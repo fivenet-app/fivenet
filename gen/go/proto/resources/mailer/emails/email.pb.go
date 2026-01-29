@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/mailer/emails/email.proto
 
+//go:build !protoopaque
+
 package maileremails
 
 import (
@@ -15,7 +17,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -27,7 +28,7 @@ const (
 )
 
 type Email struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	Id            int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp    `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp    `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -68,11 +69,6 @@ func (x *Email) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Email.ProtoReflect.Descriptor instead.
-func (*Email) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_emails_email_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Email) GetId() int64 {
@@ -166,6 +162,206 @@ func (x *Email) GetSettings() *settings.EmailSettings {
 	return nil
 }
 
+func (x *Email) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Email) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Email) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *Email) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *Email) SetDeactivated(v bool) {
+	x.Deactivated = v
+}
+
+func (x *Email) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *Email) SetUserId(v int32) {
+	x.UserId = &v
+}
+
+func (x *Email) SetUser(v *short.UserShort) {
+	x.User = v
+}
+
+func (x *Email) SetEmail(v string) {
+	x.Email = v
+}
+
+func (x *Email) SetEmailChanged(v *timestamp.Timestamp) {
+	x.EmailChanged = v
+}
+
+func (x *Email) SetLabel(v string) {
+	x.Label = &v
+}
+
+func (x *Email) SetAccess(v *access.Access) {
+	x.Access = v
+}
+
+func (x *Email) SetSettings(v *settings.EmailSettings) {
+	x.Settings = v
+}
+
+func (x *Email) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Email) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Email) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *Email) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *Email) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
+}
+
+func (x *Email) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *Email) HasEmailChanged() bool {
+	if x == nil {
+		return false
+	}
+	return x.EmailChanged != nil
+}
+
+func (x *Email) HasLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.Label != nil
+}
+
+func (x *Email) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *Email) HasSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.Settings != nil
+}
+
+func (x *Email) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Email) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Email) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *Email) ClearJob() {
+	x.Job = nil
+}
+
+func (x *Email) ClearUserId() {
+	x.UserId = nil
+}
+
+func (x *Email) ClearUser() {
+	x.User = nil
+}
+
+func (x *Email) ClearEmailChanged() {
+	x.EmailChanged = nil
+}
+
+func (x *Email) ClearLabel() {
+	x.Label = nil
+}
+
+func (x *Email) ClearAccess() {
+	x.Access = nil
+}
+
+func (x *Email) ClearSettings() {
+	x.Settings = nil
+}
+
+type Email_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id           int64
+	CreatedAt    *timestamp.Timestamp
+	UpdatedAt    *timestamp.Timestamp
+	DeletedAt    *timestamp.Timestamp
+	Deactivated  bool
+	Job          *string
+	UserId       *int32
+	User         *short.UserShort
+	Email        string
+	EmailChanged *timestamp.Timestamp
+	Label        *string
+	Access       *access.Access
+	Settings     *settings.EmailSettings
+}
+
+func (b0 Email_builder) Build() *Email {
+	m0 := &Email{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	x.Deactivated = b.Deactivated
+	x.Job = b.Job
+	x.UserId = b.UserId
+	x.User = b.User
+	x.Email = b.Email
+	x.EmailChanged = b.EmailChanged
+	x.Label = b.Label
+	x.Access = b.Access
+	x.Settings = b.Settings
+	return m0
+}
+
 var File_resources_mailer_emails_email_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_emails_email_proto_rawDesc = "" +
@@ -198,18 +394,6 @@ const file_resources_mailer_emails_email_proto_rawDesc = "" +
 	"\x0e_email_changedB\b\n" +
 	"\x06_labelB\v\n" +
 	"\t_settingsBXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails;maileremailsb\x06proto3"
-
-var (
-	file_resources_mailer_emails_email_proto_rawDescOnce sync.Once
-	file_resources_mailer_emails_email_proto_rawDescData []byte
-)
-
-func file_resources_mailer_emails_email_proto_rawDescGZIP() []byte {
-	file_resources_mailer_emails_email_proto_rawDescOnce.Do(func() {
-		file_resources_mailer_emails_email_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_mailer_emails_email_proto_rawDesc), len(file_resources_mailer_emails_email_proto_rawDesc)))
-	})
-	return file_resources_mailer_emails_email_proto_rawDescData
-}
 
 var file_resources_mailer_emails_email_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_mailer_emails_email_proto_goTypes = []any{

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/documents/approval/approval.proto
 
+//go:build !protoopaque
+
 package documentsapproval
 
 import (
@@ -15,7 +17,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -73,11 +74,6 @@ func (x OnEditBehavior) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use OnEditBehavior.Descriptor instead.
-func (OnEditBehavior) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_approval_approval_proto_rawDescGZIP(), []int{0}
-}
-
 type ApprovalRuleKind int32
 
 const (
@@ -124,11 +120,6 @@ func (x ApprovalRuleKind) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ApprovalRuleKind.Descriptor instead.
-func (ApprovalRuleKind) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_approval_approval_proto_rawDescGZIP(), []int{1}
-}
-
 type ApprovalAssigneeKind int32
 
 const (
@@ -171,11 +162,6 @@ func (ApprovalAssigneeKind) Type() protoreflect.EnumType {
 
 func (x ApprovalAssigneeKind) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use ApprovalAssigneeKind.Descriptor instead.
-func (ApprovalAssigneeKind) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_approval_approval_proto_rawDescGZIP(), []int{2}
 }
 
 type ApprovalTaskStatus int32
@@ -234,11 +220,6 @@ func (x ApprovalTaskStatus) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ApprovalTaskStatus.Descriptor instead.
-func (ApprovalTaskStatus) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_approval_approval_proto_rawDescGZIP(), []int{3}
-}
-
 type ApprovalStatus int32
 
 const (
@@ -286,13 +267,8 @@ func (x ApprovalStatus) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ApprovalStatus.Descriptor instead.
-func (ApprovalStatus) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_approval_approval_proto_rawDescGZIP(), []int{4}
-}
-
 type ApprovalPolicy struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
+	state              protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId         int64                  `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	SnapshotDate       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
 	OnEditBehavior     OnEditBehavior         `protobuf:"varint,5,opt,name=on_edit_behavior,json=onEditBehavior,proto3,enum=resources.documents.approval.OnEditBehavior" json:"on_edit_behavior,omitempty"`
@@ -337,11 +313,6 @@ func (x *ApprovalPolicy) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ApprovalPolicy.ProtoReflect.Descriptor instead.
-func (*ApprovalPolicy) Descriptor() ([]byte, []int) {
-	return file_resources_documents_approval_approval_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ApprovalPolicy) GetDocumentId() int64 {
@@ -463,8 +434,199 @@ func (x *ApprovalPolicy) GetDeletedAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *ApprovalPolicy) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *ApprovalPolicy) SetSnapshotDate(v *timestamp.Timestamp) {
+	x.SnapshotDate = v
+}
+
+func (x *ApprovalPolicy) SetOnEditBehavior(v OnEditBehavior) {
+	x.OnEditBehavior = v
+}
+
+func (x *ApprovalPolicy) SetRuleKind(v ApprovalRuleKind) {
+	x.RuleKind = v
+}
+
+func (x *ApprovalPolicy) SetRequiredCount(v int32) {
+	x.RequiredCount = &v
+}
+
+func (x *ApprovalPolicy) SetSignatureRequired(v bool) {
+	x.SignatureRequired = v
+}
+
+func (x *ApprovalPolicy) SetSelfApproveAllowed(v bool) {
+	x.SelfApproveAllowed = v
+}
+
+func (x *ApprovalPolicy) SetAssignedCount(v int32) {
+	x.AssignedCount = v
+}
+
+func (x *ApprovalPolicy) SetApprovedCount(v int32) {
+	x.ApprovedCount = v
+}
+
+func (x *ApprovalPolicy) SetDeclinedCount(v int32) {
+	x.DeclinedCount = v
+}
+
+func (x *ApprovalPolicy) SetPendingCount(v int32) {
+	x.PendingCount = v
+}
+
+func (x *ApprovalPolicy) SetAnyDeclined(v bool) {
+	x.AnyDeclined = v
+}
+
+func (x *ApprovalPolicy) SetStartedAt(v *timestamp.Timestamp) {
+	x.StartedAt = v
+}
+
+func (x *ApprovalPolicy) SetCompletedAt(v *timestamp.Timestamp) {
+	x.CompletedAt = v
+}
+
+func (x *ApprovalPolicy) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *ApprovalPolicy) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *ApprovalPolicy) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *ApprovalPolicy) HasSnapshotDate() bool {
+	if x == nil {
+		return false
+	}
+	return x.SnapshotDate != nil
+}
+
+func (x *ApprovalPolicy) HasRequiredCount() bool {
+	if x == nil {
+		return false
+	}
+	return x.RequiredCount != nil
+}
+
+func (x *ApprovalPolicy) HasStartedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.StartedAt != nil
+}
+
+func (x *ApprovalPolicy) HasCompletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CompletedAt != nil
+}
+
+func (x *ApprovalPolicy) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *ApprovalPolicy) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *ApprovalPolicy) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *ApprovalPolicy) ClearSnapshotDate() {
+	x.SnapshotDate = nil
+}
+
+func (x *ApprovalPolicy) ClearRequiredCount() {
+	x.RequiredCount = nil
+}
+
+func (x *ApprovalPolicy) ClearStartedAt() {
+	x.StartedAt = nil
+}
+
+func (x *ApprovalPolicy) ClearCompletedAt() {
+	x.CompletedAt = nil
+}
+
+func (x *ApprovalPolicy) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *ApprovalPolicy) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *ApprovalPolicy) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+type ApprovalPolicy_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId         int64
+	SnapshotDate       *timestamp.Timestamp
+	OnEditBehavior     OnEditBehavior
+	RuleKind           ApprovalRuleKind
+	RequiredCount      *int32
+	SignatureRequired  bool
+	SelfApproveAllowed bool
+	AssignedCount      int32
+	ApprovedCount      int32
+	DeclinedCount      int32
+	PendingCount       int32
+	AnyDeclined        bool
+	StartedAt          *timestamp.Timestamp
+	CompletedAt        *timestamp.Timestamp
+	CreatedAt          *timestamp.Timestamp
+	UpdatedAt          *timestamp.Timestamp
+	DeletedAt          *timestamp.Timestamp
+}
+
+func (b0 ApprovalPolicy_builder) Build() *ApprovalPolicy {
+	m0 := &ApprovalPolicy{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.SnapshotDate = b.SnapshotDate
+	x.OnEditBehavior = b.OnEditBehavior
+	x.RuleKind = b.RuleKind
+	x.RequiredCount = b.RequiredCount
+	x.SignatureRequired = b.SignatureRequired
+	x.SelfApproveAllowed = b.SelfApproveAllowed
+	x.AssignedCount = b.AssignedCount
+	x.ApprovedCount = b.ApprovedCount
+	x.DeclinedCount = b.DeclinedCount
+	x.PendingCount = b.PendingCount
+	x.AnyDeclined = b.AnyDeclined
+	x.StartedAt = b.StartedAt
+	x.CompletedAt = b.CompletedAt
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	return m0
+}
+
 type ApprovalTask struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	DocumentId    int64                  `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	SnapshotDate  *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
@@ -520,11 +682,6 @@ func (x *ApprovalTask) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ApprovalTask.ProtoReflect.Descriptor instead.
-func (*ApprovalTask) Descriptor() ([]byte, []int) {
-	return file_resources_documents_approval_approval_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ApprovalTask) GetId() int64 {
@@ -702,8 +859,349 @@ func (x *ApprovalTask) GetDocument() *documents.DocumentShort {
 	return nil
 }
 
+func (x *ApprovalTask) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *ApprovalTask) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *ApprovalTask) SetSnapshotDate(v *timestamp.Timestamp) {
+	x.SnapshotDate = v
+}
+
+func (x *ApprovalTask) SetAssigneeKind(v ApprovalAssigneeKind) {
+	x.AssigneeKind = v
+}
+
+func (x *ApprovalTask) SetUserId(v int32) {
+	x.UserId = &v
+}
+
+func (x *ApprovalTask) SetUser(v *short.UserShort) {
+	x.User = v
+}
+
+func (x *ApprovalTask) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *ApprovalTask) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *ApprovalTask) SetMinimumGrade(v int32) {
+	x.MinimumGrade = &v
+}
+
+func (x *ApprovalTask) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *ApprovalTask) SetLabel(v string) {
+	x.Label = &v
+}
+
+func (x *ApprovalTask) SetSignatureRequired(v bool) {
+	x.SignatureRequired = v
+}
+
+func (x *ApprovalTask) SetSlotNo(v int32) {
+	x.SlotNo = v
+}
+
+func (x *ApprovalTask) SetStatus(v ApprovalTaskStatus) {
+	x.Status = v
+}
+
+func (x *ApprovalTask) SetComment(v string) {
+	x.Comment = &v
+}
+
+func (x *ApprovalTask) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *ApprovalTask) SetCompletedAt(v *timestamp.Timestamp) {
+	x.CompletedAt = v
+}
+
+func (x *ApprovalTask) SetDueAt(v *timestamp.Timestamp) {
+	x.DueAt = v
+}
+
+func (x *ApprovalTask) SetDecisionCount(v int32) {
+	x.DecisionCount = v
+}
+
+func (x *ApprovalTask) SetApprovalId(v int64) {
+	x.ApprovalId = &v
+}
+
+func (x *ApprovalTask) SetCreatorId(v int32) {
+	x.CreatorId = v
+}
+
+func (x *ApprovalTask) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *ApprovalTask) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *ApprovalTask) SetCreatorJobLabel(v string) {
+	x.CreatorJobLabel = &v
+}
+
+func (x *ApprovalTask) SetDocument(v *documents.DocumentShort) {
+	x.Document = v
+}
+
+func (x *ApprovalTask) HasSnapshotDate() bool {
+	if x == nil {
+		return false
+	}
+	return x.SnapshotDate != nil
+}
+
+func (x *ApprovalTask) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
+}
+
+func (x *ApprovalTask) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *ApprovalTask) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *ApprovalTask) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *ApprovalTask) HasMinimumGrade() bool {
+	if x == nil {
+		return false
+	}
+	return x.MinimumGrade != nil
+}
+
+func (x *ApprovalTask) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *ApprovalTask) HasLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.Label != nil
+}
+
+func (x *ApprovalTask) HasComment() bool {
+	if x == nil {
+		return false
+	}
+	return x.Comment != nil
+}
+
+func (x *ApprovalTask) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *ApprovalTask) HasCompletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CompletedAt != nil
+}
+
+func (x *ApprovalTask) HasDueAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DueAt != nil
+}
+
+func (x *ApprovalTask) HasApprovalId() bool {
+	if x == nil {
+		return false
+	}
+	return x.ApprovalId != nil
+}
+
+func (x *ApprovalTask) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *ApprovalTask) HasCreatorJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorJobLabel != nil
+}
+
+func (x *ApprovalTask) HasDocument() bool {
+	if x == nil {
+		return false
+	}
+	return x.Document != nil
+}
+
+func (x *ApprovalTask) ClearSnapshotDate() {
+	x.SnapshotDate = nil
+}
+
+func (x *ApprovalTask) ClearUserId() {
+	x.UserId = nil
+}
+
+func (x *ApprovalTask) ClearUser() {
+	x.User = nil
+}
+
+func (x *ApprovalTask) ClearJob() {
+	x.Job = nil
+}
+
+func (x *ApprovalTask) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *ApprovalTask) ClearMinimumGrade() {
+	x.MinimumGrade = nil
+}
+
+func (x *ApprovalTask) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+func (x *ApprovalTask) ClearLabel() {
+	x.Label = nil
+}
+
+func (x *ApprovalTask) ClearComment() {
+	x.Comment = nil
+}
+
+func (x *ApprovalTask) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *ApprovalTask) ClearCompletedAt() {
+	x.CompletedAt = nil
+}
+
+func (x *ApprovalTask) ClearDueAt() {
+	x.DueAt = nil
+}
+
+func (x *ApprovalTask) ClearApprovalId() {
+	x.ApprovalId = nil
+}
+
+func (x *ApprovalTask) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *ApprovalTask) ClearCreatorJobLabel() {
+	x.CreatorJobLabel = nil
+}
+
+func (x *ApprovalTask) ClearDocument() {
+	x.Document = nil
+}
+
+type ApprovalTask_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id            int64
+	DocumentId    int64
+	SnapshotDate  *timestamp.Timestamp
+	AssigneeKind  ApprovalAssigneeKind
+	UserId        *int32
+	User          *short.UserShort
+	Job           *string
+	JobLabel      *string
+	MinimumGrade  *int32
+	JobGradeLabel *string
+	// "Leadership", "Counterparty Rep"
+	Label             *string
+	SignatureRequired bool
+	// >=1; meaningful only for Job tasks; always 1 for User
+	SlotNo int32
+	Status ApprovalTaskStatus
+	// Optional comment on approve/decline
+	Comment         *string
+	CreatedAt       *timestamp.Timestamp
+	CompletedAt     *timestamp.Timestamp
+	DueAt           *timestamp.Timestamp
+	DecisionCount   int32
+	ApprovalId      *int64
+	CreatorId       int32
+	Creator         *short.UserShort
+	CreatorJob      string
+	CreatorJobLabel *string
+	Document        *documents.DocumentShort
+}
+
+func (b0 ApprovalTask_builder) Build() *ApprovalTask {
+	m0 := &ApprovalTask{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.DocumentId = b.DocumentId
+	x.SnapshotDate = b.SnapshotDate
+	x.AssigneeKind = b.AssigneeKind
+	x.UserId = b.UserId
+	x.User = b.User
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.MinimumGrade = b.MinimumGrade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Label = b.Label
+	x.SignatureRequired = b.SignatureRequired
+	x.SlotNo = b.SlotNo
+	x.Status = b.Status
+	x.Comment = b.Comment
+	x.CreatedAt = b.CreatedAt
+	x.CompletedAt = b.CompletedAt
+	x.DueAt = b.DueAt
+	x.DecisionCount = b.DecisionCount
+	x.ApprovalId = b.ApprovalId
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	x.CreatorJobLabel = b.CreatorJobLabel
+	x.Document = b.Document
+	return m0
+}
+
 type Approval struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
+	state        protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	DocumentId   int64                  `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
@@ -750,11 +1248,6 @@ func (x *Approval) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Approval.ProtoReflect.Descriptor instead.
-func (*Approval) Descriptor() ([]byte, []int) {
-	return file_resources_documents_approval_approval_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Approval) GetId() int64 {
@@ -874,6 +1367,276 @@ func (x *Approval) GetRevokedAt() *timestamp.Timestamp {
 		return x.RevokedAt
 	}
 	return nil
+}
+
+func (x *Approval) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Approval) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *Approval) SetSnapshotDate(v *timestamp.Timestamp) {
+	x.SnapshotDate = v
+}
+
+func (x *Approval) SetTaskId(v int64) {
+	x.TaskId = &v
+}
+
+func (x *Approval) SetUserId(v int32) {
+	x.UserId = &v
+}
+
+func (x *Approval) SetUser(v *short.UserShort) {
+	x.User = v
+}
+
+func (x *Approval) SetUserJob(v string) {
+	x.UserJob = &v
+}
+
+func (x *Approval) SetUserJobLabel(v string) {
+	x.UserJobLabel = &v
+}
+
+func (x *Approval) SetUserGrade(v int32) {
+	x.UserGrade = &v
+}
+
+func (x *Approval) SetUserGradeLabel(v string) {
+	x.UserGradeLabel = &v
+}
+
+func (x *Approval) SetPayloadSvg(v string) {
+	x.PayloadSvg = &v
+}
+
+func (x *Approval) SetStampId(v int64) {
+	x.StampId = &v
+}
+
+func (x *Approval) SetStamp(v *stamps.Stamp) {
+	x.Stamp = v
+}
+
+func (x *Approval) SetStatus(v ApprovalStatus) {
+	x.Status = v
+}
+
+func (x *Approval) SetComment(v string) {
+	x.Comment = &v
+}
+
+func (x *Approval) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Approval) SetRevokedAt(v *timestamp.Timestamp) {
+	x.RevokedAt = v
+}
+
+func (x *Approval) HasSnapshotDate() bool {
+	if x == nil {
+		return false
+	}
+	return x.SnapshotDate != nil
+}
+
+func (x *Approval) HasTaskId() bool {
+	if x == nil {
+		return false
+	}
+	return x.TaskId != nil
+}
+
+func (x *Approval) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
+}
+
+func (x *Approval) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *Approval) HasUserJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserJob != nil
+}
+
+func (x *Approval) HasUserJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserJobLabel != nil
+}
+
+func (x *Approval) HasUserGrade() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserGrade != nil
+}
+
+func (x *Approval) HasUserGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserGradeLabel != nil
+}
+
+func (x *Approval) HasPayloadSvg() bool {
+	if x == nil {
+		return false
+	}
+	return x.PayloadSvg != nil
+}
+
+func (x *Approval) HasStampId() bool {
+	if x == nil {
+		return false
+	}
+	return x.StampId != nil
+}
+
+func (x *Approval) HasStamp() bool {
+	if x == nil {
+		return false
+	}
+	return x.Stamp != nil
+}
+
+func (x *Approval) HasComment() bool {
+	if x == nil {
+		return false
+	}
+	return x.Comment != nil
+}
+
+func (x *Approval) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Approval) HasRevokedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.RevokedAt != nil
+}
+
+func (x *Approval) ClearSnapshotDate() {
+	x.SnapshotDate = nil
+}
+
+func (x *Approval) ClearTaskId() {
+	x.TaskId = nil
+}
+
+func (x *Approval) ClearUserId() {
+	x.UserId = nil
+}
+
+func (x *Approval) ClearUser() {
+	x.User = nil
+}
+
+func (x *Approval) ClearUserJob() {
+	x.UserJob = nil
+}
+
+func (x *Approval) ClearUserJobLabel() {
+	x.UserJobLabel = nil
+}
+
+func (x *Approval) ClearUserGrade() {
+	x.UserGrade = nil
+}
+
+func (x *Approval) ClearUserGradeLabel() {
+	x.UserGradeLabel = nil
+}
+
+func (x *Approval) ClearPayloadSvg() {
+	x.PayloadSvg = nil
+}
+
+func (x *Approval) ClearStampId() {
+	x.StampId = nil
+}
+
+func (x *Approval) ClearStamp() {
+	x.Stamp = nil
+}
+
+func (x *Approval) ClearComment() {
+	x.Comment = nil
+}
+
+func (x *Approval) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Approval) ClearRevokedAt() {
+	x.RevokedAt = nil
+}
+
+type Approval_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id           int64
+	DocumentId   int64
+	SnapshotDate *timestamp.Timestamp
+	// Link to originating task (if any)
+	TaskId         *int64
+	UserId         *int32
+	User           *short.UserShort
+	UserJob        *string
+	UserJobLabel   *string
+	UserGrade      *int32
+	UserGradeLabel *string
+	// SVG path, typed preview, stamp fill, etc.
+	PayloadSvg *string
+	StampId    *int64
+	Stamp      *stamps.Stamp
+	Status     ApprovalStatus
+	Comment    *string
+	CreatedAt  *timestamp.Timestamp
+	RevokedAt  *timestamp.Timestamp
+}
+
+func (b0 Approval_builder) Build() *Approval {
+	m0 := &Approval{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.DocumentId = b.DocumentId
+	x.SnapshotDate = b.SnapshotDate
+	x.TaskId = b.TaskId
+	x.UserId = b.UserId
+	x.User = b.User
+	x.UserJob = b.UserJob
+	x.UserJobLabel = b.UserJobLabel
+	x.UserGrade = b.UserGrade
+	x.UserGradeLabel = b.UserGradeLabel
+	x.PayloadSvg = b.PayloadSvg
+	x.StampId = b.StampId
+	x.Stamp = b.Stamp
+	x.Status = b.Status
+	x.Comment = b.Comment
+	x.CreatedAt = b.CreatedAt
+	x.RevokedAt = b.RevokedAt
+	return m0
 }
 
 var File_resources_documents_approval_approval_proto protoreflect.FileDescriptor
@@ -1027,18 +1790,6 @@ const file_resources_documents_approval_approval_proto_rawDesc = "" +
 	"\x18APPROVAL_STATUS_APPROVED\x10\x01\x12\x1c\n" +
 	"\x18APPROVAL_STATUS_DECLINED\x10\x02\x12\x1b\n" +
 	"\x17APPROVAL_STATUS_REVOKED\x10\x03BbZ`github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/approval;documentsapprovalb\x06proto3"
-
-var (
-	file_resources_documents_approval_approval_proto_rawDescOnce sync.Once
-	file_resources_documents_approval_approval_proto_rawDescData []byte
-)
-
-func file_resources_documents_approval_approval_proto_rawDescGZIP() []byte {
-	file_resources_documents_approval_approval_proto_rawDescOnce.Do(func() {
-		file_resources_documents_approval_approval_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_approval_approval_proto_rawDesc), len(file_resources_documents_approval_approval_proto_rawDesc)))
-	})
-	return file_resources_documents_approval_approval_proto_rawDescData
-}
 
 var file_resources_documents_approval_approval_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
 var file_resources_documents_approval_approval_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

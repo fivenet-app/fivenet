@@ -9,8 +9,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -23,7 +23,7 @@ func (s *Server) listDocumentsQuery(
 	userInfo *userinfo.UserInfo,
 	customizeFn func(stmt mysql.SelectStatement) mysql.SelectStatement,
 ) mysql.Statement {
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 
 	wheres := []mysql.BoolExpression{}
 	if where != nil {
@@ -200,7 +200,7 @@ func (s *Server) getDocumentQuery(
 	userInfo *userinfo.UserInfo,
 	withContent bool,
 ) mysql.SelectStatement {
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 
 	var wheres []mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
@@ -427,7 +427,7 @@ func (s *Server) updateDocumentOwner(
 	return nil
 }
 
-func (s *Server) checkIfDocumentDraft(ctx context.Context, documentId int64) (bool, error) {
+func (s *Server) checkIfDocumentIsDraft(ctx context.Context, documentId int64) (bool, error) {
 	stmt := tDocument.
 		SELECT(
 			tDocument.Draft.AS("draft"),

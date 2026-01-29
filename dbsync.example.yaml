@@ -66,6 +66,7 @@ tables:
     #    `label` AS `job.label`
     #  FROM
     #    `jobs`
+    #  ORDER BY `name`
     #  OFFSET $offset;
     filters: []
       # Example filter to drop jobs starting with "off_", to enable uncomment this section
@@ -98,6 +99,7 @@ tables:
     #    `job_grades`
     #  WHERE
     #    `job_grades`.`job_name` = $jobName
+    #  ORDER BY `job_grade.job_name`, `job_grade.grade`
     #  OFFSET $offset;
   licenses:
     enabled: true
@@ -117,6 +119,7 @@ tables:
     #    `licenses`.`label` AS `license.label`
     #  FROM
     #    `licenses`
+    #  ORDER BY `type`
     #  LIMIT $limit
     #  OFFSET $offset;
   users:
@@ -170,6 +173,7 @@ tables:
     #  FROM
     #    `users`
     #  $whereCondition
+    #  ORDER BY `id`
     #  LIMIT $limit
     #  OFFSET $offset;
     # If a lastname is not returned by the query, attempt to split the firstname into "two" parts
@@ -222,6 +226,7 @@ tables:
     #    `user_licenses`
     #  WHERE
     #    `user_licenses`.`owner` = $identifier
+    #  ORDER BY `type`
     #  LIMIT $limit
     #  OFFSET $offset;
   vehicles:
@@ -254,9 +259,34 @@ tables:
     #    `model` AS `vehicle.model`
     #  FROM
     #    `owned_vehicles`
+    #  ORDER BY `vehicle.plate`
+    #  LIMIT $limit
+    #  OFFSET $offset;
+  # Accounts - Used to, e.g., sync group(s) by license, to accounts.
+  accounts:
+    enabled: false
+    tableName: "admin_accounts"
+    # By default the dbsync will attempt to add the column if it does not exist, but you can
+    # disable that by commenting this out. It is recommended to leave it enabled, for
+    # performance reasons.
+    updatedTimeColumn: "updated_at"
+    # Query to retrieve account data (example query to show how to retrieve
+    # account primary group and sub groups (using `JSON_*` funcs)).
+    #
+    # Must return result columns named: `account.license`, `account.group` (primary group)
+    # Optional columns: `account.groups` (comma-separated list of groups, if `account.group` is empty first group is used)
+    query: "" # Query to retrieve all accounts
+    #  SELECT
+    #    `license` AS `account.license`,
+    #    `group` AS `account.group`,
+    #    JSON_KEYS(NULLIF(`sub_groups`, '')) AS `account.groups`
+    #  FROM
+    #    `admin_accounts`
+    #  $whereCondition
+    #  ORDER BY `license`
     #  LIMIT $limit
     #  OFFSET $offset;
 
 tableManager:
-  # By default enabled, to create missing `updated_at` columns on tables that have it configured
+  # By default enabled, used to create missing `updated_at` columns (`updatedTimeColumn`) on tables that have it configured.
   enabled: true

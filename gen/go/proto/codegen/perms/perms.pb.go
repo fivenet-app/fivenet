@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: codegen/perms/perms.proto
 
+//go:build !protoopaque
+
 package perms
 
 import (
@@ -12,7 +14,6 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	descriptorpb "google.golang.org/protobuf/types/descriptorpb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,7 +25,7 @@ const (
 )
 
 type PermsOptions struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	Service       *string                `protobuf:"bytes,2,opt,name=service,proto3,oneof" json:"service,omitempty"`
 	Name          *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`
@@ -58,11 +59,6 @@ func (x *PermsOptions) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PermsOptions.ProtoReflect.Descriptor instead.
-func (*PermsOptions) Descriptor() ([]byte, []int) {
-	return file_codegen_perms_perms_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *PermsOptions) GetEnabled() bool {
@@ -107,8 +103,78 @@ func (x *PermsOptions) GetAttrs() []*Attr {
 	return nil
 }
 
+func (x *PermsOptions) SetEnabled(v bool) {
+	x.Enabled = v
+}
+
+func (x *PermsOptions) SetService(v string) {
+	x.Service = &v
+}
+
+func (x *PermsOptions) SetName(v string) {
+	x.Name = &v
+}
+
+func (x *PermsOptions) SetNames(v []string) {
+	x.Names = v
+}
+
+func (x *PermsOptions) SetOrder(v int32) {
+	x.Order = v
+}
+
+func (x *PermsOptions) SetAttrs(v []*Attr) {
+	x.Attrs = v
+}
+
+func (x *PermsOptions) HasService() bool {
+	if x == nil {
+		return false
+	}
+	return x.Service != nil
+}
+
+func (x *PermsOptions) HasName() bool {
+	if x == nil {
+		return false
+	}
+	return x.Name != nil
+}
+
+func (x *PermsOptions) ClearService() {
+	x.Service = nil
+}
+
+func (x *PermsOptions) ClearName() {
+	x.Name = nil
+}
+
+type PermsOptions_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Enabled bool
+	Service *string
+	Name    *string
+	Names   []string
+	Order   int32
+	Attrs   []*Attr
+}
+
+func (b0 PermsOptions_builder) Build() *PermsOptions {
+	m0 := &PermsOptions{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Enabled = b.Enabled
+	x.Service = b.Service
+	x.Name = b.Name
+	x.Names = b.Names
+	x.Order = b.Order
+	x.Attrs = b.Attrs
+	return m0
+}
+
 type Attr struct {
-	state           protoimpl.MessageState   `protogen:"open.v1"`
+	state           protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Key             string                   `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	Value           string                   `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 	Type            attributes.AttributeType `protobuf:"varint,3,opt,name=type,proto3,enum=resources.permissions.attributes.AttributeType" json:"type,omitempty"`
@@ -142,11 +208,6 @@ func (x *Attr) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Attr.ProtoReflect.Descriptor instead.
-func (*Attr) Descriptor() ([]byte, []int) {
-	return file_codegen_perms_perms_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *Attr) GetKey() string {
 	if x != nil {
 		return x.Key
@@ -175,8 +236,44 @@ func (x *Attr) GetValidStringList() []string {
 	return nil
 }
 
+func (x *Attr) SetKey(v string) {
+	x.Key = v
+}
+
+func (x *Attr) SetValue(v string) {
+	x.Value = v
+}
+
+func (x *Attr) SetType(v attributes.AttributeType) {
+	x.Type = v
+}
+
+func (x *Attr) SetValidStringList(v []string) {
+	x.ValidStringList = v
+}
+
+type Attr_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Key             string
+	Value           string
+	Type            attributes.AttributeType
+	ValidStringList []string
+}
+
+func (b0 Attr_builder) Build() *Attr {
+	m0 := &Attr{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Key = b.Key
+	x.Value = b.Value
+	x.Type = b.Type
+	x.ValidStringList = b.ValidStringList
+	return m0
+}
+
 type ServiceOptions struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Order         int32                  `protobuf:"varint,1,opt,name=order,proto3" json:"order,omitempty"`
 	Icon          *string                `protobuf:"bytes,2,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -208,11 +305,6 @@ func (x *ServiceOptions) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ServiceOptions.ProtoReflect.Descriptor instead.
-func (*ServiceOptions) Descriptor() ([]byte, []int) {
-	return file_codegen_perms_perms_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *ServiceOptions) GetOrder() int32 {
 	if x != nil {
 		return x.Order
@@ -225,6 +317,41 @@ func (x *ServiceOptions) GetIcon() string {
 		return *x.Icon
 	}
 	return ""
+}
+
+func (x *ServiceOptions) SetOrder(v int32) {
+	x.Order = v
+}
+
+func (x *ServiceOptions) SetIcon(v string) {
+	x.Icon = &v
+}
+
+func (x *ServiceOptions) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return x.Icon != nil
+}
+
+func (x *ServiceOptions) ClearIcon() {
+	x.Icon = nil
+}
+
+type ServiceOptions_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Order int32
+	Icon  *string
+}
+
+func (b0 ServiceOptions_builder) Build() *ServiceOptions {
+	m0 := &ServiceOptions{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Order = b.Order
+	x.Icon = b.Icon
+	return m0
 }
 
 var file_codegen_perms_perms_proto_extTypes = []protoimpl.ExtensionInfo{
@@ -284,18 +411,6 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\x05_icon:S\n" +
 	"\x05perms\x12\x1e.google.protobuf.MethodOptions\x18\xba\x8e\x03 \x01(\v2\x1b.codegen.perms.PermsOptionsR\x05perms:]\n" +
 	"\tperms_svc\x12\x1f.google.protobuf.ServiceOptions\x18\xbd\x8e\x03 \x01(\v2\x1d.codegen.perms.ServiceOptionsR\bpermsSvcBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms;permsb\x06proto3"
-
-var (
-	file_codegen_perms_perms_proto_rawDescOnce sync.Once
-	file_codegen_perms_perms_proto_rawDescData []byte
-)
-
-func file_codegen_perms_perms_proto_rawDescGZIP() []byte {
-	file_codegen_perms_perms_proto_rawDescOnce.Do(func() {
-		file_codegen_perms_perms_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_codegen_perms_perms_proto_rawDesc), len(file_codegen_perms_perms_proto_rawDesc)))
-	})
-	return file_codegen_perms_perms_proto_rawDescData
-}
 
 var file_codegen_perms_perms_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_codegen_perms_perms_proto_goTypes = []any{

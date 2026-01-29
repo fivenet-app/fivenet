@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/wiki/access/access.proto
 
+//go:build !protoopaque
+
 package wikiaccess
 
 import (
@@ -13,7 +15,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -74,13 +75,8 @@ func (x AccessLevel) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use AccessLevel.Descriptor instead.
-func (AccessLevel) EnumDescriptor() ([]byte, []int) {
-	return file_resources_wiki_access_access_proto_rawDescGZIP(), []int{0}
-}
-
 type PageAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Jobs          []*PageJobAccess       `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
 	Users         []*PageUserAccess      `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty" alias:"user_access"`
 	unknownFields protoimpl.UnknownFields
@@ -112,11 +108,6 @@ func (x *PageAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PageAccess.ProtoReflect.Descriptor instead.
-func (*PageAccess) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_access_access_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *PageAccess) GetJobs() []*PageJobAccess {
 	if x != nil {
 		return x.Jobs
@@ -131,8 +122,32 @@ func (x *PageAccess) GetUsers() []*PageUserAccess {
 	return nil
 }
 
+func (x *PageAccess) SetJobs(v []*PageJobAccess) {
+	x.Jobs = v
+}
+
+func (x *PageAccess) SetUsers(v []*PageUserAccess) {
+	x.Users = v
+}
+
+type PageAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs  []*PageJobAccess
+	Users []*PageUserAccess
+}
+
+func (b0 PageAccess_builder) Build() *PageAccess {
+	m0 := &PageAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	x.Users = b.Users
+	return m0
+}
+
 type PageJobAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
@@ -168,11 +183,6 @@ func (x *PageJobAccess) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PageJobAccess.ProtoReflect.Descriptor instead.
-func (*PageJobAccess) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_access_access_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *PageJobAccess) GetId() int64 {
@@ -231,8 +241,101 @@ func (x *PageJobAccess) GetAccess() AccessLevel {
 	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
 }
 
+func (x *PageJobAccess) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *PageJobAccess) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *PageJobAccess) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *PageJobAccess) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *PageJobAccess) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *PageJobAccess) SetMinimumGrade(v int32) {
+	x.MinimumGrade = v
+}
+
+func (x *PageJobAccess) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *PageJobAccess) SetAccess(v AccessLevel) {
+	x.Access = v
+}
+
+func (x *PageJobAccess) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *PageJobAccess) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *PageJobAccess) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *PageJobAccess) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *PageJobAccess) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *PageJobAccess) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+type PageJobAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id            int64
+	CreatedAt     *timestamp.Timestamp
+	TargetId      int64
+	Job           string
+	JobLabel      *string
+	MinimumGrade  int32
+	JobGradeLabel *string
+	Access        AccessLevel
+}
+
+func (b0 PageJobAccess_builder) Build() *PageJobAccess {
+	m0 := &PageJobAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.MinimumGrade = b.MinimumGrade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Access = b.Access
+	return m0
+}
+
 type PageUserAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
@@ -266,11 +369,6 @@ func (x *PageUserAccess) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PageUserAccess.ProtoReflect.Descriptor instead.
-func (*PageUserAccess) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_access_access_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *PageUserAccess) GetId() int64 {
@@ -315,6 +413,76 @@ func (x *PageUserAccess) GetAccess() AccessLevel {
 	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
 }
 
+func (x *PageUserAccess) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *PageUserAccess) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *PageUserAccess) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *PageUserAccess) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *PageUserAccess) SetUser(v *short.UserShort) {
+	x.User = v
+}
+
+func (x *PageUserAccess) SetAccess(v AccessLevel) {
+	x.Access = v
+}
+
+func (x *PageUserAccess) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *PageUserAccess) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *PageUserAccess) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *PageUserAccess) ClearUser() {
+	x.User = nil
+}
+
+type PageUserAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id        int64
+	CreatedAt *timestamp.Timestamp
+	TargetId  int64
+	UserId    int32
+	User      *short.UserShort
+	Access    AccessLevel
+}
+
+func (b0 PageUserAccess_builder) Build() *PageUserAccess {
+	m0 := &PageUserAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.UserId = b.UserId
+	x.User = b.User
+	x.Access = b.Access
+	return m0
+}
+
 var File_resources_wiki_access_access_proto protoreflect.FileDescriptor
 
 const file_resources_wiki_access_access_proto_rawDesc = "" +
@@ -354,18 +522,6 @@ const file_resources_wiki_access_access_proto_rawDesc = "" +
 	"\x11ACCESS_LEVEL_VIEW\x10\x02\x12\x17\n" +
 	"\x13ACCESS_LEVEL_ACCESS\x10\x03\x12\x15\n" +
 	"\x11ACCESS_LEVEL_EDIT\x10\x04BTZRgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access;wikiaccessb\x06proto3"
-
-var (
-	file_resources_wiki_access_access_proto_rawDescOnce sync.Once
-	file_resources_wiki_access_access_proto_rawDescData []byte
-)
-
-func file_resources_wiki_access_access_proto_rawDescGZIP() []byte {
-	file_resources_wiki_access_access_proto_rawDescOnce.Do(func() {
-		file_resources_wiki_access_access_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_wiki_access_access_proto_rawDesc), len(file_resources_wiki_access_access_proto_rawDesc)))
-	})
-	return file_resources_wiki_access_access_proto_rawDescData
-}
 
 var file_resources_wiki_access_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_wiki_access_access_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

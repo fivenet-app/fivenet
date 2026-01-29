@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/jobs/timeclock.proto
 
+//go:build !protoopaque
+
 package jobs
 
 import (
@@ -17,7 +19,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -29,7 +30,7 @@ const (
 )
 
 type ListTimeclockRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
@@ -65,11 +66,6 @@ func (x *ListTimeclockRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListTimeclockRequest.ProtoReflect.Descriptor instead.
-func (*ListTimeclockRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_timeclock_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ListTimeclockRequest) GetPagination() *database.PaginationRequest {
@@ -121,8 +117,96 @@ func (x *ListTimeclockRequest) GetUserIds() []int32 {
 	return nil
 }
 
+func (x *ListTimeclockRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListTimeclockRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListTimeclockRequest) SetUserMode(v timeclock.TimeclockViewMode) {
+	x.UserMode = v
+}
+
+func (x *ListTimeclockRequest) SetMode(v timeclock.TimeclockMode) {
+	x.Mode = v
+}
+
+func (x *ListTimeclockRequest) SetDate(v *database.DateRange) {
+	x.Date = v
+}
+
+func (x *ListTimeclockRequest) SetPerDay(v bool) {
+	x.PerDay = v
+}
+
+func (x *ListTimeclockRequest) SetUserIds(v []int32) {
+	x.UserIds = v
+}
+
+func (x *ListTimeclockRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListTimeclockRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListTimeclockRequest) HasDate() bool {
+	if x == nil {
+		return false
+	}
+	return x.Date != nil
+}
+
+func (x *ListTimeclockRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListTimeclockRequest) ClearSort() {
+	x.Sort = nil
+}
+
+func (x *ListTimeclockRequest) ClearDate() {
+	x.Date = nil
+}
+
+type ListTimeclockRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	UserMode timeclock.TimeclockViewMode
+	Mode     timeclock.TimeclockMode
+	Date     *database.DateRange
+	PerDay   bool
+	UserIds  []int32
+}
+
+func (b0 ListTimeclockRequest_builder) Build() *ListTimeclockRequest {
+	m0 := &ListTimeclockRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.UserMode = b.UserMode
+	x.Mode = b.Mode
+	x.Date = b.Date
+	x.PerDay = b.PerDay
+	x.UserIds = b.UserIds
+	return m0
+}
+
 type ListTimeclockResponse struct {
-	state       protoimpl.MessageState            `protogen:"open.v1"`
+	state       protoimpl.MessageState            `protogen:"hybrid.v1"`
 	Pagination  *database.PaginationResponse      `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Stats       *timeclock.TimeclockStats         `protobuf:"bytes,2,opt,name=stats,proto3" json:"stats,omitempty"`
 	StatsWeekly []*timeclock.TimeclockWeeklyStats `protobuf:"bytes,3,rep,name=stats_weekly,json=statsWeekly,proto3" json:"stats_weekly,omitempty"`
@@ -159,11 +243,6 @@ func (x *ListTimeclockResponse) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListTimeclockResponse.ProtoReflect.Descriptor instead.
-func (*ListTimeclockResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_timeclock_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ListTimeclockResponse) GetPagination() *database.PaginationResponse {
@@ -221,6 +300,180 @@ func (x *ListTimeclockResponse) GetRange() *TimeclockRange {
 	return nil
 }
 
+func (x *ListTimeclockResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListTimeclockResponse) SetStats(v *timeclock.TimeclockStats) {
+	x.Stats = v
+}
+
+func (x *ListTimeclockResponse) SetStatsWeekly(v []*timeclock.TimeclockWeeklyStats) {
+	x.StatsWeekly = v
+}
+
+func (x *ListTimeclockResponse) SetDaily(v *TimeclockDay) {
+	if v == nil {
+		x.Entries = nil
+		return
+	}
+	x.Entries = &ListTimeclockResponse_Daily{v}
+}
+
+func (x *ListTimeclockResponse) SetWeekly(v *TimeclockWeekly) {
+	if v == nil {
+		x.Entries = nil
+		return
+	}
+	x.Entries = &ListTimeclockResponse_Weekly{v}
+}
+
+func (x *ListTimeclockResponse) SetRange(v *TimeclockRange) {
+	if v == nil {
+		x.Entries = nil
+		return
+	}
+	x.Entries = &ListTimeclockResponse_Range{v}
+}
+
+func (x *ListTimeclockResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListTimeclockResponse) HasStats() bool {
+	if x == nil {
+		return false
+	}
+	return x.Stats != nil
+}
+
+func (x *ListTimeclockResponse) HasEntries() bool {
+	if x == nil {
+		return false
+	}
+	return x.Entries != nil
+}
+
+func (x *ListTimeclockResponse) HasDaily() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Entries.(*ListTimeclockResponse_Daily)
+	return ok
+}
+
+func (x *ListTimeclockResponse) HasWeekly() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Entries.(*ListTimeclockResponse_Weekly)
+	return ok
+}
+
+func (x *ListTimeclockResponse) HasRange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Entries.(*ListTimeclockResponse_Range)
+	return ok
+}
+
+func (x *ListTimeclockResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListTimeclockResponse) ClearStats() {
+	x.Stats = nil
+}
+
+func (x *ListTimeclockResponse) ClearEntries() {
+	x.Entries = nil
+}
+
+func (x *ListTimeclockResponse) ClearDaily() {
+	if _, ok := x.Entries.(*ListTimeclockResponse_Daily); ok {
+		x.Entries = nil
+	}
+}
+
+func (x *ListTimeclockResponse) ClearWeekly() {
+	if _, ok := x.Entries.(*ListTimeclockResponse_Weekly); ok {
+		x.Entries = nil
+	}
+}
+
+func (x *ListTimeclockResponse) ClearRange() {
+	if _, ok := x.Entries.(*ListTimeclockResponse_Range); ok {
+		x.Entries = nil
+	}
+}
+
+const ListTimeclockResponse_Entries_not_set_case case_ListTimeclockResponse_Entries = 0
+const ListTimeclockResponse_Daily_case case_ListTimeclockResponse_Entries = 4
+const ListTimeclockResponse_Weekly_case case_ListTimeclockResponse_Entries = 5
+const ListTimeclockResponse_Range_case case_ListTimeclockResponse_Entries = 6
+
+func (x *ListTimeclockResponse) WhichEntries() case_ListTimeclockResponse_Entries {
+	if x == nil {
+		return ListTimeclockResponse_Entries_not_set_case
+	}
+	switch x.Entries.(type) {
+	case *ListTimeclockResponse_Daily:
+		return ListTimeclockResponse_Daily_case
+	case *ListTimeclockResponse_Weekly:
+		return ListTimeclockResponse_Weekly_case
+	case *ListTimeclockResponse_Range:
+		return ListTimeclockResponse_Range_case
+	default:
+		return ListTimeclockResponse_Entries_not_set_case
+	}
+}
+
+type ListTimeclockResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination  *database.PaginationResponse
+	Stats       *timeclock.TimeclockStats
+	StatsWeekly []*timeclock.TimeclockWeeklyStats
+	// Fields of oneof Entries:
+	Daily  *TimeclockDay
+	Weekly *TimeclockWeekly
+	Range  *TimeclockRange
+	// -- end of Entries
+}
+
+func (b0 ListTimeclockResponse_builder) Build() *ListTimeclockResponse {
+	m0 := &ListTimeclockResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Stats = b.Stats
+	x.StatsWeekly = b.StatsWeekly
+	if b.Daily != nil {
+		x.Entries = &ListTimeclockResponse_Daily{b.Daily}
+	}
+	if b.Weekly != nil {
+		x.Entries = &ListTimeclockResponse_Weekly{b.Weekly}
+	}
+	if b.Range != nil {
+		x.Entries = &ListTimeclockResponse_Range{b.Range}
+	}
+	return m0
+}
+
+type case_ListTimeclockResponse_Entries protoreflect.FieldNumber
+
+func (x case_ListTimeclockResponse_Entries) String() string {
+	md := file_services_jobs_timeclock_proto_msgTypes[1].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isListTimeclockResponse_Entries interface {
 	isListTimeclockResponse_Entries()
 }
@@ -244,7 +497,7 @@ func (*ListTimeclockResponse_Weekly) isListTimeclockResponse_Entries() {}
 func (*ListTimeclockResponse_Range) isListTimeclockResponse_Entries() {}
 
 type TimeclockDay struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Date          *timestamp.Timestamp        `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
 	Entries       []*timeclock.TimeclockEntry `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
 	Sum           int64                       `protobuf:"varint,3,opt,name=sum,proto3" json:"sum,omitempty"`
@@ -277,11 +530,6 @@ func (x *TimeclockDay) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TimeclockDay.ProtoReflect.Descriptor instead.
-func (*TimeclockDay) Descriptor() ([]byte, []int) {
-	return file_services_jobs_timeclock_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *TimeclockDay) GetDate() *timestamp.Timestamp {
 	if x != nil {
 		return x.Date
@@ -303,8 +551,49 @@ func (x *TimeclockDay) GetSum() int64 {
 	return 0
 }
 
+func (x *TimeclockDay) SetDate(v *timestamp.Timestamp) {
+	x.Date = v
+}
+
+func (x *TimeclockDay) SetEntries(v []*timeclock.TimeclockEntry) {
+	x.Entries = v
+}
+
+func (x *TimeclockDay) SetSum(v int64) {
+	x.Sum = v
+}
+
+func (x *TimeclockDay) HasDate() bool {
+	if x == nil {
+		return false
+	}
+	return x.Date != nil
+}
+
+func (x *TimeclockDay) ClearDate() {
+	x.Date = nil
+}
+
+type TimeclockDay_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Date    *timestamp.Timestamp
+	Entries []*timeclock.TimeclockEntry
+	Sum     int64
+}
+
+func (b0 TimeclockDay_builder) Build() *TimeclockDay {
+	m0 := &TimeclockDay{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Date = b.Date
+	x.Entries = b.Entries
+	x.Sum = b.Sum
+	return m0
+}
+
 type TimeclockWeekly struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Date          *timestamp.Timestamp        `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty" sql:"primary_key"`
 	Entries       []*timeclock.TimeclockEntry `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
 	Sum           int64                       `protobuf:"varint,3,opt,name=sum,proto3" json:"sum,omitempty"`
@@ -337,11 +626,6 @@ func (x *TimeclockWeekly) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TimeclockWeekly.ProtoReflect.Descriptor instead.
-func (*TimeclockWeekly) Descriptor() ([]byte, []int) {
-	return file_services_jobs_timeclock_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *TimeclockWeekly) GetDate() *timestamp.Timestamp {
 	if x != nil {
 		return x.Date
@@ -363,8 +647,49 @@ func (x *TimeclockWeekly) GetSum() int64 {
 	return 0
 }
 
+func (x *TimeclockWeekly) SetDate(v *timestamp.Timestamp) {
+	x.Date = v
+}
+
+func (x *TimeclockWeekly) SetEntries(v []*timeclock.TimeclockEntry) {
+	x.Entries = v
+}
+
+func (x *TimeclockWeekly) SetSum(v int64) {
+	x.Sum = v
+}
+
+func (x *TimeclockWeekly) HasDate() bool {
+	if x == nil {
+		return false
+	}
+	return x.Date != nil
+}
+
+func (x *TimeclockWeekly) ClearDate() {
+	x.Date = nil
+}
+
+type TimeclockWeekly_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Date    *timestamp.Timestamp
+	Entries []*timeclock.TimeclockEntry
+	Sum     int64
+}
+
+func (b0 TimeclockWeekly_builder) Build() *TimeclockWeekly {
+	m0 := &TimeclockWeekly{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Date = b.Date
+	x.Entries = b.Entries
+	x.Sum = b.Sum
+	return m0
+}
+
 type TimeclockRange struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Date          *timestamp.Timestamp        `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty" sql:"primary_key"`
 	Entries       []*timeclock.TimeclockEntry `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
 	Sum           int64                       `protobuf:"varint,3,opt,name=sum,proto3" json:"sum,omitempty"`
@@ -397,11 +722,6 @@ func (x *TimeclockRange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TimeclockRange.ProtoReflect.Descriptor instead.
-func (*TimeclockRange) Descriptor() ([]byte, []int) {
-	return file_services_jobs_timeclock_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *TimeclockRange) GetDate() *timestamp.Timestamp {
 	if x != nil {
 		return x.Date
@@ -423,8 +743,49 @@ func (x *TimeclockRange) GetSum() int64 {
 	return 0
 }
 
+func (x *TimeclockRange) SetDate(v *timestamp.Timestamp) {
+	x.Date = v
+}
+
+func (x *TimeclockRange) SetEntries(v []*timeclock.TimeclockEntry) {
+	x.Entries = v
+}
+
+func (x *TimeclockRange) SetSum(v int64) {
+	x.Sum = v
+}
+
+func (x *TimeclockRange) HasDate() bool {
+	if x == nil {
+		return false
+	}
+	return x.Date != nil
+}
+
+func (x *TimeclockRange) ClearDate() {
+	x.Date = nil
+}
+
+type TimeclockRange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Date    *timestamp.Timestamp
+	Entries []*timeclock.TimeclockEntry
+	Sum     int64
+}
+
+func (b0 TimeclockRange_builder) Build() *TimeclockRange {
+	m0 := &TimeclockRange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Date = b.Date
+	x.Entries = b.Entries
+	x.Sum = b.Sum
+	return m0
+}
+
 type GetTimeclockStatsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId        *int32                 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -455,11 +816,6 @@ func (x *GetTimeclockStatsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetTimeclockStatsRequest.ProtoReflect.Descriptor instead.
-func (*GetTimeclockStatsRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_timeclock_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *GetTimeclockStatsRequest) GetUserId() int32 {
 	if x != nil && x.UserId != nil {
 		return *x.UserId
@@ -467,8 +823,37 @@ func (x *GetTimeclockStatsRequest) GetUserId() int32 {
 	return 0
 }
 
+func (x *GetTimeclockStatsRequest) SetUserId(v int32) {
+	x.UserId = &v
+}
+
+func (x *GetTimeclockStatsRequest) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
+}
+
+func (x *GetTimeclockStatsRequest) ClearUserId() {
+	x.UserId = nil
+}
+
+type GetTimeclockStatsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId *int32
+}
+
+func (b0 GetTimeclockStatsRequest_builder) Build() *GetTimeclockStatsRequest {
+	m0 := &GetTimeclockStatsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	return m0
+}
+
 type GetTimeclockStatsResponse struct {
-	state         protoimpl.MessageState            `protogen:"open.v1"`
+	state         protoimpl.MessageState            `protogen:"hybrid.v1"`
 	Stats         *timeclock.TimeclockStats         `protobuf:"bytes,1,opt,name=stats,proto3" json:"stats,omitempty"`
 	Weekly        []*timeclock.TimeclockWeeklyStats `protobuf:"bytes,2,rep,name=weekly,proto3" json:"weekly,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -500,11 +885,6 @@ func (x *GetTimeclockStatsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetTimeclockStatsResponse.ProtoReflect.Descriptor instead.
-func (*GetTimeclockStatsResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_timeclock_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *GetTimeclockStatsResponse) GetStats() *timeclock.TimeclockStats {
 	if x != nil {
 		return x.Stats
@@ -519,8 +899,43 @@ func (x *GetTimeclockStatsResponse) GetWeekly() []*timeclock.TimeclockWeeklyStat
 	return nil
 }
 
+func (x *GetTimeclockStatsResponse) SetStats(v *timeclock.TimeclockStats) {
+	x.Stats = v
+}
+
+func (x *GetTimeclockStatsResponse) SetWeekly(v []*timeclock.TimeclockWeeklyStats) {
+	x.Weekly = v
+}
+
+func (x *GetTimeclockStatsResponse) HasStats() bool {
+	if x == nil {
+		return false
+	}
+	return x.Stats != nil
+}
+
+func (x *GetTimeclockStatsResponse) ClearStats() {
+	x.Stats = nil
+}
+
+type GetTimeclockStatsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Stats  *timeclock.TimeclockStats
+	Weekly []*timeclock.TimeclockWeeklyStats
+}
+
+func (b0 GetTimeclockStatsResponse_builder) Build() *GetTimeclockStatsResponse {
+	m0 := &GetTimeclockStatsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Stats = b.Stats
+	x.Weekly = b.Weekly
+	return m0
+}
+
 type ListInactiveEmployeesRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
@@ -554,11 +969,6 @@ func (x *ListInactiveEmployeesRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListInactiveEmployeesRequest.ProtoReflect.Descriptor instead.
-func (*ListInactiveEmployeesRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_timeclock_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *ListInactiveEmployeesRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -580,8 +990,61 @@ func (x *ListInactiveEmployeesRequest) GetDays() int32 {
 	return 0
 }
 
+func (x *ListInactiveEmployeesRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListInactiveEmployeesRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListInactiveEmployeesRequest) SetDays(v int32) {
+	x.Days = v
+}
+
+func (x *ListInactiveEmployeesRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListInactiveEmployeesRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListInactiveEmployeesRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListInactiveEmployeesRequest) ClearSort() {
+	x.Sort = nil
+}
+
+type ListInactiveEmployeesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	Days int32
+}
+
+func (b0 ListInactiveEmployeesRequest_builder) Build() *ListInactiveEmployeesRequest {
+	m0 := &ListInactiveEmployeesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.Days = b.Days
+	return m0
+}
+
 type ListInactiveEmployeesResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Colleagues    []*colleagues.Colleague      `protobuf:"bytes,2,rep,name=colleagues,proto3" json:"colleagues,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -613,11 +1076,6 @@ func (x *ListInactiveEmployeesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListInactiveEmployeesResponse.ProtoReflect.Descriptor instead.
-func (*ListInactiveEmployeesResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_timeclock_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *ListInactiveEmployeesResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -630,6 +1088,41 @@ func (x *ListInactiveEmployeesResponse) GetColleagues() []*colleagues.Colleague 
 		return x.Colleagues
 	}
 	return nil
+}
+
+func (x *ListInactiveEmployeesResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListInactiveEmployeesResponse) SetColleagues(v []*colleagues.Colleague) {
+	x.Colleagues = v
+}
+
+func (x *ListInactiveEmployeesResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListInactiveEmployeesResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListInactiveEmployeesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Colleagues []*colleagues.Colleague
+}
+
+func (b0 ListInactiveEmployeesResponse_builder) Build() *ListInactiveEmployeesResponse {
+	m0 := &ListInactiveEmployeesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Colleagues = b.Colleagues
+	return m0
 }
 
 var File_services_jobs_timeclock_proto protoreflect.FileDescriptor
@@ -697,18 +1190,6 @@ const file_services_jobs_timeclock_proto_rawDesc = "" +
 	"\x06Access\x18\x01\"\x03All\x12}\n" +
 	"\x11GetTimeclockStats\x12'.services.jobs.GetTimeclockStatsRequest\x1a(.services.jobs.GetTimeclockStatsResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListTimeclock\x12z\n" +
 	"\x15ListInactiveEmployees\x12+.services.jobs.ListInactiveEmployeesRequest\x1a,.services.jobs.ListInactiveEmployeesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a$\xea\xf3\x18 \b>\x12\x1ci-mdi-timeline-clock-outlineBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
-
-var (
-	file_services_jobs_timeclock_proto_rawDescOnce sync.Once
-	file_services_jobs_timeclock_proto_rawDescData []byte
-)
-
-func file_services_jobs_timeclock_proto_rawDescGZIP() []byte {
-	file_services_jobs_timeclock_proto_rawDescOnce.Do(func() {
-		file_services_jobs_timeclock_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_jobs_timeclock_proto_rawDesc), len(file_services_jobs_timeclock_proto_rawDesc)))
-	})
-	return file_services_jobs_timeclock_proto_rawDescData
-}
 
 var file_services_jobs_timeclock_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_services_jobs_timeclock_proto_goTypes = []any{

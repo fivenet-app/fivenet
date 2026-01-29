@@ -14,6 +14,11 @@ func (x *QuickButtons) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
 		return protoutils.UnmarshalPartialJSON([]byte(t), x)
+	case *string:
+		if t == nil {
+			return nil
+		}
+		return protoutils.UnmarshalPartialJSON([]byte(*t), x)
 	case []byte:
 		return protoutils.UnmarshalPartialJSON(t, x)
 	}

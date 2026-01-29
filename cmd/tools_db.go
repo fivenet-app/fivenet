@@ -72,7 +72,7 @@ func (c *VersionCmd) run(_ context.Context, cfg *config.Config) error {
 		return err
 	}
 
-	m, err := query.NewMigrate(db, cfg.Database.ESXCompat, cfg.Database.DisableLocking)
+	m, err := query.NewMigrate(db, cfg.Database.DisableLocking)
 	if err != nil {
 		return err
 	}
@@ -141,7 +141,7 @@ func (c *UpCmd) run(_ context.Context, logger *zap.Logger, cfg *config.Config) e
 		return fmt.Errorf("failed to open mysqsl db connection. %w", err)
 	}
 
-	m, err := query.NewMigrate(db, cfg.Database.ESXCompat, cfg.Database.DisableLocking)
+	m, err := query.NewMigrate(db, cfg.Database.DisableLocking)
 	if err != nil {
 		return fmt.Errorf("failed to create migrationg client. %w", err)
 	}

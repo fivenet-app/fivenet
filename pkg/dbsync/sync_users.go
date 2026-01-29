@@ -9,8 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
@@ -71,7 +70,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 
 	if err := s.sendData(ctx, &pbsync.SendDataRequest{
 		Data: &pbsync.SendDataRequest_Users{
-			Users: &sync.DataUsers{
+			Users: &syncdata.DataUsers{
 				Users: us,
 			},
 		},
@@ -79,7 +78,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		return err
 	}
 
-	s.logger.Debug("usersSync", zap.Bool("syncedUp", s.state.SyncedUp))
+	s.logger.Debug("usersSync", zap.Bool("syncedUp", s.state.GetSyncedUp()))
 
 	lastUserId := strconv.FormatInt(int64(us[len(us)-1].GetUserId()), 10)
 	s.state.Set(offset+limit, &lastUserId)
@@ -88,20 +87,21 @@ func (s *usersSync) Sync(ctx context.Context) error {
 }
 
 func (s *usersSync) getInitialOffset() int64 {
-	if s.state != nil && s.state.Offset > 0 {
-		return s.state.Offset
+	offset := s.state.GetOffset()
+	if s.state != nil && offset > 0 {
+		return offset
 	}
 	return 0
 }
 
 func (s *usersSync) resetLastCheckIfNotSynced() {
-	if !s.state.SyncedUp {
-		s.state.LastCheck = nil
+	if !s.state.GetSyncedUp() {
+		s.state.SetLastCheck(nil)
 	}
 }
 
-func (s *usersSync) fetchUsers(ctx context.Context, query string) ([]*users.User, error) {
-	us := []*users.User{}
+func (s *usersSync) fetchUsers(ctx context.Context, query string) ([]*syncdata.DataUser, error) {
+	us := []*syncdata.DataUser{}
 	if _, err := qrm.Query(ctx, s.db, query, []any{}, &us); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query users table. %w", err)
@@ -110,17 +110,17 @@ func (s *usersSync) fetchUsers(ctx context.Context, query string) ([]*users.User
 	return us, nil
 }
 
-func (s *usersSync) updateSyncState(us []*users.User, offset, limit int64) (int64, error) {
+func (s *usersSync) updateSyncState(us []*syncdata.DataUser, offset, limit int64) (int64, error) {
 	if int64(len(us)) < limit {
 		offset = 0
-		s.state.SyncedUp = true
+		s.state.SetSyncedUp(true)
 	}
 	return offset, nil
 }
 
-func (s *usersSync) applyFiltersAndTransformations(us []*users.User, sQuery UsersTable) {
+func (s *usersSync) applyFiltersAndTransformations(us []*syncdata.DataUser, sQuery UsersTable) {
 	if s.cfg.Tables.Users.IgnoreEmptyName {
-		us = slices.DeleteFunc(us, func(in *users.User) bool {
+		us = slices.DeleteFunc(us, func(in *syncdata.DataUser) bool {
 			return in == nil || (in.GetFirstname() == "" && in.GetLastname() == "")
 		})
 	}
@@ -144,13 +144,13 @@ func (s *usersSync) applyFiltersAndTransformations(us []*users.User, sQuery User
 	}
 }
 
-func (s *usersSync) applyValueMapping(user *users.User) {
+func (s *usersSync) applyValueMapping(user *syncdata.DataUser) {
 	if user.Sex != nil && !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
 		s.cfg.Tables.Users.ValueMapping.Sex.Process(user.Sex)
 	}
 }
 
-func (s *usersSync) applyFilters(us []*users.User, k int, sQuery UsersTable) bool {
+func (s *usersSync) applyFilters(us []*syncdata.DataUser, k int, sQuery UsersTable) bool {
 	for _, filter := range sQuery.Filters.Jobs {
 		if filter.compiledPattern.MatchString(us[k].GetJob()) {
 			switch filter.Action {
@@ -170,17 +170,17 @@ func (s *usersSync) applyFilters(us []*users.User, k int, sQuery UsersTable) boo
 	return false
 }
 
-func (s *usersSync) splitNamesIfRequired(user *users.User) {
+func (s *usersSync) splitNamesIfRequired(user *syncdata.DataUser) {
 	if s.cfg.Tables.Users.SplitName && user.GetLastname() == "" {
 		ss := strings.Split(user.GetFirstname(), " ")
 		if len(ss) > 1 {
-			user.Lastname = ss[len(ss)-1]
+			user.Lastname = &ss[len(ss)-1]
 			user.Firstname = strings.Replace(user.GetFirstname(), " "+user.GetLastname(), "", 1)
 		}
 	}
 }
 
-func (s *usersSync) parseDateOfBirth(user *users.User) {
+func (s *usersSync) parseDateOfBirth(user *syncdata.DataUser) {
 	for _, format := range s.cfg.Tables.Users.DateOfBirth.Formats {
 		parsedTime, err := time.Parse(format, user.GetDateofbirth())
 		if err == nil {
@@ -190,7 +190,7 @@ func (s *usersSync) parseDateOfBirth(user *users.User) {
 	}
 }
 
-func (s *usersSync) retrieveAndAttachLicenses(ctx context.Context, us []*users.User) error {
+func (s *usersSync) retrieveAndAttachLicenses(ctx context.Context, us []*syncdata.DataUser) error {
 	if !s.cfg.Tables.CitizensLicenses.Enabled {
 		return nil
 	}
@@ -249,7 +249,7 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 	q := s.cfg.Tables.Users.GetQuery(s.state, 0, 1, wheres...)
 	s.logger.Debug("users sync query", zap.String("query", q))
 
-	user := &users.User{}
+	user := &syncdata.DataUser{}
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, &user); err != nil {
 		return err
 	}
@@ -272,7 +272,8 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 	if s.cfg.Tables.Users.SplitName {
 		if user.GetLastname() == "" {
 			ss := strings.Split(user.GetFirstname(), " ")
-			user.Lastname = ss[len(ss)-1]
+			lastname := ss[len(ss)-1]
+			user.Lastname = &lastname
 
 			user.Firstname = strings.Replace(user.GetFirstname(), " "+user.GetLastname(), "", 1)
 		}
@@ -281,8 +282,8 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 	if s.cli != nil {
 		if err := s.sendData(ctx, &pbsync.SendDataRequest{
 			Data: &pbsync.SendDataRequest_Users{
-				Users: &sync.DataUsers{
-					Users: []*users.User{user},
+				Users: &syncdata.DataUsers{
+					Users: []*syncdata.DataUser{user},
 				},
 			},
 		}); err != nil {

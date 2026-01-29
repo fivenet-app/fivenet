@@ -4,7 +4,7 @@ import (
 	"context"
 
 	jobsconduct "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
@@ -13,7 +13,7 @@ func (s *Server) getConductEntry(
 	id int64,
 	withFiles bool,
 ) (*jobsconduct.ConductEntry, error) {
-	tColleague := tables.User().AS("target_user")
+	tColleague := table.FivenetUser.AS("target_user")
 	tCreator := tColleague.AS("creator")
 
 	stmt := tConduct.

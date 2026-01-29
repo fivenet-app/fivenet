@@ -11,7 +11,6 @@ import (
 	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/textdiff"
@@ -87,7 +86,7 @@ func (s *Server) ListDocumentActivity(
 		return resp, nil
 	}
 
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 
 	stmt := tDocActivity.
 		SELECT(

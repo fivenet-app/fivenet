@@ -2,7 +2,7 @@
 import { isSameDay } from 'date-fns';
 import type { Attribute } from 'v-calendar/dist/types/src/utils/attribute.js';
 import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page.js';
-import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
+import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import EntryCreateOrUpdateModal from '../calendar/entry/EntryCreateOrUpdateModal.vue';
 
 const props = defineProps<{

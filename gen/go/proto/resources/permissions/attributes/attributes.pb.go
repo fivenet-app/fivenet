@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/permissions/attributes/attributes.proto
 
+//go:build !protoopaque
+
 package permissionsattributes
 
 import (
@@ -13,7 +15,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -71,13 +72,8 @@ func (x AttributeType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use AttributeType.Descriptor instead.
-func (AttributeType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_permissions_attributes_attributes_proto_rawDescGZIP(), []int{0}
-}
-
 type RoleAttribute struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	RoleId        int64                  `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	AttrId        int64                  `protobuf:"varint,3,opt,name=attr_id,json=attrId,proto3" json:"attr_id,omitempty"`
@@ -116,11 +112,6 @@ func (x *RoleAttribute) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RoleAttribute.ProtoReflect.Descriptor instead.
-func (*RoleAttribute) Descriptor() ([]byte, []int) {
-	return file_resources_permissions_attributes_attributes_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *RoleAttribute) GetRoleId() int64 {
@@ -200,8 +191,130 @@ func (x *RoleAttribute) GetMaxValues() *AttributeValues {
 	return nil
 }
 
+func (x *RoleAttribute) SetRoleId(v int64) {
+	x.RoleId = v
+}
+
+func (x *RoleAttribute) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *RoleAttribute) SetAttrId(v int64) {
+	x.AttrId = v
+}
+
+func (x *RoleAttribute) SetPermissionId(v int64) {
+	x.PermissionId = v
+}
+
+func (x *RoleAttribute) SetCategory(v string) {
+	x.Category = v
+}
+
+func (x *RoleAttribute) SetName(v string) {
+	x.Name = v
+}
+
+func (x *RoleAttribute) SetKey(v string) {
+	x.Key = v
+}
+
+func (x *RoleAttribute) SetType(v string) {
+	x.Type = v
+}
+
+func (x *RoleAttribute) SetValidValues(v *AttributeValues) {
+	x.ValidValues = v
+}
+
+func (x *RoleAttribute) SetValue(v *AttributeValues) {
+	x.Value = v
+}
+
+func (x *RoleAttribute) SetMaxValues(v *AttributeValues) {
+	x.MaxValues = v
+}
+
+func (x *RoleAttribute) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *RoleAttribute) HasValidValues() bool {
+	if x == nil {
+		return false
+	}
+	return x.ValidValues != nil
+}
+
+func (x *RoleAttribute) HasValue() bool {
+	if x == nil {
+		return false
+	}
+	return x.Value != nil
+}
+
+func (x *RoleAttribute) HasMaxValues() bool {
+	if x == nil {
+		return false
+	}
+	return x.MaxValues != nil
+}
+
+func (x *RoleAttribute) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *RoleAttribute) ClearValidValues() {
+	x.ValidValues = nil
+}
+
+func (x *RoleAttribute) ClearValue() {
+	x.Value = nil
+}
+
+func (x *RoleAttribute) ClearMaxValues() {
+	x.MaxValues = nil
+}
+
+type RoleAttribute_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	RoleId       int64
+	CreatedAt    *timestamp.Timestamp
+	AttrId       int64
+	PermissionId int64
+	Category     string
+	Name         string
+	Key          string
+	Type         string
+	ValidValues  *AttributeValues
+	Value        *AttributeValues
+	MaxValues    *AttributeValues
+}
+
+func (b0 RoleAttribute_builder) Build() *RoleAttribute {
+	m0 := &RoleAttribute{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.RoleId = b.RoleId
+	x.CreatedAt = b.CreatedAt
+	x.AttrId = b.AttrId
+	x.PermissionId = b.PermissionId
+	x.Category = b.Category
+	x.Name = b.Name
+	x.Key = b.Key
+	x.Type = b.Type
+	x.ValidValues = b.ValidValues
+	x.Value = b.Value
+	x.MaxValues = b.MaxValues
+	return m0
+}
+
 type AttributeValues struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to ValidValues:
 	//
 	//	*AttributeValues_StringList
@@ -235,11 +348,6 @@ func (x *AttributeValues) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AttributeValues.ProtoReflect.Descriptor instead.
-func (*AttributeValues) Descriptor() ([]byte, []int) {
-	return file_resources_permissions_attributes_attributes_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *AttributeValues) GetValidValues() isAttributeValues_ValidValues {
@@ -276,6 +384,140 @@ func (x *AttributeValues) GetJobGradeList() *JobGradeList {
 	return nil
 }
 
+func (x *AttributeValues) SetStringList(v *StringList) {
+	if v == nil {
+		x.ValidValues = nil
+		return
+	}
+	x.ValidValues = &AttributeValues_StringList{v}
+}
+
+func (x *AttributeValues) SetJobList(v *StringList) {
+	if v == nil {
+		x.ValidValues = nil
+		return
+	}
+	x.ValidValues = &AttributeValues_JobList{v}
+}
+
+func (x *AttributeValues) SetJobGradeList(v *JobGradeList) {
+	if v == nil {
+		x.ValidValues = nil
+		return
+	}
+	x.ValidValues = &AttributeValues_JobGradeList{v}
+}
+
+func (x *AttributeValues) HasValidValues() bool {
+	if x == nil {
+		return false
+	}
+	return x.ValidValues != nil
+}
+
+func (x *AttributeValues) HasStringList() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.ValidValues.(*AttributeValues_StringList)
+	return ok
+}
+
+func (x *AttributeValues) HasJobList() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.ValidValues.(*AttributeValues_JobList)
+	return ok
+}
+
+func (x *AttributeValues) HasJobGradeList() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.ValidValues.(*AttributeValues_JobGradeList)
+	return ok
+}
+
+func (x *AttributeValues) ClearValidValues() {
+	x.ValidValues = nil
+}
+
+func (x *AttributeValues) ClearStringList() {
+	if _, ok := x.ValidValues.(*AttributeValues_StringList); ok {
+		x.ValidValues = nil
+	}
+}
+
+func (x *AttributeValues) ClearJobList() {
+	if _, ok := x.ValidValues.(*AttributeValues_JobList); ok {
+		x.ValidValues = nil
+	}
+}
+
+func (x *AttributeValues) ClearJobGradeList() {
+	if _, ok := x.ValidValues.(*AttributeValues_JobGradeList); ok {
+		x.ValidValues = nil
+	}
+}
+
+const AttributeValues_ValidValues_not_set_case case_AttributeValues_ValidValues = 0
+const AttributeValues_StringList_case case_AttributeValues_ValidValues = 1
+const AttributeValues_JobList_case case_AttributeValues_ValidValues = 2
+const AttributeValues_JobGradeList_case case_AttributeValues_ValidValues = 3
+
+func (x *AttributeValues) WhichValidValues() case_AttributeValues_ValidValues {
+	if x == nil {
+		return AttributeValues_ValidValues_not_set_case
+	}
+	switch x.ValidValues.(type) {
+	case *AttributeValues_StringList:
+		return AttributeValues_StringList_case
+	case *AttributeValues_JobList:
+		return AttributeValues_JobList_case
+	case *AttributeValues_JobGradeList:
+		return AttributeValues_JobGradeList_case
+	default:
+		return AttributeValues_ValidValues_not_set_case
+	}
+}
+
+type AttributeValues_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof ValidValues:
+	StringList   *StringList
+	JobList      *StringList
+	JobGradeList *JobGradeList
+	// -- end of ValidValues
+}
+
+func (b0 AttributeValues_builder) Build() *AttributeValues {
+	m0 := &AttributeValues{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.StringList != nil {
+		x.ValidValues = &AttributeValues_StringList{b.StringList}
+	}
+	if b.JobList != nil {
+		x.ValidValues = &AttributeValues_JobList{b.JobList}
+	}
+	if b.JobGradeList != nil {
+		x.ValidValues = &AttributeValues_JobGradeList{b.JobGradeList}
+	}
+	return m0
+}
+
+type case_AttributeValues_ValidValues protoreflect.FieldNumber
+
+func (x case_AttributeValues_ValidValues) String() string {
+	md := file_resources_permissions_attributes_attributes_proto_msgTypes[1].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isAttributeValues_ValidValues interface {
 	isAttributeValues_ValidValues()
 }
@@ -299,7 +541,7 @@ func (*AttributeValues_JobList) isAttributeValues_ValidValues() {}
 func (*AttributeValues_JobGradeList) isAttributeValues_ValidValues() {}
 
 type StringList struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Strings       []string               `protobuf:"bytes,1,rep,name=strings,proto3" json:"strings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -330,11 +572,6 @@ func (x *StringList) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StringList.ProtoReflect.Descriptor instead.
-func (*StringList) Descriptor() ([]byte, []int) {
-	return file_resources_permissions_attributes_attributes_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *StringList) GetStrings() []string {
 	if x != nil {
 		return x.Strings
@@ -342,8 +579,26 @@ func (x *StringList) GetStrings() []string {
 	return nil
 }
 
+func (x *StringList) SetStrings(v []string) {
+	x.Strings = v
+}
+
+type StringList_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Strings []string
+}
+
+func (b0 StringList_builder) Build() *StringList {
+	m0 := &StringList{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Strings = b.Strings
+	return m0
+}
+
 type JobGradeList struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	FineGrained   bool                   `protobuf:"varint,2,opt,name=fine_grained,json=fineGrained,proto3" json:"fine_grained,omitempty"`
 	Jobs          map[string]int32       `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
 	Grades        map[string]*JobGrades  `protobuf:"bytes,3,rep,name=grades,proto3" json:"grades,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
@@ -376,11 +631,6 @@ func (x *JobGradeList) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobGradeList.ProtoReflect.Descriptor instead.
-func (*JobGradeList) Descriptor() ([]byte, []int) {
-	return file_resources_permissions_attributes_attributes_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *JobGradeList) GetFineGrained() bool {
 	if x != nil {
 		return x.FineGrained
@@ -402,8 +652,38 @@ func (x *JobGradeList) GetGrades() map[string]*JobGrades {
 	return nil
 }
 
+func (x *JobGradeList) SetFineGrained(v bool) {
+	x.FineGrained = v
+}
+
+func (x *JobGradeList) SetJobs(v map[string]int32) {
+	x.Jobs = v
+}
+
+func (x *JobGradeList) SetGrades(v map[string]*JobGrades) {
+	x.Grades = v
+}
+
+type JobGradeList_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	FineGrained bool
+	Jobs        map[string]int32
+	Grades      map[string]*JobGrades
+}
+
+func (b0 JobGradeList_builder) Build() *JobGradeList {
+	m0 := &JobGradeList{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.FineGrained = b.FineGrained
+	x.Jobs = b.Jobs
+	x.Grades = b.Grades
+	return m0
+}
+
 type JobGrades struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Grades        []int32                `protobuf:"varint,1,rep,packed,name=grades,proto3" json:"grades,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -434,16 +714,29 @@ func (x *JobGrades) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobGrades.ProtoReflect.Descriptor instead.
-func (*JobGrades) Descriptor() ([]byte, []int) {
-	return file_resources_permissions_attributes_attributes_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *JobGrades) GetGrades() []int32 {
 	if x != nil {
 		return x.Grades
 	}
 	return nil
+}
+
+func (x *JobGrades) SetGrades(v []int32) {
+	x.Grades = v
+}
+
+type JobGrades_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Grades []int32
+}
+
+func (b0 JobGrades_builder) Build() *JobGrades {
+	m0 := &JobGrades{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Grades = b.Grades
+	return m0
 }
 
 var File_resources_permissions_attributes_attributes_proto protoreflect.FileDescriptor
@@ -494,18 +787,6 @@ const file_resources_permissions_attributes_attributes_proto_rawDesc = "" +
 	"\x1aATTRIBUTE_TYPE_STRING_LIST\x10\x01\x12\x1b\n" +
 	"\x17ATTRIBUTE_TYPE_JOB_LIST\x10\x02\x12!\n" +
 	"\x1dATTRIBUTE_TYPE_JOB_GRADE_LIST\x10\x03BjZhgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes;permissionsattributesb\x06proto3"
-
-var (
-	file_resources_permissions_attributes_attributes_proto_rawDescOnce sync.Once
-	file_resources_permissions_attributes_attributes_proto_rawDescData []byte
-)
-
-func file_resources_permissions_attributes_attributes_proto_rawDescGZIP() []byte {
-	file_resources_permissions_attributes_attributes_proto_rawDescOnce.Do(func() {
-		file_resources_permissions_attributes_attributes_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_permissions_attributes_attributes_proto_rawDesc), len(file_resources_permissions_attributes_attributes_proto_rawDesc)))
-	})
-	return file_resources_permissions_attributes_attributes_proto_rawDescData
-}
 
 var file_resources_permissions_attributes_attributes_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_permissions_attributes_attributes_proto_msgTypes = make([]protoimpl.MessageInfo, 7)

@@ -4,13 +4,14 @@
 // 	protoc        (unknown)
 // source: resources/centrum/joblist.proto
 
+//go:build !protoopaque
+
 package centrum
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -22,7 +23,7 @@ const (
 )
 
 type JobList struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Jobs          []*JobListEntry        `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -53,11 +54,6 @@ func (x *JobList) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobList.ProtoReflect.Descriptor instead.
-func (*JobList) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_joblist_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *JobList) GetJobs() []*JobListEntry {
 	if x != nil {
 		return x.Jobs
@@ -65,8 +61,26 @@ func (x *JobList) GetJobs() []*JobListEntry {
 	return nil
 }
 
+func (x *JobList) SetJobs(v []*JobListEntry) {
+	x.Jobs = v
+}
+
+type JobList_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs []*JobListEntry
+}
+
+func (b0 JobList_builder) Build() *JobList {
+	m0 := &JobList{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	return m0
+}
+
 type JobListEntry struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Label         *string                `protobuf:"bytes,2,opt,name=label,proto3,oneof" json:"label,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -98,11 +112,6 @@ func (x *JobListEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobListEntry.ProtoReflect.Descriptor instead.
-func (*JobListEntry) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_joblist_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *JobListEntry) GetName() string {
 	if x != nil {
 		return x.Name
@@ -117,6 +126,41 @@ func (x *JobListEntry) GetLabel() string {
 	return ""
 }
 
+func (x *JobListEntry) SetName(v string) {
+	x.Name = v
+}
+
+func (x *JobListEntry) SetLabel(v string) {
+	x.Label = &v
+}
+
+func (x *JobListEntry) HasLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.Label != nil
+}
+
+func (x *JobListEntry) ClearLabel() {
+	x.Label = nil
+}
+
+type JobListEntry_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Name  string
+	Label *string
+}
+
+func (b0 JobListEntry_builder) Build() *JobListEntry {
+	m0 := &JobListEntry{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Name = b.Name
+	x.Label = b.Label
+	return m0
+}
+
 var File_resources_centrum_joblist_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_joblist_proto_rawDesc = "" +
@@ -128,18 +172,6 @@ const file_resources_centrum_joblist_proto_rawDesc = "" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x19\n" +
 	"\x05label\x18\x02 \x01(\tH\x00R\x05label\x88\x01\x01B\b\n" +
 	"\x06_labelBMZKgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum;centrumb\x06proto3"
-
-var (
-	file_resources_centrum_joblist_proto_rawDescOnce sync.Once
-	file_resources_centrum_joblist_proto_rawDescData []byte
-)
-
-func file_resources_centrum_joblist_proto_rawDescGZIP() []byte {
-	file_resources_centrum_joblist_proto_rawDescOnce.Do(func() {
-		file_resources_centrum_joblist_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_centrum_joblist_proto_rawDesc), len(file_resources_centrum_joblist_proto_rawDesc)))
-	})
-	return file_resources_centrum_joblist_proto_rawDescData
-}
 
 var file_resources_centrum_joblist_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_centrum_joblist_proto_goTypes = []any{

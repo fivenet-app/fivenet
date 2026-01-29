@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/notifications/notifications.proto
 
+//go:build !protoopaque
+
 package notifications
 
 import (
@@ -15,7 +17,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -76,11 +77,6 @@ func (x NotificationType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use NotificationType.Descriptor instead.
-func (NotificationType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_notifications_notifications_proto_rawDescGZIP(), []int{0}
-}
-
 type NotificationCategory int32
 
 const (
@@ -128,13 +124,8 @@ func (x NotificationCategory) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use NotificationCategory.Descriptor instead.
-func (NotificationCategory) EnumDescriptor() ([]byte, []int) {
-	return file_resources_notifications_notifications_proto_rawDescGZIP(), []int{1}
-}
-
 type Notification struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	ReadAt        *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=read_at,json=readAt,proto3" json:"read_at,omitempty"`
@@ -172,11 +163,6 @@ func (x *Notification) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Notification.ProtoReflect.Descriptor instead.
-func (*Notification) Descriptor() ([]byte, []int) {
-	return file_resources_notifications_notifications_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Notification) GetId() int64 {
@@ -249,8 +235,146 @@ func (x *Notification) GetStarred() bool {
 	return false
 }
 
+func (x *Notification) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Notification) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Notification) SetReadAt(v *timestamp.Timestamp) {
+	x.ReadAt = v
+}
+
+func (x *Notification) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *Notification) SetTitle(v *common.I18NItem) {
+	x.Title = v
+}
+
+func (x *Notification) SetType(v NotificationType) {
+	x.Type = v
+}
+
+func (x *Notification) SetContent(v *common.I18NItem) {
+	x.Content = v
+}
+
+func (x *Notification) SetCategory(v NotificationCategory) {
+	x.Category = v
+}
+
+func (x *Notification) SetData(v *Data) {
+	x.Data = v
+}
+
+func (x *Notification) SetStarred(v bool) {
+	x.Starred = &v
+}
+
+func (x *Notification) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Notification) HasReadAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.ReadAt != nil
+}
+
+func (x *Notification) HasTitle() bool {
+	if x == nil {
+		return false
+	}
+	return x.Title != nil
+}
+
+func (x *Notification) HasContent() bool {
+	if x == nil {
+		return false
+	}
+	return x.Content != nil
+}
+
+func (x *Notification) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *Notification) HasStarred() bool {
+	if x == nil {
+		return false
+	}
+	return x.Starred != nil
+}
+
+func (x *Notification) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Notification) ClearReadAt() {
+	x.ReadAt = nil
+}
+
+func (x *Notification) ClearTitle() {
+	x.Title = nil
+}
+
+func (x *Notification) ClearContent() {
+	x.Content = nil
+}
+
+func (x *Notification) ClearData() {
+	x.Data = nil
+}
+
+func (x *Notification) ClearStarred() {
+	x.Starred = nil
+}
+
+type Notification_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id        int64
+	CreatedAt *timestamp.Timestamp
+	ReadAt    *timestamp.Timestamp
+	UserId    int32
+	Title     *common.I18NItem
+	Type      NotificationType
+	Content   *common.I18NItem
+	Category  NotificationCategory
+	Data      *Data
+	Starred   *bool
+}
+
+func (b0 Notification_builder) Build() *Notification {
+	m0 := &Notification{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.ReadAt = b.ReadAt
+	x.UserId = b.UserId
+	x.Title = b.Title
+	x.Type = b.Type
+	x.Content = b.Content
+	x.Category = b.Category
+	x.Data = b.Data
+	x.Starred = b.Starred
+	return m0
+}
+
 type Data struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Link          *Link                  `protobuf:"bytes,1,opt,name=link,proto3,oneof" json:"link,omitempty"`
 	CausedBy      *short.UserShort       `protobuf:"bytes,2,opt,name=caused_by,json=causedBy,proto3,oneof" json:"caused_by,omitempty"`
 	Calendar      *CalendarData          `protobuf:"bytes,3,opt,name=calendar,proto3,oneof" json:"calendar,omitempty"`
@@ -283,11 +407,6 @@ func (x *Data) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Data.ProtoReflect.Descriptor instead.
-func (*Data) Descriptor() ([]byte, []int) {
-	return file_resources_notifications_notifications_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *Data) GetLink() *Link {
 	if x != nil {
 		return x.Link
@@ -309,8 +428,71 @@ func (x *Data) GetCalendar() *CalendarData {
 	return nil
 }
 
+func (x *Data) SetLink(v *Link) {
+	x.Link = v
+}
+
+func (x *Data) SetCausedBy(v *short.UserShort) {
+	x.CausedBy = v
+}
+
+func (x *Data) SetCalendar(v *CalendarData) {
+	x.Calendar = v
+}
+
+func (x *Data) HasLink() bool {
+	if x == nil {
+		return false
+	}
+	return x.Link != nil
+}
+
+func (x *Data) HasCausedBy() bool {
+	if x == nil {
+		return false
+	}
+	return x.CausedBy != nil
+}
+
+func (x *Data) HasCalendar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Calendar != nil
+}
+
+func (x *Data) ClearLink() {
+	x.Link = nil
+}
+
+func (x *Data) ClearCausedBy() {
+	x.CausedBy = nil
+}
+
+func (x *Data) ClearCalendar() {
+	x.Calendar = nil
+}
+
+type Data_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Link     *Link
+	CausedBy *short.UserShort
+	Calendar *CalendarData
+}
+
+func (b0 Data_builder) Build() *Data {
+	m0 := &Data{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Link = b.Link
+	x.CausedBy = b.CausedBy
+	x.Calendar = b.Calendar
+	return m0
+}
+
 type Link struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	To            string                 `protobuf:"bytes,1,opt,name=to,proto3" json:"to,omitempty"`
 	Title         *string                `protobuf:"bytes,2,opt,name=title,proto3,oneof" json:"title,omitempty"`
 	External      *bool                  `protobuf:"varint,3,opt,name=external,proto3,oneof" json:"external,omitempty"`
@@ -343,11 +525,6 @@ func (x *Link) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Link.ProtoReflect.Descriptor instead.
-func (*Link) Descriptor() ([]byte, []int) {
-	return file_resources_notifications_notifications_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *Link) GetTo() string {
 	if x != nil {
 		return x.To
@@ -369,8 +546,60 @@ func (x *Link) GetExternal() bool {
 	return false
 }
 
+func (x *Link) SetTo(v string) {
+	x.To = v
+}
+
+func (x *Link) SetTitle(v string) {
+	x.Title = &v
+}
+
+func (x *Link) SetExternal(v bool) {
+	x.External = &v
+}
+
+func (x *Link) HasTitle() bool {
+	if x == nil {
+		return false
+	}
+	return x.Title != nil
+}
+
+func (x *Link) HasExternal() bool {
+	if x == nil {
+		return false
+	}
+	return x.External != nil
+}
+
+func (x *Link) ClearTitle() {
+	x.Title = nil
+}
+
+func (x *Link) ClearExternal() {
+	x.External = nil
+}
+
+type Link_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	To       string
+	Title    *string
+	External *bool
+}
+
+func (b0 Link_builder) Build() *Link {
+	m0 := &Link{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.To = b.To
+	x.Title = b.Title
+	x.External = b.External
+	return m0
+}
+
 type CalendarData struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	CalendarId      *int64                 `protobuf:"varint,1,opt,name=calendar_id,json=calendarId,proto3,oneof" json:"calendar_id,omitempty"`
 	CalendarEntryId *int64                 `protobuf:"varint,2,opt,name=calendar_entry_id,json=calendarEntryId,proto3,oneof" json:"calendar_entry_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -402,11 +631,6 @@ func (x *CalendarData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CalendarData.ProtoReflect.Descriptor instead.
-func (*CalendarData) Descriptor() ([]byte, []int) {
-	return file_resources_notifications_notifications_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *CalendarData) GetCalendarId() int64 {
 	if x != nil && x.CalendarId != nil {
 		return *x.CalendarId
@@ -419,6 +643,52 @@ func (x *CalendarData) GetCalendarEntryId() int64 {
 		return *x.CalendarEntryId
 	}
 	return 0
+}
+
+func (x *CalendarData) SetCalendarId(v int64) {
+	x.CalendarId = &v
+}
+
+func (x *CalendarData) SetCalendarEntryId(v int64) {
+	x.CalendarEntryId = &v
+}
+
+func (x *CalendarData) HasCalendarId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CalendarId != nil
+}
+
+func (x *CalendarData) HasCalendarEntryId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CalendarEntryId != nil
+}
+
+func (x *CalendarData) ClearCalendarId() {
+	x.CalendarId = nil
+}
+
+func (x *CalendarData) ClearCalendarEntryId() {
+	x.CalendarEntryId = nil
+}
+
+type CalendarData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	CalendarId      *int64
+	CalendarEntryId *int64
+}
+
+func (b0 CalendarData_builder) Build() *CalendarData {
+	m0 := &CalendarData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.CalendarId = b.CalendarId
+	x.CalendarEntryId = b.CalendarEntryId
+	return m0
 }
 
 var File_resources_notifications_notifications_proto protoreflect.FileDescriptor
@@ -473,18 +743,6 @@ const file_resources_notifications_notifications_proto_rawDesc = "" +
 	"\x1dNOTIFICATION_CATEGORY_GENERAL\x10\x01\x12\"\n" +
 	"\x1eNOTIFICATION_CATEGORY_DOCUMENT\x10\x02\x12\"\n" +
 	"\x1eNOTIFICATION_CATEGORY_CALENDAR\x10\x03BYZWgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications;notificationsb\x06proto3"
-
-var (
-	file_resources_notifications_notifications_proto_rawDescOnce sync.Once
-	file_resources_notifications_notifications_proto_rawDescData []byte
-)
-
-func file_resources_notifications_notifications_proto_rawDescGZIP() []byte {
-	file_resources_notifications_notifications_proto_rawDescOnce.Do(func() {
-		file_resources_notifications_notifications_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_notifications_notifications_proto_rawDesc), len(file_resources_notifications_notifications_proto_rawDesc)))
-	})
-	return file_resources_notifications_notifications_proto_rawDescData
-}
 
 var file_resources_notifications_notifications_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_resources_notifications_notifications_proto_msgTypes = make([]protoimpl.MessageInfo, 4)

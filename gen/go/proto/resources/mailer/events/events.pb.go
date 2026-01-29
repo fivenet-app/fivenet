@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/mailer/events/events.proto
 
+//go:build !protoopaque
+
 package mailerevents
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -26,7 +27,7 @@ const (
 )
 
 type MailerEvent struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*MailerEvent_EmailUpdate
@@ -65,11 +66,6 @@ func (x *MailerEvent) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use MailerEvent.ProtoReflect.Descriptor instead.
-func (*MailerEvent) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_events_events_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *MailerEvent) GetData() isMailerEvent_Data {
@@ -151,6 +147,273 @@ func (x *MailerEvent) GetMessageDelete() int64 {
 	return 0
 }
 
+func (x *MailerEvent) SetEmailUpdate(v *emails.Email) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &MailerEvent_EmailUpdate{v}
+}
+
+func (x *MailerEvent) SetEmailDelete(v int64) {
+	x.Data = &MailerEvent_EmailDelete{v}
+}
+
+func (x *MailerEvent) SetEmailSettingsUpdated(v *settings.EmailSettings) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &MailerEvent_EmailSettingsUpdated{v}
+}
+
+func (x *MailerEvent) SetThreadUpdate(v *threads.Thread) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &MailerEvent_ThreadUpdate{v}
+}
+
+func (x *MailerEvent) SetThreadDelete(v int64) {
+	x.Data = &MailerEvent_ThreadDelete{v}
+}
+
+func (x *MailerEvent) SetThreadStateUpdate(v *threads.ThreadState) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &MailerEvent_ThreadStateUpdate{v}
+}
+
+func (x *MailerEvent) SetMessageUpdate(v *messages.Message) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &MailerEvent_MessageUpdate{v}
+}
+
+func (x *MailerEvent) SetMessageDelete(v int64) {
+	x.Data = &MailerEvent_MessageDelete{v}
+}
+
+func (x *MailerEvent) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *MailerEvent) HasEmailUpdate() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MailerEvent_EmailUpdate)
+	return ok
+}
+
+func (x *MailerEvent) HasEmailDelete() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MailerEvent_EmailDelete)
+	return ok
+}
+
+func (x *MailerEvent) HasEmailSettingsUpdated() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MailerEvent_EmailSettingsUpdated)
+	return ok
+}
+
+func (x *MailerEvent) HasThreadUpdate() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MailerEvent_ThreadUpdate)
+	return ok
+}
+
+func (x *MailerEvent) HasThreadDelete() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MailerEvent_ThreadDelete)
+	return ok
+}
+
+func (x *MailerEvent) HasThreadStateUpdate() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MailerEvent_ThreadStateUpdate)
+	return ok
+}
+
+func (x *MailerEvent) HasMessageUpdate() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MailerEvent_MessageUpdate)
+	return ok
+}
+
+func (x *MailerEvent) HasMessageDelete() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MailerEvent_MessageDelete)
+	return ok
+}
+
+func (x *MailerEvent) ClearData() {
+	x.Data = nil
+}
+
+func (x *MailerEvent) ClearEmailUpdate() {
+	if _, ok := x.Data.(*MailerEvent_EmailUpdate); ok {
+		x.Data = nil
+	}
+}
+
+func (x *MailerEvent) ClearEmailDelete() {
+	if _, ok := x.Data.(*MailerEvent_EmailDelete); ok {
+		x.Data = nil
+	}
+}
+
+func (x *MailerEvent) ClearEmailSettingsUpdated() {
+	if _, ok := x.Data.(*MailerEvent_EmailSettingsUpdated); ok {
+		x.Data = nil
+	}
+}
+
+func (x *MailerEvent) ClearThreadUpdate() {
+	if _, ok := x.Data.(*MailerEvent_ThreadUpdate); ok {
+		x.Data = nil
+	}
+}
+
+func (x *MailerEvent) ClearThreadDelete() {
+	if _, ok := x.Data.(*MailerEvent_ThreadDelete); ok {
+		x.Data = nil
+	}
+}
+
+func (x *MailerEvent) ClearThreadStateUpdate() {
+	if _, ok := x.Data.(*MailerEvent_ThreadStateUpdate); ok {
+		x.Data = nil
+	}
+}
+
+func (x *MailerEvent) ClearMessageUpdate() {
+	if _, ok := x.Data.(*MailerEvent_MessageUpdate); ok {
+		x.Data = nil
+	}
+}
+
+func (x *MailerEvent) ClearMessageDelete() {
+	if _, ok := x.Data.(*MailerEvent_MessageDelete); ok {
+		x.Data = nil
+	}
+}
+
+const MailerEvent_Data_not_set_case case_MailerEvent_Data = 0
+const MailerEvent_EmailUpdate_case case_MailerEvent_Data = 1
+const MailerEvent_EmailDelete_case case_MailerEvent_Data = 2
+const MailerEvent_EmailSettingsUpdated_case case_MailerEvent_Data = 3
+const MailerEvent_ThreadUpdate_case case_MailerEvent_Data = 4
+const MailerEvent_ThreadDelete_case case_MailerEvent_Data = 5
+const MailerEvent_ThreadStateUpdate_case case_MailerEvent_Data = 6
+const MailerEvent_MessageUpdate_case case_MailerEvent_Data = 7
+const MailerEvent_MessageDelete_case case_MailerEvent_Data = 8
+
+func (x *MailerEvent) WhichData() case_MailerEvent_Data {
+	if x == nil {
+		return MailerEvent_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *MailerEvent_EmailUpdate:
+		return MailerEvent_EmailUpdate_case
+	case *MailerEvent_EmailDelete:
+		return MailerEvent_EmailDelete_case
+	case *MailerEvent_EmailSettingsUpdated:
+		return MailerEvent_EmailSettingsUpdated_case
+	case *MailerEvent_ThreadUpdate:
+		return MailerEvent_ThreadUpdate_case
+	case *MailerEvent_ThreadDelete:
+		return MailerEvent_ThreadDelete_case
+	case *MailerEvent_ThreadStateUpdate:
+		return MailerEvent_ThreadStateUpdate_case
+	case *MailerEvent_MessageUpdate:
+		return MailerEvent_MessageUpdate_case
+	case *MailerEvent_MessageDelete:
+		return MailerEvent_MessageDelete_case
+	default:
+		return MailerEvent_Data_not_set_case
+	}
+}
+
+type MailerEvent_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	EmailUpdate          *emails.Email
+	EmailDelete          *int64
+	EmailSettingsUpdated *settings.EmailSettings
+	ThreadUpdate         *threads.Thread
+	ThreadDelete         *int64
+	ThreadStateUpdate    *threads.ThreadState
+	MessageUpdate        *messages.Message
+	MessageDelete        *int64
+	// -- end of Data
+}
+
+func (b0 MailerEvent_builder) Build() *MailerEvent {
+	m0 := &MailerEvent{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.EmailUpdate != nil {
+		x.Data = &MailerEvent_EmailUpdate{b.EmailUpdate}
+	}
+	if b.EmailDelete != nil {
+		x.Data = &MailerEvent_EmailDelete{*b.EmailDelete}
+	}
+	if b.EmailSettingsUpdated != nil {
+		x.Data = &MailerEvent_EmailSettingsUpdated{b.EmailSettingsUpdated}
+	}
+	if b.ThreadUpdate != nil {
+		x.Data = &MailerEvent_ThreadUpdate{b.ThreadUpdate}
+	}
+	if b.ThreadDelete != nil {
+		x.Data = &MailerEvent_ThreadDelete{*b.ThreadDelete}
+	}
+	if b.ThreadStateUpdate != nil {
+		x.Data = &MailerEvent_ThreadStateUpdate{b.ThreadStateUpdate}
+	}
+	if b.MessageUpdate != nil {
+		x.Data = &MailerEvent_MessageUpdate{b.MessageUpdate}
+	}
+	if b.MessageDelete != nil {
+		x.Data = &MailerEvent_MessageDelete{*b.MessageDelete}
+	}
+	return m0
+}
+
+type case_MailerEvent_Data protoreflect.FieldNumber
+
+func (x case_MailerEvent_Data) String() string {
+	md := file_resources_mailer_events_events_proto_msgTypes[0].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isMailerEvent_Data interface {
 	isMailerEvent_Data()
 }
@@ -218,18 +481,6 @@ const file_resources_mailer_events_events_proto_rawDesc = "" +
 	"\x0emessage_update\x18\a \x01(\v2\".resources.mailer.messages.MessageH\x00R\rmessageUpdate\x12'\n" +
 	"\x0emessage_delete\x18\b \x01(\x03H\x00R\rmessageDeleteB\x06\n" +
 	"\x04dataBXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events;mailereventsb\x06proto3"
-
-var (
-	file_resources_mailer_events_events_proto_rawDescOnce sync.Once
-	file_resources_mailer_events_events_proto_rawDescData []byte
-)
-
-func file_resources_mailer_events_events_proto_rawDescGZIP() []byte {
-	file_resources_mailer_events_events_proto_rawDescOnce.Do(func() {
-		file_resources_mailer_events_events_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_mailer_events_events_proto_rawDesc), len(file_resources_mailer_events_events_proto_rawDesc)))
-	})
-	return file_resources_mailer_events_events_proto_rawDescData
-}
 
 var file_resources_mailer_events_events_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_mailer_events_events_proto_goTypes = []any{

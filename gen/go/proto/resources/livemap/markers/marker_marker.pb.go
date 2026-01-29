@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/livemap/markers/marker_marker.proto
 
+//go:build !protoopaque
+
 package livemapmarkers
 
 import (
@@ -15,7 +17,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -73,13 +74,8 @@ func (x MarkerType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use MarkerType.Descriptor instead.
-func (MarkerType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_livemap_markers_marker_marker_proto_rawDescGZIP(), []int{0}
-}
-
 type MarkerMarker struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	X             float64                `protobuf:"fixed64,2,opt,name=x,proto3" json:"x,omitempty"`
 	Y             float64                `protobuf:"fixed64,3,opt,name=y,proto3" json:"y,omitempty"`
@@ -124,11 +120,6 @@ func (x *MarkerMarker) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use MarkerMarker.ProtoReflect.Descriptor instead.
-func (*MarkerMarker) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_markers_marker_marker_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *MarkerMarker) GetId() int64 {
@@ -250,8 +241,232 @@ func (x *MarkerMarker) GetCreator() *short.UserShort {
 	return nil
 }
 
+func (x *MarkerMarker) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *MarkerMarker) SetX(v float64) {
+	x.X = v
+}
+
+func (x *MarkerMarker) SetY(v float64) {
+	x.Y = v
+}
+
+func (x *MarkerMarker) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *MarkerMarker) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *MarkerMarker) SetExpiresAt(v *timestamp.Timestamp) {
+	x.ExpiresAt = v
+}
+
+func (x *MarkerMarker) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *MarkerMarker) SetName(v string) {
+	x.Name = v
+}
+
+func (x *MarkerMarker) SetDescription(v string) {
+	x.Description = &v
+}
+
+func (x *MarkerMarker) SetPostal(v string) {
+	x.Postal = &v
+}
+
+func (x *MarkerMarker) SetColor(v string) {
+	x.Color = &v
+}
+
+func (x *MarkerMarker) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *MarkerMarker) SetJobLabel(v string) {
+	x.JobLabel = v
+}
+
+func (x *MarkerMarker) SetType(v MarkerType) {
+	x.Type = v
+}
+
+func (x *MarkerMarker) SetData(v *MarkerData) {
+	x.Data = v
+}
+
+func (x *MarkerMarker) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *MarkerMarker) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *MarkerMarker) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *MarkerMarker) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *MarkerMarker) HasExpiresAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.ExpiresAt != nil
+}
+
+func (x *MarkerMarker) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *MarkerMarker) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Description != nil
+}
+
+func (x *MarkerMarker) HasPostal() bool {
+	if x == nil {
+		return false
+	}
+	return x.Postal != nil
+}
+
+func (x *MarkerMarker) HasColor() bool {
+	if x == nil {
+		return false
+	}
+	return x.Color != nil
+}
+
+func (x *MarkerMarker) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *MarkerMarker) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *MarkerMarker) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *MarkerMarker) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *MarkerMarker) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *MarkerMarker) ClearExpiresAt() {
+	x.ExpiresAt = nil
+}
+
+func (x *MarkerMarker) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *MarkerMarker) ClearDescription() {
+	x.Description = nil
+}
+
+func (x *MarkerMarker) ClearPostal() {
+	x.Postal = nil
+}
+
+func (x *MarkerMarker) ClearColor() {
+	x.Color = nil
+}
+
+func (x *MarkerMarker) ClearData() {
+	x.Data = nil
+}
+
+func (x *MarkerMarker) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *MarkerMarker) ClearCreator() {
+	x.Creator = nil
+}
+
+type MarkerMarker_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id          int64
+	X           float64
+	Y           float64
+	CreatedAt   *timestamp.Timestamp
+	UpdatedAt   *timestamp.Timestamp
+	ExpiresAt   *timestamp.Timestamp
+	DeletedAt   *timestamp.Timestamp
+	Name        string
+	Description *string
+	Postal      *string
+	Color       *string
+	Job         string
+	JobLabel    string
+	Type        MarkerType
+	Data        *MarkerData
+	CreatorId   *int32
+	Creator     *short.UserShort
+}
+
+func (b0 MarkerMarker_builder) Build() *MarkerMarker {
+	m0 := &MarkerMarker{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.X = b.X
+	x.Y = b.Y
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.ExpiresAt = b.ExpiresAt
+	x.DeletedAt = b.DeletedAt
+	x.Name = b.Name
+	x.Description = b.Description
+	x.Postal = b.Postal
+	x.Color = b.Color
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.Type = b.Type
+	x.Data = b.Data
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	return m0
+}
+
 type MarkerData struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*MarkerData_Circle
@@ -286,11 +501,6 @@ func (x *MarkerData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MarkerData.ProtoReflect.Descriptor instead.
-func (*MarkerData) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_markers_marker_marker_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *MarkerData) GetData() isMarkerData_Data {
 	if x != nil {
 		return x.Data
@@ -316,6 +526,111 @@ func (x *MarkerData) GetIcon() *IconMarker {
 	return nil
 }
 
+func (x *MarkerData) SetCircle(v *CircleMarker) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &MarkerData_Circle{v}
+}
+
+func (x *MarkerData) SetIcon(v *IconMarker) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &MarkerData_Icon{v}
+}
+
+func (x *MarkerData) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *MarkerData) HasCircle() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MarkerData_Circle)
+	return ok
+}
+
+func (x *MarkerData) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MarkerData_Icon)
+	return ok
+}
+
+func (x *MarkerData) ClearData() {
+	x.Data = nil
+}
+
+func (x *MarkerData) ClearCircle() {
+	if _, ok := x.Data.(*MarkerData_Circle); ok {
+		x.Data = nil
+	}
+}
+
+func (x *MarkerData) ClearIcon() {
+	if _, ok := x.Data.(*MarkerData_Icon); ok {
+		x.Data = nil
+	}
+}
+
+const MarkerData_Data_not_set_case case_MarkerData_Data = 0
+const MarkerData_Circle_case case_MarkerData_Data = 3
+const MarkerData_Icon_case case_MarkerData_Data = 4
+
+func (x *MarkerData) WhichData() case_MarkerData_Data {
+	if x == nil {
+		return MarkerData_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *MarkerData_Circle:
+		return MarkerData_Circle_case
+	case *MarkerData_Icon:
+		return MarkerData_Icon_case
+	default:
+		return MarkerData_Data_not_set_case
+	}
+}
+
+type MarkerData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	Circle *CircleMarker
+	Icon   *IconMarker
+	// -- end of Data
+}
+
+func (b0 MarkerData_builder) Build() *MarkerData {
+	m0 := &MarkerData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Circle != nil {
+		x.Data = &MarkerData_Circle{b.Circle}
+	}
+	if b.Icon != nil {
+		x.Data = &MarkerData_Icon{b.Icon}
+	}
+	return m0
+}
+
+type case_MarkerData_Data protoreflect.FieldNumber
+
+func (x case_MarkerData_Data) String() string {
+	md := file_resources_livemap_markers_marker_marker_proto_msgTypes[1].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isMarkerData_Data interface {
 	isMarkerData_Data()
 }
@@ -333,7 +648,7 @@ func (*MarkerData_Circle) isMarkerData_Data() {}
 func (*MarkerData_Icon) isMarkerData_Data() {}
 
 type CircleMarker struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Radius        int32                  `protobuf:"varint,1,opt,name=radius,proto3" json:"radius,omitempty"`
 	Opacity       *float32               `protobuf:"fixed32,2,opt,name=opacity,proto3,oneof" json:"opacity,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -365,11 +680,6 @@ func (x *CircleMarker) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CircleMarker.ProtoReflect.Descriptor instead.
-func (*CircleMarker) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_markers_marker_marker_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *CircleMarker) GetRadius() int32 {
 	if x != nil {
 		return x.Radius
@@ -384,8 +694,43 @@ func (x *CircleMarker) GetOpacity() float32 {
 	return 0
 }
 
+func (x *CircleMarker) SetRadius(v int32) {
+	x.Radius = v
+}
+
+func (x *CircleMarker) SetOpacity(v float32) {
+	x.Opacity = &v
+}
+
+func (x *CircleMarker) HasOpacity() bool {
+	if x == nil {
+		return false
+	}
+	return x.Opacity != nil
+}
+
+func (x *CircleMarker) ClearOpacity() {
+	x.Opacity = nil
+}
+
+type CircleMarker_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Radius  int32
+	Opacity *float32
+}
+
+func (b0 CircleMarker_builder) Build() *CircleMarker {
+	m0 := &CircleMarker{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Radius = b.Radius
+	x.Opacity = b.Opacity
+	return m0
+}
+
 type IconMarker struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Icon          string                 `protobuf:"bytes,1,opt,name=icon,proto3" json:"icon,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -416,16 +761,29 @@ func (x *IconMarker) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use IconMarker.ProtoReflect.Descriptor instead.
-func (*IconMarker) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_markers_marker_marker_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *IconMarker) GetIcon() string {
 	if x != nil {
 		return x.Icon
 	}
 	return ""
+}
+
+func (x *IconMarker) SetIcon(v string) {
+	x.Icon = v
+}
+
+type IconMarker_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Icon string
+}
+
+func (b0 IconMarker_builder) Build() *IconMarker {
+	m0 := &IconMarker{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Icon = b.Icon
+	return m0
 }
 
 var File_resources_livemap_markers_marker_marker_proto protoreflect.FileDescriptor
@@ -486,18 +844,6 @@ const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\x0fMARKER_TYPE_DOT\x10\x01\x12\x16\n" +
 	"\x12MARKER_TYPE_CIRCLE\x10\x02\x12\x14\n" +
 	"\x10MARKER_TYPE_ICON\x10\x03B\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers;livemapmarkersb\x06proto3"
-
-var (
-	file_resources_livemap_markers_marker_marker_proto_rawDescOnce sync.Once
-	file_resources_livemap_markers_marker_marker_proto_rawDescData []byte
-)
-
-func file_resources_livemap_markers_marker_marker_proto_rawDescGZIP() []byte {
-	file_resources_livemap_markers_marker_marker_proto_rawDescOnce.Do(func() {
-		file_resources_livemap_markers_marker_marker_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_livemap_markers_marker_marker_proto_rawDesc), len(file_resources_livemap_markers_marker_marker_proto_rawDesc)))
-	})
-	return file_resources_livemap_markers_marker_marker_proto_rawDescData
-}
 
 var file_resources_livemap_markers_marker_marker_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_livemap_markers_marker_marker_proto_msgTypes = make([]protoimpl.MessageInfo, 4)

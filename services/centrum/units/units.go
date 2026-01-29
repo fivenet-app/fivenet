@@ -17,7 +17,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
@@ -920,7 +919,7 @@ func (s *UnitDB) GetStatusByID(
 ) (*centrumunits.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
-	tUsers := tables.User().AS("colleague")
+	tUsers := table.FivenetUser.AS("colleague")
 	tUserProps := table.FivenetUserProps.AS("user_props")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
@@ -996,7 +995,7 @@ func (s *UnitDB) GetLastStatus(
 ) (*centrumunits.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
-	tUsers := tables.User().AS("colleague")
+	tUsers := table.FivenetUser.AS("colleague")
 	tUserProps := table.FivenetUserProps.AS("user_props")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 

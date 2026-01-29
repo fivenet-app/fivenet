@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/users/short/user.proto
 
+//go:build !protoopaque
+
 package usershort
 
 import (
@@ -11,7 +13,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,9 +24,8 @@ const (
 )
 
 type UserShort struct {
-	state                protoimpl.MessageState `protogen:"open.v1"`
+	state                protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
-	Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
 	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
@@ -65,23 +65,11 @@ func (x *UserShort) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserShort.ProtoReflect.Descriptor instead.
-func (*UserShort) Descriptor() ([]byte, []int) {
-	return file_resources_users_short_user_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *UserShort) GetUserId() int32 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
-}
-
-func (x *UserShort) GetIdentifier() string {
-	if x != nil && x.Identifier != nil {
-		return *x.Identifier
-	}
-	return ""
 }
 
 func (x *UserShort) GetJob() string {
@@ -154,46 +142,163 @@ func (x *UserShort) GetProfilePicture() string {
 	return ""
 }
 
+func (x *UserShort) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *UserShort) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *UserShort) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *UserShort) SetJobGrade(v int32) {
+	x.JobGrade = v
+}
+
+func (x *UserShort) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *UserShort) SetFirstname(v string) {
+	x.Firstname = v
+}
+
+func (x *UserShort) SetLastname(v string) {
+	x.Lastname = v
+}
+
+func (x *UserShort) SetDateofbirth(v string) {
+	x.Dateofbirth = v
+}
+
+func (x *UserShort) SetPhoneNumber(v string) {
+	x.PhoneNumber = &v
+}
+
+func (x *UserShort) SetProfilePictureFileId(v int64) {
+	x.ProfilePictureFileId = &v
+}
+
+func (x *UserShort) SetProfilePicture(v string) {
+	x.ProfilePicture = &v
+}
+
+func (x *UserShort) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *UserShort) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *UserShort) HasPhoneNumber() bool {
+	if x == nil {
+		return false
+	}
+	return x.PhoneNumber != nil
+}
+
+func (x *UserShort) HasProfilePictureFileId() bool {
+	if x == nil {
+		return false
+	}
+	return x.ProfilePictureFileId != nil
+}
+
+func (x *UserShort) HasProfilePicture() bool {
+	if x == nil {
+		return false
+	}
+	return x.ProfilePicture != nil
+}
+
+func (x *UserShort) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *UserShort) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+func (x *UserShort) ClearPhoneNumber() {
+	x.PhoneNumber = nil
+}
+
+func (x *UserShort) ClearProfilePictureFileId() {
+	x.ProfilePictureFileId = nil
+}
+
+func (x *UserShort) ClearProfilePicture() {
+	x.ProfilePicture = nil
+}
+
+type UserShort_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId               int32
+	Job                  string
+	JobLabel             *string
+	JobGrade             int32
+	JobGradeLabel        *string
+	Firstname            string
+	Lastname             string
+	Dateofbirth          string
+	PhoneNumber          *string
+	ProfilePictureFileId *int64
+	ProfilePicture       *string
+}
+
+func (b0 UserShort_builder) Build() *UserShort {
+	m0 := &UserShort{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.JobGrade = b.JobGrade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Firstname = b.Firstname
+	x.Lastname = b.Lastname
+	x.Dateofbirth = b.Dateofbirth
+	x.PhoneNumber = b.PhoneNumber
+	x.ProfilePictureFileId = b.ProfilePictureFileId
+	x.ProfilePicture = b.ProfilePicture
+	return m0
+}
+
 var File_resources_users_short_user_proto protoreflect.FileDescriptor
 
 const file_resources_users_short_user_proto_rawDesc = "" +
 	"\n" +
-	" resources/users/short/user.proto\x12\x15resources.users.short\x1a\x13tagger/tagger.proto\"\xb8\x04\n" +
+	" resources/users/short/user.proto\x12\x15resources.users.short\x1a\x13tagger/tagger.proto\"\x84\x04\n" +
 	"\tUserShort\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
-	"alias:\"id\"R\x06userId\x12#\n" +
-	"\n" +
-	"identifier\x18\x02 \x01(\tH\x00R\n" +
-	"identifier\x88\x01\x01\x12\x10\n" +
+	"alias:\"id\"R\x06userId\x12\x10\n" +
 	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x04 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12\x1b\n" +
+	"\tjob_label\x18\x04 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x1b\n" +
 	"\tjob_grade\x18\x05 \x01(\x05R\bjobGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
+	"\x0fjob_grade_label\x18\x06 \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
 	"\tfirstname\x18\a \x01(\tR\tfirstname\x12\x1a\n" +
 	"\blastname\x18\b \x01(\tR\blastname\x12 \n" +
 	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12&\n" +
-	"\fphone_number\x18\f \x01(\tH\x03R\vphoneNumber\x88\x01\x01\x12:\n" +
-	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x04R\x14profilePictureFileId\x88\x01\x01\x12,\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tH\x05R\x0eprofilePicture\x88\x01\x01B\r\n" +
-	"\v_identifierB\f\n" +
+	"\fphone_number\x18\f \x01(\tH\x02R\vphoneNumber\x88\x01\x01\x12:\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x03R\x14profilePictureFileId\x88\x01\x01\x12,\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tH\x04R\x0eprofilePicture\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\x0f\n" +
 	"\r_phone_numberB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
 	"\x10_profile_pictureBSZQgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short;usershortb\x06proto3"
-
-var (
-	file_resources_users_short_user_proto_rawDescOnce sync.Once
-	file_resources_users_short_user_proto_rawDescData []byte
-)
-
-func file_resources_users_short_user_proto_rawDescGZIP() []byte {
-	file_resources_users_short_user_proto_rawDescOnce.Do(func() {
-		file_resources_users_short_user_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_users_short_user_proto_rawDesc), len(file_resources_users_short_user_proto_rawDesc)))
-	})
-	return file_resources_users_short_user_proto_rawDescData
-}
 
 var file_resources_users_short_user_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_users_short_user_proto_goTypes = []any{

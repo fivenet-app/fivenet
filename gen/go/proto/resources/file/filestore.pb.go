@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/file/filestore.proto
 
+//go:build !protoopaque
+
 package file
 
 import (
@@ -12,7 +14,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,7 +25,7 @@ const (
 )
 
 type UploadFileRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Payload:
 	//
 	//	*UploadFileRequest_Meta
@@ -59,11 +60,6 @@ func (x *UploadFileRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UploadFileRequest.ProtoReflect.Descriptor instead.
-func (*UploadFileRequest) Descriptor() ([]byte, []int) {
-	return file_resources_file_filestore_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *UploadFileRequest) GetPayload() isUploadFileRequest_Payload {
 	if x != nil {
 		return x.Payload
@@ -89,6 +85,111 @@ func (x *UploadFileRequest) GetData() []byte {
 	return nil
 }
 
+func (x *UploadFileRequest) SetMeta(v *UploadMeta) {
+	if v == nil {
+		x.Payload = nil
+		return
+	}
+	x.Payload = &UploadFileRequest_Meta{v}
+}
+
+func (x *UploadFileRequest) SetData(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.Payload = &UploadFileRequest_Data{v}
+}
+
+func (x *UploadFileRequest) HasPayload() bool {
+	if x == nil {
+		return false
+	}
+	return x.Payload != nil
+}
+
+func (x *UploadFileRequest) HasMeta() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Payload.(*UploadFileRequest_Meta)
+	return ok
+}
+
+func (x *UploadFileRequest) HasData() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Payload.(*UploadFileRequest_Data)
+	return ok
+}
+
+func (x *UploadFileRequest) ClearPayload() {
+	x.Payload = nil
+}
+
+func (x *UploadFileRequest) ClearMeta() {
+	if _, ok := x.Payload.(*UploadFileRequest_Meta); ok {
+		x.Payload = nil
+	}
+}
+
+func (x *UploadFileRequest) ClearData() {
+	if _, ok := x.Payload.(*UploadFileRequest_Data); ok {
+		x.Payload = nil
+	}
+}
+
+const UploadFileRequest_Payload_not_set_case case_UploadFileRequest_Payload = 0
+const UploadFileRequest_Meta_case case_UploadFileRequest_Payload = 1
+const UploadFileRequest_Data_case case_UploadFileRequest_Payload = 2
+
+func (x *UploadFileRequest) WhichPayload() case_UploadFileRequest_Payload {
+	if x == nil {
+		return UploadFileRequest_Payload_not_set_case
+	}
+	switch x.Payload.(type) {
+	case *UploadFileRequest_Meta:
+		return UploadFileRequest_Meta_case
+	case *UploadFileRequest_Data:
+		return UploadFileRequest_Data_case
+	default:
+		return UploadFileRequest_Payload_not_set_case
+	}
+}
+
+type UploadFileRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Payload:
+	Meta *UploadMeta
+	// Raw bytes <= 128 KiB each, browsers should only read 64 KiB at a time, but this is a buffer just in case
+	Data []byte
+	// -- end of Payload
+}
+
+func (b0 UploadFileRequest_builder) Build() *UploadFileRequest {
+	m0 := &UploadFileRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Meta != nil {
+		x.Payload = &UploadFileRequest_Meta{b.Meta}
+	}
+	if b.Data != nil {
+		x.Payload = &UploadFileRequest_Data{b.Data}
+	}
+	return m0
+}
+
+type case_UploadFileRequest_Payload protoreflect.FieldNumber
+
+func (x case_UploadFileRequest_Payload) String() string {
+	md := file_resources_file_filestore_proto_msgTypes[0].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isUploadFileRequest_Payload interface {
 	isUploadFileRequest_Payload()
 }
@@ -107,7 +208,7 @@ func (*UploadFileRequest_Meta) isUploadFileRequest_Payload() {}
 func (*UploadFileRequest_Data) isUploadFileRequest_Payload() {}
 
 type UploadMeta struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	ParentId      int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
 	Namespace     string                 `protobuf:"bytes,2,opt,name=namespace,proto3" json:"namespace,omitempty"` // "documents", "wiki", …
 	OriginalName  string                 `protobuf:"bytes,3,opt,name=original_name,json=originalName,proto3" json:"original_name,omitempty"`
@@ -141,11 +242,6 @@ func (x *UploadMeta) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UploadMeta.ProtoReflect.Descriptor instead.
-func (*UploadMeta) Descriptor() ([]byte, []int) {
-	return file_resources_file_filestore_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *UploadMeta) GetParentId() int64 {
@@ -190,8 +286,56 @@ func (x *UploadMeta) GetReason() string {
 	return ""
 }
 
+func (x *UploadMeta) SetParentId(v int64) {
+	x.ParentId = v
+}
+
+func (x *UploadMeta) SetNamespace(v string) {
+	x.Namespace = v
+}
+
+func (x *UploadMeta) SetOriginalName(v string) {
+	x.OriginalName = v
+}
+
+func (x *UploadMeta) SetContentType(v string) {
+	x.ContentType = v
+}
+
+func (x *UploadMeta) SetSize(v int64) {
+	x.Size = v
+}
+
+func (x *UploadMeta) SetReason(v string) {
+	x.Reason = v
+}
+
+type UploadMeta_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ParentId     int64
+	Namespace    string
+	OriginalName string
+	ContentType  string
+	Size         int64
+	Reason       string
+}
+
+func (b0 UploadMeta_builder) Build() *UploadMeta {
+	m0 := &UploadMeta{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ParentId = b.ParentId
+	x.Namespace = b.Namespace
+	x.OriginalName = b.OriginalName
+	x.ContentType = b.ContentType
+	x.Size = b.Size
+	x.Reason = b.Reason
+	return m0
+}
+
 type UploadFileResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`    // Unique ID for the uploaded file
 	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`   // URL to the uploaded file
 	File          *File                  `protobuf:"bytes,3,opt,name=file,proto3" json:"file,omitempty"` // File info
@@ -224,11 +368,6 @@ func (x *UploadFileResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UploadFileResponse.ProtoReflect.Descriptor instead.
-func (*UploadFileResponse) Descriptor() ([]byte, []int) {
-	return file_resources_file_filestore_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *UploadFileResponse) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -250,8 +389,49 @@ func (x *UploadFileResponse) GetFile() *File {
 	return nil
 }
 
+func (x *UploadFileResponse) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *UploadFileResponse) SetUrl(v string) {
+	x.Url = v
+}
+
+func (x *UploadFileResponse) SetFile(v *File) {
+	x.File = v
+}
+
+func (x *UploadFileResponse) HasFile() bool {
+	if x == nil {
+		return false
+	}
+	return x.File != nil
+}
+
+func (x *UploadFileResponse) ClearFile() {
+	x.File = nil
+}
+
+type UploadFileResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id   int64
+	Url  string
+	File *File
+}
+
+func (b0 UploadFileResponse_builder) Build() *UploadFileResponse {
+	m0 := &UploadFileResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Url = b.Url
+	x.File = b.File
+	return m0
+}
+
 type DeleteFileRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	ParentId      int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
 	FileId        int64                  `protobuf:"varint,2,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -283,11 +463,6 @@ func (x *DeleteFileRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteFileRequest.ProtoReflect.Descriptor instead.
-func (*DeleteFileRequest) Descriptor() ([]byte, []int) {
-	return file_resources_file_filestore_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *DeleteFileRequest) GetParentId() int64 {
 	if x != nil {
 		return x.ParentId
@@ -302,8 +477,32 @@ func (x *DeleteFileRequest) GetFileId() int64 {
 	return 0
 }
 
+func (x *DeleteFileRequest) SetParentId(v int64) {
+	x.ParentId = v
+}
+
+func (x *DeleteFileRequest) SetFileId(v int64) {
+	x.FileId = v
+}
+
+type DeleteFileRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ParentId int64
+	FileId   int64
+}
+
+func (b0 DeleteFileRequest_builder) Build() *DeleteFileRequest {
+	m0 := &DeleteFileRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ParentId = b.ParentId
+	x.FileId = b.FileId
+	return m0
+}
+
 type DeleteFileResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -333,9 +532,16 @@ func (x *DeleteFileResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteFileResponse.ProtoReflect.Descriptor instead.
-func (*DeleteFileResponse) Descriptor() ([]byte, []int) {
-	return file_resources_file_filestore_proto_rawDescGZIP(), []int{4}
+type DeleteFileResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteFileResponse_builder) Build() *DeleteFileResponse {
+	m0 := &DeleteFileResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 var File_resources_file_filestore_proto protoreflect.FileDescriptor
@@ -363,18 +569,6 @@ const file_resources_file_filestore_proto_rawDesc = "" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x17\n" +
 	"\afile_id\x18\x02 \x01(\x03R\x06fileId\"\x14\n" +
 	"\x12DeleteFileResponseBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file;fileb\x06proto3"
-
-var (
-	file_resources_file_filestore_proto_rawDescOnce sync.Once
-	file_resources_file_filestore_proto_rawDescData []byte
-)
-
-func file_resources_file_filestore_proto_rawDescGZIP() []byte {
-	file_resources_file_filestore_proto_rawDescOnce.Do(func() {
-		file_resources_file_filestore_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_file_filestore_proto_rawDesc), len(file_resources_file_filestore_proto_rawDesc)))
-	})
-	return file_resources_file_filestore_proto_rawDescData
-}
 
 var file_resources_file_filestore_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_resources_file_filestore_proto_goTypes = []any{

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/documents/access/access.proto
 
+//go:build !protoopaque
+
 package documentsaccess
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -81,13 +82,8 @@ func (x AccessLevel) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use AccessLevel.Descriptor instead.
-func (AccessLevel) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_access_access_proto_rawDescGZIP(), []int{0}
-}
-
 type DocumentAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Jobs          []*DocumentJobAccess   `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
 	Users         []*DocumentUserAccess  `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty" alias:"user_access"`
 	unknownFields protoimpl.UnknownFields
@@ -119,11 +115,6 @@ func (x *DocumentAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DocumentAccess.ProtoReflect.Descriptor instead.
-func (*DocumentAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_access_access_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *DocumentAccess) GetJobs() []*DocumentJobAccess {
 	if x != nil {
 		return x.Jobs
@@ -138,8 +129,32 @@ func (x *DocumentAccess) GetUsers() []*DocumentUserAccess {
 	return nil
 }
 
+func (x *DocumentAccess) SetJobs(v []*DocumentJobAccess) {
+	x.Jobs = v
+}
+
+func (x *DocumentAccess) SetUsers(v []*DocumentUserAccess) {
+	x.Users = v
+}
+
+type DocumentAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs  []*DocumentJobAccess
+	Users []*DocumentUserAccess
+}
+
+func (b0 DocumentAccess_builder) Build() *DocumentAccess {
+	m0 := &DocumentAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	x.Users = b.Users
+	return m0
+}
+
 type DocumentJobAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
@@ -176,11 +191,6 @@ func (x *DocumentJobAccess) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DocumentJobAccess.ProtoReflect.Descriptor instead.
-func (*DocumentJobAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_access_access_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *DocumentJobAccess) GetId() int64 {
@@ -246,8 +256,118 @@ func (x *DocumentJobAccess) GetRequired() bool {
 	return false
 }
 
+func (x *DocumentJobAccess) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *DocumentJobAccess) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *DocumentJobAccess) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *DocumentJobAccess) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *DocumentJobAccess) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *DocumentJobAccess) SetMinimumGrade(v int32) {
+	x.MinimumGrade = v
+}
+
+func (x *DocumentJobAccess) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *DocumentJobAccess) SetAccess(v AccessLevel) {
+	x.Access = v
+}
+
+func (x *DocumentJobAccess) SetRequired(v bool) {
+	x.Required = &v
+}
+
+func (x *DocumentJobAccess) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *DocumentJobAccess) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *DocumentJobAccess) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *DocumentJobAccess) HasRequired() bool {
+	if x == nil {
+		return false
+	}
+	return x.Required != nil
+}
+
+func (x *DocumentJobAccess) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *DocumentJobAccess) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *DocumentJobAccess) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+func (x *DocumentJobAccess) ClearRequired() {
+	x.Required = nil
+}
+
+type DocumentJobAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id            int64
+	CreatedAt     *timestamp.Timestamp
+	TargetId      int64
+	Job           string
+	JobLabel      *string
+	MinimumGrade  int32
+	JobGradeLabel *string
+	Access        AccessLevel
+	Required      *bool
+}
+
+func (b0 DocumentJobAccess_builder) Build() *DocumentJobAccess {
+	m0 := &DocumentJobAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.MinimumGrade = b.MinimumGrade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Access = b.Access
+	x.Required = b.Required
+	return m0
+}
+
 type DocumentUserAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
@@ -282,11 +402,6 @@ func (x *DocumentUserAccess) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DocumentUserAccess.ProtoReflect.Descriptor instead.
-func (*DocumentUserAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_access_access_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *DocumentUserAccess) GetId() int64 {
@@ -338,6 +453,93 @@ func (x *DocumentUserAccess) GetRequired() bool {
 	return false
 }
 
+func (x *DocumentUserAccess) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *DocumentUserAccess) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *DocumentUserAccess) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *DocumentUserAccess) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *DocumentUserAccess) SetUser(v *short.UserShort) {
+	x.User = v
+}
+
+func (x *DocumentUserAccess) SetAccess(v AccessLevel) {
+	x.Access = v
+}
+
+func (x *DocumentUserAccess) SetRequired(v bool) {
+	x.Required = &v
+}
+
+func (x *DocumentUserAccess) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *DocumentUserAccess) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *DocumentUserAccess) HasRequired() bool {
+	if x == nil {
+		return false
+	}
+	return x.Required != nil
+}
+
+func (x *DocumentUserAccess) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *DocumentUserAccess) ClearUser() {
+	x.User = nil
+}
+
+func (x *DocumentUserAccess) ClearRequired() {
+	x.Required = nil
+}
+
+type DocumentUserAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id        int64
+	CreatedAt *timestamp.Timestamp
+	TargetId  int64
+	UserId    int32
+	User      *short.UserShort
+	Access    AccessLevel
+	Required  *bool
+}
+
+func (b0 DocumentUserAccess_builder) Build() *DocumentUserAccess {
+	m0 := &DocumentUserAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.UserId = b.UserId
+	x.User = b.User
+	x.Access = b.Access
+	x.Required = b.Required
+	return m0
+}
+
 var File_resources_documents_access_access_proto protoreflect.FileDescriptor
 
 const file_resources_documents_access_access_proto_rawDesc = "" +
@@ -382,18 +584,6 @@ const file_resources_documents_access_access_proto_rawDesc = "" +
 	"\x13ACCESS_LEVEL_STATUS\x10\x04\x12\x17\n" +
 	"\x13ACCESS_LEVEL_ACCESS\x10\x05\x12\x15\n" +
 	"\x11ACCESS_LEVEL_EDIT\x10\x06B^Z\\github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access;documentsaccessb\x06proto3"
-
-var (
-	file_resources_documents_access_access_proto_rawDescOnce sync.Once
-	file_resources_documents_access_access_proto_rawDescData []byte
-)
-
-func file_resources_documents_access_access_proto_rawDescGZIP() []byte {
-	file_resources_documents_access_access_proto_rawDescOnce.Do(func() {
-		file_resources_documents_access_access_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_access_access_proto_rawDesc), len(file_resources_documents_access_access_proto_rawDesc)))
-	})
-	return file_resources_documents_access_access_proto_rawDescData
-}
 
 var file_resources_documents_access_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_documents_access_access_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

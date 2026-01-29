@@ -11,7 +11,6 @@ import (
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -122,7 +121,7 @@ func (s *Converter) convertPhoneJobMsgToDispatch(ctx context.Context) {
 }
 
 func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
-	tUsers := tables.User()
+	tUsers := table.FivenetUser
 
 	stmt := tGksPhoneJMsg.
 		SELECT(
@@ -232,7 +231,8 @@ func (s *Converter) closeGKSPhoneJobMsg(ctx context.Context, id int32) error {
 		).
 		WHERE(
 			tGksPhoneJMsg.ID.EQ(mysql.Int32(id)),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return err
@@ -242,7 +242,7 @@ func (s *Converter) closeGKSPhoneJobMsg(ctx context.Context, id int32) error {
 }
 
 func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
-	tUsers := tables.User()
+	tUsers := table.FivenetUser
 
 	stmt := tPhoneServicesChannels.
 		SELECT(

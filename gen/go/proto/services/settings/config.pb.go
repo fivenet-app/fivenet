@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/settings/config.proto
 
+//go:build !protoopaque
+
 package settings
 
 import (
@@ -12,7 +14,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,7 +25,7 @@ const (
 )
 
 type GetAppConfigRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -54,13 +55,20 @@ func (x *GetAppConfigRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetAppConfigRequest.ProtoReflect.Descriptor instead.
-func (*GetAppConfigRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_config_proto_rawDescGZIP(), []int{0}
+type GetAppConfigRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 GetAppConfigRequest_builder) Build() *GetAppConfigRequest {
+	m0 := &GetAppConfigRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetAppConfigResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Config        *settings.AppConfig    `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -91,11 +99,6 @@ func (x *GetAppConfigResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetAppConfigResponse.ProtoReflect.Descriptor instead.
-func (*GetAppConfigResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_config_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *GetAppConfigResponse) GetConfig() *settings.AppConfig {
 	if x != nil {
 		return x.Config
@@ -103,8 +106,37 @@ func (x *GetAppConfigResponse) GetConfig() *settings.AppConfig {
 	return nil
 }
 
+func (x *GetAppConfigResponse) SetConfig(v *settings.AppConfig) {
+	x.Config = v
+}
+
+func (x *GetAppConfigResponse) HasConfig() bool {
+	if x == nil {
+		return false
+	}
+	return x.Config != nil
+}
+
+func (x *GetAppConfigResponse) ClearConfig() {
+	x.Config = nil
+}
+
+type GetAppConfigResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Config *settings.AppConfig
+}
+
+func (b0 GetAppConfigResponse_builder) Build() *GetAppConfigResponse {
+	m0 := &GetAppConfigResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Config = b.Config
+	return m0
+}
+
 type UpdateAppConfigRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Config        *settings.AppConfig    `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -135,11 +167,6 @@ func (x *UpdateAppConfigRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateAppConfigRequest.ProtoReflect.Descriptor instead.
-func (*UpdateAppConfigRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_config_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *UpdateAppConfigRequest) GetConfig() *settings.AppConfig {
 	if x != nil {
 		return x.Config
@@ -147,8 +174,37 @@ func (x *UpdateAppConfigRequest) GetConfig() *settings.AppConfig {
 	return nil
 }
 
+func (x *UpdateAppConfigRequest) SetConfig(v *settings.AppConfig) {
+	x.Config = v
+}
+
+func (x *UpdateAppConfigRequest) HasConfig() bool {
+	if x == nil {
+		return false
+	}
+	return x.Config != nil
+}
+
+func (x *UpdateAppConfigRequest) ClearConfig() {
+	x.Config = nil
+}
+
+type UpdateAppConfigRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Config *settings.AppConfig
+}
+
+func (b0 UpdateAppConfigRequest_builder) Build() *UpdateAppConfigRequest {
+	m0 := &UpdateAppConfigRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Config = b.Config
+	return m0
+}
+
 type UpdateAppConfigResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Config        *settings.AppConfig    `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -179,16 +235,40 @@ func (x *UpdateAppConfigResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateAppConfigResponse.ProtoReflect.Descriptor instead.
-func (*UpdateAppConfigResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_config_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *UpdateAppConfigResponse) GetConfig() *settings.AppConfig {
 	if x != nil {
 		return x.Config
 	}
 	return nil
+}
+
+func (x *UpdateAppConfigResponse) SetConfig(v *settings.AppConfig) {
+	x.Config = v
+}
+
+func (x *UpdateAppConfigResponse) HasConfig() bool {
+	if x == nil {
+		return false
+	}
+	return x.Config != nil
+}
+
+func (x *UpdateAppConfigResponse) ClearConfig() {
+	x.Config = nil
+}
+
+type UpdateAppConfigResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Config *settings.AppConfig
+}
+
+func (b0 UpdateAppConfigResponse_builder) Build() *UpdateAppConfigResponse {
+	m0 := &UpdateAppConfigResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Config = b.Config
+	return m0
 }
 
 var File_services_settings_config_proto protoreflect.FileDescriptor
@@ -206,18 +286,6 @@ const file_services_settings_config_proto_rawDesc = "" +
 	"\rConfigService\x12r\n" +
 	"\fGetAppConfig\x12&.services.settings.GetAppConfigRequest\x1a'.services.settings.GetAppConfigResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12{\n" +
 	"\x0fUpdateAppConfig\x12).services.settings.UpdateAppConfigRequest\x1a*.services.settings.UpdateAppConfigResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
-
-var (
-	file_services_settings_config_proto_rawDescOnce sync.Once
-	file_services_settings_config_proto_rawDescData []byte
-)
-
-func file_services_settings_config_proto_rawDescGZIP() []byte {
-	file_services_settings_config_proto_rawDescOnce.Do(func() {
-		file_services_settings_config_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_settings_config_proto_rawDesc), len(file_services_settings_config_proto_rawDesc)))
-	})
-	return file_services_settings_config_proto_rawDescData
-}
 
 var file_services_settings_config_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_services_settings_config_proto_goTypes = []any{

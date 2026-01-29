@@ -1,4 +1,4 @@
-import type { AttributeValues } from '~~/gen/ts/resources/permissions/permissions/attributes';
+import type { AttributeValues } from '~~/gen/ts/resources/permissions/attributes/attributes';
 
 export function isEmptyAttributes(val?: AttributeValues): boolean {
     if (!val) {

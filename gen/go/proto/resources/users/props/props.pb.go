@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/users/props/props.proto
 
+//go:build !protoopaque
+
 package usersprops
 
 import (
@@ -16,7 +18,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -28,7 +29,7 @@ const (
 )
 
 type UserProps struct {
-	state                            protoimpl.MessageState `protogen:"open.v1"`
+	state                            protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId                           int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	UpdatedAt                        *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Wanted                           *bool                  `protobuf:"varint,3,opt,name=wanted,proto3,oneof" json:"wanted,omitempty"`
@@ -71,11 +72,6 @@ func (x *UserProps) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserProps.ProtoReflect.Descriptor instead.
-func (*UserProps) Descriptor() ([]byte, []int) {
-	return file_resources_users_props_props_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *UserProps) GetUserId() int32 {
@@ -183,6 +179,262 @@ func (x *UserProps) GetEmail() string {
 	return ""
 }
 
+func (x *UserProps) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *UserProps) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *UserProps) SetWanted(v bool) {
+	x.Wanted = &v
+}
+
+func (x *UserProps) SetJobName(v string) {
+	x.JobName = &v
+}
+
+func (x *UserProps) SetJob(v *jobs.Job) {
+	x.Job = v
+}
+
+func (x *UserProps) SetJobGradeNumber(v int32) {
+	x.JobGradeNumber = &v
+}
+
+func (x *UserProps) SetJobGrade(v *jobs.JobGrade) {
+	x.JobGrade = v
+}
+
+func (x *UserProps) SetTrafficInfractionPoints(v uint32) {
+	x.TrafficInfractionPoints = &v
+}
+
+func (x *UserProps) SetTrafficInfractionPointsUpdatedAt(v *timestamp.Timestamp) {
+	x.TrafficInfractionPointsUpdatedAt = v
+}
+
+func (x *UserProps) SetOpenFines(v int64) {
+	x.OpenFines = &v
+}
+
+func (x *UserProps) SetBloodType(v string) {
+	x.BloodType = &v
+}
+
+func (x *UserProps) SetMugshotFileId(v int64) {
+	x.MugshotFileId = &v
+}
+
+func (x *UserProps) SetMugshot(v *file.File) {
+	x.Mugshot = v
+}
+
+func (x *UserProps) SetLabels(v *labels.Labels) {
+	x.Labels = v
+}
+
+func (x *UserProps) SetEmail(v string) {
+	x.Email = &v
+}
+
+func (x *UserProps) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *UserProps) HasWanted() bool {
+	if x == nil {
+		return false
+	}
+	return x.Wanted != nil
+}
+
+func (x *UserProps) HasJobName() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobName != nil
+}
+
+func (x *UserProps) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *UserProps) HasJobGradeNumber() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeNumber != nil
+}
+
+func (x *UserProps) HasJobGrade() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGrade != nil
+}
+
+func (x *UserProps) HasTrafficInfractionPoints() bool {
+	if x == nil {
+		return false
+	}
+	return x.TrafficInfractionPoints != nil
+}
+
+func (x *UserProps) HasTrafficInfractionPointsUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.TrafficInfractionPointsUpdatedAt != nil
+}
+
+func (x *UserProps) HasOpenFines() bool {
+	if x == nil {
+		return false
+	}
+	return x.OpenFines != nil
+}
+
+func (x *UserProps) HasBloodType() bool {
+	if x == nil {
+		return false
+	}
+	return x.BloodType != nil
+}
+
+func (x *UserProps) HasMugshotFileId() bool {
+	if x == nil {
+		return false
+	}
+	return x.MugshotFileId != nil
+}
+
+func (x *UserProps) HasMugshot() bool {
+	if x == nil {
+		return false
+	}
+	return x.Mugshot != nil
+}
+
+func (x *UserProps) HasLabels() bool {
+	if x == nil {
+		return false
+	}
+	return x.Labels != nil
+}
+
+func (x *UserProps) HasEmail() bool {
+	if x == nil {
+		return false
+	}
+	return x.Email != nil
+}
+
+func (x *UserProps) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *UserProps) ClearWanted() {
+	x.Wanted = nil
+}
+
+func (x *UserProps) ClearJobName() {
+	x.JobName = nil
+}
+
+func (x *UserProps) ClearJob() {
+	x.Job = nil
+}
+
+func (x *UserProps) ClearJobGradeNumber() {
+	x.JobGradeNumber = nil
+}
+
+func (x *UserProps) ClearJobGrade() {
+	x.JobGrade = nil
+}
+
+func (x *UserProps) ClearTrafficInfractionPoints() {
+	x.TrafficInfractionPoints = nil
+}
+
+func (x *UserProps) ClearTrafficInfractionPointsUpdatedAt() {
+	x.TrafficInfractionPointsUpdatedAt = nil
+}
+
+func (x *UserProps) ClearOpenFines() {
+	x.OpenFines = nil
+}
+
+func (x *UserProps) ClearBloodType() {
+	x.BloodType = nil
+}
+
+func (x *UserProps) ClearMugshotFileId() {
+	x.MugshotFileId = nil
+}
+
+func (x *UserProps) ClearMugshot() {
+	x.Mugshot = nil
+}
+
+func (x *UserProps) ClearLabels() {
+	x.Labels = nil
+}
+
+func (x *UserProps) ClearEmail() {
+	x.Email = nil
+}
+
+type UserProps_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId                           int32
+	UpdatedAt                        *timestamp.Timestamp
+	Wanted                           *bool
+	JobName                          *string
+	Job                              *jobs.Job
+	JobGradeNumber                   *int32
+	JobGrade                         *jobs.JobGrade
+	TrafficInfractionPoints          *uint32
+	TrafficInfractionPointsUpdatedAt *timestamp.Timestamp
+	OpenFines                        *int64
+	BloodType                        *string
+	MugshotFileId                    *int64
+	Mugshot                          *file.File
+	Labels                           *labels.Labels
+	Email                            *string
+}
+
+func (b0 UserProps_builder) Build() *UserProps {
+	m0 := &UserProps{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.UpdatedAt = b.UpdatedAt
+	x.Wanted = b.Wanted
+	x.JobName = b.JobName
+	x.Job = b.Job
+	x.JobGradeNumber = b.JobGradeNumber
+	x.JobGrade = b.JobGrade
+	x.TrafficInfractionPoints = b.TrafficInfractionPoints
+	x.TrafficInfractionPointsUpdatedAt = b.TrafficInfractionPointsUpdatedAt
+	x.OpenFines = b.OpenFines
+	x.BloodType = b.BloodType
+	x.MugshotFileId = b.MugshotFileId
+	x.Mugshot = b.Mugshot
+	x.Labels = b.Labels
+	x.Email = b.Email
+	return m0
+}
+
 var File_resources_users_props_props_proto protoreflect.FileDescriptor
 
 const file_resources_users_props_props_proto_rawDesc = "" +
@@ -225,18 +477,6 @@ const file_resources_users_props_props_proto_rawDesc = "" +
 	"\b_mugshotB\t\n" +
 	"\a_labelsB\b\n" +
 	"\x06_emailBTZRgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props;userspropsb\x06proto3"
-
-var (
-	file_resources_users_props_props_proto_rawDescOnce sync.Once
-	file_resources_users_props_props_proto_rawDescData []byte
-)
-
-func file_resources_users_props_props_proto_rawDescGZIP() []byte {
-	file_resources_users_props_props_proto_rawDescOnce.Do(func() {
-		file_resources_users_props_props_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_users_props_props_proto_rawDesc), len(file_resources_users_props_props_proto_rawDesc)))
-	})
-	return file_resources_users_props_props_proto_rawDescData
-}
 
 var file_resources_users_props_props_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_users_props_props_proto_goTypes = []any{

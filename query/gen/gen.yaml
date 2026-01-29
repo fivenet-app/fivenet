@@ -19,41 +19,6 @@ excludeTables:
   - fivenet_wiki_page_user_access
 includeTables:
   "fivenet_*": ["*"]
-  "job_grades":
-    - job_name
-    - grade
-    - name
-    - label
-  "jobs":
-    - name
-    - label
-  "licenses":
-    - type
-    - label
-  "owned_vehicles":
-    - owner
-    - plate
-    - type
-    - model
-  "user_licenses":
-    - type
-    - owner
-  "users":
-    - id
-    - identifier
-    - group
-    - firstname
-    - lastname
-    - dateofbirth
-    - job
-    - job_grade
-    - sex
-    - height
-    - phone_number
-    - visum
-    - playtime
-    - created_at
-    - last_seen
   # Phone Msg Converters
   "gksphone_job_message":
     - id

@@ -4,16 +4,18 @@
 // 	protoc        (unknown)
 // source: resources/users/user.proto
 
+//go:build !protoopaque
+
 package users
 
 import (
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -25,7 +27,7 @@ const (
 )
 
 type UserShort struct {
-	state                protoimpl.MessageState `protogen:"open.v1"`
+	state                protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
 	Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
 	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
@@ -65,11 +67,6 @@ func (x *UserShort) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserShort.ProtoReflect.Descriptor instead.
-func (*UserShort) Descriptor() ([]byte, []int) {
-	return file_resources_users_user_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *UserShort) GetUserId() int32 {
@@ -156,27 +153,178 @@ func (x *UserShort) GetProfilePicture() string {
 	return ""
 }
 
+func (x *UserShort) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *UserShort) SetIdentifier(v string) {
+	x.Identifier = &v
+}
+
+func (x *UserShort) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *UserShort) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *UserShort) SetJobGrade(v int32) {
+	x.JobGrade = v
+}
+
+func (x *UserShort) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *UserShort) SetFirstname(v string) {
+	x.Firstname = v
+}
+
+func (x *UserShort) SetLastname(v string) {
+	x.Lastname = v
+}
+
+func (x *UserShort) SetDateofbirth(v string) {
+	x.Dateofbirth = v
+}
+
+func (x *UserShort) SetPhoneNumber(v string) {
+	x.PhoneNumber = &v
+}
+
+func (x *UserShort) SetProfilePictureFileId(v int64) {
+	x.ProfilePictureFileId = &v
+}
+
+func (x *UserShort) SetProfilePicture(v string) {
+	x.ProfilePicture = &v
+}
+
+func (x *UserShort) HasIdentifier() bool {
+	if x == nil {
+		return false
+	}
+	return x.Identifier != nil
+}
+
+func (x *UserShort) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *UserShort) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *UserShort) HasPhoneNumber() bool {
+	if x == nil {
+		return false
+	}
+	return x.PhoneNumber != nil
+}
+
+func (x *UserShort) HasProfilePictureFileId() bool {
+	if x == nil {
+		return false
+	}
+	return x.ProfilePictureFileId != nil
+}
+
+func (x *UserShort) HasProfilePicture() bool {
+	if x == nil {
+		return false
+	}
+	return x.ProfilePicture != nil
+}
+
+func (x *UserShort) ClearIdentifier() {
+	x.Identifier = nil
+}
+
+func (x *UserShort) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *UserShort) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+func (x *UserShort) ClearPhoneNumber() {
+	x.PhoneNumber = nil
+}
+
+func (x *UserShort) ClearProfilePictureFileId() {
+	x.ProfilePictureFileId = nil
+}
+
+func (x *UserShort) ClearProfilePicture() {
+	x.ProfilePicture = nil
+}
+
+type UserShort_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId               int32
+	Identifier           *string
+	Job                  string
+	JobLabel             *string
+	JobGrade             int32
+	JobGradeLabel        *string
+	Firstname            string
+	Lastname             string
+	Dateofbirth          string
+	PhoneNumber          *string
+	ProfilePictureFileId *int64
+	ProfilePicture       *string
+}
+
+func (b0 UserShort_builder) Build() *UserShort {
+	m0 := &UserShort{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.Identifier = b.Identifier
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.JobGrade = b.JobGrade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Firstname = b.Firstname
+	x.Lastname = b.Lastname
+	x.Dateofbirth = b.Dateofbirth
+	x.PhoneNumber = b.PhoneNumber
+	x.ProfilePictureFileId = b.ProfilePictureFileId
+	x.ProfilePicture = b.ProfilePicture
+	return m0
+}
+
 type User struct {
-	state                protoimpl.MessageState `protogen:"open.v1"`
+	state                protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
 	Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
 	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
 	JobGradeLabel        *string                `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
+	Jobs                 []*UserJob             `protobuf:"bytes,20,rep,name=jobs,proto3" json:"jobs,omitempty"`
 	Firstname            string                 `protobuf:"bytes,7,opt,name=firstname,proto3" json:"firstname,omitempty"`
 	Lastname             string                 `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
 	Dateofbirth          string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
 	Sex                  *string                `protobuf:"bytes,10,opt,name=sex,proto3,oneof" json:"sex,omitempty"`
 	Height               *string                `protobuf:"bytes,11,opt,name=height,proto3,oneof" json:"height,omitempty"`
 	PhoneNumber          *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
+	PhoneNumbers         []*PhoneNumber         `protobuf:"bytes,19,rep,name=phone_numbers,json=phoneNumbers,proto3" json:"phone_numbers,omitempty"`
 	Visum                *int32                 `protobuf:"varint,13,opt,name=visum,proto3,oneof" json:"visum,omitempty"`
 	Playtime             *int32                 `protobuf:"varint,14,opt,name=playtime,proto3,oneof" json:"playtime,omitempty"`
 	Props                *props.UserProps       `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty" alias:"fivenet_user_props"`
 	Licenses             []*licenses.License    `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user_licenses"`
 	ProfilePictureFileId *int64                 `protobuf:"varint,17,opt,name=profile_picture_file_id,json=profilePictureFileId,proto3,oneof" json:"profile_picture_file_id,omitempty"`
 	ProfilePicture       *string                `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof" json:"profile_picture,omitempty"`
-	Group                *string                `protobuf:"bytes,20,opt,name=group,proto3,oneof" json:"group,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -204,11 +352,6 @@ func (x *User) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use User.ProtoReflect.Descriptor instead.
-func (*User) Descriptor() ([]byte, []int) {
-	return file_resources_users_user_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *User) GetUserId() int32 {
@@ -253,6 +396,13 @@ func (x *User) GetJobGradeLabel() string {
 	return ""
 }
 
+func (x *User) GetJobs() []*UserJob {
+	if x != nil {
+		return x.Jobs
+	}
+	return nil
+}
+
 func (x *User) GetFirstname() string {
 	if x != nil {
 		return x.Firstname
@@ -293,6 +443,13 @@ func (x *User) GetPhoneNumber() string {
 		return *x.PhoneNumber
 	}
 	return ""
+}
+
+func (x *User) GetPhoneNumbers() []*PhoneNumber {
+	if x != nil {
+		return x.PhoneNumbers
+	}
+	return nil
 }
 
 func (x *User) GetVisum() int32 {
@@ -337,18 +494,520 @@ func (x *User) GetProfilePicture() string {
 	return ""
 }
 
-func (x *User) GetGroup() string {
-	if x != nil && x.Group != nil {
-		return *x.Group
+func (x *User) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *User) SetIdentifier(v string) {
+	x.Identifier = &v
+}
+
+func (x *User) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *User) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *User) SetJobGrade(v int32) {
+	x.JobGrade = v
+}
+
+func (x *User) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *User) SetJobs(v []*UserJob) {
+	x.Jobs = v
+}
+
+func (x *User) SetFirstname(v string) {
+	x.Firstname = v
+}
+
+func (x *User) SetLastname(v string) {
+	x.Lastname = v
+}
+
+func (x *User) SetDateofbirth(v string) {
+	x.Dateofbirth = v
+}
+
+func (x *User) SetSex(v string) {
+	x.Sex = &v
+}
+
+func (x *User) SetHeight(v string) {
+	x.Height = &v
+}
+
+func (x *User) SetPhoneNumber(v string) {
+	x.PhoneNumber = &v
+}
+
+func (x *User) SetPhoneNumbers(v []*PhoneNumber) {
+	x.PhoneNumbers = v
+}
+
+func (x *User) SetVisum(v int32) {
+	x.Visum = &v
+}
+
+func (x *User) SetPlaytime(v int32) {
+	x.Playtime = &v
+}
+
+func (x *User) SetProps(v *props.UserProps) {
+	x.Props = v
+}
+
+func (x *User) SetLicenses(v []*licenses.License) {
+	x.Licenses = v
+}
+
+func (x *User) SetProfilePictureFileId(v int64) {
+	x.ProfilePictureFileId = &v
+}
+
+func (x *User) SetProfilePicture(v string) {
+	x.ProfilePicture = &v
+}
+
+func (x *User) HasIdentifier() bool {
+	if x == nil {
+		return false
+	}
+	return x.Identifier != nil
+}
+
+func (x *User) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *User) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *User) HasSex() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sex != nil
+}
+
+func (x *User) HasHeight() bool {
+	if x == nil {
+		return false
+	}
+	return x.Height != nil
+}
+
+func (x *User) HasPhoneNumber() bool {
+	if x == nil {
+		return false
+	}
+	return x.PhoneNumber != nil
+}
+
+func (x *User) HasVisum() bool {
+	if x == nil {
+		return false
+	}
+	return x.Visum != nil
+}
+
+func (x *User) HasPlaytime() bool {
+	if x == nil {
+		return false
+	}
+	return x.Playtime != nil
+}
+
+func (x *User) HasProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.Props != nil
+}
+
+func (x *User) HasProfilePictureFileId() bool {
+	if x == nil {
+		return false
+	}
+	return x.ProfilePictureFileId != nil
+}
+
+func (x *User) HasProfilePicture() bool {
+	if x == nil {
+		return false
+	}
+	return x.ProfilePicture != nil
+}
+
+func (x *User) ClearIdentifier() {
+	x.Identifier = nil
+}
+
+func (x *User) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *User) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+func (x *User) ClearSex() {
+	x.Sex = nil
+}
+
+func (x *User) ClearHeight() {
+	x.Height = nil
+}
+
+func (x *User) ClearPhoneNumber() {
+	x.PhoneNumber = nil
+}
+
+func (x *User) ClearVisum() {
+	x.Visum = nil
+}
+
+func (x *User) ClearPlaytime() {
+	x.Playtime = nil
+}
+
+func (x *User) ClearProps() {
+	x.Props = nil
+}
+
+func (x *User) ClearProfilePictureFileId() {
+	x.ProfilePictureFileId = nil
+}
+
+func (x *User) ClearProfilePicture() {
+	x.ProfilePicture = nil
+}
+
+type User_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId               int32
+	Identifier           *string
+	Job                  string
+	JobLabel             *string
+	JobGrade             int32
+	JobGradeLabel        *string
+	Jobs                 []*UserJob
+	Firstname            string
+	Lastname             string
+	Dateofbirth          string
+	Sex                  *string
+	Height               *string
+	PhoneNumber          *string
+	PhoneNumbers         []*PhoneNumber
+	Visum                *int32
+	Playtime             *int32
+	Props                *props.UserProps
+	Licenses             []*licenses.License
+	ProfilePictureFileId *int64
+	ProfilePicture       *string
+}
+
+func (b0 User_builder) Build() *User {
+	m0 := &User{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.Identifier = b.Identifier
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.JobGrade = b.JobGrade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Jobs = b.Jobs
+	x.Firstname = b.Firstname
+	x.Lastname = b.Lastname
+	x.Dateofbirth = b.Dateofbirth
+	x.Sex = b.Sex
+	x.Height = b.Height
+	x.PhoneNumber = b.PhoneNumber
+	x.PhoneNumbers = b.PhoneNumbers
+	x.Visum = b.Visum
+	x.Playtime = b.Playtime
+	x.Props = b.Props
+	x.Licenses = b.Licenses
+	x.ProfilePictureFileId = b.ProfilePictureFileId
+	x.ProfilePicture = b.ProfilePicture
+	return m0
+}
+
+type PhoneNumber struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Number        string                 `protobuf:"bytes,1,opt,name=number,proto3" json:"number,omitempty"`
+	IsPrimary     bool                   `protobuf:"varint,2,opt,name=is_primary,json=isPrimary,proto3" json:"is_primary,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PhoneNumber) Reset() {
+	*x = PhoneNumber{}
+	mi := &file_resources_users_user_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PhoneNumber) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PhoneNumber) ProtoMessage() {}
+
+func (x *PhoneNumber) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_users_user_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PhoneNumber) GetNumber() string {
+	if x != nil {
+		return x.Number
 	}
 	return ""
+}
+
+func (x *PhoneNumber) GetIsPrimary() bool {
+	if x != nil {
+		return x.IsPrimary
+	}
+	return false
+}
+
+func (x *PhoneNumber) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *PhoneNumber) GetUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *PhoneNumber) SetNumber(v string) {
+	x.Number = v
+}
+
+func (x *PhoneNumber) SetIsPrimary(v bool) {
+	x.IsPrimary = v
+}
+
+func (x *PhoneNumber) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *PhoneNumber) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *PhoneNumber) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *PhoneNumber) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *PhoneNumber) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *PhoneNumber) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+type PhoneNumber_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Number    string
+	IsPrimary bool
+	CreatedAt *timestamp.Timestamp
+	UpdatedAt *timestamp.Timestamp
+}
+
+func (b0 PhoneNumber_builder) Build() *PhoneNumber {
+	m0 := &PhoneNumber{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Number = b.Number
+	x.IsPrimary = b.IsPrimary
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	return m0
+}
+
+type UserJob struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel      *string                `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	Grade         int32                  `protobuf:"varint,3,opt,name=grade,proto3" json:"grade,omitempty"`
+	GradeLabel    *string                `protobuf:"bytes,4,opt,name=grade_label,json=gradeLabel,proto3,oneof" json:"grade_label,omitempty"`
+	IsPrimary     bool                   `protobuf:"varint,5,opt,name=is_primary,json=isPrimary,proto3" json:"is_primary,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserJob) Reset() {
+	*x = UserJob{}
+	mi := &file_resources_users_user_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserJob) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserJob) ProtoMessage() {}
+
+func (x *UserJob) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_users_user_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *UserJob) GetJob() string {
+	if x != nil {
+		return x.Job
+	}
+	return ""
+}
+
+func (x *UserJob) GetJobLabel() string {
+	if x != nil && x.JobLabel != nil {
+		return *x.JobLabel
+	}
+	return ""
+}
+
+func (x *UserJob) GetGrade() int32 {
+	if x != nil {
+		return x.Grade
+	}
+	return 0
+}
+
+func (x *UserJob) GetGradeLabel() string {
+	if x != nil && x.GradeLabel != nil {
+		return *x.GradeLabel
+	}
+	return ""
+}
+
+func (x *UserJob) GetIsPrimary() bool {
+	if x != nil {
+		return x.IsPrimary
+	}
+	return false
+}
+
+func (x *UserJob) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *UserJob) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *UserJob) SetGrade(v int32) {
+	x.Grade = v
+}
+
+func (x *UserJob) SetGradeLabel(v string) {
+	x.GradeLabel = &v
+}
+
+func (x *UserJob) SetIsPrimary(v bool) {
+	x.IsPrimary = v
+}
+
+func (x *UserJob) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *UserJob) HasGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.GradeLabel != nil
+}
+
+func (x *UserJob) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *UserJob) ClearGradeLabel() {
+	x.GradeLabel = nil
+}
+
+type UserJob_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job        string
+	JobLabel   *string
+	Grade      int32
+	GradeLabel *string
+	IsPrimary  bool
+}
+
+func (b0 UserJob_builder) Build() *UserJob {
+	m0 := &UserJob{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.Grade = b.Grade
+	x.GradeLabel = b.GradeLabel
+	x.IsPrimary = b.IsPrimary
+	return m0
 }
 
 var File_resources_users_user_proto protoreflect.FileDescriptor
 
 const file_resources_users_user_proto_rawDesc = "" +
 	"\n" +
-	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a'resources/users/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\xb8\x04\n" +
+	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a'resources/users/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb8\x04\n" +
 	"\tUserShort\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x06userId\x12#\n" +
@@ -371,7 +1030,7 @@ const file_resources_users_user_proto_rawDesc = "" +
 	"\x10_job_grade_labelB\x0f\n" +
 	"\r_phone_numberB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
-	"\x10_profile_picture\"\xa6\a\n" +
+	"\x10_profile_picture\"\xf2\a\n" +
 	"\x04User\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x06userId\x12#\n" +
@@ -381,22 +1040,22 @@ const file_resources_users_user_proto_rawDesc = "" +
 	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
 	"\tjob_label\x18\x04 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12\x1b\n" +
 	"\tjob_grade\x18\x05 \x01(\x05R\bjobGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
+	"\x0fjob_grade_label\x18\x06 \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12,\n" +
+	"\x04jobs\x18\x14 \x03(\v2\x18.resources.users.UserJobR\x04jobs\x12\x1c\n" +
 	"\tfirstname\x18\a \x01(\tR\tfirstname\x12\x1a\n" +
 	"\blastname\x18\b \x01(\tR\blastname\x12 \n" +
 	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12\x15\n" +
 	"\x03sex\x18\n" +
 	" \x01(\tH\x03R\x03sex\x88\x01\x01\x12\x1b\n" +
 	"\x06height\x18\v \x01(\tH\x04R\x06height\x88\x01\x01\x12&\n" +
-	"\fphone_number\x18\f \x01(\tH\x05R\vphoneNumber\x88\x01\x01\x12\x19\n" +
+	"\fphone_number\x18\f \x01(\tH\x05R\vphoneNumber\x88\x01\x01\x12A\n" +
+	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberR\fphoneNumbers\x12\x19\n" +
 	"\x05visum\x18\r \x01(\x05H\x06R\x05visum\x88\x01\x01\x12\x1f\n" +
 	"\bplaytime\x18\x0e \x01(\x05H\aR\bplaytime\x88\x01\x01\x12W\n" +
 	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsB\x1f\x9a\x84\x9e\x03\x1aalias:\"fivenet_user_props\"R\x05props\x12Y\n" +
 	"\blicenses\x18\x10 \x03(\v2!.resources.users.licenses.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user_licenses\"R\blicenses\x12:\n" +
 	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\bR\x14profilePictureFileId\x88\x01\x01\x12,\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tH\tR\x0eprofilePicture\x88\x01\x01\x12\x19\n" +
-	"\x05group\x18\x14 \x01(\tH\n" +
-	"R\x05group\x88\x01\x01B\r\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tH\tR\x0eprofilePicture\x88\x01\x01B\r\n" +
 	"\v_identifierB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
@@ -407,36 +1066,50 @@ const file_resources_users_user_proto_rawDesc = "" +
 	"\x06_visumB\v\n" +
 	"\t_playtimeB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
-	"\x10_profile_pictureB\b\n" +
-	"\x06_groupBIZGgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users;usersb\x06proto3"
+	"\x10_profile_picture\"\xd6\x01\n" +
+	"\vPhoneNumber\x12\x16\n" +
+	"\x06number\x18\x01 \x01(\tR\x06number\x12\x1d\n" +
+	"\n" +
+	"is_primary\x18\x02 \x01(\bR\tisPrimary\x12=\n" +
+	"\n" +
+	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
+	"\n" +
+	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01B\r\n" +
+	"\v_updated_at\"\xb6\x01\n" +
+	"\aUserJob\x12\x10\n" +
+	"\x03job\x18\x01 \x01(\tR\x03job\x12 \n" +
+	"\tjob_label\x18\x02 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x14\n" +
+	"\x05grade\x18\x03 \x01(\x05R\x05grade\x12$\n" +
+	"\vgrade_label\x18\x04 \x01(\tH\x01R\n" +
+	"gradeLabel\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"is_primary\x18\x05 \x01(\bR\tisPrimaryB\f\n" +
+	"\n" +
+	"_job_labelB\x0e\n" +
+	"\f_grade_labelBIZGgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users;usersb\x06proto3"
 
-var (
-	file_resources_users_user_proto_rawDescOnce sync.Once
-	file_resources_users_user_proto_rawDescData []byte
-)
-
-func file_resources_users_user_proto_rawDescGZIP() []byte {
-	file_resources_users_user_proto_rawDescOnce.Do(func() {
-		file_resources_users_user_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_users_user_proto_rawDesc), len(file_resources_users_user_proto_rawDesc)))
-	})
-	return file_resources_users_user_proto_rawDescData
-}
-
-var file_resources_users_user_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_resources_users_user_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_users_user_proto_goTypes = []any{
-	(*UserShort)(nil),        // 0: resources.users.UserShort
-	(*User)(nil),             // 1: resources.users.User
-	(*props.UserProps)(nil),  // 2: resources.users.props.UserProps
-	(*licenses.License)(nil), // 3: resources.users.licenses.License
+	(*UserShort)(nil),           // 0: resources.users.UserShort
+	(*User)(nil),                // 1: resources.users.User
+	(*PhoneNumber)(nil),         // 2: resources.users.PhoneNumber
+	(*UserJob)(nil),             // 3: resources.users.UserJob
+	(*props.UserProps)(nil),     // 4: resources.users.props.UserProps
+	(*licenses.License)(nil),    // 5: resources.users.licenses.License
+	(*timestamp.Timestamp)(nil), // 6: resources.timestamp.Timestamp
 }
 var file_resources_users_user_proto_depIdxs = []int32{
-	2, // 0: resources.users.User.props:type_name -> resources.users.props.UserProps
-	3, // 1: resources.users.User.licenses:type_name -> resources.users.licenses.License
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	3, // 0: resources.users.User.jobs:type_name -> resources.users.UserJob
+	2, // 1: resources.users.User.phone_numbers:type_name -> resources.users.PhoneNumber
+	4, // 2: resources.users.User.props:type_name -> resources.users.props.UserProps
+	5, // 3: resources.users.User.licenses:type_name -> resources.users.licenses.License
+	6, // 4: resources.users.PhoneNumber.created_at:type_name -> resources.timestamp.Timestamp
+	6, // 5: resources.users.PhoneNumber.updated_at:type_name -> resources.timestamp.Timestamp
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_user_proto_init() }
@@ -446,13 +1119,15 @@ func file_resources_users_user_proto_init() {
 	}
 	file_resources_users_user_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_users_user_proto_msgTypes[1].OneofWrappers = []any{}
+	file_resources_users_user_proto_msgTypes[2].OneofWrappers = []any{}
+	file_resources_users_user_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_users_user_proto_rawDesc), len(file_resources_users_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Timestamp } from "../timestamp/timestamp";
 import { License } from "./licenses/licenses";
 import { UserProps } from "./props/props";
 /**
@@ -95,6 +96,10 @@ export interface User {
      */
     jobGradeLabel?: string;
     /**
+     * @generated from protobuf field: repeated resources.users.UserJob jobs = 20
+     */
+    jobs: UserJob[];
+    /**
      * @generated from protobuf field: string firstname = 7
      */
     firstname: string;
@@ -119,6 +124,10 @@ export interface User {
      */
     phoneNumber?: string;
     /**
+     * @generated from protobuf field: repeated resources.users.PhoneNumber phone_numbers = 19
+     */
+    phoneNumbers: PhoneNumber[];
+    /**
      * @generated from protobuf field: optional int32 visum = 13
      */
     visum?: number;
@@ -142,10 +151,52 @@ export interface User {
      * @generated from protobuf field: optional string profile_picture = 18
      */
     profilePicture?: string;
+}
+/**
+ * @generated from protobuf message resources.users.PhoneNumber
+ */
+export interface PhoneNumber {
     /**
-     * @generated from protobuf field: optional string group = 20
+     * @generated from protobuf field: string number = 1
      */
-    group?: string;
+    number: string;
+    /**
+     * @generated from protobuf field: bool is_primary = 2
+     */
+    isPrimary: boolean;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 3
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 4
+     */
+    updatedAt?: Timestamp;
+}
+/**
+ * @generated from protobuf message resources.users.UserJob
+ */
+export interface UserJob {
+    /**
+     * @generated from protobuf field: string job = 1
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: optional string job_label = 2
+     */
+    jobLabel?: string;
+    /**
+     * @generated from protobuf field: int32 grade = 3
+     */
+    grade: number;
+    /**
+     * @generated from protobuf field: optional string grade_label = 4
+     */
+    gradeLabel?: string;
+    /**
+     * @generated from protobuf field: bool is_primary = 5
+     */
+    isPrimary: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserShort$Type extends MessageType<UserShort> {
@@ -286,19 +337,20 @@ class User$Type extends MessageType<User> {
             { no: 4, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 5, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", int32: { gte: 0 } } } },
             { no: 6, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 20, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserJob, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", repeated: { maxItems: "3" } } } },
             { no: 7, name: "firstname", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "50" } } } },
             { no: 8, name: "lastname", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "1", maxLen: "50" } } } },
             { no: 9, name: "dateofbirth", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { maxLen: "10" } } } },
             { no: 10, name: "sex", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "2" } } } },
             { no: 11, name: "height", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 12, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 19, name: "phone_numbers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PhoneNumber, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", repeated: { maxItems: "5" } } } },
             { no: 13, name: "visum", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 14, name: "playtime", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 15, name: "props", kind: "message", T: () => UserProps, options: { "tagger.tags": "alias:\"fivenet_user_props\"" } },
             { no: 16, name: "licenses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => License, options: { "tagger.tags": "alias:\"user_licenses\"" } },
             { no: 17, name: "profile_picture_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 18, name: "profile_picture", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 20, name: "group", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } }
+            { no: 18, name: "profile_picture", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<User>): User {
@@ -306,9 +358,11 @@ class User$Type extends MessageType<User> {
         message.userId = 0;
         message.job = "";
         message.jobGrade = 0;
+        message.jobs = [];
         message.firstname = "";
         message.lastname = "";
         message.dateofbirth = "";
+        message.phoneNumbers = [];
         message.licenses = [];
         if (value !== undefined)
             reflectionMergePartial<User>(this, message, value);
@@ -337,6 +391,9 @@ class User$Type extends MessageType<User> {
                 case /* optional string job_grade_label */ 6:
                     message.jobGradeLabel = reader.string();
                     break;
+                case /* repeated resources.users.UserJob jobs */ 20:
+                    message.jobs.push(UserJob.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
                 case /* string firstname */ 7:
                     message.firstname = reader.string();
                     break;
@@ -355,6 +412,9 @@ class User$Type extends MessageType<User> {
                 case /* optional string phone_number */ 12:
                     message.phoneNumber = reader.string();
                     break;
+                case /* repeated resources.users.PhoneNumber phone_numbers */ 19:
+                    message.phoneNumbers.push(PhoneNumber.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
                 case /* optional int32 visum */ 13:
                     message.visum = reader.int32();
                     break;
@@ -372,9 +432,6 @@ class User$Type extends MessageType<User> {
                     break;
                 case /* optional string profile_picture */ 18:
                     message.profilePicture = reader.string();
-                    break;
-                case /* optional string group */ 20:
-                    message.group = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -442,9 +499,12 @@ class User$Type extends MessageType<User> {
         /* optional string profile_picture = 18; */
         if (message.profilePicture !== undefined)
             writer.tag(18, WireType.LengthDelimited).string(message.profilePicture);
-        /* optional string group = 20; */
-        if (message.group !== undefined)
-            writer.tag(20, WireType.LengthDelimited).string(message.group);
+        /* repeated resources.users.PhoneNumber phone_numbers = 19; */
+        for (let i = 0; i < message.phoneNumbers.length; i++)
+            PhoneNumber.internalBinaryWrite(message.phoneNumbers[i], writer.tag(19, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.users.UserJob jobs = 20; */
+        for (let i = 0; i < message.jobs.length; i++)
+            UserJob.internalBinaryWrite(message.jobs[i], writer.tag(20, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -455,3 +515,149 @@ class User$Type extends MessageType<User> {
  * @generated MessageType for protobuf message resources.users.User
  */
 export const User = new User$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PhoneNumber$Type extends MessageType<PhoneNumber> {
+    constructor() {
+        super("resources.users.PhoneNumber", [
+            { no: 1, name: "number", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 2, name: "is_primary", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "updated_at", kind: "message", T: () => Timestamp }
+        ]);
+    }
+    create(value?: PartialMessage<PhoneNumber>): PhoneNumber {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.number = "";
+        message.isPrimary = false;
+        if (value !== undefined)
+            reflectionMergePartial<PhoneNumber>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PhoneNumber): PhoneNumber {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string number */ 1:
+                    message.number = reader.string();
+                    break;
+                case /* bool is_primary */ 2:
+                    message.isPrimary = reader.bool();
+                    break;
+                case /* resources.timestamp.Timestamp created_at */ 3:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp updated_at */ 4:
+                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PhoneNumber, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string number = 1; */
+        if (message.number !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.number);
+        /* bool is_primary = 2; */
+        if (message.isPrimary !== false)
+            writer.tag(2, WireType.Varint).bool(message.isPrimary);
+        /* resources.timestamp.Timestamp created_at = 3; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp updated_at = 4; */
+        if (message.updatedAt)
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.PhoneNumber
+ */
+export const PhoneNumber = new PhoneNumber$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UserJob$Type extends MessageType<UserJob> {
+    constructor() {
+        super("resources.users.UserJob", [
+            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 2, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 3, name: "grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
+            { no: 4, name: "grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 5, name: "is_primary", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UserJob>): UserJob {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.job = "";
+        message.grade = 0;
+        message.isPrimary = false;
+        if (value !== undefined)
+            reflectionMergePartial<UserJob>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserJob): UserJob {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string job */ 1:
+                    message.job = reader.string();
+                    break;
+                case /* optional string job_label */ 2:
+                    message.jobLabel = reader.string();
+                    break;
+                case /* int32 grade */ 3:
+                    message.grade = reader.int32();
+                    break;
+                case /* optional string grade_label */ 4:
+                    message.gradeLabel = reader.string();
+                    break;
+                case /* bool is_primary */ 5:
+                    message.isPrimary = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UserJob, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string job = 1; */
+        if (message.job !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.job);
+        /* optional string job_label = 2; */
+        if (message.jobLabel !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.jobLabel);
+        /* int32 grade = 3; */
+        if (message.grade !== 0)
+            writer.tag(3, WireType.Varint).int32(message.grade);
+        /* optional string grade_label = 4; */
+        if (message.gradeLabel !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.gradeLabel);
+        /* bool is_primary = 5; */
+        if (message.isPrimary !== false)
+            writer.tag(5, WireType.Varint).bool(message.isPrimary);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.UserJob
+ */
+export const UserJob = new UserJob$Type();

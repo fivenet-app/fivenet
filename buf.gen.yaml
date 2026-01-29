@@ -6,6 +6,7 @@ plugins:
     out: ./gen/go/proto
     opt:
       - paths=source_relative
+      - default_api_level=API_HYBRID
     include_wkt: false
     exclude_types:
       - buf.validate

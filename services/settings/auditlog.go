@@ -7,7 +7,6 @@ import (
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -131,7 +130,7 @@ func (s *Server) ViewAuditLog(
 		orderBys = append(orderBys, tAuditLog.CreatedAt.DESC())
 	}
 
-	tUser := tables.User().AS("user_short")
+	tUser := table.FivenetUser.AS("user_short")
 
 	stmt := tAuditLog.
 		SELECT(

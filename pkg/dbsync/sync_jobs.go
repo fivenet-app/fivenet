@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync"
+	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -57,7 +57,7 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 	if s.cli != nil {
 		if err := s.sendData(ctx, &pbsync.SendDataRequest{
 			Data: &pbsync.SendDataRequest_Jobs{
-				Jobs: &sync.DataJobs{
+				Jobs: &syncdata.DataJobs{
 					Jobs: jobs,
 				},
 			},

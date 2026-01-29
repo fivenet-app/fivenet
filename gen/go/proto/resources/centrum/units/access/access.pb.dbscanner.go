@@ -15,6 +15,11 @@ func (x *UnitAccess) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
 		return protojson.Unmarshal([]byte(t), x)
+	case *string:
+		if t == nil {
+			return nil
+		}
+		return protojson.Unmarshal([]byte(*t), x)
 	case []byte:
 		return protojson.Unmarshal(t, x)
 	}

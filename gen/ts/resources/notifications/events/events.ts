@@ -13,7 +13,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { ClientConfig } from "../../clientconfig/clientconfig";
 import { JobProps } from "../../jobs/props/props";
-import { UserInfoChanged } from "../../userinfo/user_info";
+import { UserInfoChanged } from "../../userinfo/userinfo";
 import { Notification } from "../notifications";
 /**
  * User related events

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/centrum/access/access.proto
 
+//go:build !protoopaque
+
 package centrumaccess
 
 import (
@@ -13,7 +15,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -74,13 +75,8 @@ func (x CentrumAccessLevel) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use CentrumAccessLevel.Descriptor instead.
-func (CentrumAccessLevel) EnumDescriptor() ([]byte, []int) {
-	return file_resources_centrum_access_access_proto_rawDescGZIP(), []int{0}
-}
-
 type CentrumAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Jobs          []*CentrumJobAccess    `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -111,11 +107,6 @@ func (x *CentrumAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CentrumAccess.ProtoReflect.Descriptor instead.
-func (*CentrumAccess) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_access_access_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *CentrumAccess) GetJobs() []*CentrumJobAccess {
 	if x != nil {
 		return x.Jobs
@@ -123,8 +114,26 @@ func (x *CentrumAccess) GetJobs() []*CentrumJobAccess {
 	return nil
 }
 
+func (x *CentrumAccess) SetJobs(v []*CentrumJobAccess) {
+	x.Jobs = v
+}
+
+type CentrumAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs []*CentrumJobAccess
+}
+
+func (b0 CentrumAccess_builder) Build() *CentrumAccess {
+	m0 := &CentrumAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	return m0
+}
+
 type CentrumJobAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
@@ -162,11 +171,6 @@ func (x *CentrumJobAccess) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CentrumJobAccess.ProtoReflect.Descriptor instead.
-func (*CentrumJobAccess) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_access_access_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CentrumJobAccess) GetId() int64 {
@@ -239,9 +243,125 @@ func (x *CentrumJobAccess) GetAcceptedAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *CentrumJobAccess) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *CentrumJobAccess) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *CentrumJobAccess) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *CentrumJobAccess) SetSourceJob(v string) {
+	x.SourceJob = v
+}
+
+func (x *CentrumJobAccess) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *CentrumJobAccess) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *CentrumJobAccess) SetMinimumGrade(v int32) {
+	x.MinimumGrade = v
+}
+
+func (x *CentrumJobAccess) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *CentrumJobAccess) SetAccess(v CentrumAccessLevel) {
+	x.Access = v
+}
+
+func (x *CentrumJobAccess) SetAcceptedAt(v *timestamp.Timestamp) {
+	x.AcceptedAt = v
+}
+
+func (x *CentrumJobAccess) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *CentrumJobAccess) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *CentrumJobAccess) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *CentrumJobAccess) HasAcceptedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.AcceptedAt != nil
+}
+
+func (x *CentrumJobAccess) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *CentrumJobAccess) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *CentrumJobAccess) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+func (x *CentrumJobAccess) ClearAcceptedAt() {
+	x.AcceptedAt = nil
+}
+
+type CentrumJobAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id            int64
+	CreatedAt     *timestamp.Timestamp
+	TargetId      int64
+	SourceJob     string
+	Job           string
+	JobLabel      *string
+	MinimumGrade  int32
+	JobGradeLabel *string
+	Access        CentrumAccessLevel
+	AcceptedAt    *timestamp.Timestamp
+}
+
+func (b0 CentrumJobAccess_builder) Build() *CentrumJobAccess {
+	m0 := &CentrumJobAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.SourceJob = b.SourceJob
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.MinimumGrade = b.MinimumGrade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Access = b.Access
+	x.AcceptedAt = b.AcceptedAt
+	return m0
+}
+
 // Dummy - DO NOT USE!
 type CentrumUserAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -271,14 +391,21 @@ func (x *CentrumUserAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CentrumUserAccess.ProtoReflect.Descriptor instead.
-func (*CentrumUserAccess) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_access_access_proto_rawDescGZIP(), []int{2}
+type CentrumUserAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 CentrumUserAccess_builder) Build() *CentrumUserAccess {
+	m0 := &CentrumUserAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 // Dummy - DO NOT USE!
 type CentrumQualificationAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -308,9 +435,16 @@ func (x *CentrumQualificationAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CentrumQualificationAccess.ProtoReflect.Descriptor instead.
-func (*CentrumQualificationAccess) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_access_access_proto_rawDescGZIP(), []int{3}
+type CentrumQualificationAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 CentrumQualificationAccess_builder) Build() *CentrumQualificationAccess {
+	m0 := &CentrumQualificationAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 var File_resources_centrum_access_access_proto protoreflect.FileDescriptor
@@ -348,18 +482,6 @@ const file_resources_centrum_access_access_proto_rawDesc = "" +
 	"\x19CENTRUM_ACCESS_LEVEL_VIEW\x10\x02\x12$\n" +
 	" CENTRUM_ACCESS_LEVEL_PARTICIPATE\x10\x03\x12!\n" +
 	"\x1dCENTRUM_ACCESS_LEVEL_DISPATCH\x10\x04BZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/access;centrumaccessb\x06proto3"
-
-var (
-	file_resources_centrum_access_access_proto_rawDescOnce sync.Once
-	file_resources_centrum_access_access_proto_rawDescData []byte
-)
-
-func file_resources_centrum_access_access_proto_rawDescGZIP() []byte {
-	file_resources_centrum_access_access_proto_rawDescOnce.Do(func() {
-		file_resources_centrum_access_access_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_centrum_access_access_proto_rawDesc), len(file_resources_centrum_access_access_proto_rawDesc)))
-	})
-	return file_resources_centrum_access_access_proto_rawDescData
-}
 
 var file_resources_centrum_access_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_centrum_access_access_proto_msgTypes = make([]protoimpl.MessageInfo, 4)

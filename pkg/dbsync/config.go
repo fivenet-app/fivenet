@@ -80,6 +80,14 @@ func NewConfig(p ParamsConfig) (ResultConfig, error) {
 	// Do not run DB migrations for dbsync
 	r.Cfg.Database.SkipMigrations = true
 
+	if cc.Tables.Accounts.Enabled {
+		if cc.Tables.Accounts.Query == nil {
+			return r, fmt.Errorf(
+				"accounts table is enabled but no query is set. please set a query for the accounts table or disable the feature",
+			)
+		}
+	}
+
 	return r, nil
 }
 
@@ -170,6 +178,8 @@ type DBSyncSourceTables struct {
 	Users            UsersTable        `yaml:"users"`
 	CitizensLicenses UserLicensesTable `yaml:"userLicenses"`
 	Vehicles         VehiclesTable     `yaml:"vehicles"`
+
+	Accounts AccountsTable `yaml:"accounts"`
 }
 
 func (c *DBSyncSourceTables) GetAllTables() []DBSyncTable {
@@ -196,6 +206,9 @@ func (c *DBSyncSourceTables) GetAllTables() []DBSyncTable {
 	}
 	if c.Vehicles.Enabled {
 		tables = append(tables, c.Vehicles.DBSyncTable)
+	}
+	if c.Accounts.Enabled {
+		tables = append(tables, c.Accounts.DBSyncTable)
 	}
 
 	return tables
@@ -258,7 +271,7 @@ func (c *JobsTable) GetQuery(
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"job.name":  c.Columns.Name,
 		"job.label": c.Columns.Label,
-	}, where, offset, limit)
+	}, where, offset, limit, []string{c.Columns.Name})
 }
 
 type JobsColumns struct {
@@ -291,7 +304,7 @@ func (c *JobGradesTable) GetQuery(
 		"job_grade.grade":    c.Columns.Grade,
 		"job_grade.name":     c.Columns.Name,
 		"job_grade.label":    c.Columns.Label,
-	}, where, offset, limit)
+	}, where, offset, limit, []string{c.Columns.JobName, c.Columns.Grade})
 }
 
 type JobGradesColumns struct {
@@ -320,7 +333,7 @@ func (c *LicensesTable) GetQuery(
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"license.type":  c.Columns.Type,
 		"license.label": c.Columns.Label,
-	}, where, offset, limit)
+	}, where, offset, limit, []string{c.Columns.Type})
 }
 
 type LicensesColumns struct {
@@ -356,7 +369,6 @@ func (c *UsersTable) GetQuery(
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"user.id":           c.Columns.ID,
 		"user.identifier":   c.Columns.Identifier,
-		"user.group":        c.Columns.Group,
 		"user.firstname":    c.Columns.FirstName,
 		"user.lastname":     c.Columns.Lastname,
 		"user.dateofbirth":  c.Columns.DateOfBirth,
@@ -367,7 +379,7 @@ func (c *UsersTable) GetQuery(
 		"user.height":       c.Columns.Height,
 		"user.visum":        c.Columns.Visum,
 		"user.playtime":     c.Columns.Playtime,
-	}, where, offset, limit)
+	}, where, offset, limit, []string{c.Columns.ID})
 }
 
 type UsersColumns struct {
@@ -447,7 +459,7 @@ func (c *UserLicensesTable) GetQuery(
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"license.type":  c.Columns.Type,
 		"license.owner": c.Columns.OwnerIdentifier,
-	}, where, offset, limit)
+	}, where, offset, limit, []string{c.Columns.Type, c.Columns.OwnerIdentifier})
 }
 
 type UserLicensesColumns struct {
@@ -477,7 +489,7 @@ func (c *VehiclesTable) GetQuery(
 		"vehicle.plate": c.Columns.Plate,
 		"vehicle.type":  c.Columns.Type,
 		"vehicle.model": c.Columns.Model,
-	}, where, offset, limit)
+	}, where, offset, limit, []string{c.Columns.Plate, c.Columns.OwnerIdentifier})
 }
 
 type VehiclesColumns struct {
@@ -486,6 +498,19 @@ type VehiclesColumns struct {
 	Plate           string  `yaml:"plate"           default:"plate"`
 	Type            string  `yaml:"type"            default:"type"`
 	Model           string  `yaml:"model"           default:"model"`
+}
+
+type AccountsTable struct {
+	DBSyncTable `yaml:",inline" mapstructure:",squash"`
+}
+
+func (c *AccountsTable) GetQuery(
+	state *TableSyncState,
+	offset int64,
+	limit int64,
+	where ...string,
+) string {
+	return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
 }
 
 type DBSyncTableSyncInterval interface {

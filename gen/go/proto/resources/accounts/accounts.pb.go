@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/accounts/accounts.proto
 
+//go:build !protoopaque
+
 package accounts
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -26,15 +27,16 @@ const (
 )
 
 type Account struct {
-	state          protoimpl.MessageState  `protogen:"open.v1"`
+	state          protoimpl.MessageState  `protogen:"hybrid.v1"`
 	Id             int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key"`
 	CreatedAt      *timestamp.Timestamp    `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt      *timestamp.Timestamp    `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Username       string                  `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`
-	License        string                  `protobuf:"bytes,5,opt,name=license,proto3" json:"license,omitempty"`
-	Enabled        bool                    `protobuf:"varint,6,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	LastChar       *int32                  `protobuf:"varint,7,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
-	Oauth2Accounts []*oauth2.OAuth2Account `protobuf:"bytes,8,rep,name=oauth2_accounts,json=oauth2Accounts,proto3" json:"oauth2_accounts,omitempty" alias:"oauth2_account"`
+	Enabled        bool                    `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Username       string                  `protobuf:"bytes,5,opt,name=username,proto3" json:"username,omitempty"`
+	License        string                  `protobuf:"bytes,6,opt,name=license,proto3" json:"license,omitempty"`
+	Groups         *AccountGroups          `protobuf:"bytes,7,opt,name=groups,proto3,oneof" json:"groups,omitempty"`
+	LastChar       *int32                  `protobuf:"varint,8,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
+	Oauth2Accounts []*oauth2.OAuth2Account `protobuf:"bytes,9,rep,name=oauth2_accounts,json=oauth2Accounts,proto3" json:"oauth2_accounts,omitempty" alias:"oauth2_account"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -64,11 +66,6 @@ func (x *Account) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Account.ProtoReflect.Descriptor instead.
-func (*Account) Descriptor() ([]byte, []int) {
-	return file_resources_accounts_accounts_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *Account) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -90,6 +87,13 @@ func (x *Account) GetUpdatedAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *Account) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
 func (x *Account) GetUsername() string {
 	if x != nil {
 		return x.Username
@@ -104,11 +108,11 @@ func (x *Account) GetLicense() string {
 	return ""
 }
 
-func (x *Account) GetEnabled() bool {
+func (x *Account) GetGroups() *AccountGroups {
 	if x != nil {
-		return x.Enabled
+		return x.Groups
 	}
-	return false
+	return nil
 }
 
 func (x *Account) GetLastChar() int32 {
@@ -125,29 +129,137 @@ func (x *Account) GetOauth2Accounts() []*oauth2.OAuth2Account {
 	return nil
 }
 
-type Character struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Available     bool                   `protobuf:"varint,1,opt,name=available,proto3" json:"available,omitempty"`
-	Group         string                 `protobuf:"bytes,2,opt,name=group,proto3" json:"group,omitempty"`
-	Char          *users.User            `protobuf:"bytes,3,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
+func (x *Account) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Account) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Account) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *Account) SetEnabled(v bool) {
+	x.Enabled = v
+}
+
+func (x *Account) SetUsername(v string) {
+	x.Username = v
+}
+
+func (x *Account) SetLicense(v string) {
+	x.License = v
+}
+
+func (x *Account) SetGroups(v *AccountGroups) {
+	x.Groups = v
+}
+
+func (x *Account) SetLastChar(v int32) {
+	x.LastChar = &v
+}
+
+func (x *Account) SetOauth2Accounts(v []*oauth2.OAuth2Account) {
+	x.Oauth2Accounts = v
+}
+
+func (x *Account) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Account) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Account) HasGroups() bool {
+	if x == nil {
+		return false
+	}
+	return x.Groups != nil
+}
+
+func (x *Account) HasLastChar() bool {
+	if x == nil {
+		return false
+	}
+	return x.LastChar != nil
+}
+
+func (x *Account) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Account) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Account) ClearGroups() {
+	x.Groups = nil
+}
+
+func (x *Account) ClearLastChar() {
+	x.LastChar = nil
+}
+
+type Account_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id             int64
+	CreatedAt      *timestamp.Timestamp
+	UpdatedAt      *timestamp.Timestamp
+	Enabled        bool
+	Username       string
+	License        string
+	Groups         *AccountGroups
+	LastChar       *int32
+	Oauth2Accounts []*oauth2.OAuth2Account
+}
+
+func (b0 Account_builder) Build() *Account {
+	m0 := &Account{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.Enabled = b.Enabled
+	x.Username = b.Username
+	x.License = b.License
+	x.Groups = b.Groups
+	x.LastChar = b.LastChar
+	x.Oauth2Accounts = b.Oauth2Accounts
+	return m0
+}
+
+type AccountGroups struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Groups        []string               `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Character) Reset() {
-	*x = Character{}
+func (x *AccountGroups) Reset() {
+	*x = AccountGroups{}
 	mi := &file_resources_accounts_accounts_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Character) String() string {
+func (x *AccountGroups) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Character) ProtoMessage() {}
+func (*AccountGroups) ProtoMessage() {}
 
-func (x *Character) ProtoReflect() protoreflect.Message {
+func (x *AccountGroups) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_accounts_accounts_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -159,9 +271,63 @@ func (x *Character) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Character.ProtoReflect.Descriptor instead.
-func (*Character) Descriptor() ([]byte, []int) {
-	return file_resources_accounts_accounts_proto_rawDescGZIP(), []int{1}
+func (x *AccountGroups) GetGroups() []string {
+	if x != nil {
+		return x.Groups
+	}
+	return nil
+}
+
+func (x *AccountGroups) SetGroups(v []string) {
+	x.Groups = v
+}
+
+type AccountGroups_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Groups []string
+}
+
+func (b0 AccountGroups_builder) Build() *AccountGroups {
+	m0 := &AccountGroups{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Groups = b.Groups
+	return m0
+}
+
+type Character struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Available     bool                   `protobuf:"varint,1,opt,name=available,proto3" json:"available,omitempty"`
+	Group         string                 `protobuf:"bytes,2,opt,name=group,proto3" json:"group,omitempty"`
+	Char          *users.User            `protobuf:"bytes,3,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Character) Reset() {
+	*x = Character{}
+	mi := &file_resources_accounts_accounts_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Character) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Character) ProtoMessage() {}
+
+func (x *Character) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_accounts_accounts_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
 }
 
 func (x *Character) GetAvailable() bool {
@@ -185,61 +351,96 @@ func (x *Character) GetChar() *users.User {
 	return nil
 }
 
+func (x *Character) SetAvailable(v bool) {
+	x.Available = v
+}
+
+func (x *Character) SetGroup(v string) {
+	x.Group = v
+}
+
+func (x *Character) SetChar(v *users.User) {
+	x.Char = v
+}
+
+func (x *Character) HasChar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Char != nil
+}
+
+func (x *Character) ClearChar() {
+	x.Char = nil
+}
+
+type Character_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Available bool
+	Group     string
+	Char      *users.User
+}
+
+func (b0 Character_builder) Build() *Character {
+	m0 := &Character{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Available = b.Available
+	x.Group = b.Group
+	x.Char = b.Char
+	return m0
+}
+
 var File_resources_accounts_accounts_proto protoreflect.FileDescriptor
 
 const file_resources_accounts_accounts_proto_rawDesc = "" +
 	"\n" +
-	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a&resources/accounts/oauth2/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"\xc7\x03\n" +
+	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a&resources/accounts/oauth2/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"\x92\x04\n" +
 	"\aAccount\x12&\n" +
 	"\x02id\x18\x01 \x01(\x03B\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x1a\n" +
-	"\busername\x18\x04 \x01(\tR\busername\x12\x18\n" +
-	"\alicense\x18\x05 \x01(\tR\alicense\x12\x18\n" +
-	"\aenabled\x18\x06 \x01(\bR\aenabled\x12 \n" +
-	"\tlast_char\x18\a \x01(\x05H\x02R\blastChar\x88\x01\x01\x12n\n" +
-	"\x0foauth2_accounts\x18\b \x03(\v2(.resources.accounts.oauth2.OAuth2AccountB\x1b\x9a\x84\x9e\x03\x16alias:\"oauth2_account\"R\x0eoauth2AccountsB\r\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x18\n" +
+	"\aenabled\x18\x04 \x01(\bR\aenabled\x12\x1a\n" +
+	"\busername\x18\x05 \x01(\tR\busername\x12\x18\n" +
+	"\alicense\x18\x06 \x01(\tR\alicense\x12>\n" +
+	"\x06groups\x18\a \x01(\v2!.resources.accounts.AccountGroupsH\x02R\x06groups\x88\x01\x01\x12 \n" +
+	"\tlast_char\x18\b \x01(\x05H\x03R\blastChar\x88\x01\x01\x12n\n" +
+	"\x0foauth2_accounts\x18\t \x03(\v2(.resources.accounts.oauth2.OAuth2AccountB\x1b\x9a\x84\x9e\x03\x16alias:\"oauth2_account\"R\x0eoauth2AccountsB\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_updated_atB\f\n" +
+	"\v_updated_atB\t\n" +
+	"\a_groupsB\f\n" +
 	"\n" +
-	"_last_char\"}\n" +
+	"_last_char\"'\n" +
+	"\rAccountGroups\x12\x16\n" +
+	"\x06groups\x18\x01 \x03(\tR\x06groups\"}\n" +
 	"\tCharacter\x12\x1c\n" +
 	"\tavailable\x18\x01 \x01(\bR\tavailable\x12\x14\n" +
 	"\x05group\x18\x02 \x01(\tR\x05group\x12<\n" +
 	"\x04char\x18\x03 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04charBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts;accountsb\x06proto3"
 
-var (
-	file_resources_accounts_accounts_proto_rawDescOnce sync.Once
-	file_resources_accounts_accounts_proto_rawDescData []byte
-)
-
-func file_resources_accounts_accounts_proto_rawDescGZIP() []byte {
-	file_resources_accounts_accounts_proto_rawDescOnce.Do(func() {
-		file_resources_accounts_accounts_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_accounts_accounts_proto_rawDesc), len(file_resources_accounts_accounts_proto_rawDesc)))
-	})
-	return file_resources_accounts_accounts_proto_rawDescData
-}
-
-var file_resources_accounts_accounts_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_resources_accounts_accounts_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_accounts_accounts_proto_goTypes = []any{
 	(*Account)(nil),              // 0: resources.accounts.Account
-	(*Character)(nil),            // 1: resources.accounts.Character
-	(*timestamp.Timestamp)(nil),  // 2: resources.timestamp.Timestamp
-	(*oauth2.OAuth2Account)(nil), // 3: resources.accounts.oauth2.OAuth2Account
-	(*users.User)(nil),           // 4: resources.users.User
+	(*AccountGroups)(nil),        // 1: resources.accounts.AccountGroups
+	(*Character)(nil),            // 2: resources.accounts.Character
+	(*timestamp.Timestamp)(nil),  // 3: resources.timestamp.Timestamp
+	(*oauth2.OAuth2Account)(nil), // 4: resources.accounts.oauth2.OAuth2Account
+	(*users.User)(nil),           // 5: resources.users.User
 }
 var file_resources_accounts_accounts_proto_depIdxs = []int32{
-	2, // 0: resources.accounts.Account.created_at:type_name -> resources.timestamp.Timestamp
-	2, // 1: resources.accounts.Account.updated_at:type_name -> resources.timestamp.Timestamp
-	3, // 2: resources.accounts.Account.oauth2_accounts:type_name -> resources.accounts.oauth2.OAuth2Account
-	4, // 3: resources.accounts.Character.char:type_name -> resources.users.User
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	3, // 0: resources.accounts.Account.created_at:type_name -> resources.timestamp.Timestamp
+	3, // 1: resources.accounts.Account.updated_at:type_name -> resources.timestamp.Timestamp
+	1, // 2: resources.accounts.Account.groups:type_name -> resources.accounts.AccountGroups
+	4, // 3: resources.accounts.Account.oauth2_accounts:type_name -> resources.accounts.oauth2.OAuth2Account
+	5, // 4: resources.accounts.Character.char:type_name -> resources.users.User
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_resources_accounts_accounts_proto_init() }
@@ -254,7 +455,7 @@ func file_resources_accounts_accounts_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_accounts_accounts_proto_rawDesc), len(file_resources_accounts_accounts_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

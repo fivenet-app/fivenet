@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/jobs/colleagues/activity/activity.proto
 
+//go:build !protoopaque
+
 package colleaguesactivity
 
 import (
@@ -16,7 +18,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -89,13 +90,8 @@ func (x ColleagueActivityType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ColleagueActivityType.Descriptor instead.
-func (ColleagueActivityType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_jobs_colleagues_activity_activity_proto_rawDescGZIP(), []int{0}
-}
-
 type ColleagueActivity struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
@@ -133,11 +129,6 @@ func (x *ColleagueActivity) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ColleagueActivity.ProtoReflect.Descriptor instead.
-func (*ColleagueActivity) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_colleagues_activity_activity_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ColleagueActivity) GetId() int64 {
@@ -210,8 +201,135 @@ func (x *ColleagueActivity) GetData() *ColleagueActivityData {
 	return nil
 }
 
+func (x *ColleagueActivity) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *ColleagueActivity) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *ColleagueActivity) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *ColleagueActivity) SetSourceUserId(v int32) {
+	x.SourceUserId = &v
+}
+
+func (x *ColleagueActivity) SetSourceUser(v *colleagues.Colleague) {
+	x.SourceUser = v
+}
+
+func (x *ColleagueActivity) SetTargetUserId(v int32) {
+	x.TargetUserId = v
+}
+
+func (x *ColleagueActivity) SetTargetUser(v *colleagues.Colleague) {
+	x.TargetUser = v
+}
+
+func (x *ColleagueActivity) SetActivityType(v ColleagueActivityType) {
+	x.ActivityType = v
+}
+
+func (x *ColleagueActivity) SetReason(v string) {
+	x.Reason = v
+}
+
+func (x *ColleagueActivity) SetData(v *ColleagueActivityData) {
+	x.Data = v
+}
+
+func (x *ColleagueActivity) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *ColleagueActivity) HasSourceUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.SourceUserId != nil
+}
+
+func (x *ColleagueActivity) HasSourceUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.SourceUser != nil
+}
+
+func (x *ColleagueActivity) HasTargetUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.TargetUser != nil
+}
+
+func (x *ColleagueActivity) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *ColleagueActivity) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *ColleagueActivity) ClearSourceUserId() {
+	x.SourceUserId = nil
+}
+
+func (x *ColleagueActivity) ClearSourceUser() {
+	x.SourceUser = nil
+}
+
+func (x *ColleagueActivity) ClearTargetUser() {
+	x.TargetUser = nil
+}
+
+func (x *ColleagueActivity) ClearData() {
+	x.Data = nil
+}
+
+type ColleagueActivity_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id           int64
+	CreatedAt    *timestamp.Timestamp
+	Job          string
+	SourceUserId *int32
+	SourceUser   *colleagues.Colleague
+	TargetUserId int32
+	TargetUser   *colleagues.Colleague
+	ActivityType ColleagueActivityType
+	Reason       string
+	Data         *ColleagueActivityData
+}
+
+func (b0 ColleagueActivity_builder) Build() *ColleagueActivity {
+	m0 := &ColleagueActivity{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.Job = b.Job
+	x.SourceUserId = b.SourceUserId
+	x.SourceUser = b.SourceUser
+	x.TargetUserId = b.TargetUserId
+	x.TargetUser = b.TargetUser
+	x.ActivityType = b.ActivityType
+	x.Reason = b.Reason
+	x.Data = b.Data
+	return m0
+}
+
 type ColleagueActivityData struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*ColleagueActivityData_AbsenceDate
@@ -246,11 +364,6 @@ func (x *ColleagueActivityData) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ColleagueActivityData.ProtoReflect.Descriptor instead.
-func (*ColleagueActivityData) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_colleagues_activity_activity_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ColleagueActivityData) GetData() isColleagueActivityData_Data {
@@ -296,6 +409,169 @@ func (x *ColleagueActivityData) GetNameChange() *NameChange {
 	return nil
 }
 
+func (x *ColleagueActivityData) SetAbsenceDate(v *AbsenceDateChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &ColleagueActivityData_AbsenceDate{v}
+}
+
+func (x *ColleagueActivityData) SetGradeChange(v *GradeChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &ColleagueActivityData_GradeChange{v}
+}
+
+func (x *ColleagueActivityData) SetLabelsChange(v *LabelsChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &ColleagueActivityData_LabelsChange{v}
+}
+
+func (x *ColleagueActivityData) SetNameChange(v *NameChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &ColleagueActivityData_NameChange{v}
+}
+
+func (x *ColleagueActivityData) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *ColleagueActivityData) HasAbsenceDate() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*ColleagueActivityData_AbsenceDate)
+	return ok
+}
+
+func (x *ColleagueActivityData) HasGradeChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*ColleagueActivityData_GradeChange)
+	return ok
+}
+
+func (x *ColleagueActivityData) HasLabelsChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*ColleagueActivityData_LabelsChange)
+	return ok
+}
+
+func (x *ColleagueActivityData) HasNameChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*ColleagueActivityData_NameChange)
+	return ok
+}
+
+func (x *ColleagueActivityData) ClearData() {
+	x.Data = nil
+}
+
+func (x *ColleagueActivityData) ClearAbsenceDate() {
+	if _, ok := x.Data.(*ColleagueActivityData_AbsenceDate); ok {
+		x.Data = nil
+	}
+}
+
+func (x *ColleagueActivityData) ClearGradeChange() {
+	if _, ok := x.Data.(*ColleagueActivityData_GradeChange); ok {
+		x.Data = nil
+	}
+}
+
+func (x *ColleagueActivityData) ClearLabelsChange() {
+	if _, ok := x.Data.(*ColleagueActivityData_LabelsChange); ok {
+		x.Data = nil
+	}
+}
+
+func (x *ColleagueActivityData) ClearNameChange() {
+	if _, ok := x.Data.(*ColleagueActivityData_NameChange); ok {
+		x.Data = nil
+	}
+}
+
+const ColleagueActivityData_Data_not_set_case case_ColleagueActivityData_Data = 0
+const ColleagueActivityData_AbsenceDate_case case_ColleagueActivityData_Data = 1
+const ColleagueActivityData_GradeChange_case case_ColleagueActivityData_Data = 2
+const ColleagueActivityData_LabelsChange_case case_ColleagueActivityData_Data = 3
+const ColleagueActivityData_NameChange_case case_ColleagueActivityData_Data = 4
+
+func (x *ColleagueActivityData) WhichData() case_ColleagueActivityData_Data {
+	if x == nil {
+		return ColleagueActivityData_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *ColleagueActivityData_AbsenceDate:
+		return ColleagueActivityData_AbsenceDate_case
+	case *ColleagueActivityData_GradeChange:
+		return ColleagueActivityData_GradeChange_case
+	case *ColleagueActivityData_LabelsChange:
+		return ColleagueActivityData_LabelsChange_case
+	case *ColleagueActivityData_NameChange:
+		return ColleagueActivityData_NameChange_case
+	default:
+		return ColleagueActivityData_Data_not_set_case
+	}
+}
+
+type ColleagueActivityData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	AbsenceDate  *AbsenceDateChange
+	GradeChange  *GradeChange
+	LabelsChange *LabelsChange
+	NameChange   *NameChange
+	// -- end of Data
+}
+
+func (b0 ColleagueActivityData_builder) Build() *ColleagueActivityData {
+	m0 := &ColleagueActivityData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.AbsenceDate != nil {
+		x.Data = &ColleagueActivityData_AbsenceDate{b.AbsenceDate}
+	}
+	if b.GradeChange != nil {
+		x.Data = &ColleagueActivityData_GradeChange{b.GradeChange}
+	}
+	if b.LabelsChange != nil {
+		x.Data = &ColleagueActivityData_LabelsChange{b.LabelsChange}
+	}
+	if b.NameChange != nil {
+		x.Data = &ColleagueActivityData_NameChange{b.NameChange}
+	}
+	return m0
+}
+
+type case_ColleagueActivityData_Data protoreflect.FieldNumber
+
+func (x case_ColleagueActivityData_Data) String() string {
+	md := file_resources_jobs_colleagues_activity_activity_proto_msgTypes[1].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isColleagueActivityData_Data interface {
 	isColleagueActivityData_Data()
 }
@@ -325,7 +601,7 @@ func (*ColleagueActivityData_LabelsChange) isColleagueActivityData_Data() {}
 func (*ColleagueActivityData_NameChange) isColleagueActivityData_Data() {}
 
 type AbsenceDateChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	AbsenceBegin  *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=absence_begin,json=absenceBegin,proto3" json:"absence_begin,omitempty"`
 	AbsenceEnd    *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=absence_end,json=absenceEnd,proto3" json:"absence_end,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -357,11 +633,6 @@ func (x *AbsenceDateChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AbsenceDateChange.ProtoReflect.Descriptor instead.
-func (*AbsenceDateChange) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_colleagues_activity_activity_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *AbsenceDateChange) GetAbsenceBegin() *timestamp.Timestamp {
 	if x != nil {
 		return x.AbsenceBegin
@@ -376,8 +647,54 @@ func (x *AbsenceDateChange) GetAbsenceEnd() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *AbsenceDateChange) SetAbsenceBegin(v *timestamp.Timestamp) {
+	x.AbsenceBegin = v
+}
+
+func (x *AbsenceDateChange) SetAbsenceEnd(v *timestamp.Timestamp) {
+	x.AbsenceEnd = v
+}
+
+func (x *AbsenceDateChange) HasAbsenceBegin() bool {
+	if x == nil {
+		return false
+	}
+	return x.AbsenceBegin != nil
+}
+
+func (x *AbsenceDateChange) HasAbsenceEnd() bool {
+	if x == nil {
+		return false
+	}
+	return x.AbsenceEnd != nil
+}
+
+func (x *AbsenceDateChange) ClearAbsenceBegin() {
+	x.AbsenceBegin = nil
+}
+
+func (x *AbsenceDateChange) ClearAbsenceEnd() {
+	x.AbsenceEnd = nil
+}
+
+type AbsenceDateChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	AbsenceBegin *timestamp.Timestamp
+	AbsenceEnd   *timestamp.Timestamp
+}
+
+func (b0 AbsenceDateChange_builder) Build() *AbsenceDateChange {
+	m0 := &AbsenceDateChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.AbsenceBegin = b.AbsenceBegin
+	x.AbsenceEnd = b.AbsenceEnd
+	return m0
+}
+
 type GradeChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Grade         int32                  `protobuf:"varint,1,opt,name=grade,proto3" json:"grade,omitempty"`
 	GradeLabel    string                 `protobuf:"bytes,2,opt,name=grade_label,json=gradeLabel,proto3" json:"grade_label,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -409,11 +726,6 @@ func (x *GradeChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GradeChange.ProtoReflect.Descriptor instead.
-func (*GradeChange) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_colleagues_activity_activity_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *GradeChange) GetGrade() int32 {
 	if x != nil {
 		return x.Grade
@@ -428,8 +740,32 @@ func (x *GradeChange) GetGradeLabel() string {
 	return ""
 }
 
+func (x *GradeChange) SetGrade(v int32) {
+	x.Grade = v
+}
+
+func (x *GradeChange) SetGradeLabel(v string) {
+	x.GradeLabel = v
+}
+
+type GradeChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Grade      int32
+	GradeLabel string
+}
+
+func (b0 GradeChange_builder) Build() *GradeChange {
+	m0 := &GradeChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Grade = b.Grade
+	x.GradeLabel = b.GradeLabel
+	return m0
+}
+
 type LabelsChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Added         []*labels.Label        `protobuf:"bytes,1,rep,name=added,proto3" json:"added,omitempty"`
 	Removed       []*labels.Label        `protobuf:"bytes,2,rep,name=removed,proto3" json:"removed,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -461,11 +797,6 @@ func (x *LabelsChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LabelsChange.ProtoReflect.Descriptor instead.
-func (*LabelsChange) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_colleagues_activity_activity_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *LabelsChange) GetAdded() []*labels.Label {
 	if x != nil {
 		return x.Added
@@ -480,8 +811,32 @@ func (x *LabelsChange) GetRemoved() []*labels.Label {
 	return nil
 }
 
+func (x *LabelsChange) SetAdded(v []*labels.Label) {
+	x.Added = v
+}
+
+func (x *LabelsChange) SetRemoved(v []*labels.Label) {
+	x.Removed = v
+}
+
+type LabelsChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Added   []*labels.Label
+	Removed []*labels.Label
+}
+
+func (b0 LabelsChange_builder) Build() *LabelsChange {
+	m0 := &LabelsChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Added = b.Added
+	x.Removed = b.Removed
+	return m0
+}
+
 type NameChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Prefix        *string                `protobuf:"bytes,1,opt,name=prefix,proto3,oneof" json:"prefix,omitempty"`
 	Suffix        *string                `protobuf:"bytes,2,opt,name=suffix,proto3,oneof" json:"suffix,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -513,11 +868,6 @@ func (x *NameChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use NameChange.ProtoReflect.Descriptor instead.
-func (*NameChange) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_colleagues_activity_activity_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *NameChange) GetPrefix() string {
 	if x != nil && x.Prefix != nil {
 		return *x.Prefix
@@ -530,6 +880,52 @@ func (x *NameChange) GetSuffix() string {
 		return *x.Suffix
 	}
 	return ""
+}
+
+func (x *NameChange) SetPrefix(v string) {
+	x.Prefix = &v
+}
+
+func (x *NameChange) SetSuffix(v string) {
+	x.Suffix = &v
+}
+
+func (x *NameChange) HasPrefix() bool {
+	if x == nil {
+		return false
+	}
+	return x.Prefix != nil
+}
+
+func (x *NameChange) HasSuffix() bool {
+	if x == nil {
+		return false
+	}
+	return x.Suffix != nil
+}
+
+func (x *NameChange) ClearPrefix() {
+	x.Prefix = nil
+}
+
+func (x *NameChange) ClearSuffix() {
+	x.Suffix = nil
+}
+
+type NameChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Prefix *string
+	Suffix *string
+}
+
+func (b0 NameChange_builder) Build() *NameChange {
+	m0 := &NameChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Prefix = b.Prefix
+	x.Suffix = b.Suffix
+	return m0
 }
 
 var File_resources_jobs_colleagues_activity_activity_proto protoreflect.FileDescriptor
@@ -589,18 +985,6 @@ const file_resources_jobs_colleagues_activity_activity_proto_rawDesc = "" +
 	"\x1cCOLLEAGUE_ACTIVITY_TYPE_NOTE\x10\x06\x12\"\n" +
 	"\x1eCOLLEAGUE_ACTIVITY_TYPE_LABELS\x10\a\x12 \n" +
 	"\x1cCOLLEAGUE_ACTIVITY_TYPE_NAME\x10\bBiZggithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity;colleaguesactivityb\x06proto3"
-
-var (
-	file_resources_jobs_colleagues_activity_activity_proto_rawDescOnce sync.Once
-	file_resources_jobs_colleagues_activity_activity_proto_rawDescData []byte
-)
-
-func file_resources_jobs_colleagues_activity_activity_proto_rawDescGZIP() []byte {
-	file_resources_jobs_colleagues_activity_activity_proto_rawDescOnce.Do(func() {
-		file_resources_jobs_colleagues_activity_activity_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_jobs_colleagues_activity_activity_proto_rawDesc), len(file_resources_jobs_colleagues_activity_activity_proto_rawDesc)))
-	})
-	return file_resources_jobs_colleagues_activity_activity_proto_rawDescData
-}
 
 var file_resources_jobs_colleagues_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_jobs_colleagues_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 6)

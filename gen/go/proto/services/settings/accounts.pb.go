@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/settings/accounts.proto
 
+//go:build !protoopaque
+
 package settings
 
 import (
@@ -15,7 +17,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -27,7 +28,7 @@ const (
 )
 
 type ListAccountsRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
@@ -62,11 +63,6 @@ func (x *ListAccountsRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListAccountsRequest.ProtoReflect.Descriptor instead.
-func (*ListAccountsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ListAccountsRequest) GetPagination() *database.PaginationRequest {
@@ -111,8 +107,123 @@ func (x *ListAccountsRequest) GetExternalId() string {
 	return ""
 }
 
+func (x *ListAccountsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListAccountsRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListAccountsRequest) SetLicense(v string) {
+	x.License = &v
+}
+
+func (x *ListAccountsRequest) SetEnabled(v bool) {
+	x.Enabled = &v
+}
+
+func (x *ListAccountsRequest) SetUsername(v string) {
+	x.Username = &v
+}
+
+func (x *ListAccountsRequest) SetExternalId(v string) {
+	x.ExternalId = &v
+}
+
+func (x *ListAccountsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListAccountsRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListAccountsRequest) HasLicense() bool {
+	if x == nil {
+		return false
+	}
+	return x.License != nil
+}
+
+func (x *ListAccountsRequest) HasEnabled() bool {
+	if x == nil {
+		return false
+	}
+	return x.Enabled != nil
+}
+
+func (x *ListAccountsRequest) HasUsername() bool {
+	if x == nil {
+		return false
+	}
+	return x.Username != nil
+}
+
+func (x *ListAccountsRequest) HasExternalId() bool {
+	if x == nil {
+		return false
+	}
+	return x.ExternalId != nil
+}
+
+func (x *ListAccountsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListAccountsRequest) ClearSort() {
+	x.Sort = nil
+}
+
+func (x *ListAccountsRequest) ClearLicense() {
+	x.License = nil
+}
+
+func (x *ListAccountsRequest) ClearEnabled() {
+	x.Enabled = nil
+}
+
+func (x *ListAccountsRequest) ClearUsername() {
+	x.Username = nil
+}
+
+func (x *ListAccountsRequest) ClearExternalId() {
+	x.ExternalId = nil
+}
+
+type ListAccountsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	License    *string
+	Enabled    *bool
+	Username   *string
+	ExternalId *string
+}
+
+func (b0 ListAccountsRequest_builder) Build() *ListAccountsRequest {
+	m0 := &ListAccountsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.License = b.License
+	x.Enabled = b.Enabled
+	x.Username = b.Username
+	x.ExternalId = b.ExternalId
+	return m0
+}
+
 type ListAccountsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Accounts      []*accounts.Account          `protobuf:"bytes,2,rep,name=accounts,proto3" json:"accounts,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -144,11 +255,6 @@ func (x *ListAccountsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListAccountsResponse.ProtoReflect.Descriptor instead.
-func (*ListAccountsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListAccountsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -163,8 +269,43 @@ func (x *ListAccountsResponse) GetAccounts() []*accounts.Account {
 	return nil
 }
 
+func (x *ListAccountsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListAccountsResponse) SetAccounts(v []*accounts.Account) {
+	x.Accounts = v
+}
+
+func (x *ListAccountsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListAccountsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListAccountsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Accounts   []*accounts.Account
+}
+
+func (b0 ListAccountsResponse_builder) Build() *ListAccountsResponse {
+	m0 := &ListAccountsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Accounts = b.Accounts
+	return m0
+}
+
 type CreateAccountRequest struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
+	state    protoimpl.MessageState `protogen:"hybrid.v1"`
 	License  string                 `protobuf:"bytes,1,opt,name=license,proto3" json:"license,omitempty"`
 	Username string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
 	LastChar *int32                 `protobuf:"varint,3,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
@@ -199,11 +340,6 @@ func (x *CreateAccountRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateAccountRequest.ProtoReflect.Descriptor instead.
-func (*CreateAccountRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *CreateAccountRequest) GetLicense() string {
 	if x != nil {
 		return x.License
@@ -232,8 +368,67 @@ func (x *CreateAccountRequest) GetChar() *short.UserShort {
 	return nil
 }
 
+func (x *CreateAccountRequest) SetLicense(v string) {
+	x.License = v
+}
+
+func (x *CreateAccountRequest) SetUsername(v string) {
+	x.Username = v
+}
+
+func (x *CreateAccountRequest) SetLastChar(v int32) {
+	x.LastChar = &v
+}
+
+func (x *CreateAccountRequest) SetChar(v *short.UserShort) {
+	x.Char = v
+}
+
+func (x *CreateAccountRequest) HasLastChar() bool {
+	if x == nil {
+		return false
+	}
+	return x.LastChar != nil
+}
+
+func (x *CreateAccountRequest) HasChar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Char != nil
+}
+
+func (x *CreateAccountRequest) ClearLastChar() {
+	x.LastChar = nil
+}
+
+func (x *CreateAccountRequest) ClearChar() {
+	x.Char = nil
+}
+
+type CreateAccountRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	License  string
+	Username string
+	LastChar *int32
+	// Allow creating a char at the same time (only when dbsync is used)
+	Char *short.UserShort
+}
+
+func (b0 CreateAccountRequest_builder) Build() *CreateAccountRequest {
+	m0 := &CreateAccountRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.License = b.License
+	x.Username = b.Username
+	x.LastChar = b.LastChar
+	x.Char = b.Char
+	return m0
+}
+
 type CreateAccountResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	RegToken      string                 `protobuf:"bytes,1,opt,name=reg_token,json=regToken,proto3" json:"reg_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -264,11 +459,6 @@ func (x *CreateAccountResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateAccountResponse.ProtoReflect.Descriptor instead.
-func (*CreateAccountResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *CreateAccountResponse) GetRegToken() string {
 	if x != nil {
 		return x.RegToken
@@ -276,8 +466,26 @@ func (x *CreateAccountResponse) GetRegToken() string {
 	return ""
 }
 
+func (x *CreateAccountResponse) SetRegToken(v string) {
+	x.RegToken = v
+}
+
+type CreateAccountResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	RegToken string
+}
+
+func (b0 CreateAccountResponse_builder) Build() *CreateAccountResponse {
+	m0 := &CreateAccountResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.RegToken = b.RegToken
+	return m0
+}
+
 type UpdateAccountRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Enabled       *bool                  `protobuf:"varint,2,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`
 	LastChar      *int32                 `protobuf:"varint,3,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
@@ -310,11 +518,6 @@ func (x *UpdateAccountRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateAccountRequest.ProtoReflect.Descriptor instead.
-func (*UpdateAccountRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *UpdateAccountRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -336,8 +539,60 @@ func (x *UpdateAccountRequest) GetLastChar() int32 {
 	return 0
 }
 
+func (x *UpdateAccountRequest) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *UpdateAccountRequest) SetEnabled(v bool) {
+	x.Enabled = &v
+}
+
+func (x *UpdateAccountRequest) SetLastChar(v int32) {
+	x.LastChar = &v
+}
+
+func (x *UpdateAccountRequest) HasEnabled() bool {
+	if x == nil {
+		return false
+	}
+	return x.Enabled != nil
+}
+
+func (x *UpdateAccountRequest) HasLastChar() bool {
+	if x == nil {
+		return false
+	}
+	return x.LastChar != nil
+}
+
+func (x *UpdateAccountRequest) ClearEnabled() {
+	x.Enabled = nil
+}
+
+func (x *UpdateAccountRequest) ClearLastChar() {
+	x.LastChar = nil
+}
+
+type UpdateAccountRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id       int64
+	Enabled  *bool
+	LastChar *int32
+}
+
+func (b0 UpdateAccountRequest_builder) Build() *UpdateAccountRequest {
+	m0 := &UpdateAccountRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Enabled = b.Enabled
+	x.LastChar = b.LastChar
+	return m0
+}
+
 type UpdateAccountResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Account       *accounts.Account      `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -368,11 +623,6 @@ func (x *UpdateAccountResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateAccountResponse.ProtoReflect.Descriptor instead.
-func (*UpdateAccountResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *UpdateAccountResponse) GetAccount() *accounts.Account {
 	if x != nil {
 		return x.Account
@@ -380,8 +630,37 @@ func (x *UpdateAccountResponse) GetAccount() *accounts.Account {
 	return nil
 }
 
+func (x *UpdateAccountResponse) SetAccount(v *accounts.Account) {
+	x.Account = v
+}
+
+func (x *UpdateAccountResponse) HasAccount() bool {
+	if x == nil {
+		return false
+	}
+	return x.Account != nil
+}
+
+func (x *UpdateAccountResponse) ClearAccount() {
+	x.Account = nil
+}
+
+type UpdateAccountResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Account *accounts.Account
+}
+
+func (b0 UpdateAccountResponse_builder) Build() *UpdateAccountResponse {
+	m0 := &UpdateAccountResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Account = b.Account
+	return m0
+}
+
 type DisconnectSocialLoginRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ProviderName  string                 `protobuf:"bytes,2,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -413,11 +692,6 @@ func (x *DisconnectSocialLoginRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DisconnectSocialLoginRequest.ProtoReflect.Descriptor instead.
-func (*DisconnectSocialLoginRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *DisconnectSocialLoginRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -432,8 +706,32 @@ func (x *DisconnectSocialLoginRequest) GetProviderName() string {
 	return ""
 }
 
+func (x *DisconnectSocialLoginRequest) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *DisconnectSocialLoginRequest) SetProviderName(v string) {
+	x.ProviderName = v
+}
+
+type DisconnectSocialLoginRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id           int64
+	ProviderName string
+}
+
+func (b0 DisconnectSocialLoginRequest_builder) Build() *DisconnectSocialLoginRequest {
+	m0 := &DisconnectSocialLoginRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.ProviderName = b.ProviderName
+	return m0
+}
+
 type DisconnectSocialLoginResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -463,13 +761,20 @@ func (x *DisconnectSocialLoginResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DisconnectSocialLoginResponse.ProtoReflect.Descriptor instead.
-func (*DisconnectSocialLoginResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{7}
+type DisconnectSocialLoginResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DisconnectSocialLoginResponse_builder) Build() *DisconnectSocialLoginResponse {
+	m0 := &DisconnectSocialLoginResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type DeleteAccountRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -500,11 +805,6 @@ func (x *DeleteAccountRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteAccountRequest.ProtoReflect.Descriptor instead.
-func (*DeleteAccountRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *DeleteAccountRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -512,8 +812,26 @@ func (x *DeleteAccountRequest) GetId() int64 {
 	return 0
 }
 
+func (x *DeleteAccountRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type DeleteAccountRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 DeleteAccountRequest_builder) Build() *DeleteAccountRequest {
+	m0 := &DeleteAccountRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type DeleteAccountResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -543,9 +861,16 @@ func (x *DeleteAccountResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteAccountResponse.ProtoReflect.Descriptor instead.
-func (*DeleteAccountResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{9}
+type DeleteAccountResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteAccountResponse_builder) Build() *DeleteAccountResponse {
+	m0 := &DeleteAccountResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 var File_services_settings_accounts_proto protoreflect.FileDescriptor
@@ -608,18 +933,6 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"\rUpdateAccount\x12'.services.settings.UpdateAccountRequest\x1a(.services.settings.UpdateAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x8d\x01\n" +
 	"\x15DisconnectSocialLogin\x12/.services.settings.DisconnectSocialLoginRequest\x1a0.services.settings.DisconnectSocialLoginResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
 	"\rDeleteAccount\x12'.services.settings.DeleteAccountRequest\x1a(.services.settings.DeleteAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
-
-var (
-	file_services_settings_accounts_proto_rawDescOnce sync.Once
-	file_services_settings_accounts_proto_rawDescData []byte
-)
-
-func file_services_settings_accounts_proto_rawDescGZIP() []byte {
-	file_services_settings_accounts_proto_rawDescOnce.Do(func() {
-		file_services_settings_accounts_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_settings_accounts_proto_rawDesc), len(file_services_settings_accounts_proto_rawDesc)))
-	})
-	return file_services_settings_accounts_proto_rawDescData
-}
 
 var file_services_settings_accounts_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_settings_accounts_proto_goTypes = []any{

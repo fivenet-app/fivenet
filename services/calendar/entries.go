@@ -10,7 +10,6 @@ import (
 	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -289,7 +288,8 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 			WHERE(mysql.AND(
 				tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntry().GetId())),
 				tCalendarEntry.CalendarID.EQ(mysql.Int64(req.GetEntry().GetCalendarId())),
-			))
+			)).
+			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -416,7 +416,8 @@ func (s *Server) DeleteCalendarEntry(
 		WHERE(mysql.AND(
 			tCalendarEntry.CalendarID.EQ(mysql.Int64(entry.GetCalendarId())),
 			tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntryId())),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -432,7 +433,7 @@ func (s *Server) getEntry(
 	userInfo *userinfo.UserInfo,
 	condition mysql.BoolExpression,
 ) (*calendarentries.CalendarEntry, error) {
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tCalendarEntry.

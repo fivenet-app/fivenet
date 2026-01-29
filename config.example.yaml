@@ -27,7 +27,7 @@ log:
     cron: "INFO"
     perms: "INFO"
 
-# Must be 32 chars (bytes) long
+# Must be exactly 32 chars (bytes) long
 secret: "your_generated_db_secret_32_char"
 
 # Indicates whether to ignore database and nats requirements on startup
@@ -38,6 +38,7 @@ jwt:
 
 http:
   listen: ":8080"
+  # It is recommended to use localhost for the admin port (metrics and go debug access).
   adminListen: ":7070"
   publicURL: "https://fivenet.example.com"
   origins:

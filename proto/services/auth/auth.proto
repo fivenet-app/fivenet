@@ -17,6 +17,33 @@ import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth;auth";
 
+message LoginRequest {
+  string username = 1 [(buf.validate.field).string = {
+    min_len: 3
+    max_len: 24
+    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$"
+  }];
+  string password = 2 [
+    (buf.validate.field).string = {
+      min_len: 6
+      max_bytes: 70
+    },
+    (codegen.audit.redacted) = true
+  ];
+}
+
+message LoginResponse {
+  resources.timestamp.Timestamp expires = 1;
+  int64 account_id = 2;
+  optional ChooseCharacterResponse char = 3;
+}
+
+message LogoutRequest {}
+
+message LogoutResponse {
+  bool success = 1;
+}
+
 message CreateAccountRequest {
   string reg_token = 1 [
     (buf.validate.field).string = {
@@ -49,33 +76,6 @@ message CreateAccountResponse {
   int64 account_id = 1;
 }
 
-message LoginRequest {
-  string username = 1 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 24
-    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$"
-  }];
-  string password = 2 [
-    (buf.validate.field).string = {
-      min_len: 6
-      max_bytes: 70
-    },
-    (codegen.audit.redacted) = true
-  ];
-}
-
-message LoginResponse {
-  resources.timestamp.Timestamp expires = 1;
-  int64 account_id = 2;
-  optional ChooseCharacterResponse char = 3;
-}
-
-message LogoutRequest {}
-
-message LogoutResponse {
-  bool success = 1;
-}
-
 message ChangePasswordRequest {
   string current = 1 [
     (buf.validate.field).string = {
@@ -93,9 +93,7 @@ message ChangePasswordRequest {
   ];
 }
 
-message ChangePasswordResponse {
-  resources.timestamp.Timestamp expires = 1;
-}
+message ChangePasswordResponse {}
 
 message ChangeUsernameRequest {
   string current = 1 [(buf.validate.field).string = {
@@ -156,12 +154,31 @@ message ChooseCharacterRequest {
 }
 
 message ChooseCharacterResponse {
-  string username = 1;
+  string token = 1;
+  string username = 2;
+
+  resources.timestamp.Timestamp expires = 3;
+  resources.jobs.props.JobProps job_props = 4;
+  resources.users.User char = 5 [(tagger.tags) = "alias:\"user\""];
+
+  repeated resources.permissions.permissions.Permission permissions = 6;
+  repeated resources.permissions.attributes.RoleAttribute attributes = 7;
+}
+
+message ImpersonateJobRequest {
+  int32 job_grade = 1 [(buf.validate.field).int32.gte = 0];
+}
+
+message ImpersonateJobResponse {
+  string token = 1;
   resources.timestamp.Timestamp expires = 2;
-  resources.jobs.props.JobProps job_props = 3;
-  resources.users.User char = 4 [(tagger.tags) = "alias:\"user\""];
-  repeated resources.permissions.permissions.Permission permissions = 5;
-  repeated resources.permissions.attributes.RoleAttribute attributes = 6;
+
+  resources.users.User char = 3 [(tagger.tags) = "alias:\"user\""];
+
+  repeated resources.permissions.permissions.Permission permissions = 4;
+  repeated resources.permissions.attributes.RoleAttribute attributes = 5;
+
+  bool state = 6;
 }
 
 message DeleteSocialLoginRequest {
@@ -184,9 +201,12 @@ message SetSuperuserModeRequest {
 }
 
 message SetSuperuserModeResponse {
+  string token = 1;
   resources.timestamp.Timestamp expires = 2;
+
   optional resources.jobs.props.JobProps job_props = 3;
   resources.users.User char = 4 [(tagger.tags) = "alias:\"user\""];
+
   repeated resources.permissions.permissions.Permission permissions = 5;
   repeated resources.permissions.attributes.RoleAttribute attributes = 6;
 }
@@ -210,6 +230,14 @@ service AuthService {
   rpc GetCharacters(GetCharactersRequest) returns (GetCharactersResponse);
   rpc ChooseCharacter(ChooseCharacterRequest) returns (ChooseCharacterResponse) {
     option (codegen.perms.perms) = {enabled: true};
+  }
+
+  rpc ImpersonateJob(ImpersonateJobRequest) returns (ImpersonateJobResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "settings.SettingsService"
+      name: "UpdateRolePerms"
+    };
   }
 
   rpc GetAccountInfo(GetAccountInfoRequest) returns (GetAccountInfoResponse);

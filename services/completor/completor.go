@@ -10,7 +10,6 @@ import (
 	pbcompletor "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor"
 	permscompletor "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -30,13 +29,12 @@ func (s *Server) CompleteCitizens(
 ) (*pbcompletor.CompleteCitizensResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tUsers := tables.User().AS("user_short")
+	tUsers := table.FivenetUser.AS("user_short")
 
+	orderBys := []mysql.OrderByClause{}
 	condition := s.customDB.Conditions.User.GetFilter(tUsers.Alias())
 
 	currentJob := req.CurrentJob != nil && req.GetCurrentJob()
-
-	orderBys := []mysql.OrderByClause{}
 
 	if currentJob {
 		condition = condition.AND(

@@ -11,11 +11,11 @@ import (
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -118,7 +118,7 @@ func (s *Server) UploadMugshot(
 	}
 	targetUserId := int32(parentId)
 
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 
 	u := &users.User{}
 	stmt := tUser.
@@ -204,7 +204,7 @@ func (s *Server) DeleteMugshot(
 		return nil, errorscitizens.ErrReasonRequired
 	}
 
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 
 	u := &users.User{}
 	uStmt := tUser.

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/wiki/activity/activity.proto
 
+//go:build !protoopaque
+
 package wikiactivity
 
 import (
@@ -16,7 +18,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -84,17 +85,12 @@ func (x PageActivityType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use PageActivityType.Descriptor instead.
-func (PageActivityType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_wiki_activity_activity_proto_rawDescGZIP(), []int{0}
-}
-
 type PageActivity struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	PageId          int64                  `protobuf:"varint,3,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
-	ActivityType    PageActivityType       `protobuf:"varint,4,opt,name=activity_type,json=activityType,proto3,enum=resources.wiki.PageActivityType" json:"activity_type,omitempty"`
+	ActivityType    PageActivityType       `protobuf:"varint,4,opt,name=activity_type,json=activityType,proto3,enum=resources.wiki.activity.PageActivityType" json:"activity_type,omitempty"`
 	CreatorId       *int32                 `protobuf:"varint,5,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	Creator         *short.UserShort       `protobuf:"bytes,6,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob      string                 `protobuf:"bytes,7,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
@@ -128,11 +124,6 @@ func (x *PageActivity) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PageActivity.ProtoReflect.Descriptor instead.
-func (*PageActivity) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_activity_activity_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *PageActivity) GetId() int64 {
@@ -205,8 +196,146 @@ func (x *PageActivity) GetData() *PageActivityData {
 	return nil
 }
 
+func (x *PageActivity) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *PageActivity) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *PageActivity) SetPageId(v int64) {
+	x.PageId = v
+}
+
+func (x *PageActivity) SetActivityType(v PageActivityType) {
+	x.ActivityType = v
+}
+
+func (x *PageActivity) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *PageActivity) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *PageActivity) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *PageActivity) SetCreatorJobLabel(v string) {
+	x.CreatorJobLabel = &v
+}
+
+func (x *PageActivity) SetReason(v string) {
+	x.Reason = &v
+}
+
+func (x *PageActivity) SetData(v *PageActivityData) {
+	x.Data = v
+}
+
+func (x *PageActivity) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *PageActivity) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *PageActivity) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *PageActivity) HasCreatorJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorJobLabel != nil
+}
+
+func (x *PageActivity) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reason != nil
+}
+
+func (x *PageActivity) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *PageActivity) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *PageActivity) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *PageActivity) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *PageActivity) ClearCreatorJobLabel() {
+	x.CreatorJobLabel = nil
+}
+
+func (x *PageActivity) ClearReason() {
+	x.Reason = nil
+}
+
+func (x *PageActivity) ClearData() {
+	x.Data = nil
+}
+
+type PageActivity_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id              int64
+	CreatedAt       *timestamp.Timestamp
+	PageId          int64
+	ActivityType    PageActivityType
+	CreatorId       *int32
+	Creator         *short.UserShort
+	CreatorJob      string
+	CreatorJobLabel *string
+	Reason          *string
+	Data            *PageActivityData
+}
+
+func (b0 PageActivity_builder) Build() *PageActivity {
+	m0 := &PageActivity{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.PageId = b.PageId
+	x.ActivityType = b.ActivityType
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	x.CreatorJobLabel = b.CreatorJobLabel
+	x.Reason = b.Reason
+	x.Data = b.Data
+	return m0
+}
+
 type PageActivityData struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*PageActivityData_Updated
@@ -241,11 +370,6 @@ func (x *PageActivityData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PageActivityData.ProtoReflect.Descriptor instead.
-func (*PageActivityData) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_activity_activity_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *PageActivityData) GetData() isPageActivityData_Data {
 	if x != nil {
 		return x.Data
@@ -271,6 +395,111 @@ func (x *PageActivityData) GetAccessUpdated() *PageAccessUpdated {
 	return nil
 }
 
+func (x *PageActivityData) SetUpdated(v *PageUpdated) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &PageActivityData_Updated{v}
+}
+
+func (x *PageActivityData) SetAccessUpdated(v *PageAccessUpdated) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &PageActivityData_AccessUpdated{v}
+}
+
+func (x *PageActivityData) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *PageActivityData) HasUpdated() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*PageActivityData_Updated)
+	return ok
+}
+
+func (x *PageActivityData) HasAccessUpdated() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*PageActivityData_AccessUpdated)
+	return ok
+}
+
+func (x *PageActivityData) ClearData() {
+	x.Data = nil
+}
+
+func (x *PageActivityData) ClearUpdated() {
+	if _, ok := x.Data.(*PageActivityData_Updated); ok {
+		x.Data = nil
+	}
+}
+
+func (x *PageActivityData) ClearAccessUpdated() {
+	if _, ok := x.Data.(*PageActivityData_AccessUpdated); ok {
+		x.Data = nil
+	}
+}
+
+const PageActivityData_Data_not_set_case case_PageActivityData_Data = 0
+const PageActivityData_Updated_case case_PageActivityData_Data = 1
+const PageActivityData_AccessUpdated_case case_PageActivityData_Data = 2
+
+func (x *PageActivityData) WhichData() case_PageActivityData_Data {
+	if x == nil {
+		return PageActivityData_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *PageActivityData_Updated:
+		return PageActivityData_Updated_case
+	case *PageActivityData_AccessUpdated:
+		return PageActivityData_AccessUpdated_case
+	default:
+		return PageActivityData_Data_not_set_case
+	}
+}
+
+type PageActivityData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	Updated       *PageUpdated
+	AccessUpdated *PageAccessUpdated
+	// -- end of Data
+}
+
+func (b0 PageActivityData_builder) Build() *PageActivityData {
+	m0 := &PageActivityData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Updated != nil {
+		x.Data = &PageActivityData_Updated{b.Updated}
+	}
+	if b.AccessUpdated != nil {
+		x.Data = &PageActivityData_AccessUpdated{b.AccessUpdated}
+	}
+	return m0
+}
+
+type case_PageActivityData_Data protoreflect.FieldNumber
+
+func (x case_PageActivityData_Data) String() string {
+	md := file_resources_wiki_activity_activity_proto_msgTypes[1].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isPageActivityData_Data interface {
 	isPageActivityData_Data()
 }
@@ -288,7 +517,7 @@ func (*PageActivityData_Updated) isPageActivityData_Data() {}
 func (*PageActivityData_AccessUpdated) isPageActivityData_Data() {}
 
 type PageUpdated struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
+	state            protoimpl.MessageState `protogen:"hybrid.v1"`
 	TitleDiff        *string                `protobuf:"bytes,1,opt,name=title_diff,json=titleDiff,proto3,oneof" json:"title_diff,omitempty"`
 	TitleCdiff       *content.ContentDiff   `protobuf:"bytes,5,opt,name=title_cdiff,json=titleCdiff,proto3,oneof" json:"title_cdiff,omitempty"`
 	DescriptionDiff  *string                `protobuf:"bytes,2,opt,name=description_diff,json=descriptionDiff,proto3,oneof" json:"description_diff,omitempty"`
@@ -323,11 +552,6 @@ func (x *PageUpdated) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PageUpdated.ProtoReflect.Descriptor instead.
-func (*PageUpdated) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_activity_activity_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *PageUpdated) GetTitleDiff() string {
@@ -379,8 +603,139 @@ func (x *PageUpdated) GetFilesChange() *PageFilesChange {
 	return nil
 }
 
+func (x *PageUpdated) SetTitleDiff(v string) {
+	x.TitleDiff = &v
+}
+
+func (x *PageUpdated) SetTitleCdiff(v *content.ContentDiff) {
+	x.TitleCdiff = v
+}
+
+func (x *PageUpdated) SetDescriptionDiff(v string) {
+	x.DescriptionDiff = &v
+}
+
+func (x *PageUpdated) SetDescriptionCdiff(v *content.ContentDiff) {
+	x.DescriptionCdiff = v
+}
+
+func (x *PageUpdated) SetContentDiff(v string) {
+	x.ContentDiff = &v
+}
+
+func (x *PageUpdated) SetContentCdiff(v *content.ContentDiff) {
+	x.ContentCdiff = v
+}
+
+func (x *PageUpdated) SetFilesChange(v *PageFilesChange) {
+	x.FilesChange = v
+}
+
+func (x *PageUpdated) HasTitleDiff() bool {
+	if x == nil {
+		return false
+	}
+	return x.TitleDiff != nil
+}
+
+func (x *PageUpdated) HasTitleCdiff() bool {
+	if x == nil {
+		return false
+	}
+	return x.TitleCdiff != nil
+}
+
+func (x *PageUpdated) HasDescriptionDiff() bool {
+	if x == nil {
+		return false
+	}
+	return x.DescriptionDiff != nil
+}
+
+func (x *PageUpdated) HasDescriptionCdiff() bool {
+	if x == nil {
+		return false
+	}
+	return x.DescriptionCdiff != nil
+}
+
+func (x *PageUpdated) HasContentDiff() bool {
+	if x == nil {
+		return false
+	}
+	return x.ContentDiff != nil
+}
+
+func (x *PageUpdated) HasContentCdiff() bool {
+	if x == nil {
+		return false
+	}
+	return x.ContentCdiff != nil
+}
+
+func (x *PageUpdated) HasFilesChange() bool {
+	if x == nil {
+		return false
+	}
+	return x.FilesChange != nil
+}
+
+func (x *PageUpdated) ClearTitleDiff() {
+	x.TitleDiff = nil
+}
+
+func (x *PageUpdated) ClearTitleCdiff() {
+	x.TitleCdiff = nil
+}
+
+func (x *PageUpdated) ClearDescriptionDiff() {
+	x.DescriptionDiff = nil
+}
+
+func (x *PageUpdated) ClearDescriptionCdiff() {
+	x.DescriptionCdiff = nil
+}
+
+func (x *PageUpdated) ClearContentDiff() {
+	x.ContentDiff = nil
+}
+
+func (x *PageUpdated) ClearContentCdiff() {
+	x.ContentCdiff = nil
+}
+
+func (x *PageUpdated) ClearFilesChange() {
+	x.FilesChange = nil
+}
+
+type PageUpdated_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	TitleDiff        *string
+	TitleCdiff       *content.ContentDiff
+	DescriptionDiff  *string
+	DescriptionCdiff *content.ContentDiff
+	ContentDiff      *string
+	ContentCdiff     *content.ContentDiff
+	FilesChange      *PageFilesChange
+}
+
+func (b0 PageUpdated_builder) Build() *PageUpdated {
+	m0 := &PageUpdated{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.TitleDiff = b.TitleDiff
+	x.TitleCdiff = b.TitleCdiff
+	x.DescriptionDiff = b.DescriptionDiff
+	x.DescriptionCdiff = b.DescriptionCdiff
+	x.ContentDiff = b.ContentDiff
+	x.ContentCdiff = b.ContentCdiff
+	x.FilesChange = b.FilesChange
+	return m0
+}
+
 type PageFilesChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Added         int64                  `protobuf:"varint,1,opt,name=added,proto3" json:"added,omitempty"`
 	Deleted       int64                  `protobuf:"varint,2,opt,name=deleted,proto3" json:"deleted,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -412,11 +767,6 @@ func (x *PageFilesChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PageFilesChange.ProtoReflect.Descriptor instead.
-func (*PageFilesChange) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_activity_activity_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *PageFilesChange) GetAdded() int64 {
 	if x != nil {
 		return x.Added
@@ -431,8 +781,32 @@ func (x *PageFilesChange) GetDeleted() int64 {
 	return 0
 }
 
+func (x *PageFilesChange) SetAdded(v int64) {
+	x.Added = v
+}
+
+func (x *PageFilesChange) SetDeleted(v int64) {
+	x.Deleted = v
+}
+
+type PageFilesChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Added   int64
+	Deleted int64
+}
+
+func (b0 PageFilesChange_builder) Build() *PageFilesChange {
+	m0 := &PageFilesChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Added = b.Added
+	x.Deleted = b.Deleted
+	return m0
+}
+
 type PageAccessUpdated struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Jobs          *PageAccessJobsDiff    `protobuf:"bytes,1,opt,name=jobs,proto3" json:"jobs,omitempty"`
 	Users         *PageAccessUsersDiff   `protobuf:"bytes,2,opt,name=users,proto3" json:"users,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -464,11 +838,6 @@ func (x *PageAccessUpdated) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PageAccessUpdated.ProtoReflect.Descriptor instead.
-func (*PageAccessUpdated) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_activity_activity_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *PageAccessUpdated) GetJobs() *PageAccessJobsDiff {
 	if x != nil {
 		return x.Jobs
@@ -483,8 +852,54 @@ func (x *PageAccessUpdated) GetUsers() *PageAccessUsersDiff {
 	return nil
 }
 
+func (x *PageAccessUpdated) SetJobs(v *PageAccessJobsDiff) {
+	x.Jobs = v
+}
+
+func (x *PageAccessUpdated) SetUsers(v *PageAccessUsersDiff) {
+	x.Users = v
+}
+
+func (x *PageAccessUpdated) HasJobs() bool {
+	if x == nil {
+		return false
+	}
+	return x.Jobs != nil
+}
+
+func (x *PageAccessUpdated) HasUsers() bool {
+	if x == nil {
+		return false
+	}
+	return x.Users != nil
+}
+
+func (x *PageAccessUpdated) ClearJobs() {
+	x.Jobs = nil
+}
+
+func (x *PageAccessUpdated) ClearUsers() {
+	x.Users = nil
+}
+
+type PageAccessUpdated_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs  *PageAccessJobsDiff
+	Users *PageAccessUsersDiff
+}
+
+func (b0 PageAccessUpdated_builder) Build() *PageAccessUpdated {
+	m0 := &PageAccessUpdated{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	x.Users = b.Users
+	return m0
+}
+
 type PageAccessJobsDiff struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	ToCreate      []*access.PageJobAccess `protobuf:"bytes,1,rep,name=to_create,json=toCreate,proto3" json:"to_create,omitempty"`
 	ToUpdate      []*access.PageJobAccess `protobuf:"bytes,2,rep,name=to_update,json=toUpdate,proto3" json:"to_update,omitempty"`
 	ToDelete      []*access.PageJobAccess `protobuf:"bytes,3,rep,name=to_delete,json=toDelete,proto3" json:"to_delete,omitempty"`
@@ -517,11 +932,6 @@ func (x *PageAccessJobsDiff) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PageAccessJobsDiff.ProtoReflect.Descriptor instead.
-func (*PageAccessJobsDiff) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_activity_activity_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *PageAccessJobsDiff) GetToCreate() []*access.PageJobAccess {
 	if x != nil {
 		return x.ToCreate
@@ -543,8 +953,38 @@ func (x *PageAccessJobsDiff) GetToDelete() []*access.PageJobAccess {
 	return nil
 }
 
+func (x *PageAccessJobsDiff) SetToCreate(v []*access.PageJobAccess) {
+	x.ToCreate = v
+}
+
+func (x *PageAccessJobsDiff) SetToUpdate(v []*access.PageJobAccess) {
+	x.ToUpdate = v
+}
+
+func (x *PageAccessJobsDiff) SetToDelete(v []*access.PageJobAccess) {
+	x.ToDelete = v
+}
+
+type PageAccessJobsDiff_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ToCreate []*access.PageJobAccess
+	ToUpdate []*access.PageJobAccess
+	ToDelete []*access.PageJobAccess
+}
+
+func (b0 PageAccessJobsDiff_builder) Build() *PageAccessJobsDiff {
+	m0 := &PageAccessJobsDiff{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ToCreate = b.ToCreate
+	x.ToUpdate = b.ToUpdate
+	x.ToDelete = b.ToDelete
+	return m0
+}
+
 type PageAccessUsersDiff struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	ToCreate      []*access.PageUserAccess `protobuf:"bytes,1,rep,name=to_create,json=toCreate,proto3" json:"to_create,omitempty"`
 	ToUpdate      []*access.PageUserAccess `protobuf:"bytes,2,rep,name=to_update,json=toUpdate,proto3" json:"to_update,omitempty"`
 	ToDelete      []*access.PageUserAccess `protobuf:"bytes,3,rep,name=to_delete,json=toDelete,proto3" json:"to_delete,omitempty"`
@@ -577,11 +1017,6 @@ func (x *PageAccessUsersDiff) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PageAccessUsersDiff.ProtoReflect.Descriptor instead.
-func (*PageAccessUsersDiff) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_activity_activity_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *PageAccessUsersDiff) GetToCreate() []*access.PageUserAccess {
 	if x != nil {
 		return x.ToCreate
@@ -603,35 +1038,65 @@ func (x *PageAccessUsersDiff) GetToDelete() []*access.PageUserAccess {
 	return nil
 }
 
+func (x *PageAccessUsersDiff) SetToCreate(v []*access.PageUserAccess) {
+	x.ToCreate = v
+}
+
+func (x *PageAccessUsersDiff) SetToUpdate(v []*access.PageUserAccess) {
+	x.ToUpdate = v
+}
+
+func (x *PageAccessUsersDiff) SetToDelete(v []*access.PageUserAccess) {
+	x.ToDelete = v
+}
+
+type PageAccessUsersDiff_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ToCreate []*access.PageUserAccess
+	ToUpdate []*access.PageUserAccess
+	ToDelete []*access.PageUserAccess
+}
+
+func (b0 PageAccessUsersDiff_builder) Build() *PageAccessUsersDiff {
+	m0 := &PageAccessUsersDiff{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ToCreate = b.ToCreate
+	x.ToUpdate = b.ToUpdate
+	x.ToDelete = b.ToDelete
+	return m0
+}
+
 var File_resources_wiki_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_wiki_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"&resources/wiki/activity/activity.proto\x12\x0eresources.wiki\x1a!codegen/dbscanner/dbscanner.proto\x1a,resources/common/content/diff_activity.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\"resources/wiki/access/access.proto\x1a\x13tagger/tagger.proto\"\x99\x04\n" +
+	"&resources/wiki/activity/activity.proto\x12\x17resources.wiki.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a,resources/common/content/diff_activity.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\"resources/wiki/access/access.proto\x1a\x13tagger/tagger.proto\"\xab\x04\n" +
 	"\fPageActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12\x17\n" +
-	"\apage_id\x18\x03 \x01(\x03R\x06pageId\x12E\n" +
-	"\ractivity_type\x18\x04 \x01(\x0e2 .resources.wiki.PageActivityTypeR\factivityType\x12\"\n" +
+	"\apage_id\x18\x03 \x01(\x03R\x06pageId\x12N\n" +
+	"\ractivity_type\x18\x04 \x01(\x0e2).resources.wiki.activity.PageActivityTypeR\factivityType\x12\"\n" +
 	"\n" +
 	"creator_id\x18\x05 \x01(\x05H\x00R\tcreatorId\x88\x01\x01\x12U\n" +
 	"\acreator\x18\x06 \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x01R\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\a \x01(\tR\n" +
 	"creatorJob\x12/\n" +
 	"\x11creator_job_label\x18\b \x01(\tH\x02R\x0fcreatorJobLabel\x88\x01\x01\x12\x1b\n" +
-	"\x06reason\x18\t \x01(\tH\x03R\x06reason\x88\x01\x01\x124\n" +
+	"\x06reason\x18\t \x01(\tH\x03R\x06reason\x88\x01\x01\x12=\n" +
 	"\x04data\x18\n" +
-	" \x01(\v2 .resources.wiki.PageActivityDataR\x04dataB\r\n" +
+	" \x01(\v2).resources.wiki.activity.PageActivityDataR\x04dataB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\t\n" +
-	"\a_reason\"\xa7\x01\n" +
-	"\x10PageActivityData\x127\n" +
-	"\aupdated\x18\x01 \x01(\v2\x1b.resources.wiki.PageUpdatedH\x00R\aupdated\x12J\n" +
-	"\x0eaccess_updated\x18\x02 \x01(\v2!.resources.wiki.PageAccessUpdatedH\x00R\raccessUpdated:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
-	"\x04data\"\xc7\x04\n" +
+	"\a_reason\"\xb9\x01\n" +
+	"\x10PageActivityData\x12@\n" +
+	"\aupdated\x18\x01 \x01(\v2$.resources.wiki.activity.PageUpdatedH\x00R\aupdated\x12S\n" +
+	"\x0eaccess_updated\x18\x02 \x01(\v2*.resources.wiki.activity.PageAccessUpdatedH\x00R\raccessUpdated:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
+	"\x04data\"\xd0\x04\n" +
 	"\vPageUpdated\x12\"\n" +
 	"\n" +
 	"title_diff\x18\x01 \x01(\tH\x00R\ttitleDiff\x88\x01\x01\x12K\n" +
@@ -640,8 +1105,8 @@ const file_resources_wiki_activity_activity_proto_rawDesc = "" +
 	"\x10description_diff\x18\x02 \x01(\tH\x02R\x0fdescriptionDiff\x88\x01\x01\x12W\n" +
 	"\x11description_cdiff\x18\x06 \x01(\v2%.resources.common.content.ContentDiffH\x03R\x10descriptionCdiff\x88\x01\x01\x12&\n" +
 	"\fcontent_diff\x18\x03 \x01(\tH\x04R\vcontentDiff\x88\x01\x01\x12O\n" +
-	"\rcontent_cdiff\x18\a \x01(\v2%.resources.common.content.ContentDiffH\x05R\fcontentCdiff\x88\x01\x01\x12G\n" +
-	"\ffiles_change\x18\x04 \x01(\v2\x1f.resources.wiki.PageFilesChangeH\x06R\vfilesChange\x88\x01\x01B\r\n" +
+	"\rcontent_cdiff\x18\a \x01(\v2%.resources.common.content.ContentDiffH\x05R\fcontentCdiff\x88\x01\x01\x12P\n" +
+	"\ffiles_change\x18\x04 \x01(\v2(.resources.wiki.activity.PageFilesChangeH\x06R\vfilesChange\x88\x01\x01B\r\n" +
 	"\v_title_diffB\x0e\n" +
 	"\f_title_cdiffB\x13\n" +
 	"\x11_description_diffB\x14\n" +
@@ -651,10 +1116,10 @@ const file_resources_wiki_activity_activity_proto_rawDesc = "" +
 	"\r_files_change\"A\n" +
 	"\x0fPageFilesChange\x12\x14\n" +
 	"\x05added\x18\x01 \x01(\x03R\x05added\x12\x18\n" +
-	"\adeleted\x18\x02 \x01(\x03R\adeleted\"\x86\x01\n" +
-	"\x11PageAccessUpdated\x126\n" +
-	"\x04jobs\x18\x01 \x01(\v2\".resources.wiki.PageAccessJobsDiffR\x04jobs\x129\n" +
-	"\x05users\x18\x02 \x01(\v2#.resources.wiki.PageAccessUsersDiffR\x05users\"\xdd\x01\n" +
+	"\adeleted\x18\x02 \x01(\x03R\adeleted\"\x98\x01\n" +
+	"\x11PageAccessUpdated\x12?\n" +
+	"\x04jobs\x18\x01 \x01(\v2+.resources.wiki.activity.PageAccessJobsDiffR\x04jobs\x12B\n" +
+	"\x05users\x18\x02 \x01(\v2,.resources.wiki.activity.PageAccessUsersDiffR\x05users\"\xdd\x01\n" +
 	"\x12PageAccessJobsDiff\x12A\n" +
 	"\tto_create\x18\x01 \x03(\v2$.resources.wiki.access.PageJobAccessR\btoCreate\x12A\n" +
 	"\tto_update\x18\x02 \x03(\v2$.resources.wiki.access.PageJobAccessR\btoUpdate\x12A\n" +
@@ -672,29 +1137,17 @@ const file_resources_wiki_activity_activity_proto_rawDesc = "" +
 	"\x1aPAGE_ACTIVITY_TYPE_DELETED\x10\x05\x12$\n" +
 	" PAGE_ACTIVITY_TYPE_DRAFT_TOGGLED\x10\x06BXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/activity;wikiactivityb\x06proto3"
 
-var (
-	file_resources_wiki_activity_activity_proto_rawDescOnce sync.Once
-	file_resources_wiki_activity_activity_proto_rawDescData []byte
-)
-
-func file_resources_wiki_activity_activity_proto_rawDescGZIP() []byte {
-	file_resources_wiki_activity_activity_proto_rawDescOnce.Do(func() {
-		file_resources_wiki_activity_activity_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_wiki_activity_activity_proto_rawDesc), len(file_resources_wiki_activity_activity_proto_rawDesc)))
-	})
-	return file_resources_wiki_activity_activity_proto_rawDescData
-}
-
 var file_resources_wiki_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_wiki_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_resources_wiki_activity_activity_proto_goTypes = []any{
-	(PageActivityType)(0),         // 0: resources.wiki.PageActivityType
-	(*PageActivity)(nil),          // 1: resources.wiki.PageActivity
-	(*PageActivityData)(nil),      // 2: resources.wiki.PageActivityData
-	(*PageUpdated)(nil),           // 3: resources.wiki.PageUpdated
-	(*PageFilesChange)(nil),       // 4: resources.wiki.PageFilesChange
-	(*PageAccessUpdated)(nil),     // 5: resources.wiki.PageAccessUpdated
-	(*PageAccessJobsDiff)(nil),    // 6: resources.wiki.PageAccessJobsDiff
-	(*PageAccessUsersDiff)(nil),   // 7: resources.wiki.PageAccessUsersDiff
+	(PageActivityType)(0),         // 0: resources.wiki.activity.PageActivityType
+	(*PageActivity)(nil),          // 1: resources.wiki.activity.PageActivity
+	(*PageActivityData)(nil),      // 2: resources.wiki.activity.PageActivityData
+	(*PageUpdated)(nil),           // 3: resources.wiki.activity.PageUpdated
+	(*PageFilesChange)(nil),       // 4: resources.wiki.activity.PageFilesChange
+	(*PageAccessUpdated)(nil),     // 5: resources.wiki.activity.PageAccessUpdated
+	(*PageAccessJobsDiff)(nil),    // 6: resources.wiki.activity.PageAccessJobsDiff
+	(*PageAccessUsersDiff)(nil),   // 7: resources.wiki.activity.PageAccessUsersDiff
 	(*timestamp.Timestamp)(nil),   // 8: resources.timestamp.Timestamp
 	(*short.UserShort)(nil),       // 9: resources.users.short.UserShort
 	(*content.ContentDiff)(nil),   // 10: resources.common.content.ContentDiff
@@ -702,24 +1155,24 @@ var file_resources_wiki_activity_activity_proto_goTypes = []any{
 	(*access.PageUserAccess)(nil), // 12: resources.wiki.access.PageUserAccess
 }
 var file_resources_wiki_activity_activity_proto_depIdxs = []int32{
-	8,  // 0: resources.wiki.PageActivity.created_at:type_name -> resources.timestamp.Timestamp
-	0,  // 1: resources.wiki.PageActivity.activity_type:type_name -> resources.wiki.PageActivityType
-	9,  // 2: resources.wiki.PageActivity.creator:type_name -> resources.users.short.UserShort
-	2,  // 3: resources.wiki.PageActivity.data:type_name -> resources.wiki.PageActivityData
-	3,  // 4: resources.wiki.PageActivityData.updated:type_name -> resources.wiki.PageUpdated
-	5,  // 5: resources.wiki.PageActivityData.access_updated:type_name -> resources.wiki.PageAccessUpdated
-	10, // 6: resources.wiki.PageUpdated.title_cdiff:type_name -> resources.common.content.ContentDiff
-	10, // 7: resources.wiki.PageUpdated.description_cdiff:type_name -> resources.common.content.ContentDiff
-	10, // 8: resources.wiki.PageUpdated.content_cdiff:type_name -> resources.common.content.ContentDiff
-	4,  // 9: resources.wiki.PageUpdated.files_change:type_name -> resources.wiki.PageFilesChange
-	6,  // 10: resources.wiki.PageAccessUpdated.jobs:type_name -> resources.wiki.PageAccessJobsDiff
-	7,  // 11: resources.wiki.PageAccessUpdated.users:type_name -> resources.wiki.PageAccessUsersDiff
-	11, // 12: resources.wiki.PageAccessJobsDiff.to_create:type_name -> resources.wiki.access.PageJobAccess
-	11, // 13: resources.wiki.PageAccessJobsDiff.to_update:type_name -> resources.wiki.access.PageJobAccess
-	11, // 14: resources.wiki.PageAccessJobsDiff.to_delete:type_name -> resources.wiki.access.PageJobAccess
-	12, // 15: resources.wiki.PageAccessUsersDiff.to_create:type_name -> resources.wiki.access.PageUserAccess
-	12, // 16: resources.wiki.PageAccessUsersDiff.to_update:type_name -> resources.wiki.access.PageUserAccess
-	12, // 17: resources.wiki.PageAccessUsersDiff.to_delete:type_name -> resources.wiki.access.PageUserAccess
+	8,  // 0: resources.wiki.activity.PageActivity.created_at:type_name -> resources.timestamp.Timestamp
+	0,  // 1: resources.wiki.activity.PageActivity.activity_type:type_name -> resources.wiki.activity.PageActivityType
+	9,  // 2: resources.wiki.activity.PageActivity.creator:type_name -> resources.users.short.UserShort
+	2,  // 3: resources.wiki.activity.PageActivity.data:type_name -> resources.wiki.activity.PageActivityData
+	3,  // 4: resources.wiki.activity.PageActivityData.updated:type_name -> resources.wiki.activity.PageUpdated
+	5,  // 5: resources.wiki.activity.PageActivityData.access_updated:type_name -> resources.wiki.activity.PageAccessUpdated
+	10, // 6: resources.wiki.activity.PageUpdated.title_cdiff:type_name -> resources.common.content.ContentDiff
+	10, // 7: resources.wiki.activity.PageUpdated.description_cdiff:type_name -> resources.common.content.ContentDiff
+	10, // 8: resources.wiki.activity.PageUpdated.content_cdiff:type_name -> resources.common.content.ContentDiff
+	4,  // 9: resources.wiki.activity.PageUpdated.files_change:type_name -> resources.wiki.activity.PageFilesChange
+	6,  // 10: resources.wiki.activity.PageAccessUpdated.jobs:type_name -> resources.wiki.activity.PageAccessJobsDiff
+	7,  // 11: resources.wiki.activity.PageAccessUpdated.users:type_name -> resources.wiki.activity.PageAccessUsersDiff
+	11, // 12: resources.wiki.activity.PageAccessJobsDiff.to_create:type_name -> resources.wiki.access.PageJobAccess
+	11, // 13: resources.wiki.activity.PageAccessJobsDiff.to_update:type_name -> resources.wiki.access.PageJobAccess
+	11, // 14: resources.wiki.activity.PageAccessJobsDiff.to_delete:type_name -> resources.wiki.access.PageJobAccess
+	12, // 15: resources.wiki.activity.PageAccessUsersDiff.to_create:type_name -> resources.wiki.access.PageUserAccess
+	12, // 16: resources.wiki.activity.PageAccessUsersDiff.to_update:type_name -> resources.wiki.access.PageUserAccess
+	12, // 17: resources.wiki.activity.PageAccessUsersDiff.to_delete:type_name -> resources.wiki.access.PageUserAccess
 	18, // [18:18] is the sub-list for method output_type
 	18, // [18:18] is the sub-list for method input_type
 	18, // [18:18] is the sub-list for extension type_name

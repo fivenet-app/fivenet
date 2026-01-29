@@ -5,10 +5,10 @@
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
 import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
@@ -31,6 +31,8 @@ export interface ListCalendarsRequest {
      */
     pagination?: PaginationRequest;
     /**
+     * Search params
+     *
      * @generated from protobuf field: bool only_public = 2
      */
     onlyPublic: boolean;
@@ -42,6 +44,10 @@ export interface ListCalendarsRequest {
      * @generated from protobuf field: optional resources.timestamp.Timestamp after = 4
      */
     after?: Timestamp;
+    /**
+     * @generated from protobuf field: repeated int64 calendar_ids = 5
+     */
+    calendarIds: number[];
 }
 /**
  * @generated from protobuf message services.calendar.ListCalendarsResponse
@@ -357,12 +363,14 @@ class ListCalendarsRequest$Type extends MessageType<ListCalendarsRequest> {
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "only_public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "min_access_level", kind: "enum", opt: true, T: () => ["resources.calendar.access.AccessLevel", AccessLevel, "ACCESS_LEVEL_"] },
-            { no: 4, name: "after", kind: "message", T: () => Timestamp }
+            { no: 4, name: "after", kind: "message", T: () => Timestamp },
+            { no: 5, name: "calendar_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ListCalendarsRequest>): ListCalendarsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.onlyPublic = false;
+        message.calendarIds = [];
         if (value !== undefined)
             reflectionMergePartial<ListCalendarsRequest>(this, message, value);
         return message;
@@ -383,6 +391,13 @@ class ListCalendarsRequest$Type extends MessageType<ListCalendarsRequest> {
                     break;
                 case /* optional resources.timestamp.Timestamp after */ 4:
                     message.after = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.after);
+                    break;
+                case /* repeated int64 calendar_ids */ 5:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.calendarIds.push(reader.int64().toNumber());
+                    else
+                        message.calendarIds.push(reader.int64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -408,6 +423,13 @@ class ListCalendarsRequest$Type extends MessageType<ListCalendarsRequest> {
         /* optional resources.timestamp.Timestamp after = 4; */
         if (message.after)
             Timestamp.internalBinaryWrite(message.after, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated int64 calendar_ids = 5; */
+        if (message.calendarIds.length) {
+            writer.tag(5, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.calendarIds.length; i++)
+                writer.int64(message.calendarIds[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

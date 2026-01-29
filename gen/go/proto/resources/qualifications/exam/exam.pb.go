@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/qualifications/exam/exam.proto
 
+//go:build !protoopaque
+
 package qualificationsexam
 
 import (
@@ -15,7 +17,6 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -73,11 +74,6 @@ func (x QualificationExamMode) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use QualificationExamMode.Descriptor instead.
-func (QualificationExamMode) EnumDescriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{0}
-}
-
 type AutoGradeMode int32
 
 const (
@@ -122,13 +118,8 @@ func (x AutoGradeMode) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use AutoGradeMode.Descriptor instead.
-func (AutoGradeMode) EnumDescriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{1}
-}
-
 type QualificationExamSettings struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Time          *durationpb.Duration   `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
 	AutoGrade     bool                   `protobuf:"varint,2,opt,name=auto_grade,json=autoGrade,proto3" json:"auto_grade,omitempty"`
 	AutoGradeMode AutoGradeMode          `protobuf:"varint,3,opt,name=auto_grade_mode,json=autoGradeMode,proto3,enum=resources.qualifications.exam.AutoGradeMode" json:"auto_grade_mode,omitempty"`
@@ -162,11 +153,6 @@ func (x *QualificationExamSettings) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use QualificationExamSettings.ProtoReflect.Descriptor instead.
-func (*QualificationExamSettings) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *QualificationExamSettings) GetTime() *durationpb.Duration {
 	if x != nil {
 		return x.Time
@@ -195,8 +181,55 @@ func (x *QualificationExamSettings) GetMinimumPoints() int32 {
 	return 0
 }
 
+func (x *QualificationExamSettings) SetTime(v *durationpb.Duration) {
+	x.Time = v
+}
+
+func (x *QualificationExamSettings) SetAutoGrade(v bool) {
+	x.AutoGrade = v
+}
+
+func (x *QualificationExamSettings) SetAutoGradeMode(v AutoGradeMode) {
+	x.AutoGradeMode = v
+}
+
+func (x *QualificationExamSettings) SetMinimumPoints(v int32) {
+	x.MinimumPoints = v
+}
+
+func (x *QualificationExamSettings) HasTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.Time != nil
+}
+
+func (x *QualificationExamSettings) ClearTime() {
+	x.Time = nil
+}
+
+type QualificationExamSettings_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Time          *durationpb.Duration
+	AutoGrade     bool
+	AutoGradeMode AutoGradeMode
+	MinimumPoints int32
+}
+
+func (b0 QualificationExamSettings_builder) Build() *QualificationExamSettings {
+	m0 := &QualificationExamSettings{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Time = b.Time
+	x.AutoGrade = b.AutoGrade
+	x.AutoGradeMode = b.AutoGradeMode
+	x.MinimumPoints = b.MinimumPoints
+	return m0
+}
+
 type ExamQuestions struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Questions     []*ExamQuestion        `protobuf:"bytes,1,rep,name=questions,proto3" json:"questions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -227,11 +260,6 @@ func (x *ExamQuestions) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamQuestions.ProtoReflect.Descriptor instead.
-func (*ExamQuestions) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ExamQuestions) GetQuestions() []*ExamQuestion {
 	if x != nil {
 		return x.Questions
@@ -239,8 +267,26 @@ func (x *ExamQuestions) GetQuestions() []*ExamQuestion {
 	return nil
 }
 
+func (x *ExamQuestions) SetQuestions(v []*ExamQuestion) {
+	x.Questions = v
+}
+
+type ExamQuestions_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Questions []*ExamQuestion
+}
+
+func (b0 ExamQuestions_builder) Build() *ExamQuestions {
+	m0 := &ExamQuestions{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Questions = b.Questions
+	return m0
+}
+
 type ExamQuestion struct {
-	state           protoimpl.MessageState  `protogen:"open.v1"`
+	state           protoimpl.MessageState  `protogen:"hybrid.v1"`
 	Id              int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	QualificationId int64                   `protobuf:"varint,2,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	CreatedAt       *timestamp.Timestamp    `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
@@ -278,11 +324,6 @@ func (x *ExamQuestion) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExamQuestion.ProtoReflect.Descriptor instead.
-func (*ExamQuestion) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ExamQuestion) GetId() int64 {
@@ -355,8 +396,146 @@ func (x *ExamQuestion) GetOrder() int32 {
 	return 0
 }
 
+func (x *ExamQuestion) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *ExamQuestion) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *ExamQuestion) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *ExamQuestion) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *ExamQuestion) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *ExamQuestion) SetDescription(v string) {
+	x.Description = &v
+}
+
+func (x *ExamQuestion) SetData(v *ExamQuestionData) {
+	x.Data = v
+}
+
+func (x *ExamQuestion) SetAnswer(v *ExamQuestionAnswerData) {
+	x.Answer = v
+}
+
+func (x *ExamQuestion) SetPoints(v int32) {
+	x.Points = &v
+}
+
+func (x *ExamQuestion) SetOrder(v int32) {
+	x.Order = v
+}
+
+func (x *ExamQuestion) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *ExamQuestion) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *ExamQuestion) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Description != nil
+}
+
+func (x *ExamQuestion) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *ExamQuestion) HasAnswer() bool {
+	if x == nil {
+		return false
+	}
+	return x.Answer != nil
+}
+
+func (x *ExamQuestion) HasPoints() bool {
+	if x == nil {
+		return false
+	}
+	return x.Points != nil
+}
+
+func (x *ExamQuestion) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *ExamQuestion) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *ExamQuestion) ClearDescription() {
+	x.Description = nil
+}
+
+func (x *ExamQuestion) ClearData() {
+	x.Data = nil
+}
+
+func (x *ExamQuestion) ClearAnswer() {
+	x.Answer = nil
+}
+
+func (x *ExamQuestion) ClearPoints() {
+	x.Points = nil
+}
+
+type ExamQuestion_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id              int64
+	QualificationId int64
+	CreatedAt       *timestamp.Timestamp
+	UpdatedAt       *timestamp.Timestamp
+	Title           string
+	Description     *string
+	Data            *ExamQuestionData
+	Answer          *ExamQuestionAnswerData
+	Points          *int32
+	Order           int32
+}
+
+func (b0 ExamQuestion_builder) Build() *ExamQuestion {
+	m0 := &ExamQuestion{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.QualificationId = b.QualificationId
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.Title = b.Title
+	x.Description = b.Description
+	x.Data = b.Data
+	x.Answer = b.Answer
+	x.Points = b.Points
+	x.Order = b.Order
+	return m0
+}
+
 type ExamQuestionData struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*ExamQuestionData_Separator
@@ -393,11 +572,6 @@ func (x *ExamQuestionData) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExamQuestionData.ProtoReflect.Descriptor instead.
-func (*ExamQuestionData) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ExamQuestionData) GetData() isExamQuestionData_Data {
@@ -461,6 +635,227 @@ func (x *ExamQuestionData) GetMultipleChoice() *ExamQuestionMultipleChoice {
 	return nil
 }
 
+func (x *ExamQuestionData) SetSeparator(v *ExamQuestionSeparator) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &ExamQuestionData_Separator{v}
+}
+
+func (x *ExamQuestionData) SetImage(v *ExamQuestionImage) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &ExamQuestionData_Image{v}
+}
+
+func (x *ExamQuestionData) SetYesno(v *ExamQuestionYesNo) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &ExamQuestionData_Yesno{v}
+}
+
+func (x *ExamQuestionData) SetFreeText(v *ExamQuestionText) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &ExamQuestionData_FreeText{v}
+}
+
+func (x *ExamQuestionData) SetSingleChoice(v *ExamQuestionSingleChoice) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &ExamQuestionData_SingleChoice{v}
+}
+
+func (x *ExamQuestionData) SetMultipleChoice(v *ExamQuestionMultipleChoice) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &ExamQuestionData_MultipleChoice{v}
+}
+
+func (x *ExamQuestionData) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *ExamQuestionData) HasSeparator() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*ExamQuestionData_Separator)
+	return ok
+}
+
+func (x *ExamQuestionData) HasImage() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*ExamQuestionData_Image)
+	return ok
+}
+
+func (x *ExamQuestionData) HasYesno() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*ExamQuestionData_Yesno)
+	return ok
+}
+
+func (x *ExamQuestionData) HasFreeText() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*ExamQuestionData_FreeText)
+	return ok
+}
+
+func (x *ExamQuestionData) HasSingleChoice() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*ExamQuestionData_SingleChoice)
+	return ok
+}
+
+func (x *ExamQuestionData) HasMultipleChoice() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*ExamQuestionData_MultipleChoice)
+	return ok
+}
+
+func (x *ExamQuestionData) ClearData() {
+	x.Data = nil
+}
+
+func (x *ExamQuestionData) ClearSeparator() {
+	if _, ok := x.Data.(*ExamQuestionData_Separator); ok {
+		x.Data = nil
+	}
+}
+
+func (x *ExamQuestionData) ClearImage() {
+	if _, ok := x.Data.(*ExamQuestionData_Image); ok {
+		x.Data = nil
+	}
+}
+
+func (x *ExamQuestionData) ClearYesno() {
+	if _, ok := x.Data.(*ExamQuestionData_Yesno); ok {
+		x.Data = nil
+	}
+}
+
+func (x *ExamQuestionData) ClearFreeText() {
+	if _, ok := x.Data.(*ExamQuestionData_FreeText); ok {
+		x.Data = nil
+	}
+}
+
+func (x *ExamQuestionData) ClearSingleChoice() {
+	if _, ok := x.Data.(*ExamQuestionData_SingleChoice); ok {
+		x.Data = nil
+	}
+}
+
+func (x *ExamQuestionData) ClearMultipleChoice() {
+	if _, ok := x.Data.(*ExamQuestionData_MultipleChoice); ok {
+		x.Data = nil
+	}
+}
+
+const ExamQuestionData_Data_not_set_case case_ExamQuestionData_Data = 0
+const ExamQuestionData_Separator_case case_ExamQuestionData_Data = 1
+const ExamQuestionData_Image_case case_ExamQuestionData_Data = 6
+const ExamQuestionData_Yesno_case case_ExamQuestionData_Data = 2
+const ExamQuestionData_FreeText_case case_ExamQuestionData_Data = 3
+const ExamQuestionData_SingleChoice_case case_ExamQuestionData_Data = 4
+const ExamQuestionData_MultipleChoice_case case_ExamQuestionData_Data = 5
+
+func (x *ExamQuestionData) WhichData() case_ExamQuestionData_Data {
+	if x == nil {
+		return ExamQuestionData_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *ExamQuestionData_Separator:
+		return ExamQuestionData_Separator_case
+	case *ExamQuestionData_Image:
+		return ExamQuestionData_Image_case
+	case *ExamQuestionData_Yesno:
+		return ExamQuestionData_Yesno_case
+	case *ExamQuestionData_FreeText:
+		return ExamQuestionData_FreeText_case
+	case *ExamQuestionData_SingleChoice:
+		return ExamQuestionData_SingleChoice_case
+	case *ExamQuestionData_MultipleChoice:
+		return ExamQuestionData_MultipleChoice_case
+	default:
+		return ExamQuestionData_Data_not_set_case
+	}
+}
+
+type ExamQuestionData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	Separator      *ExamQuestionSeparator
+	Image          *ExamQuestionImage
+	Yesno          *ExamQuestionYesNo
+	FreeText       *ExamQuestionText
+	SingleChoice   *ExamQuestionSingleChoice
+	MultipleChoice *ExamQuestionMultipleChoice
+	// -- end of Data
+}
+
+func (b0 ExamQuestionData_builder) Build() *ExamQuestionData {
+	m0 := &ExamQuestionData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Separator != nil {
+		x.Data = &ExamQuestionData_Separator{b.Separator}
+	}
+	if b.Image != nil {
+		x.Data = &ExamQuestionData_Image{b.Image}
+	}
+	if b.Yesno != nil {
+		x.Data = &ExamQuestionData_Yesno{b.Yesno}
+	}
+	if b.FreeText != nil {
+		x.Data = &ExamQuestionData_FreeText{b.FreeText}
+	}
+	if b.SingleChoice != nil {
+		x.Data = &ExamQuestionData_SingleChoice{b.SingleChoice}
+	}
+	if b.MultipleChoice != nil {
+		x.Data = &ExamQuestionData_MultipleChoice{b.MultipleChoice}
+	}
+	return m0
+}
+
+type case_ExamQuestionData_Data protoreflect.FieldNumber
+
+func (x case_ExamQuestionData_Data) String() string {
+	md := file_resources_qualifications_exam_exam_proto_msgTypes[3].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isExamQuestionData_Data interface {
 	isExamQuestionData_Data()
 }
@@ -502,7 +897,7 @@ func (*ExamQuestionData_SingleChoice) isExamQuestionData_Data() {}
 func (*ExamQuestionData_MultipleChoice) isExamQuestionData_Data() {}
 
 type ExamQuestionSeparator struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -532,13 +927,20 @@ func (x *ExamQuestionSeparator) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamQuestionSeparator.ProtoReflect.Descriptor instead.
-func (*ExamQuestionSeparator) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{4}
+type ExamQuestionSeparator_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ExamQuestionSeparator_builder) Build() *ExamQuestionSeparator {
+	m0 := &ExamQuestionSeparator{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ExamQuestionImage struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Image         *file.File             `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
 	Alt           *string                `protobuf:"bytes,2,opt,name=alt,proto3,oneof" json:"alt,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -570,11 +972,6 @@ func (x *ExamQuestionImage) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamQuestionImage.ProtoReflect.Descriptor instead.
-func (*ExamQuestionImage) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *ExamQuestionImage) GetImage() *file.File {
 	if x != nil {
 		return x.Image
@@ -589,8 +986,54 @@ func (x *ExamQuestionImage) GetAlt() string {
 	return ""
 }
 
+func (x *ExamQuestionImage) SetImage(v *file.File) {
+	x.Image = v
+}
+
+func (x *ExamQuestionImage) SetAlt(v string) {
+	x.Alt = &v
+}
+
+func (x *ExamQuestionImage) HasImage() bool {
+	if x == nil {
+		return false
+	}
+	return x.Image != nil
+}
+
+func (x *ExamQuestionImage) HasAlt() bool {
+	if x == nil {
+		return false
+	}
+	return x.Alt != nil
+}
+
+func (x *ExamQuestionImage) ClearImage() {
+	x.Image = nil
+}
+
+func (x *ExamQuestionImage) ClearAlt() {
+	x.Alt = nil
+}
+
+type ExamQuestionImage_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Image *file.File
+	Alt   *string
+}
+
+func (b0 ExamQuestionImage_builder) Build() *ExamQuestionImage {
+	m0 := &ExamQuestionImage{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Image = b.Image
+	x.Alt = b.Alt
+	return m0
+}
+
 type ExamQuestionYesNo struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -620,13 +1063,20 @@ func (x *ExamQuestionYesNo) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamQuestionYesNo.ProtoReflect.Descriptor instead.
-func (*ExamQuestionYesNo) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{6}
+type ExamQuestionYesNo_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ExamQuestionYesNo_builder) Build() *ExamQuestionYesNo {
+	m0 := &ExamQuestionYesNo{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ExamQuestionText struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	MinLength     int32                  `protobuf:"varint,1,opt,name=min_length,json=minLength,proto3" json:"min_length,omitempty"`
 	MaxLength     int32                  `protobuf:"varint,2,opt,name=max_length,json=maxLength,proto3" json:"max_length,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -658,11 +1108,6 @@ func (x *ExamQuestionText) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamQuestionText.ProtoReflect.Descriptor instead.
-func (*ExamQuestionText) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *ExamQuestionText) GetMinLength() int32 {
 	if x != nil {
 		return x.MinLength
@@ -677,8 +1122,32 @@ func (x *ExamQuestionText) GetMaxLength() int32 {
 	return 0
 }
 
+func (x *ExamQuestionText) SetMinLength(v int32) {
+	x.MinLength = v
+}
+
+func (x *ExamQuestionText) SetMaxLength(v int32) {
+	x.MaxLength = v
+}
+
+type ExamQuestionText_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	MinLength int32
+	MaxLength int32
+}
+
+func (b0 ExamQuestionText_builder) Build() *ExamQuestionText {
+	m0 := &ExamQuestionText{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.MinLength = b.MinLength
+	x.MaxLength = b.MaxLength
+	return m0
+}
+
 type ExamQuestionSingleChoice struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Choices       []string               `protobuf:"bytes,1,rep,name=choices,proto3" json:"choices,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -709,11 +1178,6 @@ func (x *ExamQuestionSingleChoice) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamQuestionSingleChoice.ProtoReflect.Descriptor instead.
-func (*ExamQuestionSingleChoice) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *ExamQuestionSingleChoice) GetChoices() []string {
 	if x != nil {
 		return x.Choices
@@ -721,8 +1185,26 @@ func (x *ExamQuestionSingleChoice) GetChoices() []string {
 	return nil
 }
 
+func (x *ExamQuestionSingleChoice) SetChoices(v []string) {
+	x.Choices = v
+}
+
+type ExamQuestionSingleChoice_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Choices []string
+}
+
+func (b0 ExamQuestionSingleChoice_builder) Build() *ExamQuestionSingleChoice {
+	m0 := &ExamQuestionSingleChoice{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Choices = b.Choices
+	return m0
+}
+
 type ExamQuestionMultipleChoice struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Choices       []string               `protobuf:"bytes,1,rep,name=choices,proto3" json:"choices,omitempty"`
 	Limit         *int32                 `protobuf:"varint,2,opt,name=limit,proto3,oneof" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -754,11 +1236,6 @@ func (x *ExamQuestionMultipleChoice) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamQuestionMultipleChoice.ProtoReflect.Descriptor instead.
-func (*ExamQuestionMultipleChoice) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{9}
-}
-
 func (x *ExamQuestionMultipleChoice) GetChoices() []string {
 	if x != nil {
 		return x.Choices
@@ -773,8 +1250,43 @@ func (x *ExamQuestionMultipleChoice) GetLimit() int32 {
 	return 0
 }
 
+func (x *ExamQuestionMultipleChoice) SetChoices(v []string) {
+	x.Choices = v
+}
+
+func (x *ExamQuestionMultipleChoice) SetLimit(v int32) {
+	x.Limit = &v
+}
+
+func (x *ExamQuestionMultipleChoice) HasLimit() bool {
+	if x == nil {
+		return false
+	}
+	return x.Limit != nil
+}
+
+func (x *ExamQuestionMultipleChoice) ClearLimit() {
+	x.Limit = nil
+}
+
+type ExamQuestionMultipleChoice_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Choices []string
+	Limit   *int32
+}
+
+func (b0 ExamQuestionMultipleChoice_builder) Build() *ExamQuestionMultipleChoice {
+	m0 := &ExamQuestionMultipleChoice{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Choices = b.Choices
+	x.Limit = b.Limit
+	return m0
+}
+
 type ExamQuestionAnswerData struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
+	state     protoimpl.MessageState `protogen:"hybrid.v1"`
 	AnswerKey string                 `protobuf:"bytes,1,opt,name=answer_key,json=answerKey,proto3" json:"answer_key,omitempty"`
 	// Types that are valid to be assigned to Answer:
 	//
@@ -810,11 +1322,6 @@ func (x *ExamQuestionAnswerData) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExamQuestionAnswerData.ProtoReflect.Descriptor instead.
-func (*ExamQuestionAnswerData) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ExamQuestionAnswerData) GetAnswerKey() string {
@@ -867,6 +1374,175 @@ func (x *ExamQuestionAnswerData) GetMultipleChoice() *ExamResponseMultipleChoice
 	return nil
 }
 
+func (x *ExamQuestionAnswerData) SetAnswerKey(v string) {
+	x.AnswerKey = v
+}
+
+func (x *ExamQuestionAnswerData) SetYesno(v *ExamResponseYesNo) {
+	if v == nil {
+		x.Answer = nil
+		return
+	}
+	x.Answer = &ExamQuestionAnswerData_Yesno{v}
+}
+
+func (x *ExamQuestionAnswerData) SetFreeText(v *ExamResponseText) {
+	if v == nil {
+		x.Answer = nil
+		return
+	}
+	x.Answer = &ExamQuestionAnswerData_FreeText{v}
+}
+
+func (x *ExamQuestionAnswerData) SetSingleChoice(v *ExamResponseSingleChoice) {
+	if v == nil {
+		x.Answer = nil
+		return
+	}
+	x.Answer = &ExamQuestionAnswerData_SingleChoice{v}
+}
+
+func (x *ExamQuestionAnswerData) SetMultipleChoice(v *ExamResponseMultipleChoice) {
+	if v == nil {
+		x.Answer = nil
+		return
+	}
+	x.Answer = &ExamQuestionAnswerData_MultipleChoice{v}
+}
+
+func (x *ExamQuestionAnswerData) HasAnswer() bool {
+	if x == nil {
+		return false
+	}
+	return x.Answer != nil
+}
+
+func (x *ExamQuestionAnswerData) HasYesno() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Answer.(*ExamQuestionAnswerData_Yesno)
+	return ok
+}
+
+func (x *ExamQuestionAnswerData) HasFreeText() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Answer.(*ExamQuestionAnswerData_FreeText)
+	return ok
+}
+
+func (x *ExamQuestionAnswerData) HasSingleChoice() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Answer.(*ExamQuestionAnswerData_SingleChoice)
+	return ok
+}
+
+func (x *ExamQuestionAnswerData) HasMultipleChoice() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Answer.(*ExamQuestionAnswerData_MultipleChoice)
+	return ok
+}
+
+func (x *ExamQuestionAnswerData) ClearAnswer() {
+	x.Answer = nil
+}
+
+func (x *ExamQuestionAnswerData) ClearYesno() {
+	if _, ok := x.Answer.(*ExamQuestionAnswerData_Yesno); ok {
+		x.Answer = nil
+	}
+}
+
+func (x *ExamQuestionAnswerData) ClearFreeText() {
+	if _, ok := x.Answer.(*ExamQuestionAnswerData_FreeText); ok {
+		x.Answer = nil
+	}
+}
+
+func (x *ExamQuestionAnswerData) ClearSingleChoice() {
+	if _, ok := x.Answer.(*ExamQuestionAnswerData_SingleChoice); ok {
+		x.Answer = nil
+	}
+}
+
+func (x *ExamQuestionAnswerData) ClearMultipleChoice() {
+	if _, ok := x.Answer.(*ExamQuestionAnswerData_MultipleChoice); ok {
+		x.Answer = nil
+	}
+}
+
+const ExamQuestionAnswerData_Answer_not_set_case case_ExamQuestionAnswerData_Answer = 0
+const ExamQuestionAnswerData_Yesno_case case_ExamQuestionAnswerData_Answer = 4
+const ExamQuestionAnswerData_FreeText_case case_ExamQuestionAnswerData_Answer = 5
+const ExamQuestionAnswerData_SingleChoice_case case_ExamQuestionAnswerData_Answer = 6
+const ExamQuestionAnswerData_MultipleChoice_case case_ExamQuestionAnswerData_Answer = 7
+
+func (x *ExamQuestionAnswerData) WhichAnswer() case_ExamQuestionAnswerData_Answer {
+	if x == nil {
+		return ExamQuestionAnswerData_Answer_not_set_case
+	}
+	switch x.Answer.(type) {
+	case *ExamQuestionAnswerData_Yesno:
+		return ExamQuestionAnswerData_Yesno_case
+	case *ExamQuestionAnswerData_FreeText:
+		return ExamQuestionAnswerData_FreeText_case
+	case *ExamQuestionAnswerData_SingleChoice:
+		return ExamQuestionAnswerData_SingleChoice_case
+	case *ExamQuestionAnswerData_MultipleChoice:
+		return ExamQuestionAnswerData_MultipleChoice_case
+	default:
+		return ExamQuestionAnswerData_Answer_not_set_case
+	}
+}
+
+type ExamQuestionAnswerData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	AnswerKey string
+	// Fields of oneof Answer:
+	Yesno          *ExamResponseYesNo
+	FreeText       *ExamResponseText
+	SingleChoice   *ExamResponseSingleChoice
+	MultipleChoice *ExamResponseMultipleChoice
+	// -- end of Answer
+}
+
+func (b0 ExamQuestionAnswerData_builder) Build() *ExamQuestionAnswerData {
+	m0 := &ExamQuestionAnswerData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.AnswerKey = b.AnswerKey
+	if b.Yesno != nil {
+		x.Answer = &ExamQuestionAnswerData_Yesno{b.Yesno}
+	}
+	if b.FreeText != nil {
+		x.Answer = &ExamQuestionAnswerData_FreeText{b.FreeText}
+	}
+	if b.SingleChoice != nil {
+		x.Answer = &ExamQuestionAnswerData_SingleChoice{b.SingleChoice}
+	}
+	if b.MultipleChoice != nil {
+		x.Answer = &ExamQuestionAnswerData_MultipleChoice{b.MultipleChoice}
+	}
+	return m0
+}
+
+type case_ExamQuestionAnswerData_Answer protoreflect.FieldNumber
+
+func (x case_ExamQuestionAnswerData_Answer) String() string {
+	md := file_resources_qualifications_exam_exam_proto_msgTypes[10].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isExamQuestionAnswerData_Answer interface {
 	isExamQuestionAnswerData_Answer()
 }
@@ -896,7 +1572,7 @@ func (*ExamQuestionAnswerData_SingleChoice) isExamQuestionAnswerData_Answer() {}
 func (*ExamQuestionAnswerData_MultipleChoice) isExamQuestionAnswerData_Answer() {}
 
 type ExamUser struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	UserId          int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
@@ -930,11 +1606,6 @@ func (x *ExamUser) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExamUser.ProtoReflect.Descriptor instead.
-func (*ExamUser) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ExamUser) GetQualificationId() int64 {
@@ -979,8 +1650,100 @@ func (x *ExamUser) GetEndedAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *ExamUser) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *ExamUser) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *ExamUser) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *ExamUser) SetStartedAt(v *timestamp.Timestamp) {
+	x.StartedAt = v
+}
+
+func (x *ExamUser) SetEndsAt(v *timestamp.Timestamp) {
+	x.EndsAt = v
+}
+
+func (x *ExamUser) SetEndedAt(v *timestamp.Timestamp) {
+	x.EndedAt = v
+}
+
+func (x *ExamUser) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *ExamUser) HasStartedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.StartedAt != nil
+}
+
+func (x *ExamUser) HasEndsAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.EndsAt != nil
+}
+
+func (x *ExamUser) HasEndedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.EndedAt != nil
+}
+
+func (x *ExamUser) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *ExamUser) ClearStartedAt() {
+	x.StartedAt = nil
+}
+
+func (x *ExamUser) ClearEndsAt() {
+	x.EndsAt = nil
+}
+
+func (x *ExamUser) ClearEndedAt() {
+	x.EndedAt = nil
+}
+
+type ExamUser_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QualificationId int64
+	UserId          int32
+	CreatedAt       *timestamp.Timestamp
+	StartedAt       *timestamp.Timestamp
+	EndsAt          *timestamp.Timestamp
+	EndedAt         *timestamp.Timestamp
+}
+
+func (b0 ExamUser_builder) Build() *ExamUser {
+	m0 := &ExamUser{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QualificationId = b.QualificationId
+	x.UserId = b.UserId
+	x.CreatedAt = b.CreatedAt
+	x.StartedAt = b.StartedAt
+	x.EndsAt = b.EndsAt
+	x.EndedAt = b.EndedAt
+	return m0
+}
+
 type ExamResponses struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	UserId          int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Responses       []*ExamResponse        `protobuf:"bytes,3,rep,name=responses,proto3" json:"responses,omitempty"`
@@ -1013,11 +1776,6 @@ func (x *ExamResponses) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamResponses.ProtoReflect.Descriptor instead.
-func (*ExamResponses) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{12}
-}
-
 func (x *ExamResponses) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
@@ -1039,8 +1797,38 @@ func (x *ExamResponses) GetResponses() []*ExamResponse {
 	return nil
 }
 
+func (x *ExamResponses) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *ExamResponses) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *ExamResponses) SetResponses(v []*ExamResponse) {
+	x.Responses = v
+}
+
+type ExamResponses_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QualificationId int64
+	UserId          int32
+	Responses       []*ExamResponse
+}
+
+func (b0 ExamResponses_builder) Build() *ExamResponses {
+	m0 := &ExamResponses{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QualificationId = b.QualificationId
+	x.UserId = b.UserId
+	x.Responses = b.Responses
+	return m0
+}
+
 type ExamResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	QuestionId    int64                  `protobuf:"varint,1,opt,name=question_id,json=questionId,proto3" json:"question_id,omitempty"`
 	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Question      *ExamQuestion          `protobuf:"bytes,3,opt,name=question,proto3" json:"question,omitempty"`
@@ -1074,11 +1862,6 @@ func (x *ExamResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamResponse.ProtoReflect.Descriptor instead.
-func (*ExamResponse) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{13}
-}
-
 func (x *ExamResponse) GetQuestionId() int64 {
 	if x != nil {
 		return x.QuestionId
@@ -1107,8 +1890,66 @@ func (x *ExamResponse) GetResponse() *ExamResponseData {
 	return nil
 }
 
+func (x *ExamResponse) SetQuestionId(v int64) {
+	x.QuestionId = v
+}
+
+func (x *ExamResponse) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *ExamResponse) SetQuestion(v *ExamQuestion) {
+	x.Question = v
+}
+
+func (x *ExamResponse) SetResponse(v *ExamResponseData) {
+	x.Response = v
+}
+
+func (x *ExamResponse) HasQuestion() bool {
+	if x == nil {
+		return false
+	}
+	return x.Question != nil
+}
+
+func (x *ExamResponse) HasResponse() bool {
+	if x == nil {
+		return false
+	}
+	return x.Response != nil
+}
+
+func (x *ExamResponse) ClearQuestion() {
+	x.Question = nil
+}
+
+func (x *ExamResponse) ClearResponse() {
+	x.Response = nil
+}
+
+type ExamResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QuestionId int64
+	UserId     int32
+	Question   *ExamQuestion
+	Response   *ExamResponseData
+}
+
+func (b0 ExamResponse_builder) Build() *ExamResponse {
+	m0 := &ExamResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QuestionId = b.QuestionId
+	x.UserId = b.UserId
+	x.Question = b.Question
+	x.Response = b.Response
+	return m0
+}
+
 type ExamResponseData struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Response:
 	//
 	//	*ExamResponseData_Separator
@@ -1144,11 +1985,6 @@ func (x *ExamResponseData) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ExamResponseData.ProtoReflect.Descriptor instead.
-func (*ExamResponseData) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ExamResponseData) GetResponse() isExamResponseData_Response {
@@ -1203,6 +2039,198 @@ func (x *ExamResponseData) GetMultipleChoice() *ExamResponseMultipleChoice {
 	return nil
 }
 
+func (x *ExamResponseData) SetSeparator(v *ExamResponseSeparator) {
+	if v == nil {
+		x.Response = nil
+		return
+	}
+	x.Response = &ExamResponseData_Separator{v}
+}
+
+func (x *ExamResponseData) SetYesno(v *ExamResponseYesNo) {
+	if v == nil {
+		x.Response = nil
+		return
+	}
+	x.Response = &ExamResponseData_Yesno{v}
+}
+
+func (x *ExamResponseData) SetFreeText(v *ExamResponseText) {
+	if v == nil {
+		x.Response = nil
+		return
+	}
+	x.Response = &ExamResponseData_FreeText{v}
+}
+
+func (x *ExamResponseData) SetSingleChoice(v *ExamResponseSingleChoice) {
+	if v == nil {
+		x.Response = nil
+		return
+	}
+	x.Response = &ExamResponseData_SingleChoice{v}
+}
+
+func (x *ExamResponseData) SetMultipleChoice(v *ExamResponseMultipleChoice) {
+	if v == nil {
+		x.Response = nil
+		return
+	}
+	x.Response = &ExamResponseData_MultipleChoice{v}
+}
+
+func (x *ExamResponseData) HasResponse() bool {
+	if x == nil {
+		return false
+	}
+	return x.Response != nil
+}
+
+func (x *ExamResponseData) HasSeparator() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Response.(*ExamResponseData_Separator)
+	return ok
+}
+
+func (x *ExamResponseData) HasYesno() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Response.(*ExamResponseData_Yesno)
+	return ok
+}
+
+func (x *ExamResponseData) HasFreeText() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Response.(*ExamResponseData_FreeText)
+	return ok
+}
+
+func (x *ExamResponseData) HasSingleChoice() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Response.(*ExamResponseData_SingleChoice)
+	return ok
+}
+
+func (x *ExamResponseData) HasMultipleChoice() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Response.(*ExamResponseData_MultipleChoice)
+	return ok
+}
+
+func (x *ExamResponseData) ClearResponse() {
+	x.Response = nil
+}
+
+func (x *ExamResponseData) ClearSeparator() {
+	if _, ok := x.Response.(*ExamResponseData_Separator); ok {
+		x.Response = nil
+	}
+}
+
+func (x *ExamResponseData) ClearYesno() {
+	if _, ok := x.Response.(*ExamResponseData_Yesno); ok {
+		x.Response = nil
+	}
+}
+
+func (x *ExamResponseData) ClearFreeText() {
+	if _, ok := x.Response.(*ExamResponseData_FreeText); ok {
+		x.Response = nil
+	}
+}
+
+func (x *ExamResponseData) ClearSingleChoice() {
+	if _, ok := x.Response.(*ExamResponseData_SingleChoice); ok {
+		x.Response = nil
+	}
+}
+
+func (x *ExamResponseData) ClearMultipleChoice() {
+	if _, ok := x.Response.(*ExamResponseData_MultipleChoice); ok {
+		x.Response = nil
+	}
+}
+
+const ExamResponseData_Response_not_set_case case_ExamResponseData_Response = 0
+const ExamResponseData_Separator_case case_ExamResponseData_Response = 3
+const ExamResponseData_Yesno_case case_ExamResponseData_Response = 4
+const ExamResponseData_FreeText_case case_ExamResponseData_Response = 5
+const ExamResponseData_SingleChoice_case case_ExamResponseData_Response = 6
+const ExamResponseData_MultipleChoice_case case_ExamResponseData_Response = 7
+
+func (x *ExamResponseData) WhichResponse() case_ExamResponseData_Response {
+	if x == nil {
+		return ExamResponseData_Response_not_set_case
+	}
+	switch x.Response.(type) {
+	case *ExamResponseData_Separator:
+		return ExamResponseData_Separator_case
+	case *ExamResponseData_Yesno:
+		return ExamResponseData_Yesno_case
+	case *ExamResponseData_FreeText:
+		return ExamResponseData_FreeText_case
+	case *ExamResponseData_SingleChoice:
+		return ExamResponseData_SingleChoice_case
+	case *ExamResponseData_MultipleChoice:
+		return ExamResponseData_MultipleChoice_case
+	default:
+		return ExamResponseData_Response_not_set_case
+	}
+}
+
+type ExamResponseData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Response:
+	Separator      *ExamResponseSeparator
+	Yesno          *ExamResponseYesNo
+	FreeText       *ExamResponseText
+	SingleChoice   *ExamResponseSingleChoice
+	MultipleChoice *ExamResponseMultipleChoice
+	// -- end of Response
+}
+
+func (b0 ExamResponseData_builder) Build() *ExamResponseData {
+	m0 := &ExamResponseData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Separator != nil {
+		x.Response = &ExamResponseData_Separator{b.Separator}
+	}
+	if b.Yesno != nil {
+		x.Response = &ExamResponseData_Yesno{b.Yesno}
+	}
+	if b.FreeText != nil {
+		x.Response = &ExamResponseData_FreeText{b.FreeText}
+	}
+	if b.SingleChoice != nil {
+		x.Response = &ExamResponseData_SingleChoice{b.SingleChoice}
+	}
+	if b.MultipleChoice != nil {
+		x.Response = &ExamResponseData_MultipleChoice{b.MultipleChoice}
+	}
+	return m0
+}
+
+type case_ExamResponseData_Response protoreflect.FieldNumber
+
+func (x case_ExamResponseData_Response) String() string {
+	md := file_resources_qualifications_exam_exam_proto_msgTypes[14].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isExamResponseData_Response interface {
 	isExamResponseData_Response()
 }
@@ -1238,7 +2266,7 @@ func (*ExamResponseData_SingleChoice) isExamResponseData_Response() {}
 func (*ExamResponseData_MultipleChoice) isExamResponseData_Response() {}
 
 type ExamResponseSeparator struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1268,13 +2296,20 @@ func (x *ExamResponseSeparator) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamResponseSeparator.ProtoReflect.Descriptor instead.
-func (*ExamResponseSeparator) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{15}
+type ExamResponseSeparator_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ExamResponseSeparator_builder) Build() *ExamResponseSeparator {
+	m0 := &ExamResponseSeparator{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ExamResponseYesNo struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Value         bool                   `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1305,11 +2340,6 @@ func (x *ExamResponseYesNo) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamResponseYesNo.ProtoReflect.Descriptor instead.
-func (*ExamResponseYesNo) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{16}
-}
-
 func (x *ExamResponseYesNo) GetValue() bool {
 	if x != nil {
 		return x.Value
@@ -1317,8 +2347,26 @@ func (x *ExamResponseYesNo) GetValue() bool {
 	return false
 }
 
+func (x *ExamResponseYesNo) SetValue(v bool) {
+	x.Value = v
+}
+
+type ExamResponseYesNo_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Value bool
+}
+
+func (b0 ExamResponseYesNo_builder) Build() *ExamResponseYesNo {
+	m0 := &ExamResponseYesNo{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Value = b.Value
+	return m0
+}
+
 type ExamResponseText struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"` // 0.5 Megabyte
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1349,11 +2397,6 @@ func (x *ExamResponseText) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamResponseText.ProtoReflect.Descriptor instead.
-func (*ExamResponseText) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{17}
-}
-
 func (x *ExamResponseText) GetText() string {
 	if x != nil {
 		return x.Text
@@ -1361,8 +2404,26 @@ func (x *ExamResponseText) GetText() string {
 	return ""
 }
 
+func (x *ExamResponseText) SetText(v string) {
+	x.Text = v
+}
+
+type ExamResponseText_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Text string
+}
+
+func (b0 ExamResponseText_builder) Build() *ExamResponseText {
+	m0 := &ExamResponseText{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Text = b.Text
+	return m0
+}
+
 type ExamResponseSingleChoice struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Choice        string                 `protobuf:"bytes,1,opt,name=choice,proto3" json:"choice,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1393,11 +2454,6 @@ func (x *ExamResponseSingleChoice) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamResponseSingleChoice.ProtoReflect.Descriptor instead.
-func (*ExamResponseSingleChoice) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{18}
-}
-
 func (x *ExamResponseSingleChoice) GetChoice() string {
 	if x != nil {
 		return x.Choice
@@ -1405,8 +2461,26 @@ func (x *ExamResponseSingleChoice) GetChoice() string {
 	return ""
 }
 
+func (x *ExamResponseSingleChoice) SetChoice(v string) {
+	x.Choice = v
+}
+
+type ExamResponseSingleChoice_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Choice string
+}
+
+func (b0 ExamResponseSingleChoice_builder) Build() *ExamResponseSingleChoice {
+	m0 := &ExamResponseSingleChoice{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Choice = b.Choice
+	return m0
+}
+
 type ExamResponseMultipleChoice struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Choices       []string               `protobuf:"bytes,1,rep,name=choices,proto3" json:"choices,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1437,11 +2511,6 @@ func (x *ExamResponseMultipleChoice) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamResponseMultipleChoice.ProtoReflect.Descriptor instead.
-func (*ExamResponseMultipleChoice) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{19}
-}
-
 func (x *ExamResponseMultipleChoice) GetChoices() []string {
 	if x != nil {
 		return x.Choices
@@ -1449,8 +2518,26 @@ func (x *ExamResponseMultipleChoice) GetChoices() []string {
 	return nil
 }
 
+func (x *ExamResponseMultipleChoice) SetChoices(v []string) {
+	x.Choices = v
+}
+
+type ExamResponseMultipleChoice_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Choices []string
+}
+
+func (b0 ExamResponseMultipleChoice_builder) Build() *ExamResponseMultipleChoice {
+	m0 := &ExamResponseMultipleChoice{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Choices = b.Choices
+	return m0
+}
+
 type ExamGrading struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Responses     []*ExamGradingResponse `protobuf:"bytes,1,rep,name=responses,proto3" json:"responses,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1481,11 +2568,6 @@ func (x *ExamGrading) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamGrading.ProtoReflect.Descriptor instead.
-func (*ExamGrading) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{20}
-}
-
 func (x *ExamGrading) GetResponses() []*ExamGradingResponse {
 	if x != nil {
 		return x.Responses
@@ -1493,8 +2575,26 @@ func (x *ExamGrading) GetResponses() []*ExamGradingResponse {
 	return nil
 }
 
+func (x *ExamGrading) SetResponses(v []*ExamGradingResponse) {
+	x.Responses = v
+}
+
+type ExamGrading_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Responses []*ExamGradingResponse
+}
+
+func (b0 ExamGrading_builder) Build() *ExamGrading {
+	m0 := &ExamGrading{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Responses = b.Responses
+	return m0
+}
+
 type ExamGradingResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	QuestionId    int64                  `protobuf:"varint,1,opt,name=question_id,json=questionId,proto3" json:"question_id,omitempty"`
 	Points        float32                `protobuf:"fixed32,2,opt,name=points,proto3" json:"points,omitempty"`
 	Checked       *bool                  `protobuf:"varint,3,opt,name=checked,proto3,oneof" json:"checked,omitempty"`
@@ -1527,11 +2627,6 @@ func (x *ExamGradingResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExamGradingResponse.ProtoReflect.Descriptor instead.
-func (*ExamGradingResponse) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_exam_exam_proto_rawDescGZIP(), []int{21}
-}
-
 func (x *ExamGradingResponse) GetQuestionId() int64 {
 	if x != nil {
 		return x.QuestionId
@@ -1551,6 +2646,47 @@ func (x *ExamGradingResponse) GetChecked() bool {
 		return *x.Checked
 	}
 	return false
+}
+
+func (x *ExamGradingResponse) SetQuestionId(v int64) {
+	x.QuestionId = v
+}
+
+func (x *ExamGradingResponse) SetPoints(v float32) {
+	x.Points = v
+}
+
+func (x *ExamGradingResponse) SetChecked(v bool) {
+	x.Checked = &v
+}
+
+func (x *ExamGradingResponse) HasChecked() bool {
+	if x == nil {
+		return false
+	}
+	return x.Checked != nil
+}
+
+func (x *ExamGradingResponse) ClearChecked() {
+	x.Checked = nil
+}
+
+type ExamGradingResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QuestionId int64
+	Points     float32
+	Checked    *bool
+}
+
+func (b0 ExamGradingResponse_builder) Build() *ExamGradingResponse {
+	m0 := &ExamGradingResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QuestionId = b.QuestionId
+	x.Points = b.Points
+	x.Checked = b.Checked
+	return m0
 }
 
 var File_resources_qualifications_exam_exam_proto protoreflect.FileDescriptor
@@ -1677,18 +2813,6 @@ const file_resources_qualifications_exam_exam_proto_rawDesc = "" +
 	"\x1bAUTO_GRADE_MODE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16AUTO_GRADE_MODE_STRICT\x10\x01\x12\"\n" +
 	"\x1eAUTO_GRADE_MODE_PARTIAL_CREDIT\x10\x02BdZbgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam;qualificationsexamb\x06proto3"
-
-var (
-	file_resources_qualifications_exam_exam_proto_rawDescOnce sync.Once
-	file_resources_qualifications_exam_exam_proto_rawDescData []byte
-)
-
-func file_resources_qualifications_exam_exam_proto_rawDescGZIP() []byte {
-	file_resources_qualifications_exam_exam_proto_rawDescOnce.Do(func() {
-		file_resources_qualifications_exam_exam_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_qualifications_exam_exam_proto_rawDesc), len(file_resources_qualifications_exam_exam_proto_rawDesc)))
-	})
-	return file_resources_qualifications_exam_exam_proto_rawDescData
-}
 
 var file_resources_qualifications_exam_exam_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_resources_qualifications_exam_exam_proto_msgTypes = make([]protoimpl.MessageInfo, 22)

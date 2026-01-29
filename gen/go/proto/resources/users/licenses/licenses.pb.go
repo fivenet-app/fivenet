@@ -4,13 +4,14 @@
 // 	protoc        (unknown)
 // source: resources/users/licenses/licenses.proto
 
+//go:build !protoopaque
+
 package userslicenses
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -22,7 +23,7 @@ const (
 )
 
 type License struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
 	Label         string                 `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -54,11 +55,6 @@ func (x *License) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use License.ProtoReflect.Descriptor instead.
-func (*License) Descriptor() ([]byte, []int) {
-	return file_resources_users_licenses_licenses_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *License) GetType() string {
 	if x != nil {
 		return x.Type
@@ -73,8 +69,32 @@ func (x *License) GetLabel() string {
 	return ""
 }
 
+func (x *License) SetType(v string) {
+	x.Type = v
+}
+
+func (x *License) SetLabel(v string) {
+	x.Label = v
+}
+
+type License_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Type  string
+	Label string
+}
+
+func (b0 License_builder) Build() *License {
+	m0 := &License{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Type = b.Type
+	x.Label = b.Label
+	return m0
+}
+
 type CitizensLicenses struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Licenses      []*License             `protobuf:"bytes,2,rep,name=licenses,proto3" json:"licenses,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -106,11 +126,6 @@ func (x *CitizensLicenses) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CitizensLicenses.ProtoReflect.Descriptor instead.
-func (*CitizensLicenses) Descriptor() ([]byte, []int) {
-	return file_resources_users_licenses_licenses_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *CitizensLicenses) GetUserId() int32 {
 	if x != nil {
 		return x.UserId
@@ -125,6 +140,30 @@ func (x *CitizensLicenses) GetLicenses() []*License {
 	return nil
 }
 
+func (x *CitizensLicenses) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *CitizensLicenses) SetLicenses(v []*License) {
+	x.Licenses = v
+}
+
+type CitizensLicenses_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId   int32
+	Licenses []*License
+}
+
+func (b0 CitizensLicenses_builder) Build() *CitizensLicenses {
+	m0 := &CitizensLicenses{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.Licenses = b.Licenses
+	return m0
+}
+
 var File_resources_users_licenses_licenses_proto protoreflect.FileDescriptor
 
 const file_resources_users_licenses_licenses_proto_rawDesc = "" +
@@ -136,18 +175,6 @@ const file_resources_users_licenses_licenses_proto_rawDesc = "" +
 	"\x10CitizensLicenses\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12=\n" +
 	"\blicenses\x18\x02 \x03(\v2!.resources.users.licenses.LicenseR\blicensesBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses;userslicensesb\x06proto3"
-
-var (
-	file_resources_users_licenses_licenses_proto_rawDescOnce sync.Once
-	file_resources_users_licenses_licenses_proto_rawDescData []byte
-)
-
-func file_resources_users_licenses_licenses_proto_rawDescGZIP() []byte {
-	file_resources_users_licenses_licenses_proto_rawDescOnce.Do(func() {
-		file_resources_users_licenses_licenses_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_users_licenses_licenses_proto_rawDesc), len(file_resources_users_licenses_licenses_proto_rawDesc)))
-	})
-	return file_resources_users_licenses_licenses_proto_rawDescData
-}
 
 var file_resources_users_licenses_licenses_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_users_licenses_licenses_proto_goTypes = []any{

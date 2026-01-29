@@ -28,6 +28,7 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
             offset: calculateOffset(page.value, data.value?.pagination),
         },
         onlyPublic: true,
+        calendarIds: [],
     });
 
     return response;
@@ -55,6 +56,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                 offset: 0,
             },
             onlyPublic: false,
+            calendarIds: [],
         });
 
         calendarStore.listCalendarEntries({

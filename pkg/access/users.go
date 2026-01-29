@@ -5,8 +5,8 @@ import (
 	"errors"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -54,7 +54,7 @@ func NewUsers[U any, T UsersAccessProtoMessage[U, V], V protoutils.ProtoEnum](
 
 // List returns all user access entries for a given targetId, joining with user_short for additional user info.
 func (a *Users[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId int64) ([]T, error) {
-	tUsers := tables.User().AS("user_short")
+	tUsers := table.FivenetUser.AS("user_short")
 
 	stmt := a.selectTable.
 		SELECT(

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/permissions/permissions/permissions.proto
 
+//go:build !protoopaque
+
 package permissionspermissions
 
 import (
@@ -12,7 +14,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,7 +25,7 @@ const (
 )
 
 type Permission struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	Category      string                 `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
@@ -60,11 +61,6 @@ func (x *Permission) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Permission.ProtoReflect.Descriptor instead.
-func (*Permission) Descriptor() ([]byte, []int) {
-	return file_resources_permissions_permissions_permissions_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Permission) GetId() int64 {
@@ -123,8 +119,101 @@ func (x *Permission) GetIcon() string {
 	return ""
 }
 
+func (x *Permission) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Permission) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Permission) SetCategory(v string) {
+	x.Category = v
+}
+
+func (x *Permission) SetName(v string) {
+	x.Name = v
+}
+
+func (x *Permission) SetGuardName(v string) {
+	x.GuardName = v
+}
+
+func (x *Permission) SetVal(v bool) {
+	x.Val = v
+}
+
+func (x *Permission) SetOrder(v int32) {
+	x.Order = &v
+}
+
+func (x *Permission) SetIcon(v string) {
+	x.Icon = &v
+}
+
+func (x *Permission) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Permission) HasOrder() bool {
+	if x == nil {
+		return false
+	}
+	return x.Order != nil
+}
+
+func (x *Permission) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return x.Icon != nil
+}
+
+func (x *Permission) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Permission) ClearOrder() {
+	x.Order = nil
+}
+
+func (x *Permission) ClearIcon() {
+	x.Icon = nil
+}
+
+type Permission_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id        int64
+	CreatedAt *timestamp.Timestamp
+	Category  string
+	Name      string
+	GuardName string
+	Val       bool
+	Order     *int32
+	Icon      *string
+}
+
+func (b0 Permission_builder) Build() *Permission {
+	m0 := &Permission{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.Category = b.Category
+	x.Name = b.Name
+	x.GuardName = b.GuardName
+	x.Val = b.Val
+	x.Order = b.Order
+	x.Icon = b.Icon
+	return m0
+}
+
 type Role struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Id            int64                       `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp        `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	Job           string                      `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
@@ -160,11 +249,6 @@ func (x *Role) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Role.ProtoReflect.Descriptor instead.
-func (*Role) Descriptor() ([]byte, []int) {
-	return file_resources_permissions_permissions_permissions_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Role) GetId() int64 {
@@ -223,8 +307,101 @@ func (x *Role) GetAttributes() []*attributes.RoleAttribute {
 	return nil
 }
 
+func (x *Role) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Role) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Role) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *Role) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *Role) SetGrade(v int32) {
+	x.Grade = v
+}
+
+func (x *Role) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *Role) SetPermissions(v []*Permission) {
+	x.Permissions = v
+}
+
+func (x *Role) SetAttributes(v []*attributes.RoleAttribute) {
+	x.Attributes = v
+}
+
+func (x *Role) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Role) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *Role) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *Role) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Role) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *Role) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+type Role_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id            int64
+	CreatedAt     *timestamp.Timestamp
+	Job           string
+	JobLabel      *string
+	Grade         int32
+	JobGradeLabel *string
+	Permissions   []*Permission
+	Attributes    []*attributes.RoleAttribute
+}
+
+func (b0 Role_builder) Build() *Role {
+	m0 := &Role{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.Grade = b.Grade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Permissions = b.Permissions
+	x.Attributes = b.Attributes
+	return m0
+}
+
 type PermItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Val           bool                   `protobuf:"varint,2,opt,name=val,proto3" json:"val,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -256,11 +433,6 @@ func (x *PermItem) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PermItem.ProtoReflect.Descriptor instead.
-func (*PermItem) Descriptor() ([]byte, []int) {
-	return file_resources_permissions_permissions_permissions_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *PermItem) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -273,6 +445,30 @@ func (x *PermItem) GetVal() bool {
 		return x.Val
 	}
 	return false
+}
+
+func (x *PermItem) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *PermItem) SetVal(v bool) {
+	x.Val = v
+}
+
+type PermItem_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id  int64
+	Val bool
+}
+
+func (b0 PermItem_builder) Build() *PermItem {
+	m0 := &PermItem{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Val = b.Val
+	return m0
 }
 
 var File_resources_permissions_permissions_permissions_proto protoreflect.FileDescriptor
@@ -314,18 +510,6 @@ const file_resources_permissions_permissions_permissions_proto_rawDesc = "" +
 	"\bPermItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
 	"\x03val\x18\x02 \x01(\bR\x03valBlZjgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions;permissionspermissionsb\x06proto3"
-
-var (
-	file_resources_permissions_permissions_permissions_proto_rawDescOnce sync.Once
-	file_resources_permissions_permissions_permissions_proto_rawDescData []byte
-)
-
-func file_resources_permissions_permissions_permissions_proto_rawDescGZIP() []byte {
-	file_resources_permissions_permissions_permissions_proto_rawDescOnce.Do(func() {
-		file_resources_permissions_permissions_permissions_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_permissions_permissions_permissions_proto_rawDesc), len(file_resources_permissions_permissions_permissions_proto_rawDesc)))
-	})
-	return file_resources_permissions_permissions_permissions_proto_rawDescData
-}
 
 var file_resources_permissions_permissions_permissions_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_permissions_permissions_permissions_proto_goTypes = []any{

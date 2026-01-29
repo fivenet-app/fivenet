@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/settings/banner.proto
 
+//go:build !protoopaque
+
 package settings
 
 import (
@@ -13,7 +15,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -25,7 +26,7 @@ const (
 )
 
 type BannerMessage struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	Icon          *string                `protobuf:"bytes,3,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
@@ -59,11 +60,6 @@ func (x *BannerMessage) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BannerMessage.ProtoReflect.Descriptor instead.
-func (*BannerMessage) Descriptor() ([]byte, []int) {
-	return file_resources_settings_banner_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *BannerMessage) GetId() string {
@@ -108,6 +104,98 @@ func (x *BannerMessage) GetExpiresAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *BannerMessage) SetId(v string) {
+	x.Id = v
+}
+
+func (x *BannerMessage) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *BannerMessage) SetIcon(v string) {
+	x.Icon = &v
+}
+
+func (x *BannerMessage) SetColor(v string) {
+	x.Color = &v
+}
+
+func (x *BannerMessage) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *BannerMessage) SetExpiresAt(v *timestamp.Timestamp) {
+	x.ExpiresAt = v
+}
+
+func (x *BannerMessage) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return x.Icon != nil
+}
+
+func (x *BannerMessage) HasColor() bool {
+	if x == nil {
+		return false
+	}
+	return x.Color != nil
+}
+
+func (x *BannerMessage) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *BannerMessage) HasExpiresAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.ExpiresAt != nil
+}
+
+func (x *BannerMessage) ClearIcon() {
+	x.Icon = nil
+}
+
+func (x *BannerMessage) ClearColor() {
+	x.Color = nil
+}
+
+func (x *BannerMessage) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *BannerMessage) ClearExpiresAt() {
+	x.ExpiresAt = nil
+}
+
+type BannerMessage_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id        string
+	Title     string
+	Icon      *string
+	Color     *string
+	CreatedAt *timestamp.Timestamp
+	ExpiresAt *timestamp.Timestamp
+}
+
+func (b0 BannerMessage_builder) Build() *BannerMessage {
+	m0 := &BannerMessage{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Title = b.Title
+	x.Icon = b.Icon
+	x.Color = b.Color
+	x.CreatedAt = b.CreatedAt
+	x.ExpiresAt = b.ExpiresAt
+	return m0
+}
+
 var File_resources_settings_banner_proto protoreflect.FileDescriptor
 
 const file_resources_settings_banner_proto_rawDesc = "" +
@@ -125,18 +213,6 @@ const file_resources_settings_banner_proto_rawDesc = "" +
 	"\x05_iconB\b\n" +
 	"\x06_colorB\r\n" +
 	"\v_expires_atBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
-
-var (
-	file_resources_settings_banner_proto_rawDescOnce sync.Once
-	file_resources_settings_banner_proto_rawDescData []byte
-)
-
-func file_resources_settings_banner_proto_rawDescGZIP() []byte {
-	file_resources_settings_banner_proto_rawDescOnce.Do(func() {
-		file_resources_settings_banner_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_settings_banner_proto_rawDesc), len(file_resources_settings_banner_proto_rawDesc)))
-	})
-	return file_resources_settings_banner_proto_rawDescData
-}
 
 var file_resources_settings_banner_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_settings_banner_proto_goTypes = []any{

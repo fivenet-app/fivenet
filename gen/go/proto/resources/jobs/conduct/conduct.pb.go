@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/jobs/conduct/conduct.proto
 
+//go:build !protoopaque
+
 package jobsconduct
 
 import (
@@ -15,7 +17,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -82,13 +83,8 @@ func (x ConductType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ConductType.Descriptor instead.
-func (ConductType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_jobs_conduct_conduct_proto_rawDescGZIP(), []int{0}
-}
-
 type ConductEntry struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -130,11 +126,6 @@ func (x *ConductEntry) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ConductEntry.ProtoReflect.Descriptor instead.
-func (*ConductEntry) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_conduct_conduct_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ConductEntry) GetId() int64 {
@@ -235,6 +226,179 @@ func (x *ConductEntry) GetCreator() *colleagues.Colleague {
 	return nil
 }
 
+func (x *ConductEntry) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *ConductEntry) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *ConductEntry) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *ConductEntry) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *ConductEntry) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *ConductEntry) SetType(v ConductType) {
+	x.Type = v
+}
+
+func (x *ConductEntry) SetDraft(v bool) {
+	x.Draft = v
+}
+
+func (x *ConductEntry) SetMessage(v *content.Content) {
+	x.Message = v
+}
+
+func (x *ConductEntry) SetFiles(v []*file.File) {
+	x.Files = v
+}
+
+func (x *ConductEntry) SetExpiresAt(v *timestamp.Timestamp) {
+	x.ExpiresAt = v
+}
+
+func (x *ConductEntry) SetTargetUserId(v int32) {
+	x.TargetUserId = v
+}
+
+func (x *ConductEntry) SetTargetUser(v *colleagues.Colleague) {
+	x.TargetUser = v
+}
+
+func (x *ConductEntry) SetCreatorId(v int32) {
+	x.CreatorId = v
+}
+
+func (x *ConductEntry) SetCreator(v *colleagues.Colleague) {
+	x.Creator = v
+}
+
+func (x *ConductEntry) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *ConductEntry) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *ConductEntry) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *ConductEntry) HasMessage() bool {
+	if x == nil {
+		return false
+	}
+	return x.Message != nil
+}
+
+func (x *ConductEntry) HasExpiresAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.ExpiresAt != nil
+}
+
+func (x *ConductEntry) HasTargetUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.TargetUser != nil
+}
+
+func (x *ConductEntry) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *ConductEntry) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *ConductEntry) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *ConductEntry) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *ConductEntry) ClearMessage() {
+	x.Message = nil
+}
+
+func (x *ConductEntry) ClearExpiresAt() {
+	x.ExpiresAt = nil
+}
+
+func (x *ConductEntry) ClearTargetUser() {
+	x.TargetUser = nil
+}
+
+func (x *ConductEntry) ClearCreator() {
+	x.Creator = nil
+}
+
+type ConductEntry_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id           int64
+	CreatedAt    *timestamp.Timestamp
+	UpdatedAt    *timestamp.Timestamp
+	DeletedAt    *timestamp.Timestamp
+	Job          string
+	Type         ConductType
+	Draft        bool
+	Message      *content.Content
+	Files        []*file.File
+	ExpiresAt    *timestamp.Timestamp
+	TargetUserId int32
+	TargetUser   *colleagues.Colleague
+	CreatorId    int32
+	Creator      *colleagues.Colleague
+}
+
+func (b0 ConductEntry_builder) Build() *ConductEntry {
+	m0 := &ConductEntry{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	x.Job = b.Job
+	x.Type = b.Type
+	x.Draft = b.Draft
+	x.Message = b.Message
+	x.Files = b.Files
+	x.ExpiresAt = b.ExpiresAt
+	x.TargetUserId = b.TargetUserId
+	x.TargetUser = b.TargetUser
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	return m0
+}
+
 var File_resources_jobs_conduct_conduct_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_conduct_conduct_proto_rawDesc = "" +
@@ -277,18 +441,6 @@ const file_resources_jobs_conduct_conduct_proto_rawDesc = "" +
 	"\x14CONDUCT_TYPE_WARNING\x10\x04\x12\x1b\n" +
 	"\x17CONDUCT_TYPE_SUSPENSION\x10\x05\x12\x15\n" +
 	"\x11CONDUCT_TYPE_NOTE\x10\x06BVZTgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct;jobsconductb\x06proto3"
-
-var (
-	file_resources_jobs_conduct_conduct_proto_rawDescOnce sync.Once
-	file_resources_jobs_conduct_conduct_proto_rawDescData []byte
-)
-
-func file_resources_jobs_conduct_conduct_proto_rawDescGZIP() []byte {
-	file_resources_jobs_conduct_conduct_proto_rawDescOnce.Do(func() {
-		file_resources_jobs_conduct_conduct_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_jobs_conduct_conduct_proto_rawDesc), len(file_resources_jobs_conduct_conduct_proto_rawDesc)))
-	})
-	return file_resources_jobs_conduct_conduct_proto_rawDescData
-}
 
 var file_resources_jobs_conduct_conduct_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_jobs_conduct_conduct_proto_msgTypes = make([]protoimpl.MessageInfo, 1)

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: codegen/dbscanner/dbscanner.proto
 
+//go:build !protoopaque
+
 package dbscanner
 
 import (
@@ -11,7 +13,6 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	descriptorpb "google.golang.org/protobuf/types/descriptorpb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,7 +24,7 @@ const (
 )
 
 type MessageOptions struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	NotJson       *bool                  `protobuf:"varint,2,opt,name=not_json,json=notJson,proto3,oneof" json:"not_json,omitempty"`
 	Partial       *bool                  `protobuf:"varint,3,opt,name=partial,proto3,oneof" json:"partial,omitempty"`
@@ -56,11 +57,6 @@ func (x *MessageOptions) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MessageOptions.ProtoReflect.Descriptor instead.
-func (*MessageOptions) Descriptor() ([]byte, []int) {
-	return file_codegen_dbscanner_dbscanner_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *MessageOptions) GetEnabled() bool {
 	if x != nil {
 		return x.Enabled
@@ -80,6 +76,58 @@ func (x *MessageOptions) GetPartial() bool {
 		return *x.Partial
 	}
 	return false
+}
+
+func (x *MessageOptions) SetEnabled(v bool) {
+	x.Enabled = v
+}
+
+func (x *MessageOptions) SetNotJson(v bool) {
+	x.NotJson = &v
+}
+
+func (x *MessageOptions) SetPartial(v bool) {
+	x.Partial = &v
+}
+
+func (x *MessageOptions) HasNotJson() bool {
+	if x == nil {
+		return false
+	}
+	return x.NotJson != nil
+}
+
+func (x *MessageOptions) HasPartial() bool {
+	if x == nil {
+		return false
+	}
+	return x.Partial != nil
+}
+
+func (x *MessageOptions) ClearNotJson() {
+	x.NotJson = nil
+}
+
+func (x *MessageOptions) ClearPartial() {
+	x.Partial = nil
+}
+
+type MessageOptions_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Enabled bool
+	NotJson *bool
+	Partial *bool
+}
+
+func (b0 MessageOptions_builder) Build() *MessageOptions {
+	m0 := &MessageOptions{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Enabled = b.Enabled
+	x.NotJson = b.NotJson
+	x.Partial = b.Partial
+	return m0
 }
 
 var file_codegen_dbscanner_dbscanner_proto_extTypes = []protoimpl.ExtensionInfo{
@@ -112,18 +160,6 @@ const file_codegen_dbscanner_dbscanner_proto_rawDesc = "" +
 	"\n" +
 	"\b_partial:b\n" +
 	"\tdbscanner\x12\x1f.google.protobuf.MessageOptions\x18\xbc\x8e\x03 \x01(\v2!.codegen.dbscanner.MessageOptionsR\tdbscannerBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner;dbscannerb\x06proto3"
-
-var (
-	file_codegen_dbscanner_dbscanner_proto_rawDescOnce sync.Once
-	file_codegen_dbscanner_dbscanner_proto_rawDescData []byte
-)
-
-func file_codegen_dbscanner_dbscanner_proto_rawDescGZIP() []byte {
-	file_codegen_dbscanner_dbscanner_proto_rawDescOnce.Do(func() {
-		file_codegen_dbscanner_dbscanner_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_codegen_dbscanner_dbscanner_proto_rawDesc), len(file_codegen_dbscanner_dbscanner_proto_rawDesc)))
-	})
-	return file_codegen_dbscanner_dbscanner_proto_rawDescData
-}
 
 var file_codegen_dbscanner_dbscanner_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_codegen_dbscanner_dbscanner_proto_goTypes = []any{

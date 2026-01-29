@@ -16,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -47,7 +46,7 @@ func (s *Server) ListQualificationsResults(
 		logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.user_id", req.GetUserId()})
 	}
 
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 	tCreator := tUser.AS("creator")
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -511,7 +510,7 @@ func (s *Server) getQualificationResult(
 	userInfo *userinfo.UserInfo,
 	userId int32,
 ) (*qualifications.QualificationResult, error) {
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 	tCreator := tUser.AS("creator")
 
 	condition := tQualiResults.DeletedAt.IS_NULL()

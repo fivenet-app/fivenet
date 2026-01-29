@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/calendar/calendar.proto
 
+//go:build !protoopaque
+
 package calendar
 
 import (
@@ -17,7 +19,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -29,11 +30,13 @@ const (
 )
 
 type ListCalendarsRequest struct {
-	state          protoimpl.MessageState      `protogen:"open.v1"`
-	Pagination     *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	OnlyPublic     bool                        `protobuf:"varint,2,opt,name=only_public,json=onlyPublic,proto3" json:"only_public,omitempty"`
-	MinAccessLevel *access.AccessLevel         `protobuf:"varint,3,opt,name=min_access_level,json=minAccessLevel,proto3,enum=resources.calendar.access.AccessLevel,oneof" json:"min_access_level,omitempty"`
-	After          *timestamp.Timestamp        `protobuf:"bytes,4,opt,name=after,proto3,oneof" json:"after,omitempty"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
+	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	// Search params
+	OnlyPublic     bool                 `protobuf:"varint,2,opt,name=only_public,json=onlyPublic,proto3" json:"only_public,omitempty"`
+	MinAccessLevel *access.AccessLevel  `protobuf:"varint,3,opt,name=min_access_level,json=minAccessLevel,proto3,enum=resources.calendar.access.AccessLevel,oneof" json:"min_access_level,omitempty"`
+	After          *timestamp.Timestamp `protobuf:"bytes,4,opt,name=after,proto3,oneof" json:"after,omitempty"`
+	CalendarIds    []int64              `protobuf:"varint,5,rep,packed,name=calendar_ids,json=calendarIds,proto3" json:"calendar_ids,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -61,11 +64,6 @@ func (x *ListCalendarsRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListCalendarsRequest.ProtoReflect.Descriptor instead.
-func (*ListCalendarsRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ListCalendarsRequest) GetPagination() *database.PaginationRequest {
@@ -96,8 +94,91 @@ func (x *ListCalendarsRequest) GetAfter() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *ListCalendarsRequest) GetCalendarIds() []int64 {
+	if x != nil {
+		return x.CalendarIds
+	}
+	return nil
+}
+
+func (x *ListCalendarsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListCalendarsRequest) SetOnlyPublic(v bool) {
+	x.OnlyPublic = v
+}
+
+func (x *ListCalendarsRequest) SetMinAccessLevel(v access.AccessLevel) {
+	x.MinAccessLevel = &v
+}
+
+func (x *ListCalendarsRequest) SetAfter(v *timestamp.Timestamp) {
+	x.After = v
+}
+
+func (x *ListCalendarsRequest) SetCalendarIds(v []int64) {
+	x.CalendarIds = v
+}
+
+func (x *ListCalendarsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListCalendarsRequest) HasMinAccessLevel() bool {
+	if x == nil {
+		return false
+	}
+	return x.MinAccessLevel != nil
+}
+
+func (x *ListCalendarsRequest) HasAfter() bool {
+	if x == nil {
+		return false
+	}
+	return x.After != nil
+}
+
+func (x *ListCalendarsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListCalendarsRequest) ClearMinAccessLevel() {
+	x.MinAccessLevel = nil
+}
+
+func (x *ListCalendarsRequest) ClearAfter() {
+	x.After = nil
+}
+
+type ListCalendarsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	// Search params
+	OnlyPublic     bool
+	MinAccessLevel *access.AccessLevel
+	After          *timestamp.Timestamp
+	CalendarIds    []int64
+}
+
+func (b0 ListCalendarsRequest_builder) Build() *ListCalendarsRequest {
+	m0 := &ListCalendarsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.OnlyPublic = b.OnlyPublic
+	x.MinAccessLevel = b.MinAccessLevel
+	x.After = b.After
+	x.CalendarIds = b.CalendarIds
+	return m0
+}
+
 type ListCalendarsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Calendars     []*calendar.Calendar         `protobuf:"bytes,2,rep,name=calendars,proto3" json:"calendars,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -129,11 +210,6 @@ func (x *ListCalendarsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListCalendarsResponse.ProtoReflect.Descriptor instead.
-func (*ListCalendarsResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListCalendarsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -148,8 +224,43 @@ func (x *ListCalendarsResponse) GetCalendars() []*calendar.Calendar {
 	return nil
 }
 
+func (x *ListCalendarsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListCalendarsResponse) SetCalendars(v []*calendar.Calendar) {
+	x.Calendars = v
+}
+
+func (x *ListCalendarsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListCalendarsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListCalendarsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Calendars  []*calendar.Calendar
+}
+
+func (b0 ListCalendarsResponse_builder) Build() *ListCalendarsResponse {
+	m0 := &ListCalendarsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Calendars = b.Calendars
+	return m0
+}
+
 type GetCalendarRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	CalendarId    int64                  `protobuf:"varint,1,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -180,11 +291,6 @@ func (x *GetCalendarRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetCalendarRequest.ProtoReflect.Descriptor instead.
-func (*GetCalendarRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *GetCalendarRequest) GetCalendarId() int64 {
 	if x != nil {
 		return x.CalendarId
@@ -192,8 +298,26 @@ func (x *GetCalendarRequest) GetCalendarId() int64 {
 	return 0
 }
 
+func (x *GetCalendarRequest) SetCalendarId(v int64) {
+	x.CalendarId = v
+}
+
+type GetCalendarRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	CalendarId int64
+}
+
+func (b0 GetCalendarRequest_builder) Build() *GetCalendarRequest {
+	m0 := &GetCalendarRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.CalendarId = b.CalendarId
+	return m0
+}
+
 type GetCalendarResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Calendar      *calendar.Calendar     `protobuf:"bytes,1,opt,name=calendar,proto3" json:"calendar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -224,11 +348,6 @@ func (x *GetCalendarResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetCalendarResponse.ProtoReflect.Descriptor instead.
-func (*GetCalendarResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *GetCalendarResponse) GetCalendar() *calendar.Calendar {
 	if x != nil {
 		return x.Calendar
@@ -236,8 +355,37 @@ func (x *GetCalendarResponse) GetCalendar() *calendar.Calendar {
 	return nil
 }
 
+func (x *GetCalendarResponse) SetCalendar(v *calendar.Calendar) {
+	x.Calendar = v
+}
+
+func (x *GetCalendarResponse) HasCalendar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Calendar != nil
+}
+
+func (x *GetCalendarResponse) ClearCalendar() {
+	x.Calendar = nil
+}
+
+type GetCalendarResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Calendar *calendar.Calendar
+}
+
+func (b0 GetCalendarResponse_builder) Build() *GetCalendarResponse {
+	m0 := &GetCalendarResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Calendar = b.Calendar
+	return m0
+}
+
 type CreateCalendarRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Calendar      *calendar.Calendar     `protobuf:"bytes,1,opt,name=calendar,proto3" json:"calendar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -268,11 +416,6 @@ func (x *CreateCalendarRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateCalendarRequest.ProtoReflect.Descriptor instead.
-func (*CreateCalendarRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *CreateCalendarRequest) GetCalendar() *calendar.Calendar {
 	if x != nil {
 		return x.Calendar
@@ -280,8 +423,37 @@ func (x *CreateCalendarRequest) GetCalendar() *calendar.Calendar {
 	return nil
 }
 
+func (x *CreateCalendarRequest) SetCalendar(v *calendar.Calendar) {
+	x.Calendar = v
+}
+
+func (x *CreateCalendarRequest) HasCalendar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Calendar != nil
+}
+
+func (x *CreateCalendarRequest) ClearCalendar() {
+	x.Calendar = nil
+}
+
+type CreateCalendarRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Calendar *calendar.Calendar
+}
+
+func (b0 CreateCalendarRequest_builder) Build() *CreateCalendarRequest {
+	m0 := &CreateCalendarRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Calendar = b.Calendar
+	return m0
+}
+
 type CreateCalendarResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Calendar      *calendar.Calendar     `protobuf:"bytes,1,opt,name=calendar,proto3" json:"calendar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -312,11 +484,6 @@ func (x *CreateCalendarResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateCalendarResponse.ProtoReflect.Descriptor instead.
-func (*CreateCalendarResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *CreateCalendarResponse) GetCalendar() *calendar.Calendar {
 	if x != nil {
 		return x.Calendar
@@ -324,8 +491,37 @@ func (x *CreateCalendarResponse) GetCalendar() *calendar.Calendar {
 	return nil
 }
 
+func (x *CreateCalendarResponse) SetCalendar(v *calendar.Calendar) {
+	x.Calendar = v
+}
+
+func (x *CreateCalendarResponse) HasCalendar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Calendar != nil
+}
+
+func (x *CreateCalendarResponse) ClearCalendar() {
+	x.Calendar = nil
+}
+
+type CreateCalendarResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Calendar *calendar.Calendar
+}
+
+func (b0 CreateCalendarResponse_builder) Build() *CreateCalendarResponse {
+	m0 := &CreateCalendarResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Calendar = b.Calendar
+	return m0
+}
+
 type UpdateCalendarRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Calendar      *calendar.Calendar     `protobuf:"bytes,1,opt,name=calendar,proto3" json:"calendar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -356,11 +552,6 @@ func (x *UpdateCalendarRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateCalendarRequest.ProtoReflect.Descriptor instead.
-func (*UpdateCalendarRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *UpdateCalendarRequest) GetCalendar() *calendar.Calendar {
 	if x != nil {
 		return x.Calendar
@@ -368,8 +559,37 @@ func (x *UpdateCalendarRequest) GetCalendar() *calendar.Calendar {
 	return nil
 }
 
+func (x *UpdateCalendarRequest) SetCalendar(v *calendar.Calendar) {
+	x.Calendar = v
+}
+
+func (x *UpdateCalendarRequest) HasCalendar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Calendar != nil
+}
+
+func (x *UpdateCalendarRequest) ClearCalendar() {
+	x.Calendar = nil
+}
+
+type UpdateCalendarRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Calendar *calendar.Calendar
+}
+
+func (b0 UpdateCalendarRequest_builder) Build() *UpdateCalendarRequest {
+	m0 := &UpdateCalendarRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Calendar = b.Calendar
+	return m0
+}
+
 type UpdateCalendarResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Calendar      *calendar.Calendar     `protobuf:"bytes,1,opt,name=calendar,proto3" json:"calendar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -400,11 +620,6 @@ func (x *UpdateCalendarResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateCalendarResponse.ProtoReflect.Descriptor instead.
-func (*UpdateCalendarResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *UpdateCalendarResponse) GetCalendar() *calendar.Calendar {
 	if x != nil {
 		return x.Calendar
@@ -412,8 +627,37 @@ func (x *UpdateCalendarResponse) GetCalendar() *calendar.Calendar {
 	return nil
 }
 
+func (x *UpdateCalendarResponse) SetCalendar(v *calendar.Calendar) {
+	x.Calendar = v
+}
+
+func (x *UpdateCalendarResponse) HasCalendar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Calendar != nil
+}
+
+func (x *UpdateCalendarResponse) ClearCalendar() {
+	x.Calendar = nil
+}
+
+type UpdateCalendarResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Calendar *calendar.Calendar
+}
+
+func (b0 UpdateCalendarResponse_builder) Build() *UpdateCalendarResponse {
+	m0 := &UpdateCalendarResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Calendar = b.Calendar
+	return m0
+}
+
 type DeleteCalendarRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	CalendarId    int64                  `protobuf:"varint,1,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -444,11 +688,6 @@ func (x *DeleteCalendarRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteCalendarRequest.ProtoReflect.Descriptor instead.
-func (*DeleteCalendarRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *DeleteCalendarRequest) GetCalendarId() int64 {
 	if x != nil {
 		return x.CalendarId
@@ -456,8 +695,26 @@ func (x *DeleteCalendarRequest) GetCalendarId() int64 {
 	return 0
 }
 
+func (x *DeleteCalendarRequest) SetCalendarId(v int64) {
+	x.CalendarId = v
+}
+
+type DeleteCalendarRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	CalendarId int64
+}
+
+func (b0 DeleteCalendarRequest_builder) Build() *DeleteCalendarRequest {
+	m0 := &DeleteCalendarRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.CalendarId = b.CalendarId
+	return m0
+}
+
 type DeleteCalendarResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -487,13 +744,20 @@ func (x *DeleteCalendarResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteCalendarResponse.ProtoReflect.Descriptor instead.
-func (*DeleteCalendarResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{9}
+type DeleteCalendarResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteCalendarResponse_builder) Build() *DeleteCalendarResponse {
+	m0 := &DeleteCalendarResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListCalendarEntriesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Year          int32                  `protobuf:"varint,1,opt,name=year,proto3" json:"year,omitempty"`
 	Month         int32                  `protobuf:"varint,2,opt,name=month,proto3" json:"month,omitempty"`
 	CalendarIds   []int64                `protobuf:"varint,3,rep,packed,name=calendar_ids,json=calendarIds,proto3" json:"calendar_ids,omitempty"`
@@ -526,11 +790,6 @@ func (x *ListCalendarEntriesRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListCalendarEntriesRequest.ProtoReflect.Descriptor instead.
-func (*ListCalendarEntriesRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListCalendarEntriesRequest) GetYear() int32 {
@@ -568,8 +827,72 @@ func (x *ListCalendarEntriesRequest) GetAfter() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *ListCalendarEntriesRequest) SetYear(v int32) {
+	x.Year = v
+}
+
+func (x *ListCalendarEntriesRequest) SetMonth(v int32) {
+	x.Month = v
+}
+
+func (x *ListCalendarEntriesRequest) SetCalendarIds(v []int64) {
+	x.CalendarIds = v
+}
+
+func (x *ListCalendarEntriesRequest) SetShowHidden(v bool) {
+	x.ShowHidden = &v
+}
+
+func (x *ListCalendarEntriesRequest) SetAfter(v *timestamp.Timestamp) {
+	x.After = v
+}
+
+func (x *ListCalendarEntriesRequest) HasShowHidden() bool {
+	if x == nil {
+		return false
+	}
+	return x.ShowHidden != nil
+}
+
+func (x *ListCalendarEntriesRequest) HasAfter() bool {
+	if x == nil {
+		return false
+	}
+	return x.After != nil
+}
+
+func (x *ListCalendarEntriesRequest) ClearShowHidden() {
+	x.ShowHidden = nil
+}
+
+func (x *ListCalendarEntriesRequest) ClearAfter() {
+	x.After = nil
+}
+
+type ListCalendarEntriesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Year        int32
+	Month       int32
+	CalendarIds []int64
+	ShowHidden  *bool
+	After       *timestamp.Timestamp
+}
+
+func (b0 ListCalendarEntriesRequest_builder) Build() *ListCalendarEntriesRequest {
+	m0 := &ListCalendarEntriesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Year = b.Year
+	x.Month = b.Month
+	x.CalendarIds = b.CalendarIds
+	x.ShowHidden = b.ShowHidden
+	x.After = b.After
+	return m0
+}
+
 type ListCalendarEntriesResponse struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Entries       []*entries.CalendarEntry `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -600,11 +923,6 @@ func (x *ListCalendarEntriesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListCalendarEntriesResponse.ProtoReflect.Descriptor instead.
-func (*ListCalendarEntriesResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{11}
-}
-
 func (x *ListCalendarEntriesResponse) GetEntries() []*entries.CalendarEntry {
 	if x != nil {
 		return x.Entries
@@ -612,8 +930,26 @@ func (x *ListCalendarEntriesResponse) GetEntries() []*entries.CalendarEntry {
 	return nil
 }
 
+func (x *ListCalendarEntriesResponse) SetEntries(v []*entries.CalendarEntry) {
+	x.Entries = v
+}
+
+type ListCalendarEntriesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Entries []*entries.CalendarEntry
+}
+
+func (b0 ListCalendarEntriesResponse_builder) Build() *ListCalendarEntriesResponse {
+	m0 := &ListCalendarEntriesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Entries = b.Entries
+	return m0
+}
+
 type GetUpcomingEntriesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Seconds       int32                  `protobuf:"varint,1,opt,name=seconds,proto3" json:"seconds,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -644,11 +980,6 @@ func (x *GetUpcomingEntriesRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetUpcomingEntriesRequest.ProtoReflect.Descriptor instead.
-func (*GetUpcomingEntriesRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{12}
-}
-
 func (x *GetUpcomingEntriesRequest) GetSeconds() int32 {
 	if x != nil {
 		return x.Seconds
@@ -656,8 +987,26 @@ func (x *GetUpcomingEntriesRequest) GetSeconds() int32 {
 	return 0
 }
 
+func (x *GetUpcomingEntriesRequest) SetSeconds(v int32) {
+	x.Seconds = v
+}
+
+type GetUpcomingEntriesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Seconds int32
+}
+
+func (b0 GetUpcomingEntriesRequest_builder) Build() *GetUpcomingEntriesRequest {
+	m0 := &GetUpcomingEntriesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Seconds = b.Seconds
+	return m0
+}
+
 type GetUpcomingEntriesResponse struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Entries       []*entries.CalendarEntry `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -688,11 +1037,6 @@ func (x *GetUpcomingEntriesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetUpcomingEntriesResponse.ProtoReflect.Descriptor instead.
-func (*GetUpcomingEntriesResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{13}
-}
-
 func (x *GetUpcomingEntriesResponse) GetEntries() []*entries.CalendarEntry {
 	if x != nil {
 		return x.Entries
@@ -700,8 +1044,26 @@ func (x *GetUpcomingEntriesResponse) GetEntries() []*entries.CalendarEntry {
 	return nil
 }
 
+func (x *GetUpcomingEntriesResponse) SetEntries(v []*entries.CalendarEntry) {
+	x.Entries = v
+}
+
+type GetUpcomingEntriesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Entries []*entries.CalendarEntry
+}
+
+func (b0 GetUpcomingEntriesResponse_builder) Build() *GetUpcomingEntriesResponse {
+	m0 := &GetUpcomingEntriesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Entries = b.Entries
+	return m0
+}
+
 type GetCalendarEntryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	EntryId       int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -732,11 +1094,6 @@ func (x *GetCalendarEntryRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetCalendarEntryRequest.ProtoReflect.Descriptor instead.
-func (*GetCalendarEntryRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{14}
-}
-
 func (x *GetCalendarEntryRequest) GetEntryId() int64 {
 	if x != nil {
 		return x.EntryId
@@ -744,8 +1101,26 @@ func (x *GetCalendarEntryRequest) GetEntryId() int64 {
 	return 0
 }
 
+func (x *GetCalendarEntryRequest) SetEntryId(v int64) {
+	x.EntryId = v
+}
+
+type GetCalendarEntryRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EntryId int64
+}
+
+func (b0 GetCalendarEntryRequest_builder) Build() *GetCalendarEntryRequest {
+	m0 := &GetCalendarEntryRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EntryId = b.EntryId
+	return m0
+}
+
 type GetCalendarEntryResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Entry         *entries.CalendarEntry `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -776,11 +1151,6 @@ func (x *GetCalendarEntryResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetCalendarEntryResponse.ProtoReflect.Descriptor instead.
-func (*GetCalendarEntryResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{15}
-}
-
 func (x *GetCalendarEntryResponse) GetEntry() *entries.CalendarEntry {
 	if x != nil {
 		return x.Entry
@@ -788,8 +1158,37 @@ func (x *GetCalendarEntryResponse) GetEntry() *entries.CalendarEntry {
 	return nil
 }
 
+func (x *GetCalendarEntryResponse) SetEntry(v *entries.CalendarEntry) {
+	x.Entry = v
+}
+
+func (x *GetCalendarEntryResponse) HasEntry() bool {
+	if x == nil {
+		return false
+	}
+	return x.Entry != nil
+}
+
+func (x *GetCalendarEntryResponse) ClearEntry() {
+	x.Entry = nil
+}
+
+type GetCalendarEntryResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Entry *entries.CalendarEntry
+}
+
+func (b0 GetCalendarEntryResponse_builder) Build() *GetCalendarEntryResponse {
+	m0 := &GetCalendarEntryResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Entry = b.Entry
+	return m0
+}
+
 type CreateOrUpdateCalendarEntryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Entry         *entries.CalendarEntry `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	UserIds       []int32                `protobuf:"varint,2,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -821,11 +1220,6 @@ func (x *CreateOrUpdateCalendarEntryRequest) ProtoReflect() protoreflect.Message
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateCalendarEntryRequest.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateCalendarEntryRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{16}
-}
-
 func (x *CreateOrUpdateCalendarEntryRequest) GetEntry() *entries.CalendarEntry {
 	if x != nil {
 		return x.Entry
@@ -840,8 +1234,43 @@ func (x *CreateOrUpdateCalendarEntryRequest) GetUserIds() []int32 {
 	return nil
 }
 
+func (x *CreateOrUpdateCalendarEntryRequest) SetEntry(v *entries.CalendarEntry) {
+	x.Entry = v
+}
+
+func (x *CreateOrUpdateCalendarEntryRequest) SetUserIds(v []int32) {
+	x.UserIds = v
+}
+
+func (x *CreateOrUpdateCalendarEntryRequest) HasEntry() bool {
+	if x == nil {
+		return false
+	}
+	return x.Entry != nil
+}
+
+func (x *CreateOrUpdateCalendarEntryRequest) ClearEntry() {
+	x.Entry = nil
+}
+
+type CreateOrUpdateCalendarEntryRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Entry   *entries.CalendarEntry
+	UserIds []int32
+}
+
+func (b0 CreateOrUpdateCalendarEntryRequest_builder) Build() *CreateOrUpdateCalendarEntryRequest {
+	m0 := &CreateOrUpdateCalendarEntryRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Entry = b.Entry
+	x.UserIds = b.UserIds
+	return m0
+}
+
 type CreateOrUpdateCalendarEntryResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Entry         *entries.CalendarEntry `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -872,11 +1301,6 @@ func (x *CreateOrUpdateCalendarEntryResponse) ProtoReflect() protoreflect.Messag
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateCalendarEntryResponse.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateCalendarEntryResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{17}
-}
-
 func (x *CreateOrUpdateCalendarEntryResponse) GetEntry() *entries.CalendarEntry {
 	if x != nil {
 		return x.Entry
@@ -884,8 +1308,37 @@ func (x *CreateOrUpdateCalendarEntryResponse) GetEntry() *entries.CalendarEntry 
 	return nil
 }
 
+func (x *CreateOrUpdateCalendarEntryResponse) SetEntry(v *entries.CalendarEntry) {
+	x.Entry = v
+}
+
+func (x *CreateOrUpdateCalendarEntryResponse) HasEntry() bool {
+	if x == nil {
+		return false
+	}
+	return x.Entry != nil
+}
+
+func (x *CreateOrUpdateCalendarEntryResponse) ClearEntry() {
+	x.Entry = nil
+}
+
+type CreateOrUpdateCalendarEntryResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Entry *entries.CalendarEntry
+}
+
+func (b0 CreateOrUpdateCalendarEntryResponse_builder) Build() *CreateOrUpdateCalendarEntryResponse {
+	m0 := &CreateOrUpdateCalendarEntryResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Entry = b.Entry
+	return m0
+}
+
 type DeleteCalendarEntryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	EntryId       int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -916,11 +1369,6 @@ func (x *DeleteCalendarEntryRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteCalendarEntryRequest.ProtoReflect.Descriptor instead.
-func (*DeleteCalendarEntryRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{18}
-}
-
 func (x *DeleteCalendarEntryRequest) GetEntryId() int64 {
 	if x != nil {
 		return x.EntryId
@@ -928,8 +1376,26 @@ func (x *DeleteCalendarEntryRequest) GetEntryId() int64 {
 	return 0
 }
 
+func (x *DeleteCalendarEntryRequest) SetEntryId(v int64) {
+	x.EntryId = v
+}
+
+type DeleteCalendarEntryRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EntryId int64
+}
+
+func (b0 DeleteCalendarEntryRequest_builder) Build() *DeleteCalendarEntryRequest {
+	m0 := &DeleteCalendarEntryRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EntryId = b.EntryId
+	return m0
+}
+
 type DeleteCalendarEntryResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -959,13 +1425,20 @@ func (x *DeleteCalendarEntryResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteCalendarEntryResponse.ProtoReflect.Descriptor instead.
-func (*DeleteCalendarEntryResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{19}
+type DeleteCalendarEntryResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteCalendarEntryResponse_builder) Build() *DeleteCalendarEntryResponse {
+	m0 := &DeleteCalendarEntryResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ShareCalendarEntryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	EntryId       int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
 	UserIds       []int32                `protobuf:"varint,2,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -997,11 +1470,6 @@ func (x *ShareCalendarEntryRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ShareCalendarEntryRequest.ProtoReflect.Descriptor instead.
-func (*ShareCalendarEntryRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{20}
-}
-
 func (x *ShareCalendarEntryRequest) GetEntryId() int64 {
 	if x != nil {
 		return x.EntryId
@@ -1016,8 +1484,32 @@ func (x *ShareCalendarEntryRequest) GetUserIds() []int32 {
 	return nil
 }
 
+func (x *ShareCalendarEntryRequest) SetEntryId(v int64) {
+	x.EntryId = v
+}
+
+func (x *ShareCalendarEntryRequest) SetUserIds(v []int32) {
+	x.UserIds = v
+}
+
+type ShareCalendarEntryRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EntryId int64
+	UserIds []int32
+}
+
+func (b0 ShareCalendarEntryRequest_builder) Build() *ShareCalendarEntryRequest {
+	m0 := &ShareCalendarEntryRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EntryId = b.EntryId
+	x.UserIds = b.UserIds
+	return m0
+}
+
 type ShareCalendarEntryResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1047,13 +1539,20 @@ func (x *ShareCalendarEntryResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ShareCalendarEntryResponse.ProtoReflect.Descriptor instead.
-func (*ShareCalendarEntryResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{21}
+type ShareCalendarEntryResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ShareCalendarEntryResponse_builder) Build() *ShareCalendarEntryResponse {
+	m0 := &ShareCalendarEntryResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListCalendarEntryRSVPRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	EntryId       int64                       `protobuf:"varint,2,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1085,11 +1584,6 @@ func (x *ListCalendarEntryRSVPRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListCalendarEntryRSVPRequest.ProtoReflect.Descriptor instead.
-func (*ListCalendarEntryRSVPRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{22}
-}
-
 func (x *ListCalendarEntryRSVPRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -1104,8 +1598,43 @@ func (x *ListCalendarEntryRSVPRequest) GetEntryId() int64 {
 	return 0
 }
 
+func (x *ListCalendarEntryRSVPRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListCalendarEntryRSVPRequest) SetEntryId(v int64) {
+	x.EntryId = v
+}
+
+func (x *ListCalendarEntryRSVPRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListCalendarEntryRSVPRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListCalendarEntryRSVPRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	EntryId    int64
+}
+
+func (b0 ListCalendarEntryRSVPRequest_builder) Build() *ListCalendarEntryRSVPRequest {
+	m0 := &ListCalendarEntryRSVPRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.EntryId = b.EntryId
+	return m0
+}
+
 type ListCalendarEntryRSVPResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Entries       []*entries.CalendarEntryRSVP `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1137,11 +1666,6 @@ func (x *ListCalendarEntryRSVPResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListCalendarEntryRSVPResponse.ProtoReflect.Descriptor instead.
-func (*ListCalendarEntryRSVPResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{23}
-}
-
 func (x *ListCalendarEntryRSVPResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -1156,8 +1680,43 @@ func (x *ListCalendarEntryRSVPResponse) GetEntries() []*entries.CalendarEntryRSV
 	return nil
 }
 
+func (x *ListCalendarEntryRSVPResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListCalendarEntryRSVPResponse) SetEntries(v []*entries.CalendarEntryRSVP) {
+	x.Entries = v
+}
+
+func (x *ListCalendarEntryRSVPResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListCalendarEntryRSVPResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListCalendarEntryRSVPResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Entries    []*entries.CalendarEntryRSVP
+}
+
+func (b0 ListCalendarEntryRSVPResponse_builder) Build() *ListCalendarEntryRSVPResponse {
+	m0 := &ListCalendarEntryRSVPResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Entries = b.Entries
+	return m0
+}
+
 type RSVPCalendarEntryRequest struct {
-	state         protoimpl.MessageState     `protogen:"open.v1"`
+	state         protoimpl.MessageState     `protogen:"hybrid.v1"`
 	Entry         *entries.CalendarEntryRSVP `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	Subscribe     bool                       `protobuf:"varint,2,opt,name=subscribe,proto3" json:"subscribe,omitempty"`
 	Remove        *bool                      `protobuf:"varint,3,opt,name=remove,proto3,oneof" json:"remove,omitempty"`
@@ -1190,11 +1749,6 @@ func (x *RSVPCalendarEntryRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RSVPCalendarEntryRequest.ProtoReflect.Descriptor instead.
-func (*RSVPCalendarEntryRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{24}
-}
-
 func (x *RSVPCalendarEntryRequest) GetEntry() *entries.CalendarEntryRSVP {
 	if x != nil {
 		return x.Entry
@@ -1216,8 +1770,60 @@ func (x *RSVPCalendarEntryRequest) GetRemove() bool {
 	return false
 }
 
+func (x *RSVPCalendarEntryRequest) SetEntry(v *entries.CalendarEntryRSVP) {
+	x.Entry = v
+}
+
+func (x *RSVPCalendarEntryRequest) SetSubscribe(v bool) {
+	x.Subscribe = v
+}
+
+func (x *RSVPCalendarEntryRequest) SetRemove(v bool) {
+	x.Remove = &v
+}
+
+func (x *RSVPCalendarEntryRequest) HasEntry() bool {
+	if x == nil {
+		return false
+	}
+	return x.Entry != nil
+}
+
+func (x *RSVPCalendarEntryRequest) HasRemove() bool {
+	if x == nil {
+		return false
+	}
+	return x.Remove != nil
+}
+
+func (x *RSVPCalendarEntryRequest) ClearEntry() {
+	x.Entry = nil
+}
+
+func (x *RSVPCalendarEntryRequest) ClearRemove() {
+	x.Remove = nil
+}
+
+type RSVPCalendarEntryRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Entry     *entries.CalendarEntryRSVP
+	Subscribe bool
+	Remove    *bool
+}
+
+func (b0 RSVPCalendarEntryRequest_builder) Build() *RSVPCalendarEntryRequest {
+	m0 := &RSVPCalendarEntryRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Entry = b.Entry
+	x.Subscribe = b.Subscribe
+	x.Remove = b.Remove
+	return m0
+}
+
 type RSVPCalendarEntryResponse struct {
-	state         protoimpl.MessageState     `protogen:"open.v1"`
+	state         protoimpl.MessageState     `protogen:"hybrid.v1"`
 	Entry         *entries.CalendarEntryRSVP `protobuf:"bytes,1,opt,name=entry,proto3,oneof" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1248,11 +1854,6 @@ func (x *RSVPCalendarEntryResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RSVPCalendarEntryResponse.ProtoReflect.Descriptor instead.
-func (*RSVPCalendarEntryResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{25}
-}
-
 func (x *RSVPCalendarEntryResponse) GetEntry() *entries.CalendarEntryRSVP {
 	if x != nil {
 		return x.Entry
@@ -1260,8 +1861,37 @@ func (x *RSVPCalendarEntryResponse) GetEntry() *entries.CalendarEntryRSVP {
 	return nil
 }
 
+func (x *RSVPCalendarEntryResponse) SetEntry(v *entries.CalendarEntryRSVP) {
+	x.Entry = v
+}
+
+func (x *RSVPCalendarEntryResponse) HasEntry() bool {
+	if x == nil {
+		return false
+	}
+	return x.Entry != nil
+}
+
+func (x *RSVPCalendarEntryResponse) ClearEntry() {
+	x.Entry = nil
+}
+
+type RSVPCalendarEntryResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Entry *entries.CalendarEntryRSVP
+}
+
+func (b0 RSVPCalendarEntryResponse_builder) Build() *RSVPCalendarEntryResponse {
+	m0 := &RSVPCalendarEntryResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Entry = b.Entry
+	return m0
+}
+
 type ListSubscriptionsRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1292,11 +1922,6 @@ func (x *ListSubscriptionsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListSubscriptionsRequest.ProtoReflect.Descriptor instead.
-func (*ListSubscriptionsRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{26}
-}
-
 func (x *ListSubscriptionsRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -1304,8 +1929,37 @@ func (x *ListSubscriptionsRequest) GetPagination() *database.PaginationRequest {
 	return nil
 }
 
+func (x *ListSubscriptionsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListSubscriptionsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListSubscriptionsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListSubscriptionsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+}
+
+func (b0 ListSubscriptionsRequest_builder) Build() *ListSubscriptionsRequest {
+	m0 := &ListSubscriptionsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	return m0
+}
+
 type ListSubscriptionsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Subs          []*calendar.CalendarSub      `protobuf:"bytes,2,rep,name=subs,proto3" json:"subs,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1337,11 +1991,6 @@ func (x *ListSubscriptionsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListSubscriptionsResponse.ProtoReflect.Descriptor instead.
-func (*ListSubscriptionsResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{27}
-}
-
 func (x *ListSubscriptionsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -1356,8 +2005,43 @@ func (x *ListSubscriptionsResponse) GetSubs() []*calendar.CalendarSub {
 	return nil
 }
 
+func (x *ListSubscriptionsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListSubscriptionsResponse) SetSubs(v []*calendar.CalendarSub) {
+	x.Subs = v
+}
+
+func (x *ListSubscriptionsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListSubscriptionsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListSubscriptionsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Subs       []*calendar.CalendarSub
+}
+
+func (b0 ListSubscriptionsResponse_builder) Build() *ListSubscriptionsResponse {
+	m0 := &ListSubscriptionsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Subs = b.Subs
+	return m0
+}
+
 type SubscribeToCalendarRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Sub           *calendar.CalendarSub  `protobuf:"bytes,1,opt,name=sub,proto3" json:"sub,omitempty"`
 	Delete        bool                   `protobuf:"varint,2,opt,name=delete,proto3" json:"delete,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1389,11 +2073,6 @@ func (x *SubscribeToCalendarRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SubscribeToCalendarRequest.ProtoReflect.Descriptor instead.
-func (*SubscribeToCalendarRequest) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{28}
-}
-
 func (x *SubscribeToCalendarRequest) GetSub() *calendar.CalendarSub {
 	if x != nil {
 		return x.Sub
@@ -1408,8 +2087,43 @@ func (x *SubscribeToCalendarRequest) GetDelete() bool {
 	return false
 }
 
+func (x *SubscribeToCalendarRequest) SetSub(v *calendar.CalendarSub) {
+	x.Sub = v
+}
+
+func (x *SubscribeToCalendarRequest) SetDelete(v bool) {
+	x.Delete = v
+}
+
+func (x *SubscribeToCalendarRequest) HasSub() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sub != nil
+}
+
+func (x *SubscribeToCalendarRequest) ClearSub() {
+	x.Sub = nil
+}
+
+type SubscribeToCalendarRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Sub    *calendar.CalendarSub
+	Delete bool
+}
+
+func (b0 SubscribeToCalendarRequest_builder) Build() *SubscribeToCalendarRequest {
+	m0 := &SubscribeToCalendarRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Sub = b.Sub
+	x.Delete = b.Delete
+	return m0
+}
+
 type SubscribeToCalendarResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Sub           *calendar.CalendarSub  `protobuf:"bytes,1,opt,name=sub,proto3" json:"sub,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1440,11 +2154,6 @@ func (x *SubscribeToCalendarResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SubscribeToCalendarResponse.ProtoReflect.Descriptor instead.
-func (*SubscribeToCalendarResponse) Descriptor() ([]byte, []int) {
-	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{29}
-}
-
 func (x *SubscribeToCalendarResponse) GetSub() *calendar.CalendarSub {
 	if x != nil {
 		return x.Sub
@@ -1452,11 +2161,40 @@ func (x *SubscribeToCalendarResponse) GetSub() *calendar.CalendarSub {
 	return nil
 }
 
+func (x *SubscribeToCalendarResponse) SetSub(v *calendar.CalendarSub) {
+	x.Sub = v
+}
+
+func (x *SubscribeToCalendarResponse) HasSub() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sub != nil
+}
+
+func (x *SubscribeToCalendarResponse) ClearSub() {
+	x.Sub = nil
+}
+
+type SubscribeToCalendarResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Sub *calendar.CalendarSub
+}
+
+func (b0 SubscribeToCalendarResponse_builder) Build() *SubscribeToCalendarResponse {
+	m0 := &SubscribeToCalendarResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Sub = b.Sub
+	return m0
+}
+
 var File_services_calendar_calendar_proto protoreflect.FileDescriptor
 
 const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
-	" services/calendar/calendar.proto\x12\x11services.calendar\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a&resources/calendar/access/access.proto\x1a!resources/calendar/calendar.proto\x1a(resources/calendar/entries/entries.proto\x1a(resources/common/database/database.proto\x1a#resources/timestamp/timestamp.proto\"\xb6\x02\n" +
+	" services/calendar/calendar.proto\x12\x11services.calendar\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a&resources/calendar/access/access.proto\x1a!resources/calendar/calendar.proto\x1a(resources/calendar/entries/entries.proto\x1a(resources/common/database/database.proto\x1a#resources/timestamp/timestamp.proto\"\xd9\x02\n" +
 	"\x14ListCalendarsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1464,7 +2202,8 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\vonly_public\x18\x02 \x01(\bR\n" +
 	"onlyPublic\x12U\n" +
 	"\x10min_access_level\x18\x03 \x01(\x0e2&.resources.calendar.access.AccessLevelH\x00R\x0eminAccessLevel\x88\x01\x01\x129\n" +
-	"\x05after\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05after\x88\x01\x01B\x13\n" +
+	"\x05after\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05after\x88\x01\x01\x12!\n" +
+	"\fcalendar_ids\x18\x05 \x03(\x03R\vcalendarIdsB\x13\n" +
 	"\x11_min_access_levelB\b\n" +
 	"\x06_after\"\xa8\x01\n" +
 	"\x15ListCalendarsResponse\x12M\n" +
@@ -1569,18 +2308,6 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\x11RSVPCalendarEntry\x12+.services.calendar.RSVPCalendarEntryRequest\x1a,.services.calendar.RSVPCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12{\n" +
 	"\x11ListSubscriptions\x12+.services.calendar.ListSubscriptionsRequest\x1a,.services.calendar.ListSubscriptionsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x81\x01\n" +
 	"\x13SubscribeToCalendar\x12-.services.calendar.SubscribeToCalendarRequest\x1a..services.calendar.SubscribeToCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x1a\x1e\xea\xf3\x18\x1a\bF\x12\x16i-mdi-calendar-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar;calendarb\x06proto3"
-
-var (
-	file_services_calendar_calendar_proto_rawDescOnce sync.Once
-	file_services_calendar_calendar_proto_rawDescData []byte
-)
-
-func file_services_calendar_calendar_proto_rawDescGZIP() []byte {
-	file_services_calendar_calendar_proto_rawDescOnce.Do(func() {
-		file_services_calendar_calendar_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_calendar_calendar_proto_rawDesc), len(file_services_calendar_calendar_proto_rawDesc)))
-	})
-	return file_services_calendar_calendar_proto_rawDescData
-}
 
 var file_services_calendar_calendar_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
 var file_services_calendar_calendar_proto_goTypes = []any{

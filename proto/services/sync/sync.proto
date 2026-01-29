@@ -5,8 +5,8 @@ package services.sync;
 import "buf/validate/validate.proto";
 import "resources/centrum/dispatches/dispatches.proto";
 import "resources/jobs/colleagues/activity/activity.proto";
-import "resources/sync/activity.proto";
-import "resources/sync/data.proto";
+import "resources/sync/activity/activity.proto";
+import "resources/sync/data/data.proto";
 import "resources/users/activity/activity.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync;sync";
@@ -14,35 +14,38 @@ option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/
 message GetStatusRequest {}
 
 message GetStatusResponse {
-  resources.sync.DataStatus jobs = 1;
-  resources.sync.DataStatus licenses = 2;
+  resources.sync.data.DataStatus jobs = 1;
+  resources.sync.data.DataStatus licenses = 2;
 
-  resources.sync.DataStatus users = 3;
-  resources.sync.DataStatus vehicles = 4;
+  resources.sync.data.DataStatus accounts = 5;
+  resources.sync.data.DataStatus users = 3;
+  resources.sync.data.DataStatus vehicles = 4;
 }
 
 message AddActivityRequest {
   oneof activity {
     option (buf.validate.oneof).required = true;
 
-    resources.sync.UserOAuth2Conn user_oauth2 = 1;
+    resources.sync.activity.UserOAuth2Conn user_oauth2 = 1;
 
     resources.centrum.dispatches.Dispatch dispatch = 2;
 
     // User activity
     resources.users.activity.UserActivity user_activity = 3;
     // Setting props will cause activity to be created automtically
-    resources.sync.UserProps user_props = 4;
+    resources.sync.activity.UserProps user_props = 4;
 
     // Jobs user activity
     resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 5;
     // Setting props will cause activity to be created automtically
-    resources.sync.ColleagueProps colleague_props = 6;
+    resources.sync.activity.ColleagueProps colleague_props = 6;
     // Timeclock user entry
-    resources.sync.TimeclockUpdate job_timeclock = 7;
+    resources.sync.activity.TimeclockUpdate job_timeclock = 7;
 
+    // Account update for a signle account to update the group(s).
+    resources.sync.activity.AccountUpdate account_update = 9;
     // User/Char info updates that aren't tracked by activity (yet)
-    resources.sync.UserUpdate user_update = 8;
+    resources.sync.activity.UserUpdate user_update = 8;
   }
 }
 
@@ -74,15 +77,16 @@ message SendDataRequest {
   oneof data {
     option (buf.validate.oneof).required = true;
 
-    resources.sync.DataJobs jobs = 1;
-    resources.sync.DataLicenses licenses = 2;
+    resources.sync.data.DataJobs jobs = 1;
+    resources.sync.data.DataLicenses licenses = 2;
 
-    resources.sync.DataUsers users = 3;
-    resources.sync.DataVehicles vehicles = 4;
+    resources.sync.data.DataAccounts accounts = 9;
+    resources.sync.data.DataUsers users = 3;
+    resources.sync.data.DataVehicles vehicles = 4;
 
-    resources.sync.DataUserLocations user_locations = 5;
+    resources.sync.data.DataUserLocations user_locations = 5;
 
-    resources.sync.LastCharID last_char_id = 6;
+    resources.sync.data.LastCharID last_char_id = 6;
   }
 }
 
@@ -94,8 +98,8 @@ message DeleteDataRequest {
   oneof data {
     option (buf.validate.oneof).required = true;
 
-    resources.sync.DeleteUsers users = 1;
-    resources.sync.DeleteVehicles vehicles = 2;
+    resources.sync.data.DeleteUsers users = 1;
+    resources.sync.data.DeleteVehicles vehicles = 2;
   }
 }
 

@@ -9,15 +9,20 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"go.uber.org/fx"
 )
 
 const (
 	AuthAccIDCtxTag        = "auth.accid"
-	AuthActiveCharIDCtxTag = "auth.chrid"
+	AuthActiveCharIDCtxTag = "auth.usrid"
 	AuthSubCtxTag          = "auth.sub"
 
-	AuthActiveCharJobCtxTag      = "auth.chrjob"
-	AuthActiveCharJobGradeCtxTag = "auth.chrjobg"
+	AuthUserJobCtxTag      = "auth.usrjob"
+	AuthUserJobGradeCtxTag = "auth.usrjobg"
+
+	AuthUserImpersonateCtxTag         = "auth.imp"
+	AuthUserImpersonateJobCtxTag      = "auth.impjob"
+	AuthUserImpersonateJobGradeCtxTag = "auth.impjobg"
 )
 
 const (
@@ -46,6 +51,12 @@ var (
 	}
 )
 
+var AuthModule = fx.Module("grpc.auth",
+	fx.Provide(
+		NewGRPCAuth,
+	),
+)
+
 type userInfoCtxMarker struct{}
 
 var userInfoCtxMarkerKey = &userInfoCtxMarker{}
@@ -69,42 +80,60 @@ func NewGRPCAuth(
 }
 
 func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, _ string) (context.Context, error) {
-	t, err := GetTokenFromGRPCContext(ctx)
+	accToken, userToken, err := GetTokensFromGRPCContext(ctx)
 	if err != nil {
 		return nil, err
 	}
-
-	if t == "" {
+	if accToken == "" || userToken == "" {
 		return nil, errorsgrpcauth.ErrNoToken
 	}
 
-	// Parse token only returns the token info when the token is still valid
-	tInfo, err := g.tm.ParseWithClaims(t)
+	// Parse tokens only returns the token info when the token is still valid
+	accClaims, err := g.tm.ParseAccToken(accToken)
 	if err != nil {
 		return nil, errorsgrpcauth.ErrInvalidToken
 	}
 
-	userInfo, err := g.ui.GetUserInfo(ctx, tInfo.CharID, tInfo.AccID)
+	userClaims, err := g.tm.ParseUserToken(userToken)
+	if err != nil {
+		return nil, errorsgrpcauth.ErrInvalidToken
+	}
+
+	userInfo, err := g.ui.GetUserInfoFromClaims(ctx, userClaims, accClaims)
 	if err != nil {
 		// Inject logging fields for better debugging
-		if tInfo != nil {
+		if accClaims != nil {
 			logging.InjectFields(ctx, logging.Fields{
-				AuthSubCtxTag, tInfo.Subject,
-				AuthAccIDCtxTag, tInfo.AccID,
-				AuthActiveCharIDCtxTag, tInfo.CharID,
+				AuthSubCtxTag, accClaims.Subject,
+				AuthAccIDCtxTag, accClaims.AccID,
+				AuthActiveCharIDCtxTag, userClaims.UserID,
 			})
 		}
 
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
 	}
 
-	newCtx := logging.InjectFields(ctx, logging.Fields{
-		AuthSubCtxTag, tInfo.Subject,
-		AuthAccIDCtxTag, tInfo.AccID,
-		AuthActiveCharIDCtxTag, tInfo.CharID,
-		AuthActiveCharJobCtxTag, userInfo.GetJob(),
-		AuthActiveCharJobGradeCtxTag, userInfo.GetJobGrade(),
-	})
+	fields := logging.Fields{
+		AuthSubCtxTag, accClaims.Subject,
+		AuthAccIDCtxTag, accClaims.AccID,
+		AuthActiveCharIDCtxTag, userClaims.UserID,
+		AuthUserJobCtxTag, userInfo.GetJob(),
+		AuthUserJobGradeCtxTag, userInfo.GetJobGrade(),
+	}
+	if userClaims.Impersonate != nil {
+		fields = append(fields,
+			AuthUserImpersonateCtxTag, true,
+			AuthUserImpersonateJobCtxTag, userClaims.Impersonate.Job,
+			AuthUserImpersonateJobGradeCtxTag, userClaims.Impersonate.JobGrade,
+		)
+	}
+
+	newCtx := logging.InjectFields(ctx, fields)
+
+	if userClaims.Impersonate != nil {
+		userInfo.Job = userClaims.Impersonate.Job
+		userInfo.JobGrade = userClaims.Impersonate.JobGrade
+	}
 
 	if userInfo.LastChar != nil && userInfo.GetLastChar() != userInfo.GetUserId() &&
 		g.appCfg.Get().Auth.GetLastCharLock() {
@@ -120,25 +149,24 @@ func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(
 	ctx context.Context,
 	_ string,
 ) (context.Context, error) {
-	t, err := GetTokenFromGRPCContext(ctx)
+	t, err := GetAccTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, err
 	}
-
 	if t == "" {
 		return nil, errorsgrpcauth.ErrNoToken
 	}
 
-	// Parse token only returns the token info when the token is still valid
-	tInfo, err := g.tm.ParseWithClaims(t)
+	// Parse acc token only returns the token info when the token is still valid
+	accClaims, err := g.tm.ParseAccToken(t)
 	if err != nil {
 		return nil, errorsgrpcauth.ErrInvalidToken
 	}
 
 	ctx = logging.InjectFields(ctx, logging.Fields{
-		AuthSubCtxTag, tInfo.Subject,
-		AuthAccIDCtxTag, tInfo.AccID,
-		AuthActiveCharIDCtxTag, tInfo.CharID,
+		AuthSubCtxTag, accClaims.Subject,
+		AuthAccIDCtxTag, accClaims.AccID,
+		AuthActiveCharIDCtxTag, 0,
 	})
 
 	return ctx, nil

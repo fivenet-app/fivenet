@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/vehicles/vehicles.proto
 
+//go:build !protoopaque
+
 package vehicles
 
 import (
@@ -12,7 +14,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,7 +25,7 @@ const (
 )
 
 type Vehicle struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	Plate           string                 `protobuf:"bytes,1,opt,name=plate,proto3" json:"plate,omitempty"`
 	Model           *string                `protobuf:"bytes,2,opt,name=model,proto3,oneof" json:"model,omitempty"`
 	Type            string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
@@ -61,11 +62,6 @@ func (x *Vehicle) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Vehicle.ProtoReflect.Descriptor instead.
-func (*Vehicle) Descriptor() ([]byte, []int) {
-	return file_resources_vehicles_vehicles_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Vehicle) GetPlate() string {
@@ -131,6 +127,149 @@ func (x *Vehicle) GetProps() *props.VehicleProps {
 	return nil
 }
 
+func (x *Vehicle) SetPlate(v string) {
+	x.Plate = v
+}
+
+func (x *Vehicle) SetModel(v string) {
+	x.Model = &v
+}
+
+func (x *Vehicle) SetType(v string) {
+	x.Type = v
+}
+
+func (x *Vehicle) SetOwnerId(v int32) {
+	x.OwnerId = &v
+}
+
+func (x *Vehicle) SetOwnerIdentifier(v string) {
+	x.OwnerIdentifier = &v
+}
+
+func (x *Vehicle) SetOwner(v *short.UserShort) {
+	x.Owner = v
+}
+
+func (x *Vehicle) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *Vehicle) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *Vehicle) SetProps(v *props.VehicleProps) {
+	x.Props = v
+}
+
+func (x *Vehicle) HasModel() bool {
+	if x == nil {
+		return false
+	}
+	return x.Model != nil
+}
+
+func (x *Vehicle) HasOwnerId() bool {
+	if x == nil {
+		return false
+	}
+	return x.OwnerId != nil
+}
+
+func (x *Vehicle) HasOwnerIdentifier() bool {
+	if x == nil {
+		return false
+	}
+	return x.OwnerIdentifier != nil
+}
+
+func (x *Vehicle) HasOwner() bool {
+	if x == nil {
+		return false
+	}
+	return x.Owner != nil
+}
+
+func (x *Vehicle) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *Vehicle) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *Vehicle) HasProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.Props != nil
+}
+
+func (x *Vehicle) ClearModel() {
+	x.Model = nil
+}
+
+func (x *Vehicle) ClearOwnerId() {
+	x.OwnerId = nil
+}
+
+func (x *Vehicle) ClearOwnerIdentifier() {
+	x.OwnerIdentifier = nil
+}
+
+func (x *Vehicle) ClearOwner() {
+	x.Owner = nil
+}
+
+func (x *Vehicle) ClearJob() {
+	x.Job = nil
+}
+
+func (x *Vehicle) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *Vehicle) ClearProps() {
+	x.Props = nil
+}
+
+type Vehicle_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Plate           string
+	Model           *string
+	Type            string
+	OwnerId         *int32
+	OwnerIdentifier *string
+	Owner           *short.UserShort
+	Job             *string
+	JobLabel        *string
+	Props           *props.VehicleProps
+}
+
+func (b0 Vehicle_builder) Build() *Vehicle {
+	m0 := &Vehicle{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Plate = b.Plate
+	x.Model = b.Model
+	x.Type = b.Type
+	x.OwnerId = b.OwnerId
+	x.OwnerIdentifier = b.OwnerIdentifier
+	x.Owner = b.Owner
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.Props = b.Props
+	return m0
+}
+
 var File_resources_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_vehicles_proto_rawDesc = "" +
@@ -154,18 +293,6 @@ const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
 	"_job_labelB\b\n" +
 	"\x06_propsBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles;vehiclesb\x06proto3"
-
-var (
-	file_resources_vehicles_vehicles_proto_rawDescOnce sync.Once
-	file_resources_vehicles_vehicles_proto_rawDescData []byte
-)
-
-func file_resources_vehicles_vehicles_proto_rawDescGZIP() []byte {
-	file_resources_vehicles_vehicles_proto_rawDescOnce.Do(func() {
-		file_resources_vehicles_vehicles_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_vehicles_vehicles_proto_rawDesc), len(file_resources_vehicles_vehicles_proto_rawDesc)))
-	})
-	return file_resources_vehicles_vehicles_proto_rawDescData
-}
 
 var file_resources_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_vehicles_vehicles_proto_goTypes = []any{

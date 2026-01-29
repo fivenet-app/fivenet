@@ -12,11 +12,10 @@ import (
 
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
-	"github.com/fivenet-app/fivenet/v2026/services/auth"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
@@ -32,7 +31,7 @@ type GroupSync struct {
 type groupSyncUser struct {
 	ExternalID string `alias:"external_id"`
 	Group      string `alias:"group"`
-	License    string `alias:"license"`
+	UserID     int32  `alias:"user_id"`
 	SameJob    bool
 }
 
@@ -124,21 +123,18 @@ func (g *GroupSync) planUsers(
 		serverGroups = append(serverGroups, mysql.String(sGroup))
 	}
 
-	tUsers := tables.User().AS("users")
+	tUsers := table.FivenetUser.AS("users")
 
 	stmt := tAccsOauth2.
 		SELECT(
 			tAccsOauth2.ExternalID.AS("groupsyncuser.external_id"),
 			tUsers.Group.AS("groupsyncuser.group"),
-			tAccs.License.AS("groupsyncuser.license"),
+			tUsers.ID.AS("groupsyncuser.user_id"),
 		).
 		FROM(
 			tAccsOauth2.
-				INNER_JOIN(tAccs,
-					tAccs.ID.EQ(tAccsOauth2.AccountID),
-				).
 				INNER_JOIN(tUsers,
-					tUsers.Identifier.LIKE(mysql.CONCAT(mysql.String("%"), tAccs.License)),
+					tUsers.ID.EQ(tAccsOauth2.AccountID),
 				),
 		).
 		WHERE(mysql.AND(
@@ -162,7 +158,7 @@ func (g *GroupSync) planUsers(
 		}
 
 		if groupCfg.NotSameJob {
-			has, err := g.checkIfUserIsPartOfJob(ctx, user.License, g.job)
+			has, err := g.checkIfUserIsPartOfJob(ctx, user.UserID, g.job)
 			if err != nil {
 				g.logger.Error(
 					fmt.Sprintf("failed to check if user has char in job %s", user.ExternalID),
@@ -222,10 +218,10 @@ func (g *GroupSync) planUsers(
 
 func (g *GroupSync) checkIfUserIsPartOfJob(
 	ctx context.Context,
-	identifier string,
+	userId int32,
 	job string,
 ) (bool, error) {
-	tUsers := tables.User()
+	tUsers := table.FivenetUser
 
 	stmt := tUsers.
 		SELECT(
@@ -233,7 +229,7 @@ func (g *GroupSync) checkIfUserIsPartOfJob(
 		).
 		FROM(tUsers).
 		WHERE(mysql.AND(
-			tUsers.Identifier.LIKE(mysql.String(auth.BuildCharSearchIdentifier(identifier))),
+			tUsers.ID.EQ(mysql.Int32(userId)),
 			tUsers.Job.EQ(mysql.String(job)),
 		))
 

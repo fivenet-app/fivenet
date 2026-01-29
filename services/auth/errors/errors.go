@@ -86,4 +86,9 @@ var (
 		&common.I18NItem{Key: "errors.AuthService.ErrNotSuperuser"},
 		nil,
 	)
+	ErrImpersonateJobInvalid = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.AuthService.ErrImpersonateJobInvalid"},
+		nil,
+	)
 )

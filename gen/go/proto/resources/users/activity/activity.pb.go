@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/users/activity/activity.proto
 
+//go:build !protoopaque
+
 package usersactivity
 
 import (
@@ -18,7 +20,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -100,13 +101,8 @@ func (x UserActivityType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use UserActivityType.Descriptor instead.
-func (UserActivityType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_users_activity_activity_proto_rawDescGZIP(), []int{0}
-}
-
 type UserActivity struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"user_activity.id"`
 	Type          UserActivityType       `protobuf:"varint,2,opt,name=type,proto3,enum=resources.users.activity.UserActivityType" json:"type,omitempty" alias:"user_activity.type"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"user_activity.created_at"`
@@ -146,11 +142,6 @@ func (x *UserActivity) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserActivity.ProtoReflect.Descriptor instead.
-func (*UserActivity) Descriptor() ([]byte, []int) {
-	return file_resources_users_activity_activity_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *UserActivity) GetId() int64 {
@@ -237,8 +228,147 @@ func (x *UserActivity) GetNewValue() string {
 	return ""
 }
 
+func (x *UserActivity) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *UserActivity) SetType(v UserActivityType) {
+	x.Type = v
+}
+
+func (x *UserActivity) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *UserActivity) SetSourceUserId(v int32) {
+	x.SourceUserId = &v
+}
+
+func (x *UserActivity) SetSourceUser(v *short.UserShort) {
+	x.SourceUser = v
+}
+
+func (x *UserActivity) SetTargetUserId(v int32) {
+	x.TargetUserId = v
+}
+
+func (x *UserActivity) SetTargetUser(v *short.UserShort) {
+	x.TargetUser = v
+}
+
+func (x *UserActivity) SetKey(v string) {
+	x.Key = v
+}
+
+func (x *UserActivity) SetReason(v string) {
+	x.Reason = v
+}
+
+func (x *UserActivity) SetData(v *UserActivityData) {
+	x.Data = v
+}
+
+func (x *UserActivity) SetOldValue(v string) {
+	x.OldValue = v
+}
+
+func (x *UserActivity) SetNewValue(v string) {
+	x.NewValue = v
+}
+
+func (x *UserActivity) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *UserActivity) HasSourceUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.SourceUserId != nil
+}
+
+func (x *UserActivity) HasSourceUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.SourceUser != nil
+}
+
+func (x *UserActivity) HasTargetUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.TargetUser != nil
+}
+
+func (x *UserActivity) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *UserActivity) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *UserActivity) ClearSourceUserId() {
+	x.SourceUserId = nil
+}
+
+func (x *UserActivity) ClearSourceUser() {
+	x.SourceUser = nil
+}
+
+func (x *UserActivity) ClearTargetUser() {
+	x.TargetUser = nil
+}
+
+func (x *UserActivity) ClearData() {
+	x.Data = nil
+}
+
+type UserActivity_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id           int64
+	Type         UserActivityType
+	CreatedAt    *timestamp.Timestamp
+	SourceUserId *int32
+	SourceUser   *short.UserShort
+	TargetUserId int32
+	TargetUser   *short.UserShort
+	Key          string
+	Reason       string
+	Data         *UserActivityData
+	OldValue     string
+	NewValue     string
+}
+
+func (b0 UserActivity_builder) Build() *UserActivity {
+	m0 := &UserActivity{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Type = b.Type
+	x.CreatedAt = b.CreatedAt
+	x.SourceUserId = b.SourceUserId
+	x.SourceUser = b.SourceUser
+	x.TargetUserId = b.TargetUserId
+	x.TargetUser = b.TargetUser
+	x.Key = b.Key
+	x.Reason = b.Reason
+	x.Data = b.Data
+	x.OldValue = b.OldValue
+	x.NewValue = b.NewValue
+	return m0
+}
+
 type UserActivityData struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*UserActivityData_NameChange
@@ -279,11 +409,6 @@ func (x *UserActivityData) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserActivityData.ProtoReflect.Descriptor instead.
-func (*UserActivityData) Descriptor() ([]byte, []int) {
-	return file_resources_users_activity_activity_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *UserActivityData) GetData() isUserActivityData_Data {
@@ -383,6 +508,346 @@ func (x *UserActivityData) GetFineChange() *FineChange {
 	return nil
 }
 
+func (x *UserActivityData) SetNameChange(v *NameChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserActivityData_NameChange{v}
+}
+
+func (x *UserActivityData) SetLicensesChange(v *LicenseChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserActivityData_LicensesChange{v}
+}
+
+func (x *UserActivityData) SetWantedChange(v *WantedChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserActivityData_WantedChange{v}
+}
+
+func (x *UserActivityData) SetTrafficInfractionPointsChange(v *TrafficInfractionPointsChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserActivityData_TrafficInfractionPointsChange{v}
+}
+
+func (x *UserActivityData) SetMugshotChange(v *MugshotChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserActivityData_MugshotChange{v}
+}
+
+func (x *UserActivityData) SetLabelsChange(v *LabelsChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserActivityData_LabelsChange{v}
+}
+
+func (x *UserActivityData) SetJobChange(v *JobChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserActivityData_JobChange{v}
+}
+
+func (x *UserActivityData) SetDocumentRelation(v *CitizenDocumentRelation) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserActivityData_DocumentRelation{v}
+}
+
+func (x *UserActivityData) SetJailChange(v *JailChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserActivityData_JailChange{v}
+}
+
+func (x *UserActivityData) SetFineChange(v *FineChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserActivityData_FineChange{v}
+}
+
+func (x *UserActivityData) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *UserActivityData) HasNameChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserActivityData_NameChange)
+	return ok
+}
+
+func (x *UserActivityData) HasLicensesChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserActivityData_LicensesChange)
+	return ok
+}
+
+func (x *UserActivityData) HasWantedChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserActivityData_WantedChange)
+	return ok
+}
+
+func (x *UserActivityData) HasTrafficInfractionPointsChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserActivityData_TrafficInfractionPointsChange)
+	return ok
+}
+
+func (x *UserActivityData) HasMugshotChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserActivityData_MugshotChange)
+	return ok
+}
+
+func (x *UserActivityData) HasLabelsChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserActivityData_LabelsChange)
+	return ok
+}
+
+func (x *UserActivityData) HasJobChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserActivityData_JobChange)
+	return ok
+}
+
+func (x *UserActivityData) HasDocumentRelation() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserActivityData_DocumentRelation)
+	return ok
+}
+
+func (x *UserActivityData) HasJailChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserActivityData_JailChange)
+	return ok
+}
+
+func (x *UserActivityData) HasFineChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserActivityData_FineChange)
+	return ok
+}
+
+func (x *UserActivityData) ClearData() {
+	x.Data = nil
+}
+
+func (x *UserActivityData) ClearNameChange() {
+	if _, ok := x.Data.(*UserActivityData_NameChange); ok {
+		x.Data = nil
+	}
+}
+
+func (x *UserActivityData) ClearLicensesChange() {
+	if _, ok := x.Data.(*UserActivityData_LicensesChange); ok {
+		x.Data = nil
+	}
+}
+
+func (x *UserActivityData) ClearWantedChange() {
+	if _, ok := x.Data.(*UserActivityData_WantedChange); ok {
+		x.Data = nil
+	}
+}
+
+func (x *UserActivityData) ClearTrafficInfractionPointsChange() {
+	if _, ok := x.Data.(*UserActivityData_TrafficInfractionPointsChange); ok {
+		x.Data = nil
+	}
+}
+
+func (x *UserActivityData) ClearMugshotChange() {
+	if _, ok := x.Data.(*UserActivityData_MugshotChange); ok {
+		x.Data = nil
+	}
+}
+
+func (x *UserActivityData) ClearLabelsChange() {
+	if _, ok := x.Data.(*UserActivityData_LabelsChange); ok {
+		x.Data = nil
+	}
+}
+
+func (x *UserActivityData) ClearJobChange() {
+	if _, ok := x.Data.(*UserActivityData_JobChange); ok {
+		x.Data = nil
+	}
+}
+
+func (x *UserActivityData) ClearDocumentRelation() {
+	if _, ok := x.Data.(*UserActivityData_DocumentRelation); ok {
+		x.Data = nil
+	}
+}
+
+func (x *UserActivityData) ClearJailChange() {
+	if _, ok := x.Data.(*UserActivityData_JailChange); ok {
+		x.Data = nil
+	}
+}
+
+func (x *UserActivityData) ClearFineChange() {
+	if _, ok := x.Data.(*UserActivityData_FineChange); ok {
+		x.Data = nil
+	}
+}
+
+const UserActivityData_Data_not_set_case case_UserActivityData_Data = 0
+const UserActivityData_NameChange_case case_UserActivityData_Data = 1
+const UserActivityData_LicensesChange_case case_UserActivityData_Data = 2
+const UserActivityData_WantedChange_case case_UserActivityData_Data = 3
+const UserActivityData_TrafficInfractionPointsChange_case case_UserActivityData_Data = 4
+const UserActivityData_MugshotChange_case case_UserActivityData_Data = 5
+const UserActivityData_LabelsChange_case case_UserActivityData_Data = 6
+const UserActivityData_JobChange_case case_UserActivityData_Data = 7
+const UserActivityData_DocumentRelation_case case_UserActivityData_Data = 8
+const UserActivityData_JailChange_case case_UserActivityData_Data = 9
+const UserActivityData_FineChange_case case_UserActivityData_Data = 10
+
+func (x *UserActivityData) WhichData() case_UserActivityData_Data {
+	if x == nil {
+		return UserActivityData_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *UserActivityData_NameChange:
+		return UserActivityData_NameChange_case
+	case *UserActivityData_LicensesChange:
+		return UserActivityData_LicensesChange_case
+	case *UserActivityData_WantedChange:
+		return UserActivityData_WantedChange_case
+	case *UserActivityData_TrafficInfractionPointsChange:
+		return UserActivityData_TrafficInfractionPointsChange_case
+	case *UserActivityData_MugshotChange:
+		return UserActivityData_MugshotChange_case
+	case *UserActivityData_LabelsChange:
+		return UserActivityData_LabelsChange_case
+	case *UserActivityData_JobChange:
+		return UserActivityData_JobChange_case
+	case *UserActivityData_DocumentRelation:
+		return UserActivityData_DocumentRelation_case
+	case *UserActivityData_JailChange:
+		return UserActivityData_JailChange_case
+	case *UserActivityData_FineChange:
+		return UserActivityData_FineChange_case
+	default:
+		return UserActivityData_Data_not_set_case
+	}
+}
+
+type UserActivityData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	NameChange     *NameChange
+	LicensesChange *LicenseChange
+	// User Props
+	WantedChange                  *WantedChange
+	TrafficInfractionPointsChange *TrafficInfractionPointsChange
+	MugshotChange                 *MugshotChange
+	LabelsChange                  *LabelsChange
+	JobChange                     *JobChange
+	// Docstore related
+	DocumentRelation *CitizenDocumentRelation
+	// "Plugin" activities
+	JailChange *JailChange
+	FineChange *FineChange
+	// -- end of Data
+}
+
+func (b0 UserActivityData_builder) Build() *UserActivityData {
+	m0 := &UserActivityData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.NameChange != nil {
+		x.Data = &UserActivityData_NameChange{b.NameChange}
+	}
+	if b.LicensesChange != nil {
+		x.Data = &UserActivityData_LicensesChange{b.LicensesChange}
+	}
+	if b.WantedChange != nil {
+		x.Data = &UserActivityData_WantedChange{b.WantedChange}
+	}
+	if b.TrafficInfractionPointsChange != nil {
+		x.Data = &UserActivityData_TrafficInfractionPointsChange{b.TrafficInfractionPointsChange}
+	}
+	if b.MugshotChange != nil {
+		x.Data = &UserActivityData_MugshotChange{b.MugshotChange}
+	}
+	if b.LabelsChange != nil {
+		x.Data = &UserActivityData_LabelsChange{b.LabelsChange}
+	}
+	if b.JobChange != nil {
+		x.Data = &UserActivityData_JobChange{b.JobChange}
+	}
+	if b.DocumentRelation != nil {
+		x.Data = &UserActivityData_DocumentRelation{b.DocumentRelation}
+	}
+	if b.JailChange != nil {
+		x.Data = &UserActivityData_JailChange{b.JailChange}
+	}
+	if b.FineChange != nil {
+		x.Data = &UserActivityData_FineChange{b.FineChange}
+	}
+	return m0
+}
+
+type case_UserActivityData_Data protoreflect.FieldNumber
+
+func (x case_UserActivityData_Data) String() string {
+	md := file_resources_users_activity_activity_proto_msgTypes[1].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isUserActivityData_Data interface {
 	isUserActivityData_Data()
 }
@@ -451,7 +916,7 @@ func (*UserActivityData_JailChange) isUserActivityData_Data() {}
 func (*UserActivityData_FineChange) isUserActivityData_Data() {}
 
 type NameChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Old           string                 `protobuf:"bytes,1,opt,name=old,proto3" json:"old,omitempty"`
 	New           string                 `protobuf:"bytes,2,opt,name=new,proto3" json:"new,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -483,11 +948,6 @@ func (x *NameChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use NameChange.ProtoReflect.Descriptor instead.
-func (*NameChange) Descriptor() ([]byte, []int) {
-	return file_resources_users_activity_activity_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *NameChange) GetOld() string {
 	if x != nil {
 		return x.Old
@@ -502,8 +962,32 @@ func (x *NameChange) GetNew() string {
 	return ""
 }
 
+func (x *NameChange) SetOld(v string) {
+	x.Old = v
+}
+
+func (x *NameChange) SetNew(v string) {
+	x.New = v
+}
+
+type NameChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Old string
+	New string
+}
+
+func (b0 NameChange_builder) Build() *NameChange {
+	m0 := &NameChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Old = b.Old
+	x.New = b.New
+	return m0
+}
+
 type LicenseChange struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// `true` if licenses were added, `false` if removed
 	Added         bool                `protobuf:"varint,1,opt,name=added,proto3" json:"added,omitempty"`
 	Licenses      []*licenses.License `protobuf:"bytes,2,rep,name=licenses,proto3" json:"licenses,omitempty"`
@@ -536,11 +1020,6 @@ func (x *LicenseChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LicenseChange.ProtoReflect.Descriptor instead.
-func (*LicenseChange) Descriptor() ([]byte, []int) {
-	return file_resources_users_activity_activity_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *LicenseChange) GetAdded() bool {
 	if x != nil {
 		return x.Added
@@ -555,8 +1034,33 @@ func (x *LicenseChange) GetLicenses() []*licenses.License {
 	return nil
 }
 
+func (x *LicenseChange) SetAdded(v bool) {
+	x.Added = v
+}
+
+func (x *LicenseChange) SetLicenses(v []*licenses.License) {
+	x.Licenses = v
+}
+
+type LicenseChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// `true` if licenses were added, `false` if removed
+	Added    bool
+	Licenses []*licenses.License
+}
+
+func (b0 LicenseChange_builder) Build() *LicenseChange {
+	m0 := &LicenseChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Added = b.Added
+	x.Licenses = b.Licenses
+	return m0
+}
+
 type WantedChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Wanted        bool                   `protobuf:"varint,1,opt,name=wanted,proto3" json:"wanted,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -587,11 +1091,6 @@ func (x *WantedChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use WantedChange.ProtoReflect.Descriptor instead.
-func (*WantedChange) Descriptor() ([]byte, []int) {
-	return file_resources_users_activity_activity_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *WantedChange) GetWanted() bool {
 	if x != nil {
 		return x.Wanted
@@ -599,8 +1098,26 @@ func (x *WantedChange) GetWanted() bool {
 	return false
 }
 
+func (x *WantedChange) SetWanted(v bool) {
+	x.Wanted = v
+}
+
+type WantedChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Wanted bool
+}
+
+func (b0 WantedChange_builder) Build() *WantedChange {
+	m0 := &WantedChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Wanted = b.Wanted
+	return m0
+}
+
 type TrafficInfractionPointsChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Old           uint32                 `protobuf:"varint,1,opt,name=old,proto3" json:"old,omitempty"`
 	New           uint32                 `protobuf:"varint,2,opt,name=new,proto3" json:"new,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -632,11 +1149,6 @@ func (x *TrafficInfractionPointsChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TrafficInfractionPointsChange.ProtoReflect.Descriptor instead.
-func (*TrafficInfractionPointsChange) Descriptor() ([]byte, []int) {
-	return file_resources_users_activity_activity_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *TrafficInfractionPointsChange) GetOld() uint32 {
 	if x != nil {
 		return x.Old
@@ -651,8 +1163,32 @@ func (x *TrafficInfractionPointsChange) GetNew() uint32 {
 	return 0
 }
 
+func (x *TrafficInfractionPointsChange) SetOld(v uint32) {
+	x.Old = v
+}
+
+func (x *TrafficInfractionPointsChange) SetNew(v uint32) {
+	x.New = v
+}
+
+type TrafficInfractionPointsChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Old uint32
+	New uint32
+}
+
+func (b0 TrafficInfractionPointsChange_builder) Build() *TrafficInfractionPointsChange {
+	m0 := &TrafficInfractionPointsChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Old = b.Old
+	x.New = b.New
+	return m0
+}
+
 type MugshotChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	New           *string                `protobuf:"bytes,1,opt,name=new,proto3,oneof" json:"new,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -683,11 +1219,6 @@ func (x *MugshotChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MugshotChange.ProtoReflect.Descriptor instead.
-func (*MugshotChange) Descriptor() ([]byte, []int) {
-	return file_resources_users_activity_activity_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *MugshotChange) GetNew() string {
 	if x != nil && x.New != nil {
 		return *x.New
@@ -695,8 +1226,37 @@ func (x *MugshotChange) GetNew() string {
 	return ""
 }
 
+func (x *MugshotChange) SetNew(v string) {
+	x.New = &v
+}
+
+func (x *MugshotChange) HasNew() bool {
+	if x == nil {
+		return false
+	}
+	return x.New != nil
+}
+
+func (x *MugshotChange) ClearNew() {
+	x.New = nil
+}
+
+type MugshotChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	New *string
+}
+
+func (b0 MugshotChange_builder) Build() *MugshotChange {
+	m0 := &MugshotChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.New = b.New
+	return m0
+}
+
 type LabelsChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Added         []*labels.Label        `protobuf:"bytes,1,rep,name=added,proto3" json:"added,omitempty"`
 	Removed       []*labels.Label        `protobuf:"bytes,2,rep,name=removed,proto3" json:"removed,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -728,11 +1288,6 @@ func (x *LabelsChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LabelsChange.ProtoReflect.Descriptor instead.
-func (*LabelsChange) Descriptor() ([]byte, []int) {
-	return file_resources_users_activity_activity_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *LabelsChange) GetAdded() []*labels.Label {
 	if x != nil {
 		return x.Added
@@ -747,8 +1302,32 @@ func (x *LabelsChange) GetRemoved() []*labels.Label {
 	return nil
 }
 
+func (x *LabelsChange) SetAdded(v []*labels.Label) {
+	x.Added = v
+}
+
+func (x *LabelsChange) SetRemoved(v []*labels.Label) {
+	x.Removed = v
+}
+
+type LabelsChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Added   []*labels.Label
+	Removed []*labels.Label
+}
+
+func (b0 LabelsChange_builder) Build() *LabelsChange {
+	m0 := &LabelsChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Added = b.Added
+	x.Removed = b.Removed
+	return m0
+}
+
 type JobChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Job           *string                `protobuf:"bytes,1,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	Grade         *int32                 `protobuf:"varint,3,opt,name=grade,proto3,oneof" json:"grade,omitempty"`
@@ -782,11 +1361,6 @@ func (x *JobChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobChange.ProtoReflect.Descriptor instead.
-func (*JobChange) Descriptor() ([]byte, []int) {
-	return file_resources_users_activity_activity_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *JobChange) GetJob() string {
 	if x != nil && x.Job != nil {
 		return *x.Job
@@ -815,8 +1389,88 @@ func (x *JobChange) GetGradeLabel() string {
 	return ""
 }
 
+func (x *JobChange) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *JobChange) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *JobChange) SetGrade(v int32) {
+	x.Grade = &v
+}
+
+func (x *JobChange) SetGradeLabel(v string) {
+	x.GradeLabel = &v
+}
+
+func (x *JobChange) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *JobChange) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *JobChange) HasGrade() bool {
+	if x == nil {
+		return false
+	}
+	return x.Grade != nil
+}
+
+func (x *JobChange) HasGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.GradeLabel != nil
+}
+
+func (x *JobChange) ClearJob() {
+	x.Job = nil
+}
+
+func (x *JobChange) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *JobChange) ClearGrade() {
+	x.Grade = nil
+}
+
+func (x *JobChange) ClearGradeLabel() {
+	x.GradeLabel = nil
+}
+
+type JobChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job        *string
+	JobLabel   *string
+	Grade      *int32
+	GradeLabel *string
+}
+
+func (b0 JobChange_builder) Build() *JobChange {
+	m0 := &JobChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.Grade = b.Grade
+	x.GradeLabel = b.GradeLabel
+	return m0
+}
+
 type CitizenDocumentRelation struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Added         bool                   `protobuf:"varint,1,opt,name=added,proto3" json:"added,omitempty"`
 	DocumentId    int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	Relation      relations.DocRelation  `protobuf:"varint,3,opt,name=relation,proto3,enum=resources.documents.relations.DocRelation" json:"relation,omitempty"`
@@ -849,11 +1503,6 @@ func (x *CitizenDocumentRelation) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CitizenDocumentRelation.ProtoReflect.Descriptor instead.
-func (*CitizenDocumentRelation) Descriptor() ([]byte, []int) {
-	return file_resources_users_activity_activity_proto_rawDescGZIP(), []int{9}
-}
-
 func (x *CitizenDocumentRelation) GetAdded() bool {
 	if x != nil {
 		return x.Added
@@ -875,8 +1524,38 @@ func (x *CitizenDocumentRelation) GetRelation() relations.DocRelation {
 	return relations.DocRelation(0)
 }
 
+func (x *CitizenDocumentRelation) SetAdded(v bool) {
+	x.Added = v
+}
+
+func (x *CitizenDocumentRelation) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *CitizenDocumentRelation) SetRelation(v relations.DocRelation) {
+	x.Relation = v
+}
+
+type CitizenDocumentRelation_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Added      bool
+	DocumentId int64
+	Relation   relations.DocRelation
+}
+
+func (b0 CitizenDocumentRelation_builder) Build() *CitizenDocumentRelation {
+	m0 := &CitizenDocumentRelation{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Added = b.Added
+	x.DocumentId = b.DocumentId
+	x.Relation = b.Relation
+	return m0
+}
+
 type JailChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Seconds       int32                  `protobuf:"varint,1,opt,name=seconds,proto3" json:"seconds,omitempty"`
 	Admin         bool                   `protobuf:"varint,2,opt,name=admin,proto3" json:"admin,omitempty"`
 	Location      *string                `protobuf:"bytes,3,opt,name=location,proto3,oneof" json:"location,omitempty"`
@@ -909,11 +1588,6 @@ func (x *JailChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JailChange.ProtoReflect.Descriptor instead.
-func (*JailChange) Descriptor() ([]byte, []int) {
-	return file_resources_users_activity_activity_proto_rawDescGZIP(), []int{10}
-}
-
 func (x *JailChange) GetSeconds() int32 {
 	if x != nil {
 		return x.Seconds
@@ -935,8 +1609,49 @@ func (x *JailChange) GetLocation() string {
 	return ""
 }
 
+func (x *JailChange) SetSeconds(v int32) {
+	x.Seconds = v
+}
+
+func (x *JailChange) SetAdmin(v bool) {
+	x.Admin = v
+}
+
+func (x *JailChange) SetLocation(v string) {
+	x.Location = &v
+}
+
+func (x *JailChange) HasLocation() bool {
+	if x == nil {
+		return false
+	}
+	return x.Location != nil
+}
+
+func (x *JailChange) ClearLocation() {
+	x.Location = nil
+}
+
+type JailChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Seconds  int32
+	Admin    bool
+	Location *string
+}
+
+func (b0 JailChange_builder) Build() *JailChange {
+	m0 := &JailChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Seconds = b.Seconds
+	x.Admin = b.Admin
+	x.Location = b.Location
+	return m0
+}
+
 type FineChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Removed       bool                   `protobuf:"varint,1,opt,name=removed,proto3" json:"removed,omitempty"`
 	Amount        int64                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -968,11 +1683,6 @@ func (x *FineChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use FineChange.ProtoReflect.Descriptor instead.
-func (*FineChange) Descriptor() ([]byte, []int) {
-	return file_resources_users_activity_activity_proto_rawDescGZIP(), []int{11}
-}
-
 func (x *FineChange) GetRemoved() bool {
 	if x != nil {
 		return x.Removed
@@ -985,6 +1695,30 @@ func (x *FineChange) GetAmount() int64 {
 		return x.Amount
 	}
 	return 0
+}
+
+func (x *FineChange) SetRemoved(v bool) {
+	x.Removed = v
+}
+
+func (x *FineChange) SetAmount(v int64) {
+	x.Amount = v
+}
+
+type FineChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Removed bool
+	Amount  int64
+}
+
+func (b0 FineChange_builder) Build() *FineChange {
+	m0 := &FineChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Removed = b.Removed
+	x.Amount = b.Amount
+	return m0
 }
 
 var File_resources_users_activity_activity_proto protoreflect.FileDescriptor
@@ -1086,18 +1820,6 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\x1bUSER_ACTIVITY_TYPE_DOCUMENT\x10\v\x12\x1b\n" +
 	"\x17USER_ACTIVITY_TYPE_JAIL\x10\f\x12\x1b\n" +
 	"\x17USER_ACTIVITY_TYPE_FINE\x10\r\"\x04\b\x01\x10\x03BZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity;usersactivityb\x06proto3"
-
-var (
-	file_resources_users_activity_activity_proto_rawDescOnce sync.Once
-	file_resources_users_activity_activity_proto_rawDescData []byte
-)
-
-func file_resources_users_activity_activity_proto_rawDescGZIP() []byte {
-	file_resources_users_activity_activity_proto_rawDescOnce.Do(func() {
-		file_resources_users_activity_activity_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_users_activity_activity_proto_rawDesc), len(file_resources_users_activity_activity_proto_rawDesc)))
-	})
-	return file_resources_users_activity_activity_proto_rawDescData
-}
 
 var file_resources_users_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_users_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 12)

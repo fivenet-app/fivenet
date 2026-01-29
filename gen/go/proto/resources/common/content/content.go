@@ -118,3 +118,11 @@ func (x *ExtractedContent) GetSummary(length int) string {
 
 	return utils.SummaryFromText(x.Text, length)
 }
+
+func Empty() *Content {
+	return &Content{
+		Version:     ContentVersionTiptapV1,
+		ContentType: ContentType_CONTENT_TYPE_TIPTAP_JSON,
+		TiptapJson:  nil,
+	}
+}

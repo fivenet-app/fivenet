@@ -10,7 +10,7 @@ import {
     NotificationType,
     type Notification as ProtoNotification,
 } from '~~/gen/ts/resources/notifications/notifications';
-import type { UserInfoChanged } from '~~/gen/ts/resources/userinfo/user_info';
+import type { UserInfoChanged } from '~~/gen/ts/resources/userinfo/userinfo';
 import type { MarkNotificationsRequest, StreamRequest, StreamResponse } from '~~/gen/ts/services/notifications/notifications';
 import { useCalendarStore } from './calendar';
 import { useMailerStore } from './mailer';

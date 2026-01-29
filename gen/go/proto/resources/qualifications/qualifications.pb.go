@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/qualifications/qualifications.proto
 
+//go:build !protoopaque
+
 package qualifications
 
 import (
@@ -19,7 +21,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -86,11 +87,6 @@ func (x RequestStatus) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use RequestStatus.Descriptor instead.
-func (RequestStatus) EnumDescriptor() ([]byte, []int) {
-	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{0}
-}
-
 type ResultStatus int32
 
 const (
@@ -138,13 +134,8 @@ func (x ResultStatus) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ResultStatus.Descriptor instead.
-func (ResultStatus) EnumDescriptor() ([]byte, []int) {
-	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{1}
-}
-
 type Qualification struct {
-	state              protoimpl.MessageState          `protogen:"open.v1"`
+	state              protoimpl.MessageState          `protogen:"hybrid.v1"`
 	Id                 int64                           `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt          *timestamp.Timestamp            `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt          *timestamp.Timestamp            `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -200,11 +191,6 @@ func (x *Qualification) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Qualification.ProtoReflect.Descriptor instead.
-func (*Qualification) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Qualification) GetId() int64 {
@@ -403,8 +389,342 @@ func (x *Qualification) GetFiles() []*file.File {
 	return nil
 }
 
+func (x *Qualification) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Qualification) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Qualification) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *Qualification) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *Qualification) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *Qualification) SetWeight(v uint32) {
+	x.Weight = v
+}
+
+func (x *Qualification) SetClosed(v bool) {
+	x.Closed = v
+}
+
+func (x *Qualification) SetDraft(v bool) {
+	x.Draft = v
+}
+
+func (x *Qualification) SetPublic(v bool) {
+	x.Public = v
+}
+
+func (x *Qualification) SetAbbreviation(v string) {
+	x.Abbreviation = v
+}
+
+func (x *Qualification) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *Qualification) SetDescription(v string) {
+	x.Description = &v
+}
+
+func (x *Qualification) SetContent(v *content.Content) {
+	x.Content = v
+}
+
+func (x *Qualification) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *Qualification) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *Qualification) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *Qualification) SetAccess(v *access.QualificationAccess) {
+	x.Access = v
+}
+
+func (x *Qualification) SetRequirements(v []*QualificationRequirement) {
+	x.Requirements = v
+}
+
+func (x *Qualification) SetDiscordSyncEnabled(v bool) {
+	x.DiscordSyncEnabled = v
+}
+
+func (x *Qualification) SetDiscordSettings(v *QualificationDiscordSettings) {
+	x.DiscordSettings = v
+}
+
+func (x *Qualification) SetExamMode(v exam.QualificationExamMode) {
+	x.ExamMode = v
+}
+
+func (x *Qualification) SetExamSettings(v *exam.QualificationExamSettings) {
+	x.ExamSettings = v
+}
+
+func (x *Qualification) SetExam(v *exam.ExamQuestions) {
+	x.Exam = v
+}
+
+func (x *Qualification) SetResult(v *QualificationResult) {
+	x.Result = v
+}
+
+func (x *Qualification) SetRequest(v *QualificationRequest) {
+	x.Request = v
+}
+
+func (x *Qualification) SetLabelSyncEnabled(v bool) {
+	x.LabelSyncEnabled = v
+}
+
+func (x *Qualification) SetLabelSyncFormat(v string) {
+	x.LabelSyncFormat = &v
+}
+
+func (x *Qualification) SetFiles(v []*file.File) {
+	x.Files = v
+}
+
+func (x *Qualification) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Qualification) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Qualification) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *Qualification) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Description != nil
+}
+
+func (x *Qualification) HasContent() bool {
+	if x == nil {
+		return false
+	}
+	return x.Content != nil
+}
+
+func (x *Qualification) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *Qualification) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *Qualification) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *Qualification) HasDiscordSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.DiscordSettings != nil
+}
+
+func (x *Qualification) HasExamSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.ExamSettings != nil
+}
+
+func (x *Qualification) HasExam() bool {
+	if x == nil {
+		return false
+	}
+	return x.Exam != nil
+}
+
+func (x *Qualification) HasResult() bool {
+	if x == nil {
+		return false
+	}
+	return x.Result != nil
+}
+
+func (x *Qualification) HasRequest() bool {
+	if x == nil {
+		return false
+	}
+	return x.Request != nil
+}
+
+func (x *Qualification) HasLabelSyncFormat() bool {
+	if x == nil {
+		return false
+	}
+	return x.LabelSyncFormat != nil
+}
+
+func (x *Qualification) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Qualification) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Qualification) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *Qualification) ClearDescription() {
+	x.Description = nil
+}
+
+func (x *Qualification) ClearContent() {
+	x.Content = nil
+}
+
+func (x *Qualification) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *Qualification) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *Qualification) ClearAccess() {
+	x.Access = nil
+}
+
+func (x *Qualification) ClearDiscordSettings() {
+	x.DiscordSettings = nil
+}
+
+func (x *Qualification) ClearExamSettings() {
+	x.ExamSettings = nil
+}
+
+func (x *Qualification) ClearExam() {
+	x.Exam = nil
+}
+
+func (x *Qualification) ClearResult() {
+	x.Result = nil
+}
+
+func (x *Qualification) ClearRequest() {
+	x.Request = nil
+}
+
+func (x *Qualification) ClearLabelSyncFormat() {
+	x.LabelSyncFormat = nil
+}
+
+type Qualification_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id                 int64
+	CreatedAt          *timestamp.Timestamp
+	UpdatedAt          *timestamp.Timestamp
+	DeletedAt          *timestamp.Timestamp
+	Job                string
+	Weight             uint32
+	Closed             bool
+	Draft              bool
+	Public             bool
+	Abbreviation       string
+	Title              string
+	Description        *string
+	Content            *content.Content
+	CreatorId          *int32
+	Creator            *short.UserShort
+	CreatorJob         string
+	Access             *access.QualificationAccess
+	Requirements       []*QualificationRequirement
+	DiscordSyncEnabled bool
+	DiscordSettings    *QualificationDiscordSettings
+	ExamMode           exam.QualificationExamMode
+	ExamSettings       *exam.QualificationExamSettings
+	Exam               *exam.ExamQuestions
+	Result             *QualificationResult
+	Request            *QualificationRequest
+	LabelSyncEnabled   bool
+	LabelSyncFormat    *string
+	Files              []*file.File
+}
+
+func (b0 Qualification_builder) Build() *Qualification {
+	m0 := &Qualification{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	x.Job = b.Job
+	x.Weight = b.Weight
+	x.Closed = b.Closed
+	x.Draft = b.Draft
+	x.Public = b.Public
+	x.Abbreviation = b.Abbreviation
+	x.Title = b.Title
+	x.Description = b.Description
+	x.Content = b.Content
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	x.Access = b.Access
+	x.Requirements = b.Requirements
+	x.DiscordSyncEnabled = b.DiscordSyncEnabled
+	x.DiscordSettings = b.DiscordSettings
+	x.ExamMode = b.ExamMode
+	x.ExamSettings = b.ExamSettings
+	x.Exam = b.Exam
+	x.Result = b.Result
+	x.Request = b.Request
+	x.LabelSyncEnabled = b.LabelSyncEnabled
+	x.LabelSyncFormat = b.LabelSyncFormat
+	x.Files = b.Files
+	return m0
+}
+
 type QualificationShort struct {
-	state         protoimpl.MessageState          `protogen:"open.v1"`
+	state         protoimpl.MessageState          `protogen:"hybrid.v1"`
 	Id            int64                           `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp            `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp            `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -451,11 +771,6 @@ func (x *QualificationShort) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QualificationShort.ProtoReflect.Descriptor instead.
-func (*QualificationShort) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *QualificationShort) GetId() int64 {
@@ -591,8 +906,222 @@ func (x *QualificationShort) GetResult() *QualificationResult {
 	return nil
 }
 
+func (x *QualificationShort) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *QualificationShort) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *QualificationShort) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *QualificationShort) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *QualificationShort) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *QualificationShort) SetWeight(v uint32) {
+	x.Weight = v
+}
+
+func (x *QualificationShort) SetClosed(v bool) {
+	x.Closed = v
+}
+
+func (x *QualificationShort) SetDraft(v bool) {
+	x.Draft = v
+}
+
+func (x *QualificationShort) SetPublic(v bool) {
+	x.Public = v
+}
+
+func (x *QualificationShort) SetAbbreviation(v string) {
+	x.Abbreviation = v
+}
+
+func (x *QualificationShort) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *QualificationShort) SetDescription(v string) {
+	x.Description = &v
+}
+
+func (x *QualificationShort) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *QualificationShort) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *QualificationShort) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *QualificationShort) SetRequirements(v []*QualificationRequirement) {
+	x.Requirements = v
+}
+
+func (x *QualificationShort) SetExamMode(v exam.QualificationExamMode) {
+	x.ExamMode = v
+}
+
+func (x *QualificationShort) SetExamSettings(v *exam.QualificationExamSettings) {
+	x.ExamSettings = v
+}
+
+func (x *QualificationShort) SetResult(v *QualificationResult) {
+	x.Result = v
+}
+
+func (x *QualificationShort) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *QualificationShort) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *QualificationShort) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *QualificationShort) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Description != nil
+}
+
+func (x *QualificationShort) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *QualificationShort) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *QualificationShort) HasExamSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.ExamSettings != nil
+}
+
+func (x *QualificationShort) HasResult() bool {
+	if x == nil {
+		return false
+	}
+	return x.Result != nil
+}
+
+func (x *QualificationShort) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *QualificationShort) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *QualificationShort) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *QualificationShort) ClearDescription() {
+	x.Description = nil
+}
+
+func (x *QualificationShort) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *QualificationShort) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *QualificationShort) ClearExamSettings() {
+	x.ExamSettings = nil
+}
+
+func (x *QualificationShort) ClearResult() {
+	x.Result = nil
+}
+
+type QualificationShort_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id           int64
+	CreatedAt    *timestamp.Timestamp
+	UpdatedAt    *timestamp.Timestamp
+	DeletedAt    *timestamp.Timestamp
+	Job          string
+	Weight       uint32
+	Closed       bool
+	Draft        bool
+	Public       bool
+	Abbreviation string
+	Title        string
+	Description  *string
+	CreatorId    *int32
+	Creator      *short.UserShort
+	CreatorJob   string
+	Requirements []*QualificationRequirement
+	ExamMode     exam.QualificationExamMode
+	ExamSettings *exam.QualificationExamSettings
+	Result       *QualificationResult
+}
+
+func (b0 QualificationShort_builder) Build() *QualificationShort {
+	m0 := &QualificationShort{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	x.Job = b.Job
+	x.Weight = b.Weight
+	x.Closed = b.Closed
+	x.Draft = b.Draft
+	x.Public = b.Public
+	x.Abbreviation = b.Abbreviation
+	x.Title = b.Title
+	x.Description = b.Description
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	x.Requirements = b.Requirements
+	x.ExamMode = b.ExamMode
+	x.ExamSettings = b.ExamSettings
+	x.Result = b.Result
+	return m0
+}
+
 type QualificationRequirement struct {
-	state                 protoimpl.MessageState `protogen:"open.v1"`
+	state                 protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id                    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt             *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	QualificationId       int64                  `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
@@ -625,11 +1154,6 @@ func (x *QualificationRequirement) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QualificationRequirement.ProtoReflect.Descriptor instead.
-func (*QualificationRequirement) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *QualificationRequirement) GetId() int64 {
@@ -667,8 +1191,72 @@ func (x *QualificationRequirement) GetTargetQualification() *QualificationShort 
 	return nil
 }
 
+func (x *QualificationRequirement) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *QualificationRequirement) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *QualificationRequirement) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *QualificationRequirement) SetTargetQualificationId(v int64) {
+	x.TargetQualificationId = v
+}
+
+func (x *QualificationRequirement) SetTargetQualification(v *QualificationShort) {
+	x.TargetQualification = v
+}
+
+func (x *QualificationRequirement) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *QualificationRequirement) HasTargetQualification() bool {
+	if x == nil {
+		return false
+	}
+	return x.TargetQualification != nil
+}
+
+func (x *QualificationRequirement) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *QualificationRequirement) ClearTargetQualification() {
+	x.TargetQualification = nil
+}
+
+type QualificationRequirement_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id                    int64
+	CreatedAt             *timestamp.Timestamp
+	QualificationId       int64
+	TargetQualificationId int64
+	TargetQualification   *QualificationShort
+}
+
+func (b0 QualificationRequirement_builder) Build() *QualificationRequirement {
+	m0 := &QualificationRequirement{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.QualificationId = b.QualificationId
+	x.TargetQualificationId = b.TargetQualificationId
+	x.TargetQualification = b.TargetQualification
+	return m0
+}
+
 type QualificationDiscordSettings struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	RoleName      *string                `protobuf:"bytes,1,opt,name=role_name,json=roleName,proto3,oneof" json:"role_name,omitempty"`
 	RoleFormat    *string                `protobuf:"bytes,2,opt,name=role_format,json=roleFormat,proto3,oneof" json:"role_format,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -700,11 +1288,6 @@ func (x *QualificationDiscordSettings) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use QualificationDiscordSettings.ProtoReflect.Descriptor instead.
-func (*QualificationDiscordSettings) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *QualificationDiscordSettings) GetRoleName() string {
 	if x != nil && x.RoleName != nil {
 		return *x.RoleName
@@ -719,8 +1302,54 @@ func (x *QualificationDiscordSettings) GetRoleFormat() string {
 	return ""
 }
 
+func (x *QualificationDiscordSettings) SetRoleName(v string) {
+	x.RoleName = &v
+}
+
+func (x *QualificationDiscordSettings) SetRoleFormat(v string) {
+	x.RoleFormat = &v
+}
+
+func (x *QualificationDiscordSettings) HasRoleName() bool {
+	if x == nil {
+		return false
+	}
+	return x.RoleName != nil
+}
+
+func (x *QualificationDiscordSettings) HasRoleFormat() bool {
+	if x == nil {
+		return false
+	}
+	return x.RoleFormat != nil
+}
+
+func (x *QualificationDiscordSettings) ClearRoleName() {
+	x.RoleName = nil
+}
+
+func (x *QualificationDiscordSettings) ClearRoleFormat() {
+	x.RoleFormat = nil
+}
+
+type QualificationDiscordSettings_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	RoleName   *string
+	RoleFormat *string
+}
+
+func (b0 QualificationDiscordSettings_builder) Build() *QualificationDiscordSettings {
+	m0 := &QualificationDiscordSettings{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.RoleName = b.RoleName
+	x.RoleFormat = b.RoleFormat
+	return m0
+}
+
 type QualificationRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	QualificationId int64                  `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty" alias:"qualification_id" sql:"primary_key"`
@@ -761,11 +1390,6 @@ func (x *QualificationRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QualificationRequest.ProtoReflect.Descriptor instead.
-func (*QualificationRequest) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *QualificationRequest) GetCreatedAt() *timestamp.Timestamp {
@@ -859,8 +1483,219 @@ func (x *QualificationRequest) GetApproverJob() string {
 	return ""
 }
 
+func (x *QualificationRequest) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *QualificationRequest) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *QualificationRequest) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *QualificationRequest) SetQualification(v *QualificationShort) {
+	x.Qualification = v
+}
+
+func (x *QualificationRequest) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *QualificationRequest) SetUser(v *short.UserShort) {
+	x.User = v
+}
+
+func (x *QualificationRequest) SetUserComment(v string) {
+	x.UserComment = &v
+}
+
+func (x *QualificationRequest) SetStatus(v RequestStatus) {
+	x.Status = &v
+}
+
+func (x *QualificationRequest) SetApprovedAt(v *timestamp.Timestamp) {
+	x.ApprovedAt = v
+}
+
+func (x *QualificationRequest) SetApproverComment(v string) {
+	x.ApproverComment = &v
+}
+
+func (x *QualificationRequest) SetApproverId(v int32) {
+	x.ApproverId = &v
+}
+
+func (x *QualificationRequest) SetApprover(v *short.UserShort) {
+	x.Approver = v
+}
+
+func (x *QualificationRequest) SetApproverJob(v string) {
+	x.ApproverJob = &v
+}
+
+func (x *QualificationRequest) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *QualificationRequest) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *QualificationRequest) HasQualification() bool {
+	if x == nil {
+		return false
+	}
+	return x.Qualification != nil
+}
+
+func (x *QualificationRequest) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *QualificationRequest) HasUserComment() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserComment != nil
+}
+
+func (x *QualificationRequest) HasStatus() bool {
+	if x == nil {
+		return false
+	}
+	return x.Status != nil
+}
+
+func (x *QualificationRequest) HasApprovedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.ApprovedAt != nil
+}
+
+func (x *QualificationRequest) HasApproverComment() bool {
+	if x == nil {
+		return false
+	}
+	return x.ApproverComment != nil
+}
+
+func (x *QualificationRequest) HasApproverId() bool {
+	if x == nil {
+		return false
+	}
+	return x.ApproverId != nil
+}
+
+func (x *QualificationRequest) HasApprover() bool {
+	if x == nil {
+		return false
+	}
+	return x.Approver != nil
+}
+
+func (x *QualificationRequest) HasApproverJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.ApproverJob != nil
+}
+
+func (x *QualificationRequest) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *QualificationRequest) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *QualificationRequest) ClearQualification() {
+	x.Qualification = nil
+}
+
+func (x *QualificationRequest) ClearUser() {
+	x.User = nil
+}
+
+func (x *QualificationRequest) ClearUserComment() {
+	x.UserComment = nil
+}
+
+func (x *QualificationRequest) ClearStatus() {
+	x.Status = nil
+}
+
+func (x *QualificationRequest) ClearApprovedAt() {
+	x.ApprovedAt = nil
+}
+
+func (x *QualificationRequest) ClearApproverComment() {
+	x.ApproverComment = nil
+}
+
+func (x *QualificationRequest) ClearApproverId() {
+	x.ApproverId = nil
+}
+
+func (x *QualificationRequest) ClearApprover() {
+	x.Approver = nil
+}
+
+func (x *QualificationRequest) ClearApproverJob() {
+	x.ApproverJob = nil
+}
+
+type QualificationRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	CreatedAt       *timestamp.Timestamp
+	DeletedAt       *timestamp.Timestamp
+	QualificationId int64
+	Qualification   *QualificationShort
+	UserId          int32
+	User            *short.UserShort
+	UserComment     *string
+	Status          *RequestStatus
+	ApprovedAt      *timestamp.Timestamp
+	ApproverComment *string
+	ApproverId      *int32
+	Approver        *short.UserShort
+	ApproverJob     *string
+}
+
+func (b0 QualificationRequest_builder) Build() *QualificationRequest {
+	m0 := &QualificationRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.CreatedAt = b.CreatedAt
+	x.DeletedAt = b.DeletedAt
+	x.QualificationId = b.QualificationId
+	x.Qualification = b.Qualification
+	x.UserId = b.UserId
+	x.User = b.User
+	x.UserComment = b.UserComment
+	x.Status = b.Status
+	x.ApprovedAt = b.ApprovedAt
+	x.ApproverComment = b.ApproverComment
+	x.ApproverId = b.ApproverId
+	x.Approver = b.Approver
+	x.ApproverJob = b.ApproverJob
+	return m0
+}
+
 type QualificationResult struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -901,11 +1736,6 @@ func (x *QualificationResult) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QualificationResult.ProtoReflect.Descriptor instead.
-func (*QualificationResult) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *QualificationResult) GetId() int64 {
@@ -997,6 +1827,162 @@ func (x *QualificationResult) GetCreatorJob() string {
 		return x.CreatorJob
 	}
 	return ""
+}
+
+func (x *QualificationResult) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *QualificationResult) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *QualificationResult) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *QualificationResult) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *QualificationResult) SetQualification(v *QualificationShort) {
+	x.Qualification = v
+}
+
+func (x *QualificationResult) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *QualificationResult) SetUser(v *short.UserShort) {
+	x.User = v
+}
+
+func (x *QualificationResult) SetStatus(v ResultStatus) {
+	x.Status = v
+}
+
+func (x *QualificationResult) SetScore(v float32) {
+	x.Score = &v
+}
+
+func (x *QualificationResult) SetSummary(v string) {
+	x.Summary = v
+}
+
+func (x *QualificationResult) SetCreatorId(v int32) {
+	x.CreatorId = v
+}
+
+func (x *QualificationResult) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *QualificationResult) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *QualificationResult) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *QualificationResult) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *QualificationResult) HasQualification() bool {
+	if x == nil {
+		return false
+	}
+	return x.Qualification != nil
+}
+
+func (x *QualificationResult) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *QualificationResult) HasScore() bool {
+	if x == nil {
+		return false
+	}
+	return x.Score != nil
+}
+
+func (x *QualificationResult) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *QualificationResult) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *QualificationResult) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *QualificationResult) ClearQualification() {
+	x.Qualification = nil
+}
+
+func (x *QualificationResult) ClearUser() {
+	x.User = nil
+}
+
+func (x *QualificationResult) ClearScore() {
+	x.Score = nil
+}
+
+func (x *QualificationResult) ClearCreator() {
+	x.Creator = nil
+}
+
+type QualificationResult_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id              int64
+	CreatedAt       *timestamp.Timestamp
+	DeletedAt       *timestamp.Timestamp
+	QualificationId int64
+	Qualification   *QualificationShort
+	UserId          int32
+	User            *short.UserShort
+	Status          ResultStatus
+	Score           *float32
+	Summary         string
+	CreatorId       int32
+	Creator         *short.UserShort
+	CreatorJob      string
+}
+
+func (b0 QualificationResult_builder) Build() *QualificationResult {
+	m0 := &QualificationResult{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.DeletedAt = b.DeletedAt
+	x.QualificationId = b.QualificationId
+	x.Qualification = b.Qualification
+	x.UserId = b.UserId
+	x.User = b.User
+	x.Status = b.Status
+	x.Score = b.Score
+	x.Summary = b.Summary
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	return m0
 }
 
 var File_resources_qualifications_qualifications_proto protoreflect.FileDescriptor
@@ -1170,18 +2156,6 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\x15RESULT_STATUS_PENDING\x10\x01\x12\x18\n" +
 	"\x14RESULT_STATUS_FAILED\x10\x02\x12\x1c\n" +
 	"\x18RESULT_STATUS_SUCCESSFUL\x10\x03B[ZYgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications;qualificationsb\x06proto3"
-
-var (
-	file_resources_qualifications_qualifications_proto_rawDescOnce sync.Once
-	file_resources_qualifications_qualifications_proto_rawDescData []byte
-)
-
-func file_resources_qualifications_qualifications_proto_rawDescGZIP() []byte {
-	file_resources_qualifications_qualifications_proto_rawDescOnce.Do(func() {
-		file_resources_qualifications_qualifications_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_qualifications_qualifications_proto_rawDesc), len(file_resources_qualifications_qualifications_proto_rawDesc)))
-	})
-	return file_resources_qualifications_qualifications_proto_rawDescData
-}
 
 var file_resources_qualifications_qualifications_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_resources_qualifications_qualifications_proto_msgTypes = make([]protoimpl.MessageInfo, 6)

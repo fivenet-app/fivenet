@@ -21,7 +21,21 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
     }
 
     // Auth token is not null and only needed by route
-    if (to.meta.authTokenOnly && username.value !== null) return true;
+    if (to.meta.authTokenOnly && username.value !== null) {
+        if (activeChar.value === null) {
+            const authStore = useAuthStore();
+
+            (async () => {
+                try {
+                    authStore.chooseCharacter(authStore.lastCharID, false);
+                } catch (_) {
+                    // Ignore errors here, as we just want to try and choose the last char of the user if possible
+                }
+            })();
+        }
+
+        return true;
+    }
 
     const redirect = getRedirectPath((to.query.redirect ?? to.fullPath) as string);
     // Check if user has access token

@@ -4,7 +4,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
 import { getSettingsSettingsClient } from '~~/gen/ts/clients';
-import type { RoleAttribute } from '~~/gen/ts/resources/permissions/permissions/attributes';
+import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 import type { GetEffectivePermissionsResponse } from '~~/gen/ts/services/settings/settings';
 import { isEmptyAttributes } from './helpers';

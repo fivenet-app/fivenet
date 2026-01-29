@@ -477,7 +477,7 @@ func (w *Workflow) autoCloseDocument(
 	}
 
 	// Make sure user has access to document
-	userInfo, err := w.ui.GetUserInfoWithoutAccountId(ctx, doc.GetCreatorId())
+	userInfo, err := w.ui.GetUserInfo(ctx, doc.GetCreatorId())
 	if err != nil {
 		return err
 	}
@@ -539,7 +539,7 @@ func (w *Workflow) sendDocumentReminder(
 	singleReminder bool,
 ) error {
 	// Make sure user has access to document
-	userInfo, err := w.ui.GetUserInfoWithoutAccountId(ctx, userId)
+	userInfo, err := w.ui.GetUserInfo(ctx, userId)
 	if err != nil {
 		return err
 	}

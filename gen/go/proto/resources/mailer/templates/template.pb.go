@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/mailer/templates/template.proto
 
+//go:build !protoopaque
+
 package mailertemplates
 
 import (
@@ -13,7 +15,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -25,7 +26,7 @@ const (
 )
 
 type Template struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -62,11 +63,6 @@ func (x *Template) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Template.ProtoReflect.Descriptor instead.
-func (*Template) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_templates_template_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Template) GetId() int64 {
@@ -132,6 +128,138 @@ func (x *Template) GetCreatorId() int32 {
 	return 0
 }
 
+func (x *Template) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Template) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Template) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *Template) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *Template) SetEmailId(v int64) {
+	x.EmailId = v
+}
+
+func (x *Template) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *Template) SetContent(v *content.Content) {
+	x.Content = v
+}
+
+func (x *Template) SetCreatorJob(v string) {
+	x.CreatorJob = &v
+}
+
+func (x *Template) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *Template) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Template) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Template) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *Template) HasContent() bool {
+	if x == nil {
+		return false
+	}
+	return x.Content != nil
+}
+
+func (x *Template) HasCreatorJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorJob != nil
+}
+
+func (x *Template) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *Template) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Template) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Template) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *Template) ClearContent() {
+	x.Content = nil
+}
+
+func (x *Template) ClearCreatorJob() {
+	x.CreatorJob = nil
+}
+
+func (x *Template) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+type Template_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id         int64
+	CreatedAt  *timestamp.Timestamp
+	UpdatedAt  *timestamp.Timestamp
+	DeletedAt  *timestamp.Timestamp
+	EmailId    int64
+	Title      string
+	Content    *content.Content
+	CreatorJob *string
+	CreatorId  *int32
+}
+
+func (b0 Template_builder) Build() *Template {
+	m0 := &Template{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	x.EmailId = b.EmailId
+	x.Title = b.Title
+	x.Content = b.Content
+	x.CreatorJob = b.CreatorJob
+	x.CreatorId = b.CreatorId
+	return m0
+}
+
 var File_resources_mailer_templates_template_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_templates_template_proto_rawDesc = "" +
@@ -157,18 +285,6 @@ const file_resources_mailer_templates_template_proto_rawDesc = "" +
 	"\v_deleted_atB\x0e\n" +
 	"\f_creator_jobB\r\n" +
 	"\v_creator_idB^Z\\github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/templates;mailertemplatesb\x06proto3"
-
-var (
-	file_resources_mailer_templates_template_proto_rawDescOnce sync.Once
-	file_resources_mailer_templates_template_proto_rawDescData []byte
-)
-
-func file_resources_mailer_templates_template_proto_rawDescGZIP() []byte {
-	file_resources_mailer_templates_template_proto_rawDescOnce.Do(func() {
-		file_resources_mailer_templates_template_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_mailer_templates_template_proto_rawDesc), len(file_resources_mailer_templates_template_proto_rawDesc)))
-	})
-	return file_resources_mailer_templates_template_proto_rawDescData
-}
 
 var file_resources_mailer_templates_template_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_mailer_templates_template_proto_goTypes = []any{

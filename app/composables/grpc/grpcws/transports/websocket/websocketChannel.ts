@@ -9,8 +9,35 @@ import { createRpcError } from './utils';
 
 const websocketChannelMaxStreamCount = 7;
 
-export function WebsocketChannelTransport(logger: ILogger, webSocket: UseWebSocketReturn<ArrayBuffer>): TransportFactory {
-    const wsChannel = new WebsocketChannelImpl(logger, webSocket);
+// Control stream is reserved and never used for RPC calls.
+const CONTROL_STREAM_ID = 0 as const;
+
+// Control-plane "operations" sent in Header.operation on stream 0.
+const CONTROL_OP_AUTH = 'auth' as const;
+const CONTROL_OP_REAUTH = 'reauth' as const;
+const CONTROL_OP_AUTH_OK = 'auth_ok' as const;
+
+type TokenProvider = () => string | null;
+
+type AuthState =
+    | { kind: 'none' }
+    | { kind: 'pending'; promise: Promise<void>; resolve: () => void; reject: (err: Error) => void }
+    | { kind: 'ok' }
+    | { kind: 'failed'; err: Error };
+
+// Default token provider: change the key to your real sessionStorage key.
+function defaultTokenProvider(): string | null {
+    const raw = sessionStorage.getItem('fivenet:user_token_v1');
+    if (!raw) return null;
+    return raw;
+}
+
+export function WebsocketChannelTransport(
+    logger: ILogger,
+    webSocket: UseWebSocketReturn<ArrayBuffer>,
+    tokenProvider: TokenProvider = defaultTokenProvider,
+): TransportFactory {
+    const wsChannel = new WebsocketChannelImpl(logger, webSocket, tokenProvider);
 
     return (opts: TransportOptions) => {
         opts.debug && logger.debug('Websocket factory triggered, status:', webSocket.status.value);
@@ -38,12 +65,18 @@ interface WebsocketChannel {
 class WebsocketChannelImpl implements WebsocketChannel {
     private logger: ILogger;
     protected ws: UseWebSocketReturn<ArrayBuffer>;
-    readonly activeStreams = new Map<number, [TransportOptions, WebsocketChannelStream]>();
-    public lastStreamId = 0;
+    private tokenProvider: TokenProvider;
 
-    constructor(logger: ILogger, ws: UseWebSocketReturn<ArrayBuffer>) {
+    readonly activeStreams = new Map<number, [TransportOptions, WebsocketChannelStream]>();
+
+    public lastStreamId = 1;
+
+    private authState: AuthState = { kind: 'none' };
+
+    constructor(logger: ILogger, ws: UseWebSocketReturn<ArrayBuffer>, tokenProvider: TokenProvider) {
         this.logger = logger;
         this.ws = ws;
+        this.tokenProvider = tokenProvider;
 
         watch(ws.data, async (val) => this.onMessage(val));
         watchThrottled(
@@ -55,11 +88,11 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 this.activeStreams.forEach((as) => {
                     as[1].cancel();
                     as[1].closed = true;
-
                     this.activeStreams.delete(as[1].streamId);
                 });
 
-                this.lastStreamId = 0;
+                this.lastStreamId = 1;
+                this.authState = { kind: 'none' };
             },
             {
                 immediate: true,
@@ -73,8 +106,15 @@ class WebsocketChannelImpl implements WebsocketChannel {
 
         const frame = GrpcFrame.fromBinary(new Uint8Array(data));
         const streamId = frame.streamId;
+
         if (frame.payload.oneofKind === 'ping') {
             this.logger.debug('Received websocket ping, pong:', frame.payload.ping.pong);
+            return;
+        }
+
+        // CONTROL stream handling (streamId = 0)
+        if (streamId === CONTROL_STREAM_ID) {
+            this.onControlFrame(frame);
             return;
         }
 
@@ -173,8 +213,46 @@ class WebsocketChannelImpl implements WebsocketChannel {
         }
     }
 
+    private onControlFrame(frame: GrpcFrame) {
+        // Control frames use Header + Failure
+        switch (frame.payload.oneofKind) {
+            case 'header': {
+                const h = frame.payload.header;
+                if (!h) return;
+
+                if (h.operation === CONTROL_OP_AUTH_OK) {
+                    this.logger.debug('WS auth ok');
+                    if (this.authState.kind === 'pending') this.authState.resolve();
+                    this.authState = { kind: 'ok' };
+                    return;
+                }
+
+                // If server responds with something else on control stream, treat as failure.
+                const err = new Error(`WS control header unexpected operation: ${h.operation}`);
+                if (this.authState.kind === 'pending') this.authState.reject(err);
+                this.authState = { kind: 'failed', err };
+                return;
+            }
+
+            case 'failure': {
+                const f = frame.payload.failure;
+                const msg = f?.errorMessage || 'Unauthenticated';
+                const err = new Error(`WS auth failed: ${msg}`);
+                this.logger.warn(err.message);
+
+                if (this.authState.kind === 'pending') this.authState.reject(err);
+                this.authState = { kind: 'failed', err };
+                return;
+            }
+
+            default:
+                // Ignore others (complete/cancel/body shouldn't happen on control stream)
+                return;
+        }
+    }
+
     async sendToWebsocket(opts: TransportOptions, toSend: GrpcFrame, usingBuffer: boolean = true): Promise<boolean> {
-        if (!this.activeStreams.has(toSend.streamId)) {
+        if (toSend.streamId !== CONTROL_STREAM_ID && !this.activeStreams.has(toSend.streamId)) {
             opts.debug && this.logger.debug('sendToWs: Stream does not exist', toSend.streamId);
             return false;
         }
@@ -182,10 +260,74 @@ class WebsocketChannelImpl implements WebsocketChannel {
         return this.ws.send(GrpcFrame.toBinary(toSend).buffer as ArrayBuffer, usingBuffer);
     }
 
+    private async sendControlHeader(operation: string, headers: Record<string, string[]>) {
+        const header = Header.create();
+        header.operation = operation;
+
+        const headerMap = header.headers;
+        for (const [key, values] of Object.entries(headers)) {
+            const hv = HeaderValue.create();
+            hv.value = values;
+            headerMap[key] = hv;
+        }
+
+        // Control sends don't belong to a normal stream in activeStreams,
+        // so use a dummy TransportOptions for logging only.
+        this.ws.send(
+            GrpcFrame.toBinary(
+                GrpcFrame.create({
+                    streamId: CONTROL_STREAM_ID,
+                    payload: { oneofKind: 'header', header },
+                }),
+            ).buffer as ArrayBuffer,
+            true,
+        );
+    }
+
+    async ensureAuthenticated(): Promise<void> {
+        if (this.ws.status.value !== 'OPEN')
+            // Let caller open first; once open, auth will be attempted.
+            throw new Error('WebSocket not open');
+
+        if (this.authState.kind === 'ok') return;
+        if (this.authState.kind === 'failed') throw this.authState.err;
+        if (this.authState.kind === 'pending') return this.authState.promise;
+
+        const token = this.tokenProvider();
+        if (!token) throw new Error('Missing character token (sessionStorage)');
+
+        let resolve!: () => void;
+        let reject!: (err: Error) => void;
+        const promise = new Promise<void>((res, rej) => {
+            resolve = res;
+            reject = rej;
+        });
+
+        this.authState = { kind: 'pending', promise, resolve, reject };
+
+        await this.sendControlHeader(CONTROL_OP_AUTH, {
+            Authorization: [`Bearer ${token}`],
+        });
+
+        return promise;
+    }
+
+    async reauth(): Promise<void> {
+        if (this.ws.status.value !== 'OPEN') throw new Error('WebSocket not open');
+
+        const token = this.tokenProvider();
+        if (!token) throw new Error('Missing character token (sessionStorage)');
+
+        // If you want to force reauth to await auth_ok, set authState pending here too.
+        await this.sendControlHeader(CONTROL_OP_REAUTH, {
+            Authorization: [`Bearer ${token}`],
+        });
+    }
+
     public getNextStreamId(): number {
-        // Reset stream id back to 0 if max is reached
+        // Reset stream id back to 1 if max is reached
         if (this.lastStreamId >= websocketChannelMaxStreamCount) {
-            this.lastStreamId = 0;
+            this.lastStreamId = 1;
             return this.lastStreamId;
         }
 
@@ -224,13 +366,22 @@ class WebsocketChannelStream {
         this.isStream = opts.methodDefinition.serverStreaming || opts.methodDefinition.clientStreaming;
     }
 
-    start(metadata: Metadata) {
+    async start(metadata: Metadata) {
         this.opts.debug && this.logger.debug('Stream start', this.streamId, `${this.service}/${this.method}`);
+
+        // Ensure control-plane auth succeeded before creating a real stream.
+        this.wsChannel.ensureAuthenticated();
 
         this.wsChannel.activeStreams.set(this.streamId, [this.opts, this]);
 
         const header = Header.create();
+        /**
+         * Header.operation multiplexing:
+         * - For RPC streams (streamId > 0): operation is "Service/Method"
+         * - For control stream (streamId == 0): operation is one of "auth", "reauth", "auth_ok"
+         */
         header.operation = `${this.service}/${this.method}`;
+
         const headerMap = header.headers;
         // Only accept Metadata for metadata
         metadata.forEach((key, values) => {

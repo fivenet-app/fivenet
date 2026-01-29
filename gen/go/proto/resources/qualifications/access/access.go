@@ -2,12 +2,12 @@ package qualificationsaccess
 
 // pkg/access compatibility
 
-func (x *QualificationJobAccess) SetMinimumGrade(grade int32) {
-	x.MinimumGrade = grade
+func (x *QualificationJobAccess) GetJobGrade() int32 {
+	return x.GetMinimumGrade()
 }
 
-func (x *QualificationJobAccess) SetAccess(access AccessLevel) {
-	x.Access = access
+func (x *QualificationJobAccess) SetJobGrade(grade int32) {
+	x.MinimumGrade = grade
 }
 
 func (x *QualificationUserAccess) GetId() int64 {
@@ -29,23 +29,3 @@ func (x *QualificationUserAccess) GetUserId() int32 {
 }
 
 func (x *QualificationUserAccess) SetUserId(userId int32) {}
-
-func (x *QualificationJobAccess) SetJob(job string) {
-	x.Job = job
-}
-
-func (x *QualificationJobAccess) SetJobLabel(label string) {
-	x.JobLabel = &label
-}
-
-func (x *QualificationJobAccess) GetJobGrade() int32 {
-	return x.GetMinimumGrade()
-}
-
-func (x *QualificationJobAccess) SetJobGrade(grade int32) {
-	x.MinimumGrade = grade
-}
-
-func (x *QualificationJobAccess) SetJobGradeLabel(label string) {
-	x.JobGradeLabel = &label
-}

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/mailer/messages/message.proto
 
+//go:build !protoopaque
+
 package mailermessages
 
 import (
@@ -16,7 +18,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -28,7 +29,7 @@ const (
 )
 
 type Message struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ThreadId      int64                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
 	SenderId      int64                  `protobuf:"varint,3,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
@@ -68,11 +69,6 @@ func (x *Message) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Message.ProtoReflect.Descriptor instead.
-func (*Message) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_messages_message_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Message) GetId() int64 {
@@ -159,8 +155,180 @@ func (x *Message) GetCreatorJob() string {
 	return ""
 }
 
+func (x *Message) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Message) SetThreadId(v int64) {
+	x.ThreadId = v
+}
+
+func (x *Message) SetSenderId(v int64) {
+	x.SenderId = v
+}
+
+func (x *Message) SetSender(v *emails.Email) {
+	x.Sender = v
+}
+
+func (x *Message) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Message) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *Message) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *Message) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *Message) SetContent(v *content.Content) {
+	x.Content = v
+}
+
+func (x *Message) SetData(v *MessageData) {
+	x.Data = v
+}
+
+func (x *Message) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *Message) SetCreatorJob(v string) {
+	x.CreatorJob = &v
+}
+
+func (x *Message) HasSender() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sender != nil
+}
+
+func (x *Message) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Message) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Message) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *Message) HasContent() bool {
+	if x == nil {
+		return false
+	}
+	return x.Content != nil
+}
+
+func (x *Message) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *Message) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *Message) HasCreatorJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorJob != nil
+}
+
+func (x *Message) ClearSender() {
+	x.Sender = nil
+}
+
+func (x *Message) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Message) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Message) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *Message) ClearContent() {
+	x.Content = nil
+}
+
+func (x *Message) ClearData() {
+	x.Data = nil
+}
+
+func (x *Message) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *Message) ClearCreatorJob() {
+	x.CreatorJob = nil
+}
+
+type Message_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id         int64
+	ThreadId   int64
+	SenderId   int64
+	Sender     *emails.Email
+	CreatedAt  *timestamp.Timestamp
+	UpdatedAt  *timestamp.Timestamp
+	DeletedAt  *timestamp.Timestamp
+	Title      string
+	Content    *content.Content
+	Data       *MessageData
+	CreatorId  *int32
+	CreatorJob *string
+}
+
+func (b0 Message_builder) Build() *Message {
+	m0 := &Message{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.ThreadId = b.ThreadId
+	x.SenderId = b.SenderId
+	x.Sender = b.Sender
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	x.Title = b.Title
+	x.Content = b.Content
+	x.Data = b.Data
+	x.CreatorId = b.CreatorId
+	x.CreatorJob = b.CreatorJob
+	return m0
+}
+
 type MessageData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Attachments   []*MessageAttachment   `protobuf:"bytes,1,rep,name=attachments,proto3" json:"attachments,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -191,11 +359,6 @@ func (x *MessageData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MessageData.ProtoReflect.Descriptor instead.
-func (*MessageData) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_messages_message_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *MessageData) GetAttachments() []*MessageAttachment {
 	if x != nil {
 		return x.Attachments
@@ -203,8 +366,26 @@ func (x *MessageData) GetAttachments() []*MessageAttachment {
 	return nil
 }
 
+func (x *MessageData) SetAttachments(v []*MessageAttachment) {
+	x.Attachments = v
+}
+
+type MessageData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Attachments []*MessageAttachment
+}
+
+func (b0 MessageData_builder) Build() *MessageData {
+	m0 := &MessageData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Attachments = b.Attachments
+	return m0
+}
+
 type MessageAttachment struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*MessageAttachment_Document
@@ -238,11 +419,6 @@ func (x *MessageAttachment) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MessageAttachment.ProtoReflect.Descriptor instead.
-func (*MessageAttachment) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_messages_message_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *MessageAttachment) GetData() isMessageAttachment_Data {
 	if x != nil {
 		return x.Data
@@ -259,6 +435,82 @@ func (x *MessageAttachment) GetDocument() *MessageAttachmentDocument {
 	return nil
 }
 
+func (x *MessageAttachment) SetDocument(v *MessageAttachmentDocument) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &MessageAttachment_Document{v}
+}
+
+func (x *MessageAttachment) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *MessageAttachment) HasDocument() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MessageAttachment_Document)
+	return ok
+}
+
+func (x *MessageAttachment) ClearData() {
+	x.Data = nil
+}
+
+func (x *MessageAttachment) ClearDocument() {
+	if _, ok := x.Data.(*MessageAttachment_Document); ok {
+		x.Data = nil
+	}
+}
+
+const MessageAttachment_Data_not_set_case case_MessageAttachment_Data = 0
+const MessageAttachment_Document_case case_MessageAttachment_Data = 1
+
+func (x *MessageAttachment) WhichData() case_MessageAttachment_Data {
+	if x == nil {
+		return MessageAttachment_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *MessageAttachment_Document:
+		return MessageAttachment_Document_case
+	default:
+		return MessageAttachment_Data_not_set_case
+	}
+}
+
+type MessageAttachment_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	Document *MessageAttachmentDocument
+	// -- end of Data
+}
+
+func (b0 MessageAttachment_builder) Build() *MessageAttachment {
+	m0 := &MessageAttachment{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Document != nil {
+		x.Data = &MessageAttachment_Document{b.Document}
+	}
+	return m0
+}
+
+type case_MessageAttachment_Data protoreflect.FieldNumber
+
+func (x case_MessageAttachment_Data) String() string {
+	md := file_resources_mailer_messages_message_proto_msgTypes[2].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isMessageAttachment_Data interface {
 	isMessageAttachment_Data()
 }
@@ -270,7 +522,7 @@ type MessageAttachment_Document struct {
 func (*MessageAttachment_Document) isMessageAttachment_Data() {}
 
 type MessageAttachmentDocument struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Title         *string                `protobuf:"bytes,2,opt,name=title,proto3,oneof" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -302,11 +554,6 @@ func (x *MessageAttachmentDocument) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MessageAttachmentDocument.ProtoReflect.Descriptor instead.
-func (*MessageAttachmentDocument) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_messages_message_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *MessageAttachmentDocument) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -319,6 +566,41 @@ func (x *MessageAttachmentDocument) GetTitle() string {
 		return *x.Title
 	}
 	return ""
+}
+
+func (x *MessageAttachmentDocument) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *MessageAttachmentDocument) SetTitle(v string) {
+	x.Title = &v
+}
+
+func (x *MessageAttachmentDocument) HasTitle() bool {
+	if x == nil {
+		return false
+	}
+	return x.Title != nil
+}
+
+func (x *MessageAttachmentDocument) ClearTitle() {
+	x.Title = nil
+}
+
+type MessageAttachmentDocument_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id    int64
+	Title *string
+}
+
+func (b0 MessageAttachmentDocument_builder) Build() *MessageAttachmentDocument {
+	m0 := &MessageAttachmentDocument{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Title = b.Title
+	return m0
 }
 
 var File_resources_mailer_messages_message_proto protoreflect.FileDescriptor
@@ -360,18 +642,6 @@ const file_resources_mailer_messages_message_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\x05title\x18\x02 \x01(\tH\x00R\x05title\x88\x01\x01B\b\n" +
 	"\x06_titleB\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/messages;mailermessagesb\x06proto3"
-
-var (
-	file_resources_mailer_messages_message_proto_rawDescOnce sync.Once
-	file_resources_mailer_messages_message_proto_rawDescData []byte
-)
-
-func file_resources_mailer_messages_message_proto_rawDescGZIP() []byte {
-	file_resources_mailer_messages_message_proto_rawDescOnce.Do(func() {
-		file_resources_mailer_messages_message_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_mailer_messages_message_proto_rawDesc), len(file_resources_mailer_messages_message_proto_rawDesc)))
-	})
-	return file_resources_mailer_messages_message_proto_rawDescData
-}
 
 var file_resources_mailer_messages_message_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_mailer_messages_message_proto_goTypes = []any{

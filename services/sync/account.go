@@ -103,7 +103,8 @@ func (s *Server) RegisterAccount(
 				tAccounts.ID.EQ(mysql.Int64(acc.GetId())),
 				// Make sure the license is (still) the same
 				tAccounts.License.EQ(mysql.String(req.GetIdentifier())),
-			))
+			)).
+			LIMIT(1)
 	}
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -160,7 +161,8 @@ func (s *Server) TransferAccount(
 		).
 		WHERE(
 			tAccounts.ID.EQ(mysql.Int64(acc.GetId())),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, fmt.Errorf("failed to update old account's license. %w", err)

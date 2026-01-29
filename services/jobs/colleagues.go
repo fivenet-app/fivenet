@@ -21,7 +21,6 @@ import (
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -66,7 +65,7 @@ func (s *Server) ListColleagues(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	tColleague := tables.User().AS("colleague")
+	tColleague := table.FivenetUser.AS("colleague")
 
 	condition := mysql.AND(
 		tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
@@ -323,7 +322,7 @@ func (s *Server) getColleague(
 	userId int32,
 	withColumns mysql.ProjectionList,
 ) (*jobscolleagues.Colleague, error) {
-	tColleague := tables.User().AS("colleague")
+	tColleague := table.FivenetUser.AS("colleague")
 
 	columns := mysql.ProjectionList{
 		tColleague.Firstname,
@@ -735,7 +734,7 @@ func (s *Server) SetColleagueProps(
 
 func (s *Server) getConditionForColleagueAccess(
 	actTable *table.FivenetJobColleagueActivityTable,
-	usersTable *tables.FivenetUserTable,
+	usersTable *table.FivenetUserTable,
 	levels []string,
 	userInfo *userinfo.UserInfo,
 ) mysql.BoolExpression {
@@ -785,7 +784,7 @@ func (s *Server) ListColleagueActivity(
 	}
 
 	tColleagueActivity := tColleagueActivity.AS("colleague_activity")
-	tTargetColleague := tables.User().AS("target_user")
+	tTargetColleague := table.FivenetUser.AS("target_user")
 	tSourceUser := tTargetColleague.AS("source_user")
 
 	condition := tColleagueActivity.Job.EQ(mysql.String(userInfo.GetJob()))

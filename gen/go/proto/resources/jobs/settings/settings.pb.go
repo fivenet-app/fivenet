@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/jobs/settings/settings.proto
 
+//go:build !protoopaque
+
 package jobssettings
 
 import (
@@ -13,7 +15,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -68,13 +69,8 @@ func (x UserInfoSyncUnemployedMode) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use UserInfoSyncUnemployedMode.Descriptor instead.
-func (UserInfoSyncUnemployedMode) EnumDescriptor() ([]byte, []int) {
-	return file_resources_jobs_settings_settings_proto_rawDescGZIP(), []int{0}
-}
-
 type DiscordSyncSettings struct {
-	state                    protoimpl.MessageState `protogen:"open.v1"`
+	state                    protoimpl.MessageState `protogen:"hybrid.v1"`
 	DryRun                   bool                   `protobuf:"varint,1,opt,name=dry_run,json=dryRun,proto3" json:"dry_run,omitempty"`
 	UserInfoSync             bool                   `protobuf:"varint,2,opt,name=user_info_sync,json=userInfoSync,proto3" json:"user_info_sync,omitempty"`
 	UserInfoSyncSettings     *UserInfoSyncSettings  `protobuf:"bytes,3,opt,name=user_info_sync_settings,json=userInfoSyncSettings,proto3" json:"user_info_sync_settings,omitempty"`
@@ -111,11 +107,6 @@ func (x *DiscordSyncSettings) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DiscordSyncSettings.ProtoReflect.Descriptor instead.
-func (*DiscordSyncSettings) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_settings_settings_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *DiscordSyncSettings) GetDryRun() bool {
@@ -181,8 +172,118 @@ func (x *DiscordSyncSettings) GetQualificationsRoleFormat() string {
 	return ""
 }
 
+func (x *DiscordSyncSettings) SetDryRun(v bool) {
+	x.DryRun = v
+}
+
+func (x *DiscordSyncSettings) SetUserInfoSync(v bool) {
+	x.UserInfoSync = v
+}
+
+func (x *DiscordSyncSettings) SetUserInfoSyncSettings(v *UserInfoSyncSettings) {
+	x.UserInfoSyncSettings = v
+}
+
+func (x *DiscordSyncSettings) SetStatusLog(v bool) {
+	x.StatusLog = v
+}
+
+func (x *DiscordSyncSettings) SetStatusLogSettings(v *StatusLogSettings) {
+	x.StatusLogSettings = v
+}
+
+func (x *DiscordSyncSettings) SetJobsAbsence(v bool) {
+	x.JobsAbsence = v
+}
+
+func (x *DiscordSyncSettings) SetJobsAbsenceSettings(v *JobsAbsenceSettings) {
+	x.JobsAbsenceSettings = v
+}
+
+func (x *DiscordSyncSettings) SetGroupSyncSettings(v *GroupSyncSettings) {
+	x.GroupSyncSettings = v
+}
+
+func (x *DiscordSyncSettings) SetQualificationsRoleFormat(v string) {
+	x.QualificationsRoleFormat = v
+}
+
+func (x *DiscordSyncSettings) HasUserInfoSyncSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserInfoSyncSettings != nil
+}
+
+func (x *DiscordSyncSettings) HasStatusLogSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.StatusLogSettings != nil
+}
+
+func (x *DiscordSyncSettings) HasJobsAbsenceSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobsAbsenceSettings != nil
+}
+
+func (x *DiscordSyncSettings) HasGroupSyncSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.GroupSyncSettings != nil
+}
+
+func (x *DiscordSyncSettings) ClearUserInfoSyncSettings() {
+	x.UserInfoSyncSettings = nil
+}
+
+func (x *DiscordSyncSettings) ClearStatusLogSettings() {
+	x.StatusLogSettings = nil
+}
+
+func (x *DiscordSyncSettings) ClearJobsAbsenceSettings() {
+	x.JobsAbsenceSettings = nil
+}
+
+func (x *DiscordSyncSettings) ClearGroupSyncSettings() {
+	x.GroupSyncSettings = nil
+}
+
+type DiscordSyncSettings_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DryRun                   bool
+	UserInfoSync             bool
+	UserInfoSyncSettings     *UserInfoSyncSettings
+	StatusLog                bool
+	StatusLogSettings        *StatusLogSettings
+	JobsAbsence              bool
+	JobsAbsenceSettings      *JobsAbsenceSettings
+	GroupSyncSettings        *GroupSyncSettings
+	QualificationsRoleFormat string
+}
+
+func (b0 DiscordSyncSettings_builder) Build() *DiscordSyncSettings {
+	m0 := &DiscordSyncSettings{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DryRun = b.DryRun
+	x.UserInfoSync = b.UserInfoSync
+	x.UserInfoSyncSettings = b.UserInfoSyncSettings
+	x.StatusLog = b.StatusLog
+	x.StatusLogSettings = b.StatusLogSettings
+	x.JobsAbsence = b.JobsAbsence
+	x.JobsAbsenceSettings = b.JobsAbsenceSettings
+	x.GroupSyncSettings = b.GroupSyncSettings
+	x.QualificationsRoleFormat = b.QualificationsRoleFormat
+	return m0
+}
+
 type DiscordSyncChanges struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Changes       []*DiscordSyncChange   `protobuf:"bytes,1,rep,name=changes,proto3" json:"changes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -213,11 +314,6 @@ func (x *DiscordSyncChanges) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DiscordSyncChanges.ProtoReflect.Descriptor instead.
-func (*DiscordSyncChanges) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_settings_settings_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *DiscordSyncChanges) GetChanges() []*DiscordSyncChange {
 	if x != nil {
 		return x.Changes
@@ -225,8 +321,26 @@ func (x *DiscordSyncChanges) GetChanges() []*DiscordSyncChange {
 	return nil
 }
 
+func (x *DiscordSyncChanges) SetChanges(v []*DiscordSyncChange) {
+	x.Changes = v
+}
+
+type DiscordSyncChanges_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Changes []*DiscordSyncChange
+}
+
+func (b0 DiscordSyncChanges_builder) Build() *DiscordSyncChanges {
+	m0 := &DiscordSyncChanges{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Changes = b.Changes
+	return m0
+}
+
 type DiscordSyncChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Time          *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
 	Plan          string                 `protobuf:"bytes,2,opt,name=plan,proto3" json:"plan,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -258,11 +372,6 @@ func (x *DiscordSyncChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DiscordSyncChange.ProtoReflect.Descriptor instead.
-func (*DiscordSyncChange) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_settings_settings_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *DiscordSyncChange) GetTime() *timestamp.Timestamp {
 	if x != nil {
 		return x.Time
@@ -277,8 +386,43 @@ func (x *DiscordSyncChange) GetPlan() string {
 	return ""
 }
 
+func (x *DiscordSyncChange) SetTime(v *timestamp.Timestamp) {
+	x.Time = v
+}
+
+func (x *DiscordSyncChange) SetPlan(v string) {
+	x.Plan = v
+}
+
+func (x *DiscordSyncChange) HasTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.Time != nil
+}
+
+func (x *DiscordSyncChange) ClearTime() {
+	x.Time = nil
+}
+
+type DiscordSyncChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Time *timestamp.Timestamp
+	Plan string
+}
+
+func (b0 DiscordSyncChange_builder) Build() *DiscordSyncChange {
+	m0 := &DiscordSyncChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Time = b.Time
+	x.Plan = b.Plan
+	return m0
+}
+
 type UserInfoSyncSettings struct {
-	state               protoimpl.MessageState     `protogen:"open.v1"`
+	state               protoimpl.MessageState     `protogen:"hybrid.v1"`
 	EmployeeRoleEnabled bool                       `protobuf:"varint,1,opt,name=employee_role_enabled,json=employeeRoleEnabled,proto3" json:"employee_role_enabled,omitempty"`
 	EmployeeRoleFormat  string                     `protobuf:"bytes,2,opt,name=employee_role_format,json=employeeRoleFormat,proto3" json:"employee_role_format,omitempty"`
 	GradeRoleFormat     string                     `protobuf:"bytes,3,opt,name=grade_role_format,json=gradeRoleFormat,proto3" json:"grade_role_format,omitempty"`
@@ -314,11 +458,6 @@ func (x *UserInfoSyncSettings) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserInfoSyncSettings.ProtoReflect.Descriptor instead.
-func (*UserInfoSyncSettings) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_settings_settings_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *UserInfoSyncSettings) GetEmployeeRoleEnabled() bool {
@@ -377,8 +516,68 @@ func (x *UserInfoSyncSettings) GetGroupMapping() []*GroupMapping {
 	return nil
 }
 
+func (x *UserInfoSyncSettings) SetEmployeeRoleEnabled(v bool) {
+	x.EmployeeRoleEnabled = v
+}
+
+func (x *UserInfoSyncSettings) SetEmployeeRoleFormat(v string) {
+	x.EmployeeRoleFormat = v
+}
+
+func (x *UserInfoSyncSettings) SetGradeRoleFormat(v string) {
+	x.GradeRoleFormat = v
+}
+
+func (x *UserInfoSyncSettings) SetUnemployedEnabled(v bool) {
+	x.UnemployedEnabled = v
+}
+
+func (x *UserInfoSyncSettings) SetUnemployedMode(v UserInfoSyncUnemployedMode) {
+	x.UnemployedMode = v
+}
+
+func (x *UserInfoSyncSettings) SetUnemployedRoleName(v string) {
+	x.UnemployedRoleName = v
+}
+
+func (x *UserInfoSyncSettings) SetSyncNicknames(v bool) {
+	x.SyncNicknames = v
+}
+
+func (x *UserInfoSyncSettings) SetGroupMapping(v []*GroupMapping) {
+	x.GroupMapping = v
+}
+
+type UserInfoSyncSettings_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EmployeeRoleEnabled bool
+	EmployeeRoleFormat  string
+	GradeRoleFormat     string
+	UnemployedEnabled   bool
+	UnemployedMode      UserInfoSyncUnemployedMode
+	UnemployedRoleName  string
+	SyncNicknames       bool
+	GroupMapping        []*GroupMapping
+}
+
+func (b0 UserInfoSyncSettings_builder) Build() *UserInfoSyncSettings {
+	m0 := &UserInfoSyncSettings{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EmployeeRoleEnabled = b.EmployeeRoleEnabled
+	x.EmployeeRoleFormat = b.EmployeeRoleFormat
+	x.GradeRoleFormat = b.GradeRoleFormat
+	x.UnemployedEnabled = b.UnemployedEnabled
+	x.UnemployedMode = b.UnemployedMode
+	x.UnemployedRoleName = b.UnemployedRoleName
+	x.SyncNicknames = b.SyncNicknames
+	x.GroupMapping = b.GroupMapping
+	return m0
+}
+
 type GroupMapping struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	FromGrade     int32                  `protobuf:"varint,2,opt,name=from_grade,json=fromGrade,proto3" json:"from_grade,omitempty"`
 	ToGrade       int32                  `protobuf:"varint,3,opt,name=to_grade,json=toGrade,proto3" json:"to_grade,omitempty"`
@@ -411,11 +610,6 @@ func (x *GroupMapping) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GroupMapping.ProtoReflect.Descriptor instead.
-func (*GroupMapping) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_settings_settings_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *GroupMapping) GetName() string {
 	if x != nil {
 		return x.Name
@@ -437,8 +631,38 @@ func (x *GroupMapping) GetToGrade() int32 {
 	return 0
 }
 
+func (x *GroupMapping) SetName(v string) {
+	x.Name = v
+}
+
+func (x *GroupMapping) SetFromGrade(v int32) {
+	x.FromGrade = v
+}
+
+func (x *GroupMapping) SetToGrade(v int32) {
+	x.ToGrade = v
+}
+
+type GroupMapping_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Name      string
+	FromGrade int32
+	ToGrade   int32
+}
+
+func (b0 GroupMapping_builder) Build() *GroupMapping {
+	m0 := &GroupMapping{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Name = b.Name
+	x.FromGrade = b.FromGrade
+	x.ToGrade = b.ToGrade
+	return m0
+}
+
 type StatusLogSettings struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	ChannelId     string                 `protobuf:"bytes,1,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -469,11 +693,6 @@ func (x *StatusLogSettings) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StatusLogSettings.ProtoReflect.Descriptor instead.
-func (*StatusLogSettings) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_settings_settings_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *StatusLogSettings) GetChannelId() string {
 	if x != nil {
 		return x.ChannelId
@@ -481,8 +700,26 @@ func (x *StatusLogSettings) GetChannelId() string {
 	return ""
 }
 
+func (x *StatusLogSettings) SetChannelId(v string) {
+	x.ChannelId = v
+}
+
+type StatusLogSettings_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ChannelId string
+}
+
+func (b0 StatusLogSettings_builder) Build() *StatusLogSettings {
+	m0 := &StatusLogSettings{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ChannelId = b.ChannelId
+	return m0
+}
+
 type JobsAbsenceSettings struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	AbsenceRole   string                 `protobuf:"bytes,1,opt,name=absence_role,json=absenceRole,proto3" json:"absence_role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -513,11 +750,6 @@ func (x *JobsAbsenceSettings) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobsAbsenceSettings.ProtoReflect.Descriptor instead.
-func (*JobsAbsenceSettings) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_settings_settings_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *JobsAbsenceSettings) GetAbsenceRole() string {
 	if x != nil {
 		return x.AbsenceRole
@@ -525,8 +757,26 @@ func (x *JobsAbsenceSettings) GetAbsenceRole() string {
 	return ""
 }
 
+func (x *JobsAbsenceSettings) SetAbsenceRole(v string) {
+	x.AbsenceRole = v
+}
+
+type JobsAbsenceSettings_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	AbsenceRole string
+}
+
+func (b0 JobsAbsenceSettings_builder) Build() *JobsAbsenceSettings {
+	m0 := &JobsAbsenceSettings{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.AbsenceRole = b.AbsenceRole
+	return m0
+}
+
 type GroupSyncSettings struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
+	state          protoimpl.MessageState `protogen:"hybrid.v1"`
 	IgnoredRoleIds []string               `protobuf:"bytes,1,rep,name=ignored_role_ids,json=ignoredRoleIds,proto3" json:"ignored_role_ids,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
@@ -557,11 +807,6 @@ func (x *GroupSyncSettings) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GroupSyncSettings.ProtoReflect.Descriptor instead.
-func (*GroupSyncSettings) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_settings_settings_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *GroupSyncSettings) GetIgnoredRoleIds() []string {
 	if x != nil {
 		return x.IgnoredRoleIds
@@ -569,8 +814,26 @@ func (x *GroupSyncSettings) GetIgnoredRoleIds() []string {
 	return nil
 }
 
+func (x *GroupSyncSettings) SetIgnoredRoleIds(v []string) {
+	x.IgnoredRoleIds = v
+}
+
+type GroupSyncSettings_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	IgnoredRoleIds []string
+}
+
+func (b0 GroupSyncSettings_builder) Build() *GroupSyncSettings {
+	m0 := &GroupSyncSettings{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.IgnoredRoleIds = b.IgnoredRoleIds
+	return m0
+}
+
 type JobSettings struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
+	state             protoimpl.MessageState `protogen:"hybrid.v1"`
 	AbsencePastDays   int32                  `protobuf:"varint,1,opt,name=absence_past_days,json=absencePastDays,proto3" json:"absence_past_days,omitempty"`
 	AbsenceFutureDays int32                  `protobuf:"varint,2,opt,name=absence_future_days,json=absenceFutureDays,proto3" json:"absence_future_days,omitempty"`
 	unknownFields     protoimpl.UnknownFields
@@ -602,11 +865,6 @@ func (x *JobSettings) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobSettings.ProtoReflect.Descriptor instead.
-func (*JobSettings) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_settings_settings_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *JobSettings) GetAbsencePastDays() int32 {
 	if x != nil {
 		return x.AbsencePastDays
@@ -619,6 +877,30 @@ func (x *JobSettings) GetAbsenceFutureDays() int32 {
 		return x.AbsenceFutureDays
 	}
 	return 0
+}
+
+func (x *JobSettings) SetAbsencePastDays(v int32) {
+	x.AbsencePastDays = v
+}
+
+func (x *JobSettings) SetAbsenceFutureDays(v int32) {
+	x.AbsenceFutureDays = v
+}
+
+type JobSettings_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	AbsencePastDays   int32
+	AbsenceFutureDays int32
+}
+
+func (b0 JobSettings_builder) Build() *JobSettings {
+	m0 := &JobSettings{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.AbsencePastDays = b.AbsencePastDays
+	x.AbsenceFutureDays = b.AbsenceFutureDays
+	return m0
 }
 
 var File_resources_jobs_settings_settings_proto protoreflect.FileDescriptor
@@ -670,18 +952,6 @@ const file_resources_jobs_settings_settings_proto_rawDesc = "" +
 	"*USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED\x10\x00\x12,\n" +
 	"(USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE\x10\x01\x12'\n" +
 	"#USER_INFO_SYNC_UNEMPLOYED_MODE_KICK\x10\x02BXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/settings;jobssettingsb\x06proto3"
-
-var (
-	file_resources_jobs_settings_settings_proto_rawDescOnce sync.Once
-	file_resources_jobs_settings_settings_proto_rawDescData []byte
-)
-
-func file_resources_jobs_settings_settings_proto_rawDescGZIP() []byte {
-	file_resources_jobs_settings_settings_proto_rawDescOnce.Do(func() {
-		file_resources_jobs_settings_settings_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_jobs_settings_settings_proto_rawDesc), len(file_resources_jobs_settings_settings_proto_rawDesc)))
-	})
-	return file_resources_jobs_settings_settings_proto_rawDescData
-}
 
 var file_resources_jobs_settings_settings_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_jobs_settings_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 9)

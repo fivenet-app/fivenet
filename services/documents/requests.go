@@ -18,7 +18,6 @@ import (
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -81,7 +80,7 @@ func (s *Server) ListDocumentReqs(
 		return resp, nil
 	}
 
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 
 	stmt := tDocRequest.
 		SELECT(
@@ -484,7 +483,7 @@ func (s *Server) notifyUserAboutRequest(
 	sourceUserId int32,
 	targetUserId int32,
 ) error {
-	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, targetUserId)
+	userInfo, err := s.ui.GetUserInfo(ctx, targetUserId)
 	if err != nil {
 		return err
 	}
@@ -636,7 +635,7 @@ func (s *Server) getDocumentReq(
 	tx qrm.DB,
 	condition mysql.BoolExpression,
 ) (*documentsrequests.DocRequest, error) {
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 
 	stmt := tDocRequest.
 		SELECT(

@@ -14,7 +14,6 @@ import (
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -162,7 +161,7 @@ func (s *Server) sendShareNotifications(
 	entry *calendarentries.CalendarEntry,
 	targetCitizens []int32,
 ) error {
-	tUsers := tables.User().AS("user_short")
+	tUsers := table.FivenetUser.AS("user_short")
 
 	stmt := tUsers.
 		SELECT(

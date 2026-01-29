@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/centrum/units/units.proto
 
+//go:build !protoopaque
+
 package centrumunits
 
 import (
@@ -16,7 +18,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -86,11 +87,6 @@ func (x StatusUnit) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use StatusUnit.Descriptor instead.
-func (StatusUnit) EnumDescriptor() ([]byte, []int) {
-	return file_resources_centrum_units_units_proto_rawDescGZIP(), []int{0}
-}
-
 type UnitAttribute int32
 
 const (
@@ -135,13 +131,8 @@ func (x UnitAttribute) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use UnitAttribute.Descriptor instead.
-func (UnitAttribute) EnumDescriptor() ([]byte, []int) {
-	return file_resources_centrum_units_units_proto_rawDescGZIP(), []int{1}
-}
-
 type Unit struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -184,11 +175,6 @@ func (x *Unit) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Unit.ProtoReflect.Descriptor instead.
-func (*Unit) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_units_units_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Unit) GetId() int64 {
@@ -296,8 +282,209 @@ func (x *Unit) GetAccess() *access.UnitAccess {
 	return nil
 }
 
+func (x *Unit) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Unit) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Unit) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *Unit) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *Unit) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *Unit) SetName(v string) {
+	x.Name = v
+}
+
+func (x *Unit) SetInitials(v string) {
+	x.Initials = v
+}
+
+func (x *Unit) SetColor(v string) {
+	x.Color = v
+}
+
+func (x *Unit) SetIcon(v string) {
+	x.Icon = &v
+}
+
+func (x *Unit) SetDescription(v string) {
+	x.Description = &v
+}
+
+func (x *Unit) SetStatus(v *UnitStatus) {
+	x.Status = v
+}
+
+func (x *Unit) SetUsers(v []*UnitAssignment) {
+	x.Users = v
+}
+
+func (x *Unit) SetAttributes(v *UnitAttributes) {
+	x.Attributes = v
+}
+
+func (x *Unit) SetHomePostal(v string) {
+	x.HomePostal = &v
+}
+
+func (x *Unit) SetAccess(v *access.UnitAccess) {
+	x.Access = v
+}
+
+func (x *Unit) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Unit) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Unit) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *Unit) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return x.Icon != nil
+}
+
+func (x *Unit) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Description != nil
+}
+
+func (x *Unit) HasStatus() bool {
+	if x == nil {
+		return false
+	}
+	return x.Status != nil
+}
+
+func (x *Unit) HasAttributes() bool {
+	if x == nil {
+		return false
+	}
+	return x.Attributes != nil
+}
+
+func (x *Unit) HasHomePostal() bool {
+	if x == nil {
+		return false
+	}
+	return x.HomePostal != nil
+}
+
+func (x *Unit) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *Unit) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Unit) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Unit) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *Unit) ClearIcon() {
+	x.Icon = nil
+}
+
+func (x *Unit) ClearDescription() {
+	x.Description = nil
+}
+
+func (x *Unit) ClearStatus() {
+	x.Status = nil
+}
+
+func (x *Unit) ClearAttributes() {
+	x.Attributes = nil
+}
+
+func (x *Unit) ClearHomePostal() {
+	x.HomePostal = nil
+}
+
+func (x *Unit) ClearAccess() {
+	x.Access = nil
+}
+
+type Unit_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id          int64
+	CreatedAt   *timestamp.Timestamp
+	UpdatedAt   *timestamp.Timestamp
+	Job         string
+	JobLabel    *string
+	Name        string
+	Initials    string
+	Color       string
+	Icon        *string
+	Description *string
+	Status      *UnitStatus
+	Users       []*UnitAssignment
+	Attributes  *UnitAttributes
+	HomePostal  *string
+	Access      *access.UnitAccess
+}
+
+func (b0 Unit_builder) Build() *Unit {
+	m0 := &Unit{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.Name = b.Name
+	x.Initials = b.Initials
+	x.Color = b.Color
+	x.Icon = b.Icon
+	x.Description = b.Description
+	x.Status = b.Status
+	x.Users = b.Users
+	x.Attributes = b.Attributes
+	x.HomePostal = b.HomePostal
+	x.Access = b.Access
+	return m0
+}
+
 type UnitAssignments struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UnitId        int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	Users         []*UnitAssignment      `protobuf:"bytes,3,rep,name=users,proto3" json:"users,omitempty"`
@@ -330,11 +517,6 @@ func (x *UnitAssignments) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UnitAssignments.ProtoReflect.Descriptor instead.
-func (*UnitAssignments) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_units_units_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *UnitAssignments) GetUnitId() int64 {
 	if x != nil {
 		return x.UnitId
@@ -356,8 +538,38 @@ func (x *UnitAssignments) GetUsers() []*UnitAssignment {
 	return nil
 }
 
+func (x *UnitAssignments) SetUnitId(v int64) {
+	x.UnitId = v
+}
+
+func (x *UnitAssignments) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *UnitAssignments) SetUsers(v []*UnitAssignment) {
+	x.Users = v
+}
+
+type UnitAssignments_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UnitId int64
+	Job    string
+	Users  []*UnitAssignment
+}
+
+func (b0 UnitAssignments_builder) Build() *UnitAssignments {
+	m0 := &UnitAssignments{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UnitId = b.UnitId
+	x.Job = b.Job
+	x.Users = b.Users
+	return m0
+}
+
 type UnitAssignment struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UnitId        int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty" alias:"unit_id" sql:"primary_key"`
 	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"user_id" sql:"primary_key"`
 	User          *colleagues.Colleague  `protobuf:"bytes,3,opt,name=user,proto3,oneof" json:"user,omitempty"`
@@ -390,11 +602,6 @@ func (x *UnitAssignment) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UnitAssignment.ProtoReflect.Descriptor instead.
-func (*UnitAssignment) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_units_units_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *UnitAssignment) GetUnitId() int64 {
 	if x != nil {
 		return x.UnitId
@@ -416,8 +623,49 @@ func (x *UnitAssignment) GetUser() *colleagues.Colleague {
 	return nil
 }
 
+func (x *UnitAssignment) SetUnitId(v int64) {
+	x.UnitId = v
+}
+
+func (x *UnitAssignment) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *UnitAssignment) SetUser(v *colleagues.Colleague) {
+	x.User = v
+}
+
+func (x *UnitAssignment) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *UnitAssignment) ClearUser() {
+	x.User = nil
+}
+
+type UnitAssignment_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UnitId int64
+	UserId int32
+	User   *colleagues.Colleague
+}
+
+func (b0 UnitAssignment_builder) Build() *UnitAssignment {
+	m0 := &UnitAssignment{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UnitId = b.UnitId
+	x.UserId = b.UserId
+	x.User = b.User
+	return m0
+}
+
 type UnitStatus struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UnitId        int64                  `protobuf:"varint,3,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
@@ -460,11 +708,6 @@ func (x *UnitStatus) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UnitStatus.ProtoReflect.Descriptor instead.
-func (*UnitStatus) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_units_units_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *UnitStatus) GetId() int64 {
@@ -572,8 +815,242 @@ func (x *UnitStatus) GetCreatorJob() string {
 	return ""
 }
 
+func (x *UnitStatus) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *UnitStatus) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *UnitStatus) SetUnitId(v int64) {
+	x.UnitId = v
+}
+
+func (x *UnitStatus) SetUnit(v *Unit) {
+	x.Unit = v
+}
+
+func (x *UnitStatus) SetStatus(v StatusUnit) {
+	x.Status = v
+}
+
+func (x *UnitStatus) SetReason(v string) {
+	x.Reason = &v
+}
+
+func (x *UnitStatus) SetCode(v string) {
+	x.Code = &v
+}
+
+func (x *UnitStatus) SetUserId(v int32) {
+	x.UserId = &v
+}
+
+func (x *UnitStatus) SetUser(v *colleagues.Colleague) {
+	x.User = v
+}
+
+func (x *UnitStatus) SetX(v float64) {
+	x.X = &v
+}
+
+func (x *UnitStatus) SetY(v float64) {
+	x.Y = &v
+}
+
+func (x *UnitStatus) SetPostal(v string) {
+	x.Postal = &v
+}
+
+func (x *UnitStatus) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *UnitStatus) SetCreator(v *colleagues.Colleague) {
+	x.Creator = v
+}
+
+func (x *UnitStatus) SetCreatorJob(v string) {
+	x.CreatorJob = &v
+}
+
+func (x *UnitStatus) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *UnitStatus) HasUnit() bool {
+	if x == nil {
+		return false
+	}
+	return x.Unit != nil
+}
+
+func (x *UnitStatus) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reason != nil
+}
+
+func (x *UnitStatus) HasCode() bool {
+	if x == nil {
+		return false
+	}
+	return x.Code != nil
+}
+
+func (x *UnitStatus) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
+}
+
+func (x *UnitStatus) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *UnitStatus) HasX() bool {
+	if x == nil {
+		return false
+	}
+	return x.X != nil
+}
+
+func (x *UnitStatus) HasY() bool {
+	if x == nil {
+		return false
+	}
+	return x.Y != nil
+}
+
+func (x *UnitStatus) HasPostal() bool {
+	if x == nil {
+		return false
+	}
+	return x.Postal != nil
+}
+
+func (x *UnitStatus) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *UnitStatus) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *UnitStatus) HasCreatorJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorJob != nil
+}
+
+func (x *UnitStatus) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *UnitStatus) ClearUnit() {
+	x.Unit = nil
+}
+
+func (x *UnitStatus) ClearReason() {
+	x.Reason = nil
+}
+
+func (x *UnitStatus) ClearCode() {
+	x.Code = nil
+}
+
+func (x *UnitStatus) ClearUserId() {
+	x.UserId = nil
+}
+
+func (x *UnitStatus) ClearUser() {
+	x.User = nil
+}
+
+func (x *UnitStatus) ClearX() {
+	x.X = nil
+}
+
+func (x *UnitStatus) ClearY() {
+	x.Y = nil
+}
+
+func (x *UnitStatus) ClearPostal() {
+	x.Postal = nil
+}
+
+func (x *UnitStatus) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *UnitStatus) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *UnitStatus) ClearCreatorJob() {
+	x.CreatorJob = nil
+}
+
+type UnitStatus_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id         int64
+	CreatedAt  *timestamp.Timestamp
+	UnitId     int64
+	Unit       *Unit
+	Status     StatusUnit
+	Reason     *string
+	Code       *string
+	UserId     *int32
+	User       *colleagues.Colleague
+	X          *float64
+	Y          *float64
+	Postal     *string
+	CreatorId  *int32
+	Creator    *colleagues.Colleague
+	CreatorJob *string
+}
+
+func (b0 UnitStatus_builder) Build() *UnitStatus {
+	m0 := &UnitStatus{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UnitId = b.UnitId
+	x.Unit = b.Unit
+	x.Status = b.Status
+	x.Reason = b.Reason
+	x.Code = b.Code
+	x.UserId = b.UserId
+	x.User = b.User
+	x.X = b.X
+	x.Y = b.Y
+	x.Postal = b.Postal
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	return m0
+}
+
 type UnitAttributes struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	List          []UnitAttribute        `protobuf:"varint,1,rep,packed,name=list,proto3,enum=resources.centrum.units.UnitAttribute" json:"list,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -604,16 +1081,29 @@ func (x *UnitAttributes) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UnitAttributes.ProtoReflect.Descriptor instead.
-func (*UnitAttributes) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_units_units_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *UnitAttributes) GetList() []UnitAttribute {
 	if x != nil {
 		return x.List
 	}
 	return nil
+}
+
+func (x *UnitAttributes) SetList(v []UnitAttribute) {
+	x.List = v
+}
+
+type UnitAttributes_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	List []UnitAttribute
+}
+
+func (b0 UnitAttributes_builder) Build() *UnitAttributes {
+	m0 := &UnitAttributes{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.List = b.List
+	return m0
 }
 
 var File_resources_centrum_units_units_proto protoreflect.FileDescriptor
@@ -712,18 +1202,6 @@ const file_resources_centrum_units_units_proto_rawDesc = "" +
 	"\x1aUNIT_ATTRIBUTE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15UNIT_ATTRIBUTE_STATIC\x10\x01\x12*\n" +
 	"&UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN\x10\x02BXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units;centrumunitsb\x06proto3"
-
-var (
-	file_resources_centrum_units_units_proto_rawDescOnce sync.Once
-	file_resources_centrum_units_units_proto_rawDescData []byte
-)
-
-func file_resources_centrum_units_units_proto_rawDescGZIP() []byte {
-	file_resources_centrum_units_units_proto_rawDescOnce.Do(func() {
-		file_resources_centrum_units_units_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_centrum_units_units_proto_rawDesc), len(file_resources_centrum_units_units_proto_rawDesc)))
-	})
-	return file_resources_centrum_units_units_proto_rawDescData
-}
 
 var file_resources_centrum_units_units_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_resources_centrum_units_units_proto_msgTypes = make([]protoimpl.MessageInfo, 5)

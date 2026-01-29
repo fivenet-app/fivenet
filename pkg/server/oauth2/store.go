@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	accountsoauth2 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts/oauth2"
 	"github.com/fivenet-app/fivenet/v2026/pkg/crypt"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
@@ -33,7 +34,7 @@ type userInfoStore interface {
 		ctx context.Context,
 		provider string,
 		userInfo *providers.UserInfo,
-	) (*model.FivenetAccounts, error)
+	) (*accounts.Account, error)
 }
 
 // oauth2UserInfo implements userInfoStore for handling OAuth2 user info in the database.
@@ -49,7 +50,7 @@ func (o *oauth2UserInfo) getAccountInfo(
 	ctx context.Context,
 	provider string,
 	userInfo *providers.UserInfo,
-) (*model.FivenetAccounts, error) {
+) (*accounts.Account, error) {
 	stmt := tOauth2.
 		SELECT(
 			tAccs.ID,
@@ -69,7 +70,7 @@ func (o *oauth2UserInfo) getAccountInfo(
 		)).
 		LIMIT(1)
 
-	var dest model.FivenetAccounts
+	var dest accounts.Account
 	if err := stmt.QueryContext(ctx, o.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -162,7 +163,6 @@ func (o *oauth2UserInfo) updateUserInfo(
 	if userInfo.ExpiresIn != nil {
 		expiresIn = *userInfo.ExpiresIn
 	}
-	_ = expiresIn
 
 	if err := accountsoauth2.UpdateOAuth2Account(ctx, o.db, o.crypt, accountId, &model.FivenetAccountsOauth2{
 		AccountID:    accountId,

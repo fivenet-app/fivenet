@@ -9,10 +9,6 @@ import (
 
 const DefaultUnitIcon = "MapMarkerIcon"
 
-func (x *Unit) SetJobLabel(in string) {
-	x.JobLabel = &in
-}
-
 func (x *Unit) Merge(in *Unit) *Unit {
 	if x.GetId() != in.GetId() {
 		return x

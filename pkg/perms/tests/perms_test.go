@@ -8,7 +8,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/testdata"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,9 +16,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	// Enable ESX compatibility for database tables
-	tables.EnableESXCompat()
-
 	code := m.Run()
 	os.Exit(code)
 }

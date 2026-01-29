@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/qualifications/access/access.proto
 
+//go:build !protoopaque
+
 package qualificationsaccess
 
 import (
@@ -12,7 +14,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -79,13 +80,8 @@ func (x AccessLevel) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use AccessLevel.Descriptor instead.
-func (AccessLevel) EnumDescriptor() ([]byte, []int) {
-	return file_resources_qualifications_access_access_proto_rawDescGZIP(), []int{0}
-}
-
 type QualificationAccess struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
+	state         protoimpl.MessageState    `protogen:"hybrid.v1"`
 	Jobs          []*QualificationJobAccess `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -116,11 +112,6 @@ func (x *QualificationAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use QualificationAccess.ProtoReflect.Descriptor instead.
-func (*QualificationAccess) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_access_access_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *QualificationAccess) GetJobs() []*QualificationJobAccess {
 	if x != nil {
 		return x.Jobs
@@ -128,8 +119,26 @@ func (x *QualificationAccess) GetJobs() []*QualificationJobAccess {
 	return nil
 }
 
+func (x *QualificationAccess) SetJobs(v []*QualificationJobAccess) {
+	x.Jobs = v
+}
+
+type QualificationAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs []*QualificationJobAccess
+}
+
+func (b0 QualificationAccess_builder) Build() *QualificationAccess {
+	m0 := &QualificationAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	return m0
+}
+
 type QualificationJobAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,4,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
@@ -165,11 +174,6 @@ func (x *QualificationJobAccess) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QualificationJobAccess.ProtoReflect.Descriptor instead.
-func (*QualificationJobAccess) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_access_access_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *QualificationJobAccess) GetId() int64 {
@@ -228,9 +232,102 @@ func (x *QualificationJobAccess) GetAccess() AccessLevel {
 	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
 }
 
+func (x *QualificationJobAccess) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *QualificationJobAccess) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *QualificationJobAccess) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *QualificationJobAccess) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *QualificationJobAccess) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *QualificationJobAccess) SetMinimumGrade(v int32) {
+	x.MinimumGrade = v
+}
+
+func (x *QualificationJobAccess) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *QualificationJobAccess) SetAccess(v AccessLevel) {
+	x.Access = v
+}
+
+func (x *QualificationJobAccess) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *QualificationJobAccess) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *QualificationJobAccess) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *QualificationJobAccess) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *QualificationJobAccess) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *QualificationJobAccess) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+type QualificationJobAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id            int64
+	CreatedAt     *timestamp.Timestamp
+	TargetId      int64
+	Job           string
+	JobLabel      *string
+	MinimumGrade  int32
+	JobGradeLabel *string
+	Access        AccessLevel
+}
+
+func (b0 QualificationJobAccess_builder) Build() *QualificationJobAccess {
+	m0 := &QualificationJobAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.MinimumGrade = b.MinimumGrade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Access = b.Access
+	return m0
+}
+
 // Dummy - DO NOT USE!
 type QualificationUserAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -260,9 +357,16 @@ func (x *QualificationUserAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use QualificationUserAccess.ProtoReflect.Descriptor instead.
-func (*QualificationUserAccess) Descriptor() ([]byte, []int) {
-	return file_resources_qualifications_access_access_proto_rawDescGZIP(), []int{2}
+type QualificationUserAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 QualificationUserAccess_builder) Build() *QualificationUserAccess {
+	m0 := &QualificationUserAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 var File_resources_qualifications_access_access_proto protoreflect.FileDescriptor
@@ -295,18 +399,6 @@ const file_resources_qualifications_access_access_proto_rawDesc = "" +
 	"\x11ACCESS_LEVEL_TAKE\x10\x04\x12\x16\n" +
 	"\x12ACCESS_LEVEL_GRADE\x10\x05\x12\x15\n" +
 	"\x11ACCESS_LEVEL_EDIT\x10\x06BhZfgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access;qualificationsaccessb\x06proto3"
-
-var (
-	file_resources_qualifications_access_access_proto_rawDescOnce sync.Once
-	file_resources_qualifications_access_access_proto_rawDescData []byte
-)
-
-func file_resources_qualifications_access_access_proto_rawDescGZIP() []byte {
-	file_resources_qualifications_access_access_proto_rawDescOnce.Do(func() {
-		file_resources_qualifications_access_access_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_qualifications_access_access_proto_rawDesc), len(file_resources_qualifications_access_access_proto_rawDesc)))
-	})
-	return file_resources_qualifications_access_access_proto_rawDescData
-}
 
 var file_resources_qualifications_access_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_qualifications_access_access_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

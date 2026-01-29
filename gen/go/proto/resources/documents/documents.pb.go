@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/documents/documents.proto
 
+//go:build !protoopaque
+
 package documents
 
 import (
@@ -19,7 +21,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -31,7 +32,7 @@ const (
 )
 
 type Document struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
+	state      protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt  *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt  *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -83,11 +84,6 @@ func (x *Document) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Document.ProtoReflect.Descriptor instead.
-func (*Document) Descriptor() ([]byte, []int) {
-	return file_resources_documents_documents_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Document) GetId() int64 {
@@ -244,8 +240,341 @@ func (x *Document) GetFiles() []*file.File {
 	return nil
 }
 
+func (x *Document) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Document) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Document) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *Document) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *Document) SetCategoryId(v int64) {
+	x.CategoryId = &v
+}
+
+func (x *Document) SetCategory(v *category.Category) {
+	x.Category = v
+}
+
+func (x *Document) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *Document) SetWordCount(v uint32) {
+	x.WordCount = &v
+}
+
+func (x *Document) SetFirstHeading(v string) {
+	x.FirstHeading = &v
+}
+
+func (x *Document) SetContentType(v content.ContentType) {
+	x.ContentType = v
+}
+
+func (x *Document) SetContent(v *content.Content) {
+	x.Content = v
+}
+
+func (x *Document) SetData(v string) {
+	x.Data = &v
+}
+
+func (x *Document) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *Document) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *Document) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *Document) SetCreatorJobLabel(v string) {
+	x.CreatorJobLabel = &v
+}
+
+func (x *Document) SetMeta(v *DocumentMeta) {
+	x.Meta = v
+}
+
+func (x *Document) SetTemplateId(v int64) {
+	x.TemplateId = &v
+}
+
+func (x *Document) SetPin(v *pins.DocumentPin) {
+	x.Pin = v
+}
+
+func (x *Document) SetWorkflowState(v *workflow.WorkflowState) {
+	x.WorkflowState = v
+}
+
+func (x *Document) SetWorkflowUser(v *workflow.WorkflowUserState) {
+	x.WorkflowUser = v
+}
+
+func (x *Document) SetFiles(v []*file.File) {
+	x.Files = v
+}
+
+func (x *Document) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Document) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Document) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *Document) HasCategoryId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CategoryId != nil
+}
+
+func (x *Document) HasCategory() bool {
+	if x == nil {
+		return false
+	}
+	return x.Category != nil
+}
+
+func (x *Document) HasWordCount() bool {
+	if x == nil {
+		return false
+	}
+	return x.WordCount != nil
+}
+
+func (x *Document) HasFirstHeading() bool {
+	if x == nil {
+		return false
+	}
+	return x.FirstHeading != nil
+}
+
+func (x *Document) HasContent() bool {
+	if x == nil {
+		return false
+	}
+	return x.Content != nil
+}
+
+func (x *Document) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *Document) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *Document) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *Document) HasCreatorJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorJobLabel != nil
+}
+
+func (x *Document) HasMeta() bool {
+	if x == nil {
+		return false
+	}
+	return x.Meta != nil
+}
+
+func (x *Document) HasTemplateId() bool {
+	if x == nil {
+		return false
+	}
+	return x.TemplateId != nil
+}
+
+func (x *Document) HasPin() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pin != nil
+}
+
+func (x *Document) HasWorkflowState() bool {
+	if x == nil {
+		return false
+	}
+	return x.WorkflowState != nil
+}
+
+func (x *Document) HasWorkflowUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.WorkflowUser != nil
+}
+
+func (x *Document) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Document) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Document) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *Document) ClearCategoryId() {
+	x.CategoryId = nil
+}
+
+func (x *Document) ClearCategory() {
+	x.Category = nil
+}
+
+func (x *Document) ClearWordCount() {
+	x.WordCount = nil
+}
+
+func (x *Document) ClearFirstHeading() {
+	x.FirstHeading = nil
+}
+
+func (x *Document) ClearContent() {
+	x.Content = nil
+}
+
+func (x *Document) ClearData() {
+	x.Data = nil
+}
+
+func (x *Document) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *Document) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *Document) ClearCreatorJobLabel() {
+	x.CreatorJobLabel = nil
+}
+
+func (x *Document) ClearMeta() {
+	x.Meta = nil
+}
+
+func (x *Document) ClearTemplateId() {
+	x.TemplateId = nil
+}
+
+func (x *Document) ClearPin() {
+	x.Pin = nil
+}
+
+func (x *Document) ClearWorkflowState() {
+	x.WorkflowState = nil
+}
+
+func (x *Document) ClearWorkflowUser() {
+	x.WorkflowUser = nil
+}
+
+type Document_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id         int64
+	CreatedAt  *timestamp.Timestamp
+	UpdatedAt  *timestamp.Timestamp
+	DeletedAt  *timestamp.Timestamp
+	CategoryId *int64
+	Category   *category.Category
+	Title      string
+	// Derived field (server authored)
+	WordCount *uint32
+	// Derived field (server authored)
+	FirstHeading    *string
+	ContentType     content.ContentType
+	Content         *content.Content
+	Data            *string
+	CreatorId       *int32
+	Creator         *short.UserShort
+	CreatorJob      string
+	CreatorJobLabel *string
+	Meta            *DocumentMeta
+	TemplateId      *int64
+	Pin             *pins.DocumentPin
+	WorkflowState   *workflow.WorkflowState
+	WorkflowUser    *workflow.WorkflowUserState
+	Files           []*file.File
+}
+
+func (b0 Document_builder) Build() *Document {
+	m0 := &Document{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	x.CategoryId = b.CategoryId
+	x.Category = b.Category
+	x.Title = b.Title
+	x.WordCount = b.WordCount
+	x.FirstHeading = b.FirstHeading
+	x.ContentType = b.ContentType
+	x.Content = b.Content
+	x.Data = b.Data
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	x.CreatorJobLabel = b.CreatorJobLabel
+	x.Meta = b.Meta
+	x.TemplateId = b.TemplateId
+	x.Pin = b.Pin
+	x.WorkflowState = b.WorkflowState
+	x.WorkflowUser = b.WorkflowUser
+	x.Files = b.Files
+	return m0
+}
+
 type DocumentShort struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
+	state      protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt  *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt  *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -294,11 +623,6 @@ func (x *DocumentShort) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DocumentShort.ProtoReflect.Descriptor instead.
-func (*DocumentShort) Descriptor() ([]byte, []int) {
-	return file_resources_documents_documents_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *DocumentShort) GetId() int64 {
@@ -434,8 +758,301 @@ func (x *DocumentShort) GetWorkflowUser() *workflow.WorkflowUserState {
 	return nil
 }
 
+func (x *DocumentShort) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *DocumentShort) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *DocumentShort) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *DocumentShort) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *DocumentShort) SetCategoryId(v int64) {
+	x.CategoryId = &v
+}
+
+func (x *DocumentShort) SetCategory(v *category.Category) {
+	x.Category = v
+}
+
+func (x *DocumentShort) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *DocumentShort) SetWordCount(v uint32) {
+	x.WordCount = &v
+}
+
+func (x *DocumentShort) SetFirstHeading(v string) {
+	x.FirstHeading = &v
+}
+
+func (x *DocumentShort) SetContentType(v content.ContentType) {
+	x.ContentType = v
+}
+
+func (x *DocumentShort) SetContent(v *content.Content) {
+	x.Content = v
+}
+
+func (x *DocumentShort) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *DocumentShort) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *DocumentShort) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *DocumentShort) SetCreatorJobLabel(v string) {
+	x.CreatorJobLabel = &v
+}
+
+func (x *DocumentShort) SetMeta(v *DocumentMeta) {
+	x.Meta = v
+}
+
+func (x *DocumentShort) SetPin(v *pins.DocumentPin) {
+	x.Pin = v
+}
+
+func (x *DocumentShort) SetWorkflowState(v *workflow.WorkflowState) {
+	x.WorkflowState = v
+}
+
+func (x *DocumentShort) SetWorkflowUser(v *workflow.WorkflowUserState) {
+	x.WorkflowUser = v
+}
+
+func (x *DocumentShort) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *DocumentShort) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *DocumentShort) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *DocumentShort) HasCategoryId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CategoryId != nil
+}
+
+func (x *DocumentShort) HasCategory() bool {
+	if x == nil {
+		return false
+	}
+	return x.Category != nil
+}
+
+func (x *DocumentShort) HasWordCount() bool {
+	if x == nil {
+		return false
+	}
+	return x.WordCount != nil
+}
+
+func (x *DocumentShort) HasFirstHeading() bool {
+	if x == nil {
+		return false
+	}
+	return x.FirstHeading != nil
+}
+
+func (x *DocumentShort) HasContent() bool {
+	if x == nil {
+		return false
+	}
+	return x.Content != nil
+}
+
+func (x *DocumentShort) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *DocumentShort) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *DocumentShort) HasCreatorJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorJobLabel != nil
+}
+
+func (x *DocumentShort) HasMeta() bool {
+	if x == nil {
+		return false
+	}
+	return x.Meta != nil
+}
+
+func (x *DocumentShort) HasPin() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pin != nil
+}
+
+func (x *DocumentShort) HasWorkflowState() bool {
+	if x == nil {
+		return false
+	}
+	return x.WorkflowState != nil
+}
+
+func (x *DocumentShort) HasWorkflowUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.WorkflowUser != nil
+}
+
+func (x *DocumentShort) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *DocumentShort) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *DocumentShort) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *DocumentShort) ClearCategoryId() {
+	x.CategoryId = nil
+}
+
+func (x *DocumentShort) ClearCategory() {
+	x.Category = nil
+}
+
+func (x *DocumentShort) ClearWordCount() {
+	x.WordCount = nil
+}
+
+func (x *DocumentShort) ClearFirstHeading() {
+	x.FirstHeading = nil
+}
+
+func (x *DocumentShort) ClearContent() {
+	x.Content = nil
+}
+
+func (x *DocumentShort) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *DocumentShort) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *DocumentShort) ClearCreatorJobLabel() {
+	x.CreatorJobLabel = nil
+}
+
+func (x *DocumentShort) ClearMeta() {
+	x.Meta = nil
+}
+
+func (x *DocumentShort) ClearPin() {
+	x.Pin = nil
+}
+
+func (x *DocumentShort) ClearWorkflowState() {
+	x.WorkflowState = nil
+}
+
+func (x *DocumentShort) ClearWorkflowUser() {
+	x.WorkflowUser = nil
+}
+
+type DocumentShort_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id         int64
+	CreatedAt  *timestamp.Timestamp
+	UpdatedAt  *timestamp.Timestamp
+	DeletedAt  *timestamp.Timestamp
+	CategoryId *int64
+	Category   *category.Category
+	Title      string
+	// Derived field (server authored)
+	WordCount *uint32
+	// Derived field (server authored)
+	FirstHeading    *string
+	ContentType     content.ContentType
+	Content         *content.Content
+	CreatorId       *int32
+	Creator         *short.UserShort
+	CreatorJob      string
+	CreatorJobLabel *string
+	Meta            *DocumentMeta
+	Pin             *pins.DocumentPin
+	WorkflowState   *workflow.WorkflowState
+	WorkflowUser    *workflow.WorkflowUserState
+}
+
+func (b0 DocumentShort_builder) Build() *DocumentShort {
+	m0 := &DocumentShort{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	x.CategoryId = b.CategoryId
+	x.Category = b.Category
+	x.Title = b.Title
+	x.WordCount = b.WordCount
+	x.FirstHeading = b.FirstHeading
+	x.ContentType = b.ContentType
+	x.Content = b.Content
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	x.CreatorJobLabel = b.CreatorJobLabel
+	x.Meta = b.Meta
+	x.Pin = b.Pin
+	x.WorkflowState = b.WorkflowState
+	x.WorkflowUser = b.WorkflowUser
+	return m0
+}
+
 type DocumentMeta struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
+	state        protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId   int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	RecomputedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=recomputed_at,json=recomputedAt,proto3,oneof" json:"recomputed_at,omitempty"`
 	Closed       bool                   `protobuf:"varint,3,opt,name=closed,proto3" json:"closed,omitempty"`
@@ -486,11 +1103,6 @@ func (x *DocumentMeta) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DocumentMeta.ProtoReflect.Descriptor instead.
-func (*DocumentMeta) Descriptor() ([]byte, []int) {
-	return file_resources_documents_documents_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *DocumentMeta) GetDocumentId() int64 {
@@ -589,6 +1201,210 @@ func (x *DocumentMeta) GetApPoliciesActive() int32 {
 		return *x.ApPoliciesActive
 	}
 	return 0
+}
+
+func (x *DocumentMeta) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *DocumentMeta) SetRecomputedAt(v *timestamp.Timestamp) {
+	x.RecomputedAt = v
+}
+
+func (x *DocumentMeta) SetClosed(v bool) {
+	x.Closed = v
+}
+
+func (x *DocumentMeta) SetDraft(v bool) {
+	x.Draft = v
+}
+
+func (x *DocumentMeta) SetPublic(v bool) {
+	x.Public = v
+}
+
+func (x *DocumentMeta) SetState(v string) {
+	x.State = v
+}
+
+func (x *DocumentMeta) SetApproved(v bool) {
+	x.Approved = &v
+}
+
+func (x *DocumentMeta) SetApRequiredTotal(v int32) {
+	x.ApRequiredTotal = &v
+}
+
+func (x *DocumentMeta) SetApCollectedApproved(v int32) {
+	x.ApCollectedApproved = &v
+}
+
+func (x *DocumentMeta) SetApRequiredRemaining(v int32) {
+	x.ApRequiredRemaining = &v
+}
+
+func (x *DocumentMeta) SetApDeclinedCount(v int32) {
+	x.ApDeclinedCount = &v
+}
+
+func (x *DocumentMeta) SetApPendingCount(v int32) {
+	x.ApPendingCount = &v
+}
+
+func (x *DocumentMeta) SetApAnyDeclined(v bool) {
+	x.ApAnyDeclined = &v
+}
+
+func (x *DocumentMeta) SetApPoliciesActive(v int32) {
+	x.ApPoliciesActive = &v
+}
+
+func (x *DocumentMeta) HasRecomputedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.RecomputedAt != nil
+}
+
+func (x *DocumentMeta) HasApproved() bool {
+	if x == nil {
+		return false
+	}
+	return x.Approved != nil
+}
+
+func (x *DocumentMeta) HasApRequiredTotal() bool {
+	if x == nil {
+		return false
+	}
+	return x.ApRequiredTotal != nil
+}
+
+func (x *DocumentMeta) HasApCollectedApproved() bool {
+	if x == nil {
+		return false
+	}
+	return x.ApCollectedApproved != nil
+}
+
+func (x *DocumentMeta) HasApRequiredRemaining() bool {
+	if x == nil {
+		return false
+	}
+	return x.ApRequiredRemaining != nil
+}
+
+func (x *DocumentMeta) HasApDeclinedCount() bool {
+	if x == nil {
+		return false
+	}
+	return x.ApDeclinedCount != nil
+}
+
+func (x *DocumentMeta) HasApPendingCount() bool {
+	if x == nil {
+		return false
+	}
+	return x.ApPendingCount != nil
+}
+
+func (x *DocumentMeta) HasApAnyDeclined() bool {
+	if x == nil {
+		return false
+	}
+	return x.ApAnyDeclined != nil
+}
+
+func (x *DocumentMeta) HasApPoliciesActive() bool {
+	if x == nil {
+		return false
+	}
+	return x.ApPoliciesActive != nil
+}
+
+func (x *DocumentMeta) ClearRecomputedAt() {
+	x.RecomputedAt = nil
+}
+
+func (x *DocumentMeta) ClearApproved() {
+	x.Approved = nil
+}
+
+func (x *DocumentMeta) ClearApRequiredTotal() {
+	x.ApRequiredTotal = nil
+}
+
+func (x *DocumentMeta) ClearApCollectedApproved() {
+	x.ApCollectedApproved = nil
+}
+
+func (x *DocumentMeta) ClearApRequiredRemaining() {
+	x.ApRequiredRemaining = nil
+}
+
+func (x *DocumentMeta) ClearApDeclinedCount() {
+	x.ApDeclinedCount = nil
+}
+
+func (x *DocumentMeta) ClearApPendingCount() {
+	x.ApPendingCount = nil
+}
+
+func (x *DocumentMeta) ClearApAnyDeclined() {
+	x.ApAnyDeclined = nil
+}
+
+func (x *DocumentMeta) ClearApPoliciesActive() {
+	x.ApPoliciesActive = nil
+}
+
+type DocumentMeta_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId   int64
+	RecomputedAt *timestamp.Timestamp
+	Closed       bool
+	Draft        bool
+	Public       bool
+	State        string
+	// Overall aggregates - At least one approval policy fully satisfied
+	Approved *bool
+	// Approval rollups
+	// Total approvals needed across policies
+	ApRequiredTotal *int32
+	// Approvals collected
+	ApCollectedApproved *int32
+	// How many left to satisfy
+	ApRequiredRemaining *int32
+	// Number of declines
+	ApDeclinedCount *int32
+	// Tasks still pending (optional)
+	ApPendingCount *int32
+	// Quick flag if any declines
+	ApAnyDeclined *bool
+	// Number of active approval policies
+	ApPoliciesActive *int32
+}
+
+func (b0 DocumentMeta_builder) Build() *DocumentMeta {
+	m0 := &DocumentMeta{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.RecomputedAt = b.RecomputedAt
+	x.Closed = b.Closed
+	x.Draft = b.Draft
+	x.Public = b.Public
+	x.State = b.State
+	x.Approved = b.Approved
+	x.ApRequiredTotal = b.ApRequiredTotal
+	x.ApCollectedApproved = b.ApCollectedApproved
+	x.ApRequiredRemaining = b.ApRequiredRemaining
+	x.ApDeclinedCount = b.ApDeclinedCount
+	x.ApPendingCount = b.ApPendingCount
+	x.ApAnyDeclined = b.ApAnyDeclined
+	x.ApPoliciesActive = b.ApPoliciesActive
+	return m0
 }
 
 var File_resources_documents_documents_proto protoreflect.FileDescriptor
@@ -711,18 +1527,6 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x11_ap_pending_countB\x12\n" +
 	"\x10_ap_any_declinedB\x15\n" +
 	"\x13_ap_policies_activeBQZOgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents;documentsb\x06proto3"
-
-var (
-	file_resources_documents_documents_proto_rawDescOnce sync.Once
-	file_resources_documents_documents_proto_rawDescData []byte
-)
-
-func file_resources_documents_documents_proto_rawDescGZIP() []byte {
-	file_resources_documents_documents_proto_rawDescOnce.Do(func() {
-		file_resources_documents_documents_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_documents_proto_rawDesc), len(file_resources_documents_documents_proto_rawDesc)))
-	})
-	return file_resources_documents_documents_proto_rawDescData
-}
 
 var file_resources_documents_documents_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_documents_documents_proto_goTypes = []any{

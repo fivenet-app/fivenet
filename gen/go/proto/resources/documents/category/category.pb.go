@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/documents/category/category.proto
 
+//go:build !protoopaque
+
 package documentscategory
 
 import (
@@ -12,7 +14,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,7 +25,7 @@ const (
 )
 
 type Category struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -60,11 +61,6 @@ func (x *Category) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Category.ProtoReflect.Descriptor instead.
-func (*Category) Descriptor() ([]byte, []int) {
-	return file_resources_documents_category_category_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Category) GetId() int64 {
@@ -123,6 +119,132 @@ func (x *Category) GetIcon() string {
 	return ""
 }
 
+func (x *Category) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Category) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Category) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *Category) SetName(v string) {
+	x.Name = v
+}
+
+func (x *Category) SetDescription(v string) {
+	x.Description = &v
+}
+
+func (x *Category) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *Category) SetColor(v string) {
+	x.Color = &v
+}
+
+func (x *Category) SetIcon(v string) {
+	x.Icon = &v
+}
+
+func (x *Category) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Category) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *Category) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Description != nil
+}
+
+func (x *Category) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *Category) HasColor() bool {
+	if x == nil {
+		return false
+	}
+	return x.Color != nil
+}
+
+func (x *Category) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return x.Icon != nil
+}
+
+func (x *Category) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Category) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *Category) ClearDescription() {
+	x.Description = nil
+}
+
+func (x *Category) ClearJob() {
+	x.Job = nil
+}
+
+func (x *Category) ClearColor() {
+	x.Color = nil
+}
+
+func (x *Category) ClearIcon() {
+	x.Icon = nil
+}
+
+type Category_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id          int64
+	CreatedAt   *timestamp.Timestamp
+	DeletedAt   *timestamp.Timestamp
+	Name        string
+	Description *string
+	Job         *string
+	Color       *string
+	Icon        *string
+}
+
+func (b0 Category_builder) Build() *Category {
+	m0 := &Category{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.DeletedAt = b.DeletedAt
+	x.Name = b.Name
+	x.Description = b.Description
+	x.Job = b.Job
+	x.Color = b.Color
+	x.Icon = b.Icon
+	return m0
+}
+
 var File_resources_documents_category_category_proto protoreflect.FileDescriptor
 
 const file_resources_documents_category_category_proto_rawDesc = "" +
@@ -144,18 +266,6 @@ const file_resources_documents_category_category_proto_rawDesc = "" +
 	"\x04_jobB\b\n" +
 	"\x06_colorB\a\n" +
 	"\x05_iconBbZ`github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/category;documentscategoryb\x06proto3"
-
-var (
-	file_resources_documents_category_category_proto_rawDescOnce sync.Once
-	file_resources_documents_category_category_proto_rawDescData []byte
-)
-
-func file_resources_documents_category_category_proto_rawDescGZIP() []byte {
-	file_resources_documents_category_category_proto_rawDescOnce.Do(func() {
-		file_resources_documents_category_category_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_category_category_proto_rawDesc), len(file_resources_documents_category_category_proto_rawDesc)))
-	})
-	return file_resources_documents_category_category_proto_rawDescData
-}
 
 var file_resources_documents_category_category_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_documents_category_category_proto_goTypes = []any{

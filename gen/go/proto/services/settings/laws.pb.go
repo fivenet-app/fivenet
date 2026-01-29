@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/settings/laws.proto
 
+//go:build !protoopaque
+
 package settings
 
 import (
@@ -12,7 +14,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,7 +25,7 @@ const (
 )
 
 type CreateOrUpdateLawBookRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	LawBook       *laws.LawBook          `protobuf:"bytes,1,opt,name=law_book,json=lawBook,proto3" json:"law_book,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -55,11 +56,6 @@ func (x *CreateOrUpdateLawBookRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateLawBookRequest.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateLawBookRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_laws_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *CreateOrUpdateLawBookRequest) GetLawBook() *laws.LawBook {
 	if x != nil {
 		return x.LawBook
@@ -67,8 +63,37 @@ func (x *CreateOrUpdateLawBookRequest) GetLawBook() *laws.LawBook {
 	return nil
 }
 
+func (x *CreateOrUpdateLawBookRequest) SetLawBook(v *laws.LawBook) {
+	x.LawBook = v
+}
+
+func (x *CreateOrUpdateLawBookRequest) HasLawBook() bool {
+	if x == nil {
+		return false
+	}
+	return x.LawBook != nil
+}
+
+func (x *CreateOrUpdateLawBookRequest) ClearLawBook() {
+	x.LawBook = nil
+}
+
+type CreateOrUpdateLawBookRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	LawBook *laws.LawBook
+}
+
+func (b0 CreateOrUpdateLawBookRequest_builder) Build() *CreateOrUpdateLawBookRequest {
+	m0 := &CreateOrUpdateLawBookRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.LawBook = b.LawBook
+	return m0
+}
+
 type CreateOrUpdateLawBookResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	LawBook       *laws.LawBook          `protobuf:"bytes,1,opt,name=law_book,json=lawBook,proto3" json:"law_book,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -99,11 +124,6 @@ func (x *CreateOrUpdateLawBookResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateLawBookResponse.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateLawBookResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_laws_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *CreateOrUpdateLawBookResponse) GetLawBook() *laws.LawBook {
 	if x != nil {
 		return x.LawBook
@@ -111,8 +131,37 @@ func (x *CreateOrUpdateLawBookResponse) GetLawBook() *laws.LawBook {
 	return nil
 }
 
+func (x *CreateOrUpdateLawBookResponse) SetLawBook(v *laws.LawBook) {
+	x.LawBook = v
+}
+
+func (x *CreateOrUpdateLawBookResponse) HasLawBook() bool {
+	if x == nil {
+		return false
+	}
+	return x.LawBook != nil
+}
+
+func (x *CreateOrUpdateLawBookResponse) ClearLawBook() {
+	x.LawBook = nil
+}
+
+type CreateOrUpdateLawBookResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	LawBook *laws.LawBook
+}
+
+func (b0 CreateOrUpdateLawBookResponse_builder) Build() *CreateOrUpdateLawBookResponse {
+	m0 := &CreateOrUpdateLawBookResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.LawBook = b.LawBook
+	return m0
+}
+
 type DeleteLawBookRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -143,11 +192,6 @@ func (x *DeleteLawBookRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteLawBookRequest.ProtoReflect.Descriptor instead.
-func (*DeleteLawBookRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_laws_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *DeleteLawBookRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -155,8 +199,26 @@ func (x *DeleteLawBookRequest) GetId() int64 {
 	return 0
 }
 
+func (x *DeleteLawBookRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type DeleteLawBookRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 DeleteLawBookRequest_builder) Build() *DeleteLawBookRequest {
+	m0 := &DeleteLawBookRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type DeleteLawBookResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -186,13 +248,20 @@ func (x *DeleteLawBookResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteLawBookResponse.ProtoReflect.Descriptor instead.
-func (*DeleteLawBookResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_laws_proto_rawDescGZIP(), []int{3}
+type DeleteLawBookResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteLawBookResponse_builder) Build() *DeleteLawBookResponse {
+	m0 := &DeleteLawBookResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type CreateOrUpdateLawRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Law           *laws.Law              `protobuf:"bytes,1,opt,name=law,proto3" json:"law,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -223,11 +292,6 @@ func (x *CreateOrUpdateLawRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateLawRequest.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateLawRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_laws_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *CreateOrUpdateLawRequest) GetLaw() *laws.Law {
 	if x != nil {
 		return x.Law
@@ -235,8 +299,37 @@ func (x *CreateOrUpdateLawRequest) GetLaw() *laws.Law {
 	return nil
 }
 
+func (x *CreateOrUpdateLawRequest) SetLaw(v *laws.Law) {
+	x.Law = v
+}
+
+func (x *CreateOrUpdateLawRequest) HasLaw() bool {
+	if x == nil {
+		return false
+	}
+	return x.Law != nil
+}
+
+func (x *CreateOrUpdateLawRequest) ClearLaw() {
+	x.Law = nil
+}
+
+type CreateOrUpdateLawRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Law *laws.Law
+}
+
+func (b0 CreateOrUpdateLawRequest_builder) Build() *CreateOrUpdateLawRequest {
+	m0 := &CreateOrUpdateLawRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Law = b.Law
+	return m0
+}
+
 type CreateOrUpdateLawResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Law           *laws.Law              `protobuf:"bytes,1,opt,name=law,proto3" json:"law,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -267,11 +360,6 @@ func (x *CreateOrUpdateLawResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateLawResponse.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateLawResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_laws_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *CreateOrUpdateLawResponse) GetLaw() *laws.Law {
 	if x != nil {
 		return x.Law
@@ -279,8 +367,37 @@ func (x *CreateOrUpdateLawResponse) GetLaw() *laws.Law {
 	return nil
 }
 
+func (x *CreateOrUpdateLawResponse) SetLaw(v *laws.Law) {
+	x.Law = v
+}
+
+func (x *CreateOrUpdateLawResponse) HasLaw() bool {
+	if x == nil {
+		return false
+	}
+	return x.Law != nil
+}
+
+func (x *CreateOrUpdateLawResponse) ClearLaw() {
+	x.Law = nil
+}
+
+type CreateOrUpdateLawResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Law *laws.Law
+}
+
+func (b0 CreateOrUpdateLawResponse_builder) Build() *CreateOrUpdateLawResponse {
+	m0 := &CreateOrUpdateLawResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Law = b.Law
+	return m0
+}
+
 type DeleteLawRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -311,11 +428,6 @@ func (x *DeleteLawRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteLawRequest.ProtoReflect.Descriptor instead.
-func (*DeleteLawRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_laws_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *DeleteLawRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -323,8 +435,26 @@ func (x *DeleteLawRequest) GetId() int64 {
 	return 0
 }
 
+func (x *DeleteLawRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type DeleteLawRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 DeleteLawRequest_builder) Build() *DeleteLawRequest {
+	m0 := &DeleteLawRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type DeleteLawResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -354,9 +484,16 @@ func (x *DeleteLawResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteLawResponse.ProtoReflect.Descriptor instead.
-func (*DeleteLawResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_laws_proto_rawDescGZIP(), []int{7}
+type DeleteLawResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteLawResponse_builder) Build() *DeleteLawResponse {
+	m0 := &DeleteLawResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 var File_services_settings_laws_proto protoreflect.FileDescriptor
@@ -383,18 +520,6 @@ const file_services_settings_laws_proto_rawDesc = "" +
 	"\rDeleteLawBook\x12'.services.settings.DeleteLawBookRequest\x1a(.services.settings.DeleteLawBookResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8d\x01\n" +
 	"\x11CreateOrUpdateLaw\x12+.services.settings.CreateOrUpdateLawRequest\x1a,.services.settings.CreateOrUpdateLawResponse\"\x1d\xd2\xf3\x18\x19\b\x01\x1a\x15CreateOrUpdateLawBook\x12m\n" +
 	"\tDeleteLaw\x12#.services.settings.DeleteLawRequest\x1a$.services.settings.DeleteLawResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rDeleteLawBook\x1a\x1b\xea\xf3\x18\x17\bz\x12\x13i-mdi-scale-balanceBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
-
-var (
-	file_services_settings_laws_proto_rawDescOnce sync.Once
-	file_services_settings_laws_proto_rawDescData []byte
-)
-
-func file_services_settings_laws_proto_rawDescGZIP() []byte {
-	file_services_settings_laws_proto_rawDescOnce.Do(func() {
-		file_services_settings_laws_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_settings_laws_proto_rawDesc), len(file_services_settings_laws_proto_rawDesc)))
-	})
-	return file_services_settings_laws_proto_rawDescData
-}
 
 var file_services_settings_laws_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_services_settings_laws_proto_goTypes = []any{

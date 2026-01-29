@@ -66,8 +66,10 @@ func (s *Sync) runStream(ctx context.Context) error {
 					st.Message(),
 					"unexpected HTTP status code received from server: 524",
 				) {
-					// TODO find a better way to detect Cloudflare timeouts
-					s.logger.Debug("stream ended with Cloudflare timeout", zap.Error(err))
+					s.logger.Debug(
+						"stream ended with gateway timeout (524; Cloudflare?)",
+						zap.Error(err),
+					)
 					return nil
 				}
 

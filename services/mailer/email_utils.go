@@ -9,9 +9,9 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
 	"github.com/go-jet/jet/v2/mysql"
 )
@@ -83,7 +83,7 @@ func (s *Server) generateEmailProposals(
 		}
 	} else {
 		// User's private email
-		tUsers := tables.User().AS("user_short")
+		tUsers := table.FivenetUser.AS("user_short")
 
 		stmt := tUsers.
 			SELECT(

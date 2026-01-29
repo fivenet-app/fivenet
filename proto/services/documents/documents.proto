@@ -190,7 +190,6 @@ message DeleteDocumentRequest {
       min_len: 0
       max_len: 255
     },
-    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
       strip_html_tags: true

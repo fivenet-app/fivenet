@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/documents/references/references.proto
 
+//go:build !protoopaque
+
 package documentsreferences
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -75,13 +76,8 @@ func (x DocReference) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use DocReference.Descriptor instead.
-func (DocReference) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_references_references_proto_rawDescGZIP(), []int{0}
-}
-
 type DocumentReference struct {
-	state            protoimpl.MessageState   `protogen:"open.v1"`
+	state            protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Id               *int64                   `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	CreatedAt        *timestamp.Timestamp     `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	SourceDocumentId int64                    `protobuf:"varint,3,opt,name=source_document_id,json=sourceDocumentId,proto3" json:"source_document_id,omitempty" alias:"source_document_id"`
@@ -118,11 +114,6 @@ func (x *DocumentReference) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DocumentReference.ProtoReflect.Descriptor instead.
-func (*DocumentReference) Descriptor() ([]byte, []int) {
-	return file_resources_documents_references_references_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *DocumentReference) GetId() int64 {
@@ -188,6 +179,138 @@ func (x *DocumentReference) GetCreator() *short.UserShort {
 	return nil
 }
 
+func (x *DocumentReference) SetId(v int64) {
+	x.Id = &v
+}
+
+func (x *DocumentReference) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *DocumentReference) SetSourceDocumentId(v int64) {
+	x.SourceDocumentId = v
+}
+
+func (x *DocumentReference) SetSourceDocument(v *documents.DocumentShort) {
+	x.SourceDocument = v
+}
+
+func (x *DocumentReference) SetReference(v DocReference) {
+	x.Reference = v
+}
+
+func (x *DocumentReference) SetTargetDocumentId(v int64) {
+	x.TargetDocumentId = v
+}
+
+func (x *DocumentReference) SetTargetDocument(v *documents.DocumentShort) {
+	x.TargetDocument = v
+}
+
+func (x *DocumentReference) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *DocumentReference) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *DocumentReference) HasId() bool {
+	if x == nil {
+		return false
+	}
+	return x.Id != nil
+}
+
+func (x *DocumentReference) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *DocumentReference) HasSourceDocument() bool {
+	if x == nil {
+		return false
+	}
+	return x.SourceDocument != nil
+}
+
+func (x *DocumentReference) HasTargetDocument() bool {
+	if x == nil {
+		return false
+	}
+	return x.TargetDocument != nil
+}
+
+func (x *DocumentReference) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *DocumentReference) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *DocumentReference) ClearId() {
+	x.Id = nil
+}
+
+func (x *DocumentReference) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *DocumentReference) ClearSourceDocument() {
+	x.SourceDocument = nil
+}
+
+func (x *DocumentReference) ClearTargetDocument() {
+	x.TargetDocument = nil
+}
+
+func (x *DocumentReference) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *DocumentReference) ClearCreator() {
+	x.Creator = nil
+}
+
+type DocumentReference_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id               *int64
+	CreatedAt        *timestamp.Timestamp
+	SourceDocumentId int64
+	SourceDocument   *documents.DocumentShort
+	Reference        DocReference
+	TargetDocumentId int64
+	TargetDocument   *documents.DocumentShort
+	CreatorId        *int32
+	Creator          *short.UserShort
+}
+
+func (b0 DocumentReference_builder) Build() *DocumentReference {
+	m0 := &DocumentReference{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.SourceDocumentId = b.SourceDocumentId
+	x.SourceDocument = b.SourceDocument
+	x.Reference = b.Reference
+	x.TargetDocumentId = b.TargetDocumentId
+	x.TargetDocument = b.TargetDocument
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	return m0
+}
+
 var File_resources_documents_references_references_proto protoreflect.FileDescriptor
 
 const file_resources_documents_references_references_proto_rawDesc = "" +
@@ -218,18 +341,6 @@ const file_resources_documents_references_references_proto_rawDesc = "" +
 	"\x14DOC_REFERENCE_SOLVES\x10\x02\x12\x18\n" +
 	"\x14DOC_REFERENCE_CLOSES\x10\x03\x12\x1c\n" +
 	"\x18DOC_REFERENCE_DEPRECATES\x10\x04BfZdgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/references;documentsreferencesb\x06proto3"
-
-var (
-	file_resources_documents_references_references_proto_rawDescOnce sync.Once
-	file_resources_documents_references_references_proto_rawDescData []byte
-)
-
-func file_resources_documents_references_references_proto_rawDescGZIP() []byte {
-	file_resources_documents_references_references_proto_rawDescOnce.Do(func() {
-		file_resources_documents_references_references_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_references_references_proto_rawDesc), len(file_resources_documents_references_references_proto_rawDesc)))
-	})
-	return file_resources_documents_references_references_proto_rawDescData
-}
 
 var file_resources_documents_references_references_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_documents_references_references_proto_msgTypes = make([]protoimpl.MessageInfo, 1)

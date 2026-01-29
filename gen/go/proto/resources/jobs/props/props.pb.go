@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/jobs/props/props.proto
 
+//go:build !protoopaque
+
 package jobsprops
 
 import (
@@ -15,7 +17,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -27,7 +28,7 @@ const (
 )
 
 type JobProps struct {
-	state               protoimpl.MessageState        `protogen:"open.v1"`
+	state               protoimpl.MessageState        `protogen:"hybrid.v1"`
 	Job                 string                        `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel            *string                       `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	DeletedAt           *timestamp.Timestamp          `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -69,11 +70,6 @@ func (x *JobProps) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use JobProps.ProtoReflect.Descriptor instead.
-func (*JobProps) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_props_props_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *JobProps) GetJob() string {
@@ -174,8 +170,236 @@ func (x *JobProps) GetSettings() *settings.JobSettings {
 	return nil
 }
 
+func (x *JobProps) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *JobProps) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *JobProps) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *JobProps) SetLivemapMarkerColor(v string) {
+	x.LivemapMarkerColor = v
+}
+
+func (x *JobProps) SetQuickButtons(v *QuickButtons) {
+	x.QuickButtons = v
+}
+
+func (x *JobProps) SetRadioFrequency(v string) {
+	x.RadioFrequency = &v
+}
+
+func (x *JobProps) SetDiscordGuildId(v string) {
+	x.DiscordGuildId = &v
+}
+
+func (x *JobProps) SetDiscordLastSync(v *timestamp.Timestamp) {
+	x.DiscordLastSync = v
+}
+
+func (x *JobProps) SetDiscordSyncSettings(v *settings.DiscordSyncSettings) {
+	x.DiscordSyncSettings = v
+}
+
+func (x *JobProps) SetDiscordSyncChanges(v *settings.DiscordSyncChanges) {
+	x.DiscordSyncChanges = v
+}
+
+func (x *JobProps) SetMotd(v string) {
+	x.Motd = &v
+}
+
+func (x *JobProps) SetLogoFileId(v int64) {
+	x.LogoFileId = &v
+}
+
+func (x *JobProps) SetLogoFile(v *file.File) {
+	x.LogoFile = v
+}
+
+func (x *JobProps) SetSettings(v *settings.JobSettings) {
+	x.Settings = v
+}
+
+func (x *JobProps) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *JobProps) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *JobProps) HasQuickButtons() bool {
+	if x == nil {
+		return false
+	}
+	return x.QuickButtons != nil
+}
+
+func (x *JobProps) HasRadioFrequency() bool {
+	if x == nil {
+		return false
+	}
+	return x.RadioFrequency != nil
+}
+
+func (x *JobProps) HasDiscordGuildId() bool {
+	if x == nil {
+		return false
+	}
+	return x.DiscordGuildId != nil
+}
+
+func (x *JobProps) HasDiscordLastSync() bool {
+	if x == nil {
+		return false
+	}
+	return x.DiscordLastSync != nil
+}
+
+func (x *JobProps) HasDiscordSyncSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.DiscordSyncSettings != nil
+}
+
+func (x *JobProps) HasDiscordSyncChanges() bool {
+	if x == nil {
+		return false
+	}
+	return x.DiscordSyncChanges != nil
+}
+
+func (x *JobProps) HasMotd() bool {
+	if x == nil {
+		return false
+	}
+	return x.Motd != nil
+}
+
+func (x *JobProps) HasLogoFileId() bool {
+	if x == nil {
+		return false
+	}
+	return x.LogoFileId != nil
+}
+
+func (x *JobProps) HasLogoFile() bool {
+	if x == nil {
+		return false
+	}
+	return x.LogoFile != nil
+}
+
+func (x *JobProps) HasSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.Settings != nil
+}
+
+func (x *JobProps) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *JobProps) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *JobProps) ClearQuickButtons() {
+	x.QuickButtons = nil
+}
+
+func (x *JobProps) ClearRadioFrequency() {
+	x.RadioFrequency = nil
+}
+
+func (x *JobProps) ClearDiscordGuildId() {
+	x.DiscordGuildId = nil
+}
+
+func (x *JobProps) ClearDiscordLastSync() {
+	x.DiscordLastSync = nil
+}
+
+func (x *JobProps) ClearDiscordSyncSettings() {
+	x.DiscordSyncSettings = nil
+}
+
+func (x *JobProps) ClearDiscordSyncChanges() {
+	x.DiscordSyncChanges = nil
+}
+
+func (x *JobProps) ClearMotd() {
+	x.Motd = nil
+}
+
+func (x *JobProps) ClearLogoFileId() {
+	x.LogoFileId = nil
+}
+
+func (x *JobProps) ClearLogoFile() {
+	x.LogoFile = nil
+}
+
+func (x *JobProps) ClearSettings() {
+	x.Settings = nil
+}
+
+type JobProps_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job                 string
+	JobLabel            *string
+	DeletedAt           *timestamp.Timestamp
+	LivemapMarkerColor  string
+	QuickButtons        *QuickButtons
+	RadioFrequency      *string
+	DiscordGuildId      *string
+	DiscordLastSync     *timestamp.Timestamp
+	DiscordSyncSettings *settings.DiscordSyncSettings
+	DiscordSyncChanges  *settings.DiscordSyncChanges
+	Motd                *string
+	LogoFileId          *int64
+	LogoFile            *file.File
+	Settings            *settings.JobSettings
+}
+
+func (b0 JobProps_builder) Build() *JobProps {
+	m0 := &JobProps{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.DeletedAt = b.DeletedAt
+	x.LivemapMarkerColor = b.LivemapMarkerColor
+	x.QuickButtons = b.QuickButtons
+	x.RadioFrequency = b.RadioFrequency
+	x.DiscordGuildId = b.DiscordGuildId
+	x.DiscordLastSync = b.DiscordLastSync
+	x.DiscordSyncSettings = b.DiscordSyncSettings
+	x.DiscordSyncChanges = b.DiscordSyncChanges
+	x.Motd = b.Motd
+	x.LogoFileId = b.LogoFileId
+	x.LogoFile = b.LogoFile
+	x.Settings = b.Settings
+	return m0
+}
+
 type QuickButtons struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
+	state             protoimpl.MessageState `protogen:"hybrid.v1"`
 	PenaltyCalculator bool                   `protobuf:"varint,1,opt,name=penalty_calculator,json=penaltyCalculator,proto3" json:"penalty_calculator,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
@@ -206,16 +430,29 @@ func (x *QuickButtons) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use QuickButtons.ProtoReflect.Descriptor instead.
-func (*QuickButtons) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_props_props_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *QuickButtons) GetPenaltyCalculator() bool {
 	if x != nil {
 		return x.PenaltyCalculator
 	}
 	return false
+}
+
+func (x *QuickButtons) SetPenaltyCalculator(v bool) {
+	x.PenaltyCalculator = v
+}
+
+type QuickButtons_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	PenaltyCalculator bool
+}
+
+func (b0 QuickButtons_builder) Build() *QuickButtons {
+	m0 := &QuickButtons{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.PenaltyCalculator = b.PenaltyCalculator
+	return m0
 }
 
 var File_resources_jobs_props_props_proto protoreflect.FileDescriptor
@@ -254,18 +491,6 @@ const file_resources_jobs_props_props_proto_rawDesc = "" +
 	"_logo_file\"S\n" +
 	"\fQuickButtons\x12-\n" +
 	"\x12penalty_calculator\x18\x01 \x01(\bR\x11penaltyCalculator:\b\xe2\xf3\x18\x04\b\x01\x18\x01J\x04\b\x02\x10\x03J\x04\b\x03\x10\x04BRZPgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props;jobspropsb\x06proto3"
-
-var (
-	file_resources_jobs_props_props_proto_rawDescOnce sync.Once
-	file_resources_jobs_props_props_proto_rawDescData []byte
-)
-
-func file_resources_jobs_props_props_proto_rawDescGZIP() []byte {
-	file_resources_jobs_props_props_proto_rawDescOnce.Do(func() {
-		file_resources_jobs_props_props_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_jobs_props_props_proto_rawDesc), len(file_resources_jobs_props_props_proto_rawDesc)))
-	})
-	return file_resources_jobs_props_props_proto_rawDescData
-}
 
 var file_resources_jobs_props_props_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_jobs_props_props_proto_goTypes = []any{

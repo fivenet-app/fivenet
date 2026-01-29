@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/centrum/centrum.proto
 
+//go:build !protoopaque
+
 package centrum
 
 import (
@@ -21,7 +23,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -33,7 +34,7 @@ const (
 )
 
 type ListDispatchActivityRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Id            int64                       `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -65,11 +66,6 @@ func (x *ListDispatchActivityRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListDispatchActivityRequest.ProtoReflect.Descriptor instead.
-func (*ListDispatchActivityRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *ListDispatchActivityRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -84,8 +80,43 @@ func (x *ListDispatchActivityRequest) GetId() int64 {
 	return 0
 }
 
+func (x *ListDispatchActivityRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListDispatchActivityRequest) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *ListDispatchActivityRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListDispatchActivityRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListDispatchActivityRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Id         int64
+}
+
+func (b0 ListDispatchActivityRequest_builder) Build() *ListDispatchActivityRequest {
+	m0 := &ListDispatchActivityRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Id = b.Id
+	return m0
+}
+
 type ListUnitActivityRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Id            int64                       `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -117,11 +148,6 @@ func (x *ListUnitActivityRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListUnitActivityRequest.ProtoReflect.Descriptor instead.
-func (*ListUnitActivityRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListUnitActivityRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -136,8 +162,43 @@ func (x *ListUnitActivityRequest) GetId() int64 {
 	return 0
 }
 
+func (x *ListUnitActivityRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListUnitActivityRequest) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *ListUnitActivityRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListUnitActivityRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListUnitActivityRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Id         int64
+}
+
+func (b0 ListUnitActivityRequest_builder) Build() *ListUnitActivityRequest {
+	m0 := &ListUnitActivityRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Id = b.Id
+	return m0
+}
+
 type GetSettingsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -167,13 +228,20 @@ func (x *GetSettingsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetSettingsRequest.ProtoReflect.Descriptor instead.
-func (*GetSettingsRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{2}
+type GetSettingsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 GetSettingsRequest_builder) Build() *GetSettingsRequest {
+	m0 := &GetSettingsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetSettingsResponse struct {
-	state           protoimpl.MessageState    `protogen:"open.v1"`
+	state           protoimpl.MessageState    `protogen:"hybrid.v1"`
 	Settings        *settings.Settings        `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
 	EffectiveAccess *settings.EffectiveAccess `protobuf:"bytes,2,opt,name=effective_access,json=effectiveAccess,proto3" json:"effective_access,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -205,11 +273,6 @@ func (x *GetSettingsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetSettingsResponse.ProtoReflect.Descriptor instead.
-func (*GetSettingsResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *GetSettingsResponse) GetSettings() *settings.Settings {
 	if x != nil {
 		return x.Settings
@@ -224,8 +287,54 @@ func (x *GetSettingsResponse) GetEffectiveAccess() *settings.EffectiveAccess {
 	return nil
 }
 
+func (x *GetSettingsResponse) SetSettings(v *settings.Settings) {
+	x.Settings = v
+}
+
+func (x *GetSettingsResponse) SetEffectiveAccess(v *settings.EffectiveAccess) {
+	x.EffectiveAccess = v
+}
+
+func (x *GetSettingsResponse) HasSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.Settings != nil
+}
+
+func (x *GetSettingsResponse) HasEffectiveAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.EffectiveAccess != nil
+}
+
+func (x *GetSettingsResponse) ClearSettings() {
+	x.Settings = nil
+}
+
+func (x *GetSettingsResponse) ClearEffectiveAccess() {
+	x.EffectiveAccess = nil
+}
+
+type GetSettingsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Settings        *settings.Settings
+	EffectiveAccess *settings.EffectiveAccess
+}
+
+func (b0 GetSettingsResponse_builder) Build() *GetSettingsResponse {
+	m0 := &GetSettingsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Settings = b.Settings
+	x.EffectiveAccess = b.EffectiveAccess
+	return m0
+}
+
 type UpdateSettingsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Settings      *settings.Settings     `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -256,11 +365,6 @@ func (x *UpdateSettingsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateSettingsRequest.ProtoReflect.Descriptor instead.
-func (*UpdateSettingsRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *UpdateSettingsRequest) GetSettings() *settings.Settings {
 	if x != nil {
 		return x.Settings
@@ -268,8 +372,37 @@ func (x *UpdateSettingsRequest) GetSettings() *settings.Settings {
 	return nil
 }
 
+func (x *UpdateSettingsRequest) SetSettings(v *settings.Settings) {
+	x.Settings = v
+}
+
+func (x *UpdateSettingsRequest) HasSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.Settings != nil
+}
+
+func (x *UpdateSettingsRequest) ClearSettings() {
+	x.Settings = nil
+}
+
+type UpdateSettingsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Settings *settings.Settings
+}
+
+func (b0 UpdateSettingsRequest_builder) Build() *UpdateSettingsRequest {
+	m0 := &UpdateSettingsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Settings = b.Settings
+	return m0
+}
+
 type UpdateSettingsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Settings      *settings.Settings     `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -300,11 +433,6 @@ func (x *UpdateSettingsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateSettingsResponse.ProtoReflect.Descriptor instead.
-func (*UpdateSettingsResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *UpdateSettingsResponse) GetSettings() *settings.Settings {
 	if x != nil {
 		return x.Settings
@@ -312,8 +440,37 @@ func (x *UpdateSettingsResponse) GetSettings() *settings.Settings {
 	return nil
 }
 
+func (x *UpdateSettingsResponse) SetSettings(v *settings.Settings) {
+	x.Settings = v
+}
+
+func (x *UpdateSettingsResponse) HasSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.Settings != nil
+}
+
+func (x *UpdateSettingsResponse) ClearSettings() {
+	x.Settings = nil
+}
+
+type UpdateSettingsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Settings *settings.Settings
+}
+
+func (b0 UpdateSettingsResponse_builder) Build() *UpdateSettingsResponse {
+	m0 := &UpdateSettingsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Settings = b.Settings
+	return m0
+}
+
 type ListUnitsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Status        []units.StatusUnit     `protobuf:"varint,1,rep,packed,name=status,proto3,enum=resources.centrum.units.StatusUnit" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -344,11 +501,6 @@ func (x *ListUnitsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListUnitsRequest.ProtoReflect.Descriptor instead.
-func (*ListUnitsRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *ListUnitsRequest) GetStatus() []units.StatusUnit {
 	if x != nil {
 		return x.Status
@@ -356,8 +508,26 @@ func (x *ListUnitsRequest) GetStatus() []units.StatusUnit {
 	return nil
 }
 
+func (x *ListUnitsRequest) SetStatus(v []units.StatusUnit) {
+	x.Status = v
+}
+
+type ListUnitsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Status []units.StatusUnit
+}
+
+func (b0 ListUnitsRequest_builder) Build() *ListUnitsRequest {
+	m0 := &ListUnitsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Status = b.Status
+	return m0
+}
+
 type ListUnitsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Units         []*units.Unit          `protobuf:"bytes,1,rep,name=units,proto3" json:"units,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -388,11 +558,6 @@ func (x *ListUnitsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListUnitsResponse.ProtoReflect.Descriptor instead.
-func (*ListUnitsResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *ListUnitsResponse) GetUnits() []*units.Unit {
 	if x != nil {
 		return x.Units
@@ -400,8 +565,26 @@ func (x *ListUnitsResponse) GetUnits() []*units.Unit {
 	return nil
 }
 
+func (x *ListUnitsResponse) SetUnits(v []*units.Unit) {
+	x.Units = v
+}
+
+type ListUnitsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Units []*units.Unit
+}
+
+func (b0 ListUnitsResponse_builder) Build() *ListUnitsResponse {
+	m0 := &ListUnitsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Units = b.Units
+	return m0
+}
+
 type CreateOrUpdateUnitRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Unit          *units.Unit            `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -432,11 +615,6 @@ func (x *CreateOrUpdateUnitRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateUnitRequest.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateUnitRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *CreateOrUpdateUnitRequest) GetUnit() *units.Unit {
 	if x != nil {
 		return x.Unit
@@ -444,8 +622,37 @@ func (x *CreateOrUpdateUnitRequest) GetUnit() *units.Unit {
 	return nil
 }
 
+func (x *CreateOrUpdateUnitRequest) SetUnit(v *units.Unit) {
+	x.Unit = v
+}
+
+func (x *CreateOrUpdateUnitRequest) HasUnit() bool {
+	if x == nil {
+		return false
+	}
+	return x.Unit != nil
+}
+
+func (x *CreateOrUpdateUnitRequest) ClearUnit() {
+	x.Unit = nil
+}
+
+type CreateOrUpdateUnitRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Unit *units.Unit
+}
+
+func (b0 CreateOrUpdateUnitRequest_builder) Build() *CreateOrUpdateUnitRequest {
+	m0 := &CreateOrUpdateUnitRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Unit = b.Unit
+	return m0
+}
+
 type CreateOrUpdateUnitResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Unit          *units.Unit            `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -476,11 +683,6 @@ func (x *CreateOrUpdateUnitResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateUnitResponse.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateUnitResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{9}
-}
-
 func (x *CreateOrUpdateUnitResponse) GetUnit() *units.Unit {
 	if x != nil {
 		return x.Unit
@@ -488,8 +690,37 @@ func (x *CreateOrUpdateUnitResponse) GetUnit() *units.Unit {
 	return nil
 }
 
+func (x *CreateOrUpdateUnitResponse) SetUnit(v *units.Unit) {
+	x.Unit = v
+}
+
+func (x *CreateOrUpdateUnitResponse) HasUnit() bool {
+	if x == nil {
+		return false
+	}
+	return x.Unit != nil
+}
+
+func (x *CreateOrUpdateUnitResponse) ClearUnit() {
+	x.Unit = nil
+}
+
+type CreateOrUpdateUnitResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Unit *units.Unit
+}
+
+func (b0 CreateOrUpdateUnitResponse_builder) Build() *CreateOrUpdateUnitResponse {
+	m0 := &CreateOrUpdateUnitResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Unit = b.Unit
+	return m0
+}
+
 type DeleteUnitRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UnitId        int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -520,11 +751,6 @@ func (x *DeleteUnitRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteUnitRequest.ProtoReflect.Descriptor instead.
-func (*DeleteUnitRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{10}
-}
-
 func (x *DeleteUnitRequest) GetUnitId() int64 {
 	if x != nil {
 		return x.UnitId
@@ -532,8 +758,26 @@ func (x *DeleteUnitRequest) GetUnitId() int64 {
 	return 0
 }
 
+func (x *DeleteUnitRequest) SetUnitId(v int64) {
+	x.UnitId = v
+}
+
+type DeleteUnitRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UnitId int64
+}
+
+func (b0 DeleteUnitRequest_builder) Build() *DeleteUnitRequest {
+	m0 := &DeleteUnitRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UnitId = b.UnitId
+	return m0
+}
+
 type DeleteUnitResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -563,13 +807,20 @@ func (x *DeleteUnitResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteUnitResponse.ProtoReflect.Descriptor instead.
-func (*DeleteUnitResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{11}
+type DeleteUnitResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteUnitResponse_builder) Build() *DeleteUnitResponse {
+	m0 := &DeleteUnitResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type UpdateUnitStatusRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UnitId        int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
 	Status        units.StatusUnit       `protobuf:"varint,2,opt,name=status,proto3,enum=resources.centrum.units.StatusUnit" json:"status,omitempty"`
 	Reason        *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
@@ -603,11 +854,6 @@ func (x *UpdateUnitStatusRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateUnitStatusRequest.ProtoReflect.Descriptor instead.
-func (*UpdateUnitStatusRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{12}
-}
-
 func (x *UpdateUnitStatusRequest) GetUnitId() int64 {
 	if x != nil {
 		return x.UnitId
@@ -636,8 +882,66 @@ func (x *UpdateUnitStatusRequest) GetCode() string {
 	return ""
 }
 
+func (x *UpdateUnitStatusRequest) SetUnitId(v int64) {
+	x.UnitId = v
+}
+
+func (x *UpdateUnitStatusRequest) SetStatus(v units.StatusUnit) {
+	x.Status = v
+}
+
+func (x *UpdateUnitStatusRequest) SetReason(v string) {
+	x.Reason = &v
+}
+
+func (x *UpdateUnitStatusRequest) SetCode(v string) {
+	x.Code = &v
+}
+
+func (x *UpdateUnitStatusRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reason != nil
+}
+
+func (x *UpdateUnitStatusRequest) HasCode() bool {
+	if x == nil {
+		return false
+	}
+	return x.Code != nil
+}
+
+func (x *UpdateUnitStatusRequest) ClearReason() {
+	x.Reason = nil
+}
+
+func (x *UpdateUnitStatusRequest) ClearCode() {
+	x.Code = nil
+}
+
+type UpdateUnitStatusRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UnitId int64
+	Status units.StatusUnit
+	Reason *string
+	Code   *string
+}
+
+func (b0 UpdateUnitStatusRequest_builder) Build() *UpdateUnitStatusRequest {
+	m0 := &UpdateUnitStatusRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UnitId = b.UnitId
+	x.Status = b.Status
+	x.Reason = b.Reason
+	x.Code = b.Code
+	return m0
+}
+
 type UpdateUnitStatusResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -667,13 +971,20 @@ func (x *UpdateUnitStatusResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateUnitStatusResponse.ProtoReflect.Descriptor instead.
-func (*UpdateUnitStatusResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{13}
+type UpdateUnitStatusResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 UpdateUnitStatusResponse_builder) Build() *UpdateUnitStatusResponse {
+	m0 := &UpdateUnitStatusResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type AssignUnitRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UnitId        int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
 	ToAdd         []int32                `protobuf:"varint,2,rep,packed,name=to_add,json=toAdd,proto3" json:"to_add,omitempty"`
 	ToRemove      []int32                `protobuf:"varint,3,rep,packed,name=to_remove,json=toRemove,proto3" json:"to_remove,omitempty"`
@@ -706,11 +1017,6 @@ func (x *AssignUnitRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AssignUnitRequest.ProtoReflect.Descriptor instead.
-func (*AssignUnitRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{14}
-}
-
 func (x *AssignUnitRequest) GetUnitId() int64 {
 	if x != nil {
 		return x.UnitId
@@ -732,8 +1038,38 @@ func (x *AssignUnitRequest) GetToRemove() []int32 {
 	return nil
 }
 
+func (x *AssignUnitRequest) SetUnitId(v int64) {
+	x.UnitId = v
+}
+
+func (x *AssignUnitRequest) SetToAdd(v []int32) {
+	x.ToAdd = v
+}
+
+func (x *AssignUnitRequest) SetToRemove(v []int32) {
+	x.ToRemove = v
+}
+
+type AssignUnitRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UnitId   int64
+	ToAdd    []int32
+	ToRemove []int32
+}
+
+func (b0 AssignUnitRequest_builder) Build() *AssignUnitRequest {
+	m0 := &AssignUnitRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UnitId = b.UnitId
+	x.ToAdd = b.ToAdd
+	x.ToRemove = b.ToRemove
+	return m0
+}
+
 type AssignUnitResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -763,13 +1099,20 @@ func (x *AssignUnitResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AssignUnitResponse.ProtoReflect.Descriptor instead.
-func (*AssignUnitResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{15}
+type AssignUnitResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 AssignUnitResponse_builder) Build() *AssignUnitResponse {
+	m0 := &AssignUnitResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetDispatchHeatmapRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -799,13 +1142,20 @@ func (x *GetDispatchHeatmapRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDispatchHeatmapRequest.ProtoReflect.Descriptor instead.
-func (*GetDispatchHeatmapRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{16}
+type GetDispatchHeatmapRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 GetDispatchHeatmapRequest_builder) Build() *GetDispatchHeatmapRequest {
+	m0 := &GetDispatchHeatmapRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetDispatchHeatmapResponse struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	MaxEntries    int32                   `protobuf:"varint,1,opt,name=max_entries,json=maxEntries,proto3" json:"max_entries,omitempty"`
 	Entries       []*heatmap.HeatmapEntry `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -837,11 +1187,6 @@ func (x *GetDispatchHeatmapResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDispatchHeatmapResponse.ProtoReflect.Descriptor instead.
-func (*GetDispatchHeatmapResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{17}
-}
-
 func (x *GetDispatchHeatmapResponse) GetMaxEntries() int32 {
 	if x != nil {
 		return x.MaxEntries
@@ -856,8 +1201,32 @@ func (x *GetDispatchHeatmapResponse) GetEntries() []*heatmap.HeatmapEntry {
 	return nil
 }
 
+func (x *GetDispatchHeatmapResponse) SetMaxEntries(v int32) {
+	x.MaxEntries = v
+}
+
+func (x *GetDispatchHeatmapResponse) SetEntries(v []*heatmap.HeatmapEntry) {
+	x.Entries = v
+}
+
+type GetDispatchHeatmapResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	MaxEntries int32
+	Entries    []*heatmap.HeatmapEntry
+}
+
+func (b0 GetDispatchHeatmapResponse_builder) Build() *GetDispatchHeatmapResponse {
+	m0 := &GetDispatchHeatmapResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.MaxEntries = b.MaxEntries
+	x.Entries = b.Entries
+	return m0
+}
+
 type UpdateDispatchersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	ToRemove      []int32                `protobuf:"varint,1,rep,packed,name=to_remove,json=toRemove,proto3" json:"to_remove,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -888,11 +1257,6 @@ func (x *UpdateDispatchersRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateDispatchersRequest.ProtoReflect.Descriptor instead.
-func (*UpdateDispatchersRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{18}
-}
-
 func (x *UpdateDispatchersRequest) GetToRemove() []int32 {
 	if x != nil {
 		return x.ToRemove
@@ -900,8 +1264,26 @@ func (x *UpdateDispatchersRequest) GetToRemove() []int32 {
 	return nil
 }
 
+func (x *UpdateDispatchersRequest) SetToRemove(v []int32) {
+	x.ToRemove = v
+}
+
+type UpdateDispatchersRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ToRemove []int32
+}
+
+func (b0 UpdateDispatchersRequest_builder) Build() *UpdateDispatchersRequest {
+	m0 := &UpdateDispatchersRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ToRemove = b.ToRemove
+	return m0
+}
+
 type UpdateDispatchersResponse struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Dispatchers   *dispatchers.Dispatchers `protobuf:"bytes,1,opt,name=dispatchers,proto3" json:"dispatchers,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -932,11 +1314,6 @@ func (x *UpdateDispatchersResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateDispatchersResponse.ProtoReflect.Descriptor instead.
-func (*UpdateDispatchersResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{19}
-}
-
 func (x *UpdateDispatchersResponse) GetDispatchers() *dispatchers.Dispatchers {
 	if x != nil {
 		return x.Dispatchers
@@ -944,8 +1321,37 @@ func (x *UpdateDispatchersResponse) GetDispatchers() *dispatchers.Dispatchers {
 	return nil
 }
 
+func (x *UpdateDispatchersResponse) SetDispatchers(v *dispatchers.Dispatchers) {
+	x.Dispatchers = v
+}
+
+func (x *UpdateDispatchersResponse) HasDispatchers() bool {
+	if x == nil {
+		return false
+	}
+	return x.Dispatchers != nil
+}
+
+func (x *UpdateDispatchersResponse) ClearDispatchers() {
+	x.Dispatchers = nil
+}
+
+type UpdateDispatchersResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Dispatchers *dispatchers.Dispatchers
+}
+
+func (b0 UpdateDispatchersResponse_builder) Build() *UpdateDispatchersResponse {
+	m0 := &UpdateDispatchersResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Dispatchers = b.Dispatchers
+	return m0
+}
+
 type ListUnitActivityResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Activity      []*units.UnitStatus          `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -977,11 +1383,6 @@ func (x *ListUnitActivityResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListUnitActivityResponse.ProtoReflect.Descriptor instead.
-func (*ListUnitActivityResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{20}
-}
-
 func (x *ListUnitActivityResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -996,8 +1397,43 @@ func (x *ListUnitActivityResponse) GetActivity() []*units.UnitStatus {
 	return nil
 }
 
+func (x *ListUnitActivityResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListUnitActivityResponse) SetActivity(v []*units.UnitStatus) {
+	x.Activity = v
+}
+
+func (x *ListUnitActivityResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListUnitActivityResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListUnitActivityResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Activity   []*units.UnitStatus
+}
+
+func (b0 ListUnitActivityResponse_builder) Build() *ListUnitActivityResponse {
+	m0 := &ListUnitActivityResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Activity = b.Activity
+	return m0
+}
+
 type TakeControlRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Signon        bool                   `protobuf:"varint,1,opt,name=signon,proto3" json:"signon,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1028,11 +1464,6 @@ func (x *TakeControlRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TakeControlRequest.ProtoReflect.Descriptor instead.
-func (*TakeControlRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{21}
-}
-
 func (x *TakeControlRequest) GetSignon() bool {
 	if x != nil {
 		return x.Signon
@@ -1040,8 +1471,26 @@ func (x *TakeControlRequest) GetSignon() bool {
 	return false
 }
 
+func (x *TakeControlRequest) SetSignon(v bool) {
+	x.Signon = v
+}
+
+type TakeControlRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Signon bool
+}
+
+func (b0 TakeControlRequest_builder) Build() *TakeControlRequest {
+	m0 := &TakeControlRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Signon = b.Signon
+	return m0
+}
+
 type TakeControlResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1071,13 +1520,20 @@ func (x *TakeControlResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TakeControlResponse.ProtoReflect.Descriptor instead.
-func (*TakeControlResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{22}
+type TakeControlResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 TakeControlResponse_builder) Build() *TakeControlResponse {
+	m0 := &TakeControlResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListDispatchesRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Status        []dispatches.StatusDispatch `protobuf:"varint,2,rep,packed,name=status,proto3,enum=resources.centrum.dispatches.StatusDispatch" json:"status,omitempty"`
 	NotStatus     []dispatches.StatusDispatch `protobuf:"varint,3,rep,packed,name=not_status,json=notStatus,proto3,enum=resources.centrum.dispatches.StatusDispatch" json:"not_status,omitempty"`
@@ -1110,11 +1566,6 @@ func (x *ListDispatchesRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListDispatchesRequest.ProtoReflect.Descriptor instead.
-func (*ListDispatchesRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ListDispatchesRequest) GetPagination() *database.PaginationRequest {
@@ -1152,8 +1603,72 @@ func (x *ListDispatchesRequest) GetPostal() string {
 	return ""
 }
 
+func (x *ListDispatchesRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListDispatchesRequest) SetStatus(v []dispatches.StatusDispatch) {
+	x.Status = v
+}
+
+func (x *ListDispatchesRequest) SetNotStatus(v []dispatches.StatusDispatch) {
+	x.NotStatus = v
+}
+
+func (x *ListDispatchesRequest) SetIds(v []int64) {
+	x.Ids = v
+}
+
+func (x *ListDispatchesRequest) SetPostal(v string) {
+	x.Postal = &v
+}
+
+func (x *ListDispatchesRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListDispatchesRequest) HasPostal() bool {
+	if x == nil {
+		return false
+	}
+	return x.Postal != nil
+}
+
+func (x *ListDispatchesRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListDispatchesRequest) ClearPostal() {
+	x.Postal = nil
+}
+
+type ListDispatchesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Status     []dispatches.StatusDispatch
+	NotStatus  []dispatches.StatusDispatch
+	Ids        []int64
+	Postal     *string
+}
+
+func (b0 ListDispatchesRequest_builder) Build() *ListDispatchesRequest {
+	m0 := &ListDispatchesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Status = b.Status
+	x.NotStatus = b.NotStatus
+	x.Ids = b.Ids
+	x.Postal = b.Postal
+	return m0
+}
+
 type ListDispatchesResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Dispatches    []*dispatches.Dispatch       `protobuf:"bytes,2,rep,name=dispatches,proto3" json:"dispatches,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1185,11 +1700,6 @@ func (x *ListDispatchesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListDispatchesResponse.ProtoReflect.Descriptor instead.
-func (*ListDispatchesResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{24}
-}
-
 func (x *ListDispatchesResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -1204,8 +1714,43 @@ func (x *ListDispatchesResponse) GetDispatches() []*dispatches.Dispatch {
 	return nil
 }
 
+func (x *ListDispatchesResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListDispatchesResponse) SetDispatches(v []*dispatches.Dispatch) {
+	x.Dispatches = v
+}
+
+func (x *ListDispatchesResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListDispatchesResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListDispatchesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Dispatches []*dispatches.Dispatch
+}
+
+func (b0 ListDispatchesResponse_builder) Build() *ListDispatchesResponse {
+	m0 := &ListDispatchesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Dispatches = b.Dispatches
+	return m0
+}
+
 type GetDispatchRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1236,11 +1781,6 @@ func (x *GetDispatchRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDispatchRequest.ProtoReflect.Descriptor instead.
-func (*GetDispatchRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{25}
-}
-
 func (x *GetDispatchRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -1248,8 +1788,26 @@ func (x *GetDispatchRequest) GetId() int64 {
 	return 0
 }
 
+func (x *GetDispatchRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type GetDispatchRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 GetDispatchRequest_builder) Build() *GetDispatchRequest {
+	m0 := &GetDispatchRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type GetDispatchResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Dispatch      *dispatches.Dispatch   `protobuf:"bytes,1,opt,name=dispatch,proto3" json:"dispatch,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1280,11 +1838,6 @@ func (x *GetDispatchResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDispatchResponse.ProtoReflect.Descriptor instead.
-func (*GetDispatchResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{26}
-}
-
 func (x *GetDispatchResponse) GetDispatch() *dispatches.Dispatch {
 	if x != nil {
 		return x.Dispatch
@@ -1292,8 +1845,37 @@ func (x *GetDispatchResponse) GetDispatch() *dispatches.Dispatch {
 	return nil
 }
 
+func (x *GetDispatchResponse) SetDispatch(v *dispatches.Dispatch) {
+	x.Dispatch = v
+}
+
+func (x *GetDispatchResponse) HasDispatch() bool {
+	if x == nil {
+		return false
+	}
+	return x.Dispatch != nil
+}
+
+func (x *GetDispatchResponse) ClearDispatch() {
+	x.Dispatch = nil
+}
+
+type GetDispatchResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Dispatch *dispatches.Dispatch
+}
+
+func (b0 GetDispatchResponse_builder) Build() *GetDispatchResponse {
+	m0 := &GetDispatchResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Dispatch = b.Dispatch
+	return m0
+}
+
 type CreateDispatchRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Dispatch      *dispatches.Dispatch   `protobuf:"bytes,1,opt,name=dispatch,proto3" json:"dispatch,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1324,11 +1906,6 @@ func (x *CreateDispatchRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateDispatchRequest.ProtoReflect.Descriptor instead.
-func (*CreateDispatchRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{27}
-}
-
 func (x *CreateDispatchRequest) GetDispatch() *dispatches.Dispatch {
 	if x != nil {
 		return x.Dispatch
@@ -1336,8 +1913,37 @@ func (x *CreateDispatchRequest) GetDispatch() *dispatches.Dispatch {
 	return nil
 }
 
+func (x *CreateDispatchRequest) SetDispatch(v *dispatches.Dispatch) {
+	x.Dispatch = v
+}
+
+func (x *CreateDispatchRequest) HasDispatch() bool {
+	if x == nil {
+		return false
+	}
+	return x.Dispatch != nil
+}
+
+func (x *CreateDispatchRequest) ClearDispatch() {
+	x.Dispatch = nil
+}
+
+type CreateDispatchRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Dispatch *dispatches.Dispatch
+}
+
+func (b0 CreateDispatchRequest_builder) Build() *CreateDispatchRequest {
+	m0 := &CreateDispatchRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Dispatch = b.Dispatch
+	return m0
+}
+
 type CreateDispatchResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Dispatch      *dispatches.Dispatch   `protobuf:"bytes,1,opt,name=dispatch,proto3" json:"dispatch,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1368,11 +1974,6 @@ func (x *CreateDispatchResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateDispatchResponse.ProtoReflect.Descriptor instead.
-func (*CreateDispatchResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{28}
-}
-
 func (x *CreateDispatchResponse) GetDispatch() *dispatches.Dispatch {
 	if x != nil {
 		return x.Dispatch
@@ -1380,8 +1981,37 @@ func (x *CreateDispatchResponse) GetDispatch() *dispatches.Dispatch {
 	return nil
 }
 
+func (x *CreateDispatchResponse) SetDispatch(v *dispatches.Dispatch) {
+	x.Dispatch = v
+}
+
+func (x *CreateDispatchResponse) HasDispatch() bool {
+	if x == nil {
+		return false
+	}
+	return x.Dispatch != nil
+}
+
+func (x *CreateDispatchResponse) ClearDispatch() {
+	x.Dispatch = nil
+}
+
+type CreateDispatchResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Dispatch *dispatches.Dispatch
+}
+
+func (b0 CreateDispatchResponse_builder) Build() *CreateDispatchResponse {
+	m0 := &CreateDispatchResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Dispatch = b.Dispatch
+	return m0
+}
+
 type UpdateDispatchRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Dispatch      *dispatches.Dispatch   `protobuf:"bytes,1,opt,name=dispatch,proto3" json:"dispatch,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1412,11 +2042,6 @@ func (x *UpdateDispatchRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateDispatchRequest.ProtoReflect.Descriptor instead.
-func (*UpdateDispatchRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{29}
-}
-
 func (x *UpdateDispatchRequest) GetDispatch() *dispatches.Dispatch {
 	if x != nil {
 		return x.Dispatch
@@ -1424,8 +2049,37 @@ func (x *UpdateDispatchRequest) GetDispatch() *dispatches.Dispatch {
 	return nil
 }
 
+func (x *UpdateDispatchRequest) SetDispatch(v *dispatches.Dispatch) {
+	x.Dispatch = v
+}
+
+func (x *UpdateDispatchRequest) HasDispatch() bool {
+	if x == nil {
+		return false
+	}
+	return x.Dispatch != nil
+}
+
+func (x *UpdateDispatchRequest) ClearDispatch() {
+	x.Dispatch = nil
+}
+
+type UpdateDispatchRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Dispatch *dispatches.Dispatch
+}
+
+func (b0 UpdateDispatchRequest_builder) Build() *UpdateDispatchRequest {
+	m0 := &UpdateDispatchRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Dispatch = b.Dispatch
+	return m0
+}
+
 type UpdateDispatchResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Dispatch      *dispatches.Dispatch   `protobuf:"bytes,1,opt,name=dispatch,proto3" json:"dispatch,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1456,11 +2110,6 @@ func (x *UpdateDispatchResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateDispatchResponse.ProtoReflect.Descriptor instead.
-func (*UpdateDispatchResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{30}
-}
-
 func (x *UpdateDispatchResponse) GetDispatch() *dispatches.Dispatch {
 	if x != nil {
 		return x.Dispatch
@@ -1468,8 +2117,37 @@ func (x *UpdateDispatchResponse) GetDispatch() *dispatches.Dispatch {
 	return nil
 }
 
+func (x *UpdateDispatchResponse) SetDispatch(v *dispatches.Dispatch) {
+	x.Dispatch = v
+}
+
+func (x *UpdateDispatchResponse) HasDispatch() bool {
+	if x == nil {
+		return false
+	}
+	return x.Dispatch != nil
+}
+
+func (x *UpdateDispatchResponse) ClearDispatch() {
+	x.Dispatch = nil
+}
+
+type UpdateDispatchResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Dispatch *dispatches.Dispatch
+}
+
+func (b0 UpdateDispatchResponse_builder) Build() *UpdateDispatchResponse {
+	m0 := &UpdateDispatchResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Dispatch = b.Dispatch
+	return m0
+}
+
 type DeleteDispatchRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1500,11 +2178,6 @@ func (x *DeleteDispatchRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteDispatchRequest.ProtoReflect.Descriptor instead.
-func (*DeleteDispatchRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{31}
-}
-
 func (x *DeleteDispatchRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -1512,8 +2185,26 @@ func (x *DeleteDispatchRequest) GetId() int64 {
 	return 0
 }
 
+func (x *DeleteDispatchRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type DeleteDispatchRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 DeleteDispatchRequest_builder) Build() *DeleteDispatchRequest {
+	m0 := &DeleteDispatchRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type DeleteDispatchResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1543,13 +2234,20 @@ func (x *DeleteDispatchResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteDispatchResponse.ProtoReflect.Descriptor instead.
-func (*DeleteDispatchResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{32}
+type DeleteDispatchResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteDispatchResponse_builder) Build() *DeleteDispatchResponse {
+	m0 := &DeleteDispatchResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListDispatchTargetJobsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1579,13 +2277,20 @@ func (x *ListDispatchTargetJobsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListDispatchTargetJobsRequest.ProtoReflect.Descriptor instead.
-func (*ListDispatchTargetJobsRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{33}
+type ListDispatchTargetJobsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ListDispatchTargetJobsRequest_builder) Build() *ListDispatchTargetJobsRequest {
+	m0 := &ListDispatchTargetJobsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListDispatchTargetJobsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Jobs          []*jobs.Job            `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1616,11 +2321,6 @@ func (x *ListDispatchTargetJobsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListDispatchTargetJobsResponse.ProtoReflect.Descriptor instead.
-func (*ListDispatchTargetJobsResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{34}
-}
-
 func (x *ListDispatchTargetJobsResponse) GetJobs() []*jobs.Job {
 	if x != nil {
 		return x.Jobs
@@ -1628,8 +2328,26 @@ func (x *ListDispatchTargetJobsResponse) GetJobs() []*jobs.Job {
 	return nil
 }
 
+func (x *ListDispatchTargetJobsResponse) SetJobs(v []*jobs.Job) {
+	x.Jobs = v
+}
+
+type ListDispatchTargetJobsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs []*jobs.Job
+}
+
+func (b0 ListDispatchTargetJobsResponse_builder) Build() *ListDispatchTargetJobsResponse {
+	m0 := &ListDispatchTargetJobsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	return m0
+}
+
 type UpdateDispatchStatusRequest struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
+	state         protoimpl.MessageState    `protogen:"hybrid.v1"`
 	DispatchId    int64                     `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
 	Status        dispatches.StatusDispatch `protobuf:"varint,2,opt,name=status,proto3,enum=resources.centrum.dispatches.StatusDispatch" json:"status,omitempty"`
 	Reason        *string                   `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
@@ -1663,11 +2381,6 @@ func (x *UpdateDispatchStatusRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateDispatchStatusRequest.ProtoReflect.Descriptor instead.
-func (*UpdateDispatchStatusRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{35}
-}
-
 func (x *UpdateDispatchStatusRequest) GetDispatchId() int64 {
 	if x != nil {
 		return x.DispatchId
@@ -1696,8 +2409,66 @@ func (x *UpdateDispatchStatusRequest) GetCode() string {
 	return ""
 }
 
+func (x *UpdateDispatchStatusRequest) SetDispatchId(v int64) {
+	x.DispatchId = v
+}
+
+func (x *UpdateDispatchStatusRequest) SetStatus(v dispatches.StatusDispatch) {
+	x.Status = v
+}
+
+func (x *UpdateDispatchStatusRequest) SetReason(v string) {
+	x.Reason = &v
+}
+
+func (x *UpdateDispatchStatusRequest) SetCode(v string) {
+	x.Code = &v
+}
+
+func (x *UpdateDispatchStatusRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reason != nil
+}
+
+func (x *UpdateDispatchStatusRequest) HasCode() bool {
+	if x == nil {
+		return false
+	}
+	return x.Code != nil
+}
+
+func (x *UpdateDispatchStatusRequest) ClearReason() {
+	x.Reason = nil
+}
+
+func (x *UpdateDispatchStatusRequest) ClearCode() {
+	x.Code = nil
+}
+
+type UpdateDispatchStatusRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DispatchId int64
+	Status     dispatches.StatusDispatch
+	Reason     *string
+	Code       *string
+}
+
+func (b0 UpdateDispatchStatusRequest_builder) Build() *UpdateDispatchStatusRequest {
+	m0 := &UpdateDispatchStatusRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DispatchId = b.DispatchId
+	x.Status = b.Status
+	x.Reason = b.Reason
+	x.Code = b.Code
+	return m0
+}
+
 type UpdateDispatchStatusResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1727,13 +2498,20 @@ func (x *UpdateDispatchStatusResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateDispatchStatusResponse.ProtoReflect.Descriptor instead.
-func (*UpdateDispatchStatusResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{36}
+type UpdateDispatchStatusResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 UpdateDispatchStatusResponse_builder) Build() *UpdateDispatchStatusResponse {
+	m0 := &UpdateDispatchStatusResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type AssignDispatchRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DispatchId    int64                  `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
 	ToAdd         []int64                `protobuf:"varint,2,rep,packed,name=to_add,json=toAdd,proto3" json:"to_add,omitempty"`
 	ToRemove      []int64                `protobuf:"varint,3,rep,packed,name=to_remove,json=toRemove,proto3" json:"to_remove,omitempty"`
@@ -1767,11 +2545,6 @@ func (x *AssignDispatchRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AssignDispatchRequest.ProtoReflect.Descriptor instead.
-func (*AssignDispatchRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{37}
-}
-
 func (x *AssignDispatchRequest) GetDispatchId() int64 {
 	if x != nil {
 		return x.DispatchId
@@ -1800,8 +2573,55 @@ func (x *AssignDispatchRequest) GetForced() bool {
 	return false
 }
 
+func (x *AssignDispatchRequest) SetDispatchId(v int64) {
+	x.DispatchId = v
+}
+
+func (x *AssignDispatchRequest) SetToAdd(v []int64) {
+	x.ToAdd = v
+}
+
+func (x *AssignDispatchRequest) SetToRemove(v []int64) {
+	x.ToRemove = v
+}
+
+func (x *AssignDispatchRequest) SetForced(v bool) {
+	x.Forced = &v
+}
+
+func (x *AssignDispatchRequest) HasForced() bool {
+	if x == nil {
+		return false
+	}
+	return x.Forced != nil
+}
+
+func (x *AssignDispatchRequest) ClearForced() {
+	x.Forced = nil
+}
+
+type AssignDispatchRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DispatchId int64
+	ToAdd      []int64
+	ToRemove   []int64
+	Forced     *bool
+}
+
+func (b0 AssignDispatchRequest_builder) Build() *AssignDispatchRequest {
+	m0 := &AssignDispatchRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DispatchId = b.DispatchId
+	x.ToAdd = b.ToAdd
+	x.ToRemove = b.ToRemove
+	x.Forced = b.Forced
+	return m0
+}
+
 type AssignDispatchResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1831,13 +2651,20 @@ func (x *AssignDispatchResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AssignDispatchResponse.ProtoReflect.Descriptor instead.
-func (*AssignDispatchResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{38}
+type AssignDispatchResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 AssignDispatchResponse_builder) Build() *AssignDispatchResponse {
+	m0 := &AssignDispatchResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListDispatchActivityResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Activity      []*dispatches.DispatchStatus `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1869,11 +2696,6 @@ func (x *ListDispatchActivityResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListDispatchActivityResponse.ProtoReflect.Descriptor instead.
-func (*ListDispatchActivityResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{39}
-}
-
 func (x *ListDispatchActivityResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -1888,8 +2710,43 @@ func (x *ListDispatchActivityResponse) GetActivity() []*dispatches.DispatchStatu
 	return nil
 }
 
+func (x *ListDispatchActivityResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListDispatchActivityResponse) SetActivity(v []*dispatches.DispatchStatus) {
+	x.Activity = v
+}
+
+func (x *ListDispatchActivityResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListDispatchActivityResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListDispatchActivityResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Activity   []*dispatches.DispatchStatus
+}
+
+func (b0 ListDispatchActivityResponse_builder) Build() *ListDispatchActivityResponse {
+	m0 := &ListDispatchActivityResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Activity = b.Activity
+	return m0
+}
+
 type JoinUnitRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UnitId        *int64                 `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1920,11 +2777,6 @@ func (x *JoinUnitRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JoinUnitRequest.ProtoReflect.Descriptor instead.
-func (*JoinUnitRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{40}
-}
-
 func (x *JoinUnitRequest) GetUnitId() int64 {
 	if x != nil && x.UnitId != nil {
 		return *x.UnitId
@@ -1932,8 +2784,37 @@ func (x *JoinUnitRequest) GetUnitId() int64 {
 	return 0
 }
 
+func (x *JoinUnitRequest) SetUnitId(v int64) {
+	x.UnitId = &v
+}
+
+func (x *JoinUnitRequest) HasUnitId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UnitId != nil
+}
+
+func (x *JoinUnitRequest) ClearUnitId() {
+	x.UnitId = nil
+}
+
+type JoinUnitRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UnitId *int64
+}
+
+func (b0 JoinUnitRequest_builder) Build() *JoinUnitRequest {
+	m0 := &JoinUnitRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UnitId = b.UnitId
+	return m0
+}
+
 type JoinUnitResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Unit          *units.Unit            `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1964,11 +2845,6 @@ func (x *JoinUnitResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JoinUnitResponse.ProtoReflect.Descriptor instead.
-func (*JoinUnitResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{41}
-}
-
 func (x *JoinUnitResponse) GetUnit() *units.Unit {
 	if x != nil {
 		return x.Unit
@@ -1976,8 +2852,37 @@ func (x *JoinUnitResponse) GetUnit() *units.Unit {
 	return nil
 }
 
+func (x *JoinUnitResponse) SetUnit(v *units.Unit) {
+	x.Unit = v
+}
+
+func (x *JoinUnitResponse) HasUnit() bool {
+	if x == nil {
+		return false
+	}
+	return x.Unit != nil
+}
+
+func (x *JoinUnitResponse) ClearUnit() {
+	x.Unit = nil
+}
+
+type JoinUnitResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Unit *units.Unit
+}
+
+func (b0 JoinUnitResponse_builder) Build() *JoinUnitResponse {
+	m0 := &JoinUnitResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Unit = b.Unit
+	return m0
+}
+
 type TakeDispatchRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	DispatchIds   []int64                     `protobuf:"varint,1,rep,packed,name=dispatch_ids,json=dispatchIds,proto3" json:"dispatch_ids,omitempty"`
 	Resp          dispatches.TakeDispatchResp `protobuf:"varint,2,opt,name=resp,proto3,enum=resources.centrum.dispatches.TakeDispatchResp" json:"resp,omitempty"`
 	Reason        *string                     `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
@@ -2010,11 +2915,6 @@ func (x *TakeDispatchRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TakeDispatchRequest.ProtoReflect.Descriptor instead.
-func (*TakeDispatchRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{42}
-}
-
 func (x *TakeDispatchRequest) GetDispatchIds() []int64 {
 	if x != nil {
 		return x.DispatchIds
@@ -2036,8 +2936,49 @@ func (x *TakeDispatchRequest) GetReason() string {
 	return ""
 }
 
+func (x *TakeDispatchRequest) SetDispatchIds(v []int64) {
+	x.DispatchIds = v
+}
+
+func (x *TakeDispatchRequest) SetResp(v dispatches.TakeDispatchResp) {
+	x.Resp = v
+}
+
+func (x *TakeDispatchRequest) SetReason(v string) {
+	x.Reason = &v
+}
+
+func (x *TakeDispatchRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reason != nil
+}
+
+func (x *TakeDispatchRequest) ClearReason() {
+	x.Reason = nil
+}
+
+type TakeDispatchRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DispatchIds []int64
+	Resp        dispatches.TakeDispatchResp
+	Reason      *string
+}
+
+func (b0 TakeDispatchRequest_builder) Build() *TakeDispatchRequest {
+	m0 := &TakeDispatchRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DispatchIds = b.DispatchIds
+	x.Resp = b.Resp
+	x.Reason = b.Reason
+	return m0
+}
+
 type TakeDispatchResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2067,13 +3008,20 @@ func (x *TakeDispatchResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TakeDispatchResponse.ProtoReflect.Descriptor instead.
-func (*TakeDispatchResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{43}
+type TakeDispatchResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 TakeDispatchResponse_builder) Build() *TakeDispatchResponse {
+	m0 := &TakeDispatchResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type StreamHandshake struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
+	state         protoimpl.MessageState    `protogen:"hybrid.v1"`
 	ServerTime    *timestamp.Timestamp      `protobuf:"bytes,1,opt,name=server_time,json=serverTime,proto3" json:"server_time,omitempty"`
 	Settings      *settings.Settings        `protobuf:"bytes,2,opt,name=settings,proto3" json:"settings,omitempty"`
 	Access        *settings.EffectiveAccess `protobuf:"bytes,3,opt,name=access,proto3" json:"access,omitempty"`
@@ -2106,11 +3054,6 @@ func (x *StreamHandshake) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StreamHandshake.ProtoReflect.Descriptor instead.
-func (*StreamHandshake) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{44}
-}
-
 func (x *StreamHandshake) GetServerTime() *timestamp.Timestamp {
 	if x != nil {
 		return x.ServerTime
@@ -2132,8 +3075,71 @@ func (x *StreamHandshake) GetAccess() *settings.EffectiveAccess {
 	return nil
 }
 
+func (x *StreamHandshake) SetServerTime(v *timestamp.Timestamp) {
+	x.ServerTime = v
+}
+
+func (x *StreamHandshake) SetSettings(v *settings.Settings) {
+	x.Settings = v
+}
+
+func (x *StreamHandshake) SetAccess(v *settings.EffectiveAccess) {
+	x.Access = v
+}
+
+func (x *StreamHandshake) HasServerTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.ServerTime != nil
+}
+
+func (x *StreamHandshake) HasSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.Settings != nil
+}
+
+func (x *StreamHandshake) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *StreamHandshake) ClearServerTime() {
+	x.ServerTime = nil
+}
+
+func (x *StreamHandshake) ClearSettings() {
+	x.Settings = nil
+}
+
+func (x *StreamHandshake) ClearAccess() {
+	x.Access = nil
+}
+
+type StreamHandshake_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ServerTime *timestamp.Timestamp
+	Settings   *settings.Settings
+	Access     *settings.EffectiveAccess
+}
+
+func (b0 StreamHandshake_builder) Build() *StreamHandshake {
+	m0 := &StreamHandshake{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ServerTime = b.ServerTime
+	x.Settings = b.Settings
+	x.Access = b.Access
+	return m0
+}
+
 type LatestState struct {
-	state       protoimpl.MessageState      `protogen:"open.v1"`
+	state       protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Dispatchers *dispatchers.JobDispatchers `protobuf:"bytes,1,opt,name=dispatchers,proto3" json:"dispatchers,omitempty"`
 	OwnUnitId   *int64                      `protobuf:"varint,2,opt,name=own_unit_id,json=ownUnitId,proto3,oneof" json:"own_unit_id,omitempty"`
 	// Send the current units and dispatches
@@ -2168,11 +3174,6 @@ func (x *LatestState) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LatestState.ProtoReflect.Descriptor instead.
-func (*LatestState) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{45}
-}
-
 func (x *LatestState) GetDispatchers() *dispatchers.JobDispatchers {
 	if x != nil {
 		return x.Dispatchers
@@ -2201,8 +3202,67 @@ func (x *LatestState) GetDispatches() []*dispatches.Dispatch {
 	return nil
 }
 
+func (x *LatestState) SetDispatchers(v *dispatchers.JobDispatchers) {
+	x.Dispatchers = v
+}
+
+func (x *LatestState) SetOwnUnitId(v int64) {
+	x.OwnUnitId = &v
+}
+
+func (x *LatestState) SetUnits(v []*units.Unit) {
+	x.Units = v
+}
+
+func (x *LatestState) SetDispatches(v []*dispatches.Dispatch) {
+	x.Dispatches = v
+}
+
+func (x *LatestState) HasDispatchers() bool {
+	if x == nil {
+		return false
+	}
+	return x.Dispatchers != nil
+}
+
+func (x *LatestState) HasOwnUnitId() bool {
+	if x == nil {
+		return false
+	}
+	return x.OwnUnitId != nil
+}
+
+func (x *LatestState) ClearDispatchers() {
+	x.Dispatchers = nil
+}
+
+func (x *LatestState) ClearOwnUnitId() {
+	x.OwnUnitId = nil
+}
+
+type LatestState_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Dispatchers *dispatchers.JobDispatchers
+	OwnUnitId   *int64
+	// Send the current units and dispatches
+	Units      []*units.Unit
+	Dispatches []*dispatches.Dispatch
+}
+
+func (b0 LatestState_builder) Build() *LatestState {
+	m0 := &LatestState{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Dispatchers = b.Dispatchers
+	x.OwnUnitId = b.OwnUnitId
+	x.Units = b.Units
+	x.Dispatches = b.Dispatches
+	return m0
+}
+
 type StreamRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2232,13 +3292,20 @@ func (x *StreamRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StreamRequest.ProtoReflect.Descriptor instead.
-func (*StreamRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{46}
+type StreamRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 StreamRequest_builder) Build() *StreamRequest {
+	m0 := &StreamRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type StreamResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Change:
 	//
 	//	*StreamResponse_Handshake
@@ -2280,11 +3347,6 @@ func (x *StreamResponse) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use StreamResponse.ProtoReflect.Descriptor instead.
-func (*StreamResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *StreamResponse) GetChange() isStreamResponse_Change {
@@ -2391,6 +3453,364 @@ func (x *StreamResponse) GetDispatchStatus() *dispatches.DispatchStatus {
 		}
 	}
 	return nil
+}
+
+func (x *StreamResponse) SetHandshake(v *StreamHandshake) {
+	if v == nil {
+		x.Change = nil
+		return
+	}
+	x.Change = &StreamResponse_Handshake{v}
+}
+
+func (x *StreamResponse) SetLatestState(v *LatestState) {
+	if v == nil {
+		x.Change = nil
+		return
+	}
+	x.Change = &StreamResponse_LatestState{v}
+}
+
+func (x *StreamResponse) SetSettings(v *settings.Settings) {
+	if v == nil {
+		x.Change = nil
+		return
+	}
+	x.Change = &StreamResponse_Settings{v}
+}
+
+func (x *StreamResponse) SetAccess(v *settings.EffectiveAccess) {
+	if v == nil {
+		x.Change = nil
+		return
+	}
+	x.Change = &StreamResponse_Access{v}
+}
+
+func (x *StreamResponse) SetDispatchers(v *dispatchers.Dispatchers) {
+	if v == nil {
+		x.Change = nil
+		return
+	}
+	x.Change = &StreamResponse_Dispatchers{v}
+}
+
+func (x *StreamResponse) SetUnitDeleted(v int64) {
+	x.Change = &StreamResponse_UnitDeleted{v}
+}
+
+func (x *StreamResponse) SetUnitUpdated(v *units.Unit) {
+	if v == nil {
+		x.Change = nil
+		return
+	}
+	x.Change = &StreamResponse_UnitUpdated{v}
+}
+
+func (x *StreamResponse) SetUnitStatus(v *units.UnitStatus) {
+	if v == nil {
+		x.Change = nil
+		return
+	}
+	x.Change = &StreamResponse_UnitStatus{v}
+}
+
+func (x *StreamResponse) SetDispatchDeleted(v int64) {
+	x.Change = &StreamResponse_DispatchDeleted{v}
+}
+
+func (x *StreamResponse) SetDispatchUpdated(v *dispatches.Dispatch) {
+	if v == nil {
+		x.Change = nil
+		return
+	}
+	x.Change = &StreamResponse_DispatchUpdated{v}
+}
+
+func (x *StreamResponse) SetDispatchStatus(v *dispatches.DispatchStatus) {
+	if v == nil {
+		x.Change = nil
+		return
+	}
+	x.Change = &StreamResponse_DispatchStatus{v}
+}
+
+func (x *StreamResponse) HasChange() bool {
+	if x == nil {
+		return false
+	}
+	return x.Change != nil
+}
+
+func (x *StreamResponse) HasHandshake() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Change.(*StreamResponse_Handshake)
+	return ok
+}
+
+func (x *StreamResponse) HasLatestState() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Change.(*StreamResponse_LatestState)
+	return ok
+}
+
+func (x *StreamResponse) HasSettings() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Change.(*StreamResponse_Settings)
+	return ok
+}
+
+func (x *StreamResponse) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Change.(*StreamResponse_Access)
+	return ok
+}
+
+func (x *StreamResponse) HasDispatchers() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Change.(*StreamResponse_Dispatchers)
+	return ok
+}
+
+func (x *StreamResponse) HasUnitDeleted() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Change.(*StreamResponse_UnitDeleted)
+	return ok
+}
+
+func (x *StreamResponse) HasUnitUpdated() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Change.(*StreamResponse_UnitUpdated)
+	return ok
+}
+
+func (x *StreamResponse) HasUnitStatus() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Change.(*StreamResponse_UnitStatus)
+	return ok
+}
+
+func (x *StreamResponse) HasDispatchDeleted() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Change.(*StreamResponse_DispatchDeleted)
+	return ok
+}
+
+func (x *StreamResponse) HasDispatchUpdated() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Change.(*StreamResponse_DispatchUpdated)
+	return ok
+}
+
+func (x *StreamResponse) HasDispatchStatus() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Change.(*StreamResponse_DispatchStatus)
+	return ok
+}
+
+func (x *StreamResponse) ClearChange() {
+	x.Change = nil
+}
+
+func (x *StreamResponse) ClearHandshake() {
+	if _, ok := x.Change.(*StreamResponse_Handshake); ok {
+		x.Change = nil
+	}
+}
+
+func (x *StreamResponse) ClearLatestState() {
+	if _, ok := x.Change.(*StreamResponse_LatestState); ok {
+		x.Change = nil
+	}
+}
+
+func (x *StreamResponse) ClearSettings() {
+	if _, ok := x.Change.(*StreamResponse_Settings); ok {
+		x.Change = nil
+	}
+}
+
+func (x *StreamResponse) ClearAccess() {
+	if _, ok := x.Change.(*StreamResponse_Access); ok {
+		x.Change = nil
+	}
+}
+
+func (x *StreamResponse) ClearDispatchers() {
+	if _, ok := x.Change.(*StreamResponse_Dispatchers); ok {
+		x.Change = nil
+	}
+}
+
+func (x *StreamResponse) ClearUnitDeleted() {
+	if _, ok := x.Change.(*StreamResponse_UnitDeleted); ok {
+		x.Change = nil
+	}
+}
+
+func (x *StreamResponse) ClearUnitUpdated() {
+	if _, ok := x.Change.(*StreamResponse_UnitUpdated); ok {
+		x.Change = nil
+	}
+}
+
+func (x *StreamResponse) ClearUnitStatus() {
+	if _, ok := x.Change.(*StreamResponse_UnitStatus); ok {
+		x.Change = nil
+	}
+}
+
+func (x *StreamResponse) ClearDispatchDeleted() {
+	if _, ok := x.Change.(*StreamResponse_DispatchDeleted); ok {
+		x.Change = nil
+	}
+}
+
+func (x *StreamResponse) ClearDispatchUpdated() {
+	if _, ok := x.Change.(*StreamResponse_DispatchUpdated); ok {
+		x.Change = nil
+	}
+}
+
+func (x *StreamResponse) ClearDispatchStatus() {
+	if _, ok := x.Change.(*StreamResponse_DispatchStatus); ok {
+		x.Change = nil
+	}
+}
+
+const StreamResponse_Change_not_set_case case_StreamResponse_Change = 0
+const StreamResponse_Handshake_case case_StreamResponse_Change = 1
+const StreamResponse_LatestState_case case_StreamResponse_Change = 2
+const StreamResponse_Settings_case case_StreamResponse_Change = 3
+const StreamResponse_Access_case case_StreamResponse_Change = 4
+const StreamResponse_Dispatchers_case case_StreamResponse_Change = 5
+const StreamResponse_UnitDeleted_case case_StreamResponse_Change = 6
+const StreamResponse_UnitUpdated_case case_StreamResponse_Change = 7
+const StreamResponse_UnitStatus_case case_StreamResponse_Change = 8
+const StreamResponse_DispatchDeleted_case case_StreamResponse_Change = 9
+const StreamResponse_DispatchUpdated_case case_StreamResponse_Change = 10
+const StreamResponse_DispatchStatus_case case_StreamResponse_Change = 11
+
+func (x *StreamResponse) WhichChange() case_StreamResponse_Change {
+	if x == nil {
+		return StreamResponse_Change_not_set_case
+	}
+	switch x.Change.(type) {
+	case *StreamResponse_Handshake:
+		return StreamResponse_Handshake_case
+	case *StreamResponse_LatestState:
+		return StreamResponse_LatestState_case
+	case *StreamResponse_Settings:
+		return StreamResponse_Settings_case
+	case *StreamResponse_Access:
+		return StreamResponse_Access_case
+	case *StreamResponse_Dispatchers:
+		return StreamResponse_Dispatchers_case
+	case *StreamResponse_UnitDeleted:
+		return StreamResponse_UnitDeleted_case
+	case *StreamResponse_UnitUpdated:
+		return StreamResponse_UnitUpdated_case
+	case *StreamResponse_UnitStatus:
+		return StreamResponse_UnitStatus_case
+	case *StreamResponse_DispatchDeleted:
+		return StreamResponse_DispatchDeleted_case
+	case *StreamResponse_DispatchUpdated:
+		return StreamResponse_DispatchUpdated_case
+	case *StreamResponse_DispatchStatus:
+		return StreamResponse_DispatchStatus_case
+	default:
+		return StreamResponse_Change_not_set_case
+	}
+}
+
+type StreamResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Change:
+	Handshake       *StreamHandshake
+	LatestState     *LatestState
+	Settings        *settings.Settings
+	Access          *settings.EffectiveAccess
+	Dispatchers     *dispatchers.Dispatchers
+	UnitDeleted     *int64
+	UnitUpdated     *units.Unit
+	UnitStatus      *units.UnitStatus
+	DispatchDeleted *int64
+	DispatchUpdated *dispatches.Dispatch
+	DispatchStatus  *dispatches.DispatchStatus
+	// -- end of Change
+}
+
+func (b0 StreamResponse_builder) Build() *StreamResponse {
+	m0 := &StreamResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Handshake != nil {
+		x.Change = &StreamResponse_Handshake{b.Handshake}
+	}
+	if b.LatestState != nil {
+		x.Change = &StreamResponse_LatestState{b.LatestState}
+	}
+	if b.Settings != nil {
+		x.Change = &StreamResponse_Settings{b.Settings}
+	}
+	if b.Access != nil {
+		x.Change = &StreamResponse_Access{b.Access}
+	}
+	if b.Dispatchers != nil {
+		x.Change = &StreamResponse_Dispatchers{b.Dispatchers}
+	}
+	if b.UnitDeleted != nil {
+		x.Change = &StreamResponse_UnitDeleted{*b.UnitDeleted}
+	}
+	if b.UnitUpdated != nil {
+		x.Change = &StreamResponse_UnitUpdated{b.UnitUpdated}
+	}
+	if b.UnitStatus != nil {
+		x.Change = &StreamResponse_UnitStatus{b.UnitStatus}
+	}
+	if b.DispatchDeleted != nil {
+		x.Change = &StreamResponse_DispatchDeleted{*b.DispatchDeleted}
+	}
+	if b.DispatchUpdated != nil {
+		x.Change = &StreamResponse_DispatchUpdated{b.DispatchUpdated}
+	}
+	if b.DispatchStatus != nil {
+		x.Change = &StreamResponse_DispatchStatus{b.DispatchStatus}
+	}
+	return m0
+}
+
+type case_StreamResponse_Change protoreflect.FieldNumber
+
+func (x case_StreamResponse_Change) String() string {
+	md := file_services_centrum_centrum_proto_msgTypes[47].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
 }
 
 type isStreamResponse_Change interface {
@@ -2659,18 +4079,6 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\fTakeDispatch\x12%.services.centrum.TakeDispatchRequest\x1a&.services.centrum.TakeDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x7f\n" +
 	"\x10UpdateUnitStatus\x12).services.centrum.UpdateUnitStatusRequest\x1a*.services.centrum.UpdateUnitStatusResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fTakeDispatch\x12\x8b\x01\n" +
 	"\x14UpdateDispatchStatus\x12-.services.centrum.UpdateDispatchStatusRequest\x1a..services.centrum.UpdateDispatchStatusResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fTakeDispatch\x1a\x1b\xea\xf3\x18\x17\bd\x12\x13i-mdi-car-emergencyBLZJgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrumb\x06proto3"
-
-var (
-	file_services_centrum_centrum_proto_rawDescOnce sync.Once
-	file_services_centrum_centrum_proto_rawDescData []byte
-)
-
-func file_services_centrum_centrum_proto_rawDescGZIP() []byte {
-	file_services_centrum_centrum_proto_rawDescOnce.Do(func() {
-		file_services_centrum_centrum_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_centrum_centrum_proto_rawDesc), len(file_services_centrum_centrum_proto_rawDesc)))
-	})
-	return file_services_centrum_centrum_proto_rawDescData
-}
 
 var file_services_centrum_centrum_proto_msgTypes = make([]protoimpl.MessageInfo, 48)
 var file_services_centrum_centrum_proto_goTypes = []any{

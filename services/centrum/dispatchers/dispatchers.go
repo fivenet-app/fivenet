@@ -9,7 +9,6 @@ import (
 	centrumdispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
@@ -90,7 +89,7 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
 	tUserProps := table.FivenetUserProps
 	tCentrumDispatchers := table.FivenetCentrumDispatchers
-	tColleague := tables.User().AS("colleague")
+	tColleague := table.FivenetUser.AS("colleague")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tCentrumDispatchers.

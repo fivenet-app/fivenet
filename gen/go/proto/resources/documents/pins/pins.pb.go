@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/documents/pins/pins.proto
 
+//go:build !protoopaque
+
 package documentspins
 
 import (
@@ -12,7 +14,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,7 +25,7 @@ const (
 )
 
 type DocumentPin struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" sql:"primary_key"`
 	Job           *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty" sql:"primary_key"`
 	UserId        *int32                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty" sql:"primary_key"`
@@ -58,11 +59,6 @@ func (x *DocumentPin) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DocumentPin.ProtoReflect.Descriptor instead.
-func (*DocumentPin) Descriptor() ([]byte, []int) {
-	return file_resources_documents_pins_pins_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *DocumentPin) GetDocumentId() int64 {
@@ -107,6 +103,87 @@ func (x *DocumentPin) GetCreatorId() int32 {
 	return 0
 }
 
+func (x *DocumentPin) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *DocumentPin) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *DocumentPin) SetUserId(v int32) {
+	x.UserId = &v
+}
+
+func (x *DocumentPin) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *DocumentPin) SetState(v bool) {
+	x.State = v
+}
+
+func (x *DocumentPin) SetCreatorId(v int32) {
+	x.CreatorId = v
+}
+
+func (x *DocumentPin) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *DocumentPin) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
+}
+
+func (x *DocumentPin) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *DocumentPin) ClearJob() {
+	x.Job = nil
+}
+
+func (x *DocumentPin) ClearUserId() {
+	x.UserId = nil
+}
+
+func (x *DocumentPin) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+type DocumentPin_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+	Job        *string
+	UserId     *int32
+	CreatedAt  *timestamp.Timestamp
+	State      bool
+	CreatorId  int32
+}
+
+func (b0 DocumentPin_builder) Build() *DocumentPin {
+	m0 := &DocumentPin{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.Job = b.Job
+	x.UserId = b.UserId
+	x.CreatedAt = b.CreatedAt
+	x.State = b.State
+	x.CreatorId = b.CreatorId
+	return m0
+}
+
 var File_resources_documents_pins_pins_proto protoreflect.FileDescriptor
 
 const file_resources_documents_pins_pins_proto_rawDesc = "" +
@@ -126,18 +203,6 @@ const file_resources_documents_pins_pins_proto_rawDesc = "" +
 	"\n" +
 	"\b_user_idB\r\n" +
 	"\v_created_atBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/pins;documentspinsb\x06proto3"
-
-var (
-	file_resources_documents_pins_pins_proto_rawDescOnce sync.Once
-	file_resources_documents_pins_pins_proto_rawDescData []byte
-)
-
-func file_resources_documents_pins_pins_proto_rawDescGZIP() []byte {
-	file_resources_documents_pins_pins_proto_rawDescOnce.Do(func() {
-		file_resources_documents_pins_pins_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_pins_pins_proto_rawDesc), len(file_resources_documents_pins_pins_proto_rawDesc)))
-	})
-	return file_resources_documents_pins_pins_proto_rawDescData
-}
 
 var file_resources_documents_pins_pins_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_documents_pins_pins_proto_goTypes = []any{

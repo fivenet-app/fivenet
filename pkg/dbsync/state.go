@@ -11,7 +11,7 @@ import (
 )
 
 type DBSyncState struct {
-	mu sync.Mutex
+	mu sync.RWMutex
 
 	logger *zap.Logger
 
@@ -21,22 +21,14 @@ type DBSyncState struct {
 	JobGrades *TableSyncState `yaml:"jobGrades"`
 	Licenses  *TableSyncState `yaml:"licenses"`
 
+	Accounts      *TableSyncState `yaml:"accounts"`
 	Users         *TableSyncState `yaml:"users"`
 	OwnedVehicles *TableSyncState `yaml:"ownedVehicles"`
 }
 
-type TableSyncState struct {
-	dss *DBSyncState
-
-	LastCheck *time.Time `yaml:"lastCheck"`
-	Offset    int64      `yaml:"offset"`
-	LastID    *string    `yaml:"lastId"`
-	SyncedUp  bool       `yaml:"syncedUp"`
-}
-
 func NewDBSyncState(logger *zap.Logger, filepath string) *DBSyncState {
 	d := &DBSyncState{
-		mu: sync.Mutex{},
+		mu: sync.RWMutex{},
 
 		logger: logger.Named("dbsync.state"),
 
@@ -85,6 +77,10 @@ func (s *DBSyncState) Save() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	return s.save()
+}
+
+func (s *DBSyncState) save() error {
 	out, err := yaml.Marshal(s)
 	if err != nil {
 		return err
@@ -97,13 +93,49 @@ func (s *DBSyncState) Save() error {
 	return nil
 }
 
+type TableSyncState struct {
+	dss *DBSyncState
+
+	LastCheck *time.Time `yaml:"lastCheck"`
+	Offset    int64      `yaml:"offset"`
+	LastID    *string    `yaml:"lastId"`
+	SyncedUp  bool       `yaml:"syncedUp"`
+}
+
 func (s *TableSyncState) Set(offset int64, lastId *string) {
+	s.dss.mu.Lock()
+	defer s.dss.mu.Unlock()
+
 	now := time.Now()
 	s.LastCheck = &now
 	s.Offset = offset
 	s.LastID = lastId
 
-	if err := s.dss.Save(); err != nil {
+	if err := s.dss.save(); err != nil {
 		s.dss.logger.Error("failed to save state", zap.Error(err))
 	}
+}
+
+func (s *TableSyncState) GetSyncedUp() bool {
+	s.dss.mu.RLock()
+	defer s.dss.mu.RUnlock()
+	return s.SyncedUp
+}
+
+func (s *TableSyncState) SetSyncedUp(syncedUp bool) {
+	s.dss.mu.Lock()
+	defer s.dss.mu.Unlock()
+	s.SyncedUp = syncedUp
+}
+
+func (s *TableSyncState) SetLastCheck(t *time.Time) {
+	s.dss.mu.Lock()
+	defer s.dss.mu.Unlock()
+	s.LastCheck = t
+}
+
+func (s *TableSyncState) GetOffset() int64 {
+	s.dss.mu.RLock()
+	defer s.dss.mu.RUnlock()
+	return s.Offset
 }

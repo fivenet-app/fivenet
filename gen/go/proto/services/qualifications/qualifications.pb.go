@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/qualifications/qualifications.proto
 
+//go:build !protoopaque
+
 package qualifications
 
 import (
@@ -19,7 +21,6 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -31,7 +32,7 @@ const (
 )
 
 type ListQualificationsRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
@@ -66,11 +67,6 @@ func (x *ListQualificationsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListQualificationsRequest.ProtoReflect.Descriptor instead.
-func (*ListQualificationsRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *ListQualificationsRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -99,8 +95,89 @@ func (x *ListQualificationsRequest) GetJob() string {
 	return ""
 }
 
+func (x *ListQualificationsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListQualificationsRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListQualificationsRequest) SetSearch(v string) {
+	x.Search = &v
+}
+
+func (x *ListQualificationsRequest) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *ListQualificationsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListQualificationsRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListQualificationsRequest) HasSearch() bool {
+	if x == nil {
+		return false
+	}
+	return x.Search != nil
+}
+
+func (x *ListQualificationsRequest) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *ListQualificationsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListQualificationsRequest) ClearSort() {
+	x.Sort = nil
+}
+
+func (x *ListQualificationsRequest) ClearSearch() {
+	x.Search = nil
+}
+
+func (x *ListQualificationsRequest) ClearJob() {
+	x.Job = nil
+}
+
+type ListQualificationsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	Search *string
+	Job    *string
+}
+
+func (b0 ListQualificationsRequest_builder) Build() *ListQualificationsRequest {
+	m0 := &ListQualificationsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.Search = b.Search
+	x.Job = b.Job
+	return m0
+}
+
 type ListQualificationsResponse struct {
-	state          protoimpl.MessageState          `protogen:"open.v1"`
+	state          protoimpl.MessageState          `protogen:"hybrid.v1"`
 	Pagination     *database.PaginationResponse    `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Qualifications []*qualifications.Qualification `protobuf:"bytes,2,rep,name=qualifications,proto3" json:"qualifications,omitempty"`
 	unknownFields  protoimpl.UnknownFields
@@ -132,11 +209,6 @@ func (x *ListQualificationsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListQualificationsResponse.ProtoReflect.Descriptor instead.
-func (*ListQualificationsResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListQualificationsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -151,8 +223,43 @@ func (x *ListQualificationsResponse) GetQualifications() []*qualifications.Quali
 	return nil
 }
 
+func (x *ListQualificationsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListQualificationsResponse) SetQualifications(v []*qualifications.Qualification) {
+	x.Qualifications = v
+}
+
+func (x *ListQualificationsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListQualificationsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListQualificationsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination     *database.PaginationResponse
+	Qualifications []*qualifications.Qualification
+}
+
+func (b0 ListQualificationsResponse_builder) Build() *ListQualificationsResponse {
+	m0 := &ListQualificationsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Qualifications = b.Qualifications
+	return m0
+}
+
 type GetQualificationRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	WithExam        *bool                  `protobuf:"varint,2,opt,name=with_exam,json=withExam,proto3,oneof" json:"with_exam,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -184,11 +291,6 @@ func (x *GetQualificationRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetQualificationRequest.ProtoReflect.Descriptor instead.
-func (*GetQualificationRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *GetQualificationRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
@@ -203,8 +305,43 @@ func (x *GetQualificationRequest) GetWithExam() bool {
 	return false
 }
 
+func (x *GetQualificationRequest) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *GetQualificationRequest) SetWithExam(v bool) {
+	x.WithExam = &v
+}
+
+func (x *GetQualificationRequest) HasWithExam() bool {
+	if x == nil {
+		return false
+	}
+	return x.WithExam != nil
+}
+
+func (x *GetQualificationRequest) ClearWithExam() {
+	x.WithExam = nil
+}
+
+type GetQualificationRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QualificationId int64
+	WithExam        *bool
+}
+
+func (b0 GetQualificationRequest_builder) Build() *GetQualificationRequest {
+	m0 := &GetQualificationRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QualificationId = b.QualificationId
+	x.WithExam = b.WithExam
+	return m0
+}
+
 type GetQualificationResponse struct {
-	state         protoimpl.MessageState        `protogen:"open.v1"`
+	state         protoimpl.MessageState        `protogen:"hybrid.v1"`
 	Qualification *qualifications.Qualification `protobuf:"bytes,1,opt,name=qualification,proto3" json:"qualification,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -235,11 +372,6 @@ func (x *GetQualificationResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetQualificationResponse.ProtoReflect.Descriptor instead.
-func (*GetQualificationResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *GetQualificationResponse) GetQualification() *qualifications.Qualification {
 	if x != nil {
 		return x.Qualification
@@ -247,8 +379,37 @@ func (x *GetQualificationResponse) GetQualification() *qualifications.Qualificat
 	return nil
 }
 
+func (x *GetQualificationResponse) SetQualification(v *qualifications.Qualification) {
+	x.Qualification = v
+}
+
+func (x *GetQualificationResponse) HasQualification() bool {
+	if x == nil {
+		return false
+	}
+	return x.Qualification != nil
+}
+
+func (x *GetQualificationResponse) ClearQualification() {
+	x.Qualification = nil
+}
+
+type GetQualificationResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Qualification *qualifications.Qualification
+}
+
+func (b0 GetQualificationResponse_builder) Build() *GetQualificationResponse {
+	m0 := &GetQualificationResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Qualification = b.Qualification
+	return m0
+}
+
 type CreateQualificationRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	ContentType   content.ContentType    `protobuf:"varint,1,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -279,11 +440,6 @@ func (x *CreateQualificationRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateQualificationRequest.ProtoReflect.Descriptor instead.
-func (*CreateQualificationRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *CreateQualificationRequest) GetContentType() content.ContentType {
 	if x != nil {
 		return x.ContentType
@@ -291,8 +447,26 @@ func (x *CreateQualificationRequest) GetContentType() content.ContentType {
 	return content.ContentType(0)
 }
 
+func (x *CreateQualificationRequest) SetContentType(v content.ContentType) {
+	x.ContentType = v
+}
+
+type CreateQualificationRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ContentType content.ContentType
+}
+
+func (b0 CreateQualificationRequest_builder) Build() *CreateQualificationRequest {
+	m0 := &CreateQualificationRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ContentType = b.ContentType
+	return m0
+}
+
 type CreateQualificationResponse struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -323,11 +497,6 @@ func (x *CreateQualificationResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateQualificationResponse.ProtoReflect.Descriptor instead.
-func (*CreateQualificationResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *CreateQualificationResponse) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
@@ -335,8 +504,26 @@ func (x *CreateQualificationResponse) GetQualificationId() int64 {
 	return 0
 }
 
+func (x *CreateQualificationResponse) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+type CreateQualificationResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QualificationId int64
+}
+
+func (b0 CreateQualificationResponse_builder) Build() *CreateQualificationResponse {
+	m0 := &CreateQualificationResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QualificationId = b.QualificationId
+	return m0
+}
+
 type UpdateQualificationRequest struct {
-	state         protoimpl.MessageState        `protogen:"open.v1"`
+	state         protoimpl.MessageState        `protogen:"hybrid.v1"`
 	Qualification *qualifications.Qualification `protobuf:"bytes,1,opt,name=qualification,proto3" json:"qualification,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -367,11 +554,6 @@ func (x *UpdateQualificationRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateQualificationRequest.ProtoReflect.Descriptor instead.
-func (*UpdateQualificationRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *UpdateQualificationRequest) GetQualification() *qualifications.Qualification {
 	if x != nil {
 		return x.Qualification
@@ -379,8 +561,37 @@ func (x *UpdateQualificationRequest) GetQualification() *qualifications.Qualific
 	return nil
 }
 
+func (x *UpdateQualificationRequest) SetQualification(v *qualifications.Qualification) {
+	x.Qualification = v
+}
+
+func (x *UpdateQualificationRequest) HasQualification() bool {
+	if x == nil {
+		return false
+	}
+	return x.Qualification != nil
+}
+
+func (x *UpdateQualificationRequest) ClearQualification() {
+	x.Qualification = nil
+}
+
+type UpdateQualificationRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Qualification *qualifications.Qualification
+}
+
+func (b0 UpdateQualificationRequest_builder) Build() *UpdateQualificationRequest {
+	m0 := &UpdateQualificationRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Qualification = b.Qualification
+	return m0
+}
+
 type UpdateQualificationResponse struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -411,11 +622,6 @@ func (x *UpdateQualificationResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateQualificationResponse.ProtoReflect.Descriptor instead.
-func (*UpdateQualificationResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *UpdateQualificationResponse) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
@@ -423,8 +629,26 @@ func (x *UpdateQualificationResponse) GetQualificationId() int64 {
 	return 0
 }
 
+func (x *UpdateQualificationResponse) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+type UpdateQualificationResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QualificationId int64
+}
+
+func (b0 UpdateQualificationResponse_builder) Build() *UpdateQualificationResponse {
+	m0 := &UpdateQualificationResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QualificationId = b.QualificationId
+	return m0
+}
+
 type DeleteQualificationRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -455,11 +679,6 @@ func (x *DeleteQualificationRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteQualificationRequest.ProtoReflect.Descriptor instead.
-func (*DeleteQualificationRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *DeleteQualificationRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
@@ -467,8 +686,26 @@ func (x *DeleteQualificationRequest) GetQualificationId() int64 {
 	return 0
 }
 
+func (x *DeleteQualificationRequest) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+type DeleteQualificationRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QualificationId int64
+}
+
+func (b0 DeleteQualificationRequest_builder) Build() *DeleteQualificationRequest {
+	m0 := &DeleteQualificationRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QualificationId = b.QualificationId
+	return m0
+}
+
 type DeleteQualificationResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -498,13 +735,20 @@ func (x *DeleteQualificationResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteQualificationResponse.ProtoReflect.Descriptor instead.
-func (*DeleteQualificationResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{9}
+type DeleteQualificationResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteQualificationResponse_builder) Build() *DeleteQualificationResponse {
+	m0 := &DeleteQualificationResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetQualificationAccessRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -535,11 +779,6 @@ func (x *GetQualificationAccessRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetQualificationAccessRequest.ProtoReflect.Descriptor instead.
-func (*GetQualificationAccessRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{10}
-}
-
 func (x *GetQualificationAccessRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
@@ -547,8 +786,26 @@ func (x *GetQualificationAccessRequest) GetQualificationId() int64 {
 	return 0
 }
 
+func (x *GetQualificationAccessRequest) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+type GetQualificationAccessRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QualificationId int64
+}
+
+func (b0 GetQualificationAccessRequest_builder) Build() *GetQualificationAccessRequest {
+	m0 := &GetQualificationAccessRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QualificationId = b.QualificationId
+	return m0
+}
+
 type GetQualificationAccessResponse struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Access        *access.QualificationAccess `protobuf:"bytes,1,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -579,11 +836,6 @@ func (x *GetQualificationAccessResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetQualificationAccessResponse.ProtoReflect.Descriptor instead.
-func (*GetQualificationAccessResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{11}
-}
-
 func (x *GetQualificationAccessResponse) GetAccess() *access.QualificationAccess {
 	if x != nil {
 		return x.Access
@@ -591,8 +843,37 @@ func (x *GetQualificationAccessResponse) GetAccess() *access.QualificationAccess
 	return nil
 }
 
+func (x *GetQualificationAccessResponse) SetAccess(v *access.QualificationAccess) {
+	x.Access = v
+}
+
+func (x *GetQualificationAccessResponse) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *GetQualificationAccessResponse) ClearAccess() {
+	x.Access = nil
+}
+
+type GetQualificationAccessResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Access *access.QualificationAccess
+}
+
+func (b0 GetQualificationAccessResponse_builder) Build() *GetQualificationAccessResponse {
+	m0 := &GetQualificationAccessResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Access = b.Access
+	return m0
+}
+
 type SetQualificationAccessRequest struct {
-	state           protoimpl.MessageState      `protogen:"open.v1"`
+	state           protoimpl.MessageState      `protogen:"hybrid.v1"`
 	QualificationId int64                       `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Access          *access.QualificationAccess `protobuf:"bytes,2,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -624,11 +905,6 @@ func (x *SetQualificationAccessRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetQualificationAccessRequest.ProtoReflect.Descriptor instead.
-func (*SetQualificationAccessRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{12}
-}
-
 func (x *SetQualificationAccessRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
@@ -643,8 +919,43 @@ func (x *SetQualificationAccessRequest) GetAccess() *access.QualificationAccess 
 	return nil
 }
 
+func (x *SetQualificationAccessRequest) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *SetQualificationAccessRequest) SetAccess(v *access.QualificationAccess) {
+	x.Access = v
+}
+
+func (x *SetQualificationAccessRequest) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *SetQualificationAccessRequest) ClearAccess() {
+	x.Access = nil
+}
+
+type SetQualificationAccessRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QualificationId int64
+	Access          *access.QualificationAccess
+}
+
+func (b0 SetQualificationAccessRequest_builder) Build() *SetQualificationAccessRequest {
+	m0 := &SetQualificationAccessRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QualificationId = b.QualificationId
+	x.Access = b.Access
+	return m0
+}
+
 type SetQualificationAccessResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -674,13 +985,20 @@ func (x *SetQualificationAccessResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetQualificationAccessResponse.ProtoReflect.Descriptor instead.
-func (*SetQualificationAccessResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{13}
+type SetQualificationAccessResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 SetQualificationAccessResponse_builder) Build() *SetQualificationAccessResponse {
+	m0 := &SetQualificationAccessResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListQualificationRequestsRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
@@ -714,11 +1032,6 @@ func (x *ListQualificationRequestsRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListQualificationRequestsRequest.ProtoReflect.Descriptor instead.
-func (*ListQualificationRequestsRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ListQualificationRequestsRequest) GetPagination() *database.PaginationRequest {
@@ -756,8 +1069,95 @@ func (x *ListQualificationRequestsRequest) GetUserId() int32 {
 	return 0
 }
 
+func (x *ListQualificationRequestsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListQualificationRequestsRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListQualificationRequestsRequest) SetQualificationId(v int64) {
+	x.QualificationId = &v
+}
+
+func (x *ListQualificationRequestsRequest) SetStatus(v []qualifications.RequestStatus) {
+	x.Status = v
+}
+
+func (x *ListQualificationRequestsRequest) SetUserId(v int32) {
+	x.UserId = &v
+}
+
+func (x *ListQualificationRequestsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListQualificationRequestsRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListQualificationRequestsRequest) HasQualificationId() bool {
+	if x == nil {
+		return false
+	}
+	return x.QualificationId != nil
+}
+
+func (x *ListQualificationRequestsRequest) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
+}
+
+func (x *ListQualificationRequestsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListQualificationRequestsRequest) ClearSort() {
+	x.Sort = nil
+}
+
+func (x *ListQualificationRequestsRequest) ClearQualificationId() {
+	x.QualificationId = nil
+}
+
+func (x *ListQualificationRequestsRequest) ClearUserId() {
+	x.UserId = nil
+}
+
+type ListQualificationRequestsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	QualificationId *int64
+	Status          []qualifications.RequestStatus
+	UserId          *int32
+}
+
+func (b0 ListQualificationRequestsRequest_builder) Build() *ListQualificationRequestsRequest {
+	m0 := &ListQualificationRequestsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.QualificationId = b.QualificationId
+	x.Status = b.Status
+	x.UserId = b.UserId
+	return m0
+}
+
 type ListQualificationRequestsResponse struct {
-	state         protoimpl.MessageState                 `protogen:"open.v1"`
+	state         protoimpl.MessageState                 `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse           `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Requests      []*qualifications.QualificationRequest `protobuf:"bytes,2,rep,name=requests,proto3" json:"requests,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -789,11 +1189,6 @@ func (x *ListQualificationRequestsResponse) ProtoReflect() protoreflect.Message 
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListQualificationRequestsResponse.ProtoReflect.Descriptor instead.
-func (*ListQualificationRequestsResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{15}
-}
-
 func (x *ListQualificationRequestsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -808,8 +1203,43 @@ func (x *ListQualificationRequestsResponse) GetRequests() []*qualifications.Qual
 	return nil
 }
 
+func (x *ListQualificationRequestsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListQualificationRequestsResponse) SetRequests(v []*qualifications.QualificationRequest) {
+	x.Requests = v
+}
+
+func (x *ListQualificationRequestsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListQualificationRequestsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListQualificationRequestsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Requests   []*qualifications.QualificationRequest
+}
+
+func (b0 ListQualificationRequestsResponse_builder) Build() *ListQualificationRequestsResponse {
+	m0 := &ListQualificationRequestsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Requests = b.Requests
+	return m0
+}
+
 type CreateOrUpdateQualificationRequestRequest struct {
-	state         protoimpl.MessageState               `protogen:"open.v1"`
+	state         protoimpl.MessageState               `protogen:"hybrid.v1"`
 	Request       *qualifications.QualificationRequest `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -840,11 +1270,6 @@ func (x *CreateOrUpdateQualificationRequestRequest) ProtoReflect() protoreflect.
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateQualificationRequestRequest.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateQualificationRequestRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{16}
-}
-
 func (x *CreateOrUpdateQualificationRequestRequest) GetRequest() *qualifications.QualificationRequest {
 	if x != nil {
 		return x.Request
@@ -852,8 +1277,37 @@ func (x *CreateOrUpdateQualificationRequestRequest) GetRequest() *qualifications
 	return nil
 }
 
+func (x *CreateOrUpdateQualificationRequestRequest) SetRequest(v *qualifications.QualificationRequest) {
+	x.Request = v
+}
+
+func (x *CreateOrUpdateQualificationRequestRequest) HasRequest() bool {
+	if x == nil {
+		return false
+	}
+	return x.Request != nil
+}
+
+func (x *CreateOrUpdateQualificationRequestRequest) ClearRequest() {
+	x.Request = nil
+}
+
+type CreateOrUpdateQualificationRequestRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Request *qualifications.QualificationRequest
+}
+
+func (b0 CreateOrUpdateQualificationRequestRequest_builder) Build() *CreateOrUpdateQualificationRequestRequest {
+	m0 := &CreateOrUpdateQualificationRequestRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Request = b.Request
+	return m0
+}
+
 type CreateOrUpdateQualificationRequestResponse struct {
-	state         protoimpl.MessageState               `protogen:"open.v1"`
+	state         protoimpl.MessageState               `protogen:"hybrid.v1"`
 	Request       *qualifications.QualificationRequest `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -884,11 +1338,6 @@ func (x *CreateOrUpdateQualificationRequestResponse) ProtoReflect() protoreflect
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateQualificationRequestResponse.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateQualificationRequestResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{17}
-}
-
 func (x *CreateOrUpdateQualificationRequestResponse) GetRequest() *qualifications.QualificationRequest {
 	if x != nil {
 		return x.Request
@@ -896,8 +1345,37 @@ func (x *CreateOrUpdateQualificationRequestResponse) GetRequest() *qualification
 	return nil
 }
 
+func (x *CreateOrUpdateQualificationRequestResponse) SetRequest(v *qualifications.QualificationRequest) {
+	x.Request = v
+}
+
+func (x *CreateOrUpdateQualificationRequestResponse) HasRequest() bool {
+	if x == nil {
+		return false
+	}
+	return x.Request != nil
+}
+
+func (x *CreateOrUpdateQualificationRequestResponse) ClearRequest() {
+	x.Request = nil
+}
+
+type CreateOrUpdateQualificationRequestResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Request *qualifications.QualificationRequest
+}
+
+func (b0 CreateOrUpdateQualificationRequestResponse_builder) Build() *CreateOrUpdateQualificationRequestResponse {
+	m0 := &CreateOrUpdateQualificationRequestResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Request = b.Request
+	return m0
+}
+
 type DeleteQualificationReqRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	UserId          int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -929,11 +1407,6 @@ func (x *DeleteQualificationReqRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteQualificationReqRequest.ProtoReflect.Descriptor instead.
-func (*DeleteQualificationReqRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{18}
-}
-
 func (x *DeleteQualificationReqRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
@@ -948,8 +1421,32 @@ func (x *DeleteQualificationReqRequest) GetUserId() int32 {
 	return 0
 }
 
+func (x *DeleteQualificationReqRequest) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *DeleteQualificationReqRequest) SetUserId(v int32) {
+	x.UserId = v
+}
+
+type DeleteQualificationReqRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QualificationId int64
+	UserId          int32
+}
+
+func (b0 DeleteQualificationReqRequest_builder) Build() *DeleteQualificationReqRequest {
+	m0 := &DeleteQualificationReqRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QualificationId = b.QualificationId
+	x.UserId = b.UserId
+	return m0
+}
+
 type DeleteQualificationReqResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -979,13 +1476,20 @@ func (x *DeleteQualificationReqResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteQualificationReqResponse.ProtoReflect.Descriptor instead.
-func (*DeleteQualificationReqResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{19}
+type DeleteQualificationReqResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteQualificationReqResponse_builder) Build() *DeleteQualificationReqResponse {
+	m0 := &DeleteQualificationReqResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListQualificationsResultsRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
@@ -1019,11 +1523,6 @@ func (x *ListQualificationsResultsRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListQualificationsResultsRequest.ProtoReflect.Descriptor instead.
-func (*ListQualificationsResultsRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ListQualificationsResultsRequest) GetPagination() *database.PaginationRequest {
@@ -1061,8 +1560,95 @@ func (x *ListQualificationsResultsRequest) GetUserId() int32 {
 	return 0
 }
 
+func (x *ListQualificationsResultsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListQualificationsResultsRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListQualificationsResultsRequest) SetQualificationId(v int64) {
+	x.QualificationId = &v
+}
+
+func (x *ListQualificationsResultsRequest) SetStatus(v []qualifications.ResultStatus) {
+	x.Status = v
+}
+
+func (x *ListQualificationsResultsRequest) SetUserId(v int32) {
+	x.UserId = &v
+}
+
+func (x *ListQualificationsResultsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListQualificationsResultsRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListQualificationsResultsRequest) HasQualificationId() bool {
+	if x == nil {
+		return false
+	}
+	return x.QualificationId != nil
+}
+
+func (x *ListQualificationsResultsRequest) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
+}
+
+func (x *ListQualificationsResultsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListQualificationsResultsRequest) ClearSort() {
+	x.Sort = nil
+}
+
+func (x *ListQualificationsResultsRequest) ClearQualificationId() {
+	x.QualificationId = nil
+}
+
+func (x *ListQualificationsResultsRequest) ClearUserId() {
+	x.UserId = nil
+}
+
+type ListQualificationsResultsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	QualificationId *int64
+	Status          []qualifications.ResultStatus
+	UserId          *int32
+}
+
+func (b0 ListQualificationsResultsRequest_builder) Build() *ListQualificationsResultsRequest {
+	m0 := &ListQualificationsResultsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.QualificationId = b.QualificationId
+	x.Status = b.Status
+	x.UserId = b.UserId
+	return m0
+}
+
 type ListQualificationsResultsResponse struct {
-	state         protoimpl.MessageState                `protogen:"open.v1"`
+	state         protoimpl.MessageState                `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse          `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Results       []*qualifications.QualificationResult `protobuf:"bytes,2,rep,name=results,proto3" json:"results,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1094,11 +1680,6 @@ func (x *ListQualificationsResultsResponse) ProtoReflect() protoreflect.Message 
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListQualificationsResultsResponse.ProtoReflect.Descriptor instead.
-func (*ListQualificationsResultsResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{21}
-}
-
 func (x *ListQualificationsResultsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -1113,8 +1694,43 @@ func (x *ListQualificationsResultsResponse) GetResults() []*qualifications.Quali
 	return nil
 }
 
+func (x *ListQualificationsResultsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListQualificationsResultsResponse) SetResults(v []*qualifications.QualificationResult) {
+	x.Results = v
+}
+
+func (x *ListQualificationsResultsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListQualificationsResultsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListQualificationsResultsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Results    []*qualifications.QualificationResult
+}
+
+func (b0 ListQualificationsResultsResponse_builder) Build() *ListQualificationsResultsResponse {
+	m0 := &ListQualificationsResultsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Results = b.Results
+	return m0
+}
+
 type CreateOrUpdateQualificationResultRequest struct {
-	state         protoimpl.MessageState              `protogen:"open.v1"`
+	state         protoimpl.MessageState              `protogen:"hybrid.v1"`
 	Result        *qualifications.QualificationResult `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
 	Grading       *exam.ExamGrading                   `protobuf:"bytes,2,opt,name=grading,proto3,oneof" json:"grading,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1146,11 +1762,6 @@ func (x *CreateOrUpdateQualificationResultRequest) ProtoReflect() protoreflect.M
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateQualificationResultRequest.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateQualificationResultRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{22}
-}
-
 func (x *CreateOrUpdateQualificationResultRequest) GetResult() *qualifications.QualificationResult {
 	if x != nil {
 		return x.Result
@@ -1165,8 +1776,54 @@ func (x *CreateOrUpdateQualificationResultRequest) GetGrading() *exam.ExamGradin
 	return nil
 }
 
+func (x *CreateOrUpdateQualificationResultRequest) SetResult(v *qualifications.QualificationResult) {
+	x.Result = v
+}
+
+func (x *CreateOrUpdateQualificationResultRequest) SetGrading(v *exam.ExamGrading) {
+	x.Grading = v
+}
+
+func (x *CreateOrUpdateQualificationResultRequest) HasResult() bool {
+	if x == nil {
+		return false
+	}
+	return x.Result != nil
+}
+
+func (x *CreateOrUpdateQualificationResultRequest) HasGrading() bool {
+	if x == nil {
+		return false
+	}
+	return x.Grading != nil
+}
+
+func (x *CreateOrUpdateQualificationResultRequest) ClearResult() {
+	x.Result = nil
+}
+
+func (x *CreateOrUpdateQualificationResultRequest) ClearGrading() {
+	x.Grading = nil
+}
+
+type CreateOrUpdateQualificationResultRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Result  *qualifications.QualificationResult
+	Grading *exam.ExamGrading
+}
+
+func (b0 CreateOrUpdateQualificationResultRequest_builder) Build() *CreateOrUpdateQualificationResultRequest {
+	m0 := &CreateOrUpdateQualificationResultRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Result = b.Result
+	x.Grading = b.Grading
+	return m0
+}
+
 type CreateOrUpdateQualificationResultResponse struct {
-	state         protoimpl.MessageState              `protogen:"open.v1"`
+	state         protoimpl.MessageState              `protogen:"hybrid.v1"`
 	Result        *qualifications.QualificationResult `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1197,11 +1854,6 @@ func (x *CreateOrUpdateQualificationResultResponse) ProtoReflect() protoreflect.
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateQualificationResultResponse.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateQualificationResultResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{23}
-}
-
 func (x *CreateOrUpdateQualificationResultResponse) GetResult() *qualifications.QualificationResult {
 	if x != nil {
 		return x.Result
@@ -1209,8 +1861,37 @@ func (x *CreateOrUpdateQualificationResultResponse) GetResult() *qualifications.
 	return nil
 }
 
+func (x *CreateOrUpdateQualificationResultResponse) SetResult(v *qualifications.QualificationResult) {
+	x.Result = v
+}
+
+func (x *CreateOrUpdateQualificationResultResponse) HasResult() bool {
+	if x == nil {
+		return false
+	}
+	return x.Result != nil
+}
+
+func (x *CreateOrUpdateQualificationResultResponse) ClearResult() {
+	x.Result = nil
+}
+
+type CreateOrUpdateQualificationResultResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Result *qualifications.QualificationResult
+}
+
+func (b0 CreateOrUpdateQualificationResultResponse_builder) Build() *CreateOrUpdateQualificationResultResponse {
+	m0 := &CreateOrUpdateQualificationResultResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Result = b.Result
+	return m0
+}
+
 type DeleteQualificationResultRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	ResultId      int64                  `protobuf:"varint,1,opt,name=result_id,json=resultId,proto3" json:"result_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1241,11 +1922,6 @@ func (x *DeleteQualificationResultRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteQualificationResultRequest.ProtoReflect.Descriptor instead.
-func (*DeleteQualificationResultRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{24}
-}
-
 func (x *DeleteQualificationResultRequest) GetResultId() int64 {
 	if x != nil {
 		return x.ResultId
@@ -1253,8 +1929,26 @@ func (x *DeleteQualificationResultRequest) GetResultId() int64 {
 	return 0
 }
 
+func (x *DeleteQualificationResultRequest) SetResultId(v int64) {
+	x.ResultId = v
+}
+
+type DeleteQualificationResultRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ResultId int64
+}
+
+func (b0 DeleteQualificationResultRequest_builder) Build() *DeleteQualificationResultRequest {
+	m0 := &DeleteQualificationResultRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ResultId = b.ResultId
+	return m0
+}
+
 type DeleteQualificationResultResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1284,13 +1978,20 @@ func (x *DeleteQualificationResultResponse) ProtoReflect() protoreflect.Message 
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteQualificationResultResponse.ProtoReflect.Descriptor instead.
-func (*DeleteQualificationResultResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{25}
+type DeleteQualificationResultResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteQualificationResultResponse_builder) Build() *DeleteQualificationResultResponse {
+	m0 := &DeleteQualificationResultResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetExamInfoRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -1321,11 +2022,6 @@ func (x *GetExamInfoRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetExamInfoRequest.ProtoReflect.Descriptor instead.
-func (*GetExamInfoRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{26}
-}
-
 func (x *GetExamInfoRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
@@ -1333,8 +2029,26 @@ func (x *GetExamInfoRequest) GetQualificationId() int64 {
 	return 0
 }
 
+func (x *GetExamInfoRequest) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+type GetExamInfoRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QualificationId int64
+}
+
+func (b0 GetExamInfoRequest_builder) Build() *GetExamInfoRequest {
+	m0 := &GetExamInfoRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QualificationId = b.QualificationId
+	return m0
+}
+
 type GetExamInfoResponse struct {
-	state         protoimpl.MessageState             `protogen:"open.v1"`
+	state         protoimpl.MessageState             `protogen:"hybrid.v1"`
 	Qualification *qualifications.QualificationShort `protobuf:"bytes,1,opt,name=qualification,proto3" json:"qualification,omitempty"`
 	QuestionCount int64                              `protobuf:"varint,2,opt,name=question_count,json=questionCount,proto3" json:"question_count,omitempty"`
 	ExamUser      *exam.ExamUser                     `protobuf:"bytes,3,opt,name=exam_user,json=examUser,proto3,oneof" json:"exam_user,omitempty"`
@@ -1367,11 +2081,6 @@ func (x *GetExamInfoResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetExamInfoResponse.ProtoReflect.Descriptor instead.
-func (*GetExamInfoResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{27}
-}
-
 func (x *GetExamInfoResponse) GetQualification() *qualifications.QualificationShort {
 	if x != nil {
 		return x.Qualification
@@ -1393,8 +2102,60 @@ func (x *GetExamInfoResponse) GetExamUser() *exam.ExamUser {
 	return nil
 }
 
+func (x *GetExamInfoResponse) SetQualification(v *qualifications.QualificationShort) {
+	x.Qualification = v
+}
+
+func (x *GetExamInfoResponse) SetQuestionCount(v int64) {
+	x.QuestionCount = v
+}
+
+func (x *GetExamInfoResponse) SetExamUser(v *exam.ExamUser) {
+	x.ExamUser = v
+}
+
+func (x *GetExamInfoResponse) HasQualification() bool {
+	if x == nil {
+		return false
+	}
+	return x.Qualification != nil
+}
+
+func (x *GetExamInfoResponse) HasExamUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.ExamUser != nil
+}
+
+func (x *GetExamInfoResponse) ClearQualification() {
+	x.Qualification = nil
+}
+
+func (x *GetExamInfoResponse) ClearExamUser() {
+	x.ExamUser = nil
+}
+
+type GetExamInfoResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Qualification *qualifications.QualificationShort
+	QuestionCount int64
+	ExamUser      *exam.ExamUser
+}
+
+func (b0 GetExamInfoResponse_builder) Build() *GetExamInfoResponse {
+	m0 := &GetExamInfoResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Qualification = b.Qualification
+	x.QuestionCount = b.QuestionCount
+	x.ExamUser = b.ExamUser
+	return m0
+}
+
 type TakeExamRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Cancel          *bool                  `protobuf:"varint,2,opt,name=cancel,proto3,oneof" json:"cancel,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -1426,11 +2187,6 @@ func (x *TakeExamRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TakeExamRequest.ProtoReflect.Descriptor instead.
-func (*TakeExamRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{28}
-}
-
 func (x *TakeExamRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
@@ -1445,8 +2201,43 @@ func (x *TakeExamRequest) GetCancel() bool {
 	return false
 }
 
+func (x *TakeExamRequest) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *TakeExamRequest) SetCancel(v bool) {
+	x.Cancel = &v
+}
+
+func (x *TakeExamRequest) HasCancel() bool {
+	if x == nil {
+		return false
+	}
+	return x.Cancel != nil
+}
+
+func (x *TakeExamRequest) ClearCancel() {
+	x.Cancel = nil
+}
+
+type TakeExamRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QualificationId int64
+	Cancel          *bool
+}
+
+func (b0 TakeExamRequest_builder) Build() *TakeExamRequest {
+	m0 := &TakeExamRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QualificationId = b.QualificationId
+	x.Cancel = b.Cancel
+	return m0
+}
+
 type TakeExamResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Exam          *exam.ExamQuestions    `protobuf:"bytes,1,opt,name=exam,proto3" json:"exam,omitempty"`
 	ExamUser      *exam.ExamUser         `protobuf:"bytes,2,opt,name=exam_user,json=examUser,proto3" json:"exam_user,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1478,11 +2269,6 @@ func (x *TakeExamResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TakeExamResponse.ProtoReflect.Descriptor instead.
-func (*TakeExamResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{29}
-}
-
 func (x *TakeExamResponse) GetExam() *exam.ExamQuestions {
 	if x != nil {
 		return x.Exam
@@ -1497,8 +2283,54 @@ func (x *TakeExamResponse) GetExamUser() *exam.ExamUser {
 	return nil
 }
 
+func (x *TakeExamResponse) SetExam(v *exam.ExamQuestions) {
+	x.Exam = v
+}
+
+func (x *TakeExamResponse) SetExamUser(v *exam.ExamUser) {
+	x.ExamUser = v
+}
+
+func (x *TakeExamResponse) HasExam() bool {
+	if x == nil {
+		return false
+	}
+	return x.Exam != nil
+}
+
+func (x *TakeExamResponse) HasExamUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.ExamUser != nil
+}
+
+func (x *TakeExamResponse) ClearExam() {
+	x.Exam = nil
+}
+
+func (x *TakeExamResponse) ClearExamUser() {
+	x.ExamUser = nil
+}
+
+type TakeExamResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Exam     *exam.ExamQuestions
+	ExamUser *exam.ExamUser
+}
+
+func (b0 TakeExamResponse_builder) Build() *TakeExamResponse {
+	m0 := &TakeExamResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Exam = b.Exam
+	x.ExamUser = b.ExamUser
+	return m0
+}
+
 type SubmitExamRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Responses       *exam.ExamResponses    `protobuf:"bytes,2,opt,name=responses,proto3" json:"responses,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -1530,11 +2362,6 @@ func (x *SubmitExamRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SubmitExamRequest.ProtoReflect.Descriptor instead.
-func (*SubmitExamRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{30}
-}
-
 func (x *SubmitExamRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
@@ -1549,8 +2376,43 @@ func (x *SubmitExamRequest) GetResponses() *exam.ExamResponses {
 	return nil
 }
 
+func (x *SubmitExamRequest) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *SubmitExamRequest) SetResponses(v *exam.ExamResponses) {
+	x.Responses = v
+}
+
+func (x *SubmitExamRequest) HasResponses() bool {
+	if x == nil {
+		return false
+	}
+	return x.Responses != nil
+}
+
+func (x *SubmitExamRequest) ClearResponses() {
+	x.Responses = nil
+}
+
+type SubmitExamRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QualificationId int64
+	Responses       *exam.ExamResponses
+}
+
+func (b0 SubmitExamRequest_builder) Build() *SubmitExamRequest {
+	m0 := &SubmitExamRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QualificationId = b.QualificationId
+	x.Responses = b.Responses
+	return m0
+}
+
 type SubmitExamResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Duration      *durationpb.Duration   `protobuf:"bytes,1,opt,name=duration,proto3" json:"duration,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1581,11 +2443,6 @@ func (x *SubmitExamResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SubmitExamResponse.ProtoReflect.Descriptor instead.
-func (*SubmitExamResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{31}
-}
-
 func (x *SubmitExamResponse) GetDuration() *durationpb.Duration {
 	if x != nil {
 		return x.Duration
@@ -1593,8 +2450,37 @@ func (x *SubmitExamResponse) GetDuration() *durationpb.Duration {
 	return nil
 }
 
+func (x *SubmitExamResponse) SetDuration(v *durationpb.Duration) {
+	x.Duration = v
+}
+
+func (x *SubmitExamResponse) HasDuration() bool {
+	if x == nil {
+		return false
+	}
+	return x.Duration != nil
+}
+
+func (x *SubmitExamResponse) ClearDuration() {
+	x.Duration = nil
+}
+
+type SubmitExamResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Duration *durationpb.Duration
+}
+
+func (b0 SubmitExamResponse_builder) Build() *SubmitExamResponse {
+	m0 := &SubmitExamResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Duration = b.Duration
+	return m0
+}
+
 type GetUserExamRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	UserId          int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -1626,11 +2512,6 @@ func (x *GetUserExamRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetUserExamRequest.ProtoReflect.Descriptor instead.
-func (*GetUserExamRequest) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{32}
-}
-
 func (x *GetUserExamRequest) GetQualificationId() int64 {
 	if x != nil {
 		return x.QualificationId
@@ -1645,8 +2526,32 @@ func (x *GetUserExamRequest) GetUserId() int32 {
 	return 0
 }
 
+func (x *GetUserExamRequest) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *GetUserExamRequest) SetUserId(v int32) {
+	x.UserId = v
+}
+
+type GetUserExamRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	QualificationId int64
+	UserId          int32
+}
+
+func (b0 GetUserExamRequest_builder) Build() *GetUserExamRequest {
+	m0 := &GetUserExamRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.QualificationId = b.QualificationId
+	x.UserId = b.UserId
+	return m0
+}
+
 type GetUserExamResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Exam          *exam.ExamQuestions    `protobuf:"bytes,1,opt,name=exam,proto3" json:"exam,omitempty"`
 	ExamUser      *exam.ExamUser         `protobuf:"bytes,2,opt,name=exam_user,json=examUser,proto3" json:"exam_user,omitempty"`
 	Responses     *exam.ExamResponses    `protobuf:"bytes,3,opt,name=responses,proto3" json:"responses,omitempty"`
@@ -1680,11 +2585,6 @@ func (x *GetUserExamResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetUserExamResponse.ProtoReflect.Descriptor instead.
-func (*GetUserExamResponse) Descriptor() ([]byte, []int) {
-	return file_services_qualifications_qualifications_proto_rawDescGZIP(), []int{33}
-}
-
 func (x *GetUserExamResponse) GetExam() *exam.ExamQuestions {
 	if x != nil {
 		return x.Exam
@@ -1711,6 +2611,86 @@ func (x *GetUserExamResponse) GetGrading() *exam.ExamGrading {
 		return x.Grading
 	}
 	return nil
+}
+
+func (x *GetUserExamResponse) SetExam(v *exam.ExamQuestions) {
+	x.Exam = v
+}
+
+func (x *GetUserExamResponse) SetExamUser(v *exam.ExamUser) {
+	x.ExamUser = v
+}
+
+func (x *GetUserExamResponse) SetResponses(v *exam.ExamResponses) {
+	x.Responses = v
+}
+
+func (x *GetUserExamResponse) SetGrading(v *exam.ExamGrading) {
+	x.Grading = v
+}
+
+func (x *GetUserExamResponse) HasExam() bool {
+	if x == nil {
+		return false
+	}
+	return x.Exam != nil
+}
+
+func (x *GetUserExamResponse) HasExamUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.ExamUser != nil
+}
+
+func (x *GetUserExamResponse) HasResponses() bool {
+	if x == nil {
+		return false
+	}
+	return x.Responses != nil
+}
+
+func (x *GetUserExamResponse) HasGrading() bool {
+	if x == nil {
+		return false
+	}
+	return x.Grading != nil
+}
+
+func (x *GetUserExamResponse) ClearExam() {
+	x.Exam = nil
+}
+
+func (x *GetUserExamResponse) ClearExamUser() {
+	x.ExamUser = nil
+}
+
+func (x *GetUserExamResponse) ClearResponses() {
+	x.Responses = nil
+}
+
+func (x *GetUserExamResponse) ClearGrading() {
+	x.Grading = nil
+}
+
+type GetUserExamResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Exam      *exam.ExamQuestions
+	ExamUser  *exam.ExamUser
+	Responses *exam.ExamResponses
+	Grading   *exam.ExamGrading
+}
+
+func (b0 GetUserExamResponse_builder) Build() *GetUserExamResponse {
+	m0 := &GetUserExamResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Exam = b.Exam
+	x.ExamUser = b.ExamUser
+	x.Responses = b.Responses
+	x.Grading = b.Grading
+	return m0
 }
 
 var File_services_qualifications_qualifications_proto protoreflect.FileDescriptor
@@ -1863,18 +2843,6 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\vGetUserExam\x12+.services.qualifications.GetUserExamRequest\x1a,.services.qualifications.GetUserExamResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12r\n" +
 	"\n" +
 	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1b\xd2\xf3\x18\x17\b\x01\x1a\x13UpdateQualification(\x01\x1a\x1c\xea\xf3\x18\x18\bP\x12\x14i-mdi-school-outlineBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
-
-var (
-	file_services_qualifications_qualifications_proto_rawDescOnce sync.Once
-	file_services_qualifications_qualifications_proto_rawDescData []byte
-)
-
-func file_services_qualifications_qualifications_proto_rawDescGZIP() []byte {
-	file_services_qualifications_qualifications_proto_rawDescOnce.Do(func() {
-		file_services_qualifications_qualifications_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_qualifications_qualifications_proto_rawDesc), len(file_services_qualifications_qualifications_proto_rawDesc)))
-	})
-	return file_services_qualifications_qualifications_proto_rawDescData
-}
 
 var file_services_qualifications_qualifications_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
 var file_services_qualifications_qualifications_proto_goTypes = []any{

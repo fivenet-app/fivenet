@@ -17,9 +17,11 @@ option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/
 
 message ListCalendarsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  // Search params
   bool only_public = 2;
   optional resources.calendar.access.AccessLevel min_access_level = 3;
   optional resources.timestamp.Timestamp after = 4;
+  repeated int64 calendar_ids = 5;
 }
 
 message ListCalendarsResponse {

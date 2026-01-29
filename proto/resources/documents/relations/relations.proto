@@ -3,7 +3,6 @@ syntax = "proto3";
 package resources.documents.relations;
 
 import "buf/validate/validate.proto";
-import "codegen/sanitizer/sanitizer.proto";
 import "resources/documents/documents.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";

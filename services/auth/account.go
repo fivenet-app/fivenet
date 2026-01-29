@@ -21,12 +21,12 @@ func (s *Server) GetAccountInfo(
 	ctx context.Context,
 	req *pbauth.GetAccountInfoRequest,
 ) (*pbauth.GetAccountInfoResponse, error) {
-	token, err := auth.GetTokenFromGRPCContext(ctx)
+	token, err := auth.GetAccTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
 
-	claims, err := s.tm.ParseWithClaims(token)
+	claims, err := s.tm.ParseAccToken(token)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}

@@ -241,10 +241,14 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	wrapperGrpc := grpcws.WrapServer(p.GRPCSrv,
 		grpcws.WithAllowedRequestHeaders(allowedHeaders),
 		grpcws.WithWebsocketsMessageReadLimit(1*1024*1024), // 1 MB
+		grpcws.WithValidateTokenFunc(func(token string) (bool, error) {
+			claims, err := p.TokenMgr.ParseUserToken(token)
+			return claims != nil && claims.UserID > 0, err
+		}),
 	)
 	e.GET("/api/grpcws", func(c *gin.Context) {
-		// Check if the request has a session cookie
-		if _, err := c.Cookie("fivenet_token"); err != nil {
+		// Check if the request has at least an acc session cookie
+		if _, err := c.Cookie(auth.AccCookieName); err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}

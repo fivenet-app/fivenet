@@ -12,7 +12,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -34,7 +33,7 @@ func (s *Server) ListTimeclock(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tColleague := tables.User().AS("colleague")
+	tColleague := table.FivenetUser.AS("colleague")
 
 	condition := tTimeClock.Job.EQ(mysql.String(userInfo.GetJob()))
 	statsCondition := tTimeClock.Job.EQ(mysql.String(userInfo.GetJob()))
@@ -468,7 +467,7 @@ func (s *Server) ListInactiveEmployees(
 ) (*pbjobs.ListInactiveEmployeesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tColleague := tables.User().AS("colleague")
+	tColleague := table.FivenetUser.AS("colleague")
 
 	condition := mysql.AND(
 		tTimeClock.Job.EQ(mysql.String(userInfo.GetJob())),

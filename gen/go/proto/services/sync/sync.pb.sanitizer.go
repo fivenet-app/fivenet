@@ -14,9 +14,17 @@ func (m *AddActivityRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: ColleagueActivity
+	// Field: AccountUpdate
 	switch v := m.Activity.(type) {
 
+	case *AddActivityRequest_AccountUpdate:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: ColleagueActivity
 	case *AddActivityRequest_ColleagueActivity:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
@@ -152,6 +160,15 @@ func (m *GetStatusResponse) Sanitize() error {
 		return nil
 	}
 
+	// Field: Accounts
+	if m.Accounts != nil {
+		if v, ok := any(m.GetAccounts()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Jobs
 	if m.Jobs != nil {
 		if v, ok := any(m.GetJobs()).(interface{ Sanitize() error }); ok {
@@ -231,9 +248,17 @@ func (m *SendDataRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Jobs
+	// Field: Accounts
 	switch v := m.Data.(type) {
 
+	case *SendDataRequest_Accounts:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Jobs
 	case *SendDataRequest_Jobs:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {

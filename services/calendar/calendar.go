@@ -11,7 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	permscalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar/perms"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -27,7 +26,7 @@ func (s *Server) ListCalendars(
 ) (*pbcalendar.ListCalendarsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	subsCondition := tCalendar.ID.IN(tCalendarSubs.
@@ -69,6 +68,9 @@ func (s *Server) ListCalendars(
 		accessExists = mysql.Bool(true)
 	}
 
+	orderBys := []mysql.OrderByClause{
+		tCalendar.Name.ASC(),
+	}
 	condition := mysql.AND(
 		tCalendar.DeletedAt.IS_NULL(),
 		mysql.OR(
@@ -89,6 +91,16 @@ func (s *Server) ListCalendars(
 		condition = condition.AND(
 			tCalendar.UpdatedAt.GT_EQ(mysql.TimestampT(req.GetAfter().AsTime())),
 		)
+	}
+
+	if len(req.GetCalendarIds()) > 0 {
+		calendarIds := []mysql.Expression{}
+		for _, v := range req.GetCalendarIds() {
+			calendarIds = append(calendarIds, mysql.Int64(v))
+		}
+
+		// Make sure to sort by the user IDs if provided
+		orderBys = append(orderBys, tCalendar.ID.IN(calendarIds...).DESC())
 	}
 
 	countStmt := tCalendar.
@@ -164,11 +176,12 @@ func (s *Server) ListCalendars(
 			),
 		).
 		WHERE(condition).
+		ORDER_BY(orderBys...).
 		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 
 	if req.GetAfter() != nil {
-		stmt.ORDER_BY(tCalendar.UpdatedAt.GT_EQ(mysql.TimestampT(req.GetAfter().AsTime())))
+		stmt = stmt.ORDER_BY(tCalendar.UpdatedAt.GT_EQ(mysql.TimestampT(req.GetAfter().AsTime())))
 	}
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Calendars); err != nil {
@@ -460,15 +473,16 @@ func (s *Server) UpdateCalendar(
 			tCalendar.Color,
 		).
 		SET(
-			tCalendar.Name.SET(mysql.String(req.GetCalendar().GetName())),
-			tCalendar.Description.SET(mysql.String(req.GetCalendar().GetDescription())),
-			tCalendar.Public.SET(mysql.Bool(req.GetCalendar().GetPublic())),
-			tCalendar.Closed.SET(mysql.Bool(req.GetCalendar().GetClosed())),
-			tCalendar.Color.SET(mysql.String(req.GetCalendar().GetColor())),
+			req.GetCalendar().GetName(),
+			req.GetCalendar().GetDescription(),
+			req.GetCalendar().GetPublic(),
+			req.GetCalendar().GetClosed(),
+			req.GetCalendar().GetColor(),
 		).
 		WHERE(mysql.AND(
 			tCalendar.ID.EQ(mysql.Int64(req.GetCalendar().GetId())),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -539,7 +553,8 @@ func (s *Server) DeleteCalendar(
 		SET(
 			tCalendar.DeletedAt.SET(deletedAtTime),
 		).
-		WHERE(tCalendar.ID.EQ(mysql.Int64(req.GetCalendarId())))
+		WHERE(tCalendar.ID.EQ(mysql.Int64(req.GetCalendarId()))).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -555,7 +570,7 @@ func (s *Server) getCalendar(
 	userInfo *userinfo.UserInfo,
 	condition mysql.BoolExpression,
 ) (*calendar.Calendar, error) {
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tCalendar.

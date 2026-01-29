@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/documents/comment/comment.proto
 
+//go:build !protoopaque
+
 package documentscomment
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -26,7 +27,7 @@ const (
 )
 
 type Comment struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -63,11 +64,6 @@ func (x *Comment) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Comment.ProtoReflect.Descriptor instead.
-func (*Comment) Descriptor() ([]byte, []int) {
-	return file_resources_documents_comment_comment_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Comment) GetId() int64 {
@@ -133,6 +129,138 @@ func (x *Comment) GetCreatorJob() string {
 	return ""
 }
 
+func (x *Comment) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Comment) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Comment) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *Comment) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *Comment) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *Comment) SetContent(v *content.Content) {
+	x.Content = v
+}
+
+func (x *Comment) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *Comment) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *Comment) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *Comment) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Comment) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Comment) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *Comment) HasContent() bool {
+	if x == nil {
+		return false
+	}
+	return x.Content != nil
+}
+
+func (x *Comment) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *Comment) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *Comment) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Comment) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Comment) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *Comment) ClearContent() {
+	x.Content = nil
+}
+
+func (x *Comment) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *Comment) ClearCreator() {
+	x.Creator = nil
+}
+
+type Comment_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id         int64
+	CreatedAt  *timestamp.Timestamp
+	UpdatedAt  *timestamp.Timestamp
+	DeletedAt  *timestamp.Timestamp
+	DocumentId int64
+	Content    *content.Content
+	CreatorId  *int32
+	Creator    *short.UserShort
+	CreatorJob string
+}
+
+func (b0 Comment_builder) Build() *Comment {
+	m0 := &Comment{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	x.DocumentId = b.DocumentId
+	x.Content = b.Content
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	return m0
+}
+
 var File_resources_documents_comment_comment_proto protoreflect.FileDescriptor
 
 const file_resources_documents_comment_comment_proto_rawDesc = "" +
@@ -161,18 +289,6 @@ const file_resources_documents_comment_comment_proto_rawDesc = "" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB`Z^github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/comment;documentscommentb\x06proto3"
-
-var (
-	file_resources_documents_comment_comment_proto_rawDescOnce sync.Once
-	file_resources_documents_comment_comment_proto_rawDescData []byte
-)
-
-func file_resources_documents_comment_comment_proto_rawDescGZIP() []byte {
-	file_resources_documents_comment_comment_proto_rawDescOnce.Do(func() {
-		file_resources_documents_comment_comment_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_comment_comment_proto_rawDesc), len(file_resources_documents_comment_comment_proto_rawDesc)))
-	})
-	return file_resources_documents_comment_comment_proto_rawDescData
-}
 
 var file_resources_documents_comment_comment_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_documents_comment_comment_proto_goTypes = []any{

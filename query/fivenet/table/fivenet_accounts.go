@@ -17,18 +17,16 @@ type fivenetAccountsTable struct {
 	mysql.Table
 
 	// Columns
-	ID               mysql.ColumnInteger
-	CreatedAt        mysql.ColumnTimestamp
-	UpdatedAt        mysql.ColumnTimestamp
-	Enabled          mysql.ColumnBool
-	Username         mysql.ColumnString
-	Password         mysql.ColumnString
-	License          mysql.ColumnString
-	RegToken         mysql.ColumnString
-	OverrideJob      mysql.ColumnString
-	OverrideJobGrade mysql.ColumnInteger
-	Superuser        mysql.ColumnBool
-	LastChar         mysql.ColumnInteger
+	ID        mysql.ColumnInteger
+	CreatedAt mysql.ColumnTimestamp
+	UpdatedAt mysql.ColumnTimestamp
+	Enabled   mysql.ColumnBool
+	Username  mysql.ColumnString
+	Password  mysql.ColumnString
+	License   mysql.ColumnString
+	Groups    mysql.ColumnString
+	RegToken  mysql.ColumnString
+	LastChar  mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -70,39 +68,35 @@ func newFivenetAccountsTable(schemaName, tableName, alias string) *FivenetAccoun
 
 func newFivenetAccountsTableImpl(schemaName, tableName, alias string) fivenetAccountsTable {
 	var (
-		IDColumn               = mysql.IntegerColumn("id")
-		CreatedAtColumn        = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn        = mysql.TimestampColumn("updated_at")
-		EnabledColumn          = mysql.BoolColumn("enabled")
-		UsernameColumn         = mysql.StringColumn("username")
-		PasswordColumn         = mysql.StringColumn("password")
-		LicenseColumn          = mysql.StringColumn("license")
-		RegTokenColumn         = mysql.StringColumn("reg_token")
-		OverrideJobColumn      = mysql.StringColumn("override_job")
-		OverrideJobGradeColumn = mysql.IntegerColumn("override_job_grade")
-		SuperuserColumn        = mysql.BoolColumn("superuser")
-		LastCharColumn         = mysql.IntegerColumn("last_char")
-		allColumns             = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn, OverrideJobColumn, OverrideJobGradeColumn, SuperuserColumn, LastCharColumn}
-		mutableColumns         = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn, OverrideJobColumn, OverrideJobGradeColumn, SuperuserColumn, LastCharColumn}
-		defaultColumns         = mysql.ColumnList{CreatedAtColumn, EnabledColumn, SuperuserColumn}
+		IDColumn        = mysql.IntegerColumn("id")
+		CreatedAtColumn = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn = mysql.TimestampColumn("updated_at")
+		EnabledColumn   = mysql.BoolColumn("enabled")
+		UsernameColumn  = mysql.StringColumn("username")
+		PasswordColumn  = mysql.StringColumn("password")
+		LicenseColumn   = mysql.StringColumn("license")
+		GroupsColumn    = mysql.StringColumn("groups")
+		RegTokenColumn  = mysql.StringColumn("reg_token")
+		LastCharColumn  = mysql.IntegerColumn("last_char")
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, GroupsColumn, RegTokenColumn, LastCharColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, GroupsColumn, RegTokenColumn, LastCharColumn}
+		defaultColumns  = mysql.ColumnList{CreatedAtColumn, EnabledColumn}
 	)
 
 	return fivenetAccountsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:               IDColumn,
-		CreatedAt:        CreatedAtColumn,
-		UpdatedAt:        UpdatedAtColumn,
-		Enabled:          EnabledColumn,
-		Username:         UsernameColumn,
-		Password:         PasswordColumn,
-		License:          LicenseColumn,
-		RegToken:         RegTokenColumn,
-		OverrideJob:      OverrideJobColumn,
-		OverrideJobGrade: OverrideJobGradeColumn,
-		Superuser:        SuperuserColumn,
-		LastChar:         LastCharColumn,
+		ID:        IDColumn,
+		CreatedAt: CreatedAtColumn,
+		UpdatedAt: UpdatedAtColumn,
+		Enabled:   EnabledColumn,
+		Username:  UsernameColumn,
+		Password:  PasswordColumn,
+		License:   LicenseColumn,
+		Groups:    GroupsColumn,
+		RegToken:  RegTokenColumn,
+		LastChar:  LastCharColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

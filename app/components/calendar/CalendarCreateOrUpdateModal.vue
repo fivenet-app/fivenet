@@ -11,6 +11,7 @@ import { useCalendarStore } from '~/stores/calendar';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateCalendarResponse, UpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
+import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 
 const props = defineProps<{
     calendarId?: number;
@@ -38,7 +39,7 @@ const canDo = computed(() => ({
 
 const schema = z.object({
     name: z.coerce.string().min(3).max(255),
-    description: z.coerce.string().max(512).optional(),
+    description: z.coerce.string().optional(),
     private: z.coerce.boolean(),
     public: z.coerce.boolean(),
     closed: z.coerce.boolean(),
@@ -87,13 +88,14 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateCalendarRes
     try {
         const response = await calendarStore.createOrUpdateCalendar({
             id: data.value?.calendar?.id ?? 0,
-            name: values.name,
             job: values.private ? undefined : activeChar.value?.job,
+            name: values.name,
+            description: values.description,
             public: values.public,
             closed: values.closed,
             color: values.color,
-            creatorJob: '',
             access: values.access,
+            creatorJob: '',
         });
 
         notifications.add({
@@ -174,11 +176,13 @@ const formRef = useTemplateRef('formRef');
                     </UFormField>
 
                     <UFormField class="flex-1" name="description" :label="$t('common.description')">
-                        <UTextarea
+                        <TiptapEditor
                             v-model="state.description"
-                            name="description"
-                            :placeholder="$t('common.description')"
+                            name="content"
+                            wrapper-class="min-h-80"
                             class="w-full"
+                            :placeholder="$t('common.description')"
+                            :limit="1_000"
                         />
                     </UFormField>
 

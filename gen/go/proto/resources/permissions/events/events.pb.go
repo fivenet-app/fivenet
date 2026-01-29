@@ -4,13 +4,14 @@
 // 	protoc        (unknown)
 // source: resources/permissions/events/events.proto
 
+//go:build !protoopaque
+
 package permissionsevents
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -22,7 +23,7 @@ const (
 )
 
 type RoleIDEvent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	RoleId        int64                  `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	Grade         int32                  `protobuf:"varint,3,opt,name=grade,proto3" json:"grade,omitempty"`
@@ -55,11 +56,6 @@ func (x *RoleIDEvent) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RoleIDEvent.ProtoReflect.Descriptor instead.
-func (*RoleIDEvent) Descriptor() ([]byte, []int) {
-	return file_resources_permissions_events_events_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *RoleIDEvent) GetRoleId() int64 {
 	if x != nil {
 		return x.RoleId
@@ -81,8 +77,38 @@ func (x *RoleIDEvent) GetGrade() int32 {
 	return 0
 }
 
+func (x *RoleIDEvent) SetRoleId(v int64) {
+	x.RoleId = v
+}
+
+func (x *RoleIDEvent) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *RoleIDEvent) SetGrade(v int32) {
+	x.Grade = v
+}
+
+type RoleIDEvent_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	RoleId int64
+	Job    string
+	Grade  int32
+}
+
+func (b0 RoleIDEvent_builder) Build() *RoleIDEvent {
+	m0 := &RoleIDEvent{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.RoleId = b.RoleId
+	x.Job = b.Job
+	x.Grade = b.Grade
+	return m0
+}
+
 type JobLimitsUpdatedEvent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -113,16 +139,29 @@ func (x *JobLimitsUpdatedEvent) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobLimitsUpdatedEvent.ProtoReflect.Descriptor instead.
-func (*JobLimitsUpdatedEvent) Descriptor() ([]byte, []int) {
-	return file_resources_permissions_events_events_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *JobLimitsUpdatedEvent) GetJob() string {
 	if x != nil {
 		return x.Job
 	}
 	return ""
+}
+
+func (x *JobLimitsUpdatedEvent) SetJob(v string) {
+	x.Job = v
+}
+
+type JobLimitsUpdatedEvent_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job string
+}
+
+func (b0 JobLimitsUpdatedEvent_builder) Build() *JobLimitsUpdatedEvent {
+	m0 := &JobLimitsUpdatedEvent{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	return m0
 }
 
 var File_resources_permissions_events_events_proto protoreflect.FileDescriptor
@@ -136,18 +175,6 @@ const file_resources_permissions_events_events_proto_rawDesc = "" +
 	"\x05grade\x18\x03 \x01(\x05R\x05grade\")\n" +
 	"\x15JobLimitsUpdatedEvent\x12\x10\n" +
 	"\x03job\x18\x01 \x01(\tR\x03jobBbZ`github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/events;permissionseventsb\x06proto3"
-
-var (
-	file_resources_permissions_events_events_proto_rawDescOnce sync.Once
-	file_resources_permissions_events_events_proto_rawDescData []byte
-)
-
-func file_resources_permissions_events_events_proto_rawDescGZIP() []byte {
-	file_resources_permissions_events_events_proto_rawDescOnce.Do(func() {
-		file_resources_permissions_events_events_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_permissions_events_events_proto_rawDesc), len(file_resources_permissions_events_events_proto_rawDesc)))
-	})
-	return file_resources_permissions_events_events_proto_rawDescData
-}
 
 var file_resources_permissions_events_events_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_permissions_events_events_proto_goTypes = []any{

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/accounts/oauth2/oauth2.proto
 
+//go:build !protoopaque
+
 package accountsoauth2
 
 import (
@@ -12,7 +14,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,7 +25,7 @@ const (
 )
 
 type OAuth2Account struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	AccountId     int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	ProviderName  string                 `protobuf:"bytes,3,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty" alias:"provider_name" sql:"primary_key"`
@@ -59,11 +60,6 @@ func (x *OAuth2Account) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use OAuth2Account.ProtoReflect.Descriptor instead.
-func (*OAuth2Account) Descriptor() ([]byte, []int) {
-	return file_resources_accounts_oauth2_oauth2_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *OAuth2Account) GetAccountId() int64 {
@@ -115,8 +111,84 @@ func (x *OAuth2Account) GetAvatar() string {
 	return ""
 }
 
+func (x *OAuth2Account) SetAccountId(v int64) {
+	x.AccountId = v
+}
+
+func (x *OAuth2Account) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *OAuth2Account) SetProviderName(v string) {
+	x.ProviderName = v
+}
+
+func (x *OAuth2Account) SetProvider(v *OAuth2Provider) {
+	x.Provider = v
+}
+
+func (x *OAuth2Account) SetExternalId(v string) {
+	x.ExternalId = v
+}
+
+func (x *OAuth2Account) SetUsername(v string) {
+	x.Username = v
+}
+
+func (x *OAuth2Account) SetAvatar(v string) {
+	x.Avatar = v
+}
+
+func (x *OAuth2Account) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *OAuth2Account) HasProvider() bool {
+	if x == nil {
+		return false
+	}
+	return x.Provider != nil
+}
+
+func (x *OAuth2Account) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *OAuth2Account) ClearProvider() {
+	x.Provider = nil
+}
+
+type OAuth2Account_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	AccountId    int64
+	CreatedAt    *timestamp.Timestamp
+	ProviderName string
+	Provider     *OAuth2Provider
+	ExternalId   string
+	Username     string
+	Avatar       string
+}
+
+func (b0 OAuth2Account_builder) Build() *OAuth2Account {
+	m0 := &OAuth2Account{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.AccountId = b.AccountId
+	x.CreatedAt = b.CreatedAt
+	x.ProviderName = b.ProviderName
+	x.Provider = b.Provider
+	x.ExternalId = b.ExternalId
+	x.Username = b.Username
+	x.Avatar = b.Avatar
+	return m0
+}
+
 type OAuth2Provider struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Label         string                 `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
 	Homepage      string                 `protobuf:"bytes,3,opt,name=homepage,proto3" json:"homepage,omitempty"`
@@ -150,11 +222,6 @@ func (x *OAuth2Provider) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OAuth2Provider.ProtoReflect.Descriptor instead.
-func (*OAuth2Provider) Descriptor() ([]byte, []int) {
-	return file_resources_accounts_oauth2_oauth2_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *OAuth2Provider) GetName() string {
 	if x != nil {
 		return x.Name
@@ -183,6 +250,53 @@ func (x *OAuth2Provider) GetIcon() string {
 	return ""
 }
 
+func (x *OAuth2Provider) SetName(v string) {
+	x.Name = v
+}
+
+func (x *OAuth2Provider) SetLabel(v string) {
+	x.Label = v
+}
+
+func (x *OAuth2Provider) SetHomepage(v string) {
+	x.Homepage = v
+}
+
+func (x *OAuth2Provider) SetIcon(v string) {
+	x.Icon = &v
+}
+
+func (x *OAuth2Provider) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return x.Icon != nil
+}
+
+func (x *OAuth2Provider) ClearIcon() {
+	x.Icon = nil
+}
+
+type OAuth2Provider_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Name     string
+	Label    string
+	Homepage string
+	Icon     *string
+}
+
+func (b0 OAuth2Provider_builder) Build() *OAuth2Provider {
+	m0 := &OAuth2Provider{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Name = b.Name
+	x.Label = b.Label
+	x.Homepage = b.Homepage
+	x.Icon = b.Icon
+	return m0
+}
+
 var File_resources_accounts_oauth2_oauth2_proto protoreflect.FileDescriptor
 
 const file_resources_accounts_oauth2_oauth2_proto_rawDesc = "" +
@@ -206,18 +320,6 @@ const file_resources_accounts_oauth2_oauth2_proto_rawDesc = "" +
 	"\bhomepage\x18\x03 \x01(\tR\bhomepage\x12\x17\n" +
 	"\x04icon\x18\x04 \x01(\tH\x00R\x04icon\x88\x01\x01B\a\n" +
 	"\x05_iconB\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts/oauth2;accountsoauth2b\x06proto3"
-
-var (
-	file_resources_accounts_oauth2_oauth2_proto_rawDescOnce sync.Once
-	file_resources_accounts_oauth2_oauth2_proto_rawDescData []byte
-)
-
-func file_resources_accounts_oauth2_oauth2_proto_rawDescGZIP() []byte {
-	file_resources_accounts_oauth2_oauth2_proto_rawDescOnce.Do(func() {
-		file_resources_accounts_oauth2_oauth2_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_accounts_oauth2_oauth2_proto_rawDesc), len(file_resources_accounts_oauth2_oauth2_proto_rawDesc)))
-	})
-	return file_resources_accounts_oauth2_oauth2_proto_rawDescData
-}
 
 var file_resources_accounts_oauth2_oauth2_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_accounts_oauth2_oauth2_proto_goTypes = []any{

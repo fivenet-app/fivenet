@@ -82,6 +82,9 @@ func Load() (Result, error) {
 		c.Database.DSN = m.FormatDSN()
 	}
 
+	// Disable ESX compatibility mode (no longer available nor supported)
+	c.Database.ESXCompat = false
+
 	// Ensure origins are lower case
 	for i := range c.HTTP.Origins {
 		c.HTTP.Origins[i] = strings.ToLower(c.HTTP.Origins[i])

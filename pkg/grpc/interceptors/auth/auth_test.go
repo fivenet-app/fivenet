@@ -82,7 +82,7 @@ func ctxWithToken(ctx context.Context, scheme string, token string) context.Cont
 }
 
 func TestAuthTestSuite(t *testing.T) {
-	authFunc := buildDummyAuthFunction("bearer", commonAuthToken)
+	authFunc := buildDummyAuthFunction("Bearer", commonAuthToken)
 	s := &AuthTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
 			TestService: &assertingPingService{&testpb.TestPingService{}, t},
@@ -106,7 +106,7 @@ func (s *AuthTestSuite) TestUnary_NoAuth() {
 }
 
 func (s *AuthTestSuite) TestUnary_BadAuth() {
-	_, err := s.Client.Ping(ctxWithToken(s.SimpleCtx(), "bearer", "bad_token"), testpb.GoodPing)
+	_, err := s.Client.Ping(ctxWithToken(s.SimpleCtx(), "Bearer", "bad_token"), testpb.GoodPing)
 	s.Require().Error(err, "there must be an error")
 	s.Equal(
 		codes.PermissionDenied,
@@ -116,7 +116,7 @@ func (s *AuthTestSuite) TestUnary_BadAuth() {
 }
 
 func (s *AuthTestSuite) TestUnary_PassesAuth() {
-	_, err := s.Client.Ping(ctxWithToken(s.SimpleCtx(), "bearer", commonAuthToken), testpb.GoodPing)
+	_, err := s.Client.Ping(ctxWithToken(s.SimpleCtx(), "Bearer", commonAuthToken), testpb.GoodPing)
 	s.Require().NoError(err, "no error must occur")
 }
 
@@ -139,7 +139,7 @@ func (s *AuthTestSuite) TestStream_NoAuth() {
 
 func (s *AuthTestSuite) TestStream_BadAuth() {
 	stream, err := s.Client.PingList(
-		ctxWithToken(s.SimpleCtx(), "bearer", "bad_token"),
+		ctxWithToken(s.SimpleCtx(), "Bearer", "bad_token"),
 		testpb.GoodPingList,
 	)
 	s.Require().NoError(err, "should not fail on establishing the stream")
@@ -186,11 +186,11 @@ func (s *authOverrideTestService) AuthFuncOverride(
 	fullMethodName string,
 ) (context.Context, error) {
 	assert.NotEmpty(s.T, fullMethodName, "method name of caller is passed around")
-	return buildDummyAuthFunction("bearer", overrideAuthToken)(ctx, fullMethodName)
+	return buildDummyAuthFunction("Bearer", overrideAuthToken)(ctx, fullMethodName)
 }
 
 func TestAuthOverrideTestSuite(t *testing.T) {
-	authFunc := buildDummyAuthFunction("bearer", commonAuthToken)
+	authFunc := buildDummyAuthFunction("Bearer", commonAuthToken)
 	s := &AuthOverrideTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
 			TestService: &authOverrideTestService{
@@ -212,7 +212,7 @@ type AuthOverrideTestSuite struct {
 
 func (s *AuthOverrideTestSuite) TestUnary_PassesAuth() {
 	_, err := s.Client.Ping(
-		ctxWithToken(s.SimpleCtx(), "bearer", overrideAuthToken),
+		ctxWithToken(s.SimpleCtx(), "Bearer", overrideAuthToken),
 		testpb.GoodPing,
 	)
 	s.Require().NoError(err, "no error must occur")
@@ -238,7 +238,7 @@ func (ts *fakeOAuth2TokenSource) Token() (*oauth2.Token, error) {
 	t := &oauth2.Token{
 		AccessToken: ts.accessToken,
 		Expiry:      time.Now().Add(1 * time.Minute),
-		TokenType:   "bearer",
+		TokenType:   "Bearer",
 	}
 	return t, nil
 }

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync"
+	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
@@ -32,14 +32,15 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 
 	limit := int64(500)
 	var offset int64
-	if s.state != nil && s.state.Offset > 0 {
-		offset = s.state.Offset
+	sOffset := s.state.GetOffset()
+	if s.state != nil && sOffset > 0 {
+		offset = sOffset
 	}
 	s.logger.Debug("vehiclesSync", zap.Int64("offset", offset))
 
 	// Ensure to zero the last check time if the data hasn't fully synced yet
-	if !s.state.SyncedUp {
-		s.state.LastCheck = nil
+	if !s.state.GetSyncedUp() {
+		s.state.SetLastCheck(nil)
 	}
 
 	q := s.cfg.Tables.Vehicles.GetQuery(s.state, offset, limit)
@@ -63,7 +64,7 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 	if s.cli != nil {
 		if err := s.sendData(ctx, &pbsync.SendDataRequest{
 			Data: &pbsync.SendDataRequest_Vehicles{
-				Vehicles: &sync.DataVehicles{
+				Vehicles: &syncdata.DataVehicles{
 					Vehicles: vehicles,
 				},
 			},
@@ -76,7 +77,7 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 	// and need to reset the offset to 0
 	if int64(len(vehicles)) < limit {
 		offset = 0
-		s.state.SyncedUp = true
+		s.state.SetSyncedUp(true)
 	}
 
 	lastPlate := vehicles[len(vehicles)-1].GetPlate()

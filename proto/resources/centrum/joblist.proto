@@ -3,13 +3,6 @@ syntax = "proto3";
 package resources.centrum;
 
 import "buf/validate/validate.proto";
-import "codegen/dbscanner/dbscanner.proto";
-import "codegen/sanitizer/sanitizer.proto";
-import "resources/centrum/units/units.proto";
-import "resources/jobs/colleagues/colleagues.proto";
-import "resources/timestamp/timestamp.proto";
-import "resources/users/user.proto";
-import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum;centrum";
 

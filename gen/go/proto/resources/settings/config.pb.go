@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/settings/config.proto
 
+//go:build !protoopaque
+
 package settings
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -75,13 +76,8 @@ func (x DiscordBotPresenceType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use DiscordBotPresenceType.Descriptor instead.
-func (DiscordBotPresenceType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{0}
-}
-
 type AppConfig struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Version       *string                `protobuf:"bytes,1,opt,name=version,proto3,oneof" json:"version,omitempty"`
 	DefaultLocale string                 `protobuf:"bytes,8,opt,name=default_locale,json=defaultLocale,proto3" json:"default_locale,omitempty"`
 	Auth          *Auth                  `protobuf:"bytes,2,opt,name=auth,proto3" json:"auth,omitempty"`
@@ -121,11 +117,6 @@ func (x *AppConfig) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AppConfig.ProtoReflect.Descriptor instead.
-func (*AppConfig) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *AppConfig) GetVersion() string {
@@ -212,8 +203,213 @@ func (x *AppConfig) GetData() *Data {
 	return nil
 }
 
+func (x *AppConfig) SetVersion(v string) {
+	x.Version = &v
+}
+
+func (x *AppConfig) SetDefaultLocale(v string) {
+	x.DefaultLocale = v
+}
+
+func (x *AppConfig) SetAuth(v *Auth) {
+	x.Auth = v
+}
+
+func (x *AppConfig) SetPerms(v *Perms) {
+	x.Perms = v
+}
+
+func (x *AppConfig) SetWebsite(v *Website) {
+	x.Website = v
+}
+
+func (x *AppConfig) SetJobInfo(v *JobInfo) {
+	x.JobInfo = v
+}
+
+func (x *AppConfig) SetUserTracker(v *UserTracker) {
+	x.UserTracker = v
+}
+
+func (x *AppConfig) SetDiscord(v *Discord) {
+	x.Discord = v
+}
+
+func (x *AppConfig) SetSystem(v *System) {
+	x.System = v
+}
+
+func (x *AppConfig) SetDisplay(v *Display) {
+	x.Display = v
+}
+
+func (x *AppConfig) SetQuickButtons(v *QuickButtons) {
+	x.QuickButtons = v
+}
+
+func (x *AppConfig) SetData(v *Data) {
+	x.Data = v
+}
+
+func (x *AppConfig) HasVersion() bool {
+	if x == nil {
+		return false
+	}
+	return x.Version != nil
+}
+
+func (x *AppConfig) HasAuth() bool {
+	if x == nil {
+		return false
+	}
+	return x.Auth != nil
+}
+
+func (x *AppConfig) HasPerms() bool {
+	if x == nil {
+		return false
+	}
+	return x.Perms != nil
+}
+
+func (x *AppConfig) HasWebsite() bool {
+	if x == nil {
+		return false
+	}
+	return x.Website != nil
+}
+
+func (x *AppConfig) HasJobInfo() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobInfo != nil
+}
+
+func (x *AppConfig) HasUserTracker() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserTracker != nil
+}
+
+func (x *AppConfig) HasDiscord() bool {
+	if x == nil {
+		return false
+	}
+	return x.Discord != nil
+}
+
+func (x *AppConfig) HasSystem() bool {
+	if x == nil {
+		return false
+	}
+	return x.System != nil
+}
+
+func (x *AppConfig) HasDisplay() bool {
+	if x == nil {
+		return false
+	}
+	return x.Display != nil
+}
+
+func (x *AppConfig) HasQuickButtons() bool {
+	if x == nil {
+		return false
+	}
+	return x.QuickButtons != nil
+}
+
+func (x *AppConfig) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *AppConfig) ClearVersion() {
+	x.Version = nil
+}
+
+func (x *AppConfig) ClearAuth() {
+	x.Auth = nil
+}
+
+func (x *AppConfig) ClearPerms() {
+	x.Perms = nil
+}
+
+func (x *AppConfig) ClearWebsite() {
+	x.Website = nil
+}
+
+func (x *AppConfig) ClearJobInfo() {
+	x.JobInfo = nil
+}
+
+func (x *AppConfig) ClearUserTracker() {
+	x.UserTracker = nil
+}
+
+func (x *AppConfig) ClearDiscord() {
+	x.Discord = nil
+}
+
+func (x *AppConfig) ClearSystem() {
+	x.System = nil
+}
+
+func (x *AppConfig) ClearDisplay() {
+	x.Display = nil
+}
+
+func (x *AppConfig) ClearQuickButtons() {
+	x.QuickButtons = nil
+}
+
+func (x *AppConfig) ClearData() {
+	x.Data = nil
+}
+
+type AppConfig_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Version       *string
+	DefaultLocale string
+	Auth          *Auth
+	Perms         *Perms
+	Website       *Website
+	JobInfo       *JobInfo
+	UserTracker   *UserTracker
+	Discord       *Discord
+	System        *System
+	Display       *Display
+	QuickButtons  *QuickButtons
+	Data          *Data
+}
+
+func (b0 AppConfig_builder) Build() *AppConfig {
+	m0 := &AppConfig{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Version = b.Version
+	x.DefaultLocale = b.DefaultLocale
+	x.Auth = b.Auth
+	x.Perms = b.Perms
+	x.Website = b.Website
+	x.JobInfo = b.JobInfo
+	x.UserTracker = b.UserTracker
+	x.Discord = b.Discord
+	x.System = b.System
+	x.Display = b.Display
+	x.QuickButtons = b.QuickButtons
+	x.Data = b.Data
+	return m0
+}
+
 type Auth struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	SignupEnabled bool                   `protobuf:"varint,1,opt,name=signup_enabled,json=signupEnabled,proto3" json:"signup_enabled,omitempty"`
 	LastCharLock  bool                   `protobuf:"varint,2,opt,name=last_char_lock,json=lastCharLock,proto3" json:"last_char_lock,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -245,11 +441,6 @@ func (x *Auth) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Auth.ProtoReflect.Descriptor instead.
-func (*Auth) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *Auth) GetSignupEnabled() bool {
 	if x != nil {
 		return x.SignupEnabled
@@ -264,8 +455,32 @@ func (x *Auth) GetLastCharLock() bool {
 	return false
 }
 
+func (x *Auth) SetSignupEnabled(v bool) {
+	x.SignupEnabled = v
+}
+
+func (x *Auth) SetLastCharLock(v bool) {
+	x.LastCharLock = v
+}
+
+type Auth_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	SignupEnabled bool
+	LastCharLock  bool
+}
+
+func (b0 Auth_builder) Build() *Auth {
+	m0 := &Auth{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.SignupEnabled = b.SignupEnabled
+	x.LastCharLock = b.LastCharLock
+	return m0
+}
+
 type Perms struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Default       []*Perm                `protobuf:"bytes,1,rep,name=default,proto3" json:"default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -296,11 +511,6 @@ func (x *Perms) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Perms.ProtoReflect.Descriptor instead.
-func (*Perms) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *Perms) GetDefault() []*Perm {
 	if x != nil {
 		return x.Default
@@ -308,8 +518,26 @@ func (x *Perms) GetDefault() []*Perm {
 	return nil
 }
 
+func (x *Perms) SetDefault(v []*Perm) {
+	x.Default = v
+}
+
+type Perms_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Default []*Perm
+}
+
+func (b0 Perms_builder) Build() *Perms {
+	m0 := &Perms{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Default = b.Default
+	return m0
+}
+
 type Perm struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Category      string                 `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -341,11 +569,6 @@ func (x *Perm) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Perm.ProtoReflect.Descriptor instead.
-func (*Perm) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *Perm) GetCategory() string {
 	if x != nil {
 		return x.Category
@@ -360,8 +583,32 @@ func (x *Perm) GetName() string {
 	return ""
 }
 
+func (x *Perm) SetCategory(v string) {
+	x.Category = v
+}
+
+func (x *Perm) SetName(v string) {
+	x.Name = v
+}
+
+type Perm_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Category string
+	Name     string
+}
+
+func (b0 Perm_builder) Build() *Perm {
+	m0 := &Perm{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Category = b.Category
+	x.Name = b.Name
+	return m0
+}
+
 type Website struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Links         *Links                 `protobuf:"bytes,1,opt,name=links,proto3" json:"links,omitempty"`
 	StatsPage     bool                   `protobuf:"varint,2,opt,name=stats_page,json=statsPage,proto3" json:"stats_page,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -393,11 +640,6 @@ func (x *Website) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Website.ProtoReflect.Descriptor instead.
-func (*Website) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *Website) GetLinks() *Links {
 	if x != nil {
 		return x.Links
@@ -412,8 +654,43 @@ func (x *Website) GetStatsPage() bool {
 	return false
 }
 
+func (x *Website) SetLinks(v *Links) {
+	x.Links = v
+}
+
+func (x *Website) SetStatsPage(v bool) {
+	x.StatsPage = v
+}
+
+func (x *Website) HasLinks() bool {
+	if x == nil {
+		return false
+	}
+	return x.Links != nil
+}
+
+func (x *Website) ClearLinks() {
+	x.Links = nil
+}
+
+type Website_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Links     *Links
+	StatsPage bool
+}
+
+func (b0 Website_builder) Build() *Website {
+	m0 := &Website{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Links = b.Links
+	x.StatsPage = b.StatsPage
+	return m0
+}
+
 type Links struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	PrivacyPolicy *string                `protobuf:"bytes,1,opt,name=privacy_policy,json=privacyPolicy,proto3,oneof" json:"privacy_policy,omitempty"`
 	Imprint       *string                `protobuf:"bytes,2,opt,name=imprint,proto3,oneof" json:"imprint,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -445,11 +722,6 @@ func (x *Links) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Links.ProtoReflect.Descriptor instead.
-func (*Links) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *Links) GetPrivacyPolicy() string {
 	if x != nil && x.PrivacyPolicy != nil {
 		return *x.PrivacyPolicy
@@ -464,8 +736,54 @@ func (x *Links) GetImprint() string {
 	return ""
 }
 
+func (x *Links) SetPrivacyPolicy(v string) {
+	x.PrivacyPolicy = &v
+}
+
+func (x *Links) SetImprint(v string) {
+	x.Imprint = &v
+}
+
+func (x *Links) HasPrivacyPolicy() bool {
+	if x == nil {
+		return false
+	}
+	return x.PrivacyPolicy != nil
+}
+
+func (x *Links) HasImprint() bool {
+	if x == nil {
+		return false
+	}
+	return x.Imprint != nil
+}
+
+func (x *Links) ClearPrivacyPolicy() {
+	x.PrivacyPolicy = nil
+}
+
+func (x *Links) ClearImprint() {
+	x.Imprint = nil
+}
+
+type Links_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	PrivacyPolicy *string
+	Imprint       *string
+}
+
+func (b0 Links_builder) Build() *Links {
+	m0 := &Links{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.PrivacyPolicy = b.PrivacyPolicy
+	x.Imprint = b.Imprint
+	return m0
+}
+
 type JobInfo struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UnemployedJob *UnemployedJob         `protobuf:"bytes,1,opt,name=unemployed_job,json=unemployedJob,proto3" json:"unemployed_job,omitempty"`
 	PublicJobs    []string               `protobuf:"bytes,2,rep,name=public_jobs,json=publicJobs,proto3" json:"public_jobs,omitempty"`
 	HiddenJobs    []string               `protobuf:"bytes,3,rep,name=hidden_jobs,json=hiddenJobs,proto3" json:"hidden_jobs,omitempty"`
@@ -498,11 +816,6 @@ func (x *JobInfo) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobInfo.ProtoReflect.Descriptor instead.
-func (*JobInfo) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *JobInfo) GetUnemployedJob() *UnemployedJob {
 	if x != nil {
 		return x.UnemployedJob
@@ -524,8 +837,49 @@ func (x *JobInfo) GetHiddenJobs() []string {
 	return nil
 }
 
+func (x *JobInfo) SetUnemployedJob(v *UnemployedJob) {
+	x.UnemployedJob = v
+}
+
+func (x *JobInfo) SetPublicJobs(v []string) {
+	x.PublicJobs = v
+}
+
+func (x *JobInfo) SetHiddenJobs(v []string) {
+	x.HiddenJobs = v
+}
+
+func (x *JobInfo) HasUnemployedJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.UnemployedJob != nil
+}
+
+func (x *JobInfo) ClearUnemployedJob() {
+	x.UnemployedJob = nil
+}
+
+type JobInfo_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UnemployedJob *UnemployedJob
+	PublicJobs    []string
+	HiddenJobs    []string
+}
+
+func (b0 JobInfo_builder) Build() *JobInfo {
+	m0 := &JobInfo{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UnemployedJob = b.UnemployedJob
+	x.PublicJobs = b.PublicJobs
+	x.HiddenJobs = b.HiddenJobs
+	return m0
+}
+
 type UnemployedJob struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Grade         int32                  `protobuf:"varint,2,opt,name=grade,proto3" json:"grade,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -557,11 +911,6 @@ func (x *UnemployedJob) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UnemployedJob.ProtoReflect.Descriptor instead.
-func (*UnemployedJob) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *UnemployedJob) GetName() string {
 	if x != nil {
 		return x.Name
@@ -576,8 +925,32 @@ func (x *UnemployedJob) GetGrade() int32 {
 	return 0
 }
 
+func (x *UnemployedJob) SetName(v string) {
+	x.Name = v
+}
+
+func (x *UnemployedJob) SetGrade(v int32) {
+	x.Grade = v
+}
+
+type UnemployedJob_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Name  string
+	Grade int32
+}
+
+func (b0 UnemployedJob_builder) Build() *UnemployedJob {
+	m0 := &UnemployedJob{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Name = b.Name
+	x.Grade = b.Grade
+	return m0
+}
+
 type UserTracker struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	RefreshTime   *durationpb.Duration   `protobuf:"bytes,1,opt,name=refresh_time,json=refreshTime,proto3" json:"refresh_time,omitempty"`
 	DbRefreshTime *durationpb.Duration   `protobuf:"bytes,2,opt,name=db_refresh_time,json=dbRefreshTime,proto3" json:"db_refresh_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -609,11 +982,6 @@ func (x *UserTracker) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserTracker.ProtoReflect.Descriptor instead.
-func (*UserTracker) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *UserTracker) GetRefreshTime() *durationpb.Duration {
 	if x != nil {
 		return x.RefreshTime
@@ -628,8 +996,54 @@ func (x *UserTracker) GetDbRefreshTime() *durationpb.Duration {
 	return nil
 }
 
+func (x *UserTracker) SetRefreshTime(v *durationpb.Duration) {
+	x.RefreshTime = v
+}
+
+func (x *UserTracker) SetDbRefreshTime(v *durationpb.Duration) {
+	x.DbRefreshTime = v
+}
+
+func (x *UserTracker) HasRefreshTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.RefreshTime != nil
+}
+
+func (x *UserTracker) HasDbRefreshTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.DbRefreshTime != nil
+}
+
+func (x *UserTracker) ClearRefreshTime() {
+	x.RefreshTime = nil
+}
+
+func (x *UserTracker) ClearDbRefreshTime() {
+	x.DbRefreshTime = nil
+}
+
+type UserTracker_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	RefreshTime   *durationpb.Duration
+	DbRefreshTime *durationpb.Duration
+}
+
+func (b0 UserTracker_builder) Build() *UserTracker {
+	m0 := &UserTracker{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.RefreshTime = b.RefreshTime
+	x.DbRefreshTime = b.DbRefreshTime
+	return m0
+}
+
 type Discord struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
+	state          protoimpl.MessageState `protogen:"hybrid.v1"`
 	Enabled        bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	SyncInterval   *durationpb.Duration   `protobuf:"bytes,2,opt,name=sync_interval,json=syncInterval,proto3" json:"sync_interval,omitempty"`
 	InviteUrl      *string                `protobuf:"bytes,3,opt,name=invite_url,json=inviteUrl,proto3,oneof" json:"invite_url,omitempty"`
@@ -664,11 +1078,6 @@ func (x *Discord) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Discord.ProtoReflect.Descriptor instead.
-func (*Discord) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *Discord) GetEnabled() bool {
@@ -720,8 +1129,106 @@ func (x *Discord) GetBotPermissions() int64 {
 	return 0
 }
 
+func (x *Discord) SetEnabled(v bool) {
+	x.Enabled = v
+}
+
+func (x *Discord) SetSyncInterval(v *durationpb.Duration) {
+	x.SyncInterval = v
+}
+
+func (x *Discord) SetInviteUrl(v string) {
+	x.InviteUrl = &v
+}
+
+func (x *Discord) SetIgnoredJobs(v []string) {
+	x.IgnoredJobs = v
+}
+
+func (x *Discord) SetBotPresence(v *DiscordBotPresence) {
+	x.BotPresence = v
+}
+
+func (x *Discord) SetBotId(v string) {
+	x.BotId = &v
+}
+
+func (x *Discord) SetBotPermissions(v int64) {
+	x.BotPermissions = v
+}
+
+func (x *Discord) HasSyncInterval() bool {
+	if x == nil {
+		return false
+	}
+	return x.SyncInterval != nil
+}
+
+func (x *Discord) HasInviteUrl() bool {
+	if x == nil {
+		return false
+	}
+	return x.InviteUrl != nil
+}
+
+func (x *Discord) HasBotPresence() bool {
+	if x == nil {
+		return false
+	}
+	return x.BotPresence != nil
+}
+
+func (x *Discord) HasBotId() bool {
+	if x == nil {
+		return false
+	}
+	return x.BotId != nil
+}
+
+func (x *Discord) ClearSyncInterval() {
+	x.SyncInterval = nil
+}
+
+func (x *Discord) ClearInviteUrl() {
+	x.InviteUrl = nil
+}
+
+func (x *Discord) ClearBotPresence() {
+	x.BotPresence = nil
+}
+
+func (x *Discord) ClearBotId() {
+	x.BotId = nil
+}
+
+type Discord_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Enabled        bool
+	SyncInterval   *durationpb.Duration
+	InviteUrl      *string
+	IgnoredJobs    []string
+	BotPresence    *DiscordBotPresence
+	BotId          *string
+	BotPermissions int64
+}
+
+func (b0 Discord_builder) Build() *Discord {
+	m0 := &Discord{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Enabled = b.Enabled
+	x.SyncInterval = b.SyncInterval
+	x.InviteUrl = b.InviteUrl
+	x.IgnoredJobs = b.IgnoredJobs
+	x.BotPresence = b.BotPresence
+	x.BotId = b.BotId
+	x.BotPermissions = b.BotPermissions
+	return m0
+}
+
 type DiscordBotPresence struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Type          DiscordBotPresenceType `protobuf:"varint,1,opt,name=type,proto3,enum=resources.settings.DiscordBotPresenceType" json:"type,omitempty"`
 	Status        *string                `protobuf:"bytes,2,opt,name=status,proto3,oneof" json:"status,omitempty"`
 	Url           *string                `protobuf:"bytes,3,opt,name=url,proto3,oneof" json:"url,omitempty"`
@@ -754,11 +1261,6 @@ func (x *DiscordBotPresence) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DiscordBotPresence.ProtoReflect.Descriptor instead.
-func (*DiscordBotPresence) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{10}
-}
-
 func (x *DiscordBotPresence) GetType() DiscordBotPresenceType {
 	if x != nil {
 		return x.Type
@@ -780,8 +1282,60 @@ func (x *DiscordBotPresence) GetUrl() string {
 	return ""
 }
 
+func (x *DiscordBotPresence) SetType(v DiscordBotPresenceType) {
+	x.Type = v
+}
+
+func (x *DiscordBotPresence) SetStatus(v string) {
+	x.Status = &v
+}
+
+func (x *DiscordBotPresence) SetUrl(v string) {
+	x.Url = &v
+}
+
+func (x *DiscordBotPresence) HasStatus() bool {
+	if x == nil {
+		return false
+	}
+	return x.Status != nil
+}
+
+func (x *DiscordBotPresence) HasUrl() bool {
+	if x == nil {
+		return false
+	}
+	return x.Url != nil
+}
+
+func (x *DiscordBotPresence) ClearStatus() {
+	x.Status = nil
+}
+
+func (x *DiscordBotPresence) ClearUrl() {
+	x.Url = nil
+}
+
+type DiscordBotPresence_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Type   DiscordBotPresenceType
+	Status *string
+	Url    *string
+}
+
+func (b0 DiscordBotPresence_builder) Build() *DiscordBotPresence {
+	m0 := &DiscordBotPresence{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Type = b.Type
+	x.Status = b.Status
+	x.Url = b.Url
+	return m0
+}
+
 type System struct {
-	state                protoimpl.MessageState `protogen:"open.v1"`
+	state                protoimpl.MessageState `protogen:"hybrid.v1"`
 	BannerMessageEnabled bool                   `protobuf:"varint,1,opt,name=banner_message_enabled,json=bannerMessageEnabled,proto3" json:"banner_message_enabled,omitempty"`
 	BannerMessage        *BannerMessage         `protobuf:"bytes,2,opt,name=banner_message,json=bannerMessage,proto3" json:"banner_message,omitempty"`
 	unknownFields        protoimpl.UnknownFields
@@ -813,11 +1367,6 @@ func (x *System) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use System.ProtoReflect.Descriptor instead.
-func (*System) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{11}
-}
-
 func (x *System) GetBannerMessageEnabled() bool {
 	if x != nil {
 		return x.BannerMessageEnabled
@@ -832,8 +1381,43 @@ func (x *System) GetBannerMessage() *BannerMessage {
 	return nil
 }
 
+func (x *System) SetBannerMessageEnabled(v bool) {
+	x.BannerMessageEnabled = v
+}
+
+func (x *System) SetBannerMessage(v *BannerMessage) {
+	x.BannerMessage = v
+}
+
+func (x *System) HasBannerMessage() bool {
+	if x == nil {
+		return false
+	}
+	return x.BannerMessage != nil
+}
+
+func (x *System) ClearBannerMessage() {
+	x.BannerMessage = nil
+}
+
+type System_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	BannerMessageEnabled bool
+	BannerMessage        *BannerMessage
+}
+
+func (b0 System_builder) Build() *System {
+	m0 := &System{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.BannerMessageEnabled = b.BannerMessageEnabled
+	x.BannerMessage = b.BannerMessage
+	return m0
+}
+
 type Display struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
 	IntlLocale *string `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3,oneof" json:"intlLocale"`
 	// ISO 4217 currency code (e.g. "USD", "EUR")
@@ -867,11 +1451,6 @@ func (x *Display) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Display.ProtoReflect.Descriptor instead.
-func (*Display) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{12}
-}
-
 func (x *Display) GetIntlLocale() string {
 	if x != nil && x.IntlLocale != nil {
 		return *x.IntlLocale
@@ -886,8 +1465,45 @@ func (x *Display) GetCurrencyName() string {
 	return ""
 }
 
+func (x *Display) SetIntlLocale(v string) {
+	x.IntlLocale = &v
+}
+
+func (x *Display) SetCurrencyName(v string) {
+	x.CurrencyName = v
+}
+
+func (x *Display) HasIntlLocale() bool {
+	if x == nil {
+		return false
+	}
+	return x.IntlLocale != nil
+}
+
+func (x *Display) ClearIntlLocale() {
+	x.IntlLocale = nil
+}
+
+type Display_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
+	IntlLocale *string
+	// ISO 4217 currency code (e.g. "USD", "EUR")
+	CurrencyName string
+}
+
+func (b0 Display_builder) Build() *Display {
+	m0 := &Display{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.IntlLocale = b.IntlLocale
+	x.CurrencyName = b.CurrencyName
+	return m0
+}
+
 type QuickButtons struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
+	state             protoimpl.MessageState `protogen:"hybrid.v1"`
 	PenaltyCalculator *PenaltyCalculator     `protobuf:"bytes,1,opt,name=penalty_calculator,json=penaltyCalculator,proto3" json:"penaltyCalculator"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
@@ -918,11 +1534,6 @@ func (x *QuickButtons) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use QuickButtons.ProtoReflect.Descriptor instead.
-func (*QuickButtons) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{13}
-}
-
 func (x *QuickButtons) GetPenaltyCalculator() *PenaltyCalculator {
 	if x != nil {
 		return x.PenaltyCalculator
@@ -930,8 +1541,37 @@ func (x *QuickButtons) GetPenaltyCalculator() *PenaltyCalculator {
 	return nil
 }
 
+func (x *QuickButtons) SetPenaltyCalculator(v *PenaltyCalculator) {
+	x.PenaltyCalculator = v
+}
+
+func (x *QuickButtons) HasPenaltyCalculator() bool {
+	if x == nil {
+		return false
+	}
+	return x.PenaltyCalculator != nil
+}
+
+func (x *QuickButtons) ClearPenaltyCalculator() {
+	x.PenaltyCalculator = nil
+}
+
+type QuickButtons_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	PenaltyCalculator *PenaltyCalculator
+}
+
+func (b0 QuickButtons_builder) Build() *QuickButtons {
+	m0 := &QuickButtons{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.PenaltyCalculator = b.PenaltyCalculator
+	return m0
+}
+
 type PenaltyCalculator struct {
-	state             protoimpl.MessageState              `protogen:"open.v1"`
+	state             protoimpl.MessageState              `protogen:"hybrid.v1"`
 	MaxCount          *uint32                             `protobuf:"varint,1,opt,name=max_count,json=maxCount,proto3,oneof" json:"maxCount"`
 	DetentionTimeUnit *PenaltyCalculatorDetentionTimeUnit `protobuf:"bytes,2,opt,name=detention_time_unit,json=detentionTimeUnit,proto3,oneof" json:"detentionTimeUnit"`
 	WarnSettings      *PenaltyCalculatorWarn              `protobuf:"bytes,3,opt,name=warn_settings,json=warnSettings,proto3,oneof" json:"warnSettings"`
@@ -965,11 +1605,6 @@ func (x *PenaltyCalculator) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PenaltyCalculator.ProtoReflect.Descriptor instead.
-func (*PenaltyCalculator) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{14}
-}
-
 func (x *PenaltyCalculator) GetMaxCount() uint32 {
 	if x != nil && x.MaxCount != nil {
 		return *x.MaxCount
@@ -998,8 +1633,88 @@ func (x *PenaltyCalculator) GetMaxLeeway() uint32 {
 	return 0
 }
 
+func (x *PenaltyCalculator) SetMaxCount(v uint32) {
+	x.MaxCount = &v
+}
+
+func (x *PenaltyCalculator) SetDetentionTimeUnit(v *PenaltyCalculatorDetentionTimeUnit) {
+	x.DetentionTimeUnit = v
+}
+
+func (x *PenaltyCalculator) SetWarnSettings(v *PenaltyCalculatorWarn) {
+	x.WarnSettings = v
+}
+
+func (x *PenaltyCalculator) SetMaxLeeway(v uint32) {
+	x.MaxLeeway = &v
+}
+
+func (x *PenaltyCalculator) HasMaxCount() bool {
+	if x == nil {
+		return false
+	}
+	return x.MaxCount != nil
+}
+
+func (x *PenaltyCalculator) HasDetentionTimeUnit() bool {
+	if x == nil {
+		return false
+	}
+	return x.DetentionTimeUnit != nil
+}
+
+func (x *PenaltyCalculator) HasWarnSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.WarnSettings != nil
+}
+
+func (x *PenaltyCalculator) HasMaxLeeway() bool {
+	if x == nil {
+		return false
+	}
+	return x.MaxLeeway != nil
+}
+
+func (x *PenaltyCalculator) ClearMaxCount() {
+	x.MaxCount = nil
+}
+
+func (x *PenaltyCalculator) ClearDetentionTimeUnit() {
+	x.DetentionTimeUnit = nil
+}
+
+func (x *PenaltyCalculator) ClearWarnSettings() {
+	x.WarnSettings = nil
+}
+
+func (x *PenaltyCalculator) ClearMaxLeeway() {
+	x.MaxLeeway = nil
+}
+
+type PenaltyCalculator_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	MaxCount          *uint32
+	DetentionTimeUnit *PenaltyCalculatorDetentionTimeUnit
+	WarnSettings      *PenaltyCalculatorWarn
+	MaxLeeway         *uint32
+}
+
+func (b0 PenaltyCalculator_builder) Build() *PenaltyCalculator {
+	m0 := &PenaltyCalculator{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.MaxCount = b.MaxCount
+	x.DetentionTimeUnit = b.DetentionTimeUnit
+	x.WarnSettings = b.WarnSettings
+	x.MaxLeeway = b.MaxLeeway
+	return m0
+}
+
 type PenaltyCalculatorDetentionTimeUnit struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Singular      *string                `protobuf:"bytes,1,opt,name=singular,proto3,oneof" json:"singular,omitempty"`
 	Plural        *string                `protobuf:"bytes,2,opt,name=plural,proto3,oneof" json:"plural,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1031,11 +1746,6 @@ func (x *PenaltyCalculatorDetentionTimeUnit) ProtoReflect() protoreflect.Message
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PenaltyCalculatorDetentionTimeUnit.ProtoReflect.Descriptor instead.
-func (*PenaltyCalculatorDetentionTimeUnit) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{15}
-}
-
 func (x *PenaltyCalculatorDetentionTimeUnit) GetSingular() string {
 	if x != nil && x.Singular != nil {
 		return *x.Singular
@@ -1050,8 +1760,54 @@ func (x *PenaltyCalculatorDetentionTimeUnit) GetPlural() string {
 	return ""
 }
 
+func (x *PenaltyCalculatorDetentionTimeUnit) SetSingular(v string) {
+	x.Singular = &v
+}
+
+func (x *PenaltyCalculatorDetentionTimeUnit) SetPlural(v string) {
+	x.Plural = &v
+}
+
+func (x *PenaltyCalculatorDetentionTimeUnit) HasSingular() bool {
+	if x == nil {
+		return false
+	}
+	return x.Singular != nil
+}
+
+func (x *PenaltyCalculatorDetentionTimeUnit) HasPlural() bool {
+	if x == nil {
+		return false
+	}
+	return x.Plural != nil
+}
+
+func (x *PenaltyCalculatorDetentionTimeUnit) ClearSingular() {
+	x.Singular = nil
+}
+
+func (x *PenaltyCalculatorDetentionTimeUnit) ClearPlural() {
+	x.Plural = nil
+}
+
+type PenaltyCalculatorDetentionTimeUnit_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Singular *string
+	Plural   *string
+}
+
+func (b0 PenaltyCalculatorDetentionTimeUnit_builder) Build() *PenaltyCalculatorDetentionTimeUnit {
+	m0 := &PenaltyCalculatorDetentionTimeUnit{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Singular = b.Singular
+	x.Plural = b.Plural
+	return m0
+}
+
 type PenaltyCalculatorWarn struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	Fine          *uint32                `protobuf:"varint,2,opt,name=fine,proto3,oneof" json:"fine,omitempty"`
 	DetentionTime *uint32                `protobuf:"varint,3,opt,name=detention_time,json=detentionTime,proto3,oneof" json:"detentionTime"`
@@ -1084,11 +1840,6 @@ func (x *PenaltyCalculatorWarn) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PenaltyCalculatorWarn.ProtoReflect.Descriptor instead.
-func (*PenaltyCalculatorWarn) Descriptor() ([]byte, []int) {
-	return file_resources_settings_config_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *PenaltyCalculatorWarn) GetEnabled() bool {
@@ -1124,6 +1875,92 @@ func (x *PenaltyCalculatorWarn) GetWarnMessage() string {
 		return *x.WarnMessage
 	}
 	return ""
+}
+
+func (x *PenaltyCalculatorWarn) SetEnabled(v bool) {
+	x.Enabled = v
+}
+
+func (x *PenaltyCalculatorWarn) SetFine(v uint32) {
+	x.Fine = &v
+}
+
+func (x *PenaltyCalculatorWarn) SetDetentionTime(v uint32) {
+	x.DetentionTime = &v
+}
+
+func (x *PenaltyCalculatorWarn) SetStvoPoints(v uint32) {
+	x.StvoPoints = &v
+}
+
+func (x *PenaltyCalculatorWarn) SetWarnMessage(v string) {
+	x.WarnMessage = &v
+}
+
+func (x *PenaltyCalculatorWarn) HasFine() bool {
+	if x == nil {
+		return false
+	}
+	return x.Fine != nil
+}
+
+func (x *PenaltyCalculatorWarn) HasDetentionTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.DetentionTime != nil
+}
+
+func (x *PenaltyCalculatorWarn) HasStvoPoints() bool {
+	if x == nil {
+		return false
+	}
+	return x.StvoPoints != nil
+}
+
+func (x *PenaltyCalculatorWarn) HasWarnMessage() bool {
+	if x == nil {
+		return false
+	}
+	return x.WarnMessage != nil
+}
+
+func (x *PenaltyCalculatorWarn) ClearFine() {
+	x.Fine = nil
+}
+
+func (x *PenaltyCalculatorWarn) ClearDetentionTime() {
+	x.DetentionTime = nil
+}
+
+func (x *PenaltyCalculatorWarn) ClearStvoPoints() {
+	x.StvoPoints = nil
+}
+
+func (x *PenaltyCalculatorWarn) ClearWarnMessage() {
+	x.WarnMessage = nil
+}
+
+type PenaltyCalculatorWarn_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Enabled       bool
+	Fine          *uint32
+	DetentionTime *uint32
+	StvoPoints    *uint32
+	WarnMessage   *string
+}
+
+func (b0 PenaltyCalculatorWarn_builder) Build() *PenaltyCalculatorWarn {
+	m0 := &PenaltyCalculatorWarn{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Enabled = b.Enabled
+	x.Fine = b.Fine
+	x.DetentionTime = b.DetentionTime
+	x.StvoPoints = b.StvoPoints
+	x.WarnMessage = b.WarnMessage
+	return m0
 }
 
 var File_resources_settings_config_proto protoreflect.FileDescriptor
@@ -1238,18 +2075,6 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"#DISCORD_BOT_PRESENCE_TYPE_LISTENING\x10\x02\x12'\n" +
 	"#DISCORD_BOT_PRESENCE_TYPE_STREAMING\x10\x03\x12#\n" +
 	"\x1fDISCORD_BOT_PRESENCE_TYPE_WATCH\x10\x04BOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
-
-var (
-	file_resources_settings_config_proto_rawDescOnce sync.Once
-	file_resources_settings_config_proto_rawDescData []byte
-)
-
-func file_resources_settings_config_proto_rawDescGZIP() []byte {
-	file_resources_settings_config_proto_rawDescOnce.Do(func() {
-		file_resources_settings_config_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_settings_config_proto_rawDesc), len(file_resources_settings_config_proto_rawDesc)))
-	})
-	return file_resources_settings_config_proto_rawDescData
-}
 
 var file_resources_settings_config_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_settings_config_proto_msgTypes = make([]protoimpl.MessageInfo, 17)

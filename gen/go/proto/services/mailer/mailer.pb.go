@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/mailer/mailer.proto
 
+//go:build !protoopaque
+
 package mailer
 
 import (
@@ -20,7 +22,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -32,7 +33,7 @@ const (
 )
 
 type ListEmailsRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	// Search params
 	All           *bool `protobuf:"varint,2,opt,name=all,proto3,oneof" json:"all,omitempty"`
@@ -65,11 +66,6 @@ func (x *ListEmailsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListEmailsRequest.ProtoReflect.Descriptor instead.
-func (*ListEmailsRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *ListEmailsRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -84,8 +80,55 @@ func (x *ListEmailsRequest) GetAll() bool {
 	return false
 }
 
+func (x *ListEmailsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListEmailsRequest) SetAll(v bool) {
+	x.All = &v
+}
+
+func (x *ListEmailsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListEmailsRequest) HasAll() bool {
+	if x == nil {
+		return false
+	}
+	return x.All != nil
+}
+
+func (x *ListEmailsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListEmailsRequest) ClearAll() {
+	x.All = nil
+}
+
+type ListEmailsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	// Search params
+	All *bool
+}
+
+func (b0 ListEmailsRequest_builder) Build() *ListEmailsRequest {
+	m0 := &ListEmailsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.All = b.All
+	return m0
+}
+
 type ListEmailsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Emails        []*emails.Email              `protobuf:"bytes,2,rep,name=emails,proto3" json:"emails,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -117,11 +160,6 @@ func (x *ListEmailsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListEmailsResponse.ProtoReflect.Descriptor instead.
-func (*ListEmailsResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListEmailsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -136,8 +174,43 @@ func (x *ListEmailsResponse) GetEmails() []*emails.Email {
 	return nil
 }
 
+func (x *ListEmailsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListEmailsResponse) SetEmails(v []*emails.Email) {
+	x.Emails = v
+}
+
+func (x *ListEmailsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListEmailsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListEmailsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Emails     []*emails.Email
+}
+
+func (b0 ListEmailsResponse_builder) Build() *ListEmailsResponse {
+	m0 := &ListEmailsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Emails = b.Emails
+	return m0
+}
+
 type GetEmailRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -168,11 +241,6 @@ func (x *GetEmailRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetEmailRequest.ProtoReflect.Descriptor instead.
-func (*GetEmailRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *GetEmailRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -180,8 +248,26 @@ func (x *GetEmailRequest) GetId() int64 {
 	return 0
 }
 
+func (x *GetEmailRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type GetEmailRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 GetEmailRequest_builder) Build() *GetEmailRequest {
+	m0 := &GetEmailRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type GetEmailResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Email         *emails.Email          `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -212,11 +298,6 @@ func (x *GetEmailResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetEmailResponse.ProtoReflect.Descriptor instead.
-func (*GetEmailResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *GetEmailResponse) GetEmail() *emails.Email {
 	if x != nil {
 		return x.Email
@@ -224,8 +305,37 @@ func (x *GetEmailResponse) GetEmail() *emails.Email {
 	return nil
 }
 
+func (x *GetEmailResponse) SetEmail(v *emails.Email) {
+	x.Email = v
+}
+
+func (x *GetEmailResponse) HasEmail() bool {
+	if x == nil {
+		return false
+	}
+	return x.Email != nil
+}
+
+func (x *GetEmailResponse) ClearEmail() {
+	x.Email = nil
+}
+
+type GetEmailResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Email *emails.Email
+}
+
+func (b0 GetEmailResponse_builder) Build() *GetEmailResponse {
+	m0 := &GetEmailResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Email = b.Email
+	return m0
+}
+
 type CreateOrUpdateEmailRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Email         *emails.Email          `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -256,11 +366,6 @@ func (x *CreateOrUpdateEmailRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateEmailRequest.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateEmailRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *CreateOrUpdateEmailRequest) GetEmail() *emails.Email {
 	if x != nil {
 		return x.Email
@@ -268,8 +373,37 @@ func (x *CreateOrUpdateEmailRequest) GetEmail() *emails.Email {
 	return nil
 }
 
+func (x *CreateOrUpdateEmailRequest) SetEmail(v *emails.Email) {
+	x.Email = v
+}
+
+func (x *CreateOrUpdateEmailRequest) HasEmail() bool {
+	if x == nil {
+		return false
+	}
+	return x.Email != nil
+}
+
+func (x *CreateOrUpdateEmailRequest) ClearEmail() {
+	x.Email = nil
+}
+
+type CreateOrUpdateEmailRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Email *emails.Email
+}
+
+func (b0 CreateOrUpdateEmailRequest_builder) Build() *CreateOrUpdateEmailRequest {
+	m0 := &CreateOrUpdateEmailRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Email = b.Email
+	return m0
+}
+
 type CreateOrUpdateEmailResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Email         *emails.Email          `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -300,11 +434,6 @@ func (x *CreateOrUpdateEmailResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateEmailResponse.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateEmailResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *CreateOrUpdateEmailResponse) GetEmail() *emails.Email {
 	if x != nil {
 		return x.Email
@@ -312,8 +441,37 @@ func (x *CreateOrUpdateEmailResponse) GetEmail() *emails.Email {
 	return nil
 }
 
+func (x *CreateOrUpdateEmailResponse) SetEmail(v *emails.Email) {
+	x.Email = v
+}
+
+func (x *CreateOrUpdateEmailResponse) HasEmail() bool {
+	if x == nil {
+		return false
+	}
+	return x.Email != nil
+}
+
+func (x *CreateOrUpdateEmailResponse) ClearEmail() {
+	x.Email = nil
+}
+
+type CreateOrUpdateEmailResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Email *emails.Email
+}
+
+func (b0 CreateOrUpdateEmailResponse_builder) Build() *CreateOrUpdateEmailResponse {
+	m0 := &CreateOrUpdateEmailResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Email = b.Email
+	return m0
+}
+
 type DeleteEmailRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -344,11 +502,6 @@ func (x *DeleteEmailRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteEmailRequest.ProtoReflect.Descriptor instead.
-func (*DeleteEmailRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *DeleteEmailRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -356,8 +509,26 @@ func (x *DeleteEmailRequest) GetId() int64 {
 	return 0
 }
 
+func (x *DeleteEmailRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type DeleteEmailRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 DeleteEmailRequest_builder) Build() *DeleteEmailRequest {
+	m0 := &DeleteEmailRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type DeleteEmailResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -387,13 +558,20 @@ func (x *DeleteEmailResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteEmailResponse.ProtoReflect.Descriptor instead.
-func (*DeleteEmailResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{7}
+type DeleteEmailResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteEmailResponse_builder) Build() *DeleteEmailResponse {
+	m0 := &DeleteEmailResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetEmailProposalsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Input         string                 `protobuf:"bytes,1,opt,name=input,proto3" json:"input,omitempty"`
 	Job           *bool                  `protobuf:"varint,2,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	UserId        *int32                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
@@ -426,11 +604,6 @@ func (x *GetEmailProposalsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetEmailProposalsRequest.ProtoReflect.Descriptor instead.
-func (*GetEmailProposalsRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *GetEmailProposalsRequest) GetInput() string {
 	if x != nil {
 		return x.Input
@@ -452,8 +625,60 @@ func (x *GetEmailProposalsRequest) GetUserId() int32 {
 	return 0
 }
 
+func (x *GetEmailProposalsRequest) SetInput(v string) {
+	x.Input = v
+}
+
+func (x *GetEmailProposalsRequest) SetJob(v bool) {
+	x.Job = &v
+}
+
+func (x *GetEmailProposalsRequest) SetUserId(v int32) {
+	x.UserId = &v
+}
+
+func (x *GetEmailProposalsRequest) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *GetEmailProposalsRequest) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
+}
+
+func (x *GetEmailProposalsRequest) ClearJob() {
+	x.Job = nil
+}
+
+func (x *GetEmailProposalsRequest) ClearUserId() {
+	x.UserId = nil
+}
+
+type GetEmailProposalsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Input  string
+	Job    *bool
+	UserId *int32
+}
+
+func (b0 GetEmailProposalsRequest_builder) Build() *GetEmailProposalsRequest {
+	m0 := &GetEmailProposalsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Input = b.Input
+	x.Job = b.Job
+	x.UserId = b.UserId
+	return m0
+}
+
 type GetEmailProposalsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Emails        []string               `protobuf:"bytes,1,rep,name=emails,proto3" json:"emails,omitempty"`
 	Domains       []string               `protobuf:"bytes,2,rep,name=domains,proto3" json:"domains,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -485,11 +710,6 @@ func (x *GetEmailProposalsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetEmailProposalsResponse.ProtoReflect.Descriptor instead.
-func (*GetEmailProposalsResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{9}
-}
-
 func (x *GetEmailProposalsResponse) GetEmails() []string {
 	if x != nil {
 		return x.Emails
@@ -504,8 +724,32 @@ func (x *GetEmailProposalsResponse) GetDomains() []string {
 	return nil
 }
 
+func (x *GetEmailProposalsResponse) SetEmails(v []string) {
+	x.Emails = v
+}
+
+func (x *GetEmailProposalsResponse) SetDomains(v []string) {
+	x.Domains = v
+}
+
+type GetEmailProposalsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Emails  []string
+	Domains []string
+}
+
+func (b0 GetEmailProposalsResponse_builder) Build() *GetEmailProposalsResponse {
+	m0 := &GetEmailProposalsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Emails = b.Emails
+	x.Domains = b.Domains
+	return m0
+}
+
 type ListTemplatesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -536,11 +780,6 @@ func (x *ListTemplatesRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListTemplatesRequest.ProtoReflect.Descriptor instead.
-func (*ListTemplatesRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{10}
-}
-
 func (x *ListTemplatesRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
@@ -548,8 +787,26 @@ func (x *ListTemplatesRequest) GetEmailId() int64 {
 	return 0
 }
 
+func (x *ListTemplatesRequest) SetEmailId(v int64) {
+	x.EmailId = v
+}
+
+type ListTemplatesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EmailId int64
+}
+
+func (b0 ListTemplatesRequest_builder) Build() *ListTemplatesRequest {
+	m0 := &ListTemplatesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EmailId = b.EmailId
+	return m0
+}
+
 type ListTemplatesResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Templates     []*templates.Template  `protobuf:"bytes,1,rep,name=templates,proto3" json:"templates,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -580,11 +837,6 @@ func (x *ListTemplatesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListTemplatesResponse.ProtoReflect.Descriptor instead.
-func (*ListTemplatesResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{11}
-}
-
 func (x *ListTemplatesResponse) GetTemplates() []*templates.Template {
 	if x != nil {
 		return x.Templates
@@ -592,8 +844,26 @@ func (x *ListTemplatesResponse) GetTemplates() []*templates.Template {
 	return nil
 }
 
+func (x *ListTemplatesResponse) SetTemplates(v []*templates.Template) {
+	x.Templates = v
+}
+
+type ListTemplatesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Templates []*templates.Template
+}
+
+func (b0 ListTemplatesResponse_builder) Build() *ListTemplatesResponse {
+	m0 := &ListTemplatesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Templates = b.Templates
+	return m0
+}
+
 type GetTemplateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	TemplateId    int64                  `protobuf:"varint,2,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -625,11 +895,6 @@ func (x *GetTemplateRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetTemplateRequest.ProtoReflect.Descriptor instead.
-func (*GetTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{12}
-}
-
 func (x *GetTemplateRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
@@ -644,8 +909,32 @@ func (x *GetTemplateRequest) GetTemplateId() int64 {
 	return 0
 }
 
+func (x *GetTemplateRequest) SetEmailId(v int64) {
+	x.EmailId = v
+}
+
+func (x *GetTemplateRequest) SetTemplateId(v int64) {
+	x.TemplateId = v
+}
+
+type GetTemplateRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EmailId    int64
+	TemplateId int64
+}
+
+func (b0 GetTemplateRequest_builder) Build() *GetTemplateRequest {
+	m0 := &GetTemplateRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EmailId = b.EmailId
+	x.TemplateId = b.TemplateId
+	return m0
+}
+
 type GetTemplateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -676,11 +965,6 @@ func (x *GetTemplateResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetTemplateResponse.ProtoReflect.Descriptor instead.
-func (*GetTemplateResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{13}
-}
-
 func (x *GetTemplateResponse) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
@@ -688,8 +972,37 @@ func (x *GetTemplateResponse) GetTemplate() *templates.Template {
 	return nil
 }
 
+func (x *GetTemplateResponse) SetTemplate(v *templates.Template) {
+	x.Template = v
+}
+
+func (x *GetTemplateResponse) HasTemplate() bool {
+	if x == nil {
+		return false
+	}
+	return x.Template != nil
+}
+
+func (x *GetTemplateResponse) ClearTemplate() {
+	x.Template = nil
+}
+
+type GetTemplateResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Template *templates.Template
+}
+
+func (b0 GetTemplateResponse_builder) Build() *GetTemplateResponse {
+	m0 := &GetTemplateResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Template = b.Template
+	return m0
+}
+
 type CreateOrUpdateTemplateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -720,11 +1033,6 @@ func (x *CreateOrUpdateTemplateRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateTemplateRequest.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{14}
-}
-
 func (x *CreateOrUpdateTemplateRequest) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
@@ -732,8 +1040,37 @@ func (x *CreateOrUpdateTemplateRequest) GetTemplate() *templates.Template {
 	return nil
 }
 
+func (x *CreateOrUpdateTemplateRequest) SetTemplate(v *templates.Template) {
+	x.Template = v
+}
+
+func (x *CreateOrUpdateTemplateRequest) HasTemplate() bool {
+	if x == nil {
+		return false
+	}
+	return x.Template != nil
+}
+
+func (x *CreateOrUpdateTemplateRequest) ClearTemplate() {
+	x.Template = nil
+}
+
+type CreateOrUpdateTemplateRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Template *templates.Template
+}
+
+func (b0 CreateOrUpdateTemplateRequest_builder) Build() *CreateOrUpdateTemplateRequest {
+	m0 := &CreateOrUpdateTemplateRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Template = b.Template
+	return m0
+}
+
 type CreateOrUpdateTemplateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -764,11 +1101,6 @@ func (x *CreateOrUpdateTemplateResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateTemplateResponse.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateTemplateResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{15}
-}
-
 func (x *CreateOrUpdateTemplateResponse) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
@@ -776,8 +1108,37 @@ func (x *CreateOrUpdateTemplateResponse) GetTemplate() *templates.Template {
 	return nil
 }
 
+func (x *CreateOrUpdateTemplateResponse) SetTemplate(v *templates.Template) {
+	x.Template = v
+}
+
+func (x *CreateOrUpdateTemplateResponse) HasTemplate() bool {
+	if x == nil {
+		return false
+	}
+	return x.Template != nil
+}
+
+func (x *CreateOrUpdateTemplateResponse) ClearTemplate() {
+	x.Template = nil
+}
+
+type CreateOrUpdateTemplateResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Template *templates.Template
+}
+
+func (b0 CreateOrUpdateTemplateResponse_builder) Build() *CreateOrUpdateTemplateResponse {
+	m0 := &CreateOrUpdateTemplateResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Template = b.Template
+	return m0
+}
+
 type DeleteTemplateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -809,11 +1170,6 @@ func (x *DeleteTemplateRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteTemplateRequest.ProtoReflect.Descriptor instead.
-func (*DeleteTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{16}
-}
-
 func (x *DeleteTemplateRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
@@ -828,8 +1184,32 @@ func (x *DeleteTemplateRequest) GetId() int64 {
 	return 0
 }
 
+func (x *DeleteTemplateRequest) SetEmailId(v int64) {
+	x.EmailId = v
+}
+
+func (x *DeleteTemplateRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type DeleteTemplateRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EmailId int64
+	Id      int64
+}
+
+func (b0 DeleteTemplateRequest_builder) Build() *DeleteTemplateRequest {
+	m0 := &DeleteTemplateRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EmailId = b.EmailId
+	x.Id = b.Id
+	return m0
+}
+
 type DeleteTemplateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -859,13 +1239,20 @@ func (x *DeleteTemplateResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteTemplateResponse.ProtoReflect.Descriptor instead.
-func (*DeleteTemplateResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{17}
+type DeleteTemplateResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteTemplateResponse_builder) Build() *DeleteTemplateResponse {
+	m0 := &DeleteTemplateResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListThreadsRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	// Search params
 	EmailIds      []int64 `protobuf:"varint,2,rep,packed,name=email_ids,json=emailIds,proto3" json:"email_ids,omitempty"`
@@ -900,11 +1287,6 @@ func (x *ListThreadsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListThreadsRequest.ProtoReflect.Descriptor instead.
-func (*ListThreadsRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{18}
-}
-
 func (x *ListThreadsRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -933,8 +1315,78 @@ func (x *ListThreadsRequest) GetArchived() bool {
 	return false
 }
 
+func (x *ListThreadsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListThreadsRequest) SetEmailIds(v []int64) {
+	x.EmailIds = v
+}
+
+func (x *ListThreadsRequest) SetUnread(v bool) {
+	x.Unread = &v
+}
+
+func (x *ListThreadsRequest) SetArchived(v bool) {
+	x.Archived = &v
+}
+
+func (x *ListThreadsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListThreadsRequest) HasUnread() bool {
+	if x == nil {
+		return false
+	}
+	return x.Unread != nil
+}
+
+func (x *ListThreadsRequest) HasArchived() bool {
+	if x == nil {
+		return false
+	}
+	return x.Archived != nil
+}
+
+func (x *ListThreadsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListThreadsRequest) ClearUnread() {
+	x.Unread = nil
+}
+
+func (x *ListThreadsRequest) ClearArchived() {
+	x.Archived = nil
+}
+
+type ListThreadsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	// Search params
+	EmailIds []int64
+	Unread   *bool
+	Archived *bool
+}
+
+func (b0 ListThreadsRequest_builder) Build() *ListThreadsRequest {
+	m0 := &ListThreadsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.EmailIds = b.EmailIds
+	x.Unread = b.Unread
+	x.Archived = b.Archived
+	return m0
+}
+
 type ListThreadsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Threads       []*threads.Thread            `protobuf:"bytes,2,rep,name=threads,proto3" json:"threads,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -966,11 +1418,6 @@ func (x *ListThreadsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListThreadsResponse.ProtoReflect.Descriptor instead.
-func (*ListThreadsResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{19}
-}
-
 func (x *ListThreadsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -985,8 +1432,43 @@ func (x *ListThreadsResponse) GetThreads() []*threads.Thread {
 	return nil
 }
 
+func (x *ListThreadsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListThreadsResponse) SetThreads(v []*threads.Thread) {
+	x.Threads = v
+}
+
+func (x *ListThreadsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListThreadsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListThreadsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Threads    []*threads.Thread
+}
+
+func (b0 ListThreadsResponse_builder) Build() *ListThreadsResponse {
+	m0 := &ListThreadsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Threads = b.Threads
+	return m0
+}
+
 type GetThreadRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	ThreadId      int64                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1018,11 +1500,6 @@ func (x *GetThreadRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetThreadRequest.ProtoReflect.Descriptor instead.
-func (*GetThreadRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{20}
-}
-
 func (x *GetThreadRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
@@ -1037,8 +1514,32 @@ func (x *GetThreadRequest) GetThreadId() int64 {
 	return 0
 }
 
+func (x *GetThreadRequest) SetEmailId(v int64) {
+	x.EmailId = v
+}
+
+func (x *GetThreadRequest) SetThreadId(v int64) {
+	x.ThreadId = v
+}
+
+type GetThreadRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EmailId  int64
+	ThreadId int64
+}
+
+func (b0 GetThreadRequest_builder) Build() *GetThreadRequest {
+	m0 := &GetThreadRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EmailId = b.EmailId
+	x.ThreadId = b.ThreadId
+	return m0
+}
+
 type GetThreadResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Thread        *threads.Thread        `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1069,11 +1570,6 @@ func (x *GetThreadResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetThreadResponse.ProtoReflect.Descriptor instead.
-func (*GetThreadResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{21}
-}
-
 func (x *GetThreadResponse) GetThread() *threads.Thread {
 	if x != nil {
 		return x.Thread
@@ -1081,8 +1577,37 @@ func (x *GetThreadResponse) GetThread() *threads.Thread {
 	return nil
 }
 
+func (x *GetThreadResponse) SetThread(v *threads.Thread) {
+	x.Thread = v
+}
+
+func (x *GetThreadResponse) HasThread() bool {
+	if x == nil {
+		return false
+	}
+	return x.Thread != nil
+}
+
+func (x *GetThreadResponse) ClearThread() {
+	x.Thread = nil
+}
+
+type GetThreadResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Thread *threads.Thread
+}
+
+func (b0 GetThreadResponse_builder) Build() *GetThreadResponse {
+	m0 := &GetThreadResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Thread = b.Thread
+	return m0
+}
+
 type CreateThreadRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Thread        *threads.Thread        `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
 	Message       *messages.Message      `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	Recipients    []string               `protobuf:"bytes,3,rep,name=recipients,proto3" json:"recipients,omitempty"`
@@ -1115,11 +1640,6 @@ func (x *CreateThreadRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateThreadRequest.ProtoReflect.Descriptor instead.
-func (*CreateThreadRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{22}
-}
-
 func (x *CreateThreadRequest) GetThread() *threads.Thread {
 	if x != nil {
 		return x.Thread
@@ -1141,8 +1661,60 @@ func (x *CreateThreadRequest) GetRecipients() []string {
 	return nil
 }
 
+func (x *CreateThreadRequest) SetThread(v *threads.Thread) {
+	x.Thread = v
+}
+
+func (x *CreateThreadRequest) SetMessage(v *messages.Message) {
+	x.Message = v
+}
+
+func (x *CreateThreadRequest) SetRecipients(v []string) {
+	x.Recipients = v
+}
+
+func (x *CreateThreadRequest) HasThread() bool {
+	if x == nil {
+		return false
+	}
+	return x.Thread != nil
+}
+
+func (x *CreateThreadRequest) HasMessage() bool {
+	if x == nil {
+		return false
+	}
+	return x.Message != nil
+}
+
+func (x *CreateThreadRequest) ClearThread() {
+	x.Thread = nil
+}
+
+func (x *CreateThreadRequest) ClearMessage() {
+	x.Message = nil
+}
+
+type CreateThreadRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Thread     *threads.Thread
+	Message    *messages.Message
+	Recipients []string
+}
+
+func (b0 CreateThreadRequest_builder) Build() *CreateThreadRequest {
+	m0 := &CreateThreadRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Thread = b.Thread
+	x.Message = b.Message
+	x.Recipients = b.Recipients
+	return m0
+}
+
 type CreateThreadResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Thread        *threads.Thread        `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1173,11 +1745,6 @@ func (x *CreateThreadResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateThreadResponse.ProtoReflect.Descriptor instead.
-func (*CreateThreadResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{23}
-}
-
 func (x *CreateThreadResponse) GetThread() *threads.Thread {
 	if x != nil {
 		return x.Thread
@@ -1185,8 +1752,37 @@ func (x *CreateThreadResponse) GetThread() *threads.Thread {
 	return nil
 }
 
+func (x *CreateThreadResponse) SetThread(v *threads.Thread) {
+	x.Thread = v
+}
+
+func (x *CreateThreadResponse) HasThread() bool {
+	if x == nil {
+		return false
+	}
+	return x.Thread != nil
+}
+
+func (x *CreateThreadResponse) ClearThread() {
+	x.Thread = nil
+}
+
+type CreateThreadResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Thread *threads.Thread
+}
+
+func (b0 CreateThreadResponse_builder) Build() *CreateThreadResponse {
+	m0 := &CreateThreadResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Thread = b.Thread
+	return m0
+}
+
 type DeleteThreadRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	ThreadId      int64                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1218,11 +1814,6 @@ func (x *DeleteThreadRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteThreadRequest.ProtoReflect.Descriptor instead.
-func (*DeleteThreadRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{24}
-}
-
 func (x *DeleteThreadRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
@@ -1237,8 +1828,32 @@ func (x *DeleteThreadRequest) GetThreadId() int64 {
 	return 0
 }
 
+func (x *DeleteThreadRequest) SetEmailId(v int64) {
+	x.EmailId = v
+}
+
+func (x *DeleteThreadRequest) SetThreadId(v int64) {
+	x.ThreadId = v
+}
+
+type DeleteThreadRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EmailId  int64
+	ThreadId int64
+}
+
+func (b0 DeleteThreadRequest_builder) Build() *DeleteThreadRequest {
+	m0 := &DeleteThreadRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EmailId = b.EmailId
+	x.ThreadId = b.ThreadId
+	return m0
+}
+
 type DeleteThreadResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1268,13 +1883,20 @@ func (x *DeleteThreadResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteThreadResponse.ProtoReflect.Descriptor instead.
-func (*DeleteThreadResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{25}
+type DeleteThreadResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteThreadResponse_builder) Build() *DeleteThreadResponse {
+	m0 := &DeleteThreadResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetThreadStateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	ThreadId      int64                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1306,11 +1928,6 @@ func (x *GetThreadStateRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetThreadStateRequest.ProtoReflect.Descriptor instead.
-func (*GetThreadStateRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{26}
-}
-
 func (x *GetThreadStateRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
@@ -1325,8 +1942,32 @@ func (x *GetThreadStateRequest) GetThreadId() int64 {
 	return 0
 }
 
+func (x *GetThreadStateRequest) SetEmailId(v int64) {
+	x.EmailId = v
+}
+
+func (x *GetThreadStateRequest) SetThreadId(v int64) {
+	x.ThreadId = v
+}
+
+type GetThreadStateRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EmailId  int64
+	ThreadId int64
+}
+
+func (b0 GetThreadStateRequest_builder) Build() *GetThreadStateRequest {
+	m0 := &GetThreadStateRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EmailId = b.EmailId
+	x.ThreadId = b.ThreadId
+	return m0
+}
+
 type GetThreadStateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	State         *threads.ThreadState   `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1357,11 +1998,6 @@ func (x *GetThreadStateResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetThreadStateResponse.ProtoReflect.Descriptor instead.
-func (*GetThreadStateResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{27}
-}
-
 func (x *GetThreadStateResponse) GetState() *threads.ThreadState {
 	if x != nil {
 		return x.State
@@ -1369,8 +2005,37 @@ func (x *GetThreadStateResponse) GetState() *threads.ThreadState {
 	return nil
 }
 
+func (x *GetThreadStateResponse) SetState(v *threads.ThreadState) {
+	x.State = v
+}
+
+func (x *GetThreadStateResponse) HasState() bool {
+	if x == nil {
+		return false
+	}
+	return x.State != nil
+}
+
+func (x *GetThreadStateResponse) ClearState() {
+	x.State = nil
+}
+
+type GetThreadStateResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	State *threads.ThreadState
+}
+
+func (b0 GetThreadStateResponse_builder) Build() *GetThreadStateResponse {
+	m0 := &GetThreadStateResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.State = b.State
+	return m0
+}
+
 type SetThreadStateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	State         *threads.ThreadState   `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1401,11 +2066,6 @@ func (x *SetThreadStateRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetThreadStateRequest.ProtoReflect.Descriptor instead.
-func (*SetThreadStateRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{28}
-}
-
 func (x *SetThreadStateRequest) GetState() *threads.ThreadState {
 	if x != nil {
 		return x.State
@@ -1413,8 +2073,37 @@ func (x *SetThreadStateRequest) GetState() *threads.ThreadState {
 	return nil
 }
 
+func (x *SetThreadStateRequest) SetState(v *threads.ThreadState) {
+	x.State = v
+}
+
+func (x *SetThreadStateRequest) HasState() bool {
+	if x == nil {
+		return false
+	}
+	return x.State != nil
+}
+
+func (x *SetThreadStateRequest) ClearState() {
+	x.State = nil
+}
+
+type SetThreadStateRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	State *threads.ThreadState
+}
+
+func (b0 SetThreadStateRequest_builder) Build() *SetThreadStateRequest {
+	m0 := &SetThreadStateRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.State = b.State
+	return m0
+}
+
 type SetThreadStateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	State         *threads.ThreadState   `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1445,11 +2134,6 @@ func (x *SetThreadStateResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetThreadStateResponse.ProtoReflect.Descriptor instead.
-func (*SetThreadStateResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{29}
-}
-
 func (x *SetThreadStateResponse) GetState() *threads.ThreadState {
 	if x != nil {
 		return x.State
@@ -1457,8 +2141,37 @@ func (x *SetThreadStateResponse) GetState() *threads.ThreadState {
 	return nil
 }
 
+func (x *SetThreadStateResponse) SetState(v *threads.ThreadState) {
+	x.State = v
+}
+
+func (x *SetThreadStateResponse) HasState() bool {
+	if x == nil {
+		return false
+	}
+	return x.State != nil
+}
+
+func (x *SetThreadStateResponse) ClearState() {
+	x.State = nil
+}
+
+type SetThreadStateResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	State *threads.ThreadState
+}
+
+func (b0 SetThreadStateResponse_builder) Build() *SetThreadStateResponse {
+	m0 := &SetThreadStateResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.State = b.State
+	return m0
+}
+
 type GetEmailSettingsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1489,11 +2202,6 @@ func (x *GetEmailSettingsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetEmailSettingsRequest.ProtoReflect.Descriptor instead.
-func (*GetEmailSettingsRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{30}
-}
-
 func (x *GetEmailSettingsRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
@@ -1501,8 +2209,26 @@ func (x *GetEmailSettingsRequest) GetEmailId() int64 {
 	return 0
 }
 
+func (x *GetEmailSettingsRequest) SetEmailId(v int64) {
+	x.EmailId = v
+}
+
+type GetEmailSettingsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EmailId int64
+}
+
+func (b0 GetEmailSettingsRequest_builder) Build() *GetEmailSettingsRequest {
+	m0 := &GetEmailSettingsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EmailId = b.EmailId
+	return m0
+}
+
 type GetEmailSettingsResponse struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	Settings      *settings.EmailSettings `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1533,11 +2259,6 @@ func (x *GetEmailSettingsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetEmailSettingsResponse.ProtoReflect.Descriptor instead.
-func (*GetEmailSettingsResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{31}
-}
-
 func (x *GetEmailSettingsResponse) GetSettings() *settings.EmailSettings {
 	if x != nil {
 		return x.Settings
@@ -1545,8 +2266,37 @@ func (x *GetEmailSettingsResponse) GetSettings() *settings.EmailSettings {
 	return nil
 }
 
+func (x *GetEmailSettingsResponse) SetSettings(v *settings.EmailSettings) {
+	x.Settings = v
+}
+
+func (x *GetEmailSettingsResponse) HasSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.Settings != nil
+}
+
+func (x *GetEmailSettingsResponse) ClearSettings() {
+	x.Settings = nil
+}
+
+type GetEmailSettingsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Settings *settings.EmailSettings
+}
+
+func (b0 GetEmailSettingsResponse_builder) Build() *GetEmailSettingsResponse {
+	m0 := &GetEmailSettingsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Settings = b.Settings
+	return m0
+}
+
 type SetEmailSettingsRequest struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	Settings      *settings.EmailSettings `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1577,11 +2327,6 @@ func (x *SetEmailSettingsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetEmailSettingsRequest.ProtoReflect.Descriptor instead.
-func (*SetEmailSettingsRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{32}
-}
-
 func (x *SetEmailSettingsRequest) GetSettings() *settings.EmailSettings {
 	if x != nil {
 		return x.Settings
@@ -1589,8 +2334,37 @@ func (x *SetEmailSettingsRequest) GetSettings() *settings.EmailSettings {
 	return nil
 }
 
+func (x *SetEmailSettingsRequest) SetSettings(v *settings.EmailSettings) {
+	x.Settings = v
+}
+
+func (x *SetEmailSettingsRequest) HasSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.Settings != nil
+}
+
+func (x *SetEmailSettingsRequest) ClearSettings() {
+	x.Settings = nil
+}
+
+type SetEmailSettingsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Settings *settings.EmailSettings
+}
+
+func (b0 SetEmailSettingsRequest_builder) Build() *SetEmailSettingsRequest {
+	m0 := &SetEmailSettingsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Settings = b.Settings
+	return m0
+}
+
 type SetEmailSettingsResponse struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	Settings      *settings.EmailSettings `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1621,11 +2395,6 @@ func (x *SetEmailSettingsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetEmailSettingsResponse.ProtoReflect.Descriptor instead.
-func (*SetEmailSettingsResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{33}
-}
-
 func (x *SetEmailSettingsResponse) GetSettings() *settings.EmailSettings {
 	if x != nil {
 		return x.Settings
@@ -1633,8 +2402,37 @@ func (x *SetEmailSettingsResponse) GetSettings() *settings.EmailSettings {
 	return nil
 }
 
+func (x *SetEmailSettingsResponse) SetSettings(v *settings.EmailSettings) {
+	x.Settings = v
+}
+
+func (x *SetEmailSettingsResponse) HasSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.Settings != nil
+}
+
+func (x *SetEmailSettingsResponse) ClearSettings() {
+	x.Settings = nil
+}
+
+type SetEmailSettingsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Settings *settings.EmailSettings
+}
+
+func (b0 SetEmailSettingsResponse_builder) Build() *SetEmailSettingsResponse {
+	m0 := &SetEmailSettingsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Settings = b.Settings
+	return m0
+}
+
 type SearchThreadsRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	// Search params
 	Search        string `protobuf:"bytes,2,opt,name=search,proto3" json:"search,omitempty"`
@@ -1667,11 +2465,6 @@ func (x *SearchThreadsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SearchThreadsRequest.ProtoReflect.Descriptor instead.
-func (*SearchThreadsRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{34}
-}
-
 func (x *SearchThreadsRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -1686,8 +2479,44 @@ func (x *SearchThreadsRequest) GetSearch() string {
 	return ""
 }
 
+func (x *SearchThreadsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *SearchThreadsRequest) SetSearch(v string) {
+	x.Search = v
+}
+
+func (x *SearchThreadsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *SearchThreadsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+type SearchThreadsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	// Search params
+	Search string
+}
+
+func (b0 SearchThreadsRequest_builder) Build() *SearchThreadsRequest {
+	m0 := &SearchThreadsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Search = b.Search
+	return m0
+}
+
 type SearchThreadsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Messages      []*messages.Message          `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1719,11 +2548,6 @@ func (x *SearchThreadsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SearchThreadsResponse.ProtoReflect.Descriptor instead.
-func (*SearchThreadsResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{35}
-}
-
 func (x *SearchThreadsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -1738,8 +2562,43 @@ func (x *SearchThreadsResponse) GetMessages() []*messages.Message {
 	return nil
 }
 
+func (x *SearchThreadsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *SearchThreadsResponse) SetMessages(v []*messages.Message) {
+	x.Messages = v
+}
+
+func (x *SearchThreadsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *SearchThreadsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type SearchThreadsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Messages   []*messages.Message
+}
+
+func (b0 SearchThreadsResponse_builder) Build() *SearchThreadsResponse {
+	m0 := &SearchThreadsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Messages = b.Messages
+	return m0
+}
+
 type ListThreadMessagesRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	EmailId       int64                       `protobuf:"varint,2,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	ThreadId      int64                       `protobuf:"varint,3,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
@@ -1773,11 +2632,6 @@ func (x *ListThreadMessagesRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListThreadMessagesRequest.ProtoReflect.Descriptor instead.
-func (*ListThreadMessagesRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{36}
-}
-
 func (x *ListThreadMessagesRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -1806,8 +2660,66 @@ func (x *ListThreadMessagesRequest) GetAfter() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *ListThreadMessagesRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListThreadMessagesRequest) SetEmailId(v int64) {
+	x.EmailId = v
+}
+
+func (x *ListThreadMessagesRequest) SetThreadId(v int64) {
+	x.ThreadId = v
+}
+
+func (x *ListThreadMessagesRequest) SetAfter(v *timestamp.Timestamp) {
+	x.After = v
+}
+
+func (x *ListThreadMessagesRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListThreadMessagesRequest) HasAfter() bool {
+	if x == nil {
+		return false
+	}
+	return x.After != nil
+}
+
+func (x *ListThreadMessagesRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListThreadMessagesRequest) ClearAfter() {
+	x.After = nil
+}
+
+type ListThreadMessagesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	EmailId    int64
+	ThreadId   int64
+	After      *timestamp.Timestamp
+}
+
+func (b0 ListThreadMessagesRequest_builder) Build() *ListThreadMessagesRequest {
+	m0 := &ListThreadMessagesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.EmailId = b.EmailId
+	x.ThreadId = b.ThreadId
+	x.After = b.After
+	return m0
+}
+
 type ListThreadMessagesResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Messages      []*messages.Message          `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1839,11 +2751,6 @@ func (x *ListThreadMessagesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListThreadMessagesResponse.ProtoReflect.Descriptor instead.
-func (*ListThreadMessagesResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{37}
-}
-
 func (x *ListThreadMessagesResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -1858,8 +2765,43 @@ func (x *ListThreadMessagesResponse) GetMessages() []*messages.Message {
 	return nil
 }
 
+func (x *ListThreadMessagesResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListThreadMessagesResponse) SetMessages(v []*messages.Message) {
+	x.Messages = v
+}
+
+func (x *ListThreadMessagesResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListThreadMessagesResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListThreadMessagesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Messages   []*messages.Message
+}
+
+func (b0 ListThreadMessagesResponse_builder) Build() *ListThreadMessagesResponse {
+	m0 := &ListThreadMessagesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Messages = b.Messages
+	return m0
+}
+
 type PostMessageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Message       *messages.Message      `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 	Recipients    []string               `protobuf:"bytes,2,rep,name=recipients,proto3" json:"recipients,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1891,11 +2833,6 @@ func (x *PostMessageRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PostMessageRequest.ProtoReflect.Descriptor instead.
-func (*PostMessageRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{38}
-}
-
 func (x *PostMessageRequest) GetMessage() *messages.Message {
 	if x != nil {
 		return x.Message
@@ -1910,8 +2847,43 @@ func (x *PostMessageRequest) GetRecipients() []string {
 	return nil
 }
 
+func (x *PostMessageRequest) SetMessage(v *messages.Message) {
+	x.Message = v
+}
+
+func (x *PostMessageRequest) SetRecipients(v []string) {
+	x.Recipients = v
+}
+
+func (x *PostMessageRequest) HasMessage() bool {
+	if x == nil {
+		return false
+	}
+	return x.Message != nil
+}
+
+func (x *PostMessageRequest) ClearMessage() {
+	x.Message = nil
+}
+
+type PostMessageRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Message    *messages.Message
+	Recipients []string
+}
+
+func (b0 PostMessageRequest_builder) Build() *PostMessageRequest {
+	m0 := &PostMessageRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Message = b.Message
+	x.Recipients = b.Recipients
+	return m0
+}
+
 type PostMessageResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Message       *messages.Message      `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1942,11 +2914,6 @@ func (x *PostMessageResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PostMessageResponse.ProtoReflect.Descriptor instead.
-func (*PostMessageResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{39}
-}
-
 func (x *PostMessageResponse) GetMessage() *messages.Message {
 	if x != nil {
 		return x.Message
@@ -1954,8 +2921,37 @@ func (x *PostMessageResponse) GetMessage() *messages.Message {
 	return nil
 }
 
+func (x *PostMessageResponse) SetMessage(v *messages.Message) {
+	x.Message = v
+}
+
+func (x *PostMessageResponse) HasMessage() bool {
+	if x == nil {
+		return false
+	}
+	return x.Message != nil
+}
+
+func (x *PostMessageResponse) ClearMessage() {
+	x.Message = nil
+}
+
+type PostMessageResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Message *messages.Message
+}
+
+func (b0 PostMessageResponse_builder) Build() *PostMessageResponse {
+	m0 := &PostMessageResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Message = b.Message
+	return m0
+}
+
 type DeleteMessageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	ThreadId      int64                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
 	MessageId     int64                  `protobuf:"varint,3,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
@@ -1988,11 +2984,6 @@ func (x *DeleteMessageRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteMessageRequest.ProtoReflect.Descriptor instead.
-func (*DeleteMessageRequest) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{40}
-}
-
 func (x *DeleteMessageRequest) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
@@ -2014,8 +3005,38 @@ func (x *DeleteMessageRequest) GetMessageId() int64 {
 	return 0
 }
 
+func (x *DeleteMessageRequest) SetEmailId(v int64) {
+	x.EmailId = v
+}
+
+func (x *DeleteMessageRequest) SetThreadId(v int64) {
+	x.ThreadId = v
+}
+
+func (x *DeleteMessageRequest) SetMessageId(v int64) {
+	x.MessageId = v
+}
+
+type DeleteMessageRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EmailId   int64
+	ThreadId  int64
+	MessageId int64
+}
+
+func (b0 DeleteMessageRequest_builder) Build() *DeleteMessageRequest {
+	m0 := &DeleteMessageRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EmailId = b.EmailId
+	x.ThreadId = b.ThreadId
+	x.MessageId = b.MessageId
+	return m0
+}
+
 type DeleteMessageResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2045,9 +3066,16 @@ func (x *DeleteMessageResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteMessageResponse.ProtoReflect.Descriptor instead.
-func (*DeleteMessageResponse) Descriptor() ([]byte, []int) {
-	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{41}
+type DeleteMessageResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteMessageResponse_builder) Build() *DeleteMessageResponse {
+	m0 := &DeleteMessageResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 var File_services_mailer_mailer_proto protoreflect.FileDescriptor
@@ -2229,18 +3257,6 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"ListEmails\x12{\n" +
 	"\x10SetEmailSettings\x12(.services.mailer.SetEmailSettingsRequest\x1a).services.mailer.SetEmailSettingsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
 	"ListEmails\x1a \xea\xf3\x18\x1c\b\x14\x12\x18i-mdi-inbox-full-outlineBJZHgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer;mailerb\x06proto3"
-
-var (
-	file_services_mailer_mailer_proto_rawDescOnce sync.Once
-	file_services_mailer_mailer_proto_rawDescData []byte
-)
-
-func file_services_mailer_mailer_proto_rawDescGZIP() []byte {
-	file_services_mailer_mailer_proto_rawDescOnce.Do(func() {
-		file_services_mailer_mailer_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_mailer_mailer_proto_rawDesc), len(file_services_mailer_mailer_proto_rawDesc)))
-	})
-	return file_services_mailer_mailer_proto_rawDescData
-}
 
 var file_services_mailer_mailer_proto_msgTypes = make([]protoimpl.MessageInfo, 42)
 var file_services_mailer_mailer_proto_goTypes = []any{

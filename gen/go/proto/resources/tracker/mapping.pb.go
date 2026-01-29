@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/tracker/mapping.proto
 
+//go:build !protoopaque
+
 package tracker
 
 import (
@@ -11,7 +13,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,7 +24,7 @@ const (
 )
 
 type UserMapping struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	UnitId        *int64                 `protobuf:"varint,2,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -57,11 +58,6 @@ func (x *UserMapping) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserMapping.ProtoReflect.Descriptor instead.
-func (*UserMapping) Descriptor() ([]byte, []int) {
-	return file_resources_tracker_mapping_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *UserMapping) GetUserId() int32 {
 	if x != nil {
 		return x.UserId
@@ -90,6 +86,64 @@ func (x *UserMapping) GetHidden() bool {
 	return false
 }
 
+func (x *UserMapping) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *UserMapping) SetUnitId(v int64) {
+	x.UnitId = &v
+}
+
+func (x *UserMapping) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *UserMapping) SetHidden(v bool) {
+	x.Hidden = v
+}
+
+func (x *UserMapping) HasUnitId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UnitId != nil
+}
+
+func (x *UserMapping) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *UserMapping) ClearUnitId() {
+	x.UnitId = nil
+}
+
+func (x *UserMapping) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+type UserMapping_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId    int32
+	UnitId    *int64
+	CreatedAt *timestamp.Timestamp
+	Hidden    bool
+}
+
+func (b0 UserMapping_builder) Build() *UserMapping {
+	m0 := &UserMapping{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.UnitId = b.UnitId
+	x.CreatedAt = b.CreatedAt
+	x.Hidden = b.Hidden
+	return m0
+}
+
 var File_resources_tracker_mapping_proto protoreflect.FileDescriptor
 
 const file_resources_tracker_mapping_proto_rawDesc = "" +
@@ -103,18 +157,6 @@ const file_resources_tracker_mapping_proto_rawDesc = "" +
 	"\x06hidden\x18\x04 \x01(\bR\x06hiddenB\n" +
 	"\n" +
 	"\b_unit_idBMZKgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/tracker;trackerb\x06proto3"
-
-var (
-	file_resources_tracker_mapping_proto_rawDescOnce sync.Once
-	file_resources_tracker_mapping_proto_rawDescData []byte
-)
-
-func file_resources_tracker_mapping_proto_rawDescGZIP() []byte {
-	file_resources_tracker_mapping_proto_rawDescOnce.Do(func() {
-		file_resources_tracker_mapping_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_tracker_mapping_proto_rawDesc), len(file_resources_tracker_mapping_proto_rawDesc)))
-	})
-	return file_resources_tracker_mapping_proto_rawDescData
-}
 
 var file_resources_tracker_mapping_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_tracker_mapping_proto_goTypes = []any{

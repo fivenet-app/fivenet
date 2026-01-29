@@ -24,14 +24,6 @@ func (x *TemplateShort) SetJobLabel(label string) {
 
 // pkg/access compatibility
 
-func (x *TemplateJobAccess) SetMinimumGrade(grade int32) {
-	x.MinimumGrade = grade
-}
-
-func (x *TemplateJobAccess) SetAccess(access documentsaccess.AccessLevel) {
-	x.Access = access
-}
-
 func (x *TemplateUserAccess) GetAccess() documentsaccess.AccessLevel {
 	return documentsaccess.AccessLevel_ACCESS_LEVEL_UNSPECIFIED
 }

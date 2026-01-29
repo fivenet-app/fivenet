@@ -9,7 +9,6 @@ import (
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
@@ -27,7 +26,7 @@ func (s *Server) listQualificationsQuery(
 	onlyColumns mysql.ProjectionList,
 	userInfo *userinfo.UserInfo,
 ) mysql.SelectStatement {
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 
 	wheres := []mysql.BoolExpression{}
 	if !userInfo.GetSuperuser() {
@@ -157,7 +156,7 @@ func (s *Server) getQualificationQuery(
 	userInfo *userinfo.UserInfo,
 	selectContent bool,
 ) mysql.SelectStatement {
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 
 	wheres := []mysql.BoolExpression{
 		tQuali.ID.EQ(mysql.Int64(qualificationId)),

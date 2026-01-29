@@ -253,6 +253,7 @@ const columns = computed(
                                 :placeholder="$t('common.license')"
                                 block
                                 leading-icon="i-mdi-search"
+                                class="w-full"
                             >
                                 <template #trailing>
                                     <UKbd value="/" />
@@ -294,6 +295,7 @@ const columns = computed(
                                         name="username"
                                         :placeholder="$t('common.username')"
                                         block
+                                        class="w-full"
                                     />
                                 </UFormField>
 
@@ -308,6 +310,7 @@ const columns = computed(
                                         name="externalId"
                                         :placeholder="$t('components.auth.SocialLogins.external_id')"
                                         block
+                                        class="w-full"
                                     />
                                 </UFormField>
                             </div>

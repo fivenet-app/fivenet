@@ -3,10 +3,8 @@ syntax = "proto3";
 package resources.calendar;
 
 import "buf/validate/validate.proto";
-import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/calendar/access/access.proto";
-import "resources/common/content/content.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";
 import "tagger/tagger.proto";
@@ -29,13 +27,7 @@ message Calendar {
       strip_html_tags: true
     }
   ];
-  optional string description = 7 [
-    (buf.validate.field).string.max_len = 512,
-    (codegen.sanitizer.sanitizer) = {
-      enabled: true
-      strip_html_tags: true
-    }
-  ];
+  optional string description = 7;
   bool public = 8;
   bool closed = 9;
   string color = 10 [
@@ -66,13 +58,7 @@ message CalendarShort {
       strip_html_tags: true
     }
   ];
-  optional string description = 7 [
-    (buf.validate.field).string.max_len = 512,
-    (codegen.sanitizer.sanitizer) = {
-      enabled: true
-      strip_html_tags: true
-    }
-  ];
+  optional string description = 7;
   bool public = 8;
   bool closed = 9;
   string color = 10 [

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/documents/requests/requests.proto
 
+//go:build !protoopaque
+
 package documentsrequests
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -26,7 +27,7 @@ const (
 )
 
 type DocRequest struct {
-	state           protoimpl.MessageState    `protogen:"open.v1"`
+	state           protoimpl.MessageState    `protogen:"hybrid.v1"`
 	Id              int64                     `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt       *timestamp.Timestamp      `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt       *timestamp.Timestamp      `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
@@ -66,11 +67,6 @@ func (x *DocRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DocRequest.ProtoReflect.Descriptor instead.
-func (*DocRequest) Descriptor() ([]byte, []int) {
-	return file_resources_documents_requests_requests_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *DocRequest) GetId() int64 {
@@ -157,6 +153,178 @@ func (x *DocRequest) GetAccepted() bool {
 	return false
 }
 
+func (x *DocRequest) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *DocRequest) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *DocRequest) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *DocRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *DocRequest) SetRequestType(v activity.DocActivityType) {
+	x.RequestType = v
+}
+
+func (x *DocRequest) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *DocRequest) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *DocRequest) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *DocRequest) SetCreatorJobLabel(v string) {
+	x.CreatorJobLabel = &v
+}
+
+func (x *DocRequest) SetReason(v string) {
+	x.Reason = &v
+}
+
+func (x *DocRequest) SetData(v *activity.DocActivityData) {
+	x.Data = v
+}
+
+func (x *DocRequest) SetAccepted(v bool) {
+	x.Accepted = &v
+}
+
+func (x *DocRequest) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *DocRequest) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *DocRequest) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *DocRequest) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *DocRequest) HasCreatorJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorJobLabel != nil
+}
+
+func (x *DocRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reason != nil
+}
+
+func (x *DocRequest) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *DocRequest) HasAccepted() bool {
+	if x == nil {
+		return false
+	}
+	return x.Accepted != nil
+}
+
+func (x *DocRequest) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *DocRequest) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *DocRequest) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *DocRequest) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *DocRequest) ClearCreatorJobLabel() {
+	x.CreatorJobLabel = nil
+}
+
+func (x *DocRequest) ClearReason() {
+	x.Reason = nil
+}
+
+func (x *DocRequest) ClearData() {
+	x.Data = nil
+}
+
+func (x *DocRequest) ClearAccepted() {
+	x.Accepted = nil
+}
+
+type DocRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id              int64
+	CreatedAt       *timestamp.Timestamp
+	UpdatedAt       *timestamp.Timestamp
+	DocumentId      int64
+	RequestType     activity.DocActivityType
+	CreatorId       *int32
+	Creator         *short.UserShort
+	CreatorJob      string
+	CreatorJobLabel *string
+	Reason          *string
+	Data            *activity.DocActivityData
+	Accepted        *bool
+}
+
+func (b0 DocRequest_builder) Build() *DocRequest {
+	m0 := &DocRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DocumentId = b.DocumentId
+	x.RequestType = b.RequestType
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	x.CreatorJobLabel = b.CreatorJobLabel
+	x.Reason = b.Reason
+	x.Data = b.Data
+	x.Accepted = b.Accepted
+	return m0
+}
+
 var File_resources_documents_requests_requests_proto protoreflect.FileDescriptor
 
 const file_resources_documents_requests_requests_proto_rawDesc = "" +
@@ -188,18 +356,6 @@ const file_resources_documents_requests_requests_proto_rawDesc = "" +
 	"\x12_creator_job_labelB\t\n" +
 	"\a_reasonB\v\n" +
 	"\t_acceptedBbZ`github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/requests;documentsrequestsb\x06proto3"
-
-var (
-	file_resources_documents_requests_requests_proto_rawDescOnce sync.Once
-	file_resources_documents_requests_requests_proto_rawDescData []byte
-)
-
-func file_resources_documents_requests_requests_proto_rawDescGZIP() []byte {
-	file_resources_documents_requests_requests_proto_rawDescOnce.Do(func() {
-		file_resources_documents_requests_requests_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_requests_requests_proto_rawDesc), len(file_resources_documents_requests_requests_proto_rawDesc)))
-	})
-	return file_resources_documents_requests_requests_proto_rawDescData
-}
 
 var file_resources_documents_requests_requests_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_documents_requests_requests_proto_goTypes = []any{

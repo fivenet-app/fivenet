@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/documents/activity/activity.proto
 
+//go:build !protoopaque
+
 package documentsactivity
 
 import (
@@ -17,7 +19,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -148,13 +149,8 @@ func (x DocActivityType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use DocActivityType.Descriptor instead.
-func (DocActivityType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_activity_activity_proto_rawDescGZIP(), []int{0}
-}
-
 type DocActivity struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	DocumentId      int64                  `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
@@ -192,11 +188,6 @@ func (x *DocActivity) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DocActivity.ProtoReflect.Descriptor instead.
-func (*DocActivity) Descriptor() ([]byte, []int) {
-	return file_resources_documents_activity_activity_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *DocActivity) GetId() int64 {
@@ -269,8 +260,146 @@ func (x *DocActivity) GetData() *DocActivityData {
 	return nil
 }
 
+func (x *DocActivity) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *DocActivity) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *DocActivity) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *DocActivity) SetActivityType(v DocActivityType) {
+	x.ActivityType = v
+}
+
+func (x *DocActivity) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *DocActivity) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *DocActivity) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *DocActivity) SetCreatorJobLabel(v string) {
+	x.CreatorJobLabel = &v
+}
+
+func (x *DocActivity) SetReason(v string) {
+	x.Reason = &v
+}
+
+func (x *DocActivity) SetData(v *DocActivityData) {
+	x.Data = v
+}
+
+func (x *DocActivity) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *DocActivity) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *DocActivity) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *DocActivity) HasCreatorJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorJobLabel != nil
+}
+
+func (x *DocActivity) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reason != nil
+}
+
+func (x *DocActivity) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *DocActivity) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *DocActivity) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *DocActivity) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *DocActivity) ClearCreatorJobLabel() {
+	x.CreatorJobLabel = nil
+}
+
+func (x *DocActivity) ClearReason() {
+	x.Reason = nil
+}
+
+func (x *DocActivity) ClearData() {
+	x.Data = nil
+}
+
+type DocActivity_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id              int64
+	CreatedAt       *timestamp.Timestamp
+	DocumentId      int64
+	ActivityType    DocActivityType
+	CreatorId       *int32
+	Creator         *short.UserShort
+	CreatorJob      string
+	CreatorJobLabel *string
+	Reason          *string
+	Data            *DocActivityData
+}
+
+func (b0 DocActivity_builder) Build() *DocActivity {
+	m0 := &DocActivity{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.DocumentId = b.DocumentId
+	x.ActivityType = b.ActivityType
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	x.CreatorJobLabel = b.CreatorJobLabel
+	x.Reason = b.Reason
+	x.Data = b.Data
+	return m0
+}
+
 type DocActivityData struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*DocActivityData_Updated
@@ -306,11 +435,6 @@ func (x *DocActivityData) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DocActivityData.ProtoReflect.Descriptor instead.
-func (*DocActivityData) Descriptor() ([]byte, []int) {
-	return file_resources_documents_activity_activity_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *DocActivityData) GetData() isDocActivityData_Data {
@@ -365,6 +489,198 @@ func (x *DocActivityData) GetSigningRequested() *DocSigningRequested {
 	return nil
 }
 
+func (x *DocActivityData) SetUpdated(v *DocUpdated) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &DocActivityData_Updated{v}
+}
+
+func (x *DocActivityData) SetOwnerChanged(v *DocOwnerChanged) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &DocActivityData_OwnerChanged{v}
+}
+
+func (x *DocActivityData) SetAccessUpdated(v *DocAccessUpdated) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &DocActivityData_AccessUpdated{v}
+}
+
+func (x *DocActivityData) SetAccessRequested(v *DocAccessRequested) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &DocActivityData_AccessRequested{v}
+}
+
+func (x *DocActivityData) SetSigningRequested(v *DocSigningRequested) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &DocActivityData_SigningRequested{v}
+}
+
+func (x *DocActivityData) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *DocActivityData) HasUpdated() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*DocActivityData_Updated)
+	return ok
+}
+
+func (x *DocActivityData) HasOwnerChanged() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*DocActivityData_OwnerChanged)
+	return ok
+}
+
+func (x *DocActivityData) HasAccessUpdated() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*DocActivityData_AccessUpdated)
+	return ok
+}
+
+func (x *DocActivityData) HasAccessRequested() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*DocActivityData_AccessRequested)
+	return ok
+}
+
+func (x *DocActivityData) HasSigningRequested() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*DocActivityData_SigningRequested)
+	return ok
+}
+
+func (x *DocActivityData) ClearData() {
+	x.Data = nil
+}
+
+func (x *DocActivityData) ClearUpdated() {
+	if _, ok := x.Data.(*DocActivityData_Updated); ok {
+		x.Data = nil
+	}
+}
+
+func (x *DocActivityData) ClearOwnerChanged() {
+	if _, ok := x.Data.(*DocActivityData_OwnerChanged); ok {
+		x.Data = nil
+	}
+}
+
+func (x *DocActivityData) ClearAccessUpdated() {
+	if _, ok := x.Data.(*DocActivityData_AccessUpdated); ok {
+		x.Data = nil
+	}
+}
+
+func (x *DocActivityData) ClearAccessRequested() {
+	if _, ok := x.Data.(*DocActivityData_AccessRequested); ok {
+		x.Data = nil
+	}
+}
+
+func (x *DocActivityData) ClearSigningRequested() {
+	if _, ok := x.Data.(*DocActivityData_SigningRequested); ok {
+		x.Data = nil
+	}
+}
+
+const DocActivityData_Data_not_set_case case_DocActivityData_Data = 0
+const DocActivityData_Updated_case case_DocActivityData_Data = 1
+const DocActivityData_OwnerChanged_case case_DocActivityData_Data = 2
+const DocActivityData_AccessUpdated_case case_DocActivityData_Data = 4
+const DocActivityData_AccessRequested_case case_DocActivityData_Data = 5
+const DocActivityData_SigningRequested_case case_DocActivityData_Data = 6
+
+func (x *DocActivityData) WhichData() case_DocActivityData_Data {
+	if x == nil {
+		return DocActivityData_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *DocActivityData_Updated:
+		return DocActivityData_Updated_case
+	case *DocActivityData_OwnerChanged:
+		return DocActivityData_OwnerChanged_case
+	case *DocActivityData_AccessUpdated:
+		return DocActivityData_AccessUpdated_case
+	case *DocActivityData_AccessRequested:
+		return DocActivityData_AccessRequested_case
+	case *DocActivityData_SigningRequested:
+		return DocActivityData_SigningRequested_case
+	default:
+		return DocActivityData_Data_not_set_case
+	}
+}
+
+type DocActivityData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	Updated          *DocUpdated
+	OwnerChanged     *DocOwnerChanged
+	AccessUpdated    *DocAccessUpdated
+	AccessRequested  *DocAccessRequested
+	SigningRequested *DocSigningRequested
+	// -- end of Data
+}
+
+func (b0 DocActivityData_builder) Build() *DocActivityData {
+	m0 := &DocActivityData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Updated != nil {
+		x.Data = &DocActivityData_Updated{b.Updated}
+	}
+	if b.OwnerChanged != nil {
+		x.Data = &DocActivityData_OwnerChanged{b.OwnerChanged}
+	}
+	if b.AccessUpdated != nil {
+		x.Data = &DocActivityData_AccessUpdated{b.AccessUpdated}
+	}
+	if b.AccessRequested != nil {
+		x.Data = &DocActivityData_AccessRequested{b.AccessRequested}
+	}
+	if b.SigningRequested != nil {
+		x.Data = &DocActivityData_SigningRequested{b.SigningRequested}
+	}
+	return m0
+}
+
+type case_DocActivityData_Data protoreflect.FieldNumber
+
+func (x case_DocActivityData_Data) String() string {
+	md := file_resources_documents_activity_activity_proto_msgTypes[1].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isDocActivityData_Data interface {
 	isDocActivityData_Data()
 }
@@ -400,7 +716,7 @@ func (*DocActivityData_AccessRequested) isDocActivityData_Data() {}
 func (*DocActivityData_SigningRequested) isDocActivityData_Data() {}
 
 type DocUpdated struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	TitleDiff     *string                `protobuf:"bytes,1,opt,name=title_diff,json=titleDiff,proto3,oneof" json:"title_diff,omitempty"`
 	TitleCdiff    *content.ContentDiff   `protobuf:"bytes,5,opt,name=title_cdiff,json=titleCdiff,proto3,oneof" json:"title_cdiff,omitempty"`
 	ContentDiff   *string                `protobuf:"bytes,2,opt,name=content_diff,json=contentDiff,proto3,oneof" json:"content_diff,omitempty"`
@@ -435,11 +751,6 @@ func (x *DocUpdated) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DocUpdated.ProtoReflect.Descriptor instead.
-func (*DocUpdated) Descriptor() ([]byte, []int) {
-	return file_resources_documents_activity_activity_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *DocUpdated) GetTitleDiff() string {
@@ -491,8 +802,139 @@ func (x *DocUpdated) GetFilesChange() *DocFilesChange {
 	return nil
 }
 
+func (x *DocUpdated) SetTitleDiff(v string) {
+	x.TitleDiff = &v
+}
+
+func (x *DocUpdated) SetTitleCdiff(v *content.ContentDiff) {
+	x.TitleCdiff = v
+}
+
+func (x *DocUpdated) SetContentDiff(v string) {
+	x.ContentDiff = &v
+}
+
+func (x *DocUpdated) SetContentCdiff(v *content.ContentDiff) {
+	x.ContentCdiff = v
+}
+
+func (x *DocUpdated) SetStateDiff(v string) {
+	x.StateDiff = &v
+}
+
+func (x *DocUpdated) SetStateCdiff(v *content.ContentDiff) {
+	x.StateCdiff = v
+}
+
+func (x *DocUpdated) SetFilesChange(v *DocFilesChange) {
+	x.FilesChange = v
+}
+
+func (x *DocUpdated) HasTitleDiff() bool {
+	if x == nil {
+		return false
+	}
+	return x.TitleDiff != nil
+}
+
+func (x *DocUpdated) HasTitleCdiff() bool {
+	if x == nil {
+		return false
+	}
+	return x.TitleCdiff != nil
+}
+
+func (x *DocUpdated) HasContentDiff() bool {
+	if x == nil {
+		return false
+	}
+	return x.ContentDiff != nil
+}
+
+func (x *DocUpdated) HasContentCdiff() bool {
+	if x == nil {
+		return false
+	}
+	return x.ContentCdiff != nil
+}
+
+func (x *DocUpdated) HasStateDiff() bool {
+	if x == nil {
+		return false
+	}
+	return x.StateDiff != nil
+}
+
+func (x *DocUpdated) HasStateCdiff() bool {
+	if x == nil {
+		return false
+	}
+	return x.StateCdiff != nil
+}
+
+func (x *DocUpdated) HasFilesChange() bool {
+	if x == nil {
+		return false
+	}
+	return x.FilesChange != nil
+}
+
+func (x *DocUpdated) ClearTitleDiff() {
+	x.TitleDiff = nil
+}
+
+func (x *DocUpdated) ClearTitleCdiff() {
+	x.TitleCdiff = nil
+}
+
+func (x *DocUpdated) ClearContentDiff() {
+	x.ContentDiff = nil
+}
+
+func (x *DocUpdated) ClearContentCdiff() {
+	x.ContentCdiff = nil
+}
+
+func (x *DocUpdated) ClearStateDiff() {
+	x.StateDiff = nil
+}
+
+func (x *DocUpdated) ClearStateCdiff() {
+	x.StateCdiff = nil
+}
+
+func (x *DocUpdated) ClearFilesChange() {
+	x.FilesChange = nil
+}
+
+type DocUpdated_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	TitleDiff    *string
+	TitleCdiff   *content.ContentDiff
+	ContentDiff  *string
+	ContentCdiff *content.ContentDiff
+	StateDiff    *string
+	StateCdiff   *content.ContentDiff
+	FilesChange  *DocFilesChange
+}
+
+func (b0 DocUpdated_builder) Build() *DocUpdated {
+	m0 := &DocUpdated{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.TitleDiff = b.TitleDiff
+	x.TitleCdiff = b.TitleCdiff
+	x.ContentDiff = b.ContentDiff
+	x.ContentCdiff = b.ContentCdiff
+	x.StateDiff = b.StateDiff
+	x.StateCdiff = b.StateCdiff
+	x.FilesChange = b.FilesChange
+	return m0
+}
+
 type DocFilesChange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Added         int64                  `protobuf:"varint,1,opt,name=added,proto3" json:"added,omitempty"`
 	Deleted       int64                  `protobuf:"varint,2,opt,name=deleted,proto3" json:"deleted,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -524,11 +966,6 @@ func (x *DocFilesChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DocFilesChange.ProtoReflect.Descriptor instead.
-func (*DocFilesChange) Descriptor() ([]byte, []int) {
-	return file_resources_documents_activity_activity_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *DocFilesChange) GetAdded() int64 {
 	if x != nil {
 		return x.Added
@@ -543,8 +980,32 @@ func (x *DocFilesChange) GetDeleted() int64 {
 	return 0
 }
 
+func (x *DocFilesChange) SetAdded(v int64) {
+	x.Added = v
+}
+
+func (x *DocFilesChange) SetDeleted(v int64) {
+	x.Deleted = v
+}
+
+type DocFilesChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Added   int64
+	Deleted int64
+}
+
+func (b0 DocFilesChange_builder) Build() *DocFilesChange {
+	m0 := &DocFilesChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Added = b.Added
+	x.Deleted = b.Deleted
+	return m0
+}
+
 type DocOwnerChanged struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	NewOwnerId    int32                  `protobuf:"varint,1,opt,name=new_owner_id,json=newOwnerId,proto3" json:"new_owner_id,omitempty"`
 	NewOwner      *short.UserShort       `protobuf:"bytes,2,opt,name=new_owner,json=newOwner,proto3" json:"new_owner,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -576,11 +1037,6 @@ func (x *DocOwnerChanged) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DocOwnerChanged.ProtoReflect.Descriptor instead.
-func (*DocOwnerChanged) Descriptor() ([]byte, []int) {
-	return file_resources_documents_activity_activity_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *DocOwnerChanged) GetNewOwnerId() int32 {
 	if x != nil {
 		return x.NewOwnerId
@@ -595,8 +1051,43 @@ func (x *DocOwnerChanged) GetNewOwner() *short.UserShort {
 	return nil
 }
 
+func (x *DocOwnerChanged) SetNewOwnerId(v int32) {
+	x.NewOwnerId = v
+}
+
+func (x *DocOwnerChanged) SetNewOwner(v *short.UserShort) {
+	x.NewOwner = v
+}
+
+func (x *DocOwnerChanged) HasNewOwner() bool {
+	if x == nil {
+		return false
+	}
+	return x.NewOwner != nil
+}
+
+func (x *DocOwnerChanged) ClearNewOwner() {
+	x.NewOwner = nil
+}
+
+type DocOwnerChanged_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	NewOwnerId int32
+	NewOwner   *short.UserShort
+}
+
+func (b0 DocOwnerChanged_builder) Build() *DocOwnerChanged {
+	m0 := &DocOwnerChanged{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.NewOwnerId = b.NewOwnerId
+	x.NewOwner = b.NewOwner
+	return m0
+}
+
 type DocAccessRequested struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Level         access.AccessLevel     `protobuf:"varint,1,opt,name=level,proto3,enum=resources.documents.access.AccessLevel" json:"level,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -627,11 +1118,6 @@ func (x *DocAccessRequested) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DocAccessRequested.ProtoReflect.Descriptor instead.
-func (*DocAccessRequested) Descriptor() ([]byte, []int) {
-	return file_resources_documents_activity_activity_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *DocAccessRequested) GetLevel() access.AccessLevel {
 	if x != nil {
 		return x.Level
@@ -639,8 +1125,26 @@ func (x *DocAccessRequested) GetLevel() access.AccessLevel {
 	return access.AccessLevel(0)
 }
 
+func (x *DocAccessRequested) SetLevel(v access.AccessLevel) {
+	x.Level = v
+}
+
+type DocAccessRequested_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Level access.AccessLevel
+}
+
+func (b0 DocAccessRequested_builder) Build() *DocAccessRequested {
+	m0 := &DocAccessRequested{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Level = b.Level
+	return m0
+}
+
 type DocAccessUpdated struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Jobs          *DocAccessJobsDiff     `protobuf:"bytes,1,opt,name=jobs,proto3" json:"jobs,omitempty"`
 	Users         *DocAccessUsersDiff    `protobuf:"bytes,2,opt,name=users,proto3" json:"users,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -672,11 +1176,6 @@ func (x *DocAccessUpdated) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DocAccessUpdated.ProtoReflect.Descriptor instead.
-func (*DocAccessUpdated) Descriptor() ([]byte, []int) {
-	return file_resources_documents_activity_activity_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *DocAccessUpdated) GetJobs() *DocAccessJobsDiff {
 	if x != nil {
 		return x.Jobs
@@ -691,8 +1190,54 @@ func (x *DocAccessUpdated) GetUsers() *DocAccessUsersDiff {
 	return nil
 }
 
+func (x *DocAccessUpdated) SetJobs(v *DocAccessJobsDiff) {
+	x.Jobs = v
+}
+
+func (x *DocAccessUpdated) SetUsers(v *DocAccessUsersDiff) {
+	x.Users = v
+}
+
+func (x *DocAccessUpdated) HasJobs() bool {
+	if x == nil {
+		return false
+	}
+	return x.Jobs != nil
+}
+
+func (x *DocAccessUpdated) HasUsers() bool {
+	if x == nil {
+		return false
+	}
+	return x.Users != nil
+}
+
+func (x *DocAccessUpdated) ClearJobs() {
+	x.Jobs = nil
+}
+
+func (x *DocAccessUpdated) ClearUsers() {
+	x.Users = nil
+}
+
+type DocAccessUpdated_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs  *DocAccessJobsDiff
+	Users *DocAccessUsersDiff
+}
+
+func (b0 DocAccessUpdated_builder) Build() *DocAccessUpdated {
+	m0 := &DocAccessUpdated{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	x.Users = b.Users
+	return m0
+}
+
 type DocAccessJobsDiff struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	ToCreate      []*access.DocumentJobAccess `protobuf:"bytes,1,rep,name=to_create,json=toCreate,proto3" json:"to_create,omitempty"`
 	ToUpdate      []*access.DocumentJobAccess `protobuf:"bytes,2,rep,name=to_update,json=toUpdate,proto3" json:"to_update,omitempty"`
 	ToDelete      []*access.DocumentJobAccess `protobuf:"bytes,3,rep,name=to_delete,json=toDelete,proto3" json:"to_delete,omitempty"`
@@ -725,11 +1270,6 @@ func (x *DocAccessJobsDiff) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DocAccessJobsDiff.ProtoReflect.Descriptor instead.
-func (*DocAccessJobsDiff) Descriptor() ([]byte, []int) {
-	return file_resources_documents_activity_activity_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *DocAccessJobsDiff) GetToCreate() []*access.DocumentJobAccess {
 	if x != nil {
 		return x.ToCreate
@@ -751,8 +1291,38 @@ func (x *DocAccessJobsDiff) GetToDelete() []*access.DocumentJobAccess {
 	return nil
 }
 
+func (x *DocAccessJobsDiff) SetToCreate(v []*access.DocumentJobAccess) {
+	x.ToCreate = v
+}
+
+func (x *DocAccessJobsDiff) SetToUpdate(v []*access.DocumentJobAccess) {
+	x.ToUpdate = v
+}
+
+func (x *DocAccessJobsDiff) SetToDelete(v []*access.DocumentJobAccess) {
+	x.ToDelete = v
+}
+
+type DocAccessJobsDiff_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ToCreate []*access.DocumentJobAccess
+	ToUpdate []*access.DocumentJobAccess
+	ToDelete []*access.DocumentJobAccess
+}
+
+func (b0 DocAccessJobsDiff_builder) Build() *DocAccessJobsDiff {
+	m0 := &DocAccessJobsDiff{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ToCreate = b.ToCreate
+	x.ToUpdate = b.ToUpdate
+	x.ToDelete = b.ToDelete
+	return m0
+}
+
 type DocAccessUsersDiff struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	ToCreate      []*access.DocumentUserAccess `protobuf:"bytes,1,rep,name=to_create,json=toCreate,proto3" json:"to_create,omitempty"`
 	ToUpdate      []*access.DocumentUserAccess `protobuf:"bytes,2,rep,name=to_update,json=toUpdate,proto3" json:"to_update,omitempty"`
 	ToDelete      []*access.DocumentUserAccess `protobuf:"bytes,3,rep,name=to_delete,json=toDelete,proto3" json:"to_delete,omitempty"`
@@ -785,11 +1355,6 @@ func (x *DocAccessUsersDiff) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DocAccessUsersDiff.ProtoReflect.Descriptor instead.
-func (*DocAccessUsersDiff) Descriptor() ([]byte, []int) {
-	return file_resources_documents_activity_activity_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *DocAccessUsersDiff) GetToCreate() []*access.DocumentUserAccess {
 	if x != nil {
 		return x.ToCreate
@@ -811,8 +1376,38 @@ func (x *DocAccessUsersDiff) GetToDelete() []*access.DocumentUserAccess {
 	return nil
 }
 
+func (x *DocAccessUsersDiff) SetToCreate(v []*access.DocumentUserAccess) {
+	x.ToCreate = v
+}
+
+func (x *DocAccessUsersDiff) SetToUpdate(v []*access.DocumentUserAccess) {
+	x.ToUpdate = v
+}
+
+func (x *DocAccessUsersDiff) SetToDelete(v []*access.DocumentUserAccess) {
+	x.ToDelete = v
+}
+
+type DocAccessUsersDiff_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ToCreate []*access.DocumentUserAccess
+	ToUpdate []*access.DocumentUserAccess
+	ToDelete []*access.DocumentUserAccess
+}
+
+func (b0 DocAccessUsersDiff_builder) Build() *DocAccessUsersDiff {
+	m0 := &DocAccessUsersDiff{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ToCreate = b.ToCreate
+	x.ToUpdate = b.ToUpdate
+	x.ToDelete = b.ToDelete
+	return m0
+}
+
 type DocSigningRequested struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Deadline      *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=deadline,proto3,oneof" json:"deadline,omitempty"`
 	Approvers     []*short.UserShort     `protobuf:"bytes,2,rep,name=approvers,proto3" json:"approvers,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -844,11 +1439,6 @@ func (x *DocSigningRequested) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DocSigningRequested.ProtoReflect.Descriptor instead.
-func (*DocSigningRequested) Descriptor() ([]byte, []int) {
-	return file_resources_documents_activity_activity_proto_rawDescGZIP(), []int{9}
-}
-
 func (x *DocSigningRequested) GetDeadline() *timestamp.Timestamp {
 	if x != nil {
 		return x.Deadline
@@ -861,6 +1451,41 @@ func (x *DocSigningRequested) GetApprovers() []*short.UserShort {
 		return x.Approvers
 	}
 	return nil
+}
+
+func (x *DocSigningRequested) SetDeadline(v *timestamp.Timestamp) {
+	x.Deadline = v
+}
+
+func (x *DocSigningRequested) SetApprovers(v []*short.UserShort) {
+	x.Approvers = v
+}
+
+func (x *DocSigningRequested) HasDeadline() bool {
+	if x == nil {
+		return false
+	}
+	return x.Deadline != nil
+}
+
+func (x *DocSigningRequested) ClearDeadline() {
+	x.Deadline = nil
+}
+
+type DocSigningRequested_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Deadline  *timestamp.Timestamp
+	Approvers []*short.UserShort
+}
+
+func (b0 DocSigningRequested_builder) Build() *DocSigningRequested {
+	m0 := &DocSigningRequested{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Deadline = b.Deadline
+	x.Approvers = b.Approvers
+	return m0
 }
 
 var File_resources_documents_activity_activity_proto protoreflect.FileDescriptor
@@ -969,18 +1594,6 @@ const file_resources_documents_activity_activity_proto_rawDesc = "" +
 	"#DOC_ACTIVITY_TYPE_APPROVAL_REJECTED\x10*\x12&\n" +
 	"\"DOC_ACTIVITY_TYPE_APPROVAL_REVOKED\x10+\x12&\n" +
 	"\"DOC_ACTIVITY_TYPE_APPROVAL_REMOVED\x10,BbZ`github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity;documentsactivityb\x06proto3"
-
-var (
-	file_resources_documents_activity_activity_proto_rawDescOnce sync.Once
-	file_resources_documents_activity_activity_proto_rawDescData []byte
-)
-
-func file_resources_documents_activity_activity_proto_rawDescGZIP() []byte {
-	file_resources_documents_activity_activity_proto_rawDescOnce.Do(func() {
-		file_resources_documents_activity_activity_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_activity_activity_proto_rawDesc), len(file_resources_documents_activity_activity_proto_rawDesc)))
-	})
-	return file_resources_documents_activity_activity_proto_rawDescData
-}
 
 var file_resources_documents_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_documents_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 10)

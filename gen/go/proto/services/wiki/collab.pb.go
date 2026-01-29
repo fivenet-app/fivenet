@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/wiki/collab.proto
 
+//go:build !protoopaque
+
 package wiki
 
 import (

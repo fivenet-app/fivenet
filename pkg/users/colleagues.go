@@ -9,7 +9,6 @@ import (
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -31,7 +30,7 @@ func RetrieveColleagueById(
 		userIds[i] = mysql.Int32(u[i])
 	}
 
-	tUsers := tables.User().AS("colleague")
+	tUsers := table.FivenetUser.AS("colleague")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
 	tUserProps := table.FivenetUserProps.AS("user_props")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
@@ -128,7 +127,7 @@ func RetrieveUsersForUnit(
 }
 
 func RetrieveUserById(ctx context.Context, db *sql.DB, u int32) (*users.User, error) {
-	tUsers := tables.User().AS("user")
+	tUsers := table.FivenetUser.AS("user")
 	tUserProps := table.FivenetUserProps.AS("user_props")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 

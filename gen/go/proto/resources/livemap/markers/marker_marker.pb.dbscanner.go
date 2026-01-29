@@ -14,6 +14,11 @@ func (x *MarkerData) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
 		return proto.Unmarshal([]byte(t), x)
+	case *string:
+		if t == nil {
+			return nil
+		}
+		return proto.Unmarshal([]byte(*t), x)
 	case []byte:
 		return proto.Unmarshal(t, x)
 	}

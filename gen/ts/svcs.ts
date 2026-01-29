@@ -128,6 +128,7 @@ export const grpcMethods = [
 	'auth.AuthService/ForgotPassword',
 	'auth.AuthService/GetCharacters',
 	'auth.AuthService/ChooseCharacter',
+	'auth.AuthService/ImpersonateJob',
 	'auth.AuthService/GetAccountInfo',
 	'auth.AuthService/DeleteSocialLogin',
 	'auth.AuthService/SetSuperuserMode',

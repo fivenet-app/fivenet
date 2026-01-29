@@ -3,6 +3,8 @@ package dbsync
 import (
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBuildQueryFromColumns(t *testing.T) {
@@ -10,6 +12,7 @@ func TestBuildQueryFromColumns(t *testing.T) {
 		tableName     string
 		columns       map[string]string
 		conditions    []string
+		orderBy       []string
 		offset        int64
 		limit         int64
 		expectedQuery string
@@ -45,6 +48,7 @@ func TestBuildQueryFromColumns(t *testing.T) {
 				"license.name": "name_but_different",
 			},
 			conditions:    []string{},
+			orderBy:       []string{"license.type"},
 			offset:        10,
 			limit:         25,
 			expectedQuery: "SELECT `name_but_different` AS `license.name`, `type` AS `license.type`\nFROM `user_licenses`\nLIMIT 25 OFFSET 10;",
@@ -56,9 +60,10 @@ func TestBuildQueryFromColumns(t *testing.T) {
 				"model": "-",
 			},
 			conditions:    []string{"`updated_at` >= '2023-01-01 00:00:00'"},
+			orderBy:       []string{"plate"},
 			offset:        10,
 			limit:         50,
-			expectedQuery: "SELECT `plate` AS `plate`\nFROM `vehicles`\nWHERE `updated_at` >= '2023-01-01 00:00:00'\nLIMIT 50 OFFSET 10;",
+			expectedQuery: "SELECT `plate` AS `plate`\nFROM `vehicles`\nORDER BY plate\nWHERE `updated_at` >= '2023-01-01 00:00:00'\nLIMIT 50 OFFSET 10;",
 		},
 	}
 
@@ -69,16 +74,10 @@ func TestBuildQueryFromColumns(t *testing.T) {
 			test.conditions,
 			test.offset,
 			test.limit,
+			test.orderBy,
 		)
 
-		if query != test.expectedQuery {
-			t.Errorf(
-				"For table %s, expected query:\n%s\nGot:\n%s",
-				test.tableName,
-				test.expectedQuery,
-				query,
-			)
-		}
+		assert.Equal(t, test.expectedQuery, query, "Query did not match expected output")
 	}
 }
 

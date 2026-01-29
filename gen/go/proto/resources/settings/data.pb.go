@@ -4,13 +4,14 @@
 // 	protoc        (unknown)
 // source: resources/settings/data.proto
 
+//go:build !protoopaque
+
 package settings
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -68,13 +69,8 @@ func (x DataMode) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use DataMode.Descriptor instead.
-func (DataMode) EnumDescriptor() ([]byte, []int) {
-	return file_resources_settings_data_proto_rawDescGZIP(), []int{0}
-}
-
 type Data struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Mode          DataMode               `protobuf:"varint,1,opt,name=mode,proto3,enum=resources.settings.DataMode" json:"mode,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -105,16 +101,29 @@ func (x *Data) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Data.ProtoReflect.Descriptor instead.
-func (*Data) Descriptor() ([]byte, []int) {
-	return file_resources_settings_data_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *Data) GetMode() DataMode {
 	if x != nil {
 		return x.Mode
 	}
 	return DataMode_DATA_MODE_UNSPECIFIED
+}
+
+func (x *Data) SetMode(v DataMode) {
+	x.Mode = v
+}
+
+type Data_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Mode DataMode
+}
+
+func (b0 Data_builder) Build() *Data {
+	m0 := &Data{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Mode = b.Mode
+	return m0
 }
 
 var File_resources_settings_data_proto protoreflect.FileDescriptor
@@ -129,18 +138,6 @@ const file_resources_settings_data_proto_rawDesc = "" +
 	"\x15DATA_MODE_UNAVAILABLE\x10\x01\x12\x16\n" +
 	"\x12DATA_MODE_READONLY\x10\x02\x12\x17\n" +
 	"\x13DATA_MODE_READWRITE\x10\x03BOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
-
-var (
-	file_resources_settings_data_proto_rawDescOnce sync.Once
-	file_resources_settings_data_proto_rawDescData []byte
-)
-
-func file_resources_settings_data_proto_rawDescGZIP() []byte {
-	file_resources_settings_data_proto_rawDescOnce.Do(func() {
-		file_resources_settings_data_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_settings_data_proto_rawDesc), len(file_resources_settings_data_proto_rawDesc)))
-	})
-	return file_resources_settings_data_proto_rawDescData
-}
 
 var file_resources_settings_data_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_settings_data_proto_msgTypes = make([]protoimpl.MessageInfo, 1)

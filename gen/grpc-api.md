@@ -571,6 +571,20 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 ## resources/users/user.proto
 
 
+### resources.users.PhoneNumber
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `number` | [string](#string) |  |  |
+| `is_primary` | [bool](#bool) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
 ### resources.users.User
 
 
@@ -582,19 +596,35 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `job_label` | [string](#string) | optional |  |
 | `job_grade` | [int32](#int32) |  |  |
 | `job_grade_label` | [string](#string) | optional |  |
+| `jobs` | [UserJob](#resourcesusersUserJob) | repeated |  |
 | `firstname` | [string](#string) |  |  |
 | `lastname` | [string](#string) |  |  |
 | `dateofbirth` | [string](#string) |  |  |
 | `sex` | [string](#string) | optional |  |
 | `height` | [string](#string) | optional |  |
 | `phone_number` | [string](#string) | optional |  |
+| `phone_numbers` | [PhoneNumber](#resourcesusersPhoneNumber) | repeated |  |
 | `visum` | [int32](#int32) | optional |  |
 | `playtime` | [int32](#int32) | optional |  |
 | `props` | [props.UserProps](#resourcesuserspropsUserProps) |  |  |
 | `licenses` | [licenses.License](#resourcesuserslicensesLicense) | repeated |  |
 | `profile_picture_file_id` | [int64](#int64) | optional |  |
 | `profile_picture` | [string](#string) | optional |  |
-| `group` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.users.UserJob
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `grade` | [int32](#int32) |  |  |
+| `grade_label` | [string](#string) | optional |  |
+| `is_primary` | [bool](#bool) |  |  |
 
 
 
@@ -642,11 +672,23 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `enabled` | [bool](#bool) |  |  |
 | `username` | [string](#string) |  |  |
 | `license` | [string](#string) |  |  |
-| `enabled` | [bool](#bool) |  |  |
+| `groups` | [AccountGroups](#resourcesaccountsAccountGroups) | optional |  |
 | `last_char` | [int32](#int32) | optional |  |
 | `oauth2_accounts` | [oauth2.OAuth2Account](#resourcesaccountsoauth2OAuth2Account) | repeated |  |
+
+
+
+
+
+### resources.accounts.AccountGroups
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `groups` | [string](#string) | repeated |  |
 
 
 
@@ -683,7 +725,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user_id` | [int32](#int32) |  |  |
-| `identifier` | [string](#string) | optional |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `job_grade` | [int32](#int32) |  |  |
@@ -861,6 +902,78 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+## resources/calendar/calendar.proto
+
+
+### resources.calendar.Calendar
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `job` | [string](#string) | optional |  |
+| `name` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
+| `public` | [bool](#bool) |  |  |
+| `closed` | [bool](#bool) |  |  |
+| `color` | [string](#string) |  |  |
+| `creator_id` | [int32](#int32) | optional |  |
+| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `creator_job` | [string](#string) |  |  |
+| `subscription` | [CalendarSub](#resourcescalendarCalendarSub) | optional |  |
+| `access` | [access.CalendarAccess](#resourcescalendaraccessCalendarAccess) |  |  |
+
+
+
+
+
+### resources.calendar.CalendarShort
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `job` | [string](#string) | optional |  |
+| `name` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
+| `public` | [bool](#bool) |  |  |
+| `closed` | [bool](#bool) |  |  |
+| `color` | [string](#string) |  |  |
+| `subscription` | [CalendarSub](#resourcescalendarCalendarSub) | optional |  |
+
+
+
+
+
+### resources.calendar.CalendarSub
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `calendar_id` | [int64](#int64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `confirmed` | [bool](#bool) |  |  |
+| `muted` | [bool](#bool) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/common/content/content.proto
 
 
@@ -942,78 +1055,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `NODE_TYPE_TEXT` | 3 |  |
 | `NODE_TYPE_COMMENT` | 4 |  |
 
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/calendar/calendar.proto
-
-
-### resources.calendar.Calendar
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `job` | [string](#string) | optional |  |
-| `name` | [string](#string) |  |  |
-| `description` | [string](#string) | optional |  |
-| `public` | [bool](#bool) |  |  |
-| `closed` | [bool](#bool) |  |  |
-| `color` | [string](#string) |  |  |
-| `creator_id` | [int32](#int32) | optional |  |
-| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `creator_job` | [string](#string) |  |  |
-| `subscription` | [CalendarSub](#resourcescalendarCalendarSub) | optional |  |
-| `access` | [access.CalendarAccess](#resourcescalendaraccessCalendarAccess) |  |  |
-
-
-
-
-
-### resources.calendar.CalendarShort
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `job` | [string](#string) | optional |  |
-| `name` | [string](#string) |  |  |
-| `description` | [string](#string) | optional |  |
-| `public` | [bool](#bool) |  |  |
-| `closed` | [bool](#bool) |  |  |
-| `color` | [string](#string) |  |  |
-| `subscription` | [CalendarSub](#resourcescalendarCalendarSub) | optional |  |
-
-
-
-
-
-### resources.calendar.CalendarSub
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `calendar_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `confirmed` | [bool](#bool) |  |  |
-| `muted` | [bool](#bool) |  |  |
-
-
-
-
- <!-- end messages -->
 
  <!-- end enums -->
 
@@ -1303,6 +1344,41 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `dispatchers` | [Dispatchers](#resourcescentrumdispatchersDispatchers) | repeated |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/centrum/joblist.proto
+
+
+### resources.centrum.JobList
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [JobListEntry](#resourcescentrumJobListEntry) | repeated |  |
+
+
+
+
+
+### resources.centrum.JobListEntry
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  |  |
+| `label` | [string](#string) | optional |  |
 
 
 
@@ -2046,41 +2122,6 @@ Dummy - DO NOT USE!
 | `UNIT_ATTRIBUTE_STATIC` | 1 |  |
 | `UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN` | 2 |  |
 
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/centrum/joblist.proto
-
-
-### resources.centrum.JobList
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [JobListEntry](#resourcescentrumJobListEntry) | repeated |  |
-
-
-
-
-
-### resources.centrum.JobListEntry
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  |  |
-| `label` | [string](#string) | optional |  |
-
-
-
-
- <!-- end messages -->
 
  <!-- end enums -->
 
@@ -5945,7 +5986,7 @@ Dummy - DO NOT USE!
 
 
 
-## resources/userinfo/user_info.proto
+## resources/userinfo/userinfo.proto
 
 
 ### resources.userinfo.PollReq
@@ -5967,18 +6008,16 @@ PollReq: published to `userinfo.poll.request` when an active user connects or re
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `enabled` | [bool](#bool) |  |  |
 | `account_id` | [int64](#int64) |  |  |
+| `enabled` | [bool](#bool) |  |  |
 | `license` | [string](#string) |  |  |
 | `last_char` | [int32](#int32) | optional |  |
 | `user_id` | [int32](#int32) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_grade` | [int32](#int32) |  |  |
-| `group` | [string](#string) |  |  |
+| `groups` | [resources.accounts.AccountGroups](#resourcesaccountsAccountGroups) | optional |  |
 | `can_be_superuser` | [bool](#bool) |  |  |
 | `superuser` | [bool](#bool) |  |  |
-| `override_job` | [string](#string) | optional |  |
-| `override_job_grade` | [int32](#int32) | optional |  |
 
 
 
@@ -5993,6 +6032,7 @@ UserInfoChanged used to signal Job or JobGrade changes.
 | ----- | ---- | ----- | ----------- |
 | `account_id` | [int64](#int64) |  | The account the user belongs to |
 | `user_id` | [int32](#int32) |  | The unique user identifier within the account |
+| `changed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Timestamp of when the change was detected |
 | `old_job` | [string](#string) |  | Previous job title |
 | `new_job` | [string](#string) | optional | New job title |
 | `new_job_label` | [string](#string) | optional |  |
@@ -6001,7 +6041,6 @@ UserInfoChanged used to signal Job or JobGrade changes.
 | `new_job_grade_label` | [string](#string) | optional | New job grade label |
 | `can_be_superuser` | [bool](#bool) | optional | Can the user be superuser (by group or license) |
 | `superuser` | [bool](#bool) | optional | Superuser state |
-| `changed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Timestamp of when the change was detected |
 
 
 
@@ -6332,10 +6371,23 @@ User related events
 
 
 
-## resources/sync/activity.proto
+## resources/sync/activity/activity.proto
 
 
-### resources.sync.ColleagueProps
+### resources.sync.activity.AccountUpdate
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `license` | [string](#string) |  |  |
+| `group` | [string](#string) | optional |  |
+| `groups` | [string](#string) | repeated |  |
+
+
+
+
+
+### resources.sync.activity.ColleagueProps
 
 
 | Field | Type | Label | Description |
@@ -6347,7 +6399,7 @@ User related events
 
 
 
-### resources.sync.TimeclockUpdate
+### resources.sync.activity.TimeclockUpdate
 
 
 | Field | Type | Label | Description |
@@ -6360,7 +6412,7 @@ User related events
 
 
 
-### resources.sync.UserOAuth2Conn
+### resources.sync.activity.UserOAuth2Conn
 Connect an identifier/license to the provider with the specified external id (e.g., auto discord social connect on server join)
 
 
@@ -6376,7 +6428,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-### resources.sync.UserProps
+### resources.sync.activity.UserProps
 
 
 | Field | Type | Label | Description |
@@ -6388,7 +6440,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-### resources.sync.UserUpdate
+### resources.sync.activity.UserUpdate
 
 
 | Field | Type | Label | Description |
@@ -6413,10 +6465,10 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-## resources/sync/data.proto
+## resources/sync/data/data.proto
 
 
-### resources.sync.CitizenLocations
+### resources.sync.data.CitizenLocations
 
 
 | Field | Type | Label | Description |
@@ -6432,7 +6484,18 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-### resources.sync.DataJobs
+### resources.sync.data.DataAccounts
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `account_updates` | [resources.sync.activity.AccountUpdate](#resourcessyncactivityAccountUpdate) | repeated |  |
+
+
+
+
+
+### resources.sync.data.DataJobs
 
 
 | Field | Type | Label | Description |
@@ -6443,7 +6506,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-### resources.sync.DataLicenses
+### resources.sync.data.DataLicenses
 
 
 | Field | Type | Label | Description |
@@ -6454,7 +6517,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-### resources.sync.DataStatus
+### resources.sync.data.DataStatus
 
 
 | Field | Type | Label | Description |
@@ -6465,30 +6528,62 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-### resources.sync.DataUserLocations
+### resources.sync.data.DataUser
+Detailed user information for sync purposes Should be kept inline with `resources.users.User`.
+
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `users` | [CitizenLocations](#resourcessyncCitizenLocations) | repeated |  |
+| `user_id` | [int32](#int32) |  |  |
+| `identifier` | [string](#string) | optional |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `job_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `jobs` | [resources.users.UserJob](#resourcesusersUserJob) | repeated |  |
+| `firstname` | [string](#string) |  |  |
+| `lastname` | [string](#string) | optional |  |
+| `dateofbirth` | [string](#string) |  |  |
+| `sex` | [string](#string) | optional |  |
+| `height` | [string](#string) | optional |  |
+| `phone_number` | [string](#string) | optional |  |
+| `phone_numbers` | [resources.users.PhoneNumber](#resourcesusersPhoneNumber) | repeated |  |
+| `visum` | [int32](#int32) | optional |  |
+| `playtime` | [int32](#int32) | optional |  |
+| `props` | [resources.users.props.UserProps](#resourcesuserspropsUserProps) | optional |  |
+| `licenses` | [resources.users.licenses.License](#resourcesuserslicensesLicense) | repeated |  |
+| `profile_picture_file_id` | [int64](#int64) | optional |  |
+| `profile_picture` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.sync.data.DataUserLocations
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `users` | [CitizenLocations](#resourcessyncdataCitizenLocations) | repeated |  |
 | `clear_all` | [bool](#bool) | optional |  |
 
 
 
 
 
-### resources.sync.DataUsers
+### resources.sync.data.DataUsers
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `users` | [resources.users.User](#resourcesusersUser) | repeated |  |
+| `users` | [DataUser](#resourcessyncdataDataUser) | repeated |  |
 
 
 
 
 
-### resources.sync.DataVehicles
+### resources.sync.data.DataVehicles
 
 
 | Field | Type | Label | Description |
@@ -6499,7 +6594,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-### resources.sync.DeleteUsers
+### resources.sync.data.DeleteUsers
 
 
 | Field | Type | Label | Description |
@@ -6510,7 +6605,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-### resources.sync.DeleteVehicles
+### resources.sync.data.DeleteVehicles
 
 
 | Field | Type | Label | Description |
@@ -6521,7 +6616,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-### resources.sync.LastCharID
+### resources.sync.data.LastCharID
 
 
 | Field | Type | Label | Description |
@@ -6882,45 +6977,45 @@ Connect an identifier/license to the provider with the specified external id (e.
 ## resources/wiki/activity/activity.proto
 
 
-### resources.wiki.PageAccessJobsDiff
+### resources.wiki.activity.PageAccessJobsDiff
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `to_create` | [access.PageJobAccess](#resourceswikiaccessPageJobAccess) | repeated |  |
-| `to_update` | [access.PageJobAccess](#resourceswikiaccessPageJobAccess) | repeated |  |
-| `to_delete` | [access.PageJobAccess](#resourceswikiaccessPageJobAccess) | repeated |  |
+| `to_create` | [resources.wiki.access.PageJobAccess](#resourceswikiaccessPageJobAccess) | repeated |  |
+| `to_update` | [resources.wiki.access.PageJobAccess](#resourceswikiaccessPageJobAccess) | repeated |  |
+| `to_delete` | [resources.wiki.access.PageJobAccess](#resourceswikiaccessPageJobAccess) | repeated |  |
 
 
 
 
 
-### resources.wiki.PageAccessUpdated
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [PageAccessJobsDiff](#resourceswikiPageAccessJobsDiff) |  |  |
-| `users` | [PageAccessUsersDiff](#resourceswikiPageAccessUsersDiff) |  |  |
-
-
-
-
-
-### resources.wiki.PageAccessUsersDiff
+### resources.wiki.activity.PageAccessUpdated
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `to_create` | [access.PageUserAccess](#resourceswikiaccessPageUserAccess) | repeated |  |
-| `to_update` | [access.PageUserAccess](#resourceswikiaccessPageUserAccess) | repeated |  |
-| `to_delete` | [access.PageUserAccess](#resourceswikiaccessPageUserAccess) | repeated |  |
+| `jobs` | [PageAccessJobsDiff](#resourceswikiactivityPageAccessJobsDiff) |  |  |
+| `users` | [PageAccessUsersDiff](#resourceswikiactivityPageAccessUsersDiff) |  |  |
 
 
 
 
 
-### resources.wiki.PageActivity
+### resources.wiki.activity.PageAccessUsersDiff
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `to_create` | [resources.wiki.access.PageUserAccess](#resourceswikiaccessPageUserAccess) | repeated |  |
+| `to_update` | [resources.wiki.access.PageUserAccess](#resourceswikiaccessPageUserAccess) | repeated |  |
+| `to_delete` | [resources.wiki.access.PageUserAccess](#resourceswikiaccessPageUserAccess) | repeated |  |
+
+
+
+
+
+### resources.wiki.activity.PageActivity
 
 
 | Field | Type | Label | Description |
@@ -6928,31 +7023,31 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `page_id` | [int64](#int64) |  |  |
-| `activity_type` | [PageActivityType](#resourceswikiPageActivityType) |  |  |
+| `activity_type` | [PageActivityType](#resourceswikiactivityPageActivityType) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
 | `reason` | [string](#string) | optional |  |
-| `data` | [PageActivityData](#resourceswikiPageActivityData) |  |  |
+| `data` | [PageActivityData](#resourceswikiactivityPageActivityData) |  |  |
 
 
 
 
 
-### resources.wiki.PageActivityData
+### resources.wiki.activity.PageActivityData
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `updated` | [PageUpdated](#resourceswikiPageUpdated) |  |  |
-| `access_updated` | [PageAccessUpdated](#resourceswikiPageAccessUpdated) |  |  |
+| `updated` | [PageUpdated](#resourceswikiactivityPageUpdated) |  |  |
+| `access_updated` | [PageAccessUpdated](#resourceswikiactivityPageAccessUpdated) |  |  |
 
 
 
 
 
-### resources.wiki.PageFilesChange
+### resources.wiki.activity.PageFilesChange
 
 
 | Field | Type | Label | Description |
@@ -6964,7 +7059,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-### resources.wiki.PageUpdated
+### resources.wiki.activity.PageUpdated
 
 
 | Field | Type | Label | Description |
@@ -6975,7 +7070,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `description_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
 | `content_diff` | [string](#string) | optional |  |
 | `content_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
-| `files_change` | [PageFilesChange](#resourceswikiPageFilesChange) | optional |  |
+| `files_change` | [PageFilesChange](#resourceswikiactivityPageFilesChange) | optional |  |
 
 
 
@@ -6983,7 +7078,7 @@ Connect an identifier/license to the provider with the specified external id (e.
  <!-- end messages -->
 
 
-### resources.wiki.PageActivityType
+### resources.wiki.activity.PageActivityType
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
@@ -7111,11 +7206,6 @@ Connect an identifier/license to the provider with the specified external id (e.
 ### services.auth.ChangePasswordResponse
 
 
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `expires` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-
-
 
 
 
@@ -7153,6 +7243,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `token` | [string](#string) |  |  |
 | `username` | [string](#string) |  |  |
 | `expires` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `job_props` | [resources.jobs.props.JobProps](#resourcesjobspropsJobProps) |  |  |
@@ -7264,6 +7355,33 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+### services.auth.ImpersonateJobRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job_grade` | [int32](#int32) |  |  |
+
+
+
+
+
+### services.auth.ImpersonateJobResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `token` | [string](#string) |  |  |
+| `expires` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `char` | [resources.users.User](#resourcesusersUser) |  |  |
+| `permissions` | [resources.permissions.permissions.Permission](#resourcespermissionspermissionsPermission) | repeated |  |
+| `attributes` | [resources.permissions.attributes.RoleAttribute](#resourcespermissionsattributesRoleAttribute) | repeated |  |
+| `state` | [bool](#bool) |  |  |
+
+
+
+
+
 ### services.auth.LoginRequest
 
 
@@ -7323,6 +7441,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `token` | [string](#string) |  |  |
 | `expires` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `job_props` | [resources.jobs.props.JobProps](#resourcesjobspropsJobProps) | optional |  |
 | `char` | [resources.users.User](#resourcesusersUser) |  |  |
@@ -7353,6 +7472,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `ForgotPassword` | [ForgotPasswordRequest](#servicesauthForgotPasswordRequest) | [ForgotPasswordResponse](#servicesauthForgotPasswordResponse) | |
 | `GetCharacters` | [GetCharactersRequest](#servicesauthGetCharactersRequest) | [GetCharactersResponse](#servicesauthGetCharactersResponse) | |
 | `ChooseCharacter` | [ChooseCharacterRequest](#servicesauthChooseCharacterRequest) | [ChooseCharacterResponse](#servicesauthChooseCharacterResponse) | |
+| `ImpersonateJob` | [ImpersonateJobRequest](#servicesauthImpersonateJobRequest) | [ImpersonateJobResponse](#servicesauthImpersonateJobResponse) | |
 | `GetAccountInfo` | [GetAccountInfoRequest](#servicesauthGetAccountInfoRequest) | [GetAccountInfoResponse](#servicesauthGetAccountInfoResponse) | |
 | `DeleteSocialLogin` | [DeleteSocialLoginRequest](#servicesauthDeleteSocialLoginRequest) | [DeleteSocialLoginResponse](#servicesauthDeleteSocialLoginResponse) | |
 | `SetSuperuserMode` | [SetSuperuserModeRequest](#servicesauthSetSuperuserModeRequest) | [SetSuperuserModeResponse](#servicesauthSetSuperuserModeResponse) | |
@@ -7565,9 +7685,10 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `only_public` | [bool](#bool) |  |  |
+| `only_public` | [bool](#bool) |  | Search params |
 | `min_access_level` | [resources.calendar.access.AccessLevel](#resourcescalendaraccessAccessLevel) | optional |  |
 | `after` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `calendar_ids` | [int64](#int64) | repeated |  |
 
 
 
@@ -12481,14 +12602,15 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `user_oauth2` | [resources.sync.UserOAuth2Conn](#resourcessyncUserOAuth2Conn) |  |  |
+| `user_oauth2` | [resources.sync.activity.UserOAuth2Conn](#resourcessyncactivityUserOAuth2Conn) |  |  |
 | `dispatch` | [resources.centrum.dispatches.Dispatch](#resourcescentrumdispatchesDispatch) |  |  |
 | `user_activity` | [resources.users.activity.UserActivity](#resourcesusersactivityUserActivity) |  | User activity |
-| `user_props` | [resources.sync.UserProps](#resourcessyncUserProps) |  | Setting props will cause activity to be created automtically |
+| `user_props` | [resources.sync.activity.UserProps](#resourcessyncactivityUserProps) |  | Setting props will cause activity to be created automtically |
 | `colleague_activity` | [resources.jobs.colleagues.activity.ColleagueActivity](#resourcesjobscolleaguesactivityColleagueActivity) |  | Jobs user activity |
-| `colleague_props` | [resources.sync.ColleagueProps](#resourcessyncColleagueProps) |  | Setting props will cause activity to be created automtically |
-| `job_timeclock` | [resources.sync.TimeclockUpdate](#resourcessyncTimeclockUpdate) |  | Timeclock user entry |
-| `user_update` | [resources.sync.UserUpdate](#resourcessyncUserUpdate) |  | User/Char info updates that aren't tracked by activity (yet) |
+| `colleague_props` | [resources.sync.activity.ColleagueProps](#resourcessyncactivityColleagueProps) |  | Setting props will cause activity to be created automtically |
+| `job_timeclock` | [resources.sync.activity.TimeclockUpdate](#resourcessyncactivityTimeclockUpdate) |  | Timeclock user entry |
+| `account_update` | [resources.sync.activity.AccountUpdate](#resourcessyncactivityAccountUpdate) |  | Account update for a signle account to update the group(s). |
+| `user_update` | [resources.sync.activity.UserUpdate](#resourcessyncactivityUserUpdate) |  | User/Char info updates that aren't tracked by activity (yet) |
 
 
 
@@ -12505,8 +12627,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `users` | [resources.sync.DeleteUsers](#resourcessyncDeleteUsers) |  |  |
-| `vehicles` | [resources.sync.DeleteVehicles](#resourcessyncDeleteVehicles) |  |  |
+| `users` | [resources.sync.data.DeleteUsers](#resourcessyncdataDeleteUsers) |  |  |
+| `vehicles` | [resources.sync.data.DeleteVehicles](#resourcessyncdataDeleteVehicles) |  |  |
 
 
 
@@ -12534,10 +12656,11 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `jobs` | [resources.sync.DataStatus](#resourcessyncDataStatus) |  |  |
-| `licenses` | [resources.sync.DataStatus](#resourcessyncDataStatus) |  |  |
-| `users` | [resources.sync.DataStatus](#resourcessyncDataStatus) |  |  |
-| `vehicles` | [resources.sync.DataStatus](#resourcessyncDataStatus) |  |  |
+| `jobs` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
+| `licenses` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
+| `accounts` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
+| `users` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
+| `vehicles` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
 
 
 
@@ -12574,12 +12697,13 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `jobs` | [resources.sync.DataJobs](#resourcessyncDataJobs) |  |  |
-| `licenses` | [resources.sync.DataLicenses](#resourcessyncDataLicenses) |  |  |
-| `users` | [resources.sync.DataUsers](#resourcessyncDataUsers) |  |  |
-| `vehicles` | [resources.sync.DataVehicles](#resourcessyncDataVehicles) |  |  |
-| `user_locations` | [resources.sync.DataUserLocations](#resourcessyncDataUserLocations) |  |  |
-| `last_char_id` | [resources.sync.LastCharID](#resourcessyncLastCharID) |  |  |
+| `jobs` | [resources.sync.data.DataJobs](#resourcessyncdataDataJobs) |  |  |
+| `licenses` | [resources.sync.data.DataLicenses](#resourcessyncdataDataLicenses) |  |  |
+| `accounts` | [resources.sync.data.DataAccounts](#resourcessyncdataDataAccounts) |  |  |
+| `users` | [resources.sync.data.DataUsers](#resourcessyncdataDataUsers) |  |  |
+| `vehicles` | [resources.sync.data.DataVehicles](#resourcessyncdataDataVehicles) |  |  |
+| `user_locations` | [resources.sync.data.DataUserLocations](#resourcessyncdataDataUserLocations) |  |  |
+| `last_char_id` | [resources.sync.data.LastCharID](#resourcessyncdataLastCharID) |  |  |
 
 
 
@@ -12835,7 +12959,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
-| `activity` | [resources.wiki.PageActivity](#resourceswikiPageActivity) | repeated |  |
+| `activity` | [resources.wiki.activity.PageActivity](#resourceswikiactivityPageActivity) | repeated |  |
 
 
 

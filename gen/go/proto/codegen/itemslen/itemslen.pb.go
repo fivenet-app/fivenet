@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: codegen/itemslen/itemslen.proto
 
+//go:build !protoopaque
+
 package itemslen
 
 import (

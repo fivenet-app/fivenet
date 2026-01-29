@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/settings/cron.proto
 
+//go:build !protoopaque
+
 package settings
 
 import (
@@ -12,7 +14,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,7 +25,7 @@ const (
 )
 
 type ListCronjobsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -54,13 +55,20 @@ func (x *ListCronjobsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListCronjobsRequest.ProtoReflect.Descriptor instead.
-func (*ListCronjobsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_cron_proto_rawDescGZIP(), []int{0}
+type ListCronjobsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ListCronjobsRequest_builder) Build() *ListCronjobsRequest {
+	m0 := &ListCronjobsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListCronjobsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Jobs          []*cron.Cronjob        `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -91,16 +99,29 @@ func (x *ListCronjobsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListCronjobsResponse.ProtoReflect.Descriptor instead.
-func (*ListCronjobsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_cron_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListCronjobsResponse) GetJobs() []*cron.Cronjob {
 	if x != nil {
 		return x.Jobs
 	}
 	return nil
+}
+
+func (x *ListCronjobsResponse) SetJobs(v []*cron.Cronjob) {
+	x.Jobs = v
+}
+
+type ListCronjobsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs []*cron.Cronjob
+}
+
+func (b0 ListCronjobsResponse_builder) Build() *ListCronjobsResponse {
+	m0 := &ListCronjobsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	return m0
 }
 
 var File_services_settings_cron_proto protoreflect.FileDescriptor
@@ -113,18 +134,6 @@ const file_services_settings_cron_proto_rawDesc = "" +
 	"\x04jobs\x18\x01 \x03(\v2\x17.resources.cron.CronjobR\x04jobs2\x81\x01\n" +
 	"\vCronService\x12r\n" +
 	"\fListCronjobs\x12&.services.settings.ListCronjobsRequest\x1a'.services.settings.ListCronjobsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
-
-var (
-	file_services_settings_cron_proto_rawDescOnce sync.Once
-	file_services_settings_cron_proto_rawDescData []byte
-)
-
-func file_services_settings_cron_proto_rawDescGZIP() []byte {
-	file_services_settings_cron_proto_rawDescOnce.Do(func() {
-		file_services_settings_cron_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_settings_cron_proto_rawDesc), len(file_services_settings_cron_proto_rawDesc)))
-	})
-	return file_services_settings_cron_proto_rawDescData
-}
 
 var file_services_settings_cron_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_services_settings_cron_proto_goTypes = []any{

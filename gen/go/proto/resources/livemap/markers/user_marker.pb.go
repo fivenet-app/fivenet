@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/livemap/markers/user_marker.proto
 
+//go:build !protoopaque
+
 package livemapmarkers
 
 import (
@@ -16,7 +18,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -28,7 +29,7 @@ const (
 )
 
 type UserMarker struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	X             float64                `protobuf:"fixed64,2,opt,name=x,proto3" json:"x,omitempty"`
 	Y             float64                `protobuf:"fixed64,3,opt,name=y,proto3" json:"y,omitempty"`
@@ -70,11 +71,6 @@ func (x *UserMarker) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserMarker.ProtoReflect.Descriptor instead.
-func (*UserMarker) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_markers_user_marker_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *UserMarker) GetUserId() int32 {
@@ -175,8 +171,192 @@ func (x *UserMarker) GetData() *UserMarkerData {
 	return nil
 }
 
+func (x *UserMarker) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *UserMarker) SetX(v float64) {
+	x.X = v
+}
+
+func (x *UserMarker) SetY(v float64) {
+	x.Y = v
+}
+
+func (x *UserMarker) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *UserMarker) SetPostal(v string) {
+	x.Postal = &v
+}
+
+func (x *UserMarker) SetColor(v string) {
+	x.Color = &v
+}
+
+func (x *UserMarker) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *UserMarker) SetJobLabel(v string) {
+	x.JobLabel = v
+}
+
+func (x *UserMarker) SetJobGrade(v int32) {
+	x.JobGrade = &v
+}
+
+func (x *UserMarker) SetUser(v *colleagues.Colleague) {
+	x.User = v
+}
+
+func (x *UserMarker) SetUnitId(v int64) {
+	x.UnitId = &v
+}
+
+func (x *UserMarker) SetUnit(v *units.Unit) {
+	x.Unit = v
+}
+
+func (x *UserMarker) SetHidden(v bool) {
+	x.Hidden = v
+}
+
+func (x *UserMarker) SetData(v *UserMarkerData) {
+	x.Data = v
+}
+
+func (x *UserMarker) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *UserMarker) HasPostal() bool {
+	if x == nil {
+		return false
+	}
+	return x.Postal != nil
+}
+
+func (x *UserMarker) HasColor() bool {
+	if x == nil {
+		return false
+	}
+	return x.Color != nil
+}
+
+func (x *UserMarker) HasJobGrade() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGrade != nil
+}
+
+func (x *UserMarker) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *UserMarker) HasUnitId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UnitId != nil
+}
+
+func (x *UserMarker) HasUnit() bool {
+	if x == nil {
+		return false
+	}
+	return x.Unit != nil
+}
+
+func (x *UserMarker) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *UserMarker) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *UserMarker) ClearPostal() {
+	x.Postal = nil
+}
+
+func (x *UserMarker) ClearColor() {
+	x.Color = nil
+}
+
+func (x *UserMarker) ClearJobGrade() {
+	x.JobGrade = nil
+}
+
+func (x *UserMarker) ClearUser() {
+	x.User = nil
+}
+
+func (x *UserMarker) ClearUnitId() {
+	x.UnitId = nil
+}
+
+func (x *UserMarker) ClearUnit() {
+	x.Unit = nil
+}
+
+func (x *UserMarker) ClearData() {
+	x.Data = nil
+}
+
+type UserMarker_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId    int32
+	X         float64
+	Y         float64
+	UpdatedAt *timestamp.Timestamp
+	Postal    *string
+	Color     *string
+	Job       string
+	JobLabel  string
+	JobGrade  *int32
+	User      *colleagues.Colleague
+	UnitId    *int64
+	Unit      *units.Unit
+	Hidden    bool
+	Data      *UserMarkerData
+}
+
+func (b0 UserMarker_builder) Build() *UserMarker {
+	m0 := &UserMarker{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.X = b.X
+	x.Y = b.Y
+	x.UpdatedAt = b.UpdatedAt
+	x.Postal = b.Postal
+	x.Color = b.Color
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.JobGrade = b.JobGrade
+	x.User = b.User
+	x.UnitId = b.UnitId
+	x.Unit = b.Unit
+	x.Hidden = b.Hidden
+	x.Data = b.Data
+	return m0
+}
+
 type UserMarkerData struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
+	state            protoimpl.MessageState `protogen:"hybrid.v1"`
 	IsInVehicle      bool                   `protobuf:"varint,1,opt,name=is_in_vehicle,json=isInVehicle,proto3" json:"is_in_vehicle,omitempty"`
 	VehiclePlate     *string                `protobuf:"bytes,2,opt,name=vehicle_plate,json=vehiclePlate,proto3,oneof" json:"vehicle_plate,omitempty"`
 	VehicleUpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=vehicle_updated_at,json=vehicleUpdatedAt,proto3,oneof" json:"vehicle_updated_at,omitempty"`
@@ -209,11 +389,6 @@ func (x *UserMarkerData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserMarkerData.ProtoReflect.Descriptor instead.
-func (*UserMarkerData) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_markers_user_marker_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *UserMarkerData) GetIsInVehicle() bool {
 	if x != nil {
 		return x.IsInVehicle
@@ -233,6 +408,58 @@ func (x *UserMarkerData) GetVehicleUpdatedAt() *timestamp.Timestamp {
 		return x.VehicleUpdatedAt
 	}
 	return nil
+}
+
+func (x *UserMarkerData) SetIsInVehicle(v bool) {
+	x.IsInVehicle = v
+}
+
+func (x *UserMarkerData) SetVehiclePlate(v string) {
+	x.VehiclePlate = &v
+}
+
+func (x *UserMarkerData) SetVehicleUpdatedAt(v *timestamp.Timestamp) {
+	x.VehicleUpdatedAt = v
+}
+
+func (x *UserMarkerData) HasVehiclePlate() bool {
+	if x == nil {
+		return false
+	}
+	return x.VehiclePlate != nil
+}
+
+func (x *UserMarkerData) HasVehicleUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.VehicleUpdatedAt != nil
+}
+
+func (x *UserMarkerData) ClearVehiclePlate() {
+	x.VehiclePlate = nil
+}
+
+func (x *UserMarkerData) ClearVehicleUpdatedAt() {
+	x.VehicleUpdatedAt = nil
+}
+
+type UserMarkerData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	IsInVehicle      bool
+	VehiclePlate     *string
+	VehicleUpdatedAt *timestamp.Timestamp
+}
+
+func (b0 UserMarkerData_builder) Build() *UserMarkerData {
+	m0 := &UserMarkerData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.IsInVehicle = b.IsInVehicle
+	x.VehiclePlate = b.VehiclePlate
+	x.VehicleUpdatedAt = b.VehicleUpdatedAt
+	return m0
 }
 
 var File_resources_livemap_markers_user_marker_proto protoreflect.FileDescriptor
@@ -273,18 +500,6 @@ const file_resources_livemap_markers_user_marker_proto_rawDesc = "" +
 	"\x12vehicle_updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x10vehicleUpdatedAt\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x10\n" +
 	"\x0e_vehicle_plateB\x15\n" +
 	"\x13_vehicle_updated_atB\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers;livemapmarkersb\x06proto3"
-
-var (
-	file_resources_livemap_markers_user_marker_proto_rawDescOnce sync.Once
-	file_resources_livemap_markers_user_marker_proto_rawDescData []byte
-)
-
-func file_resources_livemap_markers_user_marker_proto_rawDescGZIP() []byte {
-	file_resources_livemap_markers_user_marker_proto_rawDescOnce.Do(func() {
-		file_resources_livemap_markers_user_marker_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_livemap_markers_user_marker_proto_rawDesc), len(file_resources_livemap_markers_user_marker_proto_rawDesc)))
-	})
-	return file_resources_livemap_markers_user_marker_proto_rawDescData
-}
 
 var file_resources_livemap_markers_user_marker_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_livemap_markers_user_marker_proto_goTypes = []any{

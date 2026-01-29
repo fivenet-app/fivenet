@@ -9,6 +9,37 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *PhoneNumber) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Number
+	m.Number = htmlsanitizer.Sanitize(m.Number)
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *User) Sanitize() error {
 	if m == nil {
 		return nil
@@ -19,11 +50,6 @@ func (m *User) Sanitize() error {
 
 	// Field: Firstname
 	m.Firstname = htmlsanitizer.Sanitize(m.Firstname)
-
-	// Field: Group
-	if m.Group != nil {
-		*m.Group = htmlsanitizer.Sanitize(*m.Group)
-	}
 
 	// Field: Height
 	if m.Height != nil {
@@ -48,6 +74,18 @@ func (m *User) Sanitize() error {
 		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
 	}
 
+	// Field: Jobs
+	for idx, item := range m.Jobs {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: Lastname
 	m.Lastname = htmlsanitizer.Sanitize(m.Lastname)
 
@@ -68,6 +106,18 @@ func (m *User) Sanitize() error {
 		*m.PhoneNumber = htmlsanitizer.Sanitize(*m.PhoneNumber)
 	}
 
+	// Field: PhoneNumbers
+	for idx, item := range m.PhoneNumbers {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: ProfilePicture
 	if m.ProfilePicture != nil {
 		*m.ProfilePicture = htmlsanitizer.Sanitize(*m.ProfilePicture)
@@ -85,6 +135,29 @@ func (m *User) Sanitize() error {
 	// Field: Sex
 	if m.Sex != nil {
 		*m.Sex = htmlsanitizer.Sanitize(*m.Sex)
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *UserJob) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: GradeLabel
+	if m.GradeLabel != nil {
+		*m.GradeLabel = htmlsanitizer.Sanitize(*m.GradeLabel)
+	}
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
 	}
 
 	return nil

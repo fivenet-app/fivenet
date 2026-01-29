@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/notifications/events/events.proto
 
+//go:build !protoopaque
+
 package notificationsevents
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -27,7 +28,7 @@ const (
 
 // User related events
 type UserEvent struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*UserEvent_RefreshToken
@@ -62,11 +63,6 @@ func (x *UserEvent) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserEvent.ProtoReflect.Descriptor instead.
-func (*UserEvent) Descriptor() ([]byte, []int) {
-	return file_resources_notifications_events_events_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *UserEvent) GetData() isUserEvent_Data {
@@ -112,6 +108,162 @@ func (x *UserEvent) GetUserInfoChanged() *userinfo.UserInfoChanged {
 	return nil
 }
 
+func (x *UserEvent) SetRefreshToken(v bool) {
+	x.Data = &UserEvent_RefreshToken{v}
+}
+
+func (x *UserEvent) SetNotification(v *notifications.Notification) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserEvent_Notification{v}
+}
+
+func (x *UserEvent) SetNotificationsReadCount(v int64) {
+	x.Data = &UserEvent_NotificationsReadCount{v}
+}
+
+func (x *UserEvent) SetUserInfoChanged(v *userinfo.UserInfoChanged) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserEvent_UserInfoChanged{v}
+}
+
+func (x *UserEvent) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *UserEvent) HasRefreshToken() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserEvent_RefreshToken)
+	return ok
+}
+
+func (x *UserEvent) HasNotification() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserEvent_Notification)
+	return ok
+}
+
+func (x *UserEvent) HasNotificationsReadCount() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserEvent_NotificationsReadCount)
+	return ok
+}
+
+func (x *UserEvent) HasUserInfoChanged() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserEvent_UserInfoChanged)
+	return ok
+}
+
+func (x *UserEvent) ClearData() {
+	x.Data = nil
+}
+
+func (x *UserEvent) ClearRefreshToken() {
+	if _, ok := x.Data.(*UserEvent_RefreshToken); ok {
+		x.Data = nil
+	}
+}
+
+func (x *UserEvent) ClearNotification() {
+	if _, ok := x.Data.(*UserEvent_Notification); ok {
+		x.Data = nil
+	}
+}
+
+func (x *UserEvent) ClearNotificationsReadCount() {
+	if _, ok := x.Data.(*UserEvent_NotificationsReadCount); ok {
+		x.Data = nil
+	}
+}
+
+func (x *UserEvent) ClearUserInfoChanged() {
+	if _, ok := x.Data.(*UserEvent_UserInfoChanged); ok {
+		x.Data = nil
+	}
+}
+
+const UserEvent_Data_not_set_case case_UserEvent_Data = 0
+const UserEvent_RefreshToken_case case_UserEvent_Data = 1
+const UserEvent_Notification_case case_UserEvent_Data = 2
+const UserEvent_NotificationsReadCount_case case_UserEvent_Data = 3
+const UserEvent_UserInfoChanged_case case_UserEvent_Data = 4
+
+func (x *UserEvent) WhichData() case_UserEvent_Data {
+	if x == nil {
+		return UserEvent_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *UserEvent_RefreshToken:
+		return UserEvent_RefreshToken_case
+	case *UserEvent_Notification:
+		return UserEvent_Notification_case
+	case *UserEvent_NotificationsReadCount:
+		return UserEvent_NotificationsReadCount_case
+	case *UserEvent_UserInfoChanged:
+		return UserEvent_UserInfoChanged_case
+	default:
+		return UserEvent_Data_not_set_case
+	}
+}
+
+type UserEvent_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	RefreshToken *bool
+	// Notifications
+	Notification           *notifications.Notification
+	NotificationsReadCount *int64
+	UserInfoChanged        *userinfo.UserInfoChanged
+	// -- end of Data
+}
+
+func (b0 UserEvent_builder) Build() *UserEvent {
+	m0 := &UserEvent{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.RefreshToken != nil {
+		x.Data = &UserEvent_RefreshToken{*b.RefreshToken}
+	}
+	if b.Notification != nil {
+		x.Data = &UserEvent_Notification{b.Notification}
+	}
+	if b.NotificationsReadCount != nil {
+		x.Data = &UserEvent_NotificationsReadCount{*b.NotificationsReadCount}
+	}
+	if b.UserInfoChanged != nil {
+		x.Data = &UserEvent_UserInfoChanged{b.UserInfoChanged}
+	}
+	return m0
+}
+
+type case_UserEvent_Data protoreflect.FieldNumber
+
+func (x case_UserEvent_Data) String() string {
+	md := file_resources_notifications_events_events_proto_msgTypes[0].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isUserEvent_Data interface {
 	isUserEvent_Data()
 }
@@ -143,7 +295,7 @@ func (*UserEvent_UserInfoChanged) isUserEvent_Data() {}
 
 // Job related events
 type JobEvent struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*JobEvent_JobProps
@@ -177,11 +329,6 @@ func (x *JobEvent) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobEvent.ProtoReflect.Descriptor instead.
-func (*JobEvent) Descriptor() ([]byte, []int) {
-	return file_resources_notifications_events_events_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *JobEvent) GetData() isJobEvent_Data {
 	if x != nil {
 		return x.Data
@@ -198,6 +345,82 @@ func (x *JobEvent) GetJobProps() *props.JobProps {
 	return nil
 }
 
+func (x *JobEvent) SetJobProps(v *props.JobProps) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &JobEvent_JobProps{v}
+}
+
+func (x *JobEvent) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *JobEvent) HasJobProps() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*JobEvent_JobProps)
+	return ok
+}
+
+func (x *JobEvent) ClearData() {
+	x.Data = nil
+}
+
+func (x *JobEvent) ClearJobProps() {
+	if _, ok := x.Data.(*JobEvent_JobProps); ok {
+		x.Data = nil
+	}
+}
+
+const JobEvent_Data_not_set_case case_JobEvent_Data = 0
+const JobEvent_JobProps_case case_JobEvent_Data = 1
+
+func (x *JobEvent) WhichData() case_JobEvent_Data {
+	if x == nil {
+		return JobEvent_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *JobEvent_JobProps:
+		return JobEvent_JobProps_case
+	default:
+		return JobEvent_Data_not_set_case
+	}
+}
+
+type JobEvent_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	JobProps *props.JobProps
+	// -- end of Data
+}
+
+func (b0 JobEvent_builder) Build() *JobEvent {
+	m0 := &JobEvent{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.JobProps != nil {
+		x.Data = &JobEvent_JobProps{b.JobProps}
+	}
+	return m0
+}
+
+type case_JobEvent_Data protoreflect.FieldNumber
+
+func (x case_JobEvent_Data) String() string {
+	md := file_resources_notifications_events_events_proto_msgTypes[1].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isJobEvent_Data interface {
 	isJobEvent_Data()
 }
@@ -210,7 +433,7 @@ func (*JobEvent_JobProps) isJobEvent_Data() {}
 
 // Job grade events
 type JobGradeEvent struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*JobGradeEvent_RefreshToken
@@ -244,11 +467,6 @@ func (x *JobGradeEvent) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobGradeEvent.ProtoReflect.Descriptor instead.
-func (*JobGradeEvent) Descriptor() ([]byte, []int) {
-	return file_resources_notifications_events_events_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *JobGradeEvent) GetData() isJobGradeEvent_Data {
 	if x != nil {
 		return x.Data
@@ -265,6 +483,78 @@ func (x *JobGradeEvent) GetRefreshToken() bool {
 	return false
 }
 
+func (x *JobGradeEvent) SetRefreshToken(v bool) {
+	x.Data = &JobGradeEvent_RefreshToken{v}
+}
+
+func (x *JobGradeEvent) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *JobGradeEvent) HasRefreshToken() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*JobGradeEvent_RefreshToken)
+	return ok
+}
+
+func (x *JobGradeEvent) ClearData() {
+	x.Data = nil
+}
+
+func (x *JobGradeEvent) ClearRefreshToken() {
+	if _, ok := x.Data.(*JobGradeEvent_RefreshToken); ok {
+		x.Data = nil
+	}
+}
+
+const JobGradeEvent_Data_not_set_case case_JobGradeEvent_Data = 0
+const JobGradeEvent_RefreshToken_case case_JobGradeEvent_Data = 1
+
+func (x *JobGradeEvent) WhichData() case_JobGradeEvent_Data {
+	if x == nil {
+		return JobGradeEvent_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *JobGradeEvent_RefreshToken:
+		return JobGradeEvent_RefreshToken_case
+	default:
+		return JobGradeEvent_Data_not_set_case
+	}
+}
+
+type JobGradeEvent_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	RefreshToken *bool
+	// -- end of Data
+}
+
+func (b0 JobGradeEvent_builder) Build() *JobGradeEvent {
+	m0 := &JobGradeEvent{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.RefreshToken != nil {
+		x.Data = &JobGradeEvent_RefreshToken{*b.RefreshToken}
+	}
+	return m0
+}
+
+type case_JobGradeEvent_Data protoreflect.FieldNumber
+
+func (x case_JobGradeEvent_Data) String() string {
+	md := file_resources_notifications_events_events_proto_msgTypes[2].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isJobGradeEvent_Data interface {
 	isJobGradeEvent_Data()
 }
@@ -277,7 +567,7 @@ func (*JobGradeEvent_RefreshToken) isJobGradeEvent_Data() {}
 
 // System related events
 type SystemEvent struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*SystemEvent_ClientConfig
@@ -311,11 +601,6 @@ func (x *SystemEvent) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SystemEvent.ProtoReflect.Descriptor instead.
-func (*SystemEvent) Descriptor() ([]byte, []int) {
-	return file_resources_notifications_events_events_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *SystemEvent) GetData() isSystemEvent_Data {
 	if x != nil {
 		return x.Data
@@ -330,6 +615,83 @@ func (x *SystemEvent) GetClientConfig() *clientconfig.ClientConfig {
 		}
 	}
 	return nil
+}
+
+func (x *SystemEvent) SetClientConfig(v *clientconfig.ClientConfig) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &SystemEvent_ClientConfig{v}
+}
+
+func (x *SystemEvent) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *SystemEvent) HasClientConfig() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*SystemEvent_ClientConfig)
+	return ok
+}
+
+func (x *SystemEvent) ClearData() {
+	x.Data = nil
+}
+
+func (x *SystemEvent) ClearClientConfig() {
+	if _, ok := x.Data.(*SystemEvent_ClientConfig); ok {
+		x.Data = nil
+	}
+}
+
+const SystemEvent_Data_not_set_case case_SystemEvent_Data = 0
+const SystemEvent_ClientConfig_case case_SystemEvent_Data = 1
+
+func (x *SystemEvent) WhichData() case_SystemEvent_Data {
+	if x == nil {
+		return SystemEvent_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *SystemEvent_ClientConfig:
+		return SystemEvent_ClientConfig_case
+	default:
+		return SystemEvent_Data_not_set_case
+	}
+}
+
+type SystemEvent_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	// Client configuration update (e.g., feature gates, game settings, banner message)
+	ClientConfig *clientconfig.ClientConfig
+	// -- end of Data
+}
+
+func (b0 SystemEvent_builder) Build() *SystemEvent {
+	m0 := &SystemEvent{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.ClientConfig != nil {
+		x.Data = &SystemEvent_ClientConfig{b.ClientConfig}
+	}
+	return m0
+}
+
+type case_SystemEvent_Data protoreflect.FieldNumber
+
+func (x case_SystemEvent_Data) String() string {
+	md := file_resources_notifications_events_events_proto_msgTypes[3].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
 }
 
 type isSystemEvent_Data interface {
@@ -347,7 +709,7 @@ var File_resources_notifications_events_events_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_events_events_proto_rawDesc = "" +
 	"\n" +
-	"+resources/notifications/events/events.proto\x12\x1eresources.notifications.events\x1a)resources/clientconfig/clientconfig.proto\x1a resources/jobs/props/props.proto\x1a+resources/notifications/notifications.proto\x1a\"resources/userinfo/user_info.proto\"\x96\x02\n" +
+	"+resources/notifications/events/events.proto\x12\x1eresources.notifications.events\x1a)resources/clientconfig/clientconfig.proto\x1a resources/jobs/props/props.proto\x1a+resources/notifications/notifications.proto\x1a!resources/userinfo/userinfo.proto\"\x96\x02\n" +
 	"\tUserEvent\x12%\n" +
 	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshToken\x12K\n" +
 	"\fnotification\x18\x02 \x01(\v2%.resources.notifications.NotificationH\x00R\fnotification\x12:\n" +
@@ -363,18 +725,6 @@ const file_resources_notifications_events_events_proto_rawDesc = "" +
 	"\vSystemEvent\x12K\n" +
 	"\rclient_config\x18\x01 \x01(\v2$.resources.clientconfig.ClientConfigH\x00R\fclientConfigB\x06\n" +
 	"\x04dataBfZdgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events;notificationseventsb\x06proto3"
-
-var (
-	file_resources_notifications_events_events_proto_rawDescOnce sync.Once
-	file_resources_notifications_events_events_proto_rawDescData []byte
-)
-
-func file_resources_notifications_events_events_proto_rawDescGZIP() []byte {
-	file_resources_notifications_events_events_proto_rawDescOnce.Do(func() {
-		file_resources_notifications_events_events_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_notifications_events_events_proto_rawDesc), len(file_resources_notifications_events_events_proto_rawDesc)))
-	})
-	return file_resources_notifications_events_events_proto_rawDescData
-}
 
 var file_resources_notifications_events_events_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_notifications_events_events_proto_goTypes = []any{

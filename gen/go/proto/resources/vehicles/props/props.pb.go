@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/vehicles/props/props.proto
 
+//go:build !protoopaque
+
 package vehiclesprops
 
 import (
@@ -11,7 +13,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,7 +24,7 @@ const (
 )
 
 type VehicleProps struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Plate         string                 `protobuf:"bytes,1,opt,name=plate,proto3" json:"plate,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Wanted        *bool                  `protobuf:"varint,3,opt,name=wanted,proto3,oneof" json:"wanted,omitempty"`
@@ -57,11 +58,6 @@ func (x *VehicleProps) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use VehicleProps.ProtoReflect.Descriptor instead.
-func (*VehicleProps) Descriptor() ([]byte, []int) {
-	return file_resources_vehicles_props_props_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *VehicleProps) GetPlate() string {
 	if x != nil {
 		return x.Plate
@@ -90,6 +86,75 @@ func (x *VehicleProps) GetWantedReason() string {
 	return ""
 }
 
+func (x *VehicleProps) SetPlate(v string) {
+	x.Plate = v
+}
+
+func (x *VehicleProps) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *VehicleProps) SetWanted(v bool) {
+	x.Wanted = &v
+}
+
+func (x *VehicleProps) SetWantedReason(v string) {
+	x.WantedReason = &v
+}
+
+func (x *VehicleProps) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *VehicleProps) HasWanted() bool {
+	if x == nil {
+		return false
+	}
+	return x.Wanted != nil
+}
+
+func (x *VehicleProps) HasWantedReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.WantedReason != nil
+}
+
+func (x *VehicleProps) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *VehicleProps) ClearWanted() {
+	x.Wanted = nil
+}
+
+func (x *VehicleProps) ClearWantedReason() {
+	x.WantedReason = nil
+}
+
+type VehicleProps_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Plate        string
+	UpdatedAt    *timestamp.Timestamp
+	Wanted       *bool
+	WantedReason *string
+}
+
+func (b0 VehicleProps_builder) Build() *VehicleProps {
+	m0 := &VehicleProps{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Plate = b.Plate
+	x.UpdatedAt = b.UpdatedAt
+	x.Wanted = b.Wanted
+	x.WantedReason = b.WantedReason
+	return m0
+}
+
 var File_resources_vehicles_props_props_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_props_props_proto_rawDesc = "" +
@@ -104,18 +169,6 @@ const file_resources_vehicles_props_props_proto_rawDesc = "" +
 	"\v_updated_atB\t\n" +
 	"\a_wantedB\x10\n" +
 	"\x0e_wanted_reasonBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props;vehiclespropsb\x06proto3"
-
-var (
-	file_resources_vehicles_props_props_proto_rawDescOnce sync.Once
-	file_resources_vehicles_props_props_proto_rawDescData []byte
-)
-
-func file_resources_vehicles_props_props_proto_rawDescGZIP() []byte {
-	file_resources_vehicles_props_props_proto_rawDescOnce.Do(func() {
-		file_resources_vehicles_props_props_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_vehicles_props_props_proto_rawDesc), len(file_resources_vehicles_props_props_proto_rawDesc)))
-	})
-	return file_resources_vehicles_props_props_proto_rawDescData
-}
 
 var file_resources_vehicles_props_props_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_vehicles_props_props_proto_goTypes = []any{

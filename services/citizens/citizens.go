@@ -17,7 +17,6 @@ import (
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -43,7 +42,7 @@ func (s *Server) ListCitizens(
 ) (*pbcitizens.ListCitizensResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 
 	selectors := dbutils.Columns{
 		tUser.Firstname,
@@ -264,7 +263,7 @@ func (s *Server) GetUser(
 
 	grpc_audit.SetTargetUser(ctx, req.GetUserId(), "")
 
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 
 	selectors := dbutils.Columns{
 		tUser.Firstname,
@@ -391,8 +390,8 @@ func (s *Server) GetUser(
 
 	// Check if user can see licenses and fetch them
 	if !infoOnly && fields.Contains("Licenses") {
-		tLicenses := tables.Licenses()
-		tCitizensLicenses := tables.UserLicenses()
+		tLicenses := table.FivenetLicenses
+		tCitizensLicenses := table.FivenetUserLicenses
 
 		stmt := tUser.
 			SELECT(
@@ -402,7 +401,7 @@ func (s *Server) GetUser(
 			FROM(
 				tCitizensLicenses.
 					INNER_JOIN(tUser,
-						tCitizensLicenses.Owner.EQ(tUser.Identifier),
+						tCitizensLicenses.UserID.EQ(tUser.ID),
 					).
 					LEFT_JOIN(tLicenses,
 						tLicenses.Type.EQ(tCitizensLicenses.Type)),
@@ -500,7 +499,7 @@ func (s *Server) SetUserProps(
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 
 	stmt := tUser.
 		SELECT(

@@ -34,8 +34,7 @@ type Server struct {
 
 	dispatches *dispatches.DispatchDB
 
-	esxCompat bool
-	tokens    []string
+	tokens []string
 
 	lastDBSyncVersion  atomic.Pointer[string]
 	lastSyncedData     atomic.Int64
@@ -72,8 +71,7 @@ func NewServer(p Params) Result {
 
 		dispatches: p.DispatchDB,
 
-		esxCompat: p.Config.Database.ESXCompat,
-		tokens:    p.Config.Sync.APITokens,
+		tokens: p.Config.Sync.APITokens,
 
 		lastDBSyncVersion: atomic.Pointer[string]{},
 	}
@@ -105,7 +103,7 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 		}
 	}
 
-	t, err := auth.GetTokenFromGRPCContext(ctx)
+	t, err := auth.GetAccTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, err
 	}

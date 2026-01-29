@@ -10,7 +10,6 @@ import (
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -49,7 +48,7 @@ func (s *Server) ListCalendarEntryRSVP(
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	tUser := tables.User().AS("user_short")
+	tUser := table.FivenetUser.AS("user_short")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	condition := mysql.AND(
@@ -218,7 +217,7 @@ func (s *Server) getRSVPCalendarEntry(
 	entryId int64,
 	userId int32,
 ) (*calendarentries.CalendarEntryRSVP, error) {
-	tUser := tables.User().AS("user_short")
+	tUser := table.FivenetUser.AS("user_short")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tCalendarRSVP.

@@ -4,13 +4,14 @@
 // 	protoc        (unknown)
 // source: resources/livemap/heatmap/heatmap.proto
 
+//go:build !protoopaque
+
 package livemapheatmap
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -22,7 +23,7 @@ const (
 )
 
 type HeatmapEntry struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	X             float64                `protobuf:"fixed64,1,opt,name=x,proto3" json:"x,omitempty"`
 	Y             float64                `protobuf:"fixed64,2,opt,name=y,proto3" json:"y,omitempty"`
 	W             float64                `protobuf:"fixed64,3,opt,name=w,proto3" json:"w,omitempty"`
@@ -55,11 +56,6 @@ func (x *HeatmapEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use HeatmapEntry.ProtoReflect.Descriptor instead.
-func (*HeatmapEntry) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_heatmap_heatmap_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *HeatmapEntry) GetX() float64 {
 	if x != nil {
 		return x.X
@@ -81,6 +77,36 @@ func (x *HeatmapEntry) GetW() float64 {
 	return 0
 }
 
+func (x *HeatmapEntry) SetX(v float64) {
+	x.X = v
+}
+
+func (x *HeatmapEntry) SetY(v float64) {
+	x.Y = v
+}
+
+func (x *HeatmapEntry) SetW(v float64) {
+	x.W = v
+}
+
+type HeatmapEntry_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	X float64
+	Y float64
+	W float64
+}
+
+func (b0 HeatmapEntry_builder) Build() *HeatmapEntry {
+	m0 := &HeatmapEntry{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.X = b.X
+	x.Y = b.Y
+	x.W = b.W
+	return m0
+}
+
 var File_resources_livemap_heatmap_heatmap_proto protoreflect.FileDescriptor
 
 const file_resources_livemap_heatmap_heatmap_proto_rawDesc = "" +
@@ -90,18 +116,6 @@ const file_resources_livemap_heatmap_heatmap_proto_rawDesc = "" +
 	"\x01x\x18\x01 \x01(\x01R\x01x\x12\f\n" +
 	"\x01y\x18\x02 \x01(\x01R\x01y\x12\f\n" +
 	"\x01w\x18\x03 \x01(\x01R\x01wB\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/heatmap;livemapheatmapb\x06proto3"
-
-var (
-	file_resources_livemap_heatmap_heatmap_proto_rawDescOnce sync.Once
-	file_resources_livemap_heatmap_heatmap_proto_rawDescData []byte
-)
-
-func file_resources_livemap_heatmap_heatmap_proto_rawDescGZIP() []byte {
-	file_resources_livemap_heatmap_heatmap_proto_rawDescOnce.Do(func() {
-		file_resources_livemap_heatmap_heatmap_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_livemap_heatmap_heatmap_proto_rawDesc), len(file_resources_livemap_heatmap_heatmap_proto_rawDesc)))
-	})
-	return file_resources_livemap_heatmap_heatmap_proto_rawDescData
-}
 
 var file_resources_livemap_heatmap_heatmap_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_livemap_heatmap_heatmap_proto_goTypes = []any{

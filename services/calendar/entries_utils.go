@@ -3,7 +3,6 @@ package calendar
 import (
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 )
@@ -13,7 +12,7 @@ func (s *Server) listCalendarEntriesQuery(
 	userInfo *userinfo.UserInfo,
 	access calendaraccess.AccessLevel,
 ) mysql.SelectStatement {
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 	rsvp2 := tCalendarRSVP.AS("r2")
 

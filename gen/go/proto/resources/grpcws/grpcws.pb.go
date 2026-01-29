@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/grpcws/grpcws.proto
 
+//go:build !protoopaque
+
 package grpcws
 
 import (
@@ -11,7 +13,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,7 +24,7 @@ const (
 )
 
 type GrpcFrame struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
+	state    protoimpl.MessageState `protogen:"hybrid.v1"`
 	StreamId uint32                 `protobuf:"varint,1,opt,name=stream_id,json=streamId,proto3" json:"stream_id,omitempty"`
 	// Types that are valid to be assigned to Payload:
 	//
@@ -61,11 +62,6 @@ func (x *GrpcFrame) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GrpcFrame.ProtoReflect.Descriptor instead.
-func (*GrpcFrame) Descriptor() ([]byte, []int) {
-	return file_resources_grpcws_grpcws_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *GrpcFrame) GetStreamId() uint32 {
@@ -136,6 +132,233 @@ func (x *GrpcFrame) GetCancel() *Cancel {
 	return nil
 }
 
+func (x *GrpcFrame) SetStreamId(v uint32) {
+	x.StreamId = v
+}
+
+func (x *GrpcFrame) SetPing(v *Ping) {
+	if v == nil {
+		x.Payload = nil
+		return
+	}
+	x.Payload = &GrpcFrame_Ping{v}
+}
+
+func (x *GrpcFrame) SetHeader(v *Header) {
+	if v == nil {
+		x.Payload = nil
+		return
+	}
+	x.Payload = &GrpcFrame_Header{v}
+}
+
+func (x *GrpcFrame) SetBody(v *Body) {
+	if v == nil {
+		x.Payload = nil
+		return
+	}
+	x.Payload = &GrpcFrame_Body{v}
+}
+
+func (x *GrpcFrame) SetComplete(v *Complete) {
+	if v == nil {
+		x.Payload = nil
+		return
+	}
+	x.Payload = &GrpcFrame_Complete{v}
+}
+
+func (x *GrpcFrame) SetFailure(v *Failure) {
+	if v == nil {
+		x.Payload = nil
+		return
+	}
+	x.Payload = &GrpcFrame_Failure{v}
+}
+
+func (x *GrpcFrame) SetCancel(v *Cancel) {
+	if v == nil {
+		x.Payload = nil
+		return
+	}
+	x.Payload = &GrpcFrame_Cancel{v}
+}
+
+func (x *GrpcFrame) HasPayload() bool {
+	if x == nil {
+		return false
+	}
+	return x.Payload != nil
+}
+
+func (x *GrpcFrame) HasPing() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Payload.(*GrpcFrame_Ping)
+	return ok
+}
+
+func (x *GrpcFrame) HasHeader() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Payload.(*GrpcFrame_Header)
+	return ok
+}
+
+func (x *GrpcFrame) HasBody() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Payload.(*GrpcFrame_Body)
+	return ok
+}
+
+func (x *GrpcFrame) HasComplete() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Payload.(*GrpcFrame_Complete)
+	return ok
+}
+
+func (x *GrpcFrame) HasFailure() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Payload.(*GrpcFrame_Failure)
+	return ok
+}
+
+func (x *GrpcFrame) HasCancel() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Payload.(*GrpcFrame_Cancel)
+	return ok
+}
+
+func (x *GrpcFrame) ClearPayload() {
+	x.Payload = nil
+}
+
+func (x *GrpcFrame) ClearPing() {
+	if _, ok := x.Payload.(*GrpcFrame_Ping); ok {
+		x.Payload = nil
+	}
+}
+
+func (x *GrpcFrame) ClearHeader() {
+	if _, ok := x.Payload.(*GrpcFrame_Header); ok {
+		x.Payload = nil
+	}
+}
+
+func (x *GrpcFrame) ClearBody() {
+	if _, ok := x.Payload.(*GrpcFrame_Body); ok {
+		x.Payload = nil
+	}
+}
+
+func (x *GrpcFrame) ClearComplete() {
+	if _, ok := x.Payload.(*GrpcFrame_Complete); ok {
+		x.Payload = nil
+	}
+}
+
+func (x *GrpcFrame) ClearFailure() {
+	if _, ok := x.Payload.(*GrpcFrame_Failure); ok {
+		x.Payload = nil
+	}
+}
+
+func (x *GrpcFrame) ClearCancel() {
+	if _, ok := x.Payload.(*GrpcFrame_Cancel); ok {
+		x.Payload = nil
+	}
+}
+
+const GrpcFrame_Payload_not_set_case case_GrpcFrame_Payload = 0
+const GrpcFrame_Ping_case case_GrpcFrame_Payload = 3
+const GrpcFrame_Header_case case_GrpcFrame_Payload = 4
+const GrpcFrame_Body_case case_GrpcFrame_Payload = 5
+const GrpcFrame_Complete_case case_GrpcFrame_Payload = 6
+const GrpcFrame_Failure_case case_GrpcFrame_Payload = 7
+const GrpcFrame_Cancel_case case_GrpcFrame_Payload = 8
+
+func (x *GrpcFrame) WhichPayload() case_GrpcFrame_Payload {
+	if x == nil {
+		return GrpcFrame_Payload_not_set_case
+	}
+	switch x.Payload.(type) {
+	case *GrpcFrame_Ping:
+		return GrpcFrame_Ping_case
+	case *GrpcFrame_Header:
+		return GrpcFrame_Header_case
+	case *GrpcFrame_Body:
+		return GrpcFrame_Body_case
+	case *GrpcFrame_Complete:
+		return GrpcFrame_Complete_case
+	case *GrpcFrame_Failure:
+		return GrpcFrame_Failure_case
+	case *GrpcFrame_Cancel:
+		return GrpcFrame_Cancel_case
+	default:
+		return GrpcFrame_Payload_not_set_case
+	}
+}
+
+type GrpcFrame_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	StreamId uint32
+	// Fields of oneof Payload:
+	Ping     *Ping
+	Header   *Header
+	Body     *Body
+	Complete *Complete
+	Failure  *Failure
+	Cancel   *Cancel
+	// -- end of Payload
+}
+
+func (b0 GrpcFrame_builder) Build() *GrpcFrame {
+	m0 := &GrpcFrame{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.StreamId = b.StreamId
+	if b.Ping != nil {
+		x.Payload = &GrpcFrame_Ping{b.Ping}
+	}
+	if b.Header != nil {
+		x.Payload = &GrpcFrame_Header{b.Header}
+	}
+	if b.Body != nil {
+		x.Payload = &GrpcFrame_Body{b.Body}
+	}
+	if b.Complete != nil {
+		x.Payload = &GrpcFrame_Complete{b.Complete}
+	}
+	if b.Failure != nil {
+		x.Payload = &GrpcFrame_Failure{b.Failure}
+	}
+	if b.Cancel != nil {
+		x.Payload = &GrpcFrame_Cancel{b.Cancel}
+	}
+	return m0
+}
+
+type case_GrpcFrame_Payload protoreflect.FieldNumber
+
+func (x case_GrpcFrame_Payload) String() string {
+	md := file_resources_grpcws_grpcws_proto_msgTypes[0].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isGrpcFrame_Payload interface {
 	isGrpcFrame_Payload()
 }
@@ -177,7 +400,7 @@ func (*GrpcFrame_Failure) isGrpcFrame_Payload() {}
 func (*GrpcFrame_Cancel) isGrpcFrame_Payload() {}
 
 type Ping struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Pong          bool                   `protobuf:"varint,1,opt,name=pong,proto3" json:"pong,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -208,11 +431,6 @@ func (x *Ping) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Ping.ProtoReflect.Descriptor instead.
-func (*Ping) Descriptor() ([]byte, []int) {
-	return file_resources_grpcws_grpcws_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *Ping) GetPong() bool {
 	if x != nil {
 		return x.Pong
@@ -220,8 +438,26 @@ func (x *Ping) GetPong() bool {
 	return false
 }
 
+func (x *Ping) SetPong(v bool) {
+	x.Pong = v
+}
+
+type Ping_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pong bool
+}
+
+func (b0 Ping_builder) Build() *Ping {
+	m0 := &Ping{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pong = b.Pong
+	return m0
+}
+
 type Header struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	Operation     string                  `protobuf:"bytes,1,opt,name=operation,proto3" json:"operation,omitempty"`
 	Headers       map[string]*HeaderValue `protobuf:"bytes,2,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	Status        int32                   `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
@@ -254,11 +490,6 @@ func (x *Header) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Header.ProtoReflect.Descriptor instead.
-func (*Header) Descriptor() ([]byte, []int) {
-	return file_resources_grpcws_grpcws_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *Header) GetOperation() string {
 	if x != nil {
 		return x.Operation
@@ -280,8 +511,38 @@ func (x *Header) GetStatus() int32 {
 	return 0
 }
 
+func (x *Header) SetOperation(v string) {
+	x.Operation = v
+}
+
+func (x *Header) SetHeaders(v map[string]*HeaderValue) {
+	x.Headers = v
+}
+
+func (x *Header) SetStatus(v int32) {
+	x.Status = v
+}
+
+type Header_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Operation string
+	Headers   map[string]*HeaderValue
+	Status    int32
+}
+
+func (b0 Header_builder) Build() *Header {
+	m0 := &Header{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Operation = b.Operation
+	x.Headers = b.Headers
+	x.Status = b.Status
+	return m0
+}
+
 type HeaderValue struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Value         []string               `protobuf:"bytes,1,rep,name=value,proto3" json:"value,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -312,11 +573,6 @@ func (x *HeaderValue) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use HeaderValue.ProtoReflect.Descriptor instead.
-func (*HeaderValue) Descriptor() ([]byte, []int) {
-	return file_resources_grpcws_grpcws_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *HeaderValue) GetValue() []string {
 	if x != nil {
 		return x.Value
@@ -324,8 +580,26 @@ func (x *HeaderValue) GetValue() []string {
 	return nil
 }
 
+func (x *HeaderValue) SetValue(v []string) {
+	x.Value = v
+}
+
+type HeaderValue_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Value []string
+}
+
+func (b0 HeaderValue_builder) Build() *HeaderValue {
+	m0 := &HeaderValue{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Value = b.Value
+	return m0
+}
+
 type Body struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	Complete      bool                   `protobuf:"varint,2,opt,name=complete,proto3" json:"complete,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -357,11 +631,6 @@ func (x *Body) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Body.ProtoReflect.Descriptor instead.
-func (*Body) Descriptor() ([]byte, []int) {
-	return file_resources_grpcws_grpcws_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *Body) GetData() []byte {
 	if x != nil {
 		return x.Data
@@ -376,8 +645,35 @@ func (x *Body) GetComplete() bool {
 	return false
 }
 
+func (x *Body) SetData(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.Data = v
+}
+
+func (x *Body) SetComplete(v bool) {
+	x.Complete = v
+}
+
+type Body_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Data     []byte
+	Complete bool
+}
+
+func (b0 Body_builder) Build() *Body {
+	m0 := &Body{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Data = b.Data
+	x.Complete = b.Complete
+	return m0
+}
+
 type Complete struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -407,13 +703,20 @@ func (x *Complete) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Complete.ProtoReflect.Descriptor instead.
-func (*Complete) Descriptor() ([]byte, []int) {
-	return file_resources_grpcws_grpcws_proto_rawDescGZIP(), []int{5}
+type Complete_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 Complete_builder) Build() *Complete {
+	m0 := &Complete{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type Failure struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	ErrorMessage  string                  `protobuf:"bytes,1,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
 	ErrorStatus   string                  `protobuf:"bytes,2,opt,name=error_status,json=errorStatus,proto3" json:"error_status,omitempty"`
 	Headers       map[string]*HeaderValue `protobuf:"bytes,3,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
@@ -446,11 +749,6 @@ func (x *Failure) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Failure.ProtoReflect.Descriptor instead.
-func (*Failure) Descriptor() ([]byte, []int) {
-	return file_resources_grpcws_grpcws_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *Failure) GetErrorMessage() string {
 	if x != nil {
 		return x.ErrorMessage
@@ -472,8 +770,38 @@ func (x *Failure) GetHeaders() map[string]*HeaderValue {
 	return nil
 }
 
+func (x *Failure) SetErrorMessage(v string) {
+	x.ErrorMessage = v
+}
+
+func (x *Failure) SetErrorStatus(v string) {
+	x.ErrorStatus = v
+}
+
+func (x *Failure) SetHeaders(v map[string]*HeaderValue) {
+	x.Headers = v
+}
+
+type Failure_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ErrorMessage string
+	ErrorStatus  string
+	Headers      map[string]*HeaderValue
+}
+
+func (b0 Failure_builder) Build() *Failure {
+	m0 := &Failure{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ErrorMessage = b.ErrorMessage
+	x.ErrorStatus = b.ErrorStatus
+	x.Headers = b.Headers
+	return m0
+}
+
 type Cancel struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -503,9 +831,16 @@ func (x *Cancel) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Cancel.ProtoReflect.Descriptor instead.
-func (*Cancel) Descriptor() ([]byte, []int) {
-	return file_resources_grpcws_grpcws_proto_rawDescGZIP(), []int{7}
+type Cancel_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 Cancel_builder) Build() *Cancel {
+	m0 := &Cancel{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 var File_resources_grpcws_grpcws_proto protoreflect.FileDescriptor
@@ -546,18 +881,6 @@ const file_resources_grpcws_grpcws_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x123\n" +
 	"\x05value\x18\x02 \x01(\v2\x1d.resources.grpcws.HeaderValueR\x05value:\x028\x01\"\b\n" +
 	"\x06CancelBKZIgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/grpcws;grpcwsb\x06proto3"
-
-var (
-	file_resources_grpcws_grpcws_proto_rawDescOnce sync.Once
-	file_resources_grpcws_grpcws_proto_rawDescData []byte
-)
-
-func file_resources_grpcws_grpcws_proto_rawDescGZIP() []byte {
-	file_resources_grpcws_grpcws_proto_rawDescOnce.Do(func() {
-		file_resources_grpcws_grpcws_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_grpcws_grpcws_proto_rawDesc), len(file_resources_grpcws_grpcws_proto_rawDesc)))
-	})
-	return file_resources_grpcws_grpcws_proto_rawDescData
-}
 
 var file_resources_grpcws_grpcws_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_resources_grpcws_grpcws_proto_goTypes = []any{

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package resources.wiki;
+package resources.wiki.activity;
 
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";

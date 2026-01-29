@@ -358,7 +358,7 @@ func (o *OAuth2) handleConnectOnlyCallback(
 	userInfo *providers.UserInfo,
 	redirect string,
 ) {
-	claims, err := o.tm.ParseWithClaims(token)
+	claims, err := o.tm.ParseAccToken(token)
 	if err != nil {
 		c.Redirect(
 			http.StatusTemporaryRedirect,
@@ -419,16 +419,16 @@ func (o *OAuth2) handleLoginCallback(
 			LoginRedirBase+"?oauth2Login=failed&reason=unconnected",
 		)
 		return
-	} else if account.ID == 0 {
+	} else if account.Id == 0 {
 		o.logger.Error("invalid account id from userinfo", zap.String("provider", provider.GetName()), zap.Error(err))
 		o.handleRedirect(c, connectOnly, true, ReasonInternalError)
 		return
 	}
 
-	if err := o.userInfoStore.updateUserInfo(c.Request.Context(), account.ID, provider.GetName(), uInfo); err != nil {
+	if err := o.userInfoStore.updateUserInfo(c.Request.Context(), account.Id, provider.GetName(), uInfo); err != nil {
 		o.logger.Error(
 			"failed to update oauth2 user info for account id",
-			zap.Int64("account_id", account.ID),
+			zap.Int64("account_id", account.Id),
 			zap.String("provider", provider.GetName()),
 			zap.Error(err),
 		)
@@ -436,8 +436,8 @@ func (o *OAuth2) handleLoginCallback(
 		return
 	}
 
-	claims := auth.BuildTokenClaimsFromAccount(account, nil)
-	newToken, err := o.tm.NewWithClaims(claims)
+	accClaims := auth.MapAccountToClaims(account)
+	newToken, err := o.tm.FromAccClaims(accClaims)
 	if err != nil {
 		o.logger.Error(
 			"failed to create token from account",
@@ -448,13 +448,13 @@ func (o *OAuth2) handleLoginCallback(
 		return
 	}
 
-	c.SetCookie(auth.TokenCookieName, newToken, 6*24*60*60, "/", o.domain, true, true)
+	c.SetCookie(auth.UserCookieName, newToken, 6*24*60*60, "/", o.domain, true, true)
 
 	c.Redirect(
 		http.StatusTemporaryRedirect,
 		fmt.Sprintf(LoginRedirBase+"?oauth2Login=success&u=%s&exp=%d",
-			url.QueryEscape(*account.Username),
-			claims.ExpiresAt.Time.UTC().UnixNano()/1e6,
+			url.QueryEscape(account.Username),
+			accClaims.ExpiresAt.Time.UTC().UnixNano()/1e6,
 		),
 	)
 }

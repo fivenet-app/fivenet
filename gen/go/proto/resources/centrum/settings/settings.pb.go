@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/centrum/settings/settings.proto
 
+//go:build !protoopaque
+
 package centrumsettings
 
 import (
@@ -15,7 +17,6 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -70,11 +71,6 @@ func (x CentrumType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use CentrumType.Descriptor instead.
-func (CentrumType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_centrum_settings_settings_proto_rawDescGZIP(), []int{0}
-}
-
 type CentrumMode int32
 
 const (
@@ -125,13 +121,8 @@ func (x CentrumMode) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use CentrumMode.Descriptor instead.
-func (CentrumMode) EnumDescriptor() ([]byte, []int) {
-	return file_resources_centrum_settings_settings_proto_rawDescGZIP(), []int{1}
-}
-
 type Settings struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
+	state            protoimpl.MessageState `protogen:"hybrid.v1"`
 	Job              string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	Enabled          bool                   `protobuf:"varint,2,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	Type             CentrumType            `protobuf:"varint,3,opt,name=type,proto3,enum=resources.centrum.settings.CentrumType" json:"type,omitempty"`
@@ -171,11 +162,6 @@ func (x *Settings) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Settings.ProtoReflect.Descriptor instead.
-func (*Settings) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_settings_settings_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Settings) GetJob() string {
@@ -262,8 +248,158 @@ func (x *Settings) GetEffectiveAccess() *EffectiveAccess {
 	return nil
 }
 
+func (x *Settings) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *Settings) SetEnabled(v bool) {
+	x.Enabled = v
+}
+
+func (x *Settings) SetType(v CentrumType) {
+	x.Type = v
+}
+
+func (x *Settings) SetPublic(v bool) {
+	x.Public = v
+}
+
+func (x *Settings) SetMode(v CentrumMode) {
+	x.Mode = v
+}
+
+func (x *Settings) SetFallbackMode(v CentrumMode) {
+	x.FallbackMode = v
+}
+
+func (x *Settings) SetPredefinedStatus(v *PredefinedStatus) {
+	x.PredefinedStatus = v
+}
+
+func (x *Settings) SetTimings(v *Timings) {
+	x.Timings = v
+}
+
+func (x *Settings) SetConfiguration(v *Configuration) {
+	x.Configuration = v
+}
+
+func (x *Settings) SetAccess(v *access.CentrumAccess) {
+	x.Access = v
+}
+
+func (x *Settings) SetOfferedAccess(v *access.CentrumAccess) {
+	x.OfferedAccess = v
+}
+
+func (x *Settings) SetEffectiveAccess(v *EffectiveAccess) {
+	x.EffectiveAccess = v
+}
+
+func (x *Settings) HasPredefinedStatus() bool {
+	if x == nil {
+		return false
+	}
+	return x.PredefinedStatus != nil
+}
+
+func (x *Settings) HasTimings() bool {
+	if x == nil {
+		return false
+	}
+	return x.Timings != nil
+}
+
+func (x *Settings) HasConfiguration() bool {
+	if x == nil {
+		return false
+	}
+	return x.Configuration != nil
+}
+
+func (x *Settings) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *Settings) HasOfferedAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.OfferedAccess != nil
+}
+
+func (x *Settings) HasEffectiveAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.EffectiveAccess != nil
+}
+
+func (x *Settings) ClearPredefinedStatus() {
+	x.PredefinedStatus = nil
+}
+
+func (x *Settings) ClearTimings() {
+	x.Timings = nil
+}
+
+func (x *Settings) ClearConfiguration() {
+	x.Configuration = nil
+}
+
+func (x *Settings) ClearAccess() {
+	x.Access = nil
+}
+
+func (x *Settings) ClearOfferedAccess() {
+	x.OfferedAccess = nil
+}
+
+func (x *Settings) ClearEffectiveAccess() {
+	x.EffectiveAccess = nil
+}
+
+type Settings_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job              string
+	Enabled          bool
+	Type             CentrumType
+	Public           bool
+	Mode             CentrumMode
+	FallbackMode     CentrumMode
+	PredefinedStatus *PredefinedStatus
+	Timings          *Timings
+	Configuration    *Configuration
+	Access           *access.CentrumAccess
+	OfferedAccess    *access.CentrumAccess
+	EffectiveAccess  *EffectiveAccess
+}
+
+func (b0 Settings_builder) Build() *Settings {
+	m0 := &Settings{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	x.Enabled = b.Enabled
+	x.Type = b.Type
+	x.Public = b.Public
+	x.Mode = b.Mode
+	x.FallbackMode = b.FallbackMode
+	x.PredefinedStatus = b.PredefinedStatus
+	x.Timings = b.Timings
+	x.Configuration = b.Configuration
+	x.Access = b.Access
+	x.OfferedAccess = b.OfferedAccess
+	x.EffectiveAccess = b.EffectiveAccess
+	return m0
+}
+
 type PredefinedStatus struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
+	state          protoimpl.MessageState `protogen:"hybrid.v1"`
 	UnitStatus     []string               `protobuf:"bytes,1,rep,name=unit_status,json=unitStatus,proto3" json:"unit_status,omitempty"`
 	DispatchStatus []string               `protobuf:"bytes,2,rep,name=dispatch_status,json=dispatchStatus,proto3" json:"dispatch_status,omitempty"`
 	unknownFields  protoimpl.UnknownFields
@@ -295,11 +431,6 @@ func (x *PredefinedStatus) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PredefinedStatus.ProtoReflect.Descriptor instead.
-func (*PredefinedStatus) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_settings_settings_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *PredefinedStatus) GetUnitStatus() []string {
 	if x != nil {
 		return x.UnitStatus
@@ -314,8 +445,32 @@ func (x *PredefinedStatus) GetDispatchStatus() []string {
 	return nil
 }
 
+func (x *PredefinedStatus) SetUnitStatus(v []string) {
+	x.UnitStatus = v
+}
+
+func (x *PredefinedStatus) SetDispatchStatus(v []string) {
+	x.DispatchStatus = v
+}
+
+type PredefinedStatus_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UnitStatus     []string
+	DispatchStatus []string
+}
+
+func (b0 PredefinedStatus_builder) Build() *PredefinedStatus {
+	m0 := &PredefinedStatus{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UnitStatus = b.UnitStatus
+	x.DispatchStatus = b.DispatchStatus
+	return m0
+}
+
 type Timings struct {
-	state                      protoimpl.MessageState `protogen:"open.v1"`
+	state                      protoimpl.MessageState `protogen:"hybrid.v1"`
 	DispatchMaxWait            int64                  `protobuf:"varint,1,opt,name=dispatch_max_wait,json=dispatchMaxWait,proto3" json:"dispatch_max_wait,omitempty"`
 	RequireUnit                bool                   `protobuf:"varint,2,opt,name=require_unit,json=requireUnit,proto3" json:"require_unit,omitempty"`
 	RequireUnitReminderSeconds int64                  `protobuf:"varint,3,opt,name=require_unit_reminder_seconds,json=requireUnitReminderSeconds,proto3" json:"require_unit_reminder_seconds,omitempty"`
@@ -348,11 +503,6 @@ func (x *Timings) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Timings.ProtoReflect.Descriptor instead.
-func (*Timings) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_settings_settings_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *Timings) GetDispatchMaxWait() int64 {
 	if x != nil {
 		return x.DispatchMaxWait
@@ -374,8 +524,38 @@ func (x *Timings) GetRequireUnitReminderSeconds() int64 {
 	return 0
 }
 
+func (x *Timings) SetDispatchMaxWait(v int64) {
+	x.DispatchMaxWait = v
+}
+
+func (x *Timings) SetRequireUnit(v bool) {
+	x.RequireUnit = v
+}
+
+func (x *Timings) SetRequireUnitReminderSeconds(v int64) {
+	x.RequireUnitReminderSeconds = v
+}
+
+type Timings_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DispatchMaxWait            int64
+	RequireUnit                bool
+	RequireUnitReminderSeconds int64
+}
+
+func (b0 Timings_builder) Build() *Timings {
+	m0 := &Timings{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DispatchMaxWait = b.DispatchMaxWait
+	x.RequireUnit = b.RequireUnit
+	x.RequireUnitReminderSeconds = b.RequireUnitReminderSeconds
+	return m0
+}
+
 type Configuration struct {
-	state                 protoimpl.MessageState `protogen:"open.v1"`
+	state                 protoimpl.MessageState `protogen:"hybrid.v1"`
 	DeduplicationEnabled  bool                   `protobuf:"varint,1,opt,name=deduplication_enabled,json=deduplicationEnabled,proto3" json:"deduplication_enabled,omitempty"`
 	DeduplicationRadius   int64                  `protobuf:"varint,2,opt,name=deduplication_radius,json=deduplicationRadius,proto3" json:"deduplication_radius,omitempty"`
 	DeduplicationDuration *durationpb.Duration   `protobuf:"bytes,3,opt,name=deduplication_duration,json=deduplicationDuration,proto3,oneof" json:"deduplication_duration,omitempty"`
@@ -408,11 +588,6 @@ func (x *Configuration) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Configuration.ProtoReflect.Descriptor instead.
-func (*Configuration) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_settings_settings_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *Configuration) GetDeduplicationEnabled() bool {
 	if x != nil {
 		return x.DeduplicationEnabled
@@ -434,8 +609,49 @@ func (x *Configuration) GetDeduplicationDuration() *durationpb.Duration {
 	return nil
 }
 
+func (x *Configuration) SetDeduplicationEnabled(v bool) {
+	x.DeduplicationEnabled = v
+}
+
+func (x *Configuration) SetDeduplicationRadius(v int64) {
+	x.DeduplicationRadius = v
+}
+
+func (x *Configuration) SetDeduplicationDuration(v *durationpb.Duration) {
+	x.DeduplicationDuration = v
+}
+
+func (x *Configuration) HasDeduplicationDuration() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeduplicationDuration != nil
+}
+
+func (x *Configuration) ClearDeduplicationDuration() {
+	x.DeduplicationDuration = nil
+}
+
+type Configuration_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DeduplicationEnabled  bool
+	DeduplicationRadius   int64
+	DeduplicationDuration *durationpb.Duration
+}
+
+func (b0 Configuration_builder) Build() *Configuration {
+	m0 := &Configuration{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DeduplicationEnabled = b.DeduplicationEnabled
+	x.DeduplicationRadius = b.DeduplicationRadius
+	x.DeduplicationDuration = b.DeduplicationDuration
+	return m0
+}
+
 type EffectiveAccess struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Dispatches    *EffectiveDispatchAccess `protobuf:"bytes,1,opt,name=dispatches,proto3" json:"dispatches,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -466,11 +682,6 @@ func (x *EffectiveAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EffectiveAccess.ProtoReflect.Descriptor instead.
-func (*EffectiveAccess) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_settings_settings_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *EffectiveAccess) GetDispatches() *EffectiveDispatchAccess {
 	if x != nil {
 		return x.Dispatches
@@ -478,8 +689,37 @@ func (x *EffectiveAccess) GetDispatches() *EffectiveDispatchAccess {
 	return nil
 }
 
+func (x *EffectiveAccess) SetDispatches(v *EffectiveDispatchAccess) {
+	x.Dispatches = v
+}
+
+func (x *EffectiveAccess) HasDispatches() bool {
+	if x == nil {
+		return false
+	}
+	return x.Dispatches != nil
+}
+
+func (x *EffectiveAccess) ClearDispatches() {
+	x.Dispatches = nil
+}
+
+type EffectiveAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Dispatches *EffectiveDispatchAccess
+}
+
+func (b0 EffectiveAccess_builder) Build() *EffectiveAccess {
+	m0 := &EffectiveAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Dispatches = b.Dispatches
+	return m0
+}
+
 type EffectiveDispatchAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Jobs          []*JobAccessEntry      `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -510,11 +750,6 @@ func (x *EffectiveDispatchAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EffectiveDispatchAccess.ProtoReflect.Descriptor instead.
-func (*EffectiveDispatchAccess) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_settings_settings_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *EffectiveDispatchAccess) GetJobs() []*JobAccessEntry {
 	if x != nil {
 		return x.Jobs
@@ -522,8 +757,26 @@ func (x *EffectiveDispatchAccess) GetJobs() []*JobAccessEntry {
 	return nil
 }
 
+func (x *EffectiveDispatchAccess) SetJobs(v []*JobAccessEntry) {
+	x.Jobs = v
+}
+
+type EffectiveDispatchAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs []*JobAccessEntry
+}
+
+func (b0 EffectiveDispatchAccess_builder) Build() *EffectiveDispatchAccess {
+	m0 := &EffectiveDispatchAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	return m0
+}
+
 type JobAccessEntry struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
+	state         protoimpl.MessageState    `protogen:"hybrid.v1"`
 	Job           string                    `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                   `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	Access        access.CentrumAccessLevel `protobuf:"varint,3,opt,name=access,proto3,enum=resources.centrum.access.CentrumAccessLevel" json:"access,omitempty"`
@@ -556,11 +809,6 @@ func (x *JobAccessEntry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobAccessEntry.ProtoReflect.Descriptor instead.
-func (*JobAccessEntry) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_settings_settings_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *JobAccessEntry) GetJob() string {
 	if x != nil {
 		return x.Job
@@ -580,6 +828,47 @@ func (x *JobAccessEntry) GetAccess() access.CentrumAccessLevel {
 		return x.Access
 	}
 	return access.CentrumAccessLevel(0)
+}
+
+func (x *JobAccessEntry) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *JobAccessEntry) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *JobAccessEntry) SetAccess(v access.CentrumAccessLevel) {
+	x.Access = v
+}
+
+func (x *JobAccessEntry) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *JobAccessEntry) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+type JobAccessEntry_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job      string
+	JobLabel *string
+	Access   access.CentrumAccessLevel
+}
+
+func (b0 JobAccessEntry_builder) Build() *JobAccessEntry {
+	m0 := &JobAccessEntry{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.Access = b.Access
+	return m0
 }
 
 var File_resources_centrum_settings_settings_proto protoreflect.FileDescriptor
@@ -640,18 +929,6 @@ const file_resources_centrum_settings_settings_proto_rawDesc = "" +
 	"\x1cCENTRUM_MODE_CENTRAL_COMMAND\x10\x02\x12!\n" +
 	"\x1dCENTRUM_MODE_AUTO_ROUND_ROBIN\x10\x03\x12\x1b\n" +
 	"\x17CENTRUM_MODE_SIMPLIFIED\x10\x04B^Z\\github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings;centrumsettingsb\x06proto3"
-
-var (
-	file_resources_centrum_settings_settings_proto_rawDescOnce sync.Once
-	file_resources_centrum_settings_settings_proto_rawDescData []byte
-)
-
-func file_resources_centrum_settings_settings_proto_rawDescGZIP() []byte {
-	file_resources_centrum_settings_settings_proto_rawDescOnce.Do(func() {
-		file_resources_centrum_settings_settings_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_centrum_settings_settings_proto_rawDesc), len(file_resources_centrum_settings_settings_proto_rawDesc)))
-	})
-	return file_resources_centrum_settings_settings_proto_rawDescData
-}
 
 var file_resources_centrum_settings_settings_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_resources_centrum_settings_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 7)

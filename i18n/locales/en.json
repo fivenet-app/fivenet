@@ -750,7 +750,10 @@
         "fullscreen_exit": "Exit Fullscreen",
         "browser": "Browser",
         "registered_since": "Registered since",
-        "no_content": "(No content yet)"
+        "no_content": "(No content yet)",
+        "impersonate": "Impersonate",
+        "group": "Group | Groups",
+        "websocket": "WebSocket"
     },
     "components": {
         "partials": {
@@ -951,12 +954,12 @@
                     "on_edit_behavior": "On Edit Behavior",
                     "required_approvals": "Required Approvals"
                 },
-                "signature_required": "Signature(s) Required",
                 "tasks": "Approval Tasks",
                 "task_form": {
                     "title": "Tasks"
                 },
                 "slots": "Approval Slots",
+                "signature_required": "Signature(s) Required",
                 "document_not_published": "Document must be published to request approvals.",
                 "self_approve_allowed": {
                     "title": "Count self-approve",
@@ -1149,14 +1152,6 @@
                 "set_absence_date": "Set Absence Date",
                 "set_profile_picture": "Update Profile Picture"
             }
-        },
-        "bodycheckup": {
-            "title": "Body Checkup",
-            "no_points": "No points selected!",
-            "bmi_calculator": "BMI Calculator",
-            "bmi": "Body Mass Index",
-            "mass": "Mass (in KG)",
-            "height": "Height (in meters)"
         },
         "hints": {
             "start_text": "Did you know...?",
@@ -1565,6 +1560,10 @@
                 },
                 "effective_permissions": {
                     "description": "List of effective permissions for the selected role (please note to see the effects of your changes, you must save your current changes to the role first). The effective permissions are the permissions that are actually granted to the user that has the role. The effective permissions are calculated by combining the role's permissions with the user's job grade permissions."
+                },
+                "impersonate_confirm": {
+                    "title": "Are you sure you want to impersonate this role?",
+                    "description": "You will be logged out and logged back in with the permissions of this role. To change back, you will need to use the character selector."
                 }
             },
             "app_config": {
@@ -1971,10 +1970,6 @@
             "title": "Category created!",
             "content": "The Category was successfully created"
         },
-        "bodycheckup": {
-            "title": "Body Checkup: Copied to clipboard",
-            "content": "Summary copied to clipboard."
-        },
         "livemap": {
             "failed_loading_postals": {
                 "title": "Failed to load Postal codes",
@@ -2211,7 +2206,8 @@
                 "title": "Char lock is active!",
                 "content": "Please select an available character and try again."
             },
-            "ErrNotSuperuser": "You are not a superuser! Please contact your FiveNet administrators to report this issue."
+            "ErrNotSuperuser": "You are not a superuser! Please contact your FiveNet administrators to report this issue.",
+            "ErrImpersonateJobInvalid": "You can't impersonate this job grade!"
         },
         "CompletorService": {
             "ErrFailedSearch": "Failed to search the data!"

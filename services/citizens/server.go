@@ -13,7 +13,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
@@ -111,7 +110,7 @@ func NewServer(p Params) *Server {
 				return false, nil // targetId is too large to fit in int32
 			}
 			userId := int32(targetId)
-			tUser := tables.User().AS("user")
+			tUser := table.FivenetUser.AS("user")
 
 			// Retrieve user job from database
 			stmt := tUser.

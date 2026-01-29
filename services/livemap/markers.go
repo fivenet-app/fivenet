@@ -11,7 +11,6 @@ import (
 	pblivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap"
 	permslivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -211,7 +210,7 @@ func (s *Server) DeleteMarker(
 }
 
 func (s *Server) getMarker(ctx context.Context, id int64) (*livemapmarkers.MarkerMarker, error) {
-	tUsers := tables.User().AS("user_short")
+	tUsers := table.FivenetUser.AS("user_short")
 
 	stmt := tMarkers.
 		SELECT(
@@ -287,7 +286,7 @@ func (s *Server) getMarkerMarkers(
 }
 
 func (s *Server) refreshMarkers(ctx context.Context) error {
-	tUsers := tables.User().AS("user_short")
+	tUsers := table.FivenetUser.AS("user_short")
 
 	stmt := tMarkers.
 		SELECT(

@@ -660,8 +660,7 @@ const formRef = useTemplateRef('formRef');
                                     :searchable="
                                         async (q: string) => {
                                             try {
-                                                const categories = await completorStore.completeDocumentCategories(q);
-                                                return categories;
+                                                return await completorStore.completeDocumentCategories(q);
                                             } catch (e) {
                                                 handleGRPCError(e as RpcError);
                                                 throw e;

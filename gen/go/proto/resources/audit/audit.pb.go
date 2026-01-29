@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/audit/audit.proto
 
+//go:build !protoopaque
+
 package audit
 
 import (
@@ -13,7 +15,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -74,11 +75,6 @@ func (x EventAction) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use EventAction.Descriptor instead.
-func (EventAction) EnumDescriptor() ([]byte, []int) {
-	return file_resources_audit_audit_proto_rawDescGZIP(), []int{0}
-}
-
 type EventResult int32
 
 const (
@@ -126,13 +122,8 @@ func (x EventResult) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use EventResult.Descriptor instead.
-func (EventResult) EnumDescriptor() ([]byte, []int) {
-	return file_resources_audit_audit_proto_rawDescGZIP(), []int{1}
-}
-
 type AuditEntry struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UserId        int32                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -176,11 +167,6 @@ func (x *AuditEntry) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AuditEntry.ProtoReflect.Descriptor instead.
-func (*AuditEntry) Descriptor() ([]byte, []int) {
-	return file_resources_audit_audit_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *AuditEntry) GetId() int64 {
@@ -281,8 +267,183 @@ func (x *AuditEntry) GetData() string {
 	return ""
 }
 
+func (x *AuditEntry) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *AuditEntry) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *AuditEntry) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *AuditEntry) SetUser(v *short.UserShort) {
+	x.User = v
+}
+
+func (x *AuditEntry) SetUserJob(v string) {
+	x.UserJob = v
+}
+
+func (x *AuditEntry) SetTargetUserId(v int32) {
+	x.TargetUserId = &v
+}
+
+func (x *AuditEntry) SetTargetUser(v *short.UserShort) {
+	x.TargetUser = v
+}
+
+func (x *AuditEntry) SetTargetUserJob(v string) {
+	x.TargetUserJob = &v
+}
+
+func (x *AuditEntry) SetService(v string) {
+	x.Service = v
+}
+
+func (x *AuditEntry) SetMethod(v string) {
+	x.Method = v
+}
+
+func (x *AuditEntry) SetAction(v EventAction) {
+	x.Action = v
+}
+
+func (x *AuditEntry) SetResult(v EventResult) {
+	x.Result = v
+}
+
+func (x *AuditEntry) SetMeta(v *AuditEntryMeta) {
+	x.Meta = v
+}
+
+func (x *AuditEntry) SetData(v string) {
+	x.Data = &v
+}
+
+func (x *AuditEntry) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *AuditEntry) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *AuditEntry) HasTargetUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.TargetUserId != nil
+}
+
+func (x *AuditEntry) HasTargetUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.TargetUser != nil
+}
+
+func (x *AuditEntry) HasTargetUserJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.TargetUserJob != nil
+}
+
+func (x *AuditEntry) HasMeta() bool {
+	if x == nil {
+		return false
+	}
+	return x.Meta != nil
+}
+
+func (x *AuditEntry) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *AuditEntry) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *AuditEntry) ClearUser() {
+	x.User = nil
+}
+
+func (x *AuditEntry) ClearTargetUserId() {
+	x.TargetUserId = nil
+}
+
+func (x *AuditEntry) ClearTargetUser() {
+	x.TargetUser = nil
+}
+
+func (x *AuditEntry) ClearTargetUserJob() {
+	x.TargetUserJob = nil
+}
+
+func (x *AuditEntry) ClearMeta() {
+	x.Meta = nil
+}
+
+func (x *AuditEntry) ClearData() {
+	x.Data = nil
+}
+
+type AuditEntry_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id            int64
+	CreatedAt     *timestamp.Timestamp
+	UserId        int32
+	User          *short.UserShort
+	UserJob       string
+	TargetUserId  *int32
+	TargetUser    *short.UserShort
+	TargetUserJob *string
+	// GRPC Service name
+	Service string
+	// GRPC Method name
+	Method string
+	Action EventAction
+	Result EventResult
+	Meta   *AuditEntryMeta
+	Data   *string
+}
+
+func (b0 AuditEntry_builder) Build() *AuditEntry {
+	m0 := &AuditEntry{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UserId = b.UserId
+	x.User = b.User
+	x.UserJob = b.UserJob
+	x.TargetUserId = b.TargetUserId
+	x.TargetUser = b.TargetUser
+	x.TargetUserJob = b.TargetUserJob
+	x.Service = b.Service
+	x.Method = b.Method
+	x.Action = b.Action
+	x.Result = b.Result
+	x.Meta = b.Meta
+	x.Data = b.Data
+	return m0
+}
+
 type AuditEntryMeta struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Meta          map[string]string      `protobuf:"bytes,1,rep,name=meta,proto3" json:"meta,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -313,16 +474,29 @@ func (x *AuditEntryMeta) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AuditEntryMeta.ProtoReflect.Descriptor instead.
-func (*AuditEntryMeta) Descriptor() ([]byte, []int) {
-	return file_resources_audit_audit_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *AuditEntryMeta) GetMeta() map[string]string {
 	if x != nil {
 		return x.Meta
 	}
 	return nil
+}
+
+func (x *AuditEntryMeta) SetMeta(v map[string]string) {
+	x.Meta = v
+}
+
+type AuditEntryMeta_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Meta map[string]string
+}
+
+func (b0 AuditEntryMeta_builder) Build() *AuditEntryMeta {
+	m0 := &AuditEntryMeta{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Meta = b.Meta
+	return m0
 }
 
 var File_resources_audit_audit_proto protoreflect.FileDescriptor
@@ -371,18 +545,6 @@ const file_resources_audit_audit_proto_rawDesc = "" +
 	"\x16EVENT_RESULT_SUCCEEDED\x10\x01\x12\x17\n" +
 	"\x13EVENT_RESULT_FAILED\x10\x02\x12\x18\n" +
 	"\x14EVENT_RESULT_ERRORED\x10\x03BIZGgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit;auditb\x06proto3"
-
-var (
-	file_resources_audit_audit_proto_rawDescOnce sync.Once
-	file_resources_audit_audit_proto_rawDescData []byte
-)
-
-func file_resources_audit_audit_proto_rawDescGZIP() []byte {
-	file_resources_audit_audit_proto_rawDescOnce.Do(func() {
-		file_resources_audit_audit_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_audit_audit_proto_rawDesc), len(file_resources_audit_audit_proto_rawDesc)))
-	})
-	return file_resources_audit_audit_proto_rawDescData
-}
 
 var file_resources_audit_audit_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_resources_audit_audit_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

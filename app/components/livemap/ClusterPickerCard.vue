@@ -43,7 +43,7 @@ function clicked(h: Hit): void {
 
 <template>
     <UCard
-        class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col"
+        class="-my-[13px] -mr-[24px] -ml-[20px] flex max-h-[90dvh] min-w-[200px] flex-col overflow-y-auto"
         :ui="{ header: 'mx-auto p-1 sm:px-2', body: 'p-1 sm:p-2 xl:mx-auto max-h-[90%]', footer: 'mx-auto p-1 sm:px-2' }"
     >
         <template #header>

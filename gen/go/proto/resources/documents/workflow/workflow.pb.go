@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/documents/workflow/workflow.proto
 
+//go:build !protoopaque
+
 package documentsworkflow
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -26,7 +27,7 @@ const (
 )
 
 type Workflow struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
+	state             protoimpl.MessageState `protogen:"hybrid.v1"`
 	Reminder          bool                   `protobuf:"varint,1,opt,name=reminder,proto3" json:"reminder,omitempty"`
 	ReminderSettings  *ReminderSettings      `protobuf:"bytes,2,opt,name=reminder_settings,json=reminderSettings,proto3" json:"reminder_settings,omitempty"`
 	AutoClose         bool                   `protobuf:"varint,3,opt,name=auto_close,json=autoClose,proto3" json:"auto_close,omitempty"`
@@ -60,11 +61,6 @@ func (x *Workflow) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Workflow.ProtoReflect.Descriptor instead.
-func (*Workflow) Descriptor() ([]byte, []int) {
-	return file_resources_documents_workflow_workflow_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *Workflow) GetReminder() bool {
 	if x != nil {
 		return x.Reminder
@@ -93,8 +89,66 @@ func (x *Workflow) GetAutoCloseSettings() *AutoCloseSettings {
 	return nil
 }
 
+func (x *Workflow) SetReminder(v bool) {
+	x.Reminder = v
+}
+
+func (x *Workflow) SetReminderSettings(v *ReminderSettings) {
+	x.ReminderSettings = v
+}
+
+func (x *Workflow) SetAutoClose(v bool) {
+	x.AutoClose = v
+}
+
+func (x *Workflow) SetAutoCloseSettings(v *AutoCloseSettings) {
+	x.AutoCloseSettings = v
+}
+
+func (x *Workflow) HasReminderSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.ReminderSettings != nil
+}
+
+func (x *Workflow) HasAutoCloseSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.AutoCloseSettings != nil
+}
+
+func (x *Workflow) ClearReminderSettings() {
+	x.ReminderSettings = nil
+}
+
+func (x *Workflow) ClearAutoCloseSettings() {
+	x.AutoCloseSettings = nil
+}
+
+type Workflow_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Reminder          bool
+	ReminderSettings  *ReminderSettings
+	AutoClose         bool
+	AutoCloseSettings *AutoCloseSettings
+}
+
+func (b0 Workflow_builder) Build() *Workflow {
+	m0 := &Workflow{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Reminder = b.Reminder
+	x.ReminderSettings = b.ReminderSettings
+	x.AutoClose = b.AutoClose
+	x.AutoCloseSettings = b.AutoCloseSettings
+	return m0
+}
+
 type ReminderSettings struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
+	state            protoimpl.MessageState `protogen:"hybrid.v1"`
 	Reminders        []*Reminder            `protobuf:"bytes,1,rep,name=reminders,proto3" json:"reminders,omitempty"`
 	MaxReminderCount int32                  `protobuf:"varint,2,opt,name=max_reminder_count,json=maxReminderCount,proto3" json:"max_reminder_count,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -126,11 +180,6 @@ func (x *ReminderSettings) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ReminderSettings.ProtoReflect.Descriptor instead.
-func (*ReminderSettings) Descriptor() ([]byte, []int) {
-	return file_resources_documents_workflow_workflow_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ReminderSettings) GetReminders() []*Reminder {
 	if x != nil {
 		return x.Reminders
@@ -145,8 +194,32 @@ func (x *ReminderSettings) GetMaxReminderCount() int32 {
 	return 0
 }
 
+func (x *ReminderSettings) SetReminders(v []*Reminder) {
+	x.Reminders = v
+}
+
+func (x *ReminderSettings) SetMaxReminderCount(v int32) {
+	x.MaxReminderCount = v
+}
+
+type ReminderSettings_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Reminders        []*Reminder
+	MaxReminderCount int32
+}
+
+func (b0 ReminderSettings_builder) Build() *ReminderSettings {
+	m0 := &ReminderSettings{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Reminders = b.Reminders
+	x.MaxReminderCount = b.MaxReminderCount
+	return m0
+}
+
 type Reminder struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Duration      *durationpb.Duration   `protobuf:"bytes,1,opt,name=duration,proto3" json:"duration,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -178,11 +251,6 @@ func (x *Reminder) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Reminder.ProtoReflect.Descriptor instead.
-func (*Reminder) Descriptor() ([]byte, []int) {
-	return file_resources_documents_workflow_workflow_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *Reminder) GetDuration() *durationpb.Duration {
 	if x != nil {
 		return x.Duration
@@ -197,8 +265,43 @@ func (x *Reminder) GetMessage() string {
 	return ""
 }
 
+func (x *Reminder) SetDuration(v *durationpb.Duration) {
+	x.Duration = v
+}
+
+func (x *Reminder) SetMessage(v string) {
+	x.Message = v
+}
+
+func (x *Reminder) HasDuration() bool {
+	if x == nil {
+		return false
+	}
+	return x.Duration != nil
+}
+
+func (x *Reminder) ClearDuration() {
+	x.Duration = nil
+}
+
+type Reminder_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Duration *durationpb.Duration
+	Message  string
+}
+
+func (b0 Reminder_builder) Build() *Reminder {
+	m0 := &Reminder{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Duration = b.Duration
+	x.Message = b.Message
+	return m0
+}
+
 type AutoCloseSettings struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Duration      *durationpb.Duration   `protobuf:"bytes,1,opt,name=duration,proto3" json:"duration,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -230,11 +333,6 @@ func (x *AutoCloseSettings) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AutoCloseSettings.ProtoReflect.Descriptor instead.
-func (*AutoCloseSettings) Descriptor() ([]byte, []int) {
-	return file_resources_documents_workflow_workflow_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *AutoCloseSettings) GetDuration() *durationpb.Duration {
 	if x != nil {
 		return x.Duration
@@ -249,8 +347,43 @@ func (x *AutoCloseSettings) GetMessage() string {
 	return ""
 }
 
+func (x *AutoCloseSettings) SetDuration(v *durationpb.Duration) {
+	x.Duration = v
+}
+
+func (x *AutoCloseSettings) SetMessage(v string) {
+	x.Message = v
+}
+
+func (x *AutoCloseSettings) HasDuration() bool {
+	if x == nil {
+		return false
+	}
+	return x.Duration != nil
+}
+
+func (x *AutoCloseSettings) ClearDuration() {
+	x.Duration = nil
+}
+
+type AutoCloseSettings_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Duration *durationpb.Duration
+	Message  string
+}
+
+func (b0 AutoCloseSettings_builder) Build() *AutoCloseSettings {
+	m0 := &AutoCloseSettings{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Duration = b.Duration
+	x.Message = b.Message
+	return m0
+}
+
 type WorkflowCronData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	LastDocId     int64                  `protobuf:"varint,1,opt,name=last_doc_id,json=lastDocId,proto3" json:"last_doc_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -281,11 +414,6 @@ func (x *WorkflowCronData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use WorkflowCronData.ProtoReflect.Descriptor instead.
-func (*WorkflowCronData) Descriptor() ([]byte, []int) {
-	return file_resources_documents_workflow_workflow_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *WorkflowCronData) GetLastDocId() int64 {
 	if x != nil {
 		return x.LastDocId
@@ -293,8 +421,26 @@ func (x *WorkflowCronData) GetLastDocId() int64 {
 	return 0
 }
 
+func (x *WorkflowCronData) SetLastDocId(v int64) {
+	x.LastDocId = v
+}
+
+type WorkflowCronData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	LastDocId int64
+}
+
+func (b0 WorkflowCronData_builder) Build() *WorkflowCronData {
+	m0 := &WorkflowCronData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.LastDocId = b.LastDocId
+	return m0
+}
+
 type WorkflowState struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
+	state             protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId        int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	NextReminderTime  *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=next_reminder_time,json=nextReminderTime,proto3,oneof" json:"next_reminder_time,omitempty"`
 	NextReminderCount *int32                 `protobuf:"varint,3,opt,name=next_reminder_count,json=nextReminderCount,proto3,oneof" json:"next_reminder_count,omitempty"`
@@ -328,11 +474,6 @@ func (x *WorkflowState) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use WorkflowState.ProtoReflect.Descriptor instead.
-func (*WorkflowState) Descriptor() ([]byte, []int) {
-	return file_resources_documents_workflow_workflow_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *WorkflowState) GetDocumentId() int64 {
@@ -377,8 +518,100 @@ func (x *WorkflowState) GetWorkflow() *Workflow {
 	return nil
 }
 
+func (x *WorkflowState) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *WorkflowState) SetNextReminderTime(v *timestamp.Timestamp) {
+	x.NextReminderTime = v
+}
+
+func (x *WorkflowState) SetNextReminderCount(v int32) {
+	x.NextReminderCount = &v
+}
+
+func (x *WorkflowState) SetReminderCount(v int32) {
+	x.ReminderCount = v
+}
+
+func (x *WorkflowState) SetAutoCloseTime(v *timestamp.Timestamp) {
+	x.AutoCloseTime = v
+}
+
+func (x *WorkflowState) SetWorkflow(v *Workflow) {
+	x.Workflow = v
+}
+
+func (x *WorkflowState) HasNextReminderTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.NextReminderTime != nil
+}
+
+func (x *WorkflowState) HasNextReminderCount() bool {
+	if x == nil {
+		return false
+	}
+	return x.NextReminderCount != nil
+}
+
+func (x *WorkflowState) HasAutoCloseTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.AutoCloseTime != nil
+}
+
+func (x *WorkflowState) HasWorkflow() bool {
+	if x == nil {
+		return false
+	}
+	return x.Workflow != nil
+}
+
+func (x *WorkflowState) ClearNextReminderTime() {
+	x.NextReminderTime = nil
+}
+
+func (x *WorkflowState) ClearNextReminderCount() {
+	x.NextReminderCount = nil
+}
+
+func (x *WorkflowState) ClearAutoCloseTime() {
+	x.AutoCloseTime = nil
+}
+
+func (x *WorkflowState) ClearWorkflow() {
+	x.Workflow = nil
+}
+
+type WorkflowState_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId        int64
+	NextReminderTime  *timestamp.Timestamp
+	NextReminderCount *int32
+	ReminderCount     int32
+	AutoCloseTime     *timestamp.Timestamp
+	Workflow          *Workflow
+}
+
+func (b0 WorkflowState_builder) Build() *WorkflowState {
+	m0 := &WorkflowState{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.NextReminderTime = b.NextReminderTime
+	x.NextReminderCount = b.NextReminderCount
+	x.ReminderCount = b.ReminderCount
+	x.AutoCloseTime = b.AutoCloseTime
+	x.Workflow = b.Workflow
+	return m0
+}
+
 type WorkflowUserState struct {
-	state                 protoimpl.MessageState `protogen:"open.v1"`
+	state                 protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId            int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	UserId                int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	ManualReminderTime    *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=manual_reminder_time,json=manualReminderTime,proto3,oneof" json:"manual_reminder_time,omitempty"`
@@ -413,11 +646,6 @@ func (x *WorkflowUserState) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use WorkflowUserState.ProtoReflect.Descriptor instead.
-func (*WorkflowUserState) Descriptor() ([]byte, []int) {
-	return file_resources_documents_workflow_workflow_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *WorkflowUserState) GetDocumentId() int64 {
@@ -469,6 +697,93 @@ func (x *WorkflowUserState) GetWorkflow() *Workflow {
 	return nil
 }
 
+func (x *WorkflowUserState) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *WorkflowUserState) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *WorkflowUserState) SetManualReminderTime(v *timestamp.Timestamp) {
+	x.ManualReminderTime = v
+}
+
+func (x *WorkflowUserState) SetManualReminderMessage(v string) {
+	x.ManualReminderMessage = &v
+}
+
+func (x *WorkflowUserState) SetReminderCount(v int32) {
+	x.ReminderCount = v
+}
+
+func (x *WorkflowUserState) SetMaxReminderCount(v int32) {
+	x.MaxReminderCount = v
+}
+
+func (x *WorkflowUserState) SetWorkflow(v *Workflow) {
+	x.Workflow = v
+}
+
+func (x *WorkflowUserState) HasManualReminderTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.ManualReminderTime != nil
+}
+
+func (x *WorkflowUserState) HasManualReminderMessage() bool {
+	if x == nil {
+		return false
+	}
+	return x.ManualReminderMessage != nil
+}
+
+func (x *WorkflowUserState) HasWorkflow() bool {
+	if x == nil {
+		return false
+	}
+	return x.Workflow != nil
+}
+
+func (x *WorkflowUserState) ClearManualReminderTime() {
+	x.ManualReminderTime = nil
+}
+
+func (x *WorkflowUserState) ClearManualReminderMessage() {
+	x.ManualReminderMessage = nil
+}
+
+func (x *WorkflowUserState) ClearWorkflow() {
+	x.Workflow = nil
+}
+
+type WorkflowUserState_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId            int64
+	UserId                int32
+	ManualReminderTime    *timestamp.Timestamp
+	ManualReminderMessage *string
+	ReminderCount         int32
+	MaxReminderCount      int32
+	Workflow              *Workflow
+}
+
+func (b0 WorkflowUserState_builder) Build() *WorkflowUserState {
+	m0 := &WorkflowUserState{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.UserId = b.UserId
+	x.ManualReminderTime = b.ManualReminderTime
+	x.ManualReminderMessage = b.ManualReminderMessage
+	x.ReminderCount = b.ReminderCount
+	x.MaxReminderCount = b.MaxReminderCount
+	x.Workflow = b.Workflow
+	return m0
+}
+
 var File_resources_documents_workflow_workflow_proto protoreflect.FileDescriptor
 
 const file_resources_documents_workflow_workflow_proto_rawDesc = "" +
@@ -515,18 +830,6 @@ const file_resources_documents_workflow_workflow_proto_rawDesc = "" +
 	"\x15_manual_reminder_timeB\x1a\n" +
 	"\x18_manual_reminder_messageB\v\n" +
 	"\t_workflowBbZ`github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/workflow;documentsworkflowb\x06proto3"
-
-var (
-	file_resources_documents_workflow_workflow_proto_rawDescOnce sync.Once
-	file_resources_documents_workflow_workflow_proto_rawDescData []byte
-)
-
-func file_resources_documents_workflow_workflow_proto_rawDescGZIP() []byte {
-	file_resources_documents_workflow_workflow_proto_rawDescOnce.Do(func() {
-		file_resources_documents_workflow_workflow_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_workflow_workflow_proto_rawDesc), len(file_resources_documents_workflow_workflow_proto_rawDesc)))
-	})
-	return file_resources_documents_workflow_workflow_proto_rawDescData
-}
 
 var file_resources_documents_workflow_workflow_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_resources_documents_workflow_workflow_proto_goTypes = []any{

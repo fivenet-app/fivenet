@@ -3,7 +3,6 @@ package dbsync
 import (
 	"fmt"
 	"slices"
-	"sort"
 	"strconv"
 	"strings"
 )
@@ -54,13 +53,14 @@ func buildQueryFromColumns(
 	whereCondition []string,
 	offset int64,
 	limit int64,
+	orderByColumns []string,
 ) string {
 	columnsList := []string{}
 	keys := make([]string, 0, len(columns))
 	for k := range columns {
 		keys = append(keys, k)
 	}
-	sort.Strings(keys)
+	slices.Sort(keys)
 	for _, alias := range keys {
 		column := columns[alias]
 		if column == "" || column == "-" {
@@ -78,8 +78,11 @@ func buildQueryFromColumns(
 		return strings.TrimSpace(c) == ""
 	})
 	if len(whereCondition) > 0 {
-		q += "WHERE " + strings.Join(whereCondition, " AND ")
-		q += "\n"
+		q += "WHERE " + strings.Join(whereCondition, " AND ") + "\n"
+	}
+
+	if len(orderByColumns) > 0 {
+		q += "ORDER BY " + strings.Join(orderByColumns, ", ") + "\n"
 	}
 
 	if limit > 0 {

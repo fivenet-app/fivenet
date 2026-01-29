@@ -6,7 +6,7 @@ import "buf/validate/validate.proto";
 import "resources/clientconfig/clientconfig.proto";
 import "resources/jobs/props/props.proto";
 import "resources/notifications/notifications.proto";
-import "resources/userinfo/user_info.proto";
+import "resources/userinfo/userinfo.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events;notificationsevents";
 

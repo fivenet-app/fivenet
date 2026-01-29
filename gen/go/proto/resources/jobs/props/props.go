@@ -65,12 +65,8 @@ func GetJobProps(ctx context.Context, tx qrm.DB, job string) (*JobProps, error) 
 	return dest, nil
 }
 
-func (x *JobProps) SetJobLabel(label string) {
-	x.JobLabel = &label
-}
-
 func (x *JobProps) Default(job string) {
-	if x.GetJob() == "" {
+	if x.GetJob() == "" || x.GetJob() != job {
 		x.Job = job
 	}
 

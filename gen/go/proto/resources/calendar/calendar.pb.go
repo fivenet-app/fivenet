@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/calendar/calendar.proto
 
+//go:build !protoopaque
+
 package calendar
 
 import (
@@ -15,7 +17,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -27,7 +28,7 @@ const (
 )
 
 type Calendar struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -70,11 +71,6 @@ func (x *Calendar) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Calendar.ProtoReflect.Descriptor instead.
-func (*Calendar) Descriptor() ([]byte, []int) {
-	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Calendar) GetId() int64 {
@@ -182,8 +178,209 @@ func (x *Calendar) GetAccess() *access.CalendarAccess {
 	return nil
 }
 
+func (x *Calendar) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Calendar) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Calendar) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *Calendar) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *Calendar) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *Calendar) SetName(v string) {
+	x.Name = v
+}
+
+func (x *Calendar) SetDescription(v string) {
+	x.Description = &v
+}
+
+func (x *Calendar) SetPublic(v bool) {
+	x.Public = v
+}
+
+func (x *Calendar) SetClosed(v bool) {
+	x.Closed = v
+}
+
+func (x *Calendar) SetColor(v string) {
+	x.Color = v
+}
+
+func (x *Calendar) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *Calendar) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *Calendar) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *Calendar) SetSubscription(v *CalendarSub) {
+	x.Subscription = v
+}
+
+func (x *Calendar) SetAccess(v *access.CalendarAccess) {
+	x.Access = v
+}
+
+func (x *Calendar) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Calendar) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Calendar) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *Calendar) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *Calendar) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Description != nil
+}
+
+func (x *Calendar) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *Calendar) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *Calendar) HasSubscription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Subscription != nil
+}
+
+func (x *Calendar) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *Calendar) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Calendar) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Calendar) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *Calendar) ClearJob() {
+	x.Job = nil
+}
+
+func (x *Calendar) ClearDescription() {
+	x.Description = nil
+}
+
+func (x *Calendar) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *Calendar) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *Calendar) ClearSubscription() {
+	x.Subscription = nil
+}
+
+func (x *Calendar) ClearAccess() {
+	x.Access = nil
+}
+
+type Calendar_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id           int64
+	CreatedAt    *timestamp.Timestamp
+	UpdatedAt    *timestamp.Timestamp
+	DeletedAt    *timestamp.Timestamp
+	Job          *string
+	Name         string
+	Description  *string
+	Public       bool
+	Closed       bool
+	Color        string
+	CreatorId    *int32
+	Creator      *short.UserShort
+	CreatorJob   string
+	Subscription *CalendarSub
+	Access       *access.CalendarAccess
+}
+
+func (b0 Calendar_builder) Build() *Calendar {
+	m0 := &Calendar{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	x.Job = b.Job
+	x.Name = b.Name
+	x.Description = b.Description
+	x.Public = b.Public
+	x.Closed = b.Closed
+	x.Color = b.Color
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	x.Subscription = b.Subscription
+	x.Access = b.Access
+	return m0
+}
+
 type CalendarShort struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	Job           *string                `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
@@ -220,11 +417,6 @@ func (x *CalendarShort) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CalendarShort.ProtoReflect.Descriptor instead.
-func (*CalendarShort) Descriptor() ([]byte, []int) {
-	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CalendarShort) GetId() int64 {
@@ -290,8 +482,118 @@ func (x *CalendarShort) GetSubscription() *CalendarSub {
 	return nil
 }
 
+func (x *CalendarShort) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *CalendarShort) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *CalendarShort) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *CalendarShort) SetName(v string) {
+	x.Name = v
+}
+
+func (x *CalendarShort) SetDescription(v string) {
+	x.Description = &v
+}
+
+func (x *CalendarShort) SetPublic(v bool) {
+	x.Public = v
+}
+
+func (x *CalendarShort) SetClosed(v bool) {
+	x.Closed = v
+}
+
+func (x *CalendarShort) SetColor(v string) {
+	x.Color = v
+}
+
+func (x *CalendarShort) SetSubscription(v *CalendarSub) {
+	x.Subscription = v
+}
+
+func (x *CalendarShort) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *CalendarShort) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *CalendarShort) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Description != nil
+}
+
+func (x *CalendarShort) HasSubscription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Subscription != nil
+}
+
+func (x *CalendarShort) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *CalendarShort) ClearJob() {
+	x.Job = nil
+}
+
+func (x *CalendarShort) ClearDescription() {
+	x.Description = nil
+}
+
+func (x *CalendarShort) ClearSubscription() {
+	x.Subscription = nil
+}
+
+type CalendarShort_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id           int64
+	CreatedAt    *timestamp.Timestamp
+	Job          *string
+	Name         string
+	Description  *string
+	Public       bool
+	Closed       bool
+	Color        string
+	Subscription *CalendarSub
+}
+
+func (b0 CalendarShort_builder) Build() *CalendarShort {
+	m0 := &CalendarShort{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.Job = b.Job
+	x.Name = b.Name
+	x.Description = b.Description
+	x.Public = b.Public
+	x.Closed = b.Closed
+	x.Color = b.Color
+	x.Subscription = b.Subscription
+	return m0
+}
+
 type CalendarSub struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	CalendarId    int64                  `protobuf:"varint,1,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
 	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	User          *short.UserShort       `protobuf:"bytes,3,opt,name=user,proto3,oneof" json:"user,omitempty"`
@@ -325,11 +627,6 @@ func (x *CalendarSub) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CalendarSub.ProtoReflect.Descriptor instead.
-func (*CalendarSub) Descriptor() ([]byte, []int) {
-	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CalendarSub) GetCalendarId() int64 {
@@ -374,11 +671,81 @@ func (x *CalendarSub) GetMuted() bool {
 	return false
 }
 
+func (x *CalendarSub) SetCalendarId(v int64) {
+	x.CalendarId = v
+}
+
+func (x *CalendarSub) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *CalendarSub) SetUser(v *short.UserShort) {
+	x.User = v
+}
+
+func (x *CalendarSub) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *CalendarSub) SetConfirmed(v bool) {
+	x.Confirmed = v
+}
+
+func (x *CalendarSub) SetMuted(v bool) {
+	x.Muted = v
+}
+
+func (x *CalendarSub) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *CalendarSub) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *CalendarSub) ClearUser() {
+	x.User = nil
+}
+
+func (x *CalendarSub) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+type CalendarSub_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	CalendarId int64
+	UserId     int32
+	User       *short.UserShort
+	CreatedAt  *timestamp.Timestamp
+	Confirmed  bool
+	Muted      bool
+}
+
+func (b0 CalendarSub_builder) Build() *CalendarSub {
+	m0 := &CalendarSub{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.CalendarId = b.CalendarId
+	x.UserId = b.UserId
+	x.User = b.User
+	x.CreatedAt = b.CreatedAt
+	x.Confirmed = b.Confirmed
+	x.Muted = b.Muted
+	return m0
+}
+
 var File_resources_calendar_calendar_proto protoreflect.FileDescriptor
 
 const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
-	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/calendar/access/access.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xd9\x06\n" +
+	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/calendar/access/access.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xcf\x06\n" +
 	"\bCalendar\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -388,8 +755,8 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x15\n" +
 	"\x03job\x18\x05 \x01(\tH\x03R\x03job\x88\x01\x01\x12\x1c\n" +
-	"\x04name\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12/\n" +
-	"\vdescription\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x04R\vdescription\x88\x01\x01\x12\x16\n" +
+	"\x04name\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12%\n" +
+	"\vdescription\x18\a \x01(\tH\x04R\vdescription\x88\x01\x01\x12\x16\n" +
 	"\x06public\x18\b \x01(\bR\x06public\x12\x16\n" +
 	"\x06closed\x18\t \x01(\bR\x06closed\x12\x1e\n" +
 	"\x05color\x18\n" +
@@ -409,14 +776,14 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x0f\n" +
-	"\r_subscription\"\xbe\x03\n" +
+	"\r_subscription\"\xb4\x03\n" +
 	"\rCalendarShort\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x15\n" +
 	"\x03job\x18\x05 \x01(\tH\x01R\x03job\x88\x01\x01\x12\x1c\n" +
-	"\x04name\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12/\n" +
-	"\vdescription\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x02R\vdescription\x88\x01\x01\x12\x16\n" +
+	"\x04name\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12%\n" +
+	"\vdescription\x18\a \x01(\tH\x02R\vdescription\x88\x01\x01\x12\x16\n" +
 	"\x06public\x18\b \x01(\bR\x06public\x12\x16\n" +
 	"\x06closed\x18\t \x01(\bR\x06closed\x12\x1e\n" +
 	"\x05color\x18\n" +
@@ -437,18 +804,6 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\x05muted\x18\x06 \x01(\bR\x05mutedB\a\n" +
 	"\x05_userB\r\n" +
 	"\v_created_atBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar;calendarb\x06proto3"
-
-var (
-	file_resources_calendar_calendar_proto_rawDescOnce sync.Once
-	file_resources_calendar_calendar_proto_rawDescData []byte
-)
-
-func file_resources_calendar_calendar_proto_rawDescGZIP() []byte {
-	file_resources_calendar_calendar_proto_rawDescOnce.Do(func() {
-		file_resources_calendar_calendar_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_calendar_calendar_proto_rawDesc), len(file_resources_calendar_calendar_proto_rawDesc)))
-	})
-	return file_resources_calendar_calendar_proto_rawDescData
-}
 
 var file_resources_calendar_calendar_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_calendar_calendar_proto_goTypes = []any{

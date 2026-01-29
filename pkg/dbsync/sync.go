@@ -41,6 +41,7 @@ type Sync struct {
 	licenses *licensesSync
 	users    *usersSync
 	vehicles *vehiclesSync
+	accounts *accountsSync
 
 	streamCh chan *pbsync.StreamResponse
 }
@@ -145,6 +146,7 @@ func (s *Sync) start() error {
 	s.licenses = newLicensesSync(syncer, s.state.Licenses)
 	s.users = newUsersSync(syncer, s.state.Users)
 	s.vehicles = newVehiclesSync(syncer, s.state.OwnedVehicles)
+	s.accounts = newAccountsSync(syncer, s.state.Accounts)
 
 	s.wg.Add(1)
 	go s.Run(s.ctx)
@@ -203,6 +205,7 @@ func (s *Sync) Run(ctx context.Context) {
 		select {
 		case <-ctx.Done():
 			return
+
 		case <-time.After(10 * time.Second):
 		}
 	}
@@ -213,10 +216,11 @@ func (s *Sync) run(ctx context.Context) error {
 	// On startup sync base data (jobs, job grades and license types) before the "main" sync loop starts,
 	// then sync in 5 minute interval to keep the data fresh
 	if err := s.syncBaseData(ctx); err != nil {
-		s.logger.Error("error during base data sync", zap.Error(err))
+		s.logger.Error("error during initial base data sync", zap.Error(err))
 		return err
 	}
 
+	// Base data sync loop
 	wg.Go(func() {
 		for {
 			s.syncBaseData(ctx)
@@ -258,6 +262,22 @@ func (s *Sync) run(ctx context.Context) error {
 				return
 
 			case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Vehicles)):
+			}
+		}
+	})
+
+	// Accounts data sync loop
+	wg.Go(func() {
+		for {
+			if err := s.accounts.Sync(ctx); err != nil {
+				s.logger.Error("error during accounts sync", zap.Error(err))
+			}
+
+			select {
+			case <-ctx.Done():
+				return
+
+			case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Users)):
 			}
 		}
 	})

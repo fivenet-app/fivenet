@@ -58,7 +58,7 @@ func (m *Calendar) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.StripHTMLTags(*m.Description)
+		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
 
 	// Field: Job
@@ -111,7 +111,7 @@ func (m *CalendarShort) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.StripHTMLTags(*m.Description)
+		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
 
 	// Field: Job

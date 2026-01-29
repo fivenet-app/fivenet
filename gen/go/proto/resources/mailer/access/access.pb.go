@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/mailer/access/access.proto
 
+//go:build !protoopaque
+
 package maileraccess
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -75,13 +76,8 @@ func (x AccessLevel) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use AccessLevel.Descriptor instead.
-func (AccessLevel) EnumDescriptor() ([]byte, []int) {
-	return file_resources_mailer_access_access_proto_rawDescGZIP(), []int{0}
-}
-
 type Access struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
+	state          protoimpl.MessageState `protogen:"hybrid.v1"`
 	Jobs           []*JobAccess           `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
 	Users          []*UserAccess          `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty" alias:"user_access"`
 	Qualifications []*QualificationAccess `protobuf:"bytes,3,rep,name=qualifications,proto3" json:"qualifications,omitempty" alias:"qualification_access"`
@@ -114,11 +110,6 @@ func (x *Access) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Access.ProtoReflect.Descriptor instead.
-func (*Access) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_access_access_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *Access) GetJobs() []*JobAccess {
 	if x != nil {
 		return x.Jobs
@@ -140,8 +131,38 @@ func (x *Access) GetQualifications() []*QualificationAccess {
 	return nil
 }
 
+func (x *Access) SetJobs(v []*JobAccess) {
+	x.Jobs = v
+}
+
+func (x *Access) SetUsers(v []*UserAccess) {
+	x.Users = v
+}
+
+func (x *Access) SetQualifications(v []*QualificationAccess) {
+	x.Qualifications = v
+}
+
+type Access_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs           []*JobAccess
+	Users          []*UserAccess
+	Qualifications []*QualificationAccess
+}
+
+func (b0 Access_builder) Build() *Access {
+	m0 := &Access{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	x.Users = b.Users
+	x.Qualifications = b.Qualifications
+	return m0
+}
+
 type JobAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
@@ -177,11 +198,6 @@ func (x *JobAccess) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use JobAccess.ProtoReflect.Descriptor instead.
-func (*JobAccess) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_access_access_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *JobAccess) GetId() int64 {
@@ -240,8 +256,101 @@ func (x *JobAccess) GetAccess() AccessLevel {
 	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
 }
 
+func (x *JobAccess) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *JobAccess) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *JobAccess) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *JobAccess) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *JobAccess) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *JobAccess) SetMinimumGrade(v int32) {
+	x.MinimumGrade = v
+}
+
+func (x *JobAccess) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *JobAccess) SetAccess(v AccessLevel) {
+	x.Access = v
+}
+
+func (x *JobAccess) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *JobAccess) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *JobAccess) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *JobAccess) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *JobAccess) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *JobAccess) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+type JobAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id            int64
+	CreatedAt     *timestamp.Timestamp
+	TargetId      int64
+	Job           string
+	JobLabel      *string
+	MinimumGrade  int32
+	JobGradeLabel *string
+	Access        AccessLevel
+}
+
+func (b0 JobAccess_builder) Build() *JobAccess {
+	m0 := &JobAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.MinimumGrade = b.MinimumGrade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Access = b.Access
+	return m0
+}
+
 type UserAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
@@ -275,11 +384,6 @@ func (x *UserAccess) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserAccess.ProtoReflect.Descriptor instead.
-func (*UserAccess) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_access_access_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *UserAccess) GetId() int64 {
@@ -324,8 +428,78 @@ func (x *UserAccess) GetAccess() AccessLevel {
 	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
 }
 
+func (x *UserAccess) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *UserAccess) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *UserAccess) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *UserAccess) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *UserAccess) SetUser(v *short.UserShort) {
+	x.User = v
+}
+
+func (x *UserAccess) SetAccess(v AccessLevel) {
+	x.Access = v
+}
+
+func (x *UserAccess) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *UserAccess) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *UserAccess) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *UserAccess) ClearUser() {
+	x.User = nil
+}
+
+type UserAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id        int64
+	CreatedAt *timestamp.Timestamp
+	TargetId  int64
+	UserId    int32
+	User      *short.UserShort
+	Access    AccessLevel
+}
+
+func (b0 UserAccess_builder) Build() *UserAccess {
+	m0 := &UserAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.UserId = b.UserId
+	x.User = b.User
+	x.Access = b.Access
+	return m0
+}
+
 type QualificationAccess struct {
-	state           protoimpl.MessageState             `protogen:"open.v1"`
+	state           protoimpl.MessageState             `protogen:"hybrid.v1"`
 	Id              int64                              `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt       *timestamp.Timestamp               `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId        int64                              `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
@@ -359,11 +533,6 @@ func (x *QualificationAccess) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QualificationAccess.ProtoReflect.Descriptor instead.
-func (*QualificationAccess) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_access_access_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *QualificationAccess) GetId() int64 {
@@ -406,6 +575,76 @@ func (x *QualificationAccess) GetAccess() AccessLevel {
 		return x.Access
 	}
 	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
+}
+
+func (x *QualificationAccess) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *QualificationAccess) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *QualificationAccess) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *QualificationAccess) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *QualificationAccess) SetQualification(v *qualifications.QualificationShort) {
+	x.Qualification = v
+}
+
+func (x *QualificationAccess) SetAccess(v AccessLevel) {
+	x.Access = v
+}
+
+func (x *QualificationAccess) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *QualificationAccess) HasQualification() bool {
+	if x == nil {
+		return false
+	}
+	return x.Qualification != nil
+}
+
+func (x *QualificationAccess) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *QualificationAccess) ClearQualification() {
+	x.Qualification = nil
+}
+
+type QualificationAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id              int64
+	CreatedAt       *timestamp.Timestamp
+	TargetId        int64
+	QualificationId int64
+	Qualification   *qualifications.QualificationShort
+	Access          AccessLevel
+}
+
+func (b0 QualificationAccess_builder) Build() *QualificationAccess {
+	m0 := &QualificationAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.QualificationId = b.QualificationId
+	x.Qualification = b.Qualification
+	x.Access = b.Access
+	return m0
 }
 
 var File_resources_mailer_access_access_proto protoreflect.FileDescriptor
@@ -458,18 +697,6 @@ const file_resources_mailer_access_access_proto_rawDesc = "" +
 	"\x11ACCESS_LEVEL_READ\x10\x02\x12\x16\n" +
 	"\x12ACCESS_LEVEL_WRITE\x10\x03\x12\x17\n" +
 	"\x13ACCESS_LEVEL_MANAGE\x10\x04BXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access;maileraccessb\x06proto3"
-
-var (
-	file_resources_mailer_access_access_proto_rawDescOnce sync.Once
-	file_resources_mailer_access_access_proto_rawDescData []byte
-)
-
-func file_resources_mailer_access_access_proto_rawDescGZIP() []byte {
-	file_resources_mailer_access_access_proto_rawDescOnce.Do(func() {
-		file_resources_mailer_access_access_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_mailer_access_access_proto_rawDesc), len(file_resources_mailer_access_access_proto_rawDesc)))
-	})
-	return file_resources_mailer_access_access_proto_rawDescData
-}
 
 var file_resources_mailer_access_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_mailer_access_access_proto_msgTypes = make([]protoimpl.MessageInfo, 4)

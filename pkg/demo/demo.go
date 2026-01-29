@@ -15,7 +15,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum"
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
@@ -134,7 +133,7 @@ func New(p Params) *Demo {
 }
 
 func (d *Demo) lookupUsers(ctx context.Context, identifiers []string) ([]*user, error) {
-	tUsers := tables.User()
+	tUsers := table.FivenetUser
 
 	condition := tUsers.Job.EQ(mysql.String(d.cfg.Demo.TargetJob))
 	if len(identifiers) > 0 {

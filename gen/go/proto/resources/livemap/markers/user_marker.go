@@ -10,10 +10,6 @@ func (x *UserMarker) Point() orb.Point {
 	return orb.Point{x.GetX(), x.GetY()}
 }
 
-func (x *UserMarker) SetJobLabel(label string) {
-	x.JobLabel = label
-}
-
 func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
 	if x.GetUserId() != in.GetUserId() {
 		x.UserId = in.GetUserId()

@@ -141,6 +141,11 @@ func (x *{{ $message }}) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
 		return {{ $info.Unmarshal }}([]byte(t), x)
+    case *string:
+        if t == nil {
+            return nil
+        }
+        return {{ $info.Unmarshal }}([]byte(*t), x)
 	case []byte:
 		return {{ $info.Unmarshal }}(t, x)
 	}

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/jobs/timeclock/timeclock.proto
 
+//go:build !protoopaque
+
 package jobstimeclock
 
 import (
@@ -13,7 +15,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -74,11 +75,6 @@ func (x TimeclockMode) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use TimeclockMode.Descriptor instead.
-func (TimeclockMode) EnumDescriptor() ([]byte, []int) {
-	return file_resources_jobs_timeclock_timeclock_proto_rawDescGZIP(), []int{0}
-}
-
 type TimeclockViewMode int32
 
 const (
@@ -123,13 +119,8 @@ func (x TimeclockViewMode) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use TimeclockViewMode.Descriptor instead.
-func (TimeclockViewMode) EnumDescriptor() ([]byte, []int) {
-	return file_resources_jobs_timeclock_timeclock_proto_rawDescGZIP(), []int{1}
-}
-
 type TimeclockEntry struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" sql:"primary_key"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	Date          *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=date,proto3" json:"date,omitempty" sql:"primary_key"`
@@ -164,11 +155,6 @@ func (x *TimeclockEntry) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TimeclockEntry.ProtoReflect.Descriptor instead.
-func (*TimeclockEntry) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_timeclock_timeclock_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *TimeclockEntry) GetUserId() int32 {
@@ -220,8 +206,106 @@ func (x *TimeclockEntry) GetSpentTime() float32 {
 	return 0
 }
 
+func (x *TimeclockEntry) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *TimeclockEntry) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *TimeclockEntry) SetDate(v *timestamp.Timestamp) {
+	x.Date = v
+}
+
+func (x *TimeclockEntry) SetUser(v *colleagues.Colleague) {
+	x.User = v
+}
+
+func (x *TimeclockEntry) SetStartTime(v *timestamp.Timestamp) {
+	x.StartTime = v
+}
+
+func (x *TimeclockEntry) SetEndTime(v *timestamp.Timestamp) {
+	x.EndTime = v
+}
+
+func (x *TimeclockEntry) SetSpentTime(v float32) {
+	x.SpentTime = v
+}
+
+func (x *TimeclockEntry) HasDate() bool {
+	if x == nil {
+		return false
+	}
+	return x.Date != nil
+}
+
+func (x *TimeclockEntry) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *TimeclockEntry) HasStartTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.StartTime != nil
+}
+
+func (x *TimeclockEntry) HasEndTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.EndTime != nil
+}
+
+func (x *TimeclockEntry) ClearDate() {
+	x.Date = nil
+}
+
+func (x *TimeclockEntry) ClearUser() {
+	x.User = nil
+}
+
+func (x *TimeclockEntry) ClearStartTime() {
+	x.StartTime = nil
+}
+
+func (x *TimeclockEntry) ClearEndTime() {
+	x.EndTime = nil
+}
+
+type TimeclockEntry_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId    int32
+	Job       string
+	Date      *timestamp.Timestamp
+	User      *colleagues.Colleague
+	StartTime *timestamp.Timestamp
+	EndTime   *timestamp.Timestamp
+	SpentTime float32
+}
+
+func (b0 TimeclockEntry_builder) Build() *TimeclockEntry {
+	m0 := &TimeclockEntry{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.Job = b.Job
+	x.Date = b.Date
+	x.User = b.User
+	x.StartTime = b.StartTime
+	x.EndTime = b.EndTime
+	x.SpentTime = b.SpentTime
+	return m0
+}
+
 type TimeclockStats struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	SpentTimeSum  float32                `protobuf:"fixed32,2,opt,name=spent_time_sum,json=spentTimeSum,proto3" json:"spent_time_sum,omitempty"`
 	SpentTimeAvg  float32                `protobuf:"fixed32,3,opt,name=spent_time_avg,json=spentTimeAvg,proto3" json:"spent_time_avg,omitempty"`
@@ -255,11 +339,6 @@ func (x *TimeclockStats) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TimeclockStats.ProtoReflect.Descriptor instead.
-func (*TimeclockStats) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_timeclock_timeclock_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *TimeclockStats) GetJob() string {
 	if x != nil {
 		return x.Job
@@ -288,8 +367,44 @@ func (x *TimeclockStats) GetSpentTimeMax() float32 {
 	return 0
 }
 
+func (x *TimeclockStats) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *TimeclockStats) SetSpentTimeSum(v float32) {
+	x.SpentTimeSum = v
+}
+
+func (x *TimeclockStats) SetSpentTimeAvg(v float32) {
+	x.SpentTimeAvg = v
+}
+
+func (x *TimeclockStats) SetSpentTimeMax(v float32) {
+	x.SpentTimeMax = v
+}
+
+type TimeclockStats_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job          string
+	SpentTimeSum float32
+	SpentTimeAvg float32
+	SpentTimeMax float32
+}
+
+func (b0 TimeclockStats_builder) Build() *TimeclockStats {
+	m0 := &TimeclockStats{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	x.SpentTimeSum = b.SpentTimeSum
+	x.SpentTimeAvg = b.SpentTimeAvg
+	x.SpentTimeMax = b.SpentTimeMax
+	return m0
+}
+
 type TimeclockWeeklyStats struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Year          int32                  `protobuf:"varint,1,opt,name=year,proto3" json:"year,omitempty"`
 	CalendarWeek  int32                  `protobuf:"varint,2,opt,name=calendar_week,json=calendarWeek,proto3" json:"calendar_week,omitempty"`
 	Sum           float32                `protobuf:"fixed32,3,opt,name=sum,proto3" json:"sum,omitempty"`
@@ -322,11 +437,6 @@ func (x *TimeclockWeeklyStats) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TimeclockWeeklyStats.ProtoReflect.Descriptor instead.
-func (*TimeclockWeeklyStats) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_timeclock_timeclock_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *TimeclockWeeklyStats) GetYear() int32 {
@@ -362,6 +472,48 @@ func (x *TimeclockWeeklyStats) GetMax() float32 {
 		return x.Max
 	}
 	return 0
+}
+
+func (x *TimeclockWeeklyStats) SetYear(v int32) {
+	x.Year = v
+}
+
+func (x *TimeclockWeeklyStats) SetCalendarWeek(v int32) {
+	x.CalendarWeek = v
+}
+
+func (x *TimeclockWeeklyStats) SetSum(v float32) {
+	x.Sum = v
+}
+
+func (x *TimeclockWeeklyStats) SetAvg(v float32) {
+	x.Avg = v
+}
+
+func (x *TimeclockWeeklyStats) SetMax(v float32) {
+	x.Max = v
+}
+
+type TimeclockWeeklyStats_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Year         int32
+	CalendarWeek int32
+	Sum          float32
+	Avg          float32
+	Max          float32
+}
+
+func (b0 TimeclockWeeklyStats_builder) Build() *TimeclockWeeklyStats {
+	m0 := &TimeclockWeeklyStats{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Year = b.Year
+	x.CalendarWeek = b.CalendarWeek
+	x.Sum = b.Sum
+	x.Avg = b.Avg
+	x.Max = b.Max
+	return m0
 }
 
 var File_resources_jobs_timeclock_timeclock_proto protoreflect.FileDescriptor
@@ -403,18 +555,6 @@ const file_resources_jobs_timeclock_timeclock_proto_rawDesc = "" +
 	"\x1fTIMECLOCK_VIEW_MODE_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18TIMECLOCK_VIEW_MODE_SELF\x10\x01\x12\x1b\n" +
 	"\x17TIMECLOCK_VIEW_MODE_ALL\x10\x02BZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock;jobstimeclockb\x06proto3"
-
-var (
-	file_resources_jobs_timeclock_timeclock_proto_rawDescOnce sync.Once
-	file_resources_jobs_timeclock_timeclock_proto_rawDescData []byte
-)
-
-func file_resources_jobs_timeclock_timeclock_proto_rawDescGZIP() []byte {
-	file_resources_jobs_timeclock_timeclock_proto_rawDescOnce.Do(func() {
-		file_resources_jobs_timeclock_timeclock_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_jobs_timeclock_timeclock_proto_rawDesc), len(file_resources_jobs_timeclock_timeclock_proto_rawDesc)))
-	})
-	return file_resources_jobs_timeclock_timeclock_proto_rawDescData
-}
 
 var file_resources_jobs_timeclock_timeclock_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_resources_jobs_timeclock_timeclock_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

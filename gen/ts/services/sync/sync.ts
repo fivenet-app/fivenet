@@ -12,23 +12,25 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { DeleteVehicles } from "../../resources/sync/data";
-import { DeleteUsers } from "../../resources/sync/data";
-import { LastCharID } from "../../resources/sync/data";
-import { DataUserLocations } from "../../resources/sync/data";
-import { DataVehicles } from "../../resources/sync/data";
-import { DataUsers } from "../../resources/sync/data";
-import { DataLicenses } from "../../resources/sync/data";
-import { DataJobs } from "../../resources/sync/data";
-import { UserUpdate } from "../../resources/sync/activity";
-import { TimeclockUpdate } from "../../resources/sync/activity";
-import { ColleagueProps } from "../../resources/sync/activity";
+import { DeleteVehicles } from "../../resources/sync/data/data";
+import { DeleteUsers } from "../../resources/sync/data/data";
+import { LastCharID } from "../../resources/sync/data/data";
+import { DataUserLocations } from "../../resources/sync/data/data";
+import { DataVehicles } from "../../resources/sync/data/data";
+import { DataUsers } from "../../resources/sync/data/data";
+import { DataAccounts } from "../../resources/sync/data/data";
+import { DataLicenses } from "../../resources/sync/data/data";
+import { DataJobs } from "../../resources/sync/data/data";
+import { UserUpdate } from "../../resources/sync/activity/activity";
+import { AccountUpdate } from "../../resources/sync/activity/activity";
+import { TimeclockUpdate } from "../../resources/sync/activity/activity";
+import { ColleagueProps } from "../../resources/sync/activity/activity";
 import { ColleagueActivity } from "../../resources/jobs/colleagues/activity/activity";
-import { UserProps } from "../../resources/sync/activity";
+import { UserProps } from "../../resources/sync/activity/activity";
 import { UserActivity } from "../../resources/users/activity/activity";
 import { Dispatch } from "../../resources/centrum/dispatches/dispatches";
-import { UserOAuth2Conn } from "../../resources/sync/activity";
-import { DataStatus } from "../../resources/sync/data";
+import { UserOAuth2Conn } from "../../resources/sync/activity/activity";
+import { DataStatus } from "../../resources/sync/data/data";
 /**
  * @generated from protobuf message services.sync.GetStatusRequest
  */
@@ -39,19 +41,23 @@ export interface GetStatusRequest {
  */
 export interface GetStatusResponse {
     /**
-     * @generated from protobuf field: resources.sync.DataStatus jobs = 1
+     * @generated from protobuf field: resources.sync.data.DataStatus jobs = 1
      */
     jobs?: DataStatus;
     /**
-     * @generated from protobuf field: resources.sync.DataStatus licenses = 2
+     * @generated from protobuf field: resources.sync.data.DataStatus licenses = 2
      */
     licenses?: DataStatus;
     /**
-     * @generated from protobuf field: resources.sync.DataStatus users = 3
+     * @generated from protobuf field: resources.sync.data.DataStatus accounts = 5
+     */
+    accounts?: DataStatus;
+    /**
+     * @generated from protobuf field: resources.sync.data.DataStatus users = 3
      */
     users?: DataStatus;
     /**
-     * @generated from protobuf field: resources.sync.DataStatus vehicles = 4
+     * @generated from protobuf field: resources.sync.data.DataStatus vehicles = 4
      */
     vehicles?: DataStatus;
 }
@@ -65,7 +71,7 @@ export interface AddActivityRequest {
     activity: {
         oneofKind: "userOauth2";
         /**
-         * @generated from protobuf field: resources.sync.UserOAuth2Conn user_oauth2 = 1
+         * @generated from protobuf field: resources.sync.activity.UserOAuth2Conn user_oauth2 = 1
          */
         userOauth2: UserOAuth2Conn;
     } | {
@@ -87,7 +93,7 @@ export interface AddActivityRequest {
         /**
          * Setting props will cause activity to be created automtically
          *
-         * @generated from protobuf field: resources.sync.UserProps user_props = 4
+         * @generated from protobuf field: resources.sync.activity.UserProps user_props = 4
          */
         userProps: UserProps;
     } | {
@@ -103,7 +109,7 @@ export interface AddActivityRequest {
         /**
          * Setting props will cause activity to be created automtically
          *
-         * @generated from protobuf field: resources.sync.ColleagueProps colleague_props = 6
+         * @generated from protobuf field: resources.sync.activity.ColleagueProps colleague_props = 6
          */
         colleagueProps: ColleagueProps;
     } | {
@@ -111,15 +117,23 @@ export interface AddActivityRequest {
         /**
          * Timeclock user entry
          *
-         * @generated from protobuf field: resources.sync.TimeclockUpdate job_timeclock = 7
+         * @generated from protobuf field: resources.sync.activity.TimeclockUpdate job_timeclock = 7
          */
         jobTimeclock: TimeclockUpdate;
+    } | {
+        oneofKind: "accountUpdate";
+        /**
+         * Account update for a signle account to update the group(s).
+         *
+         * @generated from protobuf field: resources.sync.activity.AccountUpdate account_update = 9
+         */
+        accountUpdate: AccountUpdate;
     } | {
         oneofKind: "userUpdate";
         /**
          * User/Char info updates that aren't tracked by activity (yet)
          *
-         * @generated from protobuf field: resources.sync.UserUpdate user_update = 8
+         * @generated from protobuf field: resources.sync.activity.UserUpdate user_update = 8
          */
         userUpdate: UserUpdate;
     } | {
@@ -193,37 +207,43 @@ export interface SendDataRequest {
     data: {
         oneofKind: "jobs";
         /**
-         * @generated from protobuf field: resources.sync.DataJobs jobs = 1
+         * @generated from protobuf field: resources.sync.data.DataJobs jobs = 1
          */
         jobs: DataJobs;
     } | {
         oneofKind: "licenses";
         /**
-         * @generated from protobuf field: resources.sync.DataLicenses licenses = 2
+         * @generated from protobuf field: resources.sync.data.DataLicenses licenses = 2
          */
         licenses: DataLicenses;
     } | {
+        oneofKind: "accounts";
+        /**
+         * @generated from protobuf field: resources.sync.data.DataAccounts accounts = 9
+         */
+        accounts: DataAccounts;
+    } | {
         oneofKind: "users";
         /**
-         * @generated from protobuf field: resources.sync.DataUsers users = 3
+         * @generated from protobuf field: resources.sync.data.DataUsers users = 3
          */
         users: DataUsers;
     } | {
         oneofKind: "vehicles";
         /**
-         * @generated from protobuf field: resources.sync.DataVehicles vehicles = 4
+         * @generated from protobuf field: resources.sync.data.DataVehicles vehicles = 4
          */
         vehicles: DataVehicles;
     } | {
         oneofKind: "userLocations";
         /**
-         * @generated from protobuf field: resources.sync.DataUserLocations user_locations = 5
+         * @generated from protobuf field: resources.sync.data.DataUserLocations user_locations = 5
          */
         userLocations: DataUserLocations;
     } | {
         oneofKind: "lastCharId";
         /**
-         * @generated from protobuf field: resources.sync.LastCharID last_char_id = 6
+         * @generated from protobuf field: resources.sync.data.LastCharID last_char_id = 6
          */
         lastCharId: LastCharID;
     } | {
@@ -249,13 +269,13 @@ export interface DeleteDataRequest {
     data: {
         oneofKind: "users";
         /**
-         * @generated from protobuf field: resources.sync.DeleteUsers users = 1
+         * @generated from protobuf field: resources.sync.data.DeleteUsers users = 1
          */
         users: DeleteUsers;
     } | {
         oneofKind: "vehicles";
         /**
-         * @generated from protobuf field: resources.sync.DeleteVehicles vehicles = 2
+         * @generated from protobuf field: resources.sync.data.DeleteVehicles vehicles = 2
          */
         vehicles: DeleteVehicles;
     } | {
@@ -333,6 +353,7 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
         super("services.sync.GetStatusResponse", [
             { no: 1, name: "jobs", kind: "message", T: () => DataStatus },
             { no: 2, name: "licenses", kind: "message", T: () => DataStatus },
+            { no: 5, name: "accounts", kind: "message", T: () => DataStatus },
             { no: 3, name: "users", kind: "message", T: () => DataStatus },
             { no: 4, name: "vehicles", kind: "message", T: () => DataStatus }
         ]);
@@ -348,16 +369,19 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.sync.DataStatus jobs */ 1:
+                case /* resources.sync.data.DataStatus jobs */ 1:
                     message.jobs = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.jobs);
                     break;
-                case /* resources.sync.DataStatus licenses */ 2:
+                case /* resources.sync.data.DataStatus licenses */ 2:
                     message.licenses = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.licenses);
                     break;
-                case /* resources.sync.DataStatus users */ 3:
+                case /* resources.sync.data.DataStatus accounts */ 5:
+                    message.accounts = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.accounts);
+                    break;
+                case /* resources.sync.data.DataStatus users */ 3:
                     message.users = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.users);
                     break;
-                case /* resources.sync.DataStatus vehicles */ 4:
+                case /* resources.sync.data.DataStatus vehicles */ 4:
                     message.vehicles = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.vehicles);
                     break;
                 default:
@@ -372,18 +396,21 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
         return message;
     }
     internalBinaryWrite(message: GetStatusResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.sync.DataStatus jobs = 1; */
+        /* resources.sync.data.DataStatus jobs = 1; */
         if (message.jobs)
             DataStatus.internalBinaryWrite(message.jobs, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataStatus licenses = 2; */
+        /* resources.sync.data.DataStatus licenses = 2; */
         if (message.licenses)
             DataStatus.internalBinaryWrite(message.licenses, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataStatus users = 3; */
+        /* resources.sync.data.DataStatus users = 3; */
         if (message.users)
             DataStatus.internalBinaryWrite(message.users, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataStatus vehicles = 4; */
+        /* resources.sync.data.DataStatus vehicles = 4; */
         if (message.vehicles)
             DataStatus.internalBinaryWrite(message.vehicles, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.data.DataStatus accounts = 5; */
+        if (message.accounts)
+            DataStatus.internalBinaryWrite(message.accounts, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -405,6 +432,7 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
             { no: 5, name: "colleague_activity", kind: "message", oneof: "activity", T: () => ColleagueActivity },
             { no: 6, name: "colleague_props", kind: "message", oneof: "activity", T: () => ColleagueProps },
             { no: 7, name: "job_timeclock", kind: "message", oneof: "activity", T: () => TimeclockUpdate },
+            { no: 9, name: "account_update", kind: "message", oneof: "activity", T: () => AccountUpdate },
             { no: 8, name: "user_update", kind: "message", oneof: "activity", T: () => UserUpdate }
         ]);
     }
@@ -420,7 +448,7 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.sync.UserOAuth2Conn user_oauth2 */ 1:
+                case /* resources.sync.activity.UserOAuth2Conn user_oauth2 */ 1:
                     message.activity = {
                         oneofKind: "userOauth2",
                         userOauth2: UserOAuth2Conn.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userOauth2)
@@ -438,7 +466,7 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
                         userActivity: UserActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userActivity)
                     };
                     break;
-                case /* resources.sync.UserProps user_props */ 4:
+                case /* resources.sync.activity.UserProps user_props */ 4:
                     message.activity = {
                         oneofKind: "userProps",
                         userProps: UserProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userProps)
@@ -450,19 +478,25 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
                         colleagueActivity: ColleagueActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).colleagueActivity)
                     };
                     break;
-                case /* resources.sync.ColleagueProps colleague_props */ 6:
+                case /* resources.sync.activity.ColleagueProps colleague_props */ 6:
                     message.activity = {
                         oneofKind: "colleagueProps",
                         colleagueProps: ColleagueProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).colleagueProps)
                     };
                     break;
-                case /* resources.sync.TimeclockUpdate job_timeclock */ 7:
+                case /* resources.sync.activity.TimeclockUpdate job_timeclock */ 7:
                     message.activity = {
                         oneofKind: "jobTimeclock",
                         jobTimeclock: TimeclockUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobTimeclock)
                     };
                     break;
-                case /* resources.sync.UserUpdate user_update */ 8:
+                case /* resources.sync.activity.AccountUpdate account_update */ 9:
+                    message.activity = {
+                        oneofKind: "accountUpdate",
+                        accountUpdate: AccountUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).accountUpdate)
+                    };
+                    break;
+                case /* resources.sync.activity.UserUpdate user_update */ 8:
                     message.activity = {
                         oneofKind: "userUpdate",
                         userUpdate: UserUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userUpdate)
@@ -480,7 +514,7 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
         return message;
     }
     internalBinaryWrite(message: AddActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.sync.UserOAuth2Conn user_oauth2 = 1; */
+        /* resources.sync.activity.UserOAuth2Conn user_oauth2 = 1; */
         if (message.activity.oneofKind === "userOauth2")
             UserOAuth2Conn.internalBinaryWrite(message.activity.userOauth2, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* resources.centrum.dispatches.Dispatch dispatch = 2; */
@@ -489,21 +523,24 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
         /* resources.users.activity.UserActivity user_activity = 3; */
         if (message.activity.oneofKind === "userActivity")
             UserActivity.internalBinaryWrite(message.activity.userActivity, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.UserProps user_props = 4; */
+        /* resources.sync.activity.UserProps user_props = 4; */
         if (message.activity.oneofKind === "userProps")
             UserProps.internalBinaryWrite(message.activity.userProps, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 5; */
         if (message.activity.oneofKind === "colleagueActivity")
             ColleagueActivity.internalBinaryWrite(message.activity.colleagueActivity, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.ColleagueProps colleague_props = 6; */
+        /* resources.sync.activity.ColleagueProps colleague_props = 6; */
         if (message.activity.oneofKind === "colleagueProps")
             ColleagueProps.internalBinaryWrite(message.activity.colleagueProps, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.TimeclockUpdate job_timeclock = 7; */
+        /* resources.sync.activity.TimeclockUpdate job_timeclock = 7; */
         if (message.activity.oneofKind === "jobTimeclock")
             TimeclockUpdate.internalBinaryWrite(message.activity.jobTimeclock, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.UserUpdate user_update = 8; */
+        /* resources.sync.activity.UserUpdate user_update = 8; */
         if (message.activity.oneofKind === "userUpdate")
             UserUpdate.internalBinaryWrite(message.activity.userUpdate, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.activity.AccountUpdate account_update = 9; */
+        if (message.activity.oneofKind === "accountUpdate")
+            AccountUpdate.internalBinaryWrite(message.activity.accountUpdate, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -773,6 +810,7 @@ class SendDataRequest$Type extends MessageType<SendDataRequest> {
         super("services.sync.SendDataRequest", [
             { no: 1, name: "jobs", kind: "message", oneof: "data", T: () => DataJobs },
             { no: 2, name: "licenses", kind: "message", oneof: "data", T: () => DataLicenses },
+            { no: 9, name: "accounts", kind: "message", oneof: "data", T: () => DataAccounts },
             { no: 3, name: "users", kind: "message", oneof: "data", T: () => DataUsers },
             { no: 4, name: "vehicles", kind: "message", oneof: "data", T: () => DataVehicles },
             { no: 5, name: "user_locations", kind: "message", oneof: "data", T: () => DataUserLocations },
@@ -791,37 +829,43 @@ class SendDataRequest$Type extends MessageType<SendDataRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.sync.DataJobs jobs */ 1:
+                case /* resources.sync.data.DataJobs jobs */ 1:
                     message.data = {
                         oneofKind: "jobs",
                         jobs: DataJobs.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobs)
                     };
                     break;
-                case /* resources.sync.DataLicenses licenses */ 2:
+                case /* resources.sync.data.DataLicenses licenses */ 2:
                     message.data = {
                         oneofKind: "licenses",
                         licenses: DataLicenses.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).licenses)
                     };
                     break;
-                case /* resources.sync.DataUsers users */ 3:
+                case /* resources.sync.data.DataAccounts accounts */ 9:
+                    message.data = {
+                        oneofKind: "accounts",
+                        accounts: DataAccounts.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).accounts)
+                    };
+                    break;
+                case /* resources.sync.data.DataUsers users */ 3:
                     message.data = {
                         oneofKind: "users",
                         users: DataUsers.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).users)
                     };
                     break;
-                case /* resources.sync.DataVehicles vehicles */ 4:
+                case /* resources.sync.data.DataVehicles vehicles */ 4:
                     message.data = {
                         oneofKind: "vehicles",
                         vehicles: DataVehicles.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).vehicles)
                     };
                     break;
-                case /* resources.sync.DataUserLocations user_locations */ 5:
+                case /* resources.sync.data.DataUserLocations user_locations */ 5:
                     message.data = {
                         oneofKind: "userLocations",
                         userLocations: DataUserLocations.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userLocations)
                     };
                     break;
-                case /* resources.sync.LastCharID last_char_id */ 6:
+                case /* resources.sync.data.LastCharID last_char_id */ 6:
                     message.data = {
                         oneofKind: "lastCharId",
                         lastCharId: LastCharID.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).lastCharId)
@@ -839,24 +883,27 @@ class SendDataRequest$Type extends MessageType<SendDataRequest> {
         return message;
     }
     internalBinaryWrite(message: SendDataRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.sync.DataJobs jobs = 1; */
+        /* resources.sync.data.DataJobs jobs = 1; */
         if (message.data.oneofKind === "jobs")
             DataJobs.internalBinaryWrite(message.data.jobs, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataLicenses licenses = 2; */
+        /* resources.sync.data.DataLicenses licenses = 2; */
         if (message.data.oneofKind === "licenses")
             DataLicenses.internalBinaryWrite(message.data.licenses, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataUsers users = 3; */
+        /* resources.sync.data.DataUsers users = 3; */
         if (message.data.oneofKind === "users")
             DataUsers.internalBinaryWrite(message.data.users, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataVehicles vehicles = 4; */
+        /* resources.sync.data.DataVehicles vehicles = 4; */
         if (message.data.oneofKind === "vehicles")
             DataVehicles.internalBinaryWrite(message.data.vehicles, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataUserLocations user_locations = 5; */
+        /* resources.sync.data.DataUserLocations user_locations = 5; */
         if (message.data.oneofKind === "userLocations")
             DataUserLocations.internalBinaryWrite(message.data.userLocations, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.LastCharID last_char_id = 6; */
+        /* resources.sync.data.LastCharID last_char_id = 6; */
         if (message.data.oneofKind === "lastCharId")
             LastCharID.internalBinaryWrite(message.data.lastCharId, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.data.DataAccounts accounts = 9; */
+        if (message.data.oneofKind === "accounts")
+            DataAccounts.internalBinaryWrite(message.data.accounts, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -934,13 +981,13 @@ class DeleteDataRequest$Type extends MessageType<DeleteDataRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.sync.DeleteUsers users */ 1:
+                case /* resources.sync.data.DeleteUsers users */ 1:
                     message.data = {
                         oneofKind: "users",
                         users: DeleteUsers.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).users)
                     };
                     break;
-                case /* resources.sync.DeleteVehicles vehicles */ 2:
+                case /* resources.sync.data.DeleteVehicles vehicles */ 2:
                     message.data = {
                         oneofKind: "vehicles",
                         vehicles: DeleteVehicles.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).vehicles)
@@ -958,10 +1005,10 @@ class DeleteDataRequest$Type extends MessageType<DeleteDataRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteDataRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.sync.DeleteUsers users = 1; */
+        /* resources.sync.data.DeleteUsers users = 1; */
         if (message.data.oneofKind === "users")
             DeleteUsers.internalBinaryWrite(message.data.users, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DeleteVehicles vehicles = 2; */
+        /* resources.sync.data.DeleteVehicles vehicles = 2; */
         if (message.data.oneofKind === "vehicles")
             DeleteVehicles.internalBinaryWrite(message.data.vehicles, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

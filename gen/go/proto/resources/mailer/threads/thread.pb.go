@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/mailer/threads/thread.proto
 
+//go:build !protoopaque
+
 package mailerthreads
 
 import (
@@ -15,7 +17,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -27,7 +28,7 @@ const (
 )
 
 type Thread struct {
-	state          protoimpl.MessageState  `protogen:"open.v1"`
+	state          protoimpl.MessageState  `protogen:"hybrid.v1"`
 	Id             int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt      *timestamp.Timestamp    `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt      *timestamp.Timestamp    `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -66,11 +67,6 @@ func (x *Thread) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Thread.ProtoReflect.Descriptor instead.
-func (*Thread) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_threads_thread_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Thread) GetId() int64 {
@@ -150,8 +146,163 @@ func (x *Thread) GetState() *ThreadState {
 	return nil
 }
 
+func (x *Thread) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Thread) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Thread) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *Thread) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *Thread) SetCreatorEmailId(v int64) {
+	x.CreatorEmailId = v
+}
+
+func (x *Thread) SetCreatorEmail(v *emails.Email) {
+	x.CreatorEmail = v
+}
+
+func (x *Thread) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *Thread) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *Thread) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *Thread) SetRecipients(v []*ThreadRecipientEmail) {
+	x.Recipients = v
+}
+
+func (x *Thread) SetState(v *ThreadState) {
+	x.State = v
+}
+
+func (x *Thread) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Thread) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Thread) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *Thread) HasCreatorEmail() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorEmail != nil
+}
+
+func (x *Thread) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *Thread) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *Thread) HasState() bool {
+	if x == nil {
+		return false
+	}
+	return x.State != nil
+}
+
+func (x *Thread) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Thread) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Thread) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *Thread) ClearCreatorEmail() {
+	x.CreatorEmail = nil
+}
+
+func (x *Thread) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *Thread) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *Thread) ClearState() {
+	x.State = nil
+}
+
+type Thread_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id             int64
+	CreatedAt      *timestamp.Timestamp
+	UpdatedAt      *timestamp.Timestamp
+	DeletedAt      *timestamp.Timestamp
+	CreatorEmailId int64
+	CreatorEmail   *emails.Email
+	CreatorId      *int32
+	Creator        *short.UserShort
+	Title          string
+	Recipients     []*ThreadRecipientEmail
+	State          *ThreadState
+}
+
+func (b0 Thread_builder) Build() *Thread {
+	m0 := &Thread{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	x.CreatorEmailId = b.CreatorEmailId
+	x.CreatorEmail = b.CreatorEmail
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.Title = b.Title
+	x.Recipients = b.Recipients
+	x.State = b.State
+	return m0
+}
+
 type ThreadRecipientEmail struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,4,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty" alias:"thread_id"`
@@ -184,11 +335,6 @@ func (x *ThreadRecipientEmail) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ThreadRecipientEmail.ProtoReflect.Descriptor instead.
-func (*ThreadRecipientEmail) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_threads_thread_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ThreadRecipientEmail) GetId() int64 {
@@ -226,8 +372,72 @@ func (x *ThreadRecipientEmail) GetEmail() *emails.Email {
 	return nil
 }
 
+func (x *ThreadRecipientEmail) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *ThreadRecipientEmail) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *ThreadRecipientEmail) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *ThreadRecipientEmail) SetEmailId(v int64) {
+	x.EmailId = v
+}
+
+func (x *ThreadRecipientEmail) SetEmail(v *emails.Email) {
+	x.Email = v
+}
+
+func (x *ThreadRecipientEmail) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *ThreadRecipientEmail) HasEmail() bool {
+	if x == nil {
+		return false
+	}
+	return x.Email != nil
+}
+
+func (x *ThreadRecipientEmail) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *ThreadRecipientEmail) ClearEmail() {
+	x.Email = nil
+}
+
+type ThreadRecipientEmail_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id        int64
+	CreatedAt *timestamp.Timestamp
+	TargetId  int64
+	EmailId   int64
+	Email     *emails.Email
+}
+
+func (b0 ThreadRecipientEmail_builder) Build() *ThreadRecipientEmail {
+	m0 := &ThreadRecipientEmail{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.EmailId = b.EmailId
+	x.Email = b.Email
+	return m0
+}
+
 type ThreadState struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	ThreadId      int64                  `protobuf:"varint,1,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
 	EmailId       int64                  `protobuf:"varint,2,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	LastRead      *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=last_read,json=lastRead,proto3,oneof" json:"last_read,omitempty"`
@@ -263,11 +473,6 @@ func (x *ThreadState) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ThreadState.ProtoReflect.Descriptor instead.
-func (*ThreadState) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_threads_thread_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ThreadState) GetThreadId() int64 {
@@ -324,6 +529,132 @@ func (x *ThreadState) GetArchived() bool {
 		return *x.Archived
 	}
 	return false
+}
+
+func (x *ThreadState) SetThreadId(v int64) {
+	x.ThreadId = v
+}
+
+func (x *ThreadState) SetEmailId(v int64) {
+	x.EmailId = v
+}
+
+func (x *ThreadState) SetLastRead(v *timestamp.Timestamp) {
+	x.LastRead = v
+}
+
+func (x *ThreadState) SetUnread(v bool) {
+	x.Unread = &v
+}
+
+func (x *ThreadState) SetImportant(v bool) {
+	x.Important = &v
+}
+
+func (x *ThreadState) SetFavorite(v bool) {
+	x.Favorite = &v
+}
+
+func (x *ThreadState) SetMuted(v bool) {
+	x.Muted = &v
+}
+
+func (x *ThreadState) SetArchived(v bool) {
+	x.Archived = &v
+}
+
+func (x *ThreadState) HasLastRead() bool {
+	if x == nil {
+		return false
+	}
+	return x.LastRead != nil
+}
+
+func (x *ThreadState) HasUnread() bool {
+	if x == nil {
+		return false
+	}
+	return x.Unread != nil
+}
+
+func (x *ThreadState) HasImportant() bool {
+	if x == nil {
+		return false
+	}
+	return x.Important != nil
+}
+
+func (x *ThreadState) HasFavorite() bool {
+	if x == nil {
+		return false
+	}
+	return x.Favorite != nil
+}
+
+func (x *ThreadState) HasMuted() bool {
+	if x == nil {
+		return false
+	}
+	return x.Muted != nil
+}
+
+func (x *ThreadState) HasArchived() bool {
+	if x == nil {
+		return false
+	}
+	return x.Archived != nil
+}
+
+func (x *ThreadState) ClearLastRead() {
+	x.LastRead = nil
+}
+
+func (x *ThreadState) ClearUnread() {
+	x.Unread = nil
+}
+
+func (x *ThreadState) ClearImportant() {
+	x.Important = nil
+}
+
+func (x *ThreadState) ClearFavorite() {
+	x.Favorite = nil
+}
+
+func (x *ThreadState) ClearMuted() {
+	x.Muted = nil
+}
+
+func (x *ThreadState) ClearArchived() {
+	x.Archived = nil
+}
+
+type ThreadState_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ThreadId  int64
+	EmailId   int64
+	LastRead  *timestamp.Timestamp
+	Unread    *bool
+	Important *bool
+	Favorite  *bool
+	Muted     *bool
+	Archived  *bool
+}
+
+func (b0 ThreadState_builder) Build() *ThreadState {
+	m0 := &ThreadState{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ThreadId = b.ThreadId
+	x.EmailId = b.EmailId
+	x.LastRead = b.LastRead
+	x.Unread = b.Unread
+	x.Important = b.Important
+	x.Favorite = b.Favorite
+	x.Muted = b.Muted
+	x.Archived = b.Archived
+	return m0
 }
 
 var File_resources_mailer_threads_thread_proto protoreflect.FileDescriptor
@@ -383,18 +714,6 @@ const file_resources_mailer_threads_thread_proto_rawDesc = "" +
 	"\t_favoriteB\b\n" +
 	"\x06_mutedB\v\n" +
 	"\t_archivedBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads;mailerthreadsb\x06proto3"
-
-var (
-	file_resources_mailer_threads_thread_proto_rawDescOnce sync.Once
-	file_resources_mailer_threads_thread_proto_rawDescData []byte
-)
-
-func file_resources_mailer_threads_thread_proto_rawDescGZIP() []byte {
-	file_resources_mailer_threads_thread_proto_rawDescOnce.Do(func() {
-		file_resources_mailer_threads_thread_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_mailer_threads_thread_proto_rawDesc), len(file_resources_mailer_threads_thread_proto_rawDesc)))
-	})
-	return file_resources_mailer_threads_thread_proto_rawDescData
-}
 
 var file_resources_mailer_threads_thread_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_mailer_threads_thread_proto_goTypes = []any{

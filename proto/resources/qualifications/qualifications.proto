@@ -5,7 +5,6 @@ package resources.qualifications;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
-import "google/protobuf/duration.proto";
 import "resources/common/content/content.proto";
 import "resources/file/file.proto";
 import "resources/qualifications/access/access.proto";

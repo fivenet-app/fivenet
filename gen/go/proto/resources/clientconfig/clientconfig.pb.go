@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/clientconfig/clientconfig.proto
 
+//go:build !protoopaque
+
 package clientconfig
 
 import (
@@ -12,7 +14,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,7 +25,7 @@ const (
 )
 
 type ClientConfig struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Version       string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	DefaultLocale string                 `protobuf:"bytes,2,opt,name=default_locale,json=defaultLocale,proto3" json:"defaultLocale"`
 	Auth          *Auth                  `protobuf:"bytes,3,opt,name=auth,proto3" json:"auth,omitempty"`
@@ -63,11 +64,6 @@ func (x *ClientConfig) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ClientConfig.ProtoReflect.Descriptor instead.
-func (*ClientConfig) Descriptor() ([]byte, []int) {
-	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ClientConfig) GetVersion() string {
@@ -147,8 +143,185 @@ func (x *ClientConfig) GetData() *settings.Data {
 	return nil
 }
 
+func (x *ClientConfig) SetVersion(v string) {
+	x.Version = v
+}
+
+func (x *ClientConfig) SetDefaultLocale(v string) {
+	x.DefaultLocale = v
+}
+
+func (x *ClientConfig) SetAuth(v *Auth) {
+	x.Auth = v
+}
+
+func (x *ClientConfig) SetDiscord(v *Discord) {
+	x.Discord = v
+}
+
+func (x *ClientConfig) SetWebsite(v *Website) {
+	x.Website = v
+}
+
+func (x *ClientConfig) SetFeatureGates(v *FeatureGates) {
+	x.FeatureGates = v
+}
+
+func (x *ClientConfig) SetGame(v *Game) {
+	x.Game = v
+}
+
+func (x *ClientConfig) SetSystem(v *System) {
+	x.System = v
+}
+
+func (x *ClientConfig) SetDisplay(v *Display) {
+	x.Display = v
+}
+
+func (x *ClientConfig) SetQuickButtons(v *settings.QuickButtons) {
+	x.QuickButtons = v
+}
+
+func (x *ClientConfig) SetData(v *settings.Data) {
+	x.Data = v
+}
+
+func (x *ClientConfig) HasAuth() bool {
+	if x == nil {
+		return false
+	}
+	return x.Auth != nil
+}
+
+func (x *ClientConfig) HasDiscord() bool {
+	if x == nil {
+		return false
+	}
+	return x.Discord != nil
+}
+
+func (x *ClientConfig) HasWebsite() bool {
+	if x == nil {
+		return false
+	}
+	return x.Website != nil
+}
+
+func (x *ClientConfig) HasFeatureGates() bool {
+	if x == nil {
+		return false
+	}
+	return x.FeatureGates != nil
+}
+
+func (x *ClientConfig) HasGame() bool {
+	if x == nil {
+		return false
+	}
+	return x.Game != nil
+}
+
+func (x *ClientConfig) HasSystem() bool {
+	if x == nil {
+		return false
+	}
+	return x.System != nil
+}
+
+func (x *ClientConfig) HasDisplay() bool {
+	if x == nil {
+		return false
+	}
+	return x.Display != nil
+}
+
+func (x *ClientConfig) HasQuickButtons() bool {
+	if x == nil {
+		return false
+	}
+	return x.QuickButtons != nil
+}
+
+func (x *ClientConfig) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *ClientConfig) ClearAuth() {
+	x.Auth = nil
+}
+
+func (x *ClientConfig) ClearDiscord() {
+	x.Discord = nil
+}
+
+func (x *ClientConfig) ClearWebsite() {
+	x.Website = nil
+}
+
+func (x *ClientConfig) ClearFeatureGates() {
+	x.FeatureGates = nil
+}
+
+func (x *ClientConfig) ClearGame() {
+	x.Game = nil
+}
+
+func (x *ClientConfig) ClearSystem() {
+	x.System = nil
+}
+
+func (x *ClientConfig) ClearDisplay() {
+	x.Display = nil
+}
+
+func (x *ClientConfig) ClearQuickButtons() {
+	x.QuickButtons = nil
+}
+
+func (x *ClientConfig) ClearData() {
+	x.Data = nil
+}
+
+type ClientConfig_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Version       string
+	DefaultLocale string
+	Auth          *Auth
+	Discord       *Discord
+	Website       *Website
+	FeatureGates  *FeatureGates
+	Game          *Game
+	System        *System
+	Display       *Display
+	QuickButtons  *settings.QuickButtons
+	Data          *settings.Data
+}
+
+func (b0 ClientConfig_builder) Build() *ClientConfig {
+	m0 := &ClientConfig{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Version = b.Version
+	x.DefaultLocale = b.DefaultLocale
+	x.Auth = b.Auth
+	x.Discord = b.Discord
+	x.Website = b.Website
+	x.FeatureGates = b.FeatureGates
+	x.Game = b.Game
+	x.System = b.System
+	x.Display = b.Display
+	x.QuickButtons = b.QuickButtons
+	x.Data = b.Data
+	return m0
+}
+
 type Auth struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	SignupEnabled bool                   `protobuf:"varint,1,opt,name=signup_enabled,json=signupEnabled,proto3" json:"signupEnabled"`
 	LastCharLock  bool                   `protobuf:"varint,2,opt,name=last_char_lock,json=lastCharLock,proto3" json:"lastCharLock"`
 	Providers     []*ProviderConfig      `protobuf:"bytes,3,rep,name=providers,proto3" json:"providers"`
@@ -181,11 +354,6 @@ func (x *Auth) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Auth.ProtoReflect.Descriptor instead.
-func (*Auth) Descriptor() ([]byte, []int) {
-	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *Auth) GetSignupEnabled() bool {
 	if x != nil {
 		return x.SignupEnabled
@@ -207,8 +375,38 @@ func (x *Auth) GetProviders() []*ProviderConfig {
 	return nil
 }
 
+func (x *Auth) SetSignupEnabled(v bool) {
+	x.SignupEnabled = v
+}
+
+func (x *Auth) SetLastCharLock(v bool) {
+	x.LastCharLock = v
+}
+
+func (x *Auth) SetProviders(v []*ProviderConfig) {
+	x.Providers = v
+}
+
+type Auth_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	SignupEnabled bool
+	LastCharLock  bool
+	Providers     []*ProviderConfig
+}
+
+func (b0 Auth_builder) Build() *Auth {
+	m0 := &Auth{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.SignupEnabled = b.SignupEnabled
+	x.LastCharLock = b.LastCharLock
+	x.Providers = b.Providers
+	return m0
+}
+
 type ProviderConfig struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Label         string                 `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
 	Icon          *string                `protobuf:"bytes,3,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
@@ -242,11 +440,6 @@ func (x *ProviderConfig) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ProviderConfig.ProtoReflect.Descriptor instead.
-func (*ProviderConfig) Descriptor() ([]byte, []int) {
-	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *ProviderConfig) GetName() string {
 	if x != nil {
 		return x.Name
@@ -275,8 +468,55 @@ func (x *ProviderConfig) GetHomepage() string {
 	return ""
 }
 
+func (x *ProviderConfig) SetName(v string) {
+	x.Name = v
+}
+
+func (x *ProviderConfig) SetLabel(v string) {
+	x.Label = v
+}
+
+func (x *ProviderConfig) SetIcon(v string) {
+	x.Icon = &v
+}
+
+func (x *ProviderConfig) SetHomepage(v string) {
+	x.Homepage = v
+}
+
+func (x *ProviderConfig) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return x.Icon != nil
+}
+
+func (x *ProviderConfig) ClearIcon() {
+	x.Icon = nil
+}
+
+type ProviderConfig_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Name     string
+	Label    string
+	Icon     *string
+	Homepage string
+}
+
+func (b0 ProviderConfig_builder) Build() *ProviderConfig {
+	m0 := &ProviderConfig{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Name = b.Name
+	x.Label = b.Label
+	x.Icon = b.Icon
+	x.Homepage = b.Homepage
+	return m0
+}
+
 type Discord struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	BotEnabled    bool                   `protobuf:"varint,1,opt,name=bot_enabled,json=botEnabled,proto3" json:"botEnabled"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -307,11 +547,6 @@ func (x *Discord) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Discord.ProtoReflect.Descriptor instead.
-func (*Discord) Descriptor() ([]byte, []int) {
-	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *Discord) GetBotEnabled() bool {
 	if x != nil {
 		return x.BotEnabled
@@ -319,8 +554,26 @@ func (x *Discord) GetBotEnabled() bool {
 	return false
 }
 
+func (x *Discord) SetBotEnabled(v bool) {
+	x.BotEnabled = v
+}
+
+type Discord_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	BotEnabled bool
+}
+
+func (b0 Discord_builder) Build() *Discord {
+	m0 := &Discord{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.BotEnabled = b.BotEnabled
+	return m0
+}
+
 type Website struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Links         *Links                 `protobuf:"bytes,1,opt,name=links,proto3" json:"links,omitempty"`
 	StatsPage     bool                   `protobuf:"varint,2,opt,name=stats_page,json=statsPage,proto3" json:"statsPage"`
 	unknownFields protoimpl.UnknownFields
@@ -352,11 +605,6 @@ func (x *Website) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Website.ProtoReflect.Descriptor instead.
-func (*Website) Descriptor() ([]byte, []int) {
-	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *Website) GetLinks() *Links {
 	if x != nil {
 		return x.Links
@@ -371,8 +619,43 @@ func (x *Website) GetStatsPage() bool {
 	return false
 }
 
+func (x *Website) SetLinks(v *Links) {
+	x.Links = v
+}
+
+func (x *Website) SetStatsPage(v bool) {
+	x.StatsPage = v
+}
+
+func (x *Website) HasLinks() bool {
+	if x == nil {
+		return false
+	}
+	return x.Links != nil
+}
+
+func (x *Website) ClearLinks() {
+	x.Links = nil
+}
+
+type Website_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Links     *Links
+	StatsPage bool
+}
+
+func (b0 Website_builder) Build() *Website {
+	m0 := &Website{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Links = b.Links
+	x.StatsPage = b.StatsPage
+	return m0
+}
+
 type Links struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Imprint       *string                `protobuf:"bytes,1,opt,name=imprint,proto3,oneof" json:"imprint,omitempty"`
 	PrivacyPolicy *string                `protobuf:"bytes,2,opt,name=privacy_policy,json=privacyPolicy,proto3,oneof" json:"privacyPolicy"`
 	unknownFields protoimpl.UnknownFields
@@ -404,11 +687,6 @@ func (x *Links) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Links.ProtoReflect.Descriptor instead.
-func (*Links) Descriptor() ([]byte, []int) {
-	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *Links) GetImprint() string {
 	if x != nil && x.Imprint != nil {
 		return *x.Imprint
@@ -423,8 +701,54 @@ func (x *Links) GetPrivacyPolicy() string {
 	return ""
 }
 
+func (x *Links) SetImprint(v string) {
+	x.Imprint = &v
+}
+
+func (x *Links) SetPrivacyPolicy(v string) {
+	x.PrivacyPolicy = &v
+}
+
+func (x *Links) HasImprint() bool {
+	if x == nil {
+		return false
+	}
+	return x.Imprint != nil
+}
+
+func (x *Links) HasPrivacyPolicy() bool {
+	if x == nil {
+		return false
+	}
+	return x.PrivacyPolicy != nil
+}
+
+func (x *Links) ClearImprint() {
+	x.Imprint = nil
+}
+
+func (x *Links) ClearPrivacyPolicy() {
+	x.PrivacyPolicy = nil
+}
+
+type Links_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Imprint       *string
+	PrivacyPolicy *string
+}
+
+func (b0 Links_builder) Build() *Links {
+	m0 := &Links{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Imprint = b.Imprint
+	x.PrivacyPolicy = b.PrivacyPolicy
+	return m0
+}
+
 type FeatureGates struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -454,13 +778,20 @@ func (x *FeatureGates) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use FeatureGates.ProtoReflect.Descriptor instead.
-func (*FeatureGates) Descriptor() ([]byte, []int) {
-	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{6}
+type FeatureGates_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 FeatureGates_builder) Build() *FeatureGates {
+	m0 := &FeatureGates{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type Game struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
+	state             protoimpl.MessageState `protogen:"hybrid.v1"`
 	UnemployedJobName string                 `protobuf:"bytes,1,opt,name=unemployed_job_name,json=unemployedJobName,proto3" json:"unemployedJobName"`
 	StartJobGrade     int32                  `protobuf:"varint,2,opt,name=start_job_grade,json=startJobGrade,proto3" json:"startJobGrade"`
 	unknownFields     protoimpl.UnknownFields
@@ -492,11 +823,6 @@ func (x *Game) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Game.ProtoReflect.Descriptor instead.
-func (*Game) Descriptor() ([]byte, []int) {
-	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *Game) GetUnemployedJobName() string {
 	if x != nil {
 		return x.UnemployedJobName
@@ -511,8 +837,32 @@ func (x *Game) GetStartJobGrade() int32 {
 	return 0
 }
 
+func (x *Game) SetUnemployedJobName(v string) {
+	x.UnemployedJobName = v
+}
+
+func (x *Game) SetStartJobGrade(v int32) {
+	x.StartJobGrade = v
+}
+
+type Game_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UnemployedJobName string
+	StartJobGrade     int32
+}
+
+func (b0 Game_builder) Build() *Game {
+	m0 := &Game{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UnemployedJobName = b.UnemployedJobName
+	x.StartJobGrade = b.StartJobGrade
+	return m0
+}
+
 type System struct {
-	state                protoimpl.MessageState  `protogen:"open.v1"`
+	state                protoimpl.MessageState  `protogen:"hybrid.v1"`
 	BannerMessageEnabled bool                    `protobuf:"varint,1,opt,name=banner_message_enabled,json=bannerMessageEnabled,proto3" json:"bannerMessageEnabled"`
 	BannerMessage        *settings.BannerMessage `protobuf:"bytes,2,opt,name=banner_message,json=bannerMessage,proto3,oneof" json:"bannerMessages"`
 	Otlp                 *OTLPFrontend           `protobuf:"bytes,3,opt,name=otlp,proto3" json:"otlp,omitempty"`
@@ -545,11 +895,6 @@ func (x *System) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use System.ProtoReflect.Descriptor instead.
-func (*System) Descriptor() ([]byte, []int) {
-	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *System) GetBannerMessageEnabled() bool {
 	if x != nil {
 		return x.BannerMessageEnabled
@@ -571,8 +916,60 @@ func (x *System) GetOtlp() *OTLPFrontend {
 	return nil
 }
 
+func (x *System) SetBannerMessageEnabled(v bool) {
+	x.BannerMessageEnabled = v
+}
+
+func (x *System) SetBannerMessage(v *settings.BannerMessage) {
+	x.BannerMessage = v
+}
+
+func (x *System) SetOtlp(v *OTLPFrontend) {
+	x.Otlp = v
+}
+
+func (x *System) HasBannerMessage() bool {
+	if x == nil {
+		return false
+	}
+	return x.BannerMessage != nil
+}
+
+func (x *System) HasOtlp() bool {
+	if x == nil {
+		return false
+	}
+	return x.Otlp != nil
+}
+
+func (x *System) ClearBannerMessage() {
+	x.BannerMessage = nil
+}
+
+func (x *System) ClearOtlp() {
+	x.Otlp = nil
+}
+
+type System_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	BannerMessageEnabled bool
+	BannerMessage        *settings.BannerMessage
+	Otlp                 *OTLPFrontend
+}
+
+func (b0 System_builder) Build() *System {
+	m0 := &System{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.BannerMessageEnabled = b.BannerMessageEnabled
+	x.BannerMessage = b.BannerMessage
+	x.Otlp = b.Otlp
+	return m0
+}
+
 type OTLPFrontend struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
 	Headers       map[string]string      `protobuf:"bytes,3,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
@@ -605,11 +1002,6 @@ func (x *OTLPFrontend) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OTLPFrontend.ProtoReflect.Descriptor instead.
-func (*OTLPFrontend) Descriptor() ([]byte, []int) {
-	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{9}
-}
-
 func (x *OTLPFrontend) GetEnabled() bool {
 	if x != nil {
 		return x.Enabled
@@ -631,8 +1023,38 @@ func (x *OTLPFrontend) GetHeaders() map[string]string {
 	return nil
 }
 
+func (x *OTLPFrontend) SetEnabled(v bool) {
+	x.Enabled = v
+}
+
+func (x *OTLPFrontend) SetUrl(v string) {
+	x.Url = v
+}
+
+func (x *OTLPFrontend) SetHeaders(v map[string]string) {
+	x.Headers = v
+}
+
+type OTLPFrontend_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Enabled bool
+	Url     string
+	Headers map[string]string
+}
+
+func (b0 OTLPFrontend_builder) Build() *OTLPFrontend {
+	m0 := &OTLPFrontend{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Enabled = b.Enabled
+	x.Url = b.Url
+	x.Headers = b.Headers
+	return m0
+}
+
 type Display struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
 	IntlLocale *string `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3,oneof" json:"intlLocale"`
 	// ISO 4217 currency code (e.g. "USD", "EUR")
@@ -666,11 +1088,6 @@ func (x *Display) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Display.ProtoReflect.Descriptor instead.
-func (*Display) Descriptor() ([]byte, []int) {
-	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{10}
-}
-
 func (x *Display) GetIntlLocale() string {
 	if x != nil && x.IntlLocale != nil {
 		return *x.IntlLocale
@@ -683,6 +1100,43 @@ func (x *Display) GetCurrencyName() string {
 		return x.CurrencyName
 	}
 	return ""
+}
+
+func (x *Display) SetIntlLocale(v string) {
+	x.IntlLocale = &v
+}
+
+func (x *Display) SetCurrencyName(v string) {
+	x.CurrencyName = v
+}
+
+func (x *Display) HasIntlLocale() bool {
+	if x == nil {
+		return false
+	}
+	return x.IntlLocale != nil
+}
+
+func (x *Display) ClearIntlLocale() {
+	x.IntlLocale = nil
+}
+
+type Display_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
+	IntlLocale *string
+	// ISO 4217 currency code (e.g. "USD", "EUR")
+	CurrencyName string
+}
+
+func (b0 Display_builder) Build() *Display {
+	m0 := &Display{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.IntlLocale = b.IntlLocale
+	x.CurrencyName = b.CurrencyName
+	return m0
 }
 
 var File_resources_clientconfig_clientconfig_proto protoreflect.FileDescriptor
@@ -746,18 +1200,6 @@ const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"intlLocale\x88\x01\x01\x12=\n" +
 	"\rcurrency_name\x18\x02 \x01(\tB\x18\x9a\x84\x9e\x03\x13json:\"currencyName\"R\fcurrencyNameB\x0e\n" +
 	"\f_intl_localeBWZUgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig;clientconfigb\x06proto3"
-
-var (
-	file_resources_clientconfig_clientconfig_proto_rawDescOnce sync.Once
-	file_resources_clientconfig_clientconfig_proto_rawDescData []byte
-)
-
-func file_resources_clientconfig_clientconfig_proto_rawDescGZIP() []byte {
-	file_resources_clientconfig_clientconfig_proto_rawDescOnce.Do(func() {
-		file_resources_clientconfig_clientconfig_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_clientconfig_clientconfig_proto_rawDesc), len(file_resources_clientconfig_clientconfig_proto_rawDesc)))
-	})
-	return file_resources_clientconfig_clientconfig_proto_rawDescData
-}
 
 var file_resources_clientconfig_clientconfig_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_resources_clientconfig_clientconfig_proto_goTypes = []any{

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/wiki/page.proto
 
+//go:build !protoopaque
+
 package wiki
 
 import (
@@ -17,7 +19,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -29,7 +30,7 @@ const (
 )
 
 type Page struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,3,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
@@ -65,11 +66,6 @@ func (x *Page) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Page.ProtoReflect.Descriptor instead.
-func (*Page) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_page_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Page) GetId() int64 {
@@ -128,8 +124,123 @@ func (x *Page) GetFiles() []*file.File {
 	return nil
 }
 
+func (x *Page) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Page) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *Page) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *Page) SetParentId(v int64) {
+	x.ParentId = &v
+}
+
+func (x *Page) SetMeta(v *PageMeta) {
+	x.Meta = v
+}
+
+func (x *Page) SetContent(v *content.Content) {
+	x.Content = v
+}
+
+func (x *Page) SetAccess(v *access.PageAccess) {
+	x.Access = v
+}
+
+func (x *Page) SetFiles(v []*file.File) {
+	x.Files = v
+}
+
+func (x *Page) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *Page) HasParentId() bool {
+	if x == nil {
+		return false
+	}
+	return x.ParentId != nil
+}
+
+func (x *Page) HasMeta() bool {
+	if x == nil {
+		return false
+	}
+	return x.Meta != nil
+}
+
+func (x *Page) HasContent() bool {
+	if x == nil {
+		return false
+	}
+	return x.Content != nil
+}
+
+func (x *Page) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *Page) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *Page) ClearParentId() {
+	x.ParentId = nil
+}
+
+func (x *Page) ClearMeta() {
+	x.Meta = nil
+}
+
+func (x *Page) ClearContent() {
+	x.Content = nil
+}
+
+func (x *Page) ClearAccess() {
+	x.Access = nil
+}
+
+type Page_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id       int64
+	Job      string
+	JobLabel *string
+	ParentId *int64
+	Meta     *PageMeta
+	Content  *content.Content
+	Access   *access.PageAccess
+	Files    []*file.File
+}
+
+func (b0 Page_builder) Build() *Page {
+	m0 := &Page{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.ParentId = b.ParentId
+	x.Meta = b.Meta
+	x.Content = b.Content
+	x.Access = b.Access
+	x.Files = b.Files
+	return m0
+}
+
 type PageMeta struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -171,11 +282,6 @@ func (x *PageMeta) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PageMeta.ProtoReflect.Descriptor instead.
-func (*PageMeta) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_page_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *PageMeta) GetCreatedAt() *timestamp.Timestamp {
@@ -276,8 +382,181 @@ func (x *PageMeta) GetStartpage() bool {
 	return false
 }
 
+func (x *PageMeta) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *PageMeta) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *PageMeta) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *PageMeta) SetSlug(v string) {
+	x.Slug = &v
+}
+
+func (x *PageMeta) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *PageMeta) SetDescription(v string) {
+	x.Description = v
+}
+
+func (x *PageMeta) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *PageMeta) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *PageMeta) SetContentType(v content.ContentType) {
+	x.ContentType = v
+}
+
+func (x *PageMeta) SetTags(v []string) {
+	x.Tags = v
+}
+
+func (x *PageMeta) SetToc(v bool) {
+	x.Toc = &v
+}
+
+func (x *PageMeta) SetPublic(v bool) {
+	x.Public = v
+}
+
+func (x *PageMeta) SetDraft(v bool) {
+	x.Draft = v
+}
+
+func (x *PageMeta) SetStartpage(v bool) {
+	x.Startpage = v
+}
+
+func (x *PageMeta) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *PageMeta) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *PageMeta) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *PageMeta) HasSlug() bool {
+	if x == nil {
+		return false
+	}
+	return x.Slug != nil
+}
+
+func (x *PageMeta) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *PageMeta) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *PageMeta) HasToc() bool {
+	if x == nil {
+		return false
+	}
+	return x.Toc != nil
+}
+
+func (x *PageMeta) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *PageMeta) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *PageMeta) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *PageMeta) ClearSlug() {
+	x.Slug = nil
+}
+
+func (x *PageMeta) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *PageMeta) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *PageMeta) ClearToc() {
+	x.Toc = nil
+}
+
+type PageMeta_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	CreatedAt   *timestamp.Timestamp
+	UpdatedAt   *timestamp.Timestamp
+	DeletedAt   *timestamp.Timestamp
+	Slug        *string
+	Title       string
+	Description string
+	CreatorId   *int32
+	Creator     *short.UserShort
+	ContentType content.ContentType
+	Tags        []string
+	Toc         *bool
+	Public      bool
+	Draft       bool
+	Startpage   bool
+}
+
+func (b0 PageMeta_builder) Build() *PageMeta {
+	m0 := &PageMeta{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	x.Slug = b.Slug
+	x.Title = b.Title
+	x.Description = b.Description
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.ContentType = b.ContentType
+	x.Tags = b.Tags
+	x.Toc = b.Toc
+	x.Public = b.Public
+	x.Draft = b.Draft
+	x.Startpage = b.Startpage
+	return m0
+}
+
 type PageShort struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,3,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
@@ -318,11 +597,6 @@ func (x *PageShort) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PageShort.ProtoReflect.Descriptor instead.
-func (*PageShort) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_page_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *PageShort) GetId() int64 {
@@ -416,8 +690,164 @@ func (x *PageShort) GetStartpage() bool {
 	return false
 }
 
+func (x *PageShort) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *PageShort) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *PageShort) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *PageShort) SetParentId(v int64) {
+	x.ParentId = &v
+}
+
+func (x *PageShort) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *PageShort) SetSlug(v string) {
+	x.Slug = &v
+}
+
+func (x *PageShort) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *PageShort) SetDescription(v string) {
+	x.Description = v
+}
+
+func (x *PageShort) SetChildren(v []*PageShort) {
+	x.Children = v
+}
+
+func (x *PageShort) SetRootInfo(v *PageRootInfo) {
+	x.RootInfo = v
+}
+
+func (x *PageShort) SetLevel(v int32) {
+	x.Level = &v
+}
+
+func (x *PageShort) SetDraft(v bool) {
+	x.Draft = v
+}
+
+func (x *PageShort) SetStartpage(v bool) {
+	x.Startpage = v
+}
+
+func (x *PageShort) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *PageShort) HasParentId() bool {
+	if x == nil {
+		return false
+	}
+	return x.ParentId != nil
+}
+
+func (x *PageShort) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *PageShort) HasSlug() bool {
+	if x == nil {
+		return false
+	}
+	return x.Slug != nil
+}
+
+func (x *PageShort) HasRootInfo() bool {
+	if x == nil {
+		return false
+	}
+	return x.RootInfo != nil
+}
+
+func (x *PageShort) HasLevel() bool {
+	if x == nil {
+		return false
+	}
+	return x.Level != nil
+}
+
+func (x *PageShort) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *PageShort) ClearParentId() {
+	x.ParentId = nil
+}
+
+func (x *PageShort) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *PageShort) ClearSlug() {
+	x.Slug = nil
+}
+
+func (x *PageShort) ClearRootInfo() {
+	x.RootInfo = nil
+}
+
+func (x *PageShort) ClearLevel() {
+	x.Level = nil
+}
+
+type PageShort_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id          int64
+	Job         string
+	JobLabel    *string
+	ParentId    *int64
+	DeletedAt   *timestamp.Timestamp
+	Slug        *string
+	Title       string
+	Description string
+	Children    []*PageShort
+	RootInfo    *PageRootInfo
+	Level       *int32
+	Draft       bool
+	Startpage   bool
+}
+
+func (b0 PageShort_builder) Build() *PageShort {
+	m0 := &PageShort{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.ParentId = b.ParentId
+	x.DeletedAt = b.DeletedAt
+	x.Slug = b.Slug
+	x.Title = b.Title
+	x.Description = b.Description
+	x.Children = b.Children
+	x.RootInfo = b.RootInfo
+	x.Level = b.Level
+	x.Draft = b.Draft
+	x.Startpage = b.Startpage
+	return m0
+}
+
 type PageRootInfo struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	LogoFileId    *int64                 `protobuf:"varint,1,opt,name=logo_file_id,json=logoFileId,proto3,oneof" json:"logo_file_id,omitempty"`
 	Logo          *file.File             `protobuf:"bytes,2,opt,name=logo,proto3,oneof" json:"logo,omitempty" alias:"logo"`
 	unknownFields protoimpl.UnknownFields
@@ -449,11 +879,6 @@ func (x *PageRootInfo) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PageRootInfo.ProtoReflect.Descriptor instead.
-func (*PageRootInfo) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_page_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *PageRootInfo) GetLogoFileId() int64 {
 	if x != nil && x.LogoFileId != nil {
 		return *x.LogoFileId
@@ -466,6 +891,52 @@ func (x *PageRootInfo) GetLogo() *file.File {
 		return x.Logo
 	}
 	return nil
+}
+
+func (x *PageRootInfo) SetLogoFileId(v int64) {
+	x.LogoFileId = &v
+}
+
+func (x *PageRootInfo) SetLogo(v *file.File) {
+	x.Logo = v
+}
+
+func (x *PageRootInfo) HasLogoFileId() bool {
+	if x == nil {
+		return false
+	}
+	return x.LogoFileId != nil
+}
+
+func (x *PageRootInfo) HasLogo() bool {
+	if x == nil {
+		return false
+	}
+	return x.Logo != nil
+}
+
+func (x *PageRootInfo) ClearLogoFileId() {
+	x.LogoFileId = nil
+}
+
+func (x *PageRootInfo) ClearLogo() {
+	x.Logo = nil
+}
+
+type PageRootInfo_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	LogoFileId *int64
+	Logo       *file.File
+}
+
+func (b0 PageRootInfo_builder) Build() *PageRootInfo {
+	m0 := &PageRootInfo{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.LogoFileId = b.LogoFileId
+	x.Logo = b.Logo
+	return m0
 }
 
 var File_resources_wiki_page_proto protoreflect.FileDescriptor
@@ -544,18 +1015,6 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\x04logo\x18\x02 \x01(\v2\x14.resources.file.FileB\x11\x9a\x84\x9e\x03\falias:\"logo\"H\x01R\x04logo\x88\x01\x01B\x0f\n" +
 	"\r_logo_file_idB\a\n" +
 	"\x05_logoBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki;wikib\x06proto3"
-
-var (
-	file_resources_wiki_page_proto_rawDescOnce sync.Once
-	file_resources_wiki_page_proto_rawDescData []byte
-)
-
-func file_resources_wiki_page_proto_rawDescGZIP() []byte {
-	file_resources_wiki_page_proto_rawDescOnce.Do(func() {
-		file_resources_wiki_page_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_wiki_page_proto_rawDesc), len(file_resources_wiki_page_proto_rawDesc)))
-	})
-	return file_resources_wiki_page_proto_rawDescData
-}
 
 var file_resources_wiki_page_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_wiki_page_proto_goTypes = []any{

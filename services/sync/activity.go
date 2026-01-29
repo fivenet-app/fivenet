@@ -7,6 +7,7 @@ import (
 	"slices"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
@@ -15,7 +16,6 @@ import (
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	colleaguesstore "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues"
 	"github.com/go-jet/jet/v2/mysql"
@@ -68,12 +68,13 @@ func (s *Server) AddActivity(
 		}
 
 	case *pbsync.AddActivityRequest_UserUpdate:
-		if s.esxCompat {
-			return nil, fmt.Errorf("ESX compatibility mode is enabled, cannot send data. %w", ErrSendDataDisabled)
-		}
-
 		if err := s.handleUserUpdate(ctx, d); err != nil {
 			return nil, fmt.Errorf("failed to handle UserUpdate activity. %w", err)
+		}
+
+	case *pbsync.AddActivityRequest_AccountUpdate:
+		if err := s.handleAccountUpdate(ctx, d); err != nil {
+			return nil, fmt.Errorf("failed to handle AccountUpdate activity. %w", err)
 		}
 	}
 
@@ -339,7 +340,7 @@ func (s *Server) handleUserUpdate(
 ) error {
 	d := data.UserUpdate
 
-	tUser := tables.User()
+	tUser := table.FivenetUser
 
 	selectStmt := tUser.
 		SELECT(
@@ -392,6 +393,51 @@ func (s *Server) handleUserUpdate(
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return fmt.Errorf("failed to update user. %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *Server) handleAccountUpdate(
+	ctx context.Context,
+	data *pbsync.AddActivityRequest_AccountUpdate,
+) error {
+	d := data.AccountUpdate
+
+	tAccounts := table.FivenetAccounts
+
+	updateSets := []any{}
+	if d.Groups != nil {
+		groups, err := (&accounts.AccountGroups{
+			Groups: d.GetGroups(),
+		}).Value()
+		if err != nil {
+			return fmt.Errorf("failed to marshal account groups. %w", err)
+		}
+
+		updateSets = append(
+			updateSets,
+			tAccounts.Groups.SET(mysql.String(groups.(string))),
+		)
+	}
+
+	if len(updateSets) > 0 {
+		stmt := tAccounts.
+			UPDATE()
+
+		if len(updateSets) == 1 {
+			stmt = stmt.SET(updateSets[0])
+		} else {
+			stmt = stmt.SET(updateSets[0], updateSets[1:]...)
+		}
+
+		stmt = stmt.
+			WHERE(tAccounts.License.EQ(mysql.String(d.License))).
+			LIMIT(1)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return fmt.Errorf("failed to update account. %w", err)
 		}
 	}
 

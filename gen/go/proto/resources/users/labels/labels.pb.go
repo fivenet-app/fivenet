@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/users/labels/labels.proto
 
+//go:build !protoopaque
+
 package userslabels
 
 import (
@@ -13,7 +15,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -25,7 +26,7 @@ const (
 )
 
 type Labels struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	List          []*Label               `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -56,11 +57,6 @@ func (x *Labels) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Labels.ProtoReflect.Descriptor instead.
-func (*Labels) Descriptor() ([]byte, []int) {
-	return file_resources_users_labels_labels_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *Labels) GetList() []*Label {
 	if x != nil {
 		return x.List
@@ -68,8 +64,26 @@ func (x *Labels) GetList() []*Label {
 	return nil
 }
 
+func (x *Labels) SetList(v []*Label) {
+	x.List = v
+}
+
+type Labels_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	List []*Label
+}
+
+func (b0 Labels_builder) Build() *Labels {
+	m0 := &Labels{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.List = b.List
+	return m0
+}
+
 type Label struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	Job           *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
@@ -103,11 +117,6 @@ func (x *Label) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Label.ProtoReflect.Descriptor instead.
-func (*Label) Descriptor() ([]byte, []int) {
-	return file_resources_users_labels_labels_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *Label) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -136,6 +145,53 @@ func (x *Label) GetColor() string {
 	return ""
 }
 
+func (x *Label) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Label) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *Label) SetName(v string) {
+	x.Name = v
+}
+
+func (x *Label) SetColor(v string) {
+	x.Color = v
+}
+
+func (x *Label) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *Label) ClearJob() {
+	x.Job = nil
+}
+
+type Label_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id    int64
+	Job   *string
+	Name  string
+	Color string
+}
+
+func (b0 Label_builder) Build() *Label {
+	m0 := &Label{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Job = b.Job
+	x.Name = b.Name
+	x.Color = b.Color
+	return m0
+}
+
 var File_resources_users_labels_labels_proto protoreflect.FileDescriptor
 
 const file_resources_users_labels_labels_proto_rawDesc = "" +
@@ -149,18 +205,6 @@ const file_resources_users_labels_labels_proto_rawDesc = "" +
 	"\x04name\x18\x03 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12\x1e\n" +
 	"\x05color\x18\x04 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05colorB\x06\n" +
 	"\x04_jobBVZTgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels;userslabelsb\x06proto3"
-
-var (
-	file_resources_users_labels_labels_proto_rawDescOnce sync.Once
-	file_resources_users_labels_labels_proto_rawDescData []byte
-)
-
-func file_resources_users_labels_labels_proto_rawDescGZIP() []byte {
-	file_resources_users_labels_labels_proto_rawDescOnce.Do(func() {
-		file_resources_users_labels_labels_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_users_labels_labels_proto_rawDesc), len(file_resources_users_labels_labels_proto_rawDesc)))
-	})
-	return file_resources_users_labels_labels_proto_rawDescData
-}
 
 var file_resources_users_labels_labels_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_users_labels_labels_proto_goTypes = []any{

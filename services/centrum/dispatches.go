@@ -15,7 +15,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -117,7 +116,7 @@ func (s *Server) ListDispatches(
 		return resp, nil
 	}
 
-	tUsers := tables.User().AS("colleague")
+	tUsers := table.FivenetUser.AS("colleague")
 
 	stmt := tDispatch.
 		SELECT(
@@ -257,7 +256,7 @@ func (s *Server) GetDispatch(
 		Dispatch: &centrumdispatches.Dispatch{},
 	}
 
-	tUsers := tables.User().AS("colleague")
+	tUsers := table.FivenetUser.AS("colleague")
 
 	stmt := tDispatch.
 		SELECT(
@@ -565,7 +564,7 @@ func (s *Server) ListDispatchActivity(
 		return resp, nil
 	}
 
-	tUsers := tables.User().AS("colleague")
+	tUsers := table.FivenetUser.AS("colleague")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tDispatchStatus.

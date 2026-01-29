@@ -12,8 +12,8 @@ import (
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	permissionsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/events"
 	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms/collections"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -287,8 +287,8 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 		return err
 	}
 
-	tJobs := tables.Jobs().AS("job")
-	tJobsGrades := tables.JobsGrades().AS("job_grade")
+	tJobs := table.FivenetJobs.AS("job")
+	tJobsGrades := table.FivenetJobsGrades.AS("job_grade")
 
 	stmt := tJobs.
 		SELECT(

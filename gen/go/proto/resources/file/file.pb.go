@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/file/file.proto
 
+//go:build !protoopaque
+
 package file
 
 import (
@@ -11,7 +13,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,7 +24,7 @@ const (
 )
 
 type File struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	ParentId      *int64                 `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
 	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	FilePath      string                 `protobuf:"bytes,3,opt,name=file_path,json=filePath,proto3" json:"file_path,omitempty"`
@@ -59,11 +60,6 @@ func (x *File) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use File.ProtoReflect.Descriptor instead.
-func (*File) Descriptor() ([]byte, []int) {
-	return file_resources_file_file_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *File) GetParentId() int64 {
@@ -122,6 +118,99 @@ func (x *File) GetIsDir() bool {
 	return false
 }
 
+func (x *File) SetParentId(v int64) {
+	x.ParentId = &v
+}
+
+func (x *File) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *File) SetFilePath(v string) {
+	x.FilePath = v
+}
+
+func (x *File) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *File) SetByteSize(v int64) {
+	x.ByteSize = v
+}
+
+func (x *File) SetContentType(v string) {
+	x.ContentType = v
+}
+
+func (x *File) SetMeta(v *FileMeta) {
+	x.Meta = v
+}
+
+func (x *File) SetIsDir(v bool) {
+	x.IsDir = v
+}
+
+func (x *File) HasParentId() bool {
+	if x == nil {
+		return false
+	}
+	return x.ParentId != nil
+}
+
+func (x *File) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *File) HasMeta() bool {
+	if x == nil {
+		return false
+	}
+	return x.Meta != nil
+}
+
+func (x *File) ClearParentId() {
+	x.ParentId = nil
+}
+
+func (x *File) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *File) ClearMeta() {
+	x.Meta = nil
+}
+
+type File_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ParentId    *int64
+	Id          int64
+	FilePath    string
+	CreatedAt   *timestamp.Timestamp
+	ByteSize    int64
+	ContentType string
+	Meta        *FileMeta
+	IsDir       bool
+}
+
+func (b0 File_builder) Build() *File {
+	m0 := &File{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ParentId = b.ParentId
+	x.Id = b.Id
+	x.FilePath = b.FilePath
+	x.CreatedAt = b.CreatedAt
+	x.ByteSize = b.ByteSize
+	x.ContentType = b.ContentType
+	x.Meta = b.Meta
+	x.IsDir = b.IsDir
+	return m0
+}
+
 var File_resources_file_file_proto protoreflect.FileDescriptor
 
 const file_resources_file_file_proto_rawDesc = "" +
@@ -141,18 +230,6 @@ const file_resources_file_file_proto_rawDesc = "" +
 	"_parent_idB\r\n" +
 	"\v_created_atB\a\n" +
 	"\x05_metaBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file;fileb\x06proto3"
-
-var (
-	file_resources_file_file_proto_rawDescOnce sync.Once
-	file_resources_file_file_proto_rawDescData []byte
-)
-
-func file_resources_file_file_proto_rawDescGZIP() []byte {
-	file_resources_file_file_proto_rawDescOnce.Do(func() {
-		file_resources_file_file_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_file_file_proto_rawDesc), len(file_resources_file_file_proto_rawDesc)))
-	})
-	return file_resources_file_file_proto_rawDescData
-}
 
 var file_resources_file_file_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_file_file_proto_goTypes = []any{

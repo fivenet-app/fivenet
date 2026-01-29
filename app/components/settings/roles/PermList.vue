@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
-import type { RoleAttribute } from '~~/gen/ts/resources/permissions/permissions/attributes';
+import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 import { isEmptyAttributes } from './helpers';
 

@@ -23,6 +23,15 @@ func (m *Account) Sanitize() error {
 		}
 	}
 
+	// Field: Groups
+	if m.Groups != nil {
+		if v, ok := any(m.GetGroups()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: License
 	m.License = htmlsanitizer.Sanitize(m.License)
 
@@ -49,6 +58,24 @@ func (m *Account) Sanitize() error {
 
 	// Field: Username
 	m.Username = htmlsanitizer.Sanitize(m.Username)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *AccountGroups) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Groups
+	for idx, item := range m.Groups {
+		_, _ = idx, item
+
+		m.Groups[idx] = htmlsanitizer.Sanitize(m.Groups[idx])
+
+	}
 
 	return nil
 }

@@ -14,15 +14,22 @@ message Account {
   int64 id = 1 [(tagger.tags) = "sql:\"primary_key\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  string username = 4 [(buf.validate.field).string.max_len = 24];
-  string license = 5 [(buf.validate.field).string.max_len = 64];
-  bool enabled = 6;
-  optional int32 last_char = 7 [(buf.validate.field).int32.gt = 0];
+  bool enabled = 4;
+  string username = 5 [(buf.validate.field).string.max_len = 24];
+  string license = 6 [(buf.validate.field).string.max_len = 64];
 
-  repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts = 8 [
+  optional AccountGroups groups = 7;
+
+  optional int32 last_char = 8 [(buf.validate.field).int32.gt = 0];
+
+  repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts = 9 [
     (buf.validate.field).repeated.max_items = 10,
     (tagger.tags) = "alias:\"oauth2_account\""
   ];
+}
+
+message AccountGroups {
+  repeated string groups = 1 [(buf.validate.field).repeated.max_items = 20];
 }
 
 message Character {

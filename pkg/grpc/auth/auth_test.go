@@ -21,11 +21,11 @@ func TestGRPCAuthFunc(t *testing.T) {
 	// Valid JWT token
 	tm := NewTokenMgr(jwtTokenTestSecret)
 	assert.NotNil(t, tm)
-	token, err := tm.NewWithClaims(basicCitizenInfoClaim)
+	token, err := tm.FromCombinedClaims(testUserCombinedClaim)
 	require.NoError(t, err)
 	ui := userinfo.NewMockUserInfoRetriever(map[int32]*pbuserinfo.UserInfo{
-		basicCitizenInfoClaim.CharID: {
-			AccountId: basicCitizenInfoClaim.AccID,
+		testUserCombinedClaim.UserID: {
+			AccountId: testUserCombinedClaim.AccID,
 		},
 	})
 	appCfg, err := appconfig.NewTest(appconfig.TestParams{

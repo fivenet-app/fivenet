@@ -11,7 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/proto"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	grpcserver "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
@@ -25,9 +24,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	// All tests assume esx compat mode
-	tables.EnableESXCompat()
-
 	code := m.Run()
 	os.Exit(code)
 }

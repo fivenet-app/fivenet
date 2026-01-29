@@ -5,7 +5,6 @@ package resources.calendar.entries;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
-import "resources/calendar/access/access.proto";
 import "resources/calendar/calendar.proto";
 import "resources/common/content/content.proto";
 import "resources/timestamp/timestamp.proto";

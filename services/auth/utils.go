@@ -6,22 +6,22 @@ import (
 	"strings"
 	"time"
 
-	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
-	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
-	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"golang.org/x/crypto/bcrypt"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
 
-func (s *Server) getCookieBase(name string) http.Cookie {
+// Cost parameter for bcrypt hashing.
+const BCryptCost = 14
+
+func (s *Server) getCookieBase(name string, value string) http.Cookie {
 	return http.Cookie{
 		Name:     name,
-		Value:    "",
+		Value:    value,
 		Expires:  time.Now().Add(auth.TokenExpireTime),
 		MaxAge:   int(auth.TokenExpireTime.Seconds()),
 		Domain:   s.domain,
@@ -32,48 +32,61 @@ func (s *Server) getCookieBase(name string) http.Cookie {
 	}
 }
 
-func (s *Server) setTokenCookie(ctx context.Context, token string) error {
-	authedCookie := s.getCookieBase(auth.AuthedCookieName)
-	authedCookie.Value = "true"
+func (s *Server) setCookies(
+	ctx context.Context,
+	accClaims *authclaims.AccountInfoClaims,
+) error {
+	authedCookie := s.getCookieBase(auth.AuthedCookieName, "true")
 	authedCookie.HttpOnly = false
+	header := metadata.Pairs("set-cookie", authedCookie.String())
 
-	cookie := s.getCookieBase(auth.TokenCookieName)
-	cookie.Value = token
+	accToken, err := s.tm.FromAccClaims(accClaims)
+	if err != nil {
+		return err
+	}
+	accCookie := s.getCookieBase(auth.AccCookieName, accToken)
+	header.Append("set-cookie", accCookie.String())
 
-	header := metadata.Pairs("set-cookie", authedCookie.String(), "set-cookie", cookie.String())
-	// Send the cookie back to the client
+	// Send the cookies back to the client
 	return grpc.SendHeader(ctx, header)
 }
 
-func (s *Server) destroyTokenCookie(ctx context.Context) error {
-	authedCookie := s.getCookieBase(auth.AuthedCookieName)
-	authedCookie.Value = "false"
+func (s *Server) destroyCookies(ctx context.Context) error {
+	authedCookie := s.getCookieBase(auth.AuthedCookieName, "false")
 	authedCookie.HttpOnly = false
 
-	cookie := s.getCookieBase(auth.TokenCookieName)
-	cookie.Expires = time.Time{}
-	cookie.MaxAge = -1
+	accCookie := s.getCookieBase(auth.AccCookieName, "")
+	accCookie.Expires = time.Time{}
+	accCookie.MaxAge = -1
 
-	header := metadata.Pairs("set-cookie", authedCookie.String(), "set-cookie", cookie.String())
-	// Send the cookie back to the client
+	tokenCookie := s.getCookieBase(auth.UserCookieName, "")
+	tokenCookie.Expires = time.Time{}
+	tokenCookie.MaxAge = -1
+
+	// Send the cookies back to the client
+	header := metadata.Pairs(
+		"set-cookie", accCookie.String(),
+		"set-cookie", authedCookie.String(),
+		"set-cookie", tokenCookie.String(),
+	)
 	return grpc.SendHeader(ctx, header)
 }
 
 // Helper to fetch account from claims.
-func (s *Server) getAccountFromClaims(
+func (s *Server) getAccountFromIDAndUsername(
 	ctx context.Context,
-	claims *auth.CitizenInfoClaims,
+	accId int64, username string,
 	withPassword bool,
 ) (*model.FivenetAccounts, error) {
 	return s.getAccountFromDB(ctx, mysql.AND(
-		tAccounts.ID.EQ(mysql.Int64(claims.AccID)),
-		tAccounts.Username.EQ(mysql.String(claims.Username)),
+		tAccounts.ID.EQ(mysql.Int64(accId)),
+		tAccounts.Username.EQ(mysql.String(username)),
 	), withPassword)
 }
 
 // Helper for password hashing.
 func hashPassword(password string) (string, error) {
-	hashed, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	hashed, err := bcrypt.GenerateFromPassword([]byte(password), BCryptCost)
 	return string(hashed), err
 }
 
@@ -85,43 +98,4 @@ func checkPassword(hashed, plain string) error {
 // Helper for username normalization.
 func normalizeUsername(username string) string {
 	return strings.TrimSpace(username)
-}
-
-// Centralized superuser/override logic for character/job selection
-// Returns updated jobProps (if any) and error.
-func (s *Server) handleSuperuserOverride(
-	ctx context.Context,
-	account *model.FivenetAccounts,
-	char *users.User,
-	claims *auth.CitizenInfoClaims,
-	isSuperuser bool,
-) (*jobsprops.JobProps, error) {
-	var jProps *jobsprops.JobProps
-
-	if !isSuperuser &&
-		((account.Superuser != nil && *account.Superuser) || account.OverrideJob != nil) {
-		account.OverrideJob = nil
-		account.OverrideJobGrade = nil
-
-		if err := s.ui.SetUserInfo(ctx, claims.AccID, claims.CharID, false, account.OverrideJob, account.OverrideJobGrade); err != nil {
-			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
-		}
-
-		not := false
-		account.Superuser = &not
-	} else if isSuperuser &&
-		(account.Superuser != nil && *account.Superuser) && account.OverrideJob != nil && account.OverrideJobGrade != nil {
-		char.Job = *account.OverrideJob
-		char.JobGrade = *account.OverrideJobGrade
-
-		s.enricher.EnrichJobInfo(char)
-
-		_, _, jp, err := s.getJobWithProps(ctx, char.GetJob())
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
-		}
-		jProps = jp
-	}
-
-	return jProps, nil
 }

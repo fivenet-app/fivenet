@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/citizens/citizens.proto
 
+//go:build !protoopaque
+
 package citizens
 
 import (
@@ -19,7 +21,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -31,7 +32,7 @@ const (
 )
 
 type ListCitizensRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
@@ -68,11 +69,6 @@ func (x *ListCitizensRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListCitizensRequest.ProtoReflect.Descriptor instead.
-func (*ListCitizensRequest) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ListCitizensRequest) GetPagination() *database.PaginationRequest {
@@ -131,8 +127,146 @@ func (x *ListCitizensRequest) GetOpenFines() int64 {
 	return 0
 }
 
+func (x *ListCitizensRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListCitizensRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListCitizensRequest) SetSearch(v string) {
+	x.Search = v
+}
+
+func (x *ListCitizensRequest) SetWanted(v bool) {
+	x.Wanted = &v
+}
+
+func (x *ListCitizensRequest) SetPhoneNumber(v string) {
+	x.PhoneNumber = &v
+}
+
+func (x *ListCitizensRequest) SetTrafficInfractionPoints(v uint32) {
+	x.TrafficInfractionPoints = &v
+}
+
+func (x *ListCitizensRequest) SetDateofbirth(v string) {
+	x.Dateofbirth = &v
+}
+
+func (x *ListCitizensRequest) SetOpenFines(v int64) {
+	x.OpenFines = &v
+}
+
+func (x *ListCitizensRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListCitizensRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListCitizensRequest) HasWanted() bool {
+	if x == nil {
+		return false
+	}
+	return x.Wanted != nil
+}
+
+func (x *ListCitizensRequest) HasPhoneNumber() bool {
+	if x == nil {
+		return false
+	}
+	return x.PhoneNumber != nil
+}
+
+func (x *ListCitizensRequest) HasTrafficInfractionPoints() bool {
+	if x == nil {
+		return false
+	}
+	return x.TrafficInfractionPoints != nil
+}
+
+func (x *ListCitizensRequest) HasDateofbirth() bool {
+	if x == nil {
+		return false
+	}
+	return x.Dateofbirth != nil
+}
+
+func (x *ListCitizensRequest) HasOpenFines() bool {
+	if x == nil {
+		return false
+	}
+	return x.OpenFines != nil
+}
+
+func (x *ListCitizensRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListCitizensRequest) ClearSort() {
+	x.Sort = nil
+}
+
+func (x *ListCitizensRequest) ClearWanted() {
+	x.Wanted = nil
+}
+
+func (x *ListCitizensRequest) ClearPhoneNumber() {
+	x.PhoneNumber = nil
+}
+
+func (x *ListCitizensRequest) ClearTrafficInfractionPoints() {
+	x.TrafficInfractionPoints = nil
+}
+
+func (x *ListCitizensRequest) ClearDateofbirth() {
+	x.Dateofbirth = nil
+}
+
+func (x *ListCitizensRequest) ClearOpenFines() {
+	x.OpenFines = nil
+}
+
+type ListCitizensRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	Search                  string
+	Wanted                  *bool
+	PhoneNumber             *string
+	TrafficInfractionPoints *uint32
+	Dateofbirth             *string
+	OpenFines               *int64
+}
+
+func (b0 ListCitizensRequest_builder) Build() *ListCitizensRequest {
+	m0 := &ListCitizensRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.Search = b.Search
+	x.Wanted = b.Wanted
+	x.PhoneNumber = b.PhoneNumber
+	x.TrafficInfractionPoints = b.TrafficInfractionPoints
+	x.Dateofbirth = b.Dateofbirth
+	x.OpenFines = b.OpenFines
+	return m0
+}
+
 type ListCitizensResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Users         []*users.User                `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -164,11 +298,6 @@ func (x *ListCitizensResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListCitizensResponse.ProtoReflect.Descriptor instead.
-func (*ListCitizensResponse) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListCitizensResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -183,8 +312,43 @@ func (x *ListCitizensResponse) GetUsers() []*users.User {
 	return nil
 }
 
+func (x *ListCitizensResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListCitizensResponse) SetUsers(v []*users.User) {
+	x.Users = v
+}
+
+func (x *ListCitizensResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListCitizensResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListCitizensResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Users      []*users.User
+}
+
+func (b0 ListCitizensResponse_builder) Build() *ListCitizensResponse {
+	m0 := &ListCitizensResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Users = b.Users
+	return m0
+}
+
 type GetUserRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	InfoOnly      *bool                  `protobuf:"varint,2,opt,name=info_only,json=infoOnly,proto3,oneof" json:"info_only,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -216,11 +380,6 @@ func (x *GetUserRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetUserRequest.ProtoReflect.Descriptor instead.
-func (*GetUserRequest) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *GetUserRequest) GetUserId() int32 {
 	if x != nil {
 		return x.UserId
@@ -235,8 +394,43 @@ func (x *GetUserRequest) GetInfoOnly() bool {
 	return false
 }
 
+func (x *GetUserRequest) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *GetUserRequest) SetInfoOnly(v bool) {
+	x.InfoOnly = &v
+}
+
+func (x *GetUserRequest) HasInfoOnly() bool {
+	if x == nil {
+		return false
+	}
+	return x.InfoOnly != nil
+}
+
+func (x *GetUserRequest) ClearInfoOnly() {
+	x.InfoOnly = nil
+}
+
+type GetUserRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId   int32
+	InfoOnly *bool
+}
+
+func (b0 GetUserRequest_builder) Build() *GetUserRequest {
+	m0 := &GetUserRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.InfoOnly = b.InfoOnly
+	return m0
+}
+
 type GetUserResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	User          *users.User            `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -267,11 +461,6 @@ func (x *GetUserResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetUserResponse.ProtoReflect.Descriptor instead.
-func (*GetUserResponse) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *GetUserResponse) GetUser() *users.User {
 	if x != nil {
 		return x.User
@@ -279,8 +468,37 @@ func (x *GetUserResponse) GetUser() *users.User {
 	return nil
 }
 
+func (x *GetUserResponse) SetUser(v *users.User) {
+	x.User = v
+}
+
+func (x *GetUserResponse) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *GetUserResponse) ClearUser() {
+	x.User = nil
+}
+
+type GetUserResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	User *users.User
+}
+
+func (b0 GetUserResponse_builder) Build() *GetUserResponse {
+	m0 := &GetUserResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.User = b.User
+	return m0
+}
+
 type ListUserActivityRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
@@ -315,11 +533,6 @@ func (x *ListUserActivityRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListUserActivityRequest.ProtoReflect.Descriptor instead.
-func (*ListUserActivityRequest) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *ListUserActivityRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -348,8 +561,67 @@ func (x *ListUserActivityRequest) GetTypes() []activity.UserActivityType {
 	return nil
 }
 
+func (x *ListUserActivityRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListUserActivityRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListUserActivityRequest) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *ListUserActivityRequest) SetTypes(v []activity.UserActivityType) {
+	x.Types = v
+}
+
+func (x *ListUserActivityRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListUserActivityRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListUserActivityRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListUserActivityRequest) ClearSort() {
+	x.Sort = nil
+}
+
+type ListUserActivityRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	UserId int32
+	Types  []activity.UserActivityType
+}
+
+func (b0 ListUserActivityRequest_builder) Build() *ListUserActivityRequest {
+	m0 := &ListUserActivityRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.UserId = b.UserId
+	x.Types = b.Types
+	return m0
+}
+
 type ListUserActivityResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Activity      []*activity.UserActivity     `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -381,11 +653,6 @@ func (x *ListUserActivityResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListUserActivityResponse.ProtoReflect.Descriptor instead.
-func (*ListUserActivityResponse) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *ListUserActivityResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -400,8 +667,43 @@ func (x *ListUserActivityResponse) GetActivity() []*activity.UserActivity {
 	return nil
 }
 
+func (x *ListUserActivityResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListUserActivityResponse) SetActivity(v []*activity.UserActivity) {
+	x.Activity = v
+}
+
+func (x *ListUserActivityResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListUserActivityResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListUserActivityResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Activity   []*activity.UserActivity
+}
+
+func (b0 ListUserActivityResponse_builder) Build() *ListUserActivityResponse {
+	m0 := &ListUserActivityResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Activity = b.Activity
+	return m0
+}
+
 type SetUserPropsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Props         *props.UserProps       `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
 	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -433,11 +735,6 @@ func (x *SetUserPropsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetUserPropsRequest.ProtoReflect.Descriptor instead.
-func (*SetUserPropsRequest) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *SetUserPropsRequest) GetProps() *props.UserProps {
 	if x != nil {
 		return x.Props
@@ -452,8 +749,43 @@ func (x *SetUserPropsRequest) GetReason() string {
 	return ""
 }
 
+func (x *SetUserPropsRequest) SetProps(v *props.UserProps) {
+	x.Props = v
+}
+
+func (x *SetUserPropsRequest) SetReason(v string) {
+	x.Reason = v
+}
+
+func (x *SetUserPropsRequest) HasProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.Props != nil
+}
+
+func (x *SetUserPropsRequest) ClearProps() {
+	x.Props = nil
+}
+
+type SetUserPropsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Props  *props.UserProps
+	Reason string
+}
+
+func (b0 SetUserPropsRequest_builder) Build() *SetUserPropsRequest {
+	m0 := &SetUserPropsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Props = b.Props
+	x.Reason = b.Reason
+	return m0
+}
+
 type SetUserPropsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Props         *props.UserProps       `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -484,11 +816,6 @@ func (x *SetUserPropsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetUserPropsResponse.ProtoReflect.Descriptor instead.
-func (*SetUserPropsResponse) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *SetUserPropsResponse) GetProps() *props.UserProps {
 	if x != nil {
 		return x.Props
@@ -496,8 +823,37 @@ func (x *SetUserPropsResponse) GetProps() *props.UserProps {
 	return nil
 }
 
+func (x *SetUserPropsResponse) SetProps(v *props.UserProps) {
+	x.Props = v
+}
+
+func (x *SetUserPropsResponse) HasProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.Props != nil
+}
+
+func (x *SetUserPropsResponse) ClearProps() {
+	x.Props = nil
+}
+
+type SetUserPropsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Props *props.UserProps
+}
+
+func (b0 SetUserPropsResponse_builder) Build() *SetUserPropsResponse {
+	m0 := &SetUserPropsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Props = b.Props
+	return m0
+}
+
 type DeleteAvatarRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -527,13 +883,20 @@ func (x *DeleteAvatarRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteAvatarRequest.ProtoReflect.Descriptor instead.
-func (*DeleteAvatarRequest) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{8}
+type DeleteAvatarRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteAvatarRequest_builder) Build() *DeleteAvatarRequest {
+	m0 := &DeleteAvatarRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type DeleteAvatarResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -563,13 +926,20 @@ func (x *DeleteAvatarResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteAvatarResponse.ProtoReflect.Descriptor instead.
-func (*DeleteAvatarResponse) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{9}
+type DeleteAvatarResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteAvatarResponse_builder) Build() *DeleteAvatarResponse {
+	m0 := &DeleteAvatarResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type DeleteMugshotRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -601,11 +971,6 @@ func (x *DeleteMugshotRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteMugshotRequest.ProtoReflect.Descriptor instead.
-func (*DeleteMugshotRequest) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{10}
-}
-
 func (x *DeleteMugshotRequest) GetUserId() int32 {
 	if x != nil {
 		return x.UserId
@@ -620,8 +985,32 @@ func (x *DeleteMugshotRequest) GetReason() string {
 	return ""
 }
 
+func (x *DeleteMugshotRequest) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *DeleteMugshotRequest) SetReason(v string) {
+	x.Reason = v
+}
+
+type DeleteMugshotRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId int32
+	Reason string
+}
+
+func (b0 DeleteMugshotRequest_builder) Build() *DeleteMugshotRequest {
+	m0 := &DeleteMugshotRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.Reason = b.Reason
+	return m0
+}
+
 type DeleteMugshotResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -651,13 +1040,20 @@ func (x *DeleteMugshotResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteMugshotResponse.ProtoReflect.Descriptor instead.
-func (*DeleteMugshotResponse) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{11}
+type DeleteMugshotResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteMugshotResponse_builder) Build() *DeleteMugshotResponse {
+	m0 := &DeleteMugshotResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ManageLabelsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -688,11 +1084,6 @@ func (x *ManageLabelsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ManageLabelsRequest.ProtoReflect.Descriptor instead.
-func (*ManageLabelsRequest) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{12}
-}
-
 func (x *ManageLabelsRequest) GetLabels() []*labels.Label {
 	if x != nil {
 		return x.Labels
@@ -700,8 +1091,26 @@ func (x *ManageLabelsRequest) GetLabels() []*labels.Label {
 	return nil
 }
 
+func (x *ManageLabelsRequest) SetLabels(v []*labels.Label) {
+	x.Labels = v
+}
+
+type ManageLabelsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Labels []*labels.Label
+}
+
+func (b0 ManageLabelsRequest_builder) Build() *ManageLabelsRequest {
+	m0 := &ManageLabelsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Labels = b.Labels
+	return m0
+}
+
 type ManageLabelsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -732,16 +1141,29 @@ func (x *ManageLabelsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ManageLabelsResponse.ProtoReflect.Descriptor instead.
-func (*ManageLabelsResponse) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{13}
-}
-
 func (x *ManageLabelsResponse) GetLabels() []*labels.Label {
 	if x != nil {
 		return x.Labels
 	}
 	return nil
+}
+
+func (x *ManageLabelsResponse) SetLabels(v []*labels.Label) {
+	x.Labels = v
+}
+
+type ManageLabelsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Labels []*labels.Label
+}
+
+func (b0 ManageLabelsResponse_builder) Build() *ManageLabelsResponse {
+	m0 := &ManageLabelsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Labels = b.Labels
+	return m0
 }
 
 var File_services_citizens_citizens_proto protoreflect.FileDescriptor
@@ -823,18 +1245,6 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\rUploadMugshot\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fSetUserProps(\x01\x12x\n" +
 	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fSetUserProps\x12g\n" +
 	"\fManageLabels\x12&.services.citizens.ManageLabelsRequest\x1a'.services.citizens.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a&\xea\xf3\x18\"\b\x1e\x12\x1ei-mdi-account-multiple-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
-
-var (
-	file_services_citizens_citizens_proto_rawDescOnce sync.Once
-	file_services_citizens_citizens_proto_rawDescData []byte
-)
-
-func file_services_citizens_citizens_proto_rawDescGZIP() []byte {
-	file_services_citizens_citizens_proto_rawDescOnce.Do(func() {
-		file_services_citizens_citizens_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_citizens_citizens_proto_rawDesc), len(file_services_citizens_citizens_proto_rawDesc)))
-	})
-	return file_services_citizens_citizens_proto_rawDescData
-}
 
 var file_services_citizens_citizens_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_services_citizens_citizens_proto_goTypes = []any{

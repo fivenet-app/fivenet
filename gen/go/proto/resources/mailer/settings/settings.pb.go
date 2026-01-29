@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/mailer/settings/settings.proto
 
+//go:build !protoopaque
+
 package mailersettings
 
 import (
@@ -12,7 +14,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,7 +25,7 @@ const (
 )
 
 type EmailSettings struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	Signature     *content.Content       `protobuf:"bytes,2,opt,name=signature,proto3,oneof" json:"signature,omitempty"`
 	BlockedEmails []string               `protobuf:"bytes,3,rep,name=blocked_emails,json=blockedEmails,proto3" json:"blocked_emails,omitempty"`
@@ -57,11 +58,6 @@ func (x *EmailSettings) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EmailSettings.ProtoReflect.Descriptor instead.
-func (*EmailSettings) Descriptor() ([]byte, []int) {
-	return file_resources_mailer_settings_settings_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *EmailSettings) GetEmailId() int64 {
 	if x != nil {
 		return x.EmailId
@@ -83,6 +79,47 @@ func (x *EmailSettings) GetBlockedEmails() []string {
 	return nil
 }
 
+func (x *EmailSettings) SetEmailId(v int64) {
+	x.EmailId = v
+}
+
+func (x *EmailSettings) SetSignature(v *content.Content) {
+	x.Signature = v
+}
+
+func (x *EmailSettings) SetBlockedEmails(v []string) {
+	x.BlockedEmails = v
+}
+
+func (x *EmailSettings) HasSignature() bool {
+	if x == nil {
+		return false
+	}
+	return x.Signature != nil
+}
+
+func (x *EmailSettings) ClearSignature() {
+	x.Signature = nil
+}
+
+type EmailSettings_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EmailId       int64
+	Signature     *content.Content
+	BlockedEmails []string
+}
+
+func (b0 EmailSettings_builder) Build() *EmailSettings {
+	m0 := &EmailSettings{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EmailId = b.EmailId
+	x.Signature = b.Signature
+	x.BlockedEmails = b.BlockedEmails
+	return m0
+}
+
 var File_resources_mailer_settings_settings_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_settings_settings_proto_rawDesc = "" +
@@ -94,18 +131,6 @@ const file_resources_mailer_settings_settings_proto_rawDesc = "" +
 	"\x0eblocked_emails\x18\x03 \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\rblockedEmailsB\f\n" +
 	"\n" +
 	"_signatureB\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings;mailersettingsb\x06proto3"
-
-var (
-	file_resources_mailer_settings_settings_proto_rawDescOnce sync.Once
-	file_resources_mailer_settings_settings_proto_rawDescData []byte
-)
-
-func file_resources_mailer_settings_settings_proto_rawDescGZIP() []byte {
-	file_resources_mailer_settings_settings_proto_rawDescOnce.Do(func() {
-		file_resources_mailer_settings_settings_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_mailer_settings_settings_proto_rawDesc), len(file_resources_mailer_settings_settings_proto_rawDesc)))
-	})
-	return file_resources_mailer_settings_settings_proto_rawDescData
-}
 
 var file_resources_mailer_settings_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_mailer_settings_settings_proto_goTypes = []any{

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
+	"slices"
 	"testing"
 	"time"
 
@@ -158,7 +158,7 @@ func (m *dbServer) prepareDBForFirstUse(ctx context.Context) error {
 	}
 
 	// Use DB migrations to handle the rest (esx compat mode is true)
-	if _, err := query.MigrateDB(zap.NewNop(), m.getDSN(), false, true, false); err != nil {
+	if _, err := query.MigrateDB(zap.NewNop(), m.getDSN(), false, false); err != nil {
 		m.t.Fatalf("failed to migrate test database: %v", err)
 	}
 
@@ -204,7 +204,7 @@ func (m *dbServer) LoadBaseData(ctx context.Context) error {
 	}
 	// Sort the found files as they might not be in lexical order which we
 	// need for this case https://github.com/golang/go/issues/17153
-	sort.Strings(files)
+	slices.Sort(files)
 
 	for _, file := range files {
 		if err := m.loadSQLFile(ctx, file); err != nil {

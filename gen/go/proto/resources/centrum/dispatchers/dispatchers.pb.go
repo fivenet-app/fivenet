@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/centrum/dispatchers/dispatchers.proto
 
+//go:build !protoopaque
+
 package centrumdispatchers
 
 import (
@@ -11,7 +13,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,7 +24,7 @@ const (
 )
 
 type Dispatchers struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	Job           string                  `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                 `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	Dispatchers   []*colleagues.Colleague `protobuf:"bytes,3,rep,name=dispatchers,proto3" json:"dispatchers,omitempty"`
@@ -56,11 +57,6 @@ func (x *Dispatchers) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Dispatchers.ProtoReflect.Descriptor instead.
-func (*Dispatchers) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatchers_dispatchers_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *Dispatchers) GetJob() string {
 	if x != nil {
 		return x.Job
@@ -82,8 +78,49 @@ func (x *Dispatchers) GetDispatchers() []*colleagues.Colleague {
 	return nil
 }
 
+func (x *Dispatchers) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *Dispatchers) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *Dispatchers) SetDispatchers(v []*colleagues.Colleague) {
+	x.Dispatchers = v
+}
+
+func (x *Dispatchers) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *Dispatchers) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+type Dispatchers_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job         string
+	JobLabel    *string
+	Dispatchers []*colleagues.Colleague
+}
+
+func (b0 Dispatchers_builder) Build() *Dispatchers {
+	m0 := &Dispatchers{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.Dispatchers = b.Dispatchers
+	return m0
+}
+
 type JobDispatchers struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Dispatchers   []*Dispatchers         `protobuf:"bytes,1,rep,name=dispatchers,proto3" json:"dispatchers,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -114,16 +151,29 @@ func (x *JobDispatchers) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobDispatchers.ProtoReflect.Descriptor instead.
-func (*JobDispatchers) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatchers_dispatchers_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *JobDispatchers) GetDispatchers() []*Dispatchers {
 	if x != nil {
 		return x.Dispatchers
 	}
 	return nil
+}
+
+func (x *JobDispatchers) SetDispatchers(v []*Dispatchers) {
+	x.Dispatchers = v
+}
+
+type JobDispatchers_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Dispatchers []*Dispatchers
+}
+
+func (b0 JobDispatchers_builder) Build() *JobDispatchers {
+	m0 := &JobDispatchers{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Dispatchers = b.Dispatchers
+	return m0
 }
 
 var File_resources_centrum_dispatchers_dispatchers_proto protoreflect.FileDescriptor
@@ -139,18 +189,6 @@ const file_resources_centrum_dispatchers_dispatchers_proto_rawDesc = "" +
 	"_job_label\"^\n" +
 	"\x0eJobDispatchers\x12L\n" +
 	"\vdispatchers\x18\x01 \x03(\v2*.resources.centrum.dispatchers.DispatchersR\vdispatchersBdZbgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers;centrumdispatchersb\x06proto3"
-
-var (
-	file_resources_centrum_dispatchers_dispatchers_proto_rawDescOnce sync.Once
-	file_resources_centrum_dispatchers_dispatchers_proto_rawDescData []byte
-)
-
-func file_resources_centrum_dispatchers_dispatchers_proto_rawDescGZIP() []byte {
-	file_resources_centrum_dispatchers_dispatchers_proto_rawDescOnce.Do(func() {
-		file_resources_centrum_dispatchers_dispatchers_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_centrum_dispatchers_dispatchers_proto_rawDesc), len(file_resources_centrum_dispatchers_dispatchers_proto_rawDesc)))
-	})
-	return file_resources_centrum_dispatchers_dispatchers_proto_rawDescData
-}
 
 var file_resources_centrum_dispatchers_dispatchers_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_centrum_dispatchers_dispatchers_proto_goTypes = []any{

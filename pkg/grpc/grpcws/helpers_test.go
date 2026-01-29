@@ -4,7 +4,7 @@
 package grpcws_test
 
 import (
-	"sort"
+	"slices"
 	"testing"
 
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
@@ -26,8 +26,8 @@ func TestListGRPCResources(t *testing.T) {
 		"/improbable.grpcweb.test.TestService/PingStream",
 	}
 	actual := grpcweb.ListGRPCResources(server)
-	sort.Strings(expected)
-	sort.Strings(actual)
+	slices.Sort(expected)
+	slices.Sort(actual)
 	assert.Equal(t,
 		expected,
 		actual,

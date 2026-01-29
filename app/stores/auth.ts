@@ -7,9 +7,10 @@ import { getAuthAuthClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { JobProps } from '~~/gen/ts/resources/jobs/props/props';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { RoleAttribute } from '~~/gen/ts/resources/permissions/permissions/attributes';
+import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 import type { User } from '~~/gen/ts/resources/users/user';
+import type { ImpersonateJobResponse } from '~~/gen/ts/services/auth/auth';
 
 const logger = useLogger('🔑 Auth');
 
@@ -76,6 +77,11 @@ export const useAuthStore = defineStore(
             logoFileId: undefined,
             logoFile: undefined,
         });
+
+        /**
+         * Imperonated job grade for the user.
+         */
+        const impersonate = ref<boolean | number>(false);
 
         /**
          * Set or unset the username.
@@ -168,6 +174,7 @@ export const useAuthStore = defineStore(
             setAccessTokenExpiration(null);
             setPermissions([], []);
             setJobProps(undefined);
+            setUserToken();
 
             // Close the WebSocket connection when logging out
             useGRPCWebsocketTransport().close();
@@ -180,6 +187,9 @@ export const useAuthStore = defineStore(
          * @param pass - The password of the user.
          */
         const doLogin = async (user: string, pass: string): Promise<void> => {
+            // Prevent multiple simultaneous login attempts
+            if (loggingIn.value) return;
+
             loginStart();
             setActiveChar(null);
             setPermissions([], []);
@@ -191,9 +201,8 @@ export const useAuthStore = defineStore(
                 const { response } = await call;
                 refreshCookie('fivenet_authed');
 
-                loginStop(null);
-
                 setUsername(user);
+                loginStop(null);
 
                 if (response.char === undefined) {
                     logger.info('Login response (not fast-tracked), redirecting to char selector');
@@ -211,6 +220,7 @@ export const useAuthStore = defineStore(
                     setActiveChar(response.char.char ?? null);
                     setPermissions(response.char.permissions, response.char.attributes);
                     setJobProps(response.char.jobProps);
+                    setUserToken(response.char.token);
 
                     const startpage = settingsStore.startpage ?? '/overview';
                     try {
@@ -232,11 +242,12 @@ export const useAuthStore = defineStore(
          * Logs out the currently logged-in user and clears authentication information.
          */
         const doLogout = async (): Promise<void> => {
-            loggingIn.value = true;
-
-            const authAuthClient = await getAuthAuthClient();
+            // User is about to logout, ignore ongoing logins/choose character actions
+            loginStart();
 
             try {
+                const authAuthClient = await getAuthAuthClient();
+
                 await authAuthClient.logout({});
 
                 refreshCookie('fivenet_authed');
@@ -264,10 +275,22 @@ export const useAuthStore = defineStore(
          * @param redirect - Whether to redirect the user after selecting the character.
          */
         const chooseCharacter = async (charId?: number, redirect?: boolean): Promise<void> => {
+            // Prevent multiple simultaneous login attempts
+            if (loggingIn.value) return;
+
+            loginStart();
+
             if (charId === undefined || charId <= 0) {
                 if (!lastCharID.value) {
-                    const route = useRoute();
+                    if (!redirect) {
+                        loginStop(null);
+                        return;
+                    }
 
+                    const route = useRoute();
+                    // Clear user token and unset login-block to avoid issues
+                    setUserToken();
+                    loginStop(null);
                     await navigateTo({
                         name: 'auth-character-selector',
                         query: route.query,
@@ -278,9 +301,9 @@ export const useAuthStore = defineStore(
                 charId = lastCharID.value;
             }
 
-            const authAuthClient = await getAuthAuthClient();
-
             try {
+                const authAuthClient = await getAuthAuthClient();
+
                 const call = authAuthClient.chooseCharacter({
                     charId: charId,
                 });
@@ -290,6 +313,7 @@ export const useAuthStore = defineStore(
                 }
 
                 setUsername(response.username);
+                setUserToken(response.token);
                 setAccessTokenExpiration(toDate(response.expires));
                 setActiveChar(response.char);
                 setPermissions(response.permissions, response.attributes);
@@ -315,7 +339,34 @@ export const useAuthStore = defineStore(
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
+            } finally {
+                loginStop(null);
             }
+        };
+
+        /**
+         * Impersonate job grade for the current user.
+         * E.g., for testing permissions of a role.
+         * @param grade - The job grade to impersonate.
+         */
+        const impersonateJob = async (grade: number): Promise<ImpersonateJobResponse> => {
+            const authAuthClient = await getAuthAuthClient();
+
+            const call = authAuthClient.impersonateJob({
+                jobGrade: grade,
+            });
+            const { response } = await call;
+            if (!response.char) {
+                throw new Error('Server Error! No character in impersonate job response.');
+            }
+
+            setAccessTokenExpiration(toDate(response.expires));
+            setActiveChar(response.char);
+            setPermissions(response.permissions, response.attributes);
+            // Job props doesn't change on impersonation (user is part of the same job)
+            setUserToken(response.token);
+
+            return response;
         };
 
         /**
@@ -351,6 +402,8 @@ export const useAuthStore = defineStore(
                     permissions.value = permissions.value.filter((p) => p.guardName !== 'superuser-superuser');
                 }
 
+                setUserToken(response.token);
+
                 // Notify user about the change
                 notifications.add({
                     title: { key: 'notifications.superuser_menu.setsuperusermode.title', parameters: {} },
@@ -373,6 +426,24 @@ export const useAuthStore = defineStore(
             }
         };
 
+        /**
+         * Set user token in session storage.
+         * @param token - The user token to set. If undefined, the token is removed.
+         */
+        const setUserToken = async (token?: string): Promise<void> => {
+            if (!token) {
+                sessionStorage.removeItem('fivenet:user_token_v1');
+                return;
+            }
+
+            const userInfo = await parseJWTPayload<{
+                su?: boolean;
+            }>(token);
+
+            logger.debug('Setting user token in session storage, JWT payload:', userInfo);
+            sessionStorage.setItem('fivenet:user_token_v1', token);
+        };
+
         // Getters
         const isSuperuser = computed<boolean>(() => {
             return !!permissions.value.find((p) => p.guardName === 'superuser-superuser');
@@ -389,6 +460,7 @@ export const useAuthStore = defineStore(
             permissions,
             attributes,
             jobProps,
+            impersonate,
 
             // Actions
             setUsername,
@@ -402,7 +474,9 @@ export const useAuthStore = defineStore(
             doLogin,
             doLogout,
             chooseCharacter,
+            impersonateJob,
             setSuperuserMode,
+            setUserToken,
 
             // Getters
             isSuperuser,

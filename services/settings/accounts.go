@@ -27,6 +27,7 @@ func (s *Server) ListAccounts(
 	req *pbsettings.ListAccountsRequest,
 ) (*pbsettings.ListAccountsResponse, error) {
 	var t mysql.ReadableTable = tAccounts
+
 	condition := mysql.Bool(true)
 	if req.License != nil && req.GetLicense() != "" {
 		condition = condition.AND(
@@ -45,9 +46,10 @@ func (s *Server) ListAccounts(
 		condition = condition.AND(
 			tOauth2.ExternalID.LIKE(mysql.String(fmt.Sprintf("%%%s%%", req.GetExternalId()))),
 		)
-		t = t.INNER_JOIN(tOauth2,
-			tOauth2.AccountID.EQ(tAccounts.ID),
-		)
+		t = t.
+			INNER_JOIN(tOauth2,
+				tOauth2.AccountID.EQ(tAccounts.ID),
+			)
 	}
 
 	countStmt := tAccounts.
@@ -131,6 +133,7 @@ func (s *Server) ListAccounts(
 			tAccounts.Enabled,
 			tAccounts.Username,
 			tAccounts.License,
+			tAccounts.Groups,
 			tAccounts.LastChar,
 			tOauth2.AccountID,
 			tOauth2.CreatedAt,
@@ -165,6 +168,7 @@ func (s *Server) getAccount(ctx context.Context, id int64) (*accounts.Account, e
 			tAccounts.Enabled,
 			tAccounts.Username,
 			tAccounts.License,
+			tAccounts.Groups,
 			tAccounts.LastChar,
 		).
 		FROM(tAccounts).

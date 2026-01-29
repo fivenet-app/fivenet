@@ -13,7 +13,6 @@ import (
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -43,7 +42,7 @@ func (s *Server) ListQualificationRequests(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tQuali := tQuali.AS("qualification_short")
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 	tApprover := tUser.AS("approver")
 
 	condition := mysql.AND(
@@ -444,7 +443,7 @@ func (s *Server) getQualificationRequest(
 	userInfo *userinfo.UserInfo,
 ) (*qualifications.QualificationRequest, error) {
 	tQuali := tQuali.AS("qualificationshort")
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 	tApprover := tUser.AS("approver")
 
 	stmt := tQualiRequests.

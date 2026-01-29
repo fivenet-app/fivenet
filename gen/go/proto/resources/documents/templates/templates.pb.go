@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/documents/templates/templates.proto
 
+//go:build !protoopaque
+
 package documentstemplates
 
 import (
@@ -22,7 +24,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -34,7 +35,7 @@ const (
 )
 
 type Template struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -81,11 +82,6 @@ func (x *Template) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Template.ProtoReflect.Descriptor instead.
-func (*Template) Descriptor() ([]byte, []int) {
-	return file_resources_documents_templates_templates_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Template) GetId() int64 {
@@ -221,8 +217,244 @@ func (x *Template) GetApproval() *TemplateApproval {
 	return nil
 }
 
+func (x *Template) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Template) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Template) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *Template) SetCategory(v *category.Category) {
+	x.Category = v
+}
+
+func (x *Template) SetWeight(v uint32) {
+	x.Weight = v
+}
+
+func (x *Template) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *Template) SetDescription(v string) {
+	x.Description = v
+}
+
+func (x *Template) SetColor(v string) {
+	x.Color = &v
+}
+
+func (x *Template) SetIcon(v string) {
+	x.Icon = &v
+}
+
+func (x *Template) SetContentTitle(v string) {
+	x.ContentTitle = v
+}
+
+func (x *Template) SetContent(v string) {
+	x.Content = v
+}
+
+func (x *Template) SetState(v string) {
+	x.State = v
+}
+
+func (x *Template) SetSchema(v *TemplateSchema) {
+	x.Schema = v
+}
+
+func (x *Template) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *Template) SetCreatorJobLabel(v string) {
+	x.CreatorJobLabel = &v
+}
+
+func (x *Template) SetJobAccess(v []*TemplateJobAccess) {
+	x.JobAccess = v
+}
+
+func (x *Template) SetContentAccess(v *access.DocumentAccess) {
+	x.ContentAccess = v
+}
+
+func (x *Template) SetWorkflow(v *workflow.Workflow) {
+	x.Workflow = v
+}
+
+func (x *Template) SetApproval(v *TemplateApproval) {
+	x.Approval = v
+}
+
+func (x *Template) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Template) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Template) HasCategory() bool {
+	if x == nil {
+		return false
+	}
+	return x.Category != nil
+}
+
+func (x *Template) HasColor() bool {
+	if x == nil {
+		return false
+	}
+	return x.Color != nil
+}
+
+func (x *Template) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return x.Icon != nil
+}
+
+func (x *Template) HasSchema() bool {
+	if x == nil {
+		return false
+	}
+	return x.Schema != nil
+}
+
+func (x *Template) HasCreatorJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorJobLabel != nil
+}
+
+func (x *Template) HasContentAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.ContentAccess != nil
+}
+
+func (x *Template) HasWorkflow() bool {
+	if x == nil {
+		return false
+	}
+	return x.Workflow != nil
+}
+
+func (x *Template) HasApproval() bool {
+	if x == nil {
+		return false
+	}
+	return x.Approval != nil
+}
+
+func (x *Template) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Template) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Template) ClearCategory() {
+	x.Category = nil
+}
+
+func (x *Template) ClearColor() {
+	x.Color = nil
+}
+
+func (x *Template) ClearIcon() {
+	x.Icon = nil
+}
+
+func (x *Template) ClearSchema() {
+	x.Schema = nil
+}
+
+func (x *Template) ClearCreatorJobLabel() {
+	x.CreatorJobLabel = nil
+}
+
+func (x *Template) ClearContentAccess() {
+	x.ContentAccess = nil
+}
+
+func (x *Template) ClearWorkflow() {
+	x.Workflow = nil
+}
+
+func (x *Template) ClearApproval() {
+	x.Approval = nil
+}
+
+type Template_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id              int64
+	CreatedAt       *timestamp.Timestamp
+	UpdatedAt       *timestamp.Timestamp
+	Category        *category.Category
+	Weight          uint32
+	Title           string
+	Description     string
+	Color           *string
+	Icon            *string
+	ContentTitle    string
+	Content         string
+	State           string
+	Schema          *TemplateSchema
+	CreatorJob      string
+	CreatorJobLabel *string
+	JobAccess       []*TemplateJobAccess
+	ContentAccess   *access.DocumentAccess
+	Workflow        *workflow.Workflow
+	Approval        *TemplateApproval
+}
+
+func (b0 Template_builder) Build() *Template {
+	m0 := &Template{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.Category = b.Category
+	x.Weight = b.Weight
+	x.Title = b.Title
+	x.Description = b.Description
+	x.Color = b.Color
+	x.Icon = b.Icon
+	x.ContentTitle = b.ContentTitle
+	x.Content = b.Content
+	x.State = b.State
+	x.Schema = b.Schema
+	x.CreatorJob = b.CreatorJob
+	x.CreatorJobLabel = b.CreatorJobLabel
+	x.JobAccess = b.JobAccess
+	x.ContentAccess = b.ContentAccess
+	x.Workflow = b.Workflow
+	x.Approval = b.Approval
+	return m0
+}
+
 type TemplateShort struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -263,11 +495,6 @@ func (x *TemplateShort) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TemplateShort.ProtoReflect.Descriptor instead.
-func (*TemplateShort) Descriptor() ([]byte, []int) {
-	return file_resources_documents_templates_templates_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *TemplateShort) GetId() int64 {
@@ -361,8 +588,186 @@ func (x *TemplateShort) GetWorkflow() *workflow.Workflow {
 	return nil
 }
 
+func (x *TemplateShort) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *TemplateShort) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *TemplateShort) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *TemplateShort) SetCategory(v *category.Category) {
+	x.Category = v
+}
+
+func (x *TemplateShort) SetWeight(v uint32) {
+	x.Weight = v
+}
+
+func (x *TemplateShort) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *TemplateShort) SetDescription(v string) {
+	x.Description = v
+}
+
+func (x *TemplateShort) SetColor(v string) {
+	x.Color = &v
+}
+
+func (x *TemplateShort) SetIcon(v string) {
+	x.Icon = &v
+}
+
+func (x *TemplateShort) SetSchema(v *TemplateSchema) {
+	x.Schema = v
+}
+
+func (x *TemplateShort) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *TemplateShort) SetCreatorJobLabel(v string) {
+	x.CreatorJobLabel = &v
+}
+
+func (x *TemplateShort) SetWorkflow(v *workflow.Workflow) {
+	x.Workflow = v
+}
+
+func (x *TemplateShort) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *TemplateShort) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *TemplateShort) HasCategory() bool {
+	if x == nil {
+		return false
+	}
+	return x.Category != nil
+}
+
+func (x *TemplateShort) HasColor() bool {
+	if x == nil {
+		return false
+	}
+	return x.Color != nil
+}
+
+func (x *TemplateShort) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return x.Icon != nil
+}
+
+func (x *TemplateShort) HasSchema() bool {
+	if x == nil {
+		return false
+	}
+	return x.Schema != nil
+}
+
+func (x *TemplateShort) HasCreatorJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorJobLabel != nil
+}
+
+func (x *TemplateShort) HasWorkflow() bool {
+	if x == nil {
+		return false
+	}
+	return x.Workflow != nil
+}
+
+func (x *TemplateShort) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *TemplateShort) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *TemplateShort) ClearCategory() {
+	x.Category = nil
+}
+
+func (x *TemplateShort) ClearColor() {
+	x.Color = nil
+}
+
+func (x *TemplateShort) ClearIcon() {
+	x.Icon = nil
+}
+
+func (x *TemplateShort) ClearSchema() {
+	x.Schema = nil
+}
+
+func (x *TemplateShort) ClearCreatorJobLabel() {
+	x.CreatorJobLabel = nil
+}
+
+func (x *TemplateShort) ClearWorkflow() {
+	x.Workflow = nil
+}
+
+type TemplateShort_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id              int64
+	CreatedAt       *timestamp.Timestamp
+	UpdatedAt       *timestamp.Timestamp
+	Category        *category.Category
+	Weight          uint32
+	Title           string
+	Description     string
+	Color           *string
+	Icon            *string
+	Schema          *TemplateSchema
+	CreatorJob      string
+	CreatorJobLabel *string
+	Workflow        *workflow.Workflow
+}
+
+func (b0 TemplateShort_builder) Build() *TemplateShort {
+	m0 := &TemplateShort{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.Category = b.Category
+	x.Weight = b.Weight
+	x.Title = b.Title
+	x.Description = b.Description
+	x.Color = b.Color
+	x.Icon = b.Icon
+	x.Schema = b.Schema
+	x.CreatorJob = b.CreatorJob
+	x.CreatorJobLabel = b.CreatorJobLabel
+	x.Workflow = b.Workflow
+	return m0
+}
+
 type TemplateSchema struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Requirements  *TemplateRequirements  `protobuf:"bytes,1,opt,name=requirements,proto3" json:"requirements,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -393,11 +798,6 @@ func (x *TemplateSchema) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TemplateSchema.ProtoReflect.Descriptor instead.
-func (*TemplateSchema) Descriptor() ([]byte, []int) {
-	return file_resources_documents_templates_templates_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *TemplateSchema) GetRequirements() *TemplateRequirements {
 	if x != nil {
 		return x.Requirements
@@ -405,8 +805,37 @@ func (x *TemplateSchema) GetRequirements() *TemplateRequirements {
 	return nil
 }
 
+func (x *TemplateSchema) SetRequirements(v *TemplateRequirements) {
+	x.Requirements = v
+}
+
+func (x *TemplateSchema) HasRequirements() bool {
+	if x == nil {
+		return false
+	}
+	return x.Requirements != nil
+}
+
+func (x *TemplateSchema) ClearRequirements() {
+	x.Requirements = nil
+}
+
+type TemplateSchema_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Requirements *TemplateRequirements
+}
+
+func (b0 TemplateSchema_builder) Build() *TemplateSchema {
+	m0 := &TemplateSchema{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Requirements = b.Requirements
+	return m0
+}
+
 type TemplateRequirements struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Documents     *ObjectSpecs           `protobuf:"bytes,1,opt,name=documents,proto3,oneof" json:"documents,omitempty"`
 	Users         *ObjectSpecs           `protobuf:"bytes,2,opt,name=users,proto3,oneof" json:"users,omitempty"`
 	Vehicles      *ObjectSpecs           `protobuf:"bytes,3,opt,name=vehicles,proto3,oneof" json:"vehicles,omitempty"`
@@ -439,11 +868,6 @@ func (x *TemplateRequirements) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TemplateRequirements.ProtoReflect.Descriptor instead.
-func (*TemplateRequirements) Descriptor() ([]byte, []int) {
-	return file_resources_documents_templates_templates_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *TemplateRequirements) GetDocuments() *ObjectSpecs {
 	if x != nil {
 		return x.Documents
@@ -465,8 +889,71 @@ func (x *TemplateRequirements) GetVehicles() *ObjectSpecs {
 	return nil
 }
 
+func (x *TemplateRequirements) SetDocuments(v *ObjectSpecs) {
+	x.Documents = v
+}
+
+func (x *TemplateRequirements) SetUsers(v *ObjectSpecs) {
+	x.Users = v
+}
+
+func (x *TemplateRequirements) SetVehicles(v *ObjectSpecs) {
+	x.Vehicles = v
+}
+
+func (x *TemplateRequirements) HasDocuments() bool {
+	if x == nil {
+		return false
+	}
+	return x.Documents != nil
+}
+
+func (x *TemplateRequirements) HasUsers() bool {
+	if x == nil {
+		return false
+	}
+	return x.Users != nil
+}
+
+func (x *TemplateRequirements) HasVehicles() bool {
+	if x == nil {
+		return false
+	}
+	return x.Vehicles != nil
+}
+
+func (x *TemplateRequirements) ClearDocuments() {
+	x.Documents = nil
+}
+
+func (x *TemplateRequirements) ClearUsers() {
+	x.Users = nil
+}
+
+func (x *TemplateRequirements) ClearVehicles() {
+	x.Vehicles = nil
+}
+
+type TemplateRequirements_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Documents *ObjectSpecs
+	Users     *ObjectSpecs
+	Vehicles  *ObjectSpecs
+}
+
+func (b0 TemplateRequirements_builder) Build() *TemplateRequirements {
+	m0 := &TemplateRequirements{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Documents = b.Documents
+	x.Users = b.Users
+	x.Vehicles = b.Vehicles
+	return m0
+}
+
 type ObjectSpecs struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Required      *bool                  `protobuf:"varint,1,opt,name=required,proto3,oneof" json:"required,omitempty"`
 	Min           *int32                 `protobuf:"varint,2,opt,name=min,proto3,oneof" json:"min,omitempty"`
 	Max           *int32                 `protobuf:"varint,3,opt,name=max,proto3,oneof" json:"max,omitempty"`
@@ -499,11 +986,6 @@ func (x *ObjectSpecs) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ObjectSpecs.ProtoReflect.Descriptor instead.
-func (*ObjectSpecs) Descriptor() ([]byte, []int) {
-	return file_resources_documents_templates_templates_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *ObjectSpecs) GetRequired() bool {
 	if x != nil && x.Required != nil {
 		return *x.Required
@@ -525,8 +1007,71 @@ func (x *ObjectSpecs) GetMax() int32 {
 	return 0
 }
 
+func (x *ObjectSpecs) SetRequired(v bool) {
+	x.Required = &v
+}
+
+func (x *ObjectSpecs) SetMin(v int32) {
+	x.Min = &v
+}
+
+func (x *ObjectSpecs) SetMax(v int32) {
+	x.Max = &v
+}
+
+func (x *ObjectSpecs) HasRequired() bool {
+	if x == nil {
+		return false
+	}
+	return x.Required != nil
+}
+
+func (x *ObjectSpecs) HasMin() bool {
+	if x == nil {
+		return false
+	}
+	return x.Min != nil
+}
+
+func (x *ObjectSpecs) HasMax() bool {
+	if x == nil {
+		return false
+	}
+	return x.Max != nil
+}
+
+func (x *ObjectSpecs) ClearRequired() {
+	x.Required = nil
+}
+
+func (x *ObjectSpecs) ClearMin() {
+	x.Min = nil
+}
+
+func (x *ObjectSpecs) ClearMax() {
+	x.Max = nil
+}
+
+type ObjectSpecs_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Required *bool
+	Min      *int32
+	Max      *int32
+}
+
+func (b0 ObjectSpecs_builder) Build() *ObjectSpecs {
+	m0 := &ObjectSpecs{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Required = b.Required
+	x.Min = b.Min
+	x.Max = b.Max
+	return m0
+}
+
 type TemplateData struct {
-	state         protoimpl.MessageState     `protogen:"open.v1"`
+	state         protoimpl.MessageState     `protogen:"hybrid.v1"`
 	ActiveChar    *users.User                `protobuf:"bytes,1,opt,name=active_char,json=activeChar,proto3" json:"active_char,omitempty"`
 	Documents     []*documents.DocumentShort `protobuf:"bytes,2,rep,name=documents,proto3" json:"documents,omitempty"`
 	Users         []*short.UserShort         `protobuf:"bytes,3,rep,name=users,proto3" json:"users,omitempty"`
@@ -560,11 +1105,6 @@ func (x *TemplateData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TemplateData.ProtoReflect.Descriptor instead.
-func (*TemplateData) Descriptor() ([]byte, []int) {
-	return file_resources_documents_templates_templates_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *TemplateData) GetActiveChar() *users.User {
 	if x != nil {
 		return x.ActiveChar
@@ -593,8 +1133,55 @@ func (x *TemplateData) GetVehicles() []*vehicles.Vehicle {
 	return nil
 }
 
+func (x *TemplateData) SetActiveChar(v *users.User) {
+	x.ActiveChar = v
+}
+
+func (x *TemplateData) SetDocuments(v []*documents.DocumentShort) {
+	x.Documents = v
+}
+
+func (x *TemplateData) SetUsers(v []*short.UserShort) {
+	x.Users = v
+}
+
+func (x *TemplateData) SetVehicles(v []*vehicles.Vehicle) {
+	x.Vehicles = v
+}
+
+func (x *TemplateData) HasActiveChar() bool {
+	if x == nil {
+		return false
+	}
+	return x.ActiveChar != nil
+}
+
+func (x *TemplateData) ClearActiveChar() {
+	x.ActiveChar = nil
+}
+
+type TemplateData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ActiveChar *users.User
+	Documents  []*documents.DocumentShort
+	Users      []*short.UserShort
+	Vehicles   []*vehicles.Vehicle
+}
+
+func (b0 TemplateData_builder) Build() *TemplateData {
+	m0 := &TemplateData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ActiveChar = b.ActiveChar
+	x.Documents = b.Documents
+	x.Users = b.Users
+	x.Vehicles = b.Vehicles
+	return m0
+}
+
 type TemplateJobAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty" alias:"template_id"`
@@ -630,11 +1217,6 @@ func (x *TemplateJobAccess) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TemplateJobAccess.ProtoReflect.Descriptor instead.
-func (*TemplateJobAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_templates_templates_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *TemplateJobAccess) GetId() int64 {
@@ -693,9 +1275,102 @@ func (x *TemplateJobAccess) GetAccess() access.AccessLevel {
 	return access.AccessLevel(0)
 }
 
+func (x *TemplateJobAccess) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *TemplateJobAccess) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *TemplateJobAccess) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *TemplateJobAccess) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *TemplateJobAccess) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *TemplateJobAccess) SetMinimumGrade(v int32) {
+	x.MinimumGrade = v
+}
+
+func (x *TemplateJobAccess) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *TemplateJobAccess) SetAccess(v access.AccessLevel) {
+	x.Access = v
+}
+
+func (x *TemplateJobAccess) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *TemplateJobAccess) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *TemplateJobAccess) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *TemplateJobAccess) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *TemplateJobAccess) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *TemplateJobAccess) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+type TemplateJobAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id            int64
+	CreatedAt     *timestamp.Timestamp
+	TargetId      int64
+	Job           string
+	JobLabel      *string
+	MinimumGrade  int32
+	JobGradeLabel *string
+	Access        access.AccessLevel
+}
+
+func (b0 TemplateJobAccess_builder) Build() *TemplateJobAccess {
+	m0 := &TemplateJobAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.MinimumGrade = b.MinimumGrade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Access = b.Access
+	return m0
+}
+
 // Dummy - DO NOT USE!
 type TemplateUserAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -725,13 +1400,20 @@ func (x *TemplateUserAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TemplateUserAccess.ProtoReflect.Descriptor instead.
-func (*TemplateUserAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_templates_templates_proto_rawDescGZIP(), []int{7}
+type TemplateUserAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 TemplateUserAccess_builder) Build() *TemplateUserAccess {
+	m0 := &TemplateUserAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type TemplateApproval struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Enabled       bool                        `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	Policy        *TemplateApprovalPolicy     `protobuf:"bytes,2,opt,name=policy,proto3,oneof" json:"policy,omitempty"`
 	Tasks         []*TemplateApprovalTaskSeed `protobuf:"bytes,3,rep,name=tasks,proto3" json:"tasks,omitempty"`
@@ -764,11 +1446,6 @@ func (x *TemplateApproval) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TemplateApproval.ProtoReflect.Descriptor instead.
-func (*TemplateApproval) Descriptor() ([]byte, []int) {
-	return file_resources_documents_templates_templates_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *TemplateApproval) GetEnabled() bool {
 	if x != nil {
 		return x.Enabled
@@ -790,8 +1467,49 @@ func (x *TemplateApproval) GetTasks() []*TemplateApprovalTaskSeed {
 	return nil
 }
 
+func (x *TemplateApproval) SetEnabled(v bool) {
+	x.Enabled = v
+}
+
+func (x *TemplateApproval) SetPolicy(v *TemplateApprovalPolicy) {
+	x.Policy = v
+}
+
+func (x *TemplateApproval) SetTasks(v []*TemplateApprovalTaskSeed) {
+	x.Tasks = v
+}
+
+func (x *TemplateApproval) HasPolicy() bool {
+	if x == nil {
+		return false
+	}
+	return x.Policy != nil
+}
+
+func (x *TemplateApproval) ClearPolicy() {
+	x.Policy = nil
+}
+
+type TemplateApproval_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Enabled bool
+	Policy  *TemplateApprovalPolicy
+	Tasks   []*TemplateApprovalTaskSeed
+}
+
+func (b0 TemplateApproval_builder) Build() *TemplateApproval {
+	m0 := &TemplateApproval{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Enabled = b.Enabled
+	x.Policy = b.Policy
+	x.Tasks = b.Tasks
+	return m0
+}
+
 type TemplateApprovalPolicy struct {
-	state              protoimpl.MessageState    `protogen:"open.v1"`
+	state              protoimpl.MessageState    `protogen:"hybrid.v1"`
 	RuleKind           approval.ApprovalRuleKind `protobuf:"varint,1,opt,name=rule_kind,json=ruleKind,proto3,enum=resources.documents.approval.ApprovalRuleKind" json:"rule_kind,omitempty"`
 	OnEditBehavior     approval.OnEditBehavior   `protobuf:"varint,2,opt,name=on_edit_behavior,json=onEditBehavior,proto3,enum=resources.documents.approval.OnEditBehavior" json:"on_edit_behavior,omitempty"`
 	RequiredCount      *int32                    `protobuf:"varint,3,opt,name=required_count,json=requiredCount,proto3,oneof" json:"required_count,omitempty"`
@@ -824,11 +1542,6 @@ func (x *TemplateApprovalPolicy) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TemplateApprovalPolicy.ProtoReflect.Descriptor instead.
-func (*TemplateApprovalPolicy) Descriptor() ([]byte, []int) {
-	return file_resources_documents_templates_templates_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *TemplateApprovalPolicy) GetRuleKind() approval.ApprovalRuleKind {
@@ -866,8 +1579,61 @@ func (x *TemplateApprovalPolicy) GetSelfApproveAllowed() bool {
 	return false
 }
 
+func (x *TemplateApprovalPolicy) SetRuleKind(v approval.ApprovalRuleKind) {
+	x.RuleKind = v
+}
+
+func (x *TemplateApprovalPolicy) SetOnEditBehavior(v approval.OnEditBehavior) {
+	x.OnEditBehavior = v
+}
+
+func (x *TemplateApprovalPolicy) SetRequiredCount(v int32) {
+	x.RequiredCount = &v
+}
+
+func (x *TemplateApprovalPolicy) SetSignatureRequired(v bool) {
+	x.SignatureRequired = v
+}
+
+func (x *TemplateApprovalPolicy) SetSelfApproveAllowed(v bool) {
+	x.SelfApproveAllowed = v
+}
+
+func (x *TemplateApprovalPolicy) HasRequiredCount() bool {
+	if x == nil {
+		return false
+	}
+	return x.RequiredCount != nil
+}
+
+func (x *TemplateApprovalPolicy) ClearRequiredCount() {
+	x.RequiredCount = nil
+}
+
+type TemplateApprovalPolicy_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	RuleKind           approval.ApprovalRuleKind
+	OnEditBehavior     approval.OnEditBehavior
+	RequiredCount      *int32
+	SignatureRequired  bool
+	SelfApproveAllowed bool
+}
+
+func (b0 TemplateApprovalPolicy_builder) Build() *TemplateApprovalPolicy {
+	m0 := &TemplateApprovalPolicy{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.RuleKind = b.RuleKind
+	x.OnEditBehavior = b.OnEditBehavior
+	x.RequiredCount = b.RequiredCount
+	x.SignatureRequired = b.SignatureRequired
+	x.SelfApproveAllowed = b.SelfApproveAllowed
+	return m0
+}
+
 type TemplateApprovalTaskSeed struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
+	state  protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// If user_id == 0 -> JOB task
 	Job          string `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
@@ -908,11 +1674,6 @@ func (x *TemplateApprovalTaskSeed) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TemplateApprovalTaskSeed.ProtoReflect.Descriptor instead.
-func (*TemplateApprovalTaskSeed) Descriptor() ([]byte, []int) {
-	return file_resources_documents_templates_templates_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *TemplateApprovalTaskSeed) GetUserId() int32 {
@@ -969,6 +1730,104 @@ func (x *TemplateApprovalTaskSeed) GetComment() string {
 		return *x.Comment
 	}
 	return ""
+}
+
+func (x *TemplateApprovalTaskSeed) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *TemplateApprovalTaskSeed) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *TemplateApprovalTaskSeed) SetMinimumGrade(v int32) {
+	x.MinimumGrade = v
+}
+
+func (x *TemplateApprovalTaskSeed) SetLabel(v string) {
+	x.Label = &v
+}
+
+func (x *TemplateApprovalTaskSeed) SetSignatureRequired(v bool) {
+	x.SignatureRequired = v
+}
+
+func (x *TemplateApprovalTaskSeed) SetSlots(v int32) {
+	x.Slots = v
+}
+
+func (x *TemplateApprovalTaskSeed) SetDueInDays(v int32) {
+	x.DueInDays = &v
+}
+
+func (x *TemplateApprovalTaskSeed) SetComment(v string) {
+	x.Comment = &v
+}
+
+func (x *TemplateApprovalTaskSeed) HasLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.Label != nil
+}
+
+func (x *TemplateApprovalTaskSeed) HasDueInDays() bool {
+	if x == nil {
+		return false
+	}
+	return x.DueInDays != nil
+}
+
+func (x *TemplateApprovalTaskSeed) HasComment() bool {
+	if x == nil {
+		return false
+	}
+	return x.Comment != nil
+}
+
+func (x *TemplateApprovalTaskSeed) ClearLabel() {
+	x.Label = nil
+}
+
+func (x *TemplateApprovalTaskSeed) ClearDueInDays() {
+	x.DueInDays = nil
+}
+
+func (x *TemplateApprovalTaskSeed) ClearComment() {
+	x.Comment = nil
+}
+
+type TemplateApprovalTaskSeed_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId int32
+	// If user_id == 0 -> JOB task
+	Job          string
+	MinimumGrade int32
+	// Label of task
+	Label             *string
+	SignatureRequired bool
+	// Only for JOB tasks; number of PENDING slots to ensure (>=1)
+	Slots int32
+	// Optional default due date for created slots
+	DueInDays *int32
+	// Optional note set on created tasks
+	Comment *string
+}
+
+func (b0 TemplateApprovalTaskSeed_builder) Build() *TemplateApprovalTaskSeed {
+	m0 := &TemplateApprovalTaskSeed{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.Job = b.Job
+	x.MinimumGrade = b.MinimumGrade
+	x.Label = b.Label
+	x.SignatureRequired = b.SignatureRequired
+	x.Slots = b.Slots
+	x.DueInDays = b.DueInDays
+	x.Comment = b.Comment
+	return m0
 }
 
 var File_resources_documents_templates_templates_proto protoreflect.FileDescriptor
@@ -1098,18 +1957,6 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\f_due_in_daysB\n" +
 	"\n" +
 	"\b_commentBdZbgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates;documentstemplatesb\x06proto3"
-
-var (
-	file_resources_documents_templates_templates_proto_rawDescOnce sync.Once
-	file_resources_documents_templates_templates_proto_rawDescData []byte
-)
-
-func file_resources_documents_templates_templates_proto_rawDescGZIP() []byte {
-	file_resources_documents_templates_templates_proto_rawDescOnce.Do(func() {
-		file_resources_documents_templates_templates_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_templates_templates_proto_rawDesc), len(file_resources_documents_templates_templates_proto_rawDesc)))
-	})
-	return file_resources_documents_templates_templates_proto_rawDescData
-}
 
 var file_resources_documents_templates_templates_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_resources_documents_templates_templates_proto_goTypes = []any{

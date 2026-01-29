@@ -18,7 +18,6 @@ import (
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -95,7 +94,7 @@ func (s *Server) GetComments(
 		return resp, nil
 	}
 
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	columns := mysql.ProjectionList{
@@ -331,7 +330,7 @@ func (s *Server) getComment(
 	userInfo *userinfo.UserInfo,
 ) (*documentscomment.Comment, error) {
 	tDComments := tDComments.AS("comment")
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tDComments.
@@ -465,7 +464,7 @@ func (s *Server) notifyUsersNewComment(
 	documentId int64,
 	sourceUserId int32,
 ) error {
-	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, sourceUserId)
+	userInfo, err := s.ui.GetUserInfo(ctx, sourceUserId)
 	if err != nil {
 		return err
 	}
@@ -512,7 +511,7 @@ func (s *Server) notifyUsersNewComment(
 	// If we have a document creator, make sure to inform the creator if necessary
 	if doc.CreatorId != nil && sourceUserId != doc.GetCreatorId() &&
 		!slices.Contains(targetUserIds, doc.GetCreatorId()) {
-		userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, sourceUserId)
+		userInfo, err := s.ui.GetUserInfo(ctx, sourceUserId)
 		if err != nil {
 			return err
 		}
@@ -538,7 +537,7 @@ func (s *Server) notifyUsersNewComment(
 		}
 
 		// Make sure user has access to document
-		userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, sourceUserId)
+		userInfo, err := s.ui.GetUserInfo(ctx, sourceUserId)
 		if err != nil {
 			return err
 		}

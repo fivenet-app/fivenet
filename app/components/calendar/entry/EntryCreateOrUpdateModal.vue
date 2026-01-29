@@ -76,7 +76,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
         const response = await calendarStore.createOrUpdateCalendarEntry(
             {
                 id: data.value?.entry?.id ?? 0,
-                calendarId: values.calendar.id,
+                calendarId: values.calendar?.id,
                 title: values.title,
                 startTime: toTimestamp(values.startTime),
                 endTime: toTimestamp(values.endTime),
@@ -111,10 +111,7 @@ function setFromProps(): void {
     if (!data.value?.entry) return;
 
     const entry = data.value?.entry;
-    if (entry.calendar) {
-        state.calendar = entry.calendar;
-    }
-
+    if (entry.calendar) state.calendar = entry.calendar;
     state.title = entry.title;
     state.startTime = toDate(entry.startTime);
     state.endTime = toDate(entry.endTime);
@@ -201,13 +198,15 @@ const formRef = useTemplateRef('formRef');
                                             },
                                             onlyPublic: false,
                                             minAccessLevel: AccessLevel.EDIT,
+                                            calendarIds: [state.calendar?.id].filter((id): id is number => !!id),
                                         })
                                     ).calendars
+                                        .filter((c) => !c.closed)
                                         .map((c) => ({
-                                            ...c,
-                                            chip: { color: c.color ?? 'primary' },
+                                            id: c.id,
+                                            name: c.name,
+                                            color: c.color,
                                         }))
-                                        .filter((c) => !c.closed) as CalendarShort[]
                             "
                             searchable-key="calendar-list"
                             :search-input="{ placeholder: $t('common.search_field') }"
@@ -218,7 +217,7 @@ const formRef = useTemplateRef('formRef');
                             <template #leading="{ modelValue, ui }">
                                 <UChip
                                     v-if="modelValue"
-                                    :color="(modelValue.color ?? 'primary') as ChipProps['color']"
+                                    :color="(modelValue?.color ?? 'primary') as ChipProps['color']"
                                     inset
                                     standalone
                                     :size="ui.itemLeadingChipSize() as ChipProps['size']"

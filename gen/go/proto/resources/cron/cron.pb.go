@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/cron/cron.proto
 
+//go:build !protoopaque
+
 package cron
 
 import (
@@ -14,7 +16,6 @@ import (
 	anypb "google.golang.org/protobuf/types/known/anypb"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -73,13 +74,8 @@ func (x CronjobState) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use CronjobState.Descriptor instead.
-func (CronjobState) EnumDescriptor() ([]byte, []int) {
-	return file_resources_cron_cron_proto_rawDescGZIP(), []int{0}
-}
-
 type Cronjob struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Cronjob name
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Cron schedule expression
@@ -128,11 +124,6 @@ func (x *Cronjob) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Cronjob.ProtoReflect.Descriptor instead.
-func (*Cronjob) Descriptor() ([]byte, []int) {
-	return file_resources_cron_cron_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Cronjob) GetName() string {
@@ -198,8 +189,152 @@ func (x *Cronjob) GetLastCompletedEvent() *CronjobCompletedEvent {
 	return nil
 }
 
+func (x *Cronjob) SetName(v string) {
+	x.Name = v
+}
+
+func (x *Cronjob) SetSchedule(v string) {
+	x.Schedule = v
+}
+
+func (x *Cronjob) SetState(v CronjobState) {
+	x.State = v
+}
+
+func (x *Cronjob) SetNextScheduleTime(v *timestamp.Timestamp) {
+	x.NextScheduleTime = v
+}
+
+func (x *Cronjob) SetLastAttemptTime(v *timestamp.Timestamp) {
+	x.LastAttemptTime = v
+}
+
+func (x *Cronjob) SetStartedTime(v *timestamp.Timestamp) {
+	x.StartedTime = v
+}
+
+func (x *Cronjob) SetTimeout(v *durationpb.Duration) {
+	x.Timeout = v
+}
+
+func (x *Cronjob) SetData(v *CronjobData) {
+	x.Data = v
+}
+
+func (x *Cronjob) SetLastCompletedEvent(v *CronjobCompletedEvent) {
+	x.LastCompletedEvent = v
+}
+
+func (x *Cronjob) HasNextScheduleTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.NextScheduleTime != nil
+}
+
+func (x *Cronjob) HasLastAttemptTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.LastAttemptTime != nil
+}
+
+func (x *Cronjob) HasStartedTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.StartedTime != nil
+}
+
+func (x *Cronjob) HasTimeout() bool {
+	if x == nil {
+		return false
+	}
+	return x.Timeout != nil
+}
+
+func (x *Cronjob) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *Cronjob) HasLastCompletedEvent() bool {
+	if x == nil {
+		return false
+	}
+	return x.LastCompletedEvent != nil
+}
+
+func (x *Cronjob) ClearNextScheduleTime() {
+	x.NextScheduleTime = nil
+}
+
+func (x *Cronjob) ClearLastAttemptTime() {
+	x.LastAttemptTime = nil
+}
+
+func (x *Cronjob) ClearStartedTime() {
+	x.StartedTime = nil
+}
+
+func (x *Cronjob) ClearTimeout() {
+	x.Timeout = nil
+}
+
+func (x *Cronjob) ClearData() {
+	x.Data = nil
+}
+
+func (x *Cronjob) ClearLastCompletedEvent() {
+	x.LastCompletedEvent = nil
+}
+
+type Cronjob_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Cronjob name
+	Name string
+	// Cron schedule expression
+	// For available valid expressions, see [adhocore/gronx - Cron Expressions Documentation](https://github.com/adhocore/gronx/blob/fea40e3e90e70476877cfb9b50fac10c7de41c5c/README.md#cron-expression).
+	//
+	// To generate Cronjob schedule expressions, you can also use web tools like https://crontab.guru/.
+	Schedule string
+	// Cronjob state
+	State CronjobState
+	// Next time the cronjob should be run
+	NextScheduleTime *timestamp.Timestamp
+	// Last attempted start time of Cronjob
+	LastAttemptTime *timestamp.Timestamp
+	// Time current cronjob was started
+	StartedTime *timestamp.Timestamp
+	// Optional timeout for cronjob execution
+	Timeout *durationpb.Duration
+	// Cronjob data
+	Data *CronjobData
+	// Last event info to ease debugging and tracking
+	LastCompletedEvent *CronjobCompletedEvent
+}
+
+func (b0 Cronjob_builder) Build() *Cronjob {
+	m0 := &Cronjob{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Name = b.Name
+	x.Schedule = b.Schedule
+	x.State = b.State
+	x.NextScheduleTime = b.NextScheduleTime
+	x.LastAttemptTime = b.LastAttemptTime
+	x.StartedTime = b.StartedTime
+	x.Timeout = b.Timeout
+	x.Data = b.Data
+	x.LastCompletedEvent = b.LastCompletedEvent
+	return m0
+}
+
 type CronjobData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Data          *anypb.Any             `protobuf:"bytes,2,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -231,11 +366,6 @@ func (x *CronjobData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CronjobData.ProtoReflect.Descriptor instead.
-func (*CronjobData) Descriptor() ([]byte, []int) {
-	return file_resources_cron_cron_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *CronjobData) GetUpdatedAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
@@ -250,8 +380,54 @@ func (x *CronjobData) GetData() *anypb.Any {
 	return nil
 }
 
+func (x *CronjobData) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *CronjobData) SetData(v *anypb.Any) {
+	x.Data = v
+}
+
+func (x *CronjobData) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *CronjobData) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *CronjobData) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *CronjobData) ClearData() {
+	x.Data = nil
+}
+
+type CronjobData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UpdatedAt *timestamp.Timestamp
+	Data      *anypb.Any
+}
+
+func (b0 CronjobData_builder) Build() *CronjobData {
+	m0 := &CronjobData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UpdatedAt = b.UpdatedAt
+	x.Data = b.Data
+	return m0
+}
+
 type CronjobLockOwnerState struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Hostname of the agent the cronjob is running on
 	Hostname      string               `protobuf:"bytes,1,opt,name=hostname,proto3" json:"hostname,omitempty"`
 	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
@@ -284,11 +460,6 @@ func (x *CronjobLockOwnerState) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CronjobLockOwnerState.ProtoReflect.Descriptor instead.
-func (*CronjobLockOwnerState) Descriptor() ([]byte, []int) {
-	return file_resources_cron_cron_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *CronjobLockOwnerState) GetHostname() string {
 	if x != nil {
 		return x.Hostname
@@ -303,8 +474,44 @@ func (x *CronjobLockOwnerState) GetUpdatedAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *CronjobLockOwnerState) SetHostname(v string) {
+	x.Hostname = v
+}
+
+func (x *CronjobLockOwnerState) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *CronjobLockOwnerState) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *CronjobLockOwnerState) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+type CronjobLockOwnerState_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Hostname of the agent the cronjob is running on
+	Hostname  string
+	UpdatedAt *timestamp.Timestamp
+}
+
+func (b0 CronjobLockOwnerState_builder) Build() *CronjobLockOwnerState {
+	m0 := &CronjobLockOwnerState{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Hostname = b.Hostname
+	x.UpdatedAt = b.UpdatedAt
+	return m0
+}
+
 type CronjobSchedulerEvent struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Full Cronjob spec
 	Cronjob       *Cronjob `protobuf:"bytes,1,opt,name=cronjob,proto3" json:"cronjob,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -336,11 +543,6 @@ func (x *CronjobSchedulerEvent) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CronjobSchedulerEvent.ProtoReflect.Descriptor instead.
-func (*CronjobSchedulerEvent) Descriptor() ([]byte, []int) {
-	return file_resources_cron_cron_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *CronjobSchedulerEvent) GetCronjob() *Cronjob {
 	if x != nil {
 		return x.Cronjob
@@ -348,8 +550,38 @@ func (x *CronjobSchedulerEvent) GetCronjob() *Cronjob {
 	return nil
 }
 
+func (x *CronjobSchedulerEvent) SetCronjob(v *Cronjob) {
+	x.Cronjob = v
+}
+
+func (x *CronjobSchedulerEvent) HasCronjob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Cronjob != nil
+}
+
+func (x *CronjobSchedulerEvent) ClearCronjob() {
+	x.Cronjob = nil
+}
+
+type CronjobSchedulerEvent_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Full Cronjob spec
+	Cronjob *Cronjob
+}
+
+func (b0 CronjobSchedulerEvent_builder) Build() *CronjobSchedulerEvent {
+	m0 := &CronjobSchedulerEvent{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Cronjob = b.Cronjob
+	return m0
+}
+
 type CronjobCompletedEvent struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Cronjob name
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Cronjob execution success status
@@ -393,11 +625,6 @@ func (x *CronjobCompletedEvent) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CronjobCompletedEvent.ProtoReflect.Descriptor instead.
-func (*CronjobCompletedEvent) Descriptor() ([]byte, []int) {
-	return file_resources_cron_cron_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CronjobCompletedEvent) GetName() string {
@@ -456,8 +683,120 @@ func (x *CronjobCompletedEvent) GetErrorMessage() string {
 	return ""
 }
 
+func (x *CronjobCompletedEvent) SetName(v string) {
+	x.Name = v
+}
+
+func (x *CronjobCompletedEvent) SetSuccess(v bool) {
+	x.Success = v
+}
+
+func (x *CronjobCompletedEvent) SetCancelled(v bool) {
+	x.Cancelled = v
+}
+
+func (x *CronjobCompletedEvent) SetEndDate(v *timestamp.Timestamp) {
+	x.EndDate = v
+}
+
+func (x *CronjobCompletedEvent) SetElapsed(v *durationpb.Duration) {
+	x.Elapsed = v
+}
+
+func (x *CronjobCompletedEvent) SetData(v *CronjobData) {
+	x.Data = v
+}
+
+func (x *CronjobCompletedEvent) SetNodeName(v string) {
+	x.NodeName = v
+}
+
+func (x *CronjobCompletedEvent) SetErrorMessage(v string) {
+	x.ErrorMessage = &v
+}
+
+func (x *CronjobCompletedEvent) HasEndDate() bool {
+	if x == nil {
+		return false
+	}
+	return x.EndDate != nil
+}
+
+func (x *CronjobCompletedEvent) HasElapsed() bool {
+	if x == nil {
+		return false
+	}
+	return x.Elapsed != nil
+}
+
+func (x *CronjobCompletedEvent) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *CronjobCompletedEvent) HasErrorMessage() bool {
+	if x == nil {
+		return false
+	}
+	return x.ErrorMessage != nil
+}
+
+func (x *CronjobCompletedEvent) ClearEndDate() {
+	x.EndDate = nil
+}
+
+func (x *CronjobCompletedEvent) ClearElapsed() {
+	x.Elapsed = nil
+}
+
+func (x *CronjobCompletedEvent) ClearData() {
+	x.Data = nil
+}
+
+func (x *CronjobCompletedEvent) ClearErrorMessage() {
+	x.ErrorMessage = nil
+}
+
+type CronjobCompletedEvent_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Cronjob name
+	Name string
+	// Cronjob execution success status
+	Success bool
+	// Cronjob execution was cancelled
+	Cancelled bool
+	// Cronjob end time
+	EndDate *timestamp.Timestamp
+	// Cronjob execution time/elapsed time
+	Elapsed *durationpb.Duration
+	// Cronjob data (can be empty if not touched by the Cronjob handler)
+	Data *CronjobData
+	// Name of the node where the cronjob was executed
+	NodeName string
+	// Error message (if success = false)
+	ErrorMessage *string
+}
+
+func (b0 CronjobCompletedEvent_builder) Build() *CronjobCompletedEvent {
+	m0 := &CronjobCompletedEvent{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Name = b.Name
+	x.Success = b.Success
+	x.Cancelled = b.Cancelled
+	x.EndDate = b.EndDate
+	x.Elapsed = b.Elapsed
+	x.Data = b.Data
+	x.NodeName = b.NodeName
+	x.ErrorMessage = b.ErrorMessage
+	return m0
+}
+
 type GenericCronData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Attributes    map[string]string      `protobuf:"bytes,1,rep,name=attributes,proto3" json:"attributes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -488,16 +827,29 @@ func (x *GenericCronData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GenericCronData.ProtoReflect.Descriptor instead.
-func (*GenericCronData) Descriptor() ([]byte, []int) {
-	return file_resources_cron_cron_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *GenericCronData) GetAttributes() map[string]string {
 	if x != nil {
 		return x.Attributes
 	}
 	return nil
+}
+
+func (x *GenericCronData) SetAttributes(v map[string]string) {
+	x.Attributes = v
+}
+
+type GenericCronData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Attributes map[string]string
+}
+
+func (b0 GenericCronData_builder) Build() *GenericCronData {
+	m0 := &GenericCronData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Attributes = b.Attributes
+	return m0
 }
 
 var File_resources_cron_cron_proto protoreflect.FileDescriptor
@@ -554,18 +906,6 @@ const file_resources_cron_cron_proto_rawDesc = "" +
 	"\x15CRONJOB_STATE_WAITING\x10\x01\x12\x19\n" +
 	"\x15CRONJOB_STATE_PENDING\x10\x02\x12\x19\n" +
 	"\x15CRONJOB_STATE_RUNNING\x10\x03BGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron;cronb\x06proto3"
-
-var (
-	file_resources_cron_cron_proto_rawDescOnce sync.Once
-	file_resources_cron_cron_proto_rawDescData []byte
-)
-
-func file_resources_cron_cron_proto_rawDescGZIP() []byte {
-	file_resources_cron_cron_proto_rawDescOnce.Do(func() {
-		file_resources_cron_cron_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_cron_cron_proto_rawDesc), len(file_resources_cron_cron_proto_rawDesc)))
-	})
-	return file_resources_cron_cron_proto_rawDescData
-}
 
 var file_resources_cron_cron_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_cron_cron_proto_msgTypes = make([]protoimpl.MessageInfo, 7)

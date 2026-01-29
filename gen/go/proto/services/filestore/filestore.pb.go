@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/filestore/filestore.proto
 
+//go:build !protoopaque
+
 package filestore
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -26,7 +27,7 @@ const (
 )
 
 type ListFilesRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Path          *string                     `protobuf:"bytes,2,opt,name=path,proto3,oneof" json:"path,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -58,11 +59,6 @@ func (x *ListFilesRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListFilesRequest.ProtoReflect.Descriptor instead.
-func (*ListFilesRequest) Descriptor() ([]byte, []int) {
-	return file_services_filestore_filestore_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *ListFilesRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -77,8 +73,54 @@ func (x *ListFilesRequest) GetPath() string {
 	return ""
 }
 
+func (x *ListFilesRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListFilesRequest) SetPath(v string) {
+	x.Path = &v
+}
+
+func (x *ListFilesRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListFilesRequest) HasPath() bool {
+	if x == nil {
+		return false
+	}
+	return x.Path != nil
+}
+
+func (x *ListFilesRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListFilesRequest) ClearPath() {
+	x.Path = nil
+}
+
+type ListFilesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Path       *string
+}
+
+func (b0 ListFilesRequest_builder) Build() *ListFilesRequest {
+	m0 := &ListFilesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Path = b.Path
+	return m0
+}
+
 type ListFilesResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Files         []*file.File                 `protobuf:"bytes,2,rep,name=files,proto3" json:"files,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -110,11 +152,6 @@ func (x *ListFilesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListFilesResponse.ProtoReflect.Descriptor instead.
-func (*ListFilesResponse) Descriptor() ([]byte, []int) {
-	return file_services_filestore_filestore_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListFilesResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -129,8 +166,43 @@ func (x *ListFilesResponse) GetFiles() []*file.File {
 	return nil
 }
 
+func (x *ListFilesResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListFilesResponse) SetFiles(v []*file.File) {
+	x.Files = v
+}
+
+func (x *ListFilesResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListFilesResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListFilesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Files      []*file.File
+}
+
+func (b0 ListFilesResponse_builder) Build() *ListFilesResponse {
+	m0 := &ListFilesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Files = b.Files
+	return m0
+}
+
 type DeleteFileByPathRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Path          string                 `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -161,11 +233,6 @@ func (x *DeleteFileByPathRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteFileByPathRequest.ProtoReflect.Descriptor instead.
-func (*DeleteFileByPathRequest) Descriptor() ([]byte, []int) {
-	return file_services_filestore_filestore_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *DeleteFileByPathRequest) GetPath() string {
 	if x != nil {
 		return x.Path
@@ -173,8 +240,26 @@ func (x *DeleteFileByPathRequest) GetPath() string {
 	return ""
 }
 
+func (x *DeleteFileByPathRequest) SetPath(v string) {
+	x.Path = v
+}
+
+type DeleteFileByPathRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Path string
+}
+
+func (b0 DeleteFileByPathRequest_builder) Build() *DeleteFileByPathRequest {
+	m0 := &DeleteFileByPathRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Path = b.Path
+	return m0
+}
+
 type DeleteFileByPathResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -204,9 +289,16 @@ func (x *DeleteFileByPathResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteFileByPathResponse.ProtoReflect.Descriptor instead.
-func (*DeleteFileByPathResponse) Descriptor() ([]byte, []int) {
-	return file_services_filestore_filestore_proto_rawDescGZIP(), []int{3}
+type DeleteFileByPathResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteFileByPathResponse_builder) Build() *DeleteFileByPathResponse {
+	m0 := &DeleteFileByPathResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 var File_services_filestore_filestore_proto protoreflect.FileDescriptor
@@ -234,18 +326,6 @@ const file_services_filestore_filestore_proto_rawDesc = "" +
 	"\n" +
 	"DeleteFile\x12!.resources.file.DeleteFileRequest\x1a\".resources.file.DeleteFileResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x80\x01\n" +
 	"\x10DeleteFileByPath\x12+.services.filestore.DeleteFileByPathRequest\x1a,.services.filestore.DeleteFileByPathResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/filestore;filestoreb\x06proto3"
-
-var (
-	file_services_filestore_filestore_proto_rawDescOnce sync.Once
-	file_services_filestore_filestore_proto_rawDescData []byte
-)
-
-func file_services_filestore_filestore_proto_rawDescGZIP() []byte {
-	file_services_filestore_filestore_proto_rawDescOnce.Do(func() {
-		file_services_filestore_filestore_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_filestore_filestore_proto_rawDesc), len(file_services_filestore_filestore_proto_rawDesc)))
-	})
-	return file_services_filestore_filestore_proto_rawDescData
-}
 
 var file_services_filestore_filestore_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_services_filestore_filestore_proto_goTypes = []any{

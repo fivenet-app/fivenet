@@ -4,13 +4,14 @@
 // 	protoc        (unknown)
 // source: resources/common/id_mapping.proto
 
+//go:build !protoopaque
+
 package common
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -22,7 +23,7 @@ const (
 )
 
 type IDMapping struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -53,16 +54,29 @@ func (x *IDMapping) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use IDMapping.ProtoReflect.Descriptor instead.
-func (*IDMapping) Descriptor() ([]byte, []int) {
-	return file_resources_common_id_mapping_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *IDMapping) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
+}
+
+func (x *IDMapping) SetId(v int64) {
+	x.Id = v
+}
+
+type IDMapping_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 IDMapping_builder) Build() *IDMapping {
+	m0 := &IDMapping{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
 }
 
 var File_resources_common_id_mapping_proto protoreflect.FileDescriptor
@@ -72,18 +86,6 @@ const file_resources_common_id_mapping_proto_rawDesc = "" +
 	"!resources/common/id_mapping.proto\x12\x10resources.common\"\x1b\n" +
 	"\tIDMapping\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02idBKZIgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common;commonb\x06proto3"
-
-var (
-	file_resources_common_id_mapping_proto_rawDescOnce sync.Once
-	file_resources_common_id_mapping_proto_rawDescData []byte
-)
-
-func file_resources_common_id_mapping_proto_rawDescGZIP() []byte {
-	file_resources_common_id_mapping_proto_rawDescOnce.Do(func() {
-		file_resources_common_id_mapping_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_common_id_mapping_proto_rawDesc), len(file_resources_common_id_mapping_proto_rawDesc)))
-	})
-	return file_resources_common_id_mapping_proto_rawDescData
-}
 
 var file_resources_common_id_mapping_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_common_id_mapping_proto_goTypes = []any{

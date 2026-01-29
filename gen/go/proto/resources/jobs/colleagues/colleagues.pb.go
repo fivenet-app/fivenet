@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/jobs/colleagues/colleagues.proto
 
+//go:build !protoopaque
+
 package jobscolleagues
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -26,7 +27,7 @@ const (
 )
 
 type Colleague struct {
-	state                protoimpl.MessageState `protogen:"open.v1"`
+	state                protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
 	Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
 	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
@@ -68,11 +69,6 @@ func (x *Colleague) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Colleague.ProtoReflect.Descriptor instead.
-func (*Colleague) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_colleagues_colleagues_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Colleague) GetUserId() int32 {
@@ -173,8 +169,192 @@ func (x *Colleague) GetEmail() string {
 	return ""
 }
 
+func (x *Colleague) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *Colleague) SetIdentifier(v string) {
+	x.Identifier = &v
+}
+
+func (x *Colleague) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *Colleague) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *Colleague) SetJobGrade(v int32) {
+	x.JobGrade = v
+}
+
+func (x *Colleague) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *Colleague) SetFirstname(v string) {
+	x.Firstname = v
+}
+
+func (x *Colleague) SetLastname(v string) {
+	x.Lastname = v
+}
+
+func (x *Colleague) SetDateofbirth(v string) {
+	x.Dateofbirth = v
+}
+
+func (x *Colleague) SetPhoneNumber(v string) {
+	x.PhoneNumber = &v
+}
+
+func (x *Colleague) SetProfilePictureFileId(v int64) {
+	x.ProfilePictureFileId = &v
+}
+
+func (x *Colleague) SetProfilePicture(v string) {
+	x.ProfilePicture = &v
+}
+
+func (x *Colleague) SetProps(v *ColleagueProps) {
+	x.Props = v
+}
+
+func (x *Colleague) SetEmail(v string) {
+	x.Email = &v
+}
+
+func (x *Colleague) HasIdentifier() bool {
+	if x == nil {
+		return false
+	}
+	return x.Identifier != nil
+}
+
+func (x *Colleague) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *Colleague) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *Colleague) HasPhoneNumber() bool {
+	if x == nil {
+		return false
+	}
+	return x.PhoneNumber != nil
+}
+
+func (x *Colleague) HasProfilePictureFileId() bool {
+	if x == nil {
+		return false
+	}
+	return x.ProfilePictureFileId != nil
+}
+
+func (x *Colleague) HasProfilePicture() bool {
+	if x == nil {
+		return false
+	}
+	return x.ProfilePicture != nil
+}
+
+func (x *Colleague) HasProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.Props != nil
+}
+
+func (x *Colleague) HasEmail() bool {
+	if x == nil {
+		return false
+	}
+	return x.Email != nil
+}
+
+func (x *Colleague) ClearIdentifier() {
+	x.Identifier = nil
+}
+
+func (x *Colleague) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *Colleague) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+func (x *Colleague) ClearPhoneNumber() {
+	x.PhoneNumber = nil
+}
+
+func (x *Colleague) ClearProfilePictureFileId() {
+	x.ProfilePictureFileId = nil
+}
+
+func (x *Colleague) ClearProfilePicture() {
+	x.ProfilePicture = nil
+}
+
+func (x *Colleague) ClearProps() {
+	x.Props = nil
+}
+
+func (x *Colleague) ClearEmail() {
+	x.Email = nil
+}
+
+type Colleague_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId               int32
+	Identifier           *string
+	Job                  string
+	JobLabel             *string
+	JobGrade             int32
+	JobGradeLabel        *string
+	Firstname            string
+	Lastname             string
+	Dateofbirth          string
+	PhoneNumber          *string
+	ProfilePictureFileId *int64
+	ProfilePicture       *string
+	Props                *ColleagueProps
+	Email                *string
+}
+
+func (b0 Colleague_builder) Build() *Colleague {
+	m0 := &Colleague{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.Identifier = b.Identifier
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.JobGrade = b.JobGrade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Firstname = b.Firstname
+	x.Lastname = b.Lastname
+	x.Dateofbirth = b.Dateofbirth
+	x.PhoneNumber = b.PhoneNumber
+	x.ProfilePictureFileId = b.ProfilePictureFileId
+	x.ProfilePicture = b.ProfilePicture
+	x.Props = b.Props
+	x.Email = b.Email
+	return m0
+}
+
 type ColleagueProps struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
@@ -211,11 +391,6 @@ func (x *ColleagueProps) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ColleagueProps.ProtoReflect.Descriptor instead.
-func (*ColleagueProps) Descriptor() ([]byte, []int) {
-	return file_resources_jobs_colleagues_colleagues_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ColleagueProps) GetUserId() int32 {
@@ -281,6 +456,149 @@ func (x *ColleagueProps) GetNameSuffix() string {
 	return ""
 }
 
+func (x *ColleagueProps) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *ColleagueProps) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *ColleagueProps) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *ColleagueProps) SetAbsenceBegin(v *timestamp.Timestamp) {
+	x.AbsenceBegin = v
+}
+
+func (x *ColleagueProps) SetAbsenceEnd(v *timestamp.Timestamp) {
+	x.AbsenceEnd = v
+}
+
+func (x *ColleagueProps) SetNote(v string) {
+	x.Note = &v
+}
+
+func (x *ColleagueProps) SetLabels(v *labels.Labels) {
+	x.Labels = v
+}
+
+func (x *ColleagueProps) SetNamePrefix(v string) {
+	x.NamePrefix = &v
+}
+
+func (x *ColleagueProps) SetNameSuffix(v string) {
+	x.NameSuffix = &v
+}
+
+func (x *ColleagueProps) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *ColleagueProps) HasAbsenceBegin() bool {
+	if x == nil {
+		return false
+	}
+	return x.AbsenceBegin != nil
+}
+
+func (x *ColleagueProps) HasAbsenceEnd() bool {
+	if x == nil {
+		return false
+	}
+	return x.AbsenceEnd != nil
+}
+
+func (x *ColleagueProps) HasNote() bool {
+	if x == nil {
+		return false
+	}
+	return x.Note != nil
+}
+
+func (x *ColleagueProps) HasLabels() bool {
+	if x == nil {
+		return false
+	}
+	return x.Labels != nil
+}
+
+func (x *ColleagueProps) HasNamePrefix() bool {
+	if x == nil {
+		return false
+	}
+	return x.NamePrefix != nil
+}
+
+func (x *ColleagueProps) HasNameSuffix() bool {
+	if x == nil {
+		return false
+	}
+	return x.NameSuffix != nil
+}
+
+func (x *ColleagueProps) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *ColleagueProps) ClearAbsenceBegin() {
+	x.AbsenceBegin = nil
+}
+
+func (x *ColleagueProps) ClearAbsenceEnd() {
+	x.AbsenceEnd = nil
+}
+
+func (x *ColleagueProps) ClearNote() {
+	x.Note = nil
+}
+
+func (x *ColleagueProps) ClearLabels() {
+	x.Labels = nil
+}
+
+func (x *ColleagueProps) ClearNamePrefix() {
+	x.NamePrefix = nil
+}
+
+func (x *ColleagueProps) ClearNameSuffix() {
+	x.NameSuffix = nil
+}
+
+type ColleagueProps_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId       int32
+	Job          string
+	DeletedAt    *timestamp.Timestamp
+	AbsenceBegin *timestamp.Timestamp
+	AbsenceEnd   *timestamp.Timestamp
+	Note         *string
+	Labels       *labels.Labels
+	NamePrefix   *string
+	NameSuffix   *string
+}
+
+func (b0 ColleagueProps_builder) Build() *ColleagueProps {
+	m0 := &ColleagueProps{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.Job = b.Job
+	x.DeletedAt = b.DeletedAt
+	x.AbsenceBegin = b.AbsenceBegin
+	x.AbsenceEnd = b.AbsenceEnd
+	x.Note = b.Note
+	x.Labels = b.Labels
+	x.NamePrefix = b.NamePrefix
+	x.NameSuffix = b.NameSuffix
+	return m0
+}
+
 var File_resources_jobs_colleagues_colleagues_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_colleagues_colleagues_proto_rawDesc = "" +
@@ -333,18 +651,6 @@ const file_resources_jobs_colleagues_colleagues_proto_rawDesc = "" +
 	"\a_labelsB\x0e\n" +
 	"\f_name_prefixB\x0e\n" +
 	"\f_name_suffixB\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues;jobscolleaguesb\x06proto3"
-
-var (
-	file_resources_jobs_colleagues_colleagues_proto_rawDescOnce sync.Once
-	file_resources_jobs_colleagues_colleagues_proto_rawDescData []byte
-)
-
-func file_resources_jobs_colleagues_colleagues_proto_rawDescGZIP() []byte {
-	file_resources_jobs_colleagues_colleagues_proto_rawDescOnce.Do(func() {
-		file_resources_jobs_colleagues_colleagues_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_jobs_colleagues_colleagues_proto_rawDesc), len(file_resources_jobs_colleagues_colleagues_proto_rawDesc)))
-	})
-	return file_resources_jobs_colleagues_colleagues_proto_rawDescData
-}
 
 var file_resources_jobs_colleagues_colleagues_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_jobs_colleagues_colleagues_proto_goTypes = []any{

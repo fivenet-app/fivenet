@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/centrum/dispatches/dispatches.proto
 
+//go:build !protoopaque
+
 package centrumdispatches
 
 import (
@@ -18,7 +20,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -109,11 +110,6 @@ func (x StatusDispatch) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use StatusDispatch.Descriptor instead.
-func (StatusDispatch) EnumDescriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_dispatches_proto_rawDescGZIP(), []int{0}
-}
-
 type TakeDispatchResp int32
 
 const (
@@ -161,11 +157,6 @@ func (x TakeDispatchResp) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use TakeDispatchResp.Descriptor instead.
-func (TakeDispatchResp) EnumDescriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_dispatches_proto_rawDescGZIP(), []int{1}
-}
-
 type DispatchReferenceType int32
 
 const (
@@ -211,11 +202,6 @@ func (DispatchReferenceType) Type() protoreflect.EnumType {
 
 func (x DispatchReferenceType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use DispatchReferenceType.Descriptor instead.
-func (DispatchReferenceType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_dispatches_proto_rawDescGZIP(), []int{2}
 }
 
 type DispatchAttribute int32
@@ -268,13 +254,8 @@ func (x DispatchAttribute) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use DispatchAttribute.Descriptor instead.
-func (DispatchAttribute) EnumDescriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_dispatches_proto_rawDescGZIP(), []int{3}
-}
-
 type Dispatch struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
+	state     protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -320,11 +301,6 @@ func (x *Dispatch) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Dispatch.ProtoReflect.Descriptor instead.
-func (*Dispatch) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_dispatches_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Dispatch) GetId() int64 {
@@ -447,8 +423,234 @@ func (x *Dispatch) GetReferences() *DispatchReferences {
 	return nil
 }
 
+func (x *Dispatch) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Dispatch) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Dispatch) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+// Deprecated: Marked as deprecated in resources/centrum/dispatches/dispatches.proto.
+func (x *Dispatch) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *Dispatch) SetJobs(v *centrum.JobList) {
+	x.Jobs = v
+}
+
+func (x *Dispatch) SetStatus(v *DispatchStatus) {
+	x.Status = v
+}
+
+func (x *Dispatch) SetMessage(v string) {
+	x.Message = v
+}
+
+func (x *Dispatch) SetDescription(v string) {
+	x.Description = &v
+}
+
+func (x *Dispatch) SetAttributes(v *DispatchAttributes) {
+	x.Attributes = v
+}
+
+func (x *Dispatch) SetX(v float64) {
+	x.X = v
+}
+
+func (x *Dispatch) SetY(v float64) {
+	x.Y = v
+}
+
+func (x *Dispatch) SetPostal(v string) {
+	x.Postal = &v
+}
+
+func (x *Dispatch) SetAnon(v bool) {
+	x.Anon = v
+}
+
+func (x *Dispatch) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *Dispatch) SetCreator(v *users.User) {
+	x.Creator = v
+}
+
+func (x *Dispatch) SetUnits(v []*DispatchAssignment) {
+	x.Units = v
+}
+
+func (x *Dispatch) SetReferences(v *DispatchReferences) {
+	x.References = v
+}
+
+func (x *Dispatch) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Dispatch) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Dispatch) HasJobs() bool {
+	if x == nil {
+		return false
+	}
+	return x.Jobs != nil
+}
+
+func (x *Dispatch) HasStatus() bool {
+	if x == nil {
+		return false
+	}
+	return x.Status != nil
+}
+
+func (x *Dispatch) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Description != nil
+}
+
+func (x *Dispatch) HasAttributes() bool {
+	if x == nil {
+		return false
+	}
+	return x.Attributes != nil
+}
+
+func (x *Dispatch) HasPostal() bool {
+	if x == nil {
+		return false
+	}
+	return x.Postal != nil
+}
+
+func (x *Dispatch) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *Dispatch) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *Dispatch) HasReferences() bool {
+	if x == nil {
+		return false
+	}
+	return x.References != nil
+}
+
+func (x *Dispatch) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Dispatch) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Dispatch) ClearJobs() {
+	x.Jobs = nil
+}
+
+func (x *Dispatch) ClearStatus() {
+	x.Status = nil
+}
+
+func (x *Dispatch) ClearDescription() {
+	x.Description = nil
+}
+
+func (x *Dispatch) ClearAttributes() {
+	x.Attributes = nil
+}
+
+func (x *Dispatch) ClearPostal() {
+	x.Postal = nil
+}
+
+func (x *Dispatch) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *Dispatch) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *Dispatch) ClearReferences() {
+	x.References = nil
+}
+
+type Dispatch_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id        int64
+	CreatedAt *timestamp.Timestamp
+	UpdatedAt *timestamp.Timestamp
+	// Deprecated: Marked as deprecated in resources/centrum/dispatches/dispatches.proto.
+	Job         string
+	Jobs        *centrum.JobList
+	Status      *DispatchStatus
+	Message     string
+	Description *string
+	Attributes  *DispatchAttributes
+	X           float64
+	Y           float64
+	Postal      *string
+	Anon        bool
+	CreatorId   *int32
+	Creator     *users.User
+	Units       []*DispatchAssignment
+	References  *DispatchReferences
+}
+
+func (b0 Dispatch_builder) Build() *Dispatch {
+	m0 := &Dispatch{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.Job = b.Job
+	x.Jobs = b.Jobs
+	x.Status = b.Status
+	x.Message = b.Message
+	x.Description = b.Description
+	x.Attributes = b.Attributes
+	x.X = b.X
+	x.Y = b.Y
+	x.Postal = b.Postal
+	x.Anon = b.Anon
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.Units = b.Units
+	x.References = b.References
+	return m0
+}
+
 type DispatchAssignments struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DispatchId    int64                  `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	Units         []*DispatchAssignment  `protobuf:"bytes,3,rep,name=units,proto3" json:"units,omitempty"`
@@ -481,11 +683,6 @@ func (x *DispatchAssignments) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DispatchAssignments.ProtoReflect.Descriptor instead.
-func (*DispatchAssignments) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_dispatches_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *DispatchAssignments) GetDispatchId() int64 {
 	if x != nil {
 		return x.DispatchId
@@ -507,8 +704,38 @@ func (x *DispatchAssignments) GetUnits() []*DispatchAssignment {
 	return nil
 }
 
+func (x *DispatchAssignments) SetDispatchId(v int64) {
+	x.DispatchId = v
+}
+
+func (x *DispatchAssignments) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *DispatchAssignments) SetUnits(v []*DispatchAssignment) {
+	x.Units = v
+}
+
+type DispatchAssignments_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DispatchId int64
+	Job        string
+	Units      []*DispatchAssignment
+}
+
+func (b0 DispatchAssignments_builder) Build() *DispatchAssignments {
+	m0 := &DispatchAssignments{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DispatchId = b.DispatchId
+	x.Job = b.Job
+	x.Units = b.Units
+	return m0
+}
+
 type DispatchAssignment struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DispatchId    int64                  `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty" alias:"dispatch_id" sql:"primary_key"`
 	UnitId        int64                  `protobuf:"varint,2,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty" alias:"unit_id" sql:"primary_key"`
 	Unit          *units.Unit            `protobuf:"bytes,3,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
@@ -541,11 +768,6 @@ func (x *DispatchAssignment) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DispatchAssignment.ProtoReflect.Descriptor instead.
-func (*DispatchAssignment) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_dispatches_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *DispatchAssignment) GetDispatchId() int64 {
@@ -583,8 +805,83 @@ func (x *DispatchAssignment) GetExpiresAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *DispatchAssignment) SetDispatchId(v int64) {
+	x.DispatchId = v
+}
+
+func (x *DispatchAssignment) SetUnitId(v int64) {
+	x.UnitId = v
+}
+
+func (x *DispatchAssignment) SetUnit(v *units.Unit) {
+	x.Unit = v
+}
+
+func (x *DispatchAssignment) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *DispatchAssignment) SetExpiresAt(v *timestamp.Timestamp) {
+	x.ExpiresAt = v
+}
+
+func (x *DispatchAssignment) HasUnit() bool {
+	if x == nil {
+		return false
+	}
+	return x.Unit != nil
+}
+
+func (x *DispatchAssignment) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *DispatchAssignment) HasExpiresAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.ExpiresAt != nil
+}
+
+func (x *DispatchAssignment) ClearUnit() {
+	x.Unit = nil
+}
+
+func (x *DispatchAssignment) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *DispatchAssignment) ClearExpiresAt() {
+	x.ExpiresAt = nil
+}
+
+type DispatchAssignment_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DispatchId int64
+	UnitId     int64
+	Unit       *units.Unit
+	CreatedAt  *timestamp.Timestamp
+	ExpiresAt  *timestamp.Timestamp
+}
+
+func (b0 DispatchAssignment_builder) Build() *DispatchAssignment {
+	m0 := &DispatchAssignment{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DispatchId = b.DispatchId
+	x.UnitId = b.UnitId
+	x.Unit = b.Unit
+	x.CreatedAt = b.CreatedAt
+	x.ExpiresAt = b.ExpiresAt
+	return m0
+}
+
 type DispatchStatus struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	DispatchId    int64                  `protobuf:"varint,3,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
@@ -626,11 +923,6 @@ func (x *DispatchStatus) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DispatchStatus.ProtoReflect.Descriptor instead.
-func (*DispatchStatus) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_dispatches_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *DispatchStatus) GetId() int64 {
@@ -731,8 +1023,225 @@ func (x *DispatchStatus) GetCreatorJob() string {
 	return ""
 }
 
+func (x *DispatchStatus) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *DispatchStatus) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *DispatchStatus) SetDispatchId(v int64) {
+	x.DispatchId = v
+}
+
+func (x *DispatchStatus) SetUnitId(v int64) {
+	x.UnitId = &v
+}
+
+func (x *DispatchStatus) SetUnit(v *units.Unit) {
+	x.Unit = v
+}
+
+func (x *DispatchStatus) SetStatus(v StatusDispatch) {
+	x.Status = v
+}
+
+func (x *DispatchStatus) SetReason(v string) {
+	x.Reason = &v
+}
+
+func (x *DispatchStatus) SetCode(v string) {
+	x.Code = &v
+}
+
+func (x *DispatchStatus) SetUserId(v int32) {
+	x.UserId = &v
+}
+
+func (x *DispatchStatus) SetUser(v *colleagues.Colleague) {
+	x.User = v
+}
+
+func (x *DispatchStatus) SetX(v float64) {
+	x.X = &v
+}
+
+func (x *DispatchStatus) SetY(v float64) {
+	x.Y = &v
+}
+
+func (x *DispatchStatus) SetPostal(v string) {
+	x.Postal = &v
+}
+
+func (x *DispatchStatus) SetCreatorJob(v string) {
+	x.CreatorJob = &v
+}
+
+func (x *DispatchStatus) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *DispatchStatus) HasUnitId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UnitId != nil
+}
+
+func (x *DispatchStatus) HasUnit() bool {
+	if x == nil {
+		return false
+	}
+	return x.Unit != nil
+}
+
+func (x *DispatchStatus) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reason != nil
+}
+
+func (x *DispatchStatus) HasCode() bool {
+	if x == nil {
+		return false
+	}
+	return x.Code != nil
+}
+
+func (x *DispatchStatus) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
+}
+
+func (x *DispatchStatus) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *DispatchStatus) HasX() bool {
+	if x == nil {
+		return false
+	}
+	return x.X != nil
+}
+
+func (x *DispatchStatus) HasY() bool {
+	if x == nil {
+		return false
+	}
+	return x.Y != nil
+}
+
+func (x *DispatchStatus) HasPostal() bool {
+	if x == nil {
+		return false
+	}
+	return x.Postal != nil
+}
+
+func (x *DispatchStatus) HasCreatorJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorJob != nil
+}
+
+func (x *DispatchStatus) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *DispatchStatus) ClearUnitId() {
+	x.UnitId = nil
+}
+
+func (x *DispatchStatus) ClearUnit() {
+	x.Unit = nil
+}
+
+func (x *DispatchStatus) ClearReason() {
+	x.Reason = nil
+}
+
+func (x *DispatchStatus) ClearCode() {
+	x.Code = nil
+}
+
+func (x *DispatchStatus) ClearUserId() {
+	x.UserId = nil
+}
+
+func (x *DispatchStatus) ClearUser() {
+	x.User = nil
+}
+
+func (x *DispatchStatus) ClearX() {
+	x.X = nil
+}
+
+func (x *DispatchStatus) ClearY() {
+	x.Y = nil
+}
+
+func (x *DispatchStatus) ClearPostal() {
+	x.Postal = nil
+}
+
+func (x *DispatchStatus) ClearCreatorJob() {
+	x.CreatorJob = nil
+}
+
+type DispatchStatus_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id         int64
+	CreatedAt  *timestamp.Timestamp
+	DispatchId int64
+	UnitId     *int64
+	Unit       *units.Unit
+	Status     StatusDispatch
+	Reason     *string
+	Code       *string
+	UserId     *int32
+	User       *colleagues.Colleague
+	X          *float64
+	Y          *float64
+	Postal     *string
+	CreatorJob *string
+}
+
+func (b0 DispatchStatus_builder) Build() *DispatchStatus {
+	m0 := &DispatchStatus{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.DispatchId = b.DispatchId
+	x.UnitId = b.UnitId
+	x.Unit = b.Unit
+	x.Status = b.Status
+	x.Reason = b.Reason
+	x.Code = b.Code
+	x.UserId = b.UserId
+	x.User = b.User
+	x.X = b.X
+	x.Y = b.Y
+	x.Postal = b.Postal
+	x.CreatorJob = b.CreatorJob
+	return m0
+}
+
 type DispatchReferences struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	References    []*DispatchReference   `protobuf:"bytes,1,rep,name=references,proto3" json:"references,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -763,11 +1272,6 @@ func (x *DispatchReferences) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DispatchReferences.ProtoReflect.Descriptor instead.
-func (*DispatchReferences) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_dispatches_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *DispatchReferences) GetReferences() []*DispatchReference {
 	if x != nil {
 		return x.References
@@ -775,8 +1279,26 @@ func (x *DispatchReferences) GetReferences() []*DispatchReference {
 	return nil
 }
 
+func (x *DispatchReferences) SetReferences(v []*DispatchReference) {
+	x.References = v
+}
+
+type DispatchReferences_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	References []*DispatchReference
+}
+
+func (b0 DispatchReferences_builder) Build() *DispatchReferences {
+	m0 := &DispatchReferences{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.References = b.References
+	return m0
+}
+
 type DispatchReference struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
+	state            protoimpl.MessageState `protogen:"hybrid.v1"`
 	TargetDispatchId int64                  `protobuf:"varint,1,opt,name=target_dispatch_id,json=targetDispatchId,proto3" json:"target_dispatch_id,omitempty"`
 	ReferenceType    DispatchReferenceType  `protobuf:"varint,2,opt,name=reference_type,json=referenceType,proto3,enum=resources.centrum.dispatches.DispatchReferenceType" json:"reference_type,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -808,11 +1330,6 @@ func (x *DispatchReference) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DispatchReference.ProtoReflect.Descriptor instead.
-func (*DispatchReference) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_dispatches_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *DispatchReference) GetTargetDispatchId() int64 {
 	if x != nil {
 		return x.TargetDispatchId
@@ -827,8 +1344,32 @@ func (x *DispatchReference) GetReferenceType() DispatchReferenceType {
 	return DispatchReferenceType_DISPATCH_REFERENCE_TYPE_UNSPECIFIED
 }
 
+func (x *DispatchReference) SetTargetDispatchId(v int64) {
+	x.TargetDispatchId = v
+}
+
+func (x *DispatchReference) SetReferenceType(v DispatchReferenceType) {
+	x.ReferenceType = v
+}
+
+type DispatchReference_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	TargetDispatchId int64
+	ReferenceType    DispatchReferenceType
+}
+
+func (b0 DispatchReference_builder) Build() *DispatchReference {
+	m0 := &DispatchReference{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.TargetDispatchId = b.TargetDispatchId
+	x.ReferenceType = b.ReferenceType
+	return m0
+}
+
 type DispatchAttributes struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	List          []DispatchAttribute    `protobuf:"varint,1,rep,packed,name=list,proto3,enum=resources.centrum.dispatches.DispatchAttribute" json:"list,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -859,16 +1400,29 @@ func (x *DispatchAttributes) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DispatchAttributes.ProtoReflect.Descriptor instead.
-func (*DispatchAttributes) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_dispatches_dispatches_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *DispatchAttributes) GetList() []DispatchAttribute {
 	if x != nil {
 		return x.List
 	}
 	return nil
+}
+
+func (x *DispatchAttributes) SetList(v []DispatchAttribute) {
+	x.List = v
+}
+
+type DispatchAttributes_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	List []DispatchAttribute
+}
+
+func (b0 DispatchAttributes_builder) Build() *DispatchAttributes {
+	m0 := &DispatchAttributes{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.List = b.List
+	return m0
 }
 
 var File_resources_centrum_dispatches_dispatches_proto protoreflect.FileDescriptor
@@ -1004,18 +1558,6 @@ const file_resources_centrum_dispatches_dispatches_proto_rawDesc = "" +
 	"\x1cDISPATCH_ATTRIBUTE_DUPLICATE\x10\x02\x12\x1e\n" +
 	"\x1aDISPATCH_ATTRIBUTE_TOO_OLD\x10\x03\x12 \n" +
 	"\x1cDISPATCH_ATTRIBUTE_AUTOMATIC\x10\x04BbZ`github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches;centrumdispatchesb\x06proto3"
-
-var (
-	file_resources_centrum_dispatches_dispatches_proto_rawDescOnce sync.Once
-	file_resources_centrum_dispatches_dispatches_proto_rawDescData []byte
-)
-
-func file_resources_centrum_dispatches_dispatches_proto_rawDescGZIP() []byte {
-	file_resources_centrum_dispatches_dispatches_proto_rawDescOnce.Do(func() {
-		file_resources_centrum_dispatches_dispatches_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_centrum_dispatches_dispatches_proto_rawDesc), len(file_resources_centrum_dispatches_dispatches_proto_rawDesc)))
-	})
-	return file_resources_centrum_dispatches_dispatches_proto_rawDescData
-}
 
 var file_resources_centrum_dispatches_dispatches_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
 var file_resources_centrum_dispatches_dispatches_proto_msgTypes = make([]protoimpl.MessageInfo, 7)

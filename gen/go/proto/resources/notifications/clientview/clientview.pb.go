@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/notifications/clientview/clientview.proto
 
+//go:build !protoopaque
+
 package notificationsclientview
 
 import (
@@ -11,7 +13,6 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	structpb "google.golang.org/protobuf/types/known/structpb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -75,11 +76,6 @@ func (x ObjectType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ObjectType.Descriptor instead.
-func (ObjectType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_notifications_clientview_clientview_proto_rawDescGZIP(), []int{0}
-}
-
 type ObjectEventType int32
 
 const (
@@ -124,13 +120,8 @@ func (x ObjectEventType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ObjectEventType.Descriptor instead.
-func (ObjectEventType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_notifications_clientview_clientview_proto_rawDescGZIP(), []int{1}
-}
-
 type ClientView struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Type          ObjectType             `protobuf:"varint,1,opt,name=type,proto3,enum=resources.notifications.clientview.ObjectType" json:"type,omitempty"`
 	Id            *int64                 `protobuf:"varint,2,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -162,11 +153,6 @@ func (x *ClientView) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ClientView.ProtoReflect.Descriptor instead.
-func (*ClientView) Descriptor() ([]byte, []int) {
-	return file_resources_notifications_clientview_clientview_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *ClientView) GetType() ObjectType {
 	if x != nil {
 		return x.Type
@@ -181,8 +167,43 @@ func (x *ClientView) GetId() int64 {
 	return 0
 }
 
+func (x *ClientView) SetType(v ObjectType) {
+	x.Type = v
+}
+
+func (x *ClientView) SetId(v int64) {
+	x.Id = &v
+}
+
+func (x *ClientView) HasId() bool {
+	if x == nil {
+		return false
+	}
+	return x.Id != nil
+}
+
+func (x *ClientView) ClearId() {
+	x.Id = nil
+}
+
+type ClientView_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Type ObjectType
+	Id   *int64
+}
+
+func (b0 ClientView_builder) Build() *ClientView {
+	m0 := &ClientView{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Type = b.Type
+	x.Id = b.Id
+	return m0
+}
+
 type ObjectEvent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Type          ObjectType             `protobuf:"varint,1,opt,name=type,proto3,enum=resources.notifications.clientview.ObjectType" json:"type,omitempty"`
 	Id            *int64                 `protobuf:"varint,2,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	EventType     ObjectEventType        `protobuf:"varint,3,opt,name=event_type,json=eventType,proto3,enum=resources.notifications.clientview.ObjectEventType" json:"event_type,omitempty"`
@@ -216,11 +237,6 @@ func (x *ObjectEvent) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ObjectEvent.ProtoReflect.Descriptor instead.
-func (*ObjectEvent) Descriptor() ([]byte, []int) {
-	return file_resources_notifications_clientview_clientview_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ObjectEvent) GetType() ObjectType {
@@ -265,6 +281,98 @@ func (x *ObjectEvent) GetData() *structpb.Struct {
 	return nil
 }
 
+func (x *ObjectEvent) SetType(v ObjectType) {
+	x.Type = v
+}
+
+func (x *ObjectEvent) SetId(v int64) {
+	x.Id = &v
+}
+
+func (x *ObjectEvent) SetEventType(v ObjectEventType) {
+	x.EventType = v
+}
+
+func (x *ObjectEvent) SetUserId(v int32) {
+	x.UserId = &v
+}
+
+func (x *ObjectEvent) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *ObjectEvent) SetData(v *structpb.Struct) {
+	x.Data = v
+}
+
+func (x *ObjectEvent) HasId() bool {
+	if x == nil {
+		return false
+	}
+	return x.Id != nil
+}
+
+func (x *ObjectEvent) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
+}
+
+func (x *ObjectEvent) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *ObjectEvent) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *ObjectEvent) ClearId() {
+	x.Id = nil
+}
+
+func (x *ObjectEvent) ClearUserId() {
+	x.UserId = nil
+}
+
+func (x *ObjectEvent) ClearJob() {
+	x.Job = nil
+}
+
+func (x *ObjectEvent) ClearData() {
+	x.Data = nil
+}
+
+type ObjectEvent_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Type      ObjectType
+	Id        *int64
+	EventType ObjectEventType
+	UserId    *int32
+	Job       *string
+	Data      *structpb.Struct
+}
+
+func (b0 ObjectEvent_builder) Build() *ObjectEvent {
+	m0 := &ObjectEvent{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Type = b.Type
+	x.Id = b.Id
+	x.EventType = b.EventType
+	x.UserId = b.UserId
+	x.Job = b.Job
+	x.Data = b.Data
+	return m0
+}
+
 var File_resources_notifications_clientview_clientview_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_clientview_clientview_proto_rawDesc = "" +
@@ -300,18 +408,6 @@ const file_resources_notifications_clientview_clientview_proto_rawDesc = "" +
 	"\x1dOBJECT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19OBJECT_EVENT_TYPE_UPDATED\x10\x01\x12\x1d\n" +
 	"\x19OBJECT_EVENT_TYPE_DELETED\x10\x02BnZlgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview;notificationsclientviewb\x06proto3"
-
-var (
-	file_resources_notifications_clientview_clientview_proto_rawDescOnce sync.Once
-	file_resources_notifications_clientview_clientview_proto_rawDescData []byte
-)
-
-func file_resources_notifications_clientview_clientview_proto_rawDescGZIP() []byte {
-	file_resources_notifications_clientview_clientview_proto_rawDescOnce.Do(func() {
-		file_resources_notifications_clientview_clientview_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_notifications_clientview_clientview_proto_rawDesc), len(file_resources_notifications_clientview_clientview_proto_rawDesc)))
-	})
-	return file_resources_notifications_clientview_clientview_proto_rawDescData
-}
 
 var file_resources_notifications_clientview_clientview_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_resources_notifications_clientview_clientview_proto_msgTypes = make([]protoimpl.MessageInfo, 2)

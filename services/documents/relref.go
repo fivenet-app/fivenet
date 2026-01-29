@@ -16,7 +16,6 @@ import (
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -115,7 +114,7 @@ func (s *Server) GetDocumentReferences(
 
 	tSourceDoc := tDocument.AS("source_document")
 	tTargetDoc := tDocument.AS("target_document")
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 	tRefCreator := tCreator.AS("ref_creator")
 
 	stmt := tDocRef.
@@ -630,7 +629,7 @@ func (s *Server) getDocumentRelations(
 	userInfo *userinfo.UserInfo,
 	documentId int64,
 ) ([]*documentsrelations.DocumentRelation, error) {
-	tSourceUser := tables.User().AS("source_user")
+	tSourceUser := table.FivenetUser.AS("source_user")
 	tTargetUser := tSourceUser.AS("target_user")
 
 	stmt := tDocRel.
@@ -722,7 +721,7 @@ func (s *Server) notifyMentionedUser(
 	sourceUserId int32,
 	targetUserId int32,
 ) error {
-	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, targetUserId)
+	userInfo, err := s.ui.GetUserInfo(ctx, targetUserId)
 	if err != nil {
 		return err
 	}

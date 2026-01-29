@@ -6,7 +6,6 @@ import (
 	"path"
 	"path/filepath"
 	"slices"
-	"sort"
 	"strings"
 	"text/template"
 
@@ -287,7 +286,7 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 		return nil
 	}
 
-	sort.Strings(data.PermissionServiceKeys)
+	slices.Sort(data.PermissionServiceKeys)
 
 	name := p.ctx.OutputPath(f)
 	p.AddGeneratorTemplateFile(

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/calendar/entries/entries.proto
 
+//go:build !protoopaque
+
 package calendarentries
 
 import (
@@ -17,7 +19,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -81,13 +82,8 @@ func (x RsvpResponses) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use RsvpResponses.Descriptor instead.
-func (RsvpResponses) EnumDescriptor() ([]byte, []int) {
-	return file_resources_calendar_entries_entries_proto_rawDescGZIP(), []int{0}
-}
-
 type CalendarEntry struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	Id            int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp    `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp    `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -133,11 +129,6 @@ func (x *CalendarEntry) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CalendarEntry.ProtoReflect.Descriptor instead.
-func (*CalendarEntry) Descriptor() ([]byte, []int) {
-	return file_resources_calendar_entries_entries_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *CalendarEntry) GetId() int64 {
@@ -266,8 +257,271 @@ func (x *CalendarEntry) GetRsvp() *CalendarEntryRSVP {
 	return nil
 }
 
+func (x *CalendarEntry) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *CalendarEntry) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *CalendarEntry) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *CalendarEntry) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *CalendarEntry) SetCalendarId(v int64) {
+	x.CalendarId = v
+}
+
+func (x *CalendarEntry) SetCalendar(v *calendar.Calendar) {
+	x.Calendar = v
+}
+
+func (x *CalendarEntry) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *CalendarEntry) SetStartTime(v *timestamp.Timestamp) {
+	x.StartTime = v
+}
+
+func (x *CalendarEntry) SetEndTime(v *timestamp.Timestamp) {
+	x.EndTime = v
+}
+
+func (x *CalendarEntry) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *CalendarEntry) SetContent(v *content.Content) {
+	x.Content = v
+}
+
+func (x *CalendarEntry) SetClosed(v bool) {
+	x.Closed = v
+}
+
+func (x *CalendarEntry) SetRsvpOpen(v bool) {
+	x.RsvpOpen = &v
+}
+
+func (x *CalendarEntry) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *CalendarEntry) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *CalendarEntry) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *CalendarEntry) SetRecurring(v *CalendarEntryRecurring) {
+	x.Recurring = v
+}
+
+func (x *CalendarEntry) SetRsvp(v *CalendarEntryRSVP) {
+	x.Rsvp = v
+}
+
+func (x *CalendarEntry) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *CalendarEntry) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *CalendarEntry) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *CalendarEntry) HasCalendar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Calendar != nil
+}
+
+func (x *CalendarEntry) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *CalendarEntry) HasStartTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.StartTime != nil
+}
+
+func (x *CalendarEntry) HasEndTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.EndTime != nil
+}
+
+func (x *CalendarEntry) HasContent() bool {
+	if x == nil {
+		return false
+	}
+	return x.Content != nil
+}
+
+func (x *CalendarEntry) HasRsvpOpen() bool {
+	if x == nil {
+		return false
+	}
+	return x.RsvpOpen != nil
+}
+
+func (x *CalendarEntry) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *CalendarEntry) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *CalendarEntry) HasRecurring() bool {
+	if x == nil {
+		return false
+	}
+	return x.Recurring != nil
+}
+
+func (x *CalendarEntry) HasRsvp() bool {
+	if x == nil {
+		return false
+	}
+	return x.Rsvp != nil
+}
+
+func (x *CalendarEntry) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *CalendarEntry) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *CalendarEntry) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
+func (x *CalendarEntry) ClearCalendar() {
+	x.Calendar = nil
+}
+
+func (x *CalendarEntry) ClearJob() {
+	x.Job = nil
+}
+
+func (x *CalendarEntry) ClearStartTime() {
+	x.StartTime = nil
+}
+
+func (x *CalendarEntry) ClearEndTime() {
+	x.EndTime = nil
+}
+
+func (x *CalendarEntry) ClearContent() {
+	x.Content = nil
+}
+
+func (x *CalendarEntry) ClearRsvpOpen() {
+	x.RsvpOpen = nil
+}
+
+func (x *CalendarEntry) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *CalendarEntry) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *CalendarEntry) ClearRecurring() {
+	x.Recurring = nil
+}
+
+func (x *CalendarEntry) ClearRsvp() {
+	x.Rsvp = nil
+}
+
+type CalendarEntry_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id         int64
+	CreatedAt  *timestamp.Timestamp
+	UpdatedAt  *timestamp.Timestamp
+	DeletedAt  *timestamp.Timestamp
+	CalendarId int64
+	Calendar   *calendar.Calendar
+	Job        *string
+	StartTime  *timestamp.Timestamp
+	EndTime    *timestamp.Timestamp
+	Title      string
+	Content    *content.Content
+	Closed     bool
+	RsvpOpen   *bool
+	CreatorId  *int32
+	Creator    *short.UserShort
+	CreatorJob string
+	Recurring  *CalendarEntryRecurring
+	Rsvp       *CalendarEntryRSVP
+}
+
+func (b0 CalendarEntry_builder) Build() *CalendarEntry {
+	m0 := &CalendarEntry{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
+	x.CalendarId = b.CalendarId
+	x.Calendar = b.Calendar
+	x.Job = b.Job
+	x.StartTime = b.StartTime
+	x.EndTime = b.EndTime
+	x.Title = b.Title
+	x.Content = b.Content
+	x.Closed = b.Closed
+	x.RsvpOpen = b.RsvpOpen
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	x.Recurring = b.Recurring
+	x.Rsvp = b.Rsvp
+	return m0
+}
+
 type CalendarEntryRecurring struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Every         string                 `protobuf:"bytes,1,opt,name=every,proto3" json:"every,omitempty"`
 	Count         int32                  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
 	Until         *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=until,proto3,oneof" json:"until,omitempty"`
@@ -300,11 +554,6 @@ func (x *CalendarEntryRecurring) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CalendarEntryRecurring.ProtoReflect.Descriptor instead.
-func (*CalendarEntryRecurring) Descriptor() ([]byte, []int) {
-	return file_resources_calendar_entries_entries_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *CalendarEntryRecurring) GetEvery() string {
 	if x != nil {
 		return x.Every
@@ -326,8 +575,49 @@ func (x *CalendarEntryRecurring) GetUntil() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *CalendarEntryRecurring) SetEvery(v string) {
+	x.Every = v
+}
+
+func (x *CalendarEntryRecurring) SetCount(v int32) {
+	x.Count = v
+}
+
+func (x *CalendarEntryRecurring) SetUntil(v *timestamp.Timestamp) {
+	x.Until = v
+}
+
+func (x *CalendarEntryRecurring) HasUntil() bool {
+	if x == nil {
+		return false
+	}
+	return x.Until != nil
+}
+
+func (x *CalendarEntryRecurring) ClearUntil() {
+	x.Until = nil
+}
+
+type CalendarEntryRecurring_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Every string
+	Count int32
+	Until *timestamp.Timestamp
+}
+
+func (b0 CalendarEntryRecurring_builder) Build() *CalendarEntryRecurring {
+	m0 := &CalendarEntryRecurring{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Every = b.Every
+	x.Count = b.Count
+	x.Until = b.Until
+	return m0
+}
+
 type CalendarEntryRSVP struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	EntryId       int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UserId        int32                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -360,11 +650,6 @@ func (x *CalendarEntryRSVP) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CalendarEntryRSVP.ProtoReflect.Descriptor instead.
-func (*CalendarEntryRSVP) Descriptor() ([]byte, []int) {
-	return file_resources_calendar_entries_entries_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CalendarEntryRSVP) GetEntryId() int64 {
@@ -400,6 +685,70 @@ func (x *CalendarEntryRSVP) GetResponse() RsvpResponses {
 		return x.Response
 	}
 	return RsvpResponses_RSVP_RESPONSES_UNSPECIFIED
+}
+
+func (x *CalendarEntryRSVP) SetEntryId(v int64) {
+	x.EntryId = v
+}
+
+func (x *CalendarEntryRSVP) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *CalendarEntryRSVP) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *CalendarEntryRSVP) SetUser(v *short.UserShort) {
+	x.User = v
+}
+
+func (x *CalendarEntryRSVP) SetResponse(v RsvpResponses) {
+	x.Response = v
+}
+
+func (x *CalendarEntryRSVP) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *CalendarEntryRSVP) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *CalendarEntryRSVP) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *CalendarEntryRSVP) ClearUser() {
+	x.User = nil
+}
+
+type CalendarEntryRSVP_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EntryId   int64
+	CreatedAt *timestamp.Timestamp
+	UserId    int32
+	User      *short.UserShort
+	Response  RsvpResponses
+}
+
+func (b0 CalendarEntryRSVP_builder) Build() *CalendarEntryRSVP {
+	m0 := &CalendarEntryRSVP{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EntryId = b.EntryId
+	x.CreatedAt = b.CreatedAt
+	x.UserId = b.UserId
+	x.User = b.User
+	x.Response = b.Response
+	return m0
 }
 
 var File_resources_calendar_entries_entries_proto protoreflect.FileDescriptor
@@ -470,18 +819,6 @@ const file_resources_calendar_entries_entries_proto_rawDesc = "" +
 	"\x11RSVP_RESPONSES_NO\x10\x03\x12\x18\n" +
 	"\x14RSVP_RESPONSES_MAYBE\x10\x04\x12\x16\n" +
 	"\x12RSVP_RESPONSES_YES\x10\x05B^Z\\github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries;calendarentriesb\x06proto3"
-
-var (
-	file_resources_calendar_entries_entries_proto_rawDescOnce sync.Once
-	file_resources_calendar_entries_entries_proto_rawDescData []byte
-)
-
-func file_resources_calendar_entries_entries_proto_rawDescGZIP() []byte {
-	file_resources_calendar_entries_entries_proto_rawDescOnce.Do(func() {
-		file_resources_calendar_entries_entries_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_calendar_entries_entries_proto_rawDesc), len(file_resources_calendar_entries_entries_proto_rawDesc)))
-	})
-	return file_resources_calendar_entries_entries_proto_rawDescData
-}
 
 var file_resources_calendar_entries_entries_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_calendar_entries_entries_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

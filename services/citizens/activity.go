@@ -8,7 +8,6 @@ import (
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -82,7 +81,7 @@ func (s *Server) ListUserActivity(
 		return resp, nil
 	}
 
-	tUTarget := tables.User().AS("target_user")
+	tUTarget := table.FivenetUser.AS("target_user")
 	tUSource := tUTarget.AS("source_user")
 
 	// Convert proto sort to db sorting

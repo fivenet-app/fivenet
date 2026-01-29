@@ -40,7 +40,7 @@ const citizensCitizensClient = await getCitizensCitizensClient();
 const userId = computed(() => props.userId ?? props.user?.userId ?? 0);
 
 const { data, refresh, status, error } = useLazyAsyncData(`citizen-info-${userId.value}`, () => getCitizen(userId.value), {
-    immediate: !props.user,
+    immediate: !props.user && !!userId.value,
 });
 
 async function getCitizen(id: number): Promise<User | undefined> {
@@ -64,17 +64,19 @@ async function getCitizen(id: number): Promise<User | undefined> {
     }
 }
 
-const user = computed(
-    () =>
-        ({
-            ...data.value,
-            ...props.user,
-        }) as User,
+const user = computed(() =>
+    data.value || props.user
+        ? ({
+              ...data.value,
+              ...props.user,
+          } as User)
+        : undefined,
 );
 
 const { game } = useAppConfig();
 
 const opened = ref(false);
+
 watchOnce(opened, async () => {
     if (props.user) {
         useTimeoutFn(async () => refresh(), popover.waitTime);
@@ -83,9 +85,11 @@ watchOnce(opened, async () => {
 </script>
 
 <template>
-    <template v-if="!user && !userId">
+    <template v-if="!user && (!userId || userId === 0)">
         <span class="inline-flex items-center">
-            {{ $t('common.na') }}
+            <slot name="before" />
+            <span>{{ $t('common.na') }}</span>
+            <slot name="after" />
         </span>
     </template>
     <UPopover v-else>
@@ -98,6 +102,7 @@ watchOnce(opened, async () => {
             @click.prevent="opened = true"
         >
             <template v-if="showAvatarInName" #leading>
+                <slot name="before" />
                 <USkeleton v-if="!user && isRequestPending(status)" class="h-6 w-6" />
                 <ProfilePictureImg
                     v-else
@@ -111,17 +116,19 @@ watchOnce(opened, async () => {
             <USkeleton v-if="!user && isRequestPending(status)" class="h-8 w-[125px]" />
             <span v-else :class="textClass">
                 <slot name="name" :user="user">
-                    {{ user?.firstname }} {{ user?.lastname }}
-                    <template v-if="showBirthdate && user.dateofbirth">({{ user.dateofbirth }})</template>
+                    <span v-if="user">{{ user?.firstname }} {{ user?.lastname }}</span>
+                    <span v-else>{{ $t('common.unknown') }}</span>
+                    <template v-if="showBirthdate && user?.dateofbirth">({{ user.dateofbirth }})</template>
                 </slot>
             </span>
+            <slot name="after" />
         </UButton>
 
         <template #content>
             <div class="flex flex-col gap-2 p-4">
-                <div class="grid w-full grid-cols-3 gap-2">
+                <UFieldGroup class="grid w-full grid-cols-3 gap-2">
                     <IDCopyBadge
-                        :id="userId ?? user?.userId ?? 0"
+                        :id="userId"
                         prefix="CIT"
                         :title="{ key: 'notifications.citizens.copy_citizen_id.title', parameters: {} }"
                         :content="{ key: 'notifications.citizens.copy_citizen_id.content', parameters: {} }"
@@ -133,7 +140,7 @@ watchOnce(opened, async () => {
                         variant="link"
                         icon="i-mdi-account"
                         :label="$t('common.profile')"
-                        :to="`/citizens/${userId ?? user?.userId ?? 0}`"
+                        :to="`/citizens/${userId}`"
                     />
 
                     <UButton
@@ -141,13 +148,13 @@ watchOnce(opened, async () => {
                         variant="link"
                         icon="i-mdi-briefcase"
                         :label="$t('common.colleague')"
-                        :to="`/jobs/colleagues/${userId ?? user?.userId ?? 0}/info`"
+                        :to="`/jobs/colleagues/${userId}/info`"
                     />
 
                     <PhoneNumberBlock v-if="user?.phoneNumber" :number="user.phoneNumber" hide-number show-label />
 
                     <EmailBlock v-if="user?.props && user.props?.email" :email="user.props?.email" hide-email />
-                </div>
+                </UFieldGroup>
 
                 <div v-if="error">
                     <DataErrorBlock

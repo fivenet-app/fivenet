@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/documents/forms.proto
 
+//go:build !protoopaque
+
 package documents
 
 import (
@@ -11,7 +13,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,7 +24,7 @@ const (
 )
 
 type GetFormRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	FormId        int64                  `protobuf:"varint,1,opt,name=form_id,json=formId,proto3" json:"form_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -54,11 +55,6 @@ func (x *GetFormRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetFormRequest.ProtoReflect.Descriptor instead.
-func (*GetFormRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_forms_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *GetFormRequest) GetFormId() int64 {
 	if x != nil {
 		return x.FormId
@@ -66,8 +62,26 @@ func (x *GetFormRequest) GetFormId() int64 {
 	return 0
 }
 
+func (x *GetFormRequest) SetFormId(v int64) {
+	x.FormId = v
+}
+
+type GetFormRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	FormId int64
+}
+
+func (b0 GetFormRequest_builder) Build() *GetFormRequest {
+	m0 := &GetFormRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.FormId = b.FormId
+	return m0
+}
+
 type GetFormResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Form          *forms.Form            `protobuf:"bytes,1,opt,name=form,proto3" json:"form,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -98,11 +112,6 @@ func (x *GetFormResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetFormResponse.ProtoReflect.Descriptor instead.
-func (*GetFormResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_forms_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *GetFormResponse) GetForm() *forms.Form {
 	if x != nil {
 		return x.Form
@@ -110,8 +119,37 @@ func (x *GetFormResponse) GetForm() *forms.Form {
 	return nil
 }
 
+func (x *GetFormResponse) SetForm(v *forms.Form) {
+	x.Form = v
+}
+
+func (x *GetFormResponse) HasForm() bool {
+	if x == nil {
+		return false
+	}
+	return x.Form != nil
+}
+
+func (x *GetFormResponse) ClearForm() {
+	x.Form = nil
+}
+
+type GetFormResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Form *forms.Form
+}
+
+func (b0 GetFormResponse_builder) Build() *GetFormResponse {
+	m0 := &GetFormResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Form = b.Form
+	return m0
+}
+
 type ListFormsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -141,13 +179,20 @@ func (x *ListFormsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListFormsRequest.ProtoReflect.Descriptor instead.
-func (*ListFormsRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_forms_proto_rawDescGZIP(), []int{2}
+type ListFormsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ListFormsRequest_builder) Build() *ListFormsRequest {
+	m0 := &ListFormsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListFormsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Forms         []*forms.Form          `protobuf:"bytes,1,rep,name=forms,proto3" json:"forms,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -178,16 +223,29 @@ func (x *ListFormsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListFormsResponse.ProtoReflect.Descriptor instead.
-func (*ListFormsResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_forms_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *ListFormsResponse) GetForms() []*forms.Form {
 	if x != nil {
 		return x.Forms
 	}
 	return nil
+}
+
+func (x *ListFormsResponse) SetForms(v []*forms.Form) {
+	x.Forms = v
+}
+
+type ListFormsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Forms []*forms.Form
+}
+
+func (b0 ListFormsResponse_builder) Build() *ListFormsResponse {
+	m0 := &ListFormsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Forms = b.Forms
+	return m0
 }
 
 var File_services_documents_forms_proto protoreflect.FileDescriptor
@@ -205,18 +263,6 @@ const file_services_documents_forms_proto_rawDesc = "" +
 	"\fFormsService\x12R\n" +
 	"\aGetForm\x12\".services.documents.GetFormRequest\x1a#.services.documents.GetFormResponse\x12X\n" +
 	"\tListForms\x12$.services.documents.ListFormsRequest\x1a%.services.documents.ListFormsResponseBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
-
-var (
-	file_services_documents_forms_proto_rawDescOnce sync.Once
-	file_services_documents_forms_proto_rawDescData []byte
-)
-
-func file_services_documents_forms_proto_rawDescGZIP() []byte {
-	file_services_documents_forms_proto_rawDescOnce.Do(func() {
-		file_services_documents_forms_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_documents_forms_proto_rawDesc), len(file_services_documents_forms_proto_rawDesc)))
-	})
-	return file_services_documents_forms_proto_rawDescData
-}
 
 var file_services_documents_forms_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_services_documents_forms_proto_goTypes = []any{

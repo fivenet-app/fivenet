@@ -4,17 +4,19 @@
 // 	protoc        (unknown)
 // source: services/sync/sync.proto
 
+//go:build !protoopaque
+
 package sync
 
 import (
 	dispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
-	activity1 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
-	sync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync"
-	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
+	activity2 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
+	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
+	data "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
+	activity1 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync1 "sync"
 	unsafe "unsafe"
 )
 
@@ -26,7 +28,7 @@ const (
 )
 
 type GetStatusRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -56,17 +58,25 @@ func (x *GetStatusRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetStatusRequest.ProtoReflect.Descriptor instead.
-func (*GetStatusRequest) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{0}
+type GetStatusRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 GetStatusRequest_builder) Build() *GetStatusRequest {
+	m0 := &GetStatusRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetStatusResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Jobs          *sync.DataStatus       `protobuf:"bytes,1,opt,name=jobs,proto3" json:"jobs,omitempty"`
-	Licenses      *sync.DataStatus       `protobuf:"bytes,2,opt,name=licenses,proto3" json:"licenses,omitempty"`
-	Users         *sync.DataStatus       `protobuf:"bytes,3,opt,name=users,proto3" json:"users,omitempty"`
-	Vehicles      *sync.DataStatus       `protobuf:"bytes,4,opt,name=vehicles,proto3" json:"vehicles,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Jobs          *data.DataStatus       `protobuf:"bytes,1,opt,name=jobs,proto3" json:"jobs,omitempty"`
+	Licenses      *data.DataStatus       `protobuf:"bytes,2,opt,name=licenses,proto3" json:"licenses,omitempty"`
+	Accounts      *data.DataStatus       `protobuf:"bytes,5,opt,name=accounts,proto3" json:"accounts,omitempty"`
+	Users         *data.DataStatus       `protobuf:"bytes,3,opt,name=users,proto3" json:"users,omitempty"`
+	Vehicles      *data.DataStatus       `protobuf:"bytes,4,opt,name=vehicles,proto3" json:"vehicles,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -96,41 +106,140 @@ func (x *GetStatusResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetStatusResponse.ProtoReflect.Descriptor instead.
-func (*GetStatusResponse) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *GetStatusResponse) GetJobs() *sync.DataStatus {
+func (x *GetStatusResponse) GetJobs() *data.DataStatus {
 	if x != nil {
 		return x.Jobs
 	}
 	return nil
 }
 
-func (x *GetStatusResponse) GetLicenses() *sync.DataStatus {
+func (x *GetStatusResponse) GetLicenses() *data.DataStatus {
 	if x != nil {
 		return x.Licenses
 	}
 	return nil
 }
 
-func (x *GetStatusResponse) GetUsers() *sync.DataStatus {
+func (x *GetStatusResponse) GetAccounts() *data.DataStatus {
+	if x != nil {
+		return x.Accounts
+	}
+	return nil
+}
+
+func (x *GetStatusResponse) GetUsers() *data.DataStatus {
 	if x != nil {
 		return x.Users
 	}
 	return nil
 }
 
-func (x *GetStatusResponse) GetVehicles() *sync.DataStatus {
+func (x *GetStatusResponse) GetVehicles() *data.DataStatus {
 	if x != nil {
 		return x.Vehicles
 	}
 	return nil
 }
 
+func (x *GetStatusResponse) SetJobs(v *data.DataStatus) {
+	x.Jobs = v
+}
+
+func (x *GetStatusResponse) SetLicenses(v *data.DataStatus) {
+	x.Licenses = v
+}
+
+func (x *GetStatusResponse) SetAccounts(v *data.DataStatus) {
+	x.Accounts = v
+}
+
+func (x *GetStatusResponse) SetUsers(v *data.DataStatus) {
+	x.Users = v
+}
+
+func (x *GetStatusResponse) SetVehicles(v *data.DataStatus) {
+	x.Vehicles = v
+}
+
+func (x *GetStatusResponse) HasJobs() bool {
+	if x == nil {
+		return false
+	}
+	return x.Jobs != nil
+}
+
+func (x *GetStatusResponse) HasLicenses() bool {
+	if x == nil {
+		return false
+	}
+	return x.Licenses != nil
+}
+
+func (x *GetStatusResponse) HasAccounts() bool {
+	if x == nil {
+		return false
+	}
+	return x.Accounts != nil
+}
+
+func (x *GetStatusResponse) HasUsers() bool {
+	if x == nil {
+		return false
+	}
+	return x.Users != nil
+}
+
+func (x *GetStatusResponse) HasVehicles() bool {
+	if x == nil {
+		return false
+	}
+	return x.Vehicles != nil
+}
+
+func (x *GetStatusResponse) ClearJobs() {
+	x.Jobs = nil
+}
+
+func (x *GetStatusResponse) ClearLicenses() {
+	x.Licenses = nil
+}
+
+func (x *GetStatusResponse) ClearAccounts() {
+	x.Accounts = nil
+}
+
+func (x *GetStatusResponse) ClearUsers() {
+	x.Users = nil
+}
+
+func (x *GetStatusResponse) ClearVehicles() {
+	x.Vehicles = nil
+}
+
+type GetStatusResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs     *data.DataStatus
+	Licenses *data.DataStatus
+	Accounts *data.DataStatus
+	Users    *data.DataStatus
+	Vehicles *data.DataStatus
+}
+
+func (b0 GetStatusResponse_builder) Build() *GetStatusResponse {
+	m0 := &GetStatusResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	x.Licenses = b.Licenses
+	x.Accounts = b.Accounts
+	x.Users = b.Users
+	x.Vehicles = b.Vehicles
+	return m0
+}
+
 type AddActivityRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Activity:
 	//
 	//	*AddActivityRequest_UserOauth2
@@ -140,6 +249,7 @@ type AddActivityRequest struct {
 	//	*AddActivityRequest_ColleagueActivity
 	//	*AddActivityRequest_ColleagueProps
 	//	*AddActivityRequest_JobTimeclock
+	//	*AddActivityRequest_AccountUpdate
 	//	*AddActivityRequest_UserUpdate
 	Activity      isAddActivityRequest_Activity `protobuf_oneof:"activity"`
 	unknownFields protoimpl.UnknownFields
@@ -171,11 +281,6 @@ func (x *AddActivityRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddActivityRequest.ProtoReflect.Descriptor instead.
-func (*AddActivityRequest) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *AddActivityRequest) GetActivity() isAddActivityRequest_Activity {
 	if x != nil {
 		return x.Activity
@@ -183,7 +288,7 @@ func (x *AddActivityRequest) GetActivity() isAddActivityRequest_Activity {
 	return nil
 }
 
-func (x *AddActivityRequest) GetUserOauth2() *sync.UserOAuth2Conn {
+func (x *AddActivityRequest) GetUserOauth2() *activity.UserOAuth2Conn {
 	if x != nil {
 		if x, ok := x.Activity.(*AddActivityRequest_UserOauth2); ok {
 			return x.UserOauth2
@@ -201,7 +306,7 @@ func (x *AddActivityRequest) GetDispatch() *dispatches.Dispatch {
 	return nil
 }
 
-func (x *AddActivityRequest) GetUserActivity() *activity.UserActivity {
+func (x *AddActivityRequest) GetUserActivity() *activity1.UserActivity {
 	if x != nil {
 		if x, ok := x.Activity.(*AddActivityRequest_UserActivity); ok {
 			return x.UserActivity
@@ -210,7 +315,7 @@ func (x *AddActivityRequest) GetUserActivity() *activity.UserActivity {
 	return nil
 }
 
-func (x *AddActivityRequest) GetUserProps() *sync.UserProps {
+func (x *AddActivityRequest) GetUserProps() *activity.UserProps {
 	if x != nil {
 		if x, ok := x.Activity.(*AddActivityRequest_UserProps); ok {
 			return x.UserProps
@@ -219,7 +324,7 @@ func (x *AddActivityRequest) GetUserProps() *sync.UserProps {
 	return nil
 }
 
-func (x *AddActivityRequest) GetColleagueActivity() *activity1.ColleagueActivity {
+func (x *AddActivityRequest) GetColleagueActivity() *activity2.ColleagueActivity {
 	if x != nil {
 		if x, ok := x.Activity.(*AddActivityRequest_ColleagueActivity); ok {
 			return x.ColleagueActivity
@@ -228,7 +333,7 @@ func (x *AddActivityRequest) GetColleagueActivity() *activity1.ColleagueActivity
 	return nil
 }
 
-func (x *AddActivityRequest) GetColleagueProps() *sync.ColleagueProps {
+func (x *AddActivityRequest) GetColleagueProps() *activity.ColleagueProps {
 	if x != nil {
 		if x, ok := x.Activity.(*AddActivityRequest_ColleagueProps); ok {
 			return x.ColleagueProps
@@ -237,7 +342,7 @@ func (x *AddActivityRequest) GetColleagueProps() *sync.ColleagueProps {
 	return nil
 }
 
-func (x *AddActivityRequest) GetJobTimeclock() *sync.TimeclockUpdate {
+func (x *AddActivityRequest) GetJobTimeclock() *activity.TimeclockUpdate {
 	if x != nil {
 		if x, ok := x.Activity.(*AddActivityRequest_JobTimeclock); ok {
 			return x.JobTimeclock
@@ -246,7 +351,16 @@ func (x *AddActivityRequest) GetJobTimeclock() *sync.TimeclockUpdate {
 	return nil
 }
 
-func (x *AddActivityRequest) GetUserUpdate() *sync.UserUpdate {
+func (x *AddActivityRequest) GetAccountUpdate() *activity.AccountUpdate {
+	if x != nil {
+		if x, ok := x.Activity.(*AddActivityRequest_AccountUpdate); ok {
+			return x.AccountUpdate
+		}
+	}
+	return nil
+}
+
+func (x *AddActivityRequest) GetUserUpdate() *activity.UserUpdate {
 	if x != nil {
 		if x, ok := x.Activity.(*AddActivityRequest_UserUpdate); ok {
 			return x.UserUpdate
@@ -255,12 +369,327 @@ func (x *AddActivityRequest) GetUserUpdate() *sync.UserUpdate {
 	return nil
 }
 
+func (x *AddActivityRequest) SetUserOauth2(v *activity.UserOAuth2Conn) {
+	if v == nil {
+		x.Activity = nil
+		return
+	}
+	x.Activity = &AddActivityRequest_UserOauth2{v}
+}
+
+func (x *AddActivityRequest) SetDispatch(v *dispatches.Dispatch) {
+	if v == nil {
+		x.Activity = nil
+		return
+	}
+	x.Activity = &AddActivityRequest_Dispatch{v}
+}
+
+func (x *AddActivityRequest) SetUserActivity(v *activity1.UserActivity) {
+	if v == nil {
+		x.Activity = nil
+		return
+	}
+	x.Activity = &AddActivityRequest_UserActivity{v}
+}
+
+func (x *AddActivityRequest) SetUserProps(v *activity.UserProps) {
+	if v == nil {
+		x.Activity = nil
+		return
+	}
+	x.Activity = &AddActivityRequest_UserProps{v}
+}
+
+func (x *AddActivityRequest) SetColleagueActivity(v *activity2.ColleagueActivity) {
+	if v == nil {
+		x.Activity = nil
+		return
+	}
+	x.Activity = &AddActivityRequest_ColleagueActivity{v}
+}
+
+func (x *AddActivityRequest) SetColleagueProps(v *activity.ColleagueProps) {
+	if v == nil {
+		x.Activity = nil
+		return
+	}
+	x.Activity = &AddActivityRequest_ColleagueProps{v}
+}
+
+func (x *AddActivityRequest) SetJobTimeclock(v *activity.TimeclockUpdate) {
+	if v == nil {
+		x.Activity = nil
+		return
+	}
+	x.Activity = &AddActivityRequest_JobTimeclock{v}
+}
+
+func (x *AddActivityRequest) SetAccountUpdate(v *activity.AccountUpdate) {
+	if v == nil {
+		x.Activity = nil
+		return
+	}
+	x.Activity = &AddActivityRequest_AccountUpdate{v}
+}
+
+func (x *AddActivityRequest) SetUserUpdate(v *activity.UserUpdate) {
+	if v == nil {
+		x.Activity = nil
+		return
+	}
+	x.Activity = &AddActivityRequest_UserUpdate{v}
+}
+
+func (x *AddActivityRequest) HasActivity() bool {
+	if x == nil {
+		return false
+	}
+	return x.Activity != nil
+}
+
+func (x *AddActivityRequest) HasUserOauth2() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Activity.(*AddActivityRequest_UserOauth2)
+	return ok
+}
+
+func (x *AddActivityRequest) HasDispatch() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Activity.(*AddActivityRequest_Dispatch)
+	return ok
+}
+
+func (x *AddActivityRequest) HasUserActivity() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Activity.(*AddActivityRequest_UserActivity)
+	return ok
+}
+
+func (x *AddActivityRequest) HasUserProps() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Activity.(*AddActivityRequest_UserProps)
+	return ok
+}
+
+func (x *AddActivityRequest) HasColleagueActivity() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Activity.(*AddActivityRequest_ColleagueActivity)
+	return ok
+}
+
+func (x *AddActivityRequest) HasColleagueProps() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Activity.(*AddActivityRequest_ColleagueProps)
+	return ok
+}
+
+func (x *AddActivityRequest) HasJobTimeclock() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Activity.(*AddActivityRequest_JobTimeclock)
+	return ok
+}
+
+func (x *AddActivityRequest) HasAccountUpdate() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Activity.(*AddActivityRequest_AccountUpdate)
+	return ok
+}
+
+func (x *AddActivityRequest) HasUserUpdate() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Activity.(*AddActivityRequest_UserUpdate)
+	return ok
+}
+
+func (x *AddActivityRequest) ClearActivity() {
+	x.Activity = nil
+}
+
+func (x *AddActivityRequest) ClearUserOauth2() {
+	if _, ok := x.Activity.(*AddActivityRequest_UserOauth2); ok {
+		x.Activity = nil
+	}
+}
+
+func (x *AddActivityRequest) ClearDispatch() {
+	if _, ok := x.Activity.(*AddActivityRequest_Dispatch); ok {
+		x.Activity = nil
+	}
+}
+
+func (x *AddActivityRequest) ClearUserActivity() {
+	if _, ok := x.Activity.(*AddActivityRequest_UserActivity); ok {
+		x.Activity = nil
+	}
+}
+
+func (x *AddActivityRequest) ClearUserProps() {
+	if _, ok := x.Activity.(*AddActivityRequest_UserProps); ok {
+		x.Activity = nil
+	}
+}
+
+func (x *AddActivityRequest) ClearColleagueActivity() {
+	if _, ok := x.Activity.(*AddActivityRequest_ColleagueActivity); ok {
+		x.Activity = nil
+	}
+}
+
+func (x *AddActivityRequest) ClearColleagueProps() {
+	if _, ok := x.Activity.(*AddActivityRequest_ColleagueProps); ok {
+		x.Activity = nil
+	}
+}
+
+func (x *AddActivityRequest) ClearJobTimeclock() {
+	if _, ok := x.Activity.(*AddActivityRequest_JobTimeclock); ok {
+		x.Activity = nil
+	}
+}
+
+func (x *AddActivityRequest) ClearAccountUpdate() {
+	if _, ok := x.Activity.(*AddActivityRequest_AccountUpdate); ok {
+		x.Activity = nil
+	}
+}
+
+func (x *AddActivityRequest) ClearUserUpdate() {
+	if _, ok := x.Activity.(*AddActivityRequest_UserUpdate); ok {
+		x.Activity = nil
+	}
+}
+
+const AddActivityRequest_Activity_not_set_case case_AddActivityRequest_Activity = 0
+const AddActivityRequest_UserOauth2_case case_AddActivityRequest_Activity = 1
+const AddActivityRequest_Dispatch_case case_AddActivityRequest_Activity = 2
+const AddActivityRequest_UserActivity_case case_AddActivityRequest_Activity = 3
+const AddActivityRequest_UserProps_case case_AddActivityRequest_Activity = 4
+const AddActivityRequest_ColleagueActivity_case case_AddActivityRequest_Activity = 5
+const AddActivityRequest_ColleagueProps_case case_AddActivityRequest_Activity = 6
+const AddActivityRequest_JobTimeclock_case case_AddActivityRequest_Activity = 7
+const AddActivityRequest_AccountUpdate_case case_AddActivityRequest_Activity = 9
+const AddActivityRequest_UserUpdate_case case_AddActivityRequest_Activity = 8
+
+func (x *AddActivityRequest) WhichActivity() case_AddActivityRequest_Activity {
+	if x == nil {
+		return AddActivityRequest_Activity_not_set_case
+	}
+	switch x.Activity.(type) {
+	case *AddActivityRequest_UserOauth2:
+		return AddActivityRequest_UserOauth2_case
+	case *AddActivityRequest_Dispatch:
+		return AddActivityRequest_Dispatch_case
+	case *AddActivityRequest_UserActivity:
+		return AddActivityRequest_UserActivity_case
+	case *AddActivityRequest_UserProps:
+		return AddActivityRequest_UserProps_case
+	case *AddActivityRequest_ColleagueActivity:
+		return AddActivityRequest_ColleagueActivity_case
+	case *AddActivityRequest_ColleagueProps:
+		return AddActivityRequest_ColleagueProps_case
+	case *AddActivityRequest_JobTimeclock:
+		return AddActivityRequest_JobTimeclock_case
+	case *AddActivityRequest_AccountUpdate:
+		return AddActivityRequest_AccountUpdate_case
+	case *AddActivityRequest_UserUpdate:
+		return AddActivityRequest_UserUpdate_case
+	default:
+		return AddActivityRequest_Activity_not_set_case
+	}
+}
+
+type AddActivityRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Activity:
+	UserOauth2 *activity.UserOAuth2Conn
+	Dispatch   *dispatches.Dispatch
+	// User activity
+	UserActivity *activity1.UserActivity
+	// Setting props will cause activity to be created automtically
+	UserProps *activity.UserProps
+	// Jobs user activity
+	ColleagueActivity *activity2.ColleagueActivity
+	// Setting props will cause activity to be created automtically
+	ColleagueProps *activity.ColleagueProps
+	// Timeclock user entry
+	JobTimeclock *activity.TimeclockUpdate
+	// Account update for a signle account to update the group(s).
+	AccountUpdate *activity.AccountUpdate
+	// User/Char info updates that aren't tracked by activity (yet)
+	UserUpdate *activity.UserUpdate
+	// -- end of Activity
+}
+
+func (b0 AddActivityRequest_builder) Build() *AddActivityRequest {
+	m0 := &AddActivityRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.UserOauth2 != nil {
+		x.Activity = &AddActivityRequest_UserOauth2{b.UserOauth2}
+	}
+	if b.Dispatch != nil {
+		x.Activity = &AddActivityRequest_Dispatch{b.Dispatch}
+	}
+	if b.UserActivity != nil {
+		x.Activity = &AddActivityRequest_UserActivity{b.UserActivity}
+	}
+	if b.UserProps != nil {
+		x.Activity = &AddActivityRequest_UserProps{b.UserProps}
+	}
+	if b.ColleagueActivity != nil {
+		x.Activity = &AddActivityRequest_ColleagueActivity{b.ColleagueActivity}
+	}
+	if b.ColleagueProps != nil {
+		x.Activity = &AddActivityRequest_ColleagueProps{b.ColleagueProps}
+	}
+	if b.JobTimeclock != nil {
+		x.Activity = &AddActivityRequest_JobTimeclock{b.JobTimeclock}
+	}
+	if b.AccountUpdate != nil {
+		x.Activity = &AddActivityRequest_AccountUpdate{b.AccountUpdate}
+	}
+	if b.UserUpdate != nil {
+		x.Activity = &AddActivityRequest_UserUpdate{b.UserUpdate}
+	}
+	return m0
+}
+
+type case_AddActivityRequest_Activity protoreflect.FieldNumber
+
+func (x case_AddActivityRequest_Activity) String() string {
+	md := file_services_sync_sync_proto_msgTypes[2].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isAddActivityRequest_Activity interface {
 	isAddActivityRequest_Activity()
 }
 
 type AddActivityRequest_UserOauth2 struct {
-	UserOauth2 *sync.UserOAuth2Conn `protobuf:"bytes,1,opt,name=user_oauth2,json=userOauth2,proto3,oneof"`
+	UserOauth2 *activity.UserOAuth2Conn `protobuf:"bytes,1,opt,name=user_oauth2,json=userOauth2,proto3,oneof"`
 }
 
 type AddActivityRequest_Dispatch struct {
@@ -269,32 +698,37 @@ type AddActivityRequest_Dispatch struct {
 
 type AddActivityRequest_UserActivity struct {
 	// User activity
-	UserActivity *activity.UserActivity `protobuf:"bytes,3,opt,name=user_activity,json=userActivity,proto3,oneof"`
+	UserActivity *activity1.UserActivity `protobuf:"bytes,3,opt,name=user_activity,json=userActivity,proto3,oneof"`
 }
 
 type AddActivityRequest_UserProps struct {
 	// Setting props will cause activity to be created automtically
-	UserProps *sync.UserProps `protobuf:"bytes,4,opt,name=user_props,json=userProps,proto3,oneof"`
+	UserProps *activity.UserProps `protobuf:"bytes,4,opt,name=user_props,json=userProps,proto3,oneof"`
 }
 
 type AddActivityRequest_ColleagueActivity struct {
 	// Jobs user activity
-	ColleagueActivity *activity1.ColleagueActivity `protobuf:"bytes,5,opt,name=colleague_activity,json=colleagueActivity,proto3,oneof"`
+	ColleagueActivity *activity2.ColleagueActivity `protobuf:"bytes,5,opt,name=colleague_activity,json=colleagueActivity,proto3,oneof"`
 }
 
 type AddActivityRequest_ColleagueProps struct {
 	// Setting props will cause activity to be created automtically
-	ColleagueProps *sync.ColleagueProps `protobuf:"bytes,6,opt,name=colleague_props,json=colleagueProps,proto3,oneof"`
+	ColleagueProps *activity.ColleagueProps `protobuf:"bytes,6,opt,name=colleague_props,json=colleagueProps,proto3,oneof"`
 }
 
 type AddActivityRequest_JobTimeclock struct {
 	// Timeclock user entry
-	JobTimeclock *sync.TimeclockUpdate `protobuf:"bytes,7,opt,name=job_timeclock,json=jobTimeclock,proto3,oneof"`
+	JobTimeclock *activity.TimeclockUpdate `protobuf:"bytes,7,opt,name=job_timeclock,json=jobTimeclock,proto3,oneof"`
+}
+
+type AddActivityRequest_AccountUpdate struct {
+	// Account update for a signle account to update the group(s).
+	AccountUpdate *activity.AccountUpdate `protobuf:"bytes,9,opt,name=account_update,json=accountUpdate,proto3,oneof"`
 }
 
 type AddActivityRequest_UserUpdate struct {
 	// User/Char info updates that aren't tracked by activity (yet)
-	UserUpdate *sync.UserUpdate `protobuf:"bytes,8,opt,name=user_update,json=userUpdate,proto3,oneof"`
+	UserUpdate *activity.UserUpdate `protobuf:"bytes,8,opt,name=user_update,json=userUpdate,proto3,oneof"`
 }
 
 func (*AddActivityRequest_UserOauth2) isAddActivityRequest_Activity() {}
@@ -311,10 +745,12 @@ func (*AddActivityRequest_ColleagueProps) isAddActivityRequest_Activity() {}
 
 func (*AddActivityRequest_JobTimeclock) isAddActivityRequest_Activity() {}
 
+func (*AddActivityRequest_AccountUpdate) isAddActivityRequest_Activity() {}
+
 func (*AddActivityRequest_UserUpdate) isAddActivityRequest_Activity() {}
 
 type AddActivityResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -344,13 +780,20 @@ func (x *AddActivityResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddActivityResponse.ProtoReflect.Descriptor instead.
-func (*AddActivityResponse) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{3}
+type AddActivityResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 AddActivityResponse_builder) Build() *AddActivityResponse {
+	m0 := &AddActivityResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type RegisterAccountRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Identifier    string                 `protobuf:"bytes,1,opt,name=identifier,proto3" json:"identifier,omitempty"`
 	ResetToken    bool                   `protobuf:"varint,2,opt,name=reset_token,json=resetToken,proto3" json:"reset_token,omitempty"`
 	LastCharId    *int32                 `protobuf:"varint,3,opt,name=last_char_id,json=lastCharId,proto3,oneof" json:"last_char_id,omitempty"`
@@ -383,11 +826,6 @@ func (x *RegisterAccountRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RegisterAccountRequest.ProtoReflect.Descriptor instead.
-func (*RegisterAccountRequest) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *RegisterAccountRequest) GetIdentifier() string {
 	if x != nil {
 		return x.Identifier
@@ -409,8 +847,49 @@ func (x *RegisterAccountRequest) GetLastCharId() int32 {
 	return 0
 }
 
+func (x *RegisterAccountRequest) SetIdentifier(v string) {
+	x.Identifier = v
+}
+
+func (x *RegisterAccountRequest) SetResetToken(v bool) {
+	x.ResetToken = v
+}
+
+func (x *RegisterAccountRequest) SetLastCharId(v int32) {
+	x.LastCharId = &v
+}
+
+func (x *RegisterAccountRequest) HasLastCharId() bool {
+	if x == nil {
+		return false
+	}
+	return x.LastCharId != nil
+}
+
+func (x *RegisterAccountRequest) ClearLastCharId() {
+	x.LastCharId = nil
+}
+
+type RegisterAccountRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Identifier string
+	ResetToken bool
+	LastCharId *int32
+}
+
+func (b0 RegisterAccountRequest_builder) Build() *RegisterAccountRequest {
+	m0 := &RegisterAccountRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Identifier = b.Identifier
+	x.ResetToken = b.ResetToken
+	x.LastCharId = b.LastCharId
+	return m0
+}
+
 type RegisterAccountResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	RegToken      *string                `protobuf:"bytes,1,opt,name=reg_token,json=regToken,proto3,oneof" json:"reg_token,omitempty"`
 	AccountId     *int64                 `protobuf:"varint,2,opt,name=account_id,json=accountId,proto3,oneof" json:"account_id,omitempty"`
 	Username      *string                `protobuf:"bytes,3,opt,name=username,proto3,oneof" json:"username,omitempty"`
@@ -443,11 +922,6 @@ func (x *RegisterAccountResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RegisterAccountResponse.ProtoReflect.Descriptor instead.
-func (*RegisterAccountResponse) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *RegisterAccountResponse) GetRegToken() string {
 	if x != nil && x.RegToken != nil {
 		return *x.RegToken
@@ -469,8 +943,71 @@ func (x *RegisterAccountResponse) GetUsername() string {
 	return ""
 }
 
+func (x *RegisterAccountResponse) SetRegToken(v string) {
+	x.RegToken = &v
+}
+
+func (x *RegisterAccountResponse) SetAccountId(v int64) {
+	x.AccountId = &v
+}
+
+func (x *RegisterAccountResponse) SetUsername(v string) {
+	x.Username = &v
+}
+
+func (x *RegisterAccountResponse) HasRegToken() bool {
+	if x == nil {
+		return false
+	}
+	return x.RegToken != nil
+}
+
+func (x *RegisterAccountResponse) HasAccountId() bool {
+	if x == nil {
+		return false
+	}
+	return x.AccountId != nil
+}
+
+func (x *RegisterAccountResponse) HasUsername() bool {
+	if x == nil {
+		return false
+	}
+	return x.Username != nil
+}
+
+func (x *RegisterAccountResponse) ClearRegToken() {
+	x.RegToken = nil
+}
+
+func (x *RegisterAccountResponse) ClearAccountId() {
+	x.AccountId = nil
+}
+
+func (x *RegisterAccountResponse) ClearUsername() {
+	x.Username = nil
+}
+
+type RegisterAccountResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	RegToken  *string
+	AccountId *int64
+	Username  *string
+}
+
+func (b0 RegisterAccountResponse_builder) Build() *RegisterAccountResponse {
+	m0 := &RegisterAccountResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.RegToken = b.RegToken
+	x.AccountId = b.AccountId
+	x.Username = b.Username
+	return m0
+}
+
 type TransferAccountRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	OldLicense    string                 `protobuf:"bytes,1,opt,name=old_license,json=oldLicense,proto3" json:"old_license,omitempty"`
 	NewLicense    string                 `protobuf:"bytes,2,opt,name=new_license,json=newLicense,proto3" json:"new_license,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -502,11 +1039,6 @@ func (x *TransferAccountRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TransferAccountRequest.ProtoReflect.Descriptor instead.
-func (*TransferAccountRequest) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *TransferAccountRequest) GetOldLicense() string {
 	if x != nil {
 		return x.OldLicense
@@ -521,8 +1053,32 @@ func (x *TransferAccountRequest) GetNewLicense() string {
 	return ""
 }
 
+func (x *TransferAccountRequest) SetOldLicense(v string) {
+	x.OldLicense = v
+}
+
+func (x *TransferAccountRequest) SetNewLicense(v string) {
+	x.NewLicense = v
+}
+
+type TransferAccountRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	OldLicense string
+	NewLicense string
+}
+
+func (b0 TransferAccountRequest_builder) Build() *TransferAccountRequest {
+	m0 := &TransferAccountRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.OldLicense = b.OldLicense
+	x.NewLicense = b.NewLicense
+	return m0
+}
+
 type TransferAccountResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -552,17 +1108,25 @@ func (x *TransferAccountResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TransferAccountResponse.ProtoReflect.Descriptor instead.
-func (*TransferAccountResponse) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{7}
+type TransferAccountResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 TransferAccountResponse_builder) Build() *TransferAccountResponse {
+	m0 := &TransferAccountResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type SendDataRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*SendDataRequest_Jobs
 	//	*SendDataRequest_Licenses
+	//	*SendDataRequest_Accounts
 	//	*SendDataRequest_Users
 	//	*SendDataRequest_Vehicles
 	//	*SendDataRequest_UserLocations
@@ -597,11 +1161,6 @@ func (x *SendDataRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SendDataRequest.ProtoReflect.Descriptor instead.
-func (*SendDataRequest) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *SendDataRequest) GetData() isSendDataRequest_Data {
 	if x != nil {
 		return x.Data
@@ -609,7 +1168,7 @@ func (x *SendDataRequest) GetData() isSendDataRequest_Data {
 	return nil
 }
 
-func (x *SendDataRequest) GetJobs() *sync.DataJobs {
+func (x *SendDataRequest) GetJobs() *data.DataJobs {
 	if x != nil {
 		if x, ok := x.Data.(*SendDataRequest_Jobs); ok {
 			return x.Jobs
@@ -618,7 +1177,7 @@ func (x *SendDataRequest) GetJobs() *sync.DataJobs {
 	return nil
 }
 
-func (x *SendDataRequest) GetLicenses() *sync.DataLicenses {
+func (x *SendDataRequest) GetLicenses() *data.DataLicenses {
 	if x != nil {
 		if x, ok := x.Data.(*SendDataRequest_Licenses); ok {
 			return x.Licenses
@@ -627,7 +1186,16 @@ func (x *SendDataRequest) GetLicenses() *sync.DataLicenses {
 	return nil
 }
 
-func (x *SendDataRequest) GetUsers() *sync.DataUsers {
+func (x *SendDataRequest) GetAccounts() *data.DataAccounts {
+	if x != nil {
+		if x, ok := x.Data.(*SendDataRequest_Accounts); ok {
+			return x.Accounts
+		}
+	}
+	return nil
+}
+
+func (x *SendDataRequest) GetUsers() *data.DataUsers {
 	if x != nil {
 		if x, ok := x.Data.(*SendDataRequest_Users); ok {
 			return x.Users
@@ -636,7 +1204,7 @@ func (x *SendDataRequest) GetUsers() *sync.DataUsers {
 	return nil
 }
 
-func (x *SendDataRequest) GetVehicles() *sync.DataVehicles {
+func (x *SendDataRequest) GetVehicles() *data.DataVehicles {
 	if x != nil {
 		if x, ok := x.Data.(*SendDataRequest_Vehicles); ok {
 			return x.Vehicles
@@ -645,7 +1213,7 @@ func (x *SendDataRequest) GetVehicles() *sync.DataVehicles {
 	return nil
 }
 
-func (x *SendDataRequest) GetUserLocations() *sync.DataUserLocations {
+func (x *SendDataRequest) GetUserLocations() *data.DataUserLocations {
 	if x != nil {
 		if x, ok := x.Data.(*SendDataRequest_UserLocations); ok {
 			return x.UserLocations
@@ -654,7 +1222,7 @@ func (x *SendDataRequest) GetUserLocations() *sync.DataUserLocations {
 	return nil
 }
 
-func (x *SendDataRequest) GetLastCharId() *sync.LastCharID {
+func (x *SendDataRequest) GetLastCharId() *data.LastCharID {
 	if x != nil {
 		if x, ok := x.Data.(*SendDataRequest_LastCharId); ok {
 			return x.LastCharId
@@ -663,37 +1231,293 @@ func (x *SendDataRequest) GetLastCharId() *sync.LastCharID {
 	return nil
 }
 
+func (x *SendDataRequest) SetJobs(v *data.DataJobs) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &SendDataRequest_Jobs{v}
+}
+
+func (x *SendDataRequest) SetLicenses(v *data.DataLicenses) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &SendDataRequest_Licenses{v}
+}
+
+func (x *SendDataRequest) SetAccounts(v *data.DataAccounts) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &SendDataRequest_Accounts{v}
+}
+
+func (x *SendDataRequest) SetUsers(v *data.DataUsers) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &SendDataRequest_Users{v}
+}
+
+func (x *SendDataRequest) SetVehicles(v *data.DataVehicles) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &SendDataRequest_Vehicles{v}
+}
+
+func (x *SendDataRequest) SetUserLocations(v *data.DataUserLocations) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &SendDataRequest_UserLocations{v}
+}
+
+func (x *SendDataRequest) SetLastCharId(v *data.LastCharID) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &SendDataRequest_LastCharId{v}
+}
+
+func (x *SendDataRequest) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *SendDataRequest) HasJobs() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*SendDataRequest_Jobs)
+	return ok
+}
+
+func (x *SendDataRequest) HasLicenses() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*SendDataRequest_Licenses)
+	return ok
+}
+
+func (x *SendDataRequest) HasAccounts() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*SendDataRequest_Accounts)
+	return ok
+}
+
+func (x *SendDataRequest) HasUsers() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*SendDataRequest_Users)
+	return ok
+}
+
+func (x *SendDataRequest) HasVehicles() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*SendDataRequest_Vehicles)
+	return ok
+}
+
+func (x *SendDataRequest) HasUserLocations() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*SendDataRequest_UserLocations)
+	return ok
+}
+
+func (x *SendDataRequest) HasLastCharId() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*SendDataRequest_LastCharId)
+	return ok
+}
+
+func (x *SendDataRequest) ClearData() {
+	x.Data = nil
+}
+
+func (x *SendDataRequest) ClearJobs() {
+	if _, ok := x.Data.(*SendDataRequest_Jobs); ok {
+		x.Data = nil
+	}
+}
+
+func (x *SendDataRequest) ClearLicenses() {
+	if _, ok := x.Data.(*SendDataRequest_Licenses); ok {
+		x.Data = nil
+	}
+}
+
+func (x *SendDataRequest) ClearAccounts() {
+	if _, ok := x.Data.(*SendDataRequest_Accounts); ok {
+		x.Data = nil
+	}
+}
+
+func (x *SendDataRequest) ClearUsers() {
+	if _, ok := x.Data.(*SendDataRequest_Users); ok {
+		x.Data = nil
+	}
+}
+
+func (x *SendDataRequest) ClearVehicles() {
+	if _, ok := x.Data.(*SendDataRequest_Vehicles); ok {
+		x.Data = nil
+	}
+}
+
+func (x *SendDataRequest) ClearUserLocations() {
+	if _, ok := x.Data.(*SendDataRequest_UserLocations); ok {
+		x.Data = nil
+	}
+}
+
+func (x *SendDataRequest) ClearLastCharId() {
+	if _, ok := x.Data.(*SendDataRequest_LastCharId); ok {
+		x.Data = nil
+	}
+}
+
+const SendDataRequest_Data_not_set_case case_SendDataRequest_Data = 0
+const SendDataRequest_Jobs_case case_SendDataRequest_Data = 1
+const SendDataRequest_Licenses_case case_SendDataRequest_Data = 2
+const SendDataRequest_Accounts_case case_SendDataRequest_Data = 9
+const SendDataRequest_Users_case case_SendDataRequest_Data = 3
+const SendDataRequest_Vehicles_case case_SendDataRequest_Data = 4
+const SendDataRequest_UserLocations_case case_SendDataRequest_Data = 5
+const SendDataRequest_LastCharId_case case_SendDataRequest_Data = 6
+
+func (x *SendDataRequest) WhichData() case_SendDataRequest_Data {
+	if x == nil {
+		return SendDataRequest_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *SendDataRequest_Jobs:
+		return SendDataRequest_Jobs_case
+	case *SendDataRequest_Licenses:
+		return SendDataRequest_Licenses_case
+	case *SendDataRequest_Accounts:
+		return SendDataRequest_Accounts_case
+	case *SendDataRequest_Users:
+		return SendDataRequest_Users_case
+	case *SendDataRequest_Vehicles:
+		return SendDataRequest_Vehicles_case
+	case *SendDataRequest_UserLocations:
+		return SendDataRequest_UserLocations_case
+	case *SendDataRequest_LastCharId:
+		return SendDataRequest_LastCharId_case
+	default:
+		return SendDataRequest_Data_not_set_case
+	}
+}
+
+type SendDataRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	Jobs          *data.DataJobs
+	Licenses      *data.DataLicenses
+	Accounts      *data.DataAccounts
+	Users         *data.DataUsers
+	Vehicles      *data.DataVehicles
+	UserLocations *data.DataUserLocations
+	LastCharId    *data.LastCharID
+	// -- end of Data
+}
+
+func (b0 SendDataRequest_builder) Build() *SendDataRequest {
+	m0 := &SendDataRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Jobs != nil {
+		x.Data = &SendDataRequest_Jobs{b.Jobs}
+	}
+	if b.Licenses != nil {
+		x.Data = &SendDataRequest_Licenses{b.Licenses}
+	}
+	if b.Accounts != nil {
+		x.Data = &SendDataRequest_Accounts{b.Accounts}
+	}
+	if b.Users != nil {
+		x.Data = &SendDataRequest_Users{b.Users}
+	}
+	if b.Vehicles != nil {
+		x.Data = &SendDataRequest_Vehicles{b.Vehicles}
+	}
+	if b.UserLocations != nil {
+		x.Data = &SendDataRequest_UserLocations{b.UserLocations}
+	}
+	if b.LastCharId != nil {
+		x.Data = &SendDataRequest_LastCharId{b.LastCharId}
+	}
+	return m0
+}
+
+type case_SendDataRequest_Data protoreflect.FieldNumber
+
+func (x case_SendDataRequest_Data) String() string {
+	md := file_services_sync_sync_proto_msgTypes[8].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isSendDataRequest_Data interface {
 	isSendDataRequest_Data()
 }
 
 type SendDataRequest_Jobs struct {
-	Jobs *sync.DataJobs `protobuf:"bytes,1,opt,name=jobs,proto3,oneof"`
+	Jobs *data.DataJobs `protobuf:"bytes,1,opt,name=jobs,proto3,oneof"`
 }
 
 type SendDataRequest_Licenses struct {
-	Licenses *sync.DataLicenses `protobuf:"bytes,2,opt,name=licenses,proto3,oneof"`
+	Licenses *data.DataLicenses `protobuf:"bytes,2,opt,name=licenses,proto3,oneof"`
+}
+
+type SendDataRequest_Accounts struct {
+	Accounts *data.DataAccounts `protobuf:"bytes,9,opt,name=accounts,proto3,oneof"`
 }
 
 type SendDataRequest_Users struct {
-	Users *sync.DataUsers `protobuf:"bytes,3,opt,name=users,proto3,oneof"`
+	Users *data.DataUsers `protobuf:"bytes,3,opt,name=users,proto3,oneof"`
 }
 
 type SendDataRequest_Vehicles struct {
-	Vehicles *sync.DataVehicles `protobuf:"bytes,4,opt,name=vehicles,proto3,oneof"`
+	Vehicles *data.DataVehicles `protobuf:"bytes,4,opt,name=vehicles,proto3,oneof"`
 }
 
 type SendDataRequest_UserLocations struct {
-	UserLocations *sync.DataUserLocations `protobuf:"bytes,5,opt,name=user_locations,json=userLocations,proto3,oneof"`
+	UserLocations *data.DataUserLocations `protobuf:"bytes,5,opt,name=user_locations,json=userLocations,proto3,oneof"`
 }
 
 type SendDataRequest_LastCharId struct {
-	LastCharId *sync.LastCharID `protobuf:"bytes,6,opt,name=last_char_id,json=lastCharId,proto3,oneof"`
+	LastCharId *data.LastCharID `protobuf:"bytes,6,opt,name=last_char_id,json=lastCharId,proto3,oneof"`
 }
 
 func (*SendDataRequest_Jobs) isSendDataRequest_Data() {}
 
 func (*SendDataRequest_Licenses) isSendDataRequest_Data() {}
+
+func (*SendDataRequest_Accounts) isSendDataRequest_Data() {}
 
 func (*SendDataRequest_Users) isSendDataRequest_Data() {}
 
@@ -704,7 +1528,7 @@ func (*SendDataRequest_UserLocations) isSendDataRequest_Data() {}
 func (*SendDataRequest_LastCharId) isSendDataRequest_Data() {}
 
 type SendDataResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	AffectedRows  int64                  `protobuf:"varint,1,opt,name=affected_rows,json=affectedRows,proto3" json:"affected_rows,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -735,11 +1559,6 @@ func (x *SendDataResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SendDataResponse.ProtoReflect.Descriptor instead.
-func (*SendDataResponse) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{9}
-}
-
 func (x *SendDataResponse) GetAffectedRows() int64 {
 	if x != nil {
 		return x.AffectedRows
@@ -747,8 +1566,26 @@ func (x *SendDataResponse) GetAffectedRows() int64 {
 	return 0
 }
 
+func (x *SendDataResponse) SetAffectedRows(v int64) {
+	x.AffectedRows = v
+}
+
+type SendDataResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	AffectedRows int64
+}
+
+func (b0 SendDataResponse_builder) Build() *SendDataResponse {
+	m0 := &SendDataResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.AffectedRows = b.AffectedRows
+	return m0
+}
+
 type DeleteDataRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
 	//	*DeleteDataRequest_Users
@@ -783,11 +1620,6 @@ func (x *DeleteDataRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteDataRequest.ProtoReflect.Descriptor instead.
-func (*DeleteDataRequest) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{10}
-}
-
 func (x *DeleteDataRequest) GetData() isDeleteDataRequest_Data {
 	if x != nil {
 		return x.Data
@@ -795,7 +1627,7 @@ func (x *DeleteDataRequest) GetData() isDeleteDataRequest_Data {
 	return nil
 }
 
-func (x *DeleteDataRequest) GetUsers() *sync.DeleteUsers {
+func (x *DeleteDataRequest) GetUsers() *data.DeleteUsers {
 	if x != nil {
 		if x, ok := x.Data.(*DeleteDataRequest_Users); ok {
 			return x.Users
@@ -804,7 +1636,7 @@ func (x *DeleteDataRequest) GetUsers() *sync.DeleteUsers {
 	return nil
 }
 
-func (x *DeleteDataRequest) GetVehicles() *sync.DeleteVehicles {
+func (x *DeleteDataRequest) GetVehicles() *data.DeleteVehicles {
 	if x != nil {
 		if x, ok := x.Data.(*DeleteDataRequest_Vehicles); ok {
 			return x.Vehicles
@@ -813,16 +1645,121 @@ func (x *DeleteDataRequest) GetVehicles() *sync.DeleteVehicles {
 	return nil
 }
 
+func (x *DeleteDataRequest) SetUsers(v *data.DeleteUsers) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &DeleteDataRequest_Users{v}
+}
+
+func (x *DeleteDataRequest) SetVehicles(v *data.DeleteVehicles) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &DeleteDataRequest_Vehicles{v}
+}
+
+func (x *DeleteDataRequest) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *DeleteDataRequest) HasUsers() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*DeleteDataRequest_Users)
+	return ok
+}
+
+func (x *DeleteDataRequest) HasVehicles() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*DeleteDataRequest_Vehicles)
+	return ok
+}
+
+func (x *DeleteDataRequest) ClearData() {
+	x.Data = nil
+}
+
+func (x *DeleteDataRequest) ClearUsers() {
+	if _, ok := x.Data.(*DeleteDataRequest_Users); ok {
+		x.Data = nil
+	}
+}
+
+func (x *DeleteDataRequest) ClearVehicles() {
+	if _, ok := x.Data.(*DeleteDataRequest_Vehicles); ok {
+		x.Data = nil
+	}
+}
+
+const DeleteDataRequest_Data_not_set_case case_DeleteDataRequest_Data = 0
+const DeleteDataRequest_Users_case case_DeleteDataRequest_Data = 1
+const DeleteDataRequest_Vehicles_case case_DeleteDataRequest_Data = 2
+
+func (x *DeleteDataRequest) WhichData() case_DeleteDataRequest_Data {
+	if x == nil {
+		return DeleteDataRequest_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *DeleteDataRequest_Users:
+		return DeleteDataRequest_Users_case
+	case *DeleteDataRequest_Vehicles:
+		return DeleteDataRequest_Vehicles_case
+	default:
+		return DeleteDataRequest_Data_not_set_case
+	}
+}
+
+type DeleteDataRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	Users    *data.DeleteUsers
+	Vehicles *data.DeleteVehicles
+	// -- end of Data
+}
+
+func (b0 DeleteDataRequest_builder) Build() *DeleteDataRequest {
+	m0 := &DeleteDataRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Users != nil {
+		x.Data = &DeleteDataRequest_Users{b.Users}
+	}
+	if b.Vehicles != nil {
+		x.Data = &DeleteDataRequest_Vehicles{b.Vehicles}
+	}
+	return m0
+}
+
+type case_DeleteDataRequest_Data protoreflect.FieldNumber
+
+func (x case_DeleteDataRequest_Data) String() string {
+	md := file_services_sync_sync_proto_msgTypes[10].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isDeleteDataRequest_Data interface {
 	isDeleteDataRequest_Data()
 }
 
 type DeleteDataRequest_Users struct {
-	Users *sync.DeleteUsers `protobuf:"bytes,1,opt,name=users,proto3,oneof"`
+	Users *data.DeleteUsers `protobuf:"bytes,1,opt,name=users,proto3,oneof"`
 }
 
 type DeleteDataRequest_Vehicles struct {
-	Vehicles *sync.DeleteVehicles `protobuf:"bytes,2,opt,name=vehicles,proto3,oneof"`
+	Vehicles *data.DeleteVehicles `protobuf:"bytes,2,opt,name=vehicles,proto3,oneof"`
 }
 
 func (*DeleteDataRequest_Users) isDeleteDataRequest_Data() {}
@@ -830,7 +1767,7 @@ func (*DeleteDataRequest_Users) isDeleteDataRequest_Data() {}
 func (*DeleteDataRequest_Vehicles) isDeleteDataRequest_Data() {}
 
 type DeleteDataResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	AffectedRows  int64                  `protobuf:"varint,1,opt,name=affected_rows,json=affectedRows,proto3" json:"affected_rows,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -861,11 +1798,6 @@ func (x *DeleteDataResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteDataResponse.ProtoReflect.Descriptor instead.
-func (*DeleteDataResponse) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{11}
-}
-
 func (x *DeleteDataResponse) GetAffectedRows() int64 {
 	if x != nil {
 		return x.AffectedRows
@@ -873,8 +1805,26 @@ func (x *DeleteDataResponse) GetAffectedRows() int64 {
 	return 0
 }
 
+func (x *DeleteDataResponse) SetAffectedRows(v int64) {
+	x.AffectedRows = v
+}
+
+type DeleteDataResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	AffectedRows int64
+}
+
+func (b0 DeleteDataResponse_builder) Build() *DeleteDataResponse {
+	m0 := &DeleteDataResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.AffectedRows = b.AffectedRows
+	return m0
+}
+
 type StreamRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Version       *string                `protobuf:"bytes,1,opt,name=version,proto3,oneof" json:"version,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -905,11 +1855,6 @@ func (x *StreamRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StreamRequest.ProtoReflect.Descriptor instead.
-func (*StreamRequest) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{12}
-}
-
 func (x *StreamRequest) GetVersion() string {
 	if x != nil && x.Version != nil {
 		return *x.Version
@@ -917,8 +1862,37 @@ func (x *StreamRequest) GetVersion() string {
 	return ""
 }
 
+func (x *StreamRequest) SetVersion(v string) {
+	x.Version = &v
+}
+
+func (x *StreamRequest) HasVersion() bool {
+	if x == nil {
+		return false
+	}
+	return x.Version != nil
+}
+
+func (x *StreamRequest) ClearVersion() {
+	x.Version = nil
+}
+
+type StreamRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Version *string
+}
+
+func (b0 StreamRequest_builder) Build() *StreamRequest {
+	m0 := &StreamRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Version = b.Version
+	return m0
+}
+
 type StreamResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -949,11 +1923,6 @@ func (x *StreamResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StreamResponse.ProtoReflect.Descriptor instead.
-func (*StreamResponse) Descriptor() ([]byte, []int) {
-	return file_services_sync_sync_proto_rawDescGZIP(), []int{13}
-}
-
 func (x *StreamResponse) GetUserId() int32 {
 	if x != nil {
 		return x.UserId
@@ -961,28 +1930,48 @@ func (x *StreamResponse) GetUserId() int32 {
 	return 0
 }
 
+func (x *StreamResponse) SetUserId(v int32) {
+	x.UserId = v
+}
+
+type StreamResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId int32
+}
+
+func (b0 StreamResponse_builder) Build() *StreamResponse {
+	m0 := &StreamResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	return m0
+}
+
 var File_services_sync_sync_proto protoreflect.FileDescriptor
 
 const file_services_sync_sync_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/sync/sync.proto\x12\rservices.sync\x1a-resources/centrum/dispatches/dispatches.proto\x1a1resources/jobs/colleagues/activity/activity.proto\x1a\x1dresources/sync/activity.proto\x1a\x19resources/sync/data.proto\x1a'resources/users/activity/activity.proto\"\x12\n" +
-	"\x10GetStatusRequest\"\xe5\x01\n" +
-	"\x11GetStatusResponse\x12.\n" +
-	"\x04jobs\x18\x01 \x01(\v2\x1a.resources.sync.DataStatusR\x04jobs\x126\n" +
-	"\blicenses\x18\x02 \x01(\v2\x1a.resources.sync.DataStatusR\blicenses\x120\n" +
-	"\x05users\x18\x03 \x01(\v2\x1a.resources.sync.DataStatusR\x05users\x126\n" +
-	"\bvehicles\x18\x04 \x01(\v2\x1a.resources.sync.DataStatusR\bvehicles\"\xee\x04\n" +
-	"\x12AddActivityRequest\x12A\n" +
-	"\vuser_oauth2\x18\x01 \x01(\v2\x1e.resources.sync.UserOAuth2ConnH\x00R\n" +
+	"\x18services/sync/sync.proto\x12\rservices.sync\x1a-resources/centrum/dispatches/dispatches.proto\x1a1resources/jobs/colleagues/activity/activity.proto\x1a&resources/sync/activity/activity.proto\x1a\x1eresources/sync/data/data.proto\x1a'resources/users/activity/activity.proto\"\x12\n" +
+	"\x10GetStatusRequest\"\xb6\x02\n" +
+	"\x11GetStatusResponse\x123\n" +
+	"\x04jobs\x18\x01 \x01(\v2\x1f.resources.sync.data.DataStatusR\x04jobs\x12;\n" +
+	"\blicenses\x18\x02 \x01(\v2\x1f.resources.sync.data.DataStatusR\blicenses\x12;\n" +
+	"\baccounts\x18\x05 \x01(\v2\x1f.resources.sync.data.DataStatusR\baccounts\x125\n" +
+	"\x05users\x18\x03 \x01(\v2\x1f.resources.sync.data.DataStatusR\x05users\x12;\n" +
+	"\bvehicles\x18\x04 \x01(\v2\x1f.resources.sync.data.DataStatusR\bvehicles\"\xec\x05\n" +
+	"\x12AddActivityRequest\x12J\n" +
+	"\vuser_oauth2\x18\x01 \x01(\v2'.resources.sync.activity.UserOAuth2ConnH\x00R\n" +
 	"userOauth2\x12D\n" +
 	"\bdispatch\x18\x02 \x01(\v2&.resources.centrum.dispatches.DispatchH\x00R\bdispatch\x12M\n" +
-	"\ruser_activity\x18\x03 \x01(\v2&.resources.users.activity.UserActivityH\x00R\fuserActivity\x12:\n" +
+	"\ruser_activity\x18\x03 \x01(\v2&.resources.users.activity.UserActivityH\x00R\fuserActivity\x12C\n" +
 	"\n" +
-	"user_props\x18\x04 \x01(\v2\x19.resources.sync.UserPropsH\x00R\tuserProps\x12f\n" +
-	"\x12colleague_activity\x18\x05 \x01(\v25.resources.jobs.colleagues.activity.ColleagueActivityH\x00R\x11colleagueActivity\x12I\n" +
-	"\x0fcolleague_props\x18\x06 \x01(\v2\x1e.resources.sync.ColleaguePropsH\x00R\x0ecolleagueProps\x12F\n" +
-	"\rjob_timeclock\x18\a \x01(\v2\x1f.resources.sync.TimeclockUpdateH\x00R\fjobTimeclock\x12=\n" +
-	"\vuser_update\x18\b \x01(\v2\x1a.resources.sync.UserUpdateH\x00R\n" +
+	"user_props\x18\x04 \x01(\v2\".resources.sync.activity.UserPropsH\x00R\tuserProps\x12f\n" +
+	"\x12colleague_activity\x18\x05 \x01(\v25.resources.jobs.colleagues.activity.ColleagueActivityH\x00R\x11colleagueActivity\x12R\n" +
+	"\x0fcolleague_props\x18\x06 \x01(\v2'.resources.sync.activity.ColleaguePropsH\x00R\x0ecolleagueProps\x12O\n" +
+	"\rjob_timeclock\x18\a \x01(\v2(.resources.sync.activity.TimeclockUpdateH\x00R\fjobTimeclock\x12O\n" +
+	"\x0eaccount_update\x18\t \x01(\v2&.resources.sync.activity.AccountUpdateH\x00R\raccountUpdate\x12F\n" +
+	"\vuser_update\x18\b \x01(\v2#.resources.sync.activity.UserUpdateH\x00R\n" +
 	"userUpdateB\n" +
 	"\n" +
 	"\bactivity\"\x15\n" +
@@ -1010,21 +1999,22 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"oldLicense\x12\x1f\n" +
 	"\vnew_license\x18\x02 \x01(\tR\n" +
 	"newLicense\"\x19\n" +
-	"\x17TransferAccountResponse\"\x80\x03\n" +
-	"\x0fSendDataRequest\x12.\n" +
-	"\x04jobs\x18\x01 \x01(\v2\x18.resources.sync.DataJobsH\x00R\x04jobs\x12:\n" +
-	"\blicenses\x18\x02 \x01(\v2\x1c.resources.sync.DataLicensesH\x00R\blicenses\x121\n" +
-	"\x05users\x18\x03 \x01(\v2\x19.resources.sync.DataUsersH\x00R\x05users\x12:\n" +
-	"\bvehicles\x18\x04 \x01(\v2\x1c.resources.sync.DataVehiclesH\x00R\bvehicles\x12J\n" +
-	"\x0euser_locations\x18\x05 \x01(\v2!.resources.sync.DataUserLocationsH\x00R\ruserLocations\x12>\n" +
-	"\flast_char_id\x18\x06 \x01(\v2\x1a.resources.sync.LastCharIDH\x00R\n" +
+	"\x17TransferAccountResponse\"\xdf\x03\n" +
+	"\x0fSendDataRequest\x123\n" +
+	"\x04jobs\x18\x01 \x01(\v2\x1d.resources.sync.data.DataJobsH\x00R\x04jobs\x12?\n" +
+	"\blicenses\x18\x02 \x01(\v2!.resources.sync.data.DataLicensesH\x00R\blicenses\x12?\n" +
+	"\baccounts\x18\t \x01(\v2!.resources.sync.data.DataAccountsH\x00R\baccounts\x126\n" +
+	"\x05users\x18\x03 \x01(\v2\x1e.resources.sync.data.DataUsersH\x00R\x05users\x12?\n" +
+	"\bvehicles\x18\x04 \x01(\v2!.resources.sync.data.DataVehiclesH\x00R\bvehicles\x12O\n" +
+	"\x0euser_locations\x18\x05 \x01(\v2&.resources.sync.data.DataUserLocationsH\x00R\ruserLocations\x12C\n" +
+	"\flast_char_id\x18\x06 \x01(\v2\x1f.resources.sync.data.LastCharIDH\x00R\n" +
 	"lastCharIdB\x06\n" +
 	"\x04data\"7\n" +
 	"\x10SendDataResponse\x12#\n" +
-	"\raffected_rows\x18\x01 \x01(\x03R\faffectedRows\"\x8e\x01\n" +
-	"\x11DeleteDataRequest\x123\n" +
-	"\x05users\x18\x01 \x01(\v2\x1b.resources.sync.DeleteUsersH\x00R\x05users\x12<\n" +
-	"\bvehicles\x18\x02 \x01(\v2\x1e.resources.sync.DeleteVehiclesH\x00R\bvehiclesB\x06\n" +
+	"\raffected_rows\x18\x01 \x01(\x03R\faffectedRows\"\x98\x01\n" +
+	"\x11DeleteDataRequest\x128\n" +
+	"\x05users\x18\x01 \x01(\v2 .resources.sync.data.DeleteUsersH\x00R\x05users\x12A\n" +
+	"\bvehicles\x18\x02 \x01(\v2#.resources.sync.data.DeleteVehiclesH\x00R\bvehiclesB\x06\n" +
 	"\x04data\"9\n" +
 	"\x12DeleteDataResponse\x12#\n" +
 	"\raffected_rows\x18\x01 \x01(\x03R\faffectedRows\":\n" +
@@ -1044,18 +2034,6 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"DeleteData\x12 .services.sync.DeleteDataRequest\x1a!.services.sync.DeleteDataResponse\x12G\n" +
 	"\x06Stream\x12\x1c.services.sync.StreamRequest\x1a\x1d.services.sync.StreamResponse0\x01BFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync;syncb\x06proto3"
 
-var (
-	file_services_sync_sync_proto_rawDescOnce sync1.Once
-	file_services_sync_sync_proto_rawDescData []byte
-)
-
-func file_services_sync_sync_proto_rawDescGZIP() []byte {
-	file_services_sync_sync_proto_rawDescOnce.Do(func() {
-		file_services_sync_sync_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_sync_sync_proto_rawDesc), len(file_services_sync_sync_proto_rawDesc)))
-	})
-	return file_services_sync_sync_proto_rawDescData
-}
-
 var file_services_sync_sync_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_services_sync_sync_proto_goTypes = []any{
 	(*GetStatusRequest)(nil),            // 0: services.sync.GetStatusRequest
@@ -1072,64 +2050,69 @@ var file_services_sync_sync_proto_goTypes = []any{
 	(*DeleteDataResponse)(nil),          // 11: services.sync.DeleteDataResponse
 	(*StreamRequest)(nil),               // 12: services.sync.StreamRequest
 	(*StreamResponse)(nil),              // 13: services.sync.StreamResponse
-	(*sync.DataStatus)(nil),             // 14: resources.sync.DataStatus
-	(*sync.UserOAuth2Conn)(nil),         // 15: resources.sync.UserOAuth2Conn
+	(*data.DataStatus)(nil),             // 14: resources.sync.data.DataStatus
+	(*activity.UserOAuth2Conn)(nil),     // 15: resources.sync.activity.UserOAuth2Conn
 	(*dispatches.Dispatch)(nil),         // 16: resources.centrum.dispatches.Dispatch
-	(*activity.UserActivity)(nil),       // 17: resources.users.activity.UserActivity
-	(*sync.UserProps)(nil),              // 18: resources.sync.UserProps
-	(*activity1.ColleagueActivity)(nil), // 19: resources.jobs.colleagues.activity.ColleagueActivity
-	(*sync.ColleagueProps)(nil),         // 20: resources.sync.ColleagueProps
-	(*sync.TimeclockUpdate)(nil),        // 21: resources.sync.TimeclockUpdate
-	(*sync.UserUpdate)(nil),             // 22: resources.sync.UserUpdate
-	(*sync.DataJobs)(nil),               // 23: resources.sync.DataJobs
-	(*sync.DataLicenses)(nil),           // 24: resources.sync.DataLicenses
-	(*sync.DataUsers)(nil),              // 25: resources.sync.DataUsers
-	(*sync.DataVehicles)(nil),           // 26: resources.sync.DataVehicles
-	(*sync.DataUserLocations)(nil),      // 27: resources.sync.DataUserLocations
-	(*sync.LastCharID)(nil),             // 28: resources.sync.LastCharID
-	(*sync.DeleteUsers)(nil),            // 29: resources.sync.DeleteUsers
-	(*sync.DeleteVehicles)(nil),         // 30: resources.sync.DeleteVehicles
+	(*activity1.UserActivity)(nil),      // 17: resources.users.activity.UserActivity
+	(*activity.UserProps)(nil),          // 18: resources.sync.activity.UserProps
+	(*activity2.ColleagueActivity)(nil), // 19: resources.jobs.colleagues.activity.ColleagueActivity
+	(*activity.ColleagueProps)(nil),     // 20: resources.sync.activity.ColleagueProps
+	(*activity.TimeclockUpdate)(nil),    // 21: resources.sync.activity.TimeclockUpdate
+	(*activity.AccountUpdate)(nil),      // 22: resources.sync.activity.AccountUpdate
+	(*activity.UserUpdate)(nil),         // 23: resources.sync.activity.UserUpdate
+	(*data.DataJobs)(nil),               // 24: resources.sync.data.DataJobs
+	(*data.DataLicenses)(nil),           // 25: resources.sync.data.DataLicenses
+	(*data.DataAccounts)(nil),           // 26: resources.sync.data.DataAccounts
+	(*data.DataUsers)(nil),              // 27: resources.sync.data.DataUsers
+	(*data.DataVehicles)(nil),           // 28: resources.sync.data.DataVehicles
+	(*data.DataUserLocations)(nil),      // 29: resources.sync.data.DataUserLocations
+	(*data.LastCharID)(nil),             // 30: resources.sync.data.LastCharID
+	(*data.DeleteUsers)(nil),            // 31: resources.sync.data.DeleteUsers
+	(*data.DeleteVehicles)(nil),         // 32: resources.sync.data.DeleteVehicles
 }
 var file_services_sync_sync_proto_depIdxs = []int32{
-	14, // 0: services.sync.GetStatusResponse.jobs:type_name -> resources.sync.DataStatus
-	14, // 1: services.sync.GetStatusResponse.licenses:type_name -> resources.sync.DataStatus
-	14, // 2: services.sync.GetStatusResponse.users:type_name -> resources.sync.DataStatus
-	14, // 3: services.sync.GetStatusResponse.vehicles:type_name -> resources.sync.DataStatus
-	15, // 4: services.sync.AddActivityRequest.user_oauth2:type_name -> resources.sync.UserOAuth2Conn
-	16, // 5: services.sync.AddActivityRequest.dispatch:type_name -> resources.centrum.dispatches.Dispatch
-	17, // 6: services.sync.AddActivityRequest.user_activity:type_name -> resources.users.activity.UserActivity
-	18, // 7: services.sync.AddActivityRequest.user_props:type_name -> resources.sync.UserProps
-	19, // 8: services.sync.AddActivityRequest.colleague_activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
-	20, // 9: services.sync.AddActivityRequest.colleague_props:type_name -> resources.sync.ColleagueProps
-	21, // 10: services.sync.AddActivityRequest.job_timeclock:type_name -> resources.sync.TimeclockUpdate
-	22, // 11: services.sync.AddActivityRequest.user_update:type_name -> resources.sync.UserUpdate
-	23, // 12: services.sync.SendDataRequest.jobs:type_name -> resources.sync.DataJobs
-	24, // 13: services.sync.SendDataRequest.licenses:type_name -> resources.sync.DataLicenses
-	25, // 14: services.sync.SendDataRequest.users:type_name -> resources.sync.DataUsers
-	26, // 15: services.sync.SendDataRequest.vehicles:type_name -> resources.sync.DataVehicles
-	27, // 16: services.sync.SendDataRequest.user_locations:type_name -> resources.sync.DataUserLocations
-	28, // 17: services.sync.SendDataRequest.last_char_id:type_name -> resources.sync.LastCharID
-	29, // 18: services.sync.DeleteDataRequest.users:type_name -> resources.sync.DeleteUsers
-	30, // 19: services.sync.DeleteDataRequest.vehicles:type_name -> resources.sync.DeleteVehicles
-	0,  // 20: services.sync.SyncService.GetStatus:input_type -> services.sync.GetStatusRequest
-	2,  // 21: services.sync.SyncService.AddActivity:input_type -> services.sync.AddActivityRequest
-	4,  // 22: services.sync.SyncService.RegisterAccount:input_type -> services.sync.RegisterAccountRequest
-	6,  // 23: services.sync.SyncService.TransferAccount:input_type -> services.sync.TransferAccountRequest
-	8,  // 24: services.sync.SyncService.SendData:input_type -> services.sync.SendDataRequest
-	10, // 25: services.sync.SyncService.DeleteData:input_type -> services.sync.DeleteDataRequest
-	12, // 26: services.sync.SyncService.Stream:input_type -> services.sync.StreamRequest
-	1,  // 27: services.sync.SyncService.GetStatus:output_type -> services.sync.GetStatusResponse
-	3,  // 28: services.sync.SyncService.AddActivity:output_type -> services.sync.AddActivityResponse
-	5,  // 29: services.sync.SyncService.RegisterAccount:output_type -> services.sync.RegisterAccountResponse
-	7,  // 30: services.sync.SyncService.TransferAccount:output_type -> services.sync.TransferAccountResponse
-	9,  // 31: services.sync.SyncService.SendData:output_type -> services.sync.SendDataResponse
-	11, // 32: services.sync.SyncService.DeleteData:output_type -> services.sync.DeleteDataResponse
-	13, // 33: services.sync.SyncService.Stream:output_type -> services.sync.StreamResponse
-	27, // [27:34] is the sub-list for method output_type
-	20, // [20:27] is the sub-list for method input_type
-	20, // [20:20] is the sub-list for extension type_name
-	20, // [20:20] is the sub-list for extension extendee
-	0,  // [0:20] is the sub-list for field type_name
+	14, // 0: services.sync.GetStatusResponse.jobs:type_name -> resources.sync.data.DataStatus
+	14, // 1: services.sync.GetStatusResponse.licenses:type_name -> resources.sync.data.DataStatus
+	14, // 2: services.sync.GetStatusResponse.accounts:type_name -> resources.sync.data.DataStatus
+	14, // 3: services.sync.GetStatusResponse.users:type_name -> resources.sync.data.DataStatus
+	14, // 4: services.sync.GetStatusResponse.vehicles:type_name -> resources.sync.data.DataStatus
+	15, // 5: services.sync.AddActivityRequest.user_oauth2:type_name -> resources.sync.activity.UserOAuth2Conn
+	16, // 6: services.sync.AddActivityRequest.dispatch:type_name -> resources.centrum.dispatches.Dispatch
+	17, // 7: services.sync.AddActivityRequest.user_activity:type_name -> resources.users.activity.UserActivity
+	18, // 8: services.sync.AddActivityRequest.user_props:type_name -> resources.sync.activity.UserProps
+	19, // 9: services.sync.AddActivityRequest.colleague_activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
+	20, // 10: services.sync.AddActivityRequest.colleague_props:type_name -> resources.sync.activity.ColleagueProps
+	21, // 11: services.sync.AddActivityRequest.job_timeclock:type_name -> resources.sync.activity.TimeclockUpdate
+	22, // 12: services.sync.AddActivityRequest.account_update:type_name -> resources.sync.activity.AccountUpdate
+	23, // 13: services.sync.AddActivityRequest.user_update:type_name -> resources.sync.activity.UserUpdate
+	24, // 14: services.sync.SendDataRequest.jobs:type_name -> resources.sync.data.DataJobs
+	25, // 15: services.sync.SendDataRequest.licenses:type_name -> resources.sync.data.DataLicenses
+	26, // 16: services.sync.SendDataRequest.accounts:type_name -> resources.sync.data.DataAccounts
+	27, // 17: services.sync.SendDataRequest.users:type_name -> resources.sync.data.DataUsers
+	28, // 18: services.sync.SendDataRequest.vehicles:type_name -> resources.sync.data.DataVehicles
+	29, // 19: services.sync.SendDataRequest.user_locations:type_name -> resources.sync.data.DataUserLocations
+	30, // 20: services.sync.SendDataRequest.last_char_id:type_name -> resources.sync.data.LastCharID
+	31, // 21: services.sync.DeleteDataRequest.users:type_name -> resources.sync.data.DeleteUsers
+	32, // 22: services.sync.DeleteDataRequest.vehicles:type_name -> resources.sync.data.DeleteVehicles
+	0,  // 23: services.sync.SyncService.GetStatus:input_type -> services.sync.GetStatusRequest
+	2,  // 24: services.sync.SyncService.AddActivity:input_type -> services.sync.AddActivityRequest
+	4,  // 25: services.sync.SyncService.RegisterAccount:input_type -> services.sync.RegisterAccountRequest
+	6,  // 26: services.sync.SyncService.TransferAccount:input_type -> services.sync.TransferAccountRequest
+	8,  // 27: services.sync.SyncService.SendData:input_type -> services.sync.SendDataRequest
+	10, // 28: services.sync.SyncService.DeleteData:input_type -> services.sync.DeleteDataRequest
+	12, // 29: services.sync.SyncService.Stream:input_type -> services.sync.StreamRequest
+	1,  // 30: services.sync.SyncService.GetStatus:output_type -> services.sync.GetStatusResponse
+	3,  // 31: services.sync.SyncService.AddActivity:output_type -> services.sync.AddActivityResponse
+	5,  // 32: services.sync.SyncService.RegisterAccount:output_type -> services.sync.RegisterAccountResponse
+	7,  // 33: services.sync.SyncService.TransferAccount:output_type -> services.sync.TransferAccountResponse
+	9,  // 34: services.sync.SyncService.SendData:output_type -> services.sync.SendDataResponse
+	11, // 35: services.sync.SyncService.DeleteData:output_type -> services.sync.DeleteDataResponse
+	13, // 36: services.sync.SyncService.Stream:output_type -> services.sync.StreamResponse
+	30, // [30:37] is the sub-list for method output_type
+	23, // [23:30] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_services_sync_sync_proto_init() }
@@ -1145,6 +2128,7 @@ func file_services_sync_sync_proto_init() {
 		(*AddActivityRequest_ColleagueActivity)(nil),
 		(*AddActivityRequest_ColleagueProps)(nil),
 		(*AddActivityRequest_JobTimeclock)(nil),
+		(*AddActivityRequest_AccountUpdate)(nil),
 		(*AddActivityRequest_UserUpdate)(nil),
 	}
 	file_services_sync_sync_proto_msgTypes[4].OneofWrappers = []any{}
@@ -1152,6 +2136,7 @@ func file_services_sync_sync_proto_init() {
 	file_services_sync_sync_proto_msgTypes[8].OneofWrappers = []any{
 		(*SendDataRequest_Jobs)(nil),
 		(*SendDataRequest_Licenses)(nil),
+		(*SendDataRequest_Accounts)(nil),
 		(*SendDataRequest_Users)(nil),
 		(*SendDataRequest_Vehicles)(nil),
 		(*SendDataRequest_UserLocations)(nil),

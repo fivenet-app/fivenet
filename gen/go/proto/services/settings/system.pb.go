@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/settings/system.proto
 
+//go:build !protoopaque
+
 package settings
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -26,7 +27,7 @@ const (
 )
 
 type GetAllPermissionsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -57,11 +58,6 @@ func (x *GetAllPermissionsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetAllPermissionsRequest.ProtoReflect.Descriptor instead.
-func (*GetAllPermissionsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *GetAllPermissionsRequest) GetJob() string {
 	if x != nil {
 		return x.Job
@@ -69,8 +65,26 @@ func (x *GetAllPermissionsRequest) GetJob() string {
 	return ""
 }
 
+func (x *GetAllPermissionsRequest) SetJob(v string) {
+	x.Job = v
+}
+
+type GetAllPermissionsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job string
+}
+
+func (b0 GetAllPermissionsRequest_builder) Build() *GetAllPermissionsRequest {
+	m0 := &GetAllPermissionsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	return m0
+}
+
 type GetAllPermissionsResponse struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Permissions   []*permissions.Permission   `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,2,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -102,11 +116,6 @@ func (x *GetAllPermissionsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetAllPermissionsResponse.ProtoReflect.Descriptor instead.
-func (*GetAllPermissionsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *GetAllPermissionsResponse) GetPermissions() []*permissions.Permission {
 	if x != nil {
 		return x.Permissions
@@ -121,8 +130,32 @@ func (x *GetAllPermissionsResponse) GetAttributes() []*attributes.RoleAttribute 
 	return nil
 }
 
+func (x *GetAllPermissionsResponse) SetPermissions(v []*permissions.Permission) {
+	x.Permissions = v
+}
+
+func (x *GetAllPermissionsResponse) SetAttributes(v []*attributes.RoleAttribute) {
+	x.Attributes = v
+}
+
+type GetAllPermissionsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Permissions []*permissions.Permission
+	Attributes  []*attributes.RoleAttribute
+}
+
+func (b0 GetAllPermissionsResponse_builder) Build() *GetAllPermissionsResponse {
+	m0 := &GetAllPermissionsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Permissions = b.Permissions
+	x.Attributes = b.Attributes
+	return m0
+}
+
 type GetJobLimitsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -153,11 +186,6 @@ func (x *GetJobLimitsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetJobLimitsRequest.ProtoReflect.Descriptor instead.
-func (*GetJobLimitsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *GetJobLimitsRequest) GetJob() string {
 	if x != nil {
 		return x.Job
@@ -165,8 +193,26 @@ func (x *GetJobLimitsRequest) GetJob() string {
 	return ""
 }
 
+func (x *GetJobLimitsRequest) SetJob(v string) {
+	x.Job = v
+}
+
+type GetJobLimitsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job string
+}
+
+func (b0 GetJobLimitsRequest_builder) Build() *GetJobLimitsRequest {
+	m0 := &GetJobLimitsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	return m0
+}
+
 type GetJobLimitsResponse struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Job           string                      `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                     `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	Permissions   []*permissions.Permission   `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty"`
@@ -200,11 +246,6 @@ func (x *GetJobLimitsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetJobLimitsResponse.ProtoReflect.Descriptor instead.
-func (*GetJobLimitsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *GetJobLimitsResponse) GetJob() string {
 	if x != nil {
 		return x.Job
@@ -233,8 +274,55 @@ func (x *GetJobLimitsResponse) GetAttributes() []*attributes.RoleAttribute {
 	return nil
 }
 
+func (x *GetJobLimitsResponse) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *GetJobLimitsResponse) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *GetJobLimitsResponse) SetPermissions(v []*permissions.Permission) {
+	x.Permissions = v
+}
+
+func (x *GetJobLimitsResponse) SetAttributes(v []*attributes.RoleAttribute) {
+	x.Attributes = v
+}
+
+func (x *GetJobLimitsResponse) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *GetJobLimitsResponse) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+type GetJobLimitsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job         string
+	JobLabel    *string
+	Permissions []*permissions.Permission
+	Attributes  []*attributes.RoleAttribute
+}
+
+func (b0 GetJobLimitsResponse_builder) Build() *GetJobLimitsResponse {
+	m0 := &GetJobLimitsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.Permissions = b.Permissions
+	x.Attributes = b.Attributes
+	return m0
+}
+
 type UpdateJobLimitsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	Perms         *settings.PermsUpdate  `protobuf:"bytes,2,opt,name=perms,proto3,oneof" json:"perms,omitempty"`
 	Attrs         *settings.AttrsUpdate  `protobuf:"bytes,3,opt,name=attrs,proto3,oneof" json:"attrs,omitempty"`
@@ -267,11 +355,6 @@ func (x *UpdateJobLimitsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateJobLimitsRequest.ProtoReflect.Descriptor instead.
-func (*UpdateJobLimitsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *UpdateJobLimitsRequest) GetJob() string {
 	if x != nil {
 		return x.Job
@@ -293,8 +376,60 @@ func (x *UpdateJobLimitsRequest) GetAttrs() *settings.AttrsUpdate {
 	return nil
 }
 
+func (x *UpdateJobLimitsRequest) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *UpdateJobLimitsRequest) SetPerms(v *settings.PermsUpdate) {
+	x.Perms = v
+}
+
+func (x *UpdateJobLimitsRequest) SetAttrs(v *settings.AttrsUpdate) {
+	x.Attrs = v
+}
+
+func (x *UpdateJobLimitsRequest) HasPerms() bool {
+	if x == nil {
+		return false
+	}
+	return x.Perms != nil
+}
+
+func (x *UpdateJobLimitsRequest) HasAttrs() bool {
+	if x == nil {
+		return false
+	}
+	return x.Attrs != nil
+}
+
+func (x *UpdateJobLimitsRequest) ClearPerms() {
+	x.Perms = nil
+}
+
+func (x *UpdateJobLimitsRequest) ClearAttrs() {
+	x.Attrs = nil
+}
+
+type UpdateJobLimitsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job   string
+	Perms *settings.PermsUpdate
+	Attrs *settings.AttrsUpdate
+}
+
+func (b0 UpdateJobLimitsRequest_builder) Build() *UpdateJobLimitsRequest {
+	m0 := &UpdateJobLimitsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	x.Perms = b.Perms
+	x.Attrs = b.Attrs
+	return m0
+}
+
 type UpdateJobLimitsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -324,13 +459,20 @@ func (x *UpdateJobLimitsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateJobLimitsResponse.ProtoReflect.Descriptor instead.
-func (*UpdateJobLimitsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{5}
+type UpdateJobLimitsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 UpdateJobLimitsResponse_builder) Build() *UpdateJobLimitsResponse {
+	m0 := &UpdateJobLimitsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type DeleteFactionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -361,11 +503,6 @@ func (x *DeleteFactionRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteFactionRequest.ProtoReflect.Descriptor instead.
-func (*DeleteFactionRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *DeleteFactionRequest) GetJob() string {
 	if x != nil {
 		return x.Job
@@ -373,8 +510,26 @@ func (x *DeleteFactionRequest) GetJob() string {
 	return ""
 }
 
+func (x *DeleteFactionRequest) SetJob(v string) {
+	x.Job = v
+}
+
+type DeleteFactionRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job string
+}
+
+func (b0 DeleteFactionRequest_builder) Build() *DeleteFactionRequest {
+	m0 := &DeleteFactionRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	return m0
+}
+
 type DeleteFactionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -404,13 +559,20 @@ func (x *DeleteFactionResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteFactionResponse.ProtoReflect.Descriptor instead.
-func (*DeleteFactionResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{7}
+type DeleteFactionResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteFactionResponse_builder) Build() *DeleteFactionResponse {
+	m0 := &DeleteFactionResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetStatusRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -440,13 +602,20 @@ func (x *GetStatusRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetStatusRequest.ProtoReflect.Descriptor instead.
-func (*GetStatusRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{8}
+type GetStatusRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 GetStatusRequest_builder) Build() *GetStatusRequest {
+	m0 := &GetStatusRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetStatusResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Status        *settings.SystemStatus `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -477,16 +646,40 @@ func (x *GetStatusResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetStatusResponse.ProtoReflect.Descriptor instead.
-func (*GetStatusResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_system_proto_rawDescGZIP(), []int{9}
-}
-
 func (x *GetStatusResponse) GetStatus() *settings.SystemStatus {
 	if x != nil {
 		return x.Status
 	}
 	return nil
+}
+
+func (x *GetStatusResponse) SetStatus(v *settings.SystemStatus) {
+	x.Status = v
+}
+
+func (x *GetStatusResponse) HasStatus() bool {
+	if x == nil {
+		return false
+	}
+	return x.Status != nil
+}
+
+func (x *GetStatusResponse) ClearStatus() {
+	x.Status = nil
+}
+
+type GetStatusResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Status *settings.SystemStatus
+}
+
+func (b0 GetStatusResponse_builder) Build() *GetStatusResponse {
+	m0 := &GetStatusResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Status = b.Status
+	return m0
 }
 
 var File_services_settings_system_proto protoreflect.FileDescriptor
@@ -531,18 +724,6 @@ const file_services_settings_system_proto_rawDesc = "" +
 	"\fGetJobLimits\x12&.services.settings.GetJobLimitsRequest\x1a'.services.settings.GetJobLimitsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12{\n" +
 	"\x0fUpdateJobLimits\x12).services.settings.UpdateJobLimitsRequest\x1a*.services.settings.UpdateJobLimitsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
 	"\rDeleteFaction\x12'.services.settings.DeleteFactionRequest\x1a(.services.settings.DeleteFactionResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
-
-var (
-	file_services_settings_system_proto_rawDescOnce sync.Once
-	file_services_settings_system_proto_rawDescData []byte
-)
-
-func file_services_settings_system_proto_rawDescGZIP() []byte {
-	file_services_settings_system_proto_rawDescOnce.Do(func() {
-		file_services_settings_system_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_settings_system_proto_rawDesc), len(file_services_settings_system_proto_rawDesc)))
-	})
-	return file_services_settings_system_proto_rawDescData
-}
 
 var file_services_settings_system_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_settings_system_proto_goTypes = []any{

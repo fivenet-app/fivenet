@@ -522,6 +522,110 @@ func (x *LastCharID) GetLastCharId() int32 {
 	return 0
 }
 
+type DataAccounts struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	AccountUpdates []*AccountUpdate       `protobuf:"bytes,1,rep,name=account_updates,json=accountUpdates,proto3" json:"account_updates,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *DataAccounts) Reset() {
+	*x = DataAccounts{}
+	mi := &file_resources_sync_data_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DataAccounts) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DataAccounts) ProtoMessage() {}
+
+func (x *DataAccounts) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_sync_data_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DataAccounts.ProtoReflect.Descriptor instead.
+func (*DataAccounts) Descriptor() ([]byte, []int) {
+	return file_resources_sync_data_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *DataAccounts) GetAccountUpdates() []*AccountUpdate {
+	if x != nil {
+		return x.AccountUpdates
+	}
+	return nil
+}
+
+type AccountUpdate struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	License       string                 `protobuf:"bytes,1,opt,name=license,proto3" json:"license,omitempty"`
+	Group         *string                `protobuf:"bytes,2,opt,name=group,proto3,oneof" json:"group,omitempty"`
+	Groups        []string               `protobuf:"bytes,3,rep,name=groups,proto3" json:"groups,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AccountUpdate) Reset() {
+	*x = AccountUpdate{}
+	mi := &file_resources_sync_data_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AccountUpdate) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AccountUpdate) ProtoMessage() {}
+
+func (x *AccountUpdate) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_sync_data_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AccountUpdate.ProtoReflect.Descriptor instead.
+func (*AccountUpdate) Descriptor() ([]byte, []int) {
+	return file_resources_sync_data_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *AccountUpdate) GetLicense() string {
+	if x != nil {
+		return x.License
+	}
+	return ""
+}
+
+func (x *AccountUpdate) GetGroup() string {
+	if x != nil && x.Group != nil {
+		return *x.Group
+	}
+	return ""
+}
+
+func (x *AccountUpdate) GetGroups() []string {
+	if x != nil {
+		return x.Groups
+	}
+	return nil
+}
+
 var File_resources_sync_data_proto protoreflect.FileDescriptor
 
 const file_resources_sync_data_proto_rawDesc = "" +
@@ -565,7 +669,14 @@ const file_resources_sync_data_proto_rawDesc = "" +
 	"identifier\x12%\n" +
 	"\flast_char_id\x18\x02 \x01(\x05H\x00R\n" +
 	"lastCharId\x88\x01\x01B\x0f\n" +
-	"\r_last_char_idBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync;syncb\x06proto3"
+	"\r_last_char_id\"V\n" +
+	"\fDataAccounts\x12F\n" +
+	"\x0faccount_updates\x18\x01 \x03(\v2\x1d.resources.sync.AccountUpdateR\x0eaccountUpdates\"f\n" +
+	"\rAccountUpdate\x12\x18\n" +
+	"\alicense\x18\x01 \x01(\tR\alicense\x12\x19\n" +
+	"\x05group\x18\x02 \x01(\tH\x00R\x05group\x88\x01\x01\x12\x16\n" +
+	"\x06groups\x18\x03 \x03(\tR\x06groupsB\b\n" +
+	"\x06_groupBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync;syncb\x06proto3"
 
 var (
 	file_resources_sync_data_proto_rawDescOnce sync.Once
@@ -579,7 +690,7 @@ func file_resources_sync_data_proto_rawDescGZIP() []byte {
 	return file_resources_sync_data_proto_rawDescData
 }
 
-var file_resources_sync_data_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_resources_sync_data_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_resources_sync_data_proto_goTypes = []any{
 	(*DataStatus)(nil),        // 0: resources.sync.DataStatus
 	(*DataJobs)(nil),          // 1: resources.sync.DataJobs
@@ -591,24 +702,27 @@ var file_resources_sync_data_proto_goTypes = []any{
 	(*DeleteUsers)(nil),       // 7: resources.sync.DeleteUsers
 	(*DeleteVehicles)(nil),    // 8: resources.sync.DeleteVehicles
 	(*LastCharID)(nil),        // 9: resources.sync.LastCharID
-	(*jobs.Job)(nil),          // 10: resources.jobs.Job
-	(*users.User)(nil),        // 11: resources.users.User
-	(*vehicles.Vehicle)(nil),  // 12: resources.vehicles.Vehicle
-	(*licenses.License)(nil),  // 13: resources.users.licenses.License
-	(*livemap.Coords)(nil),    // 14: resources.livemap.Coords
+	(*DataAccounts)(nil),      // 10: resources.sync.DataAccounts
+	(*AccountUpdate)(nil),     // 11: resources.sync.AccountUpdate
+	(*jobs.Job)(nil),          // 12: resources.jobs.Job
+	(*users.User)(nil),        // 13: resources.users.User
+	(*vehicles.Vehicle)(nil),  // 14: resources.vehicles.Vehicle
+	(*licenses.License)(nil),  // 15: resources.users.licenses.License
+	(*livemap.Coords)(nil),    // 16: resources.livemap.Coords
 }
 var file_resources_sync_data_proto_depIdxs = []int32{
-	10, // 0: resources.sync.DataJobs.jobs:type_name -> resources.jobs.Job
-	11, // 1: resources.sync.DataUsers.users:type_name -> resources.users.User
-	12, // 2: resources.sync.DataVehicles.vehicles:type_name -> resources.vehicles.Vehicle
-	13, // 3: resources.sync.DataLicenses.licenses:type_name -> resources.users.licenses.License
+	12, // 0: resources.sync.DataJobs.jobs:type_name -> resources.jobs.Job
+	13, // 1: resources.sync.DataUsers.users:type_name -> resources.users.User
+	14, // 2: resources.sync.DataVehicles.vehicles:type_name -> resources.vehicles.Vehicle
+	15, // 3: resources.sync.DataLicenses.licenses:type_name -> resources.users.licenses.License
 	6,  // 4: resources.sync.DataUserLocations.users:type_name -> resources.sync.CitizenLocations
-	14, // 5: resources.sync.CitizenLocations.coords:type_name -> resources.livemap.Coords
-	6,  // [6:6] is the sub-list for method output_type
-	6,  // [6:6] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	16, // 5: resources.sync.CitizenLocations.coords:type_name -> resources.livemap.Coords
+	11, // 6: resources.sync.DataAccounts.account_updates:type_name -> resources.sync.AccountUpdate
+	7,  // [7:7] is the sub-list for method output_type
+	7,  // [7:7] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_resources_sync_data_proto_init() }
@@ -619,13 +733,14 @@ func file_resources_sync_data_proto_init() {
 	file_resources_sync_data_proto_msgTypes[5].OneofWrappers = []any{}
 	file_resources_sync_data_proto_msgTypes[6].OneofWrappers = []any{}
 	file_resources_sync_data_proto_msgTypes[9].OneofWrappers = []any{}
+	file_resources_sync_data_proto_msgTypes[11].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_sync_data_proto_rawDesc), len(file_resources_sync_data_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

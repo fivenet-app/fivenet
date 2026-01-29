@@ -119,10 +119,3 @@ func (x *Settings) JobHasAccess(job string, access centrumaccess.CentrumAccessLe
 
 	return false // Fallback access is to deny
 }
-
-func (x *JobAccessEntry) SetJobLabel(label string) {
-	if x == nil {
-		return
-	}
-	x.JobLabel = &label
-}

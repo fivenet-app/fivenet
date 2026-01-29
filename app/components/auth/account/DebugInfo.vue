@@ -143,8 +143,8 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
             (<GenericTime :value="sessionExpiration" type="long" />)
         </UFormField>
 
-        <UFormField class="grid grid-cols-2 items-center gap-2" name="status" :label="$t('common.status')">
-            {{ $t('common.status') }}: <code>{{ webSocket.status.value }}</code>
+        <UFormField class="grid grid-cols-2 items-center gap-2" name="status" :label="$t('common.websocket')">
+            <code>{{ webSocket.status.value }}</code>
         </UFormField>
 
         <UFormField class="grid grid-cols-2 items-center gap-2" name="nuiInfo" :label="$t('components.debug_info.nui_info')">

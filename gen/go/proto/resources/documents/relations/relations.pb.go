@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/documents/relations/relations.proto
 
+//go:build !protoopaque
+
 package documentsrelations
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -72,13 +73,8 @@ func (x DocRelation) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use DocRelation.Descriptor instead.
-func (DocRelation) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_relations_relations_proto_rawDescGZIP(), []int{0}
-}
-
 type DocumentRelation struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Id            *int64                   `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp     `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	DocumentId    int64                    `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
@@ -115,11 +111,6 @@ func (x *DocumentRelation) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DocumentRelation.ProtoReflect.Descriptor instead.
-func (*DocumentRelation) Descriptor() ([]byte, []int) {
-	return file_resources_documents_relations_relations_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *DocumentRelation) GetId() int64 {
@@ -185,6 +176,127 @@ func (x *DocumentRelation) GetTargetUser() *short.UserShort {
 	return nil
 }
 
+func (x *DocumentRelation) SetId(v int64) {
+	x.Id = &v
+}
+
+func (x *DocumentRelation) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *DocumentRelation) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *DocumentRelation) SetDocument(v *documents.DocumentShort) {
+	x.Document = v
+}
+
+func (x *DocumentRelation) SetSourceUserId(v int32) {
+	x.SourceUserId = v
+}
+
+func (x *DocumentRelation) SetSourceUser(v *short.UserShort) {
+	x.SourceUser = v
+}
+
+func (x *DocumentRelation) SetRelation(v DocRelation) {
+	x.Relation = v
+}
+
+func (x *DocumentRelation) SetTargetUserId(v int32) {
+	x.TargetUserId = v
+}
+
+func (x *DocumentRelation) SetTargetUser(v *short.UserShort) {
+	x.TargetUser = v
+}
+
+func (x *DocumentRelation) HasId() bool {
+	if x == nil {
+		return false
+	}
+	return x.Id != nil
+}
+
+func (x *DocumentRelation) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *DocumentRelation) HasDocument() bool {
+	if x == nil {
+		return false
+	}
+	return x.Document != nil
+}
+
+func (x *DocumentRelation) HasSourceUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.SourceUser != nil
+}
+
+func (x *DocumentRelation) HasTargetUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.TargetUser != nil
+}
+
+func (x *DocumentRelation) ClearId() {
+	x.Id = nil
+}
+
+func (x *DocumentRelation) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *DocumentRelation) ClearDocument() {
+	x.Document = nil
+}
+
+func (x *DocumentRelation) ClearSourceUser() {
+	x.SourceUser = nil
+}
+
+func (x *DocumentRelation) ClearTargetUser() {
+	x.TargetUser = nil
+}
+
+type DocumentRelation_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id           *int64
+	CreatedAt    *timestamp.Timestamp
+	DocumentId   int64
+	Document     *documents.DocumentShort
+	SourceUserId int32
+	SourceUser   *short.UserShort
+	Relation     DocRelation
+	TargetUserId int32
+	TargetUser   *short.UserShort
+}
+
+func (b0 DocumentRelation_builder) Build() *DocumentRelation {
+	m0 := &DocumentRelation{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.DocumentId = b.DocumentId
+	x.Document = b.Document
+	x.SourceUserId = b.SourceUserId
+	x.SourceUser = b.SourceUser
+	x.Relation = b.Relation
+	x.TargetUserId = b.TargetUserId
+	x.TargetUser = b.TargetUser
+	return m0
+}
+
 var File_resources_documents_relations_relations_proto protoreflect.FileDescriptor
 
 const file_resources_documents_relations_relations_proto_rawDesc = "" +
@@ -214,18 +326,6 @@ const file_resources_documents_relations_relations_proto_rawDesc = "" +
 	"\x16DOC_RELATION_MENTIONED\x10\x01\x12\x18\n" +
 	"\x14DOC_RELATION_TARGETS\x10\x02\x12\x17\n" +
 	"\x13DOC_RELATION_CAUSED\x10\x03BdZbgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations;documentsrelationsb\x06proto3"
-
-var (
-	file_resources_documents_relations_relations_proto_rawDescOnce sync.Once
-	file_resources_documents_relations_relations_proto_rawDescData []byte
-)
-
-func file_resources_documents_relations_relations_proto_rawDescGZIP() []byte {
-	file_resources_documents_relations_relations_proto_rawDescOnce.Do(func() {
-		file_resources_documents_relations_relations_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_relations_relations_proto_rawDesc), len(file_resources_documents_relations_relations_proto_rawDesc)))
-	})
-	return file_resources_documents_relations_relations_proto_rawDescData
-}
 
 var file_resources_documents_relations_relations_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_documents_relations_relations_proto_msgTypes = make([]protoimpl.MessageInfo, 1)

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/documents/approval.proto
 
+//go:build !protoopaque
+
 package documents
 
 import (
@@ -17,7 +19,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -29,7 +30,7 @@ const (
 )
 
 type ListApprovalTasksInboxRequest struct {
-	state      protoimpl.MessageState        `protogen:"open.v1"`
+	state      protoimpl.MessageState        `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest   `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Statuses   []approval.ApprovalTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.approval.ApprovalTaskStatus" json:"statuses,omitempty"`
 	// Controls inclusion of drafts in the result:
@@ -66,11 +67,6 @@ func (x *ListApprovalTasksInboxRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListApprovalTasksInboxRequest.ProtoReflect.Descriptor instead.
-func (*ListApprovalTasksInboxRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *ListApprovalTasksInboxRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -92,8 +88,64 @@ func (x *ListApprovalTasksInboxRequest) GetOnlyDrafts() bool {
 	return false
 }
 
+func (x *ListApprovalTasksInboxRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListApprovalTasksInboxRequest) SetStatuses(v []approval.ApprovalTaskStatus) {
+	x.Statuses = v
+}
+
+func (x *ListApprovalTasksInboxRequest) SetOnlyDrafts(v bool) {
+	x.OnlyDrafts = &v
+}
+
+func (x *ListApprovalTasksInboxRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListApprovalTasksInboxRequest) HasOnlyDrafts() bool {
+	if x == nil {
+		return false
+	}
+	return x.OnlyDrafts != nil
+}
+
+func (x *ListApprovalTasksInboxRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListApprovalTasksInboxRequest) ClearOnlyDrafts() {
+	x.OnlyDrafts = nil
+}
+
+type ListApprovalTasksInboxRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Statuses   []approval.ApprovalTaskStatus
+	// Controls inclusion of drafts in the result:
+	// - unset/null: include all documents (drafts and non-drafts)
+	// - false: only non-draft documents
+	// - true: only draft documents
+	OnlyDrafts *bool
+}
+
+func (b0 ListApprovalTasksInboxRequest_builder) Build() *ListApprovalTasksInboxRequest {
+	m0 := &ListApprovalTasksInboxRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Statuses = b.Statuses
+	x.OnlyDrafts = b.OnlyDrafts
+	return m0
+}
+
 type ListApprovalTasksInboxResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Tasks         []*approval.ApprovalTask     `protobuf:"bytes,2,rep,name=tasks,proto3" json:"tasks,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -125,11 +177,6 @@ func (x *ListApprovalTasksInboxResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListApprovalTasksInboxResponse.ProtoReflect.Descriptor instead.
-func (*ListApprovalTasksInboxResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListApprovalTasksInboxResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -144,8 +191,43 @@ func (x *ListApprovalTasksInboxResponse) GetTasks() []*approval.ApprovalTask {
 	return nil
 }
 
+func (x *ListApprovalTasksInboxResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListApprovalTasksInboxResponse) SetTasks(v []*approval.ApprovalTask) {
+	x.Tasks = v
+}
+
+func (x *ListApprovalTasksInboxResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListApprovalTasksInboxResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListApprovalTasksInboxResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Tasks      []*approval.ApprovalTask
+}
+
+func (b0 ListApprovalTasksInboxResponse_builder) Build() *ListApprovalTasksInboxResponse {
+	m0 := &ListApprovalTasksInboxResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Tasks = b.Tasks
+	return m0
+}
+
 type ListApprovalPoliciesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -176,11 +258,6 @@ func (x *ListApprovalPoliciesRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListApprovalPoliciesRequest.ProtoReflect.Descriptor instead.
-func (*ListApprovalPoliciesRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *ListApprovalPoliciesRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -188,9 +265,27 @@ func (x *ListApprovalPoliciesRequest) GetDocumentId() int64 {
 	return 0
 }
 
+func (x *ListApprovalPoliciesRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+type ListApprovalPoliciesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+}
+
+func (b0 ListApprovalPoliciesRequest_builder) Build() *ListApprovalPoliciesRequest {
+	m0 := &ListApprovalPoliciesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	return m0
+}
+
 // Only one policy per document is supported currently.
 type ListApprovalPoliciesResponse struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Policy        *approval.ApprovalPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
 	DocMeta       *documents.DocumentMeta  `protobuf:"bytes,2,opt,name=doc_meta,json=docMeta,proto3" json:"doc_meta,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -222,11 +317,6 @@ func (x *ListApprovalPoliciesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListApprovalPoliciesResponse.ProtoReflect.Descriptor instead.
-func (*ListApprovalPoliciesResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *ListApprovalPoliciesResponse) GetPolicy() *approval.ApprovalPolicy {
 	if x != nil {
 		return x.Policy
@@ -241,8 +331,54 @@ func (x *ListApprovalPoliciesResponse) GetDocMeta() *documents.DocumentMeta {
 	return nil
 }
 
+func (x *ListApprovalPoliciesResponse) SetPolicy(v *approval.ApprovalPolicy) {
+	x.Policy = v
+}
+
+func (x *ListApprovalPoliciesResponse) SetDocMeta(v *documents.DocumentMeta) {
+	x.DocMeta = v
+}
+
+func (x *ListApprovalPoliciesResponse) HasPolicy() bool {
+	if x == nil {
+		return false
+	}
+	return x.Policy != nil
+}
+
+func (x *ListApprovalPoliciesResponse) HasDocMeta() bool {
+	if x == nil {
+		return false
+	}
+	return x.DocMeta != nil
+}
+
+func (x *ListApprovalPoliciesResponse) ClearPolicy() {
+	x.Policy = nil
+}
+
+func (x *ListApprovalPoliciesResponse) ClearDocMeta() {
+	x.DocMeta = nil
+}
+
+type ListApprovalPoliciesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Policy  *approval.ApprovalPolicy
+	DocMeta *documents.DocumentMeta
+}
+
+func (b0 ListApprovalPoliciesResponse_builder) Build() *ListApprovalPoliciesResponse {
+	m0 := &ListApprovalPoliciesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Policy = b.Policy
+	x.DocMeta = b.DocMeta
+	return m0
+}
+
 type UpsertApprovalPolicyRequest struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Policy        *approval.ApprovalPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -273,11 +409,6 @@ func (x *UpsertApprovalPolicyRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpsertApprovalPolicyRequest.ProtoReflect.Descriptor instead.
-func (*UpsertApprovalPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *UpsertApprovalPolicyRequest) GetPolicy() *approval.ApprovalPolicy {
 	if x != nil {
 		return x.Policy
@@ -285,8 +416,37 @@ func (x *UpsertApprovalPolicyRequest) GetPolicy() *approval.ApprovalPolicy {
 	return nil
 }
 
+func (x *UpsertApprovalPolicyRequest) SetPolicy(v *approval.ApprovalPolicy) {
+	x.Policy = v
+}
+
+func (x *UpsertApprovalPolicyRequest) HasPolicy() bool {
+	if x == nil {
+		return false
+	}
+	return x.Policy != nil
+}
+
+func (x *UpsertApprovalPolicyRequest) ClearPolicy() {
+	x.Policy = nil
+}
+
+type UpsertApprovalPolicyRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Policy *approval.ApprovalPolicy
+}
+
+func (b0 UpsertApprovalPolicyRequest_builder) Build() *UpsertApprovalPolicyRequest {
+	m0 := &UpsertApprovalPolicyRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Policy = b.Policy
+	return m0
+}
+
 type UpsertApprovalPolicyResponse struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Policy        *approval.ApprovalPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -317,11 +477,6 @@ func (x *UpsertApprovalPolicyResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpsertApprovalPolicyResponse.ProtoReflect.Descriptor instead.
-func (*UpsertApprovalPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *UpsertApprovalPolicyResponse) GetPolicy() *approval.ApprovalPolicy {
 	if x != nil {
 		return x.Policy
@@ -329,8 +484,37 @@ func (x *UpsertApprovalPolicyResponse) GetPolicy() *approval.ApprovalPolicy {
 	return nil
 }
 
+func (x *UpsertApprovalPolicyResponse) SetPolicy(v *approval.ApprovalPolicy) {
+	x.Policy = v
+}
+
+func (x *UpsertApprovalPolicyResponse) HasPolicy() bool {
+	if x == nil {
+		return false
+	}
+	return x.Policy != nil
+}
+
+func (x *UpsertApprovalPolicyResponse) ClearPolicy() {
+	x.Policy = nil
+}
+
+type UpsertApprovalPolicyResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Policy *approval.ApprovalPolicy
+}
+
+func (b0 UpsertApprovalPolicyResponse_builder) Build() *UpsertApprovalPolicyResponse {
+	m0 := &UpsertApprovalPolicyResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Policy = b.Policy
+	return m0
+}
+
 type ListApprovalTasksRequest struct {
-	state         protoimpl.MessageState        `protogen:"open.v1"`
+	state         protoimpl.MessageState        `protogen:"hybrid.v1"`
 	DocumentId    int64                         `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	Statuses      []approval.ApprovalTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.approval.ApprovalTaskStatus" json:"statuses,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -362,11 +546,6 @@ func (x *ListApprovalTasksRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListApprovalTasksRequest.ProtoReflect.Descriptor instead.
-func (*ListApprovalTasksRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *ListApprovalTasksRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -381,8 +560,32 @@ func (x *ListApprovalTasksRequest) GetStatuses() []approval.ApprovalTaskStatus {
 	return nil
 }
 
+func (x *ListApprovalTasksRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *ListApprovalTasksRequest) SetStatuses(v []approval.ApprovalTaskStatus) {
+	x.Statuses = v
+}
+
+type ListApprovalTasksRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+	Statuses   []approval.ApprovalTaskStatus
+}
+
+func (b0 ListApprovalTasksRequest_builder) Build() *ListApprovalTasksRequest {
+	m0 := &ListApprovalTasksRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.Statuses = b.Statuses
+	return m0
+}
+
 type ListApprovalTasksResponse struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Tasks         []*approval.ApprovalTask `protobuf:"bytes,1,rep,name=tasks,proto3" json:"tasks,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -413,11 +616,6 @@ func (x *ListApprovalTasksResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListApprovalTasksResponse.ProtoReflect.Descriptor instead.
-func (*ListApprovalTasksResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *ListApprovalTasksResponse) GetTasks() []*approval.ApprovalTask {
 	if x != nil {
 		return x.Tasks
@@ -425,10 +623,28 @@ func (x *ListApprovalTasksResponse) GetTasks() []*approval.ApprovalTask {
 	return nil
 }
 
+func (x *ListApprovalTasksResponse) SetTasks(v []*approval.ApprovalTask) {
+	x.Tasks = v
+}
+
+type ListApprovalTasksResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Tasks []*approval.ApprovalTask
+}
+
+func (b0 ListApprovalTasksResponse_builder) Build() *ListApprovalTasksResponse {
+	m0 := &ListApprovalTasksResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Tasks = b.Tasks
+	return m0
+}
+
 // A declarative "ensure" for tasks under one policy/snapshot.
 // Exactly one target must be set: user_id OR (job + minimum_grade).
 type ApprovalTaskSeed struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// If set -> USER task; slots is forced to 1
 	UserId int32 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// If user_id == 0 -> JOB task
@@ -470,11 +686,6 @@ func (x *ApprovalTaskSeed) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ApprovalTaskSeed.ProtoReflect.Descriptor instead.
-func (*ApprovalTaskSeed) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ApprovalTaskSeed) GetUserId() int32 {
@@ -533,6 +744,105 @@ func (x *ApprovalTaskSeed) GetComment() string {
 	return ""
 }
 
+func (x *ApprovalTaskSeed) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *ApprovalTaskSeed) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *ApprovalTaskSeed) SetMinimumGrade(v int32) {
+	x.MinimumGrade = v
+}
+
+func (x *ApprovalTaskSeed) SetLabel(v string) {
+	x.Label = &v
+}
+
+func (x *ApprovalTaskSeed) SetSignatureRequired(v bool) {
+	x.SignatureRequired = v
+}
+
+func (x *ApprovalTaskSeed) SetSlots(v int32) {
+	x.Slots = v
+}
+
+func (x *ApprovalTaskSeed) SetDueAt(v *timestamp.Timestamp) {
+	x.DueAt = v
+}
+
+func (x *ApprovalTaskSeed) SetComment(v string) {
+	x.Comment = &v
+}
+
+func (x *ApprovalTaskSeed) HasLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.Label != nil
+}
+
+func (x *ApprovalTaskSeed) HasDueAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DueAt != nil
+}
+
+func (x *ApprovalTaskSeed) HasComment() bool {
+	if x == nil {
+		return false
+	}
+	return x.Comment != nil
+}
+
+func (x *ApprovalTaskSeed) ClearLabel() {
+	x.Label = nil
+}
+
+func (x *ApprovalTaskSeed) ClearDueAt() {
+	x.DueAt = nil
+}
+
+func (x *ApprovalTaskSeed) ClearComment() {
+	x.Comment = nil
+}
+
+type ApprovalTaskSeed_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// If set -> USER task; slots is forced to 1
+	UserId int32
+	// If user_id == 0 -> JOB task
+	Job          string
+	MinimumGrade int32
+	// Label of task
+	Label             *string
+	SignatureRequired bool
+	// Only for JOB tasks; number of PENDING slots to ensure (>=1)
+	Slots int32
+	// Optional default due date for created slots
+	DueAt *timestamp.Timestamp
+	// Optional note set on created tasks
+	Comment *string
+}
+
+func (b0 ApprovalTaskSeed_builder) Build() *ApprovalTaskSeed {
+	m0 := &ApprovalTaskSeed{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.Job = b.Job
+	x.MinimumGrade = b.MinimumGrade
+	x.Label = b.Label
+	x.SignatureRequired = b.SignatureRequired
+	x.Slots = b.Slots
+	x.DueAt = b.DueAt
+	x.Comment = b.Comment
+	return m0
+}
+
 // Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks.
 // Identity rules (server-side):
 //   - USER task: unique by (document_id, snapshot_date, assignee_kind=USER, user_id)
@@ -540,7 +850,7 @@ func (x *ApprovalTaskSeed) GetComment() string {
 //
 // For JOB seeds with slots=N, the server ensures there are at least N PENDING slots (slot_no 1..N).
 type UpsertApprovalTasksRequest struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
+	state      protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	// If empty, use policy.snapshot_date
 	SnapshotDate  *timestamp.Timestamp `protobuf:"bytes,2,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
@@ -574,11 +884,6 @@ func (x *UpsertApprovalTasksRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpsertApprovalTasksRequest.ProtoReflect.Descriptor instead.
-func (*UpsertApprovalTasksRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{9}
-}
-
 func (x *UpsertApprovalTasksRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -600,8 +905,50 @@ func (x *UpsertApprovalTasksRequest) GetSeeds() []*ApprovalTaskSeed {
 	return nil
 }
 
+func (x *UpsertApprovalTasksRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *UpsertApprovalTasksRequest) SetSnapshotDate(v *timestamp.Timestamp) {
+	x.SnapshotDate = v
+}
+
+func (x *UpsertApprovalTasksRequest) SetSeeds(v []*ApprovalTaskSeed) {
+	x.Seeds = v
+}
+
+func (x *UpsertApprovalTasksRequest) HasSnapshotDate() bool {
+	if x == nil {
+		return false
+	}
+	return x.SnapshotDate != nil
+}
+
+func (x *UpsertApprovalTasksRequest) ClearSnapshotDate() {
+	x.SnapshotDate = nil
+}
+
+type UpsertApprovalTasksRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+	// If empty, use policy.snapshot_date
+	SnapshotDate *timestamp.Timestamp
+	Seeds        []*ApprovalTaskSeed
+}
+
+func (b0 UpsertApprovalTasksRequest_builder) Build() *UpsertApprovalTasksRequest {
+	m0 := &UpsertApprovalTasksRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.SnapshotDate = b.SnapshotDate
+	x.Seeds = b.Seeds
+	return m0
+}
+
 type UpsertApprovalTasksResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Number of new task rows inserted
 	TasksCreated int32 `protobuf:"varint,1,opt,name=tasks_created,json=tasksCreated,proto3" json:"tasks_created,omitempty"`
 	// Number of requested targets already satisfied (no-op)
@@ -637,11 +984,6 @@ func (x *UpsertApprovalTasksResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpsertApprovalTasksResponse.ProtoReflect.Descriptor instead.
-func (*UpsertApprovalTasksResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{10}
-}
-
 func (x *UpsertApprovalTasksResponse) GetTasksCreated() int32 {
 	if x != nil {
 		return x.TasksCreated
@@ -663,8 +1005,52 @@ func (x *UpsertApprovalTasksResponse) GetPolicy() *approval.ApprovalPolicy {
 	return nil
 }
 
+func (x *UpsertApprovalTasksResponse) SetTasksCreated(v int32) {
+	x.TasksCreated = v
+}
+
+func (x *UpsertApprovalTasksResponse) SetTasksEnsured(v int32) {
+	x.TasksEnsured = v
+}
+
+func (x *UpsertApprovalTasksResponse) SetPolicy(v *approval.ApprovalPolicy) {
+	x.Policy = v
+}
+
+func (x *UpsertApprovalTasksResponse) HasPolicy() bool {
+	if x == nil {
+		return false
+	}
+	return x.Policy != nil
+}
+
+func (x *UpsertApprovalTasksResponse) ClearPolicy() {
+	x.Policy = nil
+}
+
+type UpsertApprovalTasksResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Number of new task rows inserted
+	TasksCreated int32
+	// Number of requested targets already satisfied (no-op)
+	TasksEnsured int32
+	// Echo (optional convenience)
+	Policy *approval.ApprovalPolicy
+}
+
+func (b0 UpsertApprovalTasksResponse_builder) Build() *UpsertApprovalTasksResponse {
+	m0 := &UpsertApprovalTasksResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.TasksCreated = b.TasksCreated
+	x.TasksEnsured = b.TasksEnsured
+	x.Policy = b.Policy
+	return m0
+}
+
 type DeleteApprovalTasksRequest struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
+	state      protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	TaskIds    []int64                `protobuf:"varint,2,rep,packed,name=task_ids,json=taskIds,proto3" json:"task_ids,omitempty"`
 	// If true, ignore task_ids and delete all PENDING tasks under this policy
@@ -698,11 +1084,6 @@ func (x *DeleteApprovalTasksRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteApprovalTasksRequest.ProtoReflect.Descriptor instead.
-func (*DeleteApprovalTasksRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{11}
-}
-
 func (x *DeleteApprovalTasksRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -724,8 +1105,39 @@ func (x *DeleteApprovalTasksRequest) GetDeleteAllPending() bool {
 	return false
 }
 
+func (x *DeleteApprovalTasksRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *DeleteApprovalTasksRequest) SetTaskIds(v []int64) {
+	x.TaskIds = v
+}
+
+func (x *DeleteApprovalTasksRequest) SetDeleteAllPending(v bool) {
+	x.DeleteAllPending = v
+}
+
+type DeleteApprovalTasksRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+	TaskIds    []int64
+	// If true, ignore task_ids and delete all PENDING tasks under this policy
+	DeleteAllPending bool
+}
+
+func (b0 DeleteApprovalTasksRequest_builder) Build() *DeleteApprovalTasksRequest {
+	m0 := &DeleteApprovalTasksRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.TaskIds = b.TaskIds
+	x.DeleteAllPending = b.DeleteAllPending
+	return m0
+}
+
 type DeleteApprovalTasksResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -755,15 +1167,22 @@ func (x *DeleteApprovalTasksResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteApprovalTasksResponse.ProtoReflect.Descriptor instead.
-func (*DeleteApprovalTasksResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{12}
+type DeleteApprovalTasksResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteApprovalTasksResponse_builder) Build() *DeleteApprovalTasksResponse {
+	m0 := &DeleteApprovalTasksResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 // List approvals (artifacts) for a policy/snapshot.
 // If snapshot_date is unset, server defaults to policy.snapshot_date.
 type ListApprovalsRequest struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
+	state        protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId   int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	TaskId       *int64                 `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
 	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
@@ -798,11 +1217,6 @@ func (x *ListApprovalsRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListApprovalsRequest.ProtoReflect.Descriptor instead.
-func (*ListApprovalsRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListApprovalsRequest) GetDocumentId() int64 {
@@ -840,8 +1254,96 @@ func (x *ListApprovalsRequest) GetUserId() int32 {
 	return 0
 }
 
+func (x *ListApprovalsRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *ListApprovalsRequest) SetTaskId(v int64) {
+	x.TaskId = &v
+}
+
+func (x *ListApprovalsRequest) SetSnapshotDate(v *timestamp.Timestamp) {
+	x.SnapshotDate = v
+}
+
+func (x *ListApprovalsRequest) SetStatus(v approval.ApprovalStatus) {
+	x.Status = &v
+}
+
+func (x *ListApprovalsRequest) SetUserId(v int32) {
+	x.UserId = &v
+}
+
+func (x *ListApprovalsRequest) HasTaskId() bool {
+	if x == nil {
+		return false
+	}
+	return x.TaskId != nil
+}
+
+func (x *ListApprovalsRequest) HasSnapshotDate() bool {
+	if x == nil {
+		return false
+	}
+	return x.SnapshotDate != nil
+}
+
+func (x *ListApprovalsRequest) HasStatus() bool {
+	if x == nil {
+		return false
+	}
+	return x.Status != nil
+}
+
+func (x *ListApprovalsRequest) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
+}
+
+func (x *ListApprovalsRequest) ClearTaskId() {
+	x.TaskId = nil
+}
+
+func (x *ListApprovalsRequest) ClearSnapshotDate() {
+	x.SnapshotDate = nil
+}
+
+func (x *ListApprovalsRequest) ClearStatus() {
+	x.Status = nil
+}
+
+func (x *ListApprovalsRequest) ClearUserId() {
+	x.UserId = nil
+}
+
+type ListApprovalsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId   int64
+	TaskId       *int64
+	SnapshotDate *timestamp.Timestamp
+	// Optional filters
+	Status *approval.ApprovalStatus
+	// Filter by signer
+	UserId *int32
+}
+
+func (b0 ListApprovalsRequest_builder) Build() *ListApprovalsRequest {
+	m0 := &ListApprovalsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.TaskId = b.TaskId
+	x.SnapshotDate = b.SnapshotDate
+	x.Status = b.Status
+	x.UserId = b.UserId
+	return m0
+}
+
 type ListApprovalsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Approvals     []*approval.Approval   `protobuf:"bytes,3,rep,name=approvals,proto3" json:"approvals,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -872,11 +1374,6 @@ func (x *ListApprovalsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListApprovalsResponse.ProtoReflect.Descriptor instead.
-func (*ListApprovalsResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{14}
-}
-
 func (x *ListApprovalsResponse) GetApprovals() []*approval.Approval {
 	if x != nil {
 		return x.Approvals
@@ -884,8 +1381,26 @@ func (x *ListApprovalsResponse) GetApprovals() []*approval.Approval {
 	return nil
 }
 
+func (x *ListApprovalsResponse) SetApprovals(v []*approval.Approval) {
+	x.Approvals = v
+}
+
+type ListApprovalsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Approvals []*approval.Approval
+}
+
+func (b0 ListApprovalsResponse_builder) Build() *ListApprovalsResponse {
+	m0 := &ListApprovalsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Approvals = b.Approvals
+	return m0
+}
+
 type RevokeApprovalRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	ApprovalId    int64                  `protobuf:"varint,1,opt,name=approval_id,json=approvalId,proto3" json:"approval_id,omitempty"`
 	Comment       string                 `protobuf:"bytes,2,opt,name=comment,proto3" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -917,11 +1432,6 @@ func (x *RevokeApprovalRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RevokeApprovalRequest.ProtoReflect.Descriptor instead.
-func (*RevokeApprovalRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{15}
-}
-
 func (x *RevokeApprovalRequest) GetApprovalId() int64 {
 	if x != nil {
 		return x.ApprovalId
@@ -936,8 +1446,32 @@ func (x *RevokeApprovalRequest) GetComment() string {
 	return ""
 }
 
+func (x *RevokeApprovalRequest) SetApprovalId(v int64) {
+	x.ApprovalId = v
+}
+
+func (x *RevokeApprovalRequest) SetComment(v string) {
+	x.Comment = v
+}
+
+type RevokeApprovalRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ApprovalId int64
+	Comment    string
+}
+
+func (b0 RevokeApprovalRequest_builder) Build() *RevokeApprovalRequest {
+	m0 := &RevokeApprovalRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ApprovalId = b.ApprovalId
+	x.Comment = b.Comment
+	return m0
+}
+
 type RevokeApprovalResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Approval      *approval.Approval     `protobuf:"bytes,1,opt,name=approval,proto3" json:"approval,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -968,11 +1502,6 @@ func (x *RevokeApprovalResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RevokeApprovalResponse.ProtoReflect.Descriptor instead.
-func (*RevokeApprovalResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{16}
-}
-
 func (x *RevokeApprovalResponse) GetApproval() *approval.Approval {
 	if x != nil {
 		return x.Approval
@@ -980,8 +1509,37 @@ func (x *RevokeApprovalResponse) GetApproval() *approval.Approval {
 	return nil
 }
 
+func (x *RevokeApprovalResponse) SetApproval(v *approval.Approval) {
+	x.Approval = v
+}
+
+func (x *RevokeApprovalResponse) HasApproval() bool {
+	if x == nil {
+		return false
+	}
+	return x.Approval != nil
+}
+
+func (x *RevokeApprovalResponse) ClearApproval() {
+	x.Approval = nil
+}
+
+type RevokeApprovalResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Approval *approval.Approval
+}
+
+func (b0 RevokeApprovalResponse_builder) Build() *RevokeApprovalResponse {
+	m0 := &RevokeApprovalResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Approval = b.Approval
+	return m0
+}
+
 type DecideApprovalRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	DocumentId int64                       `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	TaskId     *int64                      `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
 	NewStatus  approval.ApprovalTaskStatus `protobuf:"varint,3,opt,name=new_status,json=newStatus,proto3,enum=resources.documents.approval.ApprovalTaskStatus" json:"new_status,omitempty"` // APPROVED or DECLINED
@@ -1016,11 +1574,6 @@ func (x *DecideApprovalRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DecideApprovalRequest.ProtoReflect.Descriptor instead.
-func (*DecideApprovalRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *DecideApprovalRequest) GetDocumentId() int64 {
@@ -1065,8 +1618,90 @@ func (x *DecideApprovalRequest) GetStampId() int64 {
 	return 0
 }
 
+func (x *DecideApprovalRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *DecideApprovalRequest) SetTaskId(v int64) {
+	x.TaskId = &v
+}
+
+func (x *DecideApprovalRequest) SetNewStatus(v approval.ApprovalTaskStatus) {
+	x.NewStatus = v
+}
+
+func (x *DecideApprovalRequest) SetComment(v string) {
+	x.Comment = v
+}
+
+func (x *DecideApprovalRequest) SetPayloadSvg(v string) {
+	x.PayloadSvg = &v
+}
+
+func (x *DecideApprovalRequest) SetStampId(v int64) {
+	x.StampId = &v
+}
+
+func (x *DecideApprovalRequest) HasTaskId() bool {
+	if x == nil {
+		return false
+	}
+	return x.TaskId != nil
+}
+
+func (x *DecideApprovalRequest) HasPayloadSvg() bool {
+	if x == nil {
+		return false
+	}
+	return x.PayloadSvg != nil
+}
+
+func (x *DecideApprovalRequest) HasStampId() bool {
+	if x == nil {
+		return false
+	}
+	return x.StampId != nil
+}
+
+func (x *DecideApprovalRequest) ClearTaskId() {
+	x.TaskId = nil
+}
+
+func (x *DecideApprovalRequest) ClearPayloadSvg() {
+	x.PayloadSvg = nil
+}
+
+func (x *DecideApprovalRequest) ClearStampId() {
+	x.StampId = nil
+}
+
+type DecideApprovalRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+	TaskId     *int64
+	NewStatus  approval.ApprovalTaskStatus
+	Comment    string
+	PayloadSvg *string
+	// When type=STAMP
+	StampId *int64
+}
+
+func (b0 DecideApprovalRequest_builder) Build() *DecideApprovalRequest {
+	m0 := &DecideApprovalRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.TaskId = b.TaskId
+	x.NewStatus = b.NewStatus
+	x.Comment = b.Comment
+	x.PayloadSvg = b.PayloadSvg
+	x.StampId = b.StampId
+	return m0
+}
+
 type DecideApprovalResponse struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Approval      *approval.Approval       `protobuf:"bytes,1,opt,name=approval,proto3" json:"approval,omitempty"`
 	Task          *approval.ApprovalTask   `protobuf:"bytes,2,opt,name=task,proto3" json:"task,omitempty"`
 	Policy        *approval.ApprovalPolicy `protobuf:"bytes,3,opt,name=policy,proto3" json:"policy,omitempty"`
@@ -1099,11 +1734,6 @@ func (x *DecideApprovalResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DecideApprovalResponse.ProtoReflect.Descriptor instead.
-func (*DecideApprovalResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{18}
-}
-
 func (x *DecideApprovalResponse) GetApproval() *approval.Approval {
 	if x != nil {
 		return x.Approval
@@ -1125,8 +1755,71 @@ func (x *DecideApprovalResponse) GetPolicy() *approval.ApprovalPolicy {
 	return nil
 }
 
+func (x *DecideApprovalResponse) SetApproval(v *approval.Approval) {
+	x.Approval = v
+}
+
+func (x *DecideApprovalResponse) SetTask(v *approval.ApprovalTask) {
+	x.Task = v
+}
+
+func (x *DecideApprovalResponse) SetPolicy(v *approval.ApprovalPolicy) {
+	x.Policy = v
+}
+
+func (x *DecideApprovalResponse) HasApproval() bool {
+	if x == nil {
+		return false
+	}
+	return x.Approval != nil
+}
+
+func (x *DecideApprovalResponse) HasTask() bool {
+	if x == nil {
+		return false
+	}
+	return x.Task != nil
+}
+
+func (x *DecideApprovalResponse) HasPolicy() bool {
+	if x == nil {
+		return false
+	}
+	return x.Policy != nil
+}
+
+func (x *DecideApprovalResponse) ClearApproval() {
+	x.Approval = nil
+}
+
+func (x *DecideApprovalResponse) ClearTask() {
+	x.Task = nil
+}
+
+func (x *DecideApprovalResponse) ClearPolicy() {
+	x.Policy = nil
+}
+
+type DecideApprovalResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Approval *approval.Approval
+	Task     *approval.ApprovalTask
+	Policy   *approval.ApprovalPolicy
+}
+
+func (b0 DecideApprovalResponse_builder) Build() *DecideApprovalResponse {
+	m0 := &DecideApprovalResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Approval = b.Approval
+	x.Task = b.Task
+	x.Policy = b.Policy
+	return m0
+}
+
 type ReopenApprovalTaskRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	TaskId        int64                  `protobuf:"varint,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
 	Comment       string                 `protobuf:"bytes,2,opt,name=comment,proto3" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1158,11 +1851,6 @@ func (x *ReopenApprovalTaskRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ReopenApprovalTaskRequest.ProtoReflect.Descriptor instead.
-func (*ReopenApprovalTaskRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{19}
-}
-
 func (x *ReopenApprovalTaskRequest) GetTaskId() int64 {
 	if x != nil {
 		return x.TaskId
@@ -1177,8 +1865,32 @@ func (x *ReopenApprovalTaskRequest) GetComment() string {
 	return ""
 }
 
+func (x *ReopenApprovalTaskRequest) SetTaskId(v int64) {
+	x.TaskId = v
+}
+
+func (x *ReopenApprovalTaskRequest) SetComment(v string) {
+	x.Comment = v
+}
+
+type ReopenApprovalTaskRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	TaskId  int64
+	Comment string
+}
+
+func (b0 ReopenApprovalTaskRequest_builder) Build() *ReopenApprovalTaskRequest {
+	m0 := &ReopenApprovalTaskRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.TaskId = b.TaskId
+	x.Comment = b.Comment
+	return m0
+}
+
 type ReopenApprovalTaskResponse struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Task          *approval.ApprovalTask   `protobuf:"bytes,1,opt,name=task,proto3" json:"task,omitempty"`
 	Policy        *approval.ApprovalPolicy `protobuf:"bytes,2,opt,name=policy,proto3" json:"policy,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1210,11 +1922,6 @@ func (x *ReopenApprovalTaskResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ReopenApprovalTaskResponse.ProtoReflect.Descriptor instead.
-func (*ReopenApprovalTaskResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{20}
-}
-
 func (x *ReopenApprovalTaskResponse) GetTask() *approval.ApprovalTask {
 	if x != nil {
 		return x.Task
@@ -1229,8 +1936,54 @@ func (x *ReopenApprovalTaskResponse) GetPolicy() *approval.ApprovalPolicy {
 	return nil
 }
 
+func (x *ReopenApprovalTaskResponse) SetTask(v *approval.ApprovalTask) {
+	x.Task = v
+}
+
+func (x *ReopenApprovalTaskResponse) SetPolicy(v *approval.ApprovalPolicy) {
+	x.Policy = v
+}
+
+func (x *ReopenApprovalTaskResponse) HasTask() bool {
+	if x == nil {
+		return false
+	}
+	return x.Task != nil
+}
+
+func (x *ReopenApprovalTaskResponse) HasPolicy() bool {
+	if x == nil {
+		return false
+	}
+	return x.Policy != nil
+}
+
+func (x *ReopenApprovalTaskResponse) ClearTask() {
+	x.Task = nil
+}
+
+func (x *ReopenApprovalTaskResponse) ClearPolicy() {
+	x.Policy = nil
+}
+
+type ReopenApprovalTaskResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Task   *approval.ApprovalTask
+	Policy *approval.ApprovalPolicy
+}
+
+func (b0 ReopenApprovalTaskResponse_builder) Build() *ReopenApprovalTaskResponse {
+	m0 := &ReopenApprovalTaskResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Task = b.Task
+	x.Policy = b.Policy
+	return m0
+}
+
 type RecomputeApprovalPolicyCountersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1261,11 +2014,6 @@ func (x *RecomputeApprovalPolicyCountersRequest) ProtoReflect() protoreflect.Mes
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RecomputeApprovalPolicyCountersRequest.ProtoReflect.Descriptor instead.
-func (*RecomputeApprovalPolicyCountersRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{21}
-}
-
 func (x *RecomputeApprovalPolicyCountersRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -1273,8 +2021,26 @@ func (x *RecomputeApprovalPolicyCountersRequest) GetDocumentId() int64 {
 	return 0
 }
 
+func (x *RecomputeApprovalPolicyCountersRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+type RecomputeApprovalPolicyCountersRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+}
+
+func (b0 RecomputeApprovalPolicyCountersRequest_builder) Build() *RecomputeApprovalPolicyCountersRequest {
+	m0 := &RecomputeApprovalPolicyCountersRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	return m0
+}
+
 type RecomputeApprovalPolicyCountersResponse struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Policy        *approval.ApprovalPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1305,16 +2071,40 @@ func (x *RecomputeApprovalPolicyCountersResponse) ProtoReflect() protoreflect.Me
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RecomputeApprovalPolicyCountersResponse.ProtoReflect.Descriptor instead.
-func (*RecomputeApprovalPolicyCountersResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{22}
-}
-
 func (x *RecomputeApprovalPolicyCountersResponse) GetPolicy() *approval.ApprovalPolicy {
 	if x != nil {
 		return x.Policy
 	}
 	return nil
+}
+
+func (x *RecomputeApprovalPolicyCountersResponse) SetPolicy(v *approval.ApprovalPolicy) {
+	x.Policy = v
+}
+
+func (x *RecomputeApprovalPolicyCountersResponse) HasPolicy() bool {
+	if x == nil {
+		return false
+	}
+	return x.Policy != nil
+}
+
+func (x *RecomputeApprovalPolicyCountersResponse) ClearPolicy() {
+	x.Policy = nil
+}
+
+type RecomputeApprovalPolicyCountersResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Policy *approval.ApprovalPolicy
+}
+
+func (b0 RecomputeApprovalPolicyCountersResponse_builder) Build() *RecomputeApprovalPolicyCountersResponse {
+	m0 := &RecomputeApprovalPolicyCountersResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Policy = b.Policy
+	return m0
 }
 
 var File_services_documents_approval_proto protoreflect.FileDescriptor
@@ -1442,18 +2232,6 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\x0eDecideApproval\x12).services.documents.DecideApprovalRequest\x1a*.services.documents.DecideApprovalResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12\x8b\x01\n" +
 	"\x12ReopenApprovalTask\x12-.services.documents.ReopenApprovalTaskRequest\x1a..services.documents.ReopenApprovalTaskResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eRevokeApproval\x12\xb2\x01\n" +
 	"\x1fRecomputeApprovalPolicyCounters\x12:.services.documents.RecomputeApprovalPolicyCountersRequest\x1a;.services.documents.RecomputeApprovalPolicyCountersResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eRevokeApproval\x1a\x16\xea\xf3\x18\x12\b4\x12\x0ei-mdi-approvalBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
-
-var (
-	file_services_documents_approval_proto_rawDescOnce sync.Once
-	file_services_documents_approval_proto_rawDescData []byte
-)
-
-func file_services_documents_approval_proto_rawDescGZIP() []byte {
-	file_services_documents_approval_proto_rawDescOnce.Do(func() {
-		file_services_documents_approval_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_documents_approval_proto_rawDesc), len(file_services_documents_approval_proto_rawDesc)))
-	})
-	return file_services_documents_approval_proto_rawDescData
-}
 
 var file_services_documents_approval_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_services_documents_approval_proto_goTypes = []any{

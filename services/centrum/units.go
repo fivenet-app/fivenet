@@ -11,7 +11,6 @@ import (
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -372,7 +371,7 @@ func (s *Server) ListUnitActivity(
 		return resp, nil
 	}
 
-	tColleague := tables.User().AS("colleague")
+	tColleague := table.FivenetUser.AS("colleague")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tUnitStatus.

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/vehicles/activity/activity.proto
 
+//go:build !protoopaque
+
 package vehiclesactivity
 
 import (
@@ -15,7 +17,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -68,13 +69,8 @@ func (x VehicleActivityType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use VehicleActivityType.Descriptor instead.
-func (VehicleActivityType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_vehicles_activity_activity_proto_rawDescGZIP(), []int{0}
-}
-
 type VehicleActivity struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"vehicle_activity.id"`
 	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"user_activity.created_at"`
 	Plate           string                 `protobuf:"bytes,3,opt,name=plate,proto3" json:"plate,omitempty"`
@@ -112,11 +108,6 @@ func (x *VehicleActivity) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use VehicleActivity.ProtoReflect.Descriptor instead.
-func (*VehicleActivity) Descriptor() ([]byte, []int) {
-	return file_resources_vehicles_activity_activity_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *VehicleActivity) GetId() int64 {
@@ -189,8 +180,146 @@ func (x *VehicleActivity) GetData() *VehicleActivityData {
 	return nil
 }
 
+func (x *VehicleActivity) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *VehicleActivity) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *VehicleActivity) SetPlate(v string) {
+	x.Plate = v
+}
+
+func (x *VehicleActivity) SetActivityType(v VehicleActivityType) {
+	x.ActivityType = v
+}
+
+func (x *VehicleActivity) SetCreatorId(v int32) {
+	x.CreatorId = &v
+}
+
+func (x *VehicleActivity) SetCreator(v *short.UserShort) {
+	x.Creator = v
+}
+
+func (x *VehicleActivity) SetCreatorJob(v string) {
+	x.CreatorJob = v
+}
+
+func (x *VehicleActivity) SetCreatorJobLabel(v string) {
+	x.CreatorJobLabel = &v
+}
+
+func (x *VehicleActivity) SetReason(v string) {
+	x.Reason = &v
+}
+
+func (x *VehicleActivity) SetData(v *VehicleActivityData) {
+	x.Data = v
+}
+
+func (x *VehicleActivity) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *VehicleActivity) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorId != nil
+}
+
+func (x *VehicleActivity) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.Creator != nil
+}
+
+func (x *VehicleActivity) HasCreatorJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatorJobLabel != nil
+}
+
+func (x *VehicleActivity) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reason != nil
+}
+
+func (x *VehicleActivity) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *VehicleActivity) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *VehicleActivity) ClearCreatorId() {
+	x.CreatorId = nil
+}
+
+func (x *VehicleActivity) ClearCreator() {
+	x.Creator = nil
+}
+
+func (x *VehicleActivity) ClearCreatorJobLabel() {
+	x.CreatorJobLabel = nil
+}
+
+func (x *VehicleActivity) ClearReason() {
+	x.Reason = nil
+}
+
+func (x *VehicleActivity) ClearData() {
+	x.Data = nil
+}
+
+type VehicleActivity_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id              int64
+	CreatedAt       *timestamp.Timestamp
+	Plate           string
+	ActivityType    VehicleActivityType
+	CreatorId       *int32
+	Creator         *short.UserShort
+	CreatorJob      string
+	CreatorJobLabel *string
+	Reason          *string
+	Data            *VehicleActivityData
+}
+
+func (b0 VehicleActivity_builder) Build() *VehicleActivity {
+	m0 := &VehicleActivity{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.Plate = b.Plate
+	x.ActivityType = b.ActivityType
+	x.CreatorId = b.CreatorId
+	x.Creator = b.Creator
+	x.CreatorJob = b.CreatorJob
+	x.CreatorJobLabel = b.CreatorJobLabel
+	x.Reason = b.Reason
+	x.Data = b.Data
+	return m0
+}
+
 type VehicleActivityData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -220,9 +349,16 @@ func (x *VehicleActivityData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use VehicleActivityData.ProtoReflect.Descriptor instead.
-func (*VehicleActivityData) Descriptor() ([]byte, []int) {
-	return file_resources_vehicles_activity_activity_proto_rawDescGZIP(), []int{1}
+type VehicleActivityData_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 VehicleActivityData_builder) Build() *VehicleActivityData {
+	m0 := &VehicleActivityData{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 var File_resources_vehicles_activity_activity_proto protoreflect.FileDescriptor
@@ -255,18 +391,6 @@ const file_resources_vehicles_activity_activity_proto_rawDesc = "" +
 	"\x13VehicleActivityType\x12%\n" +
 	"!VEHICLE_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cVEHICLE_ACTIVITY_TYPE_WANTED\x10\x01B`Z^github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity;vehiclesactivityb\x06proto3"
-
-var (
-	file_resources_vehicles_activity_activity_proto_rawDescOnce sync.Once
-	file_resources_vehicles_activity_activity_proto_rawDescData []byte
-)
-
-func file_resources_vehicles_activity_activity_proto_rawDescGZIP() []byte {
-	file_resources_vehicles_activity_activity_proto_rawDescOnce.Do(func() {
-		file_resources_vehicles_activity_activity_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_vehicles_activity_activity_proto_rawDesc), len(file_resources_vehicles_activity_activity_proto_rawDesc)))
-	})
-	return file_resources_vehicles_activity_activity_proto_rawDescData
-}
 
 var file_resources_vehicles_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_vehicles_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 2)

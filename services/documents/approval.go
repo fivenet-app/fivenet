@@ -15,7 +15,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -194,8 +193,8 @@ func (s *Server) ListApprovalTasksInbox(
 		return resp, nil
 	}
 
-	tUser := tables.User().AS("requester")
-	tCreator := tables.User().AS("creator")
+	tUser := table.FivenetUser.AS("requester")
+	tCreator := table.FivenetUser.AS("creator")
 
 	stmt := mysql.
 		SELECT(
@@ -589,7 +588,7 @@ func (s *Server) ListApprovalTasks(
 		Tasks: []*documentsapproval.ApprovalTask{},
 	}
 
-	tUser := tables.User().AS("usershort")
+	tUser := table.FivenetUser.AS("usershort")
 
 	stmt := mysql.
 		SELECT(
@@ -1105,7 +1104,7 @@ func (s *Server) ListApprovals(
 	}
 
 	// Page fetch
-	tUser := tables.User().AS("usershort")
+	tUser := table.FivenetUser.AS("usershort")
 	tStamp := table.FivenetDocumentsStamps.AS("stamp")
 
 	stmt := tApprovals.

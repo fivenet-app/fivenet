@@ -124,7 +124,6 @@
             "title": "Weiterleitung",
             "subtitle": "Sie verlassen nun FiveNet.",
             "description": "Bitte beachten Sie, dass Sie auf eine andere Website weitergeleitet werden, für deren Inhalt wir nicht verantwortlich sind und für die unsere Datenschutzbestimmungen nicht gelten.",
-
             "goto": "Sollte die automatische Weiterleitung nicht funktionieren, klicken Sie bitte hier!",
             "countdown": "Sie werden in {0} Sekunden weitergeleitet..."
         },
@@ -751,7 +750,10 @@
         "fullscreen_exit": "Vollbildmodus verlassen",
         "browser": "Browser",
         "registered_since": "Registriert seit",
-        "no_content": "(Noch kein Inhalt vorhanden)"
+        "no_content": "(Noch kein Inhalt vorhanden)",
+        "impersonate": "Imitieren",
+        "group": "Gruppe | Gruppen",
+        "websocket": "WebSocket"
     },
     "components": {
         "partials": {
@@ -1150,14 +1152,6 @@
                 "set_absence_date": "Urlaub eintragen",
                 "set_profile_picture": "Profilbild aktualisieren"
             }
-        },
-        "bodycheckup": {
-            "title": "Körper Untersuchung",
-            "no_points": "Keine Punkte ausgewählt!",
-            "bmi_calculator": "BMI-Rechner",
-            "bmi": "Body-Mass-Index",
-            "mass": "Gewicht (in KG)",
-            "height": "Größe (in Metern)"
         },
         "hints": {
             "start_text": "Wussten Sie schon...?",
@@ -1566,6 +1560,10 @@
                 },
                 "effective_permissions": {
                     "description": "Liste der effektiven Berechtigungen für die ausgewählte Rolle (beachten Sie, dass Sie die Auswirkungen Ihrer Änderungen erst dann sehen können, wenn Sie Ihre aktuellen Änderungen an der Rolle abspeichern). Die effektiven Berechtigungen sind die tatsächlich den Benutzer mit dieser Rolle vergebenen Berechtigungen. Die effektiven Berechtigungen werden durch Kombination der Rolleneigenschaften und der Job-Rang-Berechtigungen des Benutzers ermittelt."
+                },
+                "impersonate_confirm": {
+                    "title": "Sind Sie sicher, dass Sie diese Rolle imitieren möchten?",
+                    "description": "Sie werden abgemeldet und mit den Berechtigungen dieser Rolle erneut angemeldet. Um zurückzuwechseln, müssen Sie den Charakterauswahl-Dialog verwenden."
                 }
             },
             "app_config": {
@@ -1685,7 +1683,8 @@
                     "last_activity_received": "Letzte empfangene Aktivität",
                     "last_dbsync_version": "Letzte gesehene DB Sync Version"
                 },
-                "title": "System-Status"
+                "title": "System-Status",
+                "new_version_available": "Neue Version verfügbar"
             },
             "system_settings": "System-Einstellungen"
         },
@@ -1851,7 +1850,7 @@
             },
             "no_permission": {
                 "title": "Du hast keine Berechtigung dazu!",
-                "content": "Keine Berechtigung um zu {path} gehen."
+                "content": "Keine Berechtigung um zu {path} zu navigieren."
             },
             "oauth2_connect": {
                 "success": {
@@ -1970,10 +1969,6 @@
         "category_created": {
             "title": "Kategorie erstellt!",
             "content": "Kategorie wurde erfolgreich erstellt"
-        },
-        "bodycheckup": {
-            "title": "Körper Untersuchung: Zusammenfassung kopiert",
-            "content": "Zusammenfassung wurde zur Zwischenablage hinzugefügt."
         },
         "livemap": {
             "failed_loading_postals": {
@@ -2211,7 +2206,8 @@
                 "title": "Charakter-Sperre ist aktiv!",
                 "content": "Bitte wählen Sie einen verfügbaren Charakter aus und versuchen Sie es erneut."
             },
-            "ErrNotSuperuser": "Sie sind kein Superuser! Bitte wenden Sie sich an Ihre FiveNet-Administratoren, um dieses Problem zu melden."
+            "ErrNotSuperuser": "Sie sind kein Superuser! Bitte wenden Sie sich an Ihre FiveNet-Administratoren, um dieses Problem zu melden.",
+            "ErrImpersonateJobInvalid": "Ungültiger Job-Grad zum Ausgeben."
         },
         "CompletorService": {
             "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"
@@ -2395,11 +2391,11 @@
                 "title": "Genehmigungsaufgabe bereits bearbeitet!",
                 "content": "Diese Genehmigungsaufgabe wurde bereits genehmigt/abgelehnt."
             },
-            "ErrDocAccessInvalid": "Dokumenten-Zugriff: Ungültiger Beruf oder Rang angegeben!",
             "ErrApprovalSignatureRequired": {
                 "title": "Genehmigungsunterschrift erforderlich!",
                 "content": "Sie müssen eine Unterschrift leisten, um dieses Dokument zu genehmigen."
             },
+            "ErrDocAccessInvalid": "Dokumenten-Zugriff: Ungültiger Beruf oder Rang angegeben!",
             "ErrApprovalDocIsDraft": {
                 "title": "Dokument ist ein Entwurf!",
                 "content": "Nur veröffentlichte Dokumente können genehmigt werden."

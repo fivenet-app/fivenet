@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/discord/discord.proto
 
+//go:build !protoopaque
+
 package discord
 
 import (
@@ -11,7 +13,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,7 +24,7 @@ const (
 )
 
 type Channel struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	GuildId       string                 `protobuf:"bytes,2,opt,name=guild_id,json=guildId,proto3" json:"guild_id,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
@@ -56,11 +57,6 @@ func (x *Channel) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Channel.ProtoReflect.Descriptor instead.
-func (*Channel) Descriptor() ([]byte, []int) {
-	return file_resources_discord_discord_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Channel) GetId() string {
@@ -98,8 +94,50 @@ func (x *Channel) GetPosition() int64 {
 	return 0
 }
 
+func (x *Channel) SetId(v string) {
+	x.Id = v
+}
+
+func (x *Channel) SetGuildId(v string) {
+	x.GuildId = v
+}
+
+func (x *Channel) SetName(v string) {
+	x.Name = v
+}
+
+func (x *Channel) SetType(v uint32) {
+	x.Type = v
+}
+
+func (x *Channel) SetPosition(v int64) {
+	x.Position = v
+}
+
+type Channel_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id       string
+	GuildId  string
+	Name     string
+	Type     uint32
+	Position int64
+}
+
+func (b0 Channel_builder) Build() *Channel {
+	m0 := &Channel{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.GuildId = b.GuildId
+	x.Name = b.Name
+	x.Type = b.Type
+	x.Position = b.Position
+	return m0
+}
+
 type Guild struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Icon          string                 `protobuf:"bytes,3,opt,name=icon,proto3" json:"icon,omitempty"`
@@ -133,11 +171,6 @@ func (x *Guild) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Guild.ProtoReflect.Descriptor instead.
-func (*Guild) Descriptor() ([]byte, []int) {
-	return file_resources_discord_discord_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *Guild) GetId() string {
 	if x != nil {
 		return x.Id
@@ -166,6 +199,53 @@ func (x *Guild) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *Guild) SetId(v string) {
+	x.Id = v
+}
+
+func (x *Guild) SetName(v string) {
+	x.Name = v
+}
+
+func (x *Guild) SetIcon(v string) {
+	x.Icon = v
+}
+
+func (x *Guild) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Guild) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Guild) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+type Guild_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id        string
+	Name      string
+	Icon      string
+	CreatedAt *timestamp.Timestamp
+}
+
+func (b0 Guild_builder) Build() *Guild {
+	m0 := &Guild{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Name = b.Name
+	x.Icon = b.Icon
+	x.CreatedAt = b.CreatedAt
+	return m0
+}
+
 var File_resources_discord_discord_proto protoreflect.FileDescriptor
 
 const file_resources_discord_discord_proto_rawDesc = "" +
@@ -184,18 +264,6 @@ const file_resources_discord_discord_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01B\r\n" +
 	"\v_created_atBMZKgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/discord;discordb\x06proto3"
-
-var (
-	file_resources_discord_discord_proto_rawDescOnce sync.Once
-	file_resources_discord_discord_proto_rawDescData []byte
-)
-
-func file_resources_discord_discord_proto_rawDescGZIP() []byte {
-	file_resources_discord_discord_proto_rawDescOnce.Do(func() {
-		file_resources_discord_discord_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_discord_discord_proto_rawDesc), len(file_resources_discord_discord_proto_rawDesc)))
-	})
-	return file_resources_discord_discord_proto_rawDescData
-}
 
 var file_resources_discord_discord_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_discord_discord_proto_goTypes = []any{

@@ -4,13 +4,14 @@
 // 	protoc        (unknown)
 // source: resources/documents/forms/forms.proto
 
+//go:build !protoopaque
+
 package documentsforms
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -22,7 +23,7 @@ const (
 )
 
 type Form struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -53,16 +54,29 @@ func (x *Form) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Form.ProtoReflect.Descriptor instead.
-func (*Form) Descriptor() ([]byte, []int) {
-	return file_resources_documents_forms_forms_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *Form) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
+}
+
+func (x *Form) SetId(v int64) {
+	x.Id = v
+}
+
+type Form_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 Form_builder) Build() *Form {
+	m0 := &Form{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
 }
 
 var File_resources_documents_forms_forms_proto protoreflect.FileDescriptor
@@ -72,18 +86,6 @@ const file_resources_documents_forms_forms_proto_rawDesc = "" +
 	"%resources/documents/forms/forms.proto\x12\x19resources.documents.forms\"\x16\n" +
 	"\x04Form\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02idB\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/forms;documentsformsb\x06proto3"
-
-var (
-	file_resources_documents_forms_forms_proto_rawDescOnce sync.Once
-	file_resources_documents_forms_forms_proto_rawDescData []byte
-)
-
-func file_resources_documents_forms_forms_proto_rawDescGZIP() []byte {
-	file_resources_documents_forms_forms_proto_rawDescOnce.Do(func() {
-		file_resources_documents_forms_forms_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_forms_forms_proto_rawDesc), len(file_resources_documents_forms_forms_proto_rawDesc)))
-	})
-	return file_resources_documents_forms_forms_proto_rawDescData
-}
 
 var file_resources_documents_forms_forms_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_documents_forms_forms_proto_goTypes = []any{

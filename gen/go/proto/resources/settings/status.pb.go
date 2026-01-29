@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/settings/status.proto
 
+//go:build !protoopaque
+
 package settings
 
 import (
@@ -11,7 +13,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,7 +24,7 @@ const (
 )
 
 type SystemStatus struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Database      *Database              `protobuf:"bytes,1,opt,name=database,proto3" json:"database,omitempty"`
 	Nats          *Nats                  `protobuf:"bytes,2,opt,name=nats,proto3" json:"nats,omitempty"`
 	Dbsync        *DBSyncStatus          `protobuf:"bytes,3,opt,name=dbsync,proto3" json:"dbsync,omitempty"`
@@ -57,11 +58,6 @@ func (x *SystemStatus) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SystemStatus.ProtoReflect.Descriptor instead.
-func (*SystemStatus) Descriptor() ([]byte, []int) {
-	return file_resources_settings_status_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *SystemStatus) GetDatabase() *Database {
 	if x != nil {
 		return x.Database
@@ -90,8 +86,88 @@ func (x *SystemStatus) GetVersion() *VersionStatus {
 	return nil
 }
 
+func (x *SystemStatus) SetDatabase(v *Database) {
+	x.Database = v
+}
+
+func (x *SystemStatus) SetNats(v *Nats) {
+	x.Nats = v
+}
+
+func (x *SystemStatus) SetDbsync(v *DBSyncStatus) {
+	x.Dbsync = v
+}
+
+func (x *SystemStatus) SetVersion(v *VersionStatus) {
+	x.Version = v
+}
+
+func (x *SystemStatus) HasDatabase() bool {
+	if x == nil {
+		return false
+	}
+	return x.Database != nil
+}
+
+func (x *SystemStatus) HasNats() bool {
+	if x == nil {
+		return false
+	}
+	return x.Nats != nil
+}
+
+func (x *SystemStatus) HasDbsync() bool {
+	if x == nil {
+		return false
+	}
+	return x.Dbsync != nil
+}
+
+func (x *SystemStatus) HasVersion() bool {
+	if x == nil {
+		return false
+	}
+	return x.Version != nil
+}
+
+func (x *SystemStatus) ClearDatabase() {
+	x.Database = nil
+}
+
+func (x *SystemStatus) ClearNats() {
+	x.Nats = nil
+}
+
+func (x *SystemStatus) ClearDbsync() {
+	x.Dbsync = nil
+}
+
+func (x *SystemStatus) ClearVersion() {
+	x.Version = nil
+}
+
+type SystemStatus_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Database *Database
+	Nats     *Nats
+	Dbsync   *DBSyncStatus
+	Version  *VersionStatus
+}
+
+func (b0 SystemStatus_builder) Build() *SystemStatus {
+	m0 := &SystemStatus{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Database = b.Database
+	x.Nats = b.Nats
+	x.Dbsync = b.Dbsync
+	x.Version = b.Version
+	return m0
+}
+
 type Nats struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Version       string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	Connected     bool                   `protobuf:"varint,2,opt,name=connected,proto3" json:"connected,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -123,11 +199,6 @@ func (x *Nats) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Nats.ProtoReflect.Descriptor instead.
-func (*Nats) Descriptor() ([]byte, []int) {
-	return file_resources_settings_status_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *Nats) GetVersion() string {
 	if x != nil {
 		return x.Version
@@ -142,8 +213,32 @@ func (x *Nats) GetConnected() bool {
 	return false
 }
 
+func (x *Nats) SetVersion(v string) {
+	x.Version = v
+}
+
+func (x *Nats) SetConnected(v bool) {
+	x.Connected = v
+}
+
+type Nats_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Version   string
+	Connected bool
+}
+
+func (b0 Nats_builder) Build() *Nats {
+	m0 := &Nats{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Version = b.Version
+	x.Connected = b.Connected
+	return m0
+}
+
 type Database struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
+	state            protoimpl.MessageState `protogen:"hybrid.v1"`
 	Version          string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	Connected        bool                   `protobuf:"varint,2,opt,name=connected,proto3" json:"connected,omitempty"`
 	MigrationVersion uint64                 `protobuf:"varint,3,opt,name=migration_version,json=migrationVersion,proto3" json:"migration_version,omitempty"`
@@ -178,11 +273,6 @@ func (x *Database) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Database.ProtoReflect.Descriptor instead.
-func (*Database) Descriptor() ([]byte, []int) {
-	return file_resources_settings_status_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Database) GetVersion() string {
@@ -234,8 +324,62 @@ func (x *Database) GetTablesOk() bool {
 	return false
 }
 
+func (x *Database) SetVersion(v string) {
+	x.Version = v
+}
+
+func (x *Database) SetConnected(v bool) {
+	x.Connected = v
+}
+
+func (x *Database) SetMigrationVersion(v uint64) {
+	x.MigrationVersion = v
+}
+
+func (x *Database) SetMigrationDirty(v bool) {
+	x.MigrationDirty = v
+}
+
+func (x *Database) SetDbCharset(v string) {
+	x.DbCharset = v
+}
+
+func (x *Database) SetDbCollation(v string) {
+	x.DbCollation = v
+}
+
+func (x *Database) SetTablesOk(v bool) {
+	x.TablesOk = v
+}
+
+type Database_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Version          string
+	Connected        bool
+	MigrationVersion uint64
+	MigrationDirty   bool
+	DbCharset        string
+	DbCollation      string
+	TablesOk         bool
+}
+
+func (b0 Database_builder) Build() *Database {
+	m0 := &Database{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Version = b.Version
+	x.Connected = b.Connected
+	x.MigrationVersion = b.MigrationVersion
+	x.MigrationDirty = b.MigrationDirty
+	x.DbCharset = b.DbCharset
+	x.DbCollation = b.DbCollation
+	x.TablesOk = b.TablesOk
+	return m0
+}
+
 type DBSyncStatus struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
+	state              protoimpl.MessageState `protogen:"hybrid.v1"`
 	Enabled            bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	LastSyncedData     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=last_synced_data,json=lastSyncedData,proto3,oneof" json:"last_synced_data,omitempty"`
 	LastSyncedActivity *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=last_synced_activity,json=lastSyncedActivity,proto3,oneof" json:"last_synced_activity,omitempty"`
@@ -269,11 +413,6 @@ func (x *DBSyncStatus) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DBSyncStatus.ProtoReflect.Descriptor instead.
-func (*DBSyncStatus) Descriptor() ([]byte, []int) {
-	return file_resources_settings_status_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *DBSyncStatus) GetEnabled() bool {
 	if x != nil {
 		return x.Enabled
@@ -302,8 +441,77 @@ func (x *DBSyncStatus) GetLastDbsyncVersion() string {
 	return ""
 }
 
+func (x *DBSyncStatus) SetEnabled(v bool) {
+	x.Enabled = v
+}
+
+func (x *DBSyncStatus) SetLastSyncedData(v *timestamp.Timestamp) {
+	x.LastSyncedData = v
+}
+
+func (x *DBSyncStatus) SetLastSyncedActivity(v *timestamp.Timestamp) {
+	x.LastSyncedActivity = v
+}
+
+func (x *DBSyncStatus) SetLastDbsyncVersion(v string) {
+	x.LastDbsyncVersion = &v
+}
+
+func (x *DBSyncStatus) HasLastSyncedData() bool {
+	if x == nil {
+		return false
+	}
+	return x.LastSyncedData != nil
+}
+
+func (x *DBSyncStatus) HasLastSyncedActivity() bool {
+	if x == nil {
+		return false
+	}
+	return x.LastSyncedActivity != nil
+}
+
+func (x *DBSyncStatus) HasLastDbsyncVersion() bool {
+	if x == nil {
+		return false
+	}
+	return x.LastDbsyncVersion != nil
+}
+
+func (x *DBSyncStatus) ClearLastSyncedData() {
+	x.LastSyncedData = nil
+}
+
+func (x *DBSyncStatus) ClearLastSyncedActivity() {
+	x.LastSyncedActivity = nil
+}
+
+func (x *DBSyncStatus) ClearLastDbsyncVersion() {
+	x.LastDbsyncVersion = nil
+}
+
+type DBSyncStatus_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Enabled            bool
+	LastSyncedData     *timestamp.Timestamp
+	LastSyncedActivity *timestamp.Timestamp
+	LastDbsyncVersion  *string
+}
+
+func (b0 DBSyncStatus_builder) Build() *DBSyncStatus {
+	m0 := &DBSyncStatus{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Enabled = b.Enabled
+	x.LastSyncedData = b.LastSyncedData
+	x.LastSyncedActivity = b.LastSyncedActivity
+	x.LastDbsyncVersion = b.LastDbsyncVersion
+	return m0
+}
+
 type VersionStatus struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Current       string                 `protobuf:"bytes,1,opt,name=current,proto3" json:"current,omitempty"`
 	NewVersion    *NewVersionInfo        `protobuf:"bytes,2,opt,name=new_version,json=newVersion,proto3,oneof" json:"new_version,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -335,11 +543,6 @@ func (x *VersionStatus) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use VersionStatus.ProtoReflect.Descriptor instead.
-func (*VersionStatus) Descriptor() ([]byte, []int) {
-	return file_resources_settings_status_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *VersionStatus) GetCurrent() string {
 	if x != nil {
 		return x.Current
@@ -354,8 +557,43 @@ func (x *VersionStatus) GetNewVersion() *NewVersionInfo {
 	return nil
 }
 
+func (x *VersionStatus) SetCurrent(v string) {
+	x.Current = v
+}
+
+func (x *VersionStatus) SetNewVersion(v *NewVersionInfo) {
+	x.NewVersion = v
+}
+
+func (x *VersionStatus) HasNewVersion() bool {
+	if x == nil {
+		return false
+	}
+	return x.NewVersion != nil
+}
+
+func (x *VersionStatus) ClearNewVersion() {
+	x.NewVersion = nil
+}
+
+type VersionStatus_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Current    string
+	NewVersion *NewVersionInfo
+}
+
+func (b0 VersionStatus_builder) Build() *VersionStatus {
+	m0 := &VersionStatus{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Current = b.Current
+	x.NewVersion = b.NewVersion
+	return m0
+}
+
 type NewVersionInfo struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Version       string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
 	ReleaseDate   *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=release_date,json=releaseDate,proto3,oneof" json:"release_date,omitempty"`
@@ -388,11 +626,6 @@ func (x *NewVersionInfo) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use NewVersionInfo.ProtoReflect.Descriptor instead.
-func (*NewVersionInfo) Descriptor() ([]byte, []int) {
-	return file_resources_settings_status_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *NewVersionInfo) GetVersion() string {
 	if x != nil {
 		return x.Version
@@ -412,6 +645,47 @@ func (x *NewVersionInfo) GetReleaseDate() *timestamp.Timestamp {
 		return x.ReleaseDate
 	}
 	return nil
+}
+
+func (x *NewVersionInfo) SetVersion(v string) {
+	x.Version = v
+}
+
+func (x *NewVersionInfo) SetUrl(v string) {
+	x.Url = v
+}
+
+func (x *NewVersionInfo) SetReleaseDate(v *timestamp.Timestamp) {
+	x.ReleaseDate = v
+}
+
+func (x *NewVersionInfo) HasReleaseDate() bool {
+	if x == nil {
+		return false
+	}
+	return x.ReleaseDate != nil
+}
+
+func (x *NewVersionInfo) ClearReleaseDate() {
+	x.ReleaseDate = nil
+}
+
+type NewVersionInfo_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Version     string
+	Url         string
+	ReleaseDate *timestamp.Timestamp
+}
+
+func (b0 NewVersionInfo_builder) Build() *NewVersionInfo {
+	m0 := &NewVersionInfo{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Version = b.Version
+	x.Url = b.Url
+	x.ReleaseDate = b.ReleaseDate
+	return m0
 }
 
 var File_resources_settings_status_proto protoreflect.FileDescriptor
@@ -454,18 +728,6 @@ const file_resources_settings_status_proto_rawDesc = "" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12F\n" +
 	"\frelease_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\vreleaseDate\x88\x01\x01B\x0f\n" +
 	"\r_release_dateBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
-
-var (
-	file_resources_settings_status_proto_rawDescOnce sync.Once
-	file_resources_settings_status_proto_rawDescData []byte
-)
-
-func file_resources_settings_status_proto_rawDescGZIP() []byte {
-	file_resources_settings_status_proto_rawDescOnce.Do(func() {
-		file_resources_settings_status_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_settings_status_proto_rawDesc), len(file_resources_settings_status_proto_rawDesc)))
-	})
-	return file_resources_settings_status_proto_rawDescData
-}
 
 var file_resources_settings_status_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_resources_settings_status_proto_goTypes = []any{

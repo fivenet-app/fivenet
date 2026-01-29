@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: codegen/audit/redacted.proto
 
+//go:build !protoopaque
+
 package audit
 
 import (

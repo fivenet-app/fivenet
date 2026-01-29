@@ -22,32 +22,6 @@ import { OAuth2Provider } from "../../resources/accounts/oauth2/oauth2";
 import { Account } from "../../resources/accounts/accounts";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 /**
- * @generated from protobuf message services.auth.CreateAccountRequest
- */
-export interface CreateAccountRequest {
-    /**
-     * @generated from protobuf field: string reg_token = 1
-     */
-    regToken: string;
-    /**
-     * @generated from protobuf field: string username = 2
-     */
-    username: string;
-    /**
-     * @generated from protobuf field: string password = 3
-     */
-    password: string;
-}
-/**
- * @generated from protobuf message services.auth.CreateAccountResponse
- */
-export interface CreateAccountResponse {
-    /**
-     * @generated from protobuf field: int64 account_id = 1
-     */
-    accountId: number;
-}
-/**
  * @generated from protobuf message services.auth.LoginRequest
  */
 export interface LoginRequest {
@@ -92,6 +66,32 @@ export interface LogoutResponse {
     success: boolean;
 }
 /**
+ * @generated from protobuf message services.auth.CreateAccountRequest
+ */
+export interface CreateAccountRequest {
+    /**
+     * @generated from protobuf field: string reg_token = 1
+     */
+    regToken: string;
+    /**
+     * @generated from protobuf field: string username = 2
+     */
+    username: string;
+    /**
+     * @generated from protobuf field: string password = 3
+     */
+    password: string;
+}
+/**
+ * @generated from protobuf message services.auth.CreateAccountResponse
+ */
+export interface CreateAccountResponse {
+    /**
+     * @generated from protobuf field: int64 account_id = 1
+     */
+    accountId: number;
+}
+/**
  * @generated from protobuf message services.auth.ChangePasswordRequest
  */
 export interface ChangePasswordRequest {
@@ -108,10 +108,6 @@ export interface ChangePasswordRequest {
  * @generated from protobuf message services.auth.ChangePasswordResponse
  */
 export interface ChangePasswordResponse {
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp expires = 1
-     */
-    expires?: Timestamp;
 }
 /**
  * @generated from protobuf message services.auth.ChangeUsernameRequest
@@ -199,29 +195,71 @@ export interface ChooseCharacterRequest {
  */
 export interface ChooseCharacterResponse {
     /**
-     * @generated from protobuf field: string username = 1
+     * @generated from protobuf field: string token = 1
+     */
+    token: string;
+    /**
+     * @generated from protobuf field: string username = 2
      */
     username: string;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp expires = 3
+     */
+    expires?: Timestamp;
+    /**
+     * @generated from protobuf field: resources.jobs.props.JobProps job_props = 4
+     */
+    jobProps?: JobProps;
+    /**
+     * @generated from protobuf field: resources.users.User char = 5
+     */
+    char?: User;
+    /**
+     * @generated from protobuf field: repeated resources.permissions.permissions.Permission permissions = 6
+     */
+    permissions: Permission[];
+    /**
+     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute attributes = 7
+     */
+    attributes: RoleAttribute[];
+}
+/**
+ * @generated from protobuf message services.auth.ImpersonateJobRequest
+ */
+export interface ImpersonateJobRequest {
+    /**
+     * @generated from protobuf field: int32 job_grade = 1
+     */
+    jobGrade: number;
+}
+/**
+ * @generated from protobuf message services.auth.ImpersonateJobResponse
+ */
+export interface ImpersonateJobResponse {
+    /**
+     * @generated from protobuf field: string token = 1
+     */
+    token: string;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp expires = 2
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: resources.jobs.props.JobProps job_props = 3
-     */
-    jobProps?: JobProps;
-    /**
-     * @generated from protobuf field: resources.users.User char = 4
+     * @generated from protobuf field: resources.users.User char = 3
      */
     char?: User;
     /**
-     * @generated from protobuf field: repeated resources.permissions.permissions.Permission permissions = 5
+     * @generated from protobuf field: repeated resources.permissions.permissions.Permission permissions = 4
      */
     permissions: Permission[];
     /**
-     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute attributes = 6
+     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute attributes = 5
      */
     attributes: RoleAttribute[];
+    /**
+     * @generated from protobuf field: bool state = 6
+     */
+    state: boolean;
 }
 /**
  * @generated from protobuf message services.auth.DeleteSocialLoginRequest
@@ -259,6 +297,10 @@ export interface SetSuperuserModeRequest {
  */
 export interface SetSuperuserModeResponse {
     /**
+     * @generated from protobuf field: string token = 1
+     */
+    token: string;
+    /**
      * @generated from protobuf field: resources.timestamp.Timestamp expires = 2
      */
     expires?: Timestamp;
@@ -279,116 +321,6 @@ export interface SetSuperuserModeResponse {
      */
     attributes: RoleAttribute[];
 }
-// @generated message type with reflection information, may provide speed optimized methods
-class CreateAccountRequest$Type extends MessageType<CreateAccountRequest> {
-    constructor() {
-        super("services.auth.CreateAccountRequest", [
-            { no: 1, name: "reg_token", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.audit.redacted": true, "buf.validate.field": { string: { len: "6", pattern: "^[0-9]{6}$" } } } },
-            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 3, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.audit.redacted": true, "buf.validate.field": { string: { minLen: "6", maxBytes: "70" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<CreateAccountRequest>): CreateAccountRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.regToken = "";
-        message.username = "";
-        message.password = "";
-        if (value !== undefined)
-            reflectionMergePartial<CreateAccountRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateAccountRequest): CreateAccountRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string reg_token */ 1:
-                    message.regToken = reader.string();
-                    break;
-                case /* string username */ 2:
-                    message.username = reader.string();
-                    break;
-                case /* string password */ 3:
-                    message.password = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: CreateAccountRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string reg_token = 1; */
-        if (message.regToken !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.regToken);
-        /* string username = 2; */
-        if (message.username !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.username);
-        /* string password = 3; */
-        if (message.password !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.password);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.auth.CreateAccountRequest
- */
-export const CreateAccountRequest = new CreateAccountRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class CreateAccountResponse$Type extends MessageType<CreateAccountResponse> {
-    constructor() {
-        super("services.auth.CreateAccountResponse", [
-            { no: 1, name: "account_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
-        ]);
-    }
-    create(value?: PartialMessage<CreateAccountResponse>): CreateAccountResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.accountId = 0;
-        if (value !== undefined)
-            reflectionMergePartial<CreateAccountResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateAccountResponse): CreateAccountResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 account_id */ 1:
-                    message.accountId = reader.int64().toNumber();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: CreateAccountResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 account_id = 1; */
-        if (message.accountId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.accountId);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.auth.CreateAccountResponse
- */
-export const CreateAccountResponse = new CreateAccountResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class LoginRequest$Type extends MessageType<LoginRequest> {
     constructor() {
@@ -591,6 +523,116 @@ class LogoutResponse$Type extends MessageType<LogoutResponse> {
  */
 export const LogoutResponse = new LogoutResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class CreateAccountRequest$Type extends MessageType<CreateAccountRequest> {
+    constructor() {
+        super("services.auth.CreateAccountRequest", [
+            { no: 1, name: "reg_token", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.audit.redacted": true, "buf.validate.field": { string: { len: "6", pattern: "^[0-9]{6}$" } } } },
+            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 3, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.audit.redacted": true, "buf.validate.field": { string: { minLen: "6", maxBytes: "70" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CreateAccountRequest>): CreateAccountRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.regToken = "";
+        message.username = "";
+        message.password = "";
+        if (value !== undefined)
+            reflectionMergePartial<CreateAccountRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateAccountRequest): CreateAccountRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string reg_token */ 1:
+                    message.regToken = reader.string();
+                    break;
+                case /* string username */ 2:
+                    message.username = reader.string();
+                    break;
+                case /* string password */ 3:
+                    message.password = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateAccountRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string reg_token = 1; */
+        if (message.regToken !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.regToken);
+        /* string username = 2; */
+        if (message.username !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.username);
+        /* string password = 3; */
+        if (message.password !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.password);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.auth.CreateAccountRequest
+ */
+export const CreateAccountRequest = new CreateAccountRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateAccountResponse$Type extends MessageType<CreateAccountResponse> {
+    constructor() {
+        super("services.auth.CreateAccountResponse", [
+            { no: 1, name: "account_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<CreateAccountResponse>): CreateAccountResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.accountId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<CreateAccountResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateAccountResponse): CreateAccountResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 account_id */ 1:
+                    message.accountId = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateAccountResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 account_id = 1; */
+        if (message.accountId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.accountId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.auth.CreateAccountResponse
+ */
+export const CreateAccountResponse = new CreateAccountResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class ChangePasswordRequest$Type extends MessageType<ChangePasswordRequest> {
     constructor() {
         super("services.auth.ChangePasswordRequest", [
@@ -648,9 +690,7 @@ export const ChangePasswordRequest = new ChangePasswordRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ChangePasswordResponse$Type extends MessageType<ChangePasswordResponse> {
     constructor() {
-        super("services.auth.ChangePasswordResponse", [
-            { no: 1, name: "expires", kind: "message", T: () => Timestamp }
-        ]);
+        super("services.auth.ChangePasswordResponse", []);
     }
     create(value?: PartialMessage<ChangePasswordResponse>): ChangePasswordResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -663,9 +703,6 @@ class ChangePasswordResponse$Type extends MessageType<ChangePasswordResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.timestamp.Timestamp expires */ 1:
-                    message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -678,9 +715,6 @@ class ChangePasswordResponse$Type extends MessageType<ChangePasswordResponse> {
         return message;
     }
     internalBinaryWrite(message: ChangePasswordResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.timestamp.Timestamp expires = 1; */
-        if (message.expires)
-            Timestamp.internalBinaryWrite(message.expires, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1113,16 +1147,18 @@ export const ChooseCharacterRequest = new ChooseCharacterRequest$Type();
 class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> {
     constructor() {
         super("services.auth.ChooseCharacterResponse", [
-            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "expires", kind: "message", T: () => Timestamp },
-            { no: 3, name: "job_props", kind: "message", T: () => JobProps },
-            { no: 4, name: "char", kind: "message", T: () => User, options: { "tagger.tags": "alias:\"user\"" } },
-            { no: 5, name: "permissions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Permission },
-            { no: 6, name: "attributes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RoleAttribute }
+            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "expires", kind: "message", T: () => Timestamp },
+            { no: 4, name: "job_props", kind: "message", T: () => JobProps },
+            { no: 5, name: "char", kind: "message", T: () => User, options: { "tagger.tags": "alias:\"user\"" } },
+            { no: 6, name: "permissions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Permission },
+            { no: 7, name: "attributes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RoleAttribute }
         ]);
     }
     create(value?: PartialMessage<ChooseCharacterResponse>): ChooseCharacterResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.token = "";
         message.username = "";
         message.permissions = [];
         message.attributes = [];
@@ -1135,22 +1171,25 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string username */ 1:
+                case /* string token */ 1:
+                    message.token = reader.string();
+                    break;
+                case /* string username */ 2:
                     message.username = reader.string();
                     break;
-                case /* resources.timestamp.Timestamp expires */ 2:
+                case /* resources.timestamp.Timestamp expires */ 3:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
-                case /* resources.jobs.props.JobProps job_props */ 3:
+                case /* resources.jobs.props.JobProps job_props */ 4:
                     message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
                     break;
-                case /* resources.users.User char */ 4:
+                case /* resources.users.User char */ 5:
                     message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
                     break;
-                case /* repeated resources.permissions.permissions.Permission permissions */ 5:
+                case /* repeated resources.permissions.permissions.Permission permissions */ 6:
                     message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.permissions.attributes.RoleAttribute attributes */ 6:
+                case /* repeated resources.permissions.attributes.RoleAttribute attributes */ 7:
                     message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1165,24 +1204,27 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
         return message;
     }
     internalBinaryWrite(message: ChooseCharacterResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string username = 1; */
+        /* string token = 1; */
+        if (message.token !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.token);
+        /* string username = 2; */
         if (message.username !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.username);
-        /* resources.timestamp.Timestamp expires = 2; */
+            writer.tag(2, WireType.LengthDelimited).string(message.username);
+        /* resources.timestamp.Timestamp expires = 3; */
         if (message.expires)
-            Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.props.JobProps job_props = 3; */
+            Timestamp.internalBinaryWrite(message.expires, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.props.JobProps job_props = 4; */
         if (message.jobProps)
-            JobProps.internalBinaryWrite(message.jobProps, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.User char = 4; */
+            JobProps.internalBinaryWrite(message.jobProps, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.User char = 5; */
         if (message.char)
-            User.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.permissions.Permission permissions = 5; */
+            User.internalBinaryWrite(message.char, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.permissions.permissions.Permission permissions = 6; */
         for (let i = 0; i < message.permissions.length; i++)
-            Permission.internalBinaryWrite(message.permissions[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.attributes.RoleAttribute attributes = 6; */
+            Permission.internalBinaryWrite(message.permissions[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.permissions.attributes.RoleAttribute attributes = 7; */
         for (let i = 0; i < message.attributes.length; i++)
-            RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1193,6 +1235,138 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
  * @generated MessageType for protobuf message services.auth.ChooseCharacterResponse
  */
 export const ChooseCharacterResponse = new ChooseCharacterResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ImpersonateJobRequest$Type extends MessageType<ImpersonateJobRequest> {
+    constructor() {
+        super("services.auth.ImpersonateJobRequest", [
+            { no: 1, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ImpersonateJobRequest>): ImpersonateJobRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.jobGrade = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ImpersonateJobRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ImpersonateJobRequest): ImpersonateJobRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 job_grade */ 1:
+                    message.jobGrade = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ImpersonateJobRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 job_grade = 1; */
+        if (message.jobGrade !== 0)
+            writer.tag(1, WireType.Varint).int32(message.jobGrade);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.auth.ImpersonateJobRequest
+ */
+export const ImpersonateJobRequest = new ImpersonateJobRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ImpersonateJobResponse$Type extends MessageType<ImpersonateJobResponse> {
+    constructor() {
+        super("services.auth.ImpersonateJobResponse", [
+            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "expires", kind: "message", T: () => Timestamp },
+            { no: 3, name: "char", kind: "message", T: () => User, options: { "tagger.tags": "alias:\"user\"" } },
+            { no: 4, name: "permissions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Permission },
+            { no: 5, name: "attributes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RoleAttribute },
+            { no: 6, name: "state", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ImpersonateJobResponse>): ImpersonateJobResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.token = "";
+        message.permissions = [];
+        message.attributes = [];
+        message.state = false;
+        if (value !== undefined)
+            reflectionMergePartial<ImpersonateJobResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ImpersonateJobResponse): ImpersonateJobResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string token */ 1:
+                    message.token = reader.string();
+                    break;
+                case /* resources.timestamp.Timestamp expires */ 2:
+                    message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
+                    break;
+                case /* resources.users.User char */ 3:
+                    message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
+                    break;
+                case /* repeated resources.permissions.permissions.Permission permissions */ 4:
+                    message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.permissions.attributes.RoleAttribute attributes */ 5:
+                    message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* bool state */ 6:
+                    message.state = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ImpersonateJobResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string token = 1; */
+        if (message.token !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.token);
+        /* resources.timestamp.Timestamp expires = 2; */
+        if (message.expires)
+            Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.User char = 3; */
+        if (message.char)
+            User.internalBinaryWrite(message.char, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.permissions.permissions.Permission permissions = 4; */
+        for (let i = 0; i < message.permissions.length; i++)
+            Permission.internalBinaryWrite(message.permissions[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.permissions.attributes.RoleAttribute attributes = 5; */
+        for (let i = 0; i < message.attributes.length; i++)
+            RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* bool state = 6; */
+        if (message.state !== false)
+            writer.tag(6, WireType.Varint).bool(message.state);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.auth.ImpersonateJobResponse
+ */
+export const ImpersonateJobResponse = new ImpersonateJobResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteSocialLoginRequest$Type extends MessageType<DeleteSocialLoginRequest> {
     constructor() {
@@ -1345,6 +1519,7 @@ export const SetSuperuserModeRequest = new SetSuperuserModeRequest$Type();
 class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse> {
     constructor() {
         super("services.auth.SetSuperuserModeResponse", [
+            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "expires", kind: "message", T: () => Timestamp },
             { no: 3, name: "job_props", kind: "message", T: () => JobProps },
             { no: 4, name: "char", kind: "message", T: () => User, options: { "tagger.tags": "alias:\"user\"" } },
@@ -1354,6 +1529,7 @@ class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse
     }
     create(value?: PartialMessage<SetSuperuserModeResponse>): SetSuperuserModeResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.token = "";
         message.permissions = [];
         message.attributes = [];
         if (value !== undefined)
@@ -1365,6 +1541,9 @@ class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* string token */ 1:
+                    message.token = reader.string();
+                    break;
                 case /* resources.timestamp.Timestamp expires */ 2:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
@@ -1392,6 +1571,9 @@ class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse
         return message;
     }
     internalBinaryWrite(message: SetSuperuserModeResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string token = 1; */
+        if (message.token !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.token);
         /* resources.timestamp.Timestamp expires = 2; */
         if (message.expires)
             Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -1429,6 +1611,7 @@ export const AuthService = new ServiceType("services.auth.AuthService", [
     { name: "ForgotPassword", options: {}, I: ForgotPasswordRequest, O: ForgotPasswordResponse },
     { name: "GetCharacters", options: {}, I: GetCharactersRequest, O: GetCharactersResponse },
     { name: "ChooseCharacter", options: { "codegen.perms.perms": { enabled: true } }, I: ChooseCharacterRequest, O: ChooseCharacterResponse },
+    { name: "ImpersonateJob", options: { "codegen.perms.perms": { enabled: true, service: "settings.SettingsService", name: "UpdateRolePerms" } }, I: ImpersonateJobRequest, O: ImpersonateJobResponse },
     { name: "GetAccountInfo", options: {}, I: GetAccountInfoRequest, O: GetAccountInfoResponse },
     { name: "DeleteSocialLogin", options: {}, I: DeleteSocialLoginRequest, O: DeleteSocialLoginResponse },
     { name: "SetSuperuserMode", options: {}, I: SetSuperuserModeRequest, O: SetSuperuserModeResponse }

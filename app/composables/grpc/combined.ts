@@ -7,6 +7,7 @@ import type {
     ServerStreamingCall,
     UnaryCall,
 } from '@protobuf-ts/runtime-rpc';
+import { authInterceptor } from '../useGRPCTransport';
 
 export class GrpcCombinedTransport {
     private unaryClient: RpcTransport;
@@ -22,7 +23,8 @@ export class GrpcCombinedTransport {
     }
 
     unary<I extends object, O extends object>(method: MethodInfo<I, O>, input: I, options: RpcOptions): UnaryCall<I, O> {
-        return this.unaryClient.unary<I, O>(method, input, options);
+        options.interceptors = [authInterceptor];
+        return this.unaryClient.unary<I, O>(method, input, this.unaryClient.mergeOptions(options));
     }
 
     serverStreaming<I extends object, O extends object>(

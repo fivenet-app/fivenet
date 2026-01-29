@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/documents/documents.proto
 
+//go:build !protoopaque
+
 package documents
 
 import (
@@ -28,7 +30,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -40,7 +41,7 @@ const (
 )
 
 type ListTemplatesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -70,13 +71,20 @@ func (x *ListTemplatesRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListTemplatesRequest.ProtoReflect.Descriptor instead.
-func (*ListTemplatesRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{0}
+type ListTemplatesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ListTemplatesRequest_builder) Build() *ListTemplatesRequest {
+	m0 := &ListTemplatesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListTemplatesResponse struct {
-	state         protoimpl.MessageState     `protogen:"open.v1"`
+	state         protoimpl.MessageState     `protogen:"hybrid.v1"`
 	Templates     []*templates.TemplateShort `protobuf:"bytes,1,rep,name=templates,proto3" json:"templates,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -107,11 +115,6 @@ func (x *ListTemplatesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListTemplatesResponse.ProtoReflect.Descriptor instead.
-func (*ListTemplatesResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListTemplatesResponse) GetTemplates() []*templates.TemplateShort {
 	if x != nil {
 		return x.Templates
@@ -119,8 +122,26 @@ func (x *ListTemplatesResponse) GetTemplates() []*templates.TemplateShort {
 	return nil
 }
 
+func (x *ListTemplatesResponse) SetTemplates(v []*templates.TemplateShort) {
+	x.Templates = v
+}
+
+type ListTemplatesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Templates []*templates.TemplateShort
+}
+
+func (b0 ListTemplatesResponse_builder) Build() *ListTemplatesResponse {
+	m0 := &ListTemplatesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Templates = b.Templates
+	return m0
+}
+
 type GetTemplateRequest struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	TemplateId    int64                   `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	Data          *templates.TemplateData `protobuf:"bytes,2,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	Render        *bool                   `protobuf:"varint,3,opt,name=render,proto3,oneof" json:"render,omitempty"`
@@ -153,11 +174,6 @@ func (x *GetTemplateRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetTemplateRequest.ProtoReflect.Descriptor instead.
-func (*GetTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *GetTemplateRequest) GetTemplateId() int64 {
 	if x != nil {
 		return x.TemplateId
@@ -179,8 +195,60 @@ func (x *GetTemplateRequest) GetRender() bool {
 	return false
 }
 
+func (x *GetTemplateRequest) SetTemplateId(v int64) {
+	x.TemplateId = v
+}
+
+func (x *GetTemplateRequest) SetData(v *templates.TemplateData) {
+	x.Data = v
+}
+
+func (x *GetTemplateRequest) SetRender(v bool) {
+	x.Render = &v
+}
+
+func (x *GetTemplateRequest) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *GetTemplateRequest) HasRender() bool {
+	if x == nil {
+		return false
+	}
+	return x.Render != nil
+}
+
+func (x *GetTemplateRequest) ClearData() {
+	x.Data = nil
+}
+
+func (x *GetTemplateRequest) ClearRender() {
+	x.Render = nil
+}
+
+type GetTemplateRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	TemplateId int64
+	Data       *templates.TemplateData
+	Render     *bool
+}
+
+func (b0 GetTemplateRequest_builder) Build() *GetTemplateRequest {
+	m0 := &GetTemplateRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.TemplateId = b.TemplateId
+	x.Data = b.Data
+	x.Render = b.Render
+	return m0
+}
+
 type GetTemplateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	Rendered      bool                   `protobuf:"varint,2,opt,name=rendered,proto3" json:"rendered,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -212,11 +280,6 @@ func (x *GetTemplateResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetTemplateResponse.ProtoReflect.Descriptor instead.
-func (*GetTemplateResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *GetTemplateResponse) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
@@ -231,8 +294,43 @@ func (x *GetTemplateResponse) GetRendered() bool {
 	return false
 }
 
+func (x *GetTemplateResponse) SetTemplate(v *templates.Template) {
+	x.Template = v
+}
+
+func (x *GetTemplateResponse) SetRendered(v bool) {
+	x.Rendered = v
+}
+
+func (x *GetTemplateResponse) HasTemplate() bool {
+	if x == nil {
+		return false
+	}
+	return x.Template != nil
+}
+
+func (x *GetTemplateResponse) ClearTemplate() {
+	x.Template = nil
+}
+
+type GetTemplateResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Template *templates.Template
+	Rendered bool
+}
+
+func (b0 GetTemplateResponse_builder) Build() *GetTemplateResponse {
+	m0 := &GetTemplateResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Template = b.Template
+	x.Rendered = b.Rendered
+	return m0
+}
+
 type CreateTemplateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -263,11 +361,6 @@ func (x *CreateTemplateRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateTemplateRequest.ProtoReflect.Descriptor instead.
-func (*CreateTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *CreateTemplateRequest) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
@@ -275,8 +368,37 @@ func (x *CreateTemplateRequest) GetTemplate() *templates.Template {
 	return nil
 }
 
+func (x *CreateTemplateRequest) SetTemplate(v *templates.Template) {
+	x.Template = v
+}
+
+func (x *CreateTemplateRequest) HasTemplate() bool {
+	if x == nil {
+		return false
+	}
+	return x.Template != nil
+}
+
+func (x *CreateTemplateRequest) ClearTemplate() {
+	x.Template = nil
+}
+
+type CreateTemplateRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Template *templates.Template
+}
+
+func (b0 CreateTemplateRequest_builder) Build() *CreateTemplateRequest {
+	m0 := &CreateTemplateRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Template = b.Template
+	return m0
+}
+
 type CreateTemplateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -307,11 +429,6 @@ func (x *CreateTemplateResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateTemplateResponse.ProtoReflect.Descriptor instead.
-func (*CreateTemplateResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *CreateTemplateResponse) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -319,8 +436,26 @@ func (x *CreateTemplateResponse) GetId() int64 {
 	return 0
 }
 
+func (x *CreateTemplateResponse) SetId(v int64) {
+	x.Id = v
+}
+
+type CreateTemplateResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 CreateTemplateResponse_builder) Build() *CreateTemplateResponse {
+	m0 := &CreateTemplateResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type UpdateTemplateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -351,11 +486,6 @@ func (x *UpdateTemplateRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateTemplateRequest.ProtoReflect.Descriptor instead.
-func (*UpdateTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *UpdateTemplateRequest) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
@@ -363,8 +493,37 @@ func (x *UpdateTemplateRequest) GetTemplate() *templates.Template {
 	return nil
 }
 
+func (x *UpdateTemplateRequest) SetTemplate(v *templates.Template) {
+	x.Template = v
+}
+
+func (x *UpdateTemplateRequest) HasTemplate() bool {
+	if x == nil {
+		return false
+	}
+	return x.Template != nil
+}
+
+func (x *UpdateTemplateRequest) ClearTemplate() {
+	x.Template = nil
+}
+
+type UpdateTemplateRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Template *templates.Template
+}
+
+func (b0 UpdateTemplateRequest_builder) Build() *UpdateTemplateRequest {
+	m0 := &UpdateTemplateRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Template = b.Template
+	return m0
+}
+
 type UpdateTemplateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -395,11 +554,6 @@ func (x *UpdateTemplateResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateTemplateResponse.ProtoReflect.Descriptor instead.
-func (*UpdateTemplateResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *UpdateTemplateResponse) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
@@ -407,8 +561,37 @@ func (x *UpdateTemplateResponse) GetTemplate() *templates.Template {
 	return nil
 }
 
+func (x *UpdateTemplateResponse) SetTemplate(v *templates.Template) {
+	x.Template = v
+}
+
+func (x *UpdateTemplateResponse) HasTemplate() bool {
+	if x == nil {
+		return false
+	}
+	return x.Template != nil
+}
+
+func (x *UpdateTemplateResponse) ClearTemplate() {
+	x.Template = nil
+}
+
+type UpdateTemplateResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Template *templates.Template
+}
+
+func (b0 UpdateTemplateResponse_builder) Build() *UpdateTemplateResponse {
+	m0 := &UpdateTemplateResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Template = b.Template
+	return m0
+}
+
 type DeleteTemplateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -439,11 +622,6 @@ func (x *DeleteTemplateRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteTemplateRequest.ProtoReflect.Descriptor instead.
-func (*DeleteTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *DeleteTemplateRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -451,8 +629,26 @@ func (x *DeleteTemplateRequest) GetId() int64 {
 	return 0
 }
 
+func (x *DeleteTemplateRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type DeleteTemplateRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 DeleteTemplateRequest_builder) Build() *DeleteTemplateRequest {
+	m0 := &DeleteTemplateRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type DeleteTemplateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -482,13 +678,20 @@ func (x *DeleteTemplateResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteTemplateResponse.ProtoReflect.Descriptor instead.
-func (*DeleteTemplateResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{9}
+type DeleteTemplateResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteTemplateResponse_builder) Build() *DeleteTemplateResponse {
+	m0 := &DeleteTemplateResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListDocumentsRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
@@ -531,11 +734,6 @@ func (x *ListDocumentsRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListDocumentsRequest.ProtoReflect.Descriptor instead.
-func (*ListDocumentsRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListDocumentsRequest) GetPagination() *database.PaginationRequest {
@@ -608,8 +806,162 @@ func (x *ListDocumentsRequest) GetOnlyDrafts() bool {
 	return false
 }
 
+func (x *ListDocumentsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListDocumentsRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListDocumentsRequest) SetSearch(v string) {
+	x.Search = &v
+}
+
+func (x *ListDocumentsRequest) SetCategoryIds(v []int64) {
+	x.CategoryIds = v
+}
+
+func (x *ListDocumentsRequest) SetCreatorIds(v []int32) {
+	x.CreatorIds = v
+}
+
+func (x *ListDocumentsRequest) SetFrom(v *timestamp.Timestamp) {
+	x.From = v
+}
+
+func (x *ListDocumentsRequest) SetTo(v *timestamp.Timestamp) {
+	x.To = v
+}
+
+func (x *ListDocumentsRequest) SetClosed(v bool) {
+	x.Closed = &v
+}
+
+func (x *ListDocumentsRequest) SetDocumentIds(v []int64) {
+	x.DocumentIds = v
+}
+
+func (x *ListDocumentsRequest) SetOnlyDrafts(v bool) {
+	x.OnlyDrafts = &v
+}
+
+func (x *ListDocumentsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListDocumentsRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListDocumentsRequest) HasSearch() bool {
+	if x == nil {
+		return false
+	}
+	return x.Search != nil
+}
+
+func (x *ListDocumentsRequest) HasFrom() bool {
+	if x == nil {
+		return false
+	}
+	return x.From != nil
+}
+
+func (x *ListDocumentsRequest) HasTo() bool {
+	if x == nil {
+		return false
+	}
+	return x.To != nil
+}
+
+func (x *ListDocumentsRequest) HasClosed() bool {
+	if x == nil {
+		return false
+	}
+	return x.Closed != nil
+}
+
+func (x *ListDocumentsRequest) HasOnlyDrafts() bool {
+	if x == nil {
+		return false
+	}
+	return x.OnlyDrafts != nil
+}
+
+func (x *ListDocumentsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListDocumentsRequest) ClearSort() {
+	x.Sort = nil
+}
+
+func (x *ListDocumentsRequest) ClearSearch() {
+	x.Search = nil
+}
+
+func (x *ListDocumentsRequest) ClearFrom() {
+	x.From = nil
+}
+
+func (x *ListDocumentsRequest) ClearTo() {
+	x.To = nil
+}
+
+func (x *ListDocumentsRequest) ClearClosed() {
+	x.Closed = nil
+}
+
+func (x *ListDocumentsRequest) ClearOnlyDrafts() {
+	x.OnlyDrafts = nil
+}
+
+type ListDocumentsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	Search      *string
+	CategoryIds []int64
+	CreatorIds  []int32
+	From        *timestamp.Timestamp
+	To          *timestamp.Timestamp
+	Closed      *bool
+	DocumentIds []int64
+	// Controls inclusion of drafts in the result:
+	// - unset/null: include all documents (drafts and non-drafts)
+	// - false: only non-draft documents
+	// - true: only draft documents
+	OnlyDrafts *bool
+}
+
+func (b0 ListDocumentsRequest_builder) Build() *ListDocumentsRequest {
+	m0 := &ListDocumentsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.Search = b.Search
+	x.CategoryIds = b.CategoryIds
+	x.CreatorIds = b.CreatorIds
+	x.From = b.From
+	x.To = b.To
+	x.Closed = b.Closed
+	x.DocumentIds = b.DocumentIds
+	x.OnlyDrafts = b.OnlyDrafts
+	return m0
+}
+
 type ListDocumentsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Documents     []*documents.DocumentShort   `protobuf:"bytes,2,rep,name=documents,proto3" json:"documents,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -641,11 +993,6 @@ func (x *ListDocumentsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListDocumentsResponse.ProtoReflect.Descriptor instead.
-func (*ListDocumentsResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{11}
-}
-
 func (x *ListDocumentsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -660,8 +1007,43 @@ func (x *ListDocumentsResponse) GetDocuments() []*documents.DocumentShort {
 	return nil
 }
 
+func (x *ListDocumentsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListDocumentsResponse) SetDocuments(v []*documents.DocumentShort) {
+	x.Documents = v
+}
+
+func (x *ListDocumentsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListDocumentsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListDocumentsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Documents  []*documents.DocumentShort
+}
+
+func (b0 ListDocumentsResponse_builder) Build() *ListDocumentsResponse {
+	m0 := &ListDocumentsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Documents = b.Documents
+	return m0
+}
+
 type GetDocumentRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	InfoOnly      *bool                  `protobuf:"varint,2,opt,name=info_only,json=infoOnly,proto3,oneof" json:"info_only,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -693,11 +1075,6 @@ func (x *GetDocumentRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDocumentRequest.ProtoReflect.Descriptor instead.
-func (*GetDocumentRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{12}
-}
-
 func (x *GetDocumentRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -712,8 +1089,43 @@ func (x *GetDocumentRequest) GetInfoOnly() bool {
 	return false
 }
 
+func (x *GetDocumentRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *GetDocumentRequest) SetInfoOnly(v bool) {
+	x.InfoOnly = &v
+}
+
+func (x *GetDocumentRequest) HasInfoOnly() bool {
+	if x == nil {
+		return false
+	}
+	return x.InfoOnly != nil
+}
+
+func (x *GetDocumentRequest) ClearInfoOnly() {
+	x.InfoOnly = nil
+}
+
+type GetDocumentRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+	InfoOnly   *bool
+}
+
+func (b0 GetDocumentRequest_builder) Build() *GetDocumentRequest {
+	m0 := &GetDocumentRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.InfoOnly = b.InfoOnly
+	return m0
+}
+
 type GetDocumentResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Document      *documents.Document    `protobuf:"bytes,1,opt,name=document,proto3" json:"document,omitempty"`
 	Access        *access.DocumentAccess `protobuf:"bytes,2,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -745,11 +1157,6 @@ func (x *GetDocumentResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDocumentResponse.ProtoReflect.Descriptor instead.
-func (*GetDocumentResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{13}
-}
-
 func (x *GetDocumentResponse) GetDocument() *documents.Document {
 	if x != nil {
 		return x.Document
@@ -764,8 +1171,54 @@ func (x *GetDocumentResponse) GetAccess() *access.DocumentAccess {
 	return nil
 }
 
+func (x *GetDocumentResponse) SetDocument(v *documents.Document) {
+	x.Document = v
+}
+
+func (x *GetDocumentResponse) SetAccess(v *access.DocumentAccess) {
+	x.Access = v
+}
+
+func (x *GetDocumentResponse) HasDocument() bool {
+	if x == nil {
+		return false
+	}
+	return x.Document != nil
+}
+
+func (x *GetDocumentResponse) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *GetDocumentResponse) ClearDocument() {
+	x.Document = nil
+}
+
+func (x *GetDocumentResponse) ClearAccess() {
+	x.Access = nil
+}
+
+type GetDocumentResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Document *documents.Document
+	Access   *access.DocumentAccess
+}
+
+func (b0 GetDocumentResponse_builder) Build() *GetDocumentResponse {
+	m0 := &GetDocumentResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Document = b.Document
+	x.Access = b.Access
+	return m0
+}
+
 type GetDocumentReferencesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -796,11 +1249,6 @@ func (x *GetDocumentReferencesRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDocumentReferencesRequest.ProtoReflect.Descriptor instead.
-func (*GetDocumentReferencesRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{14}
-}
-
 func (x *GetDocumentReferencesRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -808,8 +1256,26 @@ func (x *GetDocumentReferencesRequest) GetDocumentId() int64 {
 	return 0
 }
 
+func (x *GetDocumentReferencesRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+type GetDocumentReferencesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+}
+
+func (b0 GetDocumentReferencesRequest_builder) Build() *GetDocumentReferencesRequest {
+	m0 := &GetDocumentReferencesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	return m0
+}
+
 type GetDocumentReferencesResponse struct {
-	state         protoimpl.MessageState          `protogen:"open.v1"`
+	state         protoimpl.MessageState          `protogen:"hybrid.v1"`
 	References    []*references.DocumentReference `protobuf:"bytes,1,rep,name=references,proto3" json:"references,omitempty" alias:"reference"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -840,11 +1306,6 @@ func (x *GetDocumentReferencesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDocumentReferencesResponse.ProtoReflect.Descriptor instead.
-func (*GetDocumentReferencesResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{15}
-}
-
 func (x *GetDocumentReferencesResponse) GetReferences() []*references.DocumentReference {
 	if x != nil {
 		return x.References
@@ -852,8 +1313,26 @@ func (x *GetDocumentReferencesResponse) GetReferences() []*references.DocumentRe
 	return nil
 }
 
+func (x *GetDocumentReferencesResponse) SetReferences(v []*references.DocumentReference) {
+	x.References = v
+}
+
+type GetDocumentReferencesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	References []*references.DocumentReference
+}
+
+func (b0 GetDocumentReferencesResponse_builder) Build() *GetDocumentReferencesResponse {
+	m0 := &GetDocumentReferencesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.References = b.References
+	return m0
+}
+
 type GetDocumentRelationsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -884,11 +1363,6 @@ func (x *GetDocumentRelationsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDocumentRelationsRequest.ProtoReflect.Descriptor instead.
-func (*GetDocumentRelationsRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{16}
-}
-
 func (x *GetDocumentRelationsRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -896,8 +1370,26 @@ func (x *GetDocumentRelationsRequest) GetDocumentId() int64 {
 	return 0
 }
 
+func (x *GetDocumentRelationsRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+type GetDocumentRelationsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+}
+
+func (b0 GetDocumentRelationsRequest_builder) Build() *GetDocumentRelationsRequest {
+	m0 := &GetDocumentRelationsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	return m0
+}
+
 type GetDocumentRelationsResponse struct {
-	state         protoimpl.MessageState        `protogen:"open.v1"`
+	state         protoimpl.MessageState        `protogen:"hybrid.v1"`
 	Relations     []*relations.DocumentRelation `protobuf:"bytes,1,rep,name=relations,proto3" json:"relations,omitempty" alias:"relation"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -928,11 +1420,6 @@ func (x *GetDocumentRelationsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDocumentRelationsResponse.ProtoReflect.Descriptor instead.
-func (*GetDocumentRelationsResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{17}
-}
-
 func (x *GetDocumentRelationsResponse) GetRelations() []*relations.DocumentRelation {
 	if x != nil {
 		return x.Relations
@@ -940,8 +1427,26 @@ func (x *GetDocumentRelationsResponse) GetRelations() []*relations.DocumentRelat
 	return nil
 }
 
+func (x *GetDocumentRelationsResponse) SetRelations(v []*relations.DocumentRelation) {
+	x.Relations = v
+}
+
+type GetDocumentRelationsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Relations []*relations.DocumentRelation
+}
+
+func (b0 GetDocumentRelationsResponse_builder) Build() *GetDocumentRelationsResponse {
+	m0 := &GetDocumentRelationsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Relations = b.Relations
+	return m0
+}
+
 type AddDocumentReferenceRequest struct {
-	state         protoimpl.MessageState        `protogen:"open.v1"`
+	state         protoimpl.MessageState        `protogen:"hybrid.v1"`
 	Reference     *references.DocumentReference `protobuf:"bytes,1,opt,name=reference,proto3" json:"reference,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -972,11 +1477,6 @@ func (x *AddDocumentReferenceRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddDocumentReferenceRequest.ProtoReflect.Descriptor instead.
-func (*AddDocumentReferenceRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{18}
-}
-
 func (x *AddDocumentReferenceRequest) GetReference() *references.DocumentReference {
 	if x != nil {
 		return x.Reference
@@ -984,8 +1484,37 @@ func (x *AddDocumentReferenceRequest) GetReference() *references.DocumentReferen
 	return nil
 }
 
+func (x *AddDocumentReferenceRequest) SetReference(v *references.DocumentReference) {
+	x.Reference = v
+}
+
+func (x *AddDocumentReferenceRequest) HasReference() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reference != nil
+}
+
+func (x *AddDocumentReferenceRequest) ClearReference() {
+	x.Reference = nil
+}
+
+type AddDocumentReferenceRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Reference *references.DocumentReference
+}
+
+func (b0 AddDocumentReferenceRequest_builder) Build() *AddDocumentReferenceRequest {
+	m0 := &AddDocumentReferenceRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Reference = b.Reference
+	return m0
+}
+
 type AddDocumentReferenceResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1016,11 +1545,6 @@ func (x *AddDocumentReferenceResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddDocumentReferenceResponse.ProtoReflect.Descriptor instead.
-func (*AddDocumentReferenceResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{19}
-}
-
 func (x *AddDocumentReferenceResponse) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -1028,8 +1552,26 @@ func (x *AddDocumentReferenceResponse) GetId() int64 {
 	return 0
 }
 
+func (x *AddDocumentReferenceResponse) SetId(v int64) {
+	x.Id = v
+}
+
+type AddDocumentReferenceResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 AddDocumentReferenceResponse_builder) Build() *AddDocumentReferenceResponse {
+	m0 := &AddDocumentReferenceResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type RemoveDocumentReferenceRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1060,11 +1602,6 @@ func (x *RemoveDocumentReferenceRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RemoveDocumentReferenceRequest.ProtoReflect.Descriptor instead.
-func (*RemoveDocumentReferenceRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{20}
-}
-
 func (x *RemoveDocumentReferenceRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -1072,8 +1609,26 @@ func (x *RemoveDocumentReferenceRequest) GetId() int64 {
 	return 0
 }
 
+func (x *RemoveDocumentReferenceRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type RemoveDocumentReferenceRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 RemoveDocumentReferenceRequest_builder) Build() *RemoveDocumentReferenceRequest {
+	m0 := &RemoveDocumentReferenceRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type RemoveDocumentReferenceResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1103,13 +1658,20 @@ func (x *RemoveDocumentReferenceResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RemoveDocumentReferenceResponse.ProtoReflect.Descriptor instead.
-func (*RemoveDocumentReferenceResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{21}
+type RemoveDocumentReferenceResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 RemoveDocumentReferenceResponse_builder) Build() *RemoveDocumentReferenceResponse {
+	m0 := &RemoveDocumentReferenceResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type AddDocumentRelationRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Relation      *relations.DocumentRelation `protobuf:"bytes,1,opt,name=relation,proto3" json:"relation,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1140,11 +1702,6 @@ func (x *AddDocumentRelationRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddDocumentRelationRequest.ProtoReflect.Descriptor instead.
-func (*AddDocumentRelationRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{22}
-}
-
 func (x *AddDocumentRelationRequest) GetRelation() *relations.DocumentRelation {
 	if x != nil {
 		return x.Relation
@@ -1152,8 +1709,37 @@ func (x *AddDocumentRelationRequest) GetRelation() *relations.DocumentRelation {
 	return nil
 }
 
+func (x *AddDocumentRelationRequest) SetRelation(v *relations.DocumentRelation) {
+	x.Relation = v
+}
+
+func (x *AddDocumentRelationRequest) HasRelation() bool {
+	if x == nil {
+		return false
+	}
+	return x.Relation != nil
+}
+
+func (x *AddDocumentRelationRequest) ClearRelation() {
+	x.Relation = nil
+}
+
+type AddDocumentRelationRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Relation *relations.DocumentRelation
+}
+
+func (b0 AddDocumentRelationRequest_builder) Build() *AddDocumentRelationRequest {
+	m0 := &AddDocumentRelationRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Relation = b.Relation
+	return m0
+}
+
 type AddDocumentRelationResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1184,11 +1770,6 @@ func (x *AddDocumentRelationResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddDocumentRelationResponse.ProtoReflect.Descriptor instead.
-func (*AddDocumentRelationResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{23}
-}
-
 func (x *AddDocumentRelationResponse) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -1196,8 +1777,26 @@ func (x *AddDocumentRelationResponse) GetId() int64 {
 	return 0
 }
 
+func (x *AddDocumentRelationResponse) SetId(v int64) {
+	x.Id = v
+}
+
+type AddDocumentRelationResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 AddDocumentRelationResponse_builder) Build() *AddDocumentRelationResponse {
+	m0 := &AddDocumentRelationResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type RemoveDocumentRelationRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1228,11 +1827,6 @@ func (x *RemoveDocumentRelationRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RemoveDocumentRelationRequest.ProtoReflect.Descriptor instead.
-func (*RemoveDocumentRelationRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{24}
-}
-
 func (x *RemoveDocumentRelationRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -1240,8 +1834,26 @@ func (x *RemoveDocumentRelationRequest) GetId() int64 {
 	return 0
 }
 
+func (x *RemoveDocumentRelationRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type RemoveDocumentRelationRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 RemoveDocumentRelationRequest_builder) Build() *RemoveDocumentRelationRequest {
+	m0 := &RemoveDocumentRelationRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type RemoveDocumentRelationResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1271,13 +1883,20 @@ func (x *RemoveDocumentRelationResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RemoveDocumentRelationResponse.ProtoReflect.Descriptor instead.
-func (*RemoveDocumentRelationResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{25}
+type RemoveDocumentRelationResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 RemoveDocumentRelationResponse_builder) Build() *RemoveDocumentRelationResponse {
+	m0 := &RemoveDocumentRelationResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetCommentsRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	DocumentId    int64                       `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1309,11 +1928,6 @@ func (x *GetCommentsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetCommentsRequest.ProtoReflect.Descriptor instead.
-func (*GetCommentsRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{26}
-}
-
 func (x *GetCommentsRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -1328,8 +1942,43 @@ func (x *GetCommentsRequest) GetDocumentId() int64 {
 	return 0
 }
 
+func (x *GetCommentsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *GetCommentsRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *GetCommentsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *GetCommentsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+type GetCommentsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	DocumentId int64
+}
+
+func (b0 GetCommentsRequest_builder) Build() *GetCommentsRequest {
+	m0 := &GetCommentsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.DocumentId = b.DocumentId
+	return m0
+}
+
 type GetCommentsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Comments      []*comment.Comment           `protobuf:"bytes,2,rep,name=comments,proto3" json:"comments,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1361,11 +2010,6 @@ func (x *GetCommentsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetCommentsResponse.ProtoReflect.Descriptor instead.
-func (*GetCommentsResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{27}
-}
-
 func (x *GetCommentsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -1380,8 +2024,43 @@ func (x *GetCommentsResponse) GetComments() []*comment.Comment {
 	return nil
 }
 
+func (x *GetCommentsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *GetCommentsResponse) SetComments(v []*comment.Comment) {
+	x.Comments = v
+}
+
+func (x *GetCommentsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *GetCommentsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type GetCommentsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Comments   []*comment.Comment
+}
+
+func (b0 GetCommentsResponse_builder) Build() *GetCommentsResponse {
+	m0 := &GetCommentsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Comments = b.Comments
+	return m0
+}
+
 type PostCommentRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Comment       *comment.Comment       `protobuf:"bytes,1,opt,name=comment,proto3" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1412,11 +2091,6 @@ func (x *PostCommentRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PostCommentRequest.ProtoReflect.Descriptor instead.
-func (*PostCommentRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{28}
-}
-
 func (x *PostCommentRequest) GetComment() *comment.Comment {
 	if x != nil {
 		return x.Comment
@@ -1424,8 +2098,37 @@ func (x *PostCommentRequest) GetComment() *comment.Comment {
 	return nil
 }
 
+func (x *PostCommentRequest) SetComment(v *comment.Comment) {
+	x.Comment = v
+}
+
+func (x *PostCommentRequest) HasComment() bool {
+	if x == nil {
+		return false
+	}
+	return x.Comment != nil
+}
+
+func (x *PostCommentRequest) ClearComment() {
+	x.Comment = nil
+}
+
+type PostCommentRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Comment *comment.Comment
+}
+
+func (b0 PostCommentRequest_builder) Build() *PostCommentRequest {
+	m0 := &PostCommentRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Comment = b.Comment
+	return m0
+}
+
 type PostCommentResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Comment       *comment.Comment       `protobuf:"bytes,1,opt,name=comment,proto3" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1456,11 +2159,6 @@ func (x *PostCommentResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PostCommentResponse.ProtoReflect.Descriptor instead.
-func (*PostCommentResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{29}
-}
-
 func (x *PostCommentResponse) GetComment() *comment.Comment {
 	if x != nil {
 		return x.Comment
@@ -1468,8 +2166,37 @@ func (x *PostCommentResponse) GetComment() *comment.Comment {
 	return nil
 }
 
+func (x *PostCommentResponse) SetComment(v *comment.Comment) {
+	x.Comment = v
+}
+
+func (x *PostCommentResponse) HasComment() bool {
+	if x == nil {
+		return false
+	}
+	return x.Comment != nil
+}
+
+func (x *PostCommentResponse) ClearComment() {
+	x.Comment = nil
+}
+
+type PostCommentResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Comment *comment.Comment
+}
+
+func (b0 PostCommentResponse_builder) Build() *PostCommentResponse {
+	m0 := &PostCommentResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Comment = b.Comment
+	return m0
+}
+
 type EditCommentRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Comment       *comment.Comment       `protobuf:"bytes,1,opt,name=comment,proto3" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1500,11 +2227,6 @@ func (x *EditCommentRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EditCommentRequest.ProtoReflect.Descriptor instead.
-func (*EditCommentRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{30}
-}
-
 func (x *EditCommentRequest) GetComment() *comment.Comment {
 	if x != nil {
 		return x.Comment
@@ -1512,8 +2234,37 @@ func (x *EditCommentRequest) GetComment() *comment.Comment {
 	return nil
 }
 
+func (x *EditCommentRequest) SetComment(v *comment.Comment) {
+	x.Comment = v
+}
+
+func (x *EditCommentRequest) HasComment() bool {
+	if x == nil {
+		return false
+	}
+	return x.Comment != nil
+}
+
+func (x *EditCommentRequest) ClearComment() {
+	x.Comment = nil
+}
+
+type EditCommentRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Comment *comment.Comment
+}
+
+func (b0 EditCommentRequest_builder) Build() *EditCommentRequest {
+	m0 := &EditCommentRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Comment = b.Comment
+	return m0
+}
+
 type EditCommentResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Comment       *comment.Comment       `protobuf:"bytes,1,opt,name=comment,proto3" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1544,11 +2295,6 @@ func (x *EditCommentResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EditCommentResponse.ProtoReflect.Descriptor instead.
-func (*EditCommentResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{31}
-}
-
 func (x *EditCommentResponse) GetComment() *comment.Comment {
 	if x != nil {
 		return x.Comment
@@ -1556,8 +2302,37 @@ func (x *EditCommentResponse) GetComment() *comment.Comment {
 	return nil
 }
 
+func (x *EditCommentResponse) SetComment(v *comment.Comment) {
+	x.Comment = v
+}
+
+func (x *EditCommentResponse) HasComment() bool {
+	if x == nil {
+		return false
+	}
+	return x.Comment != nil
+}
+
+func (x *EditCommentResponse) ClearComment() {
+	x.Comment = nil
+}
+
+type EditCommentResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Comment *comment.Comment
+}
+
+func (b0 EditCommentResponse_builder) Build() *EditCommentResponse {
+	m0 := &EditCommentResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Comment = b.Comment
+	return m0
+}
+
 type DeleteCommentRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	CommentId     int64                  `protobuf:"varint,1,opt,name=comment_id,json=commentId,proto3" json:"comment_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1588,11 +2363,6 @@ func (x *DeleteCommentRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteCommentRequest.ProtoReflect.Descriptor instead.
-func (*DeleteCommentRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{32}
-}
-
 func (x *DeleteCommentRequest) GetCommentId() int64 {
 	if x != nil {
 		return x.CommentId
@@ -1600,8 +2370,26 @@ func (x *DeleteCommentRequest) GetCommentId() int64 {
 	return 0
 }
 
+func (x *DeleteCommentRequest) SetCommentId(v int64) {
+	x.CommentId = v
+}
+
+type DeleteCommentRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	CommentId int64
+}
+
+func (b0 DeleteCommentRequest_builder) Build() *DeleteCommentRequest {
+	m0 := &DeleteCommentRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.CommentId = b.CommentId
+	return m0
+}
+
 type DeleteCommentResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1631,13 +2419,20 @@ func (x *DeleteCommentResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteCommentResponse.ProtoReflect.Descriptor instead.
-func (*DeleteCommentResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{33}
+type DeleteCommentResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteCommentResponse_builder) Build() *DeleteCommentResponse {
+	m0 := &DeleteCommentResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type UpdateDocumentResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Document      *documents.Document    `protobuf:"bytes,1,opt,name=document,proto3" json:"document,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1668,11 +2463,6 @@ func (x *UpdateDocumentResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateDocumentResponse.ProtoReflect.Descriptor instead.
-func (*UpdateDocumentResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{34}
-}
-
 func (x *UpdateDocumentResponse) GetDocument() *documents.Document {
 	if x != nil {
 		return x.Document
@@ -1680,8 +2470,37 @@ func (x *UpdateDocumentResponse) GetDocument() *documents.Document {
 	return nil
 }
 
+func (x *UpdateDocumentResponse) SetDocument(v *documents.Document) {
+	x.Document = v
+}
+
+func (x *UpdateDocumentResponse) HasDocument() bool {
+	if x == nil {
+		return false
+	}
+	return x.Document != nil
+}
+
+func (x *UpdateDocumentResponse) ClearDocument() {
+	x.Document = nil
+}
+
+type UpdateDocumentResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Document *documents.Document
+}
+
+func (b0 UpdateDocumentResponse_builder) Build() *UpdateDocumentResponse {
+	m0 := &UpdateDocumentResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Document = b.Document
+	return m0
+}
+
 type DeleteDocumentRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
 	Reason        *string                `protobuf:"bytes,2,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1713,11 +2532,6 @@ func (x *DeleteDocumentRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteDocumentRequest.ProtoReflect.Descriptor instead.
-func (*DeleteDocumentRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{35}
-}
-
 func (x *DeleteDocumentRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -1732,8 +2546,43 @@ func (x *DeleteDocumentRequest) GetReason() string {
 	return ""
 }
 
+func (x *DeleteDocumentRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *DeleteDocumentRequest) SetReason(v string) {
+	x.Reason = &v
+}
+
+func (x *DeleteDocumentRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reason != nil
+}
+
+func (x *DeleteDocumentRequest) ClearReason() {
+	x.Reason = nil
+}
+
+type DeleteDocumentRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+	Reason     *string
+}
+
+func (b0 DeleteDocumentRequest_builder) Build() *DeleteDocumentRequest {
+	m0 := &DeleteDocumentRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.Reason = b.Reason
+	return m0
+}
+
 type DeleteDocumentResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1763,13 +2612,20 @@ func (x *DeleteDocumentResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteDocumentResponse.ProtoReflect.Descriptor instead.
-func (*DeleteDocumentResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{36}
+type DeleteDocumentResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteDocumentResponse_builder) Build() *DeleteDocumentResponse {
+	m0 := &DeleteDocumentResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ToggleDocumentRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	Closed        bool                   `protobuf:"varint,2,opt,name=closed,proto3" json:"closed,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1801,11 +2657,6 @@ func (x *ToggleDocumentRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ToggleDocumentRequest.ProtoReflect.Descriptor instead.
-func (*ToggleDocumentRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{37}
-}
-
 func (x *ToggleDocumentRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -1820,8 +2671,32 @@ func (x *ToggleDocumentRequest) GetClosed() bool {
 	return false
 }
 
+func (x *ToggleDocumentRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *ToggleDocumentRequest) SetClosed(v bool) {
+	x.Closed = v
+}
+
+type ToggleDocumentRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+	Closed     bool
+}
+
+func (b0 ToggleDocumentRequest_builder) Build() *ToggleDocumentRequest {
+	m0 := &ToggleDocumentRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.Closed = b.Closed
+	return m0
+}
+
 type ToggleDocumentResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1851,13 +2726,20 @@ func (x *ToggleDocumentResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ToggleDocumentResponse.ProtoReflect.Descriptor instead.
-func (*ToggleDocumentResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{38}
+type ToggleDocumentResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ToggleDocumentResponse_builder) Build() *ToggleDocumentResponse {
+	m0 := &ToggleDocumentResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ChangeDocumentOwnerRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	NewUserId     *int32                 `protobuf:"varint,2,opt,name=new_user_id,json=newUserId,proto3,oneof" json:"new_user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1889,11 +2771,6 @@ func (x *ChangeDocumentOwnerRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ChangeDocumentOwnerRequest.ProtoReflect.Descriptor instead.
-func (*ChangeDocumentOwnerRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{39}
-}
-
 func (x *ChangeDocumentOwnerRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -1908,8 +2785,43 @@ func (x *ChangeDocumentOwnerRequest) GetNewUserId() int32 {
 	return 0
 }
 
+func (x *ChangeDocumentOwnerRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *ChangeDocumentOwnerRequest) SetNewUserId(v int32) {
+	x.NewUserId = &v
+}
+
+func (x *ChangeDocumentOwnerRequest) HasNewUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.NewUserId != nil
+}
+
+func (x *ChangeDocumentOwnerRequest) ClearNewUserId() {
+	x.NewUserId = nil
+}
+
+type ChangeDocumentOwnerRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+	NewUserId  *int32
+}
+
+func (b0 ChangeDocumentOwnerRequest_builder) Build() *ChangeDocumentOwnerRequest {
+	m0 := &ChangeDocumentOwnerRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.NewUserId = b.NewUserId
+	return m0
+}
+
 type ChangeDocumentOwnerResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1939,13 +2851,20 @@ func (x *ChangeDocumentOwnerResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ChangeDocumentOwnerResponse.ProtoReflect.Descriptor instead.
-func (*ChangeDocumentOwnerResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{40}
+type ChangeDocumentOwnerResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ChangeDocumentOwnerResponse_builder) Build() *ChangeDocumentOwnerResponse {
+	m0 := &ChangeDocumentOwnerResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type CreateDocumentRequest struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	ContentType   content.ContentType     `protobuf:"varint,1,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	TemplateId    *int64                  `protobuf:"varint,2,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`
 	TemplateData  *templates.TemplateData `protobuf:"bytes,3,opt,name=template_data,json=templateData,proto3,oneof" json:"template_data,omitempty"`
@@ -1978,11 +2897,6 @@ func (x *CreateDocumentRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateDocumentRequest.ProtoReflect.Descriptor instead.
-func (*CreateDocumentRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{41}
-}
-
 func (x *CreateDocumentRequest) GetContentType() content.ContentType {
 	if x != nil {
 		return x.ContentType
@@ -2004,8 +2918,60 @@ func (x *CreateDocumentRequest) GetTemplateData() *templates.TemplateData {
 	return nil
 }
 
+func (x *CreateDocumentRequest) SetContentType(v content.ContentType) {
+	x.ContentType = v
+}
+
+func (x *CreateDocumentRequest) SetTemplateId(v int64) {
+	x.TemplateId = &v
+}
+
+func (x *CreateDocumentRequest) SetTemplateData(v *templates.TemplateData) {
+	x.TemplateData = v
+}
+
+func (x *CreateDocumentRequest) HasTemplateId() bool {
+	if x == nil {
+		return false
+	}
+	return x.TemplateId != nil
+}
+
+func (x *CreateDocumentRequest) HasTemplateData() bool {
+	if x == nil {
+		return false
+	}
+	return x.TemplateData != nil
+}
+
+func (x *CreateDocumentRequest) ClearTemplateId() {
+	x.TemplateId = nil
+}
+
+func (x *CreateDocumentRequest) ClearTemplateData() {
+	x.TemplateData = nil
+}
+
+type CreateDocumentRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ContentType  content.ContentType
+	TemplateId   *int64
+	TemplateData *templates.TemplateData
+}
+
+func (b0 CreateDocumentRequest_builder) Build() *CreateDocumentRequest {
+	m0 := &CreateDocumentRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ContentType = b.ContentType
+	x.TemplateId = b.TemplateId
+	x.TemplateData = b.TemplateData
+	return m0
+}
+
 type CreateDocumentResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2036,11 +3002,6 @@ func (x *CreateDocumentResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateDocumentResponse.ProtoReflect.Descriptor instead.
-func (*CreateDocumentResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{42}
-}
-
 func (x *CreateDocumentResponse) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -2048,8 +3009,26 @@ func (x *CreateDocumentResponse) GetId() int64 {
 	return 0
 }
 
+func (x *CreateDocumentResponse) SetId(v int64) {
+	x.Id = v
+}
+
+type CreateDocumentResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 CreateDocumentResponse_builder) Build() *CreateDocumentResponse {
+	m0 := &CreateDocumentResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type UpdateDocumentRequest struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	DocumentId    int64                   `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
 	CategoryId    *int64                  `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
 	Title         string                  `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty" alias:"title"`
@@ -2086,11 +3065,6 @@ func (x *UpdateDocumentRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateDocumentRequest.ProtoReflect.Descriptor instead.
-func (*UpdateDocumentRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *UpdateDocumentRequest) GetDocumentId() int64 {
@@ -2156,8 +3130,129 @@ func (x *UpdateDocumentRequest) GetFiles() []*file.File {
 	return nil
 }
 
+func (x *UpdateDocumentRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *UpdateDocumentRequest) SetCategoryId(v int64) {
+	x.CategoryId = &v
+}
+
+func (x *UpdateDocumentRequest) SetTitle(v string) {
+	x.Title = v
+}
+
+func (x *UpdateDocumentRequest) SetContent(v *content.Content) {
+	x.Content = v
+}
+
+func (x *UpdateDocumentRequest) SetContentType(v content.ContentType) {
+	x.ContentType = v
+}
+
+func (x *UpdateDocumentRequest) SetData(v string) {
+	x.Data = &v
+}
+
+func (x *UpdateDocumentRequest) SetMeta(v *documents.DocumentMeta) {
+	x.Meta = v
+}
+
+func (x *UpdateDocumentRequest) SetAccess(v *access.DocumentAccess) {
+	x.Access = v
+}
+
+func (x *UpdateDocumentRequest) SetFiles(v []*file.File) {
+	x.Files = v
+}
+
+func (x *UpdateDocumentRequest) HasCategoryId() bool {
+	if x == nil {
+		return false
+	}
+	return x.CategoryId != nil
+}
+
+func (x *UpdateDocumentRequest) HasContent() bool {
+	if x == nil {
+		return false
+	}
+	return x.Content != nil
+}
+
+func (x *UpdateDocumentRequest) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *UpdateDocumentRequest) HasMeta() bool {
+	if x == nil {
+		return false
+	}
+	return x.Meta != nil
+}
+
+func (x *UpdateDocumentRequest) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *UpdateDocumentRequest) ClearCategoryId() {
+	x.CategoryId = nil
+}
+
+func (x *UpdateDocumentRequest) ClearContent() {
+	x.Content = nil
+}
+
+func (x *UpdateDocumentRequest) ClearData() {
+	x.Data = nil
+}
+
+func (x *UpdateDocumentRequest) ClearMeta() {
+	x.Meta = nil
+}
+
+func (x *UpdateDocumentRequest) ClearAccess() {
+	x.Access = nil
+}
+
+type UpdateDocumentRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId  int64
+	CategoryId  *int64
+	Title       string
+	Content     *content.Content
+	ContentType content.ContentType
+	Data        *string
+	Meta        *documents.DocumentMeta
+	Access      *access.DocumentAccess
+	Files       []*file.File
+}
+
+func (b0 UpdateDocumentRequest_builder) Build() *UpdateDocumentRequest {
+	m0 := &UpdateDocumentRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.CategoryId = b.CategoryId
+	x.Title = b.Title
+	x.Content = b.Content
+	x.ContentType = b.ContentType
+	x.Data = b.Data
+	x.Meta = b.Meta
+	x.Access = b.Access
+	x.Files = b.Files
+	return m0
+}
+
 type ListDocumentActivityRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	DocumentId int64                       `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	// Search params
@@ -2191,11 +3286,6 @@ func (x *ListDocumentActivityRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListDocumentActivityRequest.ProtoReflect.Descriptor instead.
-func (*ListDocumentActivityRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{44}
-}
-
 func (x *ListDocumentActivityRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -2217,8 +3307,50 @@ func (x *ListDocumentActivityRequest) GetActivityTypes() []activity.DocActivityT
 	return nil
 }
 
+func (x *ListDocumentActivityRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListDocumentActivityRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *ListDocumentActivityRequest) SetActivityTypes(v []activity.DocActivityType) {
+	x.ActivityTypes = v
+}
+
+func (x *ListDocumentActivityRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListDocumentActivityRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListDocumentActivityRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	DocumentId int64
+	// Search params
+	ActivityTypes []activity.DocActivityType
+}
+
+func (b0 ListDocumentActivityRequest_builder) Build() *ListDocumentActivityRequest {
+	m0 := &ListDocumentActivityRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.DocumentId = b.DocumentId
+	x.ActivityTypes = b.ActivityTypes
+	return m0
+}
+
 type ListDocumentActivityResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Activity      []*activity.DocActivity      `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2250,11 +3382,6 @@ func (x *ListDocumentActivityResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListDocumentActivityResponse.ProtoReflect.Descriptor instead.
-func (*ListDocumentActivityResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{45}
-}
-
 func (x *ListDocumentActivityResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -2269,8 +3396,43 @@ func (x *ListDocumentActivityResponse) GetActivity() []*activity.DocActivity {
 	return nil
 }
 
+func (x *ListDocumentActivityResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListDocumentActivityResponse) SetActivity(v []*activity.DocActivity) {
+	x.Activity = v
+}
+
+func (x *ListDocumentActivityResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListDocumentActivityResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListDocumentActivityResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Activity   []*activity.DocActivity
+}
+
+func (b0 ListDocumentActivityResponse_builder) Build() *ListDocumentActivityResponse {
+	m0 := &ListDocumentActivityResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Activity = b.Activity
+	return m0
+}
+
 type ListDocumentReqsRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	DocumentId    int64                       `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2302,11 +3464,6 @@ func (x *ListDocumentReqsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListDocumentReqsRequest.ProtoReflect.Descriptor instead.
-func (*ListDocumentReqsRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{46}
-}
-
 func (x *ListDocumentReqsRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -2321,8 +3478,43 @@ func (x *ListDocumentReqsRequest) GetDocumentId() int64 {
 	return 0
 }
 
+func (x *ListDocumentReqsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListDocumentReqsRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *ListDocumentReqsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListDocumentReqsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListDocumentReqsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	DocumentId int64
+}
+
+func (b0 ListDocumentReqsRequest_builder) Build() *ListDocumentReqsRequest {
+	m0 := &ListDocumentReqsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.DocumentId = b.DocumentId
+	return m0
+}
+
 type ListDocumentReqsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Requests      []*requests.DocRequest       `protobuf:"bytes,2,rep,name=requests,proto3" json:"requests,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2354,11 +3546,6 @@ func (x *ListDocumentReqsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListDocumentReqsResponse.ProtoReflect.Descriptor instead.
-func (*ListDocumentReqsResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{47}
-}
-
 func (x *ListDocumentReqsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -2373,8 +3560,43 @@ func (x *ListDocumentReqsResponse) GetRequests() []*requests.DocRequest {
 	return nil
 }
 
+func (x *ListDocumentReqsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListDocumentReqsResponse) SetRequests(v []*requests.DocRequest) {
+	x.Requests = v
+}
+
+func (x *ListDocumentReqsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListDocumentReqsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListDocumentReqsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Requests   []*requests.DocRequest
+}
+
+func (b0 ListDocumentReqsResponse_builder) Build() *ListDocumentReqsResponse {
+	m0 := &ListDocumentReqsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Requests = b.Requests
+	return m0
+}
+
 type CreateDocumentReqRequest struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
+	state         protoimpl.MessageState    `protogen:"hybrid.v1"`
 	DocumentId    int64                     `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	RequestType   activity.DocActivityType  `protobuf:"varint,2,opt,name=request_type,json=requestType,proto3,enum=resources.documents.activity.DocActivityType" json:"request_type,omitempty"`
 	Reason        *string                   `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
@@ -2408,11 +3630,6 @@ func (x *CreateDocumentReqRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateDocumentReqRequest.ProtoReflect.Descriptor instead.
-func (*CreateDocumentReqRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{48}
-}
-
 func (x *CreateDocumentReqRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -2441,8 +3658,66 @@ func (x *CreateDocumentReqRequest) GetData() *activity.DocActivityData {
 	return nil
 }
 
+func (x *CreateDocumentReqRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *CreateDocumentReqRequest) SetRequestType(v activity.DocActivityType) {
+	x.RequestType = v
+}
+
+func (x *CreateDocumentReqRequest) SetReason(v string) {
+	x.Reason = &v
+}
+
+func (x *CreateDocumentReqRequest) SetData(v *activity.DocActivityData) {
+	x.Data = v
+}
+
+func (x *CreateDocumentReqRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reason != nil
+}
+
+func (x *CreateDocumentReqRequest) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *CreateDocumentReqRequest) ClearReason() {
+	x.Reason = nil
+}
+
+func (x *CreateDocumentReqRequest) ClearData() {
+	x.Data = nil
+}
+
+type CreateDocumentReqRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId  int64
+	RequestType activity.DocActivityType
+	Reason      *string
+	Data        *activity.DocActivityData
+}
+
+func (b0 CreateDocumentReqRequest_builder) Build() *CreateDocumentReqRequest {
+	m0 := &CreateDocumentReqRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.RequestType = b.RequestType
+	x.Reason = b.Reason
+	x.Data = b.Data
+	return m0
+}
+
 type CreateDocumentReqResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Request       *requests.DocRequest   `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2473,11 +3748,6 @@ func (x *CreateDocumentReqResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateDocumentReqResponse.ProtoReflect.Descriptor instead.
-func (*CreateDocumentReqResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{49}
-}
-
 func (x *CreateDocumentReqResponse) GetRequest() *requests.DocRequest {
 	if x != nil {
 		return x.Request
@@ -2485,8 +3755,37 @@ func (x *CreateDocumentReqResponse) GetRequest() *requests.DocRequest {
 	return nil
 }
 
+func (x *CreateDocumentReqResponse) SetRequest(v *requests.DocRequest) {
+	x.Request = v
+}
+
+func (x *CreateDocumentReqResponse) HasRequest() bool {
+	if x == nil {
+		return false
+	}
+	return x.Request != nil
+}
+
+func (x *CreateDocumentReqResponse) ClearRequest() {
+	x.Request = nil
+}
+
+type CreateDocumentReqResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Request *requests.DocRequest
+}
+
+func (b0 CreateDocumentReqResponse_builder) Build() *CreateDocumentReqResponse {
+	m0 := &CreateDocumentReqResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Request = b.Request
+	return m0
+}
+
 type UpdateDocumentReqRequest struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
+	state         protoimpl.MessageState    `protogen:"hybrid.v1"`
 	DocumentId    int64                     `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	RequestId     int64                     `protobuf:"varint,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	Reason        *string                   `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
@@ -2519,11 +3818,6 @@ func (x *UpdateDocumentReqRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateDocumentReqRequest.ProtoReflect.Descriptor instead.
-func (*UpdateDocumentReqRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *UpdateDocumentReqRequest) GetDocumentId() int64 {
@@ -2561,8 +3855,72 @@ func (x *UpdateDocumentReqRequest) GetAccepted() bool {
 	return false
 }
 
+func (x *UpdateDocumentReqRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *UpdateDocumentReqRequest) SetRequestId(v int64) {
+	x.RequestId = v
+}
+
+func (x *UpdateDocumentReqRequest) SetReason(v string) {
+	x.Reason = &v
+}
+
+func (x *UpdateDocumentReqRequest) SetData(v *activity.DocActivityData) {
+	x.Data = v
+}
+
+func (x *UpdateDocumentReqRequest) SetAccepted(v bool) {
+	x.Accepted = v
+}
+
+func (x *UpdateDocumentReqRequest) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reason != nil
+}
+
+func (x *UpdateDocumentReqRequest) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *UpdateDocumentReqRequest) ClearReason() {
+	x.Reason = nil
+}
+
+func (x *UpdateDocumentReqRequest) ClearData() {
+	x.Data = nil
+}
+
+type UpdateDocumentReqRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+	RequestId  int64
+	Reason     *string
+	Data       *activity.DocActivityData
+	Accepted   bool
+}
+
+func (b0 UpdateDocumentReqRequest_builder) Build() *UpdateDocumentReqRequest {
+	m0 := &UpdateDocumentReqRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.RequestId = b.RequestId
+	x.Reason = b.Reason
+	x.Data = b.Data
+	x.Accepted = b.Accepted
+	return m0
+}
+
 type UpdateDocumentReqResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Request       *requests.DocRequest   `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2593,11 +3951,6 @@ func (x *UpdateDocumentReqResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateDocumentReqResponse.ProtoReflect.Descriptor instead.
-func (*UpdateDocumentReqResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{51}
-}
-
 func (x *UpdateDocumentReqResponse) GetRequest() *requests.DocRequest {
 	if x != nil {
 		return x.Request
@@ -2605,8 +3958,37 @@ func (x *UpdateDocumentReqResponse) GetRequest() *requests.DocRequest {
 	return nil
 }
 
+func (x *UpdateDocumentReqResponse) SetRequest(v *requests.DocRequest) {
+	x.Request = v
+}
+
+func (x *UpdateDocumentReqResponse) HasRequest() bool {
+	if x == nil {
+		return false
+	}
+	return x.Request != nil
+}
+
+func (x *UpdateDocumentReqResponse) ClearRequest() {
+	x.Request = nil
+}
+
+type UpdateDocumentReqResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Request *requests.DocRequest
+}
+
+func (b0 UpdateDocumentReqResponse_builder) Build() *UpdateDocumentReqResponse {
+	m0 := &UpdateDocumentReqResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Request = b.Request
+	return m0
+}
+
 type DeleteDocumentReqRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	RequestId     int64                  `protobuf:"varint,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2637,11 +4019,6 @@ func (x *DeleteDocumentReqRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteDocumentReqRequest.ProtoReflect.Descriptor instead.
-func (*DeleteDocumentReqRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{52}
-}
-
 func (x *DeleteDocumentReqRequest) GetRequestId() int64 {
 	if x != nil {
 		return x.RequestId
@@ -2649,8 +4026,26 @@ func (x *DeleteDocumentReqRequest) GetRequestId() int64 {
 	return 0
 }
 
+func (x *DeleteDocumentReqRequest) SetRequestId(v int64) {
+	x.RequestId = v
+}
+
+type DeleteDocumentReqRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	RequestId int64
+}
+
+func (b0 DeleteDocumentReqRequest_builder) Build() *DeleteDocumentReqRequest {
+	m0 := &DeleteDocumentReqRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.RequestId = b.RequestId
+	return m0
+}
+
 type DeleteDocumentReqResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2680,13 +4075,20 @@ func (x *DeleteDocumentReqResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteDocumentReqResponse.ProtoReflect.Descriptor instead.
-func (*DeleteDocumentReqResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{53}
+type DeleteDocumentReqResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteDocumentReqResponse_builder) Build() *DeleteDocumentReqResponse {
+	m0 := &DeleteDocumentReqResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetDocumentAccessRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2717,11 +4119,6 @@ func (x *GetDocumentAccessRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDocumentAccessRequest.ProtoReflect.Descriptor instead.
-func (*GetDocumentAccessRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{54}
-}
-
 func (x *GetDocumentAccessRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -2729,8 +4126,26 @@ func (x *GetDocumentAccessRequest) GetDocumentId() int64 {
 	return 0
 }
 
+func (x *GetDocumentAccessRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+type GetDocumentAccessRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+}
+
+func (b0 GetDocumentAccessRequest_builder) Build() *GetDocumentAccessRequest {
+	m0 := &GetDocumentAccessRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	return m0
+}
+
 type GetDocumentAccessResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Access        *access.DocumentAccess `protobuf:"bytes,1,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2761,11 +4176,6 @@ func (x *GetDocumentAccessResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetDocumentAccessResponse.ProtoReflect.Descriptor instead.
-func (*GetDocumentAccessResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{55}
-}
-
 func (x *GetDocumentAccessResponse) GetAccess() *access.DocumentAccess {
 	if x != nil {
 		return x.Access
@@ -2773,8 +4183,37 @@ func (x *GetDocumentAccessResponse) GetAccess() *access.DocumentAccess {
 	return nil
 }
 
+func (x *GetDocumentAccessResponse) SetAccess(v *access.DocumentAccess) {
+	x.Access = v
+}
+
+func (x *GetDocumentAccessResponse) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *GetDocumentAccessResponse) ClearAccess() {
+	x.Access = nil
+}
+
+type GetDocumentAccessResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Access *access.DocumentAccess
+}
+
+func (b0 GetDocumentAccessResponse_builder) Build() *GetDocumentAccessResponse {
+	m0 := &GetDocumentAccessResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Access = b.Access
+	return m0
+}
+
 type SetDocumentAccessRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	Access        *access.DocumentAccess `protobuf:"bytes,2,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2806,11 +4245,6 @@ func (x *SetDocumentAccessRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetDocumentAccessRequest.ProtoReflect.Descriptor instead.
-func (*SetDocumentAccessRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{56}
-}
-
 func (x *SetDocumentAccessRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -2825,8 +4259,43 @@ func (x *SetDocumentAccessRequest) GetAccess() *access.DocumentAccess {
 	return nil
 }
 
+func (x *SetDocumentAccessRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *SetDocumentAccessRequest) SetAccess(v *access.DocumentAccess) {
+	x.Access = v
+}
+
+func (x *SetDocumentAccessRequest) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *SetDocumentAccessRequest) ClearAccess() {
+	x.Access = nil
+}
+
+type SetDocumentAccessRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+	Access     *access.DocumentAccess
+}
+
+func (b0 SetDocumentAccessRequest_builder) Build() *SetDocumentAccessRequest {
+	m0 := &SetDocumentAccessRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.Access = b.Access
+	return m0
+}
+
 type SetDocumentAccessResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2856,13 +4325,20 @@ func (x *SetDocumentAccessResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetDocumentAccessResponse.ProtoReflect.Descriptor instead.
-func (*SetDocumentAccessResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{57}
+type SetDocumentAccessResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 SetDocumentAccessResponse_builder) Build() *SetDocumentAccessResponse {
+	m0 := &SetDocumentAccessResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListUserDocumentsRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort          *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	UserId        int32                       `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2895,11 +4371,6 @@ func (x *ListUserDocumentsRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListUserDocumentsRequest.ProtoReflect.Descriptor instead.
-func (*ListUserDocumentsRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *ListUserDocumentsRequest) GetPagination() *database.PaginationRequest {
@@ -2937,8 +4408,83 @@ func (x *ListUserDocumentsRequest) GetClosed() bool {
 	return false
 }
 
+func (x *ListUserDocumentsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListUserDocumentsRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListUserDocumentsRequest) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *ListUserDocumentsRequest) SetRelations(v []relations.DocRelation) {
+	x.Relations = v
+}
+
+func (x *ListUserDocumentsRequest) SetClosed(v bool) {
+	x.Closed = &v
+}
+
+func (x *ListUserDocumentsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListUserDocumentsRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListUserDocumentsRequest) HasClosed() bool {
+	if x == nil {
+		return false
+	}
+	return x.Closed != nil
+}
+
+func (x *ListUserDocumentsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListUserDocumentsRequest) ClearSort() {
+	x.Sort = nil
+}
+
+func (x *ListUserDocumentsRequest) ClearClosed() {
+	x.Closed = nil
+}
+
+type ListUserDocumentsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	UserId     int32
+	Relations  []relations.DocRelation
+	Closed     *bool
+}
+
+func (b0 ListUserDocumentsRequest_builder) Build() *ListUserDocumentsRequest {
+	m0 := &ListUserDocumentsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.UserId = b.UserId
+	x.Relations = b.Relations
+	x.Closed = b.Closed
+	return m0
+}
+
 type ListUserDocumentsResponse struct {
-	state         protoimpl.MessageState        `protogen:"open.v1"`
+	state         protoimpl.MessageState        `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse  `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Relations     []*relations.DocumentRelation `protobuf:"bytes,2,rep,name=relations,proto3" json:"relations,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2970,11 +4516,6 @@ func (x *ListUserDocumentsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListUserDocumentsResponse.ProtoReflect.Descriptor instead.
-func (*ListUserDocumentsResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{59}
-}
-
 func (x *ListUserDocumentsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -2989,8 +4530,43 @@ func (x *ListUserDocumentsResponse) GetRelations() []*relations.DocumentRelation
 	return nil
 }
 
+func (x *ListUserDocumentsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListUserDocumentsResponse) SetRelations(v []*relations.DocumentRelation) {
+	x.Relations = v
+}
+
+func (x *ListUserDocumentsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListUserDocumentsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListUserDocumentsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Relations  []*relations.DocumentRelation
+}
+
+func (b0 ListUserDocumentsResponse_builder) Build() *ListUserDocumentsResponse {
+	m0 := &ListUserDocumentsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Relations = b.Relations
+	return m0
+}
+
 type ListCategoriesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3020,13 +4596,20 @@ func (x *ListCategoriesRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListCategoriesRequest.ProtoReflect.Descriptor instead.
-func (*ListCategoriesRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{60}
+type ListCategoriesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ListCategoriesRequest_builder) Build() *ListCategoriesRequest {
+	m0 := &ListCategoriesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListCategoriesResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Categories    []*category.Category   `protobuf:"bytes,1,rep,name=categories,proto3" json:"categories,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3057,11 +4640,6 @@ func (x *ListCategoriesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListCategoriesResponse.ProtoReflect.Descriptor instead.
-func (*ListCategoriesResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{61}
-}
-
 func (x *ListCategoriesResponse) GetCategories() []*category.Category {
 	if x != nil {
 		return x.Categories
@@ -3069,8 +4647,26 @@ func (x *ListCategoriesResponse) GetCategories() []*category.Category {
 	return nil
 }
 
+func (x *ListCategoriesResponse) SetCategories(v []*category.Category) {
+	x.Categories = v
+}
+
+type ListCategoriesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Categories []*category.Category
+}
+
+func (b0 ListCategoriesResponse_builder) Build() *ListCategoriesResponse {
+	m0 := &ListCategoriesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Categories = b.Categories
+	return m0
+}
+
 type CreateOrUpdateCategoryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Category      *category.Category     `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3101,11 +4697,6 @@ func (x *CreateOrUpdateCategoryRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateCategoryRequest.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateCategoryRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{62}
-}
-
 func (x *CreateOrUpdateCategoryRequest) GetCategory() *category.Category {
 	if x != nil {
 		return x.Category
@@ -3113,8 +4704,37 @@ func (x *CreateOrUpdateCategoryRequest) GetCategory() *category.Category {
 	return nil
 }
 
+func (x *CreateOrUpdateCategoryRequest) SetCategory(v *category.Category) {
+	x.Category = v
+}
+
+func (x *CreateOrUpdateCategoryRequest) HasCategory() bool {
+	if x == nil {
+		return false
+	}
+	return x.Category != nil
+}
+
+func (x *CreateOrUpdateCategoryRequest) ClearCategory() {
+	x.Category = nil
+}
+
+type CreateOrUpdateCategoryRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Category *category.Category
+}
+
+func (b0 CreateOrUpdateCategoryRequest_builder) Build() *CreateOrUpdateCategoryRequest {
+	m0 := &CreateOrUpdateCategoryRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Category = b.Category
+	return m0
+}
+
 type CreateOrUpdateCategoryResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Category      *category.Category     `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3145,11 +4765,6 @@ func (x *CreateOrUpdateCategoryResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateCategoryResponse.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateCategoryResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{63}
-}
-
 func (x *CreateOrUpdateCategoryResponse) GetCategory() *category.Category {
 	if x != nil {
 		return x.Category
@@ -3157,8 +4772,37 @@ func (x *CreateOrUpdateCategoryResponse) GetCategory() *category.Category {
 	return nil
 }
 
+func (x *CreateOrUpdateCategoryResponse) SetCategory(v *category.Category) {
+	x.Category = v
+}
+
+func (x *CreateOrUpdateCategoryResponse) HasCategory() bool {
+	if x == nil {
+		return false
+	}
+	return x.Category != nil
+}
+
+func (x *CreateOrUpdateCategoryResponse) ClearCategory() {
+	x.Category = nil
+}
+
+type CreateOrUpdateCategoryResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Category *category.Category
+}
+
+func (b0 CreateOrUpdateCategoryResponse_builder) Build() *CreateOrUpdateCategoryResponse {
+	m0 := &CreateOrUpdateCategoryResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Category = b.Category
+	return m0
+}
+
 type DeleteCategoryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3189,11 +4833,6 @@ func (x *DeleteCategoryRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteCategoryRequest.ProtoReflect.Descriptor instead.
-func (*DeleteCategoryRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{64}
-}
-
 func (x *DeleteCategoryRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -3201,8 +4840,26 @@ func (x *DeleteCategoryRequest) GetId() int64 {
 	return 0
 }
 
+func (x *DeleteCategoryRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type DeleteCategoryRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 DeleteCategoryRequest_builder) Build() *DeleteCategoryRequest {
+	m0 := &DeleteCategoryRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type DeleteCategoryResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3232,13 +4889,20 @@ func (x *DeleteCategoryResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteCategoryResponse.ProtoReflect.Descriptor instead.
-func (*DeleteCategoryResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{65}
+type DeleteCategoryResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteCategoryResponse_builder) Build() *DeleteCategoryResponse {
+	m0 := &DeleteCategoryResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListDocumentPinsRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	// Search params
 	// If true, only personal pins are returned
@@ -3272,11 +4936,6 @@ func (x *ListDocumentPinsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListDocumentPinsRequest.ProtoReflect.Descriptor instead.
-func (*ListDocumentPinsRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{66}
-}
-
 func (x *ListDocumentPinsRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -3291,8 +4950,56 @@ func (x *ListDocumentPinsRequest) GetPersonal() bool {
 	return false
 }
 
+func (x *ListDocumentPinsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListDocumentPinsRequest) SetPersonal(v bool) {
+	x.Personal = &v
+}
+
+func (x *ListDocumentPinsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListDocumentPinsRequest) HasPersonal() bool {
+	if x == nil {
+		return false
+	}
+	return x.Personal != nil
+}
+
+func (x *ListDocumentPinsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListDocumentPinsRequest) ClearPersonal() {
+	x.Personal = nil
+}
+
+type ListDocumentPinsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	// Search params
+	// If true, only personal pins are returned
+	Personal *bool
+}
+
+func (b0 ListDocumentPinsRequest_builder) Build() *ListDocumentPinsRequest {
+	m0 := &ListDocumentPinsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Personal = b.Personal
+	return m0
+}
+
 type ListDocumentPinsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Documents     []*documents.DocumentShort   `protobuf:"bytes,2,rep,name=documents,proto3" json:"documents,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -3324,11 +5031,6 @@ func (x *ListDocumentPinsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListDocumentPinsResponse.ProtoReflect.Descriptor instead.
-func (*ListDocumentPinsResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{67}
-}
-
 func (x *ListDocumentPinsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -3343,8 +5045,43 @@ func (x *ListDocumentPinsResponse) GetDocuments() []*documents.DocumentShort {
 	return nil
 }
 
+func (x *ListDocumentPinsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListDocumentPinsResponse) SetDocuments(v []*documents.DocumentShort) {
+	x.Documents = v
+}
+
+func (x *ListDocumentPinsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListDocumentPinsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListDocumentPinsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Documents  []*documents.DocumentShort
+}
+
+func (b0 ListDocumentPinsResponse_builder) Build() *ListDocumentPinsResponse {
+	m0 := &ListDocumentPinsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Documents = b.Documents
+	return m0
+}
+
 type ToggleDocumentPinRequest struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
+	state      protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	State      bool                   `protobuf:"varint,2,opt,name=state,proto3" json:"state,omitempty"`
 	// If true, the pin is personal and not shared with other job members
@@ -3378,11 +5115,6 @@ func (x *ToggleDocumentPinRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ToggleDocumentPinRequest.ProtoReflect.Descriptor instead.
-func (*ToggleDocumentPinRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{68}
-}
-
 func (x *ToggleDocumentPinRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -3404,8 +5136,50 @@ func (x *ToggleDocumentPinRequest) GetPersonal() bool {
 	return false
 }
 
+func (x *ToggleDocumentPinRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *ToggleDocumentPinRequest) SetState(v bool) {
+	x.State = v
+}
+
+func (x *ToggleDocumentPinRequest) SetPersonal(v bool) {
+	x.Personal = &v
+}
+
+func (x *ToggleDocumentPinRequest) HasPersonal() bool {
+	if x == nil {
+		return false
+	}
+	return x.Personal != nil
+}
+
+func (x *ToggleDocumentPinRequest) ClearPersonal() {
+	x.Personal = nil
+}
+
+type ToggleDocumentPinRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId int64
+	State      bool
+	// If true, the pin is personal and not shared with other job members
+	Personal *bool
+}
+
+func (b0 ToggleDocumentPinRequest_builder) Build() *ToggleDocumentPinRequest {
+	m0 := &ToggleDocumentPinRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.State = b.State
+	x.Personal = b.Personal
+	return m0
+}
+
 type ToggleDocumentPinResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Pin           *pins.DocumentPin      `protobuf:"bytes,1,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3436,11 +5210,6 @@ func (x *ToggleDocumentPinResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ToggleDocumentPinResponse.ProtoReflect.Descriptor instead.
-func (*ToggleDocumentPinResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{69}
-}
-
 func (x *ToggleDocumentPinResponse) GetPin() *pins.DocumentPin {
 	if x != nil {
 		return x.Pin
@@ -3448,8 +5217,37 @@ func (x *ToggleDocumentPinResponse) GetPin() *pins.DocumentPin {
 	return nil
 }
 
+func (x *ToggleDocumentPinResponse) SetPin(v *pins.DocumentPin) {
+	x.Pin = v
+}
+
+func (x *ToggleDocumentPinResponse) HasPin() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pin != nil
+}
+
+func (x *ToggleDocumentPinResponse) ClearPin() {
+	x.Pin = nil
+}
+
+type ToggleDocumentPinResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pin *pins.DocumentPin
+}
+
+func (b0 ToggleDocumentPinResponse_builder) Build() *ToggleDocumentPinResponse {
+	m0 := &ToggleDocumentPinResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pin = b.Pin
+	return m0
+}
+
 type SetDocumentReminderRequest struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
+	state            protoimpl.MessageState `protogen:"hybrid.v1"`
 	DocumentId       int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	ReminderTime     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=reminder_time,json=reminderTime,proto3,oneof" json:"reminder_time,omitempty"`
 	Message          *string                `protobuf:"bytes,3,opt,name=message,proto3,oneof" json:"message,omitempty"`
@@ -3483,11 +5281,6 @@ func (x *SetDocumentReminderRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetDocumentReminderRequest.ProtoReflect.Descriptor instead.
-func (*SetDocumentReminderRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{70}
-}
-
 func (x *SetDocumentReminderRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -3516,8 +5309,66 @@ func (x *SetDocumentReminderRequest) GetMaxReminderCount() int32 {
 	return 0
 }
 
+func (x *SetDocumentReminderRequest) SetDocumentId(v int64) {
+	x.DocumentId = v
+}
+
+func (x *SetDocumentReminderRequest) SetReminderTime(v *timestamp.Timestamp) {
+	x.ReminderTime = v
+}
+
+func (x *SetDocumentReminderRequest) SetMessage(v string) {
+	x.Message = &v
+}
+
+func (x *SetDocumentReminderRequest) SetMaxReminderCount(v int32) {
+	x.MaxReminderCount = v
+}
+
+func (x *SetDocumentReminderRequest) HasReminderTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.ReminderTime != nil
+}
+
+func (x *SetDocumentReminderRequest) HasMessage() bool {
+	if x == nil {
+		return false
+	}
+	return x.Message != nil
+}
+
+func (x *SetDocumentReminderRequest) ClearReminderTime() {
+	x.ReminderTime = nil
+}
+
+func (x *SetDocumentReminderRequest) ClearMessage() {
+	x.Message = nil
+}
+
+type SetDocumentReminderRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	DocumentId       int64
+	ReminderTime     *timestamp.Timestamp
+	Message          *string
+	MaxReminderCount int32
+}
+
+func (b0 SetDocumentReminderRequest_builder) Build() *SetDocumentReminderRequest {
+	m0 := &SetDocumentReminderRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.DocumentId = b.DocumentId
+	x.ReminderTime = b.ReminderTime
+	x.Message = b.Message
+	x.MaxReminderCount = b.MaxReminderCount
+	return m0
+}
+
 type SetDocumentReminderResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3547,9 +5398,16 @@ func (x *SetDocumentReminderResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetDocumentReminderResponse.ProtoReflect.Descriptor instead.
-func (*SetDocumentReminderResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_documents_proto_rawDescGZIP(), []int{71}
+type SetDocumentReminderResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 SetDocumentReminderResponse_builder) Build() *SetDocumentReminderResponse {
+	m0 := &SetDocumentReminderResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 var File_services_documents_documents_proto protoreflect.FileDescriptor
@@ -3878,18 +5736,6 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x13SetDocumentReminder\x12..services.documents.SetDocumentReminderRequest\x1a/.services.documents.SetDocumentReminderResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12m\n" +
 	"\n" +
 	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eUpdateDocument(\x01\x1a0\xea\xf3\x18,\b2\x12(i-mdi-file-document-box-multiple-outlineBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
-
-var (
-	file_services_documents_documents_proto_rawDescOnce sync.Once
-	file_services_documents_documents_proto_rawDescData []byte
-)
-
-func file_services_documents_documents_proto_rawDescGZIP() []byte {
-	file_services_documents_documents_proto_rawDescOnce.Do(func() {
-		file_services_documents_documents_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_documents_documents_proto_rawDesc), len(file_services_documents_documents_proto_rawDesc)))
-	})
-	return file_services_documents_documents_proto_rawDescData
-}
 
 var file_services_documents_documents_proto_msgTypes = make([]protoimpl.MessageInfo, 72)
 var file_services_documents_documents_proto_goTypes = []any{

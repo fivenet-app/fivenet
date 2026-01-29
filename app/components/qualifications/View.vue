@@ -518,7 +518,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                                     <UAlert
                                         v-else
                                         icon="i-mdi-info"
-                                        color="error"
+                                        color="warning"
                                         variant="subtle"
                                         :description="$t('components.qualifications.content_unavailable')"
                                     />

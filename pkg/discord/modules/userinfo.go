@@ -18,10 +18,10 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	jobssettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/settings"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
@@ -258,7 +258,7 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 		jobs = append(jobs, mysql.String(job))
 	}
 
-	tUsers := tables.User().AS("users")
+	tUsers := table.FivenetUser.AS("users")
 
 	stmt := tAccsOauth2.
 		SELECT(
@@ -277,11 +277,8 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 		).
 		FROM(
 			tAccsOauth2.
-				INNER_JOIN(tAccs,
-					tAccs.ID.EQ(tAccsOauth2.AccountID),
-				).
 				INNER_JOIN(tUsers,
-					tUsers.Identifier.LIKE(mysql.CONCAT(mysql.String("%"), tAccs.License)),
+					tUsers.AccountID.EQ(tAccsOauth2.AccountID),
 				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(

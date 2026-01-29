@@ -8,7 +8,6 @@ import "codegen/perms/perms.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
-import "resources/wiki/access/access.proto";
 import "resources/wiki/activity/activity.proto";
 import "resources/wiki/page.proto";
 
@@ -67,7 +66,7 @@ message ListPageActivityRequest {
 
 message ListPageActivityResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.wiki.PageActivity activity = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.wiki.activity.PageActivity activity = 2 [(codegen.itemslen.enabled) = true];
 }
 
 service WikiService {

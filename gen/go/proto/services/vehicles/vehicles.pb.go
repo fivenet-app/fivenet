@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/vehicles/vehicles.proto
 
+//go:build !protoopaque
+
 package vehicles
 
 import (
@@ -16,7 +18,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -28,7 +29,7 @@ const (
 )
 
 type ListVehiclesRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
@@ -64,11 +65,6 @@ func (x *ListVehiclesRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListVehiclesRequest.ProtoReflect.Descriptor instead.
-func (*ListVehiclesRequest) Descriptor() ([]byte, []int) {
-	return file_services_vehicles_vehicles_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ListVehiclesRequest) GetPagination() *database.PaginationRequest {
@@ -120,8 +116,129 @@ func (x *ListVehiclesRequest) GetWanted() bool {
 	return false
 }
 
+func (x *ListVehiclesRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListVehiclesRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListVehiclesRequest) SetLicensePlate(v string) {
+	x.LicensePlate = &v
+}
+
+func (x *ListVehiclesRequest) SetModel(v string) {
+	x.Model = &v
+}
+
+func (x *ListVehiclesRequest) SetUserIds(v []int32) {
+	x.UserIds = v
+}
+
+func (x *ListVehiclesRequest) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *ListVehiclesRequest) SetWanted(v bool) {
+	x.Wanted = &v
+}
+
+func (x *ListVehiclesRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListVehiclesRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListVehiclesRequest) HasLicensePlate() bool {
+	if x == nil {
+		return false
+	}
+	return x.LicensePlate != nil
+}
+
+func (x *ListVehiclesRequest) HasModel() bool {
+	if x == nil {
+		return false
+	}
+	return x.Model != nil
+}
+
+func (x *ListVehiclesRequest) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *ListVehiclesRequest) HasWanted() bool {
+	if x == nil {
+		return false
+	}
+	return x.Wanted != nil
+}
+
+func (x *ListVehiclesRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListVehiclesRequest) ClearSort() {
+	x.Sort = nil
+}
+
+func (x *ListVehiclesRequest) ClearLicensePlate() {
+	x.LicensePlate = nil
+}
+
+func (x *ListVehiclesRequest) ClearModel() {
+	x.Model = nil
+}
+
+func (x *ListVehiclesRequest) ClearJob() {
+	x.Job = nil
+}
+
+func (x *ListVehiclesRequest) ClearWanted() {
+	x.Wanted = nil
+}
+
+type ListVehiclesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	LicensePlate *string
+	Model        *string
+	UserIds      []int32
+	Job          *string
+	Wanted       *bool
+}
+
+func (b0 ListVehiclesRequest_builder) Build() *ListVehiclesRequest {
+	m0 := &ListVehiclesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.LicensePlate = b.LicensePlate
+	x.Model = b.Model
+	x.UserIds = b.UserIds
+	x.Job = b.Job
+	x.Wanted = b.Wanted
+	return m0
+}
+
 type ListVehiclesResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Vehicles      []*vehicles.Vehicle          `protobuf:"bytes,2,rep,name=vehicles,proto3" json:"vehicles,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -153,11 +270,6 @@ func (x *ListVehiclesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListVehiclesResponse.ProtoReflect.Descriptor instead.
-func (*ListVehiclesResponse) Descriptor() ([]byte, []int) {
-	return file_services_vehicles_vehicles_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListVehiclesResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -172,8 +284,43 @@ func (x *ListVehiclesResponse) GetVehicles() []*vehicles.Vehicle {
 	return nil
 }
 
+func (x *ListVehiclesResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListVehiclesResponse) SetVehicles(v []*vehicles.Vehicle) {
+	x.Vehicles = v
+}
+
+func (x *ListVehiclesResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListVehiclesResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListVehiclesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Vehicles   []*vehicles.Vehicle
+}
+
+func (b0 ListVehiclesResponse_builder) Build() *ListVehiclesResponse {
+	m0 := &ListVehiclesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Vehicles = b.Vehicles
+	return m0
+}
+
 type SetVehiclePropsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Props         *props.VehicleProps    `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -204,11 +351,6 @@ func (x *SetVehiclePropsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetVehiclePropsRequest.ProtoReflect.Descriptor instead.
-func (*SetVehiclePropsRequest) Descriptor() ([]byte, []int) {
-	return file_services_vehicles_vehicles_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *SetVehiclePropsRequest) GetProps() *props.VehicleProps {
 	if x != nil {
 		return x.Props
@@ -216,8 +358,37 @@ func (x *SetVehiclePropsRequest) GetProps() *props.VehicleProps {
 	return nil
 }
 
+func (x *SetVehiclePropsRequest) SetProps(v *props.VehicleProps) {
+	x.Props = v
+}
+
+func (x *SetVehiclePropsRequest) HasProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.Props != nil
+}
+
+func (x *SetVehiclePropsRequest) ClearProps() {
+	x.Props = nil
+}
+
+type SetVehiclePropsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Props *props.VehicleProps
+}
+
+func (b0 SetVehiclePropsRequest_builder) Build() *SetVehiclePropsRequest {
+	m0 := &SetVehiclePropsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Props = b.Props
+	return m0
+}
+
 type SetVehiclePropsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Props         *props.VehicleProps    `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
 	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -249,11 +420,6 @@ func (x *SetVehiclePropsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetVehiclePropsResponse.ProtoReflect.Descriptor instead.
-func (*SetVehiclePropsResponse) Descriptor() ([]byte, []int) {
-	return file_services_vehicles_vehicles_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *SetVehiclePropsResponse) GetProps() *props.VehicleProps {
 	if x != nil {
 		return x.Props
@@ -266,6 +432,41 @@ func (x *SetVehiclePropsResponse) GetReason() string {
 		return x.Reason
 	}
 	return ""
+}
+
+func (x *SetVehiclePropsResponse) SetProps(v *props.VehicleProps) {
+	x.Props = v
+}
+
+func (x *SetVehiclePropsResponse) SetReason(v string) {
+	x.Reason = v
+}
+
+func (x *SetVehiclePropsResponse) HasProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.Props != nil
+}
+
+func (x *SetVehiclePropsResponse) ClearProps() {
+	x.Props = nil
+}
+
+type SetVehiclePropsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Props  *props.VehicleProps
+	Reason string
+}
+
+func (b0 SetVehiclePropsResponse_builder) Build() *SetVehiclePropsResponse {
+	m0 := &SetVehiclePropsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Props = b.Props
+	x.Reason = b.Reason
+	return m0
 }
 
 var File_services_vehicles_vehicles_proto protoreflect.FileDescriptor
@@ -303,18 +504,6 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\x06Fields\x18\x01\"\x06Wanted\x12\x84\x01\n" +
 	"\x0fSetVehicleProps\x12).services.vehicles.SetVehiclePropsRequest\x1a*.services.vehicles.SetVehiclePropsResponse\"\x1a\xd2\xf3\x18\x16\b\x01*\x12\n" +
 	"\x06Fields\x18\x01\"\x06Wanted\x1a\x19\xea\xf3\x18\x15\b(\x12\x11i-mdi-car-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
-
-var (
-	file_services_vehicles_vehicles_proto_rawDescOnce sync.Once
-	file_services_vehicles_vehicles_proto_rawDescData []byte
-)
-
-func file_services_vehicles_vehicles_proto_rawDescGZIP() []byte {
-	file_services_vehicles_vehicles_proto_rawDescOnce.Do(func() {
-		file_services_vehicles_vehicles_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_vehicles_vehicles_proto_rawDesc), len(file_services_vehicles_vehicles_proto_rawDesc)))
-	})
-	return file_services_vehicles_vehicles_proto_rawDescData
-}
 
 var file_services_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_services_vehicles_vehicles_proto_goTypes = []any{

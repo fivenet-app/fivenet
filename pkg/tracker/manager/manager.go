@@ -16,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/coords/postals"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
@@ -310,7 +309,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 	m.logger.Debug("refreshing user tracker cache")
 
 	tLocs := tLocs.AS("user_marker")
-	tUsers := tables.User().AS("user")
+	tUsers := table.FivenetUser.AS("user")
 	tFallbackJobProps := tJobProps.AS("fallback_job_props")
 	tFallbackColleagueProps := tColleagueProps.AS("fallback_colleague_props")
 

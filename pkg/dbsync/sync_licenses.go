@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync"
+	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
@@ -51,7 +51,7 @@ func (s *licensesSync) Sync(ctx context.Context) error {
 	if s.cli != nil {
 		if err := s.sendData(ctx, &pbsync.SendDataRequest{
 			Data: &pbsync.SendDataRequest_Licenses{
-				Licenses: &sync.DataLicenses{
+				Licenses: &syncdata.DataLicenses{
 					Licenses: licenses,
 				},
 			},

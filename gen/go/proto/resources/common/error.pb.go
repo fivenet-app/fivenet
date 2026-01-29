@@ -4,13 +4,14 @@
 // 	protoc        (unknown)
 // source: resources/common/error.proto
 
+//go:build !protoopaque
+
 package common
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -22,7 +23,7 @@ const (
 )
 
 type Error struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Title         *I18NItem              `protobuf:"bytes,1,opt,name=title,proto3,oneof" json:"title,omitempty"`
 	Content       *I18NItem              `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -54,11 +55,6 @@ func (x *Error) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Error.ProtoReflect.Descriptor instead.
-func (*Error) Descriptor() ([]byte, []int) {
-	return file_resources_common_error_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *Error) GetTitle() *I18NItem {
 	if x != nil {
 		return x.Title
@@ -73,6 +69,52 @@ func (x *Error) GetContent() *I18NItem {
 	return nil
 }
 
+func (x *Error) SetTitle(v *I18NItem) {
+	x.Title = v
+}
+
+func (x *Error) SetContent(v *I18NItem) {
+	x.Content = v
+}
+
+func (x *Error) HasTitle() bool {
+	if x == nil {
+		return false
+	}
+	return x.Title != nil
+}
+
+func (x *Error) HasContent() bool {
+	if x == nil {
+		return false
+	}
+	return x.Content != nil
+}
+
+func (x *Error) ClearTitle() {
+	x.Title = nil
+}
+
+func (x *Error) ClearContent() {
+	x.Content = nil
+}
+
+type Error_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Title   *I18NItem
+	Content *I18NItem
+}
+
+func (b0 Error_builder) Build() *Error {
+	m0 := &Error{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Title = b.Title
+	x.Content = b.Content
+	return m0
+}
+
 var File_resources_common_error_proto protoreflect.FileDescriptor
 
 const file_resources_common_error_proto_rawDesc = "" +
@@ -82,18 +124,6 @@ const file_resources_common_error_proto_rawDesc = "" +
 	"\x05title\x18\x01 \x01(\v2\x1a.resources.common.I18NItemH\x00R\x05title\x88\x01\x01\x124\n" +
 	"\acontent\x18\x02 \x01(\v2\x1a.resources.common.I18NItemR\acontentB\b\n" +
 	"\x06_titleBKZIgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common;commonb\x06proto3"
-
-var (
-	file_resources_common_error_proto_rawDescOnce sync.Once
-	file_resources_common_error_proto_rawDescData []byte
-)
-
-func file_resources_common_error_proto_rawDescGZIP() []byte {
-	file_resources_common_error_proto_rawDescOnce.Do(func() {
-		file_resources_common_error_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_common_error_proto_rawDesc), len(file_resources_common_error_proto_rawDesc)))
-	})
-	return file_resources_common_error_proto_rawDescData
-}
 
 var file_resources_common_error_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_common_error_proto_goTypes = []any{

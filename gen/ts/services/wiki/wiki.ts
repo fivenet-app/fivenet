@@ -159,7 +159,7 @@ export interface ListPageActivityResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.wiki.PageActivity activity = 2
+     * @generated from protobuf field: repeated resources.wiki.activity.PageActivity activity = 2
      */
     activity: PageActivity[];
 }
@@ -747,7 +747,7 @@ class ListPageActivityResponse$Type extends MessageType<ListPageActivityResponse
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.wiki.PageActivity activity */ 2:
+                case /* repeated resources.wiki.activity.PageActivity activity */ 2:
                     message.activity.push(PageActivity.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -765,7 +765,7 @@ class ListPageActivityResponse$Type extends MessageType<ListPageActivityResponse
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.wiki.PageActivity activity = 2; */
+        /* repeated resources.wiki.activity.PageActivity activity = 2; */
         for (let i = 0; i < message.activity.length; i++)
             PageActivity.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

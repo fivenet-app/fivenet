@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/calendar/access/access.proto
 
+//go:build !protoopaque
+
 package calendaraccess
 
 import (
@@ -13,7 +15,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -77,13 +78,8 @@ func (x AccessLevel) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use AccessLevel.Descriptor instead.
-func (AccessLevel) EnumDescriptor() ([]byte, []int) {
-	return file_resources_calendar_access_access_proto_rawDescGZIP(), []int{0}
-}
-
 type CalendarAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Jobs          []*CalendarJobAccess   `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
 	Users         []*CalendarUserAccess  `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty" alias:"user_access"`
 	unknownFields protoimpl.UnknownFields
@@ -115,11 +111,6 @@ func (x *CalendarAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CalendarAccess.ProtoReflect.Descriptor instead.
-func (*CalendarAccess) Descriptor() ([]byte, []int) {
-	return file_resources_calendar_access_access_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *CalendarAccess) GetJobs() []*CalendarJobAccess {
 	if x != nil {
 		return x.Jobs
@@ -134,8 +125,32 @@ func (x *CalendarAccess) GetUsers() []*CalendarUserAccess {
 	return nil
 }
 
+func (x *CalendarAccess) SetJobs(v []*CalendarJobAccess) {
+	x.Jobs = v
+}
+
+func (x *CalendarAccess) SetUsers(v []*CalendarUserAccess) {
+	x.Users = v
+}
+
+type CalendarAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs  []*CalendarJobAccess
+	Users []*CalendarUserAccess
+}
+
+func (b0 CalendarAccess_builder) Build() *CalendarAccess {
+	m0 := &CalendarAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	x.Users = b.Users
+	return m0
+}
+
 type CalendarJobAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
@@ -171,11 +186,6 @@ func (x *CalendarJobAccess) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CalendarJobAccess.ProtoReflect.Descriptor instead.
-func (*CalendarJobAccess) Descriptor() ([]byte, []int) {
-	return file_resources_calendar_access_access_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CalendarJobAccess) GetId() int64 {
@@ -234,8 +244,101 @@ func (x *CalendarJobAccess) GetAccess() AccessLevel {
 	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
 }
 
+func (x *CalendarJobAccess) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *CalendarJobAccess) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *CalendarJobAccess) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *CalendarJobAccess) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *CalendarJobAccess) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *CalendarJobAccess) SetMinimumGrade(v int32) {
+	x.MinimumGrade = v
+}
+
+func (x *CalendarJobAccess) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *CalendarJobAccess) SetAccess(v AccessLevel) {
+	x.Access = v
+}
+
+func (x *CalendarJobAccess) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *CalendarJobAccess) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *CalendarJobAccess) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *CalendarJobAccess) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *CalendarJobAccess) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *CalendarJobAccess) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+type CalendarJobAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id            int64
+	CreatedAt     *timestamp.Timestamp
+	TargetId      int64
+	Job           string
+	JobLabel      *string
+	MinimumGrade  int32
+	JobGradeLabel *string
+	Access        AccessLevel
+}
+
+func (b0 CalendarJobAccess_builder) Build() *CalendarJobAccess {
+	m0 := &CalendarJobAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.MinimumGrade = b.MinimumGrade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Access = b.Access
+	return m0
+}
+
 type CalendarUserAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
@@ -269,11 +372,6 @@ func (x *CalendarUserAccess) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CalendarUserAccess.ProtoReflect.Descriptor instead.
-func (*CalendarUserAccess) Descriptor() ([]byte, []int) {
-	return file_resources_calendar_access_access_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CalendarUserAccess) GetId() int64 {
@@ -318,6 +416,76 @@ func (x *CalendarUserAccess) GetAccess() AccessLevel {
 	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
 }
 
+func (x *CalendarUserAccess) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *CalendarUserAccess) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *CalendarUserAccess) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *CalendarUserAccess) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *CalendarUserAccess) SetUser(v *short.UserShort) {
+	x.User = v
+}
+
+func (x *CalendarUserAccess) SetAccess(v AccessLevel) {
+	x.Access = v
+}
+
+func (x *CalendarUserAccess) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *CalendarUserAccess) HasUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.User != nil
+}
+
+func (x *CalendarUserAccess) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *CalendarUserAccess) ClearUser() {
+	x.User = nil
+}
+
+type CalendarUserAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id        int64
+	CreatedAt *timestamp.Timestamp
+	TargetId  int64
+	UserId    int32
+	User      *short.UserShort
+	Access    AccessLevel
+}
+
+func (b0 CalendarUserAccess_builder) Build() *CalendarUserAccess {
+	m0 := &CalendarUserAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.UserId = b.UserId
+	x.User = b.User
+	x.Access = b.Access
+	return m0
+}
+
 var File_resources_calendar_access_access_proto protoreflect.FileDescriptor
 
 const file_resources_calendar_access_access_proto_rawDesc = "" +
@@ -357,18 +525,6 @@ const file_resources_calendar_access_access_proto_rawDesc = "" +
 	"\x12ACCESS_LEVEL_SHARE\x10\x03\x12\x15\n" +
 	"\x11ACCESS_LEVEL_EDIT\x10\x04\x12\x17\n" +
 	"\x13ACCESS_LEVEL_MANAGE\x10\x05B\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access;calendaraccessb\x06proto3"
-
-var (
-	file_resources_calendar_access_access_proto_rawDescOnce sync.Once
-	file_resources_calendar_access_access_proto_rawDescData []byte
-)
-
-func file_resources_calendar_access_access_proto_rawDescGZIP() []byte {
-	file_resources_calendar_access_access_proto_rawDescOnce.Do(func() {
-		file_resources_calendar_access_access_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_calendar_access_access_proto_rawDesc), len(file_resources_calendar_access_access_proto_rawDesc)))
-	})
-	return file_resources_calendar_access_access_proto_rawDescData
-}
 
 var file_resources_calendar_access_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_calendar_access_access_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

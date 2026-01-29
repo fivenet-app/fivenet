@@ -23,7 +23,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/coords"
 	"github.com/fivenet-app/fivenet/v2026/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
@@ -367,7 +366,7 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 		condition = condition.AND(cond)
 	}
 
-	tUsers := tables.User().AS("user")
+	tUsers := table.FivenetUser.AS("user")
 
 	stmt := tDispatch.
 		SELECT(
@@ -1261,7 +1260,7 @@ func (s *DispatchDB) GetStatus(
 	id int64,
 ) (*centrumdispatches.DispatchStatus, error) {
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus.AS("dispatch_status")
-	tUsers := tables.User().AS("colleague")
+	tUsers := table.FivenetUser.AS("colleague")
 
 	stmt := tDispatchStatus.
 		SELECT(

@@ -11,7 +11,6 @@ import (
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -334,7 +333,7 @@ func (s *Server) GetColleagueLabelsStats(
 		return &pbjobs.GetColleagueLabelsStatsResponse{}, nil
 	}
 
-	tColleague := tables.User().AS("user")
+	tColleague := table.FivenetUser.AS("user")
 
 	stmt := tColleagueLabels.
 		SELECT(

@@ -45,19 +45,13 @@ func (l *MigrateLogger) Verbose() bool {
 
 // NewMigrate creates a new migrate.Migrate instance for the given DB and ESX compatibility flag.
 // It sets up the migration source and driver, and injects template data for migration scripts.
-func NewMigrate(db *sql.DB, esxCompat bool, disableLocking bool) (*migrate.Migrate, error) {
-	// FiveNet's own users/chars table
-	tableName := "fivenet_user"
-	if esxCompat {
-		// Use ESX's table
-		tableName = "users"
-	}
-
+func NewMigrate(db *sql.DB, disableLocking bool) (*migrate.Migrate, error) {
 	// Setup migrate source and driver with template data for, e.g., ESX compatibility.
 	source, err := iofs.New(&templateFS{
 		data: map[string]any{
-			"ESXCompat":      esxCompat,
-			"UsersTableName": tableName,
+			"ESXCompat": false,
+			// FiveNet's own users table name
+			"UsersTableName": "fivenet_user",
 		},
 		FS: migrationsFS,
 	}, "migrations")
@@ -89,7 +83,6 @@ func MigrateDB(
 	logger *zap.Logger,
 	dbDSN string,
 	ignoreReqs bool,
-	esxCompat bool,
 	disableLocking bool,
 ) (*reqs.DBReqs, error) {
 	dsn, err := dsn.PrepareDSN(dbDSN, disableLocking, dsn.WithMultiStatements())
@@ -120,7 +113,7 @@ func MigrateDB(
 
 	logger.Info("starting database migrations")
 
-	m, err := NewMigrate(db, esxCompat, disableLocking)
+	m, err := NewMigrate(db, disableLocking)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create migration instance. %w", err)
 	}

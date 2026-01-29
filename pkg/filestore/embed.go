@@ -373,7 +373,7 @@ func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int6
 	err := tFiles.
 		SELECT(tFiles.ID.AS("id")).
 		WHERE(tFiles.FilePath.EQ(mysql.String(key))).
-		FOR(mysql.UPDATE()). // ← row-lock
+		FOR(mysql.UPDATE()). // Row-lock
 		QueryContext(ctx, tx, &fileId)
 
 	switch {

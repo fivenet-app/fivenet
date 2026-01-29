@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 	"sync"
 	"time"
 
@@ -17,12 +18,16 @@ import (
 )
 
 type WebsocketChannel struct {
-	mu             sync.Mutex
-	ctx            context.Context
-	wsConn         *websocket.Conn
-	grpcHandler    func(resp http.ResponseWriter, req *http.Request)
-	maxStreamCount int
-	req            *http.Request
+	mu                sync.Mutex
+	ctx               context.Context
+	wsConn            *websocket.Conn
+	grpcHandler       func(resp http.ResponseWriter, req *http.Request)
+	maxStreamCount    int
+	req               *http.Request
+	validateTokenFunc func(token string) (bool, error)
+
+	authMu    sync.RWMutex
+	authToken string
 
 	activeStreams   map[uint32]*GrpcStream
 	timeoutInterval time.Duration
@@ -40,23 +45,43 @@ var framePingResponse = &grpcws.GrpcFrame{
 
 func NewWebsocketChannel(
 	ctx context.Context,
+	validateTokenFunc func(token string) (bool, error),
 	websocket *websocket.Conn,
 	grpcHandler func(resp http.ResponseWriter, req *http.Request),
 	maxStreamCount int,
 	req *http.Request,
 ) *WebsocketChannel {
 	return &WebsocketChannel{
-		mu:             sync.Mutex{},
-		ctx:            ctx,
-		wsConn:         websocket,
-		grpcHandler:    grpcHandler,
-		maxStreamCount: maxStreamCount,
-		req:            req,
+		mu:                sync.Mutex{},
+		ctx:               ctx,
+		wsConn:            websocket,
+		grpcHandler:       grpcHandler,
+		maxStreamCount:    maxStreamCount,
+		req:               req,
+		validateTokenFunc: validateTokenFunc,
 
 		activeStreams:   make(map[uint32]*GrpcStream, maxStreamCount),
 		timeoutInterval: 12 * time.Second,
 		timer:           nil,
 	}
+}
+
+func (ws *WebsocketChannel) isAuthenticated() bool {
+	ws.authMu.RLock()
+	defer ws.authMu.RUnlock()
+	return ws.authToken != ""
+}
+
+func (ws *WebsocketChannel) setAuthToken(token string) {
+	ws.authMu.Lock()
+	defer ws.authMu.Unlock()
+	ws.authToken = token
+}
+
+func (ws *WebsocketChannel) getAuthToken() string {
+	ws.authMu.RLock()
+	defer ws.authMu.RUnlock()
+	return ws.authToken
 }
 
 func (ws *WebsocketChannel) Start() {
@@ -99,7 +124,6 @@ func (ws *WebsocketChannel) poll() error {
 	if errors.Is(err, io.EOF) {
 		ws.Close()
 	}
-
 	if err != nil {
 		return err
 	}
@@ -118,6 +142,14 @@ func (ws *WebsocketChannel) poll() error {
 		})
 
 	case *grpcws.GrpcFrame_Header:
+		if frame.GetStreamId() == 0 {
+			return ws.handleControlHeader(frame.GetHeader())
+		}
+
+		if !ws.isAuthenticated() {
+			return ws.writeError(frame.GetStreamId(), "unauthenticated")
+		}
+
 		if stream != nil {
 			return ws.writeError(frame.GetStreamId(), "stream already exists")
 		}
@@ -157,6 +189,8 @@ func (ws *WebsocketChannel) poll() error {
 		for key, element := range frame.GetHeader().GetHeaders() {
 			req.Header[key] = element.GetValue()
 		}
+		// Ensure the authorization header is set with the current auth token
+		req.Header.Set("Authorization", "Bearer "+ws.getAuthToken())
 
 		interceptedReq := makeGrpcRequest(req.WithContext(newStream.ctx))
 		// Forward the request to the grpcHandler
@@ -238,6 +272,54 @@ func (ws *WebsocketChannel) readFrame() (*grpcws.GrpcFrame, error) {
 	}
 
 	return request, nil
+}
+
+func (ws *WebsocketChannel) handleControlHeader(h *grpcws.Header) error {
+	switch h.GetOperation() {
+	case "auth", "reauth":
+		authz := h.GetHeaders()["Authorization"]
+		if len(authz.GetValue()) == 0 {
+			return ws.writeAuthFailure("missing authorization")
+		}
+
+		token := strings.TrimPrefix(authz.GetValue()[0], "Bearer ")
+		valid, err := ws.validateTokenFunc(token)
+		if err != nil {
+			return ws.writeAuthFailure(err.Error())
+		}
+		if !valid {
+			return ws.writeAuthFailure("invalid token")
+		}
+
+		ws.setAuthToken(token)
+
+		return ws.write(&grpcws.GrpcFrame{
+			StreamId: 0,
+			Payload: &grpcws.GrpcFrame_Header{
+				Header: &grpcws.Header{
+					Operation: "auth_ok",
+					Status:    http.StatusOK,
+				},
+			},
+		})
+
+	default:
+		return ws.writeAuthFailure("unknown control operation")
+	}
+}
+
+func (ws *WebsocketChannel) writeAuthFailure(msg string) error {
+	_ = ws.write(&grpcws.GrpcFrame{
+		StreamId: 0,
+		Payload: &grpcws.GrpcFrame_Failure{
+			Failure: &grpcws.Failure{
+				ErrorStatus:  "Unauthenticated",
+				ErrorMessage: msg,
+			},
+		},
+	})
+	ws.Close()
+	return ErrClient
 }
 
 func (ws *WebsocketChannel) write(frame *grpcws.GrpcFrame) error {

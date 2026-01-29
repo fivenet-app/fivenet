@@ -5,13 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strings"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -19,13 +20,6 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-)
-
-const defaultUserGroupFallback = "user"
-
-var ErrSendDataDisabled = status.Error(
-	codes.FailedPrecondition,
-	"Sync API: SendData is disabled due to ESXCompat being enabled",
 )
 
 func (s *Server) SendData(
@@ -41,39 +35,28 @@ func (s *Server) SendData(
 	var err error
 	switch d := req.GetData().(type) {
 	case *pbsync.SendDataRequest_Jobs:
-		if s.esxCompat {
-			return nil, ErrSendDataDisabled
-		}
-
 		if resp.AffectedRows, err = s.handleJobsData(ctx, d); err != nil {
 			return nil, fmt.Errorf("failed to handle jobs data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_Licenses:
-		if s.esxCompat {
-			return nil, ErrSendDataDisabled
-		}
-
 		if resp.AffectedRows, err = s.handleLicensesData(ctx, d); err != nil {
 			return nil, fmt.Errorf("failed to handle licenses data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_Users:
-		if s.esxCompat {
-			return nil, ErrSendDataDisabled
-		}
-
 		if resp.AffectedRows, err = s.handleUsersData(ctx, d); err != nil {
 			return nil, fmt.Errorf("failed to handle users data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_Vehicles:
-		if s.esxCompat {
-			return nil, ErrSendDataDisabled
-		}
-
 		if resp.AffectedRows, err = s.handleVehiclesData(ctx, d); err != nil {
 			return nil, fmt.Errorf("failed to handle vehicles data. %w", err)
+		}
+
+	case *pbsync.SendDataRequest_Accounts:
+		if resp.AffectedRows, err = s.handleAccountsData(ctx, d); err != nil {
+			return nil, fmt.Errorf("failed to handle accounts data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_UserLocations:
@@ -98,7 +81,7 @@ func (s *Server) handleJobsData(
 		return 0, nil
 	}
 
-	tJobs := tables.Jobs()
+	tJobs := table.FivenetJobs
 
 	stmt := tJobs.
 		INSERT(
@@ -116,8 +99,6 @@ func (s *Server) handleJobsData(
 			job.GetLabel(),
 		)
 	}
-
-	// ??? Shoud we delete jobs, that are not part of the list, from the database?
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
@@ -147,7 +128,7 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 
 	rowsAffectedCount := int64(0)
 
-	tJobsGrades := tables.JobsGrades().AS("job_grade")
+	tJobsGrades := table.FivenetJobsGrades.AS("job_grade")
 
 	selectStmt := tJobsGrades.
 		SELECT(
@@ -218,7 +199,7 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 		}
 	}
 
-	tJobsGrades = tables.JobsGrades()
+	tJobsGrades = table.FivenetJobsGrades
 
 	if len(toCreate) > 0 {
 		stmt := tJobsGrades.
@@ -332,7 +313,7 @@ func (s *Server) handleLicensesData(
 		return 0, nil
 	}
 
-	tLicenses := tables.Licenses()
+	tLicenses := table.FivenetLicenses
 
 	stmt := tLicenses.
 		INSERT(
@@ -366,17 +347,11 @@ func (s *Server) handleUsersData(
 	ctx context.Context,
 	data *pbsync.SendDataRequest_Users,
 ) (int64, error) {
-	tUsers := tables.User()
-
-	defaultUserGroup := defaultUserGroupFallback
+	tUsers := table.FivenetUser
 
 	userIds := []mysql.Expression{}
 	for _, user := range data.Users.GetUsers() {
 		userIds = append(userIds, mysql.Int32(user.GetUserId()))
-
-		if user.Group == nil {
-			user.Group = &defaultUserGroup
-		}
 	}
 
 	checkStmt := tUsers.
@@ -395,7 +370,7 @@ func (s *Server) handleUsersData(
 		}
 	}
 
-	toCreate, toUpdate := []*users.User{}, []*users.User{}
+	toCreate, toUpdate := []*syncdata.DataUser{}, []*syncdata.DataUser{}
 	// Check which user ids already exist in the database and create/update them accordingly
 	if len(existing) == 0 {
 		toCreate = data.Users.GetUsers()
@@ -411,13 +386,15 @@ func (s *Server) handleUsersData(
 		}
 	}
 
+	tAccounts := table.FivenetAccounts
+
 	rowsAffected := int64(0)
 	if len(toCreate) > 0 {
 		stmt := tUsers.
 			INSERT(
 				tUsers.ID,
+				tUsers.AccountID,
 				tUsers.Identifier,
-				tUsers.Group,
 				tUsers.Firstname,
 				tUsers.Lastname,
 				tUsers.Dateofbirth,
@@ -431,16 +408,27 @@ func (s *Server) handleUsersData(
 			)
 
 		for _, user := range toCreate {
+			var accountIdStmt mysql.SelectStatement = nil
+			if user.GetIdentifier() != "" {
+				accountIdStmt = tAccounts.
+					SELECT(
+						mysql.COALESCE(tAccounts.ID, mysql.NULL),
+					).
+					FROM(tAccounts).
+					WHERE(tAccounts.License.EQ(mysql.String(getLicenseFromIdentifier(user.GetIdentifier())))).
+					LIMIT(1)
+			}
+
 			insertStmt := stmt.
 				VALUES(
 					user.GetUserId(),
+					accountIdStmt,
 					user.Identifier,
-					user.Group,
 					user.Firstname,
 					user.Lastname,
-					user.Dateofbirth,
-					user.Job,
-					user.JobGrade,
+					user.GetDateofbirth(),
+					user.GetJob(),
+					user.GetJobGrade(),
 					user.Sex,
 					user.PhoneNumber,
 					user.Height,
@@ -448,7 +436,7 @@ func (s *Server) handleUsersData(
 					user.Playtime,
 				).
 				ON_DUPLICATE_KEY_UPDATE(
-					tUsers.Group.SET(mysql.StringExp(mysql.Raw("VALUES(`group`)"))),
+					tUsers.AccountID.SET(mysql.IntExp(mysql.Raw("VALUES(`account_id`)"))),
 					tUsers.Firstname.SET(mysql.StringExp(mysql.Raw("VALUES(`firstname`)"))),
 					tUsers.Lastname.SET(mysql.StringExp(mysql.Raw("VALUES(`lastname`)"))),
 					tUsers.Dateofbirth.SET(mysql.StringExp(mysql.Raw("VALUES(`dateofbirth`)"))),
@@ -472,9 +460,10 @@ func (s *Server) handleUsersData(
 
 			rowsAffected += rows
 
-			if err := s.handleCitizensLicenses(ctx, user.GetIdentifier(), user.GetLicenses()); err != nil {
+			if err := s.handleCitizensLicenses(ctx, user.GetUserId(), user.GetLicenses()); err != nil {
 				return 0, fmt.Errorf(
-					"failed to handle user licenses for user %s. %w",
+					"failed to handle user licenses for user %d (%s). %w",
+					user.GetUserId(),
 					user.GetIdentifier(),
 					err,
 				)
@@ -482,12 +471,22 @@ func (s *Server) handleUsersData(
 		}
 	}
 
+	// TODO insert phone_number(s) to phone_numbers table as well + job(s)
+
 	if len(toUpdate) > 0 {
 		for _, user := range toUpdate {
+			accountIdStmt := tAccounts.
+				SELECT(
+					mysql.COALESCE(tAccounts.ID, mysql.NULL),
+				).
+				FROM(tAccounts).
+				WHERE(tAccounts.License.EQ(mysql.String(getLicenseFromIdentifier(user.GetIdentifier())))).
+				LIMIT(1)
+
 			stmt := tUsers.
 				UPDATE(
+					tUsers.AccountID,
 					tUsers.Identifier,
-					tUsers.Group,
 					tUsers.Firstname,
 					tUsers.Lastname,
 					tUsers.Dateofbirth,
@@ -500,8 +499,8 @@ func (s *Server) handleUsersData(
 					tUsers.Playtime,
 				).
 				SET(
+					accountIdStmt,
 					user.Identifier,
-					user.Group,
 					user.Firstname,
 					user.Lastname,
 					user.Dateofbirth,
@@ -515,7 +514,8 @@ func (s *Server) handleUsersData(
 				).
 				WHERE(
 					tUsers.ID.EQ(mysql.Int32(user.GetUserId())),
-				)
+				).
+				LIMIT(1)
 
 			res, err := stmt.ExecContext(ctx, s.db)
 			if err != nil {
@@ -535,16 +535,16 @@ func (s *Server) handleUsersData(
 
 func (s *Server) handleCitizensLicenses(
 	ctx context.Context,
-	identifier string,
+	userId int32,
 	licenses []*userslicenses.License,
 ) error {
-	tCitizensLicenses := tables.UserLicenses()
+	tCitizensLicenses := table.FivenetUserLicenses
 
 	if len(licenses) == 0 {
 		// User has no licenses? Delete all user licenses from the database.
 		stmt := tCitizensLicenses.
 			DELETE().
-			WHERE(tCitizensLicenses.Owner.EQ(mysql.String(identifier))).
+			WHERE(tCitizensLicenses.UserID.EQ(mysql.Int32(userId))).
 			LIMIT(25)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -559,14 +559,14 @@ func (s *Server) handleCitizensLicenses(
 			tCitizensLicenses.Type,
 		).
 		FROM(tCitizensLicenses).
-		WHERE(tCitizensLicenses.Owner.EQ(mysql.String(identifier)))
+		WHERE(tCitizensLicenses.UserID.EQ(mysql.Int32(userId)))
 
 	currentLicenses := []string{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentLicenses); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf(
-				"failed to query current user licenses for identifier %s. %w",
-				identifier,
+				"failed to query current user licenses for user ID %d. %w",
+				userId,
 				err,
 			)
 		}
@@ -582,7 +582,7 @@ func (s *Server) handleCitizensLicenses(
 	if len(toAdd) > 0 {
 		stmt := tCitizensLicenses.
 			INSERT(
-				tCitizensLicenses.Owner,
+				tCitizensLicenses.UserID,
 				tCitizensLicenses.Type,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
@@ -592,7 +592,7 @@ func (s *Server) handleCitizensLicenses(
 		for _, t := range toAdd {
 			stmt = stmt.
 				VALUES(
-					identifier,
+					userId,
 					t,
 				)
 		}
@@ -611,7 +611,7 @@ func (s *Server) handleCitizensLicenses(
 		stmt := tCitizensLicenses.
 			DELETE().
 			WHERE(mysql.AND(
-				tCitizensLicenses.Owner.EQ(mysql.String(identifier)),
+				tCitizensLicenses.UserID.EQ(mysql.Int32(userId)),
 				tCitizensLicenses.Type.IN(types...),
 			)).
 			LIMIT(25)
@@ -624,6 +624,52 @@ func (s *Server) handleCitizensLicenses(
 	return nil
 }
 
+func (s *Server) handleAccountsData(
+	ctx context.Context,
+	data *pbsync.SendDataRequest_Accounts,
+) (int64, error) {
+	if len(data.Accounts.GetAccountUpdates()) == 0 {
+		return 0, nil
+	}
+
+	tAccounts := table.FivenetAccounts
+
+	stmt := tAccounts.
+		INSERT(
+			tAccounts.License,
+			tAccounts.Groups,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tAccounts.Groups.SET(mysql.StringExp(mysql.Raw("VALUES(`groups`)"))),
+		)
+
+	for _, account := range data.Accounts.GetAccountUpdates() {
+		var groups *accounts.AccountGroups
+		gs := account.GetGroups()
+		if len(gs) > 0 {
+			groups = &accounts.AccountGroups{
+				Groups: gs,
+			}
+		}
+
+		stmt = stmt.VALUES(
+			account.GetLicense(),
+			groups,
+		)
+	}
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return 0, fmt.Errorf("failed to execute accounts insert statement. %w", err)
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("failed to retrieve rows affected for accounts insert. %w", err)
+	}
+
+	return rowsAffected, nil
+}
+
 func (s *Server) handleVehiclesData(
 	ctx context.Context,
 	data *pbsync.SendDataRequest_Vehicles,
@@ -632,28 +678,17 @@ func (s *Server) handleVehiclesData(
 		return 0, nil
 	}
 
-	tVehicles := tables.OwnedVehicles()
+	tVehicles := table.FivenetOwnedVehicles
 
-	var stmt mysql.InsertStatement
-	if !tables.IsESXCompatEnabled() {
-		stmt = tVehicles.
-			INSERT(
-				tVehicles.Owner,
-				tVehicles.Plate,
-				tVehicles.Model,
-				tVehicles.Type,
-				tVehicles.Job,
-				tVehicles.Data,
-			)
-	} else {
-		stmt = tVehicles.
-			INSERT(
-				tVehicles.Owner,
-				tVehicles.Plate,
-				tVehicles.Model,
-				tVehicles.Type,
-			)
-	}
+	stmt := tVehicles.
+		INSERT(
+			tVehicles.UserID,
+			tVehicles.Plate,
+			tVehicles.Model,
+			tVehicles.Type,
+			tVehicles.Job,
+			tVehicles.Data,
+		)
 
 	for _, vehicle := range data.Vehicles.GetVehicles() {
 		var ownerId mysql.Expression
@@ -663,37 +698,23 @@ func (s *Server) handleVehiclesData(
 			ownerId = mysql.Int32(vehicle.GetOwnerId())
 		}
 
-		if !tables.IsESXCompatEnabled() {
-			stmt = stmt.VALUES(
-				ownerId,
-				vehicle.GetPlate(),
-				vehicle.Model,
-				vehicle.GetType(),
-				vehicle.Job,
-				mysql.NULL,
-			)
-		} else {
-			stmt = stmt.VALUES(
-				ownerId,
-				vehicle.GetPlate(),
-				vehicle.Model,
-				vehicle.GetType(),
-			)
-		}
+		stmt = stmt.VALUES(
+			ownerId,
+			vehicle.GetPlate(),
+			vehicle.Model,
+			vehicle.GetType(),
+			vehicle.Job,
+			mysql.NULL,
+		)
 	}
 
 	assignments := []mysql.ColumnAssigment{
-		tVehicles.Owner.SET(mysql.StringExp(mysql.Raw("VALUES(`owner`)"))),
+		tVehicles.UserID.SET(mysql.IntExp(mysql.Raw("VALUES(`user_id`)"))),
+		tVehicles.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
 		tVehicles.Plate.SET(mysql.StringExp(mysql.Raw("VALUES(`plate`)"))),
 		tVehicles.Model.SET(mysql.StringExp(mysql.Raw("VALUES(`model`)"))),
 		tVehicles.Type.SET(mysql.StringExp(mysql.Raw("VALUES(`type`)"))),
-	}
-
-	if !tables.IsESXCompatEnabled() {
-		assignments = append(assignments,
-			tVehicles.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
-			tVehicles.Data.SET(mysql.StringExp(mysql.Raw("VALUES(`data`)"))),
-		)
+		tVehicles.Data.SET(mysql.StringExp(mysql.Raw("VALUES(`data`)"))),
 	}
 
 	stmt = stmt.
@@ -866,10 +887,6 @@ func (s *Server) DeleteData(
 	ctx context.Context,
 	req *pbsync.DeleteDataRequest,
 ) (*pbsync.DeleteDataResponse, error) {
-	if s.esxCompat {
-		return nil, ErrSendDataDisabled
-	}
-
 	rowsAffected := int64(0)
 
 	switch d := req.GetData().(type) {
@@ -879,7 +896,7 @@ func (s *Server) DeleteData(
 			userIds = append(userIds, mysql.Int32(identifier))
 		}
 
-		tUsers := tables.User()
+		tUsers := table.FivenetUser
 
 		delStmt := tUsers.
 			DELETE().
@@ -903,7 +920,7 @@ func (s *Server) DeleteData(
 			plates = append(plates, mysql.String(plate))
 		}
 
-		tVehicles := tables.OwnedVehicles()
+		tVehicles := table.FivenetOwnedVehicles
 
 		delStmt := tVehicles.
 			DELETE().
@@ -925,4 +942,12 @@ func (s *Server) DeleteData(
 	return &pbsync.DeleteDataResponse{
 		AffectedRows: rowsAffected,
 	}, nil
+}
+
+func getLicenseFromIdentifier(identifier string) string {
+	parts := strings.SplitN(identifier, ":", 2)
+	if len(parts) == 2 {
+		return parts[1]
+	}
+	return identifier
 }

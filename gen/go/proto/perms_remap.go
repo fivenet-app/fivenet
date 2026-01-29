@@ -32,6 +32,11 @@
 package goproto
 
 var PermsRemap = map[string][]string{
+	// Service: auth.AuthService
+	"auth.AuthService/ImpersonateJob": []string{
+		"settings.SettingsService/UpdateRolePerms",
+	},
+
 	// Service: calendar.CalendarService
 	"calendar.CalendarService/CreateOrUpdateCalendarEntry": []string{
 		"Any",

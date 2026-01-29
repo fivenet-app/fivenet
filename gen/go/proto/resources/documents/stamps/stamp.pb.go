@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: resources/documents/stamps/stamp.proto
 
+//go:build !protoopaque
+
 package documentsstamps
 
 import (
@@ -13,7 +15,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -71,13 +72,8 @@ func (x StampAccessLevel) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use StampAccessLevel.Descriptor instead.
-func (StampAccessLevel) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_stamps_stamp_proto_rawDescGZIP(), []int{0}
-}
-
 type Stamp struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
+	state     protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Job       string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel  *string                `protobuf:"bytes,3,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
@@ -113,11 +109,6 @@ func (x *Stamp) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Stamp.ProtoReflect.Descriptor instead.
-func (*Stamp) Descriptor() ([]byte, []int) {
-	return file_resources_documents_stamps_stamp_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Stamp) GetId() int64 {
@@ -169,8 +160,96 @@ func (x *Stamp) GetAccess() *StampAccess {
 	return nil
 }
 
+func (x *Stamp) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Stamp) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *Stamp) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *Stamp) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Stamp) SetName(v string) {
+	x.Name = v
+}
+
+func (x *Stamp) SetSvgTemplate(v string) {
+	x.SvgTemplate = v
+}
+
+func (x *Stamp) SetAccess(v *StampAccess) {
+	x.Access = v
+}
+
+func (x *Stamp) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *Stamp) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Stamp) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.Access != nil
+}
+
+func (x *Stamp) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *Stamp) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Stamp) ClearAccess() {
+	x.Access = nil
+}
+
+type Stamp_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id        int64
+	Job       string
+	JobLabel  *string
+	CreatedAt *timestamp.Timestamp
+	Name      string
+	// Parameterized SVG with slots
+	SvgTemplate string
+	Access      *StampAccess
+}
+
+func (b0 Stamp_builder) Build() *Stamp {
+	m0 := &Stamp{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.CreatedAt = b.CreatedAt
+	x.Name = b.Name
+	x.SvgTemplate = b.SvgTemplate
+	x.Access = b.Access
+	return m0
+}
+
 type StampAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Jobs          []*StampJobAccess      `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -201,11 +280,6 @@ func (x *StampAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StampAccess.ProtoReflect.Descriptor instead.
-func (*StampAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_stamps_stamp_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *StampAccess) GetJobs() []*StampJobAccess {
 	if x != nil {
 		return x.Jobs
@@ -213,8 +287,26 @@ func (x *StampAccess) GetJobs() []*StampJobAccess {
 	return nil
 }
 
+func (x *StampAccess) SetJobs(v []*StampJobAccess) {
+	x.Jobs = v
+}
+
+type StampAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs []*StampJobAccess
+}
+
+func (b0 StampAccess_builder) Build() *StampAccess {
+	m0 := &StampAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	return m0
+}
+
 type StampJobAccess struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
@@ -250,11 +342,6 @@ func (x *StampJobAccess) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use StampJobAccess.ProtoReflect.Descriptor instead.
-func (*StampJobAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_stamps_stamp_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *StampJobAccess) GetId() int64 {
@@ -313,6 +400,99 @@ func (x *StampJobAccess) GetAccess() StampAccessLevel {
 	return StampAccessLevel_STAMP_ACCESS_LEVEL_UNSPECIFIED
 }
 
+func (x *StampJobAccess) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *StampJobAccess) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *StampJobAccess) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+func (x *StampJobAccess) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *StampJobAccess) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *StampJobAccess) SetMinimumGrade(v int32) {
+	x.MinimumGrade = v
+}
+
+func (x *StampJobAccess) SetJobGradeLabel(v string) {
+	x.JobGradeLabel = &v
+}
+
+func (x *StampJobAccess) SetAccess(v StampAccessLevel) {
+	x.Access = v
+}
+
+func (x *StampJobAccess) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *StampJobAccess) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *StampJobAccess) HasJobGradeLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobGradeLabel != nil
+}
+
+func (x *StampJobAccess) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *StampJobAccess) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *StampJobAccess) ClearJobGradeLabel() {
+	x.JobGradeLabel = nil
+}
+
+type StampJobAccess_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id            int64
+	CreatedAt     *timestamp.Timestamp
+	TargetId      int64
+	Job           string
+	JobLabel      *string
+	MinimumGrade  int32
+	JobGradeLabel *string
+	Access        StampAccessLevel
+}
+
+func (b0 StampJobAccess_builder) Build() *StampJobAccess {
+	m0 := &StampJobAccess{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.TargetId = b.TargetId
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.MinimumGrade = b.MinimumGrade
+	x.JobGradeLabel = b.JobGradeLabel
+	x.Access = b.Access
+	return m0
+}
+
 var File_resources_documents_stamps_stamp_proto protoreflect.FileDescriptor
 
 const file_resources_documents_stamps_stamp_proto_rawDesc = "" +
@@ -350,18 +530,6 @@ const file_resources_documents_stamps_stamp_proto_rawDesc = "" +
 	"\x1aSTAMP_ACCESS_LEVEL_BLOCKED\x10\x01\x12\x1a\n" +
 	"\x16STAMP_ACCESS_LEVEL_USE\x10\x02\x12\x1d\n" +
 	"\x19STAMP_ACCESS_LEVEL_MANAGE\x10\x03B^Z\\github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps;documentsstampsb\x06proto3"
-
-var (
-	file_resources_documents_stamps_stamp_proto_rawDescOnce sync.Once
-	file_resources_documents_stamps_stamp_proto_rawDescData []byte
-)
-
-func file_resources_documents_stamps_stamp_proto_rawDescGZIP() []byte {
-	file_resources_documents_stamps_stamp_proto_rawDescOnce.Do(func() {
-		file_resources_documents_stamps_stamp_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_documents_stamps_stamp_proto_rawDesc), len(file_resources_documents_stamps_stamp_proto_rawDesc)))
-	})
-	return file_resources_documents_stamps_stamp_proto_rawDescData
-}
 
 var file_resources_documents_stamps_stamp_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_documents_stamps_stamp_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

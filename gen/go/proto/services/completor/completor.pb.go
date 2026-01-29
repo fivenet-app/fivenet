@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: services/completor/completor.proto
 
+//go:build !protoopaque
+
 package completor
 
 import (
@@ -17,7 +19,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -29,7 +30,7 @@ const (
 )
 
 type CompleteCitizensRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Search        string                 `protobuf:"bytes,1,opt,name=search,proto3" json:"search,omitempty"`
 	CurrentJob    *bool                  `protobuf:"varint,2,opt,name=current_job,json=currentJob,proto3,oneof" json:"current_job,omitempty"`
 	OnDuty        *bool                  `protobuf:"varint,3,opt,name=on_duty,json=onDuty,proto3,oneof" json:"on_duty,omitempty"`
@@ -62,11 +63,6 @@ func (x *CompleteCitizensRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CompleteCitizensRequest.ProtoReflect.Descriptor instead.
-func (*CompleteCitizensRequest) Descriptor() ([]byte, []int) {
-	return file_services_completor_completor_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *CompleteCitizensRequest) GetSearch() string {
@@ -104,8 +100,83 @@ func (x *CompleteCitizensRequest) GetUserIdsOnly() bool {
 	return false
 }
 
+func (x *CompleteCitizensRequest) SetSearch(v string) {
+	x.Search = v
+}
+
+func (x *CompleteCitizensRequest) SetCurrentJob(v bool) {
+	x.CurrentJob = &v
+}
+
+func (x *CompleteCitizensRequest) SetOnDuty(v bool) {
+	x.OnDuty = &v
+}
+
+func (x *CompleteCitizensRequest) SetUserIds(v []int32) {
+	x.UserIds = v
+}
+
+func (x *CompleteCitizensRequest) SetUserIdsOnly(v bool) {
+	x.UserIdsOnly = &v
+}
+
+func (x *CompleteCitizensRequest) HasCurrentJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.CurrentJob != nil
+}
+
+func (x *CompleteCitizensRequest) HasOnDuty() bool {
+	if x == nil {
+		return false
+	}
+	return x.OnDuty != nil
+}
+
+func (x *CompleteCitizensRequest) HasUserIdsOnly() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserIdsOnly != nil
+}
+
+func (x *CompleteCitizensRequest) ClearCurrentJob() {
+	x.CurrentJob = nil
+}
+
+func (x *CompleteCitizensRequest) ClearOnDuty() {
+	x.OnDuty = nil
+}
+
+func (x *CompleteCitizensRequest) ClearUserIdsOnly() {
+	x.UserIdsOnly = nil
+}
+
+type CompleteCitizensRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Search      string
+	CurrentJob  *bool
+	OnDuty      *bool
+	UserIds     []int32
+	UserIdsOnly *bool
+}
+
+func (b0 CompleteCitizensRequest_builder) Build() *CompleteCitizensRequest {
+	m0 := &CompleteCitizensRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Search = b.Search
+	x.CurrentJob = b.CurrentJob
+	x.OnDuty = b.OnDuty
+	x.UserIds = b.UserIds
+	x.UserIdsOnly = b.UserIdsOnly
+	return m0
+}
+
 type CompleteCitizensResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Users         []*short.UserShort     `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty" alias:"user"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -136,11 +207,6 @@ func (x *CompleteCitizensResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CompleteCitizensResponse.ProtoReflect.Descriptor instead.
-func (*CompleteCitizensResponse) Descriptor() ([]byte, []int) {
-	return file_services_completor_completor_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *CompleteCitizensResponse) GetUsers() []*short.UserShort {
 	if x != nil {
 		return x.Users
@@ -148,8 +214,26 @@ func (x *CompleteCitizensResponse) GetUsers() []*short.UserShort {
 	return nil
 }
 
+func (x *CompleteCitizensResponse) SetUsers(v []*short.UserShort) {
+	x.Users = v
+}
+
+type CompleteCitizensResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Users []*short.UserShort
+}
+
+func (b0 CompleteCitizensResponse_builder) Build() *CompleteCitizensResponse {
+	m0 := &CompleteCitizensResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Users = b.Users
+	return m0
+}
+
 type CompleteJobsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Search        *string                `protobuf:"bytes,1,opt,name=search,proto3,oneof" json:"search,omitempty"`
 	ExactMatch    *bool                  `protobuf:"varint,2,opt,name=exact_match,json=exactMatch,proto3,oneof" json:"exact_match,omitempty"`
 	CurrentJob    *bool                  `protobuf:"varint,3,opt,name=current_job,json=currentJob,proto3,oneof" json:"current_job,omitempty"`
@@ -182,11 +266,6 @@ func (x *CompleteJobsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CompleteJobsRequest.ProtoReflect.Descriptor instead.
-func (*CompleteJobsRequest) Descriptor() ([]byte, []int) {
-	return file_services_completor_completor_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *CompleteJobsRequest) GetSearch() string {
 	if x != nil && x.Search != nil {
 		return *x.Search
@@ -208,8 +287,71 @@ func (x *CompleteJobsRequest) GetCurrentJob() bool {
 	return false
 }
 
+func (x *CompleteJobsRequest) SetSearch(v string) {
+	x.Search = &v
+}
+
+func (x *CompleteJobsRequest) SetExactMatch(v bool) {
+	x.ExactMatch = &v
+}
+
+func (x *CompleteJobsRequest) SetCurrentJob(v bool) {
+	x.CurrentJob = &v
+}
+
+func (x *CompleteJobsRequest) HasSearch() bool {
+	if x == nil {
+		return false
+	}
+	return x.Search != nil
+}
+
+func (x *CompleteJobsRequest) HasExactMatch() bool {
+	if x == nil {
+		return false
+	}
+	return x.ExactMatch != nil
+}
+
+func (x *CompleteJobsRequest) HasCurrentJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.CurrentJob != nil
+}
+
+func (x *CompleteJobsRequest) ClearSearch() {
+	x.Search = nil
+}
+
+func (x *CompleteJobsRequest) ClearExactMatch() {
+	x.ExactMatch = nil
+}
+
+func (x *CompleteJobsRequest) ClearCurrentJob() {
+	x.CurrentJob = nil
+}
+
+type CompleteJobsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Search     *string
+	ExactMatch *bool
+	CurrentJob *bool
+}
+
+func (b0 CompleteJobsRequest_builder) Build() *CompleteJobsRequest {
+	m0 := &CompleteJobsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Search = b.Search
+	x.ExactMatch = b.ExactMatch
+	x.CurrentJob = b.CurrentJob
+	return m0
+}
+
 type CompleteJobsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Jobs          []*jobs.Job            `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -240,11 +382,6 @@ func (x *CompleteJobsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CompleteJobsResponse.ProtoReflect.Descriptor instead.
-func (*CompleteJobsResponse) Descriptor() ([]byte, []int) {
-	return file_services_completor_completor_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *CompleteJobsResponse) GetJobs() []*jobs.Job {
 	if x != nil {
 		return x.Jobs
@@ -252,8 +389,26 @@ func (x *CompleteJobsResponse) GetJobs() []*jobs.Job {
 	return nil
 }
 
+func (x *CompleteJobsResponse) SetJobs(v []*jobs.Job) {
+	x.Jobs = v
+}
+
+type CompleteJobsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Jobs []*jobs.Job
+}
+
+func (b0 CompleteJobsResponse_builder) Build() *CompleteJobsResponse {
+	m0 := &CompleteJobsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Jobs = b.Jobs
+	return m0
+}
+
 type CompleteDocumentCategoriesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Search        string                 `protobuf:"bytes,1,opt,name=search,proto3" json:"search,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -284,11 +439,6 @@ func (x *CompleteDocumentCategoriesRequest) ProtoReflect() protoreflect.Message 
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CompleteDocumentCategoriesRequest.ProtoReflect.Descriptor instead.
-func (*CompleteDocumentCategoriesRequest) Descriptor() ([]byte, []int) {
-	return file_services_completor_completor_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *CompleteDocumentCategoriesRequest) GetSearch() string {
 	if x != nil {
 		return x.Search
@@ -296,8 +446,26 @@ func (x *CompleteDocumentCategoriesRequest) GetSearch() string {
 	return ""
 }
 
+func (x *CompleteDocumentCategoriesRequest) SetSearch(v string) {
+	x.Search = v
+}
+
+type CompleteDocumentCategoriesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Search string
+}
+
+func (b0 CompleteDocumentCategoriesRequest_builder) Build() *CompleteDocumentCategoriesRequest {
+	m0 := &CompleteDocumentCategoriesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Search = b.Search
+	return m0
+}
+
 type CompleteDocumentCategoriesResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Categories    []*category.Category   `protobuf:"bytes,1,rep,name=categories,proto3" json:"categories,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -328,11 +496,6 @@ func (x *CompleteDocumentCategoriesResponse) ProtoReflect() protoreflect.Message
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CompleteDocumentCategoriesResponse.ProtoReflect.Descriptor instead.
-func (*CompleteDocumentCategoriesResponse) Descriptor() ([]byte, []int) {
-	return file_services_completor_completor_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *CompleteDocumentCategoriesResponse) GetCategories() []*category.Category {
 	if x != nil {
 		return x.Categories
@@ -340,8 +503,26 @@ func (x *CompleteDocumentCategoriesResponse) GetCategories() []*category.Categor
 	return nil
 }
 
+func (x *CompleteDocumentCategoriesResponse) SetCategories(v []*category.Category) {
+	x.Categories = v
+}
+
+type CompleteDocumentCategoriesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Categories []*category.Category
+}
+
+func (b0 CompleteDocumentCategoriesResponse_builder) Build() *CompleteDocumentCategoriesResponse {
+	m0 := &CompleteDocumentCategoriesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Categories = b.Categories
+	return m0
+}
+
 type ListLawBooksRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -371,13 +552,20 @@ func (x *ListLawBooksRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListLawBooksRequest.ProtoReflect.Descriptor instead.
-func (*ListLawBooksRequest) Descriptor() ([]byte, []int) {
-	return file_services_completor_completor_proto_rawDescGZIP(), []int{6}
+type ListLawBooksRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ListLawBooksRequest_builder) Build() *ListLawBooksRequest {
+	m0 := &ListLawBooksRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListLawBooksResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Books         []*laws.LawBook        `protobuf:"bytes,1,rep,name=books,proto3" json:"books,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -408,11 +596,6 @@ func (x *ListLawBooksResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListLawBooksResponse.ProtoReflect.Descriptor instead.
-func (*ListLawBooksResponse) Descriptor() ([]byte, []int) {
-	return file_services_completor_completor_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *ListLawBooksResponse) GetBooks() []*laws.LawBook {
 	if x != nil {
 		return x.Books
@@ -420,8 +603,26 @@ func (x *ListLawBooksResponse) GetBooks() []*laws.LawBook {
 	return nil
 }
 
+func (x *ListLawBooksResponse) SetBooks(v []*laws.LawBook) {
+	x.Books = v
+}
+
+type ListLawBooksResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Books []*laws.LawBook
+}
+
+func (b0 ListLawBooksResponse_builder) Build() *ListLawBooksResponse {
+	m0 := &ListLawBooksResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Books = b.Books
+	return m0
+}
+
 type CompleteCitizenLabelsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Search        string                 `protobuf:"bytes,1,opt,name=search,proto3" json:"search,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -452,11 +653,6 @@ func (x *CompleteCitizenLabelsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CompleteCitizenLabelsRequest.ProtoReflect.Descriptor instead.
-func (*CompleteCitizenLabelsRequest) Descriptor() ([]byte, []int) {
-	return file_services_completor_completor_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *CompleteCitizenLabelsRequest) GetSearch() string {
 	if x != nil {
 		return x.Search
@@ -464,8 +660,26 @@ func (x *CompleteCitizenLabelsRequest) GetSearch() string {
 	return ""
 }
 
+func (x *CompleteCitizenLabelsRequest) SetSearch(v string) {
+	x.Search = v
+}
+
+type CompleteCitizenLabelsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Search string
+}
+
+func (b0 CompleteCitizenLabelsRequest_builder) Build() *CompleteCitizenLabelsRequest {
+	m0 := &CompleteCitizenLabelsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Search = b.Search
+	return m0
+}
+
 type CompleteCitizenLabelsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -496,16 +710,29 @@ func (x *CompleteCitizenLabelsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CompleteCitizenLabelsResponse.ProtoReflect.Descriptor instead.
-func (*CompleteCitizenLabelsResponse) Descriptor() ([]byte, []int) {
-	return file_services_completor_completor_proto_rawDescGZIP(), []int{9}
-}
-
 func (x *CompleteCitizenLabelsResponse) GetLabels() []*labels.Label {
 	if x != nil {
 		return x.Labels
 	}
 	return nil
+}
+
+func (x *CompleteCitizenLabelsResponse) SetLabels(v []*labels.Label) {
+	x.Labels = v
+}
+
+type CompleteCitizenLabelsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Labels []*labels.Label
+}
+
+func (b0 CompleteCitizenLabelsResponse_builder) Build() *CompleteCitizenLabelsResponse {
+	m0 := &CompleteCitizenLabelsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Labels = b.Labels
+	return m0
 }
 
 var File_services_completor_completor_proto protoreflect.FileDescriptor
@@ -559,18 +786,6 @@ const file_services_completor_completor_proto_rawDesc = "" +
 	"\x15CompleteCitizenLabels\x120.services.completor.CompleteCitizenLabelsRequest\x1a1.services.completor.CompleteCitizenLabelsResponse\"\x10\xd2\xf3\x18\f\b\x01*\b\n" +
 	"\x04Jobs\x18\x02\x1a\x1a\xea\xf3\x18\x16\b\n" +
 	"\x12\x12i-mdi-keyboard-tabBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor;completorb\x06proto3"
-
-var (
-	file_services_completor_completor_proto_rawDescOnce sync.Once
-	file_services_completor_completor_proto_rawDescData []byte
-)
-
-func file_services_completor_completor_proto_rawDescGZIP() []byte {
-	file_services_completor_completor_proto_rawDescOnce.Do(func() {
-		file_services_completor_completor_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_completor_completor_proto_rawDesc), len(file_services_completor_completor_proto_rawDesc)))
-	})
-	return file_services_completor_completor_proto_rawDescData
-}
 
 var file_services_completor_completor_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_completor_completor_proto_goTypes = []any{
