@@ -80,7 +80,7 @@ func newFivenetDocumentsMetaTableImpl(schemaName, tableName, alias string) fiven
 		ApPoliciesActiveColumn    = mysql.IntegerColumn("ap_policies_active")
 		allColumns                = mysql.ColumnList{DocumentIDColumn, RecomputedAtColumn, ApprovedColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
 		mutableColumns            = mysql.ColumnList{RecomputedAtColumn, ApprovedColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
-		defaultColumns            = mysql.ColumnList{ApprovedColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
+		defaultColumns            = mysql.ColumnList{RecomputedAtColumn, ApprovedColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
 	)
 
 	return fivenetDocumentsMetaTable{
