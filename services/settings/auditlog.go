@@ -151,6 +151,7 @@ func (s *Server) ViewAuditLog(
 			tUser.JobGrade,
 			tUser.Firstname,
 			tUser.Lastname,
+			tUser.Dateofbirth,
 		).
 		FROM(
 			tAuditLog.

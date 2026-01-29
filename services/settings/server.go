@@ -47,7 +47,7 @@ type Server struct {
 	logger    *zap.Logger
 	db        *sql.DB
 	ps        perms.Permissions
-	enricher  *mstlystcdata.Enricher
+	enricher  *mstlystcdata.UserAwareEnricher
 	laws      *mstlystcdata.Laws
 	st        storage.IStorage
 	cfg       *config.Config
@@ -74,7 +74,7 @@ type Params struct {
 	Logger    *zap.Logger
 	DB        *sql.DB
 	PS        perms.Permissions
-	Enricher  *mstlystcdata.Enricher
+	Enricher  *mstlystcdata.UserAwareEnricher
 	Laws      *mstlystcdata.Laws
 	Storage   storage.IStorage
 	Config    *config.Config

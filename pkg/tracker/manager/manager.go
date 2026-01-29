@@ -315,7 +315,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 
 	stmt := tLocs.
 		SELECT(
-			tLocs.Identifier,
+			tLocs.UserID,
 			tLocs.Job,
 			tLocs.JobGrade,
 			tLocs.X,
@@ -353,7 +353,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 		FROM(
 			tLocs.
 				INNER_JOIN(tUsers,
-					tLocs.Identifier.EQ(tUsers.Identifier),
+					tLocs.UserID.EQ(tUsers.ID),
 				).
 				LEFT_JOIN(tJobProps,
 					tJobProps.Job.EQ(tLocs.Job),

@@ -57,9 +57,7 @@ func (m *User) Sanitize() error {
 	}
 
 	// Field: Identifier
-	if m.Identifier != nil {
-		*m.Identifier = htmlsanitizer.Sanitize(*m.Identifier)
-	}
+	m.Identifier = htmlsanitizer.Sanitize(m.Identifier)
 
 	// Field: Job
 	m.Job = htmlsanitizer.Sanitize(m.Job)
@@ -175,11 +173,6 @@ func (m *UserShort) Sanitize() error {
 
 	// Field: Firstname
 	m.Firstname = htmlsanitizer.Sanitize(m.Firstname)
-
-	// Field: Identifier
-	if m.Identifier != nil {
-		*m.Identifier = htmlsanitizer.Sanitize(*m.Identifier)
-	}
 
 	// Field: Job
 	m.Job = htmlsanitizer.Sanitize(m.Job)

@@ -29,7 +29,6 @@ const (
 type Colleague struct {
 	state                protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
-	Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
 	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
@@ -76,13 +75,6 @@ func (x *Colleague) GetUserId() int32 {
 		return x.UserId
 	}
 	return 0
-}
-
-func (x *Colleague) GetIdentifier() string {
-	if x != nil && x.Identifier != nil {
-		return *x.Identifier
-	}
-	return ""
 }
 
 func (x *Colleague) GetJob() string {
@@ -173,10 +165,6 @@ func (x *Colleague) SetUserId(v int32) {
 	x.UserId = v
 }
 
-func (x *Colleague) SetIdentifier(v string) {
-	x.Identifier = &v
-}
-
 func (x *Colleague) SetJob(v string) {
 	x.Job = v
 }
@@ -223,13 +211,6 @@ func (x *Colleague) SetProps(v *ColleagueProps) {
 
 func (x *Colleague) SetEmail(v string) {
 	x.Email = &v
-}
-
-func (x *Colleague) HasIdentifier() bool {
-	if x == nil {
-		return false
-	}
-	return x.Identifier != nil
 }
 
 func (x *Colleague) HasJobLabel() bool {
@@ -281,10 +262,6 @@ func (x *Colleague) HasEmail() bool {
 	return x.Email != nil
 }
 
-func (x *Colleague) ClearIdentifier() {
-	x.Identifier = nil
-}
-
 func (x *Colleague) ClearJobLabel() {
 	x.JobLabel = nil
 }
@@ -317,7 +294,6 @@ type Colleague_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	UserId               int32
-	Identifier           *string
 	Job                  string
 	JobLabel             *string
 	JobGrade             int32
@@ -337,7 +313,6 @@ func (b0 Colleague_builder) Build() *Colleague {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.UserId = b.UserId
-	x.Identifier = b.Identifier
 	x.Job = b.Job
 	x.JobLabel = b.JobLabel
 	x.JobGrade = b.JobGrade
@@ -603,33 +578,29 @@ var File_resources_jobs_colleagues_colleagues_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_colleagues_colleagues_proto_rawDesc = "" +
 	"\n" +
-	"*resources/jobs/colleagues/colleagues.proto\x12\x19resources.jobs.colleagues\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/jobs/labels/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xe4\x05\n" +
+	"*resources/jobs/colleagues/colleagues.proto\x12\x19resources.jobs.colleagues\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/jobs/labels/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb6\x05\n" +
 	"\tColleague\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
-	"alias:\"id\"R\x06userId\x12#\n" +
-	"\n" +
-	"identifier\x18\x02 \x01(\tH\x00R\n" +
-	"identifier\x88\x01\x01\x12\x10\n" +
+	"alias:\"id\"R\x06userId\x12\x10\n" +
 	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x04 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12\x1b\n" +
+	"\tjob_label\x18\x04 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x1b\n" +
 	"\tjob_grade\x18\x05 \x01(\x05R\bjobGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
+	"\x0fjob_grade_label\x18\x06 \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
 	"\tfirstname\x18\a \x01(\tR\tfirstname\x12\x1a\n" +
 	"\blastname\x18\b \x01(\tR\blastname\x12 \n" +
 	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12&\n" +
-	"\fphone_number\x18\f \x01(\tH\x03R\vphoneNumber\x88\x01\x01\x12:\n" +
-	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x04R\x14profilePictureFileId\x88\x01\x01\x12J\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tB\x1c\x9a\x84\x9e\x03\x17alias:\"profile_picture\"H\x05R\x0eprofilePicture\x88\x01\x01\x12]\n" +
+	"\fphone_number\x18\f \x01(\tH\x02R\vphoneNumber\x88\x01\x01\x12:\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x03R\x14profilePictureFileId\x88\x01\x01\x12J\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tB\x1c\x9a\x84\x9e\x03\x17alias:\"profile_picture\"H\x04R\x0eprofilePicture\x88\x01\x01\x12]\n" +
 	"\x05props\x18\x13 \x01(\v2).resources.jobs.colleagues.ColleaguePropsB\x1c\x9a\x84\x9e\x03\x17alias:\"colleague_props\"R\x05props\x12#\n" +
-	"\x05email\x18\x14 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x06R\x05email\x88\x01\x01B\r\n" +
-	"\v_identifierB\f\n" +
+	"\x05email\x18\x14 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x05R\x05email\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\x0f\n" +
 	"\r_phone_numberB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
 	"\x10_profile_pictureB\b\n" +
-	"\x06_email\"\x9f\x04\n" +
+	"\x06_emailJ\x04\b\x02\x10\x03\"\x9f\x04\n" +
 	"\x0eColleagueProps\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12B\n" +

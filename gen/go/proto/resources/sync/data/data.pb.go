@@ -398,7 +398,7 @@ func (b0 DataUserLocations_builder) Build() *DataUserLocations {
 
 type CitizenLocations struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Identifier    string                 `protobuf:"bytes,1,opt,name=identifier,proto3" json:"identifier,omitempty"`
+	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	JobGrade      *int32                 `protobuf:"varint,6,opt,name=job_grade,json=jobGrade,proto3,oneof" json:"job_grade,omitempty"`
 	Coords        *livemap.Coords        `protobuf:"bytes,3,opt,name=coords,proto3" json:"coords,omitempty"`
@@ -433,11 +433,11 @@ func (x *CitizenLocations) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *CitizenLocations) GetIdentifier() string {
+func (x *CitizenLocations) GetUserId() int32 {
 	if x != nil {
-		return x.Identifier
+		return x.UserId
 	}
-	return ""
+	return 0
 }
 
 func (x *CitizenLocations) GetJob() string {
@@ -475,8 +475,8 @@ func (x *CitizenLocations) GetRemove() bool {
 	return false
 }
 
-func (x *CitizenLocations) SetIdentifier(v string) {
-	x.Identifier = v
+func (x *CitizenLocations) SetUserId(v int32) {
+	x.UserId = v
 }
 
 func (x *CitizenLocations) SetJob(v string) {
@@ -524,19 +524,19 @@ func (x *CitizenLocations) ClearCoords() {
 type CitizenLocations_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Identifier string
-	Job        string
-	JobGrade   *int32
-	Coords     *livemap.Coords
-	Hidden     bool
-	Remove     bool
+	UserId   int32
+	Job      string
+	JobGrade *int32
+	Coords   *livemap.Coords
+	Hidden   bool
+	Remove   bool
 }
 
 func (b0 CitizenLocations_builder) Build() *CitizenLocations {
 	m0 := &CitizenLocations{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Identifier = b.Identifier
+	x.UserId = b.UserId
 	x.Job = b.Job
 	x.JobGrade = b.JobGrade
 	x.Coords = b.Coords
@@ -803,7 +803,7 @@ func (b0 DataAccounts_builder) Build() *DataAccounts {
 type DataUser struct {
 	state                protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
+	Identifier           string                 `protobuf:"bytes,2,opt,name=identifier,proto3" json:"identifier,omitempty"`
 	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
@@ -859,8 +859,8 @@ func (x *DataUser) GetUserId() int32 {
 }
 
 func (x *DataUser) GetIdentifier() string {
-	if x != nil && x.Identifier != nil {
-		return *x.Identifier
+	if x != nil {
+		return x.Identifier
 	}
 	return ""
 }
@@ -996,7 +996,7 @@ func (x *DataUser) SetUserId(v int32) {
 }
 
 func (x *DataUser) SetIdentifier(v string) {
-	x.Identifier = &v
+	x.Identifier = v
 }
 
 func (x *DataUser) SetJob(v string) {
@@ -1069,13 +1069,6 @@ func (x *DataUser) SetProfilePictureFileId(v int64) {
 
 func (x *DataUser) SetProfilePicture(v string) {
 	x.ProfilePicture = &v
-}
-
-func (x *DataUser) HasIdentifier() bool {
-	if x == nil {
-		return false
-	}
-	return x.Identifier != nil
 }
 
 func (x *DataUser) HasJobLabel() bool {
@@ -1155,10 +1148,6 @@ func (x *DataUser) HasProfilePicture() bool {
 	return x.ProfilePicture != nil
 }
 
-func (x *DataUser) ClearIdentifier() {
-	x.Identifier = nil
-}
-
 func (x *DataUser) ClearJobLabel() {
 	x.JobLabel = nil
 }
@@ -1207,7 +1196,7 @@ type DataUser_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	UserId               int32
-	Identifier           *string
+	Identifier           string
 	Job                  string
 	JobLabel             *string
 	JobGrade             int32
@@ -1275,11 +1264,9 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\x05users\x18\x01 \x03(\v2%.resources.sync.data.CitizenLocationsR\x05users\x12 \n" +
 	"\tclear_all\x18\x02 \x01(\bH\x00R\bclearAll\x88\x01\x01B\f\n" +
 	"\n" +
-	"_clear_all\"\xd7\x01\n" +
-	"\x10CitizenLocations\x12\x1e\n" +
-	"\n" +
-	"identifier\x18\x01 \x01(\tR\n" +
-	"identifier\x12\x10\n" +
+	"_clear_all\"\xd0\x01\n" +
+	"\x10CitizenLocations\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12 \n" +
 	"\tjob_grade\x18\x06 \x01(\x05H\x00R\bjobGrade\x88\x01\x01\x121\n" +
 	"\x06coords\x18\x03 \x01(\v2\x19.resources.livemap.CoordsR\x06coords\x12\x16\n" +
@@ -1300,33 +1287,32 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"lastCharId\x88\x01\x01B\x0f\n" +
 	"\r_last_char_id\"_\n" +
 	"\fDataAccounts\x12O\n" +
-	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"\xc9\a\n" +
+	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"\xb5\a\n" +
 	"\bDataUser\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12#\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x1e\n" +
 	"\n" +
-	"identifier\x18\x02 \x01(\tH\x00R\n" +
-	"identifier\x88\x01\x01\x12\x10\n" +
+	"identifier\x18\x02 \x01(\tR\n" +
+	"identifier\x12\x10\n" +
 	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x04 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12\x1b\n" +
+	"\tjob_label\x18\x04 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x1b\n" +
 	"\tjob_grade\x18\x05 \x01(\x05R\bjobGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12,\n" +
+	"\x0fjob_grade_label\x18\x06 \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12,\n" +
 	"\x04jobs\x18\x14 \x03(\v2\x18.resources.users.UserJobR\x04jobs\x12\x1c\n" +
 	"\tfirstname\x18\a \x01(\tR\tfirstname\x12\x1f\n" +
-	"\blastname\x18\b \x01(\tH\x03R\blastname\x88\x01\x01\x12 \n" +
+	"\blastname\x18\b \x01(\tH\x02R\blastname\x88\x01\x01\x12 \n" +
 	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12\x15\n" +
 	"\x03sex\x18\n" +
-	" \x01(\tH\x04R\x03sex\x88\x01\x01\x12\x1b\n" +
-	"\x06height\x18\v \x01(\tH\x05R\x06height\x88\x01\x01\x12&\n" +
-	"\fphone_number\x18\f \x01(\tH\x06R\vphoneNumber\x88\x01\x01\x12A\n" +
+	" \x01(\tH\x03R\x03sex\x88\x01\x01\x12\x1b\n" +
+	"\x06height\x18\v \x01(\tH\x04R\x06height\x88\x01\x01\x12&\n" +
+	"\fphone_number\x18\f \x01(\tH\x05R\vphoneNumber\x88\x01\x01\x12A\n" +
 	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberR\fphoneNumbers\x12\x19\n" +
-	"\x05visum\x18\r \x01(\x05H\aR\x05visum\x88\x01\x01\x12\x1f\n" +
-	"\bplaytime\x18\x0e \x01(\x05H\bR\bplaytime\x88\x01\x01\x12;\n" +
-	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsH\tR\x05props\x88\x01\x01\x12=\n" +
+	"\x05visum\x18\r \x01(\x05H\x06R\x05visum\x88\x01\x01\x12\x1f\n" +
+	"\bplaytime\x18\x0e \x01(\x05H\aR\bplaytime\x88\x01\x01\x12;\n" +
+	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsH\bR\x05props\x88\x01\x01\x12=\n" +
 	"\blicenses\x18\x10 \x03(\v2!.resources.users.licenses.LicenseR\blicenses\x12:\n" +
-	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\n" +
-	"R\x14profilePictureFileId\x88\x01\x01\x12,\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tH\vR\x0eprofilePicture\x88\x01\x01B\r\n" +
-	"\v_identifierB\f\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\tR\x14profilePictureFileId\x88\x01\x01\x12,\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tH\n" +
+	"R\x0eprofilePicture\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\v\n" +

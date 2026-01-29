@@ -303,7 +303,7 @@ func (d *Demo) moveUserMarkers(ctx context.Context) {
 					tLocs.Y.AS("y"),
 				).
 				FROM(tLocs).
-				WHERE(tLocs.Identifier.EQ(mysql.String(user.Identifier))).
+				WHERE(tLocs.UserID.EQ(mysql.Int32(user.UserID))).
 				LIMIT(1)
 
 			err := stmt.QueryContext(ctx, d.db, &curr)
@@ -349,13 +349,13 @@ func (d *Demo) moveUserMarkers(ctx context.Context) {
 
 			insertStmt := tLocs.
 				INSERT(
-					tLocs.Identifier,
+					tLocs.UserID,
 					tLocs.X,
 					tLocs.Y,
 					tLocs.Hidden,
 				).
 				VALUES(
-					user,
+					user.UserID,
 					newX,
 					newY,
 					false,

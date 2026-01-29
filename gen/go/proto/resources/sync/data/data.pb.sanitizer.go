@@ -23,9 +23,6 @@ func (m *CitizenLocations) Sanitize() error {
 		}
 	}
 
-	// Field: Identifier
-	m.Identifier = htmlsanitizer.Sanitize(m.Identifier)
-
 	// Field: Job
 	m.Job = htmlsanitizer.Sanitize(m.Job)
 
@@ -127,9 +124,7 @@ func (m *DataUser) Sanitize() error {
 	}
 
 	// Field: Identifier
-	if m.Identifier != nil {
-		*m.Identifier = htmlsanitizer.Sanitize(*m.Identifier)
-	}
+	m.Identifier = htmlsanitizer.Sanitize(m.Identifier)
 
 	// Field: Job
 	m.Job = htmlsanitizer.Sanitize(m.Job)

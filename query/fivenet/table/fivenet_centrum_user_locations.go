@@ -17,14 +17,14 @@ type fivenetCentrumUserLocationsTable struct {
 	mysql.Table
 
 	// Columns
-	Identifier mysql.ColumnString
-	Job        mysql.ColumnString
-	JobGrade   mysql.ColumnInteger
-	X          mysql.ColumnFloat
-	Y          mysql.ColumnFloat
-	Hidden     mysql.ColumnBool
-	UpdatedAt  mysql.ColumnTimestamp
-	Data       mysql.ColumnString
+	UserID    mysql.ColumnInteger
+	Job       mysql.ColumnString
+	JobGrade  mysql.ColumnInteger
+	X         mysql.ColumnFloat
+	Y         mysql.ColumnFloat
+	Hidden    mysql.ColumnBool
+	UpdatedAt mysql.ColumnTimestamp
+	Data      mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -66,31 +66,31 @@ func newFivenetCentrumUserLocationsTable(schemaName, tableName, alias string) *F
 
 func newFivenetCentrumUserLocationsTableImpl(schemaName, tableName, alias string) fivenetCentrumUserLocationsTable {
 	var (
-		IdentifierColumn = mysql.StringColumn("identifier")
-		JobColumn        = mysql.StringColumn("job")
-		JobGradeColumn   = mysql.IntegerColumn("job_grade")
-		XColumn          = mysql.FloatColumn("x")
-		YColumn          = mysql.FloatColumn("y")
-		HiddenColumn     = mysql.BoolColumn("hidden")
-		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
-		DataColumn       = mysql.StringColumn("data")
-		allColumns       = mysql.ColumnList{IdentifierColumn, JobColumn, JobGradeColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn, DataColumn}
-		mutableColumns   = mysql.ColumnList{JobColumn, JobGradeColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn, DataColumn}
-		defaultColumns   = mysql.ColumnList{HiddenColumn, UpdatedAtColumn}
+		UserIDColumn    = mysql.IntegerColumn("user_id")
+		JobColumn       = mysql.StringColumn("job")
+		JobGradeColumn  = mysql.IntegerColumn("job_grade")
+		XColumn         = mysql.FloatColumn("x")
+		YColumn         = mysql.FloatColumn("y")
+		HiddenColumn    = mysql.BoolColumn("hidden")
+		UpdatedAtColumn = mysql.TimestampColumn("updated_at")
+		DataColumn      = mysql.StringColumn("data")
+		allColumns      = mysql.ColumnList{UserIDColumn, JobColumn, JobGradeColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn, DataColumn}
+		mutableColumns  = mysql.ColumnList{UserIDColumn, JobColumn, JobGradeColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn, DataColumn}
+		defaultColumns  = mysql.ColumnList{HiddenColumn, UpdatedAtColumn}
 	)
 
 	return fivenetCentrumUserLocationsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		Identifier: IdentifierColumn,
-		Job:        JobColumn,
-		JobGrade:   JobGradeColumn,
-		X:          XColumn,
-		Y:          YColumn,
-		Hidden:     HiddenColumn,
-		UpdatedAt:  UpdatedAtColumn,
-		Data:       DataColumn,
+		UserID:    UserIDColumn,
+		Job:       JobColumn,
+		JobGrade:  JobGradeColumn,
+		X:         XColumn,
+		Y:         YColumn,
+		Hidden:    HiddenColumn,
+		UpdatedAt: UpdatedAtColumn,
+		Data:      DataColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

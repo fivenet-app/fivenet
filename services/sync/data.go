@@ -742,7 +742,7 @@ func (s *Server) handleUserLocations(
 	if data.UserLocations.ClearAll != nil && data.UserLocations.GetClearAll() {
 		stmt := tLocations.
 			DELETE().
-			WHERE(tLocations.Identifier.IS_NOT_NULL().OR(tLocations.Identifier.IS_NULL()))
+			WHERE(tLocations.UserID.IS_NOT_NULL().OR(tLocations.UserID.IS_NULL()))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return 0, fmt.Errorf("failed to execute user locations clear all statement. %w", err)
@@ -751,7 +751,7 @@ func (s *Server) handleUserLocations(
 
 	stmt := tLocations.
 		INSERT(
-			tLocations.Identifier,
+			tLocations.UserID,
 			tLocations.Job,
 			tLocations.JobGrade,
 			tLocations.X,
@@ -760,11 +760,11 @@ func (s *Server) handleUserLocations(
 		)
 
 	atLeastOne := false
-	toDelete := []string{}
+	toDelete := []int32{}
 	for _, location := range data.UserLocations.GetUsers() {
 		// Collect user locations are marked for removal
 		if location.GetRemove() {
-			toDelete = append(toDelete, location.GetIdentifier())
+			toDelete = append(toDelete, location.GetUserId())
 			continue
 		}
 
@@ -775,7 +775,7 @@ func (s *Server) handleUserLocations(
 
 		stmt = stmt.
 			VALUES(
-				location.GetIdentifier(),
+				location.GetUserId(),
 				location.GetJob(),
 				jg,
 				location.GetCoords().GetX(),
@@ -817,14 +817,14 @@ func (s *Server) handleUserLocations(
 
 	// Delete any user locations that have been marked for removal
 	if len(toDelete) > 0 {
-		identifiers := []mysql.Expression{}
-		for _, identifier := range toDelete {
-			identifiers = append(identifiers, mysql.String(identifier))
+		userIds := []mysql.Expression{}
+		for _, userId := range toDelete {
+			userIds = append(userIds, mysql.Int32(userId))
 		}
 
 		delStmt := tLocations.
 			DELETE().
-			WHERE(tLocations.Identifier.IN(identifiers...)).
+			WHERE(tLocations.UserID.IN(userIds...)).
 			LIMIT(int64(len(toDelete)))
 
 		res, err := delStmt.ExecContext(ctx, s.db)

@@ -29,7 +29,6 @@ const (
 type Colleague struct {
 	state                           protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3"`
-	xxx_hidden_Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof"`
 	xxx_hidden_Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3"`
 	xxx_hidden_JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof"`
 	xxx_hidden_JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3"`
@@ -78,16 +77,6 @@ func (x *Colleague) GetUserId() int32 {
 		return x.xxx_hidden_UserId
 	}
 	return 0
-}
-
-func (x *Colleague) GetIdentifier() string {
-	if x != nil {
-		if x.xxx_hidden_Identifier != nil {
-			return *x.xxx_hidden_Identifier
-		}
-		return ""
-	}
-	return ""
 }
 
 func (x *Colleague) GetJob() string {
@@ -193,18 +182,13 @@ func (x *Colleague) SetUserId(v int32) {
 	x.xxx_hidden_UserId = v
 }
 
-func (x *Colleague) SetIdentifier(v string) {
-	x.xxx_hidden_Identifier = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 14)
-}
-
 func (x *Colleague) SetJob(v string) {
 	x.xxx_hidden_Job = v
 }
 
 func (x *Colleague) SetJobLabel(v string) {
 	x.xxx_hidden_JobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 13)
 }
 
 func (x *Colleague) SetJobGrade(v int32) {
@@ -213,7 +197,7 @@ func (x *Colleague) SetJobGrade(v int32) {
 
 func (x *Colleague) SetJobGradeLabel(v string) {
 	x.xxx_hidden_JobGradeLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 13)
 }
 
 func (x *Colleague) SetFirstname(v string) {
@@ -230,17 +214,17 @@ func (x *Colleague) SetDateofbirth(v string) {
 
 func (x *Colleague) SetPhoneNumber(v string) {
 	x.xxx_hidden_PhoneNumber = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 13)
 }
 
 func (x *Colleague) SetProfilePictureFileId(v int64) {
 	x.xxx_hidden_ProfilePictureFileId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 13)
 }
 
 func (x *Colleague) SetProfilePicture(v string) {
 	x.xxx_hidden_ProfilePicture = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 13)
 }
 
 func (x *Colleague) SetProps(v *ColleagueProps) {
@@ -249,49 +233,42 @@ func (x *Colleague) SetProps(v *ColleagueProps) {
 
 func (x *Colleague) SetEmail(v string) {
 	x.xxx_hidden_Email = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 14)
-}
-
-func (x *Colleague) HasIdentifier() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 13)
 }
 
 func (x *Colleague) HasJobLabel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *Colleague) HasJobGradeLabel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *Colleague) HasPhoneNumber() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *Colleague) HasProfilePictureFileId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
 }
 
 func (x *Colleague) HasProfilePicture() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
 }
 
 func (x *Colleague) HasProps() bool {
@@ -305,36 +282,31 @@ func (x *Colleague) HasEmail() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 13)
-}
-
-func (x *Colleague) ClearIdentifier() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Identifier = nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 12)
 }
 
 func (x *Colleague) ClearJobLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
 	x.xxx_hidden_JobLabel = nil
 }
 
 func (x *Colleague) ClearJobGradeLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
 	x.xxx_hidden_JobGradeLabel = nil
 }
 
 func (x *Colleague) ClearPhoneNumber() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
 	x.xxx_hidden_PhoneNumber = nil
 }
 
 func (x *Colleague) ClearProfilePictureFileId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 10)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
 	x.xxx_hidden_ProfilePictureFileId = 0
 }
 
 func (x *Colleague) ClearProfilePicture() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 10)
 	x.xxx_hidden_ProfilePicture = nil
 }
 
@@ -343,7 +315,7 @@ func (x *Colleague) ClearProps() {
 }
 
 func (x *Colleague) ClearEmail() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 13)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 12)
 	x.xxx_hidden_Email = nil
 }
 
@@ -351,7 +323,6 @@ type Colleague_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	UserId               int32
-	Identifier           *string
 	Job                  string
 	JobLabel             *string
 	JobGrade             int32
@@ -371,38 +342,34 @@ func (b0 Colleague_builder) Build() *Colleague {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_UserId = b.UserId
-	if b.Identifier != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 14)
-		x.xxx_hidden_Identifier = b.Identifier
-	}
 	x.xxx_hidden_Job = b.Job
 	if b.JobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 13)
 		x.xxx_hidden_JobLabel = b.JobLabel
 	}
 	x.xxx_hidden_JobGrade = b.JobGrade
 	if b.JobGradeLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 13)
 		x.xxx_hidden_JobGradeLabel = b.JobGradeLabel
 	}
 	x.xxx_hidden_Firstname = b.Firstname
 	x.xxx_hidden_Lastname = b.Lastname
 	x.xxx_hidden_Dateofbirth = b.Dateofbirth
 	if b.PhoneNumber != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 13)
 		x.xxx_hidden_PhoneNumber = b.PhoneNumber
 	}
 	if b.ProfilePictureFileId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 13)
 		x.xxx_hidden_ProfilePictureFileId = *b.ProfilePictureFileId
 	}
 	if b.ProfilePicture != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 13)
 		x.xxx_hidden_ProfilePicture = b.ProfilePicture
 	}
 	x.xxx_hidden_Props = b.Props
 	if b.Email != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 13)
 		x.xxx_hidden_Email = b.Email
 	}
 	return m0
@@ -684,33 +651,29 @@ var File_resources_jobs_colleagues_colleagues_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_colleagues_colleagues_proto_rawDesc = "" +
 	"\n" +
-	"*resources/jobs/colleagues/colleagues.proto\x12\x19resources.jobs.colleagues\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/jobs/labels/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xe4\x05\n" +
+	"*resources/jobs/colleagues/colleagues.proto\x12\x19resources.jobs.colleagues\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/jobs/labels/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb6\x05\n" +
 	"\tColleague\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
-	"alias:\"id\"R\x06userId\x12#\n" +
-	"\n" +
-	"identifier\x18\x02 \x01(\tH\x00R\n" +
-	"identifier\x88\x01\x01\x12\x10\n" +
+	"alias:\"id\"R\x06userId\x12\x10\n" +
 	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x04 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12\x1b\n" +
+	"\tjob_label\x18\x04 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x1b\n" +
 	"\tjob_grade\x18\x05 \x01(\x05R\bjobGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
+	"\x0fjob_grade_label\x18\x06 \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
 	"\tfirstname\x18\a \x01(\tR\tfirstname\x12\x1a\n" +
 	"\blastname\x18\b \x01(\tR\blastname\x12 \n" +
 	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12&\n" +
-	"\fphone_number\x18\f \x01(\tH\x03R\vphoneNumber\x88\x01\x01\x12:\n" +
-	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x04R\x14profilePictureFileId\x88\x01\x01\x12J\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tB\x1c\x9a\x84\x9e\x03\x17alias:\"profile_picture\"H\x05R\x0eprofilePicture\x88\x01\x01\x12]\n" +
+	"\fphone_number\x18\f \x01(\tH\x02R\vphoneNumber\x88\x01\x01\x12:\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x03R\x14profilePictureFileId\x88\x01\x01\x12J\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tB\x1c\x9a\x84\x9e\x03\x17alias:\"profile_picture\"H\x04R\x0eprofilePicture\x88\x01\x01\x12]\n" +
 	"\x05props\x18\x13 \x01(\v2).resources.jobs.colleagues.ColleaguePropsB\x1c\x9a\x84\x9e\x03\x17alias:\"colleague_props\"R\x05props\x12#\n" +
-	"\x05email\x18\x14 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x06R\x05email\x88\x01\x01B\r\n" +
-	"\v_identifierB\f\n" +
+	"\x05email\x18\x14 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x05R\x05email\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\x0f\n" +
 	"\r_phone_numberB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
 	"\x10_profile_pictureB\b\n" +
-	"\x06_email\"\x9f\x04\n" +
+	"\x06_emailJ\x04\b\x02\x10\x03\"\x9f\x04\n" +
 	"\x0eColleagueProps\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12B\n" +

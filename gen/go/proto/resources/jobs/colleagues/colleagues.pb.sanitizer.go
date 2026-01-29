@@ -25,11 +25,6 @@ func (m *Colleague) Sanitize() error {
 	// Field: Firstname
 	m.Firstname = htmlsanitizer.Sanitize(m.Firstname)
 
-	// Field: Identifier
-	if m.Identifier != nil {
-		*m.Identifier = htmlsanitizer.Sanitize(*m.Identifier)
-	}
-
 	// Field: Job
 	m.Job = htmlsanitizer.Sanitize(m.Job)
 

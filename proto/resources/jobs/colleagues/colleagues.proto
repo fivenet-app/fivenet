@@ -15,7 +15,8 @@ message Colleague {
     (buf.validate.field).int32.gt = 0,
     (tagger.tags) = "alias:\"id\""
   ];
-  optional string identifier = 2 [(buf.validate.field).string.max_len = 64];
+  // Was used for identifier in the past, now deprecated
+  reserved 2;
   string job = 3 [(buf.validate.field).string.max_len = 20];
   optional string job_label = 4 [(buf.validate.field).string.max_len = 50];
   int32 job_grade = 5 [(buf.validate.field).int32.gte = 0];

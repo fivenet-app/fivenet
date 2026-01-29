@@ -214,7 +214,7 @@ func TestRefreshUserLocations(t *testing.T) {
 				return nil
 			}
 
-			stmt := tLocs.SELECT(mysql.COUNT(tLocs.Identifier).AS("total_count"))
+			stmt := tLocs.SELECT(mysql.COUNT(tLocs.UserID).AS("total_count"))
 			var dest database.DataCount
 			if err := stmt.QueryContext(ctx, db, &dest); err != nil {
 				return err
@@ -247,7 +247,7 @@ func TestRefreshUserLocations(t *testing.T) {
 func insertCitizenLocations(
 	ctx context.Context,
 	db *sql.DB,
-	identifier string,
+	userId int32,
 	job string,
 	grade int32,
 	x float64,
@@ -256,7 +256,7 @@ func insertCitizenLocations(
 ) error {
 	stmt := tLocs.
 		INSERT(
-			tLocs.Identifier,
+			tLocs.UserID,
 			tLocs.Job,
 			tLocs.JobGrade,
 			tLocs.X,
@@ -264,7 +264,7 @@ func insertCitizenLocations(
 			tLocs.Hidden,
 		).
 		VALUES(
-			identifier,
+			userId,
 			job,
 			grade,
 			x,
@@ -287,7 +287,7 @@ func insertCitizenLocations(
 func removeUserLocations(ctx context.Context, db *sql.DB) error {
 	stmt := tLocs.
 		DELETE().
-		WHERE(tLocs.Identifier.IS_NOT_NULL().OR(tLocs.Identifier.IS_NULL()))
+		WHERE(tLocs.UserID.IS_NOT_NULL().OR(tLocs.UserID.IS_NULL()))
 
 	_, err := stmt.ExecContext(ctx, db)
 

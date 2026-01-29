@@ -3,9 +3,9 @@ syntax = "proto3";
 package resources.users;
 
 import "buf/validate/validate.proto";
+import "resources/timestamp/timestamp.proto";
 import "resources/users/licenses/licenses.proto";
 import "resources/users/props/props.proto";
-import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users;users";
@@ -15,7 +15,8 @@ message UserShort {
     (buf.validate.field).int32.gt = 0,
     (tagger.tags) = "alias:\"id\""
   ];
-  optional string identifier = 2 [(buf.validate.field).string.max_len = 64];
+  // Was used for identifier in the past, now deprecated
+  reserved 2;
 
   string job = 3 [
     (buf.validate.field).string.max_len = 20,
@@ -56,7 +57,7 @@ message User {
     (buf.validate.field).int32.gt = 0,
     (tagger.tags) = "alias:\"id\""
   ];
-  optional string identifier = 2 [(buf.validate.field).string.max_len = 64];
+  string identifier = 2 [(buf.validate.field).string.max_len = 64];
 
   string job = 3 [
     (buf.validate.field).string.max_len = 20,

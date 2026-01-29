@@ -29,7 +29,6 @@ const (
 type UserShort struct {
 	state                           protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3"`
-	xxx_hidden_Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof"`
 	xxx_hidden_Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3"`
 	xxx_hidden_JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof"`
 	xxx_hidden_JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3"`
@@ -76,16 +75,6 @@ func (x *UserShort) GetUserId() int32 {
 		return x.xxx_hidden_UserId
 	}
 	return 0
-}
-
-func (x *UserShort) GetIdentifier() string {
-	if x != nil {
-		if x.xxx_hidden_Identifier != nil {
-			return *x.xxx_hidden_Identifier
-		}
-		return ""
-	}
-	return ""
 }
 
 func (x *UserShort) GetJob() string {
@@ -174,18 +163,13 @@ func (x *UserShort) SetUserId(v int32) {
 	x.xxx_hidden_UserId = v
 }
 
-func (x *UserShort) SetIdentifier(v string) {
-	x.xxx_hidden_Identifier = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 12)
-}
-
 func (x *UserShort) SetJob(v string) {
 	x.xxx_hidden_Job = v
 }
 
 func (x *UserShort) SetJobLabel(v string) {
 	x.xxx_hidden_JobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 12)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 11)
 }
 
 func (x *UserShort) SetJobGrade(v int32) {
@@ -194,7 +178,7 @@ func (x *UserShort) SetJobGrade(v int32) {
 
 func (x *UserShort) SetJobGradeLabel(v string) {
 	x.xxx_hidden_JobGradeLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 12)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 11)
 }
 
 func (x *UserShort) SetFirstname(v string) {
@@ -211,88 +195,76 @@ func (x *UserShort) SetDateofbirth(v string) {
 
 func (x *UserShort) SetPhoneNumber(v string) {
 	x.xxx_hidden_PhoneNumber = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 12)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 11)
 }
 
 func (x *UserShort) SetProfilePictureFileId(v int64) {
 	x.xxx_hidden_ProfilePictureFileId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 12)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 11)
 }
 
 func (x *UserShort) SetProfilePicture(v string) {
 	x.xxx_hidden_ProfilePicture = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 12)
-}
-
-func (x *UserShort) HasIdentifier() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 11)
 }
 
 func (x *UserShort) HasJobLabel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *UserShort) HasJobGradeLabel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *UserShort) HasPhoneNumber() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *UserShort) HasProfilePictureFileId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
 }
 
 func (x *UserShort) HasProfilePicture() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
-}
-
-func (x *UserShort) ClearIdentifier() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Identifier = nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
 }
 
 func (x *UserShort) ClearJobLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
 	x.xxx_hidden_JobLabel = nil
 }
 
 func (x *UserShort) ClearJobGradeLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
 	x.xxx_hidden_JobGradeLabel = nil
 }
 
 func (x *UserShort) ClearPhoneNumber() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
 	x.xxx_hidden_PhoneNumber = nil
 }
 
 func (x *UserShort) ClearProfilePictureFileId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 10)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
 	x.xxx_hidden_ProfilePictureFileId = 0
 }
 
 func (x *UserShort) ClearProfilePicture() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 10)
 	x.xxx_hidden_ProfilePicture = nil
 }
 
@@ -300,7 +272,6 @@ type UserShort_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	UserId               int32
-	Identifier           *string
 	Job                  string
 	JobLabel             *string
 	JobGrade             int32
@@ -318,33 +289,29 @@ func (b0 UserShort_builder) Build() *UserShort {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_UserId = b.UserId
-	if b.Identifier != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 12)
-		x.xxx_hidden_Identifier = b.Identifier
-	}
 	x.xxx_hidden_Job = b.Job
 	if b.JobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 12)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 11)
 		x.xxx_hidden_JobLabel = b.JobLabel
 	}
 	x.xxx_hidden_JobGrade = b.JobGrade
 	if b.JobGradeLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 12)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 11)
 		x.xxx_hidden_JobGradeLabel = b.JobGradeLabel
 	}
 	x.xxx_hidden_Firstname = b.Firstname
 	x.xxx_hidden_Lastname = b.Lastname
 	x.xxx_hidden_Dateofbirth = b.Dateofbirth
 	if b.PhoneNumber != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 12)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 11)
 		x.xxx_hidden_PhoneNumber = b.PhoneNumber
 	}
 	if b.ProfilePictureFileId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 12)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 11)
 		x.xxx_hidden_ProfilePictureFileId = *b.ProfilePictureFileId
 	}
 	if b.ProfilePicture != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 12)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 11)
 		x.xxx_hidden_ProfilePicture = b.ProfilePicture
 	}
 	return m0
@@ -353,7 +320,7 @@ func (b0 UserShort_builder) Build() *UserShort {
 type User struct {
 	state                           protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3"`
-	xxx_hidden_Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof"`
+	xxx_hidden_Identifier           string                 `protobuf:"bytes,2,opt,name=identifier,proto3"`
 	xxx_hidden_Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3"`
 	xxx_hidden_JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof"`
 	xxx_hidden_JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3"`
@@ -412,10 +379,7 @@ func (x *User) GetUserId() int32 {
 
 func (x *User) GetIdentifier() string {
 	if x != nil {
-		if x.xxx_hidden_Identifier != nil {
-			return *x.xxx_hidden_Identifier
-		}
-		return ""
+		return x.xxx_hidden_Identifier
 	}
 	return ""
 }
@@ -575,8 +539,7 @@ func (x *User) SetUserId(v int32) {
 }
 
 func (x *User) SetIdentifier(v string) {
-	x.xxx_hidden_Identifier = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 20)
+	x.xxx_hidden_Identifier = v
 }
 
 func (x *User) SetJob(v string) {
@@ -660,13 +623,6 @@ func (x *User) SetProfilePicture(v string) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 19, 20)
 }
 
-func (x *User) HasIdentifier() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
 func (x *User) HasJobLabel() bool {
 	if x == nil {
 		return false
@@ -737,11 +693,6 @@ func (x *User) HasProfilePicture() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 19)
 }
 
-func (x *User) ClearIdentifier() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Identifier = nil
-}
-
 func (x *User) ClearJobLabel() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
 	x.xxx_hidden_JobLabel = nil
@@ -795,7 +746,7 @@ type User_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	UserId               int32
-	Identifier           *string
+	Identifier           string
 	Job                  string
 	JobLabel             *string
 	JobGrade             int32
@@ -821,10 +772,7 @@ func (b0 User_builder) Build() *User {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_UserId = b.UserId
-	if b.Identifier != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 20)
-		x.xxx_hidden_Identifier = b.Identifier
-	}
+	x.xxx_hidden_Identifier = b.Identifier
 	x.xxx_hidden_Job = b.Job
 	if b.JobLabel != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 20)
@@ -1151,56 +1099,51 @@ var File_resources_users_user_proto protoreflect.FileDescriptor
 
 const file_resources_users_user_proto_rawDesc = "" +
 	"\n" +
-	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a'resources/users/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb8\x04\n" +
+	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\x8a\x04\n" +
 	"\tUserShort\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
-	"alias:\"id\"R\x06userId\x12#\n" +
-	"\n" +
-	"identifier\x18\x02 \x01(\tH\x00R\n" +
-	"identifier\x88\x01\x01\x12\x10\n" +
+	"alias:\"id\"R\x06userId\x12\x10\n" +
 	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x04 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12\x1b\n" +
+	"\tjob_label\x18\x04 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x1b\n" +
 	"\tjob_grade\x18\x05 \x01(\x05R\bjobGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
+	"\x0fjob_grade_label\x18\x06 \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
 	"\tfirstname\x18\a \x01(\tR\tfirstname\x12\x1a\n" +
 	"\blastname\x18\b \x01(\tR\blastname\x12 \n" +
 	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12&\n" +
-	"\fphone_number\x18\f \x01(\tH\x03R\vphoneNumber\x88\x01\x01\x12:\n" +
-	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x04R\x14profilePictureFileId\x88\x01\x01\x12,\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tH\x05R\x0eprofilePicture\x88\x01\x01B\r\n" +
-	"\v_identifierB\f\n" +
+	"\fphone_number\x18\f \x01(\tH\x02R\vphoneNumber\x88\x01\x01\x12:\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x03R\x14profilePictureFileId\x88\x01\x01\x12,\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tH\x04R\x0eprofilePicture\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\x0f\n" +
 	"\r_phone_numberB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
-	"\x10_profile_picture\"\xf2\a\n" +
+	"\x10_profile_pictureJ\x04\b\x02\x10\x03\"\xde\a\n" +
 	"\x04User\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
-	"alias:\"id\"R\x06userId\x12#\n" +
+	"alias:\"id\"R\x06userId\x12\x1e\n" +
 	"\n" +
-	"identifier\x18\x02 \x01(\tH\x00R\n" +
-	"identifier\x88\x01\x01\x12\x10\n" +
+	"identifier\x18\x02 \x01(\tR\n" +
+	"identifier\x12\x10\n" +
 	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x04 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12\x1b\n" +
+	"\tjob_label\x18\x04 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x1b\n" +
 	"\tjob_grade\x18\x05 \x01(\x05R\bjobGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12,\n" +
+	"\x0fjob_grade_label\x18\x06 \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12,\n" +
 	"\x04jobs\x18\x14 \x03(\v2\x18.resources.users.UserJobR\x04jobs\x12\x1c\n" +
 	"\tfirstname\x18\a \x01(\tR\tfirstname\x12\x1a\n" +
 	"\blastname\x18\b \x01(\tR\blastname\x12 \n" +
 	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12\x15\n" +
 	"\x03sex\x18\n" +
-	" \x01(\tH\x03R\x03sex\x88\x01\x01\x12\x1b\n" +
-	"\x06height\x18\v \x01(\tH\x04R\x06height\x88\x01\x01\x12&\n" +
-	"\fphone_number\x18\f \x01(\tH\x05R\vphoneNumber\x88\x01\x01\x12A\n" +
+	" \x01(\tH\x02R\x03sex\x88\x01\x01\x12\x1b\n" +
+	"\x06height\x18\v \x01(\tH\x03R\x06height\x88\x01\x01\x12&\n" +
+	"\fphone_number\x18\f \x01(\tH\x04R\vphoneNumber\x88\x01\x01\x12A\n" +
 	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberR\fphoneNumbers\x12\x19\n" +
-	"\x05visum\x18\r \x01(\x05H\x06R\x05visum\x88\x01\x01\x12\x1f\n" +
-	"\bplaytime\x18\x0e \x01(\x05H\aR\bplaytime\x88\x01\x01\x12W\n" +
+	"\x05visum\x18\r \x01(\x05H\x05R\x05visum\x88\x01\x01\x12\x1f\n" +
+	"\bplaytime\x18\x0e \x01(\x05H\x06R\bplaytime\x88\x01\x01\x12W\n" +
 	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsB\x1f\x9a\x84\x9e\x03\x1aalias:\"fivenet_user_props\"R\x05props\x12Y\n" +
 	"\blicenses\x18\x10 \x03(\v2!.resources.users.licenses.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user_licenses\"R\blicenses\x12:\n" +
-	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\bR\x14profilePictureFileId\x88\x01\x01\x12,\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tH\tR\x0eprofilePicture\x88\x01\x01B\r\n" +
-	"\v_identifierB\f\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\aR\x14profilePictureFileId\x88\x01\x01\x12,\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tH\bR\x0eprofilePicture\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\x06\n" +

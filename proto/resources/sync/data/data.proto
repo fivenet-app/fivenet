@@ -39,7 +39,7 @@ message DataUserLocations {
 }
 
 message CitizenLocations {
-  string identifier = 1 [(buf.validate.field).string.max_len = 64];
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
   string job = 2 [(buf.validate.field).string.max_len = 20];
   optional int32 job_grade = 6 [(buf.validate.field).int32.gte = 0];
   resources.livemap.Coords coords = 3 [(buf.validate.field).required = true];
@@ -70,7 +70,7 @@ message DataUser {
   int32 user_id = 1 [
     (buf.validate.field).int32.gt = 0
   ];
-  optional string identifier = 2 [(buf.validate.field).string.max_len = 64];
+  string identifier = 2 [(buf.validate.field).string.max_len = 64];
 
   string job = 3 [
     (buf.validate.field).string.max_len = 20,

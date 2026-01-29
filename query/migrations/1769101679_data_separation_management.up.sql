@@ -132,19 +132,14 @@ ALTER TABLE `fivenet_accounts` DROP COLUMN `superuser`;
 -- Table: `fivenet_accounts` - Add `groups` column to store JSON array of group names (this allows for multiple groups per account instead of per user as before)
 ALTER TABLE `fivenet_accounts` ADD COLUMN `groups` LONGTEXT DEFAULT NULL AFTER `license`;
 
--- Table: `fivenet_user_external`
-CREATE TABLE `fivenet_user_external` (
-  `user_id` int(11) NOT NULL,
+-- Table: `fivenet_centrum_user_locations` - Add `user_id` column and foreign key constraint to `fivenet_user`
+TRUNCATE `fivenet_centrum_user_locations`;
 
-  `source_updated_at` datetime(3) DEFAULT NULL,
-  `last_synced_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+ALTER TABLE `fivenet_centrum_user_locations` DROP FOREIGN KEY `fk_fivenet_centrum_user_locations_identifier`;
+ALTER TABLE `fivenet_centrum_user_locations` DROP PRIMARY KEY;
+ALTER TABLE `fivenet_centrum_user_locations` DROP COLUMN `identifier`;
 
-  `data_json` json NOT NULL,
-  `data_hash` binary(32) DEFAULT NULL,
-
-  PRIMARY KEY (`user_id`),
-  KEY `idx_last_synced_at` (`last_synced_at`),
-  CONSTRAINT `fk_fivenet_user_external_user_id` FOREIGN KEY (`user_id`) REFERENCES `fivenet_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
+ALTER TABLE `fivenet_centrum_user_locations` ADD COLUMN `user_id` int(11) NOT NULL FIRST;
+ALTER TABLE `fivenet_centrum_user_locations` ADD CONSTRAINT `fk_fivenet_centrum_user_locations_user_id` FOREIGN KEY (`user_id`) REFERENCES `fivenet_user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 COMMIT;

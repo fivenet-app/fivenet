@@ -591,7 +591,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user_id` | [int32](#int32) |  |  |
-| `identifier` | [string](#string) | optional |  |
+| `identifier` | [string](#string) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `job_grade` | [int32](#int32) |  |  |
@@ -636,7 +636,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user_id` | [int32](#int32) |  |  |
-| `identifier` | [string](#string) | optional |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `job_grade` | [int32](#int32) |  |  |
@@ -1276,7 +1275,6 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user_id` | [int32](#int32) |  |  |
-| `identifier` | [string](#string) | optional |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `job_grade` | [int32](#int32) |  |  |
@@ -6473,7 +6471,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `identifier` | [string](#string) |  |  |
+| `user_id` | [int32](#int32) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_grade` | [int32](#int32) | optional |  |
 | `coords` | [resources.livemap.Coords](#resourceslivemapCoords) |  |  |
@@ -6536,7 +6534,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user_id` | [int32](#int32) |  |  |
-| `identifier` | [string](#string) | optional |  |
+| `identifier` | [string](#string) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `job_grade` | [int32](#int32) |  |  |

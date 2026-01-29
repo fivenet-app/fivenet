@@ -82,9 +82,9 @@ export interface DataUserLocations {
  */
 export interface CitizenLocations {
     /**
-     * @generated from protobuf field: string identifier = 1
+     * @generated from protobuf field: int32 user_id = 1
      */
-    identifier: string;
+    userId: number;
     /**
      * @generated from protobuf field: string job = 2
      */
@@ -158,9 +158,9 @@ export interface DataUser {
      */
     userId: number;
     /**
-     * @generated from protobuf field: optional string identifier = 2
+     * @generated from protobuf field: string identifier = 2
      */
-    identifier?: string;
+    identifier: string;
     /**
      * @generated from protobuf field: string job = 3
      */
@@ -527,7 +527,7 @@ export const DataUserLocations = new DataUserLocations$Type();
 class CitizenLocations$Type extends MessageType<CitizenLocations> {
     constructor() {
         super("resources.sync.data.CitizenLocations", [
-            { no: 1, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 6, name: "job_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 3, name: "coords", kind: "message", T: () => Coords, options: { "buf.validate.field": { required: true } } },
@@ -537,7 +537,7 @@ class CitizenLocations$Type extends MessageType<CitizenLocations> {
     }
     create(value?: PartialMessage<CitizenLocations>): CitizenLocations {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.identifier = "";
+        message.userId = 0;
         message.job = "";
         message.hidden = false;
         message.remove = false;
@@ -550,8 +550,8 @@ class CitizenLocations$Type extends MessageType<CitizenLocations> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string identifier */ 1:
-                    message.identifier = reader.string();
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
                     break;
                 case /* string job */ 2:
                     message.job = reader.string();
@@ -580,9 +580,9 @@ class CitizenLocations$Type extends MessageType<CitizenLocations> {
         return message;
     }
     internalBinaryWrite(message: CitizenLocations, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string identifier = 1; */
-        if (message.identifier !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.identifier);
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
         /* string job = 2; */
         if (message.job !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.job);
@@ -816,7 +816,7 @@ class DataUser$Type extends MessageType<DataUser> {
     constructor() {
         super("resources.sync.data.DataUser", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 2, name: "identifier", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 2, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 3, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { maxLen: "20" } } } },
             { no: 4, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 5, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", int32: { gte: 0 } } } },
@@ -840,6 +840,7 @@ class DataUser$Type extends MessageType<DataUser> {
     create(value?: PartialMessage<DataUser>): DataUser {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userId = 0;
+        message.identifier = "";
         message.job = "";
         message.jobGrade = 0;
         message.jobs = [];
@@ -859,7 +860,7 @@ class DataUser$Type extends MessageType<DataUser> {
                 case /* int32 user_id */ 1:
                     message.userId = reader.int32();
                     break;
-                case /* optional string identifier */ 2:
+                case /* string identifier */ 2:
                     message.identifier = reader.string();
                     break;
                 case /* string job */ 3:
@@ -931,8 +932,8 @@ class DataUser$Type extends MessageType<DataUser> {
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
-        /* optional string identifier = 2; */
-        if (message.identifier !== undefined)
+        /* string identifier = 2; */
+        if (message.identifier !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.identifier);
         /* string job = 3; */
         if (message.job !== "")

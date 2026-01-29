@@ -29,7 +29,6 @@ const (
 type UserShort struct {
 	state                protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
-	Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
 	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
@@ -74,13 +73,6 @@ func (x *UserShort) GetUserId() int32 {
 		return x.UserId
 	}
 	return 0
-}
-
-func (x *UserShort) GetIdentifier() string {
-	if x != nil && x.Identifier != nil {
-		return *x.Identifier
-	}
-	return ""
 }
 
 func (x *UserShort) GetJob() string {
@@ -157,10 +149,6 @@ func (x *UserShort) SetUserId(v int32) {
 	x.UserId = v
 }
 
-func (x *UserShort) SetIdentifier(v string) {
-	x.Identifier = &v
-}
-
 func (x *UserShort) SetJob(v string) {
 	x.Job = v
 }
@@ -201,13 +189,6 @@ func (x *UserShort) SetProfilePicture(v string) {
 	x.ProfilePicture = &v
 }
 
-func (x *UserShort) HasIdentifier() bool {
-	if x == nil {
-		return false
-	}
-	return x.Identifier != nil
-}
-
 func (x *UserShort) HasJobLabel() bool {
 	if x == nil {
 		return false
@@ -243,10 +224,6 @@ func (x *UserShort) HasProfilePicture() bool {
 	return x.ProfilePicture != nil
 }
 
-func (x *UserShort) ClearIdentifier() {
-	x.Identifier = nil
-}
-
 func (x *UserShort) ClearJobLabel() {
 	x.JobLabel = nil
 }
@@ -271,7 +248,6 @@ type UserShort_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	UserId               int32
-	Identifier           *string
 	Job                  string
 	JobLabel             *string
 	JobGrade             int32
@@ -289,7 +265,6 @@ func (b0 UserShort_builder) Build() *UserShort {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.UserId = b.UserId
-	x.Identifier = b.Identifier
 	x.Job = b.Job
 	x.JobLabel = b.JobLabel
 	x.JobGrade = b.JobGrade
@@ -306,7 +281,7 @@ func (b0 UserShort_builder) Build() *UserShort {
 type User struct {
 	state                protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`
-	Identifier           *string                `protobuf:"bytes,2,opt,name=identifier,proto3,oneof" json:"identifier,omitempty"`
+	Identifier           string                 `protobuf:"bytes,2,opt,name=identifier,proto3" json:"identifier,omitempty"`
 	Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
@@ -362,8 +337,8 @@ func (x *User) GetUserId() int32 {
 }
 
 func (x *User) GetIdentifier() string {
-	if x != nil && x.Identifier != nil {
-		return *x.Identifier
+	if x != nil {
+		return x.Identifier
 	}
 	return ""
 }
@@ -499,7 +474,7 @@ func (x *User) SetUserId(v int32) {
 }
 
 func (x *User) SetIdentifier(v string) {
-	x.Identifier = &v
+	x.Identifier = v
 }
 
 func (x *User) SetJob(v string) {
@@ -574,13 +549,6 @@ func (x *User) SetProfilePicture(v string) {
 	x.ProfilePicture = &v
 }
 
-func (x *User) HasIdentifier() bool {
-	if x == nil {
-		return false
-	}
-	return x.Identifier != nil
-}
-
 func (x *User) HasJobLabel() bool {
 	if x == nil {
 		return false
@@ -651,10 +619,6 @@ func (x *User) HasProfilePicture() bool {
 	return x.ProfilePicture != nil
 }
 
-func (x *User) ClearIdentifier() {
-	x.Identifier = nil
-}
-
 func (x *User) ClearJobLabel() {
 	x.JobLabel = nil
 }
@@ -699,7 +663,7 @@ type User_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	UserId               int32
-	Identifier           *string
+	Identifier           string
 	Job                  string
 	JobLabel             *string
 	JobGrade             int32
@@ -1007,56 +971,51 @@ var File_resources_users_user_proto protoreflect.FileDescriptor
 
 const file_resources_users_user_proto_rawDesc = "" +
 	"\n" +
-	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a'resources/users/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb8\x04\n" +
+	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\x8a\x04\n" +
 	"\tUserShort\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
-	"alias:\"id\"R\x06userId\x12#\n" +
-	"\n" +
-	"identifier\x18\x02 \x01(\tH\x00R\n" +
-	"identifier\x88\x01\x01\x12\x10\n" +
+	"alias:\"id\"R\x06userId\x12\x10\n" +
 	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x04 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12\x1b\n" +
+	"\tjob_label\x18\x04 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x1b\n" +
 	"\tjob_grade\x18\x05 \x01(\x05R\bjobGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
+	"\x0fjob_grade_label\x18\x06 \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
 	"\tfirstname\x18\a \x01(\tR\tfirstname\x12\x1a\n" +
 	"\blastname\x18\b \x01(\tR\blastname\x12 \n" +
 	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12&\n" +
-	"\fphone_number\x18\f \x01(\tH\x03R\vphoneNumber\x88\x01\x01\x12:\n" +
-	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x04R\x14profilePictureFileId\x88\x01\x01\x12,\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tH\x05R\x0eprofilePicture\x88\x01\x01B\r\n" +
-	"\v_identifierB\f\n" +
+	"\fphone_number\x18\f \x01(\tH\x02R\vphoneNumber\x88\x01\x01\x12:\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x03R\x14profilePictureFileId\x88\x01\x01\x12,\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tH\x04R\x0eprofilePicture\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\x0f\n" +
 	"\r_phone_numberB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
-	"\x10_profile_picture\"\xf2\a\n" +
+	"\x10_profile_pictureJ\x04\b\x02\x10\x03\"\xde\a\n" +
 	"\x04User\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
-	"alias:\"id\"R\x06userId\x12#\n" +
+	"alias:\"id\"R\x06userId\x12\x1e\n" +
 	"\n" +
-	"identifier\x18\x02 \x01(\tH\x00R\n" +
-	"identifier\x88\x01\x01\x12\x10\n" +
+	"identifier\x18\x02 \x01(\tR\n" +
+	"identifier\x12\x10\n" +
 	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x04 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12\x1b\n" +
+	"\tjob_label\x18\x04 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x1b\n" +
 	"\tjob_grade\x18\x05 \x01(\x05R\bjobGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12,\n" +
+	"\x0fjob_grade_label\x18\x06 \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12,\n" +
 	"\x04jobs\x18\x14 \x03(\v2\x18.resources.users.UserJobR\x04jobs\x12\x1c\n" +
 	"\tfirstname\x18\a \x01(\tR\tfirstname\x12\x1a\n" +
 	"\blastname\x18\b \x01(\tR\blastname\x12 \n" +
 	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12\x15\n" +
 	"\x03sex\x18\n" +
-	" \x01(\tH\x03R\x03sex\x88\x01\x01\x12\x1b\n" +
-	"\x06height\x18\v \x01(\tH\x04R\x06height\x88\x01\x01\x12&\n" +
-	"\fphone_number\x18\f \x01(\tH\x05R\vphoneNumber\x88\x01\x01\x12A\n" +
+	" \x01(\tH\x02R\x03sex\x88\x01\x01\x12\x1b\n" +
+	"\x06height\x18\v \x01(\tH\x03R\x06height\x88\x01\x01\x12&\n" +
+	"\fphone_number\x18\f \x01(\tH\x04R\vphoneNumber\x88\x01\x01\x12A\n" +
 	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberR\fphoneNumbers\x12\x19\n" +
-	"\x05visum\x18\r \x01(\x05H\x06R\x05visum\x88\x01\x01\x12\x1f\n" +
-	"\bplaytime\x18\x0e \x01(\x05H\aR\bplaytime\x88\x01\x01\x12W\n" +
+	"\x05visum\x18\r \x01(\x05H\x05R\x05visum\x88\x01\x01\x12\x1f\n" +
+	"\bplaytime\x18\x0e \x01(\x05H\x06R\bplaytime\x88\x01\x01\x12W\n" +
 	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsB\x1f\x9a\x84\x9e\x03\x1aalias:\"fivenet_user_props\"R\x05props\x12Y\n" +
 	"\blicenses\x18\x10 \x03(\v2!.resources.users.licenses.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user_licenses\"R\blicenses\x12:\n" +
-	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\bR\x14profilePictureFileId\x88\x01\x01\x12,\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tH\tR\x0eprofilePicture\x88\x01\x01B\r\n" +
-	"\v_identifierB\f\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\aR\x14profilePictureFileId\x88\x01\x01\x12,\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tH\bR\x0eprofilePicture\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\x06\n" +

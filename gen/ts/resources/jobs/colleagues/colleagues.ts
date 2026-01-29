@@ -22,10 +22,6 @@ export interface Colleague {
      */
     userId: number;
     /**
-     * @generated from protobuf field: optional string identifier = 2
-     */
-    identifier?: string;
-    /**
      * @generated from protobuf field: string job = 3
      */
     job: string;
@@ -120,7 +116,6 @@ class Colleague$Type extends MessageType<Colleague> {
     constructor() {
         super("resources.jobs.colleagues.Colleague", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } }, "tagger.tags": "alias:\"id\"" } },
-            { no: 2, name: "identifier", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 3, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 4, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 5, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
@@ -154,9 +149,6 @@ class Colleague$Type extends MessageType<Colleague> {
             switch (fieldNo) {
                 case /* int32 user_id */ 1:
                     message.userId = reader.int32();
-                    break;
-                case /* optional string identifier */ 2:
-                    message.identifier = reader.string();
                     break;
                 case /* string job */ 3:
                     message.job = reader.string();
@@ -209,9 +201,6 @@ class Colleague$Type extends MessageType<Colleague> {
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
-        /* optional string identifier = 2; */
-        if (message.identifier !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.identifier);
         /* string job = 3; */
         if (message.job !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.job);
