@@ -236,6 +236,9 @@ func (s *Server) ChangePassword(
 
 	acc, err := s.getAccountFromIDAndUsername(ctx, claims.AccID, claims.Username, true)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
+		}
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
@@ -297,6 +300,9 @@ func (s *Server) ChangeUsername(
 
 	acc, err := s.getAccountFromIDAndUsername(ctx, claims.AccID, claims.Username, true)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
+		}
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
 
@@ -413,6 +419,9 @@ func (s *Server) GetCharacters(
 	// Load account to make sure it (still) exists
 	acc, err := s.getAccountFromIDAndUsername(ctx, accClaims.AccID, accClaims.Username, false)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
+		}
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 	if acc.ID <= 0 {
@@ -600,6 +609,9 @@ func (s *Server) ChooseCharacter(
 		false,
 	)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
+		}
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 	account := accounts.ConvertFromModelAcc(acc)
@@ -752,6 +764,9 @@ func (s *Server) ImpersonateJob(
 	// Load user's account data for token creation
 	acc, err := s.getAccountFromIDAndUsername(ctx, accClaims.AccID, accClaims.Username, false)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
+		}
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 	account := accounts.ConvertFromModelAcc(acc)
