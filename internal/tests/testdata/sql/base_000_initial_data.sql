@@ -1,18 +1,25 @@
--- Table data: Add 5 chars into the database
-INSERT INTO fivenet_user (id, identifier, `group`, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, last_seen)
-VALUES(1, 'char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'user', 'ambulance', 17, 'Dr. Amy', 'Clockwork', '08.04.2003', 'f', '182', '3542786', 0, 139, 1493920, '2023-01-26 09:01:51.000', '2023-03-10 22:11:09.000');
+-- Table data: `fivenet_accounts` - Add 3 accounts with password `password`
+INSERT INTO `fivenet_accounts`
+(`id`, `enabled`, `username`, `password`, `license`, `reg_token`)
+VALUES (1, 1, 'user-1', '$2y$10$QHt2PpQ3kYheZZTASOLY5uzpzoi30O9oYijIZabSE78a8yqfp7mjW', '3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', NULL);
+INSERT INTO `fivenet_accounts`
+(`id`, `enabled`, `username`, `password`, `license`, `reg_token`)
+VALUES (2, 1, 'user-2', '$2y$10$QHt2PpQ3kYheZZTASOLY5uzpzoi30O9oYijIZabSE78a8yqfp7mjW', 'fcee377a1fda007a8d2cc764a0a272e04d8c5d57', NULL);
+INSERT INTO `fivenet_accounts`
+(`id`, `enabled`, `username`, `password`, `license`, `reg_token`)
+VALUES (3, 1, 'user-3', '$2y$10$QHt2PpQ3kYheZZTASOLY5uzpzoi30O9oYijIZabSE78a8yqfp7mjW', 'db7e039146d5bf1b6781e7bc1bef31f0bb1298ea', NULL);
 
-INSERT INTO fivenet_user (id, identifier, `group`, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, last_seen)
-VALUES(2, 'char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'user', 'ambulance', 20, 'Philipp', 'Scott', '01.08.1982', 'm', '185', '1550044', 0, 209, 2244596, '2023-01-26 09:01:51.000', '2023-03-11 21:06:27.000');
-
-INSERT INTO fivenet_user (id, identifier, `group`, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, last_seen)
-VALUES(3, 'char1:db7e039146d5bf1b6781e7bc1bef31f0bb1298ea', 'user', 'doj', 16, 'Jonas', 'Striker', '28.10.1990', 'm', '186', '2488396', 0, 286, 3084976, '2023-01-26 09:01:51.000', '2023-03-11 21:06:27.000');
-
-INSERT INTO fivenet_user (id, identifier, `group`, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, last_seen)
-VALUES(4, 'char2:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'user', 'police', 2, 'Hannibal', 'Scott', '15.06.1990', 'm', '180', '1550044', 0, 209, 2244596, '2023-01-26 09:01:51.000', '2023-03-11 21:06:27.000');
-
-INSERT INTO fivenet_user (id, identifier, `group`, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, last_seen)
-VALUES(5, 'char2:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'user', 'unemployed', 1, 'Peter', 'Hans', '10.02.1991', 'm', '178', '1550044', 0, 209, 2244596, '2023-01-26 09:01:51.000', '2023-03-11 21:06:27.000');
+-- Table data: `fivenet_user` - Add 5 chars into the database
+INSERT INTO fivenet_user (id, account_id, identifier, `group`, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, last_seen)
+VALUES(1, 1, 'char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'user', 'ambulance', 17, 'Dr. Amy', 'Clockwork', '08.04.2003', 'f', '182', '3542786', 0, 139, 1493920, '2023-01-26 09:01:51.000', '2023-03-10 22:11:09.000');
+INSERT INTO fivenet_user (id, account_id, identifier, `group`, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, last_seen)
+VALUES(2, 2, 'char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'user', 'ambulance', 20, 'Philipp', 'Scott', '01.08.1982', 'm', '185', '1550044', 0, 209, 2244596, '2023-01-26 09:01:51.000', '2023-03-11 21:06:27.000');
+INSERT INTO fivenet_user (id, account_id, identifier, `group`, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, last_seen)
+VALUES(3, 3, 'char1:db7e039146d5bf1b6781e7bc1bef31f0bb1298ea', 'user', 'doj', 16, 'Jonas', 'Striker', '28.10.1990', 'm', '186', '2488396', 0, 286, 3084976, '2023-01-26 09:01:51.000', '2023-03-11 21:06:27.000');
+INSERT INTO fivenet_user (id, account_id, identifier, `group`, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, last_seen)
+VALUES(4, 2, 'char2:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'user', 'police', 2, 'Hannibal', 'Scott', '15.06.1990', 'm', '180', '1550044', 0, 209, 2244596, '2023-01-26 09:01:51.000', '2023-03-11 21:06:27.000');
+INSERT INTO fivenet_user (id, account_id, identifier, `group`, job, job_grade, firstname, lastname, dateofbirth, sex, height, phone_number, disabled, visum, playtime, created_at, last_seen)
+VALUES(5, 1, 'char2:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'user', 'unemployed', 1, 'Peter', 'Hans', '10.02.1991', 'm', '178', '1550044', 0, 209, 2244596, '2023-01-26 09:01:51.000', '2023-03-11 21:06:27.000');
 
 -- Table data: Add license types into the database
 INSERT INTO fivenet_licenses (`type`, label) VALUES('aircraft', 'Aircraft License');

@@ -21,7 +21,6 @@
     --animate-wiggle: wiggle 1s infinite;
 
     @keyframes wiggle {
-
         0%,
         80% {
             transform: rotate(0deg);
@@ -49,7 +48,6 @@
 }
 
 @layer base {
-
     input[type='number']::-webkit-inner-spin-button,
     input[type='number']::-webkit-outer-spin-button {
         -webkit-appearance: none;
@@ -131,7 +129,7 @@ html {
     }
 
     /* Focus mode  */
-    &.editor-focus>.has-focus {
+    &.editor-focus > .has-focus {
         border-radius: 3px;
         box-shadow: 0 0 0 2px var(--ui-primary);
     }
@@ -175,13 +173,13 @@ html {
             align-items: flex-start;
             display: flex;
 
-            >label {
+            > label {
                 flex: 0 0 auto;
                 margin-right: 0.5rem;
                 user-select: none;
             }
 
-            >div {
+            > div {
                 flex: 1 1 auto;
 
                 p {
@@ -225,7 +223,7 @@ html {
             position: relative;
             vertical-align: top;
 
-            >* {
+            > * {
                 margin-bottom: 0;
             }
         }

@@ -121,7 +121,7 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NotNil(getCharsRes)
 	if getCharsRes == nil {
 		assert.FailNow(
-			"user-3: Empty char list returned for valid account that should have 2 chars",
+			"user-3: Empty getchar response returned for valid account that should have 2 chars in total",
 		)
 	}
 	assert.Len(getCharsRes.GetChars(), 1)
@@ -158,7 +158,7 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NotEmpty(accountToken)
 
 	// user-1: Create authenticated metadate and get characters
-	md = metadata.New(map[string]string{"Authorization": "Bearer " + accountToken})
+	md = metadata.New(map[string]string{"Cookie": cookie.String()})
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	getCharsReq = &pbauth.GetCharactersRequest{}
 	getCharsRes, err = client.GetCharacters(ctx, getCharsReq)
@@ -223,5 +223,16 @@ func TestFullAuthFlow(t *testing.T) {
 		assert.NotNil(chooseCharRes.GetChar())
 		assert.NotEmpty(chooseCharRes.Token)
 		assert.Equal("user-1", chooseCharRes.Username)
+	}
+
+	accInfoResp, err := client.GetAccountInfo(ctx, &pbauth.GetAccountInfoRequest{})
+	require.NoError(err)
+	assert.NotNil(accInfoResp)
+	if accInfoResp != nil {
+		assert.NotNil(accInfoResp)
+		if accInfoResp.GetAccount() != nil {
+			acc := accInfoResp.GetAccount()
+			assert.Equal("user-1", acc.GetUsername())
+		}
 	}
 }
