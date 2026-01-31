@@ -2189,7 +2189,10 @@
         "AuthService": {
             "ErrGenericAccount": "Fehler beim Anzeigen/ Aktualisieren ihres Accounts.",
             "ErrAccountCreateFailed": "Bitte überprüfen sie ihren Registrierungstoken!",
-            "ErrInvalidLogin": "Falscher Username oder Passwort!",
+            "ErrInvalidLogin": {
+                "content": "Bitte überprüfen sie ihren Username und Passwort, und versuchen sie es erneut.",
+                "title": "Falscher Username oder Passwort!"
+            },
             "ErrNoAccount": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen.",
             "ErrNoCharFound": "Keine(n) Charakter für deinen Account gefunden.",
             "ErrGenericLogin": "Fehler bei der Anmeldung, bitte versuche es erneut.",
@@ -2198,10 +2201,16 @@
             "ErrChangePassword": "Fehler beim Ändern Ihres Passworts!",
             "ErrForgotPassword": "Fehler beim zurücksetzen ihres Passworts!",
             "ErrAccountExistsFailed": "Bitte nutzen Sie die Passwort vergessen Funktion!",
-            "ErrSignupDisabled": "Konto-Erstellung ist deaktiviert!",
-            "ErrAccountDuplicate": "Benutzername bereits verwendet, bitte nutzen Sie einen anderen Benutzernamen.",
+            "ErrSignupDisabled": {
+                "title": "Konto-Erstellung ist deaktiviert!",
+                "content": "Die Konto-Erstellung ist deaktiviert. Bitte kontaktieren Sie Ihre FiveNet-Administratoren für weitere Informationen."
+            },
+            "ErrAccountDuplicate": {
+                "title": "Benutzername bereits verwendet!",
+                "content": "Benutzername bereits verwendet, bitte nutzen Sie einen anderen Benutzernamen."
+            },
             "ErrChangeUsername": "Fehler beim Ändern des Benutzernamen!",
-            "ErrBadUsername": "Bitte stellen Sie sicher, dass der jetzige Benutzername korrekt ist! Versuchen es mit einem anderen neuen Benutzernamen erneut.",
+            "ErrBadUsername": "Bitte stellen Sie sicher, dass der jetzige Benutzername korrekt ist! Versuchen es erneut.",
             "ErrCharLock": {
                 "title": "Charakter-Sperre ist aktiv!",
                 "content": "Bitte wählen Sie einen verfügbaren Charakter aus und versuchen Sie es erneut."

@@ -2189,7 +2189,10 @@
         "AuthService": {
             "ErrGenericAccount": "Failed to get/ update your account, please try again.",
             "ErrAccountCreateFailed": "Please check the token you have typed in!",
-            "ErrInvalidLogin": "Wrong username or password!",
+            "ErrInvalidLogin": {
+                "content": "Please check your username and password and try again.",
+                "title": "Wrong username or password!"
+            },
             "ErrNoAccount": "You need to use your registration token to create an account first.",
             "ErrNoCharFound": "No character(s) found for your account.",
             "ErrGenericLogin": "Failed to login you in, please try again.",
@@ -2198,10 +2201,16 @@
             "ErrChangePassword": "Failed to change your password!",
             "ErrForgotPassword": "Failed to reset password!",
             "ErrAccountExistsFailed": "Please use use the forgot password function!",
-            "ErrSignupDisabled": "Account signup is disabled!",
-            "ErrAccountDuplicate": "Username already taken, please use a different username.",
+            "ErrSignupDisabled": {
+                "title": "Account signup is disabled!",
+                "content": "Please contact your FiveNet administrator for help on this."
+            },
+            "ErrAccountDuplicate": {
+                "title": "Username already taken!",
+                "content": "The username is already taken, please use a different username."
+            },
             "ErrChangeUsername": "Failed to change your username!",
-            "ErrBadUsername": "Please verify the usernames correctness! Please try with a different username.",
+            "ErrBadUsername": "Please verify the correctness of your username! Please try again.",
             "ErrCharLock": {
                 "title": "Char lock is active!",
                 "content": "Please select an available character and try again."
