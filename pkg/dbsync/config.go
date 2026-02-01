@@ -39,22 +39,27 @@ type ResultConfig struct {
 }
 
 func NewConfig(p ParamsConfig) (ResultConfig, error) {
+	v := viper.NewWithOptions(viper.ExperimentalBindStruct())
+
 	s := &Config{
 		shutdowner: p.Shutdowner,
-		v:          viper.New(),
+		v:          v,
 	}
 
 	// Viper config reading setup
-	s.v.SetEnvPrefix("FIVENET")
-	s.v.SetConfigType("yaml")
+	v.SetEnvPrefix("FIVENET")
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	v.SetConfigType("yaml")
 
 	if configFile := os.Getenv("FIVENET_DBSYNC_FILE"); configFile != "" {
-		s.v.SetConfigFile(configFile)
+		v.SetConfigFile(configFile)
 	} else {
-		s.v.SetConfigName("dbsync")
-		s.v.AddConfigPath(".")
-		s.v.AddConfigPath("/config")
+		v.SetConfigName("dbsync")
+		v.AddConfigPath(".")
+		v.AddConfigPath("/config")
 	}
+
+	v.AutomaticEnv()
 
 	if err := s.LoadConfig(); err != nil {
 		return ResultConfig{}, err

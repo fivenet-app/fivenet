@@ -54,6 +54,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	if len(us) == 0 {
 		s.logger.Debug("no users found to sync, resetting state offset")
 		s.state.Set(0, nil)
+		s.resetLastCheckIfNotSynced()
 		return nil
 	}
 
@@ -101,6 +102,8 @@ func (s *usersSync) resetLastCheckIfNotSynced() {
 }
 
 func (s *usersSync) fetchUsers(ctx context.Context, query string) ([]*syncdata.DataUser, error) {
+	s.logger.Debug("accounts sync query", zap.String("query", query))
+
 	us := []*syncdata.DataUser{}
 	if _, err := qrm.Query(ctx, s.db, query, []any{}, &us); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

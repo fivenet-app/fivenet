@@ -100,6 +100,11 @@ func (m *ListAccountsRequest) Sanitize() error {
 		*m.ExternalId = htmlsanitizer.Sanitize(*m.ExternalId)
 	}
 
+	// Field: Group
+	if m.Group != nil {
+		*m.Group = htmlsanitizer.Sanitize(*m.Group)
+	}
+
 	// Field: License
 	if m.License != nil {
 		*m.License = htmlsanitizer.Sanitize(*m.License)

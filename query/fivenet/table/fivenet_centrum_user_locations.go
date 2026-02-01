@@ -75,7 +75,7 @@ func newFivenetCentrumUserLocationsTableImpl(schemaName, tableName, alias string
 		UpdatedAtColumn = mysql.TimestampColumn("updated_at")
 		DataColumn      = mysql.StringColumn("data")
 		allColumns      = mysql.ColumnList{UserIDColumn, JobColumn, JobGradeColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn, DataColumn}
-		mutableColumns  = mysql.ColumnList{UserIDColumn, JobColumn, JobGradeColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn, DataColumn}
+		mutableColumns  = mysql.ColumnList{JobColumn, JobGradeColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn, DataColumn}
 		defaultColumns  = mysql.ColumnList{HiddenColumn, UpdatedAtColumn}
 	)
 

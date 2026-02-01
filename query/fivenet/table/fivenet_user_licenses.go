@@ -63,7 +63,7 @@ func newFivenetUserLicensesTableImpl(schemaName, tableName, alias string) fivene
 		UserIDColumn   = mysql.IntegerColumn("user_id")
 		TypeColumn     = mysql.StringColumn("type")
 		allColumns     = mysql.ColumnList{UserIDColumn, TypeColumn}
-		mutableColumns = mysql.ColumnList{UserIDColumn, TypeColumn}
+		mutableColumns = mysql.ColumnList{}
 		defaultColumns = mysql.ColumnList{}
 	)
 

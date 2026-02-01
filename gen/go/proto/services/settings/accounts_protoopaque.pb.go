@@ -35,6 +35,7 @@ type ListAccountsRequest struct {
 	xxx_hidden_Enabled     bool                        `protobuf:"varint,4,opt,name=enabled,proto3,oneof"`
 	xxx_hidden_Username    *string                     `protobuf:"bytes,5,opt,name=username,proto3,oneof"`
 	xxx_hidden_ExternalId  *string                     `protobuf:"bytes,6,opt,name=external_id,json=externalId,proto3,oneof"`
+	xxx_hidden_Group       *string                     `protobuf:"bytes,7,opt,name=group,proto3,oneof"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -117,6 +118,16 @@ func (x *ListAccountsRequest) GetExternalId() string {
 	return ""
 }
 
+func (x *ListAccountsRequest) GetGroup() string {
+	if x != nil {
+		if x.xxx_hidden_Group != nil {
+			return *x.xxx_hidden_Group
+		}
+		return ""
+	}
+	return ""
+}
+
 func (x *ListAccountsRequest) SetPagination(v *database.PaginationRequest) {
 	x.xxx_hidden_Pagination = v
 }
@@ -127,22 +138,27 @@ func (x *ListAccountsRequest) SetSort(v *database.Sort) {
 
 func (x *ListAccountsRequest) SetLicense(v string) {
 	x.xxx_hidden_License = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 6)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 7)
 }
 
 func (x *ListAccountsRequest) SetEnabled(v bool) {
 	x.xxx_hidden_Enabled = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 6)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 7)
 }
 
 func (x *ListAccountsRequest) SetUsername(v string) {
 	x.xxx_hidden_Username = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 6)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 7)
 }
 
 func (x *ListAccountsRequest) SetExternalId(v string) {
 	x.xxx_hidden_ExternalId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 6)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 7)
+}
+
+func (x *ListAccountsRequest) SetGroup(v string) {
+	x.xxx_hidden_Group = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 7)
 }
 
 func (x *ListAccountsRequest) HasPagination() bool {
@@ -187,6 +203,13 @@ func (x *ListAccountsRequest) HasExternalId() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
 }
 
+func (x *ListAccountsRequest) HasGroup() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
+}
+
 func (x *ListAccountsRequest) ClearPagination() {
 	x.xxx_hidden_Pagination = nil
 }
@@ -215,6 +238,11 @@ func (x *ListAccountsRequest) ClearExternalId() {
 	x.xxx_hidden_ExternalId = nil
 }
 
+func (x *ListAccountsRequest) ClearGroup() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	x.xxx_hidden_Group = nil
+}
+
 type ListAccountsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -225,6 +253,7 @@ type ListAccountsRequest_builder struct {
 	Enabled    *bool
 	Username   *string
 	ExternalId *string
+	Group      *string
 }
 
 func (b0 ListAccountsRequest_builder) Build() *ListAccountsRequest {
@@ -234,20 +263,24 @@ func (b0 ListAccountsRequest_builder) Build() *ListAccountsRequest {
 	x.xxx_hidden_Pagination = b.Pagination
 	x.xxx_hidden_Sort = b.Sort
 	if b.License != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 6)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 7)
 		x.xxx_hidden_License = b.License
 	}
 	if b.Enabled != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 6)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 7)
 		x.xxx_hidden_Enabled = *b.Enabled
 	}
 	if b.Username != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 6)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 7)
 		x.xxx_hidden_Username = b.Username
 	}
 	if b.ExternalId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 6)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 7)
 		x.xxx_hidden_ExternalId = b.ExternalId
+	}
+	if b.Group != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 7)
+		x.xxx_hidden_Group = b.Group
 	}
 	return m0
 }
@@ -927,7 +960,7 @@ var File_services_settings_accounts_proto protoreflect.FileDescriptor
 
 const file_services_settings_accounts_proto_rawDesc = "" +
 	"\n" +
-	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\x1a resources/users/short/user.proto\"\xe0\x02\n" +
+	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\x1a resources/users/short/user.proto\"\x85\x03\n" +
 	"\x13ListAccountsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -937,14 +970,16 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"\aenabled\x18\x04 \x01(\bH\x02R\aenabled\x88\x01\x01\x12\x1f\n" +
 	"\busername\x18\x05 \x01(\tH\x03R\busername\x88\x01\x01\x12$\n" +
 	"\vexternal_id\x18\x06 \x01(\tH\x04R\n" +
-	"externalId\x88\x01\x01B\a\n" +
+	"externalId\x88\x01\x01\x12\x19\n" +
+	"\x05group\x18\a \x01(\tH\x05R\x05group\x88\x01\x01B\a\n" +
 	"\x05_sortB\n" +
 	"\n" +
 	"\b_licenseB\n" +
 	"\n" +
 	"\b_enabledB\v\n" +
 	"\t_usernameB\x0e\n" +
-	"\f_external_id\"\xa4\x01\n" +
+	"\f_external_idB\b\n" +
+	"\x06_group\"\xa4\x01\n" +
 	"\x14ListAccountsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +

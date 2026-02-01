@@ -241,7 +241,29 @@ ALTER TABLE `fivenet_accounts` DROP COLUMN `override_job_grade`;
 ALTER TABLE `fivenet_accounts` DROP COLUMN `superuser`;
 
 -- Table: `fivenet_accounts` - Add `groups` column to store JSON array of group names (this allows for multiple groups per account instead of per user as before)
-ALTER TABLE `fivenet_accounts` ADD COLUMN `groups` TEXT DEFAULT NULL AFTER `license`;
+ALTER TABLE `fivenet_accounts` ADD COLUMN `groups` varchar(255) DEFAULT NULL AFTER `license`;
+
+-- MariaDB doesn't support JSON multi-valued indexes, so we skip this part
+-- It might land in MariaDB 12.2 or later, see https://jira.mariadb.org/browse/MDEV-25848
+SET @ver := VERSION();
+
+-- Build either the ALTER or a no-op SELECT
+SET @ddl :=
+  IF(
+    LOCATE('MariaDB', @ver) = 0,
+    'ALTER TABLE fivenet_accounts
+       ADD INDEX idx_groups
+         ((CAST(`groups` AS CHAR(255) ARRAY)));',
+    CONCAT(
+      'SELECT ''Skipping JSON multi-valued index on MariaDB: ',
+      @ver,
+      ''';'
+    )
+  );
+
+PREPARE stmt FROM @ddl;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 -- Table: `fivenet_centrum_user_locations` - Add `user_id` column and foreign key constraint to `fivenet_user`
 TRUNCATE `fivenet_centrum_user_locations`;
@@ -252,5 +274,12 @@ ALTER TABLE `fivenet_centrum_user_locations` DROP COLUMN `identifier`;
 ALTER TABLE `fivenet_centrum_user_locations` ADD COLUMN `user_id` int(11) NOT NULL FIRST;
 ALTER TABLE `fivenet_centrum_user_locations` ADD PRIMARY KEY (`user_id`);
 ALTER TABLE `fivenet_centrum_user_locations` ADD CONSTRAINT `fk_fivenet_centrum_user_locations_user_id` FOREIGN KEY (`user_id`) REFERENCES `fivenet_user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- Table: `fivenet_user_props`
+ALTER TABLE `fivenet_user_props` DROP COLUMN `attributes`;
+
+-- Table: `fivenet_documents_stamps` - Drop `user_id` column as stamps are per job
+ALTER TABLE `fivenet_documents_stamps` DROP FOREIGN KEY `fk_fivenet_documents_signatures_stamp_user`;
+ALTER TABLE `fivenet_documents_stamps` DROP COLUMN `user_id`;
 
 COMMIT;

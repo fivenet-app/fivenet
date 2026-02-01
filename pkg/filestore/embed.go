@@ -309,7 +309,7 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID int64) error
 	err = h.joinTable.
 		SELECT(mysql.COUNT(h.fileCol).AS("count")).
 		FROM(h.joinTable).
-		WHERE(mysql.AND(h.fileCol.EQ(mysql.Int64(fileID)))).
+		WHERE(h.fileCol.EQ(mysql.Int64(fileID))).
 		QueryContext(ctx, tx, &refs)
 	if err != nil {
 		return err

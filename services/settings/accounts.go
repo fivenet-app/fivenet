@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -50,6 +51,11 @@ func (s *Server) ListAccounts(
 			INNER_JOIN(tOauth2,
 				tOauth2.AccountID.EQ(tAccounts.ID),
 			)
+	}
+	if req.Group != nil && req.GetGroup() != "" {
+		condition = condition.AND(
+			dbutils.JSON_CONTAINS(tAccounts.Groups, mysql.String(req.GetGroup())),
+		)
 	}
 
 	countStmt := tAccounts.

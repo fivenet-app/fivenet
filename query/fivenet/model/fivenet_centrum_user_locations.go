@@ -12,7 +12,7 @@ import (
 )
 
 type FivenetCentrumUserLocations struct {
-	UserID    int32      `json:"user_id"`
+	UserID    int32      `sql:"primary_key" json:"user_id"`
 	Job       *string    `json:"job"`
 	JobGrade  *int32     `json:"job_grade"`
 	X         *float64   `json:"x"`

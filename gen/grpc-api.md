@@ -11865,6 +11865,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `enabled` | [bool](#bool) | optional |  |
 | `username` | [string](#string) | optional |  |
 | `external_id` | [string](#string) | optional |  |
+| `group` | [string](#string) | optional |  |
 
 
 

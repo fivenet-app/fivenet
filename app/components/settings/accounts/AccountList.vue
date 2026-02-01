@@ -29,6 +29,7 @@ const schema = z.object({
     enabled: z.coerce.boolean().default(true),
     username: z.coerce.string().max(64).optional(),
     externalId: z.coerce.string().max(64).optional(),
+    group: z.coerce.string().max(64).optional(),
 
     sorting: z
         .object({
@@ -69,6 +70,7 @@ async function listAccounts(): Promise<ListAccountsResponse> {
             license: query.license,
             username: query.username,
             externalId: query.externalId,
+            group: query.group,
         });
         const { response } = await call;
 
@@ -156,7 +158,7 @@ const columns = computed(
                 },
                 sortable: true,
                 cell: ({ row }) =>
-                    h(UTooltip, { text: `${t('common.id')}: ${row.original.id}` }, [
+                    h(UTooltip, { text: `${t('common.id', 1)}: ${row.original.id}` }, [
                         h(
                             'span',
                             { class: 'text-highlighted' },
@@ -172,6 +174,12 @@ const columns = computed(
                         color: row.original.enabled ? 'success' : 'error',
                         label: row.original.enabled ? t('common.yes') : t('common.no'),
                     }),
+            },
+            {
+                accessorKey: 'group',
+                header: t('common.group', 2),
+                cell: ({ row }) =>
+                    h('pre', { class: 'text-highlighted' }, row.original.groups?.groups.join(', ') || t('common.na')),
             },
             {
                 accessorKey: 'lastChar',

@@ -47,6 +47,10 @@ export interface ListAccountsRequest {
      * @generated from protobuf field: optional string external_id = 6
      */
     externalId?: string;
+    /**
+     * @generated from protobuf field: optional string group = 7
+     */
+    group?: string;
 }
 /**
  * @generated from protobuf message services.settings.ListAccountsResponse
@@ -160,7 +164,8 @@ class ListAccountsRequest$Type extends MessageType<ListAccountsRequest> {
             { no: 3, name: "license", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 4, name: "enabled", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "username", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 6, name: "external_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } }
+            { no: 6, name: "external_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
+            { no: 7, name: "group", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<ListAccountsRequest>): ListAccountsRequest {
@@ -192,6 +197,9 @@ class ListAccountsRequest$Type extends MessageType<ListAccountsRequest> {
                 case /* optional string external_id */ 6:
                     message.externalId = reader.string();
                     break;
+                case /* optional string group */ 7:
+                    message.group = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -222,6 +230,9 @@ class ListAccountsRequest$Type extends MessageType<ListAccountsRequest> {
         /* optional string external_id = 6; */
         if (message.externalId !== undefined)
             writer.tag(6, WireType.LengthDelimited).string(message.externalId);
+        /* optional string group = 7; */
+        if (message.group !== undefined)
+            writer.tag(7, WireType.LengthDelimited).string(message.group);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

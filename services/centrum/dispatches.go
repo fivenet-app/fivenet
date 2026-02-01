@@ -46,9 +46,7 @@ func (s *Server) ListDispatches(
 	jobsOut, _ := json.Marshal(jobs)
 
 	condition := mysql.AND(
-		mysql.BoolExp(
-			dbutils.JSON_CONTAINS(tDispatch.Jobs, mysql.StringExp(mysql.String(string(jobsOut)))),
-		),
+		dbutils.JSON_CONTAINS(tDispatch.Jobs, mysql.String(string(jobsOut))),
 
 		tDispatchStatus.ID.IS_NULL().OR(
 			tDispatchStatus.ID.EQ(
@@ -244,13 +242,17 @@ func (s *Server) GetDispatch(
 	}
 	jobsOut, _ := json.Marshal(jobs)
 
-	condition := tDispatchStatus.ID.IS_NULL().OR(
-		tDispatchStatus.ID.EQ(
-			mysql.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
+	condition := mysql.AND(
+		tDispatchStatus.ID.IS_NULL().OR(
+			tDispatchStatus.ID.EQ(
+				mysql.RawInt(
+					"SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`",
+				),
+			),
 		),
-	).
-		AND(tDispatch.ID.EQ(mysql.Int64(req.GetId()))).
-		AND(mysql.BoolExp(dbutils.JSON_CONTAINS(tDispatch.Jobs, mysql.StringExp(mysql.String(string(jobsOut))))))
+		tDispatch.ID.EQ(mysql.Int64(req.GetId())),
+		dbutils.JSON_CONTAINS(tDispatch.Jobs, mysql.String(string(jobsOut))),
+	)
 
 	resp := &pbcentrum.GetDispatchResponse{
 		Dispatch: &centrumdispatches.Dispatch{},
