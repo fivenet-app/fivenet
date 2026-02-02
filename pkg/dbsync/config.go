@@ -3,6 +3,7 @@ package dbsync
 import (
 	"fmt"
 	"os"
+	"reflect"
 	"regexp"
 	"strings"
 	"sync/atomic"
@@ -11,6 +12,7 @@ import (
 	"github.com/creasty/defaults"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fsnotify/fsnotify"
+	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -119,6 +121,30 @@ func (s *Config) LoadConfig() error {
 		return fmt.Errorf("failed to initialize config. %w", err)
 	}
 
+	// Validate config
+	validate := validator.New()
+	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("yaml"), ",", 2)[0]
+		// Skip if tag key says it should be ignored
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+
+	if err := validate.Struct(c); err != nil {
+		// Build detailed validation error message
+		msg := "Invalid FiveNet DBSync config detected:\n"
+		for _, validationErr := range err.(validator.ValidationErrors) {
+			msg += fmt.Sprintf(
+				"- Field `%s` violated %s validation.\n",
+				validationErr.StructNamespace(),
+				validationErr.Tag(),
+			)
+		}
+		return fmt.Errorf("%s", msg)
+	}
+
 	s.cfg.Store(c)
 
 	return nil
@@ -165,6 +191,8 @@ type DBSyncConfig struct {
 
 type DBSyncSource struct {
 	config.DatabaseConnection `yaml:",inline" mapstructure:",squash"`
+
+	BaseDataResyncInterval time.Duration `default:"5m" yaml:"baseDataResyncInterval" validate:"gte=1"`
 }
 
 type DBSyncDestination struct {
@@ -172,7 +200,7 @@ type DBSyncDestination struct {
 	Token    string `yaml:"token"`
 	Insecure bool   `yaml:"insecure"`
 
-	SyncInterval time.Duration `default:"5s" yaml:"syncInterval"`
+	SyncInterval time.Duration `default:"5s" yaml:"syncInterval" validate:"gte=1"`
 }
 
 type DBSyncSourceTables struct {
@@ -241,7 +269,7 @@ type DBSyncTable struct {
 	TableName         string         `yaml:"tableName"`
 	UpdatedTimeColumn *string        `yaml:"updatedTimeColumn"`
 	Query             *string        `yaml:"query"`
-	SyncInterval      *time.Duration `yaml:"syncInterval"`
+	SyncInterval      *time.Duration `yaml:"syncInterval"      validate:"gte=1"`
 }
 
 func (c *DBSyncTable) GetSyncInterval() *time.Duration {

@@ -54,11 +54,23 @@ http:
     domain: "fivenet.example.com"
 
 database:
-  # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-  # Please note that the `parseTime` parameter is allows set to true
+  # You can either use a DSN connection string or individual parameters below.
+  # DSN connection string, refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
+  # Please note that the `parseTime` parameter is always set to true
   dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
-  # For the local test database using `docker-compose`
+  # Example for a locally hosted database
   #dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
+  #
+  # Or use individual parameters (make sure to comment out the `dsn:` line above if you use these).
+  # Hint: you can set these via environment variables as well, e.g., FIVENET_DATABASE_HOST, FIVENET_DATABASE_PORT,
+  # FIVENET_DATABASE_USERNAME, FIVENET_DATABASE_PASSWORD, FIVENET_DATABASE_DATABASE
+  #host: "localhost"
+  #port: 3306
+  #username: "fivenet"
+  #password: "changeme"
+  #database: "fivenet"
+
+  # Advanced connection settings
   maxOpenConns: 32
   maxIdleConns: 5
   connMaxIdleTime: 15m

@@ -35,15 +35,29 @@ destination:
 # Changes to the source require a restart of the dbsync.
 source:
   # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-  # Please note that the `parseTime` parameter is allows set to true
+  # Please note that the `parseTime` parameter is always set to true
   dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
-  # For the local test database using `docker-compose`
+  # Example for a locally hosted database
   #dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
+  #
+  # Or use individual parameters (make sure to comment out the `dsn:` line above if you use these).
+  # Hint: you can set these via environment variables as well, e.g., FIVENET_DATABASE_HOST, FIVENET_DATABASE_PORT,
+  # FIVENET_DATABASE_USERNAME, FIVENET_DATABASE_PASSWORD, FIVENET_DATABASE_DATABASE
+  #host: "localhost"
+  #port: 3306
+  #username: "fivenet"
+  #password: "changeme"
+  #database: "fivenet"
+
+  # Advanced connection settings
   maxOpenConns: 12
   maxIdleConns: 5
   connMaxIdleTime: 10m
   connMaxLifetime: 45m
   disableLocking: false
+
+  # Interval in which base data (jobs, job grades, licenses) is re-synced fully
+  baseDataResyncInterval: 5m
 
 # A query for each "piece of data" FiveNet needs to function
 tables:

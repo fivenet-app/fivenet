@@ -283,7 +283,7 @@ type Cache struct {
 }
 
 type Audit struct {
-	RetentionDays int `default:"180" yaml:"auditRetentionDays"`
+	RetentionDays int `default:"180" yaml:"auditRetentionDays" validate:"gte=1"`
 }
 
 type OAuth2 struct {

@@ -2,6 +2,7 @@ package sync
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"slices"
@@ -390,6 +391,14 @@ func (s *Server) handleUsersData(
 
 	rowsAffected := int64(0)
 	if len(toCreate) > 0 {
+		// Begin transaction
+		tx, err := s.db.BeginTx(ctx, nil)
+		if err != nil {
+			return 0, err
+		}
+		// Defer a rollback in case anything fails
+		defer tx.Rollback()
+
 		stmt := tUsers.
 			INSERT(
 				tUsers.ID,
@@ -449,7 +458,7 @@ func (s *Server) handleUsersData(
 					tUsers.Playtime.SET(mysql.IntExp(mysql.Raw("VALUES(`playtime`)"))),
 				)
 
-			res, err := insertStmt.ExecContext(ctx, s.db)
+			res, err := insertStmt.ExecContext(ctx, tx)
 			if err != nil {
 				return 0, fmt.Errorf("failed to execute user insert statement. %w", err)
 			}
@@ -460,7 +469,7 @@ func (s *Server) handleUsersData(
 
 			rowsAffected += rows
 
-			if err := s.handleCitizensLicenses(ctx, user.GetUserId(), user.GetLicenses()); err != nil {
+			if err := s.handleCitizensLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
 				return 0, fmt.Errorf(
 					"failed to handle user licenses for user %d (%s). %w",
 					user.GetUserId(),
@@ -469,11 +478,24 @@ func (s *Server) handleUsersData(
 				)
 			}
 		}
+
+		// Commit the transaction
+		if err := tx.Commit(); err != nil {
+			return 0, err
+		}
 	}
 
-	// TODO insert phone_number(s) to phone_numbers table as well + job(s)
+	// TODO insert job(s) to fivenet_user_jobs table and phone_number(s) to fivenet_user_phone_numbers table
 
 	if len(toUpdate) > 0 {
+		// Begin transaction
+		tx, err := s.db.BeginTx(ctx, nil)
+		if err != nil {
+			return 0, err
+		}
+		// Defer a rollback in case anything fails
+		defer tx.Rollback()
+
 		for _, user := range toUpdate {
 			accountIdStmt := tAccounts.
 				SELECT(
@@ -528,6 +550,11 @@ func (s *Server) handleUsersData(
 
 			rowsAffected += rows
 		}
+
+		// Commit the transaction
+		if err := tx.Commit(); err != nil {
+			return 0, err
+		}
 	}
 
 	return rowsAffected, nil
@@ -535,6 +562,7 @@ func (s *Server) handleUsersData(
 
 func (s *Server) handleCitizensLicenses(
 	ctx context.Context,
+	tx *sql.Tx,
 	userId int32,
 	licenses []*userslicenses.License,
 ) error {
@@ -547,7 +575,7 @@ func (s *Server) handleCitizensLicenses(
 			WHERE(tCitizensLicenses.UserID.EQ(mysql.Int32(userId))).
 			LIMIT(25)
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user licenses delete statement. %w", err)
 		}
 
@@ -562,7 +590,7 @@ func (s *Server) handleCitizensLicenses(
 		WHERE(tCitizensLicenses.UserID.EQ(mysql.Int32(userId)))
 
 	currentLicenses := []string{}
-	if err := selectStmt.QueryContext(ctx, s.db, &currentLicenses); err != nil {
+	if err := selectStmt.QueryContext(ctx, tx, &currentLicenses); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf(
 				"failed to query current user licenses for user ID %d. %w",
@@ -597,7 +625,7 @@ func (s *Server) handleCitizensLicenses(
 				)
 		}
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user licenses insert statement. %w", err)
 		}
 	}
@@ -616,7 +644,7 @@ func (s *Server) handleCitizensLicenses(
 			)).
 			LIMIT(25)
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user licenses delete statement. %w", err)
 		}
 	}
