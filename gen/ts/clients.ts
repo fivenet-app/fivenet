@@ -4,180 +4,180 @@ import { useGRPCTransport } from '~/composables/useGRPCTransport';
 
 // Factory for auth.auth client.
 export async function getAuthAuthClient() {
-    const { authClient } = await import('~~/gen/ts/services/auth/auth.client');
-    return new authClient(useGRPCTransport());
+    const { AuthServiceClient } = await import('~~/gen/ts/services/auth/auth.client');
+    return new AuthServiceClient(useGRPCTransport());
 }
 
 // Factory for calendar.calendar client.
 export async function getCalendarCalendarClient() {
-    const { calendarClient } = await import('~~/gen/ts/services/calendar/calendar.client');
-    return new calendarClient(useGRPCTransport());
+    const { CalendarServiceClient } = await import('~~/gen/ts/services/calendar/calendar.client');
+    return new CalendarServiceClient(useGRPCTransport());
 }
 
 // Factory for centrum.centrum client.
 export async function getCentrumCentrumClient() {
-    const { centrumClient } = await import('~~/gen/ts/services/centrum/centrum.client');
-    return new centrumClient(useGRPCTransport());
+    const { CentrumServiceClient } = await import('~~/gen/ts/services/centrum/centrum.client');
+    return new CentrumServiceClient(useGRPCTransport());
 }
 
 // Factory for citizens.citizens client.
 export async function getCitizensCitizensClient() {
-    const { citizensClient } = await import('~~/gen/ts/services/citizens/citizens.client');
-    return new citizensClient(useGRPCTransport());
+    const { CitizensServiceClient } = await import('~~/gen/ts/services/citizens/citizens.client');
+    return new CitizensServiceClient(useGRPCTransport());
 }
 
 // Factory for completor.completor client.
 export async function getCompletorCompletorClient() {
-    const { completorClient } = await import('~~/gen/ts/services/completor/completor.client');
-    return new completorClient(useGRPCTransport());
+    const { CompletorServiceClient } = await import('~~/gen/ts/services/completor/completor.client');
+    return new CompletorServiceClient(useGRPCTransport());
 }
 
 // Factory for documents.approval client.
 export async function getDocumentsApprovalClient() {
-    const { approvalClient } = await import('~~/gen/ts/services/documents/approval.client');
-    return new approvalClient(useGRPCTransport());
+    const { ApprovalServiceClient } = await import('~~/gen/ts/services/documents/approval.client');
+    return new ApprovalServiceClient(useGRPCTransport());
 }
 
 // Factory for documents.collab client.
 export async function getDocumentsCollabClient() {
-    const { collabClient } = await import('~~/gen/ts/services/documents/collab.client');
-    return new collabClient(useGRPCTransport());
+    const { CollabServiceClient } = await import('~~/gen/ts/services/documents/collab.client');
+    return new CollabServiceClient(useGRPCTransport());
 }
 
 // Factory for documents.documents client.
 export async function getDocumentsDocumentsClient() {
-    const { documentsClient } = await import('~~/gen/ts/services/documents/documents.client');
-    return new documentsClient(useGRPCTransport());
+    const { DocumentsServiceClient } = await import('~~/gen/ts/services/documents/documents.client');
+    return new DocumentsServiceClient(useGRPCTransport());
 }
 
 // Factory for documents.forms client.
 export async function getDocumentsFormsClient() {
-    const { formsClient } = await import('~~/gen/ts/services/documents/forms.client');
-    return new formsClient(useGRPCTransport());
+    const { FormsServiceClient } = await import('~~/gen/ts/services/documents/forms.client');
+    return new FormsServiceClient(useGRPCTransport());
 }
 
 // Factory for documents.stamps client.
 export async function getDocumentsStampsClient() {
-    const { stampsClient } = await import('~~/gen/ts/services/documents/stamps.client');
-    return new stampsClient(useGRPCTransport());
+    const { StampsServiceClient } = await import('~~/gen/ts/services/documents/stamps.client');
+    return new StampsServiceClient(useGRPCTransport());
 }
 
 // Factory for filestore.filestore client.
 export async function getFilestoreFilestoreClient() {
-    const { filestoreClient } = await import('~~/gen/ts/services/filestore/filestore.client');
-    return new filestoreClient(useGRPCTransport());
+    const { FilestoreServiceClient } = await import('~~/gen/ts/services/filestore/filestore.client');
+    return new FilestoreServiceClient(useGRPCTransport());
 }
 
 // Factory for jobs.conduct client.
 export async function getJobsConductClient() {
-    const { conductClient } = await import('~~/gen/ts/services/jobs/conduct.client');
-    return new conductClient(useGRPCTransport());
+    const { ConductServiceClient } = await import('~~/gen/ts/services/jobs/conduct.client');
+    return new ConductServiceClient(useGRPCTransport());
 }
 
 // Factory for jobs.jobs client.
 export async function getJobsJobsClient() {
-    const { jobsClient } = await import('~~/gen/ts/services/jobs/jobs.client');
-    return new jobsClient(useGRPCTransport());
+    const { JobsServiceClient } = await import('~~/gen/ts/services/jobs/jobs.client');
+    return new JobsServiceClient(useGRPCTransport());
 }
 
 // Factory for jobs.timeclock client.
 export async function getJobsTimeclockClient() {
-    const { timeclockClient } = await import('~~/gen/ts/services/jobs/timeclock.client');
-    return new timeclockClient(useGRPCTransport());
+    const { TimeclockServiceClient } = await import('~~/gen/ts/services/jobs/timeclock.client');
+    return new TimeclockServiceClient(useGRPCTransport());
 }
 
 // Factory for livemap.livemap client.
 export async function getLivemapLivemapClient() {
-    const { livemapClient } = await import('~~/gen/ts/services/livemap/livemap.client');
-    return new livemapClient(useGRPCTransport());
+    const { LivemapServiceClient } = await import('~~/gen/ts/services/livemap/livemap.client');
+    return new LivemapServiceClient(useGRPCTransport());
 }
 
 // Factory for mailer.mailer client.
 export async function getMailerMailerClient() {
-    const { mailerClient } = await import('~~/gen/ts/services/mailer/mailer.client');
-    return new mailerClient(useGRPCTransport());
+    const { MailerServiceClient } = await import('~~/gen/ts/services/mailer/mailer.client');
+    return new MailerServiceClient(useGRPCTransport());
 }
 
 // Factory for notifications.notifications client.
 export async function getNotificationsNotificationsClient() {
-    const { notificationsClient } = await import('~~/gen/ts/services/notifications/notifications.client');
-    return new notificationsClient(useGRPCTransport());
+    const { NotificationsServiceClient } = await import('~~/gen/ts/services/notifications/notifications.client');
+    return new NotificationsServiceClient(useGRPCTransport());
 }
 
 // Factory for qualifications.qualifications client.
 export async function getQualificationsQualificationsClient() {
-    const { qualificationsClient } = await import('~~/gen/ts/services/qualifications/qualifications.client');
-    return new qualificationsClient(useGRPCTransport());
+    const { QualificationsServiceClient } = await import('~~/gen/ts/services/qualifications/qualifications.client');
+    return new QualificationsServiceClient(useGRPCTransport());
 }
 
 // Factory for settings.accounts client.
 export async function getSettingsAccountsClient() {
-    const { accountsClient } = await import('~~/gen/ts/services/settings/accounts.client');
-    return new accountsClient(useGRPCTransport());
+    const { AccountsServiceClient } = await import('~~/gen/ts/services/settings/accounts.client');
+    return new AccountsServiceClient(useGRPCTransport());
 }
 
 // Factory for settings.config client.
 export async function getSettingsConfigClient() {
-    const { configClient } = await import('~~/gen/ts/services/settings/config.client');
-    return new configClient(useGRPCTransport());
+    const { ConfigServiceClient } = await import('~~/gen/ts/services/settings/config.client');
+    return new ConfigServiceClient(useGRPCTransport());
 }
 
 // Factory for settings.cron client.
 export async function getSettingsCronClient() {
-    const { cronClient } = await import('~~/gen/ts/services/settings/cron.client');
-    return new cronClient(useGRPCTransport());
+    const { CronServiceClient } = await import('~~/gen/ts/services/settings/cron.client');
+    return new CronServiceClient(useGRPCTransport());
 }
 
 // Factory for settings.laws client.
 export async function getSettingsLawsClient() {
-    const { lawsClient } = await import('~~/gen/ts/services/settings/laws.client');
-    return new lawsClient(useGRPCTransport());
+    const { LawsServiceClient } = await import('~~/gen/ts/services/settings/laws.client');
+    return new LawsServiceClient(useGRPCTransport());
 }
 
 // Factory for settings.settings client.
 export async function getSettingsSettingsClient() {
-    const { settingsClient } = await import('~~/gen/ts/services/settings/settings.client');
-    return new settingsClient(useGRPCTransport());
+    const { SettingsServiceClient } = await import('~~/gen/ts/services/settings/settings.client');
+    return new SettingsServiceClient(useGRPCTransport());
 }
 
 // Factory for settings.system client.
 export async function getSettingsSystemClient() {
-    const { systemClient } = await import('~~/gen/ts/services/settings/system.client');
-    return new systemClient(useGRPCTransport());
+    const { SystemServiceClient } = await import('~~/gen/ts/services/settings/system.client');
+    return new SystemServiceClient(useGRPCTransport());
 }
 
 // Factory for stats.stats client.
 export async function getStatsStatsClient() {
-    const { statsClient } = await import('~~/gen/ts/services/stats/stats.client');
-    return new statsClient(useGRPCTransport());
+    const { StatsServiceClient } = await import('~~/gen/ts/services/stats/stats.client');
+    return new StatsServiceClient(useGRPCTransport());
 }
 
 // Factory for sync.sync client.
 export async function getSyncSyncClient() {
-    const { syncClient } = await import('~~/gen/ts/services/sync/sync.client');
-    return new syncClient(useGRPCTransport());
+    const { SyncServiceClient } = await import('~~/gen/ts/services/sync/sync.client');
+    return new SyncServiceClient(useGRPCTransport());
 }
 
 // Factory for sync.v2.sync client.
 export async function getSyncV2SyncClient() {
-    const { syncClient } = await import('~~/gen/ts/services/sync/v2/sync.client');
-    return new syncClient(useGRPCTransport());
+    const { SyncServiceClient } = await import('~~/gen/ts/services/sync/v2/sync.client');
+    return new SyncServiceClient(useGRPCTransport());
 }
 
 // Factory for vehicles.vehicles client.
 export async function getVehiclesVehiclesClient() {
-    const { vehiclesClient } = await import('~~/gen/ts/services/vehicles/vehicles.client');
-    return new vehiclesClient(useGRPCTransport());
+    const { VehiclesServiceClient } = await import('~~/gen/ts/services/vehicles/vehicles.client');
+    return new VehiclesServiceClient(useGRPCTransport());
 }
 
 // Factory for wiki.collab client.
 export async function getWikiCollabClient() {
-    const { collabClient } = await import('~~/gen/ts/services/wiki/collab.client');
-    return new collabClient(useGRPCTransport());
+    const { CollabServiceClient } = await import('~~/gen/ts/services/wiki/collab.client');
+    return new CollabServiceClient(useGRPCTransport());
 }
 
 // Factory for wiki.wiki client.
 export async function getWikiWikiClient() {
-    const { wikiClient } = await import('~~/gen/ts/services/wiki/wiki.client');
-    return new wikiClient(useGRPCTransport());
+    const { WikiServiceClient } = await import('~~/gen/ts/services/wiki/wiki.client');
+    return new WikiServiceClient(useGRPCTransport());
 }

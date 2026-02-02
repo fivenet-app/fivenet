@@ -85,10 +85,9 @@ func (p *ClientsModule) Execute(
 				}
 
 				importPath := strings.ReplaceAll(string(s.File().Name()), ".proto", "") + ".client"
-				safeSName := utils.StringFirstToLower(strings.ReplaceAll(sName, "Service", ""))
 				data.Svcs[categoryName] = append(data.Svcs[categoryName], svcClientInfo{
-					Svc:    safeSName,
-					Client: safeSName + "Client",
+					Svc:    utils.StringFirstToLower(strings.ReplaceAll(sName, "Service", "")),
+					Client: sName + "Client",
 					Import: importPath,
 				})
 			}

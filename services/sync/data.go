@@ -485,7 +485,7 @@ func (s *Server) handleUsersData(
 		}
 	}
 
-	// TODO insert job(s) to fivenet_user_jobs table and phone_number(s) to fivenet_user_phone_numbers table
+	// TODO insert user's job(s) to fivenet_user_jobs table and phone_number(s) to fivenet_user_phone_numbers table
 
 	if len(toUpdate) > 0 {
 		// Begin transaction
