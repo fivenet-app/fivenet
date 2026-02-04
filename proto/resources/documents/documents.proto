@@ -119,4 +119,7 @@ message DocumentMeta {
   optional bool ap_any_declined = 21;
   // Number of active approval policies
   optional int32 ap_policies_active = 22;
+
+  // Number of comments on the document
+  optional int32 comment_count = 23;
 }

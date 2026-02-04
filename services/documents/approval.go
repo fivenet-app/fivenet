@@ -245,6 +245,7 @@ func (s *Server) ListApprovalTasksInbox(
 			tDMeta.ApPendingCount,
 			tDMeta.ApAnyDeclined,
 			tDMeta.ApPoliciesActive,
+			tDMeta.CommentCount,
 		).
 		FROM(
 			tApprovalTasks.

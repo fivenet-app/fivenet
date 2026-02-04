@@ -1144,6 +1144,7 @@ type DocumentMeta struct {
 	xxx_hidden_ApPendingCount      int32                  `protobuf:"varint,20,opt,name=ap_pending_count,json=apPendingCount,proto3,oneof"`
 	xxx_hidden_ApAnyDeclined       bool                   `protobuf:"varint,21,opt,name=ap_any_declined,json=apAnyDeclined,proto3,oneof"`
 	xxx_hidden_ApPoliciesActive    int32                  `protobuf:"varint,22,opt,name=ap_policies_active,json=apPoliciesActive,proto3,oneof"`
+	xxx_hidden_CommentCount        int32                  `protobuf:"varint,23,opt,name=comment_count,json=commentCount,proto3,oneof"`
 	XXX_raceDetectHookData         protoimpl.RaceDetectHookData
 	XXX_presence                   [1]uint32
 	unknownFields                  protoimpl.UnknownFields
@@ -1273,6 +1274,13 @@ func (x *DocumentMeta) GetApPoliciesActive() int32 {
 	return 0
 }
 
+func (x *DocumentMeta) GetCommentCount() int32 {
+	if x != nil {
+		return x.xxx_hidden_CommentCount
+	}
+	return 0
+}
+
 func (x *DocumentMeta) SetDocumentId(v int64) {
 	x.xxx_hidden_DocumentId = v
 }
@@ -1299,42 +1307,47 @@ func (x *DocumentMeta) SetState(v string) {
 
 func (x *DocumentMeta) SetApproved(v bool) {
 	x.xxx_hidden_Approved = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 15)
 }
 
 func (x *DocumentMeta) SetApRequiredTotal(v int32) {
 	x.xxx_hidden_ApRequiredTotal = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 15)
 }
 
 func (x *DocumentMeta) SetApCollectedApproved(v int32) {
 	x.xxx_hidden_ApCollectedApproved = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 15)
 }
 
 func (x *DocumentMeta) SetApRequiredRemaining(v int32) {
 	x.xxx_hidden_ApRequiredRemaining = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 15)
 }
 
 func (x *DocumentMeta) SetApDeclinedCount(v int32) {
 	x.xxx_hidden_ApDeclinedCount = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 15)
 }
 
 func (x *DocumentMeta) SetApPendingCount(v int32) {
 	x.xxx_hidden_ApPendingCount = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 15)
 }
 
 func (x *DocumentMeta) SetApAnyDeclined(v bool) {
 	x.xxx_hidden_ApAnyDeclined = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 15)
 }
 
 func (x *DocumentMeta) SetApPoliciesActive(v int32) {
 	x.xxx_hidden_ApPoliciesActive = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 14)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 15)
+}
+
+func (x *DocumentMeta) SetCommentCount(v int32) {
+	x.xxx_hidden_CommentCount = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 15)
 }
 
 func (x *DocumentMeta) HasRecomputedAt() bool {
@@ -1400,6 +1413,13 @@ func (x *DocumentMeta) HasApPoliciesActive() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 13)
 }
 
+func (x *DocumentMeta) HasCommentCount() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 14)
+}
+
 func (x *DocumentMeta) ClearRecomputedAt() {
 	x.xxx_hidden_RecomputedAt = nil
 }
@@ -1444,6 +1464,11 @@ func (x *DocumentMeta) ClearApPoliciesActive() {
 	x.xxx_hidden_ApPoliciesActive = 0
 }
 
+func (x *DocumentMeta) ClearCommentCount() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 14)
+	x.xxx_hidden_CommentCount = 0
+}
+
 type DocumentMeta_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -1470,6 +1495,8 @@ type DocumentMeta_builder struct {
 	ApAnyDeclined *bool
 	// Number of active approval policies
 	ApPoliciesActive *int32
+	// Number of comments on the document
+	CommentCount *int32
 }
 
 func (b0 DocumentMeta_builder) Build() *DocumentMeta {
@@ -1483,36 +1510,40 @@ func (b0 DocumentMeta_builder) Build() *DocumentMeta {
 	x.xxx_hidden_Public = b.Public
 	x.xxx_hidden_State = b.State
 	if b.Approved != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 15)
 		x.xxx_hidden_Approved = *b.Approved
 	}
 	if b.ApRequiredTotal != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 15)
 		x.xxx_hidden_ApRequiredTotal = *b.ApRequiredTotal
 	}
 	if b.ApCollectedApproved != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 15)
 		x.xxx_hidden_ApCollectedApproved = *b.ApCollectedApproved
 	}
 	if b.ApRequiredRemaining != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 15)
 		x.xxx_hidden_ApRequiredRemaining = *b.ApRequiredRemaining
 	}
 	if b.ApDeclinedCount != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 15)
 		x.xxx_hidden_ApDeclinedCount = *b.ApDeclinedCount
 	}
 	if b.ApPendingCount != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 15)
 		x.xxx_hidden_ApPendingCount = *b.ApPendingCount
 	}
 	if b.ApAnyDeclined != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 15)
 		x.xxx_hidden_ApAnyDeclined = *b.ApAnyDeclined
 	}
 	if b.ApPoliciesActive != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 14)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 15)
 		x.xxx_hidden_ApPoliciesActive = *b.ApPoliciesActive
+	}
+	if b.CommentCount != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 15)
+		x.xxx_hidden_CommentCount = *b.CommentCount
 	}
 	return m0
 }
@@ -1611,7 +1642,7 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x12_creator_job_labelB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xa0\x06\n" +
+	"\x0e_workflow_user\"\xdc\x06\n" +
 	"\fDocumentMeta\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12H\n" +
@@ -1627,7 +1658,8 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x11ap_declined_count\x18\x13 \x01(\x05H\x05R\x0fapDeclinedCount\x88\x01\x01\x12-\n" +
 	"\x10ap_pending_count\x18\x14 \x01(\x05H\x06R\x0eapPendingCount\x88\x01\x01\x12+\n" +
 	"\x0fap_any_declined\x18\x15 \x01(\bH\aR\rapAnyDeclined\x88\x01\x01\x121\n" +
-	"\x12ap_policies_active\x18\x16 \x01(\x05H\bR\x10apPoliciesActive\x88\x01\x01B\x10\n" +
+	"\x12ap_policies_active\x18\x16 \x01(\x05H\bR\x10apPoliciesActive\x88\x01\x01\x12(\n" +
+	"\rcomment_count\x18\x17 \x01(\x05H\tR\fcommentCount\x88\x01\x01B\x10\n" +
 	"\x0e_recomputed_atB\v\n" +
 	"\t_approvedB\x14\n" +
 	"\x12_ap_required_totalB\x18\n" +
@@ -1636,7 +1668,8 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x12_ap_declined_countB\x13\n" +
 	"\x11_ap_pending_countB\x12\n" +
 	"\x10_ap_any_declinedB\x15\n" +
-	"\x13_ap_policies_activeBQZOgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\x13_ap_policies_activeB\x10\n" +
+	"\x0e_comment_countBQZOgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var file_resources_documents_documents_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_documents_documents_proto_goTypes = []any{

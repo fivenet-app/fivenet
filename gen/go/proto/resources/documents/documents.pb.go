@@ -1076,8 +1076,10 @@ type DocumentMeta struct {
 	ApAnyDeclined *bool `protobuf:"varint,21,opt,name=ap_any_declined,json=apAnyDeclined,proto3,oneof" json:"ap_any_declined,omitempty"`
 	// Number of active approval policies
 	ApPoliciesActive *int32 `protobuf:"varint,22,opt,name=ap_policies_active,json=apPoliciesActive,proto3,oneof" json:"ap_policies_active,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// Number of comments on the document
+	CommentCount  *int32 `protobuf:"varint,23,opt,name=comment_count,json=commentCount,proto3,oneof" json:"comment_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DocumentMeta) Reset() {
@@ -1203,6 +1205,13 @@ func (x *DocumentMeta) GetApPoliciesActive() int32 {
 	return 0
 }
 
+func (x *DocumentMeta) GetCommentCount() int32 {
+	if x != nil && x.CommentCount != nil {
+		return *x.CommentCount
+	}
+	return 0
+}
+
 func (x *DocumentMeta) SetDocumentId(v int64) {
 	x.DocumentId = v
 }
@@ -1257,6 +1266,10 @@ func (x *DocumentMeta) SetApAnyDeclined(v bool) {
 
 func (x *DocumentMeta) SetApPoliciesActive(v int32) {
 	x.ApPoliciesActive = &v
+}
+
+func (x *DocumentMeta) SetCommentCount(v int32) {
+	x.CommentCount = &v
 }
 
 func (x *DocumentMeta) HasRecomputedAt() bool {
@@ -1322,6 +1335,13 @@ func (x *DocumentMeta) HasApPoliciesActive() bool {
 	return x.ApPoliciesActive != nil
 }
 
+func (x *DocumentMeta) HasCommentCount() bool {
+	if x == nil {
+		return false
+	}
+	return x.CommentCount != nil
+}
+
 func (x *DocumentMeta) ClearRecomputedAt() {
 	x.RecomputedAt = nil
 }
@@ -1358,6 +1378,10 @@ func (x *DocumentMeta) ClearApPoliciesActive() {
 	x.ApPoliciesActive = nil
 }
 
+func (x *DocumentMeta) ClearCommentCount() {
+	x.CommentCount = nil
+}
+
 type DocumentMeta_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -1384,6 +1408,8 @@ type DocumentMeta_builder struct {
 	ApAnyDeclined *bool
 	// Number of active approval policies
 	ApPoliciesActive *int32
+	// Number of comments on the document
+	CommentCount *int32
 }
 
 func (b0 DocumentMeta_builder) Build() *DocumentMeta {
@@ -1404,6 +1430,7 @@ func (b0 DocumentMeta_builder) Build() *DocumentMeta {
 	x.ApPendingCount = b.ApPendingCount
 	x.ApAnyDeclined = b.ApAnyDeclined
 	x.ApPoliciesActive = b.ApPoliciesActive
+	x.CommentCount = b.CommentCount
 	return m0
 }
 
@@ -1501,7 +1528,7 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x12_creator_job_labelB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xa0\x06\n" +
+	"\x0e_workflow_user\"\xdc\x06\n" +
 	"\fDocumentMeta\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12H\n" +
@@ -1517,7 +1544,8 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x11ap_declined_count\x18\x13 \x01(\x05H\x05R\x0fapDeclinedCount\x88\x01\x01\x12-\n" +
 	"\x10ap_pending_count\x18\x14 \x01(\x05H\x06R\x0eapPendingCount\x88\x01\x01\x12+\n" +
 	"\x0fap_any_declined\x18\x15 \x01(\bH\aR\rapAnyDeclined\x88\x01\x01\x121\n" +
-	"\x12ap_policies_active\x18\x16 \x01(\x05H\bR\x10apPoliciesActive\x88\x01\x01B\x10\n" +
+	"\x12ap_policies_active\x18\x16 \x01(\x05H\bR\x10apPoliciesActive\x88\x01\x01\x12(\n" +
+	"\rcomment_count\x18\x17 \x01(\x05H\tR\fcommentCount\x88\x01\x01B\x10\n" +
 	"\x0e_recomputed_atB\v\n" +
 	"\t_approvedB\x14\n" +
 	"\x12_ap_required_totalB\x18\n" +
@@ -1526,7 +1554,8 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x12_ap_declined_countB\x13\n" +
 	"\x11_ap_pending_countB\x12\n" +
 	"\x10_ap_any_declinedB\x15\n" +
-	"\x13_ap_policies_activeBQZOgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\x13_ap_policies_activeB\x10\n" +
+	"\x0e_comment_countBQZOgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var file_resources_documents_documents_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_documents_documents_proto_goTypes = []any{

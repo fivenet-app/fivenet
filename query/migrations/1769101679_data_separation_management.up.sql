@@ -282,4 +282,7 @@ ALTER TABLE `fivenet_user_props` DROP COLUMN `attributes`;
 ALTER TABLE `fivenet_documents_stamps` DROP FOREIGN KEY `fk_fivenet_documents_signatures_stamp_user`;
 ALTER TABLE `fivenet_documents_stamps` DROP COLUMN `user_id`;
 
+-- Table: `fivenet_documents_meta` - Add comment count
+ALTER TABLE `fivenet_documents_meta` ADD COLUMN `comment_count` int(11) NOT NULL DEFAULT '0' AFTER `ap_policies_active`;
+
 COMMIT;

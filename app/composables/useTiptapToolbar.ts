@@ -22,6 +22,7 @@ export function useTiptapToolbar(editor: () => Editor | null | undefined) {
         checkboxStandalone: false,
         codeBlock: false,
         blockquote: false,
+        table: false,
 
         // Attributes / derived
         textAlign: 'left' as TextAlign,
@@ -60,6 +61,8 @@ export function useTiptapToolbar(editor: () => Editor | null | undefined) {
         ui.checkboxStandalone = ed.isActive('checkboxStandalone');
         ui.codeBlock = ed.isActive('codeBlock');
         ui.blockquote = ed.isActive('blockquote');
+        ui.table = ed.isActive('table');
+        // TODO is 'table' enough?
 
         // textAlign: check attrs once, don’t pass object literals in template
         if (ed.isActive({ textAlign: 'center' })) ui.textAlign = 'center';

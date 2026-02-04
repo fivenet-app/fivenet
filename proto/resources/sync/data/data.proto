@@ -5,11 +5,12 @@ package resources.sync.data;
 import "buf/validate/validate.proto";
 import "resources/jobs/jobs.proto";
 import "resources/livemap/coords.proto";
+import "resources/sync/activity/activity.proto";
 import "resources/users/licenses/licenses.proto";
 import "resources/users/props/props.proto";
 import "resources/users/user.proto";
-import "resources/sync/activity/activity.proto";
 import "resources/vehicles/vehicles.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data;syncdata";
 
@@ -68,59 +69,104 @@ message DataAccounts {
 // Should be kept inline with `resources.users.User`.
 message DataUser {
   int32 user_id = 1 [
-    (buf.validate.field).int32.gt = 0
+    (buf.validate.field).int32.gt = 0,
+    (tagger.tags) = "alias:\"user.id\""
   ];
-  string identifier = 2 [(buf.validate.field).string.max_len = 64];
+  string identifier = 2 [
+    (buf.validate.field).string.max_len = 64,
+    (tagger.tags) = "alias:\"user.identifier\""
+  ];
 
   string job = 3 [
     (buf.validate.field).string.max_len = 20,
-    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
+    (tagger.tags) = "alias:\"user.job\""
   ];
-  optional string job_label = 4 [(buf.validate.field).string.max_len = 50];
+  optional string job_label = 4 [
+    (buf.validate.field).string.max_len = 50,
+    (tagger.tags) = "alias:\"user.job_label\""
+  ];
   int32 job_grade = 5 [
     (buf.validate.field).int32.gte = 0,
-    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
+    (tagger.tags) = "alias:\"user.job_grade\""
   ];
-  optional string job_grade_label = 6 [(buf.validate.field).string.max_len = 50];
+  optional string job_grade_label = 6 [
+    (buf.validate.field).string.max_len = 50,
+    (tagger.tags) = "alias:\"user.job_grade_label\""
+  ];
   repeated resources.users.UserJob jobs = 20 [
     (buf.validate.field).repeated.max_items = 3,
-    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
+    (tagger.tags) = "alias:\"user.jobs\""
   ];
 
-  string firstname = 7 [(buf.validate.field).string = {
-    min_len: 1
-    max_len: 50
-  }];
+  string firstname = 7 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 50
+    },
+    (tagger.tags) = "alias:\"user.firstname\""
+  ];
   optional string lastname = 8 [
     (buf.validate.field).string = {
       min_len: 1
       max_len: 50
-    }
+    },
+    (tagger.tags) = "alias:\"user.lastname\""
   ];
 
   string dateofbirth = 9 [
     (buf.validate.field).string.max_len = 10,
-    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
+    (tagger.tags) = "alias:\"user.dateofbirth\""
   ];
 
-  optional string sex = 10 [(buf.validate.field).string = {
-    min_len: 1
-    max_len: 2
-  }];
-  optional string height = 11;
+  optional string sex = 10 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 2
+    },
+    (tagger.tags) = "alias:\"user.sex\""
+  ];
+  optional string height = 11 [
+    (tagger.tags) = "alias:\"user.height\""
+  ];
 
-  optional string phone_number = 12 [(buf.validate.field).string.max_len = 20];
+  optional string phone_number = 12 [
+    (buf.validate.field).string.max_len = 20,
+    (tagger.tags) = "alias:\"user.phone_number\""
+  ];
   repeated resources.users.PhoneNumber phone_numbers = 19 [
     (buf.validate.field).repeated.max_items = 5,
-    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
+    (tagger.tags) = "alias:\"user.phone_numbers\""
   ];
 
-  optional int32 visum = 13 [(buf.validate.field).int32.gte = 0];
-  optional int32 playtime = 14 [(buf.validate.field).int32.gte = 0];
+  optional int32 visum = 13 [
+    (buf.validate.field).int32.gte = 0,
+    (tagger.tags) = "alias:\"user.visum\""
+  ];
+  optional int32 playtime = 14 [
+    (buf.validate.field).int32.gte = 0,
+    (tagger.tags) = "alias:\"user.playtime\""
+  ];
 
-  optional resources.users.props.UserProps props = 15;
-  repeated resources.users.licenses.License licenses = 16;
+  optional resources.users.props.UserProps props = 15 [
+    (tagger.tags) = "alias:\"user.props\""
+  ];
+  repeated resources.users.licenses.License licenses = 16 [
+    (buf.validate.field).repeated.max_items = 20,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
+    (tagger.tags) = "alias:\"user.licenses\""
+  ];
 
-  optional int64 profile_picture_file_id = 17;
-  optional string profile_picture = 18;
+  optional int64 profile_picture_file_id = 17 [
+    (buf.validate.field).int64.gte = 0,
+    (tagger.tags) = "alias:\"user.profile_picture_file_id\""
+  ];
+  optional string profile_picture = 18 [
+    (buf.validate.field).string.max_len = 255,
+    (tagger.tags) = "alias:\"user.profile_picture\""
+  ];
 }

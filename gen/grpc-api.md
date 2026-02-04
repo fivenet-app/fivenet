@@ -3945,6 +3945,7 @@ States of Cronjbo
 | `ap_pending_count` | [int32](#int32) | optional | Tasks still pending (optional) |
 | `ap_any_declined` | [bool](#bool) | optional | Quick flag if any declines |
 | `ap_policies_active` | [int32](#int32) | optional | Number of active approval policies |
+| `comment_count` | [int32](#int32) | optional | Number of comments on the document |
 
 
 

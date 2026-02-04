@@ -22,4 +22,5 @@ type FivenetDocumentsMeta struct {
 	ApPendingCount      int32     `json:"ap_pending_count"`
 	ApAnyDeclined       bool      `json:"ap_any_declined"`
 	ApPoliciesActive    int32     `json:"ap_policies_active"`
+	CommentCount        int32     `json:"comment_count"`
 }

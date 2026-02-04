@@ -279,6 +279,12 @@ export interface DocumentMeta {
      * @generated from protobuf field: optional int32 ap_policies_active = 22
      */
     apPoliciesActive?: number;
+    /**
+     * Number of comments on the document
+     *
+     * @generated from protobuf field: optional int32 comment_count = 23
+     */
+    commentCount?: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Document$Type extends MessageType<Document> {
@@ -671,7 +677,8 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
             { no: 19, name: "ap_declined_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 20, name: "ap_pending_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 21, name: "ap_any_declined", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 22, name: "ap_policies_active", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 22, name: "ap_policies_active", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 23, name: "comment_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<DocumentMeta>): DocumentMeta {
@@ -732,6 +739,9 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
                 case /* optional int32 ap_policies_active */ 22:
                     message.apPoliciesActive = reader.int32();
                     break;
+                case /* optional int32 comment_count */ 23:
+                    message.commentCount = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -786,6 +796,9 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
         /* optional int32 ap_policies_active = 22; */
         if (message.apPoliciesActive !== undefined)
             writer.tag(22, WireType.Varint).int32(message.apPoliciesActive);
+        /* optional int32 comment_count = 23; */
+        if (message.commentCount !== undefined)
+            writer.tag(23, WireType.Varint).int32(message.commentCount);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

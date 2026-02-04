@@ -134,6 +134,7 @@ func (s *Server) listDocumentsQuery(
 			tDMeta.ApPendingCount,
 			tDMeta.ApAnyDeclined,
 			tDMeta.ApPoliciesActive,
+			tDMeta.CommentCount,
 		)
 
 		if userInfo.GetSuperuser() {
@@ -291,6 +292,7 @@ func (s *Server) getDocumentQuery(
 			tDMeta.ApPendingCount,
 			tDMeta.ApAnyDeclined,
 			tDMeta.ApPoliciesActive,
+			tDMeta.CommentCount,
 		)
 
 		if withContent {
@@ -369,6 +371,7 @@ func (s *Server) getDocumentMeta(
 			tDMeta.ApPendingCount,
 			tDMeta.ApAnyDeclined,
 			tDMeta.ApPoliciesActive,
+			tDMeta.CommentCount,
 		).
 		FROM(tDMeta).
 		WHERE(

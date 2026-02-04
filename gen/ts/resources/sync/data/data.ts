@@ -815,26 +815,26 @@ export const DataAccounts = new DataAccounts$Type();
 class DataUser$Type extends MessageType<DataUser> {
     constructor() {
         super("resources.sync.data.DataUser", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 2, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 3, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { maxLen: "20" } } } },
-            { no: 4, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 5, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", int32: { gte: 0 } } } },
-            { no: 6, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 20, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserJob, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", repeated: { maxItems: "3" } } } },
-            { no: 7, name: "firstname", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "50" } } } },
-            { no: 8, name: "lastname", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "50" } } } },
-            { no: 9, name: "dateofbirth", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { maxLen: "10" } } } },
-            { no: 10, name: "sex", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "2" } } } },
-            { no: 11, name: "height", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 12, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 19, name: "phone_numbers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PhoneNumber, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", repeated: { maxItems: "5" } } } },
-            { no: 13, name: "visum", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
-            { no: 14, name: "playtime", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
-            { no: 15, name: "props", kind: "message", T: () => UserProps },
-            { no: 16, name: "licenses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => License },
-            { no: 17, name: "profile_picture_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 18, name: "profile_picture", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } }, "tagger.tags": "alias:\"user.id\"" } },
+            { no: 2, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } }, "tagger.tags": "alias:\"user.identifier\"" } },
+            { no: 3, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { maxLen: "20" } }, "tagger.tags": "alias:\"user.job\"" } },
+            { no: 4, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } }, "tagger.tags": "alias:\"user.job_label\"" } },
+            { no: 5, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", int32: { gte: 0 } }, "tagger.tags": "alias:\"user.job_grade\"" } },
+            { no: 6, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } }, "tagger.tags": "alias:\"user.job_grade_label\"" } },
+            { no: 20, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserJob, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", repeated: { maxItems: "3" } }, "tagger.tags": "alias:\"user.jobs\"" } },
+            { no: 7, name: "firstname", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "50" } }, "tagger.tags": "alias:\"user.firstname\"" } },
+            { no: 8, name: "lastname", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "50" } }, "tagger.tags": "alias:\"user.lastname\"" } },
+            { no: 9, name: "dateofbirth", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { maxLen: "10" } }, "tagger.tags": "alias:\"user.dateofbirth\"" } },
+            { no: 10, name: "sex", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "2" } }, "tagger.tags": "alias:\"user.sex\"" } },
+            { no: 11, name: "height", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "alias:\"user.height\"" } },
+            { no: 12, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } }, "tagger.tags": "alias:\"user.phone_number\"" } },
+            { no: 19, name: "phone_numbers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PhoneNumber, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", repeated: { maxItems: "5" } }, "tagger.tags": "alias:\"user.phone_numbers\"" } },
+            { no: 13, name: "visum", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } }, "tagger.tags": "alias:\"user.visum\"" } },
+            { no: 14, name: "playtime", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } }, "tagger.tags": "alias:\"user.playtime\"" } },
+            { no: 15, name: "props", kind: "message", T: () => UserProps, options: { "tagger.tags": "alias:\"user.props\"" } },
+            { no: 16, name: "licenses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => License, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"user.licenses\"" } },
+            { no: 17, name: "profile_picture_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gte: "0" } }, "tagger.tags": "alias:\"user.profile_picture_file_id\"" } },
+            { no: 18, name: "profile_picture", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "tagger.tags": "alias:\"user.profile_picture\"" } }
         ]);
     }
     create(value?: PartialMessage<DataUser>): DataUser {

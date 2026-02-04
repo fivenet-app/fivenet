@@ -33,6 +33,9 @@ func main() {
 func genTemplate() template.Template {
 	return template.Default(mysql.Dialect).
 		UseSchema(func(schemaMetaData metadata.Schema) template.Schema {
+			// Override schema name
+			schemaMetaData.Name = "fivenet"
+
 			return template.DefaultSchema(schemaMetaData).
 				UseModel(template.DefaultModel().
 					UseTable(func(table metadata.Table) template.TableModel {

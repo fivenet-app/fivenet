@@ -91,7 +91,7 @@ gen-sql:
 	$(GO) run ./query/gen/
 
 	# Remove schema/database name from the generated table code, so it uses the currently selected database
-	find ./query/fivenet/table -type f -iname '*.go' -exec sed -i 's~("fivenet", ~("", ~g' {} \;
+	find ./query/fivenet/table -type f -iname '*.go' -exec sed -E -i 's~\("fivenet[_a-z-]*", ~\("", ~g' {} \;
 
 .PHONY: gen-proto
 gen-proto: buf protoc-gen-doc

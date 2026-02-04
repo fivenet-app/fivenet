@@ -231,12 +231,16 @@ func (s *Server) PostComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
+	if err := s.updateCommentsCount(ctx, tx, req.GetComment().GetDocumentId()); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	comment, err := s.getComment(ctx, lastId, userInfo)
 	if err != nil {
@@ -290,6 +294,14 @@ func (s *Server) EditComment(
 		return nil, errorsdocuments.ErrCommentPostDenied
 	}
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	stmt := tDComments.
 		UPDATE(
 			tDComments.Content,
@@ -302,18 +314,27 @@ func (s *Server) EditComment(
 			tDComments.DeletedAt.IS_NULL(),
 		))
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	comment.Content = req.GetComment().GetContent()
 
-	if _, err := addDocumentActivity(ctx, s.db, &documentsactivity.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 		DocumentId:   req.GetComment().GetDocumentId(),
 		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_UPDATED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.GetJob(),
 	}); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if err := s.updateCommentsCount(ctx, tx, comment.GetDocumentId()); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -428,6 +449,14 @@ func (s *Server) DeleteComment(
 		return nil, errorsdocuments.ErrCommentDeleteDenied
 	}
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	stmt := tDComments.
 		UPDATE(
 			tDComments.DeletedAt,
@@ -440,16 +469,25 @@ func (s *Server) DeleteComment(
 			tDComments.DeletedAt.IS_NULL(),
 		))
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := addDocumentActivity(ctx, s.db, &documentsactivity.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 		DocumentId:   comment.GetDocumentId(),
 		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_DELETED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.GetJob(),
 	}); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if err := s.updateCommentsCount(ctx, tx, comment.GetDocumentId()); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -578,6 +616,62 @@ func (s *Server) notifyUsersNewComment(
 		if err := s.notifi.NotifyUser(ctx, not); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (s *Server) countComments(ctx context.Context, tx qrm.DB, documentId int64) (int32, error) {
+	tDComments := tDComments.AS("comments")
+	stmt := tDComments.
+		SELECT(
+			mysql.COUNT(tDComments.ID).AS(""),
+		).
+		FROM(
+			tDComments,
+		).
+		WHERE(
+			mysql.AND(
+				tDComments.DocumentID.EQ(mysql.Int64(documentId)),
+				tDComments.DeletedAt.IS_NULL(),
+			),
+		)
+
+	var result struct {
+		CommentCount int32 `alias:"comment_count"`
+	}
+	if err := stmt.QueryContext(ctx, tx, &result); err != nil {
+		return 0, err
+	}
+
+	return result.CommentCount, nil
+}
+
+func (s *Server) updateCommentsCount(
+	ctx context.Context,
+	tx qrm.DB,
+	documentId int64,
+) error {
+	commentCount, err := s.countComments(ctx, tx, documentId)
+	if err != nil {
+		return err
+	}
+
+	updateStmt := tDMeta.
+		INSERT(
+			tDMeta.DocumentID,
+			tDMeta.CommentCount,
+		).
+		VALUES(
+			documentId,
+			commentCount,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tDMeta.CommentCount.SET(mysql.Int32(commentCount)),
+		)
+
+	if _, err := updateStmt.ExecContext(ctx, tx); err != nil {
+		return err
 	}
 
 	return nil

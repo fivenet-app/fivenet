@@ -11,7 +11,7 @@ import type { HistoryContent } from '~/types/history';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
-import type { Comment } from '~~/gen/ts/resources/documents/comment';
+import type { Comment } from '~~/gen/ts/resources/documents/comment/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetCommentsResponse } from '~~/gen/ts/services/documents/documents';
 import CommentEntry from './CommentEntry.vue';

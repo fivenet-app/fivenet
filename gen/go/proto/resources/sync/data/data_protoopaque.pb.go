@@ -16,6 +16,7 @@ import (
 	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
+	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -1360,7 +1361,7 @@ var File_resources_sync_data_data_proto protoreflect.FileDescriptor
 
 const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/sync/data/data.proto\x12\x13resources.sync.data\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a'resources/users/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\x1a&resources/sync/activity/activity.proto\x1a!resources/vehicles/vehicles.proto\"\"\n" +
+	"\x1eresources/sync/data/data.proto\x12\x13resources.sync.data\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a&resources/sync/activity/activity.proto\x1a'resources/users/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\"\n" +
 	"\n" +
 	"DataStatus\x12\x14\n" +
 	"\x05count\x18\x01 \x01(\x03R\x05count\"3\n" +
@@ -1399,31 +1400,31 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"lastCharId\x88\x01\x01B\x0f\n" +
 	"\r_last_char_id\"_\n" +
 	"\fDataAccounts\x12O\n" +
-	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"\xb5\a\n" +
-	"\bDataUser\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x1e\n" +
+	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"\xf7\v\n" +
+	"\bDataUser\x12-\n" +
+	"\auser_id\x18\x01 \x01(\x05B\x14\x9a\x84\x9e\x03\x0falias:\"user.id\"R\x06userId\x12<\n" +
 	"\n" +
-	"identifier\x18\x02 \x01(\tR\n" +
-	"identifier\x12\x10\n" +
-	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x04 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x1b\n" +
-	"\tjob_grade\x18\x05 \x01(\x05R\bjobGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12,\n" +
-	"\x04jobs\x18\x14 \x03(\v2\x18.resources.users.UserJobR\x04jobs\x12\x1c\n" +
-	"\tfirstname\x18\a \x01(\tR\tfirstname\x12\x1f\n" +
-	"\blastname\x18\b \x01(\tH\x02R\blastname\x88\x01\x01\x12 \n" +
-	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12\x15\n" +
+	"identifier\x18\x02 \x01(\tB\x1c\x9a\x84\x9e\x03\x17alias:\"user.identifier\"R\n" +
+	"identifier\x12'\n" +
+	"\x03job\x18\x03 \x01(\tB\x15\x9a\x84\x9e\x03\x10alias:\"user.job\"R\x03job\x12=\n" +
+	"\tjob_label\x18\x04 \x01(\tB\x1b\x9a\x84\x9e\x03\x16alias:\"user.job_label\"H\x00R\bjobLabel\x88\x01\x01\x128\n" +
+	"\tjob_grade\x18\x05 \x01(\x05B\x1b\x9a\x84\x9e\x03\x16alias:\"user.job_grade\"R\bjobGrade\x12N\n" +
+	"\x0fjob_grade_label\x18\x06 \x01(\tB!\x9a\x84\x9e\x03\x1calias:\"user.job_grade_label\"H\x01R\rjobGradeLabel\x88\x01\x01\x12D\n" +
+	"\x04jobs\x18\x14 \x03(\v2\x18.resources.users.UserJobB\x16\x9a\x84\x9e\x03\x11alias:\"user.jobs\"R\x04jobs\x129\n" +
+	"\tfirstname\x18\a \x01(\tB\x1b\x9a\x84\x9e\x03\x16alias:\"user.firstname\"R\tfirstname\x12;\n" +
+	"\blastname\x18\b \x01(\tB\x1a\x9a\x84\x9e\x03\x15alias:\"user.lastname\"H\x02R\blastname\x88\x01\x01\x12?\n" +
+	"\vdateofbirth\x18\t \x01(\tB\x1d\x9a\x84\x9e\x03\x18alias:\"user.dateofbirth\"R\vdateofbirth\x12,\n" +
 	"\x03sex\x18\n" +
-	" \x01(\tH\x03R\x03sex\x88\x01\x01\x12\x1b\n" +
-	"\x06height\x18\v \x01(\tH\x04R\x06height\x88\x01\x01\x12&\n" +
-	"\fphone_number\x18\f \x01(\tH\x05R\vphoneNumber\x88\x01\x01\x12A\n" +
-	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberR\fphoneNumbers\x12\x19\n" +
-	"\x05visum\x18\r \x01(\x05H\x06R\x05visum\x88\x01\x01\x12\x1f\n" +
-	"\bplaytime\x18\x0e \x01(\x05H\aR\bplaytime\x88\x01\x01\x12;\n" +
-	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsH\bR\x05props\x88\x01\x01\x12=\n" +
-	"\blicenses\x18\x10 \x03(\v2!.resources.users.licenses.LicenseR\blicenses\x12:\n" +
-	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\tR\x14profilePictureFileId\x88\x01\x01\x12,\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tH\n" +
+	" \x01(\tB\x15\x9a\x84\x9e\x03\x10alias:\"user.sex\"H\x03R\x03sex\x88\x01\x01\x125\n" +
+	"\x06height\x18\v \x01(\tB\x18\x9a\x84\x9e\x03\x13alias:\"user.height\"H\x04R\x06height\x88\x01\x01\x12F\n" +
+	"\fphone_number\x18\f \x01(\tB\x1e\x9a\x84\x9e\x03\x19alias:\"user.phone_number\"H\x05R\vphoneNumber\x88\x01\x01\x12b\n" +
+	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberB\x1f\x9a\x84\x9e\x03\x1aalias:\"user.phone_numbers\"R\fphoneNumbers\x122\n" +
+	"\x05visum\x18\r \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"user.visum\"H\x06R\x05visum\x88\x01\x01\x12;\n" +
+	"\bplaytime\x18\x0e \x01(\x05B\x1a\x9a\x84\x9e\x03\x15alias:\"user.playtime\"H\aR\bplaytime\x88\x01\x01\x12T\n" +
+	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsB\x17\x9a\x84\x9e\x03\x12alias:\"user.props\"H\bR\x05props\x88\x01\x01\x12Y\n" +
+	"\blicenses\x18\x10 \x03(\v2!.resources.users.licenses.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user.licenses\"R\blicenses\x12e\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03B)\x9a\x84\x9e\x03$alias:\"user.profile_picture_file_id\"H\tR\x14profilePictureFileId\x88\x01\x01\x12O\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tB!\x9a\x84\x9e\x03\x1calias:\"user.profile_picture\"H\n" +
 	"R\x0eprofilePicture\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +

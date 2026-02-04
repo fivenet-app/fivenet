@@ -10,6 +10,7 @@ import (
 	"time"
 
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
@@ -35,7 +36,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
-	limit := int64(500)
+	limit := int64(200)
 	offset := s.getInitialOffset()
 	s.logger.Debug("usersSync", zap.Int64("offset", offset))
 
@@ -58,7 +59,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
-	offset, err = s.updateSyncState(us, offset, limit)
+	offset, err = s.updateSyncState(int64(len(us)), offset, limit)
 	if err != nil {
 		return err
 	}
@@ -110,11 +111,12 @@ func (s *usersSync) fetchUsers(ctx context.Context, query string) ([]*syncdata.D
 			return nil, fmt.Errorf("failed to query users table. %w", err)
 		}
 	}
+
 	return us, nil
 }
 
-func (s *usersSync) updateSyncState(us []*syncdata.DataUser, offset, limit int64) (int64, error) {
-	if int64(len(us)) < limit {
+func (s *usersSync) updateSyncState(usersCount int64, offset, limit int64) (int64, error) {
+	if usersCount < limit {
 		offset = 0
 		s.state.SetSyncedUp(true)
 	}
@@ -130,20 +132,74 @@ func (s *usersSync) applyFiltersAndTransformations(us []*syncdata.DataUser, sQue
 
 	hasFilters := len(sQuery.Filters.Jobs) > 0
 
-	for k := 0; k < len(us); {
+	foundNullUserId := false
+	for i := 0; i < len(us); i++ {
+		if us[i].GetUserId() <= 0 {
+			foundNullUserId = true
+			s.logger.Debug(
+				"user with null/zero id found",
+				zap.String("identifier", us[i].GetIdentifier()),
+			)
+			continue
+		}
+
 		if s.cfg.Tables.Users.ValueMapping != nil {
-			s.applyValueMapping(us[k])
+			s.applyValueMapping(us[i])
 		}
 
 		if hasFilters {
-			if s.applyFilters(us, k, sQuery) {
+			if s.applyFilters(us, i, sQuery) {
 				continue
 			}
 		}
 
-		s.splitNamesIfRequired(us[k])
-		s.parseDateOfBirth(us[k])
-		k++
+		s.splitNamesIfRequired(us[i])
+		s.parseDateOfBirth(us[i])
+
+		if len(us[i].Jobs) == 0 {
+			// If no jobs are set, create one from the user job field
+			us[i].Jobs = []*users.UserJob{
+				{
+					Job:       us[i].GetJob(),
+					Grade:     us[i].GetJobGrade(),
+					IsPrimary: true,
+				},
+			}
+		} else {
+			// Sort the user's jobs by is primary and then alphabetically to ensure consistent order
+			slices.SortFunc(us[i].GetJobs(), func(a *users.UserJob, b *users.UserJob) int {
+				if a.GetIsPrimary() && !b.GetIsPrimary() {
+					return -1
+				}
+				if !a.GetIsPrimary() && b.GetIsPrimary() {
+					return 1
+				}
+				return strings.Compare(a.GetJob(), b.GetJob())
+			})
+
+			foundPrimary := false
+			primaryJob := us[i].GetJob()
+			for _, job := range us[i].GetJobs() {
+				if job.GetJob() == primaryJob {
+					// Make sure the "primary" job (user's job field if set) is marked as primary
+					foundPrimary = true
+					job.IsPrimary = true
+				} else {
+					job.IsPrimary = false
+				}
+			}
+
+			// If not ensure user has at least one primary job set
+			if !foundPrimary {
+				us[i].Jobs[0].IsPrimary = true
+			}
+		}
+	}
+
+	if foundNullUserId {
+		s.logger.Warn(
+			"some queried users have null or zero id, which have been skipped during processing",
+		)
 	}
 }
 

@@ -267,19 +267,18 @@ type Filter struct {
 type DBSyncTable struct {
 	Enabled           bool           `yaml:"enabled"`
 	TableName         string         `yaml:"tableName"`
-	UpdatedTimeColumn *string        `yaml:"updatedTimeColumn"`
-	Query             *string        `yaml:"query"`
-	SyncInterval      *time.Duration `yaml:"syncInterval"      validate:"gte=1"`
+	UpdatedTimeColumn *string        `yaml:"updatedTimeColumn,omitempty"`
+	Query             *string        `yaml:"query,omitempty"`
+	SyncInterval      *time.Duration `yaml:"syncInterval,omitempty"      validate:"omitempty,gte=1"`
 }
 
 func (c *DBSyncTable) GetSyncInterval() *time.Duration {
 	// Minimum sync interval is 1 second
-	if c.SyncInterval != nil && *c.SyncInterval <= 1*time.Second {
-		interval := 1 * time.Second
-		return &interval
+	if c.SyncInterval != nil && *c.SyncInterval >= 1*time.Second {
+		return c.SyncInterval
 	}
 
-	return c.SyncInterval
+	return nil
 }
 
 type JobsTable struct {
@@ -552,8 +551,11 @@ type DBSyncTableSyncInterval interface {
 
 func (c *DBSyncConfig) GetSyncInterval(table DBSyncTableSyncInterval) time.Duration {
 	if table != nil && table.GetSyncInterval() != nil {
+		// Only return the interval if it's at least 1 second
 		interval := table.GetSyncInterval()
-		return *interval
+		if *interval >= 1*time.Second {
+			return *interval
+		}
 	}
 
 	return c.Destination.SyncInterval
