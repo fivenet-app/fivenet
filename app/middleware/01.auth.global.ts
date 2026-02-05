@@ -92,7 +92,9 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                 title: { key: 'notifications.auth.no_permission.title', parameters: {} },
                 description: {
                     key: 'notifications.auth.no_permission.content',
-                    parameters: { path: to.name ? toTitleCase(to.name?.toString()) : to.path },
+                    parameters: {
+                        path: to.name ? toTitleCase(to.name?.toString().replaceAll('-', ' ')) + ` (${to.path})` : to.path,
+                    },
                 },
                 type: NotificationType.WARNING,
             });

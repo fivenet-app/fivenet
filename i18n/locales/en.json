@@ -609,19 +609,9 @@
         "suffix": "Suffix",
         "grade": "Grade | Grades",
         "sort_direction": "Sort Direction",
-        "font": "Font",
-        "default": "Default",
         "case_sensitive": "Case sensitive",
-        "rows": "Rows",
-        "cols": "Columns",
-        "with_header_row": "With header row",
-        "url": "URL",
-        "link": "Link",
-        "unlink": "Unlink",
-        "editor": "Editor",
         "source_code": "Source Code",
-        "insert": "Insert",
-        "allowed_file_types": "PNG, JPG (MAX. 2000x1500px)",
+        "allowed_file_types": "PNG, JPG (Max. 2000x1500px)",
         "default_lang": "Default Language",
         "selected": "None selected | {n} selected | {n} selected",
         "image_caching": "Please note that due to browser caching it can take up to 4 hours for the image to have updated for everyone.",
@@ -857,7 +847,20 @@
                 },
                 "invisible_characters": "Show/Hide Invisible Characters",
                 "font_size": "Font Size",
-                "focus_mode": "Focus Mode"
+                "focus_mode": "Focus Mode",
+                "insert": "Insert",
+                "url": "URL",
+                "unlink": "Unlink",
+                "rows": "Rows",
+                "cols": "Columns",
+                "with_header_row": "With header row",
+                "add_column_before": "Add column before",
+                "add_column_after": "Add column after",
+                "delete_column": "Delete column",
+                "add_row_before": "Add row before",
+                "add_row_after": "Add row after",
+                "delete_row": "Delete row",
+                "default": "Default"
             },
             "signature_pad": {
                 "pen_color": "Pen Color",
@@ -1854,7 +1857,7 @@
             },
             "no_permission": {
                 "title": "You don't have permission!",
-                "content": "You do not have permission to access {path}."
+                "content": "You don't have permission to access {path}."
             },
             "oauth2_connect": {
                 "success": {

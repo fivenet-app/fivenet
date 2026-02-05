@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 const props = defineProps<{
     editor: Editor;
+    active?: boolean | undefined;
     disabled?: boolean | undefined;
 }>();
 
@@ -34,14 +35,18 @@ async function onSubmit(event: FormSubmitEvent<Schema>): Promise<void> {
             withHeaderRow: values.withHeaderRow,
         })
         .run();
+
+    isOpen.value = false;
 }
+
+const isOpen = ref(false);
 </script>
 
 <template>
-    <UPopover>
+    <UPopover v-model:open="isOpen">
         <UTooltip :text="$t('components.partials.tiptap_editor.table')">
             <UButton
-                :class="{ 'bg-neutral-300 dark:bg-neutral-900': editor.isActive('table') }"
+                :class="{ 'bg-neutral-300 dark:bg-neutral-900': active }"
                 color="neutral"
                 variant="ghost"
                 icon="i-mdi-table"
@@ -51,21 +56,82 @@ async function onSubmit(event: FormSubmitEvent<Schema>): Promise<void> {
 
         <template #content>
             <div class="p-4">
-                <UForm :schema="schema" :state="{}" @submit="onSubmit">
-                    <UFormField :label="$t('common.rows')" name="rows">
+                <div v-if="active" class="grid grid-cols-1 gap-2">
+                    <div class="grid grid-cols-2 gap-2">
+                        <UFieldGroup orientation="vertical">
+                            <UButton
+                                class="w-full"
+                                :label="$t('components.partials.tiptap_editor.add_column_before')"
+                                icon="i-mdi-table-column-plus-before"
+                                @click="editor.chain().focus().addColumnBefore().run()"
+                            />
+                            <UButton
+                                class="w-full"
+                                :label="$t('components.partials.tiptap_editor.add_column_after')"
+                                icon="i-mdi-table-column-plus-after"
+                                @click="editor.chain().focus().addColumnAfter().run()"
+                            />
+                        </UFieldGroup>
+
+                        <UFieldGroup orientation="vertical">
+                            <UButton
+                                class="w-full"
+                                :label="$t('components.partials.tiptap_editor.add_row_before')"
+                                icon="i-mdi-table-row-plus-before"
+                                @click="editor.chain().focus().addRowBefore().run()"
+                            />
+                            <UButton
+                                class="w-full"
+                                :label="$t('components.partials.tiptap_editor.add_row_after')"
+                                icon="i-mdi-table-row-plus-after"
+                                @click="editor.chain().focus().addRowAfter().run()"
+                            />
+                        </UFieldGroup>
+                    </div>
+
+                    <USeparator />
+
+                    <UFieldGroup>
+                        <UButton
+                            class="w-full"
+                            :label="$t('components.partials.tiptap_editor.delete_column')"
+                            icon="i-mdi-table-column-remove"
+                            color="red"
+                            variant="subtle"
+                            @click="editor.chain().focus().deleteColumn().run()"
+                        />
+                        <UButton
+                            class="w-full"
+                            :label="$t('components.partials.tiptap_editor.delete_row')"
+                            icon="i-mdi-table-row-remove"
+                            color="red"
+                            variant="subtle"
+                            @click="editor.chain().focus().deleteRow().run()"
+                        />
+                    </UFieldGroup>
+                </div>
+
+                <UForm v-else :schema="schema" :state="state" @submit="onSubmit">
+                    <UFormField :label="$t('components.partials.tiptap_editor.rows')" name="rows">
                         <UInput v-model="state.rows" type="text" :disabled="disabled" />
                     </UFormField>
 
-                    <UFormField :label="$t('common.cols')" name="cols">
+                    <UFormField :label="$t('components.partials.tiptap_editor.cols')" name="cols">
                         <UInput v-model="state.cols" type="text" :disabled="disabled" />
                     </UFormField>
 
-                    <UFormField :label="$t('common.with_header_row')" name="withHeaderRow">
+                    <UFormField :label="$t('components.partials.tiptap_editor.with_header_row')" name="withHeaderRow">
                         <USwitch v-model="state.withHeaderRow" type="text" :disabled="disabled" />
                     </UFormField>
 
                     <UFormField class="mt-2">
-                        <UButton type="submit" block :label="$t('common.create')" :disabled="disabled" />
+                        <UButton
+                            type="submit"
+                            icon="i-mdi-table-plus"
+                            class="w-full"
+                            :label="$t('common.create')"
+                            :disabled="disabled"
+                        />
                     </UFormField>
                 </UForm>
             </div>

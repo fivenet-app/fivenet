@@ -369,7 +369,7 @@ const isLinkOpen = ref(false);
                 name="selectedFont"
                 :filter-fields="['label']"
                 :items="fonts"
-                :placeholder="$t('common.font', 1)"
+                :placeholder="$t('components.partials.tiptap_editor.font_family', 1)"
                 :disabled="disabled"
                 :style="{ fontFamily: selectedFont.value }"
             >
@@ -413,7 +413,7 @@ const isLinkOpen = ref(false);
                             color="neutral"
                             variant="outline"
                             icon="i-mdi-water-off"
-                            :label="$t('common.default')"
+                            :label="$t('components.partials.tiptap_editor.default')"
                             :disabled="disabled"
                             @click="
                                 ed?.chain().focus().unsetColor().run();
@@ -640,7 +640,7 @@ const isLinkOpen = ref(false);
             "
         />
 
-        <TablePopover :editor="unref(editor)" :disabled="disabled" />
+        <TablePopover :editor="unref(editor)" :active="ui.table" :disabled="disabled" />
 
         <UPopover v-model:open="isLinkOpen">
             <UTooltip :text="$t('components.partials.tiptap_editor.link')">
@@ -656,7 +656,7 @@ const isLinkOpen = ref(false);
             <template #content>
                 <div class="p-4">
                     <UForm ref="formRef" :state="linkState" :schema="linkSchema" @submit="($event) => setLink($event.data)">
-                        <UFormField :label="$t('common.url')" name="url">
+                        <UFormField :label="$t('components.partials.tiptap_editor.url')" name="url">
                             <UInput v-model="linkState.url" type="text" :disabled="disabled" />
                         </UFormField>
 
@@ -667,17 +667,17 @@ const isLinkOpen = ref(false);
                                 class="flex-1"
                                 type="submit"
                                 icon="i-mdi-link"
-                                :label="$t('common.link')"
+                                :label="$t('components.partials.tiptap_editor.link')"
                                 :disabled="disabled"
                                 @click="formRef?.submit()"
                             />
 
                             <UButton
-                                :disabled="!editor.isActive('link') || disabled"
+                                :disabled="!ui.link || disabled"
                                 color="error"
                                 variant="outline"
                                 icon="i-mdi-link-off"
-                                :label="$t('common.unlink')"
+                                :label="$t('components.partials.tiptap_editor.unlink')"
                                 @click="
                                     isLinkOpen = false;
                                     ed?.chain().focus().unsetLink().run();

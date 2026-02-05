@@ -103,7 +103,7 @@ const insertCustom = () => {
                     <UFormField>
                         <UButton
                             block
-                            :label="$t('common.insert')"
+                            :label="$t('components.partials.tiptap_editor.insert')"
                             :disabled="!selectedCategory || !selectedProperty"
                             @click="insert"
                         />

@@ -44,6 +44,7 @@ export function useTiptapToolbar(editor: () => Editor | null | undefined) {
     const refreshNow = () => {
         const ed = editor();
         if (!ed) return;
+
         // ACTIVE STATES (cheap single reads)
         ui.bold = ed.isActive('bold');
         ui.italic = ed.isActive('italic');
