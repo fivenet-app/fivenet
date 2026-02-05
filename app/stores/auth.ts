@@ -383,7 +383,7 @@ export const useAuthStore = defineStore(
                     job: job?.name,
                 });
                 const { response } = await call;
-                setUserToken(response.token);
+                setUserToken(response.token, true);
 
                 await navigateTo('/overview');
 
@@ -419,8 +419,6 @@ export const useAuthStore = defineStore(
                 setActiveChar(response.char!);
                 setPermissions(response.permissions, response.attributes);
                 setJobProps(response.jobProps);
-
-                await notifications.restartStream();
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
@@ -431,9 +429,15 @@ export const useAuthStore = defineStore(
          * Set user token in session storage.
          * @param token - The user token to set. If undefined, the token is removed.
          */
-        const setUserToken = async (token?: string): Promise<void> => {
+        const setUserToken = async (token?: string, restartWS = false): Promise<void> => {
             if (!token) {
                 sessionStorage.removeItem('fivenet:user_token_v1');
+                return;
+            }
+
+            const currentToken = sessionStorage.getItem('fivenet:user_token_v1');
+            if (currentToken === token) {
+                logger.debug('User token is the same as the current one, skipping update');
                 return;
             }
 
@@ -443,6 +447,11 @@ export const useAuthStore = defineStore(
 
             logger.debug('Setting user token in session storage, JWT payload:', userInfo);
             sessionStorage.setItem('fivenet:user_token_v1', token);
+
+            if (activeChar.value !== null && restartWS) {
+                logger.info('User token updated, restarting WebSocket connection to apply new token');
+                useGRPCWebsocketTransport().updateUserToken(token);
+            }
         };
 
         // Getters

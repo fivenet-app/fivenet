@@ -221,7 +221,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 if (!h) return;
 
                 if (h.operation === CONTROL_OP_AUTH_OK) {
-                    this.logger.debug('WS auth ok');
+                    this.logger.debug('WS auth operation: ok');
                     if (this.authState.kind === 'pending') this.authState.resolve();
                     this.authState = { kind: 'ok' };
                     return;

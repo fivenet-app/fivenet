@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strings"
 
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
@@ -24,8 +25,77 @@ func (s *Server) handleUsersData(
 	tUsers := table.FivenetUser
 
 	userIds := []mysql.Expression{}
-	for _, user := range data.Users.GetUsers() {
-		userIds = append(userIds, mysql.Int32(user.GetUserId()))
+	us := data.Users.GetUsers()
+	for i := range us {
+		userIds = append(userIds, mysql.Int32(us[i].GetUserId()))
+
+		// Ensure that user has valid jobs and phone_numbers data
+		if len(us[i].Jobs) == 0 {
+			// If no jobs are set, create one from the user job field
+			us[i].Jobs = []*users.UserJob{
+				{
+					Job:       us[i].GetJob(),
+					Grade:     us[i].GetJobGrade(),
+					IsPrimary: true,
+				},
+			}
+		} else {
+			// Sort the user's jobs by is primary and then alphabetically to ensure consistent order
+			slices.SortFunc(us[i].GetJobs(), func(a *users.UserJob, b *users.UserJob) int {
+				if a.GetIsPrimary() && !b.GetIsPrimary() {
+					return -1
+				}
+				if !a.GetIsPrimary() && b.GetIsPrimary() {
+					return 1
+				}
+				return strings.Compare(a.GetJob(), b.GetJob())
+			})
+
+			foundPrimary := false
+			primaryJob := us[i].GetJob()
+			for _, job := range us[i].GetJobs() {
+				if job.GetJob() == primaryJob {
+					// Make sure the "primary" job (user's job field if set) is marked as primary
+					foundPrimary = true
+					job.IsPrimary = true
+				} else {
+					job.IsPrimary = false
+				}
+			}
+
+			// If not ensure user has at least one primary job set
+			if !foundPrimary {
+				us[i].Jobs[0].IsPrimary = true
+			}
+		}
+
+		if len(us[i].PhoneNumbers) == 0 {
+			// If no phone numbers are set, create one from the user phone number field if it exists
+			if us[i].GetPhoneNumber() != "" {
+				us[i].PhoneNumbers = []*users.PhoneNumber{
+					{
+						Number:    us[i].GetPhoneNumber(),
+						IsPrimary: true,
+					},
+				}
+			} else {
+				foundPrimary := false
+
+				for _, phoneNumber := range us[i].GetPhoneNumbers() {
+					if phoneNumber.GetNumber() == us[i].GetPhoneNumber() {
+						foundPrimary = true
+						phoneNumber.IsPrimary = true
+					} else {
+						phoneNumber.IsPrimary = false
+					}
+				}
+
+				// If not ensure user has at least one primary phone number set
+				if !foundPrimary && len(us[i].GetPhoneNumbers()) > 0 {
+					us[i].PhoneNumbers[0].IsPrimary = true
+				}
+			}
+		}
 	}
 
 	checkStmt := tUsers.
@@ -159,6 +229,15 @@ func (s *Server) handleUsersData(
 					err,
 				)
 			}
+
+			if err := s.handleCitizensPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
+				return 0, fmt.Errorf(
+					"failed to handle user phone numbers for user %d (%s). %w",
+					user.GetUserId(),
+					user.GetIdentifier(),
+					err,
+				)
+			}
 		}
 
 		// Commit the transaction
@@ -166,8 +245,6 @@ func (s *Server) handleUsersData(
 			return 0, err
 		}
 	}
-
-	// TODO insert user's job(s) to fivenet_user_jobs table and phone_number(s) to fivenet_user_phone_numbers table
 
 	if len(toUpdate) > 0 {
 		// Begin transaction
@@ -221,7 +298,7 @@ func (s *Server) handleUsersData(
 				).
 				LIMIT(1)
 
-			res, err := stmt.ExecContext(ctx, s.db)
+			res, err := stmt.ExecContext(ctx, tx)
 			if err != nil {
 				return 0, fmt.Errorf("failed to execute user update statement. %w", err)
 			}
@@ -231,6 +308,33 @@ func (s *Server) handleUsersData(
 			}
 
 			rowsAffected += rows
+
+			if err := s.handleCitizenLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
+				return 0, fmt.Errorf(
+					"failed to handle user licenses for user %d (%s). %w",
+					user.GetUserId(),
+					user.GetIdentifier(),
+					err,
+				)
+			}
+
+			if err := s.handleCitizensJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
+				return 0, fmt.Errorf(
+					"failed to handle user jobs for user %d (%s). %w",
+					user.GetUserId(),
+					user.GetIdentifier(),
+					err,
+				)
+			}
+
+			if err := s.handleCitizensPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
+				return 0, fmt.Errorf(
+					"failed to handle user phone numbers for user %d (%s). %w",
+					user.GetUserId(),
+					user.GetIdentifier(),
+					err,
+				)
+			}
 		}
 
 		// Commit the transaction
@@ -351,8 +455,191 @@ func (s *Server) handleCitizensJobs(
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user jobs delete statement. %w", err)
 		}
-	} else {
-		// TODO
+
+		return nil
+	}
+
+	selectStmt := tCitizensJobs.
+		SELECT(
+			tCitizensJobs.Job,
+			tCitizensJobs.Grade,
+			tCitizensJobs.IsPrimary,
+		).
+		FROM(tCitizensJobs).
+		WHERE(tCitizensJobs.UserID.EQ(mysql.Int32(userId)))
+
+	currentJobs := []string{}
+	if err := selectStmt.QueryContext(ctx, tx, &currentJobs); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return fmt.Errorf(
+				"failed to query current user licenses for user ID %d. %w",
+				userId,
+				err,
+			)
+		}
+	}
+
+	jobsList := []string{}
+	for _, job := range jobs {
+		jobsList = append(jobsList, job.GetJob())
+	}
+
+	toAdd, toRemove := utils.SlicesDifference(currentJobs, jobsList)
+
+	if len(toAdd) > 0 {
+		stmt := tCitizensJobs.
+			INSERT(
+				tCitizensJobs.UserID,
+				tCitizensJobs.Job,
+				tCitizensJobs.Grade,
+				tCitizensJobs.IsPrimary,
+			).
+			ON_DUPLICATE_KEY_UPDATE(
+				tCitizensJobs.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
+				tCitizensJobs.Grade.SET(mysql.IntExp(mysql.Raw("VALUES(`grade`)"))),
+				tCitizensJobs.IsPrimary.SET(mysql.BoolExp(mysql.Raw("VALUES(`is_primary`)"))),
+			)
+
+		jobsToAdd := []*users.UserJob{}
+		for _, job := range jobs {
+			if slices.Contains(toAdd, job.GetJob()) {
+				jobsToAdd = append(jobsToAdd, job)
+			}
+		}
+
+		for _, t := range jobsToAdd {
+			stmt = stmt.
+				VALUES(
+					userId,
+					t.GetJob(),
+					t.GetGrade(),
+					t.GetIsPrimary(),
+				)
+		}
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user licenses insert statement. %w", err)
+		}
+	}
+
+	if len(toRemove) > 0 {
+		jobs := []mysql.Expression{}
+		for _, t := range toRemove {
+			jobs = append(jobs, mysql.String(t))
+		}
+
+		stmt := tCitizensJobs.
+			DELETE().
+			WHERE(mysql.AND(
+				tCitizensJobs.UserID.EQ(mysql.Int32(userId)),
+				tCitizensJobs.Job.IN(jobs...),
+			)).
+			LIMIT(25)
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user licenses delete statement. %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *Server) handleCitizensPhoneNumbers(
+	ctx context.Context,
+	tx *sql.Tx,
+	userId int32,
+	phoneNumbers []*users.PhoneNumber,
+) error {
+	tCitizensPhoneNumbers := table.FivenetUserPhoneNumbers
+
+	if len(phoneNumbers) == 0 {
+		// User has no phone numbers? Delete all user phone numbers from the database.
+		stmt := tCitizensPhoneNumbers.
+			DELETE().
+			WHERE(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId))).
+			LIMIT(25)
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user phone numbers delete statement. %w", err)
+		}
+
+		return nil
+	}
+
+	selectStmt := tCitizensPhoneNumbers.
+		SELECT(
+			tCitizensPhoneNumbers.PhoneNumber,
+		).
+		FROM(tCitizensPhoneNumbers).
+		WHERE(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId)))
+
+	currentPhoneNumbers := []string{}
+	if err := selectStmt.QueryContext(ctx, tx, &currentPhoneNumbers); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return fmt.Errorf(
+				"failed to query current user phone numbers for user ID %d. %w",
+				userId,
+				err,
+			)
+		}
+	}
+
+	phoneNumbersList := []string{}
+	for _, phoneNumber := range phoneNumbers {
+		phoneNumbersList = append(phoneNumbersList, phoneNumber.GetNumber())
+	}
+
+	toAdd, toRemove := utils.SlicesDifference(currentPhoneNumbers, phoneNumbersList)
+
+	if len(toAdd) > 0 {
+		stmt := tCitizensPhoneNumbers.
+			INSERT(
+				tCitizensPhoneNumbers.UserID,
+				tCitizensPhoneNumbers.PhoneNumber,
+				tCitizensPhoneNumbers.IsPrimary,
+			).
+			ON_DUPLICATE_KEY_UPDATE(
+				tCitizensPhoneNumbers.PhoneNumber.SET(mysql.StringExp(mysql.Raw("VALUES(`phone_number`)"))),
+				tCitizensPhoneNumbers.IsPrimary.SET(mysql.BoolExp(mysql.Raw("VALUES(`is_primary`)"))),
+			)
+
+		phoneNumbersToAdd := []*users.PhoneNumber{}
+		for _, phoneNumber := range phoneNumbers {
+			if slices.Contains(toAdd, phoneNumber.GetNumber()) {
+				phoneNumbersToAdd = append(phoneNumbersToAdd, phoneNumber)
+			}
+		}
+
+		for _, t := range phoneNumbersToAdd {
+			stmt = stmt.
+				VALUES(
+					userId,
+					t.GetNumber(),
+					t.GetIsPrimary(),
+				)
+		}
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user phone numbers insert statement. %w", err)
+		}
+	}
+
+	if len(toRemove) > 0 {
+		phoneNumbers := []mysql.Expression{}
+		for _, t := range toRemove {
+			phoneNumbers = append(phoneNumbers, mysql.String(t))
+		}
+
+		stmt := tCitizensPhoneNumbers.
+			DELETE().
+			WHERE(mysql.AND(
+				tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId)),
+				tCitizensPhoneNumbers.PhoneNumber.IN(phoneNumbers...),
+			)).
+			LIMIT(25)
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to execute user phone numbers delete statement. %w", err)
+		}
 	}
 
 	return nil

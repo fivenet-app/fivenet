@@ -330,6 +330,33 @@ export class GrpcWSTransport implements RpcTransport {
         logger.info('Closing Websocket');
         this.webSocket.close();
     }
+
+    updateUserToken(token: string): void {
+        if (this.webSocket.status.value !== 'OPEN') {
+            logger.error("Websocket isn't connected, cannot update user token");
+            return;
+        }
+
+        this.webSocket.send(
+            GrpcFrame.toBinary(
+                GrpcFrame.create({
+                    streamId: 0,
+                    payload: {
+                        oneofKind: 'header',
+                        header: {
+                            headers: {
+                                Authorization: {
+                                    value: [`Bearer ${token}`],
+                                },
+                            },
+                            operation: 'reauth',
+                            status: 0,
+                        },
+                    },
+                }),
+            ).buffer as ArrayBuffer,
+        );
+    }
 }
 
 class GrpcInputStreamWrapper<I> implements RpcInputStream<I> {

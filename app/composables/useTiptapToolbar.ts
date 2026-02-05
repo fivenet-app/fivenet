@@ -40,7 +40,7 @@ export function useTiptapToolbar(editor: () => Editor | null | undefined) {
         canRedo: false,
     });
 
-    // runs at most every animation frame + debounced for safety
+    // Runs at most every animation frame + debounced for safety
     const refreshNow = () => {
         const ed = editor();
         if (!ed) return;
@@ -61,8 +61,7 @@ export function useTiptapToolbar(editor: () => Editor | null | undefined) {
         ui.checkboxStandalone = ed.isActive('checkboxStandalone');
         ui.codeBlock = ed.isActive('codeBlock');
         ui.blockquote = ed.isActive('blockquote');
-        ui.table = ed.isActive('table');
-        // TODO is 'table' enough?
+        ui.table = ed.isActive('table') || ed.isActive('tableCell') || ed.isActive('tableHeader') || ed.isActive('tableRow');
 
         // textAlign: check attrs once, don’t pass object literals in template
         if (ed.isActive({ textAlign: 'center' })) ui.textAlign = 'center';
@@ -80,8 +79,7 @@ export function useTiptapToolbar(editor: () => Editor | null | undefined) {
         }
         ui.headingLevel = level;
 
-        // === Current colors ===
-        // Color extension sets a textStyle mark
+        // Current colors - Color extension sets a textStyle mark
         const textStyleAttrs = ed.getAttributes('textStyle');
         ui.fontColor = (textStyleAttrs?.color as string | undefined) ?? null;
 
