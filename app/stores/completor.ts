@@ -34,10 +34,9 @@ export const useCompletorStore = defineStore(
          * Fetch job list and cache it in state.
          * @returns {Promise<Job[]>} - The list of jobs.
          */
-        const listJobs = async (): Promise<Job[]> => {
-            if (jobs.value.length > 0) {
-                return jobs.value;
-            }
+        const listJobs = async (refresh = false): Promise<Job[]> => {
+            if (jobs.value.length > 0 && !refresh) return jobs.value;
+
             jobs.value = await completeJobs({});
             return jobs.value;
         };

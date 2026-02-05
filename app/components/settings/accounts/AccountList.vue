@@ -156,7 +156,6 @@ const columns = computed(
                         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
-                sortable: true,
                 cell: ({ row }) =>
                     h(UTooltip, { text: `${t('common.id', 1)}: ${row.original.id}` }, [
                         h(
@@ -223,7 +222,6 @@ const columns = computed(
                         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
-                sortable: true,
                 cell: ({ row }) => h('pre', { class: 'text-highlighted' }, row.original.license),
             },
         ] as TableColumn<Account>[],
@@ -339,6 +337,7 @@ const columns = computed(
                 />
 
                 <UTable
+                    v-else
                     v-model:sorting="query.sorting.columns"
                     class="flex-1"
                     :loading="isRequestPending(status)"

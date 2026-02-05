@@ -198,7 +198,6 @@
         "settings": {
             "features": {
                 "properties": "Stelle deine Job Eigenschaften ein (e.g., Mitarbeiter-Marker-Farbe).",
-                "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
                 "audit_log": "Ein Protokoll der Aktionen, die von Ihren Kollegen durchgeführt wurden.",
                 "limiter": "Einschränken, welche Informationen Fraktionen sehen können (z. B. Mitarbeiterstandorte, Einsätze).",
                 "laws": "Erstellen und Aktualisieren der Gesetzbücher des Staates.",
@@ -207,7 +206,8 @@
                 "settings": "Verwalten von FiveNet-Einstellungen.",
                 "cron": "Status der Hintergrundaufgaben anzeigen.",
                 "accounts": "Auflisten und verwalten von FiveNet Konten.",
-                "dispatch_center": "Verknüpfung zur Verwaltung der Leitstellen-Einstellungen."
+                "dispatch_center": "Verknüpfung zur Verwaltung der Leitstellen-Einstellungen.",
+                "jobs": "Liste der Berufe in deiner FiveNet-Instanz."
             },
             "roles": {
                 "title": "Rollen",
@@ -234,6 +234,9 @@
             },
             "accounts": {
                 "title": "Konten"
+            },
+            "jobs": {
+                "title": "Berufe"
             }
         },
         "wiki": {
@@ -283,7 +286,7 @@
         "close": "Schließen | Geschlossen",
         "open": "Öffnen | Offen",
         "last_used": "Zuletzt Genutzt",
-        "rank": "Rang",
+        "rank": "Rang | Ränge",
         "playtime": "Spielzeit",
         "choose": "Auswählen",
         "clipboard": "Zwischenablage",
@@ -753,7 +756,8 @@
         "no_content": "(Noch kein Inhalt vorhanden)",
         "impersonate": "Imitieren",
         "group": "Gruppe | Gruppen",
-        "websocket": "WebSocket"
+        "websocket": "WebSocket",
+        "ranks": "Keine Ränge | {n} Rang | {n} Ränge"
     },
     "components": {
         "partials": {

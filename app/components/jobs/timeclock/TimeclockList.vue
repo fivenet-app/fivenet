@@ -186,7 +186,6 @@ const columns = computed(() => [
     {
         accessorKey: 'date',
         header: t('common.date'),
-        sortable: true,
         meta: {
             class: {
                 td:
@@ -203,7 +202,6 @@ const columns = computed(() => [
     {
         accessorKey: 'name',
         header: t('common.name'),
-        sortable: canAccessAll.value && props.userId === undefined,
         meta: {
             class: {
                 td: props.userId === undefined && query.viewMode === TimeclockViewMode.ALL ? '' : 'hidden',
@@ -214,7 +212,6 @@ const columns = computed(() => [
     {
         accessorKey: 'rank',
         header: t('common.rank'),
-        sortable: true,
         meta: {
             class: {
                 td:
@@ -237,7 +234,6 @@ const columns = computed(() => [
     {
         accessorKey: 'time',
         header: t('common.time'),
-        sortable: true,
     },
 ]);
 

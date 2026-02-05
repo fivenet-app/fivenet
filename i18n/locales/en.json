@@ -198,7 +198,6 @@
         "settings": {
             "features": {
                 "properties": "Set your job properties (e.g., employee marker color).",
-                "jobs": "Setup your factions roles job rank permissions.",
                 "audit_log": "An audit trail of everything your colleagues have done.",
                 "limiter": "Limit what factions can see each other.",
                 "laws": "Set the law books and laws for the state.",
@@ -207,7 +206,8 @@
                 "settings": "Manage FiveNet settings.",
                 "cron": "View status of background tasks.",
                 "accounts": "List and manage FiveNet accounts.",
-                "dispatch_center": "Shortcut to manage the dispatch center settings."
+                "dispatch_center": "Shortcut to manage the dispatch center settings.",
+                "jobs": "List the jobs in your FiveNet instance."
             },
             "roles": {
                 "title": "Roles",
@@ -234,6 +234,9 @@
             },
             "accounts": {
                 "title": "Accounts"
+            },
+            "jobs": {
+                "title": "Jobs"
             }
         },
         "wiki": {
@@ -283,7 +286,7 @@
         "close": "Close | Closed",
         "open": "Open",
         "last_used": "Last Used",
-        "rank": "Rank",
+        "rank": "Rank | Ranks",
         "playtime": "Playtime",
         "choose": "Choose",
         "clipboard": "Clipboard",
@@ -604,7 +607,7 @@
         "auto_close": "Auto Close",
         "prefix": "Prefix",
         "suffix": "Suffix",
-        "grade": "Grade",
+        "grade": "Grade | Grades",
         "sort_direction": "Sort Direction",
         "font": "Font",
         "default": "Default",
@@ -753,7 +756,8 @@
         "no_content": "(No content yet)",
         "impersonate": "Impersonate",
         "group": "Group | Groups",
-        "websocket": "WebSocket"
+        "websocket": "WebSocket",
+        "ranks": "No Ranks | {n} Rank | {n} Ranks"
     },
     "components": {
         "partials": {

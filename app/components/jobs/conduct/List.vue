@@ -173,7 +173,6 @@ const columns = computed(
                         `#${row.original.id}`,
                         row.original.draft ? h(DraftBadge, { label: undefined }) : null,
                     ]),
-                sortable: true,
             },
             {
                 accessorKey: 'createdAt',
@@ -201,7 +200,6 @@ const columns = computed(
                     h(UBadge, { color: conductTypesToBadgeColor(row.original.type) }, () =>
                         t(`enums.jobs.ConductType.${ConductType[row.original.type ?? 0]}`),
                     ),
-                sortable: true,
             },
             {
                 accessorKey: 'message',

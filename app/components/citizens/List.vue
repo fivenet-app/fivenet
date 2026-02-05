@@ -132,7 +132,6 @@ const columns = computed(() =>
                         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
-                sortable: true,
             },
             {
                 accessorKey: 'jobLabel',
@@ -199,7 +198,6 @@ const columns = computed(() =>
                               onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                           });
                       },
-                      sortable: true,
                       cell: ({ row }) => row.original.props?.trafficInfractionPoints,
                   }
                 : undefined,
@@ -222,7 +220,6 @@ const columns = computed(() =>
                               onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                           });
                       },
-                      sortable: true,
                       cell: ({ row }) =>
                           row.original.props?.openFines !== undefined && row.original.props?.openFines > 0
                               ? new Intl.NumberFormat(display.intlLocale, {

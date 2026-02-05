@@ -53,6 +53,13 @@ const items = computed<CardElements>(() => [
         permission: 'Superuser/Superuser',
         icon: 'i-mdi-scale-balance',
     },
+    {
+        title: t('pages.settings.jobs.title'),
+        description: t('pages.settings.features.jobs'),
+        to: '/settings/jobs',
+        permission: 'Superuser/Superuser',
+        icon: 'i-mdi-briefcase',
+    },
 ]);
 
 const superuserItems = computed<CardElements>(() => [

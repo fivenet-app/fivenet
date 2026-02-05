@@ -137,7 +137,6 @@ const columns = computed(
                         onClick: () => column.toggleSorting(isSorted === 'asc'),
                     });
                 },
-                sortable: true,
                 cell: ({ row }) => h(GenericTime, { value: row.original.createdAt }),
             },
             {
