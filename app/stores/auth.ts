@@ -383,6 +383,7 @@ export const useAuthStore = defineStore(
                     job: job?.name,
                 });
                 const { response } = await call;
+                setUserToken(response.token);
 
                 await navigateTo('/overview');
 
@@ -402,8 +403,6 @@ export const useAuthStore = defineStore(
                     permissions.value = permissions.value.filter((p) => p.guardName !== 'superuser-superuser');
                 }
 
-                setUserToken(response.token);
-
                 // Notify user about the change
                 notifications.add({
                     title: { key: 'notifications.superuser_menu.setsuperusermode.title', parameters: {} },
@@ -420,6 +419,8 @@ export const useAuthStore = defineStore(
                 setActiveChar(response.char!);
                 setPermissions(response.permissions, response.attributes);
                 setJobProps(response.jobProps);
+
+                await notifications.restartStream();
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;

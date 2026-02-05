@@ -4,6 +4,7 @@ import { notificationTypeToColor, notificationTypeToIcon } from '~/components/no
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { useCalendarStore } from '~/stores/calendar';
 import { useMailerStore } from '~/stores/mailer';
+import { logger } from '~/stores/notifications';
 import { useSettingsStore } from '~/stores/settings';
 import type { Notification } from '~/types/notifications';
 
@@ -33,9 +34,7 @@ const { pause, resume } = useIntervalFn(
     async () => {
         pause();
 
-        if (calendar.value.reminderTimes.length > 0) {
-            checkAppointments();
-        }
+        if (calendar.value.reminderTimes.length > 0) checkAppointments();
 
         resume();
     },

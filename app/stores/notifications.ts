@@ -15,7 +15,7 @@ import type { MarkNotificationsRequest, StreamRequest, StreamResponse } from '~~
 import { useCalendarStore } from './calendar';
 import { useMailerStore } from './mailer';
 
-const logger = useLogger('📣 Notificator');
+export const logger = useLogger('📣 Notificator');
 
 // In seconds
 const maxBackoffTime = 20;
@@ -212,7 +212,6 @@ export const useNotificationsStore = defineStore(
             if (abort.value !== undefined) return;
 
             logger.debug('Starting Stream');
-            abort.value = new AbortController();
             reconnecting.value = true;
 
             const notificationsNotificationsClient = await getNotificationsNotificationsClient();
@@ -223,6 +222,7 @@ export const useNotificationsStore = defineStore(
             const mailerStore = useMailerStore();
 
             try {
+                abort.value = new AbortController();
                 currentStream = notificationsNotificationsClient.stream({ abort: abort.value.signal });
                 setStreamReadyState(true);
 
