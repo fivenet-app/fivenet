@@ -61,6 +61,11 @@ func (g *GRPCPerm) checkPermission(
 		return nil, errorsgrpcauth.ErrPermissionDenied
 	}
 
+	// Short circuit for superusers, they have access to everything
+	if userInfo.Superuser {
+		return ctx, nil
+	}
+
 	perms := []string{perm}
 	if _, ok := goproto.PermsRemap[perm]; ok {
 		perms = goproto.PermsRemap[perm]
