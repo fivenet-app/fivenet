@@ -1693,7 +1693,39 @@
                 "title": "System-Status",
                 "new_version_available": "Neue Version verfügbar"
             },
-            "system_settings": "System-Einstellungen"
+            "system_settings": "System-Einstellungen",
+            "attr_view": {
+                "templates": {
+                    "no_perms": {
+                        "title": "Keine Berechtigungen",
+                        "description": "Zum schnellen zurücksetzen der Rollen-Berechtigungen."
+                    },
+                    "job_police": {
+                        "title": "Polizei Job Vorlage",
+                        "description": "Beispielvorlage für den Polizei Job, die auch als Grundlage für andere Staatsberufe verwendet werden kann (Zugriffe auf Berufe/Ränge müssen in den Berechtigungen manuell aktiviert werden)."
+                    },
+                    "job_neutral": {
+                        "title": "Neutrale Job Vorlage",
+                        "description": "Beispielvorlage für neutrale Jobs, die als Grundlage für neutrale Berufe (e.g., Mechaniker, Café) verwendet werden kann (Zugriffe auf Berufe/Ränge müssen in den Berechtigungen manuell aktiviert werden)."
+                    },
+                    "job_gang": {
+                        "title": "Gang Job Vorlage",
+                        "description": "Beispielvorlage für Gang Jobs, die als Grundlage für Gang Berufe verwendet werden kann (Zugriffe auf Berufe/Ränge müssen in den Berechtigungen manuell aktiviert werden)."
+                    },
+                    "full_perms": {
+                        "title": "Volle Berechtigungen",
+                        "description": "Alle Berechtigungen und Attribute sind aktiviert (Nur auf den Beruf selbst ist Zugriff erlaubt; Berufe/Ränge müssen eigenhändig in den Berechtigungen aktiviert werden.)"
+                    }
+                },
+                "template_apply": {
+                    "title": "Vorlagen-Berechtigungen \"{name}\" auf Rolle anwenden",
+                    "description": "Dadurch werden alle Berechtigungen der Rolle mit denen aus der Vorlage überschrieben. Sind Sie sicher, dass Sie fortfahren möchten?"
+                },
+                "template_note": {
+                    "title": "Hinweis zu den Begrenzer-Vorlagen",
+                    "description": "Die Vorlagen sind nicht perfekt und erfordern möglicherweise einige Anpassungen nach der Anwendung, insbesondere bezüglich der Zugriffe auf Job-Ränge. Bitte überprüfen Sie die Berechtigungen nach der Anwendung einer Vorlage sorgfältig."
+                }
+            }
         },
         "fabric_editor": {
             "text": "Text",

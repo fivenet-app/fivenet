@@ -152,8 +152,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
         </template>
 
         <template #body>
-            <div class="grid grid-cols-1 gap-2 lg:grid-cols-3">
-                <div class="mb-2">
+            <div class="grid h-full grid-cols-1 gap-2 lg:grid-cols-3">
+                <div class="mb-2 flex flex-col">
                     <UForm
                         v-if="can('settings.SettingsService/CreateRole').value"
                         class="flex flex-row gap-2"
@@ -191,7 +191,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         </UFormField>
                     </UForm>
 
-                    <div>
+                    <div class="flex flex-1 flex-col">
                         <DataErrorBlock
                             v-if="error"
                             :title="$t('common.unable_to_load', [$t('common.job', 2)])"

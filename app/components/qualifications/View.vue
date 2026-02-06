@@ -484,7 +484,7 @@ const requestUserModal = overlay.create(RequestUserModal);
             <div v-else class="flex min-h-full w-full max-w-full flex-1 flex-col overflow-y-hidden">
                 <div v-if="!canDo.grade && qualification.content === undefined" class="p-4 sm:p-4">
                     <UAlert
-                        icon="i-mdi-information"
+                        icon="i-mdi-information-outline"
                         color="info"
                         variant="subtle"
                         :description="$t('components.qualifications.content_unavailable')"

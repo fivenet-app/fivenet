@@ -1693,7 +1693,39 @@
                 "title": "System Status",
                 "new_version_available": "New version available"
             },
-            "system_settings": "System Settings"
+            "system_settings": "System Settings",
+            "attr_view": {
+                "templates": {
+                    "no_perms": {
+                        "title": "Empty Role",
+                        "description": "Quickly reset role permissions (no permissions at all)."
+                    },
+                    "job_police": {
+                        "title": "Police Job Template",
+                        "description": "Sample police job template that can be used as a base for any state jobs (you must manually enable jobs/grades accesses in the permissions)."
+                    },
+                    "job_neutral": {
+                        "title": "Neutral Job Template",
+                        "description": "Sample neutral job template that can be used as a base for neutral jobs (e.g., Mechanic, Café); you must manually enable jobs/grades accesses in the permissions)."
+                    },
+                    "job_gang": {
+                        "title": "Gang Job Template",
+                        "description": "Sample gang job template that can be used as a base for gang jobs (you must manually enable jobs/grades accesses in the permissions)."
+                    },
+                    "full_perms": {
+                        "title": "Full Permissions",
+                        "description": "All permissions and attributes are enabled (only the job itself is made accessible; you must manually enable/disable jobs/grades accesses in the permissions)."
+                    }
+                },
+                "template_apply": {
+                    "title": "Apply Template \"{name}\" Permissions to Role",
+                    "description": "This will override all permissions of the role with the ones from the template. Are you sure you want to continue?"
+                },
+                "template_note": {
+                    "title": "Note about Limiter Templates",
+                    "description": "The templates aren't perfect and might require some adjustments after applying, especially regarding job grade accesses. Please make sure to double check the permissions after applying a template."
+                }
+            }
         },
         "fabric_editor": {
             "text": "Text",
