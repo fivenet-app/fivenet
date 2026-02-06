@@ -107,6 +107,14 @@ func (s *Server) Login(
 
 	accClaims := auth.MapAccountToClaims(accounts.ConvertFromModelAcc(account))
 
+	// FIXME move this to the user sync API logic
+	if err := s.linkCharsToAccount(ctx, account.License, account.ID); err != nil {
+		s.logger.Error(
+			"failed to link chars to account",
+			zap.Error(err),
+		)
+	}
+
 	var chooseCharResp *pbauth.ChooseCharacterResponse
 	if s.appCfg.Get().Auth.GetLastCharLock() && account.LastChar != nil {
 		token, err := s.tm.FromAccClaims(accClaims)
@@ -136,6 +144,32 @@ func (s *Server) Login(
 		AccountId: account.ID,
 		Char:      chooseCharResp,
 	}, nil
+}
+
+func (s *Server) linkCharsToAccount(
+	ctx context.Context,
+	identifier string,
+	accId int64,
+) error {
+	tUsers := table.FivenetUser
+
+	stmt := tUsers.
+		UPDATE(
+			tUsers.AccountID,
+		).
+		SET(
+			accId,
+		).
+		WHERE(
+			tUsers.Identifier.LIKE(mysql.String(fmt.Sprintf("%%%s", identifier))),
+		).
+		LIMIT(15)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Server) Logout(
