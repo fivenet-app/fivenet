@@ -145,6 +145,15 @@ func (m *UserJob) Sanitize() error {
 		return nil
 	}
 
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: GradeLabel
 	if m.GradeLabel != nil {
 		*m.GradeLabel = htmlsanitizer.Sanitize(*m.GradeLabel)
@@ -156,6 +165,15 @@ func (m *UserJob) Sanitize() error {
 	// Field: JobLabel
 	if m.JobLabel != nil {
 		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

@@ -48,6 +48,7 @@ func (s *Server) handleUsersData(
 				if !a.GetIsPrimary() && b.GetIsPrimary() {
 					return 1
 				}
+
 				return strings.Compare(a.GetJob(), b.GetJob())
 			})
 
@@ -373,7 +374,8 @@ func (s *Server) handleCitizenLicenses(
 			tCitizensLicenses.Type,
 		).
 		FROM(tCitizensLicenses).
-		WHERE(tCitizensLicenses.UserID.EQ(mysql.Int32(userId)))
+		WHERE(tCitizensLicenses.UserID.EQ(mysql.Int32(userId))).
+		ORDER_BY(tCitizensLicenses.Type)
 
 	currentLicenses := []string{}
 	if err := selectStmt.QueryContext(ctx, tx, &currentLicenses); err != nil {
@@ -444,6 +446,18 @@ func (s *Server) handleCitizensJobs(
 	userId int32,
 	jobs []*users.UserJob,
 ) error {
+	// Make sure to sort array by is primary and then alphabetically to ensure consistent order
+	slices.SortFunc(jobs, func(a *users.UserJob, b *users.UserJob) int {
+		if a.GetIsPrimary() && !b.GetIsPrimary() {
+			return -1
+		}
+		if !a.GetIsPrimary() && b.GetIsPrimary() {
+			return 1
+		}
+
+		return strings.Compare(a.GetJob(), b.GetJob())
+	})
+
 	tCitizensJobs := table.FivenetUserJobs
 
 	if len(jobs) == 0 {
@@ -459,16 +473,21 @@ func (s *Server) handleCitizensJobs(
 		return nil
 	}
 
-	selectStmt := tCitizensJobs.
-		SELECT(
-			tCitizensJobs.Job,
-			tCitizensJobs.Grade,
-			tCitizensJobs.IsPrimary,
-		).
-		FROM(tCitizensJobs).
-		WHERE(tCitizensJobs.UserID.EQ(mysql.Int32(userId)))
+	var selectStmt mysql.SelectStatement
+	{
+		tCitizensJobs := tCitizensJobs.AS("user_job")
+		selectStmt = tCitizensJobs.
+			SELECT(
+				tCitizensJobs.Job,
+				tCitizensJobs.Grade,
+				tCitizensJobs.IsPrimary,
+			).
+			FROM(tCitizensJobs).
+			WHERE(tCitizensJobs.UserID.EQ(mysql.Int32(userId))).
+			ORDER_BY(tCitizensJobs.IsPrimary, tCitizensJobs.Job, tCitizensJobs.Grade)
+	}
 
-	currentJobs := []string{}
+	currentJobs := []*users.UserJob{}
 	if err := selectStmt.QueryContext(ctx, tx, &currentJobs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf(
@@ -479,14 +498,9 @@ func (s *Server) handleCitizensJobs(
 		}
 	}
 
-	jobsList := []string{}
-	for _, job := range jobs {
-		jobsList = append(jobsList, job.GetJob())
-	}
+	toAdd, toUpdate, toRemove := compareJobs(currentJobs, jobs)
 
-	toAdd, toRemove := utils.SlicesDifference(currentJobs, jobsList)
-
-	if len(toAdd) > 0 {
+	if len(toAdd) > 0 || len(toUpdate) > 0 {
 		stmt := tCitizensJobs.
 			INSERT(
 				tCitizensJobs.UserID,
@@ -500,14 +514,7 @@ func (s *Server) handleCitizensJobs(
 				tCitizensJobs.IsPrimary.SET(mysql.BoolExp(mysql.Raw("VALUES(`is_primary`)"))),
 			)
 
-		jobsToAdd := []*users.UserJob{}
-		for _, job := range jobs {
-			if slices.Contains(toAdd, job.GetJob()) {
-				jobsToAdd = append(jobsToAdd, job)
-			}
-		}
-
-		for _, t := range jobsToAdd {
+		for _, t := range append(toAdd, toUpdate...) {
 			stmt = stmt.
 				VALUES(
 					userId,
@@ -525,7 +532,7 @@ func (s *Server) handleCitizensJobs(
 	if len(toRemove) > 0 {
 		jobs := []mysql.Expression{}
 		for _, t := range toRemove {
-			jobs = append(jobs, mysql.String(t))
+			jobs = append(jobs, mysql.String(t.GetJob()))
 		}
 
 		stmt := tCitizensJobs.
@@ -544,12 +551,61 @@ func (s *Server) handleCitizensJobs(
 	return nil
 }
 
+// compareJobs compares currentJobs and jobs, returning toAdd, toUpdate, and toRemove.
+func compareJobs(currentJobs, jobs []*users.UserJob) (toAdd, toUpdate, toRemove []*users.UserJob) {
+	// Create a map for current jobs by job name
+	currentJobsMap := make(map[string]*users.UserJob)
+	for _, job := range currentJobs {
+		currentJobsMap[job.GetJob()] = job
+	}
+
+	// Create a map for incoming jobs by job name
+	incomingJobsMap := make(map[string]*users.UserJob)
+	for _, job := range jobs {
+		incomingJobsMap[job.GetJob()] = job
+	}
+
+	// Determine toAdd and toUpdate
+	for jobName, incomingJob := range incomingJobsMap {
+		if currentJob, exists := currentJobsMap[jobName]; exists {
+			// Check if the job needs an update (ignoring grade)
+			if currentJob.GetIsPrimary() != incomingJob.GetIsPrimary() {
+				toUpdate = append(toUpdate, incomingJob)
+			}
+		} else {
+			// Job does not exist in current jobs, add it
+			toAdd = append(toAdd, incomingJob)
+		}
+	}
+
+	// Determine toRemove
+	for jobName, currentJob := range currentJobsMap {
+		if _, exists := incomingJobsMap[jobName]; !exists {
+			toRemove = append(toRemove, currentJob)
+		}
+	}
+
+	return toAdd, toUpdate, toRemove
+}
+
 func (s *Server) handleCitizensPhoneNumbers(
 	ctx context.Context,
 	tx *sql.Tx,
 	userId int32,
 	phoneNumbers []*users.PhoneNumber,
 ) error {
+	// Make sure to sort array by is primary and then alphabetically to ensure consistent order
+	slices.SortFunc(phoneNumbers, func(a *users.PhoneNumber, b *users.PhoneNumber) int {
+		if a.GetIsPrimary() && !b.GetIsPrimary() {
+			return -1
+		}
+		if !a.GetIsPrimary() && b.GetIsPrimary() {
+			return 1
+		}
+
+		return strings.Compare(a.GetNumber(), b.GetNumber())
+	})
+
 	tCitizensPhoneNumbers := table.FivenetUserPhoneNumbers
 
 	if len(phoneNumbers) == 0 {
@@ -565,14 +621,21 @@ func (s *Server) handleCitizensPhoneNumbers(
 		return nil
 	}
 
-	selectStmt := tCitizensPhoneNumbers.
-		SELECT(
-			tCitizensPhoneNumbers.PhoneNumber,
-		).
-		FROM(tCitizensPhoneNumbers).
-		WHERE(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId)))
+	var selectStmt mysql.SelectStatement
+	{
+		tCitizensPhoneNumbers := tCitizensPhoneNumbers.AS("phone_number")
+		selectStmt = tCitizensPhoneNumbers.
+			SELECT(
+				tCitizensPhoneNumbers.UserID,
+				tCitizensPhoneNumbers.PhoneNumber,
+				tCitizensPhoneNumbers.IsPrimary,
+			).
+			FROM(tCitizensPhoneNumbers).
+			WHERE(tCitizensPhoneNumbers.UserID.EQ(mysql.Int32(userId))).
+			ORDER_BY(tCitizensPhoneNumbers.IsPrimary, tCitizensPhoneNumbers.PhoneNumber)
+	}
 
-	currentPhoneNumbers := []string{}
+	currentPhoneNumbers := []*users.PhoneNumber{}
 	if err := selectStmt.QueryContext(ctx, tx, &currentPhoneNumbers); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf(
@@ -583,14 +646,9 @@ func (s *Server) handleCitizensPhoneNumbers(
 		}
 	}
 
-	phoneNumbersList := []string{}
-	for _, phoneNumber := range phoneNumbers {
-		phoneNumbersList = append(phoneNumbersList, phoneNumber.GetNumber())
-	}
+	toAdd, toUpdate, toRemove := comparePhoneNumbers(currentPhoneNumbers, phoneNumbers)
 
-	toAdd, toRemove := utils.SlicesDifference(currentPhoneNumbers, phoneNumbersList)
-
-	if len(toAdd) > 0 {
+	if len(toAdd) > 0 || len(toUpdate) > 0 {
 		stmt := tCitizensPhoneNumbers.
 			INSERT(
 				tCitizensPhoneNumbers.UserID,
@@ -604,7 +662,9 @@ func (s *Server) handleCitizensPhoneNumbers(
 
 		phoneNumbersToAdd := []*users.PhoneNumber{}
 		for _, phoneNumber := range phoneNumbers {
-			if slices.Contains(toAdd, phoneNumber.GetNumber()) {
+			if slices.ContainsFunc(toAdd, func(t *users.PhoneNumber) bool {
+				return t.GetNumber() == phoneNumber.GetNumber()
+			}) {
 				phoneNumbersToAdd = append(phoneNumbersToAdd, phoneNumber)
 			}
 		}
@@ -626,7 +686,7 @@ func (s *Server) handleCitizensPhoneNumbers(
 	if len(toRemove) > 0 {
 		phoneNumbers := []mysql.Expression{}
 		for _, t := range toRemove {
-			phoneNumbers = append(phoneNumbers, mysql.String(t))
+			phoneNumbers = append(phoneNumbers, mysql.String(t.GetNumber()))
 		}
 
 		stmt := tCitizensPhoneNumbers.
@@ -643,4 +703,64 @@ func (s *Server) handleCitizensPhoneNumbers(
 	}
 
 	return nil
+}
+
+// comparePhoneNumbers compares currentPhoneNumbers and phoneNumbers, ensuring only one primary number, and returns toAdd, toUpdate, and toRemove.
+func comparePhoneNumbers(
+	currentPhoneNumbers, phoneNumbers []*users.PhoneNumber,
+) (toAdd, toUpdate, toRemove []*users.PhoneNumber) {
+	// Create a map for current phone numbers by number
+	currentPhoneNumbersMap := make(map[string]*users.PhoneNumber)
+	for _, phoneNumber := range currentPhoneNumbers {
+		currentPhoneNumbersMap[phoneNumber.GetNumber()] = phoneNumber
+	}
+
+	// Create a map for incoming phone numbers by number
+	incomingPhoneNumbersMap := make(map[string]*users.PhoneNumber)
+	for _, phoneNumber := range phoneNumbers {
+		incomingPhoneNumbersMap[phoneNumber.GetNumber()] = phoneNumber
+	}
+
+	// Track the new primary number
+	var newPrimary *users.PhoneNumber
+	for _, phoneNumber := range phoneNumbers {
+		if phoneNumber.GetIsPrimary() {
+			newPrimary = phoneNumber
+			break
+		}
+	}
+
+	// Determine toAdd and toUpdate
+	for number, incomingPhoneNumber := range incomingPhoneNumbersMap {
+		if currentPhoneNumber, exists := currentPhoneNumbersMap[number]; exists {
+			// Check if the phone number needs an update
+			if currentPhoneNumber.GetIsPrimary() != incomingPhoneNumber.GetIsPrimary() {
+				toUpdate = append(toUpdate, incomingPhoneNumber)
+			}
+		} else {
+			// Phone number does not exist in current phone numbers, add it
+			toAdd = append(toAdd, incomingPhoneNumber)
+		}
+	}
+
+	// Ensure only the new primary number is marked as primary
+	if newPrimary != nil {
+		for _, currentPhoneNumber := range currentPhoneNumbers {
+			if currentPhoneNumber.GetIsPrimary() &&
+				currentPhoneNumber.GetNumber() != newPrimary.GetNumber() {
+				// Mark the old primary number as non-primary
+				currentPhoneNumber.IsPrimary = false
+				toUpdate = append(toUpdate, currentPhoneNumber)
+			}
+		}
+	}
+
+	// Determine toRemove
+	for number, currentPhoneNumber := range currentPhoneNumbersMap {
+		if _, exists := incomingPhoneNumbersMap[number]; !exists {
+			toRemove = append(toRemove, currentPhoneNumber)
+		}
+	}
+
+	return toAdd, toUpdate, toRemove
 }

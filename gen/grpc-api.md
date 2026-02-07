@@ -576,6 +576,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
 | `number` | [string](#string) |  |  |
 | `is_primary` | [bool](#bool) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
@@ -620,11 +621,14 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `grade` | [int32](#int32) |  |  |
 | `grade_label` | [string](#string) | optional |  |
 | `is_primary` | [bool](#bool) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
 
 
@@ -6622,6 +6626,54 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | ----- | ---- | ----- | ----------- |
 | `identifier` | [string](#string) |  |  |
 | `last_char_id` | [int32](#int32) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/sync/data/v2/data.proto
+
+
+### resources.sync.data.v2.DataUserJobs
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `jobs` | [resources.users.UserJob](#resourcesusersUserJob) | repeated |  |
+
+
+
+
+
+### resources.sync.data.v2.DataUserLicenses
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `licenses` | [resources.users.licenses.License](#resourcesuserslicensesLicense) | repeated |  |
+
+
+
+
+
+### resources.sync.data.v2.DataUserPhoneNumbers
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `phone_numbers` | [resources.users.PhoneNumber](#resourcesusersPhoneNumber) | repeated |  |
 
 
 
@@ -12912,7 +12964,7 @@ Individual DeleteData request messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `users` | [resources.sync.data.DeleteUsers](#resourcessyncdataDeleteUsers) |  |  |
+| `user_ids` | [int32](#int32) | repeated |  |
 
 
 
@@ -12923,7 +12975,7 @@ Individual DeleteData request messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `vehicles` | [resources.sync.data.DeleteVehicles](#resourcessyncdataDeleteVehicles) |  |  |
+| `plates` | [string](#string) | repeated |  |
 
 
 
@@ -12981,7 +13033,7 @@ Individual DeleteData request messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `accounts` | [resources.sync.data.DataAccounts](#resourcessyncdataDataAccounts) |  |  |
+| `account_updates` | [resources.sync.activity.AccountUpdate](#resourcessyncactivityAccountUpdate) | repeated |  |
 
 
 
@@ -13005,7 +13057,7 @@ Individual SendData request messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `jobs` | [resources.sync.data.DataJobs](#resourcessyncdataDataJobs) |  |  |
+| `jobs` | [resources.jobs.Job](#resourcesjobsJob) | repeated |  |
 
 
 
@@ -13027,7 +13079,7 @@ Individual SendData request messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `licenses` | [resources.sync.data.DataLicenses](#resourcessyncdataDataLicenses) |  |  |
+| `licenses` | [resources.users.licenses.License](#resourcesuserslicensesLicense) | repeated |  |
 
 
 
@@ -13038,7 +13090,8 @@ Individual SendData request messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `user_locations` | [resources.sync.data.DataUserLocations](#resourcessyncdataDataUserLocations) |  |  |
+| `users` | [resources.sync.data.CitizenLocations](#resourcessyncdataCitizenLocations) | repeated |  |
+| `clear_all` | [bool](#bool) | optional |  |
 
 
 
@@ -13049,7 +13102,29 @@ Individual SendData request messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `users` | [resources.sync.data.DataUsers](#resourcessyncdataDataUsers) |  |  |
+| `users` | [resources.sync.data.DataUser](#resourcessyncdataDataUser) | repeated |  |
+
+
+
+
+
+### services.sync.v2.SendUsersJobsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `users_jobs` | [resources.sync.data.v2.DataUserJobs](#resourcessyncdatav2DataUserJobs) | repeated |  |
+
+
+
+
+
+### services.sync.v2.SendUsersPhoneNumbersRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `users_phone_numbers` | [resources.sync.data.v2.DataUserPhoneNumbers](#resourcessyncdatav2DataUserPhoneNumbers) | repeated |  |
 
 
 
@@ -13060,7 +13135,7 @@ Individual SendData request messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `vehicles` | [resources.sync.data.DataVehicles](#resourcessyncdataDataVehicles) |  |  |
+| `vehicles` | [resources.vehicles.Vehicle](#resourcesvehiclesVehicle) | repeated |  |
 
 
 
@@ -13134,6 +13209,8 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `SendLicensesData` | [SendLicensesDataRequest](#servicessyncv2SendLicensesDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
 | `SendAccountsData` | [SendAccountsDataRequest](#servicessyncv2SendAccountsDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
 | `SendUsersData` | [SendUsersDataRequest](#servicessyncv2SendUsersDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
+| `SendUsersJobs` | [SendUsersJobsRequest](#servicessyncv2SendUsersJobsRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
+| `SendUsersPhoneNumbers` | [SendUsersPhoneNumbersRequest](#servicessyncv2SendUsersPhoneNumbersRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
 | `SendVehiclesData` | [SendVehiclesDataRequest](#servicessyncv2SendVehiclesDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
 | `SendUserLocationsData` | [SendUserLocationsDataRequest](#servicessyncv2SendUserLocationsDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
 | `SendLastCharIDData` | [SendLastCharIDDataRequest](#servicessyncv2SendLastCharIDDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |

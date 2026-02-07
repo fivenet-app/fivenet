@@ -1,4 +1,4 @@
-package dbsync
+package dbsyncconfig
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -16,6 +17,14 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+)
+
+var watchSetupOnce sync.Once
+
+var Module = fx.Module("dbsync.config",
+	fx.Provide(
+		New,
+	),
 )
 
 type Config struct {
@@ -40,7 +49,7 @@ type ResultConfig struct {
 	Cfg    *config.Config
 }
 
-func NewConfig(p ParamsConfig) (ResultConfig, error) {
+func New(p ParamsConfig) (ResultConfig, error) {
 	v := viper.NewWithOptions(viper.ExperimentalBindStruct())
 
 	s := &Config{
@@ -150,6 +159,12 @@ func (s *Config) LoadConfig() error {
 	return nil
 }
 
+func (s *Config) SetupWatch(logger *zap.Logger, restartFn func() error) {
+	watchSetupOnce.Do(func() {
+		s.setupWatch(logger, restartFn)
+	})
+}
+
 func (s *Config) setupWatch(logger *zap.Logger, restartFn func() error) {
 	s.v.WatchConfig()
 	s.v.OnConfigChange(func(_ fsnotify.Event) {
@@ -187,6 +202,8 @@ type DBSyncConfig struct {
 	UpdateCheck config.UpdateCheck `yaml:"updateCheck"`
 
 	TableManager TableManagerConfig `yaml:"tableManager"`
+
+	Limits SyncLimits `yaml:"limits"`
 }
 
 type DBSyncSource struct {
@@ -206,11 +223,13 @@ type DBSyncDestination struct {
 type DBSyncSourceTables struct {
 	Jobs      JobsTable      `yaml:"jobs"`
 	JobGrades JobGradesTable `yaml:"jobGrades"`
-	Licenses  LicensesTable  `yaml:"licenses"`
 
-	Users            UsersTable        `yaml:"users"`
-	CitizensLicenses UserLicensesTable `yaml:"userLicenses"`
-	Vehicles         VehiclesTable     `yaml:"vehicles"`
+	Licenses LicensesTable `yaml:"licenses"`
+
+	Users        UsersTable        `yaml:"users"`
+	UserLicenses UserLicensesTable `yaml:"userLicenses"`
+
+	Vehicles VehiclesTable `yaml:"vehicles"`
 
 	Accounts AccountsTable `yaml:"accounts"`
 }
@@ -234,8 +253,8 @@ func (c *DBSyncSourceTables) GetAllTables() []DBSyncTable {
 	if c.Users.Enabled {
 		tables = append(tables, c.Users.DBSyncTable)
 	}
-	if c.CitizensLicenses.Enabled {
-		tables = append(tables, c.CitizensLicenses.DBSyncTable)
+	if c.UserLicenses.Enabled {
+		tables = append(tables, c.UserLicenses.DBSyncTable)
 	}
 	if c.Vehicles.Enabled {
 		tables = append(tables, c.Vehicles.DBSyncTable)
@@ -261,15 +280,16 @@ type Filter struct {
 	Action      FilterAction `yaml:"action"      default:"replace"`
 	Replacement string       `yaml:"replacement"`
 
-	compiledPattern *regexp.Regexp
+	// Compiled regex pattern for internal use (compiled during config load)
+	CompiledPattern *regexp.Regexp `yaml:"-"`
 }
 
 type DBSyncTable struct {
-	Enabled           bool           `yaml:"enabled"`
+	Enabled           bool           `yaml:"enabled"                     default:"false"`
 	TableName         string         `yaml:"tableName"`
 	UpdatedTimeColumn *string        `yaml:"updatedTimeColumn,omitempty"`
 	Query             *string        `yaml:"query,omitempty"`
-	SyncInterval      *time.Duration `yaml:"syncInterval,omitempty"      validate:"omitempty,gte=1"`
+	SyncInterval      *time.Duration `yaml:"syncInterval,omitempty"                      validate:"omitempty,gte=1"`
 }
 
 func (c *DBSyncTable) GetSyncInterval() *time.Duration {
@@ -566,7 +586,7 @@ func (c *DBSyncConfig) Init() error {
 	for k := range c.Tables.Jobs.Filters {
 		filter := &c.Tables.Jobs.Filters[k]
 		var err error
-		filter.compiledPattern, err = regexp.Compile(filter.Pattern)
+		filter.CompiledPattern, err = regexp.Compile(filter.Pattern)
 		if err != nil {
 			return fmt.Errorf("failed to compile regex for filter %d: %w", k, err)
 		}
@@ -575,7 +595,7 @@ func (c *DBSyncConfig) Init() error {
 	for k := range c.Tables.Users.Filters.Jobs {
 		filter := &c.Tables.Users.Filters.Jobs[k]
 		var err error
-		filter.compiledPattern, err = regexp.Compile(filter.Pattern)
+		filter.CompiledPattern, err = regexp.Compile(filter.Pattern)
 		if err != nil {
 			return fmt.Errorf("failed to compile regex for user job filter %d: %w", k, err)
 		}
@@ -586,4 +606,19 @@ func (c *DBSyncConfig) Init() error {
 
 type TableManagerConfig struct {
 	Enabled bool `default:"true" yaml:"enabled"`
+}
+
+// SyncLimits defines limits for the sync process, such as maximum number of records to sync per table.
+// Must be kept in-sync with the current sync API limits.
+//
+// Current limits from: `services/sync/v2/sync.proto`.
+type SyncLimits struct {
+	Jobs     int64 `default:"200" yaml:"jobs"     validate:"omitempty,gte=1,lte=200"`
+	Licenses int64 `default:"200" yaml:"licenses" validate:"omitempty,gte=1,lte=200"`
+
+	Users int64 `default:"300" yaml:"users" validate:"omitempty,gte=1,lte=300"`
+
+	Vehicles int64 `default:"500" yaml:"vehicles" validate:"omitempty,gte=1,lte=500"`
+
+	Accounts int64 `default:"100" yaml:"accounts" validate:"omitempty,gte=1,lte=100"`
 }

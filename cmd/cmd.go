@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2026/pkg/crypt"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbsync"
+	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/demo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/commands"
@@ -142,6 +143,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		updatecheck.Module,
 		dbsync.Module,
 		dbsync.TableManagerModule,
+		dbsyncconfig.StateModule,
 
 		userinfo.PollerModule,
 		userinfo.RetrieverModule,
@@ -222,9 +224,9 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			query.Module,
 		)
 	} else {
-		// Don't include query module, provide only the dbsync config
+		// Don't include query module (for DB connection), provide only the dbsync config and db instance
 		opts = append(opts,
-			fx.Provide(dbsync.NewConfig),
+			dbsyncconfig.Module,
 			fx.Provide(dbsync.NewDB),
 		)
 	}

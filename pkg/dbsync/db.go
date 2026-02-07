@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/XSAM/otelsql"
+	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/dsn"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
@@ -17,7 +18,7 @@ type DBParams struct {
 
 	LC fx.Lifecycle
 
-	Config *Config
+	Config *dbsyncconfig.Config
 }
 
 func NewDB(p DBParams) (*sql.DB, error) {

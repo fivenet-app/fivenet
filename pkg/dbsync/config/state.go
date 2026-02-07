@@ -1,4 +1,4 @@
-package dbsync
+package dbsyncconfig
 
 import (
 	"errors"
@@ -6,11 +6,25 @@ import (
 	"sync"
 	"time"
 
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 )
 
-type DBSyncState struct {
+var StateModule = fx.Module("dbsync.state",
+	fx.Provide(
+		NewState,
+	),
+)
+
+type StateParams struct {
+	fx.In
+
+	Logger *zap.Logger
+	Config *Config
+}
+
+type State struct {
 	mu sync.RWMutex
 
 	logger *zap.Logger
@@ -26,13 +40,13 @@ type DBSyncState struct {
 	OwnedVehicles *TableSyncState `yaml:"ownedVehicles"`
 }
 
-func NewDBSyncState(logger *zap.Logger, filepath string) *DBSyncState {
-	d := &DBSyncState{
+func NewState(p StateParams) *State {
+	d := &State{
 		mu: sync.RWMutex{},
 
-		logger: logger.Named("dbsync.state"),
+		logger: p.Logger.Named("dbsync.state"),
 
-		filepath: filepath,
+		filepath: p.Config.Load().StateFile,
 	}
 
 	d.Jobs = &TableSyncState{
@@ -55,7 +69,7 @@ func NewDBSyncState(logger *zap.Logger, filepath string) *DBSyncState {
 	return d
 }
 
-func (s *DBSyncState) Load() error {
+func (s *State) Load() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -73,14 +87,14 @@ func (s *DBSyncState) Load() error {
 	return nil
 }
 
-func (s *DBSyncState) Save() error {
+func (s *State) Save() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	return s.save()
 }
 
-func (s *DBSyncState) save() error {
+func (s *State) save() error {
 	out, err := yaml.Marshal(s)
 	if err != nil {
 		return err
@@ -94,7 +108,7 @@ func (s *DBSyncState) save() error {
 }
 
 type TableSyncState struct {
-	dss *DBSyncState
+	dss *State
 
 	LastCheck *time.Time `yaml:"lastCheck"`
 	Offset    int64      `yaml:"offset"`

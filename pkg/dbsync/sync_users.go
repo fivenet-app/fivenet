@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -21,10 +22,10 @@ import (
 type usersSync struct {
 	*syncer
 
-	state *TableSyncState
+	state *dbsyncconfig.TableSyncState
 }
 
-func newUsersSync(s *syncer, state *TableSyncState) *usersSync {
+func newUsersSync(s *syncer, state *dbsyncconfig.TableSyncState) *usersSync {
 	return &usersSync{
 		syncer: s,
 		state:  state,
@@ -123,7 +124,10 @@ func (s *usersSync) updateSyncState(usersCount int64, offset, limit int64) (int6
 	return offset, nil
 }
 
-func (s *usersSync) applyFiltersAndTransformations(us []*syncdata.DataUser, sQuery UsersTable) {
+func (s *usersSync) applyFiltersAndTransformations(
+	us []*syncdata.DataUser,
+	sQuery dbsyncconfig.UsersTable,
+) {
 	if s.cfg.Tables.Users.IgnoreEmptyName {
 		us = slices.DeleteFunc(us, func(in *syncdata.DataUser) bool {
 			return in == nil || (in.GetFirstname() == "" && in.GetLastname() == "")
@@ -209,15 +213,19 @@ func (s *usersSync) applyValueMapping(user *syncdata.DataUser) {
 	}
 }
 
-func (s *usersSync) applyFilters(us []*syncdata.DataUser, k int, sQuery UsersTable) bool {
+func (s *usersSync) applyFilters(
+	us []*syncdata.DataUser,
+	k int,
+	sQuery dbsyncconfig.UsersTable,
+) bool {
 	for _, filter := range sQuery.Filters.Jobs {
-		if filter.compiledPattern.MatchString(us[k].GetJob()) {
+		if filter.CompiledPattern.MatchString(us[k].GetJob()) {
 			switch filter.Action {
-			case FilterActionDrop:
+			case dbsyncconfig.FilterActionDrop:
 				us = append(us[:k], us[k+1:]...)
 				return true
-			case FilterActionReplace:
-				us[k].Job = filter.compiledPattern.ReplaceAllString(
+			case dbsyncconfig.FilterActionReplace:
+				us[k].Job = filter.CompiledPattern.ReplaceAllString(
 					us[k].GetJob(),
 					filter.Replacement,
 				)
@@ -250,7 +258,7 @@ func (s *usersSync) parseDateOfBirth(user *syncdata.DataUser) {
 }
 
 func (s *usersSync) retrieveAndAttachLicenses(ctx context.Context, us []*syncdata.DataUser) error {
-	if !s.cfg.Tables.CitizensLicenses.Enabled {
+	if !s.cfg.Tables.UserLicenses.Enabled {
 		return nil
 	}
 
@@ -274,7 +282,7 @@ func (s *usersSync) retrieveLicenses(
 	userId int32,
 	identifier string,
 ) ([]*userslicenses.License, error) {
-	q := s.cfg.Tables.CitizensLicenses.GetQuery(s.state, 0, 100)
+	q := s.cfg.Tables.UserLicenses.GetQuery(s.state, 0, 100)
 	s.logger.Debug("citizens licenses sync query", zap.String("query", q))
 
 	args := []any{}
@@ -308,7 +316,7 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 		return err
 	}
 
-	if s.cfg.Tables.CitizensLicenses.Enabled {
+	if s.cfg.Tables.UserLicenses.Enabled {
 		// Retrieve user's licenses
 		var err error
 		user.Licenses, err = s.retrieveLicenses(ctx, user.GetUserId(), user.GetIdentifier())

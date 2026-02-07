@@ -5,9 +5,14 @@ package services.sync.v2;
 import "buf/validate/validate.proto";
 import "resources/centrum/dispatches/dispatches.proto";
 import "resources/jobs/colleagues/activity/activity.proto";
+import "resources/jobs/jobs.proto";
 import "resources/sync/activity/activity.proto";
 import "resources/sync/data/data.proto";
+import "resources/sync/data/v2/data.proto";
 import "resources/users/activity/activity.proto";
+import "resources/users/licenses/licenses.proto";
+import "resources/users/user.proto";
+import "resources/vehicles/vehicles.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync;sync";
 
@@ -85,27 +90,28 @@ message AddActivityResponse {}
 
 // Individual SendData request messages
 message SendJobsDataRequest {
-  resources.sync.data.DataJobs jobs = 1;
+  repeated resources.jobs.Job jobs = 1 [(buf.validate.field).repeated.max_items = 200];
 }
 
 message SendLicensesDataRequest {
-  resources.sync.data.DataLicenses licenses = 1;
+  repeated resources.users.licenses.License licenses = 1 [(buf.validate.field).repeated.max_items = 200];
 }
 
 message SendAccountsDataRequest {
-  resources.sync.data.DataAccounts accounts = 1;
+  repeated resources.sync.activity.AccountUpdate account_updates = 1 [(buf.validate.field).repeated.max_items = 100];
 }
 
 message SendUsersDataRequest {
-  resources.sync.data.DataUsers users = 1;
+  repeated resources.sync.data.DataUser users = 1 [(buf.validate.field).repeated.max_items = 300];
 }
 
 message SendVehiclesDataRequest {
-  resources.sync.data.DataVehicles vehicles = 1;
+  repeated resources.vehicles.Vehicle vehicles = 1 [(buf.validate.field).repeated.max_items = 500];
 }
 
 message SendUserLocationsDataRequest {
-  resources.sync.data.DataUserLocations user_locations = 1;
+  repeated resources.sync.data.CitizenLocations users = 1 [(buf.validate.field).repeated.max_items = 2000];
+  optional bool clear_all = 2;
 }
 
 message SendLastCharIDDataRequest {
@@ -118,11 +124,11 @@ message SendDataResponse {
 
 // Individual DeleteData request messages
 message DeleteUsersDataRequest {
-  resources.sync.data.DeleteUsers users = 1;
+  repeated int32 user_ids = 1 [(buf.validate.field).repeated.max_items = 100];
 }
 
 message DeleteVehiclesDataRequest {
-  resources.sync.data.DeleteVehicles vehicles = 1;
+  repeated string plates = 1 [(buf.validate.field).repeated.max_items = 100];
 }
 
 message DeleteDataResponse {
@@ -165,10 +171,15 @@ service SyncService {
 
   // Individual SendData methods
   rpc SendJobsData(SendJobsDataRequest) returns (SendDataResponse);
+
   rpc SendLicensesData(SendLicensesDataRequest) returns (SendDataResponse);
+
   rpc SendAccountsData(SendAccountsDataRequest) returns (SendDataResponse);
+
   rpc SendUsersData(SendUsersDataRequest) returns (SendDataResponse);
+
   rpc SendVehiclesData(SendVehiclesDataRequest) returns (SendDataResponse);
+
   rpc SendUserLocationsData(SendUserLocationsDataRequest) returns (SendDataResponse);
   rpc SendLastCharIDData(SendLastCharIDDataRequest) returns (SendDataResponse);
 

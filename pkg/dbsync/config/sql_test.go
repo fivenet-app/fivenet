@@ -1,4 +1,4 @@
-package dbsync
+package dbsyncconfig
 
 import (
 	"testing"

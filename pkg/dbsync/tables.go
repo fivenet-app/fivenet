@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -29,7 +30,7 @@ type TableManagerParams struct {
 	Logger *zap.Logger
 	DB     *sql.DB
 
-	Config *Config
+	Config *dbsyncconfig.Config
 }
 
 func NewTableManager(p TableManagerParams) *TableManager {
@@ -48,7 +49,7 @@ func NewTableManager(p TableManagerParams) *TableManager {
 func (t *TableManager) CheckTables(
 	ctx context.Context,
 	db qrm.DB,
-	tables []DBSyncTable,
+	tables []dbsyncconfig.DBSyncTable,
 ) error {
 	if len(tables) == 0 {
 		return nil

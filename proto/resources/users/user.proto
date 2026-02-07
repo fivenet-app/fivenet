@@ -114,17 +114,22 @@ message User {
 }
 
 message PhoneNumber {
-  string number = 1 [(buf.validate.field).string.max_len = 20];
-  bool is_primary = 2;
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+  string number = 2 [(buf.validate.field).string.max_len = 20];
+  bool is_primary = 3;
 
-  resources.timestamp.Timestamp created_at = 3;
-  optional resources.timestamp.Timestamp updated_at = 4;
+  resources.timestamp.Timestamp created_at = 4;
+  optional resources.timestamp.Timestamp updated_at = 5;
 }
 
 message UserJob {
-  string job = 1 [(buf.validate.field).string.max_len = 20];
-  optional string job_label = 2 [(buf.validate.field).string.max_len = 50];
-  int32 grade = 3 [(buf.validate.field).int32.gte = 0];
-  optional string grade_label = 4 [(buf.validate.field).string.max_len = 50];
-  bool is_primary = 5;
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+  string job = 2 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 3 [(buf.validate.field).string.max_len = 50];
+  int32 grade = 4 [(buf.validate.field).int32.gte = 0];
+  optional string grade_label = 5 [(buf.validate.field).string.max_len = 50];
+  bool is_primary = 6;
+
+  resources.timestamp.Timestamp created_at = 7;
+  optional resources.timestamp.Timestamp updated_at = 8;
 }

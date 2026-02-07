@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 )
@@ -22,7 +23,7 @@ func TestTableManager_CheckTables(t *testing.T) {
 	ctx := t.Context()
 
 	col := "updated_at"
-	tables := []DBSyncTable{
+	tables := []dbsyncconfig.DBSyncTable{
 		{
 			TableName:         "vehicles",
 			UpdatedTimeColumn: &col,

@@ -205,15 +205,6 @@ func (m *DeleteUsersDataRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Users
-	if m.Users != nil {
-		if v, ok := any(m.GetUsers()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	return nil
 }
 
@@ -224,13 +215,12 @@ func (m *DeleteVehiclesDataRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Vehicles
-	if m.Vehicles != nil {
-		if v, ok := any(m.GetVehicles()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
+	// Field: Plates
+	for idx, item := range m.Plates {
+		_, _ = idx, item
+
+		m.Plates[idx] = htmlsanitizer.Sanitize(m.Plates[idx])
+
 	}
 
 	return nil
@@ -341,13 +331,16 @@ func (m *SendAccountsDataRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Accounts
-	if m.Accounts != nil {
-		if v, ok := any(m.GetAccounts()).(interface{ Sanitize() error }); ok {
+	// Field: AccountUpdates
+	for idx, item := range m.AccountUpdates {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	return nil
@@ -371,12 +364,15 @@ func (m *SendJobsDataRequest) Sanitize() error {
 	}
 
 	// Field: Jobs
-	if m.Jobs != nil {
-		if v, ok := any(m.GetJobs()).(interface{ Sanitize() error }); ok {
+	for idx, item := range m.Jobs {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	return nil
@@ -409,12 +405,15 @@ func (m *SendLicensesDataRequest) Sanitize() error {
 	}
 
 	// Field: Licenses
-	if m.Licenses != nil {
-		if v, ok := any(m.GetLicenses()).(interface{ Sanitize() error }); ok {
+	for idx, item := range m.Licenses {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	return nil
@@ -427,13 +426,16 @@ func (m *SendUserLocationsDataRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: UserLocations
-	if m.UserLocations != nil {
-		if v, ok := any(m.GetUserLocations()).(interface{ Sanitize() error }); ok {
+	// Field: Users
+	for idx, item := range m.Users {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	return nil
@@ -447,12 +449,59 @@ func (m *SendUsersDataRequest) Sanitize() error {
 	}
 
 	// Field: Users
-	if m.Users != nil {
-		if v, ok := any(m.GetUsers()).(interface{ Sanitize() error }); ok {
+	for idx, item := range m.Users {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SendUsersJobsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: UsersJobs
+	for idx, item := range m.UsersJobs {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SendUsersPhoneNumbersRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: UsersPhoneNumbers
+	for idx, item := range m.UsersPhoneNumbers {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -466,12 +515,15 @@ func (m *SendVehiclesDataRequest) Sanitize() error {
 	}
 
 	// Field: Vehicles
-	if m.Vehicles != nil {
-		if v, ok := any(m.GetVehicles()).(interface{ Sanitize() error }); ok {
+	for idx, item := range m.Vehicles {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	return nil

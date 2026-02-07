@@ -60,8 +60,9 @@ source:
   baseDataResyncInterval: 5m
 
 # A query for each "piece of data" FiveNet needs to function
+# The example table names + columns and queries are for the ESX framework
 tables:
-  # The example queries here are for the ESX framework
+  # Jobs of your game server (e.g., police, ambulance, taxi, etc., with their name and label/display name)
   jobs:
     enabled: true
     # Name of the table for this data (in case you are using a custom query or are joining
@@ -88,6 +89,8 @@ tables:
       # have "off-duty" jobs that need to be rewritten to their "actual" job name
       #- pattern: '^off_'
       #  action: drop
+
+  # Job grades for the jobs, e.g., "police" job has the grades "0", "1", "2", etc. with different labels and names.
   jobGrades:
     enabled: true
     # Name of the table for this data (in case you are using a custom query or are joining
@@ -115,6 +118,8 @@ tables:
     #    `job_grades`.`job_name` = $jobName
     #  ORDER BY `job_grade.job_name`, `job_grade.grade`
     #  OFFSET $offset;
+
+  # Licenses available on your server, e.g., driver's license, weapon license, etc.
   licenses:
     enabled: true
     # Name of the table for this data (in case you are using a custom query or are joining
@@ -136,6 +141,9 @@ tables:
     #  ORDER BY `type`
     #  LIMIT $limit
     #  OFFSET $offset;
+
+  # Users/Characters of the game server - This is the main users table,
+  # which is used to link to other data to (e.g., vehicles, users' licenses)
   users:
     enabled: true
     # Name of the table for this data (in case you are using a custom query or are joining
@@ -154,11 +162,11 @@ tables:
       firstname: "firstname"
       lastname: "lastname"
       dateOfBirth: "dateofbirth"
+      sex: "sex"
+      height: "height"
       job: "job"
       jobGrade: "job_grade"
-      sex: "sex"
       phoneNumber: "phone_number"
-      height: "height"
       # Optional columns
       visum: "-" # Indicates that this column is not available
       playtime: "-" # Indicates that this column is not available
@@ -167,8 +175,17 @@ tables:
     # E.g., it is prefered to use a ESX like identifier layout for that case `charX:LICENSE`
     #
     # Must return result columns named: `user.user_id`, `user.identifier`, `user.group`, `user.firstname`,
-    # `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex`, `user.phone_number` columns
-    # Optional columns: `user.height`, `user.visum`, `user.playtime`
+    # `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex` columns
+    # Optional columns: `user.phone_number`, `user.height`, `user.visum`, `user.playtime`
+    #
+    # For advanced users: If an user can has more than one job (e.g., a main job and a secondary job),
+    # you can instead of `user.job` and `user.job_grade`, return multiple rows per user with the job data
+    # in the columns `user_job.job`, `user_job.job_grade` and `user_job.is_primary` (boolean column to
+    # indicate the primary job, if multiple jobs are returned).
+    #
+    # If an user can has multiple phone numbers, you can return multiple rows per user with the phone number
+    # data in the columns `user_phone_number.number` and `user_phone_number.is_primary` (boolean column
+    # to indicate the primary phone number, if multiple phone numbers are returned).
     #query: |
     #  SELECT
     #    `id` AS `user.id`,
@@ -177,11 +194,11 @@ tables:
     #    `firstname` AS `user.firstname`,
     #    `lastname` AS `user.lastname`,
     #    `dateofbirth` AS `user.dateofbirth`,
+    #    `sex` AS `user.sex`,
+    #    `height` AS `user.height`,
     #    `job` AS `user.job`,
     #    `job_grade` AS `user.job_grade`,
-    #    `sex` AS `user.sex`,
     #    `phone_number` AS `user.phone_number`,
-    #    `height` AS `user.height`,
     #    `visum` AS `user.visum`,
     #    `playtime` AS `user.playtime`
     #  FROM
@@ -220,6 +237,8 @@ tables:
         #- pattern: '^ambulance$'
         #  action: replace
         #  replacement: 'ems'
+
+  # Licenses of a user
   userLicenses:
     enabled: true
     # Name of the table for this data (in case you are using a custom query or are joining
@@ -243,6 +262,8 @@ tables:
     #  ORDER BY `type`
     #  LIMIT $limit
     #  OFFSET $offset;
+
+  # Vehicles owned by users
   vehicles:
     enabled: true
     # Name of the table for this data (in case you are using a custom query or are joining
@@ -276,6 +297,7 @@ tables:
     #  ORDER BY `vehicle.plate`
     #  LIMIT $limit
     #  OFFSET $offset;
+
   # Accounts - Used to, e.g., sync group(s) by license, to accounts.
   accounts:
     enabled: false
@@ -288,7 +310,8 @@ tables:
     # account primary group and sub groups (using `JSON_*` funcs)).
     #
     # Must return result columns named: `account.license`, `account.group` (primary group)
-    # Optional columns: `account.groups` (comma-separated list of groups, if `account.group` is empty first group is used)
+    # Optional columns: `account.groups` (comma-separated list of groups, if `account.group` is
+    # empty `account.group` is used)
     query: "" # Query to retrieve all accounts
     #  SELECT
     #    `license` AS `account.license`,
@@ -304,3 +327,12 @@ tables:
 tableManager:
   # By default enabled, used to create missing `updated_at` columns (`updatedTimeColumn`) on tables that have it configured.
   enabled: true
+
+# Limit the amount of data to sync per query, this is useful to prevent syncing too much data at once which can cause performance issues or timeouts.
+# The default numbers are the maximum allowed by the sync API, you can lower them if you experience performance issues or timeouts, but you cannot increase them above these values.
+limits:
+  jobs: 200
+  licenses: 200
+  users: 300
+  vehicles: 500
+  accounts: 100

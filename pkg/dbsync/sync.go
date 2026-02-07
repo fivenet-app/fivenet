@@ -9,6 +9,7 @@ import (
 	"time"
 
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
@@ -32,8 +33,8 @@ type Sync struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 
-	cfg     *Config
-	state   *DBSyncState
+	cfg     *dbsyncconfig.Config
+	state   *dbsyncconfig.State
 	cli     *grpc.ClientConn
 	syncCli pbsync.SyncServiceClient
 
@@ -52,8 +53,9 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
-	Config *Config
+	Config *dbsyncconfig.Config
 	DB     *sql.DB
+	State  *dbsyncconfig.State
 }
 
 type Result struct {
@@ -70,14 +72,14 @@ func New(p Params) (*Sync, error) {
 		logger: logger,
 		cfg:    p.Config,
 		db:     p.DB,
+		state:  p.State,
 
 		streamCh: make(chan *pbsync.StreamResponse, 12),
 	}
 
-	p.Config.setupWatch(logger.Named("config"), s.restart)
+	p.Config.SetupWatch(logger.Named("config"), s.restart)
 
 	// Load dbsync state from file if exists
-	s.state = NewDBSyncState(s.logger, s.cfg.Load().StateFile)
 	if err := s.state.Load(); err != nil {
 		return nil, fmt.Errorf("failed to load dbsync state. %w", err)
 	}

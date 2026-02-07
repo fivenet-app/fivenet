@@ -823,10 +823,11 @@ func (b0 User_builder) Build() *User {
 
 type PhoneNumber struct {
 	state                protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Number    string                 `protobuf:"bytes,1,opt,name=number,proto3"`
-	xxx_hidden_IsPrimary bool                   `protobuf:"varint,2,opt,name=is_primary,json=isPrimary,proto3"`
-	xxx_hidden_CreatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3"`
-	xxx_hidden_UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof"`
+	xxx_hidden_UserId    int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_Number    string                 `protobuf:"bytes,2,opt,name=number,proto3"`
+	xxx_hidden_IsPrimary bool                   `protobuf:"varint,3,opt,name=is_primary,json=isPrimary,proto3"`
+	xxx_hidden_CreatedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3"`
+	xxx_hidden_UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3,oneof"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -856,6 +857,13 @@ func (x *PhoneNumber) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *PhoneNumber) GetUserId() int32 {
+	if x != nil {
+		return x.xxx_hidden_UserId
+	}
+	return 0
+}
+
 func (x *PhoneNumber) GetNumber() string {
 	if x != nil {
 		return x.xxx_hidden_Number
@@ -882,6 +890,10 @@ func (x *PhoneNumber) GetUpdatedAt() *timestamp.Timestamp {
 		return x.xxx_hidden_UpdatedAt
 	}
 	return nil
+}
+
+func (x *PhoneNumber) SetUserId(v int32) {
+	x.xxx_hidden_UserId = v
 }
 
 func (x *PhoneNumber) SetNumber(v string) {
@@ -925,6 +937,7 @@ func (x *PhoneNumber) ClearUpdatedAt() {
 type PhoneNumber_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	UserId    int32
 	Number    string
 	IsPrimary bool
 	CreatedAt *timestamp.Timestamp
@@ -935,6 +948,7 @@ func (b0 PhoneNumber_builder) Build() *PhoneNumber {
 	m0 := &PhoneNumber{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.xxx_hidden_UserId = b.UserId
 	x.xxx_hidden_Number = b.Number
 	x.xxx_hidden_IsPrimary = b.IsPrimary
 	x.xxx_hidden_CreatedAt = b.CreatedAt
@@ -944,11 +958,14 @@ func (b0 PhoneNumber_builder) Build() *PhoneNumber {
 
 type UserJob struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Job         string                 `protobuf:"bytes,1,opt,name=job,proto3"`
-	xxx_hidden_JobLabel    *string                `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof"`
-	xxx_hidden_Grade       int32                  `protobuf:"varint,3,opt,name=grade,proto3"`
-	xxx_hidden_GradeLabel  *string                `protobuf:"bytes,4,opt,name=grade_label,json=gradeLabel,proto3,oneof"`
-	xxx_hidden_IsPrimary   bool                   `protobuf:"varint,5,opt,name=is_primary,json=isPrimary,proto3"`
+	xxx_hidden_UserId      int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_Job         string                 `protobuf:"bytes,2,opt,name=job,proto3"`
+	xxx_hidden_JobLabel    *string                `protobuf:"bytes,3,opt,name=job_label,json=jobLabel,proto3,oneof"`
+	xxx_hidden_Grade       int32                  `protobuf:"varint,4,opt,name=grade,proto3"`
+	xxx_hidden_GradeLabel  *string                `protobuf:"bytes,5,opt,name=grade_label,json=gradeLabel,proto3,oneof"`
+	xxx_hidden_IsPrimary   bool                   `protobuf:"varint,6,opt,name=is_primary,json=isPrimary,proto3"`
+	xxx_hidden_CreatedAt   *timestamp.Timestamp   `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3"`
+	xxx_hidden_UpdatedAt   *timestamp.Timestamp   `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3,oneof"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -978,6 +995,13 @@ func (x *UserJob) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
+}
+
+func (x *UserJob) GetUserId() int32 {
+	if x != nil {
+		return x.xxx_hidden_UserId
+	}
+	return 0
 }
 
 func (x *UserJob) GetJob() string {
@@ -1021,13 +1045,31 @@ func (x *UserJob) GetIsPrimary() bool {
 	return false
 }
 
+func (x *UserJob) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_CreatedAt
+	}
+	return nil
+}
+
+func (x *UserJob) GetUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_UpdatedAt
+	}
+	return nil
+}
+
+func (x *UserJob) SetUserId(v int32) {
+	x.xxx_hidden_UserId = v
+}
+
 func (x *UserJob) SetJob(v string) {
 	x.xxx_hidden_Job = v
 }
 
 func (x *UserJob) SetJobLabel(v string) {
 	x.xxx_hidden_JobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 8)
 }
 
 func (x *UserJob) SetGrade(v int32) {
@@ -1036,62 +1078,98 @@ func (x *UserJob) SetGrade(v int32) {
 
 func (x *UserJob) SetGradeLabel(v string) {
 	x.xxx_hidden_GradeLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 8)
 }
 
 func (x *UserJob) SetIsPrimary(v bool) {
 	x.xxx_hidden_IsPrimary = v
 }
 
+func (x *UserJob) SetCreatedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_CreatedAt = v
+}
+
+func (x *UserJob) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_UpdatedAt = v
+}
+
 func (x *UserJob) HasJobLabel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *UserJob) HasGradeLabel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+}
+
+func (x *UserJob) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_CreatedAt != nil
+}
+
+func (x *UserJob) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_UpdatedAt != nil
 }
 
 func (x *UserJob) ClearJobLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
 	x.xxx_hidden_JobLabel = nil
 }
 
 func (x *UserJob) ClearGradeLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
 	x.xxx_hidden_GradeLabel = nil
+}
+
+func (x *UserJob) ClearCreatedAt() {
+	x.xxx_hidden_CreatedAt = nil
+}
+
+func (x *UserJob) ClearUpdatedAt() {
+	x.xxx_hidden_UpdatedAt = nil
 }
 
 type UserJob_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	UserId     int32
 	Job        string
 	JobLabel   *string
 	Grade      int32
 	GradeLabel *string
 	IsPrimary  bool
+	CreatedAt  *timestamp.Timestamp
+	UpdatedAt  *timestamp.Timestamp
 }
 
 func (b0 UserJob_builder) Build() *UserJob {
 	m0 := &UserJob{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.xxx_hidden_UserId = b.UserId
 	x.xxx_hidden_Job = b.Job
 	if b.JobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 8)
 		x.xxx_hidden_JobLabel = b.JobLabel
 	}
 	x.xxx_hidden_Grade = b.Grade
 	if b.GradeLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 8)
 		x.xxx_hidden_GradeLabel = b.GradeLabel
 	}
 	x.xxx_hidden_IsPrimary = b.IsPrimary
+	x.xxx_hidden_CreatedAt = b.CreatedAt
+	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	return m0
 }
 
@@ -1153,27 +1231,34 @@ const file_resources_users_user_proto_rawDesc = "" +
 	"\x06_visumB\v\n" +
 	"\t_playtimeB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
-	"\x10_profile_picture\"\xd6\x01\n" +
-	"\vPhoneNumber\x12\x16\n" +
-	"\x06number\x18\x01 \x01(\tR\x06number\x12\x1d\n" +
+	"\x10_profile_picture\"\xef\x01\n" +
+	"\vPhoneNumber\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x16\n" +
+	"\x06number\x18\x02 \x01(\tR\x06number\x12\x1d\n" +
 	"\n" +
-	"is_primary\x18\x02 \x01(\bR\tisPrimary\x12=\n" +
+	"is_primary\x18\x03 \x01(\bR\tisPrimary\x12=\n" +
 	"\n" +
-	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
+	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01B\r\n" +
-	"\v_updated_at\"\xb6\x01\n" +
-	"\aUserJob\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x02 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x14\n" +
-	"\x05grade\x18\x03 \x01(\x05R\x05grade\x12$\n" +
-	"\vgrade_label\x18\x04 \x01(\tH\x01R\n" +
+	"updated_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01B\r\n" +
+	"\v_updated_at\"\xe1\x02\n" +
+	"\aUserJob\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
+	"\x03job\x18\x02 \x01(\tR\x03job\x12 \n" +
+	"\tjob_label\x18\x03 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x14\n" +
+	"\x05grade\x18\x04 \x01(\x05R\x05grade\x12$\n" +
+	"\vgrade_label\x18\x05 \x01(\tH\x01R\n" +
 	"gradeLabel\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"is_primary\x18\x05 \x01(\bR\tisPrimaryB\f\n" +
+	"is_primary\x18\x06 \x01(\bR\tisPrimary\x12=\n" +
+	"\n" +
+	"created_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
+	"\n" +
+	"updated_at\x18\b \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tupdatedAt\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x0e\n" +
-	"\f_grade_labelBIZGgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users;usersb\x06proto3"
+	"\f_grade_labelB\r\n" +
+	"\v_updated_atBIZGgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users;usersb\x06proto3"
 
 var file_resources_users_user_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_users_user_proto_goTypes = []any{
@@ -1192,11 +1277,13 @@ var file_resources_users_user_proto_depIdxs = []int32{
 	5, // 3: resources.users.User.licenses:type_name -> resources.users.licenses.License
 	6, // 4: resources.users.PhoneNumber.created_at:type_name -> resources.timestamp.Timestamp
 	6, // 5: resources.users.PhoneNumber.updated_at:type_name -> resources.timestamp.Timestamp
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	6, // 6: resources.users.UserJob.created_at:type_name -> resources.timestamp.Timestamp
+	6, // 7: resources.users.UserJob.updated_at:type_name -> resources.timestamp.Timestamp
+	8, // [8:8] is the sub-list for method output_type
+	8, // [8:8] is the sub-list for method input_type
+	8, // [8:8] is the sub-list for extension type_name
+	8, // [8:8] is the sub-list for extension extendee
+	0, // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_user_proto_init() }

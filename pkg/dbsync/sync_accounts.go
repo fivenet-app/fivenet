@@ -8,6 +8,7 @@ import (
 	syncactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
@@ -15,10 +16,10 @@ import (
 type accountsSync struct {
 	*syncer
 
-	state *TableSyncState
+	state *dbsyncconfig.TableSyncState
 }
 
-func newAccountsSync(s *syncer, state *TableSyncState) *accountsSync {
+func newAccountsSync(s *syncer, state *dbsyncconfig.TableSyncState) *accountsSync {
 	return &accountsSync{
 		syncer: s,
 		state:  state,

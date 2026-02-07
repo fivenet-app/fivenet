@@ -7,6 +7,7 @@ import (
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
@@ -14,10 +15,10 @@ import (
 type licensesSync struct {
 	*syncer
 
-	state *TableSyncState
+	state *dbsyncconfig.TableSyncState
 }
 
-func newLicensesSync(s *syncer, state *TableSyncState) *licensesSync {
+func newLicensesSync(s *syncer, state *dbsyncconfig.TableSyncState) *licensesSync {
 	return &licensesSync{
 		syncer: s,
 		state:  state,

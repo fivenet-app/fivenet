@@ -285,4 +285,8 @@ ALTER TABLE `fivenet_documents_stamps` DROP COLUMN `user_id`;
 -- Table: `fivenet_documents_meta` - Add comment count
 ALTER TABLE `fivenet_documents_meta` ADD COLUMN `comment_count` int(11) NOT NULL DEFAULT '0' AFTER `ap_policies_active`;
 
+-- Table: `fivenet_jobs` - Add `created_at` column and `deleted_at` column for soft deletes
+ALTER TABLE `fivenet_jobs` ADD COLUMN `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) AFTER `label`;
+ALTER TABLE `fivenet_jobs` ADD COLUMN `deleted_at` datetime(3) DEFAULT NULL AFTER `created_at`;
+
 COMMIT;
