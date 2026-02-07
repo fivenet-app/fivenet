@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UButton, UFieldGroup, UTooltip } from '#components';
+import { UBadge, UButton, UFieldGroup, UTooltip } from '#components';
 import type { TableColumn, TabsItem } from '@nuxt/ui';
 import { computed, h } from 'vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -9,6 +9,7 @@ import { getUser, useClipboardStore } from '~/stores/clipboard';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { type DocumentRelation, DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import type { User } from '~~/gen/ts/resources/users/user';
+import { docRelationToBadge, docRelationToIcon } from './helpers';
 
 const props = defineProps<{
     documentId?: number;
@@ -131,7 +132,16 @@ const columnsCurrent = computed(
             {
                 accessorKey: 'relation',
                 header: t('common.relation', 1),
-                cell: ({ row }) => t(`enums.documents.DocRelation.${DocRelation[row.original.relation]}`),
+                cell: ({ row }) =>
+                    h(
+                        UBadge,
+                        {
+                            class: 'truncate',
+                            color: docRelationToBadge(row.original.relation),
+                            icon: docRelationToIcon(row.original.relation),
+                        },
+                        [t(`enums.documents.DocRelation.${DocRelation[row.original.relation]}`)],
+                    ),
             },
             {
                 id: 'actions',
@@ -336,6 +346,7 @@ const columnsNew = computed(
                     v-model="queryCitizens"
                     type="text"
                     name="name"
+                    class="w-full"
                     :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
                     leading-icon="i-mdi-search"
                 />

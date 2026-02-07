@@ -107,7 +107,7 @@ const formRef = useTemplateRef('formRef');
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.types"
-                                    class="min-w-40 flex-1"
+                                    class="w-full min-w-40 flex-1"
                                     multiple
                                     :items="options"
                                     value-key="value"

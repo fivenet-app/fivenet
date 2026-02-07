@@ -118,7 +118,7 @@ watchOnce(opened, async () => {
                 <slot name="name" :user="user">
                     <span v-if="user">{{ user?.firstname }} {{ user?.lastname }}</span>
                     <span v-else>{{ $t('common.unknown') }}</span>
-                    <template v-if="showBirthdate && user?.dateofbirth">({{ user.dateofbirth }})</template>
+                    <span v-if="showBirthdate && user?.dateofbirth"> ({{ user.dateofbirth }})</span>
                 </slot>
             </span>
             <slot name="after" />

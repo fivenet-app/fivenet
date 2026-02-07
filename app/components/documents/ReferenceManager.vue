@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UButton, UFieldGroup, UTooltip } from '#components';
+import { UBadge, UButton, UFieldGroup, UTooltip } from '#components';
 import type { TableColumn, TabsItem } from '@nuxt/ui';
 import { h } from 'vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -10,6 +10,7 @@ import { type ClipboardDocument, getDocument, useClipboardStore } from '~/stores
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { type DocumentReference, DocReference } from '~~/gen/ts/resources/documents/references/references';
+import { docReferenceToBadge, docReferenceToIcon } from './helpers';
 
 const props = defineProps<{
     documentId?: number;
@@ -135,7 +136,16 @@ const columnsCurrent = computed(
             {
                 accessorKey: 'reference',
                 header: t('common.reference', 1),
-                cell: ({ row }) => t(`enums.documents.DocReference.${DocReference[row.original.reference]}`),
+                cell: ({ row }) =>
+                    h(
+                        UBadge,
+                        {
+                            class: 'truncate',
+                            color: docReferenceToBadge(row.original.reference),
+                            icon: docReferenceToIcon(row.original.reference),
+                        },
+                        [t(`enums.documents.DocReference.${DocReference[row.original.reference]}`)],
+                    ),
             },
             {
                 id: 'actions',
@@ -360,6 +370,7 @@ const columnsNew = computed(
                     v-model="queryDoc"
                     type="text"
                     name="title"
+                    class="w-full"
                     :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
                     leading-icon="i-mdi-search"
                 />
