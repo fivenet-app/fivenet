@@ -130,7 +130,7 @@
         "autoprefixer": "10.4.23",
         "cssnano": "7.1.2",
         "culori": "4.0.2",
-        "eslint": "9.39.2",
+        "eslint": "10.0.0",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.5",
         "happy-dom": "20.3.4",
