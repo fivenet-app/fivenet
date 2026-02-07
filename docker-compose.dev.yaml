@@ -1,4 +1,7 @@
-# This docker-compose.yaml is only used for development of FiveNet
+#
+# This docker-compose.yaml is only used for development of FiveNet and should not be used in production.
+# For production, please use the `docker-compose.yaml` file.
+#
 
 services:
   # Database - Used for testing only

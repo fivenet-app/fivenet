@@ -1,10 +1,11 @@
 #
-# README - BEFORE YOU START
+# ! README - BEFORE YOU START !
 # Make sure to replace `VIRTUAL_HOST: "example.com"` with your domain
 # The first container is the NGINX Proxy which if you already have one make sure to remove this one and connect your network_mode
 # See https://github.com/nginx-proxy/nginx-proxy/tree/main/docs#multiple-networks
 #
 # The path (volume) for the `config.yaml` expects the file to be in the same folder of your `docker-compose.yaml`
+# ! Make sure to create the `config.yaml` file before starting the containers for the first time!
 #
 
 name: fivenet
@@ -113,6 +114,9 @@ services:
   #  volumes:
   #    - fivenet:/data
   #    - fivenet_dbsync:/dbsync
+  #    #
+  #    # ! You must create the `dbsync.yaml` file in the same folder of your `docker-compose.yaml`
+  #    # ! before starting the container for the first time!
   #    - ./dbsync.yaml:/config/dbsync.yaml
 
 networks:
