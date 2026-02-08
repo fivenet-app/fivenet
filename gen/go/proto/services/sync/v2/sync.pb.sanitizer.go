@@ -465,50 +465,6 @@ func (m *SendUsersDataRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *SendUsersJobsRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: UsersJobs
-	for idx, item := range m.UsersJobs {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *SendUsersPhoneNumbersRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: UsersPhoneNumbers
-	for idx, item := range m.UsersPhoneNumbers {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *SendVehiclesDataRequest) Sanitize() error {
 	if m == nil {
 		return nil

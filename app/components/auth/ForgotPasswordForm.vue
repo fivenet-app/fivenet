@@ -68,7 +68,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UForm class="space-y-4" :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm class="space-y-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <UAlert icon="i-mdi-info-circle">
             <template #description>
                 <I18nT keypath="components.auth.ForgotPassword.subtitle">

@@ -1,8 +1,8 @@
 import type { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { parseQuery } from 'vue-router';
-import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
-import { webSocket } from '~/composables/grpc/grpcws/bridge';
+import { useGRPCWebsocketTransport } from '~/composables/grpcws';
+import { webSocket } from '~/composables/grpcws/bridge';
 import { getAuthAuthClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { JobProps } from '~~/gen/ts/resources/jobs/props/props';
@@ -22,48 +22,26 @@ export const useAuthStore = defineStore(
     () => {
         const settingsStore = useSettingsStore();
         const notifications = useNotificationsStore();
+        const authSessionStore = useAuthSessionStore();
 
         // State
-        /**
-         * The expiration date of the current session.
-         */
-        const sessionExpiration = ref<Date | null>(null);
-
         /**
          * The username of the currently logged-in user.
          */
         const username = ref<string | null>(null);
+        /**
+         * Account ID.
+         */
+        const accountId = ref<number | null>(null);
 
         /**
          * The ID of the last selected character.
          */
         const lastCharID = ref<number | undefined>(0);
-
         /**
          * The currently active character.
          */
         const activeChar = ref<User | null>(null);
-
-        /**
-         * Indicates whether a login operation is in progress.
-         */
-        const loggingIn = ref<boolean>(false);
-
-        /**
-         * Stores any error that occurred during login.
-         */
-        const loginError = ref<RpcError | null>(null);
-
-        /**
-         * The list of permissions assigned to the user.
-         */
-        const permissions = ref<Permission[]>([]);
-
-        /**
-         * The list of role attributes assigned to the user.
-         */
-        const attributes = ref<RoleAttribute[]>([]);
-
         /**
          * The job properties of the user.
          */
@@ -79,9 +57,22 @@ export const useAuthStore = defineStore(
         });
 
         /**
-         * Imperonated job grade for the user.
+         * Indicates whether a login operation is in progress.
          */
-        const impersonate = ref<boolean | number>(false);
+        const loggingIn = ref<boolean>(false);
+        /**
+         * Stores any error that occurred during login.
+         */
+        const loginError = ref<RpcError | null>(null);
+
+        /**
+         * The list of permissions assigned to the user.
+         */
+        const permissions = ref<Permission[]>([]);
+        /**
+         * The list of role attributes assigned to the user.
+         */
+        const attributes = ref<RoleAttribute[]>([]);
 
         /**
          * Set or unset the username.
@@ -114,38 +105,9 @@ export const useAuthStore = defineStore(
          * Stops the login process and sets the provided error, if any.
          * @param error - The error that occurred during login, or null if successful.
          */
-        const loginStop = (error: RpcError | null): void => {
+        const loginStop = (error: RpcError | null = null): void => {
             loggingIn.value = false;
             loginError.value = error;
-        };
-
-        /**
-         * Sets the expiration date of the access token.
-         * @param expiration - The expiration date as a string, Date object, or null.
-         */
-        const setAccessTokenExpiration = (expiration: string | Date | null): void => {
-            if (typeof expiration === 'string') {
-                expiration = new Date(expiration);
-            }
-        };
-
-        /**
-         * Sets the currently active character and updates the last character ID.
-         * @param char - The character to set as active, or null to clear.
-         */
-        const setActiveChar = (char: User | null): void => {
-            activeChar.value = char;
-            lastCharID.value = char ? char.userId : lastCharID.value;
-        };
-
-        /**
-         * Updates the user's permissions and role attributes.
-         * @param perms - The list of permissions to set.
-         * @param attrs - The list of role attributes to set.
-         */
-        const setPermissions = (perms: Permission[], attrs: RoleAttribute[]): void => {
-            permissions.value = [...perms.sort()];
-            attributes.value = [...attrs.sort()];
         };
 
         /**
@@ -165,22 +127,24 @@ export const useAuthStore = defineStore(
         };
 
         /**
-         * Clears all authentication-related information and closes the WebSocket connection.
+         * Sets the currently active character and updates the last character ID.
+         * @param char - The character to set as active, or null to clear.
          */
-        const clearAuthInfo = (): void => {
-            logger.info('Clearing auth info');
-            setUsername(null);
-            setActiveChar(null);
-            setAccessTokenExpiration(null);
-            setPermissions([], []);
-            setJobProps(undefined);
-            setUserToken();
-
-            // Close the WebSocket connection when logging out
-            useGRPCWebsocketTransport().close();
+        const setActiveChar = (char: User | null = null): void => {
+            lastCharID.value = char ? char.userId : lastCharID.value;
+            activeChar.value = char;
         };
 
-        // GRPC Calls
+        /**
+         * Updates the user's permissions and role attributes.
+         * @param perms - The list of permissions to set.
+         * @param attrs - The list of role attributes to set.
+         */
+        const setPermissions = (perms: Permission[], attrs: RoleAttribute[]): void => {
+            permissions.value = [...perms.sort()];
+            attributes.value = [...attrs.sort()];
+        };
+
         /**
          * Logs in the user with the provided credentials.
          * @param user - The username of the user.
@@ -191,7 +155,7 @@ export const useAuthStore = defineStore(
             if (loggingIn.value) return;
 
             loginStart();
-            setActiveChar(null);
+            setActiveChar();
             setPermissions([], []);
 
             try {
@@ -201,12 +165,12 @@ export const useAuthStore = defineStore(
                 const { response } = await call;
                 refreshCookie('fivenet_authed');
 
+                accountId.value = response.accountId;
                 setUsername(user);
-                loginStop(null);
+                loginStop();
 
                 if (response.char === undefined) {
                     logger.info('Login response (not fast-tracked), redirecting to char selector');
-                    setAccessTokenExpiration(toDate(response.expires));
 
                     const route = useRoute();
                     await navigateTo({
@@ -216,7 +180,6 @@ export const useAuthStore = defineStore(
                 } else {
                     logger.info('Received fast-tracked login response with char, id:', response.char.char?.userId);
 
-                    setAccessTokenExpiration(toDate(response.char.expires));
                     setActiveChar(response.char.char ?? null);
                     setPermissions(response.char.permissions, response.char.attributes);
                     setJobProps(response.char.jobProps);
@@ -233,13 +196,12 @@ export const useAuthStore = defineStore(
             } catch (e) {
                 const err = e as RpcError;
                 loginStop(err);
-                setAccessTokenExpiration(null);
                 handleGRPCError(err);
             }
         };
 
         /**
-         * Logs out the currently logged-in user and clears authentication information.
+         * Logout the currently logged-in user and clear authentication information.
          */
         const doLogout = async (): Promise<void> => {
             // User is about to logout, ignore ongoing logins/choose character actions
@@ -265,7 +227,7 @@ export const useAuthStore = defineStore(
                 });
             } finally {
                 clearAuthInfo();
-                loginStop(null);
+                loginStop();
             }
         };
 
@@ -283,14 +245,14 @@ export const useAuthStore = defineStore(
             if (charId === undefined || charId <= 0) {
                 if (!lastCharID.value) {
                     if (!redirect) {
-                        loginStop(null);
+                        loginStop();
                         return;
                     }
 
                     const route = useRoute();
                     // Clear user token and unset login-block to avoid issues
                     setUserToken();
-                    loginStop(null);
+                    loginStop();
                     await navigateTo({
                         name: 'auth-character-selector',
                         query: route.query,
@@ -314,7 +276,6 @@ export const useAuthStore = defineStore(
 
                 setUsername(response.username);
                 setUserToken(response.token);
-                setAccessTokenExpiration(toDate(response.expires));
                 setActiveChar(response.char);
                 setPermissions(response.permissions, response.attributes);
                 setJobProps(response.jobProps);
@@ -340,7 +301,7 @@ export const useAuthStore = defineStore(
                 handleGRPCError(e as RpcError);
                 throw e;
             } finally {
-                loginStop(null);
+                loginStop();
             }
         };
 
@@ -360,7 +321,6 @@ export const useAuthStore = defineStore(
                 throw new Error('Server Error! No character in impersonate job response.');
             }
 
-            setAccessTokenExpiration(toDate(response.expires));
             setActiveChar(response.char);
             setPermissions(response.permissions, response.attributes);
             // Job props doesn't change on impersonation (user is part of the same job)
@@ -426,67 +386,79 @@ export const useAuthStore = defineStore(
         };
 
         /**
+         * Clears all authentication-related information from store and closes the WebSocket connection.
+         */
+        const clearAuthInfo = (): void => {
+            logger.info('Clearing auth info');
+            setUsername(null);
+            setActiveChar(null);
+            setPermissions([], []);
+            setJobProps(undefined);
+            setUserToken();
+
+            // Close the WebSocket connection when logging out
+            useGRPCWebsocketTransport().close();
+        };
+
+        /**
          * Set user token in session storage.
          * @param token - The user token to set. If undefined, the token is removed.
          */
         const setUserToken = async (token?: string, restartWS = false): Promise<void> => {
             if (!token) {
-                sessionStorage.removeItem('fivenet:user_token_v1');
+                authSessionStore.setUserToken(null);
                 return;
             }
 
-            const currentToken = sessionStorage.getItem('fivenet:user_token_v1');
+            const currentToken = authSessionStore.getUserToken();
             if (currentToken === token) {
                 logger.debug('User token is the same as the current one, skipping update');
                 return;
             }
 
-            const userInfo = await parseJWTPayload<{
-                su?: boolean;
-            }>(token);
-
-            logger.debug('Setting user token in session storage, JWT payload:', userInfo);
-            sessionStorage.setItem('fivenet:user_token_v1', token);
+            logger.debug('Setting user token in session storage');
+            authSessionStore.setUserToken(token);
 
             if (activeChar.value !== null && restartWS) {
-                logger.info('User token updated, restarting WebSocket connection to apply new token');
+                logger.info('User token updated, send WebSocket re-auth message');
                 useGRPCWebsocketTransport().updateUserToken(token);
             }
         };
 
         // Getters
-        const isSuperuser = computed<boolean>(() => {
-            return !!permissions.value.find((p) => p.guardName === 'superuser-superuser');
-        });
+        const isSuperuser = computed<boolean>(() => !!permissions.value.find((p) => p.guardName === 'superuser-superuser'));
 
         return {
             // State
-            sessionExpiration,
             username,
+            accountId,
+
             lastCharID,
             activeChar,
+            jobProps,
+
             loggingIn,
             loginError,
+
             permissions,
             attributes,
-            jobProps,
-            impersonate,
 
             // Actions
             setUsername,
             loginStart,
             loginStop,
-            setAccessTokenExpiration,
+            doLogin,
+            doLogout,
+
+            clearAuthInfo,
+            setUserToken,
             setActiveChar,
             setPermissions,
             setJobProps,
-            clearAuthInfo,
-            doLogin,
-            doLogout,
+
             chooseCharacter,
             impersonateJob,
             setSuperuserMode,
-            setUserToken,
 
             // Getters
             isSuperuser,
@@ -494,14 +466,7 @@ export const useAuthStore = defineStore(
     },
     {
         persist: {
-            pick: ['sessionExpiration', 'username', 'lastCharID'],
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            afterHydrate: (ctx: any) => {
-                const store = ctx.store;
-                if (typeof store.sessionExpiration === 'string') {
-                    store.sessionExpiration = new Date(store.sessionExpiration);
-                }
-            },
+            pick: ['username', 'lastCharID'],
         },
     },
 );

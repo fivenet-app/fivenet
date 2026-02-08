@@ -3,7 +3,6 @@ syntax = "proto3";
 package resources.sync.data.v2;
 
 import "buf/validate/validate.proto";
-import "resources/jobs/jobs.proto";
 import "resources/users/licenses/licenses.proto";
 import "resources/users/user.proto";
 

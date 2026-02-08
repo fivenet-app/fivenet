@@ -36,9 +36,9 @@ export interface ListAccountsRequest {
      */
     license?: string;
     /**
-     * @generated from protobuf field: optional bool enabled = 4
+     * @generated from protobuf field: optional bool only_disabled = 4
      */
-    enabled?: boolean;
+    onlyDisabled?: boolean;
     /**
      * @generated from protobuf field: optional string username = 5
      */
@@ -162,7 +162,7 @@ class ListAccountsRequest$Type extends MessageType<ListAccountsRequest> {
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "license", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 4, name: "enabled", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "only_disabled", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "username", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 6, name: "external_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
             { no: 7, name: "group", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } }
@@ -188,8 +188,8 @@ class ListAccountsRequest$Type extends MessageType<ListAccountsRequest> {
                 case /* optional string license */ 3:
                     message.license = reader.string();
                     break;
-                case /* optional bool enabled */ 4:
-                    message.enabled = reader.bool();
+                case /* optional bool only_disabled */ 4:
+                    message.onlyDisabled = reader.bool();
                     break;
                 case /* optional string username */ 5:
                     message.username = reader.string();
@@ -221,9 +221,9 @@ class ListAccountsRequest$Type extends MessageType<ListAccountsRequest> {
         /* optional string license = 3; */
         if (message.license !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.license);
-        /* optional bool enabled = 4; */
-        if (message.enabled !== undefined)
-            writer.tag(4, WireType.Varint).bool(message.enabled);
+        /* optional bool only_disabled = 4; */
+        if (message.onlyDisabled !== undefined)
+            writer.tag(4, WireType.Varint).bool(message.onlyDisabled);
         /* optional string username = 5; */
         if (message.username !== undefined)
             writer.tag(5, WireType.LengthDelimited).string(message.username);

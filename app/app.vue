@@ -48,6 +48,20 @@ if (APP_VERSION !== settingsStore.version) {
     settingsStore.setVersion(APP_VERSION);
 }
 
+// Remove any `dashboard-*` cookies on app start, as they are no longer used.
+// This should help prevent 400 errors due to too many cookies being sent.
+function removeDashboardCookies(): void {
+    cookieStore.getAll().then((cookies) => {
+        cookies.forEach((cookie) => {
+            if (cookie?.name && cookie.name.startsWith('dashboard-')) {
+                logger.info('Removing dashboard cookie:', cookie.name);
+                cookieStore.delete(cookie.name);
+            }
+        });
+    });
+}
+removeDashboardCookies();
+
 // Set locale and theme colors in app config
 async function setThemeColors(): Promise<void> {
     const primary = design.value.ui.primary;
@@ -168,7 +182,7 @@ watch(updateAvailable, async () => {
 const authStore = useAuthStore();
 const { username } = storeToRefs(authStore);
 
-// Use fivenet_authed cookie for basic browser-wide is logged in/out "signal"
+// Use `fivenet_authed` cookie for basic browser-wide is logged in/out "signal"
 const authedState = useCookie('fivenet_authed');
 useIntervalFn(async () => refreshCookie('fivenet_authed'), 1750);
 

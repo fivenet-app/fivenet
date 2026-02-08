@@ -22,7 +22,7 @@ const { auth } = useAppConfig();
 const { t } = useI18n();
 
 const authStore = useAuthStore();
-const { setAccessTokenExpiration } = authStore;
+const { setUserToken } = authStore;
 const { username } = storeToRefs(authStore);
 
 const notifications = useNotificationsStore();
@@ -59,11 +59,18 @@ const selectedTab = computed({
 
 onMounted(async () => {
     const query = route.query;
-    // `t` and `exp` set, means social login was successful
-    if (query.u && query.u !== '' && query.exp && query.exp !== '') {
+    // `u` set, means social login was successful
+    if (query.u && query.u !== '') {
         logger.info('Got access token via query param (oauth2 login)');
+        // Read and attempt to parse token from user token cookie
+        const fivenetUsr = await cookieStore.get('fivenet_usr');
+        if (!fivenetUsr?.value) return;
+
+        setUserToken(fivenetUsr.value);
         username.value = query.u as string;
-        setAccessTokenExpiration(query.exp as string);
+
+        // Remove the cookie after reading
+        await cookieStore.delete('fivenet_usr');
 
         notifications.add({
             title: { key: 'notifications.auth.oauth2_login.success.title', parameters: {} },
@@ -71,9 +78,12 @@ onMounted(async () => {
             type: NotificationType.INFO,
         });
 
-        await navigateTo({ name: 'auth-character-selector' });
-    } else if (query.oauth2Login && query.oauth2Login === 'failed') {
-        // `oauth2Login` can be `failed` (with `reason`)
+        await navigateTo('/auth/character-selector');
+        return;
+    }
+
+    if (query.oauth2Login && query.oauth2Login === 'failed') {
+        // `oauth2Login` can be `failed` (with an optional `reason` param explaining why)
         const reason = query.reason ?? 'N/A';
 
         notifications.add({
@@ -88,14 +98,18 @@ const canSubmit = ref(true);
 </script>
 
 <template>
-    <UPageCard class="w-full max-w-md shrink-0 bg-white/75 backdrop-blur-sm dark:bg-white/5">
+    <UPageCard class="w-full max-w-md shrink-0 bg-white/75 backdrop-blur-sm dark:bg-white/5" :ui="{ header: 'w-full' }">
+        <template #header>
+            <div class="w-full space-y-2">
+                <FiveNetLogo class="mx-auto h-auto w-20" />
+
+                <h2 class="text-center text-3xl">
+                    {{ $t('common.login') }}
+                </h2>
+            </div>
+        </template>
+
         <div class="space-y-4">
-            <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
-
-            <h2 class="text-center text-3xl">
-                {{ $t('common.login') }}
-            </h2>
-
             <UTabs v-model="selectedTab" class="w-full" :items="items">
                 <template #login>
                     <LoginForm v-model="canSubmit" />

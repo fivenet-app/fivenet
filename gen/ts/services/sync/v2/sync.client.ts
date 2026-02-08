@@ -14,8 +14,6 @@ import type { DeleteUsersDataRequest } from "./sync";
 import type { SendLastCharIDDataRequest } from "./sync";
 import type { SendUserLocationsDataRequest } from "./sync";
 import type { SendVehiclesDataRequest } from "./sync";
-import type { SendUsersPhoneNumbersRequest } from "./sync";
-import type { SendUsersJobsRequest } from "./sync";
 import type { SendUsersDataRequest } from "./sync";
 import type { SendAccountsDataRequest } from "./sync";
 import type { SendLicensesDataRequest } from "./sync";
@@ -121,14 +119,6 @@ export interface ISyncServiceClient {
      * @generated from protobuf rpc: SendUsersData
      */
     sendUsersData(input: SendUsersDataRequest, options?: RpcOptions): UnaryCall<SendUsersDataRequest, SendDataResponse>;
-    /**
-     * @generated from protobuf rpc: SendUsersJobs
-     */
-    sendUsersJobs(input: SendUsersJobsRequest, options?: RpcOptions): UnaryCall<SendUsersJobsRequest, SendDataResponse>;
-    /**
-     * @generated from protobuf rpc: SendUsersPhoneNumbers
-     */
-    sendUsersPhoneNumbers(input: SendUsersPhoneNumbersRequest, options?: RpcOptions): UnaryCall<SendUsersPhoneNumbersRequest, SendDataResponse>;
     /**
      * @generated from protobuf rpc: SendVehiclesData
      */
@@ -293,38 +283,24 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
         return stackIntercept<SendUsersDataRequest, SendDataResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: SendUsersJobs
-     */
-    sendUsersJobs(input: SendUsersJobsRequest, options?: RpcOptions): UnaryCall<SendUsersJobsRequest, SendDataResponse> {
-        const method = this.methods[16], opt = this._transport.mergeOptions(options);
-        return stackIntercept<SendUsersJobsRequest, SendDataResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: SendUsersPhoneNumbers
-     */
-    sendUsersPhoneNumbers(input: SendUsersPhoneNumbersRequest, options?: RpcOptions): UnaryCall<SendUsersPhoneNumbersRequest, SendDataResponse> {
-        const method = this.methods[17], opt = this._transport.mergeOptions(options);
-        return stackIntercept<SendUsersPhoneNumbersRequest, SendDataResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
      * @generated from protobuf rpc: SendVehiclesData
      */
     sendVehiclesData(input: SendVehiclesDataRequest, options?: RpcOptions): UnaryCall<SendVehiclesDataRequest, SendDataResponse> {
-        const method = this.methods[18], opt = this._transport.mergeOptions(options);
+        const method = this.methods[16], opt = this._transport.mergeOptions(options);
         return stackIntercept<SendVehiclesDataRequest, SendDataResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: SendUserLocationsData
      */
     sendUserLocationsData(input: SendUserLocationsDataRequest, options?: RpcOptions): UnaryCall<SendUserLocationsDataRequest, SendDataResponse> {
-        const method = this.methods[19], opt = this._transport.mergeOptions(options);
+        const method = this.methods[17], opt = this._transport.mergeOptions(options);
         return stackIntercept<SendUserLocationsDataRequest, SendDataResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: SendLastCharIDData
      */
     sendLastCharIDData(input: SendLastCharIDDataRequest, options?: RpcOptions): UnaryCall<SendLastCharIDDataRequest, SendDataResponse> {
-        const method = this.methods[20], opt = this._transport.mergeOptions(options);
+        const method = this.methods[18], opt = this._transport.mergeOptions(options);
         return stackIntercept<SendLastCharIDDataRequest, SendDataResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -333,14 +309,14 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
      * @generated from protobuf rpc: DeleteUsersData
      */
     deleteUsersData(input: DeleteUsersDataRequest, options?: RpcOptions): UnaryCall<DeleteUsersDataRequest, DeleteDataResponse> {
-        const method = this.methods[21], opt = this._transport.mergeOptions(options);
+        const method = this.methods[19], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteUsersDataRequest, DeleteDataResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteVehiclesData
      */
     deleteVehiclesData(input: DeleteVehiclesDataRequest, options?: RpcOptions): UnaryCall<DeleteVehiclesDataRequest, DeleteDataResponse> {
-        const method = this.methods[22], opt = this._transport.mergeOptions(options);
+        const method = this.methods[20], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteVehiclesDataRequest, DeleteDataResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -349,7 +325,7 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
      * @generated from protobuf rpc: Stream
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {
-        const method = this.methods[23], opt = this._transport.mergeOptions(options);
+        const method = this.methods[21], opt = this._transport.mergeOptions(options);
         return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
     }
 }

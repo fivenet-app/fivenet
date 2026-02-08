@@ -17,7 +17,7 @@ import {
     type UnaryCall,
 } from '@protobuf-ts/runtime-rpc';
 import type { UseWebSocketReturn } from '@vueuse/core';
-import { Metadata } from '~/composables/grpc/grpcws/metadata';
+import { Metadata } from '~/composables/grpcws/metadata';
 import { GrpcFrame } from '~~/gen/ts/resources/grpcws/grpcws';
 import type { GrpcWSOptions } from '../../grpcws/bridge/options';
 import { errInternal, errTimeout, errUnavailable } from '../errors';

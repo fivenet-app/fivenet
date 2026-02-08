@@ -11915,7 +11915,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `license` | [string](#string) | optional | Search params |
-| `enabled` | [bool](#bool) | optional |  |
+| `only_disabled` | [bool](#bool) | optional |  |
 | `username` | [string](#string) | optional |  |
 | `external_id` | [string](#string) | optional |  |
 | `group` | [string](#string) | optional |  |
@@ -13108,28 +13108,6 @@ Individual SendData request messages
 
 
 
-### services.sync.v2.SendUsersJobsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `users_jobs` | [resources.sync.data.v2.DataUserJobs](#resourcessyncdatav2DataUserJobs) | repeated |  |
-
-
-
-
-
-### services.sync.v2.SendUsersPhoneNumbersRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `users_phone_numbers` | [resources.sync.data.v2.DataUserPhoneNumbers](#resourcessyncdatav2DataUserPhoneNumbers) | repeated |  |
-
-
-
-
-
 ### services.sync.v2.SendVehiclesDataRequest
 
 
@@ -13209,8 +13187,6 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `SendLicensesData` | [SendLicensesDataRequest](#servicessyncv2SendLicensesDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
 | `SendAccountsData` | [SendAccountsDataRequest](#servicessyncv2SendAccountsDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
 | `SendUsersData` | [SendUsersDataRequest](#servicessyncv2SendUsersDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
-| `SendUsersJobs` | [SendUsersJobsRequest](#servicessyncv2SendUsersJobsRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
-| `SendUsersPhoneNumbers` | [SendUsersPhoneNumbersRequest](#servicessyncv2SendUsersPhoneNumbersRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
 | `SendVehiclesData` | [SendVehiclesDataRequest](#servicessyncv2SendVehiclesDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
 | `SendUserLocationsData` | [SendUserLocationsDataRequest](#servicessyncv2SendUserLocationsDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
 | `SendLastCharIDData` | [SendLastCharIDDataRequest](#servicessyncv2SendLastCharIDDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |

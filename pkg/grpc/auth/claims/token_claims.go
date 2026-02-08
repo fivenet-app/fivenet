@@ -14,6 +14,7 @@ type AccountInfoClaims struct {
 type UserInfoClaims struct {
 	jwt.RegisteredClaims
 
+	AccID       int64            `json:"aid"`
 	UserID      int32            `json:"uid"`
 	Job         *string          `json:"jb,omitempty"`
 	JobGrade    *int32           `json:"jbg,omitempty"`

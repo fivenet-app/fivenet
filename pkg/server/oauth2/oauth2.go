@@ -448,13 +448,12 @@ func (o *OAuth2) handleLoginCallback(
 		return
 	}
 
-	c.SetCookie(auth.UserCookieName, newToken, 6*24*60*60, "/", o.domain, true, true)
+	c.SetCookie(auth.UserCookieName, newToken, 6*24*60*60, "/", o.domain, true, false)
 
 	c.Redirect(
 		http.StatusTemporaryRedirect,
-		fmt.Sprintf(LoginRedirBase+"?oauth2Login=success&u=%s&exp=%d",
+		fmt.Sprintf(LoginRedirBase+"?oauth2Login=success&u=%s",
 			url.QueryEscape(account.Username),
-			accClaims.ExpiresAt.Time.UTC().UnixNano()/1e6,
 		),
 	)
 }

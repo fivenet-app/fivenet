@@ -1,4 +1,4 @@
-import { useGRPCWebsocketTransport } from './grpc/grpcws';
+import { useGRPCWebsocketTransport } from './grpcws';
 
 export function collectDebugInfo(): string {
     const authStore = useAuthStore();

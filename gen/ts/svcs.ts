@@ -361,8 +361,6 @@ export const grpcMethods = [
 	'sync.v2.SyncService/SendLicensesData',
 	'sync.v2.SyncService/SendAccountsData',
 	'sync.v2.SyncService/SendUsersData',
-	'sync.v2.SyncService/SendUsersJobs',
-	'sync.v2.SyncService/SendUsersPhoneNumbers',
 	'sync.v2.SyncService/SendVehiclesData',
 	'sync.v2.SyncService/SendUserLocationsData',
 	'sync.v2.SyncService/SendLastCharIDData',

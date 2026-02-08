@@ -129,9 +129,7 @@ message DataUser {
     },
     (tagger.tags) = "alias:\"user.sex\""
   ];
-  optional string height = 11 [
-    (tagger.tags) = "alias:\"user.height\""
-  ];
+  optional string height = 11 [(tagger.tags) = "alias:\"user.height\""];
 
   optional string phone_number = 12 [
     (buf.validate.field).string.max_len = 20,
@@ -152,9 +150,7 @@ message DataUser {
     (tagger.tags) = "alias:\"user.playtime\""
   ];
 
-  optional resources.users.props.UserProps props = 15 [
-    (tagger.tags) = "alias:\"user.props\""
-  ];
+  optional resources.users.props.UserProps props = 15 [(tagger.tags) = "alias:\"user.props\""];
   repeated resources.users.licenses.License licenses = 16 [
     (buf.validate.field).repeated.max_items = 20,
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,

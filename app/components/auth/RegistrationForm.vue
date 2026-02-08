@@ -71,12 +71,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <div class="space-y-4">
+    <div class="space-y-2">
         <h2 class="text-center text-3xl">
             {{ $t('components.auth.RegistrationForm.title') }}
         </h2>
 
-        <UForm class="space-y-4" :schema="schema" :state="state" @submit="onSubmitThrottle">
+        <UForm class="space-y-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UAlert v-if="!nuiEnabled" icon="i-mdi-info-circle">
                 <template #description>
                     <I18nT keypath="components.auth.RegistrationForm.subtitle">

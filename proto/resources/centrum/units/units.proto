@@ -127,4 +127,3 @@ message UnitAttributes {
 
   repeated UnitAttribute list = 1 [(buf.validate.field).repeated.items.enum.defined_only = true];
 }
-

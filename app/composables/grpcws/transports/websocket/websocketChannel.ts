@@ -25,11 +25,9 @@ type AuthState =
     | { kind: 'ok' }
     | { kind: 'failed'; err: Error };
 
-// Default token provider: change the key to your real sessionStorage key.
+// Default token provider
 function defaultTokenProvider(): string | null {
-    const raw = sessionStorage.getItem('fivenet:user_token_v1');
-    if (!raw) return null;
-    return raw;
+    return sessionStorage.getItem(authUserTokenKey);
 }
 
 export function WebsocketChannelTransport(

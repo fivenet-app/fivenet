@@ -261,7 +261,7 @@ func TestCallback_LoginSuccess(t *testing.T) {
 	assert.Contains(
 		t,
 		w.Header().Get("Location"),
-		"/auth/login?oauth2Login=success&u=testuser&exp=",
+		"/auth/login?oauth2Login=success&u=testuser",
 	)
 	mockProvider.AssertExpectations(t)
 }

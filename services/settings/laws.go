@@ -18,7 +18,6 @@ func (s *Server) CreateOrUpdateLawBook(
 	ctx context.Context,
 	req *pbsettings.CreateOrUpdateLawBookRequest,
 ) (*pbsettings.CreateOrUpdateLawBookResponse, error) {
-
 	tLawBooks := table.FivenetLawbooks
 
 	if req.GetLawBook().GetId() <= 0 {
@@ -84,12 +83,10 @@ func (s *Server) CreateOrUpdateLawBook(
 	}, nil
 }
 
-//nolint:dupl // Similar code, but different logic
 func (s *Server) DeleteLawBook(
 	ctx context.Context,
 	req *pbsettings.DeleteLawBookRequest,
 ) (*pbsettings.DeleteLawBookResponse, error) {
-
 	lawBook, err := s.getLawBook(ctx, req.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
@@ -144,7 +141,6 @@ func (s *Server) CreateOrUpdateLaw(
 	ctx context.Context,
 	req *pbsettings.CreateOrUpdateLawRequest,
 ) (*pbsettings.CreateOrUpdateLawResponse, error) {
-
 	tLaws := table.FivenetLawbooksLaws
 
 	if req.GetLaw().GetId() <= 0 {
@@ -226,12 +222,10 @@ func (s *Server) CreateOrUpdateLaw(
 	}, nil
 }
 
-//nolint:dupl // Similar code, but different logic
 func (s *Server) DeleteLaw(
 	ctx context.Context,
 	req *pbsettings.DeleteLawRequest,
 ) (*pbsettings.DeleteLawResponse, error) {
-
 	law, err := s.getLaw(ctx, req.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)

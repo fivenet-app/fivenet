@@ -33,7 +33,7 @@ type ListAccountsRequest struct {
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
 	License       *string `protobuf:"bytes,3,opt,name=license,proto3,oneof" json:"license,omitempty"`
-	Enabled       *bool   `protobuf:"varint,4,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`
+	OnlyDisabled  *bool   `protobuf:"varint,4,opt,name=only_disabled,json=onlyDisabled,proto3,oneof" json:"only_disabled,omitempty"`
 	Username      *string `protobuf:"bytes,5,opt,name=username,proto3,oneof" json:"username,omitempty"`
 	ExternalId    *string `protobuf:"bytes,6,opt,name=external_id,json=externalId,proto3,oneof" json:"external_id,omitempty"`
 	Group         *string `protobuf:"bytes,7,opt,name=group,proto3,oneof" json:"group,omitempty"`
@@ -87,9 +87,9 @@ func (x *ListAccountsRequest) GetLicense() string {
 	return ""
 }
 
-func (x *ListAccountsRequest) GetEnabled() bool {
-	if x != nil && x.Enabled != nil {
-		return *x.Enabled
+func (x *ListAccountsRequest) GetOnlyDisabled() bool {
+	if x != nil && x.OnlyDisabled != nil {
+		return *x.OnlyDisabled
 	}
 	return false
 }
@@ -127,8 +127,8 @@ func (x *ListAccountsRequest) SetLicense(v string) {
 	x.License = &v
 }
 
-func (x *ListAccountsRequest) SetEnabled(v bool) {
-	x.Enabled = &v
+func (x *ListAccountsRequest) SetOnlyDisabled(v bool) {
+	x.OnlyDisabled = &v
 }
 
 func (x *ListAccountsRequest) SetUsername(v string) {
@@ -164,11 +164,11 @@ func (x *ListAccountsRequest) HasLicense() bool {
 	return x.License != nil
 }
 
-func (x *ListAccountsRequest) HasEnabled() bool {
+func (x *ListAccountsRequest) HasOnlyDisabled() bool {
 	if x == nil {
 		return false
 	}
-	return x.Enabled != nil
+	return x.OnlyDisabled != nil
 }
 
 func (x *ListAccountsRequest) HasUsername() bool {
@@ -204,8 +204,8 @@ func (x *ListAccountsRequest) ClearLicense() {
 	x.License = nil
 }
 
-func (x *ListAccountsRequest) ClearEnabled() {
-	x.Enabled = nil
+func (x *ListAccountsRequest) ClearOnlyDisabled() {
+	x.OnlyDisabled = nil
 }
 
 func (x *ListAccountsRequest) ClearUsername() {
@@ -226,11 +226,11 @@ type ListAccountsRequest_builder struct {
 	Pagination *database.PaginationRequest
 	Sort       *database.Sort
 	// Search params
-	License    *string
-	Enabled    *bool
-	Username   *string
-	ExternalId *string
-	Group      *string
+	License      *string
+	OnlyDisabled *bool
+	Username     *string
+	ExternalId   *string
+	Group        *string
 }
 
 func (b0 ListAccountsRequest_builder) Build() *ListAccountsRequest {
@@ -240,7 +240,7 @@ func (b0 ListAccountsRequest_builder) Build() *ListAccountsRequest {
 	x.Pagination = b.Pagination
 	x.Sort = b.Sort
 	x.License = b.License
-	x.Enabled = b.Enabled
+	x.OnlyDisabled = b.OnlyDisabled
 	x.Username = b.Username
 	x.ExternalId = b.ExternalId
 	x.Group = b.Group
@@ -902,23 +902,22 @@ var File_services_settings_accounts_proto protoreflect.FileDescriptor
 
 const file_services_settings_accounts_proto_rawDesc = "" +
 	"\n" +
-	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\x1a resources/users/short/user.proto\"\x85\x03\n" +
+	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\x1a resources/users/short/user.proto\"\x96\x03\n" +
 	"\x13ListAccountsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x1d\n" +
-	"\alicense\x18\x03 \x01(\tH\x01R\alicense\x88\x01\x01\x12\x1d\n" +
-	"\aenabled\x18\x04 \x01(\bH\x02R\aenabled\x88\x01\x01\x12\x1f\n" +
+	"\alicense\x18\x03 \x01(\tH\x01R\alicense\x88\x01\x01\x12(\n" +
+	"\ronly_disabled\x18\x04 \x01(\bH\x02R\fonlyDisabled\x88\x01\x01\x12\x1f\n" +
 	"\busername\x18\x05 \x01(\tH\x03R\busername\x88\x01\x01\x12$\n" +
 	"\vexternal_id\x18\x06 \x01(\tH\x04R\n" +
 	"externalId\x88\x01\x01\x12\x19\n" +
 	"\x05group\x18\a \x01(\tH\x05R\x05group\x88\x01\x01B\a\n" +
 	"\x05_sortB\n" +
 	"\n" +
-	"\b_licenseB\n" +
-	"\n" +
-	"\b_enabledB\v\n" +
+	"\b_licenseB\x10\n" +
+	"\x0e_only_disabledB\v\n" +
 	"\t_usernameB\x0e\n" +
 	"\f_external_idB\b\n" +
 	"\x06_group\"\xa4\x01\n" +

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { v4 as uuidv4 } from 'uuid';
 import { notificationTypeToColor, notificationTypeToIcon } from '~/components/notifications/helpers';
-import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
+import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { useCalendarStore } from '~/stores/calendar';
 import { useMailerStore } from '~/stores/mailer';
 import { logger } from '~/stores/notifications';
@@ -38,7 +38,7 @@ const { pause, resume } = useIntervalFn(
 
         resume();
     },
-    (60 + randomNumber(2, 7)) * 1000,
+    (60 + randomNumber(2, 15)) * 1000,
     { immediate: false },
 );
 
@@ -50,13 +50,9 @@ const { start, stop } = useTimeoutFn(
             return;
         }
 
-        if (can('mailer.MailerService/ListEmails').value) {
-            await mailerStore.checkEmails();
-        }
+        if (can('mailer.MailerService/ListEmails').value) await mailerStore.checkEmails();
 
-        if (calendar.value.reminderTimes.length > 0) {
-            await checkAppointments();
-        }
+        if (calendar.value.reminderTimes.length > 0) checkAppointments();
 
         resume();
     },

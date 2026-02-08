@@ -35,8 +35,6 @@ const (
 	SyncService_SendLicensesData_FullMethodName      = "/services.sync.v2.SyncService/SendLicensesData"
 	SyncService_SendAccountsData_FullMethodName      = "/services.sync.v2.SyncService/SendAccountsData"
 	SyncService_SendUsersData_FullMethodName         = "/services.sync.v2.SyncService/SendUsersData"
-	SyncService_SendUsersJobs_FullMethodName         = "/services.sync.v2.SyncService/SendUsersJobs"
-	SyncService_SendUsersPhoneNumbers_FullMethodName = "/services.sync.v2.SyncService/SendUsersPhoneNumbers"
 	SyncService_SendVehiclesData_FullMethodName      = "/services.sync.v2.SyncService/SendVehiclesData"
 	SyncService_SendUserLocationsData_FullMethodName = "/services.sync.v2.SyncService/SendUserLocationsData"
 	SyncService_SendLastCharIDData_FullMethodName    = "/services.sync.v2.SyncService/SendLastCharIDData"
@@ -73,8 +71,6 @@ type SyncServiceClient interface {
 	SendLicensesData(ctx context.Context, in *SendLicensesDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
 	SendAccountsData(ctx context.Context, in *SendAccountsDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
 	SendUsersData(ctx context.Context, in *SendUsersDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
-	SendUsersJobs(ctx context.Context, in *SendUsersJobsRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
-	SendUsersPhoneNumbers(ctx context.Context, in *SendUsersPhoneNumbersRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
 	SendVehiclesData(ctx context.Context, in *SendVehiclesDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
 	SendUserLocationsData(ctx context.Context, in *SendUserLocationsDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
 	SendLastCharIDData(ctx context.Context, in *SendLastCharIDDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
@@ -253,26 +249,6 @@ func (c *syncServiceClient) SendUsersData(ctx context.Context, in *SendUsersData
 	return out, nil
 }
 
-func (c *syncServiceClient) SendUsersJobs(ctx context.Context, in *SendUsersJobsRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SendDataResponse)
-	err := c.cc.Invoke(ctx, SyncService_SendUsersJobs_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *syncServiceClient) SendUsersPhoneNumbers(ctx context.Context, in *SendUsersPhoneNumbersRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SendDataResponse)
-	err := c.cc.Invoke(ctx, SyncService_SendUsersPhoneNumbers_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *syncServiceClient) SendVehiclesData(ctx context.Context, in *SendVehiclesDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SendDataResponse)
@@ -370,8 +346,6 @@ type SyncServiceServer interface {
 	SendLicensesData(context.Context, *SendLicensesDataRequest) (*SendDataResponse, error)
 	SendAccountsData(context.Context, *SendAccountsDataRequest) (*SendDataResponse, error)
 	SendUsersData(context.Context, *SendUsersDataRequest) (*SendDataResponse, error)
-	SendUsersJobs(context.Context, *SendUsersJobsRequest) (*SendDataResponse, error)
-	SendUsersPhoneNumbers(context.Context, *SendUsersPhoneNumbersRequest) (*SendDataResponse, error)
 	SendVehiclesData(context.Context, *SendVehiclesDataRequest) (*SendDataResponse, error)
 	SendUserLocationsData(context.Context, *SendUserLocationsDataRequest) (*SendDataResponse, error)
 	SendLastCharIDData(context.Context, *SendLastCharIDDataRequest) (*SendDataResponse, error)
@@ -437,12 +411,6 @@ func (UnimplementedSyncServiceServer) SendAccountsData(context.Context, *SendAcc
 }
 func (UnimplementedSyncServiceServer) SendUsersData(context.Context, *SendUsersDataRequest) (*SendDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendUsersData not implemented")
-}
-func (UnimplementedSyncServiceServer) SendUsersJobs(context.Context, *SendUsersJobsRequest) (*SendDataResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendUsersJobs not implemented")
-}
-func (UnimplementedSyncServiceServer) SendUsersPhoneNumbers(context.Context, *SendUsersPhoneNumbersRequest) (*SendDataResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendUsersPhoneNumbers not implemented")
 }
 func (UnimplementedSyncServiceServer) SendVehiclesData(context.Context, *SendVehiclesDataRequest) (*SendDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendVehiclesData not implemented")
@@ -771,42 +739,6 @@ func _SyncService_SendUsersData_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SyncService_SendUsersJobs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SendUsersJobsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SyncServiceServer).SendUsersJobs(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SyncService_SendUsersJobs_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyncServiceServer).SendUsersJobs(ctx, req.(*SendUsersJobsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SyncService_SendUsersPhoneNumbers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SendUsersPhoneNumbersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SyncServiceServer).SendUsersPhoneNumbers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SyncService_SendUsersPhoneNumbers_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyncServiceServer).SendUsersPhoneNumbers(ctx, req.(*SendUsersPhoneNumbersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _SyncService_SendVehiclesData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SendVehiclesDataRequest)
 	if err := dec(in); err != nil {
@@ -978,14 +910,6 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendUsersData",
 			Handler:    _SyncService_SendUsersData_Handler,
-		},
-		{
-			MethodName: "SendUsersJobs",
-			Handler:    _SyncService_SendUsersJobs_Handler,
-		},
-		{
-			MethodName: "SendUsersPhoneNumbers",
-			Handler:    _SyncService_SendUsersPhoneNumbers_Handler,
 		},
 		{
 			MethodName: "SendVehiclesData",

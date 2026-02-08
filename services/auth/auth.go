@@ -709,7 +709,7 @@ func (s *Server) ChooseCharacter(
 	if canBeSuperuser && currentAccClaims.CanBeSuperuser {
 		accClaims.CanBeSuperuser = currentAccClaims.CanBeSuperuser
 	}
-	userClaims := auth.MapUserToClaims(char)
+	userClaims := auth.MapUserToClaims(account.Id, char)
 	if canBeSuperuser && currentUserClaims != nil && currentUserClaims.Superuser != nil &&
 		*currentUserClaims.Superuser {
 		userClaims.Superuser = currentUserClaims.Superuser
@@ -776,7 +776,7 @@ func (s *Server) ImpersonateJob(
 	imp := true
 	if req.GetJobGrade() > userInfo.GetJobGrade() {
 		return nil, errorsauth.ErrImpersonateJobInvalid
-	} else if req.GetJobGrade() == userInfo.GetJobGrade() {
+	} else if req.GetJobGrade() < 0 || req.GetJobGrade() == userInfo.GetJobGrade() {
 		// Disable impersonation if job grade is the same
 		imp = false
 	}
@@ -823,7 +823,7 @@ func (s *Server) ImpersonateJob(
 		return nil, err
 	}
 
-	userClaims := auth.MapUserToClaims(char)
+	userClaims := auth.MapUserToClaims(acc.ID, char)
 	if imp {
 		userClaims.Impersonate = &authclaims.UserImpersonate{
 			Job:      job.GetName(),
@@ -947,7 +947,7 @@ func (s *Server) SetSuperuserMode(
 	accClaims = auth.MapAccountToClaims(accounts.ConvertFromModelAcc(account))
 	accClaims.CanBeSuperuser = userInfo.GetCanBeSuperuser()
 
-	userClaims := auth.MapUserToClaims(char)
+	userClaims := auth.MapUserToClaims(account.ID, char)
 	superuser := userInfo.GetSuperuser()
 	userClaims.Superuser = &superuser
 

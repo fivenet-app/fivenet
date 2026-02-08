@@ -154,8 +154,9 @@ func MapAccountToClaims(account *accounts.Account) *authclaims.AccountInfoClaims
 	return accClaims
 }
 
-func MapUserToClaims(user *users.User) *authclaims.UserInfoClaims {
+func MapUserToClaims(accId int64, user *users.User) *authclaims.UserInfoClaims {
 	userClaims := &authclaims.UserInfoClaims{
+		AccID:    accId,
 		UserID:   user.GetUserId(),
 		Job:      &user.Job,
 		JobGrade: &user.JobGrade,

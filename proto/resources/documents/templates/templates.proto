@@ -11,8 +11,8 @@ import "resources/documents/category/category.proto";
 import "resources/documents/documents.proto";
 import "resources/documents/workflow/workflow.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/user.proto";
 import "resources/users/short/user.proto";
+import "resources/users/user.proto";
 import "resources/vehicles/vehicles.proto";
 import "tagger/tagger.proto";
 

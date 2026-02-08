@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
+import ImpersonatingBanner from '~/components/auth/ImpersonatingBanner.vue';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
 import SuperuserJobToggle from '~/components/partials/SuperuserJobToggle.vue';
 import MathCalculatorDrawer from '~/components/quickbuttons/mathcalculator/MathCalculatorDrawer.vue';
@@ -13,6 +14,8 @@ import type { Perms } from '~~/gen/ts/perms';
 const { t } = useI18n();
 
 const { can, activeChar, jobProps, isSuperuser } = useAuth();
+const authSessionStore = useAuthSessionStore();
+const { userInfo } = storeToRefs(authSessionStore);
 
 const { isDashboardSidebarSlideoverOpen, isHelpSlideoverOpen } = useDashboard();
 
@@ -332,7 +335,7 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
 </script>
 
 <template>
-    <UDashboardGroup unit="%">
+    <UDashboardGroup unit="%" storage="local">
         <UDashboardSidebar
             id="default"
             v-model:open="open"
@@ -386,6 +389,12 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
                 <UserMenu :collapsed="collapsed" />
             </template>
         </UDashboardSidebar>
+
+        <ImpersonatingBanner
+            v-if="userInfo?.impersonation"
+            :job="userInfo?.impersonation?.job"
+            :job-grade="userInfo?.impersonation?.jobGrade"
+        />
 
         <slot />
 

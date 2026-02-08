@@ -166,7 +166,7 @@ message ChooseCharacterResponse {
 }
 
 message ImpersonateJobRequest {
-  int32 job_grade = 1 [(buf.validate.field).int32.gte = 0];
+  int32 job_grade = 1 [(buf.validate.field).int32.gte = -1];
 }
 
 message ImpersonateJobResponse {

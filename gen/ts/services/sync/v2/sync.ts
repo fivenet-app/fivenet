@@ -15,8 +15,6 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { LastCharID } from "../../../resources/sync/data/data";
 import { CitizenLocations } from "../../../resources/sync/data/data";
 import { Vehicle } from "../../../resources/vehicles/vehicles";
-import { DataUserPhoneNumbers } from "../../../resources/sync/data/v2/data";
-import { DataUserJobs } from "../../../resources/sync/data/v2/data";
 import { DataUser } from "../../../resources/sync/data/data";
 import { License } from "../../../resources/users/licenses/licenses";
 import { Job } from "../../../resources/jobs/jobs";
@@ -237,24 +235,6 @@ export interface SendUsersDataRequest {
      * @generated from protobuf field: repeated resources.sync.data.DataUser users = 1
      */
     users: DataUser[];
-}
-/**
- * @generated from protobuf message services.sync.v2.SendUsersJobsRequest
- */
-export interface SendUsersJobsRequest {
-    /**
-     * @generated from protobuf field: repeated resources.sync.data.v2.DataUserJobs users_jobs = 1
-     */
-    usersJobs: DataUserJobs[];
-}
-/**
- * @generated from protobuf message services.sync.v2.SendUsersPhoneNumbersRequest
- */
-export interface SendUsersPhoneNumbersRequest {
-    /**
-     * @generated from protobuf field: repeated resources.sync.data.v2.DataUserPhoneNumbers users_phone_numbers = 1
-     */
-    usersPhoneNumbers: DataUserPhoneNumbers[];
 }
 /**
  * @generated from protobuf message services.sync.v2.SendVehiclesDataRequest
@@ -1275,7 +1255,7 @@ export const SendAccountsDataRequest = new SendAccountsDataRequest$Type();
 class SendUsersDataRequest$Type extends MessageType<SendUsersDataRequest> {
     constructor() {
         super("services.sync.v2.SendUsersDataRequest", [
-            { no: 1, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DataUser, options: { "buf.validate.field": { repeated: { maxItems: "500" } } } }
+            { no: 1, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DataUser, options: { "buf.validate.field": { repeated: { maxItems: "300" } } } }
         ]);
     }
     create(value?: PartialMessage<SendUsersDataRequest>): SendUsersDataRequest {
@@ -1319,104 +1299,10 @@ class SendUsersDataRequest$Type extends MessageType<SendUsersDataRequest> {
  */
 export const SendUsersDataRequest = new SendUsersDataRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class SendUsersJobsRequest$Type extends MessageType<SendUsersJobsRequest> {
-    constructor() {
-        super("services.sync.v2.SendUsersJobsRequest", [
-            { no: 1, name: "users_jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DataUserJobs, options: { "buf.validate.field": { repeated: { maxItems: "500" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<SendUsersJobsRequest>): SendUsersJobsRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.usersJobs = [];
-        if (value !== undefined)
-            reflectionMergePartial<SendUsersJobsRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SendUsersJobsRequest): SendUsersJobsRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.sync.data.v2.DataUserJobs users_jobs */ 1:
-                    message.usersJobs.push(DataUserJobs.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: SendUsersJobsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.sync.data.v2.DataUserJobs users_jobs = 1; */
-        for (let i = 0; i < message.usersJobs.length; i++)
-            DataUserJobs.internalBinaryWrite(message.usersJobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.v2.SendUsersJobsRequest
- */
-export const SendUsersJobsRequest = new SendUsersJobsRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class SendUsersPhoneNumbersRequest$Type extends MessageType<SendUsersPhoneNumbersRequest> {
-    constructor() {
-        super("services.sync.v2.SendUsersPhoneNumbersRequest", [
-            { no: 1, name: "users_phone_numbers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DataUserPhoneNumbers, options: { "buf.validate.field": { repeated: { maxItems: "500" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<SendUsersPhoneNumbersRequest>): SendUsersPhoneNumbersRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.usersPhoneNumbers = [];
-        if (value !== undefined)
-            reflectionMergePartial<SendUsersPhoneNumbersRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SendUsersPhoneNumbersRequest): SendUsersPhoneNumbersRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.sync.data.v2.DataUserPhoneNumbers users_phone_numbers */ 1:
-                    message.usersPhoneNumbers.push(DataUserPhoneNumbers.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: SendUsersPhoneNumbersRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.sync.data.v2.DataUserPhoneNumbers users_phone_numbers = 1; */
-        for (let i = 0; i < message.usersPhoneNumbers.length; i++)
-            DataUserPhoneNumbers.internalBinaryWrite(message.usersPhoneNumbers[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.v2.SendUsersPhoneNumbersRequest
- */
-export const SendUsersPhoneNumbersRequest = new SendUsersPhoneNumbersRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class SendVehiclesDataRequest$Type extends MessageType<SendVehiclesDataRequest> {
     constructor() {
         super("services.sync.v2.SendVehiclesDataRequest", [
-            { no: 1, name: "vehicles", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Vehicle, options: { "buf.validate.field": { repeated: { maxItems: "1000" } } } }
+            { no: 1, name: "vehicles", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Vehicle, options: { "buf.validate.field": { repeated: { maxItems: "500" } } } }
         ]);
     }
     create(value?: PartialMessage<SendVehiclesDataRequest>): SendVehiclesDataRequest {
@@ -1871,8 +1757,6 @@ export const SyncService = new ServiceType("services.sync.v2.SyncService", [
     { name: "SendLicensesData", options: {}, I: SendLicensesDataRequest, O: SendDataResponse },
     { name: "SendAccountsData", options: {}, I: SendAccountsDataRequest, O: SendDataResponse },
     { name: "SendUsersData", options: {}, I: SendUsersDataRequest, O: SendDataResponse },
-    { name: "SendUsersJobs", options: {}, I: SendUsersJobsRequest, O: SendDataResponse },
-    { name: "SendUsersPhoneNumbers", options: {}, I: SendUsersPhoneNumbersRequest, O: SendDataResponse },
     { name: "SendVehiclesData", options: {}, I: SendVehiclesDataRequest, O: SendDataResponse },
     { name: "SendUserLocationsData", options: {}, I: SendUserLocationsDataRequest, O: SendDataResponse },
     { name: "SendLastCharIDData", options: {}, I: SendLastCharIDDataRequest, O: SendDataResponse },

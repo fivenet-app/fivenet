@@ -4,7 +4,7 @@ import { parseJWTPayload } from './jwt';
 describe('parseJWTPayload', () => {
     it('should parse a valid JWT payload', async () => {
         const token = `${btoa('header')}.${btoa('{"key":"value"}')}.signature`;
-        const result = await parseJWTPayload<{ key: string }>(token);
+        const result = parseJWTPayload<{ key: string }>(token);
         expect(result).toEqual({ key: 'value' });
     });
 

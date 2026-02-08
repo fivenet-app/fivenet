@@ -17,7 +17,6 @@ export const useCompletorStore = defineStore(
     () => {
         /**
          * Cached job list.
-         * @type {Ref<Job[]>}
          */
         const jobs = ref<Job[]>([]);
 

@@ -4,7 +4,7 @@ import { LogLevels } from 'consola';
 import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import PermList from '~/components/settings/roles/PermList.vue';
-import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
+import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useSettingsStore } from '~/stores/settings';

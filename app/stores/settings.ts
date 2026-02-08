@@ -231,7 +231,6 @@ export const useSettingsStore = defineStore(
             nuiResourceName,
 
             eventsDisabled,
-            eventsShowSnowflakes,
 
             livemap,
             livemapLayerCategories,
@@ -259,6 +258,7 @@ export const useSettingsStore = defineStore(
 
             // Getters
             getUserLocale,
+            eventsShowSnowflakes,
         };
     },
     {

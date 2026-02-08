@@ -19,6 +19,8 @@ const { t } = useI18n();
 
 const overlay = useOverlay();
 
+const { accountId } = useAuth();
+
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
@@ -26,7 +28,7 @@ const settingsAccountsClient = await getSettingsAccountsClient();
 
 const schema = z.object({
     license: z.coerce.string().max(64).optional(),
-    enabled: z.coerce.boolean().default(true),
+    onlyDisabled: z.coerce.boolean().default(false),
     username: z.coerce.string().max(64).optional(),
     externalId: z.coerce.string().max(64).optional(),
     group: z.coerce.string().max(64).optional(),
@@ -55,7 +57,7 @@ const {
     error,
 } = useLazyAsyncData(
     () =>
-        `settings-accounts-${query.license}-${query.enabled}-${query.username}-${query.externalId}-${JSON.stringify(query.sorting)}-${query.page}`,
+        `settings-accounts-${query.license}-${query.onlyDisabled}-${query.username}-${query.externalId}-${JSON.stringify(query.sorting)}-${query.page}`,
     () => listAccounts(),
 );
 
@@ -66,7 +68,7 @@ async function listAccounts(): Promise<ListAccountsResponse> {
                 offset: calculateOffset(query.page, accounts.value?.pagination),
             },
             sort: query.sorting,
-            enabled: query.enabled,
+            onlyDisabled: query.onlyDisabled,
             license: query.license,
             username: query.username,
             externalId: query.externalId,
@@ -124,18 +126,20 @@ const columns = computed(
                                 },
                             }),
                         ]),
-                        h(UTooltip, { text: t('common.delete') }, [
-                            h(UButton, {
-                                variant: 'link',
-                                icon: 'i-mdi-delete',
-                                color: 'error',
-                                onClick: () => {
-                                    confirmModal.open({
-                                        confirm: async () => deleteAccount(row.original.id),
-                                    });
-                                },
-                            }),
-                        ]),
+                        row.original.id !== accountId.value
+                            ? h(UTooltip, { text: t('common.delete') }, [
+                                  h(UButton, {
+                                      variant: 'link',
+                                      icon: 'i-mdi-delete',
+                                      color: 'error',
+                                      onClick: () => {
+                                          confirmModal.open({
+                                              confirm: async () => deleteAccount(row.original.id),
+                                          });
+                                      },
+                                  }),
+                              ])
+                            : undefined,
                     ]),
             },
             {
@@ -269,12 +273,12 @@ const columns = computed(
 
                         <UFormField
                             class="flex flex-initial flex-col"
-                            name="enabled"
-                            :label="$t('common.enabled')"
+                            name="onlyDisabled"
+                            :label="$t('common.only_disabled')"
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <div class="flex flex-1 items-center">
-                                <USwitch v-model="query.enabled" />
+                                <USwitch v-model="query.onlyDisabled" />
                             </div>
                         </UFormField>
                     </div>

@@ -52,4 +52,9 @@ var (
 		&common.I18NItem{Key: "errors.SettingsService.ErrDiscordConnectRequired.content"},
 		&common.I18NItem{Key: "errors.SettingsService.ErrDiscordConnectRequired.title"},
 	)
+	ErrCannotDeleteOwnAccount = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.SettingsService.ErrCannotDeleteOwnAccount.content"},
+		&common.I18NItem{Key: "errors.SettingsService.ErrCannotDeleteOwnAccount.title"},
+	)
 )

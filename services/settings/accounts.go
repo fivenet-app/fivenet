@@ -10,6 +10,7 @@ import (
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -35,8 +36,8 @@ func (s *Server) ListAccounts(
 			tAccounts.License.LIKE(mysql.String(fmt.Sprintf("%%%s%%", req.GetLicense()))),
 		)
 	}
-	if req.Enabled != nil {
-		condition = condition.AND(tAccounts.Enabled.EQ(mysql.Bool(req.GetEnabled())))
+	if req.GetOnlyDisabled() {
+		condition = condition.AND(tAccounts.Enabled.EQ(mysql.Bool(false)))
 	}
 	if req.Username != nil && req.GetUsername() != "" {
 		condition = condition.AND(
@@ -269,6 +270,12 @@ func (s *Server) DeleteAccount(
 	ctx context.Context,
 	req *pbsettings.DeleteAccountRequest,
 ) (*pbsettings.DeleteAccountResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	if userInfo.GetAccountId() == req.GetId() {
+		return nil, errorssettings.ErrCannotDeleteOwnAccount
+	}
+
 	tAccounts := table.FivenetAccounts
 
 	stmt := tAccounts.

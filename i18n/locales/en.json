@@ -747,7 +747,10 @@
         "impersonate": "Impersonate",
         "group": "Group | Groups",
         "websocket": "WebSocket",
-        "ranks": "No Ranks | {n} Rank | {n} Ranks"
+        "ranks": "No Ranks | {n} Rank | {n} Ranks",
+        "only_disabled": "Only Disabled",
+        "impersonation_active": "You are currently impersonating {label} ({number}).",
+        "stop_impersonation": "Stop Impersonation"
     },
     "components": {
         "partials": {
@@ -2465,6 +2468,10 @@
             "ErrDiscordConnectRequired": {
                 "title": "You must have your Discord account connected!",
                 "content": "Please make sure to connect your Discord account with FiveNet."
+            },
+            "ErrCannotDeleteOwnAccount": {
+                "title": "You can't delete your own account!",
+                "content": "Please ask another administrator to delete your account or change your password if you want to prevent access to your account."
             }
         },
         "Filestore": {
