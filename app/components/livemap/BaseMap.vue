@@ -44,6 +44,8 @@ const emit = defineEmits<{
 
 const { can } = useAuth();
 
+const { game } = useAppConfig();
+
 const settingsStore = useSettingsStore();
 const { livemapTileLayer, livemapLayers, livemap: livemapSettings } = storeToRefs(settingsStore);
 
@@ -349,9 +351,7 @@ defineExpose({
     mapResize,
 });
 
-onBeforeUnmount(() => {
-    map = undefined;
-});
+onBeforeUnmount(() => (map = undefined));
 </script>
 
 <template>
@@ -383,6 +383,15 @@ onBeforeUnmount(() => {
                 :min-zoom="1"
                 :max-zoom="layer.options?.maxZoom || 7"
                 :attribution="layer.options?.attribution || ''"
+            />
+
+            <LImageOverlay
+                v-if="game.livemap?.enableCayoPerico"
+                :url="`/images/livemap/overlays/cayo-perico/${livemapTileLayer}.webp`"
+                :bounds="[
+                    [-6144.05, 3666.78],
+                    [-4144.05, 5723.78],
+                ]"
             />
 
             <ZoomControls />

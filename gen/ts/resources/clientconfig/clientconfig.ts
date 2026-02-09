@@ -153,6 +153,19 @@ export interface Game {
      * @generated from protobuf field: int32 start_job_grade = 2
      */
     startJobGrade: number;
+    /**
+     * @generated from protobuf field: resources.clientconfig.Livemap livemap = 3
+     */
+    livemap?: Livemap;
+}
+/**
+ * @generated from protobuf message resources.clientconfig.Livemap
+ */
+export interface Livemap {
+    /**
+     * @generated from protobuf field: bool enable_cayo_perico = 1
+     */
+    enableCayoPerico: boolean;
 }
 /**
  * @generated from protobuf message resources.clientconfig.System
@@ -655,7 +668,8 @@ class Game$Type extends MessageType<Game> {
     constructor() {
         super("resources.clientconfig.Game", [
             { no: 1, name: "unemployed_job_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"unemployedJobName\"" } },
-            { no: 2, name: "start_job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "tagger.tags": "json:\"startJobGrade\"" } }
+            { no: 2, name: "start_job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "tagger.tags": "json:\"startJobGrade\"" } },
+            { no: 3, name: "livemap", kind: "message", T: () => Livemap }
         ]);
     }
     create(value?: PartialMessage<Game>): Game {
@@ -677,6 +691,9 @@ class Game$Type extends MessageType<Game> {
                 case /* int32 start_job_grade */ 2:
                     message.startJobGrade = reader.int32();
                     break;
+                case /* resources.clientconfig.Livemap livemap */ 3:
+                    message.livemap = Livemap.internalBinaryRead(reader, reader.uint32(), options, message.livemap);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -695,6 +712,9 @@ class Game$Type extends MessageType<Game> {
         /* int32 start_job_grade = 2; */
         if (message.startJobGrade !== 0)
             writer.tag(2, WireType.Varint).int32(message.startJobGrade);
+        /* resources.clientconfig.Livemap livemap = 3; */
+        if (message.livemap)
+            Livemap.internalBinaryWrite(message.livemap, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -705,6 +725,53 @@ class Game$Type extends MessageType<Game> {
  * @generated MessageType for protobuf message resources.clientconfig.Game
  */
 export const Game = new Game$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Livemap$Type extends MessageType<Livemap> {
+    constructor() {
+        super("resources.clientconfig.Livemap", [
+            { no: 1, name: "enable_cayo_perico", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<Livemap>): Livemap {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.enableCayoPerico = false;
+        if (value !== undefined)
+            reflectionMergePartial<Livemap>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Livemap): Livemap {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool enable_cayo_perico */ 1:
+                    message.enableCayoPerico = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Livemap, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool enable_cayo_perico = 1; */
+        if (message.enableCayoPerico !== false)
+            writer.tag(1, WireType.Varint).bool(message.enableCayoPerico);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.clientconfig.Livemap
+ */
+export const Livemap = new Livemap$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class System$Type extends MessageType<System> {
     constructor() {

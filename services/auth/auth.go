@@ -107,7 +107,7 @@ func (s *Server) Login(
 
 	accClaims := auth.MapAccountToClaims(accounts.ConvertFromModelAcc(account))
 
-	// FIXME move this to the sync API user logic
+	// FIXME move this to the sync API user update and registration logic
 	if err := s.linkCharsToAccount(ctx, account.License, account.ID); err != nil {
 		s.logger.Error(
 			"failed to link chars to account",

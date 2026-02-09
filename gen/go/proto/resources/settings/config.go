@@ -78,6 +78,12 @@ func (x *AppConfig) Default() {
 		}
 	}
 
+	if x.GetLivemap() == nil {
+		x.Livemap = &Livemap{
+			EnableCayoPerico: true,
+		}
+	}
+
 	if x.GetUserTracker() == nil {
 		x.UserTracker = &UserTracker{}
 	}

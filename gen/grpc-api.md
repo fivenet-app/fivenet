@@ -2525,6 +2525,7 @@ Dummy - DO NOT USE!
 | `display` | [Display](#resourcessettingsDisplay) |  |  |
 | `quick_buttons` | [QuickButtons](#resourcessettingsQuickButtons) |  |  |
 | `data` | [Data](#resourcessettingsData) |  |  |
+| `livemap` | [Livemap](#resourcessettingsLivemap) |  |  |
 
 
 
@@ -2604,6 +2605,17 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `privacy_policy` | [string](#string) | optional |  |
 | `imprint` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.settings.Livemap
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enable_cayo_perico` | [bool](#bool) |  |  |
 
 
 
@@ -2826,6 +2838,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `unemployed_job_name` | [string](#string) |  |  |
 | `start_job_grade` | [int32](#int32) |  |  |
+| `livemap` | [Livemap](#resourcesclientconfigLivemap) |  |  |
 
 
 
@@ -2838,6 +2851,17 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `imprint` | [string](#string) | optional |  |
 | `privacy_policy` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.clientconfig.Livemap
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enable_cayo_perico` | [bool](#bool) |  |  |
 
 
 

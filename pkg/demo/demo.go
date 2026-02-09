@@ -114,7 +114,7 @@ func New(p Params) *Demo {
 	}
 
 	d.logger.Warn(
-		"Demo mode is enabled. This will generate random dispatches and user locations!!!",
+		"Demo mode is enabled. This will generate random dispatches and user locations!",
 	)
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {

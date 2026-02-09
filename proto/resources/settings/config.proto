@@ -32,6 +32,7 @@ message AppConfig {
   Display display = 10;
   QuickButtons quick_buttons = 11;
   Data data = 12;
+  Livemap livemap = 13;
 }
 
 message Auth {
@@ -241,4 +242,8 @@ message PenaltyCalculatorWarn {
     (codegen.sanitizer.sanitizer) = {enabled: true},
     (tagger.tags) = "json:\"warnMessage\""
   ];
+}
+
+message Livemap {
+  bool enable_cayo_perico = 1;
 }

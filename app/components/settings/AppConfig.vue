@@ -152,6 +152,9 @@ const schema = z.object({
                 warnSettings: { enabled: false },
             }),
     }),
+    livemap: z.object({
+        enableCayoPerico: z.coerce.boolean().default(true),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -209,6 +212,9 @@ const state = reactive<Schema>({
             warnSettings: { enabled: false },
         },
     },
+    livemap: {
+        enableCayoPerico: true,
+    },
 });
 
 async function updateAppConfig(values: Schema): Promise<void> {
@@ -242,6 +248,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
         },
     };
     config.value.config.quickButtons = values.quickButtons;
+    config.value.config.livemap = values.livemap;
 
     try {
         const { response } = await settingsConfigClient.updateAppConfig({
@@ -333,6 +340,10 @@ function setSettingsValues(): void {
 
             state.quickButtons.penaltyCalculator = config.value.config.quickButtons.penaltyCalculator;
         }
+    }
+
+    if (config.value.config.livemap) {
+        state.livemap = config.value.config.livemap;
     }
 }
 
@@ -1059,6 +1070,19 @@ const formRef = useTemplateRef('formRef');
                                         :rows="5"
                                     />
                                 </UFormField>
+                            </UFormField>
+                        </UPageCard>
+
+                        <UPageCard
+                            :title="$t('components.settings.app_config.livemap.title')"
+                            :description="$t('components.settings.app_config.livemap.description')"
+                        >
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="livemap.enableCayoPerico"
+                                :label="$t('components.settings.app_config.livemap.enable_cayo_perico')"
+                            >
+                                <USwitch v-model="state.livemap.enableCayoPerico" />
                             </UFormField>
                         </UPageCard>
                     </template>

@@ -794,6 +794,7 @@ type Game struct {
 	state             protoimpl.MessageState `protogen:"hybrid.v1"`
 	UnemployedJobName string                 `protobuf:"bytes,1,opt,name=unemployed_job_name,json=unemployedJobName,proto3" json:"unemployedJobName"`
 	StartJobGrade     int32                  `protobuf:"varint,2,opt,name=start_job_grade,json=startJobGrade,proto3" json:"startJobGrade"`
+	Livemap           *Livemap               `protobuf:"bytes,3,opt,name=livemap,proto3" json:"livemap,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -837,6 +838,13 @@ func (x *Game) GetStartJobGrade() int32 {
 	return 0
 }
 
+func (x *Game) GetLivemap() *Livemap {
+	if x != nil {
+		return x.Livemap
+	}
+	return nil
+}
+
 func (x *Game) SetUnemployedJobName(v string) {
 	x.UnemployedJobName = v
 }
@@ -845,11 +853,27 @@ func (x *Game) SetStartJobGrade(v int32) {
 	x.StartJobGrade = v
 }
 
+func (x *Game) SetLivemap(v *Livemap) {
+	x.Livemap = v
+}
+
+func (x *Game) HasLivemap() bool {
+	if x == nil {
+		return false
+	}
+	return x.Livemap != nil
+}
+
+func (x *Game) ClearLivemap() {
+	x.Livemap = nil
+}
+
 type Game_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	UnemployedJobName string
 	StartJobGrade     int32
+	Livemap           *Livemap
 }
 
 func (b0 Game_builder) Build() *Game {
@@ -858,6 +882,64 @@ func (b0 Game_builder) Build() *Game {
 	_, _ = b, x
 	x.UnemployedJobName = b.UnemployedJobName
 	x.StartJobGrade = b.StartJobGrade
+	x.Livemap = b.Livemap
+	return m0
+}
+
+type Livemap struct {
+	state            protoimpl.MessageState `protogen:"hybrid.v1"`
+	EnableCayoPerico bool                   `protobuf:"varint,1,opt,name=enable_cayo_perico,json=enableCayoPerico,proto3" json:"enable_cayo_perico,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *Livemap) Reset() {
+	*x = Livemap{}
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Livemap) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Livemap) ProtoMessage() {}
+
+func (x *Livemap) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *Livemap) GetEnableCayoPerico() bool {
+	if x != nil {
+		return x.EnableCayoPerico
+	}
+	return false
+}
+
+func (x *Livemap) SetEnableCayoPerico(v bool) {
+	x.EnableCayoPerico = v
+}
+
+type Livemap_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EnableCayoPerico bool
+}
+
+func (b0 Livemap_builder) Build() *Livemap {
+	m0 := &Livemap{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EnableCayoPerico = b.EnableCayoPerico
 	return m0
 }
 
@@ -872,7 +954,7 @@ type System struct {
 
 func (x *System) Reset() {
 	*x = System{}
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[8]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -884,7 +966,7 @@ func (x *System) String() string {
 func (*System) ProtoMessage() {}
 
 func (x *System) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[8]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -979,7 +1061,7 @@ type OTLPFrontend struct {
 
 func (x *OTLPFrontend) Reset() {
 	*x = OTLPFrontend{}
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[9]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -991,7 +1073,7 @@ func (x *OTLPFrontend) String() string {
 func (*OTLPFrontend) ProtoMessage() {}
 
 func (x *OTLPFrontend) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[9]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1065,7 +1147,7 @@ type Display struct {
 
 func (x *Display) Reset() {
 	*x = Display{}
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[10]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1077,7 +1159,7 @@ func (x *Display) String() string {
 func (*Display) ProtoMessage() {}
 
 func (x *Display) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[10]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1179,10 +1261,13 @@ const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\n" +
 	"\b_imprintB\x11\n" +
 	"\x0f_privacy_policy\"\x0e\n" +
-	"\fFeatureGates\"\x98\x01\n" +
+	"\fFeatureGates\"\xd3\x01\n" +
 	"\x04Game\x12M\n" +
 	"\x13unemployed_job_name\x18\x01 \x01(\tB\x1d\x9a\x84\x9e\x03\x18json:\"unemployedJobName\"R\x11unemployedJobName\x12A\n" +
-	"\x0fstart_job_grade\x18\x02 \x01(\x05B\x19\x9a\x84\x9e\x03\x14json:\"startJobGrade\"R\rstartJobGrade\"\x98\x02\n" +
+	"\x0fstart_job_grade\x18\x02 \x01(\x05B\x19\x9a\x84\x9e\x03\x14json:\"startJobGrade\"R\rstartJobGrade\x129\n" +
+	"\alivemap\x18\x03 \x01(\v2\x1f.resources.clientconfig.LivemapR\alivemap\"7\n" +
+	"\aLivemap\x12,\n" +
+	"\x12enable_cayo_perico\x18\x01 \x01(\bR\x10enableCayoPerico\"\x98\x02\n" +
 	"\x06System\x12V\n" +
 	"\x16banner_message_enabled\x18\x01 \x01(\bB \x9a\x84\x9e\x03\x1bjson:\"bannerMessageEnabled\"R\x14bannerMessageEnabled\x12i\n" +
 	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageB\x1a\x9a\x84\x9e\x03\x15json:\"bannerMessages\"H\x00R\rbannerMessage\x88\x01\x01\x128\n" +
@@ -1201,7 +1286,7 @@ const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\rcurrency_name\x18\x02 \x01(\tB\x18\x9a\x84\x9e\x03\x13json:\"currencyName\"R\fcurrencyNameB\x0e\n" +
 	"\f_intl_localeBWZUgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig;clientconfigb\x06proto3"
 
-var file_resources_clientconfig_clientconfig_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_resources_clientconfig_clientconfig_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_resources_clientconfig_clientconfig_proto_goTypes = []any{
 	(*ClientConfig)(nil),           // 0: resources.clientconfig.ClientConfig
 	(*Auth)(nil),                   // 1: resources.clientconfig.Auth
@@ -1211,13 +1296,14 @@ var file_resources_clientconfig_clientconfig_proto_goTypes = []any{
 	(*Links)(nil),                  // 5: resources.clientconfig.Links
 	(*FeatureGates)(nil),           // 6: resources.clientconfig.FeatureGates
 	(*Game)(nil),                   // 7: resources.clientconfig.Game
-	(*System)(nil),                 // 8: resources.clientconfig.System
-	(*OTLPFrontend)(nil),           // 9: resources.clientconfig.OTLPFrontend
-	(*Display)(nil),                // 10: resources.clientconfig.Display
-	nil,                            // 11: resources.clientconfig.OTLPFrontend.HeadersEntry
-	(*settings.QuickButtons)(nil),  // 12: resources.settings.QuickButtons
-	(*settings.Data)(nil),          // 13: resources.settings.Data
-	(*settings.BannerMessage)(nil), // 14: resources.settings.BannerMessage
+	(*Livemap)(nil),                // 8: resources.clientconfig.Livemap
+	(*System)(nil),                 // 9: resources.clientconfig.System
+	(*OTLPFrontend)(nil),           // 10: resources.clientconfig.OTLPFrontend
+	(*Display)(nil),                // 11: resources.clientconfig.Display
+	nil,                            // 12: resources.clientconfig.OTLPFrontend.HeadersEntry
+	(*settings.QuickButtons)(nil),  // 13: resources.settings.QuickButtons
+	(*settings.Data)(nil),          // 14: resources.settings.Data
+	(*settings.BannerMessage)(nil), // 15: resources.settings.BannerMessage
 }
 var file_resources_clientconfig_clientconfig_proto_depIdxs = []int32{
 	1,  // 0: resources.clientconfig.ClientConfig.auth:type_name -> resources.clientconfig.Auth
@@ -1225,20 +1311,21 @@ var file_resources_clientconfig_clientconfig_proto_depIdxs = []int32{
 	4,  // 2: resources.clientconfig.ClientConfig.website:type_name -> resources.clientconfig.Website
 	6,  // 3: resources.clientconfig.ClientConfig.feature_gates:type_name -> resources.clientconfig.FeatureGates
 	7,  // 4: resources.clientconfig.ClientConfig.game:type_name -> resources.clientconfig.Game
-	8,  // 5: resources.clientconfig.ClientConfig.system:type_name -> resources.clientconfig.System
-	10, // 6: resources.clientconfig.ClientConfig.display:type_name -> resources.clientconfig.Display
-	12, // 7: resources.clientconfig.ClientConfig.quick_buttons:type_name -> resources.settings.QuickButtons
-	13, // 8: resources.clientconfig.ClientConfig.data:type_name -> resources.settings.Data
+	9,  // 5: resources.clientconfig.ClientConfig.system:type_name -> resources.clientconfig.System
+	11, // 6: resources.clientconfig.ClientConfig.display:type_name -> resources.clientconfig.Display
+	13, // 7: resources.clientconfig.ClientConfig.quick_buttons:type_name -> resources.settings.QuickButtons
+	14, // 8: resources.clientconfig.ClientConfig.data:type_name -> resources.settings.Data
 	2,  // 9: resources.clientconfig.Auth.providers:type_name -> resources.clientconfig.ProviderConfig
 	5,  // 10: resources.clientconfig.Website.links:type_name -> resources.clientconfig.Links
-	14, // 11: resources.clientconfig.System.banner_message:type_name -> resources.settings.BannerMessage
-	9,  // 12: resources.clientconfig.System.otlp:type_name -> resources.clientconfig.OTLPFrontend
-	11, // 13: resources.clientconfig.OTLPFrontend.headers:type_name -> resources.clientconfig.OTLPFrontend.HeadersEntry
-	14, // [14:14] is the sub-list for method output_type
-	14, // [14:14] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	8,  // 11: resources.clientconfig.Game.livemap:type_name -> resources.clientconfig.Livemap
+	15, // 12: resources.clientconfig.System.banner_message:type_name -> resources.settings.BannerMessage
+	10, // 13: resources.clientconfig.System.otlp:type_name -> resources.clientconfig.OTLPFrontend
+	12, // 14: resources.clientconfig.OTLPFrontend.headers:type_name -> resources.clientconfig.OTLPFrontend.HeadersEntry
+	15, // [15:15] is the sub-list for method output_type
+	15, // [15:15] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_resources_clientconfig_clientconfig_proto_init() }
@@ -1248,15 +1335,15 @@ func file_resources_clientconfig_clientconfig_proto_init() {
 	}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[5].OneofWrappers = []any{}
-	file_resources_clientconfig_clientconfig_proto_msgTypes[8].OneofWrappers = []any{}
-	file_resources_clientconfig_clientconfig_proto_msgTypes[10].OneofWrappers = []any{}
+	file_resources_clientconfig_clientconfig_proto_msgTypes[9].OneofWrappers = []any{}
+	file_resources_clientconfig_clientconfig_proto_msgTypes[11].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_clientconfig_clientconfig_proto_rawDesc), len(file_resources_clientconfig_clientconfig_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -62,6 +62,15 @@ func (m *AppConfig) Sanitize() error {
 		}
 	}
 
+	// Field: Livemap
+	if m.Livemap != nil {
+		if v, ok := any(m.GetLivemap()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Perms
 	if m.Perms != nil {
 		if v, ok := any(m.GetPerms()).(interface{ Sanitize() error }); ok {
@@ -259,6 +268,16 @@ func (m *Links) Sanitize() error {
 	// Field: PrivacyPolicy
 	if m.PrivacyPolicy != nil {
 		*m.PrivacyPolicy = htmlsanitizer.StripHTMLTags(*m.PrivacyPolicy)
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *Livemap) Sanitize() error {
+	if m == nil {
+		return nil
 	}
 
 	return nil

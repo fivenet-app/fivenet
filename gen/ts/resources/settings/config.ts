@@ -66,6 +66,10 @@ export interface AppConfig {
      * @generated from protobuf field: resources.settings.Data data = 12
      */
     data?: Data;
+    /**
+     * @generated from protobuf field: resources.settings.Livemap livemap = 13
+     */
+    livemap?: Livemap;
 }
 /**
  * @generated from protobuf message resources.settings.Auth
@@ -320,6 +324,15 @@ export interface PenaltyCalculatorWarn {
     warnMessage?: string;
 }
 /**
+ * @generated from protobuf message resources.settings.Livemap
+ */
+export interface Livemap {
+    /**
+     * @generated from protobuf field: bool enable_cayo_perico = 1
+     */
+    enableCayoPerico: boolean;
+}
+/**
  * @generated from protobuf enum resources.settings.DiscordBotPresenceType
  */
 export enum DiscordBotPresenceType {
@@ -359,7 +372,8 @@ class AppConfig$Type extends MessageType<AppConfig> {
             { no: 9, name: "system", kind: "message", T: () => System },
             { no: 10, name: "display", kind: "message", T: () => Display },
             { no: 11, name: "quick_buttons", kind: "message", T: () => QuickButtons },
-            { no: 12, name: "data", kind: "message", T: () => Data }
+            { no: 12, name: "data", kind: "message", T: () => Data },
+            { no: 13, name: "livemap", kind: "message", T: () => Livemap }
         ], { "codegen.dbscanner.dbscanner": { enabled: true, partial: true } });
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
@@ -410,6 +424,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
                 case /* resources.settings.Data data */ 12:
                     message.data = Data.internalBinaryRead(reader, reader.uint32(), options, message.data);
                     break;
+                case /* resources.settings.Livemap livemap */ 13:
+                    message.livemap = Livemap.internalBinaryRead(reader, reader.uint32(), options, message.livemap);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -458,6 +475,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
         /* resources.settings.Data data = 12; */
         if (message.data)
             Data.internalBinaryWrite(message.data, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* resources.settings.Livemap livemap = 13; */
+        if (message.livemap)
+            Livemap.internalBinaryWrite(message.livemap, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1403,3 +1423,50 @@ class PenaltyCalculatorWarn$Type extends MessageType<PenaltyCalculatorWarn> {
  * @generated MessageType for protobuf message resources.settings.PenaltyCalculatorWarn
  */
 export const PenaltyCalculatorWarn = new PenaltyCalculatorWarn$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Livemap$Type extends MessageType<Livemap> {
+    constructor() {
+        super("resources.settings.Livemap", [
+            { no: 1, name: "enable_cayo_perico", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<Livemap>): Livemap {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.enableCayoPerico = false;
+        if (value !== undefined)
+            reflectionMergePartial<Livemap>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Livemap): Livemap {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool enable_cayo_perico */ 1:
+                    message.enableCayoPerico = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Livemap, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool enable_cayo_perico = 1; */
+        if (message.enableCayoPerico !== false)
+            writer.tag(1, WireType.Varint).bool(message.enableCayoPerico);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.settings.Livemap
+ */
+export const Livemap = new Livemap$Type();

@@ -42,6 +42,10 @@ func BuildClientConfig(
 		Game: &Game{
 			UnemployedJobName: appCfg.JobInfo.GetUnemployedJob().GetName(),
 			StartJobGrade:     cfg.Game.StartJobGrade,
+
+			Livemap: &Livemap{
+				EnableCayoPerico: appCfg.Livemap.GetEnableCayoPerico(),
+			},
 		},
 		System: &System{
 			BannerMessageEnabled: appCfg.System.GetBannerMessageEnabled(),

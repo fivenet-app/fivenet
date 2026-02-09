@@ -90,6 +90,7 @@ type AppConfig struct {
 	xxx_hidden_Display       *Display               `protobuf:"bytes,10,opt,name=display,proto3"`
 	xxx_hidden_QuickButtons  *QuickButtons          `protobuf:"bytes,11,opt,name=quick_buttons,json=quickButtons,proto3"`
 	xxx_hidden_Data          *Data                  `protobuf:"bytes,12,opt,name=data,proto3"`
+	xxx_hidden_Livemap       *Livemap               `protobuf:"bytes,13,opt,name=livemap,proto3"`
 	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
 	XXX_presence             [1]uint32
 	unknownFields            protoimpl.UnknownFields
@@ -208,9 +209,16 @@ func (x *AppConfig) GetData() *Data {
 	return nil
 }
 
+func (x *AppConfig) GetLivemap() *Livemap {
+	if x != nil {
+		return x.xxx_hidden_Livemap
+	}
+	return nil
+}
+
 func (x *AppConfig) SetVersion(v string) {
 	x.xxx_hidden_Version = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 12)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 13)
 }
 
 func (x *AppConfig) SetDefaultLocale(v string) {
@@ -255,6 +263,10 @@ func (x *AppConfig) SetQuickButtons(v *QuickButtons) {
 
 func (x *AppConfig) SetData(v *Data) {
 	x.xxx_hidden_Data = v
+}
+
+func (x *AppConfig) SetLivemap(v *Livemap) {
+	x.xxx_hidden_Livemap = v
 }
 
 func (x *AppConfig) HasVersion() bool {
@@ -334,6 +346,13 @@ func (x *AppConfig) HasData() bool {
 	return x.xxx_hidden_Data != nil
 }
 
+func (x *AppConfig) HasLivemap() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Livemap != nil
+}
+
 func (x *AppConfig) ClearVersion() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_Version = nil
@@ -379,6 +398,10 @@ func (x *AppConfig) ClearData() {
 	x.xxx_hidden_Data = nil
 }
 
+func (x *AppConfig) ClearLivemap() {
+	x.xxx_hidden_Livemap = nil
+}
+
 type AppConfig_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -394,6 +417,7 @@ type AppConfig_builder struct {
 	Display       *Display
 	QuickButtons  *QuickButtons
 	Data          *Data
+	Livemap       *Livemap
 }
 
 func (b0 AppConfig_builder) Build() *AppConfig {
@@ -401,7 +425,7 @@ func (b0 AppConfig_builder) Build() *AppConfig {
 	b, x := &b0, m0
 	_, _ = b, x
 	if b.Version != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 12)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 13)
 		x.xxx_hidden_Version = b.Version
 	}
 	x.xxx_hidden_DefaultLocale = b.DefaultLocale
@@ -415,6 +439,7 @@ func (b0 AppConfig_builder) Build() *AppConfig {
 	x.xxx_hidden_Display = b.Display
 	x.xxx_hidden_QuickButtons = b.QuickButtons
 	x.xxx_hidden_Data = b.Data
+	x.xxx_hidden_Livemap = b.Livemap
 	return m0
 }
 
@@ -2092,11 +2117,68 @@ func (b0 PenaltyCalculatorWarn_builder) Build() *PenaltyCalculatorWarn {
 	return m0
 }
 
+type Livemap struct {
+	state                       protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_EnableCayoPerico bool                   `protobuf:"varint,1,opt,name=enable_cayo_perico,json=enableCayoPerico,proto3"`
+	unknownFields               protoimpl.UnknownFields
+	sizeCache                   protoimpl.SizeCache
+}
+
+func (x *Livemap) Reset() {
+	*x = Livemap{}
+	mi := &file_resources_settings_config_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Livemap) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Livemap) ProtoMessage() {}
+
+func (x *Livemap) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_settings_config_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *Livemap) GetEnableCayoPerico() bool {
+	if x != nil {
+		return x.xxx_hidden_EnableCayoPerico
+	}
+	return false
+}
+
+func (x *Livemap) SetEnableCayoPerico(v bool) {
+	x.xxx_hidden_EnableCayoPerico = v
+}
+
+type Livemap_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EnableCayoPerico bool
+}
+
+func (b0 Livemap_builder) Build() *Livemap {
+	m0 := &Livemap{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_EnableCayoPerico = b.EnableCayoPerico
+	return m0
+}
+
 var File_resources_settings_config_proto protoreflect.FileDescriptor
 
 const file_resources_settings_config_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\x90\x05\n" +
+	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\xc7\x05\n" +
 	"\tAppConfig\x12\x1d\n" +
 	"\aversion\x18\x01 \x01(\tH\x00R\aversion\x88\x01\x01\x12%\n" +
 	"\x0edefault_locale\x18\b \x01(\tR\rdefaultLocale\x12,\n" +
@@ -2110,7 +2192,8 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\adisplay\x18\n" +
 	" \x01(\v2\x1b.resources.settings.DisplayR\adisplay\x12E\n" +
 	"\rquick_buttons\x18\v \x01(\v2 .resources.settings.QuickButtonsR\fquickButtons\x12,\n" +
-	"\x04data\x18\f \x01(\v2\x18.resources.settings.DataR\x04data:\b\xe2\xf3\x18\x04\b\x01\x18\x01B\n" +
+	"\x04data\x18\f \x01(\v2\x18.resources.settings.DataR\x04data\x125\n" +
+	"\alivemap\x18\r \x01(\v2\x1b.resources.settings.LivemapR\alivemap:\b\xe2\xf3\x18\x04\b\x01\x18\x01B\n" +
 	"\n" +
 	"\b_version\"S\n" +
 	"\x04Auth\x12%\n" +
@@ -2197,7 +2280,9 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\x05_fineB\x11\n" +
 	"\x0f_detention_timeB\x0e\n" +
 	"\f_stvo_pointsB\x0f\n" +
-	"\r_warn_message*\xde\x01\n" +
+	"\r_warn_message\"7\n" +
+	"\aLivemap\x12,\n" +
+	"\x12enable_cayo_perico\x18\x01 \x01(\bR\x10enableCayoPerico*\xde\x01\n" +
 	"\x16DiscordBotPresenceType\x12)\n" +
 	"%DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eDISCORD_BOT_PRESENCE_TYPE_GAME\x10\x01\x12'\n" +
@@ -2206,7 +2291,7 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\x1fDISCORD_BOT_PRESENCE_TYPE_WATCH\x10\x04BOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
 
 var file_resources_settings_config_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_settings_config_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_resources_settings_config_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_resources_settings_config_proto_goTypes = []any{
 	(DiscordBotPresenceType)(0),                // 0: resources.settings.DiscordBotPresenceType
 	(*AppConfig)(nil),                          // 1: resources.settings.AppConfig
@@ -2226,9 +2311,10 @@ var file_resources_settings_config_proto_goTypes = []any{
 	(*PenaltyCalculator)(nil),                  // 15: resources.settings.PenaltyCalculator
 	(*PenaltyCalculatorDetentionTimeUnit)(nil), // 16: resources.settings.PenaltyCalculatorDetentionTimeUnit
 	(*PenaltyCalculatorWarn)(nil),              // 17: resources.settings.PenaltyCalculatorWarn
-	(*Data)(nil),                               // 18: resources.settings.Data
-	(*durationpb.Duration)(nil),                // 19: google.protobuf.Duration
-	(*BannerMessage)(nil),                      // 20: resources.settings.BannerMessage
+	(*Livemap)(nil),                            // 18: resources.settings.Livemap
+	(*Data)(nil),                               // 19: resources.settings.Data
+	(*durationpb.Duration)(nil),                // 20: google.protobuf.Duration
+	(*BannerMessage)(nil),                      // 21: resources.settings.BannerMessage
 }
 var file_resources_settings_config_proto_depIdxs = []int32{
 	2,  // 0: resources.settings.AppConfig.auth:type_name -> resources.settings.Auth
@@ -2240,24 +2326,25 @@ var file_resources_settings_config_proto_depIdxs = []int32{
 	12, // 6: resources.settings.AppConfig.system:type_name -> resources.settings.System
 	13, // 7: resources.settings.AppConfig.display:type_name -> resources.settings.Display
 	14, // 8: resources.settings.AppConfig.quick_buttons:type_name -> resources.settings.QuickButtons
-	18, // 9: resources.settings.AppConfig.data:type_name -> resources.settings.Data
-	4,  // 10: resources.settings.Perms.default:type_name -> resources.settings.Perm
-	6,  // 11: resources.settings.Website.links:type_name -> resources.settings.Links
-	8,  // 12: resources.settings.JobInfo.unemployed_job:type_name -> resources.settings.UnemployedJob
-	19, // 13: resources.settings.UserTracker.refresh_time:type_name -> google.protobuf.Duration
-	19, // 14: resources.settings.UserTracker.db_refresh_time:type_name -> google.protobuf.Duration
-	19, // 15: resources.settings.Discord.sync_interval:type_name -> google.protobuf.Duration
-	11, // 16: resources.settings.Discord.bot_presence:type_name -> resources.settings.DiscordBotPresence
-	0,  // 17: resources.settings.DiscordBotPresence.type:type_name -> resources.settings.DiscordBotPresenceType
-	20, // 18: resources.settings.System.banner_message:type_name -> resources.settings.BannerMessage
-	15, // 19: resources.settings.QuickButtons.penalty_calculator:type_name -> resources.settings.PenaltyCalculator
-	16, // 20: resources.settings.PenaltyCalculator.detention_time_unit:type_name -> resources.settings.PenaltyCalculatorDetentionTimeUnit
-	17, // 21: resources.settings.PenaltyCalculator.warn_settings:type_name -> resources.settings.PenaltyCalculatorWarn
-	22, // [22:22] is the sub-list for method output_type
-	22, // [22:22] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	19, // 9: resources.settings.AppConfig.data:type_name -> resources.settings.Data
+	18, // 10: resources.settings.AppConfig.livemap:type_name -> resources.settings.Livemap
+	4,  // 11: resources.settings.Perms.default:type_name -> resources.settings.Perm
+	6,  // 12: resources.settings.Website.links:type_name -> resources.settings.Links
+	8,  // 13: resources.settings.JobInfo.unemployed_job:type_name -> resources.settings.UnemployedJob
+	20, // 14: resources.settings.UserTracker.refresh_time:type_name -> google.protobuf.Duration
+	20, // 15: resources.settings.UserTracker.db_refresh_time:type_name -> google.protobuf.Duration
+	20, // 16: resources.settings.Discord.sync_interval:type_name -> google.protobuf.Duration
+	11, // 17: resources.settings.Discord.bot_presence:type_name -> resources.settings.DiscordBotPresence
+	0,  // 18: resources.settings.DiscordBotPresence.type:type_name -> resources.settings.DiscordBotPresenceType
+	21, // 19: resources.settings.System.banner_message:type_name -> resources.settings.BannerMessage
+	15, // 20: resources.settings.QuickButtons.penalty_calculator:type_name -> resources.settings.PenaltyCalculator
+	16, // 21: resources.settings.PenaltyCalculator.detention_time_unit:type_name -> resources.settings.PenaltyCalculatorDetentionTimeUnit
+	17, // 22: resources.settings.PenaltyCalculator.warn_settings:type_name -> resources.settings.PenaltyCalculatorWarn
+	23, // [23:23] is the sub-list for method output_type
+	23, // [23:23] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_resources_settings_config_proto_init() }
@@ -2281,7 +2368,7 @@ func file_resources_settings_config_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_settings_config_proto_rawDesc), len(file_resources_settings_config_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   17,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

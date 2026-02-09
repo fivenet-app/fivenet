@@ -1670,6 +1670,11 @@
                             }
                         }
                     }
+                },
+                "livemap": {
+                    "title": "Livemap",
+                    "description": "Settings for the livemap.",
+                    "enable_cayo_perico": "Enable Cayo Perico Island on the livemap"
                 }
             },
             "accounts": {

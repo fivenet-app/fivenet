@@ -1239,7 +1239,7 @@ export const ChooseCharacterResponse = new ChooseCharacterResponse$Type();
 class ImpersonateJobRequest$Type extends MessageType<ImpersonateJobRequest> {
     constructor() {
         super("services.auth.ImpersonateJobRequest", [
-            { no: 1, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } }
+            { no: 1, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: -1 } } } }
         ]);
     }
     create(value?: PartialMessage<ImpersonateJobRequest>): ImpersonateJobRequest {
