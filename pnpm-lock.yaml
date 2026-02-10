@@ -16,8 +16,8 @@ importers:
   .:
     dependencies:
       '@galexrt/nuxt-update':
-        specifier: 1.5.0
-        version: 1.5.0(magicast@0.5.1)
+        specifier: 2.1.0
+        version: 2.1.0(magicast@0.5.1)
       '@iconify-json/flagpack':
         specifier: 1.2.7
         version: 1.2.7
@@ -1414,8 +1414,8 @@ packages:
   '@floating-ui/vue@1.1.9':
     resolution: {integrity: sha512-BfNqNW6KA83Nexspgb9DZuz578R7HT8MZw1CfK9I6Ah4QReNWEJsXWHN+SdmOVLNGmTPDi+fDT535Df5PzMLbQ==}
 
-  '@galexrt/nuxt-update@1.5.0':
-    resolution: {integrity: sha512-z2VAtkBNIfNB1pTwp195S35hLqO+CkoSyiErGPSyBtpL/H5hQBMOf1UxCHS6jZAKkuJblOWN5AfIv6eadT/1og==}
+  '@galexrt/nuxt-update@2.1.0':
+    resolution: {integrity: sha512-quWfpOL+MVmoCb4SxTmiuo1lSYf8i6ddRV64OTwRD20sbbZVQ7HV37gcGJ/nlklQeReYN+ZdNUkYfGqg/Nkn4w==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -5883,6 +5883,7 @@ packages:
 
   glob@10.5.0:
     resolution: {integrity: sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg==}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   glob@13.0.0:
@@ -5892,7 +5893,7 @@ packages:
   glob@8.1.0:
     resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
     engines: {node: '>=12'}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   global-directory@4.0.1:
     resolution: {integrity: sha512-wHTUcDUoZ1H5/0iVqEudYW4/kAlN5cZ3j/bXn0Dpbizl9iaUVeWSHqiOjsgk6OW2bkLclbBjzewBz6weQ1zA2Q==}
@@ -8512,6 +8513,7 @@ packages:
   tar@7.5.2:
     resolution: {integrity: sha512-7NyxrTE4Anh8km8iEy7o0QYPs+0JKBTj5ZaqHg6B39erLg0qYXN3BijtShwbsNSvQ+LN75+KV+C4QR/f6Gwnpg==}
     engines: {node: '>=18'}
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   terser@5.46.0:
     resolution: {integrity: sha512-jTwoImyr/QbOWFFso3YoU3ik0jBBDJ6JTOQiy/J2YxVJdZCc+5u7skhNwiOR3FQIygFqVUPHl7qbbxtjW2K3Qg==}
@@ -10431,11 +10433,9 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
-  '@galexrt/nuxt-update@1.5.0(magicast@0.5.1)':
+  '@galexrt/nuxt-update@2.1.0(magicast@0.5.1)':
     dependencies:
       '@nuxt/kit': 4.2.2(magicast@0.5.1)
-      defu: 6.1.4
-      mitt: 3.0.1
     transitivePeerDependencies:
       - magicast
 
