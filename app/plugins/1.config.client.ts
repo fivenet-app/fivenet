@@ -36,6 +36,7 @@ export default defineNuxtPlugin({
     name: 'config',
     parallel: false,
     enforce: 'post',
+
     async setup(nuxtApp) {
         nuxtApp.provide('appConfigPromise', appConfigPromise);
 

@@ -1,4 +1,7 @@
 export default defineNuxtPlugin({
+    name: 'polyfills',
+    enforce: 'pre',
+
     async setup() {
         if (!import.meta.client) return;
 

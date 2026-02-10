@@ -3631,9 +3631,9 @@
             "have_full": "{origin} muss {comparator} {minimum} {unit} {verb}",
             "be_full": "{origin} muss {comparator} {minimum} sein"
         },
-        "starts_with": "Ungültige Zeichenkette: muss mit „{prefix}“ beginnen",
-        "ends_with": "Ungültige Zeichenkette: muss mit „{suffix}“ enden",
-        "includes": "Ungültige Zeichenkette: muss „{includes}“ enthalten",
+        "starts_with": "Ungültige Zeichenkette: muss mit \"{prefix}\" beginnen",
+        "ends_with": "Ungültige Zeichenkette: muss mit \"{suffix}\" enden",
+        "includes": "Ungültige Zeichenkette: muss \"{includes}\" enthalten",
         "regex": "Ungültige Zeichenkette: Muster {pattern} erforderlich",
         "invalid_format_noun": "Ungültige(r/s) {noun}",
         "not_multiple_of": "Ungültige Zahl: muss ein Vielfaches von {divisor} sein",

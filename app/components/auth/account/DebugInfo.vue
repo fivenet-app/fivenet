@@ -17,8 +17,11 @@ const searchesStore = useSearchesStore();
 const settingsStore = useSettingsStore();
 
 const authStore = useAuthStore();
-const { activeChar, sessionExpiration, attributes, permissions } = storeToRefs(authStore);
+const { activeChar, attributes, permissions } = storeToRefs(authStore);
 const { clearAuthInfo } = authStore;
+
+const authSessionStore = useAuthSessionStore();
+const { userInfo } = storeToRefs(authSessionStore);
 
 const notifications = useNotificationsStore();
 
@@ -134,13 +137,13 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
         </UFormField>
 
         <UFormField
-            v-if="sessionExpiration"
+            v-if="userInfo"
             class="grid grid-cols-2 items-center gap-2"
             name="sessionExpiration"
             :label="$t('components.debug_info.access_token_expiration')"
         >
-            <GenericTime :value="sessionExpiration" ago />
-            (<GenericTime :value="sessionExpiration" type="long" />)
+            <GenericTime :value="userInfo.expiration" ago />
+            (<GenericTime :value="userInfo.expiration" type="long" />)
         </UFormField>
 
         <UFormField class="grid grid-cols-2 items-center gap-2" name="status" :label="$t('common.websocket')">

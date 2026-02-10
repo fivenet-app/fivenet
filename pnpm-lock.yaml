@@ -16,8 +16,8 @@ importers:
   .:
     dependencies:
       '@galexrt/nuxt-update':
-        specifier: 1.5.0
-        version: 1.5.0(magicast@0.5.1)
+        specifier: 2.0.4
+        version: 2.0.4(magicast@0.5.1)
       '@iconify-json/flagpack':
         specifier: 1.2.7
         version: 1.2.7
@@ -1597,8 +1597,8 @@ packages:
   '@floating-ui/vue@1.1.9':
     resolution: {integrity: sha512-BfNqNW6KA83Nexspgb9DZuz578R7HT8MZw1CfK9I6Ah4QReNWEJsXWHN+SdmOVLNGmTPDi+fDT535Df5PzMLbQ==}
 
-  '@galexrt/nuxt-update@1.5.0':
-    resolution: {integrity: sha512-z2VAtkBNIfNB1pTwp195S35hLqO+CkoSyiErGPSyBtpL/H5hQBMOf1UxCHS6jZAKkuJblOWN5AfIv6eadT/1og==}
+  '@galexrt/nuxt-update@2.0.4':
+    resolution: {integrity: sha512-UW3gzIS5GYdLl3+PxSuXsa1t0LvAmOYqHFOyMrPW8TQLESpgGVPII7Ic4OqQHQCcqqxo7TifRiHOKCPJJAawXw==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -11115,11 +11115,9 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
-  '@galexrt/nuxt-update@1.5.0(magicast@0.5.1)':
+  '@galexrt/nuxt-update@2.0.4(magicast@0.5.1)':
     dependencies:
       '@nuxt/kit': 4.3.0(magicast@0.5.1)
-      defu: 6.1.4
-      mitt: 3.0.1
     transitivePeerDependencies:
       - magicast
 

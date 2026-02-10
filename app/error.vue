@@ -63,7 +63,13 @@ const isDev = import.meta.dev;
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #d72638 0%, #ac1e2d 50%, #d72638 100%)" />
 
         <div class="flex h-full flex-col items-center justify-center">
-            <UButton class="absolute top-4 z-10" icon="i-mdi-home" :label="$t('common.home')" to="/" color="neutral" />
+            <UButton
+                class="absolute top-4 z-10"
+                icon="i-mdi-home"
+                :label="$t !== undefined ? $t('common.home') : 'Home'"
+                to="/"
+                color="neutral"
+            />
 
             <UCard class="w-full max-w-md bg-white/75 backdrop-blur-sm dark:bg-white/5">
                 <template #header>
@@ -136,10 +142,9 @@ const isDev = import.meta.dev;
                                 block
                                 size="lg"
                                 :disabled="buttonDisabled"
+                                :label="$t !== undefined ? $t('common.home') : 'Home'"
                                 @click="() => handleError()"
-                            >
-                                {{ $t('common.home') }}
-                            </UButton>
+                            />
 
                             <UButton
                                 class="flex-1"
@@ -147,10 +152,9 @@ const isDev = import.meta.dev;
                                 size="lg"
                                 color="green"
                                 :disabled="buttonDisabled"
+                                :label="$t !== undefined ? $t('common.retry') : 'Retry'"
                                 @click="() => handleError(route.fullPath)"
-                            >
-                                {{ $t('common.retry') }}
-                            </UButton>
+                            />
 
                             <!-- @vue-ignore -->
                             <UButton
@@ -159,10 +163,9 @@ const isDev = import.meta.dev;
                                 block
                                 size="lg"
                                 color="warning"
+                                :label="$t !== undefined ? $t('pages.error.copy_error') : 'Copy Error message'"
                                 @click="() => copyError()"
-                            >
-                                {{ $t !== undefined ? $t('pages.error.copy_error') : 'Copy Error message' }}
-                            </UButton>
+                            />
                         </div>
 
                         <UButton v-if="isDev" @click="() => setDevConfig()"> Set Dev App Config </UButton>
