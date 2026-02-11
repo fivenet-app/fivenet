@@ -326,10 +326,6 @@ export enum DocActivityType {
      */
     REQUESTED_APPROVAL = 20,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_SIGNING = 21;
-     */
-    REQUESTED_SIGNING = 21,
-    /**
      * Approval
      *
      * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_APPROVAL_ASSIGNED = 40;

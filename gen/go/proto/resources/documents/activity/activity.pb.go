@@ -56,7 +56,6 @@ const (
 	DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE DocActivityType = 17
 	DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_DELETION     DocActivityType = 18
 	DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_APPROVAL     DocActivityType = 20
-	DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_SIGNING      DocActivityType = 21
 	// Approval
 	DocActivityType_DOC_ACTIVITY_TYPE_APPROVAL_ASSIGNED DocActivityType = 40
 	DocActivityType_DOC_ACTIVITY_TYPE_APPROVAL_APPROVED DocActivityType = 41
@@ -89,7 +88,6 @@ var (
 		17: "DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE",
 		18: "DOC_ACTIVITY_TYPE_REQUESTED_DELETION",
 		20: "DOC_ACTIVITY_TYPE_REQUESTED_APPROVAL",
-		21: "DOC_ACTIVITY_TYPE_REQUESTED_SIGNING",
 		40: "DOC_ACTIVITY_TYPE_APPROVAL_ASSIGNED",
 		41: "DOC_ACTIVITY_TYPE_APPROVAL_APPROVED",
 		42: "DOC_ACTIVITY_TYPE_APPROVAL_REJECTED",
@@ -118,7 +116,6 @@ var (
 		"DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE": 17,
 		"DOC_ACTIVITY_TYPE_REQUESTED_DELETION":     18,
 		"DOC_ACTIVITY_TYPE_REQUESTED_APPROVAL":     20,
-		"DOC_ACTIVITY_TYPE_REQUESTED_SIGNING":      21,
 		"DOC_ACTIVITY_TYPE_APPROVAL_ASSIGNED":      40,
 		"DOC_ACTIVITY_TYPE_APPROVAL_APPROVED":      41,
 		"DOC_ACTIVITY_TYPE_APPROVAL_REJECTED":      42,
@@ -1564,7 +1561,7 @@ const file_resources_documents_activity_activity_proto_rawDesc = "" +
 	"\x13DocSigningRequested\x12?\n" +
 	"\bdeadline\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\bdeadline\x88\x01\x01\x12>\n" +
 	"\tapprovers\x18\x02 \x03(\v2 .resources.users.short.UserShortR\tapproversB\v\n" +
-	"\t_deadline*\xa7\b\n" +
+	"\t_deadline*\x84\b\n" +
 	"\x0fDocActivityType\x12!\n" +
 	"\x1dDOC_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19DOC_ACTIVITY_TYPE_CREATED\x10\x01\x12!\n" +
@@ -1588,12 +1585,11 @@ const file_resources_documents_activity_activity_proto_rawDesc = "" +
 	"(DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE\x10\x11\x12(\n" +
 	"$DOC_ACTIVITY_TYPE_REQUESTED_DELETION\x10\x12\x12(\n" +
 	"$DOC_ACTIVITY_TYPE_REQUESTED_APPROVAL\x10\x14\x12'\n" +
-	"#DOC_ACTIVITY_TYPE_REQUESTED_SIGNING\x10\x15\x12'\n" +
 	"#DOC_ACTIVITY_TYPE_APPROVAL_ASSIGNED\x10(\x12'\n" +
 	"#DOC_ACTIVITY_TYPE_APPROVAL_APPROVED\x10)\x12'\n" +
 	"#DOC_ACTIVITY_TYPE_APPROVAL_REJECTED\x10*\x12&\n" +
 	"\"DOC_ACTIVITY_TYPE_APPROVAL_REVOKED\x10+\x12&\n" +
-	"\"DOC_ACTIVITY_TYPE_APPROVAL_REMOVED\x10,BbZ`github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity;documentsactivityb\x06proto3"
+	"\"DOC_ACTIVITY_TYPE_APPROVAL_REMOVED\x10,\"\x04\b\x15\x10\x15BbZ`github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity;documentsactivityb\x06proto3"
 
 var file_resources_documents_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_documents_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
