@@ -18,6 +18,7 @@ import { TimeclockMode, TimeclockViewMode } from '~~/gen/ts/resources/jobs/timec
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 import ColleagueName from '../colleagues/ColleagueName.vue';
+import TimeclockStatsDrawer from './TimeclockStatsDrawer.vue';
 import TimeclockTimeline from './TimeclockTimeline.vue';
 
 const props = withDefaults(
@@ -617,27 +618,13 @@ const { game } = useAppConfig();
                                     :ui="{ leadingIcon: 'hidden sm:block' }"
                                 />
 
-                                <UDrawer>
-                                    <UButton
-                                        :label="$t('common.stats')"
-                                        color="neutral"
-                                        variant="subtle"
-                                        icon="i-mdi-graph-line"
-                                        :ui="{ leadingIcon: 'hidden sm:block' }"
-                                    />
-
-                                    <template #content>
-                                        <div class="p-4">
-                                            <LazyJobsTimeclockStatsBlock
-                                                :weekly="data?.statsWeekly"
-                                                :stats="data?.stats"
-                                                hide-header
-                                                :failed="!!error"
-                                                :loading="isRequestPending(status)"
-                                            />
-                                        </div>
-                                    </template>
-                                </UDrawer>
+                                <TimeclockStatsDrawer
+                                    :stats="data?.stats"
+                                    :weekly="data?.statsWeekly"
+                                    hide-header
+                                    :error="error"
+                                    :loading="isRequestPending(status)"
+                                />
                             </UFieldGroup>
                         </div>
 

@@ -222,9 +222,12 @@ const { game } = useAppConfig();
                         </UFormField>
 
                         <UFormField v-if="can('jobs.TimeclockService/ListTimeclock').value" label="&nbsp;">
-                            <UButton to="/jobs/timeclock" icon="i-mdi-arrow-left">
-                                {{ $t('common.timeclock') }}
-                            </UButton>
+                            <UButton
+                                to="/jobs/timeclock"
+                                icon="i-mdi-arrow-left"
+                                variant="subtle"
+                                :label="$t('common.timeclock')"
+                            />
                         </UFormField>
                     </UForm>
                 </template>
