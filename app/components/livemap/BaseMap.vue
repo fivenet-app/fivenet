@@ -275,14 +275,17 @@ async function onMapReady(m: Map): Promise<void> {
         map.eachLayer((layer) => {
             const name = (layer.options as { name?: string })['name'];
             if (name === undefined) return;
-            if (!livemapLayers.value.find((l) => l.key === name)?.visible) {
-                hiddenCount++;
-                return;
-            }
+            const hidden = !livemapLayers.value.find((l) => l.key === name)?.visible;
 
             eachMarkerIn(layer, (m) => {
                 const pos = map.latLngToContainerPoint(m.getLatLng());
-                if (pos.distanceTo(px) <= radiusPx && !hits.find((hit) => stamp(hit) === stamp(m))) hits.push(m);
+                if (pos.distanceTo(px) > radiusPx || hits.find((hit) => stamp(hit) === stamp(m))) return;
+
+                if (hidden) {
+                    hiddenCount++;
+                } else {
+                    hits.push(m);
+                }
             });
         });
         return { hits: hits, hiddenCount: hiddenCount };
