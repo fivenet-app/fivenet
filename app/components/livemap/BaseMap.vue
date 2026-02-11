@@ -23,7 +23,7 @@ import 'leaflet.heat';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
 import { simpleGraticule } from '~/composables/leaflet/L.SimpleGraticule';
 import { useLivemapStore } from '~/stores/livemap';
-import { backgroundColorList, tileLayers } from '~/types/livemap';
+import { backgroundColorList, overlayCayoPericoBounds, tileLayers } from '~/types/livemap';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
@@ -382,16 +382,13 @@ onBeforeUnmount(() => (map = undefined));
                 :visible="livemapTileLayer === layer.key"
                 :min-zoom="1"
                 :max-zoom="layer.options?.maxZoom || 7"
-                :attribution="layer.options?.attribution || ''"
+                :attribution="layer.options?.attribution || undefined"
             />
 
             <LImageOverlay
                 v-if="game.livemap?.enableCayoPerico"
                 :url="`/images/livemap/overlays/cayo-perico/${livemapTileLayer}.webp`"
-                :bounds="[
-                    [-6144.05, 3666.78],
-                    [-4144.05, 5723.78],
-                ]"
+                :bounds="overlayCayoPericoBounds"
             />
 
             <ZoomControls />

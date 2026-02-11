@@ -1,3 +1,5 @@
+import type { LatLngBoundsExpression } from 'leaflet';
+
 export const backgroundColorList = {
     postal: '#74aace',
     satelite: '#133e6b',
@@ -29,3 +31,8 @@ export type Postal = {
     y: number;
     code: string;
 };
+
+export const overlayCayoPericoBounds: LatLngBoundsExpression = [
+    [-6144.05, 3666.78],
+    [-4144.05, 5723.78],
+] as const;

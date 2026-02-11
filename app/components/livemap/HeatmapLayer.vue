@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type * as L from 'leaflet';
+import type { HeatLayer } from 'leaflet';
 import HeatmapLegend from '~/components/livemap/controls/HeatmapLegend.vue';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { GetDispatchHeatmapResponse } from '~~/gen/ts/services/centrum/centrum';
@@ -35,7 +35,7 @@ async function getDispatchHeatmap(): Promise<GetDispatchHeatmapResponse> {
     }
 }
 
-const heat = inject<Ref<L.HeatLayer | undefined>>('heat');
+const heat = inject<Ref<HeatLayer | undefined>>('heat');
 
 async function handleProps(show: boolean): Promise<void> {
     if (show) {
