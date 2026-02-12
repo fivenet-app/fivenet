@@ -29,7 +29,7 @@ destination:
   # Disable TLS verification (not recommended)
   insecure: false
   # Sync Interval can also be specified per table in the `tables:` section
-  syncInterval: 5s
+  syncInterval: 3s
 
 # Your gameservers' database details
 # Changes to the source require a restart of the dbsync.
@@ -179,9 +179,7 @@ tables:
     # Optional columns: `user.phone_number`, `user.height`, `user.visum`, `user.playtime`
     #
     # For advanced users: If an user can has more than one job (e.g., a main job and a secondary job),
-    # you can instead of `user.job` and `user.job_grade`, return multiple rows per user with the job data
-    # in the columns `user_job.job`, `user_job.job_grade` and `user_job.is_primary` (boolean column to
-    # indicate the primary job, if multiple jobs are returned).
+    # you should use the `userJobs:` section to query the job(s) of the users instead of returning multiple rows per user in this query, to prevent data duplication and potential performance issues.
     #
     # If an user can has multiple phone numbers, you can return multiple rows per user with the phone number
     # data in the columns `user_phone_number.number` and `user_phone_number.is_primary` (boolean column
@@ -263,6 +261,29 @@ tables:
     #  LIMIT $limit
     #  OFFSET $offset;
 
+  # Jobs of a user (if your users can have multiple jobs, e.g., a main job and a secondary job, it is recommended to enable and use this
+  # and return the jobs in a separate query to prevent data duplication and potential performance issues,
+  # otherwise you can also return the job data in the main users query)
+  userJobs:
+    enabled: false
+    # Custom query to retrieve the jobs for a **specific** user, the `$userId` and `$identifier`
+    # parameters are the placeholder for the user's user id/identifier.
+    #
+    # Must return result columns named: `user_job.job`, `user_job.grade`
+    # Optional but recommended: `user_job.is_primary` (boolean column to indicate the primary job,
+    # if multiple jobs are returned, otherwise the first is set as primary)
+    #query: |
+    #  SELECT
+    #    `job_name` AS `user_job.job_name`,
+    #    `job_grade` AS `user_job.job_grade`
+    #  FROM
+    #    `user_jobs`
+    #  WHERE
+    #    `user_jobs`.`owner` = $identifier
+    #  ORDER BY `owner`
+    #  LIMIT $limit
+    #  OFFSET $offset;
+
   # Vehicles owned by users
   vehicles:
     enabled: true
@@ -333,6 +354,6 @@ tableManager:
 limits:
   jobs: 200
   licenses: 200
-  users: 300
+  users: 150
   vehicles: 500
   accounts: 100

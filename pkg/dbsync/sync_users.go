@@ -37,7 +37,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
-	limit := int64(200)
+	limit := int64(150)
 	offset := s.getInitialOffset()
 	s.logger.Debug("usersSync", zap.Int64("offset", offset))
 
@@ -65,11 +65,14 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		return err
 	}
 
-	s.applyFiltersAndTransformations(us, sQuery)
-
 	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
 		return err
 	}
+	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
+		return err
+	}
+
+	s.applyFiltersAndTransformations(us, sQuery)
 
 	if err := s.sendData(ctx, &pbsync.SendDataRequest{
 		Data: &pbsync.SendDataRequest_Users{
@@ -159,51 +162,54 @@ func (s *usersSync) applyFiltersAndTransformations(
 
 		s.splitNamesIfRequired(us[i])
 		s.parseDateOfBirth(us[i])
-
-		if len(us[i].Jobs) == 0 {
-			// If no jobs are set, create one from the user job field
-			us[i].Jobs = []*users.UserJob{
-				{
-					Job:       us[i].GetJob(),
-					Grade:     us[i].GetJobGrade(),
-					IsPrimary: true,
-				},
-			}
-		} else {
-			// Sort the user's jobs by is primary and then alphabetically to ensure consistent order
-			slices.SortFunc(us[i].GetJobs(), func(a *users.UserJob, b *users.UserJob) int {
-				if a.GetIsPrimary() && !b.GetIsPrimary() {
-					return -1
-				}
-				if !a.GetIsPrimary() && b.GetIsPrimary() {
-					return 1
-				}
-				return strings.Compare(a.GetJob(), b.GetJob())
-			})
-
-			foundPrimary := false
-			primaryJob := us[i].GetJob()
-			for _, job := range us[i].GetJobs() {
-				if job.GetJob() == primaryJob {
-					// Make sure the "primary" job (user's job field if set) is marked as primary
-					foundPrimary = true
-					job.IsPrimary = true
-				} else {
-					job.IsPrimary = false
-				}
-			}
-
-			// If not ensure user has at least one primary job set
-			if !foundPrimary {
-				us[i].Jobs[0].IsPrimary = true
-			}
-		}
+		s.cleanupUserJob(us[i])
 	}
 
 	if foundNullUserId {
 		s.logger.Warn(
 			"some queried users have null or zero id, which have been skipped during processing",
 		)
+	}
+}
+
+func (s *usersSync) cleanupUserJob(user *syncdata.DataUser) {
+	if len(user.Jobs) == 0 {
+		// If no jobs are set, create one from the user job field
+		user.Jobs = []*users.UserJob{
+			{
+				Job:       user.GetJob(),
+				Grade:     user.GetJobGrade(),
+				IsPrimary: true,
+			},
+		}
+	} else {
+		// Sort the user's jobs by is primary and then alphabetically to ensure consistent order
+		slices.SortFunc(user.GetJobs(), func(a *users.UserJob, b *users.UserJob) int {
+			if a.GetIsPrimary() && !b.GetIsPrimary() {
+				return -1
+			}
+			if !a.GetIsPrimary() && b.GetIsPrimary() {
+				return 1
+			}
+			return strings.Compare(a.GetJob(), b.GetJob())
+		})
+
+		foundPrimary := false
+		primaryJob := user.GetJob()
+		for _, job := range user.GetJobs() {
+			if job.GetJob() == primaryJob {
+				// Make sure the "primary" job (user's job field if set) is marked as primary
+				foundPrimary = true
+				job.IsPrimary = true
+			} else {
+				job.IsPrimary = false
+			}
+		}
+
+		// If not ensure user has at least one primary job set
+		if !foundPrimary {
+			user.Jobs[0].IsPrimary = true
+		}
 	}
 }
 
@@ -302,6 +308,56 @@ func (s *usersSync) retrieveLicenses(
 	return licenses, nil
 }
 
+func (s *usersSync) retrieveAndAttachJobs(ctx context.Context, us []*syncdata.DataUser) error {
+	if !s.cfg.Tables.UserJobs.Enabled {
+		return nil
+	}
+
+	errs := multierr.Combine()
+	for k := range us {
+		jobs, err := s.retrieveJobs(ctx, us[k].GetUserId(), us[k].GetIdentifier())
+		if err != nil {
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf(
+					"failed to retrieve users %d (%s) jobs. %w",
+					us[k].GetUserId(),
+					us[k].GetIdentifier(),
+					err,
+				),
+			)
+		}
+		us[k].Jobs = jobs
+	}
+
+	return errs
+}
+
+func (s *usersSync) retrieveJobs(
+	ctx context.Context,
+	userId int32,
+	identifier string,
+) ([]*users.UserJob, error) {
+	q := s.cfg.Tables.UserJobs.GetQuery(s.state, 0, 100)
+	s.logger.Debug("users jobs sync query", zap.String("query", q))
+
+	args := []any{}
+	if strings.Contains(q, "$userId") {
+		q = strings.ReplaceAll(q, "$userId", strconv.FormatInt(int64(userId), 10))
+		args = append(args, userId)
+	} else if strings.Contains(q, "$identifier") {
+		q = strings.ReplaceAll(q, "$identifier", identifier)
+		args = append(args, identifier)
+	}
+
+	jobs := []*users.UserJob{}
+	if _, err := qrm.Query(ctx, s.db, q, args, &jobs); err != nil {
+		return nil, err
+	}
+
+	return jobs, nil
+}
+
 // Sync an individual user's info.
 func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 	wheres := []string{}
@@ -316,25 +372,16 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 		return err
 	}
 
-	if s.cfg.Tables.UserLicenses.Enabled {
-		// Retrieve user's licenses
-		var err error
-		user.Licenses, err = s.retrieveLicenses(ctx, user.GetUserId(), user.GetIdentifier())
-		if err != nil {
-			return err
-		}
+	if err := s.retrieveAndAttachLicenses(ctx, []*syncdata.DataUser{user}); err != nil {
+		return err
+	}
+	if err := s.retrieveAndAttachJobs(ctx, []*syncdata.DataUser{user}); err != nil {
+		return err
 	}
 
-	// Split names if only one field is used by the framework
-	if s.cfg.Tables.Users.SplitName {
-		if user.GetLastname() == "" {
-			ss := strings.Split(user.GetFirstname(), " ")
-			lastname := ss[len(ss)-1]
-			user.Lastname = &lastname
-
-			user.Firstname = strings.Replace(user.GetFirstname(), " "+user.GetLastname(), "", 1)
-		}
-	}
+	s.splitNamesIfRequired(user)
+	s.parseDateOfBirth(user)
+	s.cleanupUserJob(user)
 
 	if s.cli != nil {
 		if err := s.sendData(ctx, &pbsync.SendDataRequest{

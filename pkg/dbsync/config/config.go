@@ -228,6 +228,7 @@ type DBSyncSourceTables struct {
 
 	Users        UsersTable        `yaml:"users"`
 	UserLicenses UserLicensesTable `yaml:"userLicenses"`
+	UserJobs     UserJobsTable     `yaml:"userJobs"`
 
 	Vehicles VehiclesTable `yaml:"vehicles"`
 
@@ -519,6 +520,19 @@ type UserLicensesColumns struct {
 	OwnerIdentifier string `yaml:"ownerIdentifier" default:"owner"`
 }
 
+type UserJobsTable struct {
+	DBSyncTable `yaml:",inline" mapstructure:",squash"`
+}
+
+func (c *UserJobsTable) GetQuery(
+	state *TableSyncState,
+	offset int64,
+	limit int64,
+	where ...string,
+) string {
+	return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+}
+
 type VehiclesTable struct {
 	DBSyncTable `yaml:",inline" mapstructure:",squash"`
 
@@ -616,7 +630,7 @@ type SyncLimits struct {
 	Jobs     int64 `default:"200" yaml:"jobs"     validate:"omitempty,gte=1,lte=200"`
 	Licenses int64 `default:"200" yaml:"licenses" validate:"omitempty,gte=1,lte=200"`
 
-	Users int64 `default:"300" yaml:"users" validate:"omitempty,gte=1,lte=300"`
+	Users int64 `default:"150" yaml:"users" validate:"omitempty,gte=1,lte=300"`
 
 	Vehicles int64 `default:"500" yaml:"vehicles" validate:"omitempty,gte=1,lte=500"`
 
