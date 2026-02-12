@@ -10,11 +10,11 @@ describe('parseJWTPayload', () => {
 
     it('should throw an error for an invalid JWT token', async () => {
         const token = 'invalid.token';
-        await expect(parseJWTPayload(token)).rejects.toThrow('Invalid JWT token');
+        expect(() => parseJWTPayload(token)).toThrow('Invalid JWT token');
     });
 
     it('should throw an error for a malformed payload', async () => {
         const token = `${btoa('header')}.invalidPayload.signature`;
-        await expect(parseJWTPayload(token)).rejects.toThrow();
+        expect(() => parseJWTPayload(token)).toThrow();
     });
 });
