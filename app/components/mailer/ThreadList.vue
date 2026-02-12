@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { isToday } from 'date-fns';
-import type { Thread } from '~~/gen/ts/resources/mailer/thread';
+import type { Thread } from '~~/gen/ts/resources/mailer/threads/thread';
 
 const props = withDefaults(
     defineProps<{

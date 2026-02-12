@@ -3,7 +3,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getVehiclesVehiclesClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { VehicleProps } from '~~/gen/ts/resources/vehicles/props';
+import type { VehicleProps } from '~~/gen/ts/resources/vehicles/props/props';
 
 const props = defineProps<{
     plate: string;

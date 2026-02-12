@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus';
-import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
+import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam/exam';
 
 defineProps<{
     disabled?: boolean;

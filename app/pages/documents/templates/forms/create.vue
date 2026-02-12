@@ -10,8 +10,10 @@ definePageMeta({
     requiresAuth: true,
     permission: 'TODOService/TODOMethod',
 });
+
+const svgData = ref<string>('');
 </script>
 
 <template>
-    <EditorContainer />
+    <EditorContainer v-model="svgData" />
 </template>

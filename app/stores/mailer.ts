@@ -1,10 +1,10 @@
 import type { JSONContent } from '@tiptap/core';
 import type { NotificationActionI18n } from '~/types/notifications';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
-import type { Email } from '~~/gen/ts/resources/mailer/email';
-import type { MailerEvent } from '~~/gen/ts/resources/mailer/events';
-import type { Message, MessageAttachment } from '~~/gen/ts/resources/mailer/message';
-import type { Thread, ThreadState } from '~~/gen/ts/resources/mailer/thread';
+import type { Email } from '~~/gen/ts/resources/mailer/emails/email';
+import type { MailerEvent } from '~~/gen/ts/resources/mailer/events/events';
+import type { Message, MessageAttachment } from '~~/gen/ts/resources/mailer/messages/message';
+import type { Thread, ThreadState } from '~~/gen/ts/resources/mailer/threads/thread';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type {
     CreateOrUpdateEmailRequest,

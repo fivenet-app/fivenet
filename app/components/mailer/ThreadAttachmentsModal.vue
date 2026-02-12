@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
+import type { MessageAttachment } from '~~/gen/ts/resources/mailer/messages/message';
 import ThreadAttachmentsForm from './ThreadAttachmentsForm.vue';
 
 defineProps<{

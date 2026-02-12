@@ -4,7 +4,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
-import type { ExamQuestions, ExamUser } from '~~/gen/ts/resources/qualifications/exam';
+import type { ExamQuestions, ExamUser } from '~~/gen/ts/resources/qualifications/exam/exam';
 import type { GetExamInfoResponse, TakeExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import ExamViewQuestions from './ExamViewQuestions.vue';
 

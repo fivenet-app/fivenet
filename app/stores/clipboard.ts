@@ -140,12 +140,15 @@ export function getUser(obj: ClipboardUser): User {
         jobLabel: obj.jobLabel ?? '',
         jobGrade: obj.jobGrade!,
         jobGradeLabel: obj.jobGradeLabel ?? '',
+        jobs: [],
         firstname: obj.firstname!,
         lastname: obj.lastname!,
         dateofbirth: obj.dateofbirth ?? '',
         phoneNumber: obj.phoneNumber ?? '',
+        phoneNumbers: [],
         licenses: [],
         profilePicture: obj.profilePicture,
+        identifier: '',
     };
 
     return u;

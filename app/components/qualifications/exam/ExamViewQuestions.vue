@@ -4,7 +4,7 @@ import { differenceInMinutes, isPast } from 'date-fns';
 import { z } from 'zod';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { ExamQuestions, ExamResponse, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam';
+import type { ExamQuestions, ExamResponse, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam/exam';
 import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { SubmitExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import ExamViewQuestion from './ExamViewQuestion.vue';

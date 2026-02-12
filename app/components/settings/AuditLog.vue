@@ -144,7 +144,7 @@ async function addToClipboard(logEntry: AuditEntry): Promise<void> {
 
 `;
     if (user) {
-        text += `**User**: ${user?.firstname} ${user?.lastname} (ID: ${user?.userId}; ${user?.identifier})
+        text += `**User**: ${user?.firstname} ${user?.lastname} (ID: ${user?.userId})
 `;
     }
     text += `**Service/Method**: \`${logEntry.service}/${logEntry.method}\`

@@ -6,7 +6,7 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
-import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
+import type { MessageAttachment } from '~~/gen/ts/resources/mailer/messages/message';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { defaultEmptyContent } from './helpers';
 import TemplateSelector from './TemplateSelector.vue';

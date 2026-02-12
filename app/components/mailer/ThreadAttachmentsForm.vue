@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
+import type { MessageAttachment } from '~~/gen/ts/resources/mailer/messages/message';
 import type { ListDocumentsRequest } from '~~/gen/ts/services/documents/documents';
 import SelectMenu from '../partials/SelectMenu.vue';
 

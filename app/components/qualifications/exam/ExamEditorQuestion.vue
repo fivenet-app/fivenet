@@ -5,7 +5,7 @@ import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlo
 import { useSettingsStore } from '~/stores/settings';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
-import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
+import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam/exam';
 import QuestionMutipleChoice from './QuestionMutipleChoice.vue';
 import QuestionSingleChoice from './QuestionSingleChoice.vue';
 
