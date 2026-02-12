@@ -228,9 +228,10 @@ type DBSyncSourceTables struct {
 
 	Licenses LicensesTable `yaml:"licenses"`
 
-	Users        UsersTable        `yaml:"users"`
-	UserLicenses UserLicensesTable `yaml:"userLicenses"`
-	UserJobs     UserJobsTable     `yaml:"userJobs"`
+	Users            UsersTable            `yaml:"users"`
+	UserLicenses     UserLicensesTable     `yaml:"userLicenses"`
+	UserJobs         UserJobsTable         `yaml:"userJobs"`
+	UserPhoneNumbers UserPhoneNumbersTable `yaml:"userPhoneNumbers"`
 
 	Vehicles VehiclesTable `yaml:"vehicles"`
 
@@ -528,6 +529,19 @@ type UserJobsTable struct {
 }
 
 func (c *UserJobsTable) GetQuery(
+	state *TableSyncState,
+	offset int64,
+	limit int64,
+	where ...string,
+) string {
+	return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+}
+
+type UserPhoneNumbersTable struct {
+	DBSyncTable `yaml:",inline" mapstructure:",squash"`
+}
+
+func (c *UserPhoneNumbersTable) GetQuery(
 	state *TableSyncState,
 	offset int64,
 	limit int64,

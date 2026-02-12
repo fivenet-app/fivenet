@@ -67,6 +67,9 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
 		return err
 	}
+	if err := s.retrieveAndAttachPhoneNumbers(ctx, us); err != nil {
+		return err
+	}
 
 	s.applyFiltersAndTransformations(us, sQuery)
 
@@ -366,6 +369,65 @@ func (s *usersSync) retrieveJobs(
 	return jobs, nil
 }
 
+func (s *usersSync) retrieveAndAttachPhoneNumbers(
+	ctx context.Context,
+	us []*syncdata.DataUser,
+) error {
+	if !s.cfg.Tables.UserPhoneNumbers.Enabled {
+		return nil
+	}
+
+	errs := multierr.Combine()
+	for k := range us {
+		phoneNumbers, err := s.retrievePhoneNumbers(ctx, us[k].GetUserId(), us[k].GetIdentifier())
+		if err != nil {
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf(
+					"failed to retrieve users %d (%s) jobs. %w",
+					us[k].GetUserId(),
+					us[k].GetIdentifier(),
+					err,
+				),
+			)
+		}
+		us[k].PhoneNumbers = phoneNumbers
+	}
+
+	return errs
+}
+
+func (s *usersSync) retrievePhoneNumbers(
+	ctx context.Context,
+	userId int32,
+	identifier string,
+) ([]*users.PhoneNumber, error) {
+	q := s.cfg.Tables.UserPhoneNumbers.GetQuery(s.state, 0, 10)
+	s.logger.Debug("users jobs sync query", zap.String("query", q))
+
+	args := []any{}
+	if strings.Contains(q, "$userId") {
+		count := strings.Count(q, "$userId")
+		q = strings.ReplaceAll(q, "$userId", "?")
+		for range count {
+			args = append(args, userId)
+		}
+	} else if strings.Contains(q, "$identifier") {
+		count := strings.Count(q, "$identifier")
+		q = strings.ReplaceAll(q, "$identifier", "?")
+		for range count {
+			args = append(args, identifier)
+		}
+	}
+
+	phoneNumbers := []*users.PhoneNumber{}
+	if _, err := qrm.Query(ctx, s.db, q, args, &phoneNumbers); err != nil {
+		return nil, err
+	}
+
+	return phoneNumbers, nil
+}
+
 // Sync an individual user's info.
 func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 	wheres := []string{}
@@ -384,6 +446,9 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 		return err
 	}
 	if err := s.retrieveAndAttachJobs(ctx, []*syncdata.DataUser{user}); err != nil {
+		return err
+	}
+	if err := s.retrieveAndAttachPhoneNumbers(ctx, []*syncdata.DataUser{user}); err != nil {
 		return err
 	}
 
