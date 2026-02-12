@@ -289,6 +289,22 @@ tables:
     #  LIMIT $limit
     #  OFFSET $offset;
 
+  # User Phone Numbers (if your users can have multiple phone numbers,
+  # it is recommended to enable and use this
+  userPhoneNumbers:
+    enabled: false
+    # Custom query to retrieve the phone numbers for a **specific** user, the `$userId` and `$identifier`
+    # parameters are the placeholder for the user's user id/identifier.
+    #
+    # Must return result columns named: `user_phone_number.number`, `user_phone_number.is_primary`
+    query: |
+      SELECT
+        `phone_number` AS `user_phone_number.number`,
+        (ROW_NUMBER() OVER (ORDER BY `is_primary` DESC) = 1) AS `user_phone_number.is_primary`
+      FROM user_phone_numbers
+      WHERE user_phone_numbers.identifier = $identifier
+      ORDER BY `is_primary` DESC, `phone_number`;
+
   # Vehicles owned by users
   vehicles:
     enabled: true
