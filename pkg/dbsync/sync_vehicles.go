@@ -27,10 +27,6 @@ func newVehiclesSync(s *syncer, state *dbsyncconfig.TableSyncState) *vehiclesSyn
 }
 
 func (s *vehiclesSync) Sync(ctx context.Context) error {
-	if !s.cfg.Tables.Vehicles.Enabled {
-		return nil
-	}
-
 	limit := int64(500)
 	var offset int64
 	sOffset := s.state.GetOffset()

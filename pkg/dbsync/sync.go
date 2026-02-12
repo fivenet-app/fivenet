@@ -133,6 +133,8 @@ func (s *Sync) createGRPCClient() error {
 func (s *Sync) start() error {
 	s.logger.Info("starting dbsync process")
 
+	s.ctx, s.cancel = context.WithCancel(context.Background())
+
 	if err := s.createGRPCClient(); err != nil {
 		return err
 	}
@@ -150,12 +152,14 @@ func (s *Sync) start() error {
 	s.vehicles = newVehiclesSync(syncer, s.state.OwnedVehicles)
 	s.accounts = newAccountsSync(syncer, s.state.Accounts)
 
-	s.wg.Add(1)
-	go s.Run(s.ctx)
+	s.wg.Go(func() {
+		s.Run(s.ctx)
+	})
 
 	if s.syncCli != nil {
-		s.wg.Add(1)
-		go s.RunStream(s.ctx)
+		s.wg.Go(func() {
+			s.RunStream(s.ctx)
+		})
 	}
 
 	return nil
@@ -195,8 +199,6 @@ func (s *Sync) restart() error {
 }
 
 func (s *Sync) Run(ctx context.Context) {
-	defer s.wg.Done()
-
 	s.logger.Info("started dbsync loop")
 
 	for {
@@ -236,8 +238,14 @@ func (s *Sync) run(ctx context.Context) error {
 		}
 	})
 
+	cfg := s.cfg.Load().Tables
+
 	// User data sync loop
 	wg.Go(func() {
+		if !cfg.Users.Enabled {
+			return
+		}
+
 		for {
 			if err := s.users.Sync(ctx); err != nil {
 				s.logger.Error("error during users sync", zap.Error(err))
@@ -254,6 +262,10 @@ func (s *Sync) run(ctx context.Context) error {
 
 	// Vehicles data sync loop
 	wg.Go(func() {
+		if !cfg.Vehicles.Enabled {
+			return
+		}
+
 		for {
 			if err := s.vehicles.Sync(ctx); err != nil {
 				s.logger.Error("error during vehicles sync", zap.Error(err))
@@ -270,6 +282,10 @@ func (s *Sync) run(ctx context.Context) error {
 
 	// Accounts data sync loop
 	wg.Go(func() {
+		if !cfg.Accounts.Enabled {
+			return
+		}
+
 		for {
 			if err := s.accounts.Sync(ctx); err != nil {
 				s.logger.Error("error during accounts sync", zap.Error(err))
@@ -292,14 +308,18 @@ func (s *Sync) run(ctx context.Context) error {
 func (s *Sync) syncBaseData(ctx context.Context) error {
 	errs := multierr.Combine()
 
-	if err := s.jobs.Sync(ctx); err != nil {
-		errs = multierr.Append(errs, err)
-		s.logger.Error("error during jobs sync", zap.Error(err))
+	if s.cfg.Load().Tables.Jobs.Enabled {
+		if err := s.jobs.Sync(ctx); err != nil {
+			errs = multierr.Append(errs, err)
+			s.logger.Error("error during jobs sync", zap.Error(err))
+		}
 	}
 
-	if err := s.licenses.Sync(ctx); err != nil {
-		errs = multierr.Append(errs, err)
-		s.logger.Error("error during licenses sync", zap.Error(err))
+	if s.cfg.Load().Tables.Licenses.Enabled {
+		if err := s.licenses.Sync(ctx); err != nil {
+			errs = multierr.Append(errs, err)
+			s.logger.Error("error during licenses sync", zap.Error(err))
+		}
 	}
 
 	return errs

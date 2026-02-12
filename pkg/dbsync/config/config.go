@@ -218,6 +218,8 @@ type DBSyncDestination struct {
 	Insecure bool   `yaml:"insecure"`
 
 	SyncInterval time.Duration `default:"5s" yaml:"syncInterval" validate:"gte=1"`
+
+	DryRun bool `default:"false" yaml:"dryRun"`
 }
 
 type DBSyncSourceTables struct {
@@ -509,6 +511,7 @@ func (c *UserLicensesTable) GetQuery(
 	}
 
 	where = append(where, getWhereCondition(c.DBSyncTable, state))
+	where = append(where, "`"+c.Columns.OwnerIdentifier+"` = $identifier")
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"license.type":  c.Columns.Type,
 		"license.owner": c.Columns.OwnerIdentifier,

@@ -33,10 +33,6 @@ func newUsersSync(s *syncer, state *dbsyncconfig.TableSyncState) *usersSync {
 }
 
 func (s *usersSync) Sync(ctx context.Context) error {
-	if !s.cfg.Tables.Users.Enabled {
-		return nil
-	}
-
 	limit := int64(150)
 	offset := s.getInitialOffset()
 	s.logger.Debug("usersSync", zap.Int64("offset", offset))
@@ -289,15 +285,21 @@ func (s *usersSync) retrieveLicenses(
 	identifier string,
 ) ([]*userslicenses.License, error) {
 	q := s.cfg.Tables.UserLicenses.GetQuery(s.state, 0, 100)
-	s.logger.Debug("citizens licenses sync query", zap.String("query", q))
+	s.logger.Debug("users licenses sync query", zap.String("query", q))
 
 	args := []any{}
 	if strings.Contains(q, "$userId") {
-		q = strings.ReplaceAll(q, "$userId", strconv.FormatInt(int64(userId), 10))
-		args = append(args, userId)
+		count := strings.Count(q, "$userId")
+		q = strings.ReplaceAll(q, "$userId", "?")
+		for range count {
+			args = append(args, userId)
+		}
 	} else if strings.Contains(q, "$identifier") {
-		q = strings.ReplaceAll(q, "$identifier", identifier)
-		args = append(args, identifier)
+		count := strings.Count(q, "$identifier")
+		q = strings.ReplaceAll(q, "$identifier", "?")
+		for range count {
+			args = append(args, identifier)
+		}
 	}
 
 	licenses := []*userslicenses.License{}
@@ -338,16 +340,22 @@ func (s *usersSync) retrieveJobs(
 	userId int32,
 	identifier string,
 ) ([]*users.UserJob, error) {
-	q := s.cfg.Tables.UserJobs.GetQuery(s.state, 0, 100)
+	q := s.cfg.Tables.UserJobs.GetQuery(s.state, 0, 10)
 	s.logger.Debug("users jobs sync query", zap.String("query", q))
 
 	args := []any{}
 	if strings.Contains(q, "$userId") {
-		q = strings.ReplaceAll(q, "$userId", strconv.FormatInt(int64(userId), 10))
-		args = append(args, userId)
+		count := strings.Count(q, "$userId")
+		q = strings.ReplaceAll(q, "$userId", "?")
+		for range count {
+			args = append(args, userId)
+		}
 	} else if strings.Contains(q, "$identifier") {
-		q = strings.ReplaceAll(q, "$identifier", identifier)
-		args = append(args, identifier)
+		count := strings.Count(q, "$identifier")
+		q = strings.ReplaceAll(q, "$identifier", "?")
+		for range count {
+			args = append(args, identifier)
+		}
 	}
 
 	jobs := []*users.UserJob{}

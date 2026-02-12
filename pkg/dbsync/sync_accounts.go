@@ -27,10 +27,6 @@ func newAccountsSync(s *syncer, state *dbsyncconfig.TableSyncState) *accountsSyn
 }
 
 func (s *accountsSync) Sync(ctx context.Context) error {
-	if !s.cfg.Tables.Jobs.Enabled {
-		return nil
-	}
-
 	accounts, err := s.fetchAccounts(ctx)
 	if err != nil {
 		return err

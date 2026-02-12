@@ -30,6 +30,10 @@ destination:
   insecure: false
   # Sync Interval can also be specified per table in the `tables:` section
   syncInterval: 3s
+  # If you want to test your configuration without actually syncing data to FiveNet, you can enable the `dryRun` mode,
+  # which will log the data that would be synced instead of sending it to FiveNet.
+  # This is useful for testing and debugging your configuration.
+  dryRun: false
 
 # Your gameservers' database details
 # Changes to the source require a restart of the dbsync.
@@ -270,12 +274,13 @@ tables:
     # parameters are the placeholder for the user's user id/identifier.
     #
     # Must return result columns named: `user_job.job`, `user_job.grade`
-    # Optional but recommended: `user_job.is_primary` (boolean column to indicate the primary job,
+    # Optional but recommended: `user_job.is_primary` (boolean column to indicate if it is the primary job,
     # if multiple jobs are returned, otherwise the first is set as primary)
     #query: |
     #  SELECT
-    #    `job_name` AS `user_job.job_name`,
-    #    `job_grade` AS `user_job.job_grade`
+    #    `job` AS `user_job.job`,
+    #    `grade` AS `user_job.grade`
+    #    1 AS `user_job.is_primary`
     #  FROM
     #    `user_jobs`
     #  WHERE

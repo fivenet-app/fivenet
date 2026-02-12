@@ -15,11 +15,10 @@ import (
 )
 
 func (s *Sync) RunStream(ctx context.Context) {
-	defer s.wg.Done()
-
 	for range 3 {
-		s.wg.Add(1)
-		go s.streamWorker(ctx)
+		s.wg.Go(func() {
+			s.streamWorker(ctx)
+		})
 	}
 
 	for {
@@ -85,8 +84,6 @@ func (s *Sync) runStream(ctx context.Context) error {
 }
 
 func (s *Sync) streamWorker(ctx context.Context) {
-	defer s.wg.Done()
-
 	for {
 		select {
 		case <-ctx.Done():

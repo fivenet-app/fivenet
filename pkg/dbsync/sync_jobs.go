@@ -27,10 +27,6 @@ func newJobsSync(s *syncer, state *dbsyncconfig.TableSyncState) *jobsSync {
 }
 
 func (s *jobsSync) Sync(ctx context.Context) error {
-	if !s.cfg.Tables.Jobs.Enabled {
-		return nil
-	}
-
 	jobs, err := s.fetchJobs(ctx)
 	if err != nil {
 		return err
