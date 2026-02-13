@@ -61,6 +61,8 @@ destination:
     token: "YOUR_SYNC_API_TOKEN"
     # Disable TLS verification (not recommended)
     insecure: false
+    # Advanced: Only disable if you know what you are doing!
+    transportSecurity: true
 
   # Sync Interval can also be specified per table in the `tables:` section
   syncInterval: 3s

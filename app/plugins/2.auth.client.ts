@@ -4,8 +4,13 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 export default defineNuxtPlugin({
     name: 'auth',
 
-    async setup() {
+    async setup(nuxtApp) {
         addRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
+            // Fail if app config wasn't loaded properlyl
+            const { $appConfigPromise } = nuxtApp;
+            const result = await $appConfigPromise;
+            if (result === undefined) return;
+
             const authStore = useAuthStore();
             const { can, activeChar, username } = useAuth();
 

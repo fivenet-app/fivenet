@@ -16,6 +16,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 var Module = fx.Module("dbsync",
@@ -87,13 +88,7 @@ func New(p Params) (*Sync, error) {
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(s.start))
-	p.LC.Append(fx.StopHook(func() error {
-		if err := s.stop(); err != nil {
-			return err
-		}
-
-		return nil
-	}))
+	p.LC.Append(fx.StopHook(s.stop))
 
 	return s, nil
 }
@@ -103,22 +98,22 @@ func (s *Sync) createGRPCClient() error {
 	cfg := s.cfg.Load()
 	api := cfg.Destination.API
 	if api.URL != "" {
-		transportCreds := auth.NewCredentials()
-		if !s.cfg.Load().Destination.Insecure {
+		var transportCreds credentials.TransportCredentials
+		if api.Insecure {
+			transportCreds = insecure.NewCredentials()
+		} else {
 			transportCreds = credentials.NewTLS(&tls.Config{
 				MinVersion: tls.VersionTLS13,
 				ClientAuth: tls.NoClientCert,
 			})
 		}
 
-		cli, err := grpc.NewClient(
-			api.URL,
+		cli, err := grpc.NewClient(api.URL,
 			grpc.WithTransportCredentials(transportCreds),
-			// Require transport security for release mode
 			grpc.WithPerRPCCredentials(
 				auth.NewClientTokenAuth(
 					api.Token,
-					cfg.Mode == "release",
+					api.TransportSecurity,
 				),
 			),
 		)
