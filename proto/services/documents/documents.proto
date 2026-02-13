@@ -351,6 +351,8 @@ message ListUserDocumentsRequest {
   int32 user_id = 3 [(buf.validate.field).int32.gt = 0];
   repeated resources.documents.relations.DocRelation relations = 4 [(buf.validate.field).repeated.max_items = 3];
   optional bool closed = 5;
+  // Include the document relations created by the given user.
+  optional bool include_created = 6;
 }
 
 message ListUserDocumentsResponse {

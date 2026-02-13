@@ -1412,6 +1412,12 @@
             "List": {
                 "no_citizens": "Benutze das obige Suchfeld, um erneut zu suchen oder die Anfrage zu aktualisieren.",
                 "open_fine": "Offene Geldstrafen"
+            },
+            "documents": {
+                "include_created": {
+                    "title": "Erstellte Beziehungen",
+                    "description": "Dokumente einschließen, bei denen der Bürger Beziehungen zu anderen Bürgern erstellt hat."
+                }
             }
         },
         "CookieControl": {

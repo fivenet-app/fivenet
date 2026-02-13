@@ -735,6 +735,12 @@ export interface ListUserDocumentsRequest {
      * @generated from protobuf field: optional bool closed = 5
      */
     closed?: boolean;
+    /**
+     * Include the document relations created by the given user.
+     *
+     * @generated from protobuf field: optional bool include_created = 6
+     */
+    includeCreated?: boolean;
 }
 /**
  * @generated from protobuf message services.documents.ListUserDocumentsResponse
@@ -3857,7 +3863,8 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 4, name: "relations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.relations.DocRelation", DocRelation, "DOC_RELATION_"], options: { "buf.validate.field": { repeated: { maxItems: "3" } } } },
-            { no: 5, name: "closed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 5, name: "closed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "include_created", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListUserDocumentsRequest>): ListUserDocumentsRequest {
@@ -3892,6 +3899,9 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
                 case /* optional bool closed */ 5:
                     message.closed = reader.bool();
                     break;
+                case /* optional bool include_created */ 6:
+                    message.includeCreated = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -3923,6 +3933,9 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
         /* optional bool closed = 5; */
         if (message.closed !== undefined)
             writer.tag(5, WireType.Varint).bool(message.closed);
+        /* optional bool include_created = 6; */
+        if (message.includeCreated !== undefined)
+            writer.tag(6, WireType.Varint).bool(message.includeCreated);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

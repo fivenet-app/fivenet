@@ -9673,6 +9673,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `user_id` | [int32](#int32) |  |  |
 | `relations` | [resources.documents.relations.DocRelation](#resourcesdocumentsrelationsDocRelation) | repeated |  |
 | `closed` | [bool](#bool) | optional |  |
+| `include_created` | [bool](#bool) | optional | Include the document relations created by the given user. |
 
 
 

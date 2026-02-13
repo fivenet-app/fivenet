@@ -54,11 +54,15 @@ func (s *Server) ListUserDocuments(
 		userCondition = mysql.Bool(true)
 	}
 
-	condition := mysql.AND(
-		mysql.OR(
+	userCondiution := tDocRel.TargetUserID.EQ(mysql.Int32(req.GetUserId()))
+	if req.GetIncludeCreated() {
+		userCondiution = mysql.OR(userCondiution,
 			tDocRel.SourceUserID.EQ(mysql.Int32(req.GetUserId())),
-			tDocRel.TargetUserID.EQ(mysql.Int32(req.GetUserId())),
-		),
+		)
+	}
+
+	condition := mysql.AND(
+		userCondiution,
 		tDocRel.DeletedAt.IS_NULL(),
 		tDocument.DeletedAt.IS_NULL(),
 		mysql.OR(

@@ -4441,16 +4441,17 @@ func (b0 SetDocumentAccessResponse_builder) Build() *SetDocumentAccessResponse {
 }
 
 type ListUserDocumentsRequest struct {
-	state                  protoimpl.MessageState      `protogen:"opaque.v1"`
-	xxx_hidden_Pagination  *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Sort        *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
-	xxx_hidden_UserId      int32                       `protobuf:"varint,3,opt,name=user_id,json=userId,proto3"`
-	xxx_hidden_Relations   []relations.DocRelation     `protobuf:"varint,4,rep,packed,name=relations,proto3,enum=resources.documents.relations.DocRelation"`
-	xxx_hidden_Closed      bool                        `protobuf:"varint,5,opt,name=closed,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state                     protoimpl.MessageState      `protogen:"opaque.v1"`
+	xxx_hidden_Pagination     *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
+	xxx_hidden_Sort           *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
+	xxx_hidden_UserId         int32                       `protobuf:"varint,3,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_Relations      []relations.DocRelation     `protobuf:"varint,4,rep,packed,name=relations,proto3,enum=resources.documents.relations.DocRelation"`
+	xxx_hidden_Closed         bool                        `protobuf:"varint,5,opt,name=closed,proto3,oneof"`
+	xxx_hidden_IncludeCreated bool                        `protobuf:"varint,6,opt,name=include_created,json=includeCreated,proto3,oneof"`
+	XXX_raceDetectHookData    protoimpl.RaceDetectHookData
+	XXX_presence              [1]uint32
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
 }
 
 func (x *ListUserDocumentsRequest) Reset() {
@@ -4513,6 +4514,13 @@ func (x *ListUserDocumentsRequest) GetClosed() bool {
 	return false
 }
 
+func (x *ListUserDocumentsRequest) GetIncludeCreated() bool {
+	if x != nil {
+		return x.xxx_hidden_IncludeCreated
+	}
+	return false
+}
+
 func (x *ListUserDocumentsRequest) SetPagination(v *database.PaginationRequest) {
 	x.xxx_hidden_Pagination = v
 }
@@ -4531,7 +4539,12 @@ func (x *ListUserDocumentsRequest) SetRelations(v []relations.DocRelation) {
 
 func (x *ListUserDocumentsRequest) SetClosed(v bool) {
 	x.xxx_hidden_Closed = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 6)
+}
+
+func (x *ListUserDocumentsRequest) SetIncludeCreated(v bool) {
+	x.xxx_hidden_IncludeCreated = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 6)
 }
 
 func (x *ListUserDocumentsRequest) HasPagination() bool {
@@ -4555,6 +4568,13 @@ func (x *ListUserDocumentsRequest) HasClosed() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
+func (x *ListUserDocumentsRequest) HasIncludeCreated() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+}
+
 func (x *ListUserDocumentsRequest) ClearPagination() {
 	x.xxx_hidden_Pagination = nil
 }
@@ -4568,6 +4588,11 @@ func (x *ListUserDocumentsRequest) ClearClosed() {
 	x.xxx_hidden_Closed = false
 }
 
+func (x *ListUserDocumentsRequest) ClearIncludeCreated() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_IncludeCreated = false
+}
+
 type ListUserDocumentsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -4576,6 +4601,8 @@ type ListUserDocumentsRequest_builder struct {
 	UserId     int32
 	Relations  []relations.DocRelation
 	Closed     *bool
+	// Include the document relations created by the given user.
+	IncludeCreated *bool
 }
 
 func (b0 ListUserDocumentsRequest_builder) Build() *ListUserDocumentsRequest {
@@ -4587,8 +4614,12 @@ func (b0 ListUserDocumentsRequest_builder) Build() *ListUserDocumentsRequest {
 	x.xxx_hidden_UserId = b.UserId
 	x.xxx_hidden_Relations = b.Relations
 	if b.Closed != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 6)
 		x.xxx_hidden_Closed = *b.Closed
+	}
+	if b.IncludeCreated != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 6)
+		x.xxx_hidden_IncludeCreated = *b.IncludeCreated
 	}
 	return m0
 }
@@ -5764,7 +5795,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12B\n" +
 	"\x06access\x18\x02 \x01(\v2*.resources.documents.access.DocumentAccessR\x06access\"\x1b\n" +
-	"\x19SetDocumentAccessResponse\"\xb6\x02\n" +
+	"\x19SetDocumentAccessResponse\"\xf8\x02\n" +
 	"\x18ListUserDocumentsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -5772,9 +5803,11 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x05R\x06userId\x12H\n" +
 	"\trelations\x18\x04 \x03(\x0e2*.resources.documents.relations.DocRelationR\trelations\x12\x1b\n" +
-	"\x06closed\x18\x05 \x01(\bH\x01R\x06closed\x88\x01\x01B\a\n" +
+	"\x06closed\x18\x05 \x01(\bH\x01R\x06closed\x88\x01\x01\x12,\n" +
+	"\x0finclude_created\x18\x06 \x01(\bH\x02R\x0eincludeCreated\x88\x01\x01B\a\n" +
 	"\x05_sortB\t\n" +
-	"\a_closed\"\xbf\x01\n" +
+	"\a_closedB\x12\n" +
+	"\x10_include_created\"\xbf\x01\n" +
 	"\x19ListUserDocumentsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +

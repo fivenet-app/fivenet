@@ -1412,6 +1412,12 @@
             "List": {
                 "no_citizens": "Use the search field above to search or update your query.",
                 "open_fine": "Open fines"
+            },
+            "documents": {
+                "include_created": {
+                    "title": "Include Created",
+                    "description": "Include documents that the citizen has created relations to other citizens to."
+                }
             }
         },
         "CookieControl": {

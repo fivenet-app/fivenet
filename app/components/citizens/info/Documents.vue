@@ -44,6 +44,8 @@ const schema = z.object({
         .array()
         .max(docRelations.length)
         .default(docRelationsEnum.map((r) => DocRelation[r.name as keyof typeof DocRelation])),
+    includeCreated: z.coerce.boolean().optional().default(false),
+
     sorting: z
         .object({
             columns: z
@@ -78,6 +80,7 @@ async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
             userId: props.userId,
             relations: query.relations,
             closed: query.closed,
+            includeCreated: query.includeCreated,
         });
         const { response } = await call;
 
@@ -223,6 +226,16 @@ const formRef = useTemplateRef('formRef');
                             </template>
                         </USelectMenu>
                     </ClientOnly>
+                </UFormField>
+
+                <UFormField name="includeCreated" :label="$t('components.citizens.documents.include_created.title')">
+                    <div class="inline-flex items-center gap-2">
+                        <USwitch v-model="query.includeCreated" />
+
+                        <UTooltip :text="$t('components.citizens.documents.include_created.description')">
+                            <UIcon name="i-mdi-information" class="size-4" />
+                        </UTooltip>
+                    </div>
                 </UFormField>
             </UForm>
         </template>
