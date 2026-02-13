@@ -241,6 +241,22 @@ defineShortcuts({
     },
 });
 
+function setCommentCount(count: number): void {
+    if (!doc.value?.document) return;
+
+    if (!doc.value?.document?.meta) {
+        doc.value.document!.meta = {
+            documentId: props.documentId,
+            closed: false,
+            draft: false,
+            approved: false,
+            public: false,
+            state: '',
+        };
+    }
+    doc.value.document.meta.commentCount = count;
+}
+
 const scrollRef = useTemplateRef('scrollRef');
 
 const confirmModal = overlay.create(ConfirmModal);
@@ -734,7 +750,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                                 :document-id="documentId"
                                 :closed="doc.document?.meta?.closed"
                                 :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"
-                                @counted="doc.document?.meta?.commentCount && (doc.document.meta.commentCount = $event)"
+                                @counted="($event) => setCommentCount($event)"
                                 @new-comment="doc.document?.meta?.commentCount && doc.document.meta.commentCount++"
                                 @deleted-comment="
                                     doc.document?.meta?.commentCount &&
