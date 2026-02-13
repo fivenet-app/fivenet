@@ -9,6 +9,8 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
+const { isCommandSearchOpen } = useDashboard();
+
 const citizensCitizensClient = await getCitizensCitizensClient();
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
@@ -173,6 +175,7 @@ const groups = computed<CommandPaletteGroup<CommandPaletteItem>[]>(() => [
 
 <template>
     <UDashboardSearch
+        v-model:open="isCommandSearchOpen"
         v-model:search-term="searchTerm"
         :groups="groups"
         :loading="isRequestPending(citizensStatus) || isRequestPending(documentsStatus)"

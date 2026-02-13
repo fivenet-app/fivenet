@@ -4,13 +4,13 @@ import (
 	"slices"
 	"strconv"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 )
 
 // NotAvailablePlaceholder is used as a fallback label when job info is not available.

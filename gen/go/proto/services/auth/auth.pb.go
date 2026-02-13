@@ -4,22 +4,25 @@
 // 	protoc        (unknown)
 // source: services/auth/auth.proto
 
+//go:build !protoopaque
+
 package auth
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/audit"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	accounts "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	permissions "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/audit"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	oauth2 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts/oauth2"
+	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
+	attributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -30,112 +33,8 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type CreateAccountRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	RegToken      string                 `protobuf:"bytes,1,opt,name=reg_token,json=regToken,proto3" json:"reg_token,omitempty"`
-	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateAccountRequest) Reset() {
-	*x = CreateAccountRequest{}
-	mi := &file_services_auth_auth_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateAccountRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateAccountRequest) ProtoMessage() {}
-
-func (x *CreateAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_auth_auth_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateAccountRequest.ProtoReflect.Descriptor instead.
-func (*CreateAccountRequest) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *CreateAccountRequest) GetRegToken() string {
-	if x != nil {
-		return x.RegToken
-	}
-	return ""
-}
-
-func (x *CreateAccountRequest) GetUsername() string {
-	if x != nil {
-		return x.Username
-	}
-	return ""
-}
-
-func (x *CreateAccountRequest) GetPassword() string {
-	if x != nil {
-		return x.Password
-	}
-	return ""
-}
-
-type CreateAccountResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccountId     int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateAccountResponse) Reset() {
-	*x = CreateAccountResponse{}
-	mi := &file_services_auth_auth_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateAccountResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateAccountResponse) ProtoMessage() {}
-
-func (x *CreateAccountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_auth_auth_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateAccountResponse.ProtoReflect.Descriptor instead.
-func (*CreateAccountResponse) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *CreateAccountResponse) GetAccountId() int64 {
-	if x != nil {
-		return x.AccountId
-	}
-	return 0
-}
-
 type LoginRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -144,7 +43,7 @@ type LoginRequest struct {
 
 func (x *LoginRequest) Reset() {
 	*x = LoginRequest{}
-	mi := &file_services_auth_auth_proto_msgTypes[2]
+	mi := &file_services_auth_auth_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -156,7 +55,7 @@ func (x *LoginRequest) String() string {
 func (*LoginRequest) ProtoMessage() {}
 
 func (x *LoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_auth_auth_proto_msgTypes[2]
+	mi := &file_services_auth_auth_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -165,11 +64,6 @@ func (x *LoginRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use LoginRequest.ProtoReflect.Descriptor instead.
-func (*LoginRequest) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *LoginRequest) GetUsername() string {
@@ -186,8 +80,32 @@ func (x *LoginRequest) GetPassword() string {
 	return ""
 }
 
+func (x *LoginRequest) SetUsername(v string) {
+	x.Username = v
+}
+
+func (x *LoginRequest) SetPassword(v string) {
+	x.Password = v
+}
+
+type LoginRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Username string
+	Password string
+}
+
+func (b0 LoginRequest_builder) Build() *LoginRequest {
+	m0 := &LoginRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Username = b.Username
+	x.Password = b.Password
+	return m0
+}
+
 type LoginResponse struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
+	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Expires       *timestamp.Timestamp     `protobuf:"bytes,1,opt,name=expires,proto3" json:"expires,omitempty"`
 	AccountId     int64                    `protobuf:"varint,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	Char          *ChooseCharacterResponse `protobuf:"bytes,3,opt,name=char,proto3,oneof" json:"char,omitempty"`
@@ -197,7 +115,7 @@ type LoginResponse struct {
 
 func (x *LoginResponse) Reset() {
 	*x = LoginResponse{}
-	mi := &file_services_auth_auth_proto_msgTypes[3]
+	mi := &file_services_auth_auth_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -209,7 +127,7 @@ func (x *LoginResponse) String() string {
 func (*LoginResponse) ProtoMessage() {}
 
 func (x *LoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_auth_auth_proto_msgTypes[3]
+	mi := &file_services_auth_auth_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -218,11 +136,6 @@ func (x *LoginResponse) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use LoginResponse.ProtoReflect.Descriptor instead.
-func (*LoginResponse) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *LoginResponse) GetExpires() *timestamp.Timestamp {
@@ -246,15 +159,67 @@ func (x *LoginResponse) GetChar() *ChooseCharacterResponse {
 	return nil
 }
 
+func (x *LoginResponse) SetExpires(v *timestamp.Timestamp) {
+	x.Expires = v
+}
+
+func (x *LoginResponse) SetAccountId(v int64) {
+	x.AccountId = v
+}
+
+func (x *LoginResponse) SetChar(v *ChooseCharacterResponse) {
+	x.Char = v
+}
+
+func (x *LoginResponse) HasExpires() bool {
+	if x == nil {
+		return false
+	}
+	return x.Expires != nil
+}
+
+func (x *LoginResponse) HasChar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Char != nil
+}
+
+func (x *LoginResponse) ClearExpires() {
+	x.Expires = nil
+}
+
+func (x *LoginResponse) ClearChar() {
+	x.Char = nil
+}
+
+type LoginResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Expires   *timestamp.Timestamp
+	AccountId int64
+	Char      *ChooseCharacterResponse
+}
+
+func (b0 LoginResponse_builder) Build() *LoginResponse {
+	m0 := &LoginResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Expires = b.Expires
+	x.AccountId = b.AccountId
+	x.Char = b.Char
+	return m0
+}
+
 type LogoutRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *LogoutRequest) Reset() {
 	*x = LogoutRequest{}
-	mi := &file_services_auth_auth_proto_msgTypes[4]
+	mi := &file_services_auth_auth_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -266,7 +231,7 @@ func (x *LogoutRequest) String() string {
 func (*LogoutRequest) ProtoMessage() {}
 
 func (x *LogoutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_auth_auth_proto_msgTypes[4]
+	mi := &file_services_auth_auth_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -277,13 +242,20 @@ func (x *LogoutRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LogoutRequest.ProtoReflect.Descriptor instead.
-func (*LogoutRequest) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{4}
+type LogoutRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 LogoutRequest_builder) Build() *LogoutRequest {
+	m0 := &LogoutRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type LogoutResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -291,7 +263,7 @@ type LogoutResponse struct {
 
 func (x *LogoutResponse) Reset() {
 	*x = LogoutResponse{}
-	mi := &file_services_auth_auth_proto_msgTypes[5]
+	mi := &file_services_auth_auth_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -303,6 +275,148 @@ func (x *LogoutResponse) String() string {
 func (*LogoutResponse) ProtoMessage() {}
 
 func (x *LogoutResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_auth_auth_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *LogoutResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *LogoutResponse) SetSuccess(v bool) {
+	x.Success = v
+}
+
+type LogoutResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Success bool
+}
+
+func (b0 LogoutResponse_builder) Build() *LogoutResponse {
+	m0 := &LogoutResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Success = b.Success
+	return m0
+}
+
+type CreateAccountRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	RegToken      string                 `protobuf:"bytes,1,opt,name=reg_token,json=regToken,proto3" json:"reg_token,omitempty"`
+	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateAccountRequest) Reset() {
+	*x = CreateAccountRequest{}
+	mi := &file_services_auth_auth_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateAccountRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAccountRequest) ProtoMessage() {}
+
+func (x *CreateAccountRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_auth_auth_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *CreateAccountRequest) GetRegToken() string {
+	if x != nil {
+		return x.RegToken
+	}
+	return ""
+}
+
+func (x *CreateAccountRequest) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *CreateAccountRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+func (x *CreateAccountRequest) SetRegToken(v string) {
+	x.RegToken = v
+}
+
+func (x *CreateAccountRequest) SetUsername(v string) {
+	x.Username = v
+}
+
+func (x *CreateAccountRequest) SetPassword(v string) {
+	x.Password = v
+}
+
+type CreateAccountRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	RegToken string
+	Username string
+	Password string
+}
+
+func (b0 CreateAccountRequest_builder) Build() *CreateAccountRequest {
+	m0 := &CreateAccountRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.RegToken = b.RegToken
+	x.Username = b.Username
+	x.Password = b.Password
+	return m0
+}
+
+type CreateAccountResponse struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	AccountId     int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateAccountResponse) Reset() {
+	*x = CreateAccountResponse{}
+	mi := &file_services_auth_auth_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateAccountResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAccountResponse) ProtoMessage() {}
+
+func (x *CreateAccountResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_services_auth_auth_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -314,20 +428,33 @@ func (x *LogoutResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LogoutResponse.ProtoReflect.Descriptor instead.
-func (*LogoutResponse) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{5}
+func (x *CreateAccountResponse) GetAccountId() int64 {
+	if x != nil {
+		return x.AccountId
+	}
+	return 0
 }
 
-func (x *LogoutResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
+func (x *CreateAccountResponse) SetAccountId(v int64) {
+	x.AccountId = v
+}
+
+type CreateAccountResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	AccountId int64
+}
+
+func (b0 CreateAccountResponse_builder) Build() *CreateAccountResponse {
+	m0 := &CreateAccountResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.AccountId = b.AccountId
+	return m0
 }
 
 type ChangePasswordRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Current       string                 `protobuf:"bytes,1,opt,name=current,proto3" json:"current,omitempty"`
 	New           string                 `protobuf:"bytes,2,opt,name=new,proto3" json:"new,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -359,11 +486,6 @@ func (x *ChangePasswordRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ChangePasswordRequest.ProtoReflect.Descriptor instead.
-func (*ChangePasswordRequest) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *ChangePasswordRequest) GetCurrent() string {
 	if x != nil {
 		return x.Current
@@ -378,9 +500,32 @@ func (x *ChangePasswordRequest) GetNew() string {
 	return ""
 }
 
+func (x *ChangePasswordRequest) SetCurrent(v string) {
+	x.Current = v
+}
+
+func (x *ChangePasswordRequest) SetNew(v string) {
+	x.New = v
+}
+
+type ChangePasswordRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Current string
+	New     string
+}
+
+func (b0 ChangePasswordRequest_builder) Build() *ChangePasswordRequest {
+	m0 := &ChangePasswordRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Current = b.Current
+	x.New = b.New
+	return m0
+}
+
 type ChangePasswordResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Expires       *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=expires,proto3" json:"expires,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -410,20 +555,20 @@ func (x *ChangePasswordResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ChangePasswordResponse.ProtoReflect.Descriptor instead.
-func (*ChangePasswordResponse) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{7}
+type ChangePasswordResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
 }
 
-func (x *ChangePasswordResponse) GetExpires() *timestamp.Timestamp {
-	if x != nil {
-		return x.Expires
-	}
-	return nil
+func (b0 ChangePasswordResponse_builder) Build() *ChangePasswordResponse {
+	m0 := &ChangePasswordResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ChangeUsernameRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Current       string                 `protobuf:"bytes,1,opt,name=current,proto3" json:"current,omitempty"`
 	New           string                 `protobuf:"bytes,2,opt,name=new,proto3" json:"new,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -455,11 +600,6 @@ func (x *ChangeUsernameRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ChangeUsernameRequest.ProtoReflect.Descriptor instead.
-func (*ChangeUsernameRequest) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *ChangeUsernameRequest) GetCurrent() string {
 	if x != nil {
 		return x.Current
@@ -474,8 +614,32 @@ func (x *ChangeUsernameRequest) GetNew() string {
 	return ""
 }
 
+func (x *ChangeUsernameRequest) SetCurrent(v string) {
+	x.Current = v
+}
+
+func (x *ChangeUsernameRequest) SetNew(v string) {
+	x.New = v
+}
+
+type ChangeUsernameRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Current string
+	New     string
+}
+
+func (b0 ChangeUsernameRequest_builder) Build() *ChangeUsernameRequest {
+	m0 := &ChangeUsernameRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Current = b.Current
+	x.New = b.New
+	return m0
+}
+
 type ChangeUsernameResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -505,13 +669,20 @@ func (x *ChangeUsernameResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ChangeUsernameResponse.ProtoReflect.Descriptor instead.
-func (*ChangeUsernameResponse) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{9}
+type ChangeUsernameResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ChangeUsernameResponse_builder) Build() *ChangeUsernameResponse {
+	m0 := &ChangeUsernameResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ForgotPasswordRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	RegToken      string                 `protobuf:"bytes,1,opt,name=reg_token,json=regToken,proto3" json:"reg_token,omitempty"`
 	New           string                 `protobuf:"bytes,2,opt,name=new,proto3" json:"new,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -543,11 +714,6 @@ func (x *ForgotPasswordRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ForgotPasswordRequest.ProtoReflect.Descriptor instead.
-func (*ForgotPasswordRequest) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{10}
-}
-
 func (x *ForgotPasswordRequest) GetRegToken() string {
 	if x != nil {
 		return x.RegToken
@@ -562,8 +728,32 @@ func (x *ForgotPasswordRequest) GetNew() string {
 	return ""
 }
 
+func (x *ForgotPasswordRequest) SetRegToken(v string) {
+	x.RegToken = v
+}
+
+func (x *ForgotPasswordRequest) SetNew(v string) {
+	x.New = v
+}
+
+type ForgotPasswordRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	RegToken string
+	New      string
+}
+
+func (b0 ForgotPasswordRequest_builder) Build() *ForgotPasswordRequest {
+	m0 := &ForgotPasswordRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.RegToken = b.RegToken
+	x.New = b.New
+	return m0
+}
+
 type ForgotPasswordResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -593,13 +783,20 @@ func (x *ForgotPasswordResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ForgotPasswordResponse.ProtoReflect.Descriptor instead.
-func (*ForgotPasswordResponse) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{11}
+type ForgotPasswordResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ForgotPasswordResponse_builder) Build() *ForgotPasswordResponse {
+	m0 := &ForgotPasswordResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetAccountInfoRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -629,16 +826,23 @@ func (x *GetAccountInfoRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetAccountInfoRequest.ProtoReflect.Descriptor instead.
-func (*GetAccountInfoRequest) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{12}
+type GetAccountInfoRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 GetAccountInfoRequest_builder) Build() *GetAccountInfoRequest {
+	m0 := &GetAccountInfoRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetAccountInfoResponse struct {
-	state             protoimpl.MessageState     `protogen:"open.v1"`
-	Account           *accounts.Account          `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
-	Oauth2Providers   []*accounts.OAuth2Provider `protobuf:"bytes,2,rep,name=oauth2_providers,json=oauth2Providers,proto3" json:"oauth2_providers,omitempty"`
-	Oauth2Connections []*accounts.OAuth2Account  `protobuf:"bytes,3,rep,name=oauth2_connections,json=oauth2Connections,proto3" json:"oauth2_connections,omitempty"`
+	state             protoimpl.MessageState   `protogen:"hybrid.v1"`
+	Account           *accounts.Account        `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
+	Oauth2Providers   []*oauth2.OAuth2Provider `protobuf:"bytes,2,rep,name=oauth2_providers,json=oauth2Providers,proto3" json:"oauth2_providers,omitempty"`
+	Oauth2Connections []*oauth2.OAuth2Account  `protobuf:"bytes,3,rep,name=oauth2_connections,json=oauth2Connections,proto3" json:"oauth2_connections,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -668,11 +872,6 @@ func (x *GetAccountInfoResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetAccountInfoResponse.ProtoReflect.Descriptor instead.
-func (*GetAccountInfoResponse) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{13}
-}
-
 func (x *GetAccountInfoResponse) GetAccount() *accounts.Account {
 	if x != nil {
 		return x.Account
@@ -680,22 +879,63 @@ func (x *GetAccountInfoResponse) GetAccount() *accounts.Account {
 	return nil
 }
 
-func (x *GetAccountInfoResponse) GetOauth2Providers() []*accounts.OAuth2Provider {
+func (x *GetAccountInfoResponse) GetOauth2Providers() []*oauth2.OAuth2Provider {
 	if x != nil {
 		return x.Oauth2Providers
 	}
 	return nil
 }
 
-func (x *GetAccountInfoResponse) GetOauth2Connections() []*accounts.OAuth2Account {
+func (x *GetAccountInfoResponse) GetOauth2Connections() []*oauth2.OAuth2Account {
 	if x != nil {
 		return x.Oauth2Connections
 	}
 	return nil
 }
 
+func (x *GetAccountInfoResponse) SetAccount(v *accounts.Account) {
+	x.Account = v
+}
+
+func (x *GetAccountInfoResponse) SetOauth2Providers(v []*oauth2.OAuth2Provider) {
+	x.Oauth2Providers = v
+}
+
+func (x *GetAccountInfoResponse) SetOauth2Connections(v []*oauth2.OAuth2Account) {
+	x.Oauth2Connections = v
+}
+
+func (x *GetAccountInfoResponse) HasAccount() bool {
+	if x == nil {
+		return false
+	}
+	return x.Account != nil
+}
+
+func (x *GetAccountInfoResponse) ClearAccount() {
+	x.Account = nil
+}
+
+type GetAccountInfoResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Account           *accounts.Account
+	Oauth2Providers   []*oauth2.OAuth2Provider
+	Oauth2Connections []*oauth2.OAuth2Account
+}
+
+func (b0 GetAccountInfoResponse_builder) Build() *GetAccountInfoResponse {
+	m0 := &GetAccountInfoResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Account = b.Account
+	x.Oauth2Providers = b.Oauth2Providers
+	x.Oauth2Connections = b.Oauth2Connections
+	return m0
+}
+
 type GetCharactersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -725,13 +965,20 @@ func (x *GetCharactersRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetCharactersRequest.ProtoReflect.Descriptor instead.
-func (*GetCharactersRequest) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{14}
+type GetCharactersRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 GetCharactersRequest_builder) Build() *GetCharactersRequest {
+	m0 := &GetCharactersRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetCharactersResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Chars         []*accounts.Character  `protobuf:"bytes,1,rep,name=chars,proto3" json:"chars,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -762,11 +1009,6 @@ func (x *GetCharactersResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetCharactersResponse.ProtoReflect.Descriptor instead.
-func (*GetCharactersResponse) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{15}
-}
-
 func (x *GetCharactersResponse) GetChars() []*accounts.Character {
 	if x != nil {
 		return x.Chars
@@ -774,8 +1016,26 @@ func (x *GetCharactersResponse) GetChars() []*accounts.Character {
 	return nil
 }
 
+func (x *GetCharactersResponse) SetChars(v []*accounts.Character) {
+	x.Chars = v
+}
+
+type GetCharactersResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Chars []*accounts.Character
+}
+
+func (b0 GetCharactersResponse_builder) Build() *GetCharactersResponse {
+	m0 := &GetCharactersResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Chars = b.Chars
+	return m0
+}
+
 type ChooseCharacterRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	CharId        int32                  `protobuf:"varint,1,opt,name=char_id,json=charId,proto3" json:"char_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -806,11 +1066,6 @@ func (x *ChooseCharacterRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ChooseCharacterRequest.ProtoReflect.Descriptor instead.
-func (*ChooseCharacterRequest) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{16}
-}
-
 func (x *ChooseCharacterRequest) GetCharId() int32 {
 	if x != nil {
 		return x.CharId
@@ -818,14 +1073,33 @@ func (x *ChooseCharacterRequest) GetCharId() int32 {
 	return 0
 }
 
+func (x *ChooseCharacterRequest) SetCharId(v int32) {
+	x.CharId = v
+}
+
+type ChooseCharacterRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	CharId int32
+}
+
+func (b0 ChooseCharacterRequest_builder) Build() *ChooseCharacterRequest {
+	m0 := &ChooseCharacterRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.CharId = b.CharId
+	return m0
+}
+
 type ChooseCharacterResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Username      string                       `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
-	Expires       *timestamp.Timestamp         `protobuf:"bytes,2,opt,name=expires,proto3" json:"expires,omitempty"`
-	JobProps      *jobs.JobProps               `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
-	Char          *users.User                  `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
-	Permissions   []*permissions.Permission    `protobuf:"bytes,5,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	Attributes    []*permissions.RoleAttribute `protobuf:"bytes,6,rep,name=attributes,proto3" json:"attributes,omitempty"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
+	Token         string                      `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Username      string                      `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Expires       *timestamp.Timestamp        `protobuf:"bytes,3,opt,name=expires,proto3" json:"expires,omitempty"`
+	JobProps      *props.JobProps             `protobuf:"bytes,4,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
+	Char          *users.User                 `protobuf:"bytes,5,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
+	Permissions   []*permissions.Permission   `protobuf:"bytes,6,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,7,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -855,9 +1129,11 @@ func (x *ChooseCharacterResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ChooseCharacterResponse.ProtoReflect.Descriptor instead.
-func (*ChooseCharacterResponse) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{17}
+func (x *ChooseCharacterResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
 }
 
 func (x *ChooseCharacterResponse) GetUsername() string {
@@ -874,7 +1150,7 @@ func (x *ChooseCharacterResponse) GetExpires() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *ChooseCharacterResponse) GetJobProps() *jobs.JobProps {
+func (x *ChooseCharacterResponse) GetJobProps() *props.JobProps {
 	if x != nil {
 		return x.JobProps
 	}
@@ -895,15 +1171,308 @@ func (x *ChooseCharacterResponse) GetPermissions() []*permissions.Permission {
 	return nil
 }
 
-func (x *ChooseCharacterResponse) GetAttributes() []*permissions.RoleAttribute {
+func (x *ChooseCharacterResponse) GetAttributes() []*attributes.RoleAttribute {
 	if x != nil {
 		return x.Attributes
 	}
 	return nil
 }
 
+func (x *ChooseCharacterResponse) SetToken(v string) {
+	x.Token = v
+}
+
+func (x *ChooseCharacterResponse) SetUsername(v string) {
+	x.Username = v
+}
+
+func (x *ChooseCharacterResponse) SetExpires(v *timestamp.Timestamp) {
+	x.Expires = v
+}
+
+func (x *ChooseCharacterResponse) SetJobProps(v *props.JobProps) {
+	x.JobProps = v
+}
+
+func (x *ChooseCharacterResponse) SetChar(v *users.User) {
+	x.Char = v
+}
+
+func (x *ChooseCharacterResponse) SetPermissions(v []*permissions.Permission) {
+	x.Permissions = v
+}
+
+func (x *ChooseCharacterResponse) SetAttributes(v []*attributes.RoleAttribute) {
+	x.Attributes = v
+}
+
+func (x *ChooseCharacterResponse) HasExpires() bool {
+	if x == nil {
+		return false
+	}
+	return x.Expires != nil
+}
+
+func (x *ChooseCharacterResponse) HasJobProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobProps != nil
+}
+
+func (x *ChooseCharacterResponse) HasChar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Char != nil
+}
+
+func (x *ChooseCharacterResponse) ClearExpires() {
+	x.Expires = nil
+}
+
+func (x *ChooseCharacterResponse) ClearJobProps() {
+	x.JobProps = nil
+}
+
+func (x *ChooseCharacterResponse) ClearChar() {
+	x.Char = nil
+}
+
+type ChooseCharacterResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Token       string
+	Username    string
+	Expires     *timestamp.Timestamp
+	JobProps    *props.JobProps
+	Char        *users.User
+	Permissions []*permissions.Permission
+	Attributes  []*attributes.RoleAttribute
+}
+
+func (b0 ChooseCharacterResponse_builder) Build() *ChooseCharacterResponse {
+	m0 := &ChooseCharacterResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Token = b.Token
+	x.Username = b.Username
+	x.Expires = b.Expires
+	x.JobProps = b.JobProps
+	x.Char = b.Char
+	x.Permissions = b.Permissions
+	x.Attributes = b.Attributes
+	return m0
+}
+
+type ImpersonateJobRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	JobGrade      int32                  `protobuf:"varint,1,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImpersonateJobRequest) Reset() {
+	*x = ImpersonateJobRequest{}
+	mi := &file_services_auth_auth_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImpersonateJobRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImpersonateJobRequest) ProtoMessage() {}
+
+func (x *ImpersonateJobRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_auth_auth_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ImpersonateJobRequest) GetJobGrade() int32 {
+	if x != nil {
+		return x.JobGrade
+	}
+	return 0
+}
+
+func (x *ImpersonateJobRequest) SetJobGrade(v int32) {
+	x.JobGrade = v
+}
+
+type ImpersonateJobRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	JobGrade int32
+}
+
+func (b0 ImpersonateJobRequest_builder) Build() *ImpersonateJobRequest {
+	m0 := &ImpersonateJobRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.JobGrade = b.JobGrade
+	return m0
+}
+
+type ImpersonateJobResponse struct {
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
+	Token         string                      `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Expires       *timestamp.Timestamp        `protobuf:"bytes,2,opt,name=expires,proto3" json:"expires,omitempty"`
+	Char          *users.User                 `protobuf:"bytes,3,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
+	Permissions   []*permissions.Permission   `protobuf:"bytes,4,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,5,rep,name=attributes,proto3" json:"attributes,omitempty"`
+	State         bool                        `protobuf:"varint,6,opt,name=state,proto3" json:"state,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImpersonateJobResponse) Reset() {
+	*x = ImpersonateJobResponse{}
+	mi := &file_services_auth_auth_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImpersonateJobResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImpersonateJobResponse) ProtoMessage() {}
+
+func (x *ImpersonateJobResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_auth_auth_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ImpersonateJobResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *ImpersonateJobResponse) GetExpires() *timestamp.Timestamp {
+	if x != nil {
+		return x.Expires
+	}
+	return nil
+}
+
+func (x *ImpersonateJobResponse) GetChar() *users.User {
+	if x != nil {
+		return x.Char
+	}
+	return nil
+}
+
+func (x *ImpersonateJobResponse) GetPermissions() []*permissions.Permission {
+	if x != nil {
+		return x.Permissions
+	}
+	return nil
+}
+
+func (x *ImpersonateJobResponse) GetAttributes() []*attributes.RoleAttribute {
+	if x != nil {
+		return x.Attributes
+	}
+	return nil
+}
+
+func (x *ImpersonateJobResponse) GetState() bool {
+	if x != nil {
+		return x.State
+	}
+	return false
+}
+
+func (x *ImpersonateJobResponse) SetToken(v string) {
+	x.Token = v
+}
+
+func (x *ImpersonateJobResponse) SetExpires(v *timestamp.Timestamp) {
+	x.Expires = v
+}
+
+func (x *ImpersonateJobResponse) SetChar(v *users.User) {
+	x.Char = v
+}
+
+func (x *ImpersonateJobResponse) SetPermissions(v []*permissions.Permission) {
+	x.Permissions = v
+}
+
+func (x *ImpersonateJobResponse) SetAttributes(v []*attributes.RoleAttribute) {
+	x.Attributes = v
+}
+
+func (x *ImpersonateJobResponse) SetState(v bool) {
+	x.State = v
+}
+
+func (x *ImpersonateJobResponse) HasExpires() bool {
+	if x == nil {
+		return false
+	}
+	return x.Expires != nil
+}
+
+func (x *ImpersonateJobResponse) HasChar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Char != nil
+}
+
+func (x *ImpersonateJobResponse) ClearExpires() {
+	x.Expires = nil
+}
+
+func (x *ImpersonateJobResponse) ClearChar() {
+	x.Char = nil
+}
+
+type ImpersonateJobResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Token       string
+	Expires     *timestamp.Timestamp
+	Char        *users.User
+	Permissions []*permissions.Permission
+	Attributes  []*attributes.RoleAttribute
+	State       bool
+}
+
+func (b0 ImpersonateJobResponse_builder) Build() *ImpersonateJobResponse {
+	m0 := &ImpersonateJobResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Token = b.Token
+	x.Expires = b.Expires
+	x.Char = b.Char
+	x.Permissions = b.Permissions
+	x.Attributes = b.Attributes
+	x.State = b.State
+	return m0
+}
+
 type DeleteSocialLoginRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Provider      string                 `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -911,7 +1480,7 @@ type DeleteSocialLoginRequest struct {
 
 func (x *DeleteSocialLoginRequest) Reset() {
 	*x = DeleteSocialLoginRequest{}
-	mi := &file_services_auth_auth_proto_msgTypes[18]
+	mi := &file_services_auth_auth_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -923,7 +1492,7 @@ func (x *DeleteSocialLoginRequest) String() string {
 func (*DeleteSocialLoginRequest) ProtoMessage() {}
 
 func (x *DeleteSocialLoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_auth_auth_proto_msgTypes[18]
+	mi := &file_services_auth_auth_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -934,11 +1503,6 @@ func (x *DeleteSocialLoginRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteSocialLoginRequest.ProtoReflect.Descriptor instead.
-func (*DeleteSocialLoginRequest) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{18}
-}
-
 func (x *DeleteSocialLoginRequest) GetProvider() string {
 	if x != nil {
 		return x.Provider
@@ -946,8 +1510,26 @@ func (x *DeleteSocialLoginRequest) GetProvider() string {
 	return ""
 }
 
+func (x *DeleteSocialLoginRequest) SetProvider(v string) {
+	x.Provider = v
+}
+
+type DeleteSocialLoginRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Provider string
+}
+
+func (b0 DeleteSocialLoginRequest_builder) Build() *DeleteSocialLoginRequest {
+	m0 := &DeleteSocialLoginRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Provider = b.Provider
+	return m0
+}
+
 type DeleteSocialLoginResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -955,7 +1537,7 @@ type DeleteSocialLoginResponse struct {
 
 func (x *DeleteSocialLoginResponse) Reset() {
 	*x = DeleteSocialLoginResponse{}
-	mi := &file_services_auth_auth_proto_msgTypes[19]
+	mi := &file_services_auth_auth_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -967,7 +1549,7 @@ func (x *DeleteSocialLoginResponse) String() string {
 func (*DeleteSocialLoginResponse) ProtoMessage() {}
 
 func (x *DeleteSocialLoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_auth_auth_proto_msgTypes[19]
+	mi := &file_services_auth_auth_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -978,11 +1560,6 @@ func (x *DeleteSocialLoginResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteSocialLoginResponse.ProtoReflect.Descriptor instead.
-func (*DeleteSocialLoginResponse) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{19}
-}
-
 func (x *DeleteSocialLoginResponse) GetSuccess() bool {
 	if x != nil {
 		return x.Success
@@ -990,8 +1567,26 @@ func (x *DeleteSocialLoginResponse) GetSuccess() bool {
 	return false
 }
 
+func (x *DeleteSocialLoginResponse) SetSuccess(v bool) {
+	x.Success = v
+}
+
+type DeleteSocialLoginResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Success bool
+}
+
+func (b0 DeleteSocialLoginResponse_builder) Build() *DeleteSocialLoginResponse {
+	m0 := &DeleteSocialLoginResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Success = b.Success
+	return m0
+}
+
 type SetSuperuserModeRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Superuser     bool                   `protobuf:"varint,1,opt,name=superuser,proto3" json:"superuser,omitempty"`
 	Job           *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1000,7 +1595,7 @@ type SetSuperuserModeRequest struct {
 
 func (x *SetSuperuserModeRequest) Reset() {
 	*x = SetSuperuserModeRequest{}
-	mi := &file_services_auth_auth_proto_msgTypes[20]
+	mi := &file_services_auth_auth_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1012,7 +1607,7 @@ func (x *SetSuperuserModeRequest) String() string {
 func (*SetSuperuserModeRequest) ProtoMessage() {}
 
 func (x *SetSuperuserModeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_auth_auth_proto_msgTypes[20]
+	mi := &file_services_auth_auth_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1021,11 +1616,6 @@ func (x *SetSuperuserModeRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetSuperuserModeRequest.ProtoReflect.Descriptor instead.
-func (*SetSuperuserModeRequest) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *SetSuperuserModeRequest) GetSuperuser() bool {
@@ -1042,20 +1632,56 @@ func (x *SetSuperuserModeRequest) GetJob() string {
 	return ""
 }
 
+func (x *SetSuperuserModeRequest) SetSuperuser(v bool) {
+	x.Superuser = v
+}
+
+func (x *SetSuperuserModeRequest) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *SetSuperuserModeRequest) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *SetSuperuserModeRequest) ClearJob() {
+	x.Job = nil
+}
+
+type SetSuperuserModeRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Superuser bool
+	Job       *string
+}
+
+func (b0 SetSuperuserModeRequest_builder) Build() *SetSuperuserModeRequest {
+	m0 := &SetSuperuserModeRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Superuser = b.Superuser
+	x.Job = b.Job
+	return m0
+}
+
 type SetSuperuserModeResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Expires       *timestamp.Timestamp         `protobuf:"bytes,2,opt,name=expires,proto3" json:"expires,omitempty"`
-	JobProps      *jobs.JobProps               `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3,oneof" json:"job_props,omitempty"`
-	Char          *users.User                  `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
-	Permissions   []*permissions.Permission    `protobuf:"bytes,5,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	Attributes    []*permissions.RoleAttribute `protobuf:"bytes,6,rep,name=attributes,proto3" json:"attributes,omitempty"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
+	Token         string                      `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Expires       *timestamp.Timestamp        `protobuf:"bytes,2,opt,name=expires,proto3" json:"expires,omitempty"`
+	JobProps      *props.JobProps             `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3,oneof" json:"job_props,omitempty"`
+	Char          *users.User                 `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
+	Permissions   []*permissions.Permission   `protobuf:"bytes,5,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,6,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *SetSuperuserModeResponse) Reset() {
 	*x = SetSuperuserModeResponse{}
-	mi := &file_services_auth_auth_proto_msgTypes[21]
+	mi := &file_services_auth_auth_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1067,7 +1693,7 @@ func (x *SetSuperuserModeResponse) String() string {
 func (*SetSuperuserModeResponse) ProtoMessage() {}
 
 func (x *SetSuperuserModeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_auth_auth_proto_msgTypes[21]
+	mi := &file_services_auth_auth_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1078,9 +1704,11 @@ func (x *SetSuperuserModeResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetSuperuserModeResponse.ProtoReflect.Descriptor instead.
-func (*SetSuperuserModeResponse) Descriptor() ([]byte, []int) {
-	return file_services_auth_auth_proto_rawDescGZIP(), []int{21}
+func (x *SetSuperuserModeResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
 }
 
 func (x *SetSuperuserModeResponse) GetExpires() *timestamp.Timestamp {
@@ -1090,7 +1718,7 @@ func (x *SetSuperuserModeResponse) GetExpires() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *SetSuperuserModeResponse) GetJobProps() *jobs.JobProps {
+func (x *SetSuperuserModeResponse) GetJobProps() *props.JobProps {
 	if x != nil {
 		return x.JobProps
 	}
@@ -1111,25 +1739,99 @@ func (x *SetSuperuserModeResponse) GetPermissions() []*permissions.Permission {
 	return nil
 }
 
-func (x *SetSuperuserModeResponse) GetAttributes() []*permissions.RoleAttribute {
+func (x *SetSuperuserModeResponse) GetAttributes() []*attributes.RoleAttribute {
 	if x != nil {
 		return x.Attributes
 	}
 	return nil
 }
 
+func (x *SetSuperuserModeResponse) SetToken(v string) {
+	x.Token = v
+}
+
+func (x *SetSuperuserModeResponse) SetExpires(v *timestamp.Timestamp) {
+	x.Expires = v
+}
+
+func (x *SetSuperuserModeResponse) SetJobProps(v *props.JobProps) {
+	x.JobProps = v
+}
+
+func (x *SetSuperuserModeResponse) SetChar(v *users.User) {
+	x.Char = v
+}
+
+func (x *SetSuperuserModeResponse) SetPermissions(v []*permissions.Permission) {
+	x.Permissions = v
+}
+
+func (x *SetSuperuserModeResponse) SetAttributes(v []*attributes.RoleAttribute) {
+	x.Attributes = v
+}
+
+func (x *SetSuperuserModeResponse) HasExpires() bool {
+	if x == nil {
+		return false
+	}
+	return x.Expires != nil
+}
+
+func (x *SetSuperuserModeResponse) HasJobProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobProps != nil
+}
+
+func (x *SetSuperuserModeResponse) HasChar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Char != nil
+}
+
+func (x *SetSuperuserModeResponse) ClearExpires() {
+	x.Expires = nil
+}
+
+func (x *SetSuperuserModeResponse) ClearJobProps() {
+	x.JobProps = nil
+}
+
+func (x *SetSuperuserModeResponse) ClearChar() {
+	x.Char = nil
+}
+
+type SetSuperuserModeResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Token       string
+	Expires     *timestamp.Timestamp
+	JobProps    *props.JobProps
+	Char        *users.User
+	Permissions []*permissions.Permission
+	Attributes  []*attributes.RoleAttribute
+}
+
+func (b0 SetSuperuserModeResponse_builder) Build() *SetSuperuserModeResponse {
+	m0 := &SetSuperuserModeResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Token = b.Token
+	x.Expires = b.Expires
+	x.JobProps = b.JobProps
+	x.Char = b.Char
+	x.Permissions = b.Permissions
+	x.Attributes = b.Attributes
+	return m0
+}
+
 var File_services_auth_auth_proto protoreflect.FileDescriptor
 
 const file_services_auth_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/auth/auth.proto\x12\rservices.auth\x1a\x1ccodegen/audit/redacted.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a!resources/accounts/accounts.proto\x1a\x1fresources/accounts/oauth2.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\x81\x01\n" +
-	"\x14CreateAccountRequest\x12!\n" +
-	"\treg_token\x18\x01 \x01(\tB\x04\xf0\xf3\x18\x01R\bregToken\x12$\n" +
-	"\busername\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\busername\x12 \n" +
-	"\bpassword\x18\x03 \x01(\tB\x04\xf0\xf3\x18\x01R\bpassword\"6\n" +
-	"\x15CreateAccountResponse\x12\x1d\n" +
-	"\n" +
-	"account_id\x18\x01 \x01(\x03R\taccountId\"L\n" +
+	"\x18services/auth/auth.proto\x12\rservices.auth\x1a\x1ccodegen/audit/redacted.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a!resources/accounts/accounts.proto\x1a&resources/accounts/oauth2/oauth2.proto\x1a resources/jobs/props/props.proto\x1a1resources/permissions/attributes/attributes.proto\x1a3resources/permissions/permissions/permissions.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"L\n" +
 	"\fLoginRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12 \n" +
 	"\bpassword\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\bpassword\"\xb2\x01\n" +
@@ -1141,12 +1843,18 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x05_char\"\x0f\n" +
 	"\rLogoutRequest\"*\n" +
 	"\x0eLogoutResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"O\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x81\x01\n" +
+	"\x14CreateAccountRequest\x12!\n" +
+	"\treg_token\x18\x01 \x01(\tB\x04\xf0\xf3\x18\x01R\bregToken\x12$\n" +
+	"\busername\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\busername\x12 \n" +
+	"\bpassword\x18\x03 \x01(\tB\x04\xf0\xf3\x18\x01R\bpassword\"6\n" +
+	"\x15CreateAccountResponse\x12\x1d\n" +
+	"\n" +
+	"account_id\x18\x01 \x01(\x03R\taccountId\"O\n" +
 	"\x15ChangePasswordRequest\x12\x1e\n" +
 	"\acurrent\x18\x01 \x01(\tB\x04\xf0\xf3\x18\x01R\acurrent\x12\x16\n" +
-	"\x03new\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\x03new\"R\n" +
-	"\x16ChangePasswordResponse\x128\n" +
-	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\"M\n" +
+	"\x03new\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\x03new\"\x18\n" +
+	"\x16ChangePasswordResponse\"M\n" +
 	"\x15ChangeUsernameRequest\x12\x18\n" +
 	"\acurrent\x18\x01 \x01(\tR\acurrent\x12\x1a\n" +
 	"\x03new\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x03new\"\x18\n" +
@@ -1155,25 +1863,37 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\treg_token\x18\x01 \x01(\tB\x04\xf0\xf3\x18\x01R\bregToken\x12\x16\n" +
 	"\x03new\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\x03new\"\x18\n" +
 	"\x16ForgotPasswordResponse\"\x17\n" +
-	"\x15GetAccountInfoRequest\"\xf0\x01\n" +
+	"\x15GetAccountInfoRequest\"\xfe\x01\n" +
 	"\x16GetAccountInfoResponse\x125\n" +
-	"\aaccount\x18\x01 \x01(\v2\x1b.resources.accounts.AccountR\aaccount\x12M\n" +
-	"\x10oauth2_providers\x18\x02 \x03(\v2\".resources.accounts.OAuth2ProviderR\x0foauth2Providers\x12P\n" +
-	"\x12oauth2_connections\x18\x03 \x03(\v2!.resources.accounts.OAuth2AccountR\x11oauth2Connections\"\x16\n" +
+	"\aaccount\x18\x01 \x01(\v2\x1b.resources.accounts.AccountR\aaccount\x12T\n" +
+	"\x10oauth2_providers\x18\x02 \x03(\v2).resources.accounts.oauth2.OAuth2ProviderR\x0foauth2Providers\x12W\n" +
+	"\x12oauth2_connections\x18\x03 \x03(\v2(.resources.accounts.oauth2.OAuth2AccountR\x11oauth2Connections\"\x16\n" +
 	"\x14GetCharactersRequest\"L\n" +
 	"\x15GetCharactersResponse\x123\n" +
 	"\x05chars\x18\x01 \x03(\v2\x1d.resources.accounts.CharacterR\x05chars\"1\n" +
 	"\x16ChooseCharacterRequest\x12\x17\n" +
-	"\achar_id\x18\x01 \x01(\x05R\x06charId\"\xef\x02\n" +
-	"\x17ChooseCharacterResponse\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x128\n" +
-	"\aexpires\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x125\n" +
-	"\tjob_props\x18\x03 \x01(\v2\x18.resources.jobs.JobPropsR\bjobProps\x12<\n" +
-	"\x04char\x18\x04 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12C\n" +
-	"\vpermissions\x18\x05 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
+	"\achar_id\x18\x01 \x01(\x05R\x06charId\"\xa2\x03\n" +
+	"\x17ChooseCharacterResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x12\x1a\n" +
+	"\busername\x18\x02 \x01(\tR\busername\x128\n" +
+	"\aexpires\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12;\n" +
+	"\tjob_props\x18\x04 \x01(\v2\x1e.resources.jobs.props.JobPropsR\bjobProps\x12<\n" +
+	"\x04char\x18\x05 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12O\n" +
+	"\vpermissions\x18\x06 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
 	"\n" +
-	"attributes\x18\x06 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
-	"attributes\"@\n" +
+	"attributes\x18\a \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
+	"attributes\"4\n" +
+	"\x15ImpersonateJobRequest\x12\x1b\n" +
+	"\tjob_grade\x18\x01 \x01(\x05R\bjobGrade\"\xde\x02\n" +
+	"\x16ImpersonateJobResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x128\n" +
+	"\aexpires\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12<\n" +
+	"\x04char\x18\x03 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12O\n" +
+	"\vpermissions\x18\x04 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
+	"\n" +
+	"attributes\x18\x05 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
+	"attributes\x12\x14\n" +
+	"\x05state\x18\x06 \x01(\bR\x05state\"@\n" +
 	"\x18DeleteSocialLoginRequest\x12$\n" +
 	"\bprovider\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\bprovider\"5\n" +
 	"\x19DeleteSocialLoginResponse\x12\x18\n" +
@@ -1181,17 +1901,18 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x17SetSuperuserModeRequest\x12\x1c\n" +
 	"\tsuperuser\x18\x01 \x01(\bR\tsuperuser\x12\x15\n" +
 	"\x03job\x18\x02 \x01(\tH\x00R\x03job\x88\x01\x01B\x06\n" +
-	"\x04_job\"\xe7\x02\n" +
-	"\x18SetSuperuserModeResponse\x128\n" +
-	"\aexpires\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12:\n" +
-	"\tjob_props\x18\x03 \x01(\v2\x18.resources.jobs.JobPropsH\x00R\bjobProps\x88\x01\x01\x12<\n" +
-	"\x04char\x18\x04 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12C\n" +
-	"\vpermissions\x18\x05 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
+	"\x04_job\"\x9a\x03\n" +
+	"\x18SetSuperuserModeResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x128\n" +
+	"\aexpires\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12@\n" +
+	"\tjob_props\x18\x03 \x01(\v2\x1e.resources.jobs.props.JobPropsH\x00R\bjobProps\x88\x01\x01\x12<\n" +
+	"\x04char\x18\x04 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12O\n" +
+	"\vpermissions\x18\x05 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
 	"\n" +
-	"attributes\x18\x06 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
+	"attributes\x18\x06 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
 	"attributesB\f\n" +
 	"\n" +
-	"_job_props2\x9c\b\n" +
+	"_job_props2\xaf\t\n" +
 	"\vAuthService\x12B\n" +
 	"\x05Login\x12\x1b.services.auth.LoginRequest\x1a\x1c.services.auth.LoginResponse\x12E\n" +
 	"\x06Logout\x12\x1c.services.auth.LogoutRequest\x1a\x1d.services.auth.LogoutResponse\x12Z\n" +
@@ -1200,31 +1921,20 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x0eChangePassword\x12$.services.auth.ChangePasswordRequest\x1a%.services.auth.ChangePasswordResponse\x12]\n" +
 	"\x0eForgotPassword\x12$.services.auth.ForgotPasswordRequest\x1a%.services.auth.ForgotPasswordResponse\x12Z\n" +
 	"\rGetCharacters\x12#.services.auth.GetCharactersRequest\x1a$.services.auth.GetCharactersResponse\x12h\n" +
-	"\x0fChooseCharacter\x12%.services.auth.ChooseCharacterRequest\x1a&.services.auth.ChooseCharacterResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12]\n" +
+	"\x0fChooseCharacter\x12%.services.auth.ChooseCharacterRequest\x1a&.services.auth.ChooseCharacterResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x90\x01\n" +
+	"\x0eImpersonateJob\x12$.services.auth.ImpersonateJobRequest\x1a%.services.auth.ImpersonateJobResponse\"1\xd2\xf3\x18-\b\x01\x12\x18settings.SettingsService\x1a\x0fUpdateRolePerms\x12]\n" +
 	"\x0eGetAccountInfo\x12$.services.auth.GetAccountInfoRequest\x1a%.services.auth.GetAccountInfoResponse\x12f\n" +
 	"\x11DeleteSocialLogin\x12'.services.auth.DeleteSocialLoginRequest\x1a(.services.auth.DeleteSocialLoginResponse\x12c\n" +
-	"\x10SetSuperuserMode\x12&.services.auth.SetSuperuserModeRequest\x1a'.services.auth.SetSuperuserModeResponse\x1a\x17\xea\xf3\x18\x13\x12\x11i-mdi-key-outlineBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth;authb\x06proto3"
+	"\x10SetSuperuserMode\x12&.services.auth.SetSuperuserModeRequest\x1a'.services.auth.SetSuperuserModeResponse\x1a\x17\xea\xf3\x18\x13\x12\x11i-mdi-key-outlineBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth;authb\x06proto3"
 
-var (
-	file_services_auth_auth_proto_rawDescOnce sync.Once
-	file_services_auth_auth_proto_rawDescData []byte
-)
-
-func file_services_auth_auth_proto_rawDescGZIP() []byte {
-	file_services_auth_auth_proto_rawDescOnce.Do(func() {
-		file_services_auth_auth_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_auth_auth_proto_rawDesc), len(file_services_auth_auth_proto_rawDesc)))
-	})
-	return file_services_auth_auth_proto_rawDescData
-}
-
-var file_services_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_services_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
 var file_services_auth_auth_proto_goTypes = []any{
-	(*CreateAccountRequest)(nil),      // 0: services.auth.CreateAccountRequest
-	(*CreateAccountResponse)(nil),     // 1: services.auth.CreateAccountResponse
-	(*LoginRequest)(nil),              // 2: services.auth.LoginRequest
-	(*LoginResponse)(nil),             // 3: services.auth.LoginResponse
-	(*LogoutRequest)(nil),             // 4: services.auth.LogoutRequest
-	(*LogoutResponse)(nil),            // 5: services.auth.LogoutResponse
+	(*LoginRequest)(nil),              // 0: services.auth.LoginRequest
+	(*LoginResponse)(nil),             // 1: services.auth.LoginResponse
+	(*LogoutRequest)(nil),             // 2: services.auth.LogoutRequest
+	(*LogoutResponse)(nil),            // 3: services.auth.LogoutResponse
+	(*CreateAccountRequest)(nil),      // 4: services.auth.CreateAccountRequest
+	(*CreateAccountResponse)(nil),     // 5: services.auth.CreateAccountResponse
 	(*ChangePasswordRequest)(nil),     // 6: services.auth.ChangePasswordRequest
 	(*ChangePasswordResponse)(nil),    // 7: services.auth.ChangePasswordResponse
 	(*ChangeUsernameRequest)(nil),     // 8: services.auth.ChangeUsernameRequest
@@ -1237,65 +1947,72 @@ var file_services_auth_auth_proto_goTypes = []any{
 	(*GetCharactersResponse)(nil),     // 15: services.auth.GetCharactersResponse
 	(*ChooseCharacterRequest)(nil),    // 16: services.auth.ChooseCharacterRequest
 	(*ChooseCharacterResponse)(nil),   // 17: services.auth.ChooseCharacterResponse
-	(*DeleteSocialLoginRequest)(nil),  // 18: services.auth.DeleteSocialLoginRequest
-	(*DeleteSocialLoginResponse)(nil), // 19: services.auth.DeleteSocialLoginResponse
-	(*SetSuperuserModeRequest)(nil),   // 20: services.auth.SetSuperuserModeRequest
-	(*SetSuperuserModeResponse)(nil),  // 21: services.auth.SetSuperuserModeResponse
-	(*timestamp.Timestamp)(nil),       // 22: resources.timestamp.Timestamp
-	(*accounts.Account)(nil),          // 23: resources.accounts.Account
-	(*accounts.OAuth2Provider)(nil),   // 24: resources.accounts.OAuth2Provider
-	(*accounts.OAuth2Account)(nil),    // 25: resources.accounts.OAuth2Account
-	(*accounts.Character)(nil),        // 26: resources.accounts.Character
-	(*jobs.JobProps)(nil),             // 27: resources.jobs.JobProps
-	(*users.User)(nil),                // 28: resources.users.User
-	(*permissions.Permission)(nil),    // 29: resources.permissions.Permission
-	(*permissions.RoleAttribute)(nil), // 30: resources.permissions.RoleAttribute
+	(*ImpersonateJobRequest)(nil),     // 18: services.auth.ImpersonateJobRequest
+	(*ImpersonateJobResponse)(nil),    // 19: services.auth.ImpersonateJobResponse
+	(*DeleteSocialLoginRequest)(nil),  // 20: services.auth.DeleteSocialLoginRequest
+	(*DeleteSocialLoginResponse)(nil), // 21: services.auth.DeleteSocialLoginResponse
+	(*SetSuperuserModeRequest)(nil),   // 22: services.auth.SetSuperuserModeRequest
+	(*SetSuperuserModeResponse)(nil),  // 23: services.auth.SetSuperuserModeResponse
+	(*timestamp.Timestamp)(nil),       // 24: resources.timestamp.Timestamp
+	(*accounts.Account)(nil),          // 25: resources.accounts.Account
+	(*oauth2.OAuth2Provider)(nil),     // 26: resources.accounts.oauth2.OAuth2Provider
+	(*oauth2.OAuth2Account)(nil),      // 27: resources.accounts.oauth2.OAuth2Account
+	(*accounts.Character)(nil),        // 28: resources.accounts.Character
+	(*props.JobProps)(nil),            // 29: resources.jobs.props.JobProps
+	(*users.User)(nil),                // 30: resources.users.User
+	(*permissions.Permission)(nil),    // 31: resources.permissions.permissions.Permission
+	(*attributes.RoleAttribute)(nil),  // 32: resources.permissions.attributes.RoleAttribute
 }
 var file_services_auth_auth_proto_depIdxs = []int32{
-	22, // 0: services.auth.LoginResponse.expires:type_name -> resources.timestamp.Timestamp
+	24, // 0: services.auth.LoginResponse.expires:type_name -> resources.timestamp.Timestamp
 	17, // 1: services.auth.LoginResponse.char:type_name -> services.auth.ChooseCharacterResponse
-	22, // 2: services.auth.ChangePasswordResponse.expires:type_name -> resources.timestamp.Timestamp
-	23, // 3: services.auth.GetAccountInfoResponse.account:type_name -> resources.accounts.Account
-	24, // 4: services.auth.GetAccountInfoResponse.oauth2_providers:type_name -> resources.accounts.OAuth2Provider
-	25, // 5: services.auth.GetAccountInfoResponse.oauth2_connections:type_name -> resources.accounts.OAuth2Account
-	26, // 6: services.auth.GetCharactersResponse.chars:type_name -> resources.accounts.Character
-	22, // 7: services.auth.ChooseCharacterResponse.expires:type_name -> resources.timestamp.Timestamp
-	27, // 8: services.auth.ChooseCharacterResponse.job_props:type_name -> resources.jobs.JobProps
-	28, // 9: services.auth.ChooseCharacterResponse.char:type_name -> resources.users.User
-	29, // 10: services.auth.ChooseCharacterResponse.permissions:type_name -> resources.permissions.Permission
-	30, // 11: services.auth.ChooseCharacterResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	22, // 12: services.auth.SetSuperuserModeResponse.expires:type_name -> resources.timestamp.Timestamp
-	27, // 13: services.auth.SetSuperuserModeResponse.job_props:type_name -> resources.jobs.JobProps
-	28, // 14: services.auth.SetSuperuserModeResponse.char:type_name -> resources.users.User
-	29, // 15: services.auth.SetSuperuserModeResponse.permissions:type_name -> resources.permissions.Permission
-	30, // 16: services.auth.SetSuperuserModeResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	2,  // 17: services.auth.AuthService.Login:input_type -> services.auth.LoginRequest
-	4,  // 18: services.auth.AuthService.Logout:input_type -> services.auth.LogoutRequest
-	0,  // 19: services.auth.AuthService.CreateAccount:input_type -> services.auth.CreateAccountRequest
-	8,  // 20: services.auth.AuthService.ChangeUsername:input_type -> services.auth.ChangeUsernameRequest
-	6,  // 21: services.auth.AuthService.ChangePassword:input_type -> services.auth.ChangePasswordRequest
-	10, // 22: services.auth.AuthService.ForgotPassword:input_type -> services.auth.ForgotPasswordRequest
-	14, // 23: services.auth.AuthService.GetCharacters:input_type -> services.auth.GetCharactersRequest
-	16, // 24: services.auth.AuthService.ChooseCharacter:input_type -> services.auth.ChooseCharacterRequest
-	12, // 25: services.auth.AuthService.GetAccountInfo:input_type -> services.auth.GetAccountInfoRequest
-	18, // 26: services.auth.AuthService.DeleteSocialLogin:input_type -> services.auth.DeleteSocialLoginRequest
-	20, // 27: services.auth.AuthService.SetSuperuserMode:input_type -> services.auth.SetSuperuserModeRequest
-	3,  // 28: services.auth.AuthService.Login:output_type -> services.auth.LoginResponse
-	5,  // 29: services.auth.AuthService.Logout:output_type -> services.auth.LogoutResponse
-	1,  // 30: services.auth.AuthService.CreateAccount:output_type -> services.auth.CreateAccountResponse
-	9,  // 31: services.auth.AuthService.ChangeUsername:output_type -> services.auth.ChangeUsernameResponse
-	7,  // 32: services.auth.AuthService.ChangePassword:output_type -> services.auth.ChangePasswordResponse
-	11, // 33: services.auth.AuthService.ForgotPassword:output_type -> services.auth.ForgotPasswordResponse
-	15, // 34: services.auth.AuthService.GetCharacters:output_type -> services.auth.GetCharactersResponse
-	17, // 35: services.auth.AuthService.ChooseCharacter:output_type -> services.auth.ChooseCharacterResponse
-	13, // 36: services.auth.AuthService.GetAccountInfo:output_type -> services.auth.GetAccountInfoResponse
-	19, // 37: services.auth.AuthService.DeleteSocialLogin:output_type -> services.auth.DeleteSocialLoginResponse
-	21, // 38: services.auth.AuthService.SetSuperuserMode:output_type -> services.auth.SetSuperuserModeResponse
-	28, // [28:39] is the sub-list for method output_type
-	17, // [17:28] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	25, // 2: services.auth.GetAccountInfoResponse.account:type_name -> resources.accounts.Account
+	26, // 3: services.auth.GetAccountInfoResponse.oauth2_providers:type_name -> resources.accounts.oauth2.OAuth2Provider
+	27, // 4: services.auth.GetAccountInfoResponse.oauth2_connections:type_name -> resources.accounts.oauth2.OAuth2Account
+	28, // 5: services.auth.GetCharactersResponse.chars:type_name -> resources.accounts.Character
+	24, // 6: services.auth.ChooseCharacterResponse.expires:type_name -> resources.timestamp.Timestamp
+	29, // 7: services.auth.ChooseCharacterResponse.job_props:type_name -> resources.jobs.props.JobProps
+	30, // 8: services.auth.ChooseCharacterResponse.char:type_name -> resources.users.User
+	31, // 9: services.auth.ChooseCharacterResponse.permissions:type_name -> resources.permissions.permissions.Permission
+	32, // 10: services.auth.ChooseCharacterResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
+	24, // 11: services.auth.ImpersonateJobResponse.expires:type_name -> resources.timestamp.Timestamp
+	30, // 12: services.auth.ImpersonateJobResponse.char:type_name -> resources.users.User
+	31, // 13: services.auth.ImpersonateJobResponse.permissions:type_name -> resources.permissions.permissions.Permission
+	32, // 14: services.auth.ImpersonateJobResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
+	24, // 15: services.auth.SetSuperuserModeResponse.expires:type_name -> resources.timestamp.Timestamp
+	29, // 16: services.auth.SetSuperuserModeResponse.job_props:type_name -> resources.jobs.props.JobProps
+	30, // 17: services.auth.SetSuperuserModeResponse.char:type_name -> resources.users.User
+	31, // 18: services.auth.SetSuperuserModeResponse.permissions:type_name -> resources.permissions.permissions.Permission
+	32, // 19: services.auth.SetSuperuserModeResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
+	0,  // 20: services.auth.AuthService.Login:input_type -> services.auth.LoginRequest
+	2,  // 21: services.auth.AuthService.Logout:input_type -> services.auth.LogoutRequest
+	4,  // 22: services.auth.AuthService.CreateAccount:input_type -> services.auth.CreateAccountRequest
+	8,  // 23: services.auth.AuthService.ChangeUsername:input_type -> services.auth.ChangeUsernameRequest
+	6,  // 24: services.auth.AuthService.ChangePassword:input_type -> services.auth.ChangePasswordRequest
+	10, // 25: services.auth.AuthService.ForgotPassword:input_type -> services.auth.ForgotPasswordRequest
+	14, // 26: services.auth.AuthService.GetCharacters:input_type -> services.auth.GetCharactersRequest
+	16, // 27: services.auth.AuthService.ChooseCharacter:input_type -> services.auth.ChooseCharacterRequest
+	18, // 28: services.auth.AuthService.ImpersonateJob:input_type -> services.auth.ImpersonateJobRequest
+	12, // 29: services.auth.AuthService.GetAccountInfo:input_type -> services.auth.GetAccountInfoRequest
+	20, // 30: services.auth.AuthService.DeleteSocialLogin:input_type -> services.auth.DeleteSocialLoginRequest
+	22, // 31: services.auth.AuthService.SetSuperuserMode:input_type -> services.auth.SetSuperuserModeRequest
+	1,  // 32: services.auth.AuthService.Login:output_type -> services.auth.LoginResponse
+	3,  // 33: services.auth.AuthService.Logout:output_type -> services.auth.LogoutResponse
+	5,  // 34: services.auth.AuthService.CreateAccount:output_type -> services.auth.CreateAccountResponse
+	9,  // 35: services.auth.AuthService.ChangeUsername:output_type -> services.auth.ChangeUsernameResponse
+	7,  // 36: services.auth.AuthService.ChangePassword:output_type -> services.auth.ChangePasswordResponse
+	11, // 37: services.auth.AuthService.ForgotPassword:output_type -> services.auth.ForgotPasswordResponse
+	15, // 38: services.auth.AuthService.GetCharacters:output_type -> services.auth.GetCharactersResponse
+	17, // 39: services.auth.AuthService.ChooseCharacter:output_type -> services.auth.ChooseCharacterResponse
+	19, // 40: services.auth.AuthService.ImpersonateJob:output_type -> services.auth.ImpersonateJobResponse
+	13, // 41: services.auth.AuthService.GetAccountInfo:output_type -> services.auth.GetAccountInfoResponse
+	21, // 42: services.auth.AuthService.DeleteSocialLogin:output_type -> services.auth.DeleteSocialLoginResponse
+	23, // 43: services.auth.AuthService.SetSuperuserMode:output_type -> services.auth.SetSuperuserModeResponse
+	32, // [32:44] is the sub-list for method output_type
+	20, // [20:32] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_services_auth_auth_proto_init() }
@@ -1303,16 +2020,16 @@ func file_services_auth_auth_proto_init() {
 	if File_services_auth_auth_proto != nil {
 		return
 	}
-	file_services_auth_auth_proto_msgTypes[3].OneofWrappers = []any{}
-	file_services_auth_auth_proto_msgTypes[20].OneofWrappers = []any{}
-	file_services_auth_auth_proto_msgTypes[21].OneofWrappers = []any{}
+	file_services_auth_auth_proto_msgTypes[1].OneofWrappers = []any{}
+	file_services_auth_auth_proto_msgTypes[22].OneofWrappers = []any{}
+	file_services_auth_auth_proto_msgTypes[23].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_auth_auth_proto_rawDesc), len(file_services_auth_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   22,
+			NumMessages:   24,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -8,23 +8,23 @@ import (
 	"slices"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
-	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
-	"github.com/fivenet-app/fivenet/v2025/pkg/users"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
-	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
+	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	unitsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/coords/postals"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2026/pkg/users"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
+	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
@@ -47,10 +47,10 @@ type UnitDB struct {
 	tracker  tracker.ITracker
 	postals  postals.Postals
 
-	store      *store.Store[centrum.Unit, *centrum.Unit]
+	store      *store.Store[centrumunits.Unit, *centrumunits.Unit]
 	jobMapping *store.Store[common.IDMapping, *common.IDMapping]
 
-	unitAccess *access.Grouped[centrum.UnitJobAccess, *centrum.UnitJobAccess, centrum.UnitUserAccess, *centrum.UnitUserAccess, centrum.UnitQualificationAccess, *centrum.UnitQualificationAccess, centrum.UnitAccessLevel]
+	unitAccess *access.Grouped[unitsaccess.UnitJobAccess, *unitsaccess.UnitJobAccess, unitsaccess.UnitUserAccess, *unitsaccess.UnitUserAccess, unitsaccess.UnitQualificationAccess, *unitsaccess.UnitQualificationAccess, unitsaccess.UnitAccessLevel]
 
 	KVPing jetstream.KeyValue
 }
@@ -82,14 +82,14 @@ func New(p Params) *UnitDB {
 		tracker:  p.Tracker,
 		postals:  p.Postals,
 
-		unitAccess: access.NewGrouped[centrum.UnitJobAccess, *centrum.UnitJobAccess, centrum.UnitUserAccess](
+		unitAccess: access.NewGrouped[unitsaccess.UnitJobAccess, *unitsaccess.UnitJobAccess, unitsaccess.UnitUserAccess](
 			p.DB,
 			table.FivenetCentrumUnits,
 			&access.TargetTableColumns{
 				ID:        table.FivenetCentrumUnits.ID,
 				DeletedAt: table.FivenetCentrumUnits.DeletedAt,
 			},
-			access.NewJobs[centrum.UnitJobAccess, *centrum.UnitJobAccess, centrum.UnitAccessLevel](
+			access.NewJobs[unitsaccess.UnitJobAccess, *unitsaccess.UnitJobAccess, unitsaccess.UnitAccessLevel](
 				table.FivenetCentrumUnitsAccess,
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
@@ -114,7 +114,7 @@ func New(p Params) *UnitDB {
 				},
 			),
 			nil,
-			access.NewQualifications[centrum.UnitQualificationAccess, *centrum.UnitQualificationAccess, centrum.UnitAccessLevel](
+			access.NewQualifications[unitsaccess.UnitQualificationAccess, *unitsaccess.UnitQualificationAccess, unitsaccess.UnitAccessLevel](
 				table.FivenetCentrumUnitsAccess,
 				&access.QualificationAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
@@ -182,14 +182,14 @@ func New(p Params) *UnitDB {
 		}
 		d.jobMapping = jobSt
 
-		st, err := store.New[centrum.Unit, *centrum.Unit](
+		st, err := store.New[centrumunits.Unit, *centrumunits.Unit](
 			ctxCancel,
 			storeLogger,
 			p.JS,
 			"centrum_units",
-			store.WithKVPrefix[centrum.Unit, *centrum.Unit]("id"),
-			store.WithOnUpdateFn[centrum.Unit, *centrum.Unit](
-				func(ctx context.Context, _ *centrum.Unit, unit *centrum.Unit) (*centrum.Unit, error) {
+			store.WithKVPrefix[centrumunits.Unit, *centrumunits.Unit]("id"),
+			store.WithOnUpdateFn[centrumunits.Unit, *centrumunits.Unit](
+				func(ctx context.Context, _ *centrumunits.Unit, unit *centrumunits.Unit) (*centrumunits.Unit, error) {
 					if unit == nil {
 						return nil, nil
 					}
@@ -213,30 +213,32 @@ func New(p Params) *UnitDB {
 					return unit, nil
 				},
 			),
-			store.WithOnDeleteFn(func(ctx context.Context, _ string, unit *centrum.Unit) error {
-				if unit == nil {
+			store.WithOnDeleteFn(
+				func(ctx context.Context, _ string, unit *centrumunits.Unit) error {
+					if unit == nil {
+						return nil
+					}
+
+					if err := jobSt.Delete(ctx, centrumutils.JobIdKey(unit.GetJob(), unit.GetId())); err != nil {
+						return fmt.Errorf(
+							"failed to delete job %s mapping for unit %d. %w",
+							unit.GetJob(),
+							unit.GetId(),
+							err,
+						)
+					}
+
+					if err := d.KVPing.Delete(ctx, fmt.Sprintf("ping.%d", unit.GetId())); err != nil {
+						d.logger.Error(
+							"failed to delete ping timer for unit",
+							zap.Int64("unit_id", unit.GetId()),
+							zap.Error(err),
+						)
+					}
+
 					return nil
-				}
-
-				if err := jobSt.Delete(ctx, centrumutils.JobIdKey(unit.GetJob(), unit.GetId())); err != nil {
-					return fmt.Errorf(
-						"failed to delete job %s mapping for unit %d. %w",
-						unit.GetJob(),
-						unit.GetId(),
-						err,
-					)
-				}
-
-				if err := d.KVPing.Delete(ctx, fmt.Sprintf("ping.%d", unit.GetId())); err != nil {
-					d.logger.Error(
-						"failed to delete ping timer for unit",
-						zap.Int64("unit_id", unit.GetId()),
-						zap.Error(err),
-					)
-				}
-
-				return nil
-			}),
+				},
+			),
 		)
 		if err != nil {
 			return err
@@ -299,7 +301,7 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id int64) error {
 			tUnits.Name.ASC(),
 		)
 
-	units := []*centrum.Unit{}
+	units := []*centrumunits.Unit{}
 	if err := stmt.QueryContext(ctx, s.db, &units); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
@@ -369,8 +371,8 @@ func (s *UnitDB) LoadUnitIDForUserID(ctx context.Context, userId int32) (int64, 
 func (s *UnitDB) UpdateStatus(
 	ctx context.Context,
 	unitId int64,
-	in *centrum.UnitStatus,
-) (*centrum.UnitStatus, error) {
+	in *centrumunits.UnitStatus,
+) (*centrumunits.UnitStatus, error) {
 	unit, err := s.Get(ctx, unitId)
 	if err != nil {
 		return nil, err
@@ -379,10 +381,10 @@ func (s *UnitDB) UpdateStatus(
 	// If the unit status is the same and is a status that shouldn't be duplicated, don't update the status again
 	if unit.GetStatus() != nil &&
 		unit.GetStatus().GetStatus() == in.GetStatus() &&
-		(in.GetStatus() == centrum.StatusUnit_STATUS_UNIT_ON_BREAK ||
-			in.GetStatus() == centrum.StatusUnit_STATUS_UNIT_BUSY ||
-			in.GetStatus() == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
-			in.GetStatus() == centrum.StatusUnit_STATUS_UNIT_AVAILABLE) &&
+		(in.GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_ON_BREAK ||
+			in.GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_BUSY ||
+			in.GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
+			in.GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_AVAILABLE) &&
 		// Additionally if the status is under 2 minutes disallow the same status update
 		(unit.GetStatus().GetCreatedAt() == nil || time.Since(unit.GetStatus().GetCreatedAt().AsTime()) < 2*time.Minute) {
 		s.logger.Debug(
@@ -394,11 +396,11 @@ func (s *UnitDB) UpdateStatus(
 	}
 
 	if unit.GetAttributes() != nil &&
-		unit.GetAttributes().Has(centrum.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
+		unit.GetAttributes().Has(centrumunits.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
 		// Only allow a static unit to be set busy, on break or unavailable
-		if in.GetStatus() != centrum.StatusUnit_STATUS_UNIT_BUSY &&
-			in.GetStatus() != centrum.StatusUnit_STATUS_UNIT_ON_BREAK &&
-			in.GetStatus() != centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE {
+		if in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_BUSY &&
+			in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_ON_BREAK &&
+			in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE {
 			return nil, nil
 		}
 	}
@@ -517,7 +519,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 
 	tUnitUser := table.FivenetCentrumUnitsUsers
 
-	toAddUsers := []*jobs.Colleague{}
+	toAddUsers := []*jobscolleagues.Colleague{}
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -557,7 +559,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 				return err
 			}
 			// Skip already added units
-			if slices.ContainsFunc(unit.GetUsers(), func(in *centrum.UnitAssignment) bool {
+			if slices.ContainsFunc(unit.GetUsers(), func(in *centrumunits.UnitAssignment) bool {
 				return in.GetUserId() == toAdd[i]
 			}) {
 				continue
@@ -605,7 +607,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 	}
 
 	key := centrumutils.IdKey(unitId)
-	if err := s.store.ComputeUpdate(ctx, key, func(key string, unit *centrum.Unit) (*centrum.Unit, bool, error) {
+	if err := s.store.ComputeUpdate(ctx, key, func(key string, unit *centrumunits.Unit) (*centrumunits.Unit, bool, error) {
 		if len(toRemove) > 0 {
 			toAnnounce := []int32{}
 
@@ -613,7 +615,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 				// No users in unit? Make sure to announce all users that should be removed just in case
 				toAnnounce = append(toAnnounce, toRemove...)
 			} else {
-				unit.Users = slices.DeleteFunc(unit.GetUsers(), func(in *centrum.UnitAssignment) bool {
+				unit.Users = slices.DeleteFunc(unit.GetUsers(), func(in *centrumunits.UnitAssignment) bool {
 					for k := range toRemove {
 						if in.GetUserId() != toRemove[k] {
 							continue
@@ -629,10 +631,10 @@ func (s *UnitDB) UpdateUnitAssignments(
 
 			// Send updates
 			for _, user := range toAnnounce {
-				if _, err := s.AddStatus(ctx, s.db, &centrum.UnitStatus{
+				if _, err := s.AddStatus(ctx, s.db, &centrumunits.UnitStatus{
 					CreatedAt: timestamp.Now(),
 					UnitId:    unit.GetId(),
-					Status:    centrum.StatusUnit_STATUS_UNIT_USER_REMOVED,
+					Status:    centrumunits.StatusUnit_STATUS_UNIT_USER_REMOVED,
 					UserId:    &user,
 					CreatorId: userId,
 					X:         x,
@@ -650,16 +652,16 @@ func (s *UnitDB) UpdateUnitAssignments(
 
 		if len(toAddUsers) > 0 {
 			for _, user := range toAddUsers {
-				unit.Users = append(unit.Users, &centrum.UnitAssignment{
+				unit.Users = append(unit.Users, &centrumunits.UnitAssignment{
 					UnitId: unit.GetId(),
 					UserId: user.GetUserId(),
 					User:   user,
 				})
 
-				if _, err := s.AddStatus(ctx, s.db, &centrum.UnitStatus{
+				if _, err := s.AddStatus(ctx, s.db, &centrumunits.UnitStatus{
 					CreatedAt:  timestamp.Now(),
 					UnitId:     unit.GetId(),
-					Status:     centrum.StatusUnit_STATUS_UNIT_USER_ADDED,
+					Status:     centrumunits.StatusUnit_STATUS_UNIT_USER_ADDED,
 					UserId:     &user.UserId,
 					CreatorId:  userId,
 					X:          x,
@@ -678,11 +680,11 @@ func (s *UnitDB) UpdateUnitAssignments(
 
 		// Unit is empty now, set unit status to be unavailable automatically
 		if len(unit.GetUsers()) == 0 {
-			if unit.Status, err = s.AddStatus(ctx, s.db, &centrum.UnitStatus{
+			if unit.Status, err = s.AddStatus(ctx, s.db, &centrumunits.UnitStatus{
 				CreatedAt: timestamp.Now(),
 				UnitId:    unit.GetId(),
-				Unit:      proto.Clone(unit).(*centrum.Unit),
-				Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+				Unit:      proto.Clone(unit).(*centrumunits.Unit),
+				Status:    centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 				UserId:    userId,
 				CreatorId: userId,
 				X:         x,
@@ -704,10 +706,10 @@ func (s *UnitDB) UpdateUnitAssignments(
 func (s *UnitDB) CreateUnit(
 	ctx context.Context,
 	creatorJob string,
-	unit *centrum.Unit,
-) (*centrum.Unit, error) {
+	unit *centrumunits.Unit,
+) (*centrumunits.Unit, error) {
 	if unit.GetAccess() == nil {
-		unit.Access = &centrum.UnitAccess{}
+		unit.Access = &unitsaccess.UnitAccess{}
 	}
 	unit.GetAccess().ClearQualificationResults()
 
@@ -755,11 +757,11 @@ func (s *UnitDB) CreateUnit(
 	unit.Id = lastId
 
 	// A new unit shouldn't have a status, so we make sure we add one
-	if unit.Status, err = s.AddStatus(ctx, tx, &centrum.UnitStatus{
+	if unit.Status, err = s.AddStatus(ctx, tx, &centrumunits.UnitStatus{
 		CreatedAt: timestamp.Now(),
 		UnitId:    unit.GetId(),
 		Unit:      unit,
-		Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+		Status:    centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 	}, false, ""); err != nil {
 		return nil, err
 	}
@@ -781,9 +783,9 @@ func (s *UnitDB) CreateUnit(
 	return unit, nil
 }
 
-func (s *UnitDB) Update(ctx context.Context, unit *centrum.Unit) (*centrum.Unit, error) {
+func (s *UnitDB) Update(ctx context.Context, unit *centrumunits.Unit) (*centrumunits.Unit, error) {
 	if unit.GetAccess() == nil {
-		unit.Access = &centrum.UnitAccess{}
+		unit.Access = &unitsaccess.UnitAccess{}
 	}
 	unit.GetAccess().ClearQualificationResults()
 
@@ -848,10 +850,10 @@ func (s *UnitDB) Update(ctx context.Context, unit *centrum.Unit) (*centrum.Unit,
 func (s *UnitDB) AddStatus(
 	ctx context.Context,
 	tx qrm.DB,
-	status *centrum.UnitStatus,
+	status *centrumunits.UnitStatus,
 	publish bool,
 	job string,
-) (*centrum.UnitStatus, error) {
+) (*centrumunits.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
@@ -914,10 +916,10 @@ func (s *UnitDB) GetStatusByID(
 	ctx context.Context,
 	tx qrm.DB,
 	id int64,
-) (*centrum.UnitStatus, error) {
+) (*centrumunits.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
-	tUsers := tables.User().AS("colleague")
+	tUsers := table.FivenetUser.AS("colleague")
 	tUserProps := table.FivenetUserProps.AS("user_props")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
@@ -974,7 +976,7 @@ func (s *UnitDB) GetStatusByID(
 		ORDER_BY(tUnitStatus.ID.DESC()).
 		LIMIT(1)
 
-	var dest centrum.UnitStatus
+	var dest centrumunits.UnitStatus
 	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -990,10 +992,10 @@ func (s *UnitDB) GetLastStatus(
 	ctx context.Context,
 	tx qrm.DB,
 	unitId int64,
-) (*centrum.UnitStatus, error) {
+) (*centrumunits.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
-	tUsers := tables.User().AS("colleague")
+	tUsers := table.FivenetUser.AS("colleague")
 	tUserProps := table.FivenetUserProps.AS("user_props")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
@@ -1047,14 +1049,14 @@ func (s *UnitDB) GetLastStatus(
 		WHERE(mysql.AND(
 			tUnitStatus.UnitID.EQ(mysql.Int64(unitId)),
 			tUnitStatus.Status.NOT_IN(
-				mysql.Int32(int32(centrum.StatusUnit_STATUS_UNIT_USER_ADDED)),
-				mysql.Int32(int32(centrum.StatusUnit_STATUS_UNIT_USER_REMOVED)),
+				mysql.Int32(int32(centrumunits.StatusUnit_STATUS_UNIT_USER_ADDED)),
+				mysql.Int32(int32(centrumunits.StatusUnit_STATUS_UNIT_USER_REMOVED)),
 			),
 		)).
 		ORDER_BY(tUnitStatus.ID.DESC()).
 		LIMIT(1)
 
-	var dest centrum.UnitStatus
+	var dest centrumunits.UnitStatus
 	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -1087,8 +1089,8 @@ func (s *UnitDB) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (s *UnitDB) ListAccess(ctx context.Context, id int64) (*centrum.UnitAccess, error) {
-	access := &centrum.UnitAccess{}
+func (s *UnitDB) ListAccess(ctx context.Context, id int64) (*unitsaccess.UnitAccess, error) {
+	access := &unitsaccess.UnitAccess{}
 
 	jobsAccess, err := s.unitAccess.Jobs.List(ctx, s.db, id)
 	if err != nil {
@@ -1109,6 +1111,6 @@ func (s *UnitDB) ListAccess(ctx context.Context, id int64) (*centrum.UnitAccess,
 	return access, nil
 }
 
-func (s *UnitDB) GetAccess() *access.Grouped[centrum.UnitJobAccess, *centrum.UnitJobAccess, centrum.UnitUserAccess, *centrum.UnitUserAccess, centrum.UnitQualificationAccess, *centrum.UnitQualificationAccess, centrum.UnitAccessLevel] {
+func (s *UnitDB) GetAccess() *access.Grouped[unitsaccess.UnitJobAccess, *unitsaccess.UnitJobAccess, unitsaccess.UnitUserAccess, *unitsaccess.UnitUserAccess, unitsaccess.UnitQualificationAccess, *unitsaccess.UnitQualificationAccess, unitsaccess.UnitAccessLevel] {
 	return s.unitAccess
 }

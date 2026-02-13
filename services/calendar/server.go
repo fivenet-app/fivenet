@@ -3,16 +3,16 @@ package calendar
 import (
 	"database/sql"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
-	pbcalendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
+	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 )
@@ -73,7 +73,7 @@ type Server struct {
 	notif    notifi.INotifi
 	js       *events.JSWrapper
 
-	access *access.Grouped[calendar.CalendarJobAccess, *calendar.CalendarJobAccess, calendar.CalendarUserAccess, *calendar.CalendarUserAccess, access.DummyQualificationAccess[calendar.AccessLevel], *access.DummyQualificationAccess[calendar.AccessLevel], calendar.AccessLevel]
+	access *access.Grouped[calendaraccess.CalendarJobAccess, *calendaraccess.CalendarJobAccess, calendaraccess.CalendarUserAccess, *calendaraccess.CalendarUserAccess, access.DummyQualificationAccess[calendaraccess.AccessLevel], *access.DummyQualificationAccess[calendaraccess.AccessLevel], calendaraccess.AccessLevel]
 }
 
 type Params struct {
@@ -95,7 +95,7 @@ func NewServer(p Params) *Server {
 		appCfg:   p.AppConfig,
 		notif:    p.Notif,
 		js:       p.JS,
-		access: access.NewGrouped[calendar.CalendarJobAccess, *calendar.CalendarJobAccess, calendar.CalendarUserAccess, *calendar.CalendarUserAccess, access.DummyQualificationAccess[calendar.AccessLevel], *access.DummyQualificationAccess[calendar.AccessLevel], calendar.AccessLevel](
+		access: access.NewGrouped[calendaraccess.CalendarJobAccess, *calendaraccess.CalendarJobAccess, calendaraccess.CalendarUserAccess, *calendaraccess.CalendarUserAccess, access.DummyQualificationAccess[calendaraccess.AccessLevel], *access.DummyQualificationAccess[calendaraccess.AccessLevel], calendaraccess.AccessLevel](
 			p.DB,
 			table.FivenetDocuments,
 			&access.TargetTableColumns{
@@ -104,7 +104,7 @@ func NewServer(p Params) *Server {
 				CreatorJob: table.FivenetDocuments.CreatorJob,
 				CreatorID:  table.FivenetDocuments.CreatorID,
 			},
-			access.NewJobs[calendar.CalendarJobAccess, *calendar.CalendarJobAccess, calendar.AccessLevel](
+			access.NewJobs[calendaraccess.CalendarJobAccess, *calendaraccess.CalendarJobAccess, calendaraccess.AccessLevel](
 				table.FivenetCalendarAccess,
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
@@ -128,7 +128,7 @@ func NewServer(p Params) *Server {
 					).MinimumGrade,
 				},
 			),
-			access.NewUsers[calendar.CalendarUserAccess, *calendar.CalendarUserAccess, calendar.AccessLevel](
+			access.NewUsers[calendaraccess.CalendarUserAccess, *calendaraccess.CalendarUserAccess, calendaraccess.AccessLevel](
 				table.FivenetCalendarAccess,
 				&access.UserAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{

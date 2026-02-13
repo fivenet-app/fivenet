@@ -16,10 +16,10 @@ import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
-import { AccessLevel } from '~~/gen/ts/resources/documents/access';
-import { ApprovalAssigneeKind, ApprovalRuleKind, OnEditBehavior } from '~~/gen/ts/resources/documents/approval';
-import type { Category } from '~~/gen/ts/resources/documents/category';
-import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
+import { ApprovalAssigneeKind, ApprovalRuleKind, OnEditBehavior } from '~~/gen/ts/resources/documents/approval/approval';
+import type { Category } from '~~/gen/ts/resources/documents/category/category';
+import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/documents/documents';
 import PolicyEditor from '../../approval/PolicyEditor.vue';
@@ -660,8 +660,7 @@ const formRef = useTemplateRef('formRef');
                                     :searchable="
                                         async (q: string) => {
                                             try {
-                                                const categories = await completorStore.completeDocumentCategories(q);
-                                                return categories;
+                                                return await completorStore.completeDocumentCategories(q);
                                             } catch (e) {
                                                 handleGRPCError(e as RpcError);
                                                 throw e;

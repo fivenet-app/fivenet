@@ -102,7 +102,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
                 useAuthStore().clearAuthInfo();
 
                 // Only update the redirect query param if it isn't already set
-                navigateTo({
+                await navigateTo({
                     name: 'auth-login',
                     query: { redirect: route.query.redirect ?? route.fullPath },
                     replace: true,

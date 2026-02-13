@@ -144,15 +144,15 @@ async function addToClipboard(logEntry: AuditEntry): Promise<void> {
 
 `;
     if (user) {
-        text += `User: ${user?.firstname} ${user?.lastname} (${user?.userId}; ${user?.identifier})
+        text += `**User**: ${user?.firstname} ${user?.lastname} (ID: ${user?.userId})
 `;
     }
-    text += `Service/Method: \`${logEntry.service}/${logEntry.method}\`
-Action: \`${EventAction[logEntry.action]}\`
-Result: \`${EventResult[logEntry.result]}\`
+    text += `**Service/Method**: \`${logEntry.service}/${logEntry.method}\`
+**Action**: \`${EventAction[logEntry.action]}\`
+**Result**: \`${EventResult[logEntry.result]}\`
 `;
     if (logEntry.data) {
-        text += `Data:
+        text += `**Data**:
 \`\`\`json
 ${JSON.stringify(JSON.parse(logEntry.data!), undefined, 2)}
 \`\`\`

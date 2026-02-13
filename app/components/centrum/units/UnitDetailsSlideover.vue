@@ -8,8 +8,8 @@ import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
-import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
-import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
+import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units/access/access';
+import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
 
 const props = defineProps<{
     unit: Unit;

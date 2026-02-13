@@ -5,10 +5,10 @@ package services.livemap;
 import "buf/validate/validate.proto";
 import "codegen/perms/perms.proto";
 import "resources/jobs/jobs.proto";
-import "resources/livemap/marker_marker.proto";
-import "resources/livemap/user_marker.proto";
+import "resources/livemap/markers/marker_marker.proto";
+import "resources/livemap/markers/user_marker.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap;livemap";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap;livemap";
 
 message StreamRequest {}
 
@@ -32,7 +32,7 @@ message JobsList {
 }
 
 message MarkerMarkersUpdates {
-  repeated resources.livemap.MarkerMarker updated = 1;
+  repeated resources.livemap.markers.MarkerMarker updated = 1;
   repeated int64 deleted = 2;
   int32 part = 3;
   bool partial = 4;
@@ -46,11 +46,11 @@ message MarkerMarkersUpdates {
 message Snapshot {
   // All currently-known user markers, already filtered for
   // obsolete PURGE/DELETE events.
-  repeated resources.livemap.UserMarker markers = 1;
+  repeated resources.livemap.markers.UserMarker markers = 1;
 }
 
 message UserUpdates {
-  repeated resources.livemap.UserMarker updates = 1;
+  repeated resources.livemap.markers.UserMarker updates = 1;
 }
 
 message UserDeletes {
@@ -66,11 +66,11 @@ message UserDelete {
 }
 
 message CreateOrUpdateMarkerRequest {
-  resources.livemap.MarkerMarker marker = 1 [(buf.validate.field).required = true];
+  resources.livemap.markers.MarkerMarker marker = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateMarkerResponse {
-  resources.livemap.MarkerMarker marker = 1;
+  resources.livemap.markers.MarkerMarker marker = 1;
 }
 
 message DeleteMarkerRequest {

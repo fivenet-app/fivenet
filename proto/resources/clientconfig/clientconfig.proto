@@ -7,7 +7,7 @@ import "resources/settings/config.proto";
 import "resources/settings/data.proto";
 import "tagger/tagger.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig;clientconfig";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig;clientconfig";
 
 message ClientConfig {
   string version = 1;
@@ -57,6 +57,12 @@ message FeatureGates {}
 message Game {
   string unemployed_job_name = 1 [(tagger.tags) = "json:\"unemployedJobName\""];
   int32 start_job_grade = 2 [(tagger.tags) = "json:\"startJobGrade\""];
+
+  Livemap livemap = 3;
+}
+
+message Livemap {
+  bool enable_cayo_perico = 1;
 }
 
 message System {

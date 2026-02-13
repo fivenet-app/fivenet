@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
+	permissionsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -49,7 +49,7 @@ func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 		case RoleCreatedSubject:
 			fallthrough
 		case RolePermUpdateSubject:
-			event := &permissions.RoleIDEvent{}
+			event := &permissionsevents.RoleIDEvent{}
 			if err := protojson.Unmarshal(msg.Data, event); err != nil {
 				p.logger.Error("failed to unmarshal message event data", zap.Error(err))
 				return
@@ -66,7 +66,7 @@ func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 			}
 
 		case RoleAttrUpdateSubject:
-			event := &permissions.RoleIDEvent{}
+			event := &permissionsevents.RoleIDEvent{}
 			if err := protojson.Unmarshal(msg.Data, event); err != nil {
 				p.logger.Error("failed to unmarshal message event data", zap.Error(err))
 				return
@@ -83,7 +83,7 @@ func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 			}
 
 		case RoleDeletedSubject:
-			event := &permissions.RoleIDEvent{}
+			event := &permissionsevents.RoleIDEvent{}
 			if err := protojson.Unmarshal(msg.Data, event); err != nil {
 				p.logger.Error("failed to unmarshal message event data", zap.Error(err))
 				return
@@ -93,7 +93,7 @@ func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 			p.deleteRole(event.GetRoleId(), event.GetJob(), event.GetGrade())
 
 		case JobLimitsUpdatedSubject:
-			event := &permissions.JobLimitsUpdatedEvent{}
+			event := &permissionsevents.JobLimitsUpdatedEvent{}
 			if err := protojson.Unmarshal(msg.Data, event); err != nil {
 				p.logger.Error("failed to unmarshal message event data", zap.Error(err))
 				return

@@ -27,7 +27,7 @@ log:
     cron: "INFO"
     perms: "INFO"
 
-# Must be 32 chars (bytes) long
+# Must be exactly 32 chars (bytes) long
 secret: "your_generated_db_secret_32_char"
 
 # Indicates whether to ignore database and nats requirements on startup
@@ -38,6 +38,7 @@ jwt:
 
 http:
   listen: ":8080"
+  # It is recommended to use localhost for the admin port (metrics and go debug access).
   adminListen: ":7070"
   publicURL: "https://fivenet.example.com"
   origins:
@@ -53,18 +54,30 @@ http:
     domain: "fivenet.example.com"
 
 database:
-  # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-  # Please note that the `parseTime` parameter is allows set to true
+  # You can either use a DSN connection string or individual parameters below.
+  # DSN connection string, refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
+  # Please note that the `parseTime` parameter is always set to true
   dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
-  # For the local test database using `docker-compose`
+  # Example for a locally hosted database
   #dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
+  #
+  # Or use individual parameters (make sure to comment out the `dsn:` line above if you use these).
+  # Hint: you can set these via environment variables as well, e.g., FIVENET_DATABASE_HOST, FIVENET_DATABASE_PORT,
+  # FIVENET_DATABASE_USERNAME, FIVENET_DATABASE_PASSWORD, FIVENET_DATABASE_DATABASE
+  #host: "localhost"
+  #port: 3306
+  #username: "fivenet"
+  #password: "changeme"
+  #database: "fivenet"
+
+  # Advanced connection settings
   maxOpenConns: 32
   maxIdleConns: 5
   connMaxIdleTime: 15m
   connMaxLifetime: 60m
   disableLocking: false
-  # Must be enabled if using a gameserver database (with ESX tables) and not wanting to use the dbsync
-  esxCompat: true
+  # ESX Compat mode has been removed.
+  #
   # Indicates whether to skip database migrations on startup
   skipMigrations: false
   custom:

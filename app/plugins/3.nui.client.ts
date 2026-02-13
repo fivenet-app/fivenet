@@ -1,26 +1,31 @@
-export default defineNuxtPlugin(() => {
-    if (import.meta.server) return;
+export default defineNuxtPlugin({
+    name: 'nui',
+    parallel: true,
 
-    const query = useRouter().currentRoute.value.query;
+    async setup() {
+        if (import.meta.server) return;
 
-    if (query?.nui !== undefined) {
-        const nuiQuery = query.nui as string;
+        const query = useRouter().currentRoute.value.query;
 
-        const logger = useLogger('🎮 NUI');
-        const settingsStore = useSettingsStore();
-        if (nuiQuery.toLowerCase() !== 'false') {
-            settingsStore.setNuiSettings(true, nuiQuery);
-            logger.info('Enabled NUI integration, resource:', settingsStore.nuiResourceName);
-        } else {
-            settingsStore.setNuiSettings(false);
-            logger.info('Disabled NUI integration');
+        if (query?.nui !== undefined) {
+            const nuiQuery = query.nui as string;
+
+            const logger = useLogger('🎮 NUI');
+            const settingsStore = useSettingsStore();
+            if (nuiQuery.toLowerCase() !== 'false') {
+                settingsStore.setNuiSettings(true, nuiQuery);
+                logger.info('Enabled NUI integration, resource:', settingsStore.nuiResourceName);
+            } else {
+                settingsStore.setNuiSettings(false);
+                logger.info('Disabled NUI integration');
+            }
         }
-    }
 
-    if (query?.refreshApp !== undefined) {
-        reloadNuxtApp({
-            persistState: false,
-            ttl: 7_500, // 7.5 seconds
-        });
-    }
+        if (query?.refreshApp !== undefined) {
+            reloadNuxtApp({
+                persistState: false,
+                ttl: 7_500, // 7.5 seconds
+            });
+        }
+    },
 });

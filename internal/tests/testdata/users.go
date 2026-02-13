@@ -1,6 +1,6 @@
 package testdata
 
-import "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+import "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 
 func ptr(s string) *string {
 	return &s
@@ -9,8 +9,7 @@ func ptr(s string) *string {
 var Users = []*users.User{
 	{
 		UserId:      1,
-		Identifier:  ptr("char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4"),
-		Group:       ptr("user"),
+		Identifier:  "char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4",
 		Job:         "ambulance",
 		JobGrade:    17,
 		Firstname:   "Dr. Amy",
@@ -21,8 +20,7 @@ var Users = []*users.User{
 	},
 	{
 		UserId:      2,
-		Identifier:  ptr("char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57"),
-		Group:       ptr("user"),
+		Identifier:  "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57",
 		Job:         "ambulance",
 		JobGrade:    20,
 		Firstname:   "Philipp",
@@ -33,8 +31,7 @@ var Users = []*users.User{
 	},
 	{
 		UserId:      3,
-		Identifier:  ptr("char1:db7e039146d5bf1b6781e7bc1bef31f0bb1298ea"),
-		Group:       ptr("user"),
+		Identifier:  "char1:db7e039146d5bf1b6781e7bc1bef31f0bb1298ea",
 		Job:         "doj",
 		JobGrade:    16,
 		Firstname:   "Jonas",
@@ -45,8 +42,7 @@ var Users = []*users.User{
 	},
 	{
 		UserId:      4,
-		Identifier:  ptr("char2:fcee377a1fda007a8d2cc764a0a272e04d8c5d57"),
-		Group:       ptr("user"),
+		Identifier:  "char2:fcee377a1fda007a8d2cc764a0a272e04d8c5d57",
 		Job:         "police",
 		JobGrade:    2,
 		Firstname:   "Hannibal",
@@ -57,8 +53,7 @@ var Users = []*users.User{
 	},
 	{
 		UserId:      5,
-		Identifier:  ptr("char2:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4"),
-		Group:       ptr("user"),
+		Identifier:  "char2:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4",
 		Job:         "unemployed",
 		JobGrade:    1,
 		Firstname:   "Peter",

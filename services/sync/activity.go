@@ -7,13 +7,17 @@ import (
 	"slices"
 	"time"
 
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
+	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
+	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	colleaguesstore "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -39,7 +43,7 @@ func (s *Server) AddActivity(
 		}
 
 	case *pbsync.AddActivityRequest_UserActivity:
-		if err := users.CreateUserActivities(ctx, s.db, d.UserActivity); err != nil {
+		if err := usersactivity.CreateUserActivities(ctx, s.db, d.UserActivity); err != nil {
 			return nil, fmt.Errorf("failed to create user activities. %w", err)
 		}
 
@@ -49,7 +53,7 @@ func (s *Server) AddActivity(
 		}
 
 	case *pbsync.AddActivityRequest_ColleagueActivity:
-		if err := jobs.CreateColleagueActivity(ctx, s.db, d.ColleagueActivity); err != nil {
+		if err := colleaguesactivity.CreateColleagueActivity(ctx, s.db, d.ColleagueActivity); err != nil {
 			return nil, fmt.Errorf("failed to create jobs user activities. %w", err)
 		}
 
@@ -64,12 +68,13 @@ func (s *Server) AddActivity(
 		}
 
 	case *pbsync.AddActivityRequest_UserUpdate:
-		if s.esxCompat {
-			return nil, fmt.Errorf("ESX compatibility mode is enabled, cannot send data. %w", ErrSendDataDisabled)
-		}
-
 		if err := s.handleUserUpdate(ctx, d); err != nil {
 			return nil, fmt.Errorf("failed to handle UserUpdate activity. %w", err)
+		}
+
+	case *pbsync.AddActivityRequest_AccountUpdate:
+		if err := s.handleAccountUpdate(ctx, d); err != nil {
+			return nil, fmt.Errorf("failed to handle AccountUpdate activity. %w", err)
 		}
 	}
 
@@ -164,7 +169,7 @@ func (s *Server) handleUserProps(
 	defer tx.Rollback()
 
 	reqP := data.UserProps.GetProps()
-	props, err := users.GetUserProps(ctx, tx, reqP.GetUserId(), nil)
+	props, err := usersprops.GetUserProps(ctx, tx, reqP.GetUserId(), nil)
 	if err != nil {
 		return fmt.Errorf("failed to get user props. %w", err)
 	}
@@ -186,7 +191,7 @@ func (s *Server) handleUserProps(
 	}
 
 	if data.UserProps.Reason != nil && data.UserProps.GetReason() != "" {
-		if err := users.CreateUserActivities(ctx, tx, activities...); err != nil {
+		if err := usersactivity.CreateUserActivities(ctx, tx, activities...); err != nil {
 			return fmt.Errorf("failed to create user activities. %w", err)
 		}
 	}
@@ -211,12 +216,12 @@ func (s *Server) handleColleagueProps(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	current := data.ColleagueProps.GetProps()
-	props, err := jobs.GetColleagueProps(
+	input := data.ColleagueProps.GetProps()
+	props, err := colleaguesstore.GetColleagueProps(
 		ctx,
 		tx,
-		current.GetJob(),
-		current.GetUserId(),
+		input.GetJob(),
+		input.GetUserId(),
 		nil,
 	)
 	if err != nil {
@@ -228,12 +233,13 @@ func (s *Server) handleColleagueProps(
 		reason = data.ColleagueProps.GetReason()
 	}
 
-	activities, err := props.HandleChanges(
+	activities, err := colleaguesstore.HandleColleaguesPropsChanges(
 		ctx,
 		tx,
-		current,
-		current.GetJob(),
-		&current.UserId,
+		props,
+		input,
+		input.GetJob(),
+		&input.UserId,
 		reason,
 	)
 	if err != nil {
@@ -241,7 +247,7 @@ func (s *Server) handleColleagueProps(
 	}
 
 	if data.ColleagueProps.Reason != nil && data.ColleagueProps.GetReason() != "" {
-		if err := jobs.CreateColleagueActivity(ctx, tx, activities...); err != nil {
+		if err := colleaguesactivity.CreateColleagueActivity(ctx, tx, activities...); err != nil {
 			return fmt.Errorf("failed to create jobs user activities. %w", err)
 		}
 	}
@@ -277,7 +283,7 @@ func (s *Server) handleTimeclockEntry(
 			ORDER_BY(tTimeClock.Date.DESC()).
 			LIMIT(1)
 
-		dest := &jobs.TimeclockEntry{}
+		dest := &jobstimeclock.TimeclockEntry{}
 		if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
 				return fmt.Errorf("failed to query timeclock entry. %w", err)
@@ -334,7 +340,7 @@ func (s *Server) handleUserUpdate(
 ) error {
 	d := data.UserUpdate
 
-	tUser := tables.User()
+	tUser := table.FivenetUser
 
 	selectStmt := tUser.
 		SELECT(
@@ -387,6 +393,51 @@ func (s *Server) handleUserUpdate(
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return fmt.Errorf("failed to update user. %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *Server) handleAccountUpdate(
+	ctx context.Context,
+	data *pbsync.AddActivityRequest_AccountUpdate,
+) error {
+	d := data.AccountUpdate
+
+	tAccounts := table.FivenetAccounts
+
+	updateSets := []any{}
+	if d.Groups != nil {
+		groups, err := (&accounts.AccountGroups{
+			Groups: d.GetGroups(),
+		}).Value()
+		if err != nil {
+			return fmt.Errorf("failed to marshal account groups. %w", err)
+		}
+
+		updateSets = append(
+			updateSets,
+			tAccounts.Groups.SET(mysql.String(groups.(string))),
+		)
+	}
+
+	if len(updateSets) > 0 {
+		stmt := tAccounts.
+			UPDATE()
+
+		if len(updateSets) == 1 {
+			stmt = stmt.SET(updateSets[0])
+		} else {
+			stmt = stmt.SET(updateSets[0], updateSets[1:]...)
+		}
+
+		stmt = stmt.
+			WHERE(tAccounts.License.EQ(mysql.String(d.License))).
+			LIMIT(1)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return fmt.Errorf("failed to update account. %w", err)
 		}
 	}
 

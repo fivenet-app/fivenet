@@ -4,18 +4,21 @@
 // 	protoc        (unknown)
 // source: services/notifications/notifications.proto
 
+//go:build !protoopaque
+
 package notifications
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	mailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	notifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	events1 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
+	notifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
+	clientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
+	events "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -27,7 +30,7 @@ const (
 )
 
 type GetNotificationsRequest struct {
-	state         protoimpl.MessageState               `protogen:"open.v1"`
+	state         protoimpl.MessageState               `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationRequest          `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	IncludeRead   *bool                                `protobuf:"varint,2,opt,name=include_read,json=includeRead,proto3,oneof" json:"include_read,omitempty"`
 	Categories    []notifications.NotificationCategory `protobuf:"varint,3,rep,packed,name=categories,proto3,enum=resources.notifications.NotificationCategory" json:"categories,omitempty"`
@@ -60,11 +63,6 @@ func (x *GetNotificationsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetNotificationsRequest.ProtoReflect.Descriptor instead.
-func (*GetNotificationsRequest) Descriptor() ([]byte, []int) {
-	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *GetNotificationsRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -86,8 +84,60 @@ func (x *GetNotificationsRequest) GetCategories() []notifications.NotificationCa
 	return nil
 }
 
+func (x *GetNotificationsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *GetNotificationsRequest) SetIncludeRead(v bool) {
+	x.IncludeRead = &v
+}
+
+func (x *GetNotificationsRequest) SetCategories(v []notifications.NotificationCategory) {
+	x.Categories = v
+}
+
+func (x *GetNotificationsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *GetNotificationsRequest) HasIncludeRead() bool {
+	if x == nil {
+		return false
+	}
+	return x.IncludeRead != nil
+}
+
+func (x *GetNotificationsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *GetNotificationsRequest) ClearIncludeRead() {
+	x.IncludeRead = nil
+}
+
+type GetNotificationsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination  *database.PaginationRequest
+	IncludeRead *bool
+	Categories  []notifications.NotificationCategory
+}
+
+func (b0 GetNotificationsRequest_builder) Build() *GetNotificationsRequest {
+	m0 := &GetNotificationsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.IncludeRead = b.IncludeRead
+	x.Categories = b.Categories
+	return m0
+}
+
 type GetNotificationsResponse struct {
-	state         protoimpl.MessageState        `protogen:"open.v1"`
+	state         protoimpl.MessageState        `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse  `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Notifications []*notifications.Notification `protobuf:"bytes,2,rep,name=notifications,proto3" json:"notifications,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -119,11 +169,6 @@ func (x *GetNotificationsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetNotificationsResponse.ProtoReflect.Descriptor instead.
-func (*GetNotificationsResponse) Descriptor() ([]byte, []int) {
-	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *GetNotificationsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -138,8 +183,43 @@ func (x *GetNotificationsResponse) GetNotifications() []*notifications.Notificat
 	return nil
 }
 
+func (x *GetNotificationsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *GetNotificationsResponse) SetNotifications(v []*notifications.Notification) {
+	x.Notifications = v
+}
+
+func (x *GetNotificationsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *GetNotificationsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type GetNotificationsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination    *database.PaginationResponse
+	Notifications []*notifications.Notification
+}
+
+func (b0 GetNotificationsResponse_builder) Build() *GetNotificationsResponse {
+	m0 := &GetNotificationsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Notifications = b.Notifications
+	return m0
+}
+
 type MarkNotificationsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Unread        bool                   `protobuf:"varint,1,opt,name=unread,proto3" json:"unread,omitempty"`
 	Ids           []int64                `protobuf:"varint,2,rep,packed,name=ids,proto3" json:"ids,omitempty"`
 	All           *bool                  `protobuf:"varint,3,opt,name=all,proto3,oneof" json:"all,omitempty"`
@@ -172,11 +252,6 @@ func (x *MarkNotificationsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MarkNotificationsRequest.ProtoReflect.Descriptor instead.
-func (*MarkNotificationsRequest) Descriptor() ([]byte, []int) {
-	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *MarkNotificationsRequest) GetUnread() bool {
 	if x != nil {
 		return x.Unread
@@ -198,8 +273,49 @@ func (x *MarkNotificationsRequest) GetAll() bool {
 	return false
 }
 
+func (x *MarkNotificationsRequest) SetUnread(v bool) {
+	x.Unread = v
+}
+
+func (x *MarkNotificationsRequest) SetIds(v []int64) {
+	x.Ids = v
+}
+
+func (x *MarkNotificationsRequest) SetAll(v bool) {
+	x.All = &v
+}
+
+func (x *MarkNotificationsRequest) HasAll() bool {
+	if x == nil {
+		return false
+	}
+	return x.All != nil
+}
+
+func (x *MarkNotificationsRequest) ClearAll() {
+	x.All = nil
+}
+
+type MarkNotificationsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Unread bool
+	Ids    []int64
+	All    *bool
+}
+
+func (b0 MarkNotificationsRequest_builder) Build() *MarkNotificationsRequest {
+	m0 := &MarkNotificationsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Unread = b.Unread
+	x.Ids = b.Ids
+	x.All = b.All
+	return m0
+}
+
 type MarkNotificationsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Updated       int64                  `protobuf:"varint,1,opt,name=updated,proto3" json:"updated,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -230,11 +346,6 @@ func (x *MarkNotificationsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MarkNotificationsResponse.ProtoReflect.Descriptor instead.
-func (*MarkNotificationsResponse) Descriptor() ([]byte, []int) {
-	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *MarkNotificationsResponse) GetUpdated() int64 {
 	if x != nil {
 		return x.Updated
@@ -242,11 +353,29 @@ func (x *MarkNotificationsResponse) GetUpdated() int64 {
 	return 0
 }
 
+func (x *MarkNotificationsResponse) SetUpdated(v int64) {
+	x.Updated = v
+}
+
+type MarkNotificationsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Updated int64
+}
+
+func (b0 MarkNotificationsResponse_builder) Build() *MarkNotificationsResponse {
+	m0 := &MarkNotificationsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Updated = b.Updated
+	return m0
+}
+
 type StreamRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
 	//
-	//	*StreamRequest_ClientView
+	//	*StreamRequest_Clientview
 	Data          isStreamRequest_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -277,11 +406,6 @@ func (x *StreamRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StreamRequest.ProtoReflect.Descriptor instead.
-func (*StreamRequest) Descriptor() ([]byte, []int) {
-	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *StreamRequest) GetData() isStreamRequest_Data {
 	if x != nil {
 		return x.Data
@@ -289,27 +413,103 @@ func (x *StreamRequest) GetData() isStreamRequest_Data {
 	return nil
 }
 
-func (x *StreamRequest) GetClientView() *notifications.ClientView {
+func (x *StreamRequest) GetClientview() *clientview.ClientView {
 	if x != nil {
-		if x, ok := x.Data.(*StreamRequest_ClientView); ok {
-			return x.ClientView
+		if x, ok := x.Data.(*StreamRequest_Clientview); ok {
+			return x.Clientview
 		}
 	}
 	return nil
+}
+
+func (x *StreamRequest) SetClientview(v *clientview.ClientView) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &StreamRequest_Clientview{v}
+}
+
+func (x *StreamRequest) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *StreamRequest) HasClientview() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*StreamRequest_Clientview)
+	return ok
+}
+
+func (x *StreamRequest) ClearData() {
+	x.Data = nil
+}
+
+func (x *StreamRequest) ClearClientview() {
+	if _, ok := x.Data.(*StreamRequest_Clientview); ok {
+		x.Data = nil
+	}
+}
+
+const StreamRequest_Data_not_set_case case_StreamRequest_Data = 0
+const StreamRequest_Clientview_case case_StreamRequest_Data = 1
+
+func (x *StreamRequest) WhichData() case_StreamRequest_Data {
+	if x == nil {
+		return StreamRequest_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *StreamRequest_Clientview:
+		return StreamRequest_Clientview_case
+	default:
+		return StreamRequest_Data_not_set_case
+	}
+}
+
+type StreamRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Data:
+	Clientview *clientview.ClientView
+	// -- end of Data
+}
+
+func (b0 StreamRequest_builder) Build() *StreamRequest {
+	m0 := &StreamRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Clientview != nil {
+		x.Data = &StreamRequest_Clientview{b.Clientview}
+	}
+	return m0
+}
+
+type case_StreamRequest_Data protoreflect.FieldNumber
+
+func (x case_StreamRequest_Data) String() string {
+	md := file_services_notifications_notifications_proto_msgTypes[4].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
 }
 
 type isStreamRequest_Data interface {
 	isStreamRequest_Data()
 }
 
-type StreamRequest_ClientView struct {
-	ClientView *notifications.ClientView `protobuf:"bytes,1,opt,name=client_view,json=clientView,proto3,oneof"`
+type StreamRequest_Clientview struct {
+	Clientview *clientview.ClientView `protobuf:"bytes,1,opt,name=clientview,proto3,oneof"`
 }
 
-func (*StreamRequest_ClientView) isStreamRequest_Data() {}
+func (*StreamRequest_Clientview) isStreamRequest_Data() {}
 
 type StreamResponse struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
+	state             protoimpl.MessageState `protogen:"hybrid.v1"`
 	NotificationCount int64                  `protobuf:"varint,1,opt,name=notification_count,json=notificationCount,proto3" json:"notification_count,omitempty"`
 	Restart           *bool                  `protobuf:"varint,2,opt,name=restart,proto3,oneof" json:"restart,omitempty"`
 	// Types that are valid to be assigned to Data:
@@ -350,11 +550,6 @@ func (x *StreamResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StreamResponse.ProtoReflect.Descriptor instead.
-func (*StreamResponse) Descriptor() ([]byte, []int) {
-	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *StreamResponse) GetNotificationCount() int64 {
 	if x != nil {
 		return x.NotificationCount
@@ -376,7 +571,7 @@ func (x *StreamResponse) GetData() isStreamResponse_Data {
 	return nil
 }
 
-func (x *StreamResponse) GetUserEvent() *notifications.UserEvent {
+func (x *StreamResponse) GetUserEvent() *events.UserEvent {
 	if x != nil {
 		if x, ok := x.Data.(*StreamResponse_UserEvent); ok {
 			return x.UserEvent
@@ -385,7 +580,7 @@ func (x *StreamResponse) GetUserEvent() *notifications.UserEvent {
 	return nil
 }
 
-func (x *StreamResponse) GetJobEvent() *notifications.JobEvent {
+func (x *StreamResponse) GetJobEvent() *events.JobEvent {
 	if x != nil {
 		if x, ok := x.Data.(*StreamResponse_JobEvent); ok {
 			return x.JobEvent
@@ -394,7 +589,7 @@ func (x *StreamResponse) GetJobEvent() *notifications.JobEvent {
 	return nil
 }
 
-func (x *StreamResponse) GetJobGradeEvent() *notifications.JobGradeEvent {
+func (x *StreamResponse) GetJobGradeEvent() *events.JobGradeEvent {
 	if x != nil {
 		if x, ok := x.Data.(*StreamResponse_JobGradeEvent); ok {
 			return x.JobGradeEvent
@@ -403,7 +598,7 @@ func (x *StreamResponse) GetJobGradeEvent() *notifications.JobGradeEvent {
 	return nil
 }
 
-func (x *StreamResponse) GetSystemEvent() *notifications.SystemEvent {
+func (x *StreamResponse) GetSystemEvent() *events.SystemEvent {
 	if x != nil {
 		if x, ok := x.Data.(*StreamResponse_SystemEvent); ok {
 			return x.SystemEvent
@@ -412,7 +607,7 @@ func (x *StreamResponse) GetSystemEvent() *notifications.SystemEvent {
 	return nil
 }
 
-func (x *StreamResponse) GetMailerEvent() *mailer.MailerEvent {
+func (x *StreamResponse) GetMailerEvent() *events1.MailerEvent {
 	if x != nil {
 		if x, ok := x.Data.(*StreamResponse_MailerEvent); ok {
 			return x.MailerEvent
@@ -421,7 +616,7 @@ func (x *StreamResponse) GetMailerEvent() *mailer.MailerEvent {
 	return nil
 }
 
-func (x *StreamResponse) GetObjectEvent() *notifications.ObjectEvent {
+func (x *StreamResponse) GetObjectEvent() *clientview.ObjectEvent {
 	if x != nil {
 		if x, ok := x.Data.(*StreamResponse_ObjectEvent); ok {
 			return x.ObjectEvent
@@ -430,32 +625,276 @@ func (x *StreamResponse) GetObjectEvent() *notifications.ObjectEvent {
 	return nil
 }
 
+func (x *StreamResponse) SetNotificationCount(v int64) {
+	x.NotificationCount = v
+}
+
+func (x *StreamResponse) SetRestart(v bool) {
+	x.Restart = &v
+}
+
+func (x *StreamResponse) SetUserEvent(v *events.UserEvent) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &StreamResponse_UserEvent{v}
+}
+
+func (x *StreamResponse) SetJobEvent(v *events.JobEvent) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &StreamResponse_JobEvent{v}
+}
+
+func (x *StreamResponse) SetJobGradeEvent(v *events.JobGradeEvent) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &StreamResponse_JobGradeEvent{v}
+}
+
+func (x *StreamResponse) SetSystemEvent(v *events.SystemEvent) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &StreamResponse_SystemEvent{v}
+}
+
+func (x *StreamResponse) SetMailerEvent(v *events1.MailerEvent) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &StreamResponse_MailerEvent{v}
+}
+
+func (x *StreamResponse) SetObjectEvent(v *clientview.ObjectEvent) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &StreamResponse_ObjectEvent{v}
+}
+
+func (x *StreamResponse) HasRestart() bool {
+	if x == nil {
+		return false
+	}
+	return x.Restart != nil
+}
+
+func (x *StreamResponse) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *StreamResponse) HasUserEvent() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*StreamResponse_UserEvent)
+	return ok
+}
+
+func (x *StreamResponse) HasJobEvent() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*StreamResponse_JobEvent)
+	return ok
+}
+
+func (x *StreamResponse) HasJobGradeEvent() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*StreamResponse_JobGradeEvent)
+	return ok
+}
+
+func (x *StreamResponse) HasSystemEvent() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*StreamResponse_SystemEvent)
+	return ok
+}
+
+func (x *StreamResponse) HasMailerEvent() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*StreamResponse_MailerEvent)
+	return ok
+}
+
+func (x *StreamResponse) HasObjectEvent() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*StreamResponse_ObjectEvent)
+	return ok
+}
+
+func (x *StreamResponse) ClearRestart() {
+	x.Restart = nil
+}
+
+func (x *StreamResponse) ClearData() {
+	x.Data = nil
+}
+
+func (x *StreamResponse) ClearUserEvent() {
+	if _, ok := x.Data.(*StreamResponse_UserEvent); ok {
+		x.Data = nil
+	}
+}
+
+func (x *StreamResponse) ClearJobEvent() {
+	if _, ok := x.Data.(*StreamResponse_JobEvent); ok {
+		x.Data = nil
+	}
+}
+
+func (x *StreamResponse) ClearJobGradeEvent() {
+	if _, ok := x.Data.(*StreamResponse_JobGradeEvent); ok {
+		x.Data = nil
+	}
+}
+
+func (x *StreamResponse) ClearSystemEvent() {
+	if _, ok := x.Data.(*StreamResponse_SystemEvent); ok {
+		x.Data = nil
+	}
+}
+
+func (x *StreamResponse) ClearMailerEvent() {
+	if _, ok := x.Data.(*StreamResponse_MailerEvent); ok {
+		x.Data = nil
+	}
+}
+
+func (x *StreamResponse) ClearObjectEvent() {
+	if _, ok := x.Data.(*StreamResponse_ObjectEvent); ok {
+		x.Data = nil
+	}
+}
+
+const StreamResponse_Data_not_set_case case_StreamResponse_Data = 0
+const StreamResponse_UserEvent_case case_StreamResponse_Data = 3
+const StreamResponse_JobEvent_case case_StreamResponse_Data = 4
+const StreamResponse_JobGradeEvent_case case_StreamResponse_Data = 5
+const StreamResponse_SystemEvent_case case_StreamResponse_Data = 6
+const StreamResponse_MailerEvent_case case_StreamResponse_Data = 7
+const StreamResponse_ObjectEvent_case case_StreamResponse_Data = 8
+
+func (x *StreamResponse) WhichData() case_StreamResponse_Data {
+	if x == nil {
+		return StreamResponse_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *StreamResponse_UserEvent:
+		return StreamResponse_UserEvent_case
+	case *StreamResponse_JobEvent:
+		return StreamResponse_JobEvent_case
+	case *StreamResponse_JobGradeEvent:
+		return StreamResponse_JobGradeEvent_case
+	case *StreamResponse_SystemEvent:
+		return StreamResponse_SystemEvent_case
+	case *StreamResponse_MailerEvent:
+		return StreamResponse_MailerEvent_case
+	case *StreamResponse_ObjectEvent:
+		return StreamResponse_ObjectEvent_case
+	default:
+		return StreamResponse_Data_not_set_case
+	}
+}
+
+type StreamResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	NotificationCount int64
+	Restart           *bool
+	// Fields of oneof Data:
+	UserEvent     *events.UserEvent
+	JobEvent      *events.JobEvent
+	JobGradeEvent *events.JobGradeEvent
+	SystemEvent   *events.SystemEvent
+	MailerEvent   *events1.MailerEvent
+	ObjectEvent   *clientview.ObjectEvent
+	// -- end of Data
+}
+
+func (b0 StreamResponse_builder) Build() *StreamResponse {
+	m0 := &StreamResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.NotificationCount = b.NotificationCount
+	x.Restart = b.Restart
+	if b.UserEvent != nil {
+		x.Data = &StreamResponse_UserEvent{b.UserEvent}
+	}
+	if b.JobEvent != nil {
+		x.Data = &StreamResponse_JobEvent{b.JobEvent}
+	}
+	if b.JobGradeEvent != nil {
+		x.Data = &StreamResponse_JobGradeEvent{b.JobGradeEvent}
+	}
+	if b.SystemEvent != nil {
+		x.Data = &StreamResponse_SystemEvent{b.SystemEvent}
+	}
+	if b.MailerEvent != nil {
+		x.Data = &StreamResponse_MailerEvent{b.MailerEvent}
+	}
+	if b.ObjectEvent != nil {
+		x.Data = &StreamResponse_ObjectEvent{b.ObjectEvent}
+	}
+	return m0
+}
+
+type case_StreamResponse_Data protoreflect.FieldNumber
+
+func (x case_StreamResponse_Data) String() string {
+	md := file_services_notifications_notifications_proto_msgTypes[5].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isStreamResponse_Data interface {
 	isStreamResponse_Data()
 }
 
 type StreamResponse_UserEvent struct {
-	UserEvent *notifications.UserEvent `protobuf:"bytes,3,opt,name=user_event,json=userEvent,proto3,oneof"`
+	UserEvent *events.UserEvent `protobuf:"bytes,3,opt,name=user_event,json=userEvent,proto3,oneof"`
 }
 
 type StreamResponse_JobEvent struct {
-	JobEvent *notifications.JobEvent `protobuf:"bytes,4,opt,name=job_event,json=jobEvent,proto3,oneof"`
+	JobEvent *events.JobEvent `protobuf:"bytes,4,opt,name=job_event,json=jobEvent,proto3,oneof"`
 }
 
 type StreamResponse_JobGradeEvent struct {
-	JobGradeEvent *notifications.JobGradeEvent `protobuf:"bytes,5,opt,name=job_grade_event,json=jobGradeEvent,proto3,oneof"`
+	JobGradeEvent *events.JobGradeEvent `protobuf:"bytes,5,opt,name=job_grade_event,json=jobGradeEvent,proto3,oneof"`
 }
 
 type StreamResponse_SystemEvent struct {
-	SystemEvent *notifications.SystemEvent `protobuf:"bytes,6,opt,name=system_event,json=systemEvent,proto3,oneof"`
+	SystemEvent *events.SystemEvent `protobuf:"bytes,6,opt,name=system_event,json=systemEvent,proto3,oneof"`
 }
 
 type StreamResponse_MailerEvent struct {
-	MailerEvent *mailer.MailerEvent `protobuf:"bytes,7,opt,name=mailer_event,json=mailerEvent,proto3,oneof"`
+	MailerEvent *events1.MailerEvent `protobuf:"bytes,7,opt,name=mailer_event,json=mailerEvent,proto3,oneof"`
 }
 
 type StreamResponse_ObjectEvent struct {
-	ObjectEvent *notifications.ObjectEvent `protobuf:"bytes,8,opt,name=object_event,json=objectEvent,proto3,oneof"`
+	ObjectEvent *clientview.ObjectEvent `protobuf:"bytes,8,opt,name=object_event,json=objectEvent,proto3,oneof"`
 }
 
 func (*StreamResponse_UserEvent) isStreamResponse_Data() {}
@@ -474,7 +913,7 @@ var File_services_notifications_notifications_proto protoreflect.FileDescriptor
 
 const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\n" +
-	"*services/notifications/notifications.proto\x12\x16services.notifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1dresources/mailer/events.proto\x1a)resources/notifications/client_view.proto\x1a$resources/notifications/events.proto\x1a+resources/notifications/notifications.proto\"\xef\x01\n" +
+	"*services/notifications/notifications.proto\x12\x16services.notifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a$resources/mailer/events/events.proto\x1a3resources/notifications/clientview/clientview.proto\x1a+resources/notifications/events/events.proto\x1a+resources/notifications/notifications.proto\"\xef\x01\n" +
 	"\x17GetNotificationsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -495,40 +934,29 @@ const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\x03all\x18\x03 \x01(\bH\x00R\x03all\x88\x01\x01B\x06\n" +
 	"\x04_all\"5\n" +
 	"\x19MarkNotificationsResponse\x12\x18\n" +
-	"\aupdated\x18\x01 \x01(\x03R\aupdated\"_\n" +
-	"\rStreamRequest\x12F\n" +
-	"\vclient_view\x18\x01 \x01(\v2#.resources.notifications.ClientViewH\x00R\n" +
-	"clientViewB\x06\n" +
-	"\x04data\"\xa5\x04\n" +
+	"\aupdated\x18\x01 \x01(\x03R\aupdated\"i\n" +
+	"\rStreamRequest\x12P\n" +
+	"\n" +
+	"clientview\x18\x01 \x01(\v2..resources.notifications.clientview.ClientViewH\x00R\n" +
+	"clientviewB\x06\n" +
+	"\x04data\"\xd3\x04\n" +
 	"\x0eStreamResponse\x12-\n" +
 	"\x12notification_count\x18\x01 \x01(\x03R\x11notificationCount\x12\x1d\n" +
-	"\arestart\x18\x02 \x01(\bH\x01R\arestart\x88\x01\x01\x12C\n" +
+	"\arestart\x18\x02 \x01(\bH\x01R\arestart\x88\x01\x01\x12J\n" +
 	"\n" +
-	"user_event\x18\x03 \x01(\v2\".resources.notifications.UserEventH\x00R\tuserEvent\x12@\n" +
-	"\tjob_event\x18\x04 \x01(\v2!.resources.notifications.JobEventH\x00R\bjobEvent\x12P\n" +
-	"\x0fjob_grade_event\x18\x05 \x01(\v2&.resources.notifications.JobGradeEventH\x00R\rjobGradeEvent\x12I\n" +
-	"\fsystem_event\x18\x06 \x01(\v2$.resources.notifications.SystemEventH\x00R\vsystemEvent\x12B\n" +
-	"\fmailer_event\x18\a \x01(\v2\x1d.resources.mailer.MailerEventH\x00R\vmailerEvent\x12I\n" +
-	"\fobject_event\x18\b \x01(\v2$.resources.notifications.ObjectEventH\x00R\vobjectEventB\x06\n" +
+	"user_event\x18\x03 \x01(\v2).resources.notifications.events.UserEventH\x00R\tuserEvent\x12G\n" +
+	"\tjob_event\x18\x04 \x01(\v2(.resources.notifications.events.JobEventH\x00R\bjobEvent\x12W\n" +
+	"\x0fjob_grade_event\x18\x05 \x01(\v2-.resources.notifications.events.JobGradeEventH\x00R\rjobGradeEvent\x12P\n" +
+	"\fsystem_event\x18\x06 \x01(\v2+.resources.notifications.events.SystemEventH\x00R\vsystemEvent\x12I\n" +
+	"\fmailer_event\x18\a \x01(\v2$.resources.mailer.events.MailerEventH\x00R\vmailerEvent\x12T\n" +
+	"\fobject_event\x18\b \x01(\v2/.resources.notifications.clientview.ObjectEventH\x00R\vobjectEventB\x06\n" +
 	"\x04dataB\n" +
 	"\n" +
 	"\b_restart2\x8d\x03\n" +
 	"\x14NotificationsService\x12\x82\x01\n" +
 	"\x10GetNotifications\x12/.services.notifications.GetNotificationsRequest\x1a0.services.notifications.GetNotificationsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x85\x01\n" +
 	"\x11MarkNotifications\x120.services.notifications.MarkNotificationsRequest\x1a1.services.notifications.MarkNotificationsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12h\n" +
-	"\x06Stream\x12%.services.notifications.StreamRequest\x1a&.services.notifications.StreamResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any(\x010\x01BXZVgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications;notificationsb\x06proto3"
-
-var (
-	file_services_notifications_notifications_proto_rawDescOnce sync.Once
-	file_services_notifications_notifications_proto_rawDescData []byte
-)
-
-func file_services_notifications_notifications_proto_rawDescGZIP() []byte {
-	file_services_notifications_notifications_proto_rawDescOnce.Do(func() {
-		file_services_notifications_notifications_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_notifications_notifications_proto_rawDesc), len(file_services_notifications_notifications_proto_rawDesc)))
-	})
-	return file_services_notifications_notifications_proto_rawDescData
-}
+	"\x06Stream\x12%.services.notifications.StreamRequest\x1a&.services.notifications.StreamResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any(\x010\x01BXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/notifications;notificationsb\x06proto3"
 
 var file_services_notifications_notifications_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_services_notifications_notifications_proto_goTypes = []any{
@@ -542,26 +970,26 @@ var file_services_notifications_notifications_proto_goTypes = []any{
 	(notifications.NotificationCategory)(0), // 7: resources.notifications.NotificationCategory
 	(*database.PaginationResponse)(nil),     // 8: resources.common.database.PaginationResponse
 	(*notifications.Notification)(nil),      // 9: resources.notifications.Notification
-	(*notifications.ClientView)(nil),        // 10: resources.notifications.ClientView
-	(*notifications.UserEvent)(nil),         // 11: resources.notifications.UserEvent
-	(*notifications.JobEvent)(nil),          // 12: resources.notifications.JobEvent
-	(*notifications.JobGradeEvent)(nil),     // 13: resources.notifications.JobGradeEvent
-	(*notifications.SystemEvent)(nil),       // 14: resources.notifications.SystemEvent
-	(*mailer.MailerEvent)(nil),              // 15: resources.mailer.MailerEvent
-	(*notifications.ObjectEvent)(nil),       // 16: resources.notifications.ObjectEvent
+	(*clientview.ClientView)(nil),           // 10: resources.notifications.clientview.ClientView
+	(*events.UserEvent)(nil),                // 11: resources.notifications.events.UserEvent
+	(*events.JobEvent)(nil),                 // 12: resources.notifications.events.JobEvent
+	(*events.JobGradeEvent)(nil),            // 13: resources.notifications.events.JobGradeEvent
+	(*events.SystemEvent)(nil),              // 14: resources.notifications.events.SystemEvent
+	(*events1.MailerEvent)(nil),             // 15: resources.mailer.events.MailerEvent
+	(*clientview.ObjectEvent)(nil),          // 16: resources.notifications.clientview.ObjectEvent
 }
 var file_services_notifications_notifications_proto_depIdxs = []int32{
 	6,  // 0: services.notifications.GetNotificationsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	7,  // 1: services.notifications.GetNotificationsRequest.categories:type_name -> resources.notifications.NotificationCategory
 	8,  // 2: services.notifications.GetNotificationsResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	9,  // 3: services.notifications.GetNotificationsResponse.notifications:type_name -> resources.notifications.Notification
-	10, // 4: services.notifications.StreamRequest.client_view:type_name -> resources.notifications.ClientView
-	11, // 5: services.notifications.StreamResponse.user_event:type_name -> resources.notifications.UserEvent
-	12, // 6: services.notifications.StreamResponse.job_event:type_name -> resources.notifications.JobEvent
-	13, // 7: services.notifications.StreamResponse.job_grade_event:type_name -> resources.notifications.JobGradeEvent
-	14, // 8: services.notifications.StreamResponse.system_event:type_name -> resources.notifications.SystemEvent
-	15, // 9: services.notifications.StreamResponse.mailer_event:type_name -> resources.mailer.MailerEvent
-	16, // 10: services.notifications.StreamResponse.object_event:type_name -> resources.notifications.ObjectEvent
+	10, // 4: services.notifications.StreamRequest.clientview:type_name -> resources.notifications.clientview.ClientView
+	11, // 5: services.notifications.StreamResponse.user_event:type_name -> resources.notifications.events.UserEvent
+	12, // 6: services.notifications.StreamResponse.job_event:type_name -> resources.notifications.events.JobEvent
+	13, // 7: services.notifications.StreamResponse.job_grade_event:type_name -> resources.notifications.events.JobGradeEvent
+	14, // 8: services.notifications.StreamResponse.system_event:type_name -> resources.notifications.events.SystemEvent
+	15, // 9: services.notifications.StreamResponse.mailer_event:type_name -> resources.mailer.events.MailerEvent
+	16, // 10: services.notifications.StreamResponse.object_event:type_name -> resources.notifications.clientview.ObjectEvent
 	0,  // 11: services.notifications.NotificationsService.GetNotifications:input_type -> services.notifications.GetNotificationsRequest
 	2,  // 12: services.notifications.NotificationsService.MarkNotifications:input_type -> services.notifications.MarkNotificationsRequest
 	4,  // 13: services.notifications.NotificationsService.Stream:input_type -> services.notifications.StreamRequest
@@ -583,7 +1011,7 @@ func file_services_notifications_notifications_proto_init() {
 	file_services_notifications_notifications_proto_msgTypes[0].OneofWrappers = []any{}
 	file_services_notifications_notifications_proto_msgTypes[2].OneofWrappers = []any{}
 	file_services_notifications_notifications_proto_msgTypes[4].OneofWrappers = []any{
-		(*StreamRequest_ClientView)(nil),
+		(*StreamRequest_Clientview)(nil),
 	}
 	file_services_notifications_notifications_proto_msgTypes[5].OneofWrappers = []any{
 		(*StreamResponse_UserEvent)(nil),

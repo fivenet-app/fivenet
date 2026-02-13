@@ -4,12 +4,11 @@ import (
 	"os"
 	"testing"
 
-	pblivemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap"
-	"github.com/fivenet-app/fivenet/v2025/internal/modules"
-	"github.com/fivenet-app/fivenet/v2025/internal/tests/servers"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	grpcserver "github.com/fivenet-app/fivenet/v2025/pkg/grpc"
-	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
+	pblivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap"
+	"github.com/fivenet-app/fivenet/v2026/internal/modules"
+	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
+	grpcserver "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
+	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
@@ -18,9 +17,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	// All tests assume esx compat mode for now
-	tables.EnableESXCompat()
-
 	code := m.Run()
 	os.Exit(code)
 }

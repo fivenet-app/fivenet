@@ -47,7 +47,6 @@ export const useSettingsStore = defineStore(
     () => {
         // State
         const version = ref<string>(APP_VERSION);
-        const updateAvailable = ref<false | string>(false);
         const locale = ref<Locale | undefined>(undefined);
 
         const nuiEnabled = ref<boolean>(false);
@@ -124,15 +123,6 @@ export const useSettingsStore = defineStore(
          */
         const setVersion = (newVersion: string): void => {
             version.value = newVersion;
-        };
-
-        /**
-         * Set the update availability status.
-         *
-         * @param {string} newVersion - The version string indicating the available update.
-         */
-        const setUpdateAvailable = async (newVersion: string): Promise<void> => {
-            updateAvailable.value = newVersion;
         };
 
         /**
@@ -224,14 +214,12 @@ export const useSettingsStore = defineStore(
         return {
             // State
             version,
-            updateAvailable,
             locale,
 
             nuiEnabled,
             nuiResourceName,
 
             eventsDisabled,
-            eventsShowSnowflakes,
 
             livemap,
             livemapLayerCategories,
@@ -251,7 +239,6 @@ export const useSettingsStore = defineStore(
             // Actions
             getLogger,
             setVersion,
-            setUpdateAvailable,
             setNuiSettings,
             addOrUpdateLivemapCategory,
             addOrUpdateLivemapLayer,
@@ -259,11 +246,12 @@ export const useSettingsStore = defineStore(
 
             // Getters
             getUserLocale,
+            eventsShowSnowflakes,
         };
     },
     {
         persist: {
-            omit: ['updateAvailable', 'livemapLayerCategories'],
+            omit: ['livemapLayerCategories'],
         },
     },
 );

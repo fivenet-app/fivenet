@@ -4,6 +4,7 @@ import type {
     Display,
     FeatureGates,
     Game,
+    Livemap,
     System,
     Website,
 } from '~~/gen/ts/resources/clientconfig/clientconfig';
@@ -31,6 +32,10 @@ export default defineAppConfig({
     game: {
         unemployedJobName: 'unemployed',
         startJobGrade: 0,
+
+        livemap: {
+            enableCayoPerico: true,
+        } as Livemap,
     } as Game,
     system: {
         bannerMessageEnabled: false,

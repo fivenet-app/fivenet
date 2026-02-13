@@ -11,7 +11,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/state"
 	"github.com/diamondburned/arikawa/v3/utils/httputil"
 	"github.com/diamondburned/arikawa/v3/utils/json/option"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
+	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 	"go.uber.org/multierr"
 )
 

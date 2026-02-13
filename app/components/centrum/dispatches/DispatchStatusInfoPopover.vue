@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches//DispatchDetailsByIDSlideover.vue';
 import { useCentrumStore } from '~/stores/centrum';
-import { type DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { type DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import { dispatchStatusToBGColor } from '../helpers';
 
 const props = defineProps<{
@@ -36,7 +36,7 @@ const dispatchStatusColor = computed(() => dispatchStatusToBGColor(props.status?
         </UButton>
 
         <template #content>
-            <div class="inline-flex min-w-48 flex-col gap-1 p-4">
+            <div class="flex min-w-48 flex-col gap-2 p-4">
                 <div class="flex items-center gap-2">
                     <UTooltip :text="$t('common.detail', 2)">
                         <UButton

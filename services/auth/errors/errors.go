@@ -1,7 +1,7 @@
 package errorsauth
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	"google.golang.org/grpc/codes"
 )
 
@@ -23,8 +23,8 @@ var (
 	)
 	ErrInvalidLogin = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.AuthService.ErrInvalidLogin"},
-		nil,
+		&common.I18NItem{Key: "errors.AuthService.ErrInvalidLogin.content"},
+		&common.I18NItem{Key: "errors.AuthService.ErrInvalidLogin.title"},
 	)
 	ErrNoAccount = common.NewI18nErr(
 		codes.InvalidArgument,
@@ -63,13 +63,13 @@ var (
 	)
 	ErrSignupDisabled = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.AuthService.ErrSignupDisabled"},
-		nil,
+		&common.I18NItem{Key: "errors.AuthService.ErrSignupDisabled.content"},
+		&common.I18NItem{Key: "errors.AuthService.ErrSignupDisabled.title"},
 	)
 	ErrAccountDuplicate = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.AuthService.ErrAccountDuplicate"},
-		nil,
+		&common.I18NItem{Key: "errors.AuthService.ErrAccountDuplicate.content"},
+		&common.I18NItem{Key: "errors.AuthService.ErrAccountDuplicate.title"},
 	)
 	ErrChangeUsername = common.NewI18nErr(
 		codes.InvalidArgument,
@@ -84,6 +84,11 @@ var (
 	ErrNotSuperuser = common.NewI18nErr(
 		codes.PermissionDenied,
 		&common.I18NItem{Key: "errors.AuthService.ErrNotSuperuser"},
+		nil,
+	)
+	ErrImpersonateJobInvalid = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.AuthService.ErrImpersonateJobInvalid"},
 		nil,
 	)
 )

@@ -6,16 +6,18 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
+	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
+	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
+	mailersettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings"
+	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -37,7 +39,7 @@ func (s *Server) GetEmailSettings(
 		ctx,
 		req.GetEmailId(),
 		userInfo,
-		mailer.AccessLevel_ACCESS_LEVEL_MANAGE,
+		maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -60,7 +62,7 @@ func (s *Server) getEmailSettings(
 	ctx context.Context,
 	tx qrm.DB,
 	emailId int64,
-) (*mailer.EmailSettings, error) {
+) (*mailersettings.EmailSettings, error) {
 	tSettings := tSettings.AS("email_settings")
 	stmt := tSettings.
 		SELECT(
@@ -79,7 +81,7 @@ func (s *Server) getEmailSettings(
 		).
 		LIMIT(25)
 
-	dest := &mailer.EmailSettings{
+	dest := &mailersettings.EmailSettings{
 		EmailId: emailId,
 	}
 	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
@@ -101,7 +103,7 @@ func (s *Server) SetEmailSettings(
 		ctx,
 		req.GetSettings().GetEmailId(),
 		userInfo,
-		mailer.AccessLevel_ACCESS_LEVEL_MANAGE,
+		maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -247,8 +249,8 @@ func (s *Server) SetEmailSettings(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	s.sendUpdate(ctx, &mailer.MailerEvent{
-		Data: &mailer.MailerEvent_EmailSettingsUpdated{
+	s.sendUpdate(ctx, &mailerevents.MailerEvent{
+		Data: &mailerevents.MailerEvent_EmailSettingsUpdated{
 			EmailSettingsUpdated: settings,
 		},
 	}, req.GetSettings().GetEmailId())

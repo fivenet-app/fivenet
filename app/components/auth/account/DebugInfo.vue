@@ -4,7 +4,7 @@ import { LogLevels } from 'consola';
 import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import PermList from '~/components/settings/roles/PermList.vue';
-import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
+import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useSettingsStore } from '~/stores/settings';
@@ -17,8 +17,11 @@ const searchesStore = useSearchesStore();
 const settingsStore = useSettingsStore();
 
 const authStore = useAuthStore();
-const { activeChar, sessionExpiration, attributes, permissions } = storeToRefs(authStore);
+const { activeChar, attributes, permissions } = storeToRefs(authStore);
 const { clearAuthInfo } = authStore;
+
+const authSessionStore = useAuthSessionStore();
+const { userInfo } = storeToRefs(authSessionStore);
 
 const notifications = useNotificationsStore();
 
@@ -134,17 +137,17 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
         </UFormField>
 
         <UFormField
-            v-if="sessionExpiration"
+            v-if="userInfo"
             class="grid grid-cols-2 items-center gap-2"
             name="sessionExpiration"
             :label="$t('components.debug_info.access_token_expiration')"
         >
-            <GenericTime :value="sessionExpiration" ago />
-            (<GenericTime :value="sessionExpiration" type="long" />)
+            <GenericTime :value="userInfo.expiration" ago />
+            (<GenericTime :value="userInfo.expiration" type="long" />)
         </UFormField>
 
-        <UFormField class="grid grid-cols-2 items-center gap-2" name="status" :label="$t('common.status')">
-            {{ $t('common.status') }}: <code>{{ webSocket.status.value }}</code>
+        <UFormField class="grid grid-cols-2 items-center gap-2" name="status" :label="$t('common.websocket')">
+            <code>{{ webSocket.status.value }}</code>
         </UFormField>
 
         <UFormField class="grid grid-cols-2 items-center gap-2" name="nuiInfo" :label="$t('components.debug_info.nui_info')">

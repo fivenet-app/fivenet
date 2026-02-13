@@ -1,0 +1,135 @@
+syntax = "proto3";
+
+package resources.users;
+
+import "buf/validate/validate.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/licenses/licenses.proto";
+import "resources/users/props/props.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users;users";
+
+message UserShort {
+  int32 user_id = 1 [
+    (buf.validate.field).int32.gt = 0,
+    (tagger.tags) = "alias:\"id\""
+  ];
+  // Was used for identifier in the past, now deprecated
+  reserved 2;
+
+  string job = 3 [
+    (buf.validate.field).string.max_len = 20,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+  optional string job_label = 4 [(buf.validate.field).string.max_len = 50];
+  int32 job_grade = 5 [
+    (buf.validate.field).int32.gte = 0,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+  optional string job_grade_label = 6 [(buf.validate.field).string.max_len = 50];
+
+  string firstname = 7 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 50
+  }];
+  string lastname = 8 [
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 50
+    }
+  ];
+
+  string dateofbirth = 9 [
+    (buf.validate.field).string.max_len = 10,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+
+  optional string phone_number = 12 [(buf.validate.field).string.max_len = 20];
+
+  optional int64 profile_picture_file_id = 17;
+  optional string profile_picture = 18;
+}
+
+message User {
+  int32 user_id = 1 [
+    (buf.validate.field).int32.gt = 0,
+    (tagger.tags) = "alias:\"id\""
+  ];
+  string identifier = 2 [(buf.validate.field).string.max_len = 64];
+
+  string job = 3 [
+    (buf.validate.field).string.max_len = 20,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+  optional string job_label = 4 [(buf.validate.field).string.max_len = 50];
+  int32 job_grade = 5 [
+    (buf.validate.field).int32.gte = 0,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+  optional string job_grade_label = 6 [(buf.validate.field).string.max_len = 50];
+  repeated UserJob jobs = 20 [
+    (buf.validate.field).repeated.max_items = 3,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+
+  string firstname = 7 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 50
+  }];
+  string lastname = 8 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 50
+    },
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+
+  string dateofbirth = 9 [
+    (buf.validate.field).string.max_len = 10,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+
+  optional string sex = 10 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 2
+  }];
+  optional string height = 11;
+
+  optional string phone_number = 12 [(buf.validate.field).string.max_len = 20];
+  repeated PhoneNumber phone_numbers = 19 [
+    (buf.validate.field).repeated.max_items = 5,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+
+  optional int32 visum = 13 [(buf.validate.field).int32.gte = 0];
+  optional int32 playtime = 14 [(buf.validate.field).int32.gte = 0];
+
+  resources.users.props.UserProps props = 15 [(tagger.tags) = "alias:\"fivenet_user_props\""];
+  repeated resources.users.licenses.License licenses = 16 [(tagger.tags) = "alias:\"user_licenses\""];
+
+  optional int64 profile_picture_file_id = 17;
+  optional string profile_picture = 18;
+}
+
+message PhoneNumber {
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+  string number = 2 [(buf.validate.field).string.max_len = 20];
+  bool is_primary = 3;
+
+  resources.timestamp.Timestamp created_at = 4;
+  optional resources.timestamp.Timestamp updated_at = 5;
+}
+
+message UserJob {
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+  string job = 2 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 3 [(buf.validate.field).string.max_len = 50];
+  int32 grade = 4 [(buf.validate.field).int32.gte = 0];
+  optional string grade_label = 5 [(buf.validate.field).string.max_len = 50];
+  bool is_primary = 6;
+
+  resources.timestamp.Timestamp created_at = 7;
+  optional resources.timestamp.Timestamp updated_at = 8;
+}

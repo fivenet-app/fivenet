@@ -4,7 +4,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import ResultTutorForm from '~/components/qualifications/tutor/ResultTutorForm.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
-import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/qualifications';
+import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
 import type { GetUserExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import ExamViewResult from '../exam/ExamViewResult.vue';
 

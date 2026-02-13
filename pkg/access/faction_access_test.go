@@ -3,9 +3,9 @@ package access
 import (
 	"testing"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,7 +15,7 @@ func TestCheckIfHasAccess(t *testing.T) {
 		levels     []string
 		userInfo   *userinfo.UserInfo
 		creatorJob string
-		creator    *users.UserShort
+		creator    *usershort.UserShort
 		expected   bool
 	}{
 		{
@@ -49,7 +49,7 @@ func TestCheckIfHasAccess(t *testing.T) {
 				JobGrade: 2,
 				UserId:   456,
 			},
-			creator: &users.UserShort{
+			creator: &usershort.UserShort{
 				Job:      "Police",
 				JobGrade: 2,
 				UserId:   123,
@@ -75,7 +75,7 @@ func TestCheckIfHasAccess(t *testing.T) {
 				Job:      "Police",
 				JobGrade: 2,
 			},
-			creator: &users.UserShort{
+			creator: &usershort.UserShort{
 				UserId:   123,
 				Job:      "Police",
 				JobGrade: 2,
@@ -91,7 +91,7 @@ func TestCheckIfHasAccess(t *testing.T) {
 				Job:      "Police",
 				JobGrade: 2,
 			},
-			creator: &users.UserShort{
+			creator: &usershort.UserShort{
 				UserId:   456,
 				Job:      "Police",
 				JobGrade: 10,
@@ -106,7 +106,7 @@ func TestCheckIfHasAccess(t *testing.T) {
 				Job:      "Police",
 				JobGrade: 2,
 			},
-			creator: &users.UserShort{
+			creator: &usershort.UserShort{
 				Job:      "Police",
 				JobGrade: 1,
 			},
@@ -120,7 +120,7 @@ func TestCheckIfHasAccess(t *testing.T) {
 				Job:      "Police",
 				JobGrade: 2,
 			},
-			creator: &users.UserShort{
+			creator: &usershort.UserShort{
 				Job:      "Police",
 				JobGrade: 2,
 			},
@@ -135,7 +135,7 @@ func TestCheckIfHasAccess(t *testing.T) {
 				Job:      "Police",
 				JobGrade: 2,
 			},
-			creator: &users.UserShort{
+			creator: &usershort.UserShort{
 				UserId:   123,
 				Job:      "Police",
 				JobGrade: 2,
@@ -151,7 +151,7 @@ func TestCheckIfHasAccess(t *testing.T) {
 				Job:      "Police",
 				JobGrade: 2,
 			},
-			creator: &users.UserShort{
+			creator: &usershort.UserShort{
 				UserId:   456,
 				Job:      "Police",
 				JobGrade: 2,
@@ -167,7 +167,7 @@ func TestCheckIfHasAccess(t *testing.T) {
 				Job:      "EMS",
 				JobGrade: 2,
 			},
-			creator: &users.UserShort{
+			creator: &usershort.UserShort{
 				UserId:   456,
 				Job:      "Police",
 				JobGrade: 2,
@@ -183,7 +183,7 @@ func TestCheckIfHasAccess(t *testing.T) {
 				Job:      "Police",
 				JobGrade: 2,
 			},
-			creator: &users.UserShort{
+			creator: &usershort.UserShort{
 				UserId:   456,
 				Job:      "Police",
 				JobGrade: 2,
@@ -195,7 +195,7 @@ func TestCheckIfHasAccess(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := CheckIfHasOwnJobAccess(&permissions.StringList{
+			result := CheckIfHasOwnJobAccess(&permissionsattributes.StringList{
 				Strings: tt.levels,
 			}, tt.userInfo, tt.creatorJob, tt.creator)
 			assert.Equal(t, tt.expected, result, "Test case: %s", tt.name)

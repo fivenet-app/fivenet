@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
+	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -72,7 +72,7 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id int64) error {
 
 	// Fast check if unit is already unavailable and empty
 	if unit.GetStatus() != nil &&
-		unit.GetStatus().GetStatus() == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE &&
+		unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE &&
 		len(unit.GetUsers()) == 0 {
 		return nil
 	}
@@ -87,12 +87,12 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id int64) error {
 	// If all users are still valid (toRemove is empty) and status checks pass, keep the unit available
 	if len(unit.GetUsers()) > 0 && len(toRemove) == 0 {
 		if unit.GetAttributes() == nil ||
-			!unit.GetAttributes().Has(centrum.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
+			!unit.GetAttributes().Has(centrumunits.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
 			stillAvailable = true
 		} else if unit.GetStatus() != nil &&
-			(unit.GetStatus().GetStatus() == centrum.StatusUnit_STATUS_UNIT_BUSY ||
-				unit.GetStatus().GetStatus() == centrum.StatusUnit_STATUS_UNIT_ON_BREAK ||
-				unit.GetStatus().GetStatus() == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE) {
+			(unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_BUSY ||
+				unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_ON_BREAK ||
+				unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE) {
 			stillAvailable = true
 		}
 	}
@@ -113,11 +113,11 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id int64) error {
 		zap.Int64("unit_id", unit.GetId()),
 		zap.Int32p("user_id", userId),
 	)
-	if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrum.UnitStatus{
+	if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
 		CreatedAt:  timestamp.Now(),
 		UnitId:     unit.GetId(),
-		Unit:       proto.Clone(unit).(*centrum.Unit),
-		Status:     centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+		Unit:       proto.Clone(unit).(*centrumunits.Unit),
+		Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 		UserId:     userId,
 		CreatorJob: &unit.Job,
 	}); err != nil {

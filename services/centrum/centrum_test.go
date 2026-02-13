@@ -4,16 +4,15 @@ import (
 	"os"
 	"testing"
 
-	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
-	"github.com/fivenet-app/fivenet/v2025/internal/modules"
-	"github.com/fivenet-app/fivenet/v2025/internal/tests/servers"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatchers"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/helpers"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/settings"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
+	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
+	"github.com/fivenet-app/fivenet/v2026/internal/modules"
+	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
+	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatchers"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
@@ -22,9 +21,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	// All tests assume esx compat mode for now
-	tables.EnableESXCompat()
-
 	code := m.Run()
 	os.Exit(code)
 }

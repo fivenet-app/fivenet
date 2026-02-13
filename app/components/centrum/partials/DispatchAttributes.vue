@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { BadgeProps } from '@nuxt/ui';
-import { DispatchAttribute, type DispatchAttributes } from '~~/gen/ts/resources/centrum/attributes';
+import { DispatchAttribute, type DispatchAttributes } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 
 interface Props extends /* @vue-ignore */ BadgeProps {
     attributes?: DispatchAttributes;

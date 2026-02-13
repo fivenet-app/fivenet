@@ -11,8 +11,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { ColleagueProps as ColleagueProps$ } from "../jobs/colleagues";
-import { UserProps as UserProps$ } from "../users/props";
+import { ColleagueProps as ColleagueProps$ } from "../jobs/colleagues/colleagues";
+import { UserProps as UserProps$ } from "../users/props/props";
 /**
  * Connect an identifier/license to the provider with the specified external id
  * (e.g., auto discord social connect on server join)
@@ -46,7 +46,7 @@ export interface UserProps {
      */
     reason?: string;
     /**
-     * @generated from protobuf field: resources.users.UserProps props = 2
+     * @generated from protobuf field: resources.users.props.UserProps props = 2
      */
     props?: UserProps$;
 }
@@ -59,7 +59,7 @@ export interface ColleagueProps {
      */
     reason?: string;
     /**
-     * @generated from protobuf field: resources.jobs.ColleagueProps props = 2
+     * @generated from protobuf field: resources.jobs.colleagues.ColleagueProps props = 2
      */
     props?: ColleagueProps$;
 }
@@ -204,7 +204,7 @@ class UserProps$Type extends MessageType<UserProps> {
                 case /* optional string reason */ 1:
                     message.reason = reader.string();
                     break;
-                case /* resources.users.UserProps props */ 2:
+                case /* resources.users.props.UserProps props */ 2:
                     message.props = UserProps$.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
                 default:
@@ -222,7 +222,7 @@ class UserProps$Type extends MessageType<UserProps> {
         /* optional string reason = 1; */
         if (message.reason !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.reason);
-        /* resources.users.UserProps props = 2; */
+        /* resources.users.props.UserProps props = 2; */
         if (message.props)
             UserProps$.internalBinaryWrite(message.props, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -257,7 +257,7 @@ class ColleagueProps$Type extends MessageType<ColleagueProps> {
                 case /* optional string reason */ 1:
                     message.reason = reader.string();
                     break;
-                case /* resources.jobs.ColleagueProps props */ 2:
+                case /* resources.jobs.colleagues.ColleagueProps props */ 2:
                     message.props = ColleagueProps$.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
                 default:
@@ -275,7 +275,7 @@ class ColleagueProps$Type extends MessageType<ColleagueProps> {
         /* optional string reason = 1; */
         if (message.reason !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.reason);
-        /* resources.jobs.ColleagueProps props = 2; */
+        /* resources.jobs.colleagues.ColleagueProps props = 2; */
         if (message.props)
             ColleagueProps$.internalBinaryWrite(message.props, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

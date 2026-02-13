@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx/fxtest"
 )

@@ -5,7 +5,7 @@ import ClipboardVehicles from '~/components/clipboard/modal/ClipboardVehicles.vu
 import List from '~/components/documents/templates/List.vue';
 import RequirementsList from '~/components/documents/templates/RequirementsList.vue';
 import { useClipboardStore } from '~/stores/clipboard';
-import type { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/documents/templates';
+import type { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/documents/templates/templates';
 
 const clipboardStore = useClipboardStore();
 

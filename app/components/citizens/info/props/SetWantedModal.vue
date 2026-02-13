@@ -3,8 +3,8 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { UserProps } from '~~/gen/ts/resources/users/props';
-import type { User } from '~~/gen/ts/resources/users/users';
+import type { UserProps } from '~~/gen/ts/resources/users/props/props';
+import type { User } from '~~/gen/ts/resources/users/user';
 
 const props = defineProps<{
     user: User;

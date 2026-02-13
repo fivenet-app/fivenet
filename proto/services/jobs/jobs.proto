@@ -7,11 +7,11 @@ import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
-import "resources/jobs/activity.proto";
-import "resources/jobs/colleagues.proto";
-import "resources/jobs/labels.proto";
+import "resources/jobs/colleagues/activity/activity.proto";
+import "resources/jobs/colleagues/colleagues.proto";
+import "resources/jobs/labels/labels.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobs";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobs";
 
 // Colleagues
 
@@ -30,13 +30,13 @@ message ListColleaguesRequest {
 
 message ListColleaguesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.jobs.Colleague colleagues = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.jobs.colleagues.Colleague colleagues = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message GetSelfRequest {}
 
 message GetSelfResponse {
-  resources.jobs.Colleague colleague = 1;
+  resources.jobs.colleagues.Colleague colleague = 1;
 }
 
 message GetColleagueRequest {
@@ -45,7 +45,7 @@ message GetColleagueRequest {
 }
 
 message GetColleagueResponse {
-  resources.jobs.Colleague colleague = 1;
+  resources.jobs.colleagues.Colleague colleague = 1;
 }
 
 message ListColleagueActivityRequest {
@@ -53,16 +53,16 @@ message ListColleagueActivityRequest {
   optional resources.common.database.Sort sort = 2;
   // Search params
   repeated int32 user_ids = 3;
-  repeated resources.jobs.ColleagueActivityType activity_types = 4 [(buf.validate.field).repeated.max_items = 10];
+  repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types = 4 [(buf.validate.field).repeated.max_items = 10];
 }
 
 message ListColleagueActivityResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.jobs.ColleagueActivity activity = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.jobs.colleagues.activity.ColleagueActivity activity = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message SetColleaguePropsRequest {
-  resources.jobs.ColleagueProps props = 1;
+  resources.jobs.colleagues.ColleagueProps props = 1;
   string reason = 2 [
     (buf.validate.field).string = {
       min_len: 3
@@ -74,7 +74,7 @@ message SetColleaguePropsRequest {
 }
 
 message SetColleaguePropsResponse {
-  resources.jobs.ColleagueProps props = 1;
+  resources.jobs.colleagues.ColleagueProps props = 1;
 }
 
 message GetColleagueLabelsRequest {
@@ -82,15 +82,15 @@ message GetColleagueLabelsRequest {
 }
 
 message GetColleagueLabelsResponse {
-  repeated resources.jobs.Label labels = 1;
+  repeated resources.jobs.labels.Label labels = 1;
 }
 
 message ManageLabelsRequest {
-  repeated resources.jobs.Label labels = 1 [(buf.validate.field).repeated.max_items = 50];
+  repeated resources.jobs.labels.Label labels = 1 [(buf.validate.field).repeated.max_items = 50];
 }
 
 message ManageLabelsResponse {
-  repeated resources.jobs.Label labels = 1;
+  repeated resources.jobs.labels.Label labels = 1;
 }
 
 message GetColleagueLabelsStatsRequest {
@@ -98,7 +98,7 @@ message GetColleagueLabelsStatsRequest {
 }
 
 message GetColleagueLabelsStatsResponse {
-  repeated resources.jobs.LabelCount count = 1;
+  repeated resources.jobs.labels.LabelCount count = 1;
 }
 
 // MOTD

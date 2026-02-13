@@ -3,13 +3,13 @@ package centrum
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
-	permscentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
+	permscentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 )
 
 func (s *Server) GetSettings(

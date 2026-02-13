@@ -4,13 +4,14 @@
 // 	protoc        (unknown)
 // source: resources/common/content/diff_activity.proto
 
+//go:build !protoopaque
+
 package content
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -68,14 +69,9 @@ func (x Kind) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use Kind.Descriptor instead.
-func (Kind) EnumDescriptor() ([]byte, []int) {
-	return file_resources_common_content_diff_activity_proto_rawDescGZIP(), []int{0}
-}
-
 // One diff operation, designed for inline client rendering.
 type ContentDiffOp struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	Kind  Kind                   `protobuf:"varint,1,opt,name=kind,proto3,enum=resources.common.content.Kind" json:"kind,omitempty"`
 	// Plain text segment. Can contain whitespace and newlines.
 	// Client renders:
@@ -112,11 +108,6 @@ func (x *ContentDiffOp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ContentDiffOp.ProtoReflect.Descriptor instead.
-func (*ContentDiffOp) Descriptor() ([]byte, []int) {
-	return file_resources_common_content_diff_activity_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *ContentDiffOp) GetKind() Kind {
 	if x != nil {
 		return x.Kind
@@ -131,9 +122,38 @@ func (x *ContentDiffOp) GetText() string {
 	return ""
 }
 
+func (x *ContentDiffOp) SetKind(v Kind) {
+	x.Kind = v
+}
+
+func (x *ContentDiffOp) SetText(v string) {
+	x.Text = v
+}
+
+type ContentDiffOp_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Kind Kind
+	// Plain text segment. Can contain whitespace and newlines.
+	// Client renders:
+	// - EQUAL: normal text
+	// - INSERT: highlighted
+	// - DELETE: strikethrough or hidden behind a toggle
+	Text string
+}
+
+func (b0 ContentDiffOp_builder) Build() *ContentDiffOp {
+	m0 := &ContentDiffOp{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Kind = b.Kind
+	x.Text = b.Text
+	return m0
+}
+
 // Optional stats to quickly show "what changed" without parsing ops.
 type ContentDiffStats struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Counts are measured in runes/codepoints on the server side.
 	InsertedRunes uint32 `protobuf:"varint,1,opt,name=inserted_runes,json=insertedRunes,proto3" json:"inserted_runes,omitempty"`
 	DeletedRunes  uint32 `protobuf:"varint,2,opt,name=deleted_runes,json=deletedRunes,proto3" json:"deleted_runes,omitempty"`
@@ -168,11 +188,6 @@ func (x *ContentDiffStats) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ContentDiffStats.ProtoReflect.Descriptor instead.
-func (*ContentDiffStats) Descriptor() ([]byte, []int) {
-	return file_resources_common_content_diff_activity_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ContentDiffStats) GetInsertedRunes() uint32 {
 	if x != nil {
 		return x.InsertedRunes
@@ -194,8 +209,40 @@ func (x *ContentDiffStats) GetOpCount() uint32 {
 	return 0
 }
 
+func (x *ContentDiffStats) SetInsertedRunes(v uint32) {
+	x.InsertedRunes = v
+}
+
+func (x *ContentDiffStats) SetDeletedRunes(v uint32) {
+	x.DeletedRunes = v
+}
+
+func (x *ContentDiffStats) SetOpCount(v uint32) {
+	x.OpCount = v
+}
+
+type ContentDiffStats_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Counts are measured in runes/codepoints on the server side.
+	InsertedRunes uint32
+	DeletedRunes  uint32
+	// Optional: number of diff ops (after cleanup/coalescing).
+	OpCount uint32
+}
+
+func (b0 ContentDiffStats_builder) Build() *ContentDiffStats {
+	m0 := &ContentDiffStats{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.InsertedRunes = b.InsertedRunes
+	x.DeletedRunes = b.DeletedRunes
+	x.OpCount = b.OpCount
+	return m0
+}
+
 type ContentDiff struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Quick summary for badge like "+12 / -3"
 	Stats *ContentDiffStats `protobuf:"bytes,1,opt,name=stats,proto3" json:"stats,omitempty"`
 	// The diff itself for inline rendering
@@ -229,11 +276,6 @@ func (x *ContentDiff) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ContentDiff.ProtoReflect.Descriptor instead.
-func (*ContentDiff) Descriptor() ([]byte, []int) {
-	return file_resources_common_content_diff_activity_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *ContentDiff) GetStats() *ContentDiffStats {
 	if x != nil {
 		return x.Stats
@@ -246,6 +288,43 @@ func (x *ContentDiff) GetOps() []*ContentDiffOp {
 		return x.Ops
 	}
 	return nil
+}
+
+func (x *ContentDiff) SetStats(v *ContentDiffStats) {
+	x.Stats = v
+}
+
+func (x *ContentDiff) SetOps(v []*ContentDiffOp) {
+	x.Ops = v
+}
+
+func (x *ContentDiff) HasStats() bool {
+	if x == nil {
+		return false
+	}
+	return x.Stats != nil
+}
+
+func (x *ContentDiff) ClearStats() {
+	x.Stats = nil
+}
+
+type ContentDiff_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Quick summary for badge like "+12 / -3"
+	Stats *ContentDiffStats
+	// The diff itself for inline rendering
+	Ops []*ContentDiffOp
+}
+
+func (b0 ContentDiff_builder) Build() *ContentDiff {
+	m0 := &ContentDiff{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Stats = b.Stats
+	x.Ops = b.Ops
+	return m0
 }
 
 var File_resources_common_content_diff_activity_proto protoreflect.FileDescriptor
@@ -268,19 +347,7 @@ const file_resources_common_content_diff_activity_proto_rawDesc = "" +
 	"\n" +
 	"KIND_EQUAL\x10\x01\x12\x0f\n" +
 	"\vKIND_INSERT\x10\x02\x12\x0f\n" +
-	"\vKIND_DELETE\x10\x03BTZRgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content;contentb\x06proto3"
-
-var (
-	file_resources_common_content_diff_activity_proto_rawDescOnce sync.Once
-	file_resources_common_content_diff_activity_proto_rawDescData []byte
-)
-
-func file_resources_common_content_diff_activity_proto_rawDescGZIP() []byte {
-	file_resources_common_content_diff_activity_proto_rawDescOnce.Do(func() {
-		file_resources_common_content_diff_activity_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_common_content_diff_activity_proto_rawDesc), len(file_resources_common_content_diff_activity_proto_rawDesc)))
-	})
-	return file_resources_common_content_diff_activity_proto_rawDescData
-}
+	"\vKIND_DELETE\x10\x03BTZRgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content;contentb\x06proto3"
 
 var file_resources_common_content_diff_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_common_content_diff_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

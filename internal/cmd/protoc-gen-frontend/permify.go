@@ -3,17 +3,14 @@ package main
 import (
 	"fmt"
 	"path"
-	"reflect"
 	"slices"
 	"strings"
 	"text/template"
 
-	permspb "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	permspb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	pgs "github.com/lyft/protoc-gen-star/v2"
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 // PermifyPlugin is a protoc-gen-star module that generates a TypeScript file
@@ -23,16 +20,6 @@ type PermifyModule struct {
 
 	ctx pgsgo.Context
 	tpl *template.Template
-}
-
-var fns = template.FuncMap{
-	"last": func(x int, a any) bool {
-		return x == reflect.ValueOf(a).Len()-1
-	},
-	"title": func(s string) string {
-		c := cases.Title(language.English)
-		return c.String(s)
-	},
 }
 
 // Permify returns an initialized PermifyPlugin.
@@ -125,9 +112,9 @@ func (p *PermifyModule) Execute(
 					for i, a := range val.Attrs {
 						atype := "StringList"
 						switch a.Type {
-						case permissions.AttributeType_ATTRIBUTE_TYPE_JOB_LIST:
+						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_LIST:
 							atype = "JobList"
-						case permissions.AttributeType_ATTRIBUTE_TYPE_JOB_GRADE_LIST:
+						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_GRADE_LIST:
 							atype = "JobGradeList"
 						}
 

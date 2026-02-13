@@ -4,14 +4,15 @@
 // 	protoc        (unknown)
 // source: resources/file/meta.proto
 
+//go:build !protoopaque
+
 package file
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,7 +24,7 @@ const (
 )
 
 type FileMeta struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Meta:
 	//
 	//	*FileMeta_Image
@@ -57,11 +58,6 @@ func (x *FileMeta) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use FileMeta.ProtoReflect.Descriptor instead.
-func (*FileMeta) Descriptor() ([]byte, []int) {
-	return file_resources_file_meta_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *FileMeta) GetMeta() isFileMeta_Meta {
 	if x != nil {
 		return x.Meta
@@ -78,6 +74,82 @@ func (x *FileMeta) GetImage() *ImageMeta {
 	return nil
 }
 
+func (x *FileMeta) SetImage(v *ImageMeta) {
+	if v == nil {
+		x.Meta = nil
+		return
+	}
+	x.Meta = &FileMeta_Image{v}
+}
+
+func (x *FileMeta) HasMeta() bool {
+	if x == nil {
+		return false
+	}
+	return x.Meta != nil
+}
+
+func (x *FileMeta) HasImage() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Meta.(*FileMeta_Image)
+	return ok
+}
+
+func (x *FileMeta) ClearMeta() {
+	x.Meta = nil
+}
+
+func (x *FileMeta) ClearImage() {
+	if _, ok := x.Meta.(*FileMeta_Image); ok {
+		x.Meta = nil
+	}
+}
+
+const FileMeta_Meta_not_set_case case_FileMeta_Meta = 0
+const FileMeta_Image_case case_FileMeta_Meta = 1
+
+func (x *FileMeta) WhichMeta() case_FileMeta_Meta {
+	if x == nil {
+		return FileMeta_Meta_not_set_case
+	}
+	switch x.Meta.(type) {
+	case *FileMeta_Image:
+		return FileMeta_Image_case
+	default:
+		return FileMeta_Meta_not_set_case
+	}
+}
+
+type FileMeta_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Meta:
+	Image *ImageMeta
+	// -- end of Meta
+}
+
+func (b0 FileMeta_builder) Build() *FileMeta {
+	m0 := &FileMeta{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Image != nil {
+		x.Meta = &FileMeta_Image{b.Image}
+	}
+	return m0
+}
+
+type case_FileMeta_Meta protoreflect.FieldNumber
+
+func (x case_FileMeta_Meta) String() string {
+	md := file_resources_file_meta_proto_msgTypes[0].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isFileMeta_Meta interface {
 	isFileMeta_Meta()
 }
@@ -89,7 +161,7 @@ type FileMeta_Image struct {
 func (*FileMeta_Image) isFileMeta_Meta() {}
 
 type ImageMeta struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Width         int64                  `protobuf:"varint,1,opt,name=width,proto3" json:"width,omitempty"`
 	Height        int64                  `protobuf:"varint,2,opt,name=height,proto3" json:"height,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -121,11 +193,6 @@ func (x *ImageMeta) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ImageMeta.ProtoReflect.Descriptor instead.
-func (*ImageMeta) Descriptor() ([]byte, []int) {
-	return file_resources_file_meta_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ImageMeta) GetWidth() int64 {
 	if x != nil {
 		return x.Width
@@ -140,6 +207,30 @@ func (x *ImageMeta) GetHeight() int64 {
 	return 0
 }
 
+func (x *ImageMeta) SetWidth(v int64) {
+	x.Width = v
+}
+
+func (x *ImageMeta) SetHeight(v int64) {
+	x.Height = v
+}
+
+type ImageMeta_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Width  int64
+	Height int64
+}
+
+func (b0 ImageMeta_builder) Build() *ImageMeta {
+	m0 := &ImageMeta{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Width = b.Width
+	x.Height = b.Height
+	return m0
+}
+
 var File_resources_file_meta_proto protoreflect.FileDescriptor
 
 const file_resources_file_meta_proto_rawDesc = "" +
@@ -150,19 +241,7 @@ const file_resources_file_meta_proto_rawDesc = "" +
 	"\x04meta\"9\n" +
 	"\tImageMeta\x12\x14\n" +
 	"\x05width\x18\x01 \x01(\x03R\x05width\x12\x16\n" +
-	"\x06height\x18\x02 \x01(\x03R\x06heightBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file;fileb\x06proto3"
-
-var (
-	file_resources_file_meta_proto_rawDescOnce sync.Once
-	file_resources_file_meta_proto_rawDescData []byte
-)
-
-func file_resources_file_meta_proto_rawDescGZIP() []byte {
-	file_resources_file_meta_proto_rawDescOnce.Do(func() {
-		file_resources_file_meta_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_file_meta_proto_rawDesc), len(file_resources_file_meta_proto_rawDesc)))
-	})
-	return file_resources_file_meta_proto_rawDescData
-}
+	"\x06height\x18\x02 \x01(\x03R\x06heightBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file;fileb\x06proto3"
 
 var file_resources_file_meta_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_file_meta_proto_goTypes = []any{

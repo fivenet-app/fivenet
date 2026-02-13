@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { WebSocketStatus } from '@vueuse/core';
 import { v4 as uuidv4 } from 'uuid';
-import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
+import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 
 const { t } = useI18n();
 

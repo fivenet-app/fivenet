@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	grpc_metadata "github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -21,11 +21,11 @@ func TestGRPCAuthFunc(t *testing.T) {
 	// Valid JWT token
 	tm := NewTokenMgr(jwtTokenTestSecret)
 	assert.NotNil(t, tm)
-	token, err := tm.NewWithClaims(basicCitizenInfoClaim)
+	token, err := tm.FromCombinedClaims(testUserCombinedClaim)
 	require.NoError(t, err)
 	ui := userinfo.NewMockUserInfoRetriever(map[int32]*pbuserinfo.UserInfo{
-		basicCitizenInfoClaim.CharID: {
-			AccountId: basicCitizenInfoClaim.AccID,
+		testUserCombinedClaim.UserID: {
+			AccountId: testUserCombinedClaim.AccID,
 		},
 	})
 	appCfg, err := appconfig.NewTest(appconfig.TestParams{

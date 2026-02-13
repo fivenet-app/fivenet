@@ -4,14 +4,15 @@
 // 	protoc        (unknown)
 // source: resources/common/database/database.proto
 
+//go:build !protoopaque
+
 package database
 
 import (
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,7 +25,7 @@ const (
 
 // Pagination for requests to the server
 type PaginationRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Offset        int64                  `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
 	PageSize      *int64                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3,oneof" json:"page_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -56,11 +57,6 @@ func (x *PaginationRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PaginationRequest.ProtoReflect.Descriptor instead.
-func (*PaginationRequest) Descriptor() ([]byte, []int) {
-	return file_resources_common_database_database_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *PaginationRequest) GetOffset() int64 {
 	if x != nil {
 		return x.Offset
@@ -75,9 +71,44 @@ func (x *PaginationRequest) GetPageSize() int64 {
 	return 0
 }
 
+func (x *PaginationRequest) SetOffset(v int64) {
+	x.Offset = v
+}
+
+func (x *PaginationRequest) SetPageSize(v int64) {
+	x.PageSize = &v
+}
+
+func (x *PaginationRequest) HasPageSize() bool {
+	if x == nil {
+		return false
+	}
+	return x.PageSize != nil
+}
+
+func (x *PaginationRequest) ClearPageSize() {
+	x.PageSize = nil
+}
+
+type PaginationRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Offset   int64
+	PageSize *int64
+}
+
+func (b0 PaginationRequest_builder) Build() *PaginationRequest {
+	m0 := &PaginationRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Offset = b.Offset
+	x.PageSize = b.PageSize
+	return m0
+}
+
 // Server Pagination Response
 type PaginationResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	TotalCount    int64                  `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
 	Offset        int64                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
 	End           int64                  `protobuf:"varint,3,opt,name=end,proto3" json:"end,omitempty"`
@@ -111,11 +142,6 @@ func (x *PaginationResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PaginationResponse.ProtoReflect.Descriptor instead.
-func (*PaginationResponse) Descriptor() ([]byte, []int) {
-	return file_resources_common_database_database_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *PaginationResponse) GetTotalCount() int64 {
 	if x != nil {
 		return x.TotalCount
@@ -144,8 +170,44 @@ func (x *PaginationResponse) GetPageSize() int64 {
 	return 0
 }
 
+func (x *PaginationResponse) SetTotalCount(v int64) {
+	x.TotalCount = v
+}
+
+func (x *PaginationResponse) SetOffset(v int64) {
+	x.Offset = v
+}
+
+func (x *PaginationResponse) SetEnd(v int64) {
+	x.End = v
+}
+
+func (x *PaginationResponse) SetPageSize(v int64) {
+	x.PageSize = v
+}
+
+type PaginationResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	TotalCount int64
+	Offset     int64
+	End        int64
+	PageSize   int64
+}
+
+func (b0 PaginationResponse_builder) Build() *PaginationResponse {
+	m0 := &PaginationResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.TotalCount = b.TotalCount
+	x.Offset = b.Offset
+	x.End = b.End
+	x.PageSize = b.PageSize
+	return m0
+}
+
 type Sort struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Columns       []*SortByColumn        `protobuf:"bytes,1,rep,name=columns,proto3" json:"columns,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -176,11 +238,6 @@ func (x *Sort) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Sort.ProtoReflect.Descriptor instead.
-func (*Sort) Descriptor() ([]byte, []int) {
-	return file_resources_common_database_database_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *Sort) GetColumns() []*SortByColumn {
 	if x != nil {
 		return x.Columns
@@ -188,9 +245,27 @@ func (x *Sort) GetColumns() []*SortByColumn {
 	return nil
 }
 
+func (x *Sort) SetColumns(v []*SortByColumn) {
+	x.Columns = v
+}
+
+type Sort_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Columns []*SortByColumn
+}
+
+func (b0 Sort_builder) Build() *Sort {
+	m0 := &Sort{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Columns = b.Columns
+	return m0
+}
+
 // SortByColumn sort by column and direction
 type SortByColumn struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// ID is the column name.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Desc if true sorts descending, ascending otherwise.
@@ -224,11 +299,6 @@ func (x *SortByColumn) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SortByColumn.ProtoReflect.Descriptor instead.
-func (*SortByColumn) Descriptor() ([]byte, []int) {
-	return file_resources_common_database_database_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *SortByColumn) GetId() string {
 	if x != nil {
 		return x.Id
@@ -243,10 +313,36 @@ func (x *SortByColumn) GetDesc() bool {
 	return false
 }
 
+func (x *SortByColumn) SetId(v string) {
+	x.Id = v
+}
+
+func (x *SortByColumn) SetDesc(v bool) {
+	x.Desc = v
+}
+
+type SortByColumn_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// ID is the column name.
+	Id string
+	// Desc if true sorts descending, ascending otherwise.
+	Desc bool
+}
+
+func (b0 SortByColumn_builder) Build() *SortByColumn {
+	m0 := &SortByColumn{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Desc = b.Desc
+	return m0
+}
+
 // DateRange represents a datetime range (uses Timestamp underneath)
 // It depends on the API method if it will use date or date + time.
 type DateRange struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Start time
 	Start *timestamp.Timestamp `protobuf:"bytes,1,opt,name=start,proto3" json:"start,omitempty"`
 	// End time
@@ -280,11 +376,6 @@ func (x *DateRange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DateRange.ProtoReflect.Descriptor instead.
-func (*DateRange) Descriptor() ([]byte, []int) {
-	return file_resources_common_database_database_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *DateRange) GetStart() *timestamp.Timestamp {
 	if x != nil {
 		return x.Start
@@ -297,6 +388,54 @@ func (x *DateRange) GetEnd() *timestamp.Timestamp {
 		return x.End
 	}
 	return nil
+}
+
+func (x *DateRange) SetStart(v *timestamp.Timestamp) {
+	x.Start = v
+}
+
+func (x *DateRange) SetEnd(v *timestamp.Timestamp) {
+	x.End = v
+}
+
+func (x *DateRange) HasStart() bool {
+	if x == nil {
+		return false
+	}
+	return x.Start != nil
+}
+
+func (x *DateRange) HasEnd() bool {
+	if x == nil {
+		return false
+	}
+	return x.End != nil
+}
+
+func (x *DateRange) ClearStart() {
+	x.Start = nil
+}
+
+func (x *DateRange) ClearEnd() {
+	x.End = nil
+}
+
+type DateRange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Start time
+	Start *timestamp.Timestamp
+	// End time
+	End *timestamp.Timestamp
+}
+
+func (b0 DateRange_builder) Build() *DateRange {
+	m0 := &DateRange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Start = b.Start
+	x.End = b.End
+	return m0
 }
 
 var File_resources_common_database_database_proto protoreflect.FileDescriptor
@@ -322,19 +461,7 @@ const file_resources_common_database_database_proto_rawDesc = "" +
 	"\x04desc\x18\x02 \x01(\bR\x04desc\"s\n" +
 	"\tDateRange\x124\n" +
 	"\x05start\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x05start\x120\n" +
-	"\x03end\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\x03endBVZTgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database;databaseb\x06proto3"
-
-var (
-	file_resources_common_database_database_proto_rawDescOnce sync.Once
-	file_resources_common_database_database_proto_rawDescData []byte
-)
-
-func file_resources_common_database_database_proto_rawDescGZIP() []byte {
-	file_resources_common_database_database_proto_rawDescOnce.Do(func() {
-		file_resources_common_database_database_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_common_database_database_proto_rawDesc), len(file_resources_common_database_database_proto_rawDesc)))
-	})
-	return file_resources_common_database_database_proto_rawDescData
-}
+	"\x03end\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\x03endBVZTgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database;databaseb\x06proto3"
 
 var file_resources_common_database_database_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_resources_common_database_database_proto_goTypes = []any{

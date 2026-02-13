@@ -10,7 +10,7 @@ import "resources/settings/banner.proto";
 import "resources/settings/data.proto";
 import "tagger/tagger.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settings";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settings";
 
 message AppConfig {
   option (codegen.dbscanner.dbscanner) = {
@@ -32,6 +32,7 @@ message AppConfig {
   Display display = 10;
   QuickButtons quick_buttons = 11;
   Data data = 12;
+  Livemap livemap = 13;
 }
 
 message Auth {
@@ -241,4 +242,8 @@ message PenaltyCalculatorWarn {
     (codegen.sanitizer.sanitizer) = {enabled: true},
     (tagger.tags) = "json:\"warnMessage\""
   ];
+}
+
+message Livemap {
+  bool enable_cayo_perico = 1;
 }

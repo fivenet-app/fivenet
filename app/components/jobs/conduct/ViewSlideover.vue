@@ -3,8 +3,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import CustomContentRenderer from '~/components/partials/content/CustomContentRenderer.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import { ConductType, type ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
-import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
+import { ConductType, type ConductEntry } from '~~/gen/ts/resources/jobs/conduct/conduct';
+import { ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { conductTypesToBadgeColor } from './helpers';
 
@@ -22,8 +22,8 @@ const notifications = useNotificationsStore();
 // Handle the client update event
 const { sendClientView } = useClientUpdate(ObjectType.JOBS_CONDUCT, () =>
     notifications.add({
-        title: { key: 'notifications.jobs.conduct.client_view_update.title', parameters: {} },
-        description: { key: 'notifications.jobs.conduct.client_view_update.content', parameters: {} },
+        title: { key: 'notifications.jobs.conduct.clientview_update.title', parameters: {} },
+        description: { key: 'notifications.jobs.conduct.clientview_update.content', parameters: {} },
         duration: 7500,
         type: NotificationType.INFO,
         actions: [

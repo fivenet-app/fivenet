@@ -1,19 +1,18 @@
 package calendar
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
 func (s *Server) listCalendarEntriesQuery(
 	condition mysql.BoolExpression,
 	userInfo *userinfo.UserInfo,
-	access calendar.AccessLevel,
+	access calendaraccess.AccessLevel,
 ) mysql.SelectStatement {
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 	rsvp2 := tCalendarRSVP.AS("r2")
 

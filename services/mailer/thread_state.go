@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
+	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
+	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
+	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -20,7 +22,7 @@ func (s *Server) GetThreadState(
 ) (*pbmailer.GetThreadStateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetThreadId(), req.GetEmailId(), mailer.AccessLevel_ACCESS_LEVEL_READ); err != nil {
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetThreadId(), req.GetEmailId(), maileraccess.AccessLevel_ACCESS_LEVEL_READ); err != nil {
 		return nil, err
 	}
 
@@ -40,7 +42,7 @@ func (s *Server) SetThreadState(
 ) (*pbmailer.SetThreadStateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetState().GetThreadId(), req.GetState().GetEmailId(), mailer.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetState().GetThreadId(), req.GetState().GetEmailId(), maileraccess.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
 		return nil, err
 	}
 
@@ -111,8 +113,8 @@ func (s *Server) SetThreadState(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	s.sendUpdate(ctx, &mailer.MailerEvent{
-		Data: &mailer.MailerEvent_ThreadStateUpdate{
+	s.sendUpdate(ctx, &mailerevents.MailerEvent{
+		Data: &mailerevents.MailerEvent_ThreadStateUpdate{
 			ThreadStateUpdate: state,
 		},
 	}, req.GetState().GetEmailId())
@@ -126,7 +128,7 @@ func (s *Server) getThreadState(
 	ctx context.Context,
 	threadId int64,
 	emaildId int64,
-) (*mailer.ThreadState, error) {
+) (*mailerthreads.ThreadState, error) {
 	stmt := tThreadsState.
 		SELECT(
 			tThreadsState.ThreadID,
@@ -144,7 +146,7 @@ func (s *Server) getThreadState(
 			tThreadsState.EmailID.EQ(mysql.Int64(emaildId)),
 		))
 
-	dest := &mailer.ThreadState{}
+	dest := &mailerthreads.ThreadState{}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err

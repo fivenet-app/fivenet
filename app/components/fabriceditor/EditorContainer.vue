@@ -12,6 +12,8 @@ withDefaults(
         maxWidth: 900,
     },
 );
+
+const modelValue = defineModel<string>({ required: true });
 </script>
 
 <template>
@@ -35,7 +37,7 @@ withDefaults(
         </template>
 
         <template #body>
-            <EditorWrapper :max-height="maxHeight" :max-width="maxWidth" />
+            <EditorWrapper v-model="modelValue" :max-height="maxHeight" :max-width="maxWidth" />
         </template>
     </UDashboardPanel>
 </template>

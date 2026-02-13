@@ -13,8 +13,8 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
-import { type Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access/access';
+import { type Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 
 const props = defineProps<{
     dispatchId: number;

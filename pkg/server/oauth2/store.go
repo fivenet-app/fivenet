@@ -6,11 +6,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
-	"github.com/fivenet-app/fivenet/v2025/pkg/crypt"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/oauth2/providers"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	accountsoauth2 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts/oauth2"
+	"github.com/fivenet-app/fivenet/v2026/pkg/crypt"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/providers"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -33,7 +34,7 @@ type userInfoStore interface {
 		ctx context.Context,
 		provider string,
 		userInfo *providers.UserInfo,
-	) (*model.FivenetAccounts, error)
+	) (*accounts.Account, error)
 }
 
 // oauth2UserInfo implements userInfoStore for handling OAuth2 user info in the database.
@@ -49,7 +50,7 @@ func (o *oauth2UserInfo) getAccountInfo(
 	ctx context.Context,
 	provider string,
 	userInfo *providers.UserInfo,
-) (*model.FivenetAccounts, error) {
+) (*accounts.Account, error) {
 	stmt := tOauth2.
 		SELECT(
 			tAccs.ID,
@@ -69,7 +70,7 @@ func (o *oauth2UserInfo) getAccountInfo(
 		)).
 		LIMIT(1)
 
-	var dest model.FivenetAccounts
+	var dest accounts.Account
 	if err := stmt.QueryContext(ctx, o.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -131,7 +132,7 @@ func (o *oauth2UserInfo) storeUserInfo(
 		}
 
 		// Retrieve oauth2 connection to make sure the external ID matches before updating the user info
-		acc, err := accounts.RetrieveOAuth2Account(ctx, o.db, o.crypt, accountId, provider)
+		acc, err := accountsoauth2.RetrieveOAuth2Account(ctx, o.db, o.crypt, accountId, provider)
 		if err != nil {
 			return err
 		}
@@ -162,9 +163,8 @@ func (o *oauth2UserInfo) updateUserInfo(
 	if userInfo.ExpiresIn != nil {
 		expiresIn = *userInfo.ExpiresIn
 	}
-	_ = expiresIn
 
-	if err := accounts.UpdateOAuth2Account(ctx, o.db, o.crypt, accountId, &model.FivenetAccountsOauth2{
+	if err := accountsoauth2.UpdateOAuth2Account(ctx, o.db, o.crypt, accountId, &model.FivenetAccountsOauth2{
 		AccountID:    accountId,
 		ExternalID:   userInfo.ID,
 		Username:     userInfo.Username,

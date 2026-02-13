@@ -3,7 +3,7 @@ package grpc_database
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"google.golang.org/grpc"
 )
 

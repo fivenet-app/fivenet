@@ -6,20 +6,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
-	permsqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
+	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
+	permsqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -123,7 +125,7 @@ func (s *Server) GetQualification(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_VIEW,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -160,7 +162,7 @@ func (s *Server) GetQualification(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_GRADE,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -174,13 +176,13 @@ func (s *Server) GetQualification(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_TAKE,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if canTake &&
-		quali.GetExamMode() == qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_ENABLED {
+		quali.GetExamMode() == qualificationsexam.QualificationExamMode_QUALIFICATION_EXAM_MODE_ENABLED {
 		canContent = true
 	}
 
@@ -196,14 +198,14 @@ func (s *Server) GetQualification(
 	}
 
 	if resp.GetQualification().GetExam() == nil {
-		resp.Qualification.Exam = &qualifications.ExamQuestions{
-			Questions: []*qualifications.ExamQuestion{},
+		resp.Qualification.Exam = &qualificationsexam.ExamQuestions{
+			Questions: []*qualificationsexam.ExamQuestion{},
 		}
 	}
 	if resp.GetQualification().GetExamSettings() == nil {
-		resp.Qualification.ExamSettings = &qualifications.QualificationExamSettings{
+		resp.Qualification.ExamSettings = &qualificationsexam.QualificationExamSettings{
 			Time:          durationpb.New(10 * time.Minute),
-			AutoGradeMode: qualifications.AutoGradeMode_AUTO_GRADE_MODE_STRICT,
+			AutoGradeMode: qualificationsexam.AutoGradeMode_AUTO_GRADE_MODE_STRICT,
 		}
 	}
 
@@ -296,7 +298,7 @@ func (s *Server) CreateQualification(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	jobAccess := []*qualifications.QualificationJobAccess{}
+	jobAccess := []*qualificationsaccess.QualificationJobAccess{}
 
 	job := s.enricher.GetJobByName(userInfo.GetJob())
 	if job != nil {
@@ -305,11 +307,11 @@ func (s *Server) CreateQualification(
 			highestGrade = job.GetGrades()[len(job.GetGrades())-1].GetGrade()
 		}
 
-		jobAccess = append(jobAccess, &qualifications.QualificationJobAccess{
+		jobAccess = append(jobAccess, &qualificationsaccess.QualificationJobAccess{
 			TargetId:     lastId,
 			Job:          job.GetName(),
 			MinimumGrade: highestGrade,
-			Access:       qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+			Access:       qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 		})
 	}
 
@@ -344,7 +346,7 @@ func (s *Server) UpdateQualification(
 		ctx,
 		req.GetQualification().GetId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -524,7 +526,7 @@ func (s *Server) DeleteQualification(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

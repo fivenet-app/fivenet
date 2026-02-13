@@ -24,7 +24,7 @@ import (
 	"testing"
 	"time"
 
-	grpcws "github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
+	grpcws "github.com/fivenet-app/fivenet/v2026/pkg/grpc/grpcws"
 	testproto "github.com/improbable-eng/grpc-web/integration_test/go/_proto/improbable/grpcweb/test"
 	"github.com/mwitkow/go-conntrack/connhelpers"
 	"github.com/stretchr/testify/assert"

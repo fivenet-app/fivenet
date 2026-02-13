@@ -3,7 +3,7 @@ import type { Editor, JSONContent } from '@tiptap/core';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
-import type { Template } from '~~/gen/ts/resources/mailer/template';
+import type { Template } from '~~/gen/ts/resources/mailer/templates/template';
 import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
 
 const props = defineProps<{
@@ -69,7 +69,11 @@ function selectTemplate(template: Template | undefined): void {
         </USelectMenu>
 
         <UFieldGroup v-else v-bind="$attrs">
-            <UButton :label="$t('common.insert')" icon="i-mdi-plus" @click="() => selectTemplate(selectedTemplate)" />
+            <UButton
+                :label="$t('components.partials.tiptap_editor.insert')"
+                icon="i-mdi-plus"
+                @click="() => selectTemplate(selectedTemplate)"
+            />
 
             <UButton :label="$t('common.cancel')" color="error" icon="i-mdi-cancel" @click="selectedTemplate = undefined" />
         </UFieldGroup>

@@ -6,12 +6,12 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/cache"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
+	documentscategory "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/category"
+	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2026/pkg/nats/cache"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -22,7 +22,7 @@ import (
 // DocumentCategories manages document category data, including caching and enrichment.
 type DocumentCategories struct {
 	// Cache provides a cache for document categories keyed by string.
-	*cache.Cache[documents.Category, *documents.Category]
+	*cache.Cache[documentscategory.Category, *documentscategory.Category]
 
 	// logger is used for logging within the DocumentCategories service.
 	logger *zap.Logger
@@ -59,7 +59,7 @@ func NewDocumentCategories(p Params) DocumentCategoriesResult {
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		// Initialize the document categories cache with a key-value prefix.
 		docCategories, err := cache.New(ctxStartup, p.Logger, p.JS, "cache",
-			cache.WithKVPrefix[documents.Category]("doc_categories"),
+			cache.WithKVPrefix[documentscategory.Category]("doc_categories"),
 		)
 		if err != nil {
 			return err
@@ -146,7 +146,7 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 			tDCategory.SortKey.ASC(),
 		)
 
-	var dest []*documents.Category
+	var dest []*documentscategory.Category
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
@@ -154,7 +154,7 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 	}
 
 	errs := multierr.Combine()
-	categoriesPerJob := map[string][]*documents.Category{}
+	categoriesPerJob := map[string][]*documentscategory.Category{}
 	for _, d := range dest {
 		key := strconv.FormatInt(d.GetId(), 10)
 		if err := c.Put(ctx, key, d); err != nil {
@@ -162,7 +162,7 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 		}
 
 		if _, ok := categoriesPerJob[d.GetJob()]; !ok {
-			categoriesPerJob[d.GetJob()] = []*documents.Category{}
+			categoriesPerJob[d.GetJob()] = []*documentscategory.Category{}
 		}
 		categoriesPerJob[d.GetJob()] = append(categoriesPerJob[d.GetJob()], d)
 	}
@@ -183,7 +183,7 @@ func (c *DocumentCategories) Enrich(doc common.ICategory) {
 	dc, err := c.Get(strconv.FormatInt(cId, 10))
 	if err != nil {
 		job := NotAvailablePlaceholder
-		doc.SetCategory(&documents.Category{
+		doc.SetCategory(&documentscategory.Category{
 			Id:   0,
 			Name: NotAvailablePlaceholder,
 			Job:  &job,

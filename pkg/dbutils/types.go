@@ -1,7 +1,7 @@
 package dbutils
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/go-jet/jet/v2/mysql"
 )
 

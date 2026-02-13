@@ -7,8 +7,8 @@ import (
 	"slices"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
+	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -16,7 +16,7 @@ import (
 func (s *Server) getTimeclockStats(
 	ctx context.Context,
 	condition mysql.BoolExpression,
-) (*jobs.TimeclockStats, error) {
+) (*jobstimeclock.TimeclockStats, error) {
 	stmt := tTimeClock.
 		SELECT(
 			tTimeClock.Job.AS("timeclock_stats.job"),
@@ -34,7 +34,7 @@ func (s *Server) getTimeclockStats(
 		)).
 		GROUP_BY(tTimeClock.Job)
 
-	var dest jobs.TimeclockStats
+	var dest jobstimeclock.TimeclockStats
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -47,7 +47,7 @@ func (s *Server) getTimeclockStats(
 func (s *Server) getTimeclockWeeklyStats(
 	ctx context.Context,
 	condition mysql.BoolExpression,
-) ([]*jobs.TimeclockWeeklyStats, error) {
+) ([]*jobstimeclock.TimeclockWeeklyStats, error) {
 	yearExpr := dbutils.YEAR(tTimeClock.Date)
 	weekExpr := dbutils.WEEK(tTimeClock.Date)
 
@@ -71,7 +71,7 @@ func (s *Server) getTimeclockWeeklyStats(
 		).
 		LIMIT(10)
 
-	var dest []*jobs.TimeclockWeeklyStats
+	var dest []*jobstimeclock.TimeclockWeeklyStats
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -99,7 +99,7 @@ func (s *Server) getTimeclockWeeklyStats(
 
 			for lastCalendarWeek-s.GetCalendarWeek() > 1 {
 				lastCalendarWeek--
-				dest = append([]*jobs.TimeclockWeeklyStats{
+				dest = append([]*jobstimeclock.TimeclockWeeklyStats{
 					{
 						Year:         last.GetYear(),
 						CalendarWeek: lastCalendarWeek,
@@ -108,12 +108,12 @@ func (s *Server) getTimeclockWeeklyStats(
 			}
 		}
 
-		slices.SortFunc(dest, func(a, b *jobs.TimeclockWeeklyStats) int {
+		slices.SortFunc(dest, func(a, b *jobstimeclock.TimeclockWeeklyStats) int {
 			return int(a.GetYear() - b.GetYear() + a.GetCalendarWeek() - b.GetCalendarWeek())
 		})
 
 		if dest[0].GetYear() == last.GetYear() && dest[0].GetCalendarWeek() > 1 {
-			dest = append([]*jobs.TimeclockWeeklyStats{
+			dest = append([]*jobstimeclock.TimeclockWeeklyStats{
 				{
 					Year:         last.GetYear(),
 					CalendarWeek: dest[0].GetCalendarWeek() - 1,
@@ -124,11 +124,11 @@ func (s *Server) getTimeclockWeeklyStats(
 		// No stats? Add two empty ones so the graph doesn't break
 		year, week := time.Now().ISOWeek()
 		dest = append(dest,
-			&jobs.TimeclockWeeklyStats{
+			&jobstimeclock.TimeclockWeeklyStats{
 				Year:         int32(year),
 				CalendarWeek: int32(week),
 			},
-			&jobs.TimeclockWeeklyStats{
+			&jobstimeclock.TimeclockWeeklyStats{
 				Year:         int32(year),
 				CalendarWeek: int32(week + 1),
 			})

@@ -5,16 +5,17 @@ import (
 	"errors"
 	"strings"
 
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/textdiff"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/textdiff"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -38,7 +39,7 @@ func (s *Server) ListDocumentActivity(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -79,13 +80,13 @@ func (s *Server) ListDocumentActivity(
 	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, ActivityDefaultPageSize)
 	resp := &pbdocuments.ListDocumentActivityResponse{
 		Pagination: pag,
-		Activity:   []*documents.DocActivity{},
+		Activity:   []*documentsactivity.DocActivity{},
 	}
 	if count.Total <= 0 {
 		return resp, nil
 	}
 
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 
 	stmt := tDocActivity.
 		SELECT(
@@ -135,7 +136,7 @@ func (s *Server) ListDocumentActivity(
 func addDocumentActivity(
 	ctx context.Context,
 	tx qrm.DB,
-	activitiy *documents.DocActivity,
+	activitiy *documentsactivity.DocActivity,
 ) (int64, error) {
 	stmt := tDocActivity.
 		INSERT(
@@ -174,8 +175,8 @@ func addDocumentActivity(
 func (s *Server) generateDocumentDiff(
 	old *documents.Document,
 	new *documents.Document,
-) (*documents.DocUpdated, error) {
-	diff := &documents.DocUpdated{}
+) (*documentsactivity.DocUpdated, error) {
+	diff := &documentsactivity.DocUpdated{}
 
 	if !strings.EqualFold(old.GetTitle(), new.GetTitle()) {
 		if titleDiff := textdiff.DiffText(old.GetTitle(), new.GetTitle()); titleDiff.HasChanges() {

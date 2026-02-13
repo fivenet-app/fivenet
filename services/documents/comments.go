@@ -6,22 +6,23 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	permsdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
+	documentscomment "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/comment"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -46,7 +47,7 @@ func (s *Server) GetComments(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -87,13 +88,13 @@ func (s *Server) GetComments(
 	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, CommentsDefaultPageSize)
 	resp := &pbdocuments.GetCommentsResponse{
 		Pagination: pag,
-		Comments:   []*documents.Comment{},
+		Comments:   []*documentscomment.Comment{},
 	}
 	if count.Total <= 0 {
 		return resp, nil
 	}
 
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	columns := mysql.ProjectionList{
@@ -170,7 +171,7 @@ func (s *Server) PostComment(
 		ctx,
 		req.GetComment().GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_COMMENT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_COMMENT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -217,9 +218,9 @@ func (s *Server) PostComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 		DocumentId:   req.GetComment().GetDocumentId(),
-		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_ADDED,
+		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_ADDED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.GetJob(),
 	}); err != nil {
@@ -230,12 +231,16 @@ func (s *Server) PostComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
+	if err := s.updateCommentsCount(ctx, tx, req.GetComment().GetDocumentId()); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	comment, err := s.getComment(ctx, lastId, userInfo)
 	if err != nil {
@@ -266,7 +271,7 @@ func (s *Server) EditComment(
 		ctx,
 		req.GetComment().GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_COMMENT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_COMMENT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -289,6 +294,14 @@ func (s *Server) EditComment(
 		return nil, errorsdocuments.ErrCommentPostDenied
 	}
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	stmt := tDComments.
 		UPDATE(
 			tDComments.Content,
@@ -301,18 +314,27 @@ func (s *Server) EditComment(
 			tDComments.DeletedAt.IS_NULL(),
 		))
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	comment.Content = req.GetComment().GetContent()
 
-	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 		DocumentId:   req.GetComment().GetDocumentId(),
-		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_UPDATED,
+		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_UPDATED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.GetJob(),
 	}); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if err := s.updateCommentsCount(ctx, tx, comment.GetDocumentId()); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -327,9 +349,9 @@ func (s *Server) getComment(
 	ctx context.Context,
 	id int64,
 	userInfo *userinfo.UserInfo,
-) (*documents.Comment, error) {
+) (*documentscomment.Comment, error) {
 	tDComments := tDComments.AS("comment")
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tDComments.
@@ -367,7 +389,7 @@ func (s *Server) getComment(
 		).
 		LIMIT(1)
 
-	comment := &documents.Comment{}
+	comment := &documentscomment.Comment{}
 	if err := stmt.QueryContext(ctx, s.db, comment); err != nil {
 		return nil, err
 	}
@@ -399,7 +421,7 @@ func (s *Server) DeleteComment(
 		ctx,
 		comment.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_COMMENT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_COMMENT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -427,6 +449,14 @@ func (s *Server) DeleteComment(
 		return nil, errorsdocuments.ErrCommentDeleteDenied
 	}
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	stmt := tDComments.
 		UPDATE(
 			tDComments.DeletedAt,
@@ -439,16 +469,25 @@ func (s *Server) DeleteComment(
 			tDComments.DeletedAt.IS_NULL(),
 		))
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 		DocumentId:   comment.GetDocumentId(),
-		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_DELETED,
+		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_DELETED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.GetJob(),
 	}); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if err := s.updateCommentsCount(ctx, tx, comment.GetDocumentId()); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -463,7 +502,7 @@ func (s *Server) notifyUsersNewComment(
 	documentId int64,
 	sourceUserId int32,
 ) error {
-	userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, sourceUserId)
+	userInfo, err := s.ui.GetUserInfo(ctx, sourceUserId)
 	if err != nil {
 		return err
 	}
@@ -510,7 +549,7 @@ func (s *Server) notifyUsersNewComment(
 	// If we have a document creator, make sure to inform the creator if necessary
 	if doc.CreatorId != nil && sourceUserId != doc.GetCreatorId() &&
 		!slices.Contains(targetUserIds, doc.GetCreatorId()) {
-		userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, sourceUserId)
+		userInfo, err := s.ui.GetUserInfo(ctx, sourceUserId)
 		if err != nil {
 			return err
 		}
@@ -519,7 +558,7 @@ func (s *Server) notifyUsersNewComment(
 			ctx,
 			doc.GetId(),
 			userInfo,
-			documents.AccessLevel_ACCESS_LEVEL_VIEW,
+			documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 		)
 		if err != nil {
 			return err
@@ -536,7 +575,7 @@ func (s *Server) notifyUsersNewComment(
 		}
 
 		// Make sure user has access to document
-		userInfo, err := s.ui.GetUserInfoWithoutAccountId(ctx, sourceUserId)
+		userInfo, err := s.ui.GetUserInfo(ctx, sourceUserId)
 		if err != nil {
 			return err
 		}
@@ -545,7 +584,7 @@ func (s *Server) notifyUsersNewComment(
 			ctx,
 			doc.GetId(),
 			userInfo,
-			documents.AccessLevel_ACCESS_LEVEL_VIEW,
+			documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 		)
 		if err != nil {
 			return err
@@ -569,7 +608,7 @@ func (s *Server) notifyUsersNewComment(
 				Link: &notifications.Link{
 					To: fmt.Sprintf("/documents/%d#comments", doc.GetId()),
 				},
-				CausedBy: &users.UserShort{
+				CausedBy: &usershort.UserShort{
 					UserId: sourceUserId,
 				},
 			},
@@ -577,6 +616,62 @@ func (s *Server) notifyUsersNewComment(
 		if err := s.notifi.NotifyUser(ctx, not); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (s *Server) countComments(ctx context.Context, tx qrm.DB, documentId int64) (int32, error) {
+	tDComments := tDComments.AS("comments")
+	stmt := tDComments.
+		SELECT(
+			mysql.COUNT(tDComments.ID).AS(""),
+		).
+		FROM(
+			tDComments,
+		).
+		WHERE(
+			mysql.AND(
+				tDComments.DocumentID.EQ(mysql.Int64(documentId)),
+				tDComments.DeletedAt.IS_NULL(),
+			),
+		)
+
+	var result struct {
+		CommentCount int32 `alias:"comment_count"`
+	}
+	if err := stmt.QueryContext(ctx, tx, &result); err != nil {
+		return 0, err
+	}
+
+	return result.CommentCount, nil
+}
+
+func (s *Server) updateCommentsCount(
+	ctx context.Context,
+	tx qrm.DB,
+	documentId int64,
+) error {
+	commentCount, err := s.countComments(ctx, tx, documentId)
+	if err != nil {
+		return err
+	}
+
+	updateStmt := tDMeta.
+		INSERT(
+			tDMeta.DocumentID,
+			tDMeta.CommentCount,
+		).
+		VALUES(
+			documentId,
+			commentCount,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tDMeta.CommentCount.SET(mysql.Int32(commentCount)),
+		)
+
+	if _, err := updateStmt.ExecContext(ctx, tx); err != nil {
+		return err
 	}
 
 	return nil

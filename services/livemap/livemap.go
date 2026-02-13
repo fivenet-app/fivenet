@@ -7,17 +7,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pblivemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap"
-	permslivemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	errorslivemap "github.com/fivenet-app/fivenet/v2025/services/livemap/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pblivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap"
+	permslivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	errorslivemap "github.com/fivenet-app/fivenet/v2026/services/livemap/errors"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -33,7 +33,7 @@ const (
 func (s *Server) getAndSendACL(
 	srv pblivemap.LivemapService_StreamServer,
 	userInfo *userinfo.UserInfo,
-) (*permissions.StringList, *permissions.JobGradeList, bool, error) {
+) (*permissionsattributes.StringList, *permissionsattributes.JobGradeList, bool, error) {
 	markerJobs, err := s.ps.AttrJobList(
 		userInfo,
 		permslivemap.LivemapServicePerm,
@@ -112,7 +112,7 @@ func (s *Server) getAndSendACL(
 }
 
 // buildFilters returns the FilterSubjects slice that encodes the caller’s ACL.
-func buildFilters(jobs *permissions.JobGradeList) []string {
+func buildFilters(jobs *permissionsattributes.JobGradeList) []string {
 	var f []string
 	for job, grades := range jobs.Iter() {
 		if jobs.GetFineGrained() {
@@ -129,7 +129,7 @@ func buildFilters(jobs *permissions.JobGradeList) []string {
 
 func (s *Server) sendUserMarkers(
 	srv pblivemap.LivemapService_StreamServer,
-	usersJobs *permissions.JobGradeList,
+	usersJobs *permissionsattributes.JobGradeList,
 	userInfo *userinfo.UserInfo,
 	userOnDuty bool,
 ) error {
@@ -235,7 +235,7 @@ func (s *Server) Stream(
 					outCh <- &pblivemap.StreamResponse{
 						Data: &pblivemap.StreamResponse_Markers{
 							Markers: &pblivemap.MarkerMarkersUpdates{
-								Updated: []*livemap.MarkerMarker{event.MarkerUpdate},
+								Updated: []*livemapmarkers.MarkerMarker{event.MarkerUpdate},
 								Partial: true,
 							},
 						},
@@ -310,7 +310,7 @@ func (s *Server) processMessage(
 	m jetstream.Msg,
 	userInfo *userinfo.UserInfo,
 	userOnDuty *bool,
-	usersJobs *permissions.JobGradeList,
+	usersJobs *permissionsattributes.JobGradeList,
 	outCh chan<- *pblivemap.StreamResponse,
 ) error {
 	op := m.Headers().Get("KV-Operation")
@@ -348,7 +348,7 @@ func (s *Server) processMessage(
 		return nil
 	}
 
-	um := &livemap.UserMarker{}
+	um := &livemapmarkers.UserMarker{}
 	if err := proto.Unmarshal(m.Data(), um); err != nil {
 		return nil // Ignore invalid messages
 	}
@@ -400,7 +400,7 @@ func (s *Server) processMessage(
 		UserOnDuty: userOnDuty,
 		Data: &pblivemap.StreamResponse_UserUpdates{
 			UserUpdates: &pblivemap.UserUpdates{
-				Updates: []*livemap.UserMarker{um},
+				Updates: []*livemapmarkers.UserMarker{um},
 			},
 		},
 	}
@@ -411,7 +411,7 @@ func (s *Server) processMessage(
 // Send out chunked current marker markers.
 func (s *Server) sendMarkerMarkers(
 	srv pblivemap.LivemapService_StreamServer,
-	jobs *permissions.StringList,
+	jobs *permissionsattributes.StringList,
 ) (bool, error) {
 	updatedMarkers, deletedMarkers := s.getMarkerMarkers(jobs)
 

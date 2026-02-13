@@ -1,14 +1,14 @@
 package wiki
 
 import (
-	pbcollab "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2025/pkg/collab"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
-	errorswiki "github.com/fivenet-app/fivenet/v2025/services/wiki/errors"
+	pbcollab "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/collab"
+	wikiaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/collab"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/grpcws"
+	errorswiki "github.com/fivenet-app/fivenet/v2026/services/wiki/errors"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 )
@@ -34,7 +34,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 		ctx,
 		pageId,
 		userInfo,
-		wiki.AccessLevel_ACCESS_LEVEL_ACCESS,
+		wikiaccess.AccessLevel_ACCESS_LEVEL_ACCESS,
 	)
 	if err != nil {
 		return errswrap.NewError(err, errorswiki.ErrPageDenied)

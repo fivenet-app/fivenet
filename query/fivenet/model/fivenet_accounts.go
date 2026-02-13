@@ -12,16 +12,14 @@ import (
 )
 
 type FivenetAccounts struct {
-	ID               int64      `sql:"primary_key" json:"id"`
-	CreatedAt        *time.Time `json:"created_at"`
-	UpdatedAt        *time.Time `json:"updated_at"`
-	Enabled          *bool      `json:"enabled"`
-	Username         *string    `json:"username"`
-	Password         *string    `json:"password"`
-	License          string     `json:"license"`
-	RegToken         *string    `json:"reg_token"`
-	OverrideJob      *string    `json:"override_job"`
-	OverrideJobGrade *int32     `json:"override_job_grade"`
-	Superuser        *bool      `json:"superuser"`
-	LastChar         *int32     `json:"last_char"`
+	ID        int64      `sql:"primary_key" json:"id"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
+	Enabled   *bool      `json:"enabled"`
+	Username  *string    `json:"username"`
+	Password  *string    `json:"password"`
+	License   string     `json:"license"`
+	Groups    *string    `json:"groups"`
+	RegToken  *string    `json:"reg_token"`
+	LastChar  *int32     `json:"last_char"`
 }

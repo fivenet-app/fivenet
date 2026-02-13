@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/zaputils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/zaputils"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap/zapcore"
 )
@@ -33,6 +33,7 @@ type Config struct {
 	NATS           NATS           `yaml:"nats"`
 	Storage        Storage        `yaml:"storage"`
 	ImageProxy     ImageProxy     `yaml:"imageProxy"`
+	Icons          Icons          `yaml:"icons"`
 	Audit          Audit          `yaml:"audit"`
 	OAuth2         OAuth2         `yaml:"oauth2"`
 	PostalsFile    string         `yaml:"postalsFile"    default:".output/public/data/postals.json" validate:"filepath"`
@@ -43,7 +44,6 @@ type Config struct {
 	Sync           Sync           `yaml:"sync"`
 	OTLP           OTLPConfig     `yaml:"otlp"`
 	UpdateCheck    UpdateCheck    `yaml:"updateCheck"`
-	Icons          Icons          `yaml:"icons"`
 }
 
 type Log struct {
@@ -269,12 +269,21 @@ type ImageProxyOptions struct {
 	MinimumCacheDuration time.Duration `yaml:"minimumCacheDuration" default:"30m"`
 }
 
+type Icons struct {
+	// If true, the backend server will act as a proxy for the Iconify API (URL specified via `APIURL` setting).
+	Proxy bool `default:"false"                      yaml:"proxy"`
+	// If you are using the proxy mode, make sure to support the Iconify project: https://iconify.design/sponsors/
+	APIURL string `default:"https://api.iconify.design" yaml:"apiUrl"`
+	// Path to the directory containing icon sets (used when proxy is disabled; this path works with the official FiveNet container images).
+	Path string `default:"./icons"                    yaml:"path"`
+}
+
 type Cache struct {
 	RefreshTime time.Duration `default:"2m" yaml:"refreshTime" validate:"gte=1"`
 }
 
 type Audit struct {
-	RetentionDays int `default:"180" yaml:"auditRetentionDays"`
+	RetentionDays int `default:"180" yaml:"auditRetentionDays" validate:"gte=1"`
 }
 
 type OAuth2 struct {
@@ -412,13 +421,4 @@ type OTLPFrontendConfig struct {
 type UpdateCheck struct {
 	Enabled  bool          `default:"true" yaml:"enabled"`
 	Interval time.Duration `default:"6h"   yaml:"interval"`
-}
-
-type Icons struct {
-	// If true, the backend server will act as a proxy for the Iconify API (URL specified via `APIURL` setting).
-	Proxy bool `default:"false"                      yaml:"proxy"`
-	// If you are using the proxy mode, make sure to support the Iconify project: https://iconify.design/sponsors/
-	APIURL string `default:"https://api.iconify.design" yaml:"apiUrl"`
-	// Path to the directory containing icon sets (used when proxy is disabled; this path works with the official FiveNet container images).
-	Path string `default:"./icons"                    yaml:"path"`
 }

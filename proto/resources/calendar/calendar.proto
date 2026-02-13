@@ -3,15 +3,13 @@ syntax = "proto3";
 package resources.calendar;
 
 import "buf/validate/validate.proto";
-import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
-import "resources/calendar/access.proto";
-import "resources/common/content/content.proto";
+import "resources/calendar/access/access.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
+import "resources/users/short/user.proto";
 import "tagger/tagger.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar;calendar";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar;calendar";
 
 message Calendar {
   int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
@@ -29,13 +27,7 @@ message Calendar {
       strip_html_tags: true
     }
   ];
-  optional string description = 7 [
-    (buf.validate.field).string.max_len = 512,
-    (codegen.sanitizer.sanitizer) = {
-      enabled: true
-      strip_html_tags: true
-    }
-  ];
+  optional string description = 7;
   bool public = 8;
   bool closed = 9;
   string color = 10 [
@@ -46,10 +38,10 @@ message Calendar {
     }
   ];
   optional int32 creator_id = 11 [(buf.validate.field).int32.gt = 0];
-  optional resources.users.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
+  optional resources.users.short.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
   optional CalendarSub subscription = 14;
-  resources.calendar.CalendarAccess access = 15;
+  resources.calendar.access.CalendarAccess access = 15;
 }
 
 message CalendarShort {
@@ -66,13 +58,7 @@ message CalendarShort {
       strip_html_tags: true
     }
   ];
-  optional string description = 7 [
-    (buf.validate.field).string.max_len = 512,
-    (codegen.sanitizer.sanitizer) = {
-      enabled: true
-      strip_html_tags: true
-    }
-  ];
+  optional string description = 7;
   bool public = 8;
   bool closed = 9;
   string color = 10 [
@@ -88,65 +74,8 @@ message CalendarShort {
 message CalendarSub {
   int64 calendar_id = 1;
   int32 user_id = 2 [(buf.validate.field).int32.gte = 0];
-  optional resources.users.UserShort user = 3;
+  optional resources.users.short.UserShort user = 3;
   optional resources.timestamp.Timestamp created_at = 4;
   bool confirmed = 5;
   bool muted = 6;
-}
-
-// Entry
-
-message CalendarEntry {
-  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
-  optional resources.timestamp.Timestamp created_at = 2;
-  optional resources.timestamp.Timestamp updated_at = 3;
-  optional resources.timestamp.Timestamp deleted_at = 4;
-  int64 calendar_id = 5;
-  optional Calendar calendar = 6;
-  optional string job = 7 [(buf.validate.field).string.max_len = 20];
-  resources.timestamp.Timestamp start_time = 8;
-  optional resources.timestamp.Timestamp end_time = 9;
-  string title = 10 [
-    (buf.validate.field).string = {
-      min_len: 3
-      max_len: 512
-    },
-    (codegen.sanitizer.sanitizer) = {
-      enabled: true
-      strip_html_tags: true
-    }
-  ];
-  resources.common.content.Content content = 11;
-  bool closed = 12;
-  optional bool rsvp_open = 13;
-  optional int32 creator_id = 14 [(buf.validate.field).int32.gt = 0];
-  optional resources.users.UserShort creator = 15 [(tagger.tags) = "alias:\"creator\""];
-  string creator_job = 16 [(buf.validate.field).string.max_len = 20];
-  optional CalendarEntryRecurring recurring = 17;
-  optional CalendarEntryRSVP rsvp = 18;
-}
-
-message CalendarEntryRecurring {
-  option (codegen.dbscanner.dbscanner) = {enabled: true};
-
-  string every = 1;
-  int32 count = 2;
-  optional resources.timestamp.Timestamp until = 3;
-}
-
-enum RsvpResponses {
-  RSVP_RESPONSES_UNSPECIFIED = 0;
-  RSVP_RESPONSES_HIDDEN = 1;
-  RSVP_RESPONSES_INVITED = 2;
-  RSVP_RESPONSES_NO = 3;
-  RSVP_RESPONSES_MAYBE = 4;
-  RSVP_RESPONSES_YES = 5;
-}
-
-message CalendarEntryRSVP {
-  int64 entry_id = 1;
-  optional resources.timestamp.Timestamp created_at = 2;
-  int32 user_id = 3 [(buf.validate.field).int32.gt = 0];
-  optional resources.users.UserShort user = 4;
-  RsvpResponses response = 5 [(buf.validate.field).enum.defined_only = true];
 }

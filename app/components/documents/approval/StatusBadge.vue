@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { BadgeProps } from '@nuxt/ui';
-import { ApprovalStatus } from '~~/gen/ts/resources/documents/approval';
+import { ApprovalStatus } from '~~/gen/ts/resources/documents/approval/approval';
 import { approvalStatusToColor } from './helpers';
 
 interface Props extends /* @vue-ignore */ BadgeProps {

@@ -4,7 +4,7 @@ package resources.common;
 
 import "buf/validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;common";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common;common";
 
 message IDMapping {
   int64 id = 1 [(buf.validate.field).int64.gt = 0];

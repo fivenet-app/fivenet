@@ -4,14 +4,14 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	documentscategory "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/category"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -52,7 +52,7 @@ func (s *Server) ListCategories(
 		)
 
 	resp := &pbdocuments.ListCategoriesResponse{
-		Categories: []*documents.Category{},
+		Categories: []*documentscategory.Category{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Categories); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -63,7 +63,7 @@ func (s *Server) ListCategories(
 	return resp, nil
 }
 
-func (s *Server) getCategory(ctx context.Context, id int64) (*documents.Category, error) {
+func (s *Server) getCategory(ctx context.Context, id int64) (*documentscategory.Category, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	stmt := tDCategory.
@@ -85,7 +85,7 @@ func (s *Server) getCategory(ctx context.Context, id int64) (*documents.Category
 		)).
 		LIMIT(1)
 
-	var dest documents.Category
+	var dest documentscategory.Category
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, err
 	}

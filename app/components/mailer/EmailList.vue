@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Email } from '~~/gen/ts/resources/mailer/email';
+import type { Email } from '~~/gen/ts/resources/mailer/emails/email';
 
 const props = withDefaults(
     defineProps<{

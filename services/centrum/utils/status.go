@@ -1,21 +1,23 @@
 package centrumutils
 
-import "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+import (
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+)
 
-func IsStatusDispatchComplete(in centrum.StatusDispatch) bool {
-	return in == centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED ||
-		in == centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED ||
-		in == centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED ||
-		in == centrum.StatusDispatch_STATUS_DISPATCH_DELETED
+func IsStatusDispatchComplete(in centrumdispatches.StatusDispatch) bool {
+	return in == centrumdispatches.StatusDispatch_STATUS_DISPATCH_ARCHIVED ||
+		in == centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED ||
+		in == centrumdispatches.StatusDispatch_STATUS_DISPATCH_COMPLETED ||
+		in == centrumdispatches.StatusDispatch_STATUS_DISPATCH_DELETED
 }
 
-func IsStatusDispatchUnassigned(in centrum.StatusDispatch) bool {
-	return in == centrum.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED ||
-		in == centrum.StatusDispatch_STATUS_DISPATCH_NEW ||
-		in == centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED
+func IsStatusDispatchUnassigned(in centrumdispatches.StatusDispatch) bool {
+	return in == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED ||
+		in == centrumdispatches.StatusDispatch_STATUS_DISPATCH_NEW ||
+		in == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED
 }
 
-func IsDispatchUnassigned(in *centrum.Dispatch) bool {
+func IsDispatchUnassigned(in *centrumdispatches.Dispatch) bool {
 	if in == nil {
 		return false
 	}
@@ -31,6 +33,6 @@ func IsDispatchUnassigned(in *centrum.Dispatch) bool {
 	}
 
 	// Dispatch is "new" or unassgined, and no units assigned to it
-	return (IsStatusDispatchUnassigned(in.GetStatus().GetStatus()) || in.GetStatus().GetStatus() == centrum.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED) &&
+	return (IsStatusDispatchUnassigned(in.GetStatus().GetStatus()) || in.GetStatus().GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED) &&
 		len(in.GetUnits()) == 0
 }

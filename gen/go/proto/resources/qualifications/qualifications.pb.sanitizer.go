@@ -4,7 +4,7 @@
 package qualifications
 
 import (
-	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -177,25 +177,6 @@ func (m *QualificationDiscordSettings) Sanitize() error {
 	// Field: RoleName
 	if m.RoleName != nil {
 		*m.RoleName = htmlsanitizer.Sanitize(*m.RoleName)
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *QualificationExamSettings) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Time
-	if m.Time != nil {
-		if v, ok := any(m.GetTime()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil

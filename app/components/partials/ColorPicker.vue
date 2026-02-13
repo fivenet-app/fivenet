@@ -61,7 +61,7 @@ watch(manual, (val) => {
                             color="neutral"
                             variant="link"
                             size="sm"
-                            icon="i-lucide-copy"
+                            icon="i-mdi-content-copy"
                             :aria-label="$t('common.copy')"
                             @click="copyToClipboardWrapper(manual)"
                         />

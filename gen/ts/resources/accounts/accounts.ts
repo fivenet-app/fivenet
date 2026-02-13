@@ -11,8 +11,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { User } from "../users/users";
-import { OAuth2Account } from "./oauth2";
+import { User } from "../users/user";
+import { OAuth2Account } from "./oauth2/oauth2";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.accounts.Account
@@ -31,25 +31,38 @@ export interface Account {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: string username = 4
-     */
-    username: string;
-    /**
-     * @generated from protobuf field: string license = 5
-     */
-    license: string;
-    /**
-     * @generated from protobuf field: bool enabled = 6
+     * @generated from protobuf field: bool enabled = 4
      */
     enabled: boolean;
     /**
-     * @generated from protobuf field: optional int32 last_char = 7
+     * @generated from protobuf field: string username = 5
+     */
+    username: string;
+    /**
+     * @generated from protobuf field: string license = 6
+     */
+    license: string;
+    /**
+     * @generated from protobuf field: optional resources.accounts.AccountGroups groups = 7
+     */
+    groups?: AccountGroups;
+    /**
+     * @generated from protobuf field: optional int32 last_char = 8
      */
     lastChar?: number;
     /**
-     * @generated from protobuf field: repeated resources.accounts.OAuth2Account oauth2_accounts = 8
+     * @generated from protobuf field: repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts = 9
      */
     oauth2Accounts: OAuth2Account[];
+}
+/**
+ * @generated from protobuf message resources.accounts.AccountGroups
+ */
+export interface AccountGroups {
+    /**
+     * @generated from protobuf field: repeated string groups = 1
+     */
+    groups: string[];
 }
 /**
  * @generated from protobuf message resources.accounts.Character
@@ -75,19 +88,20 @@ class Account$Type extends MessageType<Account> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "24" } } } },
-            { no: 5, name: "license", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 6, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "last_char", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 8, name: "oauth2_accounts", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => OAuth2Account, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "tagger.tags": "alias:\"oauth2_account\"" } }
+            { no: 4, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "24" } } } },
+            { no: 6, name: "license", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 7, name: "groups", kind: "message", T: () => AccountGroups },
+            { no: 8, name: "last_char", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 9, name: "oauth2_accounts", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => OAuth2Account, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "tagger.tags": "alias:\"oauth2_account\"" } }
         ]);
     }
     create(value?: PartialMessage<Account>): Account {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
+        message.enabled = false;
         message.username = "";
         message.license = "";
-        message.enabled = false;
         message.oauth2Accounts = [];
         if (value !== undefined)
             reflectionMergePartial<Account>(this, message, value);
@@ -107,19 +121,22 @@ class Account$Type extends MessageType<Account> {
                 case /* optional resources.timestamp.Timestamp updated_at */ 3:
                     message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
-                case /* string username */ 4:
-                    message.username = reader.string();
-                    break;
-                case /* string license */ 5:
-                    message.license = reader.string();
-                    break;
-                case /* bool enabled */ 6:
+                case /* bool enabled */ 4:
                     message.enabled = reader.bool();
                     break;
-                case /* optional int32 last_char */ 7:
+                case /* string username */ 5:
+                    message.username = reader.string();
+                    break;
+                case /* string license */ 6:
+                    message.license = reader.string();
+                    break;
+                case /* optional resources.accounts.AccountGroups groups */ 7:
+                    message.groups = AccountGroups.internalBinaryRead(reader, reader.uint32(), options, message.groups);
+                    break;
+                case /* optional int32 last_char */ 8:
                     message.lastChar = reader.int32();
                     break;
-                case /* repeated resources.accounts.OAuth2Account oauth2_accounts */ 8:
+                case /* repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts */ 9:
                     message.oauth2Accounts.push(OAuth2Account.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -143,21 +160,24 @@ class Account$Type extends MessageType<Account> {
         /* optional resources.timestamp.Timestamp updated_at = 3; */
         if (message.updatedAt)
             Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* string username = 4; */
-        if (message.username !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.username);
-        /* string license = 5; */
-        if (message.license !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.license);
-        /* bool enabled = 6; */
+        /* bool enabled = 4; */
         if (message.enabled !== false)
-            writer.tag(6, WireType.Varint).bool(message.enabled);
-        /* optional int32 last_char = 7; */
+            writer.tag(4, WireType.Varint).bool(message.enabled);
+        /* string username = 5; */
+        if (message.username !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.username);
+        /* string license = 6; */
+        if (message.license !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.license);
+        /* optional resources.accounts.AccountGroups groups = 7; */
+        if (message.groups)
+            AccountGroups.internalBinaryWrite(message.groups, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* optional int32 last_char = 8; */
         if (message.lastChar !== undefined)
-            writer.tag(7, WireType.Varint).int32(message.lastChar);
-        /* repeated resources.accounts.OAuth2Account oauth2_accounts = 8; */
+            writer.tag(8, WireType.Varint).int32(message.lastChar);
+        /* repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts = 9; */
         for (let i = 0; i < message.oauth2Accounts.length; i++)
-            OAuth2Account.internalBinaryWrite(message.oauth2Accounts[i], writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+            OAuth2Account.internalBinaryWrite(message.oauth2Accounts[i], writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -168,6 +188,53 @@ class Account$Type extends MessageType<Account> {
  * @generated MessageType for protobuf message resources.accounts.Account
  */
 export const Account = new Account$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AccountGroups$Type extends MessageType<AccountGroups> {
+    constructor() {
+        super("resources.accounts.AccountGroups", [
+            { no: 1, name: "groups", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<AccountGroups>): AccountGroups {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.groups = [];
+        if (value !== undefined)
+            reflectionMergePartial<AccountGroups>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AccountGroups): AccountGroups {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string groups */ 1:
+                    message.groups.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AccountGroups, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string groups = 1; */
+        for (let i = 0; i < message.groups.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.groups[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.accounts.AccountGroups
+ */
+export const AccountGroups = new AccountGroups$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Character$Type extends MessageType<Character> {
     constructor() {

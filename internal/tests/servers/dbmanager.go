@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
+	"slices"
 	"testing"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/internal/tests"
-	"github.com/fivenet-app/fivenet/v2025/query"
+	"github.com/fivenet-app/fivenet/v2026/internal/tests"
+	"github.com/fivenet-app/fivenet/v2026/query"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
@@ -152,13 +152,8 @@ func (m *dbServer) getDSN() string {
 }
 
 func (m *dbServer) prepareDBForFirstUse(ctx context.Context) error {
-	// Load and apply premigrate.sql file
-	if err := m.loadSQLFile(ctx, filepath.Join(tests.TestDataSQLPath, "initial_esx.sql")); err != nil {
-		return err
-	}
-
 	// Use DB migrations to handle the rest (esx compat mode is true)
-	if _, err := query.MigrateDB(zap.NewNop(), m.getDSN(), false, true, false); err != nil {
+	if _, err := query.MigrateDB(zap.NewNop(), m.getDSN(), false, false); err != nil {
 		m.t.Fatalf("failed to migrate test database: %v", err)
 	}
 
@@ -204,7 +199,7 @@ func (m *dbServer) LoadBaseData(ctx context.Context) error {
 	}
 	// Sort the found files as they might not be in lexical order which we
 	// need for this case https://github.com/golang/go/issues/17153
-	sort.Strings(files)
+	slices.Sort(files)
 
 	for _, file := range files {
 		if err := m.loadSQLFile(ctx, file); err != nil {

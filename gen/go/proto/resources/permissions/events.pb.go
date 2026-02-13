@@ -135,7 +135,7 @@ const file_resources_permissions_events_proto_rawDesc = "" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12\x14\n" +
 	"\x05grade\x18\x03 \x01(\x05R\x05grade\")\n" +
 	"\x15JobLimitsUpdatedEvent\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03jobBUZSgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions;permissionsb\x06proto3"
+	"\x03job\x18\x01 \x01(\tR\x03jobBUZSgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions;permissionsb\x06proto3"
 
 var (
 	file_resources_permissions_events_proto_rawDescOnce sync.Once

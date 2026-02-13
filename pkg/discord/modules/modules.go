@@ -9,13 +9,13 @@ import (
 
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/state"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
-	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	jobssettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"go.uber.org/zap"
 )
 
@@ -57,7 +57,7 @@ type BaseModule struct {
 	appCfg   appconfig.IConfig
 	enricher *mstlystcdata.Enricher
 
-	settings atomic.Pointer[jobs.DiscordSyncSettings]
+	settings atomic.Pointer[jobssettings.DiscordSyncSettings]
 }
 
 func NewBaseModule(
@@ -70,7 +70,7 @@ func NewBaseModule(
 	cfg *config.Discord,
 	appCfg appconfig.IConfig,
 	enricher *mstlystcdata.Enricher,
-	settings *jobs.DiscordSyncSettings,
+	settings *jobssettings.DiscordSyncSettings,
 ) *BaseModule {
 	bm := &BaseModule{
 		ctx:      ctx,
@@ -83,14 +83,14 @@ func NewBaseModule(
 		appCfg:   appCfg,
 		enricher: enricher,
 
-		settings: atomic.Pointer[jobs.DiscordSyncSettings]{},
+		settings: atomic.Pointer[jobssettings.DiscordSyncSettings]{},
 	}
 	bm.settings.Store(settings)
 
 	return bm
 }
 
-func (m *BaseModule) SetSettings(settings *jobs.DiscordSyncSettings) {
+func (m *BaseModule) SetSettings(settings *jobssettings.DiscordSyncSettings) {
 	m.settings.Store(settings)
 }
 

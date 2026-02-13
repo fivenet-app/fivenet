@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
-import { ApprovalRuleKind, OnEditBehavior, type ApprovalPolicy } from '~~/gen/ts/resources/documents/approval';
+import { ApprovalRuleKind, OnEditBehavior, type ApprovalPolicy } from '~~/gen/ts/resources/documents/approval/approval';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import PolicyEditor from './PolicyEditor.vue';
 

@@ -14,11 +14,11 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Label } from "../../resources/users/labels";
-import { UserProps } from "../../resources/users/props";
-import { UserActivity } from "../../resources/users/activity";
-import { UserActivityType } from "../../resources/users/activity";
-import { User } from "../../resources/users/users";
+import { Label } from "../../resources/users/labels/labels";
+import { UserProps } from "../../resources/users/props/props";
+import { UserActivity } from "../../resources/users/activity/activity";
+import { UserActivityType } from "../../resources/users/activity/activity";
+import { User } from "../../resources/users/user";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
@@ -115,7 +115,7 @@ export interface ListUserActivityRequest {
      */
     userId: number;
     /**
-     * @generated from protobuf field: repeated resources.users.UserActivityType types = 4
+     * @generated from protobuf field: repeated resources.users.activity.UserActivityType types = 4
      */
     types: UserActivityType[];
 }
@@ -128,7 +128,7 @@ export interface ListUserActivityResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.users.UserActivity activity = 2
+     * @generated from protobuf field: repeated resources.users.activity.UserActivity activity = 2
      */
     activity: UserActivity[];
 }
@@ -137,7 +137,7 @@ export interface ListUserActivityResponse {
  */
 export interface SetUserPropsRequest {
     /**
-     * @generated from protobuf field: resources.users.UserProps props = 1
+     * @generated from protobuf field: resources.users.props.UserProps props = 1
      */
     props?: UserProps;
     /**
@@ -150,7 +150,7 @@ export interface SetUserPropsRequest {
  */
 export interface SetUserPropsResponse {
     /**
-     * @generated from protobuf field: resources.users.UserProps props = 1
+     * @generated from protobuf field: resources.users.props.UserProps props = 1
      */
     props?: UserProps;
 }
@@ -187,7 +187,7 @@ export interface DeleteMugshotResponse {
  */
 export interface ManageLabelsRequest {
     /**
-     * @generated from protobuf field: repeated resources.users.Label labels = 1
+     * @generated from protobuf field: repeated resources.users.labels.Label labels = 1
      */
     labels: Label[];
 }
@@ -196,7 +196,7 @@ export interface ManageLabelsRequest {
  */
 export interface ManageLabelsResponse {
     /**
-     * @generated from protobuf field: repeated resources.users.Label labels = 1
+     * @generated from protobuf field: repeated resources.users.labels.Label labels = 1
      */
     labels: Label[];
 }
@@ -457,7 +457,7 @@ class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> 
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.users.UserActivityType", UserActivityType, "USER_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
+            { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.users.activity.UserActivityType", UserActivityType, "USER_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<ListUserActivityRequest>): ListUserActivityRequest {
@@ -482,7 +482,7 @@ class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> 
                 case /* int32 user_id */ 3:
                     message.userId = reader.int32();
                     break;
-                case /* repeated resources.users.UserActivityType types */ 4:
+                case /* repeated resources.users.activity.UserActivityType types */ 4:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.types.push(reader.int32());
@@ -510,7 +510,7 @@ class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> 
         /* int32 user_id = 3; */
         if (message.userId !== 0)
             writer.tag(3, WireType.Varint).int32(message.userId);
-        /* repeated resources.users.UserActivityType types = 4; */
+        /* repeated resources.users.activity.UserActivityType types = 4; */
         if (message.types.length) {
             writer.tag(4, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.types.length; i++)
@@ -550,7 +550,7 @@ class ListUserActivityResponse$Type extends MessageType<ListUserActivityResponse
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.users.UserActivity activity */ 2:
+                case /* repeated resources.users.activity.UserActivity activity */ 2:
                     message.activity.push(UserActivity.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -568,7 +568,7 @@ class ListUserActivityResponse$Type extends MessageType<ListUserActivityResponse
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.users.UserActivity activity = 2; */
+        /* repeated resources.users.activity.UserActivity activity = 2; */
         for (let i = 0; i < message.activity.length; i++)
             UserActivity.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -601,7 +601,7 @@ class SetUserPropsRequest$Type extends MessageType<SetUserPropsRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.users.UserProps props */ 1:
+                case /* resources.users.props.UserProps props */ 1:
                     message.props = UserProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
                 case /* string reason */ 2:
@@ -619,7 +619,7 @@ class SetUserPropsRequest$Type extends MessageType<SetUserPropsRequest> {
         return message;
     }
     internalBinaryWrite(message: SetUserPropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.users.UserProps props = 1; */
+        /* resources.users.props.UserProps props = 1; */
         if (message.props)
             UserProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* string reason = 2; */
@@ -653,7 +653,7 @@ class SetUserPropsResponse$Type extends MessageType<SetUserPropsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.users.UserProps props */ 1:
+                case /* resources.users.props.UserProps props */ 1:
                     message.props = UserProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
                 default:
@@ -668,7 +668,7 @@ class SetUserPropsResponse$Type extends MessageType<SetUserPropsResponse> {
         return message;
     }
     internalBinaryWrite(message: SetUserPropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.users.UserProps props = 1; */
+        /* resources.users.props.UserProps props = 1; */
         if (message.props)
             UserProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -869,7 +869,7 @@ class ManageLabelsRequest$Type extends MessageType<ManageLabelsRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.Label labels */ 1:
+                case /* repeated resources.users.labels.Label labels */ 1:
                     message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -884,7 +884,7 @@ class ManageLabelsRequest$Type extends MessageType<ManageLabelsRequest> {
         return message;
     }
     internalBinaryWrite(message: ManageLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.Label labels = 1; */
+        /* repeated resources.users.labels.Label labels = 1; */
         for (let i = 0; i < message.labels.length; i++)
             Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -916,7 +916,7 @@ class ManageLabelsResponse$Type extends MessageType<ManageLabelsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.Label labels */ 1:
+                case /* repeated resources.users.labels.Label labels */ 1:
                     message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -931,7 +931,7 @@ class ManageLabelsResponse$Type extends MessageType<ManageLabelsResponse> {
         return message;
     }
     internalBinaryWrite(message: ManageLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.Label labels = 1; */
+        /* repeated resources.users.labels.Label labels = 1; */
         for (let i = 0; i < message.labels.length; i++)
             Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

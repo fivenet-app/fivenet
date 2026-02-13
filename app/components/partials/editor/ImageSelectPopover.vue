@@ -154,7 +154,7 @@ const formRef = useTemplateRef('formRef');
                 <USeparator class="my-2" :label="$t('common.or')" orientation="horizontal" />
 
                 <UForm ref="formRef" :schema="schema" :state="imageState" @submit="onSubmitThrottle">
-                    <UFormField name="url" :label="$t('common.url')">
+                    <UFormField name="url" :label="$t('components.partials.tiptap_editor.url')">
                         <UInput v-model="imageState.url" type="text" name="url" class="w-full" :disabled="disabled" />
                     </UFormField>
 
@@ -165,7 +165,7 @@ const formRef = useTemplateRef('formRef');
                             icon="i-mdi-image"
                             :disabled="disabled || !canSubmit || !imageState.url"
                             :loading="disabled || !canSubmit"
-                            :label="$t('common.insert')"
+                            :label="$t('components.partials.tiptap_editor.insert')"
                             block
                             @click="formRef?.submit()"
                         />

@@ -189,6 +189,15 @@ export default defineNuxtConfig({
             // Only drop debugger statements, console logs are kept
             drop: ['debugger'],
         },
+        optimizeDeps: {
+            include: [
+                '@nuxt/ui > prosemirror-state',
+                '@nuxt/ui > prosemirror-transform',
+                '@nuxt/ui > prosemirror-model',
+                '@nuxt/ui > prosemirror-view',
+                '@nuxt/ui > prosemirror-gapcursor',
+            ],
+        },
         server: {
             // Make it easier to test the app behind a proxy server (e.g., ngrok), SSR is disabled
             // so we can use `allowedHosts: true` to allow any host

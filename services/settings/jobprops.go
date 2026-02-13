@@ -6,18 +6,18 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
-	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
+	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
+	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
@@ -41,8 +41,8 @@ func (s *Server) GetJobProps(
 	}, nil
 }
 
-func (s *Server) getJobProps(ctx context.Context, job string) (*jobs.JobProps, error) {
-	props, err := jobs.GetJobProps(ctx, s.db, job)
+func (s *Server) getJobProps(ctx context.Context, job string) (*jobsprops.JobProps, error) {
+	props, err := jobsprops.GetJobProps(ctx, s.db, job)
 	if err != nil {
 		return nil, err
 	}
@@ -109,8 +109,8 @@ func (s *Server) SetJobProps(
 	if !proto.Equal(req.GetJobProps(), jobProps) {
 		if _, err := s.js.PublishAsyncProto(ctx,
 			fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.GetJob()),
-			&notifications.JobEvent{
-				Data: &notifications.JobEvent_JobProps{
+			&notificationsevents.JobEvent{
+				Data: &notificationsevents.JobEvent_JobProps{
 					JobProps: newJobProps,
 				},
 			}); err != nil {
@@ -170,8 +170,8 @@ func (s *Server) UploadJobLogo(
 
 		if _, err := s.js.PublishAsyncProto(ctx,
 			fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.GetJob()),
-			&notifications.JobEvent{
-				Data: &notifications.JobEvent_JobProps{
+			&notificationsevents.JobEvent{
+				Data: &notificationsevents.JobEvent_JobProps{
 					JobProps: newJobProps,
 				},
 			}); err != nil {
@@ -210,8 +210,8 @@ func (s *Server) DeleteJobLogo(
 
 	if _, err := s.js.PublishAsyncProto(ctx,
 		fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.GetJob()),
-		&notifications.JobEvent{
-			Data: &notifications.JobEvent_JobProps{
+		&notificationsevents.JobEvent{
+			Data: &notificationsevents.JobEvent_JobProps{
 				JobProps: newJobProps,
 			},
 		}); err != nil {

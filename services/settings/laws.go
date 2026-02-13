@@ -3,13 +3,13 @@ package settings
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws"
-	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/laws"
+	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/zap"
 )
@@ -18,7 +18,6 @@ func (s *Server) CreateOrUpdateLawBook(
 	ctx context.Context,
 	req *pbsettings.CreateOrUpdateLawBookRequest,
 ) (*pbsettings.CreateOrUpdateLawBookResponse, error) {
-
 	tLawBooks := table.FivenetLawbooks
 
 	if req.GetLawBook().GetId() <= 0 {
@@ -84,12 +83,10 @@ func (s *Server) CreateOrUpdateLawBook(
 	}, nil
 }
 
-//nolint:dupl // Similar code, but different logic
 func (s *Server) DeleteLawBook(
 	ctx context.Context,
 	req *pbsettings.DeleteLawBookRequest,
 ) (*pbsettings.DeleteLawBookResponse, error) {
-
 	lawBook, err := s.getLawBook(ctx, req.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
@@ -144,7 +141,6 @@ func (s *Server) CreateOrUpdateLaw(
 	ctx context.Context,
 	req *pbsettings.CreateOrUpdateLawRequest,
 ) (*pbsettings.CreateOrUpdateLawResponse, error) {
-
 	tLaws := table.FivenetLawbooksLaws
 
 	if req.GetLaw().GetId() <= 0 {
@@ -226,12 +222,10 @@ func (s *Server) CreateOrUpdateLaw(
 	}, nil
 }
 
-//nolint:dupl // Similar code, but different logic
 func (s *Server) DeleteLaw(
 	ctx context.Context,
 	req *pbsettings.DeleteLawRequest,
 ) (*pbsettings.DeleteLawResponse, error) {
-
 	law, err := s.getLaw(ctx, req.GetId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import List from '~/components/documents/templates/List.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import type { TemplateShort } from '~~/gen/ts/resources/documents/templates';
+import type { TemplateShort } from '~~/gen/ts/resources/documents/templates/templates';
 
 useHead({
     title: 'pages.documents.templates.title',

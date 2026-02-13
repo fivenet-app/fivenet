@@ -27,6 +27,7 @@ type fivenetDocumentsMetaTable struct {
 	ApPendingCount      mysql.ColumnInteger
 	ApAnyDeclined       mysql.ColumnBool
 	ApPoliciesActive    mysql.ColumnInteger
+	CommentCount        mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -78,9 +79,10 @@ func newFivenetDocumentsMetaTableImpl(schemaName, tableName, alias string) fiven
 		ApPendingCountColumn      = mysql.IntegerColumn("ap_pending_count")
 		ApAnyDeclinedColumn       = mysql.BoolColumn("ap_any_declined")
 		ApPoliciesActiveColumn    = mysql.IntegerColumn("ap_policies_active")
-		allColumns                = mysql.ColumnList{DocumentIDColumn, RecomputedAtColumn, ApprovedColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
-		mutableColumns            = mysql.ColumnList{RecomputedAtColumn, ApprovedColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
-		defaultColumns            = mysql.ColumnList{ApprovedColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
+		CommentCountColumn        = mysql.IntegerColumn("comment_count")
+		allColumns                = mysql.ColumnList{DocumentIDColumn, RecomputedAtColumn, ApprovedColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn, CommentCountColumn}
+		mutableColumns            = mysql.ColumnList{RecomputedAtColumn, ApprovedColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn, CommentCountColumn}
+		defaultColumns            = mysql.ColumnList{RecomputedAtColumn, ApprovedColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn, CommentCountColumn}
 	)
 
 	return fivenetDocumentsMetaTable{
@@ -97,6 +99,7 @@ func newFivenetDocumentsMetaTableImpl(schemaName, tableName, alias string) fiven
 		ApPendingCount:      ApPendingCountColumn,
 		ApAnyDeclined:       ApAnyDeclinedColumn,
 		ApPoliciesActive:    ApPoliciesActiveColumn,
+		CommentCount:        CommentCountColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

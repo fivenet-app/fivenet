@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package resources.livemap.markers;
+
+import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/short/user.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers;livemapmarkers";
+
+enum MarkerType {
+  MARKER_TYPE_UNSPECIFIED = 0;
+  MARKER_TYPE_DOT = 1;
+  MARKER_TYPE_CIRCLE = 2;
+  MARKER_TYPE_ICON = 3;
+}
+
+message MarkerMarker {
+  int64 id = 1;
+  double x = 2;
+  double y = 3;
+  optional resources.timestamp.Timestamp created_at = 4;
+  optional resources.timestamp.Timestamp updated_at = 5;
+  optional resources.timestamp.Timestamp expires_at = 6;
+  optional resources.timestamp.Timestamp deleted_at = 7;
+  string name = 8 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 255
+    },
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string description = 9 [
+    (buf.validate.field).string.max_len = 1024,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string postal = 10 [
+    (buf.validate.field).string.max_len = 48,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  optional string color = 11 [
+    (buf.validate.field).string = {
+      len: 7
+      pattern: "^#[A-Fa-f0-9]{6}$"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  string job = 12 [(buf.validate.field).string.max_len = 20];
+  string job_label = 13;
+
+  MarkerType type = 14 [(tagger.tags) = "alias:\"markerType\""];
+  MarkerData data = 15 [(tagger.tags) = "alias:\"markerData\""];
+
+  optional int32 creator_id = 16 [(buf.validate.field).int32.gt = 0];
+  optional resources.users.short.UserShort creator = 17;
+}
+
+message MarkerData {
+  option (codegen.dbscanner.dbscanner) = {
+    enabled: true
+    not_json: true
+  };
+
+  oneof data {
+    option (buf.validate.oneof).required = true;
+
+    CircleMarker circle = 3;
+    IconMarker icon = 4;
+  }
+}
+
+message CircleMarker {
+  int32 radius = 1;
+  optional float opacity = 2 [(buf.validate.field).float = {
+    gte: 1
+    lte: 75
+  }];
+}
+
+message IconMarker {
+  string icon = 1 [
+    (buf.validate.field).string = {
+      max_len: 128
+      suffix: "Icon"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+}

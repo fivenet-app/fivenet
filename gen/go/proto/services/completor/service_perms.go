@@ -4,9 +4,9 @@
 package completor
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permkeys "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 )
 
 func init() {
@@ -19,7 +19,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:  permkeys.CompletorServiceCompleteCitizenLabelsJobsPermField,
-					Type: permissions.JobListAttributeType,
+					Type: permissionsattributes.JobListAttributeType,
 				},
 			},
 			Order: 1000,
@@ -31,7 +31,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:  permkeys.CompletorServiceCompleteDocumentCategoriesJobsPermField,
-					Type: permissions.JobListAttributeType,
+					Type: permissionsattributes.JobListAttributeType,
 				},
 			},
 			Order: 1000,

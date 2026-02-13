@@ -4,8 +4,34 @@
 package sync
 
 import (
-	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
 )
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *AccountUpdate) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Group
+	if m.Group != nil {
+		*m.Group = htmlsanitizer.Sanitize(*m.Group)
+	}
+
+	// Field: Groups
+	for idx, item := range m.Groups {
+		_, _ = idx, item
+
+		m.Groups[idx] = htmlsanitizer.Sanitize(m.Groups[idx])
+
+	}
+
+	// Field: License
+	m.License = htmlsanitizer.Sanitize(m.License)
+
+	return nil
+}
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
@@ -28,6 +54,28 @@ func (m *CitizenLocations) Sanitize() error {
 
 	// Field: Job
 	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *DataAccounts) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: AccountUpdates
+	for idx, item := range m.AccountUpdates {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	return nil
 }

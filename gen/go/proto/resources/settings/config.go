@@ -3,7 +3,7 @@ package settings
 import (
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -75,6 +75,12 @@ func (x *AppConfig) Default() {
 		x.JobInfo.UnemployedJob = &UnemployedJob{
 			Name:  "unemployed",
 			Grade: 1,
+		}
+	}
+
+	if x.GetLivemap() == nil {
+		x.Livemap = &Livemap{
+			EnableCayoPerico: true,
 		}
 	}
 

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package resources.mailer.templates;
+
+import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "resources/common/content/content.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/templates;mailertemplates";
+
+message Template {
+  int64 id = 1;
+  resources.timestamp.Timestamp created_at = 3;
+  optional resources.timestamp.Timestamp updated_at = 4;
+  optional resources.timestamp.Timestamp deleted_at = 5;
+  int64 email_id = 6;
+  string title = 7 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 255
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  resources.common.content.Content content = 8;
+  optional string creator_job = 9 [(buf.validate.field).string.max_len = 40];
+  optional int32 creator_id = 10 [(buf.validate.field).int32.gt = 0];
+}

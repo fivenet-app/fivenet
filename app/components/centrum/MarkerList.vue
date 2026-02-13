@@ -7,7 +7,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
-import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/marker_marker';
+import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 
 const { t } = useI18n();
 

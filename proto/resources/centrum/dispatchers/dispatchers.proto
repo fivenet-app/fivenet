@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package resources.centrum.dispatchers;
+
+import "buf/validate/validate.proto";
+import "resources/jobs/colleagues/colleagues.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers;centrumdispatchers";
+
+message Dispatchers {
+  string job = 1 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 2 [(buf.validate.field).string.max_len = 50];
+  repeated resources.jobs.colleagues.Colleague dispatchers = 3;
+}
+
+message JobDispatchers {
+  repeated Dispatchers dispatchers = 1;
+}

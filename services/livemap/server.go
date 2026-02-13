@@ -6,18 +6,18 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
-	pblivemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
+	pblivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2026/pkg/coords/postals"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -71,7 +71,7 @@ type Server struct {
 	appCfg   appconfig.IConfig
 	postals  postals.Postals
 
-	markersCache        *xsync.Map[string, []*livemap.MarkerMarker]
+	markersCache        *xsync.Map[string, []*livemapmarkers.MarkerMarker]
 	markersDeletedCache *xsync.Map[string, []int64]
 
 	broker *broker.Broker[*brokerEvent]
@@ -95,7 +95,7 @@ type Params struct {
 }
 
 type brokerEvent struct {
-	MarkerUpdate *livemap.MarkerMarker
+	MarkerUpdate *livemapmarkers.MarkerMarker
 	MarkerDelete *int64
 }
 
@@ -114,7 +114,7 @@ func NewServer(p Params) *Server {
 		appCfg:   p.AppConfig,
 		postals:  p.Postals,
 
-		markersCache:        xsync.NewMap[string, []*livemap.MarkerMarker](),
+		markersCache:        xsync.NewMap[string, []*livemapmarkers.MarkerMarker](),
 		markersDeletedCache: xsync.NewMap[string, []int64](),
 
 		broker: broker.New[*brokerEvent](),

@@ -5,9 +5,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
@@ -15,10 +16,10 @@ import (
 type jobsSync struct {
 	*syncer
 
-	state *TableSyncState
+	state *dbsyncconfig.TableSyncState
 }
 
-func newJobsSync(s *syncer, state *TableSyncState) *jobsSync {
+func newJobsSync(s *syncer, state *dbsyncconfig.TableSyncState) *jobsSync {
 	return &jobsSync{
 		syncer: s,
 		state:  state,
@@ -26,10 +27,6 @@ func newJobsSync(s *syncer, state *TableSyncState) *jobsSync {
 }
 
 func (s *jobsSync) Sync(ctx context.Context) error {
-	if !s.cfg.Tables.Jobs.Enabled {
-		return nil
-	}
-
 	jobs, err := s.fetchJobs(ctx)
 	if err != nil {
 		return err
@@ -57,7 +54,7 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 	if s.cli != nil {
 		if err := s.sendData(ctx, &pbsync.SendDataRequest{
 			Data: &pbsync.SendDataRequest_Jobs{
-				Jobs: &sync.DataJobs{
+				Jobs: &syncdata.DataJobs{
 					Jobs: jobs,
 				},
 			},
@@ -100,13 +97,13 @@ func (s *jobsSync) applyFiltersAndRetrieveGrades(
 			// Apply filters
 			filtered := false
 			for _, filter := range sQuery.Filters {
-				if filter.compiledPattern.MatchString(job.Name) {
+				if filter.CompiledPattern.MatchString(job.Name) {
 					switch filter.Action {
-					case FilterActionDrop:
+					case dbsyncconfig.FilterActionDrop:
 						filtered = true
 
-					case FilterActionReplace:
-						job.Name = filter.compiledPattern.ReplaceAllString(
+					case dbsyncconfig.FilterActionReplace:
+						job.Name = filter.CompiledPattern.ReplaceAllString(
 							job.Name,
 							filter.Replacement,
 						)

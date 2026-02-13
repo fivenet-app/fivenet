@@ -2,8 +2,7 @@
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
 import type { File } from '~~/gen/ts/resources/file/file';
-import type { ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
-import { AutoGradeMode, QualificationExamMode } from '~~/gen/ts/resources/qualifications/qualifications';
+import { AutoGradeMode, type ExamQuestions, QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
 import ExamEditorQuestion from './ExamEditorQuestion.vue';
 
 const props = defineProps<{

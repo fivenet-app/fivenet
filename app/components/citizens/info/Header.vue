@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
-import type { User } from '~~/gen/ts/resources/users/users';
+import type { User } from '~~/gen/ts/resources/users/user';
 defineProps<{
     user: User;
 }>();

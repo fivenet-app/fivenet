@@ -4,15 +4,15 @@ import (
 	context "context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentsrelations "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations"
+	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -46,7 +46,7 @@ func (s *Server) ListUserDocuments(
 						),
 					),
 					tDAccess.Access.GT_EQ(
-						mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
+						mysql.Int32(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
 				)),
 		)
@@ -86,7 +86,7 @@ func (s *Server) ListUserDocuments(
 	} else {
 		return &pbdocuments.ListUserDocumentsResponse{
 			Pagination: &database.PaginationResponse{},
-			Relations:  []*documents.DocumentRelation{},
+			Relations:  []*documentsrelations.DocumentRelation{},
 		}, nil
 	}
 
@@ -112,7 +112,7 @@ func (s *Server) ListUserDocuments(
 	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 20)
 	resp := &pbdocuments.ListUserDocumentsResponse{
 		Pagination: pag,
-		Relations:  []*documents.DocumentRelation{},
+		Relations:  []*documentsrelations.DocumentRelation{},
 	}
 	if count.Total <= 0 {
 		return resp, nil
@@ -142,7 +142,7 @@ func (s *Server) ListUserDocuments(
 		orderBys = append(orderBys, tDocument.CreatedAt.DESC())
 	}
 
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 	tASource := tCreator.AS("source_user")
 
 	docRel := tDocRel.
@@ -237,9 +237,10 @@ func (s *Server) ListUserDocuments(
 		if resp.GetRelations()[i].GetSourceUser() != nil {
 			jobInfoFn(resp.GetRelations()[i].GetSourceUser())
 		}
-		if resp.GetRelations()[i].GetDocument() != nil &&
-			resp.GetRelations()[i].GetDocument().GetCreator() != nil {
-			jobInfoFn(resp.GetRelations()[i].GetDocument().GetCreator())
+
+		if doc := resp.GetRelations()[i].GetDocument(); doc != nil &&
+			doc.GetCreator() != nil {
+			jobInfoFn(doc.GetCreator())
 		}
 	}
 
@@ -251,9 +252,9 @@ func (s *Server) addUserActivity(
 	tx qrm.DB,
 	userId int32,
 	targetUserId int32,
-	aType users.UserActivityType,
+	aType usersactivity.UserActivityType,
 	reason string,
-	data *users.UserActivityData,
+	data *usersactivity.UserActivityData,
 ) error {
 	reasonField := mysql.NULL
 	if reason != "" {

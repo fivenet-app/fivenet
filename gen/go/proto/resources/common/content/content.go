@@ -5,8 +5,8 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 )
 
 const (
@@ -117,4 +117,12 @@ func (x *ExtractedContent) GetSummary(length int) string {
 	}
 
 	return utils.SummaryFromText(x.Text, length)
+}
+
+func Empty() *Content {
+	return &Content{
+		Version:     ContentVersionTiptapV1,
+		ContentType: ContentType_CONTENT_TYPE_TIPTAP_JSON,
+		TiptapJson:  nil,
+	}
 }

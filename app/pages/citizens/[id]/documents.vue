@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import Documents from '~/components/citizens/info/Documents.vue';
-import type { User } from '~~/gen/ts/resources/users/users';
+import type { User } from '~~/gen/ts/resources/users/user';
 
 const user = defineModel<User>('user', { required: true });
 </script>

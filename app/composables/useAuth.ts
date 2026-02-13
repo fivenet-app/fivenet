@@ -1,23 +1,20 @@
 import { useAuthStore } from '~/stores/auth';
 import slug from '~/utils/slugify';
 import type { Perms } from '~~/gen/ts/perms';
-import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
+import type { JobGrades } from '~~/gen/ts/resources/permissions/attributes/attributes';
+import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 
 export type canMode = 'oneof' | 'all';
 
 // Wrapper around auth store to make live easier
 const _useAuth = () => {
     const authStore = useAuthStore();
-    const { activeChar, attributes, isSuperuser, jobProps, username, permissions } = storeToRefs(authStore);
+    const { username, accountId, activeChar, isSuperuser, jobProps, permissions, attributes } = storeToRefs(authStore);
 
     function checkPerm(permissions: Permission[], perm: string | string[], mode: canMode = 'oneof'): boolean {
-        if (mode === undefined) {
-            mode = 'oneof';
-        }
+        if (mode === undefined) mode = 'oneof';
 
-        if (permissions.find((p) => p.guardName === 'superuser')) {
-            return true;
-        }
+        if (permissions.find((p) => p.guardName === 'superuser')) return true;
 
         const input: string[] = [];
         if (typeof perm === 'string') {
@@ -87,7 +84,7 @@ const _useAuth = () => {
         });
 
     const attrStringList = (perm: Perms, key: string) =>
-        computed(() => {
+        computed<string[]>(() => {
             const a = getAttr(perm, key).value;
 
             if (a?.value?.validValues.oneofKind === 'stringList') {
@@ -97,7 +94,7 @@ const _useAuth = () => {
         });
 
     const attrJobList = (perm: Perms, key: string) =>
-        computed(() => {
+        computed<string[]>(() => {
             const a = getAttr(perm, key).value;
 
             if (a?.value?.validValues.oneofKind === 'jobList') {
@@ -107,7 +104,15 @@ const _useAuth = () => {
         });
 
     const attrJobGradeList = (perm: Perms, key: string) =>
-        computed(() => {
+        computed<{
+            fineGrained: boolean;
+            jobs: {
+                [key: string]: number;
+            };
+            grades: {
+                [key: string]: JobGrades;
+            };
+        }>(() => {
             const a = getAttr(perm, key).value;
 
             if (a?.value?.validValues.oneofKind === 'jobGradeList') {
@@ -123,6 +128,7 @@ const _useAuth = () => {
 
     return {
         // Getters
+        accountId,
         activeChar,
         isSuperuser,
         jobProps,

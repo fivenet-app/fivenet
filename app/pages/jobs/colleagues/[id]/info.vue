@@ -5,7 +5,7 @@ import ColleagueSetName from '~/components/jobs/colleagues/ColleagueSetName.vue'
 import ColleagueSetNote from '~/components/jobs/colleagues/ColleagueSetNote.vue';
 import EmailInfoPopover from '~/components/mailer/EmailInfoPopover.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 
 useHead({
     title: 'pages.jobs.colleagues.id.title',

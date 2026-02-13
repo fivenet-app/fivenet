@@ -4,7 +4,7 @@
 package calendar
 
 import (
-	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -58,7 +58,7 @@ func (m *Calendar) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.StripHTMLTags(*m.Description)
+		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
 
 	// Field: Job
@@ -92,167 +92,6 @@ func (m *Calendar) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *CalendarEntry) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Calendar
-	if m.Calendar != nil {
-		if v, ok := any(m.GetCalendar()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Content
-	if m.Content != nil {
-		if v, ok := any(m.GetContent()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Creator
-	if m.Creator != nil {
-		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: CreatorJob
-	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
-
-	// Field: DeletedAt
-	if m.DeletedAt != nil {
-		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: EndTime
-	if m.EndTime != nil {
-		if v, ok := any(m.GetEndTime()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Job
-	if m.Job != nil {
-		*m.Job = htmlsanitizer.Sanitize(*m.Job)
-	}
-
-	// Field: Recurring
-	if m.Recurring != nil {
-		if v, ok := any(m.GetRecurring()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Rsvp
-	if m.Rsvp != nil {
-		if v, ok := any(m.GetRsvp()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: StartTime
-	if m.StartTime != nil {
-		if v, ok := any(m.GetStartTime()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Title
-	m.Title = htmlsanitizer.StripHTMLTags(m.Title)
-
-	// Field: UpdatedAt
-	if m.UpdatedAt != nil {
-		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *CalendarEntryRSVP) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: User
-	if m.User != nil {
-		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *CalendarEntryRecurring) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Every
-	m.Every = htmlsanitizer.Sanitize(m.Every)
-
-	// Field: Until
-	if m.Until != nil {
-		if v, ok := any(m.GetUntil()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *CalendarShort) Sanitize() error {
 	if m == nil {
 		return nil
@@ -272,7 +111,7 @@ func (m *CalendarShort) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.StripHTMLTags(*m.Description)
+		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
 
 	// Field: Job

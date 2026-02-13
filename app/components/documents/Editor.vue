@@ -3,7 +3,7 @@ import type { UForm } from '#components';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
-import { checkDocAccess, logger } from '~/components/documents/helpers';
+import { checkDocAccess } from '~/components/documents/helpers';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
@@ -13,11 +13,12 @@ import type { HistoryContent } from '~/types/history';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
-import { AccessLevel, type DocumentJobAccess, type DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
-import type { Category } from '~~/gen/ts/resources/documents/category';
-import type { DocumentReference, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { AccessLevel, type DocumentJobAccess, type DocumentUserAccess } from '~~/gen/ts/resources/documents/access/access';
+import type { Category } from '~~/gen/ts/resources/documents/category/category';
+import type { DocumentReference } from '~~/gen/ts/resources/documents/references/references';
+import type { DocumentRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import type { File } from '~~/gen/ts/resources/file/file';
-import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
+import { ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UpdateDocumentRequest } from '~~/gen/ts/services/documents/documents';
 import ConfirmModal from '../partials/ConfirmModal.vue';
@@ -48,6 +49,8 @@ const notifications = useNotificationsStore();
 const historyStore = useHistoryStore();
 
 const { maxAccessEntries, maxContentLength } = useAppConfig();
+
+const logger = useLogger('📃 Doc Editor');
 
 const documentsDocuments = await useDocumentsDocuments();
 
@@ -101,25 +104,48 @@ const onSync = (s: boolean) => {
 };
 provider.on('sync', onSync);
 
+const docReferenceIds = ref<number[]>([]);
+const docRelationIds = ref<number[]>([]);
+
+const {
+    status: statusReferences,
+    error: errorReferences,
+    refresh: refreshReferences,
+} = useLazyAsyncData(
+    `documents-${props.documentId}-references`,
+    async () => {
+        const call = documentsDocumentsClient.getDocumentReferences({ documentId: props.documentId });
+        const { response } = await call;
+
+        state.references = response.references;
+        docReferenceIds.value = response.references.map((ref) => ref.id!);
+
+        return response.references;
+    },
+    { immediate: false },
+);
+
+const {
+    status: statusRelations,
+    error: errorRelations,
+    refresh: refreshRelations,
+} = useLazyAsyncData(
+    `documents-${props.documentId}-relations`,
+    async () => {
+        const call = documentsDocumentsClient.getDocumentRelations({ documentId: props.documentId });
+        const { response } = await call;
+
+        state.relations = response.relations;
+        docRelationIds.value = response.relations.map((rel) => rel.id!);
+
+        return response.relations;
+    },
+    { immediate: false },
+);
+
 watch(document, async () => {
-    const [refs, rels] = await Promise.all([
-        documentsDocumentsClient.getDocumentReferences({
-            documentId: props.documentId,
-        }),
-        documentsDocumentsClient.getDocumentRelations({
-            documentId: props.documentId,
-        }),
-    ]);
-
-    state.references = refs.response.references;
-    docReferences.value = refs.response.references.map((ref) => ref.id!);
-
-    state.relations = rels.response.relations;
-    docRelations.value = rels.response.relations.map((rel) => rel.id!);
+    await Promise.all([refreshReferences(), refreshRelations()]);
 });
-
-const docReferences = ref<number[]>([]);
-const docRelations = ref<number[]>([]);
 
 const route = useRoute();
 
@@ -260,7 +286,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         if (canDo.value.references) {
             // Remove references that are no longer present
             const currentReferenceIds = state.references.filter((r) => r.id !== undefined && r.id > 0).map((ref) => ref.id!);
-            const referencesToRemove = docReferences.value.filter((id) => !currentReferenceIds.includes(id));
+            const referencesToRemove = docReferenceIds.value.filter((id) => !currentReferenceIds.includes(id));
             referencesToRemove.forEach((id) =>
                 documentsDocumentsClient.removeDocumentReference({
                     id: id,
@@ -271,7 +297,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
             state.references
                 .filter((r) => r.id === undefined || r.id <= 0)
                 .forEach((ref) => {
-                    if (docReferences.value.find((r) => r === ref.id)) return;
+                    if (docReferenceIds.value.find((r) => r === ref.id)) return;
 
                     ref.sourceDocumentId = response.document!.id!;
                     documentsDocumentsClient.addDocumentReference({
@@ -283,7 +309,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         if (canDo.value.relations) {
             // Remove relations that are no longer present
             const currentRelationIds = state.relations.filter((r) => r.id !== undefined && r.id > 0).map((rel) => rel.id!);
-            const relationsToRemove = docRelations.value.filter((id) => !currentRelationIds.includes(id));
+            const relationsToRemove = docRelationIds.value.filter((id) => !currentRelationIds.includes(id));
             relationsToRemove.forEach((id) => {
                 documentsDocumentsClient.removeDocumentRelation({ id });
             });
@@ -292,7 +318,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
             state.relations
                 .filter((r) => r.id === undefined || r.id <= 0)
                 .forEach((rel) => {
-                    if (docRelations.value.find((r) => r === rel.id)) return;
+                    if (docRelationIds.value.find((r) => r === rel.id)) return;
 
                     rel.documentId = response.document!.id!;
                     documentsDocumentsClient.addDocumentRelation({
@@ -379,8 +405,8 @@ const canDo = computed(() => ({
 // Handle the client update event
 const { sendClientView } = useClientUpdate(ObjectType.DOCUMENT, () =>
     notifications.add({
-        title: { key: 'notifications.documents.client_view_update.title', parameters: {} },
-        description: { key: 'notifications.documents.client_view_update.content', parameters: {} },
+        title: { key: 'notifications.documents.clientview_update.title', parameters: {} },
+        description: { key: 'notifications.documents.clientview_update.content', parameters: {} },
         duration: 7500,
         type: NotificationType.INFO,
         actions: [
@@ -672,16 +698,38 @@ provide('yjsProvider', provider);
 
                     <template #references>
                         <UContainer class="p-4 sm:p-4">
-                            <UPageCard :title="`${$t('common.document', 1)} ${$t('common.reference', 2)}`">
-                                <ReferenceManager v-model="state.references" :document-id="documentId" />
+                            <UPageCard :title="$t('common.reference', 2)">
+                                <DataPendingBlock
+                                    v-if="isRequestPending(statusReferences)"
+                                    :message="$t('common.loading', [$t('common.reference', 2)])"
+                                />
+                                <DataErrorBlock
+                                    v-else-if="errorReferences"
+                                    :title="$t('common.unable_to_load', [$t('common.reference', 2)])"
+                                    :error="errorReferences"
+                                    :retry="refreshReferences"
+                                />
+
+                                <ReferenceManager v-else v-model="state.references" :document-id="documentId" />
                             </UPageCard>
                         </UContainer>
                     </template>
 
                     <template #relations>
                         <UContainer class="p-4 sm:p-4">
-                            <UPageCard :title="`${$t('common.document', 1)} ${$t('common.relation', 2)}`">
-                                <RelationManager v-model="state.relations" :document-id="documentId" />
+                            <UPageCard :title="$t('common.relation', 2)">
+                                <DataPendingBlock
+                                    v-if="isRequestPending(statusRelations)"
+                                    :message="$t('common.loading', [$t('common.relation', 2)])"
+                                />
+                                <DataErrorBlock
+                                    v-else-if="errorRelations"
+                                    :title="$t('common.unable_to_load', [$t('common.relation', 2)])"
+                                    :error="errorRelations"
+                                    :retry="refreshRelations"
+                                />
+
+                                <RelationManager v-else v-model="state.relations" :document-id="documentId" />
                             </UPageCard>
                         </UContainer>
                     </template>

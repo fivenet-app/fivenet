@@ -4,18 +4,19 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"slices"
 	"sync"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	pb "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	pb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
@@ -31,12 +32,14 @@ var PollerModule = fx.Module(
 )
 
 type userSnapshot struct {
-	Job       string
-	JobGrade  int32
-	Superuser bool
+	Job      string
+	JobGrade int32
+	Groups   []string
 }
 
 // Poller is responsible for polling user information via the Retriever.
+// It is used to detect changes in user information and publish events accordingly.
+// The events are mainly used by any streams.
 type Poller struct {
 	ctx context.Context
 
@@ -201,7 +204,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 		userIds = append(userIds, mysql.Int32(req.GetUserId()))
 	}
 
-	tUser := tables.User()
+	tUser := table.FivenetUser
 	tAccount := table.FivenetAccounts
 
 	stmt := tUser.
@@ -210,7 +213,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 			tUser.ID.AS("user_id"),
 			tUser.Job.AS("job"),
 			tUser.JobGrade.AS("job_grade"),
-			tAccount.Superuser.AS("superuser"),
+			tAccount.Groups.AS("groups"),
 			tUser.LastSeen.AS("last_seen"),
 		).
 		FROM(
@@ -230,7 +233,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 		UserId    int32
 		Job       string
 		JobGrade  int32
-		Superuser bool
+		Groups    *accounts.AccountGroups
 		LastSeen  *timestamp.Timestamp
 	}
 
@@ -240,7 +243,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 
 	var errs error
 	for _, row := range dest {
-		if err := p.checkDiffAndPublish(ctx, row.AccountId, row.UserId, row.Job, row.JobGrade, row.Superuser, row.LastSeen); err != nil {
+		if err := p.checkDiffAndPublish(ctx, row.AccountId, row.UserId, row.Job, row.JobGrade, row.Groups, row.LastSeen); err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("failed to check diff. %w", err))
 			continue
 		}
@@ -255,7 +258,7 @@ func (p *Poller) checkDiffAndPublish(
 	uid int32,
 	job string,
 	grade int32,
-	superuser bool,
+	groups *accounts.AccountGroups,
 	updatedAt *timestamp.Timestamp,
 ) error {
 	p.snapMu.Lock()
@@ -273,31 +276,35 @@ func (p *Poller) checkDiffAndPublish(
 		return nil
 	}
 
-	if old.Job != job || old.JobGrade != grade || old.Superuser != superuser {
+	if old.Job != job || old.JobGrade != grade || !slices.Equal(old.Groups, groups.GetGroups()) {
 		evt := &pb.UserInfoChanged{
-			AccountId:   acct,
-			UserId:      uid,
-			OldJob:      old.Job,
-			NewJob:      &job,
+			AccountId: acct,
+			UserId:    uid,
+			ChangedAt: updatedAt,
+
+			OldJob: old.Job,
+			NewJob: &job,
+
 			OldJobGrade: old.JobGrade,
 			NewJobGrade: &grade,
-			Superuser:   &superuser,
-			ChangedAt:   updatedAt,
 		}
 		p.enricher.EnrichJobInfo(evt)
 
-		subj := fmt.Sprintf("userinfo.%d.changes", acct)
-		if _, err := p.js.PublishAsyncProto(ctx, subj, evt); err != nil {
+		if _, err := p.js.PublishAsyncProto(ctx, fmt.Sprintf("userinfo.%d.changes", acct), evt); err != nil {
 			p.logger.Error("failed to publish user info change event",
 				zap.Int64("accountId", acct),
 				zap.Int32("userId", uid),
 				zap.String("job", job),
 				zap.Int32("jobGrade", grade),
-				zap.Bool("superuser", superuser),
+				zap.Strings("groups", groups.GetGroups()),
 				zap.Error(err),
 			)
 		}
-		userMap[uid] = &userSnapshot{Job: job, JobGrade: grade, Superuser: superuser}
+		userMap[uid] = &userSnapshot{
+			Job:      job,
+			JobGrade: grade,
+			Groups:   groups.GetGroups(),
+		}
 	}
 
 	return nil

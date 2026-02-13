@@ -1,5 +1,5 @@
 import type { BadgeProps } from '@nuxt/ui';
-import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
+import { ConductType } from '~~/gen/ts/resources/jobs/conduct/conduct';
 
 export function conductTypesToBadgeColor(status: ConductType | undefined): BadgeProps['color'] {
     switch (status) {

@@ -2,16 +2,18 @@
 import EditorContainer from '~/components/fabriceditor/EditorContainer.vue';
 
 useHead({
-    title: 'Document Edit Form',
+    title: 'Edit Document Form',
 });
 
 definePageMeta({
-    title: 'Document Edit Form',
+    title: 'Edit Document Form',
     requiresAuth: true,
     permission: 'TODOService/TODOMethod',
 });
+
+const svgData = ref<string>('');
 </script>
 
 <template>
-    <EditorContainer />
+    <EditorContainer v-model="svgData" />
 </template>

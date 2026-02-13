@@ -81,6 +81,7 @@
 // source: services/settings/system.proto
 // source: services/stats/stats.proto
 // source: services/sync/sync.proto
+// source: services/sync/v2/sync.proto
 // source: services/vehicles/vehicles.proto
 // source: services/wiki/collab.proto
 // source: services/wiki/wiki.proto
@@ -114,6 +115,7 @@ export const grpcServices = [
     'settings.SystemService',
     'stats.StatsService',
     'sync.SyncService',
+    'sync.v2.SyncService',
     'vehicles.VehiclesService',
     'wiki.CollabService',
     'wiki.WikiService',
@@ -128,6 +130,7 @@ export const grpcMethods = [
 	'auth.AuthService/ForgotPassword',
 	'auth.AuthService/GetCharacters',
 	'auth.AuthService/ChooseCharacter',
+	'auth.AuthService/ImpersonateJob',
 	'auth.AuthService/GetAccountInfo',
 	'auth.AuthService/DeleteSocialLogin',
 	'auth.AuthService/SetSuperuserMode',
@@ -342,6 +345,28 @@ export const grpcMethods = [
 	'sync.SyncService/SendData',
 	'sync.SyncService/DeleteData',
 	'sync.SyncService/Stream',
+	'sync.v2.SyncService/GetStatus',
+	'sync.v2.SyncService/RegisterAccount',
+	'sync.v2.SyncService/TransferAccount',
+	'sync.v2.SyncService/AddUserOAuth2Conn',
+	'sync.v2.SyncService/AddDispatch',
+	'sync.v2.SyncService/AddUserActivity',
+	'sync.v2.SyncService/AddUserProps',
+	'sync.v2.SyncService/AddColleagueActivity',
+	'sync.v2.SyncService/AddColleagueProps',
+	'sync.v2.SyncService/AddJobTimeclock',
+	'sync.v2.SyncService/AddAccountUpdate',
+	'sync.v2.SyncService/AddUserUpdate',
+	'sync.v2.SyncService/SendJobsData',
+	'sync.v2.SyncService/SendLicensesData',
+	'sync.v2.SyncService/SendAccountsData',
+	'sync.v2.SyncService/SendUsersData',
+	'sync.v2.SyncService/SendVehiclesData',
+	'sync.v2.SyncService/SendUserLocationsData',
+	'sync.v2.SyncService/SendLastCharIDData',
+	'sync.v2.SyncService/DeleteUsersData',
+	'sync.v2.SyncService/DeleteVehiclesData',
+	'sync.v2.SyncService/Stream',
 	'vehicles.VehiclesService/ListVehicles',
 	'vehicles.VehiclesService/SetVehicleProps',
 	'wiki.CollabService/JoinRoom',

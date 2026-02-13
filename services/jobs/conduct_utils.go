@@ -3,8 +3,8 @@ package jobs
 import (
 	"context"
 
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
+	jobsconduct "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
@@ -12,8 +12,8 @@ func (s *Server) getConductEntry(
 	ctx context.Context,
 	id int64,
 	withFiles bool,
-) (*jobs.ConductEntry, error) {
-	tColleague := tables.User().AS("target_user")
+) (*jobsconduct.ConductEntry, error) {
+	tColleague := table.FivenetUser.AS("target_user")
 	tCreator := tColleague.AS("creator")
 
 	stmt := tConduct.
@@ -52,7 +52,7 @@ func (s *Server) getConductEntry(
 		WHERE(tConduct.ID.EQ(mysql.Int64(id))).
 		LIMIT(1)
 
-	dest := &jobs.ConductEntry{}
+	dest := &jobsconduct.ConductEntry{}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		return nil, err
 	}

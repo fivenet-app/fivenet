@@ -6,9 +6,9 @@ import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
-import "resources/documents/stamp.proto";
+import "resources/documents/stamps/stamp.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documents";
 
 message ListUsableStampsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
@@ -18,15 +18,15 @@ message ListUsableStampsRequest {
 
 message ListUsableStampsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.documents.Stamp stamps = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.documents.stamps.Stamp stamps = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message UpsertStampRequest {
-  resources.documents.Stamp stamp = 1 [(buf.validate.field).required = true];
+  resources.documents.stamps.Stamp stamp = 1 [(buf.validate.field).required = true];
 }
 
 message UpsertStampResponse {
-  resources.documents.Stamp stamp = 1;
+  resources.documents.stamps.Stamp stamp = 1;
 }
 
 message DeleteStampRequest {

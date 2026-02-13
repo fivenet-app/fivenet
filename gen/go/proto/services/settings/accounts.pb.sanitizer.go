@@ -4,7 +4,7 @@
 package settings
 
 import (
-	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -98,6 +98,11 @@ func (m *ListAccountsRequest) Sanitize() error {
 	// Field: ExternalId
 	if m.ExternalId != nil {
 		*m.ExternalId = htmlsanitizer.Sanitize(*m.ExternalId)
+	}
+
+	// Field: Group
+	if m.Group != nil {
+		*m.Group = htmlsanitizer.Sanitize(*m.Group)
 	}
 
 	// Field: License

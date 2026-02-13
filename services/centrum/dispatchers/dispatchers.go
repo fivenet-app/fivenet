@@ -6,17 +6,16 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
-	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
+	centrumdispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
+	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
@@ -31,7 +30,7 @@ type DispatchersDB struct {
 	enricher *mstlystcdata.Enricher
 	tracker  tracker.ITracker
 
-	store *store.Store[centrum.Dispatchers, *centrum.Dispatchers]
+	store *store.Store[centrumdispatchers.Dispatchers, *centrumdispatchers.Dispatchers]
 }
 
 type Params struct {
@@ -59,7 +58,7 @@ func New(p Params) *DispatchersDB {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		st, err := store.New[centrum.Dispatchers, *centrum.Dispatchers](
+		st, err := store.New[centrumdispatchers.Dispatchers, *centrumdispatchers.Dispatchers](
 			ctxCancel,
 			logger,
 			p.JS,
@@ -90,7 +89,7 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
 	tUserProps := table.FivenetUserProps
 	tCentrumDispatchers := table.FivenetCentrumDispatchers
-	tColleague := tables.User().AS("colleague")
+	tColleague := table.FivenetUser.AS("colleague")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tCentrumDispatchers.
@@ -135,17 +134,17 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 		)
 	}
 
-	var dest []*jobs.Colleague
+	var dest []*jobscolleagues.Colleague
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf("failed to query centrum dispatchers. %w", err)
 		}
 	}
 
-	perJob := map[string][]*jobs.Colleague{}
+	perJob := map[string][]*jobscolleagues.Colleague{}
 	for _, user := range dest {
 		if _, ok := perJob[user.GetJob()]; !ok {
-			perJob[user.GetJob()] = []*jobs.Colleague{}
+			perJob[user.GetJob()] = []*jobscolleagues.Colleague{}
 		}
 
 		s.enricher.EnrichJobName(user)

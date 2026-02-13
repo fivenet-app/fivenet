@@ -2,8 +2,9 @@
 import { useCompletorStore } from '~/stores/completor';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
-import { QualificationExamMode, type QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
+import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import SelectMenu from '../SelectMenu.vue';
 import type { AccessLevelEnum, AccessType, MixedAccessEntry } from './helpers';
 

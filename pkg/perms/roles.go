@@ -7,11 +7,12 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	permissionsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/events"
+	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms/collections"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/puzpuzpuz/xsync/v4"
@@ -128,7 +129,7 @@ func (p *Perms) GetClosestJobRole(
 	ctx context.Context,
 	job string,
 	grade int32,
-) (*permissions.Role, error) {
+) (*permissionspermissions.Role, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -143,7 +144,7 @@ func (p *Perms) GetClosestJobRole(
 		)).
 		LIMIT(1)
 
-	var dest permissions.Role
+	var dest permissionspermissions.Role
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf(
@@ -178,7 +179,7 @@ func (p *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error)
 	return dest.Total, nil
 }
 
-func (p *Perms) GetRole(ctx context.Context, id int64) (*permissions.Role, error) {
+func (p *Perms) GetRole(ctx context.Context, id int64) (*permissionspermissions.Role, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -192,7 +193,7 @@ func (p *Perms) GetRole(ctx context.Context, id int64) (*permissions.Role, error
 		).
 		LIMIT(1)
 
-	var dest permissions.Role
+	var dest permissionspermissions.Role
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to get role with ID %d. %w", id, err)
@@ -210,7 +211,7 @@ func (p *Perms) CreateRole(
 	ctx context.Context,
 	job string,
 	grade int32,
-) (*permissions.Role, error) {
+) (*permissionspermissions.Role, error) {
 	tRoles := table.FivenetRbacRoles
 	stmt := tRoles.
 		INSERT(
@@ -227,7 +228,7 @@ func (p *Perms) CreateRole(
 		return nil, fmt.Errorf("failed to create role for job %s and grade %d. %w", job, grade, err)
 	}
 
-	var role *permissions.Role
+	var role *permissionspermissions.Role
 	if res != nil {
 		lastId, err := res.LastInsertId()
 		if err != nil {
@@ -257,7 +258,7 @@ func (p *Perms) CreateRole(
 
 	p.roleIDToJobMap.Store(role.GetId(), role.GetJob())
 
-	if err := p.publishMessage(ctx, RoleCreatedSubject, &permissions.RoleIDEvent{
+	if err := p.publishMessage(ctx, RoleCreatedSubject, &permissionsevents.RoleIDEvent{
 		RoleId: role.GetId(),
 		Job:    role.GetJob(),
 		Grade:  role.GetGrade(),
@@ -295,7 +296,7 @@ func (p *Perms) DeleteRole(ctx context.Context, id int64) error {
 		return fmt.Errorf("failed to delete role with ID %d. %w", id, err)
 	}
 
-	if err := p.publishMessage(ctx, RoleDeletedSubject, &permissions.RoleIDEvent{
+	if err := p.publishMessage(ctx, RoleDeletedSubject, &permissionsevents.RoleIDEvent{
 		RoleId: role.GetId(),
 		Job:    role.GetJob(),
 		Grade:  role.GetGrade(),
@@ -327,7 +328,7 @@ func (p *Perms) GetRoleByJobAndGrade(
 	ctx context.Context,
 	job string,
 	grade int32,
-) (*permissions.Role, error) {
+) (*permissionspermissions.Role, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -342,7 +343,7 @@ func (p *Perms) GetRoleByJobAndGrade(
 		)).
 		LIMIT(1)
 
-	var dest permissions.Role
+	var dest permissionspermissions.Role
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil
@@ -357,7 +358,7 @@ func (p *Perms) GetRoleByJobAndGrade(
 func (p *Perms) GetRolePermissions(
 	ctx context.Context,
 	id int64,
-) ([]*permissions.Permission, error) {
+) ([]*permissionspermissions.Permission, error) {
 	tRolePerms := tRolePerms
 	tPerms := tPerms.AS("permission")
 	stmt := tRolePerms.
@@ -384,7 +385,7 @@ func (p *Perms) GetRolePermissions(
 			tPerms.ID.ASC(),
 		)
 
-	var dest []*permissions.Permission
+	var dest []*permissionspermissions.Permission
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to get permissions for role ID %d. %w", id, err)
@@ -397,7 +398,7 @@ func (p *Perms) GetRolePermissions(
 func (p *Perms) GetEffectiveRolePermissions(
 	ctx context.Context,
 	roleId int64,
-) ([]*permissions.Permission, error) {
+) ([]*permissionspermissions.Permission, error) {
 	defaultRoleId, ok := p.lookupRoleIDForJobAndGrade(DefaultRoleJob, p.startJobGrade)
 	if !ok {
 		return nil, errors.New("failed to fallback to default role")
@@ -432,14 +433,14 @@ func (p *Perms) GetEffectiveRolePermissions(
 		}
 	}
 
-	ps := []*permissions.Permission{}
+	ps := []*permissionspermissions.Permission{}
 	for i, v := range perms {
 		p, ok := p.lookupPermByID(i)
 		if !ok {
 			continue
 		}
 
-		ps = append(ps, &permissions.Permission{
+		ps = append(ps, &permissionspermissions.Permission{
 			Id:        p.ID,
 			Category:  string(p.Category),
 			Name:      string(p.Name),
@@ -451,7 +452,7 @@ func (p *Perms) GetEffectiveRolePermissions(
 	}
 
 	// Order by `GuardName` ascending
-	slices.SortFunc(ps, func(a, b *permissions.Permission) int {
+	slices.SortFunc(ps, func(a, b *permissionspermissions.Permission) int {
 		return strings.Compare(a.GetGuardName(), b.GetGuardName())
 	})
 
@@ -500,7 +501,7 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId int64, perms .
 		roleCache.Store(v.PermissionID, v.Val)
 	}
 
-	if err := p.publishMessage(ctx, RolePermUpdateSubject, &permissions.RoleIDEvent{
+	if err := p.publishMessage(ctx, RolePermUpdateSubject, &permissionsevents.RoleIDEvent{
 		RoleId: roleId,
 	}); err != nil {
 		return fmt.Errorf(
@@ -541,7 +542,7 @@ func (p *Perms) RemovePermissionsFromRole(
 		}
 	}
 
-	if err := p.publishMessage(ctx, RolePermUpdateSubject, &permissions.RoleIDEvent{
+	if err := p.publishMessage(ctx, RolePermUpdateSubject, &permissionsevents.RoleIDEvent{
 		RoleId: roleId,
 	}); err != nil {
 		return fmt.Errorf(
@@ -557,7 +558,7 @@ func (p *Perms) RemovePermissionsFromRole(
 func (p *Perms) GetJobPermissions(
 	ctx context.Context,
 	job string,
-) ([]*permissions.Permission, error) {
+) ([]*permissionspermissions.Permission, error) {
 	tPerms := tPerms.AS("permission")
 	stmt := tJobPerms.
 		SELECT(
@@ -580,7 +581,7 @@ func (p *Perms) GetJobPermissions(
 			tJobPerms.Job.EQ(mysql.String(job)),
 		)
 
-	var dest []*permissions.Permission
+	var dest []*permissionspermissions.Permission
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to get permissions for job %s. %w", job, err)
@@ -593,7 +594,7 @@ func (p *Perms) GetJobPermissions(
 func (p *Perms) UpdateJobPermissions(
 	ctx context.Context,
 	job string,
-	perms ...*permissions.PermItem,
+	perms ...*permissionspermissions.PermItem,
 ) error {
 	for _, ps := range perms {
 		stmt := tJobPerms.

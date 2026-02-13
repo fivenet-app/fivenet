@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package resources.notifications.events;
+
+import "buf/validate/validate.proto";
+import "resources/clientconfig/clientconfig.proto";
+import "resources/jobs/props/props.proto";
+import "resources/notifications/notifications.proto";
+import "resources/userinfo/userinfo.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events;notificationsevents";
+
+// User related events
+message UserEvent {
+  oneof data {
+    option (buf.validate.oneof).required = true;
+
+    bool refresh_token = 1;
+    // Notifications
+    resources.notifications.Notification notification = 2;
+    int64 notifications_read_count = 3;
+    resources.userinfo.UserInfoChanged user_info_changed = 4;
+  }
+}
+
+// Job related events
+message JobEvent {
+  oneof data {
+    option (buf.validate.oneof).required = true;
+
+    resources.jobs.props.JobProps job_props = 1;
+  }
+}
+
+// Job grade events
+message JobGradeEvent {
+  oneof data {
+    option (buf.validate.oneof).required = true;
+
+    bool refresh_token = 1;
+  }
+}
+
+// System related events
+message SystemEvent {
+  oneof data {
+    option (buf.validate.oneof).required = true;
+
+    // Client configuration update (e.g., feature gates, game settings, banner message)
+    resources.clientconfig.ClientConfig client_config = 1;
+  }
+}

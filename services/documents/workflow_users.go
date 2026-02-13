@@ -6,8 +6,9 @@ import (
 	sync "sync"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
+	documentsworkflow "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/workflow"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -15,14 +16,21 @@ import (
 
 var tUserWorkflow = table.FivenetDocumentsWorkflowUsers.AS("workflow_user_state")
 
+type workflowUserState struct {
+	DocumentId int64                                `alias:"document_id"`
+	State      *documentsworkflow.WorkflowUserState `alias:"workflow_user_state"`
+	Document   *documents.DocumentShort             `alias:"document_short"`
+}
+
 func (w *Workflow) handleDocumentsUsers(
 	ctx context.Context,
-	data *documents.WorkflowCronData,
+	data *documentsworkflow.WorkflowCronData,
 ) error {
 	tDTemplates := table.FivenetDocumentsTemplates.AS("template_short")
 
 	stmt := tUserWorkflow.
 		SELECT(
+			tUserWorkflow.DocumentID.AS("document_id"),
 			tUserWorkflow.DocumentID,
 			tUserWorkflow.UserID,
 			tUserWorkflow.ManualReminderTime,
@@ -55,7 +63,7 @@ func (w *Workflow) handleDocumentsUsers(
 		)).
 		LIMIT(100)
 
-	var dest []*documents.WorkflowUserState
+	var dest []*workflowUserState
 	if err := stmt.QueryContext(ctx, w.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
@@ -65,7 +73,7 @@ func (w *Workflow) handleDocumentsUsers(
 	var wg sync.WaitGroup
 
 	// Run at max 3 handlers at once
-	workChannel := make(chan *documents.WorkflowUserState, 3)
+	workChannel := make(chan *workflowUserState, 3)
 
 	wg.Add(1)
 	go func() {
@@ -76,14 +84,18 @@ func (w *Workflow) handleDocumentsUsers(
 			go func() {
 				defer wg.Done()
 
+				if state == nil || state.State == nil {
+					return
+				}
+
 				if err := w.handleWorkflowUserState(ctx, state); err != nil {
 					w.logger.Error(
 						"error during workflow user state handling",
 						zap.Int64(
 							"document_id",
-							state.GetDocumentId(),
+							state.DocumentId,
 						),
-						zap.Int32("user_id", state.GetUserId()),
+						zap.Int32("user_id", state.State.GetUserId()),
 						zap.Error(err),
 					)
 				}
@@ -104,16 +116,19 @@ func (w *Workflow) handleDocumentsUsers(
 
 func (w *Workflow) handleWorkflowUserState(
 	ctx context.Context,
-	state *documents.WorkflowUserState,
+	st *workflowUserState,
 ) error {
+	state := st.State
+	doc := st.Document
+
 	if state.GetManualReminderTime() != nil &&
 		time.Since(state.GetManualReminderTime().AsTime()) > 0 {
 		// Send reminder and null reminder time
-		if err := w.sendDocumentReminder(ctx, state.GetDocumentId(), state.GetUserId(), state.GetDocument(), state.GetManualReminderMessage(), true); err != nil {
+		if err := w.sendDocumentReminder(ctx, state.GetDocumentId(), state.GetUserId(), doc, state.GetManualReminderMessage(), true); err != nil {
 			return err
 		}
 
-		if err := deleteWorkflowUserState(ctx, w.db, state); err != nil {
+		if err := deleteWorkflowUserState(ctx, w.db, state.GetDocumentId(), state.GetUserId()); err != nil {
 			return err
 		}
 	}
@@ -124,7 +139,7 @@ func (w *Workflow) handleWorkflowUserState(
 func updateWorkflowUserState(
 	ctx context.Context,
 	tx qrm.DB,
-	state *documents.WorkflowUserState,
+	state *documentsworkflow.WorkflowUserState,
 ) error {
 	reminderTime := mysql.TimestampExp(mysql.NULL)
 	if state.GetManualReminderTime() != nil {
@@ -172,15 +187,16 @@ func updateWorkflowUserState(
 func deleteWorkflowUserState(
 	ctx context.Context,
 	tx qrm.DB,
-	state *documents.WorkflowUserState,
+	documentId int64,
+	userId int32,
 ) error {
 	tUserWorkflow := table.FivenetDocumentsWorkflowUsers
 
 	stmt := tUserWorkflow.
 		DELETE().
 		WHERE(mysql.AND(
-			tUserWorkflow.DocumentID.EQ(mysql.Int64(state.GetDocumentId())),
-			tUserWorkflow.UserID.EQ(mysql.Int32(state.GetUserId())),
+			tUserWorkflow.DocumentID.EQ(mysql.Int64(documentId)),
+			tUserWorkflow.UserID.EQ(mysql.Int32(userId)),
 		)).
 		LIMIT(1)
 

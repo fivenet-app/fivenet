@@ -10,26 +10,26 @@ import "resources/audit/audit.proto";
 import "resources/common/database/database.proto";
 import "resources/discord/discord.proto";
 import "resources/file/filestore.proto";
-import "resources/jobs/job_props.proto";
-import "resources/permissions/attributes.proto";
-import "resources/permissions/permissions.proto";
+import "resources/jobs/props/props.proto";
+import "resources/permissions/attributes/attributes.proto";
+import "resources/permissions/permissions/permissions.proto";
 import "resources/settings/perms.proto";
 import "resources/timestamp/timestamp.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settings";
 
 message GetJobPropsRequest {}
 
 message GetJobPropsResponse {
-  resources.jobs.JobProps job_props = 1;
+  resources.jobs.props.JobProps job_props = 1;
 }
 
 message SetJobPropsRequest {
-  resources.jobs.JobProps job_props = 1;
+  resources.jobs.props.JobProps job_props = 1;
 }
 
 message SetJobPropsResponse {
-  resources.jobs.JobProps job_props = 1;
+  resources.jobs.props.JobProps job_props = 1;
 }
 
 message GetRolesRequest {
@@ -37,7 +37,7 @@ message GetRolesRequest {
 }
 
 message GetRolesResponse {
-  repeated resources.permissions.Role roles = 1;
+  repeated resources.permissions.permissions.Role roles = 1;
 }
 
 message GetRoleRequest {
@@ -45,7 +45,7 @@ message GetRoleRequest {
 }
 
 message GetRoleResponse {
-  resources.permissions.Role role = 1;
+  resources.permissions.permissions.Role role = 1;
 }
 
 message CreateRoleRequest {
@@ -54,7 +54,7 @@ message CreateRoleRequest {
 }
 
 message CreateRoleResponse {
-  resources.permissions.Role role = 1;
+  resources.permissions.permissions.Role role = 1;
 }
 
 message DeleteRoleRequest {
@@ -76,8 +76,8 @@ message GetPermissionsRequest {
 }
 
 message GetPermissionsResponse {
-  repeated resources.permissions.Permission permissions = 1;
-  repeated resources.permissions.RoleAttribute attributes = 2;
+  repeated resources.permissions.permissions.Permission permissions = 1;
+  repeated resources.permissions.attributes.RoleAttribute attributes = 2;
 }
 
 message GetEffectivePermissionsRequest {
@@ -85,9 +85,9 @@ message GetEffectivePermissionsRequest {
 }
 
 message GetEffectivePermissionsResponse {
-  resources.permissions.Role role = 1;
-  repeated resources.permissions.Permission permissions = 2;
-  repeated resources.permissions.RoleAttribute attributes = 3;
+  resources.permissions.permissions.Role role = 1;
+  repeated resources.permissions.permissions.Permission permissions = 2;
+  repeated resources.permissions.attributes.RoleAttribute attributes = 3;
 }
 
 message ViewAuditLogRequest {

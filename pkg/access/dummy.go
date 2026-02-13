@@ -2,7 +2,7 @@
 package access
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 

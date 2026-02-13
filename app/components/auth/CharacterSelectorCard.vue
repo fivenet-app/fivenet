@@ -2,7 +2,7 @@
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import { useAuthStore } from '~/stores/auth';
-import type { User } from '~~/gen/ts/resources/users/users';
+import type { User } from '~~/gen/ts/resources/users/user';
 
 const authStore = useAuthStore();
 

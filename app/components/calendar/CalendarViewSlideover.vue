@@ -7,7 +7,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useCalendarStore } from '~/stores/calendar';
-import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
+import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import CalendarCreateOrUpdateModal from './CalendarCreateOrUpdateModal.vue';
 import { checkCalendarAccess } from './helpers';
 

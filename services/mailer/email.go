@@ -6,19 +6,21 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
-	permsmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
+	maileremails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
+	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
+	permsmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -83,7 +85,7 @@ func (s *Server) ListEmails(
 					mysql.AND(
 						tEmailsAccess.TargetID.EQ(tEmails.ID),
 						tEmailsAccess.Access.GT_EQ(
-							mysql.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ)),
+							mysql.Int32(int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ)),
 						),
 					),
 				).
@@ -145,7 +147,7 @@ func ListUserEmails(
 	userInfo *userinfo.UserInfo,
 	pag *database.PaginationRequest,
 	includeDisabled bool,
-) ([]*mailer.Email, error) {
+) ([]*maileremails.Email, error) {
 	condition := mysql.Bool(true)
 	baseCondition := tEmails.DeletedAt.IS_NULL()
 	if !includeDisabled {
@@ -153,7 +155,7 @@ func ListUserEmails(
 	}
 
 	if !userInfo.GetSuperuser() {
-		access := int32(mailer.AccessLevel_ACCESS_LEVEL_READ)
+		access := int32(maileraccess.AccessLevel_ACCESS_LEVEL_READ)
 		// Access predicates via EXISTS (no joins)
 		userAccessExists := mysql.EXISTS(
 			mysql.
@@ -265,7 +267,7 @@ func (s *Server) getEmailByCondition(
 	ctx context.Context,
 	tx qrm.DB,
 	condition mysql.BoolExpression,
-) (*mailer.Email, error) {
+) (*maileremails.Email, error) {
 	stmt := tEmails.
 		SELECT(
 			tEmails.ID,
@@ -283,7 +285,7 @@ func (s *Server) getEmailByCondition(
 		WHERE(condition).
 		LIMIT(1)
 
-	dest := &mailer.Email{}
+	dest := &maileremails.Email{}
 	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -302,7 +304,7 @@ func (s *Server) getEmail(
 	emailId int64,
 	withAccess bool,
 	withSettings bool,
-) (*mailer.Email, error) {
+) (*maileremails.Email, error) {
 	email, err := s.getEmailByCondition(ctx, s.db, tEmails.ID.EQ(mysql.Int64(emailId)))
 	if err != nil {
 		return nil, err
@@ -340,7 +342,7 @@ func (s *Server) GetEmail(
 		ctx,
 		req.GetId(),
 		userInfo,
-		mailer.AccessLevel_ACCESS_LEVEL_READ,
+		maileraccess.AccessLevel_ACCESS_LEVEL_READ,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -361,8 +363,8 @@ func (s *Server) GetEmail(
 	}, nil
 }
 
-func (s *Server) getEmailAccess(ctx context.Context, emailId int64) (*mailer.Access, error) {
-	access := &mailer.Access{}
+func (s *Server) getEmailAccess(ctx context.Context, emailId int64) (*maileraccess.Access, error) {
+	access := &maileraccess.Access{}
 
 	jobsAccess, err := s.access.Jobs.List(ctx, s.db, emailId)
 	if err != nil {
@@ -449,7 +451,7 @@ func (s *Server) CreateOrUpdateEmail(
 
 		req.Email.Id = lastId
 	} else {
-		check, err := s.access.CanUserAccessTarget(ctx, req.GetEmail().GetId(), userInfo, mailer.AccessLevel_ACCESS_LEVEL_MANAGE)
+		check, err := s.access.CanUserAccessTarget(ctx, req.GetEmail().GetId(), userInfo, maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -565,8 +567,8 @@ func (s *Server) CreateOrUpdateEmail(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	s.sendUpdate(ctx, &mailer.MailerEvent{
-		Data: &mailer.MailerEvent_EmailUpdate{
+	s.sendUpdate(ctx, &mailerevents.MailerEvent{
+		Data: &mailerevents.MailerEvent_EmailUpdate{
 			EmailUpdate: resp.GetEmail(),
 		},
 	},
@@ -581,7 +583,7 @@ func (s *Server) CreateOrUpdateEmail(
 func (s *Server) createEmail(
 	ctx context.Context,
 	tx qrm.DB,
-	email *mailer.Email,
+	email *maileremails.Email,
 	userInfo *userinfo.UserInfo,
 ) (int64, error) {
 	tEmails := table.FivenetMailerEmails
@@ -647,7 +649,7 @@ func (s *Server) DeleteEmail(
 		ctx,
 		req.GetId(),
 		userInfo,
-		mailer.AccessLevel_ACCESS_LEVEL_MANAGE,
+		maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -666,8 +668,8 @@ func (s *Server) DeleteEmail(
 		return nil, errorsmailer.ErrCantDeleteOwnEmail
 	}
 
-	s.sendUpdate(ctx, &mailer.MailerEvent{
-		Data: &mailer.MailerEvent_EmailDelete{
+	s.sendUpdate(ctx, &mailerevents.MailerEvent{
+		Data: &mailerevents.MailerEvent_EmailDelete{
 			EmailDelete: req.GetId(),
 		},
 	},

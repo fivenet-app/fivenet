@@ -9,9 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
+	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -20,10 +22,10 @@ import (
 type usersSync struct {
 	*syncer
 
-	state *TableSyncState
+	state *dbsyncconfig.TableSyncState
 }
 
-func newUsersSync(s *syncer, state *TableSyncState) *usersSync {
+func newUsersSync(s *syncer, state *dbsyncconfig.TableSyncState) *usersSync {
 	return &usersSync{
 		syncer: s,
 		state:  state,
@@ -31,11 +33,7 @@ func newUsersSync(s *syncer, state *TableSyncState) *usersSync {
 }
 
 func (s *usersSync) Sync(ctx context.Context) error {
-	if !s.cfg.Tables.Users.Enabled {
-		return nil
-	}
-
-	limit := int64(500)
+	limit := int64(150)
 	offset := s.getInitialOffset()
 	s.logger.Debug("usersSync", zap.Int64("offset", offset))
 
@@ -54,23 +52,30 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	if len(us) == 0 {
 		s.logger.Debug("no users found to sync, resetting state offset")
 		s.state.Set(0, nil)
+		s.resetLastCheckIfNotSynced()
 		return nil
 	}
 
-	offset, err = s.updateSyncState(us, offset, limit)
+	offset, err = s.updateSyncState(int64(len(us)), offset, limit)
 	if err != nil {
+		return err
+	}
+
+	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
+		return err
+	}
+	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
+		return err
+	}
+	if err := s.retrieveAndAttachPhoneNumbers(ctx, us); err != nil {
 		return err
 	}
 
 	s.applyFiltersAndTransformations(us, sQuery)
 
-	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
-		return err
-	}
-
 	if err := s.sendData(ctx, &pbsync.SendDataRequest{
 		Data: &pbsync.SendDataRequest_Users{
-			Users: &sync.DataUsers{
+			Users: &syncdata.DataUsers{
 				Users: us,
 			},
 		},
@@ -78,7 +83,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		return err
 	}
 
-	s.logger.Debug("usersSync", zap.Bool("syncedUp", s.state.SyncedUp))
+	s.logger.Debug("usersSync", zap.Bool("syncedUp", s.state.GetSyncedUp()))
 
 	lastUserId := strconv.FormatInt(int64(us[len(us)-1].GetUserId()), 10)
 	s.state.Set(offset+limit, &lastUserId)
@@ -87,77 +92,145 @@ func (s *usersSync) Sync(ctx context.Context) error {
 }
 
 func (s *usersSync) getInitialOffset() int64 {
-	if s.state != nil && s.state.Offset > 0 {
-		return s.state.Offset
+	offset := s.state.GetOffset()
+	if s.state != nil && offset > 0 {
+		return offset
 	}
 	return 0
 }
 
 func (s *usersSync) resetLastCheckIfNotSynced() {
-	if !s.state.SyncedUp {
-		s.state.LastCheck = nil
+	if !s.state.GetSyncedUp() {
+		s.state.SetLastCheck(nil)
 	}
 }
 
-func (s *usersSync) fetchUsers(ctx context.Context, query string) ([]*users.User, error) {
-	us := []*users.User{}
+func (s *usersSync) fetchUsers(ctx context.Context, query string) ([]*syncdata.DataUser, error) {
+	s.logger.Debug("accounts sync query", zap.String("query", query))
+
+	us := []*syncdata.DataUser{}
 	if _, err := qrm.Query(ctx, s.db, query, []any{}, &us); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query users table. %w", err)
 		}
 	}
+
 	return us, nil
 }
 
-func (s *usersSync) updateSyncState(us []*users.User, offset, limit int64) (int64, error) {
-	if int64(len(us)) < limit {
+func (s *usersSync) updateSyncState(usersCount int64, offset, limit int64) (int64, error) {
+	if usersCount < limit {
 		offset = 0
-		s.state.SyncedUp = true
+		s.state.SetSyncedUp(true)
 	}
 	return offset, nil
 }
 
-func (s *usersSync) applyFiltersAndTransformations(us []*users.User, sQuery UsersTable) {
+func (s *usersSync) applyFiltersAndTransformations(
+	us []*syncdata.DataUser,
+	sQuery dbsyncconfig.UsersTable,
+) {
 	if s.cfg.Tables.Users.IgnoreEmptyName {
-		us = slices.DeleteFunc(us, func(in *users.User) bool {
+		us = slices.DeleteFunc(us, func(in *syncdata.DataUser) bool {
 			return in == nil || (in.GetFirstname() == "" && in.GetLastname() == "")
 		})
 	}
 
 	hasFilters := len(sQuery.Filters.Jobs) > 0
 
-	for k := 0; k < len(us); {
+	foundNullUserId := false
+	for i := 0; i < len(us); i++ {
+		if us[i].GetUserId() <= 0 {
+			foundNullUserId = true
+			s.logger.Debug(
+				"user with null/zero id found",
+				zap.String("identifier", us[i].GetIdentifier()),
+			)
+			continue
+		}
+
 		if s.cfg.Tables.Users.ValueMapping != nil {
-			s.applyValueMapping(us[k])
+			s.applyValueMapping(us[i])
 		}
 
 		if hasFilters {
-			if s.applyFilters(us, k, sQuery) {
+			if s.applyFilters(us, i, sQuery) {
 				continue
 			}
 		}
 
-		s.splitNamesIfRequired(us[k])
-		s.parseDateOfBirth(us[k])
-		k++
+		s.splitNamesIfRequired(us[i])
+		s.parseDateOfBirth(us[i])
+		s.cleanupUserJob(us[i])
+	}
+
+	if foundNullUserId {
+		s.logger.Warn(
+			"some queried users have null or zero id, which have been skipped during processing",
+		)
 	}
 }
 
-func (s *usersSync) applyValueMapping(user *users.User) {
+func (s *usersSync) cleanupUserJob(user *syncdata.DataUser) {
+	if len(user.Jobs) == 0 {
+		// If no jobs are set, create one from the user job field
+		user.Jobs = []*users.UserJob{
+			{
+				Job:       user.GetJob(),
+				Grade:     user.GetJobGrade(),
+				IsPrimary: true,
+			},
+		}
+	} else {
+		// Sort the user's jobs by is primary and then alphabetically to ensure consistent order
+		slices.SortFunc(user.GetJobs(), func(a *users.UserJob, b *users.UserJob) int {
+			if a.GetIsPrimary() && !b.GetIsPrimary() {
+				return -1
+			}
+			if !a.GetIsPrimary() && b.GetIsPrimary() {
+				return 1
+			}
+			return strings.Compare(a.GetJob(), b.GetJob())
+		})
+
+		foundPrimary := false
+		primaryJob := user.GetJob()
+		for _, job := range user.GetJobs() {
+			if job.GetJob() == primaryJob {
+				// Make sure the "primary" job (user's job field if set) is marked as primary
+				foundPrimary = true
+				job.IsPrimary = true
+			} else {
+				job.IsPrimary = false
+			}
+		}
+
+		// If not ensure user has at least one primary job set
+		if !foundPrimary {
+			user.Jobs[0].IsPrimary = true
+		}
+	}
+}
+
+func (s *usersSync) applyValueMapping(user *syncdata.DataUser) {
 	if user.Sex != nil && !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
 		s.cfg.Tables.Users.ValueMapping.Sex.Process(user.Sex)
 	}
 }
 
-func (s *usersSync) applyFilters(us []*users.User, k int, sQuery UsersTable) bool {
+func (s *usersSync) applyFilters(
+	us []*syncdata.DataUser,
+	k int,
+	sQuery dbsyncconfig.UsersTable,
+) bool {
 	for _, filter := range sQuery.Filters.Jobs {
-		if filter.compiledPattern.MatchString(us[k].GetJob()) {
+		if filter.CompiledPattern.MatchString(us[k].GetJob()) {
 			switch filter.Action {
-			case FilterActionDrop:
+			case dbsyncconfig.FilterActionDrop:
 				us = append(us[:k], us[k+1:]...)
 				return true
-			case FilterActionReplace:
-				us[k].Job = filter.compiledPattern.ReplaceAllString(
+			case dbsyncconfig.FilterActionReplace:
+				us[k].Job = filter.CompiledPattern.ReplaceAllString(
 					us[k].GetJob(),
 					filter.Replacement,
 				)
@@ -169,17 +242,17 @@ func (s *usersSync) applyFilters(us []*users.User, k int, sQuery UsersTable) boo
 	return false
 }
 
-func (s *usersSync) splitNamesIfRequired(user *users.User) {
+func (s *usersSync) splitNamesIfRequired(user *syncdata.DataUser) {
 	if s.cfg.Tables.Users.SplitName && user.GetLastname() == "" {
 		ss := strings.Split(user.GetFirstname(), " ")
 		if len(ss) > 1 {
-			user.Lastname = ss[len(ss)-1]
+			user.Lastname = &ss[len(ss)-1]
 			user.Firstname = strings.Replace(user.GetFirstname(), " "+user.GetLastname(), "", 1)
 		}
 	}
 }
 
-func (s *usersSync) parseDateOfBirth(user *users.User) {
+func (s *usersSync) parseDateOfBirth(user *syncdata.DataUser) {
 	for _, format := range s.cfg.Tables.Users.DateOfBirth.Formats {
 		parsedTime, err := time.Parse(format, user.GetDateofbirth())
 		if err == nil {
@@ -189,23 +262,18 @@ func (s *usersSync) parseDateOfBirth(user *users.User) {
 	}
 }
 
-func (s *usersSync) retrieveAndAttachLicenses(ctx context.Context, us []*users.User) error {
-	if !s.cfg.Tables.CitizensLicenses.Enabled {
+func (s *usersSync) retrieveAndAttachLicenses(ctx context.Context, us []*syncdata.DataUser) error {
+	if !s.cfg.Tables.UserLicenses.Enabled {
 		return nil
 	}
 
 	errs := multierr.Combine()
 	for k := range us {
-		identifier := ""
-		if us[k].Identifier != nil {
-			identifier = us[k].GetIdentifier()
-		}
-
-		licenses, err := s.retrieveLicenses(ctx, us[k].GetUserId(), identifier)
+		licenses, err := s.retrieveLicenses(ctx, us[k].GetUserId(), us[k].GetIdentifier())
 		if err != nil {
 			errs = multierr.Append(
 				errs,
-				fmt.Errorf("failed to retrieve users %s licenses. %w", identifier, err),
+				fmt.Errorf("failed to retrieve users %s licenses. %w", us[k].GetIdentifier(), err),
 			)
 		}
 		us[k].Licenses = licenses
@@ -218,25 +286,146 @@ func (s *usersSync) retrieveLicenses(
 	ctx context.Context,
 	userId int32,
 	identifier string,
-) ([]*users.License, error) {
-	q := s.cfg.Tables.CitizensLicenses.GetQuery(s.state, 0, 100)
-	s.logger.Debug("citizens licenses sync query", zap.String("query", q))
+) ([]*userslicenses.License, error) {
+	q := s.cfg.Tables.UserLicenses.GetQuery(s.state, 0, 100)
+	s.logger.Debug("users licenses sync query", zap.String("query", q))
 
 	args := []any{}
 	if strings.Contains(q, "$userId") {
-		q = strings.ReplaceAll(q, "$userId", strconv.FormatInt(int64(userId), 10))
-		args = append(args, userId)
+		count := strings.Count(q, "$userId")
+		q = strings.ReplaceAll(q, "$userId", "?")
+		for range count {
+			args = append(args, userId)
+		}
 	} else if strings.Contains(q, "$identifier") {
-		q = strings.ReplaceAll(q, "$identifier", identifier)
-		args = append(args, identifier)
+		count := strings.Count(q, "$identifier")
+		q = strings.ReplaceAll(q, "$identifier", "?")
+		for range count {
+			args = append(args, identifier)
+		}
 	}
 
-	licenses := []*users.License{}
+	licenses := []*userslicenses.License{}
 	if _, err := qrm.Query(ctx, s.db, q, args, &licenses); err != nil {
 		return nil, err
 	}
 
 	return licenses, nil
+}
+
+func (s *usersSync) retrieveAndAttachJobs(ctx context.Context, us []*syncdata.DataUser) error {
+	if !s.cfg.Tables.UserJobs.Enabled {
+		return nil
+	}
+
+	errs := multierr.Combine()
+	for k := range us {
+		jobs, err := s.retrieveJobs(ctx, us[k].GetUserId(), us[k].GetIdentifier())
+		if err != nil {
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf(
+					"failed to retrieve users %d (%s) jobs. %w",
+					us[k].GetUserId(),
+					us[k].GetIdentifier(),
+					err,
+				),
+			)
+		}
+		us[k].Jobs = jobs
+	}
+
+	return errs
+}
+
+func (s *usersSync) retrieveJobs(
+	ctx context.Context,
+	userId int32,
+	identifier string,
+) ([]*users.UserJob, error) {
+	q := s.cfg.Tables.UserJobs.GetQuery(s.state, 0, 10)
+	s.logger.Debug("users jobs sync query", zap.String("query", q))
+
+	args := []any{}
+	if strings.Contains(q, "$userId") {
+		count := strings.Count(q, "$userId")
+		q = strings.ReplaceAll(q, "$userId", "?")
+		for range count {
+			args = append(args, userId)
+		}
+	} else if strings.Contains(q, "$identifier") {
+		count := strings.Count(q, "$identifier")
+		q = strings.ReplaceAll(q, "$identifier", "?")
+		for range count {
+			args = append(args, identifier)
+		}
+	}
+
+	jobs := []*users.UserJob{}
+	if _, err := qrm.Query(ctx, s.db, q, args, &jobs); err != nil {
+		return nil, err
+	}
+
+	return jobs, nil
+}
+
+func (s *usersSync) retrieveAndAttachPhoneNumbers(
+	ctx context.Context,
+	us []*syncdata.DataUser,
+) error {
+	if !s.cfg.Tables.UserPhoneNumbers.Enabled {
+		return nil
+	}
+
+	errs := multierr.Combine()
+	for k := range us {
+		phoneNumbers, err := s.retrievePhoneNumbers(ctx, us[k].GetUserId(), us[k].GetIdentifier())
+		if err != nil {
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf(
+					"failed to retrieve users %d (%s) jobs. %w",
+					us[k].GetUserId(),
+					us[k].GetIdentifier(),
+					err,
+				),
+			)
+		}
+		us[k].PhoneNumbers = phoneNumbers
+	}
+
+	return errs
+}
+
+func (s *usersSync) retrievePhoneNumbers(
+	ctx context.Context,
+	userId int32,
+	identifier string,
+) ([]*users.PhoneNumber, error) {
+	q := s.cfg.Tables.UserPhoneNumbers.GetQuery(s.state, 0, 10)
+	s.logger.Debug("users jobs sync query", zap.String("query", q))
+
+	args := []any{}
+	if strings.Contains(q, "$userId") {
+		count := strings.Count(q, "$userId")
+		q = strings.ReplaceAll(q, "$userId", "?")
+		for range count {
+			args = append(args, userId)
+		}
+	} else if strings.Contains(q, "$identifier") {
+		count := strings.Count(q, "$identifier")
+		q = strings.ReplaceAll(q, "$identifier", "?")
+		for range count {
+			args = append(args, identifier)
+		}
+	}
+
+	phoneNumbers := []*users.PhoneNumber{}
+	if _, err := qrm.Query(ctx, s.db, q, args, &phoneNumbers); err != nil {
+		return nil, err
+	}
+
+	return phoneNumbers, nil
 }
 
 // Sync an individual user's info.
@@ -248,40 +437,30 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 	q := s.cfg.Tables.Users.GetQuery(s.state, 0, 1, wheres...)
 	s.logger.Debug("users sync query", zap.String("query", q))
 
-	user := &users.User{}
+	user := &syncdata.DataUser{}
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, &user); err != nil {
 		return err
 	}
 
-	if s.cfg.Tables.CitizensLicenses.Enabled {
-		// Retrieve user's licenses
-		identifier := ""
-		if user.Identifier != nil {
-			identifier = user.GetIdentifier()
-		}
-
-		var err error
-		user.Licenses, err = s.retrieveLicenses(ctx, user.GetUserId(), identifier)
-		if err != nil {
-			return err
-		}
+	if err := s.retrieveAndAttachLicenses(ctx, []*syncdata.DataUser{user}); err != nil {
+		return err
+	}
+	if err := s.retrieveAndAttachJobs(ctx, []*syncdata.DataUser{user}); err != nil {
+		return err
+	}
+	if err := s.retrieveAndAttachPhoneNumbers(ctx, []*syncdata.DataUser{user}); err != nil {
+		return err
 	}
 
-	// Split names if only one field is used by the framework
-	if s.cfg.Tables.Users.SplitName {
-		if user.GetLastname() == "" {
-			ss := strings.Split(user.GetFirstname(), " ")
-			user.Lastname = ss[len(ss)-1]
-
-			user.Firstname = strings.Replace(user.GetFirstname(), " "+user.GetLastname(), "", 1)
-		}
-	}
+	s.splitNamesIfRequired(user)
+	s.parseDateOfBirth(user)
+	s.cleanupUserJob(user)
 
 	if s.cli != nil {
 		if err := s.sendData(ctx, &pbsync.SendDataRequest{
 			Data: &pbsync.SendDataRequest_Users{
-				Users: &sync.DataUsers{
-					Users: []*users.User{user},
+				Users: &syncdata.DataUsers{
+					Users: []*syncdata.DataUser{user},
 				},
 			},
 		}); err != nil {

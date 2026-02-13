@@ -12,8 +12,6 @@ const { locale, t, setLocale, finalizePendingLocaleChange } = useI18n();
 
 const appConfig = useAppConfig();
 
-const toast = useToast();
-
 const colorMode = useColorMode();
 
 const color = computed(() => (colorMode.value === 'dark' ? '#111827' : '#fff'));
@@ -38,7 +36,7 @@ useSeoMeta({
 });
 
 const settingsStore = useSettingsStore();
-const { getUserLocale, nuiEnabled, design, updateAvailable } = storeToRefs(settingsStore);
+const { getUserLocale, nuiEnabled, design } = storeToRefs(settingsStore);
 
 if (APP_VERSION !== settingsStore.version) {
     logger.info('Resetting app data because new version has been detected', settingsStore.version, APP_VERSION);
@@ -47,6 +45,20 @@ if (APP_VERSION !== settingsStore.version) {
     useSearchesStore().clear();
     settingsStore.setVersion(APP_VERSION);
 }
+
+// Remove any `dashboard-*` cookies on app start, as they are no longer used.
+// This should help prevent 400 errors due to too many cookies being sent.
+function removeDashboardCookies(): void {
+    cookieStore.getAll().then((cookies) => {
+        cookies.forEach((cookie) => {
+            if (cookie?.name && cookie.name.startsWith('dashboard-')) {
+                logger.info('Removing dashboard cookie:', cookie.name);
+                cookieStore.delete(cookie.name);
+            }
+        });
+    });
+}
+removeDashboardCookies();
 
 // Set locale and theme colors in app config
 async function setThemeColors(): Promise<void> {
@@ -144,31 +156,10 @@ onBeforeUnmount(async () => {
     window.removeEventListener('focusout', onFocusHandler);
 });
 
-watch(updateAvailable, async () => {
-    if (!updateAvailable.value) return;
-
-    toast.add({
-        title: t('system.update_available.title', { version: updateAvailable.value }),
-        description: t('system.update_available.content'),
-        actions: [
-            {
-                label: t('common.refresh'),
-                onClick: () => reloadNuxtApp({ persistState: false, force: true }),
-            },
-        ],
-        icon: 'i-mdi-update',
-        color: 'primary',
-        duration: 20000,
-        close: {
-            disabled: true,
-        },
-    });
-});
-
 const authStore = useAuthStore();
 const { username } = storeToRefs(authStore);
 
-// Use fivenet_authed cookie for basic browser-wide is logged in/out "signal"
+// Use `fivenet_authed` cookie for basic browser-wide is logged in/out "signal"
 const authedState = useCookie('fivenet_authed');
 useIntervalFn(async () => refreshCookie('fivenet_authed'), 1750);
 

@@ -8,8 +8,8 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
 import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
-import type { Permission, Role } from '~~/gen/ts/resources/permissions/permissions';
+import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
+import type { Permission, Role } from '~~/gen/ts/resources/permissions/permissions/permissions';
 import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/resources/settings/perms';
 import EffectivePermsSlideover from './EffectivePermsSlideover.vue';
 import { isEmptyAttributes } from './helpers';
@@ -24,11 +24,14 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const { can } = useAuth();
+const { activeChar, can } = useAuth();
 
 const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
+
+const authStore = useAuthStore();
+const { impersonateJob } = authStore;
 
 const settingsSettingsClient = await getSettingsSettingsClient();
 
@@ -348,6 +351,26 @@ async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
     changed.value = true;
 }
 
+async function impersonateRole(grade: number): Promise<void> {
+    try {
+        await impersonateJob(grade);
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.ERROR,
+        });
+    } catch (e) {
+        handleGRPCError(e as Error);
+
+        notifications.add({
+            title: { key: 'notifications.action_failed.title', parameters: {} },
+            description: { key: 'notifications.common.coming_soon', parameters: {} },
+            type: NotificationType.ERROR,
+        });
+    }
+}
+
 const accordionCategories = computed(() =>
     [...permCategories.value.entries()]
         .map((category) => {
@@ -364,7 +387,15 @@ const accordionCategories = computed(() =>
 const canUpdate = can('settings.SettingsService/UpdateRolePerms');
 
 const effectivePermsSlideover = overlay.create(EffectivePermsSlideover, { props: { roleId: props.roleId } });
-const confirmModal = overlay.create(ConfirmModal);
+const confirmDeleteModal = overlay.create(ConfirmModal);
+const confirmImpersonateModal = overlay.create(ConfirmModal, {
+    props: {
+        title: t('components.settings.role_view.impersonate_confirm.title'),
+        description: t('components.settings.role_view.impersonate_confirm.description'),
+        color: 'warning',
+        confirm: async () => role.value && deleteRole(role.value.id),
+    },
+});
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
@@ -405,6 +436,20 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             />
                         </UTooltip>
 
+                        <UTooltip v-if="canUpdate" :text="$t('common.impersonate')">
+                            <UButton
+                                variant="link"
+                                icon="i-mdi-drama-masks"
+                                color="primary"
+                                :disabled="!activeChar || activeChar.jobGrade >= role.grade"
+                                @click="
+                                    confirmImpersonateModal.open({
+                                        confirm: async () => role && impersonateRole(role.grade),
+                                    })
+                                "
+                            />
+                        </UTooltip>
+
                         <UTooltip :text="$t('common.refresh')">
                             <UButton variant="link" icon="i-mdi-refresh" color="primary" @click="refresh()" />
                         </UTooltip>
@@ -415,11 +460,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 variant="link"
                                 icon="i-mdi-delete"
                                 color="error"
-                                @click="
-                                    confirmModal.open({
-                                        confirm: async () => deleteRole(role!.id),
-                                    })
-                                "
+                                @click="confirmDeleteModal.open()"
                             />
                         </UTooltip>
                     </UFieldGroup>

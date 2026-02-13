@@ -3,13 +3,15 @@ package documents
 import (
 	context "context"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -21,7 +23,7 @@ func (s *Server) listDocumentsQuery(
 	userInfo *userinfo.UserInfo,
 	customizeFn func(stmt mysql.SelectStatement) mysql.SelectStatement,
 ) mysql.Statement {
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 
 	wheres := []mysql.BoolExpression{}
 	if where != nil {
@@ -70,7 +72,7 @@ func (s *Server) listDocumentsQuery(
 						),
 					),
 					tDAccess.Access.GT_EQ(
-						mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
+						mysql.Int32(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
 				)),
 		)
@@ -132,6 +134,7 @@ func (s *Server) listDocumentsQuery(
 			tDMeta.ApPendingCount,
 			tDMeta.ApAnyDeclined,
 			tDMeta.ApPoliciesActive,
+			tDMeta.CommentCount,
 		)
 
 		if userInfo.GetSuperuser() {
@@ -198,7 +201,7 @@ func (s *Server) getDocumentQuery(
 	userInfo *userinfo.UserInfo,
 	withContent bool,
 ) mysql.SelectStatement {
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 
 	var wheres []mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
@@ -218,7 +221,7 @@ func (s *Server) getDocumentQuery(
 						),
 					),
 					tDAccess.Access.GT_EQ(
-						mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
+						mysql.Int32(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
 				)),
 		)
@@ -289,6 +292,7 @@ func (s *Server) getDocumentQuery(
 			tDMeta.ApPendingCount,
 			tDMeta.ApAnyDeclined,
 			tDMeta.ApPoliciesActive,
+			tDMeta.CommentCount,
 		)
 
 		if withContent {
@@ -367,6 +371,7 @@ func (s *Server) getDocumentMeta(
 			tDMeta.ApPendingCount,
 			tDMeta.ApAnyDeclined,
 			tDMeta.ApPoliciesActive,
+			tDMeta.CommentCount,
 		).
 		FROM(tDMeta).
 		WHERE(
@@ -387,7 +392,7 @@ func (s *Server) updateDocumentOwner(
 	tx qrm.DB,
 	documentId int64,
 	userInfo *userinfo.UserInfo,
-	newOwner *users.UserShort,
+	newOwner *usershort.UserShort,
 ) error {
 	stmt := tDocument.
 		UPDATE(
@@ -405,14 +410,14 @@ func (s *Server) updateDocumentOwner(
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 		DocumentId:   documentId,
-		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED,
+		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.GetJob(),
-		Data: &documents.DocActivityData{
-			Data: &documents.DocActivityData_OwnerChanged{
-				OwnerChanged: &documents.DocOwnerChanged{
+		Data: &documentsactivity.DocActivityData{
+			Data: &documentsactivity.DocActivityData_OwnerChanged{
+				OwnerChanged: &documentsactivity.DocOwnerChanged{
 					NewOwnerId: newOwner.GetUserId(),
 					NewOwner:   newOwner,
 				},
@@ -425,7 +430,7 @@ func (s *Server) updateDocumentOwner(
 	return nil
 }
 
-func (s *Server) checkIfDocumentDraft(ctx context.Context, documentId int64) (bool, error) {
+func (s *Server) checkIfDocumentIsDraft(ctx context.Context, documentId int64) (bool, error) {
 	stmt := tDocument.
 		SELECT(
 			tDocument.Draft.AS("draft"),

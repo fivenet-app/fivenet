@@ -14,40 +14,66 @@ watchConfig: true
 
 stateFile: "dbsync.state.yaml"
 
-# The target FiveNet instance to sync data to (the instance must have the sync API enabled and you need a valid token)
-destination:
-  # Your FiveNet Hostname, with port if your port is not 443 (HTTPS),
-  # requires the FiveNet instance to **use HTTPS**.
-  # ! Make sure to not include the protocol (http:// or https://) here!
-  # ! Don't include a trailing slash!
-  #
-  # Example:
-  # 'https://demo.fivenet.app'   -> 'demo.fivenet.app:443'
-  # 'https://fivenet.example.com' -> 'fivenet.example.com:443'
-  url: "fivenet.example.com"
-  token: "YOUR_SYNC_API_TOKEN"
-  # Disable TLS verification (not recommended)
-  insecure: false
-  # Sync Interval can also be specified per table in the `tables:` section
-  syncInterval: 5s
-
-# Your gameservers' database details
-# Changes to the source require a restart of the dbsync.
+# Your **gameservers' database** details
+# Changes to the source require a restart of the dbsync!
 source:
   # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-  # Please note that the `parseTime` parameter is allows set to true
+  # Please note that the `parseTime` parameter is always set to true
   dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
-  # For the local test database using `docker-compose`
+  # Example for a locally hosted database
   #dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?collation=utf8mb4_unicode_ci&loc=Europe%2FBerlin"
+  #
+  # Or use individual parameters (make sure to comment out the `dsn:` line above if you use these).
+  # Hint: you can set these via environment variables as well, e.g., FIVENET_DATABASE_HOST, FIVENET_DATABASE_PORT,
+  # FIVENET_DATABASE_USERNAME, FIVENET_DATABASE_PASSWORD, FIVENET_DATABASE_DATABASE
+  #host: "localhost"
+  #port: 3306
+  #username: "fivenet"
+  #password: "changeme"
+  #database: "fivenet"
+
+  # Advanced connection settings
   maxOpenConns: 12
   maxIdleConns: 5
   connMaxIdleTime: 10m
   connMaxLifetime: 45m
   disableLocking: false
 
+  # Interval in which base data (jobs, job grades, licenses) is re-synced fully
+  baseDataResyncInterval: 5m
+
+# The target FiveNet instance to sync data to (the instance must have the sync API enabled
+# and you need a valid token)
+destination:
+  # Sync method to use, currently only `api` is supported, which uses the FiveNet Sync API to sync data to FiveNet.
+  method: "api"
+  # Your FiveNet Sync API details.
+  api:
+    # Your FiveNet Hostname, with port if your port is not 443 (HTTPS),
+    # requires the FiveNet instance to **use HTTPS**.
+    # ! Make sure to not include the protocol (http:// or https://) here!
+    # ! Don't include a trailing slash!
+    #
+    # Example:
+    # 'https://demo.fivenet.app'   -> 'demo.fivenet.app:443'
+    # 'https://fivenet.example.com' -> 'fivenet.example.com:443'
+    url: "fivenet.example.com"
+    token: "YOUR_SYNC_API_TOKEN"
+    # Disable TLS verification (not recommended)
+    insecure: false
+
+  # Sync Interval can also be specified per table in the `tables:` section
+  syncInterval: 3s
+  # If you want to test your configuration without actually syncing data to FiveNet
+  # you can enable the `dryRun` mode,
+  # which will log the data that would be synced instead of sending it to FiveNet.
+  # This is useful for testing and debugging your configuration.
+  dryRun: false
+
 # A query for each "piece of data" FiveNet needs to function
+# The example table names + columns and queries are for the ESX framework
 tables:
-  # The example queries here are for the ESX framework
+  # Jobs of your game server (e.g., police, ambulance, taxi, etc., with their name and label/display name)
   jobs:
     enabled: true
     # Name of the table for this data (in case you are using a custom query or are joining
@@ -66,6 +92,7 @@ tables:
     #    `label` AS `job.label`
     #  FROM
     #    `jobs`
+    #  ORDER BY `name`
     #  OFFSET $offset;
     filters: []
       # Example filter to drop jobs starting with "off_", to enable uncomment this section
@@ -73,6 +100,9 @@ tables:
       # have "off-duty" jobs that need to be rewritten to their "actual" job name
       #- pattern: '^off_'
       #  action: drop
+
+  # Job grades for the jobs, e.g., "police" job has the grades "0", "1", "2", etc. with different
+  # labels and names.
   jobGrades:
     enabled: true
     # Name of the table for this data (in case you are using a custom query or are joining
@@ -98,7 +128,10 @@ tables:
     #    `job_grades`
     #  WHERE
     #    `job_grades`.`job_name` = $jobName
+    #  ORDER BY `job_grade.job_name`, `job_grade.grade`
     #  OFFSET $offset;
+
+  # Licenses available on your server, e.g., driver's license, weapon license, etc.
   licenses:
     enabled: true
     # Name of the table for this data (in case you are using a custom query or are joining
@@ -117,8 +150,12 @@ tables:
     #    `licenses`.`label` AS `license.label`
     #  FROM
     #    `licenses`
+    #  ORDER BY `type`
     #  LIMIT $limit
     #  OFFSET $offset;
+
+  # Users/Characters of the game server - This is the main users table,
+  # which is used to link to other data to (e.g., vehicles, users' licenses)
   users:
     enabled: true
     # Name of the table for this data (in case you are using a custom query or are joining
@@ -137,11 +174,11 @@ tables:
       firstname: "firstname"
       lastname: "lastname"
       dateOfBirth: "dateofbirth"
+      sex: "sex"
+      height: "height"
       job: "job"
       jobGrade: "job_grade"
-      sex: "sex"
       phoneNumber: "phone_number"
-      height: "height"
       # Optional columns
       visum: "-" # Indicates that this column is not available
       playtime: "-" # Indicates that this column is not available
@@ -150,8 +187,15 @@ tables:
     # E.g., it is prefered to use a ESX like identifier layout for that case `charX:LICENSE`
     #
     # Must return result columns named: `user.user_id`, `user.identifier`, `user.group`, `user.firstname`,
-    # `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex`, `user.phone_number` columns
-    # Optional columns: `user.height`, `user.visum`, `user.playtime`
+    # `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex` columns
+    # Optional columns: `user.phone_number`, `user.height`, `user.visum`, `user.playtime`
+    #
+    # For advanced users: If an user can has more than one job (e.g., a main job and a secondary job),
+    # you should use the `userJobs:` section to query the job(s) of the users instead of returning multiple rows per user in this query, to prevent data duplication and potential performance issues.
+    #
+    # If an user can has multiple phone numbers, you can return multiple rows per user with the phone number
+    # data in the columns `user_phone_number.number` and `user_phone_number.is_primary` (boolean column
+    # to indicate the primary phone number, if multiple phone numbers are returned).
     #query: |
     #  SELECT
     #    `id` AS `user.id`,
@@ -160,16 +204,17 @@ tables:
     #    `firstname` AS `user.firstname`,
     #    `lastname` AS `user.lastname`,
     #    `dateofbirth` AS `user.dateofbirth`,
+    #    `sex` AS `user.sex`,
+    #    `height` AS `user.height`,
     #    `job` AS `user.job`,
     #    `job_grade` AS `user.job_grade`,
-    #    `sex` AS `user.sex`,
     #    `phone_number` AS `user.phone_number`,
-    #    `height` AS `user.height`,
     #    `visum` AS `user.visum`,
     #    `playtime` AS `user.playtime`
     #  FROM
     #    `users`
     #  $whereCondition
+    #  ORDER BY `id`
     #  LIMIT $limit
     #  OFFSET $offset;
     # If a lastname is not returned by the query, attempt to split the firstname into "two" parts
@@ -202,6 +247,8 @@ tables:
         #- pattern: '^ambulance$'
         #  action: replace
         #  replacement: 'ems'
+
+  # Licenses of a user
   userLicenses:
     enabled: true
     # Name of the table for this data (in case you are using a custom query or are joining
@@ -222,8 +269,51 @@ tables:
     #    `user_licenses`
     #  WHERE
     #    `user_licenses`.`owner` = $identifier
+    #  ORDER BY `type`
     #  LIMIT $limit
     #  OFFSET $offset;
+
+  # Jobs of a user (if your users can have multiple jobs, e.g., a main job and a secondary job, it is recommended to enable and use this
+  # and return the jobs in a separate query to prevent data duplication and potential performance issues,
+  # otherwise you can also return the job data in the main users query)
+  userJobs:
+    enabled: false
+    # Custom query to retrieve the jobs for a **specific** user, the `$userId` and `$identifier`
+    # parameters are the placeholder for the user's user id/identifier.
+    #
+    # Must return result columns named: `user_job.job`, `user_job.grade`
+    # Optional but recommended: `user_job.is_primary` (boolean column to indicate if it is the primary job,
+    # if multiple jobs are returned, otherwise the first is set as primary)
+    #query: |
+    #  SELECT
+    #    `job` AS `user_job.job`,
+    #    `grade` AS `user_job.grade`
+    #    1 AS `user_job.is_primary`
+    #  FROM
+    #    `user_jobs`
+    #  WHERE
+    #    `user_jobs`.`owner` = $identifier
+    #  ORDER BY `owner`
+    #  LIMIT $limit
+    #  OFFSET $offset;
+
+  # User Phone Numbers (if your users can have multiple phone numbers,
+  # it is recommended to enable and use this
+  userPhoneNumbers:
+    enabled: false
+    # Custom query to retrieve the phone numbers for a **specific** user, the `$userId` and `$identifier`
+    # parameters are the placeholder for the user's user id/identifier.
+    #
+    # Must return result columns named: `user_phone_number.number`, `user_phone_number.is_primary`
+    query: |
+      SELECT
+        `phone_number` AS `user_phone_number.number`,
+        (ROW_NUMBER() OVER (ORDER BY `is_primary` DESC) = 1) AS `user_phone_number.is_primary`
+      FROM user_phone_numbers
+      WHERE user_phone_numbers.identifier = $identifier
+      ORDER BY `is_primary` DESC, `phone_number`;
+
+  # Vehicles owned by users
   vehicles:
     enabled: true
     # Name of the table for this data (in case you are using a custom query or are joining
@@ -254,9 +344,45 @@ tables:
     #    `model` AS `vehicle.model`
     #  FROM
     #    `owned_vehicles`
+    #  ORDER BY `vehicle.plate`
+    #  LIMIT $limit
+    #  OFFSET $offset;
+
+  # Accounts - Used to, e.g., sync group(s) by license, to accounts.
+  accounts:
+    enabled: false
+    tableName: "admin_accounts"
+    # By default the dbsync will attempt to add the column if it does not exist, but you can
+    # disable that by commenting this out. It is recommended to leave it enabled, for
+    # performance reasons.
+    updatedTimeColumn: "updated_at"
+    # Query to retrieve account data (example query to show how to retrieve
+    # account primary group and sub groups (using `JSON_*` funcs)).
+    #
+    # Must return result columns named: `account.license`, `account.group` (primary group)
+    # Optional columns: `account.groups` (comma-separated list of groups, if `account.group` is
+    # empty `account.group` is used)
+    query: "" # Query to retrieve all accounts
+    #  SELECT
+    #    `license` AS `account.license`,
+    #    `group` AS `account.group`,
+    #    JSON_KEYS(NULLIF(`sub_groups`, '')) AS `account.groups`
+    #  FROM
+    #    `admin_accounts`
+    #  $whereCondition
+    #  ORDER BY `license`
     #  LIMIT $limit
     #  OFFSET $offset;
 
 tableManager:
-  # By default enabled, to create missing `updated_at` columns on tables that have it configured
+  # By default enabled, used to create missing `updated_at` columns (`updatedTimeColumn`) on tables that have it configured.
   enabled: true
+
+# Limit the amount of data to sync per query, this is useful to prevent syncing too much data at once which can cause performance issues or timeouts.
+# The default numbers are the maximum allowed by the sync API, you can lower them if you experience performance issues or timeouts, but you cannot increase them above these values.
+limits:
+  jobs: 200
+  licenses: 200
+  users: 150
+  vehicles: 500
+  accounts: 100

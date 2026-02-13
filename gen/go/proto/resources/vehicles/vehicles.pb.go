@@ -4,14 +4,16 @@
 // 	protoc        (unknown)
 // source: resources/vehicles/vehicles.proto
 
+//go:build !protoopaque
+
 package vehicles
 
 import (
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,16 +25,16 @@ const (
 )
 
 type Vehicle struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	Plate           string                 `protobuf:"bytes,1,opt,name=plate,proto3" json:"plate,omitempty"`
 	Model           *string                `protobuf:"bytes,2,opt,name=model,proto3,oneof" json:"model,omitempty"`
 	Type            string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
 	OwnerId         *int32                 `protobuf:"varint,4,opt,name=owner_id,json=ownerId,proto3,oneof" json:"owner_id,omitempty"`
 	OwnerIdentifier *string                `protobuf:"bytes,6,opt,name=owner_identifier,json=ownerIdentifier,proto3,oneof" json:"owner_identifier,omitempty"`
-	Owner           *users.UserShort       `protobuf:"bytes,5,opt,name=owner,proto3,oneof" json:"owner,omitempty"`
+	Owner           *short.UserShort       `protobuf:"bytes,5,opt,name=owner,proto3,oneof" json:"owner,omitempty"`
 	Job             *string                `protobuf:"bytes,7,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	JobLabel        *string                `protobuf:"bytes,8,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	Props           *VehicleProps          `protobuf:"bytes,9,opt,name=props,proto3,oneof" json:"props,omitempty"`
+	Props           *props.VehicleProps    `protobuf:"bytes,9,opt,name=props,proto3,oneof" json:"props,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -60,11 +62,6 @@ func (x *Vehicle) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Vehicle.ProtoReflect.Descriptor instead.
-func (*Vehicle) Descriptor() ([]byte, []int) {
-	return file_resources_vehicles_vehicles_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Vehicle) GetPlate() string {
@@ -102,7 +99,7 @@ func (x *Vehicle) GetOwnerIdentifier() string {
 	return ""
 }
 
-func (x *Vehicle) GetOwner() *users.UserShort {
+func (x *Vehicle) GetOwner() *short.UserShort {
 	if x != nil {
 		return x.Owner
 	}
@@ -123,28 +120,171 @@ func (x *Vehicle) GetJobLabel() string {
 	return ""
 }
 
-func (x *Vehicle) GetProps() *VehicleProps {
+func (x *Vehicle) GetProps() *props.VehicleProps {
 	if x != nil {
 		return x.Props
 	}
 	return nil
 }
 
+func (x *Vehicle) SetPlate(v string) {
+	x.Plate = v
+}
+
+func (x *Vehicle) SetModel(v string) {
+	x.Model = &v
+}
+
+func (x *Vehicle) SetType(v string) {
+	x.Type = v
+}
+
+func (x *Vehicle) SetOwnerId(v int32) {
+	x.OwnerId = &v
+}
+
+func (x *Vehicle) SetOwnerIdentifier(v string) {
+	x.OwnerIdentifier = &v
+}
+
+func (x *Vehicle) SetOwner(v *short.UserShort) {
+	x.Owner = v
+}
+
+func (x *Vehicle) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *Vehicle) SetJobLabel(v string) {
+	x.JobLabel = &v
+}
+
+func (x *Vehicle) SetProps(v *props.VehicleProps) {
+	x.Props = v
+}
+
+func (x *Vehicle) HasModel() bool {
+	if x == nil {
+		return false
+	}
+	return x.Model != nil
+}
+
+func (x *Vehicle) HasOwnerId() bool {
+	if x == nil {
+		return false
+	}
+	return x.OwnerId != nil
+}
+
+func (x *Vehicle) HasOwnerIdentifier() bool {
+	if x == nil {
+		return false
+	}
+	return x.OwnerIdentifier != nil
+}
+
+func (x *Vehicle) HasOwner() bool {
+	if x == nil {
+		return false
+	}
+	return x.Owner != nil
+}
+
+func (x *Vehicle) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *Vehicle) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobLabel != nil
+}
+
+func (x *Vehicle) HasProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.Props != nil
+}
+
+func (x *Vehicle) ClearModel() {
+	x.Model = nil
+}
+
+func (x *Vehicle) ClearOwnerId() {
+	x.OwnerId = nil
+}
+
+func (x *Vehicle) ClearOwnerIdentifier() {
+	x.OwnerIdentifier = nil
+}
+
+func (x *Vehicle) ClearOwner() {
+	x.Owner = nil
+}
+
+func (x *Vehicle) ClearJob() {
+	x.Job = nil
+}
+
+func (x *Vehicle) ClearJobLabel() {
+	x.JobLabel = nil
+}
+
+func (x *Vehicle) ClearProps() {
+	x.Props = nil
+}
+
+type Vehicle_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Plate           string
+	Model           *string
+	Type            string
+	OwnerId         *int32
+	OwnerIdentifier *string
+	Owner           *short.UserShort
+	Job             *string
+	JobLabel        *string
+	Props           *props.VehicleProps
+}
+
+func (b0 Vehicle_builder) Build() *Vehicle {
+	m0 := &Vehicle{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Plate = b.Plate
+	x.Model = b.Model
+	x.Type = b.Type
+	x.OwnerId = b.OwnerId
+	x.OwnerIdentifier = b.OwnerIdentifier
+	x.Owner = b.Owner
+	x.Job = b.Job
+	x.JobLabel = b.JobLabel
+	x.Props = b.Props
+	return m0
+}
+
 var File_resources_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	"!resources/vehicles/vehicles.proto\x12\x12resources.vehicles\x1a\x1bresources/users/users.proto\x1a\x1eresources/vehicles/props.proto\"\xa1\x03\n" +
+	"!resources/vehicles/vehicles.proto\x12\x12resources.vehicles\x1a resources/users/short/user.proto\x1a$resources/vehicles/props/props.proto\"\xad\x03\n" +
 	"\aVehicle\x12\x14\n" +
 	"\x05plate\x18\x01 \x01(\tR\x05plate\x12\x19\n" +
 	"\x05model\x18\x02 \x01(\tH\x00R\x05model\x88\x01\x01\x12\x12\n" +
 	"\x04type\x18\x03 \x01(\tR\x04type\x12\x1e\n" +
 	"\bowner_id\x18\x04 \x01(\x05H\x01R\aownerId\x88\x01\x01\x12.\n" +
-	"\x10owner_identifier\x18\x06 \x01(\tH\x02R\x0fownerIdentifier\x88\x01\x01\x125\n" +
-	"\x05owner\x18\x05 \x01(\v2\x1a.resources.users.UserShortH\x03R\x05owner\x88\x01\x01\x12\x15\n" +
+	"\x10owner_identifier\x18\x06 \x01(\tH\x02R\x0fownerIdentifier\x88\x01\x01\x12;\n" +
+	"\x05owner\x18\x05 \x01(\v2 .resources.users.short.UserShortH\x03R\x05owner\x88\x01\x01\x12\x15\n" +
 	"\x03job\x18\a \x01(\tH\x04R\x03job\x88\x01\x01\x12 \n" +
-	"\tjob_label\x18\b \x01(\tH\x05R\bjobLabel\x88\x01\x01\x12;\n" +
-	"\x05props\x18\t \x01(\v2 .resources.vehicles.VehiclePropsH\x06R\x05props\x88\x01\x01B\b\n" +
+	"\tjob_label\x18\b \x01(\tH\x05R\bjobLabel\x88\x01\x01\x12A\n" +
+	"\x05props\x18\t \x01(\v2&.resources.vehicles.props.VehiclePropsH\x06R\x05props\x88\x01\x01B\b\n" +
 	"\x06_modelB\v\n" +
 	"\t_owner_idB\x13\n" +
 	"\x11_owner_identifierB\b\n" +
@@ -152,29 +292,17 @@ const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 	"\x04_jobB\f\n" +
 	"\n" +
 	"_job_labelB\b\n" +
-	"\x06_propsBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles;vehiclesb\x06proto3"
-
-var (
-	file_resources_vehicles_vehicles_proto_rawDescOnce sync.Once
-	file_resources_vehicles_vehicles_proto_rawDescData []byte
-)
-
-func file_resources_vehicles_vehicles_proto_rawDescGZIP() []byte {
-	file_resources_vehicles_vehicles_proto_rawDescOnce.Do(func() {
-		file_resources_vehicles_vehicles_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_vehicles_vehicles_proto_rawDesc), len(file_resources_vehicles_vehicles_proto_rawDesc)))
-	})
-	return file_resources_vehicles_vehicles_proto_rawDescData
-}
+	"\x06_propsBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles;vehiclesb\x06proto3"
 
 var file_resources_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_vehicles_vehicles_proto_goTypes = []any{
-	(*Vehicle)(nil),         // 0: resources.vehicles.Vehicle
-	(*users.UserShort)(nil), // 1: resources.users.UserShort
-	(*VehicleProps)(nil),    // 2: resources.vehicles.VehicleProps
+	(*Vehicle)(nil),            // 0: resources.vehicles.Vehicle
+	(*short.UserShort)(nil),    // 1: resources.users.short.UserShort
+	(*props.VehicleProps)(nil), // 2: resources.vehicles.props.VehicleProps
 }
 var file_resources_vehicles_vehicles_proto_depIdxs = []int32{
-	1, // 0: resources.vehicles.Vehicle.owner:type_name -> resources.users.UserShort
-	2, // 1: resources.vehicles.Vehicle.props:type_name -> resources.vehicles.VehicleProps
+	1, // 0: resources.vehicles.Vehicle.owner:type_name -> resources.users.short.UserShort
+	2, // 1: resources.vehicles.Vehicle.props:type_name -> resources.vehicles.props.VehicleProps
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
@@ -187,7 +315,6 @@ func file_resources_vehicles_vehicles_proto_init() {
 	if File_resources_vehicles_vehicles_proto != nil {
 		return
 	}
-	file_resources_vehicles_props_proto_init()
 	file_resources_vehicles_vehicles_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

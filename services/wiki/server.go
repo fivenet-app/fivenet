@@ -4,19 +4,19 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
-	pbwiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/collab"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
-	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	wikiaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
+	pbwiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/collab"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
+	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -57,7 +57,7 @@ type Server struct {
 	enricher *mstlystcdata.UserAwareEnricher
 	notifi   notifi.INotifi
 
-	access *access.Grouped[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.PageUserAccess, *wiki.PageUserAccess, access.DummyQualificationAccess[wiki.AccessLevel], *access.DummyQualificationAccess[wiki.AccessLevel], wiki.AccessLevel]
+	access *access.Grouped[wikiaccess.PageJobAccess, *wikiaccess.PageJobAccess, wikiaccess.PageUserAccess, *wikiaccess.PageUserAccess, access.DummyQualificationAccess[wikiaccess.AccessLevel], *access.DummyQualificationAccess[wikiaccess.AccessLevel], wikiaccess.AccessLevel]
 
 	collabServer *collab.CollabServer
 	fHandler     *filestore.Handler[int64]
@@ -97,7 +97,7 @@ func NewServer(p Params) *Server {
 		false,
 	)
 
-	objAccess := access.NewGrouped[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.PageUserAccess, *wiki.PageUserAccess, access.DummyQualificationAccess[wiki.AccessLevel]](
+	objAccess := access.NewGrouped[wikiaccess.PageJobAccess, *wikiaccess.PageJobAccess, wikiaccess.PageUserAccess, *wikiaccess.PageUserAccess, access.DummyQualificationAccess[wikiaccess.AccessLevel]](
 		p.DB,
 		table.FivenetWikiPages,
 		&access.TargetTableColumns{
@@ -106,7 +106,7 @@ func NewServer(p Params) *Server {
 			CreatorID:  table.FivenetWikiPages.CreatorID,
 			CreatorJob: table.FivenetWikiPages.Job,
 		},
-		access.NewJobs[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.AccessLevel](
+		access.NewJobs[wikiaccess.PageJobAccess, *wikiaccess.PageJobAccess, wikiaccess.AccessLevel](
 			table.FivenetWikiPagesAccess,
 			&access.JobAccessColumns{
 				BaseAccessColumns: access.BaseAccessColumns{
@@ -128,7 +128,7 @@ func NewServer(p Params) *Server {
 				MinimumGrade: table.FivenetWikiPagesAccess.AS("page_job_access").MinimumGrade,
 			},
 		),
-		access.NewUsers[wiki.PageUserAccess, *wiki.PageUserAccess, wiki.AccessLevel](
+		access.NewUsers[wikiaccess.PageUserAccess, *wikiaccess.PageUserAccess, wikiaccess.AccessLevel](
 			table.FivenetWikiPagesAccess,
 			&access.UserAccessColumns{
 				BaseAccessColumns: access.BaseAccessColumns{
@@ -152,7 +152,12 @@ func NewServer(p Params) *Server {
 	)
 	access.RegisterAccess("wiki_page", &access.GroupedAccessAdapter{
 		CanUserAccessTargetFn: func(ctx context.Context, targetId int64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
-			return objAccess.CanUserAccessTarget(ctx, targetId, userInfo, wiki.AccessLevel(access))
+			return objAccess.CanUserAccessTarget(
+				ctx,
+				targetId,
+				userInfo,
+				wikiaccess.AccessLevel(access),
+			)
 		},
 	})
 

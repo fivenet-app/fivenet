@@ -1,112 +1,118 @@
 <script lang="ts" setup>
 import { useCompletorStore } from '~/stores/completor';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
-import type { AttributeValues, RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
-import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
+import type { AttributeValues, RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
+import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 
-const props = defineProps<{
-    modelValue: RoleAttribute;
+defineProps<{
     disabled?: boolean;
     permission: Permission;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: AttributeValues): void;
     (e: 'changed'): void;
     (e: 'opened', value: boolean): void;
 }>();
+
+const attribute = defineModel<RoleAttribute>({ required: true });
 
 const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
 
-const attribute = useVModel(props, 'modelValue', emit);
-
-if (attribute.value?.validValues === undefined) {
-    switch (lowercaseFirstLetter(attribute.value.type)) {
-        case 'stringList': {
-            attribute.value.validValues = {
-                validValues: {
-                    oneofKind: 'stringList',
-                    stringList: {
-                        strings: [],
+function setFromProps(): void {
+    if (attribute.value?.validValues === undefined) {
+        switch (lowercaseFirstLetter(attribute.value.type)) {
+            case 'stringList': {
+                attribute.value.validValues = {
+                    validValues: {
+                        oneofKind: 'stringList',
+                        stringList: {
+                            strings: [],
+                        },
                     },
-                },
-            };
-            break;
+                };
+                break;
+            }
+
+            case 'jobList': {
+                attribute.value.validValues = {
+                    validValues: {
+                        oneofKind: 'jobList',
+                        jobList: {
+                            strings: [],
+                        },
+                    },
+                };
+                break;
+            }
+
+            case 'jobGradeList': {
+                attribute.value.validValues = {
+                    validValues: {
+                        oneofKind: 'jobGradeList',
+                        jobGradeList: {
+                            jobs: {},
+                            fineGrained: false,
+                            grades: {},
+                        },
+                    },
+                };
+                break;
+            }
         }
+    }
 
-        case 'jobList': {
-            attribute.value.validValues = {
-                validValues: {
-                    oneofKind: 'jobList',
-                    jobList: {
-                        strings: [],
+    if (attribute.value?.maxValues === undefined || attribute.value?.maxValues.validValues.oneofKind === undefined) {
+        switch (lowercaseFirstLetter(attribute.value.type)) {
+            case 'stringList': {
+                attribute.value.maxValues = {
+                    validValues: {
+                        oneofKind: 'stringList',
+                        stringList: {
+                            strings: [],
+                        },
                     },
-                },
-            };
-            break;
-        }
+                };
+                break;
+            }
 
-        case 'jobGradeList': {
-            attribute.value.validValues = {
-                validValues: {
-                    oneofKind: 'jobGradeList',
-                    jobGradeList: {
-                        jobs: {},
-                        fineGrained: false,
-                        grades: {},
+            case 'jobList': {
+                attribute.value.maxValues = {
+                    validValues: {
+                        oneofKind: 'jobList',
+                        jobList: {
+                            strings: [],
+                        },
                     },
-                },
-            };
-            break;
+                };
+                break;
+            }
+
+            case 'jobGradeList': {
+                attribute.value.maxValues = {
+                    validValues: {
+                        oneofKind: 'jobGradeList',
+                        jobGradeList: {
+                            jobs: {},
+                            fineGrained: false,
+                            grades: {},
+                        },
+                    },
+                };
+                break;
+            }
         }
     }
 }
 
-if (attribute.value?.maxValues === undefined || attribute.value?.maxValues.validValues.oneofKind === undefined) {
-    switch (lowercaseFirstLetter(attribute.value.type)) {
-        case 'stringList': {
-            attribute.value.maxValues = {
-                validValues: {
-                    oneofKind: 'stringList',
-                    stringList: {
-                        strings: [],
-                    },
-                },
-            };
-            break;
-        }
+setFromProps();
+watch(attribute, () => setFromProps());
 
-        case 'jobList': {
-            attribute.value.maxValues = {
-                validValues: {
-                    oneofKind: 'jobList',
-                    jobList: {
-                        strings: [],
-                    },
-                },
-            };
-            break;
-        }
-
-        case 'jobGradeList': {
-            attribute.value.maxValues = {
-                validValues: {
-                    oneofKind: 'jobGradeList',
-                    jobGradeList: {
-                        jobs: {},
-                        fineGrained: false,
-                        grades: {},
-                    },
-                },
-            };
-            break;
-        }
-    }
-}
-
-const attrValues = ref<AttributeValues>(attribute.value.maxValues!);
+const attrValues = computed<AttributeValues>({
+    get: () => attribute.value.maxValues!,
+    set: (val) => (attribute.value.maxValues = val),
+});
 
 const validValues = computed<AttributeValues | undefined>(() => attribute.value.validValues);
 
@@ -146,13 +152,15 @@ async function toggleJobListValue(value: string): Promise<void> {
 }
 
 async function toggleJobListAll(): Promise<void> {
-    if (attrValues.value.validValues.oneofKind !== 'jobList') return;
-    if (validValues.value?.validValues.oneofKind !== 'jobList') return;
+    if (attrValues.value.validValues.oneofKind !== 'jobList' || validValues.value?.validValues.oneofKind !== 'jobList') return;
 
-    if (attrValues.value.validValues.jobList.strings.length === validValues.value?.validValues.jobList.strings.length) {
+    if (
+        attrValues.value.validValues.jobList.strings.length !== 0 &&
+        attrValues.value.validValues.jobList.strings.length === jobs.value.length
+    ) {
         attrValues.value.validValues.jobList.strings = [];
     } else {
-        attrValues.value.validValues.jobList.strings = [...(validValues.value?.validValues.jobList.strings ?? [])];
+        attrValues.value.validValues.jobList.strings = [...(jobs.value.map((job) => job.name) ?? [])];
     }
 }
 
@@ -284,12 +292,14 @@ const { game } = useAppConfig();
                             size="xs"
                             color="neutral"
                             :icon="
-                                attrValues.validValues.jobList.strings.length !== validValues.validValues.jobList.strings.length
+                                attrValues.validValues.jobList.strings.length === 0 ||
+                                attrValues.validValues.jobList.strings.length !== jobs.length
                                     ? 'i-mdi-check-all'
                                     : 'i-mdi-close'
                             "
                             :label="
-                                attrValues.validValues.jobList.strings.length !== validValues.validValues.jobList.strings.length
+                                attrValues.validValues.jobList.strings.length === 0 ||
+                                attrValues.validValues.jobList.strings.length !== jobs.length
                                     ? $t('common.check_all')
                                     : $t('common.uncheck_all')
                             "

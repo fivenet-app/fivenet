@@ -4,14 +4,16 @@
 // 	protoc        (unknown)
 // source: resources/settings/perms.proto
 
+//go:build !protoopaque
+
 package settings
 
 import (
-	permissions "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	attributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,7 +25,7 @@ const (
 )
 
 type PermsUpdate struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	ToUpdate      []*permissions.PermItem `protobuf:"bytes,1,rep,name=to_update,json=toUpdate,proto3" json:"to_update,omitempty"`
 	ToRemove      []*permissions.PermItem `protobuf:"bytes,2,rep,name=to_remove,json=toRemove,proto3" json:"to_remove,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -55,11 +57,6 @@ func (x *PermsUpdate) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PermsUpdate.ProtoReflect.Descriptor instead.
-func (*PermsUpdate) Descriptor() ([]byte, []int) {
-	return file_resources_settings_perms_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *PermsUpdate) GetToUpdate() []*permissions.PermItem {
 	if x != nil {
 		return x.ToUpdate
@@ -74,10 +71,34 @@ func (x *PermsUpdate) GetToRemove() []*permissions.PermItem {
 	return nil
 }
 
+func (x *PermsUpdate) SetToUpdate(v []*permissions.PermItem) {
+	x.ToUpdate = v
+}
+
+func (x *PermsUpdate) SetToRemove(v []*permissions.PermItem) {
+	x.ToRemove = v
+}
+
+type PermsUpdate_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ToUpdate []*permissions.PermItem
+	ToRemove []*permissions.PermItem
+}
+
+func (b0 PermsUpdate_builder) Build() *PermsUpdate {
+	m0 := &PermsUpdate{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ToUpdate = b.ToUpdate
+	x.ToRemove = b.ToRemove
+	return m0
+}
+
 type AttrsUpdate struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	ToUpdate      []*permissions.RoleAttribute `protobuf:"bytes,1,rep,name=to_update,json=toUpdate,proto3" json:"to_update,omitempty"`
-	ToRemove      []*permissions.RoleAttribute `protobuf:"bytes,2,rep,name=to_remove,json=toRemove,proto3" json:"to_remove,omitempty"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
+	ToUpdate      []*attributes.RoleAttribute `protobuf:"bytes,1,rep,name=to_update,json=toUpdate,proto3" json:"to_update,omitempty"`
+	ToRemove      []*attributes.RoleAttribute `protobuf:"bytes,2,rep,name=to_remove,json=toRemove,proto3" json:"to_remove,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -107,61 +128,68 @@ func (x *AttrsUpdate) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AttrsUpdate.ProtoReflect.Descriptor instead.
-func (*AttrsUpdate) Descriptor() ([]byte, []int) {
-	return file_resources_settings_perms_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *AttrsUpdate) GetToUpdate() []*permissions.RoleAttribute {
+func (x *AttrsUpdate) GetToUpdate() []*attributes.RoleAttribute {
 	if x != nil {
 		return x.ToUpdate
 	}
 	return nil
 }
 
-func (x *AttrsUpdate) GetToRemove() []*permissions.RoleAttribute {
+func (x *AttrsUpdate) GetToRemove() []*attributes.RoleAttribute {
 	if x != nil {
 		return x.ToRemove
 	}
 	return nil
 }
 
+func (x *AttrsUpdate) SetToUpdate(v []*attributes.RoleAttribute) {
+	x.ToUpdate = v
+}
+
+func (x *AttrsUpdate) SetToRemove(v []*attributes.RoleAttribute) {
+	x.ToRemove = v
+}
+
+type AttrsUpdate_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ToUpdate []*attributes.RoleAttribute
+	ToRemove []*attributes.RoleAttribute
+}
+
+func (b0 AttrsUpdate_builder) Build() *AttrsUpdate {
+	m0 := &AttrsUpdate{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ToUpdate = b.ToUpdate
+	x.ToRemove = b.ToRemove
+	return m0
+}
+
 var File_resources_settings_perms_proto protoreflect.FileDescriptor
 
 const file_resources_settings_perms_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/settings/perms.proto\x12\x12resources.settings\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\"\x89\x01\n" +
-	"\vPermsUpdate\x12<\n" +
-	"\tto_update\x18\x01 \x03(\v2\x1f.resources.permissions.PermItemR\btoUpdate\x12<\n" +
-	"\tto_remove\x18\x02 \x03(\v2\x1f.resources.permissions.PermItemR\btoRemove\"\x93\x01\n" +
-	"\vAttrsUpdate\x12A\n" +
-	"\tto_update\x18\x01 \x03(\v2$.resources.permissions.RoleAttributeR\btoUpdate\x12A\n" +
-	"\tto_remove\x18\x02 \x03(\v2$.resources.permissions.RoleAttributeR\btoRemoveBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settingsb\x06proto3"
-
-var (
-	file_resources_settings_perms_proto_rawDescOnce sync.Once
-	file_resources_settings_perms_proto_rawDescData []byte
-)
-
-func file_resources_settings_perms_proto_rawDescGZIP() []byte {
-	file_resources_settings_perms_proto_rawDescOnce.Do(func() {
-		file_resources_settings_perms_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_settings_perms_proto_rawDesc), len(file_resources_settings_perms_proto_rawDesc)))
-	})
-	return file_resources_settings_perms_proto_rawDescData
-}
+	"\x1eresources/settings/perms.proto\x12\x12resources.settings\x1a1resources/permissions/attributes/attributes.proto\x1a3resources/permissions/permissions/permissions.proto\"\xa1\x01\n" +
+	"\vPermsUpdate\x12H\n" +
+	"\tto_update\x18\x01 \x03(\v2+.resources.permissions.permissions.PermItemR\btoUpdate\x12H\n" +
+	"\tto_remove\x18\x02 \x03(\v2+.resources.permissions.permissions.PermItemR\btoRemove\"\xa9\x01\n" +
+	"\vAttrsUpdate\x12L\n" +
+	"\tto_update\x18\x01 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\btoUpdate\x12L\n" +
+	"\tto_remove\x18\x02 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\btoRemoveBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
 
 var file_resources_settings_perms_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_settings_perms_proto_goTypes = []any{
-	(*PermsUpdate)(nil),               // 0: resources.settings.PermsUpdate
-	(*AttrsUpdate)(nil),               // 1: resources.settings.AttrsUpdate
-	(*permissions.PermItem)(nil),      // 2: resources.permissions.PermItem
-	(*permissions.RoleAttribute)(nil), // 3: resources.permissions.RoleAttribute
+	(*PermsUpdate)(nil),              // 0: resources.settings.PermsUpdate
+	(*AttrsUpdate)(nil),              // 1: resources.settings.AttrsUpdate
+	(*permissions.PermItem)(nil),     // 2: resources.permissions.permissions.PermItem
+	(*attributes.RoleAttribute)(nil), // 3: resources.permissions.attributes.RoleAttribute
 }
 var file_resources_settings_perms_proto_depIdxs = []int32{
-	2, // 0: resources.settings.PermsUpdate.to_update:type_name -> resources.permissions.PermItem
-	2, // 1: resources.settings.PermsUpdate.to_remove:type_name -> resources.permissions.PermItem
-	3, // 2: resources.settings.AttrsUpdate.to_update:type_name -> resources.permissions.RoleAttribute
-	3, // 3: resources.settings.AttrsUpdate.to_remove:type_name -> resources.permissions.RoleAttribute
+	2, // 0: resources.settings.PermsUpdate.to_update:type_name -> resources.permissions.permissions.PermItem
+	2, // 1: resources.settings.PermsUpdate.to_remove:type_name -> resources.permissions.permissions.PermItem
+	3, // 2: resources.settings.AttrsUpdate.to_update:type_name -> resources.permissions.attributes.RoleAttribute
+	3, // 3: resources.settings.AttrsUpdate.to_remove:type_name -> resources.permissions.attributes.RoleAttribute
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name

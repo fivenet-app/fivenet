@@ -9,11 +9,11 @@ import "google/protobuf/duration.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
-import "resources/qualifications/access.proto";
-import "resources/qualifications/exam.proto";
+import "resources/qualifications/access/access.proto";
+import "resources/qualifications/exam/exam.proto";
 import "resources/qualifications/qualifications.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications;qualifications";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications;qualifications";
 
 message ListQualificationsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
@@ -66,12 +66,12 @@ message GetQualificationAccessRequest {
 }
 
 message GetQualificationAccessResponse {
-  resources.qualifications.QualificationAccess access = 1 [(buf.validate.field).required = true];
+  resources.qualifications.access.QualificationAccess access = 1 [(buf.validate.field).required = true];
 }
 
 message SetQualificationAccessRequest {
   int64 qualification_id = 1;
-  resources.qualifications.QualificationAccess access = 2 [(buf.validate.field).required = true];
+  resources.qualifications.access.QualificationAccess access = 2 [(buf.validate.field).required = true];
 }
 
 message SetQualificationAccessResponse {}
@@ -125,7 +125,7 @@ message ListQualificationsResultsResponse {
 
 message CreateOrUpdateQualificationResultRequest {
   resources.qualifications.QualificationResult result = 1 [(buf.validate.field).required = true];
-  optional resources.qualifications.ExamGrading grading = 2;
+  optional resources.qualifications.exam.ExamGrading grading = 2;
 }
 
 message CreateOrUpdateQualificationResultResponse {
@@ -147,7 +147,7 @@ message GetExamInfoRequest {
 message GetExamInfoResponse {
   resources.qualifications.QualificationShort qualification = 1;
   int64 question_count = 2;
-  optional resources.qualifications.ExamUser exam_user = 3;
+  optional resources.qualifications.exam.ExamUser exam_user = 3;
 }
 
 message TakeExamRequest {
@@ -156,13 +156,13 @@ message TakeExamRequest {
 }
 
 message TakeExamResponse {
-  resources.qualifications.ExamQuestions exam = 1;
-  resources.qualifications.ExamUser exam_user = 2;
+  resources.qualifications.exam.ExamQuestions exam = 1;
+  resources.qualifications.exam.ExamUser exam_user = 2;
 }
 
 message SubmitExamRequest {
   int64 qualification_id = 1;
-  resources.qualifications.ExamResponses responses = 2;
+  resources.qualifications.exam.ExamResponses responses = 2;
 }
 
 message SubmitExamResponse {
@@ -175,10 +175,10 @@ message GetUserExamRequest {
 }
 
 message GetUserExamResponse {
-  resources.qualifications.ExamQuestions exam = 1;
-  resources.qualifications.ExamUser exam_user = 2;
-  resources.qualifications.ExamResponses responses = 3;
-  resources.qualifications.ExamGrading grading = 4;
+  resources.qualifications.exam.ExamQuestions exam = 1;
+  resources.qualifications.exam.ExamUser exam_user = 2;
+  resources.qualifications.exam.ExamResponses responses = 3;
+  resources.qualifications.exam.ExamGrading grading = 4;
 }
 
 service QualificationsService {

@@ -4,19 +4,18 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles"
-	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
-	pbvehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles"
-	permsvehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsvehicles "github.com/fivenet-app/fivenet/v2025/services/vehicles/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	vehiclesprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
+	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
+	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsvehicles "github.com/fivenet-app/fivenet/v2026/services/vehicles/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -29,9 +28,9 @@ func (s *Server) ListVehicles(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	logRequest := false
 
-	tVehicles := tables.OwnedVehicles().AS("vehicle")
+	tVehicles := table.FivenetOwnedVehicles.AS("vehicle")
 	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
-	tUsers := tables.User().AS("user_short")
+	tUsers := table.FivenetUser.AS("user_short")
 
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
@@ -45,7 +44,7 @@ func (s *Server) ListVehicles(
 	}
 
 	condition := mysql.Bool(true)
-	userCondition := tUsers.Identifier.EQ(tVehicles.Owner)
+	userCondition := tUsers.ID.EQ(tVehicles.UserID)
 	if req.GetLicensePlate() != "" {
 		logRequest = true
 
@@ -72,11 +71,11 @@ func (s *Server) ListVehicles(
 		}
 
 		condition = mysql.AND(condition,
-			tUsers.Identifier.EQ(tVehicles.Owner),
+			tUsers.ID.EQ(tVehicles.UserID),
 			tUsers.ID.IN(userIds...),
 		)
 		userCondition = mysql.AND(userCondition, tUsers.ID.IN(userIds...))
-	} else if req.Job != nil && req.GetJob() != "" && !tables.IsESXCompatEnabled() {
+	} else if req.Job != nil && req.GetJob() != "" {
 		logRequest = true
 		condition = mysql.AND(condition,
 			tVehicles.Job.EQ(mysql.String(req.GetJob())),
@@ -98,7 +97,7 @@ func (s *Server) ListVehicles(
 
 	countStmt := tVehicles.
 		SELECT(
-			mysql.COUNT(tVehicles.Owner).AS("data_count.total"),
+			mysql.COUNT(tVehicles.Plate).AS("data_count.total"),
 		).
 		FROM(
 			tVehicles.
@@ -158,13 +157,8 @@ func (s *Server) ListVehicles(
 		tUsers.Lastname,
 		tUsers.Dateofbirth,
 		tVehicleProps.Plate,
-	}
-
-	if !tables.IsESXCompatEnabled() {
-		columns = append(columns,
-			tVehicles.Job,
-			tVehicles.Data,
-		)
+		tVehicles.Job,
+		tVehicles.Data,
 	}
 
 	// Field Permission Check
@@ -244,7 +238,7 @@ func (s *Server) SetVehicleProps(
 	}
 
 	resp := &pbvehicles.SetVehiclePropsResponse{
-		Props: &vehicles.VehicleProps{},
+		Props: &vehiclesprops.VehicleProps{},
 	}
 
 	// Field Permission Check
@@ -295,7 +289,7 @@ func (s *Server) SetVehicleProps(
 func (s *Server) getVehicleProps(
 	ctx context.Context,
 	plate string,
-) (*vehicles.VehicleProps, error) {
+) (*vehiclesprops.VehicleProps, error) {
 	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
 
 	stmt := tVehicleProps.
@@ -311,7 +305,7 @@ func (s *Server) getVehicleProps(
 		).
 		LIMIT(1)
 
-	var dest vehicles.VehicleProps
+	var dest vehiclesprops.VehicleProps
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err

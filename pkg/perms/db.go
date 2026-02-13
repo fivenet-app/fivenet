@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/pkg/errors"
@@ -128,7 +129,7 @@ func (p *Perms) loadAttributes(ctx context.Context) error {
 		).
 		FROM(tAttrs)
 
-	var dest []*permissions.RoleAttribute
+	var dest []*permissionsattributes.RoleAttribute
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf("failed to query attributes. %w", err)
@@ -136,7 +137,7 @@ func (p *Perms) loadAttributes(ctx context.Context) error {
 	}
 
 	for _, attr := range dest {
-		if err := p.addOrUpdateAttributeInMap(attr.GetPermissionId(), attr.GetAttrId(), Key(attr.GetKey()), permissions.AttributeTypes(attr.GetType()), attr.GetValidValues()); err != nil {
+		if err := p.addOrUpdateAttributeInMap(attr.GetPermissionId(), attr.GetAttrId(), Key(attr.GetKey()), permissionsattributes.AttributeTypes(attr.GetType()), attr.GetValidValues()); err != nil {
 			return fmt.Errorf("failed to add/update attribute in map. %w", err)
 		}
 	}
@@ -158,7 +159,7 @@ func (p *Perms) loadRoles(ctx context.Context, id int64) error {
 			WHERE(tRoles.ID.EQ(mysql.Int64(id)))
 	}
 
-	var dest []*permissions.Role
+	var dest []*permissionspermissions.Role
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf("failed to query roles. %w", err)
@@ -272,7 +273,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId int64) error {
 		)
 	}
 
-	var dest []*permissions.RoleAttribute
+	var dest []*permissionsattributes.RoleAttribute
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf("failed to query role attributes. %w", err)
@@ -281,13 +282,13 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId int64) error {
 
 	found := map[int64][]int64{}
 	for _, ra := range dest {
-		ra.GetValue().Default(permissions.AttributeTypes(ra.GetType()))
+		ra.GetValue().Default(permissionsattributes.AttributeTypes(ra.GetType()))
 		p.updateRoleAttributeInMap(
 			ra.GetRoleId(),
 			ra.GetPermissionId(),
 			ra.GetAttrId(),
 			Key(ra.GetKey()),
-			permissions.AttributeTypes(ra.GetType()),
+			permissionsattributes.AttributeTypes(ra.GetType()),
 			ra.GetValue(),
 		)
 

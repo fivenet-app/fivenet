@@ -1,4 +1,5 @@
 VERSION := $(shell cat VERSION)
+GIT_VERSION := $(shell git describe --tags --exclude='fivenet-*')
 
 VALIDATE_VERSION ?= v1.0.2
 BUILD_DIR := .build/
@@ -68,7 +69,7 @@ build-go:
 		build \
 		-a \
 		-installsuffix cgo \
-		-ldflags "-X github.com/fivenet-app/fivenet/v2025/pkg/version.Version=$(shell git describe --tags --exclude='fivenet-*')" \
+		-ldflags "-X github.com/fivenet-app/fivenet/v2026/pkg/version.Version=$(GIT_VERSION)" \
 		-o fivenet \
 		.
 
@@ -90,7 +91,7 @@ gen-sql:
 	$(GO) run ./query/gen/
 
 	# Remove schema/database name from the generated table code, so it uses the currently selected database
-	find ./query/fivenet/table -type f -iname '*.go' -exec sed -i 's~("fivenet", ~("", ~g' {} \;
+	find ./query/fivenet/table -type f -iname '*.go' -exec sed -E -i 's~\("fivenet[_a-z-]*", ~\("", ~g' {} \;
 
 .PHONY: gen-proto
 gen-proto: buf protoc-gen-doc

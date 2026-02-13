@@ -5,13 +5,14 @@ import (
 	"errors"
 	"slices"
 
-	accounts "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
-	pbauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsauth "github.com/fivenet-app/fivenet/v2025/services/auth/errors"
+	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	accountsoauth2 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts/oauth2"
+	pbauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -20,12 +21,12 @@ func (s *Server) GetAccountInfo(
 	ctx context.Context,
 	req *pbauth.GetAccountInfoRequest,
 ) (*pbauth.GetAccountInfoResponse, error) {
-	token, err := auth.GetTokenFromGRPCContext(ctx)
+	token, err := auth.GetAccTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
 
-	claims, err := s.tm.ParseWithClaims(token)
+	claims, err := s.tm.ParseAccToken(token)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}
@@ -39,10 +40,10 @@ func (s *Server) GetAccountInfo(
 		return nil, errorsauth.ErrGenericAccount
 	}
 
-	oauth2Providers := make([]*accounts.OAuth2Provider, len(s.oauth2Providers))
+	oauth2Providers := make([]*accountsoauth2.OAuth2Provider, len(s.oauth2Providers))
 	for i := range oauth2Providers {
 		p := s.oauth2Providers[i]
-		oauth2Providers[i] = &accounts.OAuth2Provider{
+		oauth2Providers[i] = &accountsoauth2.OAuth2Provider{
 			Name:     p.Name,
 			Label:    p.Label,
 			Homepage: p.Homepage,
@@ -69,7 +70,7 @@ func (s *Server) GetAccountInfo(
 		).
 		LIMIT(5)
 
-	oauth2Conns := []*accounts.OAuth2Account{}
+	oauth2Conns := []*accountsoauth2.OAuth2Account{}
 	if err := stmt.QueryContext(ctx, s.db, &oauth2Conns); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
@@ -79,7 +80,7 @@ func (s *Server) GetAccountInfo(
 
 	// Set provider in the connections
 	i := range oauth2Conns {
-		idx := slices.IndexFunc(oauth2Providers, func(p *accounts.OAuth2Provider) bool {
+		idx := slices.IndexFunc(oauth2Providers, func(p *accountsoauth2.OAuth2Provider) bool {
 			return p.GetName() == oauth2Conns[i].GetProviderName()
 		})
 		if idx > -1 {

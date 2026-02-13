@@ -5,16 +5,19 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
+	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
+	mailermessages "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/messages"
+	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -32,7 +35,7 @@ func (s *Server) ListThreadMessages(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetThreadId(), req.GetEmailId(), mailer.AccessLevel_ACCESS_LEVEL_READ); err != nil {
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetThreadId(), req.GetEmailId(), maileraccess.AccessLevel_ACCESS_LEVEL_READ); err != nil {
 		return nil, err
 	}
 
@@ -56,7 +59,7 @@ func (s *Server) ListThreadMessages(
 	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, MessagesDefaultPageSize)
 	resp := &pbmailer.ListThreadMessagesResponse{
 		Pagination: pag,
-		Messages:   []*mailer.Message{},
+		Messages:   []*mailermessages.Message{},
 	}
 	if count.Total <= 0 {
 		return resp, nil
@@ -108,7 +111,7 @@ func (s *Server) ListThreadMessages(
 	return resp, nil
 }
 
-func (s *Server) getMessage(ctx context.Context, messageId int64) (*mailer.Message, error) {
+func (s *Server) getMessage(ctx context.Context, messageId int64) (*mailermessages.Message, error) {
 	stmt := tMessages.
 		SELECT(
 			tMessages.ID,
@@ -130,7 +133,7 @@ func (s *Server) getMessage(ctx context.Context, messageId int64) (*mailer.Messa
 		).
 		LIMIT(1)
 
-	message := &mailer.Message{}
+	message := &mailermessages.Message{}
 	if err := stmt.QueryContext(ctx, s.db, message); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -150,7 +153,7 @@ func (s *Server) PostMessage(
 ) (*pbmailer.PostMessageResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetMessage().GetThreadId(), req.GetMessage().GetSenderId(), mailer.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetMessage().GetThreadId(), req.GetMessage().GetSenderId(), maileraccess.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
 		return nil, err
 	}
 
@@ -164,7 +167,7 @@ func (s *Server) PostMessage(
 		return nil, errorsmailer.ErrEmailDisabled
 	}
 
-	var emails []*mailer.ThreadRecipientEmail
+	var emails []*mailerthreads.ThreadRecipientEmail
 	if len(req.GetRecipients()) > 0 {
 		emails, err = s.retrieveRecipientsToEmails(ctx, senderEmail, req.GetRecipients())
 		if err != nil {
@@ -178,7 +181,7 @@ func (s *Server) PostMessage(
 
 	// Remove titles from attached documents
 	for _, attachment := range req.GetMessage().GetData().GetAttachments() {
-		if a, ok := attachment.GetData().(*mailer.MessageAttachment_Document); ok {
+		if a, ok := attachment.GetData().(*mailermessages.MessageAttachment_Document); ok {
 			a.Document.Title = nil
 		}
 	}
@@ -236,8 +239,8 @@ func (s *Server) PostMessage(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	s.sendUpdate(ctx, &mailer.MailerEvent{
-		Data: &mailer.MailerEvent_MessageUpdate{
+	s.sendUpdate(ctx, &mailerevents.MailerEvent{
+		Data: &mailerevents.MailerEvent_MessageUpdate{
 			MessageUpdate: message,
 		},
 	}, emailIds...)
@@ -252,7 +255,7 @@ func (s *Server) PostMessage(
 func (s *Server) createMessage(
 	ctx context.Context,
 	tx qrm.DB,
-	msg *mailer.Message,
+	msg *mailermessages.Message,
 ) (int64, error) {
 	tMessages := table.FivenetMailerMessages
 	stmt := tMessages.
@@ -340,8 +343,8 @@ func (s *Server) DeleteMessage(
 			emailIds = append(emailIds, ua.GetEmailId())
 		}
 
-		s.sendUpdate(ctx, &mailer.MailerEvent{
-			Data: &mailer.MailerEvent_MessageDelete{
+		s.sendUpdate(ctx, &mailerevents.MailerEvent{
+			Data: &mailerevents.MailerEvent_MessageDelete{
 				MessageDelete: req.GetMessageId(),
 			},
 		}, emailIds...)

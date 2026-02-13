@@ -7,23 +7,25 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth"
-	permsauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsauth "github.com/fivenet-app/fivenet/v2025/services/auth/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	pbauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth"
+	permsauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -35,15 +37,6 @@ var (
 	tUserProps = table.FivenetUserProps.AS("user_props")
 	tJobProps  = table.FivenetJobProps.AS("job_props")
 )
-
-func (s *Server) createTokenFromAccountAndChar(
-	account *model.FivenetAccounts,
-	activeChar *users.User,
-) (string, *auth.CitizenInfoClaims, error) {
-	claims := auth.BuildTokenClaimsFromAccount(account, activeChar)
-	token, err := s.tm.NewWithClaims(claims)
-	return token, claims, err
-}
 
 func (s *Server) getAccountFromDB(
 	ctx context.Context,
@@ -58,9 +51,7 @@ func (s *Server) getAccountFromDB(
 		tAccounts.Username,
 		tAccounts.License,
 		tAccounts.RegToken,
-		tAccounts.OverrideJob,
-		tAccounts.OverrideJobGrade,
-		tAccounts.Superuser,
+		tAccounts.Groups,
 		tAccounts.LastChar,
 	}
 	if withPass {
@@ -114,14 +105,25 @@ func (s *Server) Login(
 		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
 	}
 
-	token, claims, err := s.createTokenFromAccountAndChar(account, nil)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+	accClaims := auth.MapAccountToClaims(accounts.ConvertFromModelAcc(account))
+
+	// FIXME move this to the sync API user update and registration logic
+	if err := s.linkCharsToAccount(ctx, account.License, account.ID); err != nil {
+		s.logger.Error(
+			"failed to link chars to account",
+			zap.Error(err),
+		)
 	}
 
 	var chooseCharResp *pbauth.ChooseCharacterResponse
 	if s.appCfg.Get().Auth.GetLastCharLock() && account.LastChar != nil {
+		token, err := s.tm.FromAccClaims(accClaims)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+		}
+
 		ctx = auth.SetTokenInGRPCContext(ctx, token)
+
 		chooseCharResp, err = s.ChooseCharacter(ctx, &pbauth.ChooseCharacterRequest{
 			CharId: *account.LastChar,
 		})
@@ -132,16 +134,42 @@ func (s *Server) Login(
 
 	// If choose char response is null, set the basic login token
 	if chooseCharResp == nil {
-		if err := s.setTokenCookie(ctx, token); err != nil {
+		if err := s.setCookies(ctx, accClaims); err != nil {
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 		}
 	}
 
 	return &pbauth.LoginResponse{
-		Expires:   timestamp.New(claims.ExpiresAt.Time),
+		Expires:   timestamp.New(accClaims.ExpiresAt.Time),
 		AccountId: account.ID,
 		Char:      chooseCharResp,
 	}, nil
+}
+
+func (s *Server) linkCharsToAccount(
+	ctx context.Context,
+	identifier string,
+	accId int64,
+) error {
+	tUsers := table.FivenetUser
+
+	stmt := tUsers.
+		UPDATE(
+			tUsers.AccountID,
+		).
+		SET(
+			accId,
+		).
+		WHERE(
+			tUsers.Identifier.LIKE(mysql.String(fmt.Sprintf("%%%s", identifier))),
+		).
+		LIMIT(15)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Server) Logout(
@@ -151,7 +179,7 @@ func (s *Server) Logout(
 	// No need to audit logout actions
 	grpc_audit.Skip(ctx)
 
-	err := s.destroyTokenCookie(ctx)
+	err := s.destroyCookies(ctx)
 	if err != nil {
 		s.logger.Error("failed to destroy token cookie", zap.Error(err))
 	}
@@ -231,28 +259,29 @@ func (s *Server) ChangePassword(
 	ctx context.Context,
 	req *pbauth.ChangePasswordRequest,
 ) (*pbauth.ChangePasswordResponse, error) {
-	token, err := auth.GetTokenFromGRPCContext(ctx)
+	token, err := auth.GetAccTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
-
-	claims, err := s.tm.ParseWithClaims(token)
+	claims, err := s.tm.ParseAccToken(token)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
-	acc, err := s.getAccountFromClaims(ctx, claims, true)
+	acc, err := s.getAccountFromIDAndUsername(ctx, claims.AccID, claims.Username, true)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
+		}
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
-	// No password set
+	// Account has no password set
 	if acc.Password == nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrNoAccount)
 	}
 
 	// Password check logic
-
 	if err := checkPassword(*acc.Password, req.GetCurrent()); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
@@ -260,17 +289,6 @@ func (s *Server) ChangePassword(
 	hashedPassword, err := hashPassword(req.GetNew())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
-	}
-
-	var char *users.User
-	if claims.CharID > 0 {
-		char, _, _, err = s.getCharacter(ctx, claims.CharID)
-		if err != nil {
-			if errors.Is(err, qrm.ErrNoRows) {
-				return nil, errorsauth.ErrNoCharFound
-			}
-			return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
-		}
 	}
 
 	pass := hashedPassword
@@ -285,42 +303,40 @@ func (s *Server) ChangePassword(
 		).
 		WHERE(
 			tAccounts.ID.EQ(mysql.Int64(acc.ID)),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrUpdateAccount)
 	}
 
-	newToken, newClaims, err := s.createTokenFromAccountAndChar(acc, char)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
-	}
-
-	if err := s.setTokenCookie(ctx, newToken); err != nil {
+	// Clear session cookies after password change
+	if err := s.destroyCookies(ctx); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
-	return &pbauth.ChangePasswordResponse{
-		Expires: timestamp.New(newClaims.ExpiresAt.Time),
-	}, nil
+	return &pbauth.ChangePasswordResponse{}, nil
 }
 
 func (s *Server) ChangeUsername(
 	ctx context.Context,
 	req *pbauth.ChangeUsernameRequest,
 ) (*pbauth.ChangeUsernameResponse, error) {
-	token, err := auth.GetTokenFromGRPCContext(ctx)
+	token, err := auth.GetAccTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
 
-	claims, err := s.tm.ParseWithClaims(token)
+	claims, err := s.tm.ParseAccToken(token)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
 
-	acc, err := s.getAccountFromClaims(ctx, claims, true)
+	acc, err := s.getAccountFromIDAndUsername(ctx, claims.AccID, claims.Username, true)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
+		}
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
 
@@ -365,7 +381,8 @@ func (s *Server) ChangeUsername(
 		).
 		WHERE(
 			tAccounts.ID.EQ(mysql.Int64(acc.ID)),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrUpdateAccount)
@@ -424,27 +441,29 @@ func (s *Server) GetCharacters(
 	ctx context.Context,
 	req *pbauth.GetCharactersRequest,
 ) (*pbauth.GetCharactersResponse, error) {
-	token, err := auth.GetTokenFromGRPCContext(ctx)
+	accToken, err := auth.GetAccTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
-
-	claims, err := s.tm.ParseWithClaims(token)
+	accClaims, err := s.tm.ParseAccToken(accToken)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
 	// Load account to make sure it (still) exists
-	acc, err := s.getAccountFromClaims(ctx, claims, false)
+	acc, err := s.getAccountFromIDAndUsername(ctx, accClaims.AccID, accClaims.Username, false)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
+		}
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
-	if acc.ID == 0 {
+	if acc.ID <= 0 {
 		return nil, errorsauth.ErrGenericLogin
 	}
 
 	// Load chars from database
-	tUsers := tables.User().AS("user")
+	tUsers := table.FivenetUser.AS("user")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tUsers.
@@ -452,6 +471,7 @@ func (s *Server) GetCharacters(
 			tUsers.ID,
 			dbutils.Columns{
 				tUsers.ID.AS("user.user_id"),
+				tUsers.AccountID,
 				tUsers.Identifier,
 				tUsers.Job,
 				tUsers.JobGrade,
@@ -476,9 +496,7 @@ func (s *Server) GetCharacters(
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
-		WHERE(
-			tUsers.Identifier.LIKE(mysql.String(BuildCharSearchIdentifier(claims.Subject))),
-		).
+		WHERE(tUsers.AccountID.EQ(mysql.Int64(accClaims.AccID))).
 		ORDER_BY(tUsers.ID).
 		LIMIT(10)
 
@@ -500,7 +518,7 @@ func (s *Server) GetCharacters(
 				slices.Contains(
 					s.superuserGroups,
 					resp.GetChars()[i].GetGroup(),
-				) || slices.Contains(s.superuserUsers, claims.Subject) {
+				) || slices.Contains(s.superuserUsers, accClaims.Subject) {
 				resp.Chars[i].Available = true
 				continue
 			}
@@ -528,15 +546,11 @@ func (s *Server) GetCharacters(
 	return resp, nil
 }
 
-func BuildCharSearchIdentifier(license string) string {
-	return "%" + license
-}
-
 func (s *Server) getCharacter(
 	ctx context.Context,
 	charId int32,
-) (*users.User, *jobs.JobProps, string, error) {
-	tUsers := tables.User().AS("user")
+) (*users.User, *jobsprops.JobProps, error) {
+	tUsers := table.FivenetUser.AS("user")
 	tLogo := table.FivenetFiles.AS("logo_file")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
@@ -552,7 +566,6 @@ func (s *Server) getCharacter(
 			tUsers.Dateofbirth,
 			tUserProps.AvatarFileID.AS("user.profile_picture_file_id"),
 			tAvatar.FilePath.AS("user.profile_picture"),
-			tUsers.Group.AS("group"),
 			tJobProps.Job,
 			tJobProps.DeletedAt,
 			tJobProps.LivemapMarkerColor,
@@ -577,19 +590,16 @@ func (s *Server) getCharacter(
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
-		WHERE(
-			tUsers.ID.EQ(mysql.Int32(charId)),
-		).
+		WHERE(tUsers.ID.EQ(mysql.Int32(charId))).
 		LIMIT(1)
 
 	var dest struct {
 		*users.User
 
-		Group    string
-		JobProps *jobs.JobProps
+		JobProps *jobsprops.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, nil, "", err
+		return nil, nil, err
 	}
 
 	if dest.JobProps != nil {
@@ -598,7 +608,7 @@ func (s *Server) getCharacter(
 
 	s.enricher.EnrichJobInfo(dest.User)
 
-	return dest.User, dest.JobProps, dest.Group, nil
+	return dest.User, dest.JobProps, nil
 }
 
 func (s *Server) ChooseCharacter(
@@ -607,41 +617,58 @@ func (s *Server) ChooseCharacter(
 ) (*pbauth.ChooseCharacterResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.char_id", req.GetCharId()})
 
-	token, err := auth.GetTokenFromGRPCContext(ctx)
+	accToken, err := auth.GetAccTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
+	}
+	currentAccClaims, err := s.tm.ParseAccToken(accToken)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
 
-	claims, err := s.tm.ParseWithClaims(token)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
+	var currentUserClaims *authclaims.UserInfoClaims
+	userToken, err := auth.GetUserTokenFromGRPCContext(ctx)
+	if err == nil {
+		currentUserClaims, err = s.tm.ParseUserToken(userToken)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
+		}
 	}
 
 	// Load account data for token creation
-	account, err := s.getAccountFromClaims(ctx, claims, false)
+	acc, err := s.getAccountFromIDAndUsername(
+		ctx,
+		currentAccClaims.AccID,
+		currentAccClaims.Username,
+		false,
+	)
 	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
+		}
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
+	account := accounts.ConvertFromModelAcc(acc)
 
-	char, jProps, userGroup, err := s.getCharacter(ctx, req.GetCharId())
+	char, jProps, err := s.getCharacter(ctx, req.GetCharId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 
 	// Make sure the user isn't sending us a different char ID than their own
-	if !strings.HasSuffix(char.GetIdentifier(), claims.Subject) {
+	if !strings.HasSuffix(char.GetIdentifier(), currentAccClaims.Subject) {
 		s.logger.Error(
 			"user sent bad char!",
 			zap.String("expected", char.GetIdentifier()),
-			zap.String("current", claims.Subject),
+			zap.String("current", currentAccClaims.Subject),
 		)
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 
-	isSuperuser := slices.Contains(s.superuserGroups, userGroup) ||
-		slices.Contains(s.superuserUsers, claims.Subject)
+	canBeSuperuser := account.Groups.ContainsAnyGroup(s.superuserGroups) ||
+		slices.Contains(s.superuserUsers, currentAccClaims.Subject)
 
-	if err := s.ui.RefreshUserInfo(ctx, char.GetUserId(), claims.AccID); err != nil {
+	if err := s.ui.RefreshUserInfo(ctx, char.GetUserId()); err != nil {
 		s.logger.Error(
 			"failed to refresh user info",
 			zap.Error(err),
@@ -651,32 +678,26 @@ func (s *Server) ChooseCharacter(
 	}
 
 	// If char lock is active, make sure that the user is choosing the active char
-	if !isSuperuser &&
+	if !canBeSuperuser &&
 		s.appCfg.Get().Auth.GetLastCharLock() &&
 		account.LastChar != nil &&
 		*account.LastChar != req.GetCharId() {
 		return nil, errorsgrpcauth.ErrCharLock
 	}
 
-	// Centralized superuser/override logic
-	if jPropsOverride, err := s.handleSuperuserOverride(ctx, account, char, claims, isSuperuser); err != nil {
-		return nil, err
-	} else if jPropsOverride != nil {
-		jProps = jPropsOverride
-	}
-
-	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
-	}
-
-	ps, attrs, err := s.listUserPerms(ctx, account, char, isSuperuser)
+	ps, attrs, err := s.listUserPerms(
+		ctx,
+		char,
+		canBeSuperuser,
+		currentUserClaims != nil && currentUserClaims.Superuser != nil &&
+			*currentUserClaims.Superuser,
+	)
 	if err != nil {
 		return nil, err
 	}
 
 	if len(ps) == 0 ||
-		(!isSuperuser && !slices.ContainsFunc(ps, func(p *permissions.Permission) bool {
+		(!canBeSuperuser && !slices.ContainsFunc(ps, func(p *permissionspermissions.Permission) bool {
 			return p.GetCategory() == string(permsauth.AuthServicePerm) && p.GetName() == string(permsauth.AuthServiceChooseCharacterPerm)
 		})) {
 		return nil, errorsauth.ErrUnableToChooseChar
@@ -684,13 +705,29 @@ func (s *Server) ChooseCharacter(
 
 	grpc_audit.SetUser(ctx, char.UserId, char.Job)
 
-	if err := s.setTokenCookie(ctx, newToken); err != nil {
+	accClaims := auth.MapAccountToClaims(account)
+	if canBeSuperuser && currentAccClaims.CanBeSuperuser {
+		accClaims.CanBeSuperuser = currentAccClaims.CanBeSuperuser
+	}
+	userClaims := auth.MapUserToClaims(account.Id, char)
+	if canBeSuperuser && currentUserClaims != nil && currentUserClaims.Superuser != nil &&
+		*currentUserClaims.Superuser {
+		userClaims.Superuser = currentUserClaims.Superuser
+	}
+
+	if err := s.setCookies(ctx, accClaims); err != nil {
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+	}
+
+	userToken, err = s.tm.FromUserClaims(userClaims)
+	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
 	return &pbauth.ChooseCharacterResponse{
-		Expires:     timestamp.New(newClaims.ExpiresAt.Time),
-		Username:    *account.Username,
+		Token:       userToken,
+		Expires:     timestamp.New(currentAccClaims.ExpiresAt.Time),
+		Username:    account.Username,
 		JobProps:    jProps,
 		Char:        char,
 		Permissions: ps,
@@ -700,10 +737,10 @@ func (s *Server) ChooseCharacter(
 
 func (s *Server) listUserPerms(
 	ctx context.Context,
-	account *model.FivenetAccounts,
 	char *users.User,
-	isSuperuser bool,
-) ([]*permissions.Permission, []*permissions.RoleAttribute, error) {
+	canBeSuperuser bool,
+	isSuperuserActive bool,
+) ([]*permissionspermissions.Permission, []*permissionsattributes.RoleAttribute, error) {
 	// Load permissions of user
 	userPs, err := s.ps.GetPermissionsOfUser(&userinfo.UserInfo{
 		UserId:   char.GetUserId(),
@@ -714,10 +751,10 @@ func (s *Server) listUserPerms(
 		return nil, nil, errswrap.NewError(err, errorsauth.ErrUnableToChooseChar)
 	}
 
-	if isSuperuser {
+	if canBeSuperuser {
 		userPs = append(userPs, auth.PermCanBeSuperuser)
 
-		if account.Superuser != nil && *account.Superuser {
+		if isSuperuserActive {
 			userPs = append(userPs, auth.PermSuperuser)
 		}
 	}
@@ -730,16 +767,97 @@ func (s *Server) listUserPerms(
 	return userPs, attrs, nil
 }
 
+func (s *Server) ImpersonateJob(
+	ctx context.Context,
+	req *pbauth.ImpersonateJobRequest,
+) (*pbauth.ImpersonateJobResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	imp := true
+	if req.GetJobGrade() > userInfo.GetJobGrade() {
+		return nil, errorsauth.ErrImpersonateJobInvalid
+	} else if req.GetJobGrade() < 0 || req.GetJobGrade() == userInfo.GetJobGrade() {
+		// Disable impersonation if job grade is the same
+		imp = false
+	}
+
+	job, grade := s.enricher.GetJobGrade(userInfo.GetJob(), req.GetJobGrade())
+	if job == nil || grade == nil {
+		return nil, errorsauth.ErrImpersonateJobInvalid
+	}
+
+	accToken, err := auth.GetAccTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
+	}
+	accClaims, err := s.tm.ParseAccToken(accToken)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
+	}
+
+	// Load user's account data for token creation
+	acc, err := s.getAccountFromIDAndUsername(ctx, accClaims.AccID, accClaims.Username, false)
+	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
+		}
+		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
+	}
+	account := accounts.ConvertFromModelAcc(acc)
+
+	char, _, err := s.getCharacter(ctx, userInfo.GetUserId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
+	}
+
+	canBeSuperuser := account.Groups.ContainsAnyGroup(s.superuserGroups) ||
+		slices.Contains(s.superuserUsers, accClaims.Subject)
+
+	if imp {
+		char.Job = job.GetName()
+		char.JobGrade = grade.GetGrade()
+	}
+
+	ps, attrs, err := s.listUserPerms(ctx, char, canBeSuperuser, userInfo.Superuser)
+	if err != nil {
+		return nil, err
+	}
+
+	userClaims := auth.MapUserToClaims(acc.ID, char)
+	if imp {
+		userClaims.Impersonate = &authclaims.UserImpersonate{
+			Job:      job.GetName(),
+			JobGrade: grade.GetGrade(),
+		}
+	} else {
+		userClaims.Impersonate = nil
+	}
+
+	userToken, err := s.tm.FromUserClaims(userClaims)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+	}
+
+	return &pbauth.ImpersonateJobResponse{
+		Token:       userToken,
+		Expires:     timestamp.New(userClaims.ExpiresAt.Time),
+		Char:        char,
+		Permissions: ps,
+		Attributes:  attrs,
+		State:       imp,
+	}, nil
+}
+
 func (s *Server) SetSuperuserMode(
 	ctx context.Context,
 	req *pbauth.SetSuperuserModeRequest,
 ) (*pbauth.SetSuperuserModeResponse, error) {
-	token, err := auth.GetTokenFromGRPCContext(ctx)
+	accToken, err := auth.GetAccTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errorsgrpcauth.ErrInvalidToken
 	}
 
-	claims, err := s.tm.ParseWithClaims(token)
+	accClaims, err := s.tm.ParseAccToken(accToken)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
 	}
@@ -766,50 +884,24 @@ func (s *Server) SetSuperuserMode(
 		req.Job = &job
 	}
 
-	char, _, _, err := s.getCharacter(ctx, claims.CharID)
+	char, _, err := s.getCharacter(ctx, userInfo.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(
-			fmt.Errorf("failed to get char %d. %w", claims.CharID, err),
+			fmt.Errorf("failed to get char by id %d. %w", userInfo.UserId, err),
 			errorsauth.ErrNoCharFound,
 		)
 	}
 
-	var jobProps *jobs.JobProps
-	var ps []*permissions.Permission
-	var attrs []*permissions.RoleAttribute
+	var jobProps *jobsprops.JobProps
+	var ps []*permissionspermissions.Permission
+	var attrs []*permissionsattributes.RoleAttribute
 
-	// Reset override job when switching off superuser mode using centralized helper
+	// Reset job when switching off superuser mode
 	if !req.GetSuperuser() {
-		// Fetch the account for the current user
-		account, err := s.getAccountFromDB(
-			ctx,
-			tAccounts.Username.EQ(mysql.String(claims.Username)),
-			false,
-		)
-		if err != nil {
-			return nil, errswrap.NewError(
-				fmt.Errorf("failed to get account from db. %w", err),
-				errorsauth.ErrGenericLogin,
-			)
-		}
-
-		jPropsOverride, err := s.handleSuperuserOverride(ctx, account, char, claims, false)
-		if err != nil {
-			return nil, err
-		}
-		if jPropsOverride != nil {
-			jobProps = jPropsOverride
-		}
-
 		userInfo.Job = char.GetJob()
 		userInfo.JobGrade = char.GetJobGrade()
-		userInfo.OverrideJob = nil
-		userInfo.OverrideJobGrade = nil
 
-		not := false
-		ps, attrs, err = s.listUserPerms(ctx, &model.FivenetAccounts{
-			Superuser: &not,
-		}, char, true)
+		ps, attrs, err = s.listUserPerms(ctx, char, true, false)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get user perms. %w", err)
 		}
@@ -823,22 +915,15 @@ func (s *Server) SetSuperuserMode(
 
 		userInfo.Job = job.GetName()
 		userInfo.JobGrade = jobGrade
-		userInfo.OverrideJob = &job.Name
-		userInfo.OverrideJobGrade = &jobGrade
 
 		char.Job = job.GetName()
 		char.JobGrade = jobGrade
 		s.enricher.EnrichJobInfo(char)
 
-		ps = []*permissions.Permission{auth.PermCanBeSuperuser, auth.PermSuperuser}
-	}
-
-	//nolint:protogetter // The values are needed as pointers
-	if err := s.ui.SetUserInfo(ctx, claims.AccID, claims.CharID, req.GetSuperuser(), userInfo.OverrideJob, userInfo.OverrideJobGrade); err != nil {
-		return nil, errswrap.NewError(
-			fmt.Errorf("failed to set user info. %w", err),
-			errorsauth.ErrGenericLogin,
-		)
+		ps = []*permissionspermissions.Permission{
+			auth.PermCanBeSuperuser,
+			auth.PermSuperuser,
+		}
 	}
 
 	userInfo.Superuser = req.GetSuperuser()
@@ -846,7 +931,10 @@ func (s *Server) SetSuperuserMode(
 	// Load account data for token creation
 	account, err := s.getAccountFromDB(
 		ctx,
-		tAccounts.Username.EQ(mysql.String(claims.Username)),
+		mysql.AND(
+			tAccounts.ID.EQ(mysql.Int64(accClaims.AccID)),
+			tAccounts.Username.EQ(mysql.String(accClaims.Username)),
+		),
 		false,
 	)
 	if err != nil {
@@ -856,17 +944,25 @@ func (s *Server) SetSuperuserMode(
 		)
 	}
 
-	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)
+	accClaims = auth.MapAccountToClaims(accounts.ConvertFromModelAcc(account))
+	accClaims.CanBeSuperuser = userInfo.GetCanBeSuperuser()
+
+	userClaims := auth.MapUserToClaims(account.ID, char)
+	superuser := userInfo.GetSuperuser()
+	userClaims.Superuser = &superuser
+
+	userToken, err := s.tm.FromUserClaims(userClaims)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
-	if err := s.setTokenCookie(ctx, newToken); err != nil {
+	if err := s.setCookies(ctx, accClaims); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
 	return &pbauth.SetSuperuserModeResponse{
-		Expires:     timestamp.New(newClaims.ExpiresAt.Time),
+		Token:       userToken,
+		Expires:     timestamp.New(accClaims.ExpiresAt.Time),
 		JobProps:    jobProps,
 		Char:        char,
 		Permissions: ps,
@@ -877,9 +973,9 @@ func (s *Server) SetSuperuserMode(
 func (s *Server) getJobWithProps(
 	ctx context.Context,
 	jobName string,
-) (*jobs.Job, int32, *jobs.JobProps, error) {
-	tJobs := tables.Jobs().AS("job")
-	tJobsGrades := tables.JobsGrades()
+) (*jobs.Job, int32, *jobsprops.JobProps, error) {
+	tJobs := table.FivenetJobs.AS("job")
+	tJobsGrades := table.FivenetJobsGrades
 	tFiles := table.FivenetFiles.AS("logo_file")
 
 	stmt := tJobs.
@@ -917,10 +1013,23 @@ func (s *Server) getJobWithProps(
 	var dest struct {
 		Job      *jobs.Job
 		JobGrade int32 `alias:"job_grade"`
-		JobProps *jobs.JobProps
+		JobProps *jobsprops.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, 0, nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, 0, nil, err
+		}
+
+		// Create empty dummy job if not found in DB
+		dest.Job = &jobs.Job{
+			Name:  jobName,
+			Label: jobName,
+		}
+		dest.JobProps = &jobsprops.JobProps{
+			Job:      jobName,
+			JobLabel: &jobName,
+		}
+		dest.JobProps.Default(jobName)
 	}
 
 	if dest.JobProps != nil {

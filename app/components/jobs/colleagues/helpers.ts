@@ -1,6 +1,6 @@
 import type { Perms } from '~~/gen/ts/perms';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
-import type { User } from '~~/gen/ts/resources/users/users';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
+import type { User } from '~~/gen/ts/resources/users/user';
 
 export function checkIfCanAccessColleague(target: Colleague | User, perm: Perms): boolean {
     const { attrStringList, activeChar, isSuperuser } = useAuth();

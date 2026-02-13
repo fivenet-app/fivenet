@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
+	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
+	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
@@ -14,10 +15,10 @@ import (
 type licensesSync struct {
 	*syncer
 
-	state *TableSyncState
+	state *dbsyncconfig.TableSyncState
 }
 
-func newLicensesSync(s *syncer, state *TableSyncState) *licensesSync {
+func newLicensesSync(s *syncer, state *dbsyncconfig.TableSyncState) *licensesSync {
 	return &licensesSync{
 		syncer: s,
 		state:  state,
@@ -25,16 +26,12 @@ func newLicensesSync(s *syncer, state *TableSyncState) *licensesSync {
 }
 
 func (s *licensesSync) Sync(ctx context.Context) error {
-	if !s.cfg.Tables.Licenses.Enabled {
-		return nil
-	}
-
 	limit := int64(200)
 
 	q := s.cfg.Tables.Licenses.GetQuery(s.state, 0, limit)
 	s.logger.Debug("licenses sync query", zap.String("query", q))
 
-	licenses := []*users.License{}
+	licenses := []*userslicenses.License{}
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, &licenses); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
@@ -51,7 +48,7 @@ func (s *licensesSync) Sync(ctx context.Context) error {
 	if s.cli != nil {
 		if err := s.sendData(ctx, &pbsync.SendDataRequest{
 			Data: &pbsync.SendDataRequest_Licenses{
-				Licenses: &sync.DataLicenses{
+				Licenses: &syncdata.DataLicenses{
 					Licenses: licenses,
 				},
 			},

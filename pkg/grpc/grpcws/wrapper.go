@@ -41,6 +41,7 @@ type WrappedGrpcServer struct {
 	allowedHeaders      []string
 	endpointFunc        func(req *http.Request) string
 	registeredEndpoints []string
+	validateTokenFunc   func(token string) (bool, error)
 }
 
 // WrapServer takes a gRPC Server in Go and returns a *WrappedGrpcServer that provides gRPC-Web Compatibility.
@@ -107,6 +108,7 @@ func wrapGrpc(
 		allowedHeaders:      allowedHeaders,
 		endpointFunc:        endpointFunc,
 		registeredEndpoints: endpointsFunc(),
+		validateTokenFunc:   opts.validateTokenFunc,
 	}
 	w.corsWrapperHandler = corsWrapper.Handler(http.HandlerFunc(w.HandleGrpcWebRequest))
 
@@ -182,9 +184,11 @@ func (w *WrappedGrpcServer) HandleGrpcWebsocketChannelRequest(
 	headers[ConnectionIdHeader] = []string{connUUID.String()}
 	req.Header = headers
 
-	ctx := req.Context() // Use the request context
+	// Use the request context
+	ctx := req.Context()
 	websocketChannel := NewWebsocketChannel(
 		ctx,
+		w.validateTokenFunc,
 		c,
 		w.handler.ServeHTTP,
 		w.opts.websocketChannelMaxStreamCount,

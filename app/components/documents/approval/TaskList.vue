@@ -4,7 +4,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
-import { ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval';
+import { ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval/approval';
 import type { DeleteApprovalTasksResponse, ListApprovalTasksResponse } from '~~/gen/ts/services/documents/approval';
 import { approvalTaskStatusToColor } from './helpers';
 

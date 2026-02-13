@@ -4,13 +4,14 @@
 // 	protoc        (unknown)
 // source: resources/common/tests/objects.proto
 
+//go:build !protoopaque
+
 package tests
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,7 +24,7 @@ const (
 
 // **INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages are required.
 type SimpleObject struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Field1        string                 `protobuf:"bytes,1,opt,name=field1,proto3" json:"field1,omitempty"`
 	Field2        bool                   `protobuf:"varint,2,opt,name=field2,proto3" json:"field2,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -55,11 +56,6 @@ func (x *SimpleObject) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SimpleObject.ProtoReflect.Descriptor instead.
-func (*SimpleObject) Descriptor() ([]byte, []int) {
-	return file_resources_common_tests_objects_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *SimpleObject) GetField1() string {
 	if x != nil {
 		return x.Field1
@@ -74,6 +70,30 @@ func (x *SimpleObject) GetField2() bool {
 	return false
 }
 
+func (x *SimpleObject) SetField1(v string) {
+	x.Field1 = v
+}
+
+func (x *SimpleObject) SetField2(v bool) {
+	x.Field2 = v
+}
+
+type SimpleObject_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Field1 string
+	Field2 bool
+}
+
+func (b0 SimpleObject_builder) Build() *SimpleObject {
+	m0 := &SimpleObject{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Field1 = b.Field1
+	x.Field2 = b.Field2
+	return m0
+}
+
 var File_resources_common_tests_objects_proto protoreflect.FileDescriptor
 
 const file_resources_common_tests_objects_proto_rawDesc = "" +
@@ -81,19 +101,7 @@ const file_resources_common_tests_objects_proto_rawDesc = "" +
 	"$resources/common/tests/objects.proto\x12\x16resources.common.tests\">\n" +
 	"\fSimpleObject\x12\x16\n" +
 	"\x06field1\x18\x01 \x01(\tR\x06field1\x12\x16\n" +
-	"\x06field2\x18\x02 \x01(\bR\x06field2BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/tests;testsb\x06proto3"
-
-var (
-	file_resources_common_tests_objects_proto_rawDescOnce sync.Once
-	file_resources_common_tests_objects_proto_rawDescData []byte
-)
-
-func file_resources_common_tests_objects_proto_rawDescGZIP() []byte {
-	file_resources_common_tests_objects_proto_rawDescOnce.Do(func() {
-		file_resources_common_tests_objects_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_common_tests_objects_proto_rawDesc), len(file_resources_common_tests_objects_proto_rawDesc)))
-	})
-	return file_resources_common_tests_objects_proto_rawDescData
-}
+	"\x06field2\x18\x02 \x01(\bR\x06field2BPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/tests;testsb\x06proto3"
 
 var file_resources_common_tests_objects_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_common_tests_objects_proto_goTypes = []any{

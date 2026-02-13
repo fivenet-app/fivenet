@@ -9,10 +9,10 @@ import (
 	"os"
 
 	"github.com/alecthomas/kong"
-	"github.com/fivenet-app/fivenet/v2025/cmd/envs"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/dsn"
-	"github.com/fivenet-app/fivenet/v2025/query"
+	"github.com/fivenet-app/fivenet/v2026/cmd/envs"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/dsn"
+	"github.com/fivenet-app/fivenet/v2026/query"
 	"github.com/golang-migrate/migrate/v4"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -72,7 +72,7 @@ func (c *VersionCmd) run(_ context.Context, cfg *config.Config) error {
 		return err
 	}
 
-	m, err := query.NewMigrate(db, cfg.Database.ESXCompat, cfg.Database.DisableLocking)
+	m, err := query.NewMigrate(db, cfg.Database.DisableLocking)
 	if err != nil {
 		return err
 	}
@@ -141,7 +141,7 @@ func (c *UpCmd) run(_ context.Context, logger *zap.Logger, cfg *config.Config) e
 		return fmt.Errorf("failed to open mysqsl db connection. %w", err)
 	}
 
-	m, err := query.NewMigrate(db, cfg.Database.ESXCompat, cfg.Database.DisableLocking)
+	m, err := query.NewMigrate(db, cfg.Database.DisableLocking)
 	if err != nil {
 		return fmt.Errorf("failed to create migrationg client. %w", err)
 	}

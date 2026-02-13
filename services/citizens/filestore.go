@@ -5,17 +5,18 @@ import (
 	"errors"
 	"math"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbcitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens"
-	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
+	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -117,7 +118,7 @@ func (s *Server) UploadMugshot(
 	}
 	targetUserId := int32(parentId)
 
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 
 	u := &users.User{}
 	stmt := tUser.
@@ -173,14 +174,14 @@ func (s *Server) UploadMugshot(
 	}
 
 	if props.MugshotFileId == nil || resp.GetId() != props.GetMugshotFileId() {
-		if err := users.CreateUserActivities(ctx, s.db, &users.UserActivity{
+		if err := usersactivity.CreateUserActivities(ctx, s.db, &usersactivity.UserActivity{
 			SourceUserId: &userInfo.UserId,
 			TargetUserId: targetUserId,
-			Type:         users.UserActivityType_USER_ACTIVITY_TYPE_MUGSHOT,
+			Type:         usersactivity.UserActivityType_USER_ACTIVITY_TYPE_MUGSHOT,
 			Reason:       meta.GetReason(),
-			Data: &users.UserActivityData{
-				Data: &users.UserActivityData_MugshotChange{
-					MugshotChange: &users.MugshotChange{},
+			Data: &usersactivity.UserActivityData{
+				Data: &usersactivity.UserActivityData_MugshotChange{
+					MugshotChange: &usersactivity.MugshotChange{},
 				},
 			},
 		}); err != nil {
@@ -203,7 +204,7 @@ func (s *Server) DeleteMugshot(
 		return nil, errorscitizens.ErrReasonRequired
 	}
 
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 
 	u := &users.User{}
 	uStmt := tUser.
@@ -262,14 +263,14 @@ func (s *Server) DeleteMugshot(
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if err := users.CreateUserActivities(ctx, s.db, &users.UserActivity{
+	if err := usersactivity.CreateUserActivities(ctx, s.db, &usersactivity.UserActivity{
 		SourceUserId: &userInfo.UserId,
 		TargetUserId: req.GetUserId(),
-		Type:         users.UserActivityType_USER_ACTIVITY_TYPE_MUGSHOT,
+		Type:         usersactivity.UserActivityType_USER_ACTIVITY_TYPE_MUGSHOT,
 		Reason:       req.GetReason(),
-		Data: &users.UserActivityData{
-			Data: &users.UserActivityData_MugshotChange{
-				MugshotChange: &users.MugshotChange{},
+		Data: &usersactivity.UserActivityData{
+			Data: &usersactivity.UserActivityData_MugshotChange{
+				MugshotChange: &usersactivity.MugshotChange{},
 			},
 		},
 	}); err != nil {

@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: codegen/audit/redacted.proto
 
+//go:build !protoopaque
+
 package audit
 
 import (
@@ -43,7 +45,7 @@ var File_codegen_audit_redacted_proto protoreflect.FileDescriptor
 const file_codegen_audit_redacted_proto_rawDesc = "" +
 	"\n" +
 	"\x1ccodegen/audit/redacted.proto\x12\rcodegen.audit\x1a google/protobuf/descriptor.proto:;\n" +
-	"\bredacted\x12\x1d.google.protobuf.FieldOptions\x18\xbe\x8e\x03 \x01(\bR\bredactedBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/audit;auditb\x06proto3"
+	"\bredacted\x12\x1d.google.protobuf.FieldOptions\x18\xbe\x8e\x03 \x01(\bR\bredactedBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/audit;auditb\x06proto3"
 
 var file_codegen_audit_redacted_proto_goTypes = []any{
 	(*descriptorpb.FieldOptions)(nil), // 0: google.protobuf.FieldOptions

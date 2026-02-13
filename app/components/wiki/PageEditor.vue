@@ -3,7 +3,6 @@ import type { UForm } from '#components';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
-import { logger } from '~/components/documents/helpers';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
@@ -12,9 +11,9 @@ import { getWikiWikiClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
-import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
+import { ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { type PageJobAccess, type PageUserAccess, AccessLevel } from '~~/gen/ts/resources/wiki/access';
+import { type PageJobAccess, type PageUserAccess, AccessLevel } from '~~/gen/ts/resources/wiki/access/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import BackButton from '../partials/BackButton.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
@@ -40,6 +39,8 @@ const notifications = useNotificationsStore();
 const { maxAccessEntries, maxContentLength } = useAppConfig();
 
 const route = useRoute<'wiki-job-id-slug-edit'>();
+
+const logger = useLogger('📃 Wiki');
 
 const wikiClient = await getWikiWikiClient();
 
@@ -362,8 +363,8 @@ const selectedTab = computed({
 // Handle the client update event
 const { sendClientView } = useClientUpdate(ObjectType.WIKI_PAGE, () =>
     notifications.add({
-        title: { key: 'notifications.wiki.client_view_update.title', parameters: {} },
-        description: { key: 'notifications.wiki.client_view_update.content', parameters: {} },
+        title: { key: 'notifications.wiki.clientview_update.title', parameters: {} },
+        description: { key: 'notifications.wiki.clientview_update.content', parameters: {} },
         duration: 7500,
         type: NotificationType.INFO,
         actions: [

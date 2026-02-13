@@ -18,7 +18,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useClipboardStore } from '~/stores/clipboard';
-import { AccessLevel } from '~~/gen/ts/resources/documents/access';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
@@ -48,8 +48,6 @@ const { design } = storeToRefs(settingsStore);
 const overlay = useOverlay();
 
 const documentsDocuments = await useDocumentsDocuments();
-
-const commentCount = ref<undefined | number>();
 
 const {
     data: doc,
@@ -560,8 +558,8 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                             size="md"
                             icon="i-mdi-comment-text-multiple"
                             :label="
-                                commentCount !== undefined
-                                    ? $t('common.comments', commentCount)
+                                doc.document?.meta?.commentCount !== undefined
+                                    ? $t('common.comments', doc.document?.meta?.commentCount)
                                     : '? ' + $t('common.comment', 2)
                             "
                         />
@@ -736,9 +734,13 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                                 :document-id="documentId"
                                 :closed="doc.document?.meta?.closed"
                                 :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"
-                                @counted="commentCount = $event"
-                                @new-comment="commentCount && commentCount++"
-                                @deleted-comment="commentCount && commentCount > 0 && commentCount--"
+                                @counted="doc.document?.meta?.commentCount && (doc.document.meta.commentCount = $event)"
+                                @new-comment="doc.document?.meta?.commentCount && doc.document.meta.commentCount++"
+                                @deleted-comment="
+                                    doc.document?.meta?.commentCount &&
+                                    doc.document?.meta?.commentCount > 0 &&
+                                    doc.document.meta.commentCount--
+                                "
                             />
                         </UContainer>
                     </template>

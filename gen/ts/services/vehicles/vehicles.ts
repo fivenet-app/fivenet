@@ -12,7 +12,7 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { VehicleProps } from "../../resources/vehicles/props";
+import { VehicleProps } from "../../resources/vehicles/props/props";
 import { Vehicle } from "../../resources/vehicles/vehicles";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Sort } from "../../resources/common/database/database";
@@ -70,7 +70,7 @@ export interface ListVehiclesResponse {
  */
 export interface SetVehiclePropsRequest {
     /**
-     * @generated from protobuf field: resources.vehicles.VehicleProps props = 1
+     * @generated from protobuf field: resources.vehicles.props.VehicleProps props = 1
      */
     props?: VehicleProps;
 }
@@ -79,7 +79,7 @@ export interface SetVehiclePropsRequest {
  */
 export interface SetVehiclePropsResponse {
     /**
-     * @generated from protobuf field: resources.vehicles.VehicleProps props = 1
+     * @generated from protobuf field: resources.vehicles.props.VehicleProps props = 1
      */
     props?: VehicleProps;
     /**
@@ -256,7 +256,7 @@ class SetVehiclePropsRequest$Type extends MessageType<SetVehiclePropsRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.vehicles.VehicleProps props */ 1:
+                case /* resources.vehicles.props.VehicleProps props */ 1:
                     message.props = VehicleProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
                 default:
@@ -271,7 +271,7 @@ class SetVehiclePropsRequest$Type extends MessageType<SetVehiclePropsRequest> {
         return message;
     }
     internalBinaryWrite(message: SetVehiclePropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.vehicles.VehicleProps props = 1; */
+        /* resources.vehicles.props.VehicleProps props = 1; */
         if (message.props)
             VehicleProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -304,7 +304,7 @@ class SetVehiclePropsResponse$Type extends MessageType<SetVehiclePropsResponse> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.vehicles.VehicleProps props */ 1:
+                case /* resources.vehicles.props.VehicleProps props */ 1:
                     message.props = VehicleProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
                 case /* string reason */ 2:
@@ -322,7 +322,7 @@ class SetVehiclePropsResponse$Type extends MessageType<SetVehiclePropsResponse> 
         return message;
     }
     internalBinaryWrite(message: SetVehiclePropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.vehicles.VehicleProps props = 1; */
+        /* resources.vehicles.props.VehicleProps props = 1; */
         if (message.props)
             VehicleProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* string reason = 2; */

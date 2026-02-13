@@ -2,7 +2,7 @@
 import { addDays, subDays } from 'date-fns';
 import { Timeline, type TimelineGroup, type TimelineItem, type TimelineMarker } from 'vue-timeline-chart';
 import 'vue-timeline-chart/style.css';
-import type { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
+import type { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock/timeclock';
 
 const props = defineProps<{
     data: TimeclockEntry[];

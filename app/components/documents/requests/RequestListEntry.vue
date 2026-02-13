@@ -2,8 +2,8 @@
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
-import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
-import type { DocRequest } from '~~/gen/ts/resources/documents/requests';
+import { DocActivityType } from '~~/gen/ts/resources/documents/activity/activity';
+import type { DocRequest } from '~~/gen/ts/resources/documents/requests/requests';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{

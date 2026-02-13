@@ -11,6 +11,11 @@ lint:
     - STANDARD
   except:
     - PACKAGE_VERSION_SUFFIX
+    # Disabled to allow request/response messages to be shared, e.g.,
+    # file store `UploadFileRequest` and `UploadFileResponse`
+    - RPC_REQUEST_RESPONSE_UNIQUE
+    # Allow for same standard response message in some services
+    - RPC_RESPONSE_STANDARD_NAME
 breaking:
   use:
     - FILE_NO_DELETE

@@ -6,7 +6,7 @@ import "buf/validate/validate.proto";
 import "codegen/perms/perms.proto";
 import "resources/settings/config.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settings";
 
 message GetAppConfigRequest {}
 

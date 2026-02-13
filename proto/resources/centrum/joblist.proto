@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package resources.centrum;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum;centrum";
+
+message JobList {
+  repeated JobListEntry jobs = 1 [(buf.validate.field).repeated.max_items = 10];
+}
+
+message JobListEntry {
+  string name = 1 [(buf.validate.field).string.max_len = 20];
+  optional string label = 2;
+}

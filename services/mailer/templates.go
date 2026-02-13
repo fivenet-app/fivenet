@@ -4,15 +4,16 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
+	mailertemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/templates"
+	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -29,7 +30,7 @@ func (s *Server) ListTemplates(
 		ctx,
 		req.GetEmailId(),
 		userInfo,
-		mailer.AccessLevel_ACCESS_LEVEL_READ,
+		maileraccess.AccessLevel_ACCESS_LEVEL_READ,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -54,7 +55,9 @@ func (s *Server) ListTemplates(
 		)).
 		LIMIT(25)
 
-	resp := &pbmailer.ListTemplatesResponse{}
+	resp := &pbmailer.ListTemplatesResponse{
+		Templates: []*mailertemplates.Template{},
+	}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -68,7 +71,7 @@ func (s *Server) getTemplate(
 	ctx context.Context,
 	id int64,
 	emailId *int64,
-) (*mailer.Template, error) {
+) (*mailertemplates.Template, error) {
 	condition := tTemplates.ID.EQ(mysql.Int64(id))
 
 	if emailId == nil || *emailId <= 0 {
@@ -97,7 +100,7 @@ func (s *Server) getTemplate(
 		WHERE(condition).
 		LIMIT(1)
 
-	dest := &mailer.Template{}
+	dest := &mailertemplates.Template{}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -121,7 +124,7 @@ func (s *Server) GetTemplate(
 		ctx,
 		req.GetEmailId(),
 		userInfo,
-		mailer.AccessLevel_ACCESS_LEVEL_READ,
+		maileraccess.AccessLevel_ACCESS_LEVEL_READ,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -151,7 +154,7 @@ func (s *Server) CreateOrUpdateTemplate(
 		ctx,
 		req.GetTemplate().GetEmailId(),
 		userInfo,
-		mailer.AccessLevel_ACCESS_LEVEL_MANAGE,
+		maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -265,7 +268,7 @@ func (s *Server) DeleteTemplate(
 		ctx,
 		req.GetId(),
 		userInfo,
-		mailer.AccessLevel_ACCESS_LEVEL_MANAGE,
+		maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

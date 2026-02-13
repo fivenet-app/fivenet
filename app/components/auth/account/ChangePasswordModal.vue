@@ -2,7 +2,6 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
-import { useAuthStore } from '~/stores/auth';
 import { getAuthAuthClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -11,9 +10,6 @@ const emit = defineEmits<{
 }>();
 
 const notifications = useNotificationsStore();
-
-const authStore = useAuthStore();
-const { setAccessTokenExpiration } = authStore;
 
 const authAuthClient = await getAuthAuthClient();
 
@@ -35,10 +31,8 @@ async function changePassword(values: Schema): Promise<void> {
             current: values.currentPassword,
             new: values.newPassword,
         });
-        const { response } = await call;
+        await call;
         emit('close', false);
-
-        setAccessTokenExpiration(toDate(response.expires));
 
         notifications.add({
             title: { key: 'notifications.auth.changed_password.title', parameters: {} },
@@ -46,7 +40,7 @@ async function changePassword(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        await navigateTo('/overview');
+        await navigateTo('/auth/logout');
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;

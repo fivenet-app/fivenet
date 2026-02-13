@@ -1,11 +1,10 @@
 import type { BadgeProps, ButtonProps } from '@nuxt/ui';
 import type { Perms } from '~~/gen/ts/perms';
-import type { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
-import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
-import { DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
-
-export const logger = useLogger('📃 Docstore');
+import type { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access/access';
+import { DocActivityType } from '~~/gen/ts/resources/documents/activity/activity';
+import { DocReference } from '~~/gen/ts/resources/documents/references/references';
+import { DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 export function checkDocAccess(
     docAccess: DocumentAccess | undefined,
@@ -204,6 +203,8 @@ export function getDocAtivityIcon(activityType: DocActivityType): string {
             return 'i-mdi-file-swap-outline';
         case DocActivityType.REQUESTED_DELETION:
             return 'i-mdi-delete-circle-outline';
+        case DocActivityType.REQUESTED_APPROVAL:
+            return 'i-mdi-check-circle-outline';
 
         // Comments
         case DocActivityType.COMMENT_ADDED:
@@ -212,6 +213,18 @@ export function getDocAtivityIcon(activityType: DocActivityType): string {
             return 'i-mdi-comment-edit';
         case DocActivityType.COMMENT_DELETED:
             return 'i-mdi-delete';
+
+        // Approval System
+        case DocActivityType.APPROVAL_ASSIGNED:
+            return 'i-mdi-account-add-outline';
+        case DocActivityType.APPROVAL_APPROVED:
+            return 'i-mdi-account-check';
+        case DocActivityType.APPROVAL_REJECTED:
+            return 'i-mdi-account-cancel';
+        case DocActivityType.APPROVAL_REVOKED:
+            return 'i-mdi-account-remove';
+        case DocActivityType.APPROVAL_REMOVED:
+            return 'i-mdi-account-off';
 
         default:
             return 'i-mdi-help';

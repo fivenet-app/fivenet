@@ -11,7 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../users/users";
+import { UserShort } from "../users/short/user";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.audit.AuditEntry
@@ -30,7 +30,7 @@ export interface AuditEntry {
      */
     userId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 4
+     * @generated from protobuf field: optional resources.users.short.UserShort user = 4
      */
     user?: UserShort;
     /**
@@ -42,7 +42,7 @@ export interface AuditEntry {
      */
     targetUserId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort target_user = 7
+     * @generated from protobuf field: optional resources.users.short.UserShort target_user = 7
      */
     targetUser?: UserShort;
     /**
@@ -182,7 +182,7 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
                 case /* int32 user_id */ 3:
                     message.userId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort user */ 4:
+                case /* optional resources.users.short.UserShort user */ 4:
                     message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
                 case /* string user_job */ 5:
@@ -191,7 +191,7 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
                 case /* optional int32 target_user_id */ 6:
                     message.targetUserId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort target_user */ 7:
+                case /* optional resources.users.short.UserShort target_user */ 7:
                     message.targetUser = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.targetUser);
                     break;
                 case /* optional string target_user_job */ 8:
@@ -236,7 +236,7 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
         /* int32 user_id = 3; */
         if (message.userId !== 0)
             writer.tag(3, WireType.Varint).int32(message.userId);
-        /* optional resources.users.UserShort user = 4; */
+        /* optional resources.users.short.UserShort user = 4; */
         if (message.user)
             UserShort.internalBinaryWrite(message.user, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* string user_job = 5; */
@@ -245,7 +245,7 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
         /* optional int32 target_user_id = 6; */
         if (message.targetUserId !== undefined)
             writer.tag(6, WireType.Varint).int32(message.targetUserId);
-        /* optional resources.users.UserShort target_user = 7; */
+        /* optional resources.users.short.UserShort target_user = 7; */
         if (message.targetUser)
             UserShort.internalBinaryWrite(message.targetUser, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* optional string target_user_job = 8; */

@@ -5,13 +5,13 @@ import (
 	"errors"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -26,7 +26,7 @@ func (s *Server) listQualificationsQuery(
 	onlyColumns mysql.ProjectionList,
 	userInfo *userinfo.UserInfo,
 ) mysql.SelectStatement {
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 
 	wheres := []mysql.BoolExpression{}
 	if !userInfo.GetSuperuser() {
@@ -38,7 +38,7 @@ func (s *Server) listQualificationsQuery(
 					tQAccess.TargetID.EQ(tQuali.ID),
 					tQAccess.Access.IS_NOT_NULL(),
 					tQAccess.Access.GT_EQ(
-						mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW)),
+						mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
 					mysql.AND(
 						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
@@ -156,7 +156,7 @@ func (s *Server) getQualificationQuery(
 	userInfo *userinfo.UserInfo,
 	selectContent bool,
 ) mysql.SelectStatement {
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 
 	wheres := []mysql.BoolExpression{
 		tQuali.ID.EQ(mysql.Int64(qualificationId)),
@@ -170,7 +170,7 @@ func (s *Server) getQualificationQuery(
 					tQAccess.TargetID.EQ(tQuali.ID),
 					tQAccess.Access.IS_NOT_NULL(),
 					tQAccess.Access.GT_EQ(
-						mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW)),
+						mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
 					mysql.AND(
 						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),

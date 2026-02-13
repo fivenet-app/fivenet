@@ -4,7 +4,7 @@
 package accounts
 
 import (
-	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -17,6 +17,15 @@ func (m *Account) Sanitize() error {
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
 		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Groups
+	if m.Groups != nil {
+		if v, ok := any(m.GetGroups()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -49,6 +58,24 @@ func (m *Account) Sanitize() error {
 
 	// Field: Username
 	m.Username = htmlsanitizer.Sanitize(m.Username)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *AccountGroups) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Groups
+	for idx, item := range m.Groups {
+		_, _ = idx, item
+
+		m.Groups[idx] = htmlsanitizer.Sanitize(m.Groups[idx])
+
+	}
 
 	return nil
 }

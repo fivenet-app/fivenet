@@ -2,7 +2,7 @@
 import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
 import { jobsUserActivityTypeBGColor, jobsUserActivityTypeIcon } from '~/components/jobs/colleagues/info/helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { ColleagueActivityType, type ColleagueActivity } from '~~/gen/ts/resources/jobs/activity';
+import { ColleagueActivityType, type ColleagueActivity } from '~~/gen/ts/resources/jobs/colleagues/activity/activity';
 
 withDefaults(
     defineProps<{

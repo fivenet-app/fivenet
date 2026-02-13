@@ -4,15 +4,14 @@ import (
 	context "context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbcitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens"
-	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
+	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -27,7 +26,7 @@ func (s *Server) ListUserActivity(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	resp := &pbcitizens.ListUserActivityResponse{
-		Activity: []*users.UserActivity{},
+		Activity: []*usersactivity.UserActivity{},
 	}
 
 	// User can't see their own activities, unless they have "Own" perm attribute, or are a superuser
@@ -82,7 +81,7 @@ func (s *Server) ListUserActivity(
 		return resp, nil
 	}
 
-	tUTarget := tables.User().AS("target_user")
+	tUTarget := table.FivenetUser.AS("target_user")
 	tUSource := tUTarget.AS("source_user")
 
 	// Convert proto sort to db sorting

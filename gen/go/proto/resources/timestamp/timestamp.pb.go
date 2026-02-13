@@ -7,6 +7,8 @@
 // 	protoc        (unknown)
 // source: resources/timestamp/timestamp.proto
 
+//go:build !protoopaque
+
 package timestamp
 
 import (
@@ -14,7 +16,6 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -31,7 +32,7 @@ const (
 // https://golang.org/pkg/database/sql/#Scanner
 // https://golang.org/pkg/database/sql/driver/#Valuer
 type Timestamp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Timestamp     *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -62,16 +63,40 @@ func (x *Timestamp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Timestamp.ProtoReflect.Descriptor instead.
-func (*Timestamp) Descriptor() ([]byte, []int) {
-	return file_resources_timestamp_timestamp_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *Timestamp) GetTimestamp() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Timestamp
 	}
 	return nil
+}
+
+func (x *Timestamp) SetTimestamp(v *timestamppb.Timestamp) {
+	x.Timestamp = v
+}
+
+func (x *Timestamp) HasTimestamp() bool {
+	if x == nil {
+		return false
+	}
+	return x.Timestamp != nil
+}
+
+func (x *Timestamp) ClearTimestamp() {
+	x.Timestamp = nil
+}
+
+type Timestamp_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Timestamp *timestamppb.Timestamp
+}
+
+func (b0 Timestamp_builder) Build() *Timestamp {
+	m0 := &Timestamp{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Timestamp = b.Timestamp
+	return m0
 }
 
 var File_resources_timestamp_timestamp_proto protoreflect.FileDescriptor
@@ -80,19 +105,7 @@ const file_resources_timestamp_timestamp_proto_rawDesc = "" +
 	"\n" +
 	"#resources/timestamp/timestamp.proto\x12\x13resources.timestamp\x1a\x1fgoogle/protobuf/timestamp.proto\"E\n" +
 	"\tTimestamp\x128\n" +
-	"\ttimestamp\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestampBQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp;timestampb\x06proto3"
-
-var (
-	file_resources_timestamp_timestamp_proto_rawDescOnce sync.Once
-	file_resources_timestamp_timestamp_proto_rawDescData []byte
-)
-
-func file_resources_timestamp_timestamp_proto_rawDescGZIP() []byte {
-	file_resources_timestamp_timestamp_proto_rawDescOnce.Do(func() {
-		file_resources_timestamp_timestamp_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_timestamp_timestamp_proto_rawDesc), len(file_resources_timestamp_timestamp_proto_rawDesc)))
-	})
-	return file_resources_timestamp_timestamp_proto_rawDescData
-}
+	"\ttimestamp\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestampBQZOgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp;timestampb\x06proto3"
 
 var file_resources_timestamp_timestamp_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_timestamp_timestamp_proto_goTypes = []any{

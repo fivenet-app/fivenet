@@ -8,7 +8,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
-import { UserActivityType } from '~~/gen/ts/resources/users/activity';
+import { UserActivityType } from '~~/gen/ts/resources/users/activity/activity';
 import type { ListUserActivityResponse } from '~~/gen/ts/services/citizens/citizens';
 
 const props = defineProps<{
@@ -107,7 +107,7 @@ const formRef = useTemplateRef('formRef');
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.types"
-                                    class="min-w-40 flex-1"
+                                    class="w-full min-w-40 flex-1"
                                     multiple
                                     :items="options"
                                     value-key="value"

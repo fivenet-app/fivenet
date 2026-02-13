@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
-import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
+import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
+import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
 
 const props = withDefaults(
     defineProps<{
@@ -43,7 +43,7 @@ function clicked(h: Hit): void {
 
 <template>
     <UCard
-        class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col"
+        class="-my-[13px] -mr-[24px] -ml-[20px] flex max-h-[90dvh] min-w-[200px] flex-col overflow-y-auto"
         :ui="{ header: 'mx-auto p-1 sm:px-2', body: 'p-1 sm:p-2 xl:mx-auto max-h-[90%]', footer: 'mx-auto p-1 sm:px-2' }"
     >
         <template #header>

@@ -12,7 +12,12 @@ useHead({
 definePageMeta({
     title: 'common.control_panel',
     requiresAuth: true,
-    permission: 'settings.SettingsService/GetRoles',
+    permission: [
+        'settings.SettingsService/GetJobProps',
+        'settings.SettingsService/GetRoles',
+        'settings.SettingsService/ViewAuditLog',
+        'settings.LawsService/CreateOrUpdateLawBook',
+    ],
 });
 
 const { isSuperuser } = useAuth();
@@ -50,8 +55,15 @@ const items = computed<CardElements>(() => [
         title: t('pages.settings.laws.title'),
         description: t('pages.settings.features.laws'),
         to: '/settings/laws',
-        permission: 'Superuser/Superuser',
+        permission: 'settings.LawsService/CreateOrUpdateLawBook',
         icon: 'i-mdi-scale-balance',
+    },
+    {
+        title: t('pages.settings.jobs.title'),
+        description: t('pages.settings.features.jobs'),
+        to: '/settings/jobs',
+        permission: 'Superuser/Superuser',
+        icon: 'i-mdi-briefcase',
     },
 ]);
 

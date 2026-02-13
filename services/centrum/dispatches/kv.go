@@ -7,14 +7,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
-	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
+	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/nats-io/nats.go/jetstream"
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *DispatchDB) Store() *store.Store[centrum.Dispatch, *centrum.Dispatch] {
+func (s *DispatchDB) Store() *store.Store[centrumdispatches.Dispatch, *centrumdispatches.Dispatch] {
 	return s.store
 }
 
@@ -22,8 +22,12 @@ func (s *DispatchDB) IdleStore() jetstream.KeyValue {
 	return s.idleKV
 }
 
-func (s *DispatchDB) updateInKV(ctx context.Context, id int64, dsp *centrum.Dispatch) error {
-	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
+func (s *DispatchDB) updateInKV(
+	ctx context.Context,
+	id int64,
+	dsp *centrumdispatches.Dispatch,
+) error {
+	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
 		if existing == nil {
 			return dsp, dsp != nil, nil
 		}
@@ -45,7 +49,7 @@ func (s *DispatchDB) deleteInKV(ctx context.Context, id int64) error {
 	return s.store.Delete(ctx, centrumutils.IdKey(id))
 }
 
-func (s *DispatchDB) Get(ctx context.Context, id int64) (*centrum.Dispatch, error) {
+func (s *DispatchDB) Get(ctx context.Context, id int64) (*centrumdispatches.Dispatch, error) {
 	dsp, err := s.store.GetOrLoad(ctx, centrumutils.IdKey(id))
 	if err != nil {
 		return nil, err
@@ -56,7 +60,7 @@ func (s *DispatchDB) Get(ctx context.Context, id int64) (*centrum.Dispatch, erro
 
 // List returns all dispatches that match the given job prefixes.
 // If jobs is nil, it returns all dispatches.
-func (s *DispatchDB) List(ctx context.Context, jobs []string) []*centrum.Dispatch {
+func (s *DispatchDB) List(ctx context.Context, jobs []string) []*centrumdispatches.Dispatch {
 	if jobs == nil {
 		jobs = []string{""}
 	}
@@ -71,7 +75,7 @@ func (s *DispatchDB) List(ctx context.Context, jobs []string) []*centrum.Dispatc
 		return false
 	})
 
-	ds := []*centrum.Dispatch{}
+	ds := []*centrumdispatches.Dispatch{}
 	for _, key := range keys {
 		uid, err := centrumutils.ExtractIDString(key)
 		if err != nil {
@@ -89,7 +93,7 @@ func (s *DispatchDB) List(ctx context.Context, jobs []string) []*centrum.Dispatc
 		ds = append(ds, dsp)
 	}
 
-	slices.SortFunc(ds, func(a, b *centrum.Dispatch) int {
+	slices.SortFunc(ds, func(a, b *centrumdispatches.Dispatch) int {
 		return int(a.GetId() - b.GetId())
 	})
 
@@ -99,12 +103,12 @@ func (s *DispatchDB) List(ctx context.Context, jobs []string) []*centrum.Dispatc
 func (s *DispatchDB) Filter(
 	ctx context.Context,
 	jobs []string,
-	statuses []centrum.StatusDispatch,
-	notStatuses []centrum.StatusDispatch,
-) []*centrum.Dispatch {
+	statuses []centrumdispatches.StatusDispatch,
+	notStatuses []centrumdispatches.StatusDispatch,
+) []*centrumdispatches.Dispatch {
 	ds := s.List(ctx, jobs)
 
-	ds = slices.DeleteFunc(ds, func(dispatch *centrum.Dispatch) bool {
+	ds = slices.DeleteFunc(ds, func(dispatch *centrumdispatches.Dispatch) bool {
 		// Hide user info when dispatch is anonymous
 		if dispatch.GetAnon() {
 			dispatch.Creator = nil
@@ -129,9 +133,9 @@ func (s *DispatchDB) Filter(
 func (s *DispatchDB) updateStatusInKV(
 	ctx context.Context,
 	id int64,
-	status *centrum.DispatchStatus,
+	status *centrumdispatches.DispatchStatus,
 ) error {
-	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
+	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
 		if existing == nil {
 			return existing, false, nil
 		}

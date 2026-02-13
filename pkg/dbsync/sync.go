@@ -8,8 +8,9 @@ import (
 	"sync"
 	"time"
 
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -32,8 +33,8 @@ type Sync struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 
-	cfg     *Config
-	state   *DBSyncState
+	cfg     *dbsyncconfig.Config
+	state   *dbsyncconfig.State
 	cli     *grpc.ClientConn
 	syncCli pbsync.SyncServiceClient
 
@@ -41,6 +42,7 @@ type Sync struct {
 	licenses *licensesSync
 	users    *usersSync
 	vehicles *vehiclesSync
+	accounts *accountsSync
 
 	streamCh chan *pbsync.StreamResponse
 }
@@ -51,8 +53,9 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
-	Config *Config
+	Config *dbsyncconfig.Config
 	DB     *sql.DB
+	State  *dbsyncconfig.State
 }
 
 type Result struct {
@@ -69,14 +72,14 @@ func New(p Params) (*Sync, error) {
 		logger: logger,
 		cfg:    p.Config,
 		db:     p.DB,
+		state:  p.State,
 
 		streamCh: make(chan *pbsync.StreamResponse, 12),
 	}
 
-	p.Config.setupWatch(logger.Named("config"), s.restart)
+	p.Config.SetupWatch(logger.Named("config"), s.restart)
 
 	// Load dbsync state from file if exists
-	s.state = NewDBSyncState(s.logger, s.cfg.Load().StateFile)
 	if err := s.state.Load(); err != nil {
 		return nil, fmt.Errorf("failed to load dbsync state. %w", err)
 	}
@@ -97,7 +100,9 @@ func New(p Params) (*Sync, error) {
 
 func (s *Sync) createGRPCClient() error {
 	// Create GRPC client for sync if destination is given
-	if s.cfg.Load().Destination.URL != "" {
+	cfg := s.cfg.Load()
+	api := cfg.Destination.API
+	if api.URL != "" {
 		transportCreds := auth.NewCredentials()
 		if !s.cfg.Load().Destination.Insecure {
 			transportCreds = credentials.NewTLS(&tls.Config{
@@ -107,13 +112,13 @@ func (s *Sync) createGRPCClient() error {
 		}
 
 		cli, err := grpc.NewClient(
-			s.cfg.Load().Destination.URL,
+			api.URL,
 			grpc.WithTransportCredentials(transportCreds),
 			// Require transport security for release mode
 			grpc.WithPerRPCCredentials(
 				auth.NewClientTokenAuth(
-					s.cfg.Load().Destination.Token,
-					s.cfg.Load().Mode == "release",
+					api.Token,
+					cfg.Mode == "release",
 				),
 			),
 		)
@@ -130,6 +135,8 @@ func (s *Sync) createGRPCClient() error {
 func (s *Sync) start() error {
 	s.logger.Info("starting dbsync process")
 
+	s.ctx, s.cancel = context.WithCancel(context.Background())
+
 	if err := s.createGRPCClient(); err != nil {
 		return err
 	}
@@ -145,13 +152,16 @@ func (s *Sync) start() error {
 	s.licenses = newLicensesSync(syncer, s.state.Licenses)
 	s.users = newUsersSync(syncer, s.state.Users)
 	s.vehicles = newVehiclesSync(syncer, s.state.OwnedVehicles)
+	s.accounts = newAccountsSync(syncer, s.state.Accounts)
 
-	s.wg.Add(1)
-	go s.Run(s.ctx)
+	s.wg.Go(func() {
+		s.Run(s.ctx)
+	})
 
 	if s.syncCli != nil {
-		s.wg.Add(1)
-		go s.RunStream(s.ctx)
+		s.wg.Go(func() {
+			s.RunStream(s.ctx)
+		})
 	}
 
 	return nil
@@ -191,8 +201,6 @@ func (s *Sync) restart() error {
 }
 
 func (s *Sync) Run(ctx context.Context) {
-	defer s.wg.Done()
-
 	s.logger.Info("started dbsync loop")
 
 	for {
@@ -203,6 +211,7 @@ func (s *Sync) Run(ctx context.Context) {
 		select {
 		case <-ctx.Done():
 			return
+
 		case <-time.After(10 * time.Second):
 		}
 	}
@@ -213,10 +222,11 @@ func (s *Sync) run(ctx context.Context) error {
 	// On startup sync base data (jobs, job grades and license types) before the "main" sync loop starts,
 	// then sync in 5 minute interval to keep the data fresh
 	if err := s.syncBaseData(ctx); err != nil {
-		s.logger.Error("error during base data sync", zap.Error(err))
+		s.logger.Error("error during initial base data sync", zap.Error(err))
 		return err
 	}
 
+	// Base data sync loop
 	wg.Go(func() {
 		for {
 			s.syncBaseData(ctx)
@@ -230,8 +240,14 @@ func (s *Sync) run(ctx context.Context) error {
 		}
 	})
 
+	cfg := s.cfg.Load().Tables
+
 	// User data sync loop
 	wg.Go(func() {
+		if !cfg.Users.Enabled {
+			return
+		}
+
 		for {
 			if err := s.users.Sync(ctx); err != nil {
 				s.logger.Error("error during users sync", zap.Error(err))
@@ -248,6 +264,10 @@ func (s *Sync) run(ctx context.Context) error {
 
 	// Vehicles data sync loop
 	wg.Go(func() {
+		if !cfg.Vehicles.Enabled {
+			return
+		}
+
 		for {
 			if err := s.vehicles.Sync(ctx); err != nil {
 				s.logger.Error("error during vehicles sync", zap.Error(err))
@@ -262,6 +282,26 @@ func (s *Sync) run(ctx context.Context) error {
 		}
 	})
 
+	// Accounts data sync loop
+	wg.Go(func() {
+		if !cfg.Accounts.Enabled {
+			return
+		}
+
+		for {
+			if err := s.accounts.Sync(ctx); err != nil {
+				s.logger.Error("error during accounts sync", zap.Error(err))
+			}
+
+			select {
+			case <-ctx.Done():
+				return
+
+			case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Users)):
+			}
+		}
+	})
+
 	wg.Wait()
 
 	return nil
@@ -270,14 +310,18 @@ func (s *Sync) run(ctx context.Context) error {
 func (s *Sync) syncBaseData(ctx context.Context) error {
 	errs := multierr.Combine()
 
-	if err := s.jobs.Sync(ctx); err != nil {
-		errs = multierr.Append(errs, err)
-		s.logger.Error("error during jobs sync", zap.Error(err))
+	if s.cfg.Load().Tables.Jobs.Enabled {
+		if err := s.jobs.Sync(ctx); err != nil {
+			errs = multierr.Append(errs, err)
+			s.logger.Error("error during jobs sync", zap.Error(err))
+		}
 	}
 
-	if err := s.licenses.Sync(ctx); err != nil {
-		errs = multierr.Append(errs, err)
-		s.logger.Error("error during licenses sync", zap.Error(err))
+	if s.cfg.Load().Tables.Licenses.Enabled {
+		if err := s.licenses.Sync(ctx); err != nil {
+			errs = multierr.Append(errs, err)
+			s.logger.Error("error during licenses sync", zap.Error(err))
+		}
 	}
 
 	return errs

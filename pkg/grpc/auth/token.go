@@ -6,26 +6,35 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
 	"github.com/golang-jwt/jwt/v5"
+	"go.uber.org/fx"
 )
 
 const (
-	TokenExpireTime  = 96 * time.Hour
+	// 4 days.
+	TokenExpireTime = 96 * time.Hour
+	// 2 days.
 	TokenRenewalTime = 48 * time.Hour
 )
 
-type CitizenInfoClaims struct {
-	jwt.RegisteredClaims
+var ErrFailedJWTVerify = errors.New("failed to verify jwt token method")
 
-	AccID    int64  `json:"accid"`
-	Username string `json:"usr"`
-	CharID   int32  `json:"chrid"`
-}
+var TokenMgrModule = fx.Module("tokenMgr",
+	fx.Provide(
+		NewTokenMgrFromConfig,
+	),
+)
 
 type TokenMgr struct {
 	jwtSigningKey []byte
+}
+
+func NewTokenMgrFromConfig(cfg *config.Config) *TokenMgr {
+	return NewTokenMgr(cfg.JWT.Secret)
 }
 
 func NewTokenMgr(jwtSecret string) *TokenMgr {
@@ -34,62 +43,138 @@ func NewTokenMgr(jwtSecret string) *TokenMgr {
 	}
 }
 
-func (t *TokenMgr) NewWithClaims(claims *CitizenInfoClaims) (string, error) {
+func (t *TokenMgr) FromAccClaims(claims *authclaims.AccountInfoClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(t.jwtSigningKey)
 }
 
-func (t *TokenMgr) ParseWithClaims(tokenString string) (*CitizenInfoClaims, error) {
+func (t *TokenMgr) FromUserClaims(claims *authclaims.UserInfoClaims) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(t.jwtSigningKey)
+}
+
+func (t *TokenMgr) FromCombinedClaims(claims *authclaims.CombinedClaims) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(t.jwtSigningKey)
+}
+
+func (t *TokenMgr) ParseAccToken(tokenString string) (*authclaims.AccountInfoClaims, error) {
 	token, err := jwt.ParseWithClaims(
 		tokenString,
-		&CitizenInfoClaims{},
+		&authclaims.AccountInfoClaims{},
 		func(token *jwt.Token) (any, error) {
-			_, ok := token.Method.(*jwt.SigningMethodHMAC)
-			if !ok {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return "", ErrFailedJWTVerify
+			}
+			return t.jwtSigningKey, nil
+		},
+	)
+	if err != nil {
+		return nil, errors.New("failed to parse jwt acc token")
+	}
+
+	claims, ok := token.Claims.(*authclaims.AccountInfoClaims)
+	if ok && token.Valid {
+		// Ensure AccID is set
+		if claims.AccID > 0 {
+			return claims, nil
+		}
+	}
+
+	return nil, errors.New("failed to parse acc token claims")
+}
+
+func (t *TokenMgr) ParseUserToken(tokenString string) (*authclaims.UserInfoClaims, error) {
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		&authclaims.UserInfoClaims{},
+		func(token *jwt.Token) (any, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return "", ErrFailedJWTVerify
+			}
+			return t.jwtSigningKey, nil
+		},
+	)
+	if err != nil {
+		return nil, errors.New("failed to parse jwt user token")
+	}
+
+	claims, ok := token.Claims.(*authclaims.UserInfoClaims)
+	if ok && token.Valid {
+		// Ensure at least UserID is set "correctly"
+		if claims.UserID > 0 {
+			return claims, nil
+		}
+	}
+
+	return nil, errors.New("failed to parse user token claims")
+}
+
+func (t *TokenMgr) ParseCombinedToken(tokenString string) (*authclaims.CombinedClaims, error) {
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		&authclaims.CombinedClaims{},
+		func(token *jwt.Token) (any, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return "", errors.New("failed to verify jwt token method")
 			}
 			return t.jwtSigningKey, nil
 		},
 	)
 	if err != nil {
-		return nil, errors.New("failed to parse jwt token")
+		return nil, errors.New("failed to parse jwt user token")
 	}
 
-	claims, ok := token.Claims.(*CitizenInfoClaims)
+	claims, ok := token.Claims.(*authclaims.CombinedClaims)
 	if ok && token.Valid {
-		return claims, nil
+		// Ensure at least AccID is set "correctly"
+		if claims.AccID > 0 {
+			return claims, nil
+		}
 	}
-	return nil, errors.New("failed to parse token claims")
+
+	return nil, errors.New("failed to parse user token claims")
 }
 
-func BuildTokenClaimsFromAccount(
-	account *model.FivenetAccounts,
-	activeChar *users.User,
-) *CitizenInfoClaims {
-	claims := &CitizenInfoClaims{
-		AccID:    account.ID,
-		Username: *account.Username,
+func MapAccountToClaims(account *accounts.Account) *authclaims.AccountInfoClaims {
+	accClaims := &authclaims.AccountInfoClaims{
+		AccID:    account.Id,
+		Username: account.Username,
+		Groups:   account.GetGroups().GetGroups(),
+
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:   "fivenet",
 			Subject:  account.License,
-			ID:       strconv.FormatInt(account.ID, 10),
+			ID:       strconv.FormatInt(account.Id, 10),
 			Audience: []string{"fivenet"},
 		},
 	}
-	SetTokenClaimsTimes(claims)
+	setTokenClaimsTimes(&accClaims.RegisteredClaims)
 
-	if activeChar != nil {
-		claims.CharID = activeChar.GetUserId()
-	} else {
-		claims.CharID = 0
-	}
-
-	return claims
+	return accClaims
 }
 
-func SetTokenClaimsTimes(claims *CitizenInfoClaims) {
+func MapUserToClaims(accId int64, user *users.User) *authclaims.UserInfoClaims {
+	userClaims := &authclaims.UserInfoClaims{
+		AccID:    accId,
+		UserID:   user.GetUserId(),
+		Job:      &user.Job,
+		JobGrade: &user.JobGrade,
+
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:   "fivenet",
+			ID:       strconv.FormatInt(int64(user.UserId), 10),
+			Audience: []string{"fivenet"},
+		},
+	}
+	setTokenClaimsTimes(&userClaims.RegisteredClaims)
+
+	return userClaims
+}
+
+// Set the expiration time relative to the current (server) time for the given claims.
+func setTokenClaimsTimes(claims *jwt.RegisteredClaims) {
 	now := time.Now()
-	// A usual scenario is to set the expiration time relative to the current time
 	claims.ExpiresAt = jwt.NewNumericDate(now.Add(TokenExpireTime))
 	claims.IssuedAt = jwt.NewNumericDate(now)
 	claims.NotBefore = jwt.NewNumericDate(now)

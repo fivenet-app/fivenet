@@ -3,7 +3,7 @@ package cache
 import (
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 )
 

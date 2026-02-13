@@ -6,12 +6,12 @@ import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
-import "resources/mailer/events.proto";
-import "resources/notifications/client_view.proto";
-import "resources/notifications/events.proto";
+import "resources/mailer/events/events.proto";
+import "resources/notifications/clientview/clientview.proto";
+import "resources/notifications/events/events.proto";
 import "resources/notifications/notifications.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications;notifications";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/notifications;notifications";
 
 message GetNotificationsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
@@ -49,7 +49,7 @@ message StreamRequest {
   oneof data {
     option (buf.validate.oneof).required = true;
 
-    resources.notifications.ClientView client_view = 1;
+    resources.notifications.clientview.ClientView clientview = 1;
   }
 }
 
@@ -60,12 +60,12 @@ message StreamResponse {
   oneof data {
     option (buf.validate.oneof).required = true;
 
-    resources.notifications.UserEvent user_event = 3;
-    resources.notifications.JobEvent job_event = 4;
-    resources.notifications.JobGradeEvent job_grade_event = 5;
-    resources.notifications.SystemEvent system_event = 6;
-    resources.mailer.MailerEvent mailer_event = 7;
-    resources.notifications.ObjectEvent object_event = 8;
+    resources.notifications.events.UserEvent user_event = 3;
+    resources.notifications.events.JobEvent job_event = 4;
+    resources.notifications.events.JobGradeEvent job_grade_event = 5;
+    resources.notifications.events.SystemEvent system_event = 6;
+    resources.mailer.events.MailerEvent mailer_event = 7;
+    resources.notifications.clientview.ObjectEvent object_event = 8;
   }
 }
 

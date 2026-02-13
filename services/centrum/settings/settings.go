@@ -8,15 +8,16 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	centrumaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/access"
+	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
@@ -32,7 +33,7 @@ type SettingsDB struct {
 	js       *events.JSWrapper
 	enricher *mstlystcdata.Enricher
 
-	store *store.Store[centrum.Settings, *centrum.Settings]
+	store *store.Store[centrumsettings.Settings, *centrumsettings.Settings]
 
 	publicJobsMu sync.RWMutex
 	publicJobs   []*jobs.Job
@@ -65,13 +66,13 @@ func New(p Params) *SettingsDB {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		st, err := store.New[centrum.Settings, *centrum.Settings](
+		st, err := store.New[centrumsettings.Settings, *centrumsettings.Settings](
 			ctxCancel,
 			logger,
 			p.JS,
 			"centrum_settings",
 			store.WithOnRemoteUpdatedFn(
-				func(ctx context.Context, oldValue *centrum.Settings, newValue *centrum.Settings) (*centrum.Settings, error) {
+				func(ctx context.Context, oldValue *centrumsettings.Settings, newValue *centrumsettings.Settings) (*centrumsettings.Settings, error) {
 					if newValue == nil {
 						return newValue, nil
 					}
@@ -145,7 +146,7 @@ func (s *SettingsDB) LoadFromDB(ctx context.Context, job string) error {
 			LIMIT(1)
 	}
 
-	var dest []*centrum.Settings
+	var dest []*centrumsettings.Settings
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
@@ -175,7 +176,11 @@ func (s *SettingsDB) LoadFromDB(ctx context.Context, job string) error {
 	return nil
 }
 
-func (s *SettingsDB) updateDB(ctx context.Context, job string, settings *centrum.Settings) error {
+func (s *SettingsDB) updateDB(
+	ctx context.Context,
+	job string,
+	settings *centrumsettings.Settings,
+) error {
 	tCentrumSettings := table.FivenetCentrumSettings
 
 	stmt := tCentrumSettings.
@@ -241,7 +246,7 @@ func (s *SettingsDB) updateDB(ctx context.Context, job string, settings *centrum
 func (s *SettingsDB) loadAccess(
 	ctx context.Context,
 	job string,
-) (*centrum.CentrumAccess, *centrum.CentrumAccess, error) {
+) (*centrumaccess.CentrumAccess, *centrumaccess.CentrumAccess, error) {
 	tCentrumJobAccess := table.FivenetCentrumJobAccess.AS("centrum_job_access")
 
 	stmt := tCentrumJobAccess.
@@ -260,15 +265,15 @@ func (s *SettingsDB) loadAccess(
 		)).
 		LIMIT(25)
 
-	var accesses []*centrum.CentrumJobAccess
+	var accesses []*centrumaccess.CentrumJobAccess
 	if err := stmt.QueryContext(ctx, s.db, &accesses); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil, fmt.Errorf("failed to load offered access for job %s. %w", job, err)
 		}
 	}
 
-	access := &centrum.CentrumAccess{}
-	offered := &centrum.CentrumAccess{}
+	access := &centrumaccess.CentrumAccess{}
+	offered := &centrumaccess.CentrumAccess{}
 	for _, v := range accesses {
 		if v.GetSourceJob() == job {
 			access.Jobs = append(access.Jobs, v)
@@ -283,8 +288,8 @@ func (s *SettingsDB) loadAccess(
 func (s *SettingsDB) handleAccessChanges(
 	ctx context.Context,
 	job string,
-	current *centrum.CentrumAccess,
-	incoming *centrum.CentrumAccess,
+	current *centrumaccess.CentrumAccess,
+	incoming *centrumaccess.CentrumAccess,
 ) error {
 	removed, updated, created, err := s.compareAccess(job, current, incoming)
 	if err != nil {
@@ -420,19 +425,19 @@ func (s *SettingsDB) handleAccessChanges(
 
 func (s *SettingsDB) compareAccess(
 	j string,
-	currentSettings *centrum.CentrumAccess,
-	incoming *centrum.CentrumAccess,
-) ([]*centrum.CentrumJobAccess, []*centrum.CentrumJobAccess, []*centrum.CentrumJobAccess, error) {
-	currentAccess := make(map[string]*centrum.CentrumJobAccess)
+	currentSettings *centrumaccess.CentrumAccess,
+	incoming *centrumaccess.CentrumAccess,
+) ([]*centrumaccess.CentrumJobAccess, []*centrumaccess.CentrumJobAccess, []*centrumaccess.CentrumJobAccess, error) {
+	currentAccess := make(map[string]*centrumaccess.CentrumJobAccess)
 	if currentSettings != nil {
 		for _, access := range currentSettings.GetJobs() {
 			currentAccess[access.GetJob()] = access
 		}
 	}
 
-	removed := []*centrum.CentrumJobAccess{}
-	updated := []*centrum.CentrumJobAccess{}
-	created := []*centrum.CentrumJobAccess{}
+	removed := []*centrumaccess.CentrumJobAccess{}
+	updated := []*centrumaccess.CentrumJobAccess{}
+	created := []*centrumaccess.CentrumJobAccess{}
 
 	if incoming != nil {
 		for _, offered := range incoming.GetJobs() {
@@ -478,10 +483,10 @@ func (s *SettingsDB) compareAccess(
 
 func (s *SettingsDB) calculateEffectiveAccess(
 	job string,
-	offeredAccess *centrum.CentrumAccess,
-) *centrum.EffectiveAccess {
-	effectiveAccess := &centrum.EffectiveAccess{
-		Dispatches: &centrum.EffectiveDispatchAccess{},
+	offeredAccess *centrumaccess.CentrumAccess,
+) *centrumsettings.EffectiveAccess {
+	effectiveAccess := &centrumsettings.EffectiveAccess{
+		Dispatches: &centrumsettings.EffectiveDispatchAccess{},
 	}
 
 	// Calculate effective access: intersection of offered and accepted accesses
@@ -500,7 +505,7 @@ func (s *SettingsDB) calculateEffectiveAccess(
 
 			effectiveAccess.Dispatches.Jobs = append(
 				effectiveAccess.Dispatches.Jobs,
-				&centrum.JobAccessEntry{
+				&centrumsettings.JobAccessEntry{
 					Job:    offered.GetSourceJob(),
 					Access: offered.GetAccess(),
 				},
@@ -514,8 +519,8 @@ func (s *SettingsDB) calculateEffectiveAccess(
 func (s *SettingsDB) Update(
 	ctx context.Context,
 	job string,
-	in *centrum.Settings,
-) (*centrum.Settings, error) {
+	in *centrumsettings.Settings,
+) (*centrumsettings.Settings, error) {
 	current, err := s.Get(ctx, job)
 	if err != nil {
 		return nil, err

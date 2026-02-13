@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ExamResponses } from '~~/gen/ts/resources/qualifications/exam';
+import type { ExamResponses } from '~~/gen/ts/resources/qualifications/exam/exam';
 import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import ExamViewQuestion from './ExamViewQuestion.vue';
 

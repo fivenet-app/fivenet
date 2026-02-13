@@ -6,7 +6,7 @@ package audit
 import (
 	"database/sql/driver"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -15,6 +15,11 @@ func (x *AuditEntryMeta) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
 		return protojson.Unmarshal([]byte(t), x)
+	case *string:
+		if t == nil {
+			return nil
+		}
+		return protojson.Unmarshal([]byte(*t), x)
 	case []byte:
 		return protojson.Unmarshal(t, x)
 	}

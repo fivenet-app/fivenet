@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UnitAttribute, type UnitAttributes } from '~~/gen/ts/resources/centrum/attributes';
+import { UnitAttribute, type UnitAttributes } from '~~/gen/ts/resources/centrum/units/units';
 
 defineProps<{
     attributes?: UnitAttributes;

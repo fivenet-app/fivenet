@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package resources.documents.forms;
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/forms;documentsforms";
+
+message Form {
+  int64 id = 1;
+}

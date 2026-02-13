@@ -23,7 +23,7 @@ func TestAuthFromMD(t *testing.T) {
 		msg     string
 	}{
 		{
-			md:    grpcMetadata.Pairs("Authorization", "bearer some_token"),
+			md:    grpcMetadata.Pairs("Authorization", "Bearer some_token"),
 			value: "some_token",
 			msg:   "must extract simple bearer tokens without case checking",
 		},
@@ -44,7 +44,7 @@ func TestAuthFromMD(t *testing.T) {
 			msg:     "must check authentication type",
 		},
 		{
-			md:      grpcMetadata.Pairs("Authorization", "Basic login:passwd", "Authorization", "bearer some_token"),
+			md:      grpcMetadata.Pairs("Authorization", "Basic login:passwd", "Authorization", "Bearer some_token"),
 			value:   "",
 			errCode: codes.Unauthenticated,
 			msg:     "must not allow multiple authentication methods",
@@ -63,7 +63,7 @@ func TestAuthFromMD(t *testing.T) {
 		},
 	} {
 		ctx := metadata.MD(run.md).ToIncoming(context.Background())
-		out, err := AuthFromMD(ctx, "bearer")
+		out, err := AuthFromMD(ctx, "Bearer")
 		if run.errCode != codes.OK {
 			assert.Equal(t, run.errCode, status.Code(err), run.msg)
 		} else {

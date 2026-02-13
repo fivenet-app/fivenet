@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/collab"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"

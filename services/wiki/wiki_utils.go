@@ -4,7 +4,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
 )
 
 func mapPagesToNavItems(pages []*wiki.PageShort) []*wiki.PageShort {

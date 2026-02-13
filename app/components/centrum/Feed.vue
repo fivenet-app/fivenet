@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import DispatchFeedItem from '~/components/centrum/dispatches/DispatchFeedItem.vue';
 import UnitFeedItem from '~/components/centrum/units/UnitFeedItem.vue';
-import type { DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
-import type { UnitStatus } from '~~/gen/ts/resources/centrum/units';
+import type { DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import type { UnitStatus } from '~~/gen/ts/resources/centrum/units/units';
 
 defineProps<{
     items: (DispatchStatus | UnitStatus)[];

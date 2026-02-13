@@ -7,11 +7,11 @@ import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/content/content.proto";
 import "resources/file/file.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
-import "resources/wiki/access.proto";
+import "resources/users/short/user.proto";
+import "resources/wiki/access/access.proto";
 import "tagger/tagger.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki;wiki";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki;wiki";
 
 message Page {
   int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
@@ -26,7 +26,7 @@ message Page {
   optional int64 parent_id = 4;
   PageMeta meta = 5 [(buf.validate.field).required = true];
   resources.common.content.Content content = 6;
-  PageAccess access = 7 [(buf.validate.field).required = true];
+  resources.wiki.access.PageAccess access = 7 [(buf.validate.field).required = true];
   repeated resources.file.File files = 8 [(tagger.tags) = "alias:\"files\""];
 }
 
@@ -56,7 +56,7 @@ message PageMeta {
     }
   ];
   optional int32 creator_id = 7 [(buf.validate.field).int32.gt = 0];
-  optional resources.users.UserShort creator = 8 [(tagger.tags) = "alias:\"creator\""];
+  optional resources.users.short.UserShort creator = 8 [(tagger.tags) = "alias:\"creator\""];
   resources.common.content.ContentType content_type = 9 [(buf.validate.field).enum.defined_only = true];
   repeated string tags = 10 [(codegen.sanitizer.sanitizer) = {
     enabled: true

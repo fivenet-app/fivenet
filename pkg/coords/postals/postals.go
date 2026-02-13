@@ -6,8 +6,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/coords"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/coords"
 )
 
 // Postals is a type alias for a read-only coordinate store of Postal pointers.

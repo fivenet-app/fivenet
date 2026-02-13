@@ -4,18 +4,20 @@
 // 	protoc        (unknown)
 // source: services/vehicles/vehicles.proto
 
+//go:build !protoopaque
+
 package vehicles
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	vehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
+	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -27,7 +29,7 @@ const (
 )
 
 type ListVehiclesRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
@@ -63,11 +65,6 @@ func (x *ListVehiclesRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListVehiclesRequest.ProtoReflect.Descriptor instead.
-func (*ListVehiclesRequest) Descriptor() ([]byte, []int) {
-	return file_services_vehicles_vehicles_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ListVehiclesRequest) GetPagination() *database.PaginationRequest {
@@ -119,8 +116,129 @@ func (x *ListVehiclesRequest) GetWanted() bool {
 	return false
 }
 
+func (x *ListVehiclesRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListVehiclesRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListVehiclesRequest) SetLicensePlate(v string) {
+	x.LicensePlate = &v
+}
+
+func (x *ListVehiclesRequest) SetModel(v string) {
+	x.Model = &v
+}
+
+func (x *ListVehiclesRequest) SetUserIds(v []int32) {
+	x.UserIds = v
+}
+
+func (x *ListVehiclesRequest) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *ListVehiclesRequest) SetWanted(v bool) {
+	x.Wanted = &v
+}
+
+func (x *ListVehiclesRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListVehiclesRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListVehiclesRequest) HasLicensePlate() bool {
+	if x == nil {
+		return false
+	}
+	return x.LicensePlate != nil
+}
+
+func (x *ListVehiclesRequest) HasModel() bool {
+	if x == nil {
+		return false
+	}
+	return x.Model != nil
+}
+
+func (x *ListVehiclesRequest) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *ListVehiclesRequest) HasWanted() bool {
+	if x == nil {
+		return false
+	}
+	return x.Wanted != nil
+}
+
+func (x *ListVehiclesRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListVehiclesRequest) ClearSort() {
+	x.Sort = nil
+}
+
+func (x *ListVehiclesRequest) ClearLicensePlate() {
+	x.LicensePlate = nil
+}
+
+func (x *ListVehiclesRequest) ClearModel() {
+	x.Model = nil
+}
+
+func (x *ListVehiclesRequest) ClearJob() {
+	x.Job = nil
+}
+
+func (x *ListVehiclesRequest) ClearWanted() {
+	x.Wanted = nil
+}
+
+type ListVehiclesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	LicensePlate *string
+	Model        *string
+	UserIds      []int32
+	Job          *string
+	Wanted       *bool
+}
+
+func (b0 ListVehiclesRequest_builder) Build() *ListVehiclesRequest {
+	m0 := &ListVehiclesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.LicensePlate = b.LicensePlate
+	x.Model = b.Model
+	x.UserIds = b.UserIds
+	x.Job = b.Job
+	x.Wanted = b.Wanted
+	return m0
+}
+
 type ListVehiclesResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Vehicles      []*vehicles.Vehicle          `protobuf:"bytes,2,rep,name=vehicles,proto3" json:"vehicles,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -152,11 +270,6 @@ func (x *ListVehiclesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListVehiclesResponse.ProtoReflect.Descriptor instead.
-func (*ListVehiclesResponse) Descriptor() ([]byte, []int) {
-	return file_services_vehicles_vehicles_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListVehiclesResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -171,9 +284,44 @@ func (x *ListVehiclesResponse) GetVehicles() []*vehicles.Vehicle {
 	return nil
 }
 
+func (x *ListVehiclesResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListVehiclesResponse) SetVehicles(v []*vehicles.Vehicle) {
+	x.Vehicles = v
+}
+
+func (x *ListVehiclesResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListVehiclesResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListVehiclesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Vehicles   []*vehicles.Vehicle
+}
+
+func (b0 ListVehiclesResponse_builder) Build() *ListVehiclesResponse {
+	m0 := &ListVehiclesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Vehicles = b.Vehicles
+	return m0
+}
+
 type SetVehiclePropsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Props         *vehicles.VehicleProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Props         *props.VehicleProps    `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -203,21 +351,45 @@ func (x *SetVehiclePropsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetVehiclePropsRequest.ProtoReflect.Descriptor instead.
-func (*SetVehiclePropsRequest) Descriptor() ([]byte, []int) {
-	return file_services_vehicles_vehicles_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *SetVehiclePropsRequest) GetProps() *vehicles.VehicleProps {
+func (x *SetVehiclePropsRequest) GetProps() *props.VehicleProps {
 	if x != nil {
 		return x.Props
 	}
 	return nil
 }
 
+func (x *SetVehiclePropsRequest) SetProps(v *props.VehicleProps) {
+	x.Props = v
+}
+
+func (x *SetVehiclePropsRequest) HasProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.Props != nil
+}
+
+func (x *SetVehiclePropsRequest) ClearProps() {
+	x.Props = nil
+}
+
+type SetVehiclePropsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Props *props.VehicleProps
+}
+
+func (b0 SetVehiclePropsRequest_builder) Build() *SetVehiclePropsRequest {
+	m0 := &SetVehiclePropsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Props = b.Props
+	return m0
+}
+
 type SetVehiclePropsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Props         *vehicles.VehicleProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Props         *props.VehicleProps    `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
 	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -248,12 +420,7 @@ func (x *SetVehiclePropsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetVehiclePropsResponse.ProtoReflect.Descriptor instead.
-func (*SetVehiclePropsResponse) Descriptor() ([]byte, []int) {
-	return file_services_vehicles_vehicles_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *SetVehiclePropsResponse) GetProps() *vehicles.VehicleProps {
+func (x *SetVehiclePropsResponse) GetProps() *props.VehicleProps {
 	if x != nil {
 		return x.Props
 	}
@@ -267,11 +434,46 @@ func (x *SetVehiclePropsResponse) GetReason() string {
 	return ""
 }
 
+func (x *SetVehiclePropsResponse) SetProps(v *props.VehicleProps) {
+	x.Props = v
+}
+
+func (x *SetVehiclePropsResponse) SetReason(v string) {
+	x.Reason = v
+}
+
+func (x *SetVehiclePropsResponse) HasProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.Props != nil
+}
+
+func (x *SetVehiclePropsResponse) ClearProps() {
+	x.Props = nil
+}
+
+type SetVehiclePropsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Props  *props.VehicleProps
+	Reason string
+}
+
+func (b0 SetVehiclePropsResponse_builder) Build() *SetVehiclePropsResponse {
+	m0 := &SetVehiclePropsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Props = b.Props
+	x.Reason = b.Reason
+	return m0
+}
+
 var File_services_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/vehicles/props.proto\x1a!resources/vehicles/vehicles.proto\"\xe9\x02\n" +
+	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a$resources/vehicles/props/props.proto\x1a!resources/vehicles/vehicles.proto\"\xe9\x02\n" +
 	"\x13ListVehiclesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -291,29 +493,17 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12=\n" +
-	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleB\x04\xc8\xf3\x18\x01R\bvehicles\"P\n" +
-	"\x16SetVehiclePropsRequest\x126\n" +
-	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsR\x05props\"q\n" +
-	"\x17SetVehiclePropsResponse\x126\n" +
-	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsR\x05props\x12\x1e\n" +
+	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleB\x04\xc8\xf3\x18\x01R\bvehicles\"V\n" +
+	"\x16SetVehiclePropsRequest\x12<\n" +
+	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\"w\n" +
+	"\x17SetVehiclePropsResponse\x12<\n" +
+	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\x12\x1e\n" +
 	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason2\xb0\x02\n" +
 	"\x0fVehiclesService\x12{\n" +
 	"\fListVehicles\x12&.services.vehicles.ListVehiclesRequest\x1a'.services.vehicles.ListVehiclesResponse\"\x1a\xd2\xf3\x18\x16\b\x01*\x12\n" +
 	"\x06Fields\x18\x01\"\x06Wanted\x12\x84\x01\n" +
 	"\x0fSetVehicleProps\x12).services.vehicles.SetVehiclePropsRequest\x1a*.services.vehicles.SetVehiclePropsResponse\"\x1a\xd2\xf3\x18\x16\b\x01*\x12\n" +
-	"\x06Fields\x18\x01\"\x06Wanted\x1a\x19\xea\xf3\x18\x15\b(\x12\x11i-mdi-car-outlineBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
-
-var (
-	file_services_vehicles_vehicles_proto_rawDescOnce sync.Once
-	file_services_vehicles_vehicles_proto_rawDescData []byte
-)
-
-func file_services_vehicles_vehicles_proto_rawDescGZIP() []byte {
-	file_services_vehicles_vehicles_proto_rawDescOnce.Do(func() {
-		file_services_vehicles_vehicles_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_vehicles_vehicles_proto_rawDesc), len(file_services_vehicles_vehicles_proto_rawDesc)))
-	})
-	return file_services_vehicles_vehicles_proto_rawDescData
-}
+	"\x06Fields\x18\x01\"\x06Wanted\x1a\x19\xea\xf3\x18\x15\b(\x12\x11i-mdi-car-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
 
 var file_services_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_services_vehicles_vehicles_proto_goTypes = []any{
@@ -325,15 +515,15 @@ var file_services_vehicles_vehicles_proto_goTypes = []any{
 	(*database.Sort)(nil),               // 5: resources.common.database.Sort
 	(*database.PaginationResponse)(nil), // 6: resources.common.database.PaginationResponse
 	(*vehicles.Vehicle)(nil),            // 7: resources.vehicles.Vehicle
-	(*vehicles.VehicleProps)(nil),       // 8: resources.vehicles.VehicleProps
+	(*props.VehicleProps)(nil),          // 8: resources.vehicles.props.VehicleProps
 }
 var file_services_vehicles_vehicles_proto_depIdxs = []int32{
 	4, // 0: services.vehicles.ListVehiclesRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	5, // 1: services.vehicles.ListVehiclesRequest.sort:type_name -> resources.common.database.Sort
 	6, // 2: services.vehicles.ListVehiclesResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	7, // 3: services.vehicles.ListVehiclesResponse.vehicles:type_name -> resources.vehicles.Vehicle
-	8, // 4: services.vehicles.SetVehiclePropsRequest.props:type_name -> resources.vehicles.VehicleProps
-	8, // 5: services.vehicles.SetVehiclePropsResponse.props:type_name -> resources.vehicles.VehicleProps
+	8, // 4: services.vehicles.SetVehiclePropsRequest.props:type_name -> resources.vehicles.props.VehicleProps
+	8, // 5: services.vehicles.SetVehiclePropsResponse.props:type_name -> resources.vehicles.props.VehicleProps
 	0, // 6: services.vehicles.VehiclesService.ListVehicles:input_type -> services.vehicles.ListVehiclesRequest
 	2, // 7: services.vehicles.VehiclesService.SetVehicleProps:input_type -> services.vehicles.SetVehiclePropsRequest
 	1, // 8: services.vehicles.VehiclesService.ListVehicles:output_type -> services.vehicles.ListVehiclesResponse

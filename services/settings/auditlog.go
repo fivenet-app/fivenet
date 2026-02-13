@@ -4,14 +4,13 @@ import (
 	"context"
 	"errors"
 
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -131,7 +130,7 @@ func (s *Server) ViewAuditLog(
 		orderBys = append(orderBys, tAuditLog.CreatedAt.DESC())
 	}
 
-	tUser := tables.User().AS("user_short")
+	tUser := table.FivenetUser.AS("user_short")
 
 	stmt := tAuditLog.
 		SELECT(
@@ -152,6 +151,7 @@ func (s *Server) ViewAuditLog(
 			tUser.JobGrade,
 			tUser.Firstname,
 			tUser.Lastname,
+			tUser.Dateofbirth,
 		).
 		FROM(
 			tAuditLog.

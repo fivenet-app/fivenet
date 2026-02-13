@@ -4,12 +4,13 @@ import (
 	"context"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentsworkflow "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/workflow"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -19,7 +20,7 @@ func (s *Server) createOrUpdateWorkflowState(
 	ctx context.Context,
 	tx qrm.DB,
 	documentId int64,
-	workflow *documents.Workflow,
+	workflow *documentsworkflow.Workflow,
 ) error {
 	if workflow == nil || (!workflow.GetAutoClose() && !workflow.GetReminder()) {
 		return nil
@@ -82,7 +83,7 @@ func (s *Server) SetDocumentReminder(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -92,14 +93,11 @@ func (s *Server) SetDocumentReminder(
 	}
 
 	if req.GetReminderTime() == nil {
-		if err := deleteWorkflowUserState(ctx, s.db, &documents.WorkflowUserState{
-			DocumentId: req.GetDocumentId(),
-			UserId:     userInfo.GetUserId(),
-		}); err != nil {
+		if err := deleteWorkflowUserState(ctx, s.db, req.GetDocumentId(), userInfo.GetUserId()); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	} else {
-		if err := updateWorkflowUserState(ctx, s.db, &documents.WorkflowUserState{
+		if err := updateWorkflowUserState(ctx, s.db, &documentsworkflow.WorkflowUserState{
 			DocumentId:            req.GetDocumentId(),
 			UserId:                userInfo.GetUserId(),
 			ManualReminderTime:    req.GetReminderTime(),

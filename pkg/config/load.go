@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/creasty/defaults"
-	"github.com/fivenet-app/fivenet/v2025/cmd/envs"
+	"github.com/fivenet-app/fivenet/v2026/cmd/envs"
 	"github.com/go-playground/validator/v10"
 	"github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
@@ -81,6 +81,9 @@ func Load() (Result, error) {
 
 		c.Database.DSN = m.FormatDSN()
 	}
+
+	// Disable ESX compatibility mode (no longer available nor supported)
+	c.Database.ESXCompat = false
 
 	// Ensure origins are lower case
 	for i := range c.HTTP.Origins {

@@ -3,7 +3,7 @@ package centrum
 import (
 	"fmt"
 
-	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
+	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
 )
 
 func centrumSubjects(jobs []string) []string {

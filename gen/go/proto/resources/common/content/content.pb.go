@@ -4,15 +4,16 @@
 // 	protoc        (unknown)
 // source: resources/common/content/content.proto
 
+//go:build !protoopaque
+
 package content
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	structpb "google.golang.org/protobuf/types/known/structpb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -69,11 +70,6 @@ func (x ContentType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ContentType.Descriptor instead.
-func (ContentType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_common_content_content_proto_rawDescGZIP(), []int{0}
-}
-
 type NodeType int32
 
 const (
@@ -124,13 +120,8 @@ func (x NodeType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use NodeType.Descriptor instead.
-func (NodeType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_common_content_content_proto_rawDescGZIP(), []int{1}
-}
-
 type Content struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
+	state       protoimpl.MessageState `protogen:"hybrid.v1"`
 	Version     string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	ContentType ContentType            `protobuf:"varint,2,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	// Deprecated: Legacy HTML (only for viewing old content)
@@ -168,11 +159,6 @@ func (x *Content) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Content.ProtoReflect.Descriptor instead.
-func (*Content) Descriptor() ([]byte, []int) {
-	return file_resources_common_content_content_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *Content) GetVersion() string {
 	if x != nil {
 		return x.Version
@@ -208,8 +194,86 @@ func (x *Content) GetTiptapJson() *structpb.Struct {
 	return nil
 }
 
+func (x *Content) SetVersion(v string) {
+	x.Version = v
+}
+
+func (x *Content) SetContentType(v ContentType) {
+	x.ContentType = v
+}
+
+func (x *Content) SetRawHtml(v string) {
+	x.RawHtml = &v
+}
+
+func (x *Content) SetContent(v *RichTextHtmlNode) {
+	x.Content = v
+}
+
+func (x *Content) SetTiptapJson(v *structpb.Struct) {
+	x.TiptapJson = v
+}
+
+func (x *Content) HasRawHtml() bool {
+	if x == nil {
+		return false
+	}
+	return x.RawHtml != nil
+}
+
+func (x *Content) HasContent() bool {
+	if x == nil {
+		return false
+	}
+	return x.Content != nil
+}
+
+func (x *Content) HasTiptapJson() bool {
+	if x == nil {
+		return false
+	}
+	return x.TiptapJson != nil
+}
+
+func (x *Content) ClearRawHtml() {
+	x.RawHtml = nil
+}
+
+func (x *Content) ClearContent() {
+	x.Content = nil
+}
+
+func (x *Content) ClearTiptapJson() {
+	x.TiptapJson = nil
+}
+
+type Content_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Version     string
+	ContentType ContentType
+	// Deprecated: Legacy HTML (only for viewing old content)
+	RawHtml *string
+	// Deprecated: Legacy custom HTML to JSON AST (only for viewing old content)
+	Content *RichTextHtmlNode
+	// Tiptap JSON Document
+	TiptapJson *structpb.Struct
+}
+
+func (b0 Content_builder) Build() *Content {
+	m0 := &Content{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Version = b.Version
+	x.ContentType = b.ContentType
+	x.RawHtml = b.RawHtml
+	x.Content = b.Content
+	x.TiptapJson = b.TiptapJson
+	return m0
+}
+
 type RichTextHtmlNode struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Type          NodeType               `protobuf:"varint,1,opt,name=type,proto3,enum=resources.common.content.NodeType" json:"type,omitempty"`
 	Id            *string                `protobuf:"bytes,2,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	Tag           string                 `protobuf:"bytes,3,opt,name=tag,proto3" json:"tag,omitempty"`
@@ -243,11 +307,6 @@ func (x *RichTextHtmlNode) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RichTextHtmlNode.ProtoReflect.Descriptor instead.
-func (*RichTextHtmlNode) Descriptor() ([]byte, []int) {
-	return file_resources_common_content_content_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *RichTextHtmlNode) GetType() NodeType {
@@ -292,8 +351,78 @@ func (x *RichTextHtmlNode) GetContent() []*RichTextHtmlNode {
 	return nil
 }
 
+func (x *RichTextHtmlNode) SetType(v NodeType) {
+	x.Type = v
+}
+
+func (x *RichTextHtmlNode) SetId(v string) {
+	x.Id = &v
+}
+
+func (x *RichTextHtmlNode) SetTag(v string) {
+	x.Tag = v
+}
+
+func (x *RichTextHtmlNode) SetAttrs(v map[string]string) {
+	x.Attrs = v
+}
+
+func (x *RichTextHtmlNode) SetText(v string) {
+	x.Text = &v
+}
+
+func (x *RichTextHtmlNode) SetContent(v []*RichTextHtmlNode) {
+	x.Content = v
+}
+
+func (x *RichTextHtmlNode) HasId() bool {
+	if x == nil {
+		return false
+	}
+	return x.Id != nil
+}
+
+func (x *RichTextHtmlNode) HasText() bool {
+	if x == nil {
+		return false
+	}
+	return x.Text != nil
+}
+
+func (x *RichTextHtmlNode) ClearId() {
+	x.Id = nil
+}
+
+func (x *RichTextHtmlNode) ClearText() {
+	x.Text = nil
+}
+
+type RichTextHtmlNode_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Type    NodeType
+	Id      *string
+	Tag     string
+	Attrs   map[string]string
+	Text    *string
+	Content []*RichTextHtmlNode
+}
+
+func (b0 RichTextHtmlNode_builder) Build() *RichTextHtmlNode {
+	m0 := &RichTextHtmlNode{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Type = b.Type
+	x.Id = b.Id
+	x.Tag = b.Tag
+	x.Attrs = b.Attrs
+	x.Text = b.Text
+	x.Content = b.Content
+	return m0
+}
+
 type ExtractedContent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
 	WordCount     uint32                 `protobuf:"varint,2,opt,name=word_count,json=wordCount,proto3" json:"word_count,omitempty"`
 	FirstHeading  string                 `protobuf:"bytes,3,opt,name=first_heading,json=firstHeading,proto3" json:"first_heading,omitempty"`
@@ -326,11 +455,6 @@ func (x *ExtractedContent) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ExtractedContent.ProtoReflect.Descriptor instead.
-func (*ExtractedContent) Descriptor() ([]byte, []int) {
-	return file_resources_common_content_content_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *ExtractedContent) GetText() string {
 	if x != nil {
 		return x.Text
@@ -350,6 +474,36 @@ func (x *ExtractedContent) GetFirstHeading() string {
 		return x.FirstHeading
 	}
 	return ""
+}
+
+func (x *ExtractedContent) SetText(v string) {
+	x.Text = v
+}
+
+func (x *ExtractedContent) SetWordCount(v uint32) {
+	x.WordCount = v
+}
+
+func (x *ExtractedContent) SetFirstHeading(v string) {
+	x.FirstHeading = v
+}
+
+type ExtractedContent_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Text         string
+	WordCount    uint32
+	FirstHeading string
+}
+
+func (b0 ExtractedContent_builder) Build() *ExtractedContent {
+	m0 := &ExtractedContent{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Text = b.Text
+	x.WordCount = b.WordCount
+	x.FirstHeading = b.FirstHeading
+	return m0
 }
 
 var File_resources_common_content_content_proto protoreflect.FileDescriptor
@@ -394,19 +548,7 @@ const file_resources_common_content_content_proto_rawDesc = "" +
 	"\rNODE_TYPE_DOC\x10\x01\x12\x15\n" +
 	"\x11NODE_TYPE_ELEMENT\x10\x02\x12\x12\n" +
 	"\x0eNODE_TYPE_TEXT\x10\x03\x12\x15\n" +
-	"\x11NODE_TYPE_COMMENT\x10\x04BTZRgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content;contentb\x06proto3"
-
-var (
-	file_resources_common_content_content_proto_rawDescOnce sync.Once
-	file_resources_common_content_content_proto_rawDescData []byte
-)
-
-func file_resources_common_content_content_proto_rawDescGZIP() []byte {
-	file_resources_common_content_content_proto_rawDescOnce.Do(func() {
-		file_resources_common_content_content_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_common_content_content_proto_rawDesc), len(file_resources_common_content_content_proto_rawDesc)))
-	})
-	return file_resources_common_content_content_proto_rawDescData
-}
+	"\x11NODE_TYPE_COMMENT\x10\x04BTZRgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content;contentb\x06proto3"
 
 var file_resources_common_content_content_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_resources_common_content_content_proto_msgTypes = make([]protoimpl.MessageInfo, 4)

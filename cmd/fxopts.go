@@ -1,19 +1,19 @@
 package cmd
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbsync"
-	"github.com/fivenet-app/fivenet/v2025/pkg/demo"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/commands"
-	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server"
-	"github.com/fivenet-app/fivenet/v2025/pkg/tracker/manager"
-	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
-	centrumbot "github.com/fivenet-app/fivenet/v2025/services/centrum/bot"
-	centrumhousekeeper "github.com/fivenet-app/fivenet/v2025/services/centrum/housekeeper"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/services/documents"
-	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
+	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbsync"
+	"github.com/fivenet-app/fivenet/v2026/pkg/demo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/discord"
+	"github.com/fivenet-app/fivenet/v2026/pkg/discord/commands"
+	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server"
+	"github.com/fivenet-app/fivenet/v2026/pkg/tracker/manager"
+	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
+	centrumbot "github.com/fivenet-app/fivenet/v2026/services/centrum/bot"
+	centrumhousekeeper "github.com/fivenet-app/fivenet/v2026/services/centrum/housekeeper"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/services/documents"
+	pbjobs "github.com/fivenet-app/fivenet/v2026/services/jobs"
 	"go.uber.org/fx"
 )
 

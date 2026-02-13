@@ -6,20 +6,21 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -45,7 +46,7 @@ func (s *Server) ListQualificationsResults(
 		logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.user_id", req.GetUserId()})
 	}
 
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 	tCreator := tUser.AS("creator")
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -59,7 +60,7 @@ func (s *Server) ListQualificationsResults(
 			ctx,
 			req.GetQualificationId(),
 			userInfo,
-			qualifications.AccessLevel_ACCESS_LEVEL_GRADE,
+			qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -81,9 +82,9 @@ func (s *Server) ListQualificationsResults(
 					tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 
 					mysql.OR(
-						tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
+						tQAccess.Access.GT_EQ(mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE))),
 						mysql.AND(
-							tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW))),
+							tQAccess.Access.GT_EQ(mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW))),
 							tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						),
 					),
@@ -278,7 +279,7 @@ func (s *Server) CreateOrUpdateQualificationResult(
 		ctx,
 		req.GetResult().GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_GRADE,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -331,7 +332,7 @@ func (s *Server) createOrUpdateQualificationResult(
 	status qualifications.ResultStatus,
 	score *float32,
 	summary string,
-	grading *qualifications.ExamGrading,
+	grading *qualificationsexam.ExamGrading,
 ) (int64, error) {
 	currentResult, err := s.getQualificationResult(
 		ctx,
@@ -431,7 +432,7 @@ func (s *Server) createOrUpdateQualificationResult(
 		}
 	}
 
-	if quali.GetExamMode() > qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED &&
+	if quali.GetExamMode() > qualificationsexam.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED &&
 		grading != nil { // Only update the exam grading info when
 		// Insert/update exam grading info from tutor
 		stmt := tExamResponses.
@@ -509,7 +510,7 @@ func (s *Server) getQualificationResult(
 	userInfo *userinfo.UserInfo,
 	userId int32,
 ) (*qualifications.QualificationResult, error) {
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 	tCreator := tUser.AS("creator")
 
 	condition := tQualiResults.DeletedAt.IS_NULL()
@@ -614,7 +615,7 @@ func (s *Server) DeleteQualificationResult(
 		ctx,
 		result.GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

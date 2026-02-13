@@ -10,7 +10,7 @@ import { useCompletorStore } from '~/stores/completor';
 import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { Role } from '~~/gen/ts/resources/permissions/permissions';
+import type { Role } from '~~/gen/ts/resources/permissions/permissions/permissions';
 
 const { t } = useI18n();
 
@@ -140,8 +140,8 @@ const confirmModal = overlay.create(ConfirmModal);
         </template>
 
         <template #body>
-            <div class="grid grid-cols-1 gap-2 lg:grid-cols-3">
-                <div class="mb-2">
+            <div class="grid h-full grid-cols-1 gap-2 lg:grid-cols-3">
+                <div class="mb-2 flex flex-col">
                     <UForm
                         v-if="can('settings.SettingsService/CreateRole').value"
                         ref="formRef"

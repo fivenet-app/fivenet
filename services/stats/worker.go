@@ -9,9 +9,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/stats"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/stats"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
@@ -88,7 +87,7 @@ func (s *worker) calculateStats(ctx context.Context) {
 func (s *worker) loadStats(ctx context.Context) error {
 	data := Stats{}
 
-	tUsers := tables.User()
+	tUsers := table.FivenetUser
 	queries := map[string]mysql.Statement{
 		"users_registered": tAccounts.SELECT(mysql.COUNT(tAccounts.ID).AS("value")).
 			WHERE(tAccounts.Enabled.IS_TRUE()),

@@ -5,9 +5,9 @@ package resources.audit;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
+import "resources/users/short/user.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit;audit";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit;audit";
 
 enum EventAction {
   EVENT_ACTION_UNSPECIFIED = 0;
@@ -31,11 +31,11 @@ message AuditEntry {
   resources.timestamp.Timestamp created_at = 2;
 
   int32 user_id = 3;
-  optional resources.users.UserShort user = 4;
+  optional resources.users.short.UserShort user = 4;
   string user_job = 5;
 
   optional int32 target_user_id = 6;
-  optional resources.users.UserShort target_user = 7;
+  optional resources.users.short.UserShort target_user = 7;
   optional string target_user_job = 8;
 
   // GRPC Service name

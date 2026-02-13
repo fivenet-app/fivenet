@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package resources.documents.references;
+
+import "buf/validate/validate.proto";
+import "resources/documents/documents.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/short/user.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/references;documentsreferences";
+
+enum DocReference {
+  DOC_REFERENCE_UNSPECIFIED = 0;
+  DOC_REFERENCE_LINKED = 1;
+  DOC_REFERENCE_SOLVES = 2;
+  DOC_REFERENCE_CLOSES = 3;
+  DOC_REFERENCE_DEPRECATES = 4;
+}
+
+message DocumentReference {
+  optional int64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+
+  int64 source_document_id = 3 [(tagger.tags) = "alias:\"source_document_id\""];
+  optional resources.documents.DocumentShort source_document = 4 [(tagger.tags) = "alias:\"source_document\""];
+
+  DocReference reference = 5 [
+    (buf.validate.field).enum.defined_only = true,
+    (tagger.tags) = "alias:\"reference\""
+  ];
+
+  int64 target_document_id = 6 [(tagger.tags) = "alias:\"target_document_id\""];
+  optional resources.documents.DocumentShort target_document = 7 [(tagger.tags) = "alias:\"target_document\""];
+
+  optional int32 creator_id = 8 [(buf.validate.field).int32.gt = 0];
+  optional resources.users.short.UserShort creator = 9 [(tagger.tags) = "alias:\"ref_creator\""];
+}

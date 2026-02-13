@@ -11,13 +11,13 @@ import (
 
 	"github.com/blevesearch/bleve/v2"
 	"github.com/blevesearch/bleve/v2/search/query"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/cache"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/nats/cache"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/qrm"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -146,8 +146,8 @@ func (c *Jobs) RegisterCronjobHandlers(h *croner.Handlers) error {
 
 // loadJobs loads jobs and their grades from the database into the cache.
 func (c *Jobs) loadJobs(ctx context.Context) error {
-	tJobs := tables.Jobs().AS("job")
-	tJobsGrades := tables.JobsGrades().AS("job_grade")
+	tJobs := table.FivenetJobs.AS("job")
+	tJobsGrades := table.FivenetJobsGrades.AS("job_grade")
 
 	stmt := tJobs.
 		SELECT(

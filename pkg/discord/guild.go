@@ -11,13 +11,14 @@ import (
 	"time"
 
 	"github.com/diamondburned/arikawa/v3/discord"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/modules"
-	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
+	jobssettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/settings"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
+	"github.com/fivenet-app/fivenet/v2026/pkg/discord/modules"
+	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
@@ -52,7 +53,7 @@ type Guild struct {
 	base    *modules.BaseModule
 	modules []modules.Module
 
-	settings *atomic.Pointer[jobs.DiscordSyncSettings]
+	settings *atomic.Pointer[jobssettings.DiscordSyncSettings]
 	events   *broker.Broker[any]
 }
 
@@ -85,7 +86,7 @@ func NewGuild(
 		guild:   guild,
 		modules: []modules.Module{},
 
-		settings: &atomic.Pointer[jobs.DiscordSyncSettings]{},
+		settings: &atomic.Pointer[jobssettings.DiscordSyncSettings]{},
 		events:   events,
 	}
 
@@ -176,7 +177,7 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 	}
 	g.base.SetSettings(settings)
 	if planDiff == nil {
-		planDiff = &jobs.DiscordSyncChanges{}
+		planDiff = &jobssettings.DiscordSyncChanges{}
 	}
 
 	if _, err := g.bot.dc.MembersAfter(g.guild.ID, 0, 0); err != nil {
@@ -236,7 +237,7 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 	if err := yamlEncoder.Encode(plan); err != nil {
 		errs = multierr.Append(errs, fmt.Errorf("failed to encode plan to yaml for diff. %w", err))
 	}
-	planDiff.Add(&jobs.DiscordSyncChange{
+	planDiff.Add(&jobssettings.DiscordSyncChange{
 		Time: timestamp.Now(),
 		Plan: b.String(),
 	})
@@ -373,7 +374,7 @@ func (g *Guild) sendEndStatusLog(
 
 func (g *Guild) getSyncSettings(
 	ctx context.Context,
-) (*jobs.DiscordSyncSettings, *jobs.DiscordSyncChanges, error) {
+) (*jobssettings.DiscordSyncSettings, *jobssettings.DiscordSyncChanges, error) {
 	tJobProps := table.FivenetJobProps.AS("job_props")
 
 	stmt := tJobProps.
@@ -387,7 +388,7 @@ func (g *Guild) getSyncSettings(
 		).
 		LIMIT(1)
 
-	var dest jobs.JobProps
+	var dest jobsprops.JobProps
 	if err := stmt.QueryContext(ctx, g.bot.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil, err
@@ -405,7 +406,7 @@ func (g *Guild) getSyncSettings(
 func (g *Guild) setLastSyncInterval(
 	ctx context.Context,
 	job string,
-	pDiff *jobs.DiscordSyncChanges,
+	pDiff *jobssettings.DiscordSyncChanges,
 ) error {
 	t := time.Now()
 

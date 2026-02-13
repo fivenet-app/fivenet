@@ -8,12 +8,11 @@ import (
 	"strings"
 
 	"github.com/diamondburned/arikawa/v3/discord"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
-	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
+	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
@@ -183,7 +182,7 @@ func (g *QualificationsSync) planUsers(
 		jobs = append(jobs, mysql.String(job))
 	}
 
-	tUsers := tables.User().AS("users")
+	tUsers := table.FivenetUser.AS("users")
 
 	users := discordtypes.Users{}
 	for qualificationId, role := range qualificationRoles {

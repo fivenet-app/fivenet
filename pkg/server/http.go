@@ -10,11 +10,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	grpcws "github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/filestore"
-	imageproxy "github.com/fivenet-app/fivenet/v2025/pkg/server/images"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	grpcws "github.com/fivenet-app/fivenet/v2026/pkg/grpc/grpcws"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/filestore"
+	imageproxy "github.com/fivenet-app/fivenet/v2026/pkg/server/images"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -241,10 +241,14 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	wrapperGrpc := grpcws.WrapServer(p.GRPCSrv,
 		grpcws.WithAllowedRequestHeaders(allowedHeaders),
 		grpcws.WithWebsocketsMessageReadLimit(1*1024*1024), // 1 MB
+		grpcws.WithValidateTokenFunc(func(token string) (bool, error) {
+			claims, err := p.TokenMgr.ParseUserToken(token)
+			return claims != nil && claims.UserID > 0, err
+		}),
 	)
 	e.GET("/api/grpcws", func(c *gin.Context) {
-		// Check if the request has a session cookie
-		if _, err := c.Cookie("fivenet_token"); err != nil {
+		// Check if the request has at least an acc session cookie
+		if _, err := c.Cookie(auth.AccCookieName); err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}

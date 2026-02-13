@@ -12,12 +12,12 @@ import (
 	"math/rand/v2"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum"
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
@@ -56,11 +56,11 @@ var (
 		"Suspicious package reported",
 	}
 
-	dispatchStatusProgression = []centrum.StatusDispatch{
-		centrum.StatusDispatch_STATUS_DISPATCH_NEW,
-		centrum.StatusDispatch_STATUS_DISPATCH_EN_ROUTE,
-		centrum.StatusDispatch_STATUS_DISPATCH_ON_SCENE,
-		centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+	dispatchStatusProgression = []centrumdispatches.StatusDispatch{
+		centrumdispatches.StatusDispatch_STATUS_DISPATCH_NEW,
+		centrumdispatches.StatusDispatch_STATUS_DISPATCH_EN_ROUTE,
+		centrumdispatches.StatusDispatch_STATUS_DISPATCH_ON_SCENE,
+		centrumdispatches.StatusDispatch_STATUS_DISPATCH_COMPLETED,
 	}
 )
 
@@ -114,7 +114,7 @@ func New(p Params) *Demo {
 	}
 
 	d.logger.Warn(
-		"Demo mode is enabled. This will generate random dispatches and user locations!!!",
+		"Demo mode is enabled. This will generate random dispatches and user locations!",
 	)
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
@@ -133,7 +133,7 @@ func New(p Params) *Demo {
 }
 
 func (d *Demo) lookupUsers(ctx context.Context, identifiers []string) ([]*user, error) {
-	tUsers := tables.User()
+	tUsers := table.FivenetUser
 
 	condition := tUsers.Job.EQ(mysql.String(d.cfg.Demo.TargetJob))
 	if len(identifiers) > 0 {
@@ -216,7 +216,7 @@ func (d *Demo) generateDispatches(ctx context.Context) {
 		y := rand.Float64()*(yBounds[1]-yBounds[0]) + yBounds[0]
 		desc := dispatchDescriptions[rand.IntN(len(dispatchDescriptions))]
 		msg := dispatchMessages[rand.IntN(len(dispatchMessages))]
-		if _, err := d.dispatches.Create(ctx, &centrum.Dispatch{
+		if _, err := d.dispatches.Create(ctx, &centrumdispatches.Dispatch{
 			Jobs: &centrum.JobList{
 				Jobs: []*centrum.JobListEntry{
 					{
@@ -262,7 +262,7 @@ func (d *Demo) updateDispatches(ctx context.Context) error {
 				break
 			}
 		}
-		newStatus := &centrum.DispatchStatus{
+		newStatus := &centrumdispatches.DispatchStatus{
 			DispatchId: dsp.GetId(),
 			Status:     newStatusValue,
 
@@ -303,7 +303,7 @@ func (d *Demo) moveUserMarkers(ctx context.Context) {
 					tLocs.Y.AS("y"),
 				).
 				FROM(tLocs).
-				WHERE(tLocs.Identifier.EQ(mysql.String(user.Identifier))).
+				WHERE(tLocs.UserID.EQ(mysql.Int32(user.UserID))).
 				LIMIT(1)
 
 			err := stmt.QueryContext(ctx, d.db, &curr)
@@ -349,13 +349,13 @@ func (d *Demo) moveUserMarkers(ctx context.Context) {
 
 			insertStmt := tLocs.
 				INSERT(
-					tLocs.Identifier,
+					tLocs.UserID,
 					tLocs.X,
 					tLocs.Y,
 					tLocs.Hidden,
 				).
 				VALUES(
-					user,
+					user.UserID,
 					newX,
 					newY,
 					false,

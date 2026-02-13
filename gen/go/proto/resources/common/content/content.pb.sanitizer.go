@@ -4,8 +4,8 @@
 package content
 
 import (
-	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
-	tiptapsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/tiptap"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
+	tiptapsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/tiptap"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls

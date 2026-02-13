@@ -5,10 +5,10 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pb "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
+	pb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -45,7 +45,7 @@ func newUserActivitySorter() *database.Builder {
 func (s *UserActivityStore) List(
 	ctx context.Context,
 	req *pb.ListUserActivityRequest,
-) ([]*users.UserActivity, error) {
+) ([]*usersactivity.UserActivity, error) {
 	tUserActivity := table.FivenetUserActivity.AS("user_activity")
 
 	orderBys := s.sorter.Build(req.GetSort())
@@ -57,7 +57,7 @@ func (s *UserActivityStore) List(
 		FROM(tUserActivity).
 		ORDER_BY(orderBys...)
 
-	var activities []*users.UserActivity
+	var activities []*usersactivity.UserActivity
 	if err := stmt.QueryContext(ctx, s.db, &activities); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err

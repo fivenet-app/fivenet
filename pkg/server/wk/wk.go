@@ -12,10 +12,10 @@ import (
 )
 
 // securityTxtTpl is the template for the security.txt file served under /.well-known/security.txt.
-const securityTxtTpl = `Contact: https://github.com/fivenet-app/fivenet/v2025/blob/main/SECURITY.md
+const securityTxtTpl = `Contact: https://github.com/fivenet-app/fivenet/v2026/blob/main/SECURITY.md
 Expires: %s
 Preferred-Languages: en, de
-Policy: https://github.com/fivenet-app/fivenet/v2025/blob/main/SECURITY.md
+Policy: https://github.com/fivenet-app/fivenet/v2026/blob/main/SECURITY.md
 `
 
 // WK provides handlers for /.well-known endpoints such as security.txt and change-password.

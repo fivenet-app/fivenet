@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
-import type { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches';
-import { StatusUnit, type Unit } from '~~/gen/ts/resources/centrum/units';
+import type { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import { StatusUnit, type Unit } from '~~/gen/ts/resources/centrum/units/units';
 import { defaultUnitIcon, unitStatusToBGColor, unitStatusToIcon } from '../helpers';
 
 const centrumStore = useCentrumStore();
@@ -54,7 +54,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
         </UButton>
 
         <template #content>
-            <div class="inline-flex min-w-48 flex-col gap-1 p-4">
+            <div class="flex min-w-48 flex-col gap-2 p-4">
                 <p class="text-base leading-none font-semibold">
                     <UIcon
                         v-if="showIcon && unit.icon && unit.icon !== defaultUnitIcon"
@@ -73,9 +73,8 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
                     :class="unitStatusColor"
                     :icon="unitStatusToIcon(unit.status?.status)"
                     size="sm"
-                >
-                    {{ $t(`enums.centrum.StatusUnit.${StatusUnit[unit.status?.status ?? 0]}`) }}
-                </UBadge>
+                    :label="$t(`enums.centrum.StatusUnit.${StatusUnit[unit.status?.status ?? 0]}`)"
+                />
 
                 <p v-if="assignment?.expiresAt" class="inline-flex items-center gap-1 text-sm font-normal">
                     <UIcon class="size-4 text-amber-600" name="i-mdi-timer" />
@@ -91,6 +90,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
                     <p class="text-sm leading-none font-medium">
                         {{ $t('common.members') }}
                     </p>
+
                     <template v-if="unit.users.length === 0">
                         <p class="text-xs font-normal">
                             {{ $t('common.member', 0) }}

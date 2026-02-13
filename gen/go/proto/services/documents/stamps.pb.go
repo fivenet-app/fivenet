@@ -4,17 +4,18 @@
 // 	protoc        (unknown)
 // source: services/documents/stamps.proto
 
+//go:build !protoopaque
+
 package documents
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	stamps "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -26,7 +27,7 @@ const (
 )
 
 type ListUsableStampsRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	// If set, only stamps usable for signing this document are returned
 	DocumentId    *int64 `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3,oneof" json:"document_id,omitempty"`
@@ -59,11 +60,6 @@ func (x *ListUsableStampsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListUsableStampsRequest.ProtoReflect.Descriptor instead.
-func (*ListUsableStampsRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_stamps_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *ListUsableStampsRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -78,10 +74,57 @@ func (x *ListUsableStampsRequest) GetDocumentId() int64 {
 	return 0
 }
 
+func (x *ListUsableStampsRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListUsableStampsRequest) SetDocumentId(v int64) {
+	x.DocumentId = &v
+}
+
+func (x *ListUsableStampsRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListUsableStampsRequest) HasDocumentId() bool {
+	if x == nil {
+		return false
+	}
+	return x.DocumentId != nil
+}
+
+func (x *ListUsableStampsRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListUsableStampsRequest) ClearDocumentId() {
+	x.DocumentId = nil
+}
+
+type ListUsableStampsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	// If set, only stamps usable for signing this document are returned
+	DocumentId *int64
+}
+
+func (b0 ListUsableStampsRequest_builder) Build() *ListUsableStampsRequest {
+	m0 := &ListUsableStampsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.DocumentId = b.DocumentId
+	return m0
+}
+
 type ListUsableStampsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Stamps        []*documents.Stamp           `protobuf:"bytes,2,rep,name=stamps,proto3" json:"stamps,omitempty"`
+	Stamps        []*stamps.Stamp              `protobuf:"bytes,2,rep,name=stamps,proto3" json:"stamps,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -111,11 +154,6 @@ func (x *ListUsableStampsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListUsableStampsResponse.ProtoReflect.Descriptor instead.
-func (*ListUsableStampsResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_stamps_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListUsableStampsResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -123,16 +161,51 @@ func (x *ListUsableStampsResponse) GetPagination() *database.PaginationResponse 
 	return nil
 }
 
-func (x *ListUsableStampsResponse) GetStamps() []*documents.Stamp {
+func (x *ListUsableStampsResponse) GetStamps() []*stamps.Stamp {
 	if x != nil {
 		return x.Stamps
 	}
 	return nil
 }
 
+func (x *ListUsableStampsResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListUsableStampsResponse) SetStamps(v []*stamps.Stamp) {
+	x.Stamps = v
+}
+
+func (x *ListUsableStampsResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListUsableStampsResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListUsableStampsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Stamps     []*stamps.Stamp
+}
+
+func (b0 ListUsableStampsResponse_builder) Build() *ListUsableStampsResponse {
+	m0 := &ListUsableStampsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Stamps = b.Stamps
+	return m0
+}
+
 type UpsertStampRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Stamp         *documents.Stamp       `protobuf:"bytes,1,opt,name=stamp,proto3" json:"stamp,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Stamp         *stamps.Stamp          `protobuf:"bytes,1,opt,name=stamp,proto3" json:"stamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -162,21 +235,45 @@ func (x *UpsertStampRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpsertStampRequest.ProtoReflect.Descriptor instead.
-func (*UpsertStampRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_stamps_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *UpsertStampRequest) GetStamp() *documents.Stamp {
+func (x *UpsertStampRequest) GetStamp() *stamps.Stamp {
 	if x != nil {
 		return x.Stamp
 	}
 	return nil
 }
 
+func (x *UpsertStampRequest) SetStamp(v *stamps.Stamp) {
+	x.Stamp = v
+}
+
+func (x *UpsertStampRequest) HasStamp() bool {
+	if x == nil {
+		return false
+	}
+	return x.Stamp != nil
+}
+
+func (x *UpsertStampRequest) ClearStamp() {
+	x.Stamp = nil
+}
+
+type UpsertStampRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Stamp *stamps.Stamp
+}
+
+func (b0 UpsertStampRequest_builder) Build() *UpsertStampRequest {
+	m0 := &UpsertStampRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Stamp = b.Stamp
+	return m0
+}
+
 type UpsertStampResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Stamp         *documents.Stamp       `protobuf:"bytes,1,opt,name=stamp,proto3" json:"stamp,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Stamp         *stamps.Stamp          `protobuf:"bytes,1,opt,name=stamp,proto3" json:"stamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -206,20 +303,44 @@ func (x *UpsertStampResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpsertStampResponse.ProtoReflect.Descriptor instead.
-func (*UpsertStampResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_stamps_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *UpsertStampResponse) GetStamp() *documents.Stamp {
+func (x *UpsertStampResponse) GetStamp() *stamps.Stamp {
 	if x != nil {
 		return x.Stamp
 	}
 	return nil
 }
 
+func (x *UpsertStampResponse) SetStamp(v *stamps.Stamp) {
+	x.Stamp = v
+}
+
+func (x *UpsertStampResponse) HasStamp() bool {
+	if x == nil {
+		return false
+	}
+	return x.Stamp != nil
+}
+
+func (x *UpsertStampResponse) ClearStamp() {
+	x.Stamp = nil
+}
+
+type UpsertStampResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Stamp *stamps.Stamp
+}
+
+func (b0 UpsertStampResponse_builder) Build() *UpsertStampResponse {
+	m0 := &UpsertStampResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Stamp = b.Stamp
+	return m0
+}
+
 type DeleteStampRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	StampId       int64                  `protobuf:"varint,1,opt,name=stamp_id,json=stampId,proto3" json:"stamp_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -250,11 +371,6 @@ func (x *DeleteStampRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteStampRequest.ProtoReflect.Descriptor instead.
-func (*DeleteStampRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_stamps_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *DeleteStampRequest) GetStampId() int64 {
 	if x != nil {
 		return x.StampId
@@ -262,8 +378,26 @@ func (x *DeleteStampRequest) GetStampId() int64 {
 	return 0
 }
 
+func (x *DeleteStampRequest) SetStampId(v int64) {
+	x.StampId = v
+}
+
+type DeleteStampRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	StampId int64
+}
+
+func (b0 DeleteStampRequest_builder) Build() *DeleteStampRequest {
+	m0 := &DeleteStampRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.StampId = b.StampId
+	return m0
+}
+
 type DeleteStampResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -293,51 +427,46 @@ func (x *DeleteStampResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteStampResponse.ProtoReflect.Descriptor instead.
-func (*DeleteStampResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_stamps_proto_rawDescGZIP(), []int{5}
+type DeleteStampResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteStampResponse_builder) Build() *DeleteStampResponse {
+	m0 := &DeleteStampResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 var File_services_documents_stamps_proto protoreflect.FileDescriptor
 
 const file_services_documents_stamps_proto_rawDesc = "" +
 	"\n" +
-	"\x1fservices/documents/stamps.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/documents/stamp.proto\"\x9d\x01\n" +
+	"\x1fservices/documents/stamps.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a&resources/documents/stamps/stamp.proto\"\x9d\x01\n" +
 	"\x17ListUsableStampsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12$\n" +
 	"\vdocument_id\x18\x02 \x01(\x03H\x00R\n" +
 	"documentId\x88\x01\x01B\x0e\n" +
-	"\f_document_id\"\xa3\x01\n" +
+	"\f_document_id\"\xaa\x01\n" +
 	"\x18ListUsableStampsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x128\n" +
-	"\x06stamps\x18\x02 \x03(\v2\x1a.resources.documents.StampB\x04\xc8\xf3\x18\x01R\x06stamps\"F\n" +
-	"\x12UpsertStampRequest\x120\n" +
-	"\x05stamp\x18\x01 \x01(\v2\x1a.resources.documents.StampR\x05stamp\"G\n" +
-	"\x13UpsertStampResponse\x120\n" +
-	"\x05stamp\x18\x01 \x01(\v2\x1a.resources.documents.StampR\x05stamp\"/\n" +
+	"pagination\x12?\n" +
+	"\x06stamps\x18\x02 \x03(\v2!.resources.documents.stamps.StampB\x04\xc8\xf3\x18\x01R\x06stamps\"M\n" +
+	"\x12UpsertStampRequest\x127\n" +
+	"\x05stamp\x18\x01 \x01(\v2!.resources.documents.stamps.StampR\x05stamp\"N\n" +
+	"\x13UpsertStampResponse\x127\n" +
+	"\x05stamp\x18\x01 \x01(\v2!.resources.documents.stamps.StampR\x05stamp\"/\n" +
 	"\x12DeleteStampRequest\x12\x19\n" +
 	"\bstamp_id\x18\x01 \x01(\x03R\astampId\"\x15\n" +
 	"\x13DeleteStampResponse2\xed\x02\n" +
 	"\rStampsService\x12u\n" +
 	"\x10ListUsableStamps\x12+.services.documents.ListUsableStampsRequest\x1a,.services.documents.ListUsableStampsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12f\n" +
 	"\vUpsertStamp\x12&.services.documents.UpsertStampRequest\x1a'.services.documents.UpsertStampResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12f\n" +
-	"\vDeleteStamp\x12&.services.documents.DeleteStampRequest\x1a'.services.documents.DeleteStampResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x15\xea\xf3\x18\x11\b9\x12\ri-mdi-stamperBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
-
-var (
-	file_services_documents_stamps_proto_rawDescOnce sync.Once
-	file_services_documents_stamps_proto_rawDescData []byte
-)
-
-func file_services_documents_stamps_proto_rawDescGZIP() []byte {
-	file_services_documents_stamps_proto_rawDescOnce.Do(func() {
-		file_services_documents_stamps_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_documents_stamps_proto_rawDesc), len(file_services_documents_stamps_proto_rawDesc)))
-	})
-	return file_services_documents_stamps_proto_rawDescData
-}
+	"\vDeleteStamp\x12&.services.documents.DeleteStampRequest\x1a'.services.documents.DeleteStampResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x15\xea\xf3\x18\x11\b9\x12\ri-mdi-stamperBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var file_services_documents_stamps_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_services_documents_stamps_proto_goTypes = []any{
@@ -349,14 +478,14 @@ var file_services_documents_stamps_proto_goTypes = []any{
 	(*DeleteStampResponse)(nil),         // 5: services.documents.DeleteStampResponse
 	(*database.PaginationRequest)(nil),  // 6: resources.common.database.PaginationRequest
 	(*database.PaginationResponse)(nil), // 7: resources.common.database.PaginationResponse
-	(*documents.Stamp)(nil),             // 8: resources.documents.Stamp
+	(*stamps.Stamp)(nil),                // 8: resources.documents.stamps.Stamp
 }
 var file_services_documents_stamps_proto_depIdxs = []int32{
 	6, // 0: services.documents.ListUsableStampsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	7, // 1: services.documents.ListUsableStampsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	8, // 2: services.documents.ListUsableStampsResponse.stamps:type_name -> resources.documents.Stamp
-	8, // 3: services.documents.UpsertStampRequest.stamp:type_name -> resources.documents.Stamp
-	8, // 4: services.documents.UpsertStampResponse.stamp:type_name -> resources.documents.Stamp
+	8, // 2: services.documents.ListUsableStampsResponse.stamps:type_name -> resources.documents.stamps.Stamp
+	8, // 3: services.documents.UpsertStampRequest.stamp:type_name -> resources.documents.stamps.Stamp
+	8, // 4: services.documents.UpsertStampResponse.stamp:type_name -> resources.documents.stamps.Stamp
 	0, // 5: services.documents.StampsService.ListUsableStamps:input_type -> services.documents.ListUsableStampsRequest
 	2, // 6: services.documents.StampsService.UpsertStamp:input_type -> services.documents.UpsertStampRequest
 	4, // 7: services.documents.StampsService.DeleteStamp:input_type -> services.documents.DeleteStampRequest

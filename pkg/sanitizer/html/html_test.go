@@ -42,6 +42,11 @@ func TestSanitize(t *testing.T) {
 			result: "HELLO WORLD!</p> This<table> test",
 			msg:    "Make sure bad tag is removed, even with broken tags",
 		},
+		{
+			input:  "FiveNet Fehler // \"Troll&#34;",
+			result: "FiveNet Fehler // &#34;Troll&#34;",
+			msg:    "Make sure that HTML entities are escaped",
+		},
 	} {
 		assert.Equal(t, Sanitize(run.input), run.result, run.msg)
 	}
@@ -72,6 +77,11 @@ func TestStripHTMLTags(t *testing.T) {
 			input:  "<script src=\"example.com\"></script>HELLO WORLD!</p> This<table is a> test</table.",
 			result: "HELLO WORLD! This test",
 			msg:    "Make sure bad tag is removed, even with broken tags",
+		},
+		{
+			input:  "FiveNet Fehler // &#34;Troll&#34;",
+			result: "FiveNet Fehler // \"Troll\"",
+			msg:    "Make sure that HTML entities are unescaped",
 		},
 	} {
 		assert.Equal(t, StripHTMLTags(run.input), run.result, run.msg)

@@ -5,20 +5,20 @@
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
 import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { CalendarSub } from "../../resources/calendar/calendar";
-import { CalendarEntryRSVP } from "../../resources/calendar/calendar";
-import { CalendarEntry } from "../../resources/calendar/calendar";
+import { CalendarEntryRSVP } from "../../resources/calendar/entries/entries";
+import { CalendarEntry } from "../../resources/calendar/entries/entries";
 import { Calendar } from "../../resources/calendar/calendar";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Timestamp } from "../../resources/timestamp/timestamp";
-import { AccessLevel } from "../../resources/calendar/access";
+import { AccessLevel } from "../../resources/calendar/access/access";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Calendar
 
@@ -31,17 +31,23 @@ export interface ListCalendarsRequest {
      */
     pagination?: PaginationRequest;
     /**
+     * Search params
+     *
      * @generated from protobuf field: bool only_public = 2
      */
     onlyPublic: boolean;
     /**
-     * @generated from protobuf field: optional resources.calendar.AccessLevel min_access_level = 3
+     * @generated from protobuf field: optional resources.calendar.access.AccessLevel min_access_level = 3
      */
     minAccessLevel?: AccessLevel;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp after = 4
      */
     after?: Timestamp;
+    /**
+     * @generated from protobuf field: repeated int64 calendar_ids = 5
+     */
+    calendarIds: number[];
 }
 /**
  * @generated from protobuf message services.calendar.ListCalendarsResponse
@@ -156,7 +162,7 @@ export interface ListCalendarEntriesRequest {
  */
 export interface ListCalendarEntriesResponse {
     /**
-     * @generated from protobuf field: repeated resources.calendar.CalendarEntry entries = 1
+     * @generated from protobuf field: repeated resources.calendar.entries.CalendarEntry entries = 1
      */
     entries: CalendarEntry[];
 }
@@ -174,7 +180,7 @@ export interface GetUpcomingEntriesRequest {
  */
 export interface GetUpcomingEntriesResponse {
     /**
-     * @generated from protobuf field: repeated resources.calendar.CalendarEntry entries = 1
+     * @generated from protobuf field: repeated resources.calendar.entries.CalendarEntry entries = 1
      */
     entries: CalendarEntry[];
 }
@@ -192,7 +198,7 @@ export interface GetCalendarEntryRequest {
  */
 export interface GetCalendarEntryResponse {
     /**
-     * @generated from protobuf field: resources.calendar.CalendarEntry entry = 1
+     * @generated from protobuf field: resources.calendar.entries.CalendarEntry entry = 1
      */
     entry?: CalendarEntry;
 }
@@ -201,7 +207,7 @@ export interface GetCalendarEntryResponse {
  */
 export interface CreateOrUpdateCalendarEntryRequest {
     /**
-     * @generated from protobuf field: resources.calendar.CalendarEntry entry = 1
+     * @generated from protobuf field: resources.calendar.entries.CalendarEntry entry = 1
      */
     entry?: CalendarEntry;
     /**
@@ -214,7 +220,7 @@ export interface CreateOrUpdateCalendarEntryRequest {
  */
 export interface CreateOrUpdateCalendarEntryResponse {
     /**
-     * @generated from protobuf field: resources.calendar.CalendarEntry entry = 1
+     * @generated from protobuf field: resources.calendar.entries.CalendarEntry entry = 1
      */
     entry?: CalendarEntry;
 }
@@ -274,7 +280,7 @@ export interface ListCalendarEntryRSVPResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.calendar.CalendarEntryRSVP entries = 2
+     * @generated from protobuf field: repeated resources.calendar.entries.CalendarEntryRSVP entries = 2
      */
     entries: CalendarEntryRSVP[];
 }
@@ -283,7 +289,7 @@ export interface ListCalendarEntryRSVPResponse {
  */
 export interface RSVPCalendarEntryRequest {
     /**
-     * @generated from protobuf field: resources.calendar.CalendarEntryRSVP entry = 1
+     * @generated from protobuf field: resources.calendar.entries.CalendarEntryRSVP entry = 1
      */
     entry?: CalendarEntryRSVP;
     /**
@@ -300,7 +306,7 @@ export interface RSVPCalendarEntryRequest {
  */
 export interface RSVPCalendarEntryResponse {
     /**
-     * @generated from protobuf field: optional resources.calendar.CalendarEntryRSVP entry = 1
+     * @generated from protobuf field: optional resources.calendar.entries.CalendarEntryRSVP entry = 1
      */
     entry?: CalendarEntryRSVP;
 }
@@ -356,13 +362,15 @@ class ListCalendarsRequest$Type extends MessageType<ListCalendarsRequest> {
         super("services.calendar.ListCalendarsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "only_public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "min_access_level", kind: "enum", opt: true, T: () => ["resources.calendar.AccessLevel", AccessLevel, "ACCESS_LEVEL_"] },
-            { no: 4, name: "after", kind: "message", T: () => Timestamp }
+            { no: 3, name: "min_access_level", kind: "enum", opt: true, T: () => ["resources.calendar.access.AccessLevel", AccessLevel, "ACCESS_LEVEL_"] },
+            { no: 4, name: "after", kind: "message", T: () => Timestamp },
+            { no: 5, name: "calendar_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ListCalendarsRequest>): ListCalendarsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.onlyPublic = false;
+        message.calendarIds = [];
         if (value !== undefined)
             reflectionMergePartial<ListCalendarsRequest>(this, message, value);
         return message;
@@ -378,11 +386,18 @@ class ListCalendarsRequest$Type extends MessageType<ListCalendarsRequest> {
                 case /* bool only_public */ 2:
                     message.onlyPublic = reader.bool();
                     break;
-                case /* optional resources.calendar.AccessLevel min_access_level */ 3:
+                case /* optional resources.calendar.access.AccessLevel min_access_level */ 3:
                     message.minAccessLevel = reader.int32();
                     break;
                 case /* optional resources.timestamp.Timestamp after */ 4:
                     message.after = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.after);
+                    break;
+                case /* repeated int64 calendar_ids */ 5:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.calendarIds.push(reader.int64().toNumber());
+                    else
+                        message.calendarIds.push(reader.int64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -402,12 +417,19 @@ class ListCalendarsRequest$Type extends MessageType<ListCalendarsRequest> {
         /* bool only_public = 2; */
         if (message.onlyPublic !== false)
             writer.tag(2, WireType.Varint).bool(message.onlyPublic);
-        /* optional resources.calendar.AccessLevel min_access_level = 3; */
+        /* optional resources.calendar.access.AccessLevel min_access_level = 3; */
         if (message.minAccessLevel !== undefined)
             writer.tag(3, WireType.Varint).int32(message.minAccessLevel);
         /* optional resources.timestamp.Timestamp after = 4; */
         if (message.after)
             Timestamp.internalBinaryWrite(message.after, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated int64 calendar_ids = 5; */
+        if (message.calendarIds.length) {
+            writer.tag(5, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.calendarIds.length; i++)
+                writer.int64(message.calendarIds[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -938,7 +960,7 @@ class ListCalendarEntriesResponse$Type extends MessageType<ListCalendarEntriesRe
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.calendar.CalendarEntry entries */ 1:
+                case /* repeated resources.calendar.entries.CalendarEntry entries */ 1:
                     message.entries.push(CalendarEntry.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -953,7 +975,7 @@ class ListCalendarEntriesResponse$Type extends MessageType<ListCalendarEntriesRe
         return message;
     }
     internalBinaryWrite(message: ListCalendarEntriesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.calendar.CalendarEntry entries = 1; */
+        /* repeated resources.calendar.entries.CalendarEntry entries = 1; */
         for (let i = 0; i < message.entries.length; i++)
             CalendarEntry.internalBinaryWrite(message.entries[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1032,7 +1054,7 @@ class GetUpcomingEntriesResponse$Type extends MessageType<GetUpcomingEntriesResp
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.calendar.CalendarEntry entries */ 1:
+                case /* repeated resources.calendar.entries.CalendarEntry entries */ 1:
                     message.entries.push(CalendarEntry.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1047,7 +1069,7 @@ class GetUpcomingEntriesResponse$Type extends MessageType<GetUpcomingEntriesResp
         return message;
     }
     internalBinaryWrite(message: GetUpcomingEntriesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.calendar.CalendarEntry entries = 1; */
+        /* repeated resources.calendar.entries.CalendarEntry entries = 1; */
         for (let i = 0; i < message.entries.length; i++)
             CalendarEntry.internalBinaryWrite(message.entries[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1125,7 +1147,7 @@ class GetCalendarEntryResponse$Type extends MessageType<GetCalendarEntryResponse
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.calendar.CalendarEntry entry */ 1:
+                case /* resources.calendar.entries.CalendarEntry entry */ 1:
                     message.entry = CalendarEntry.internalBinaryRead(reader, reader.uint32(), options, message.entry);
                     break;
                 default:
@@ -1140,7 +1162,7 @@ class GetCalendarEntryResponse$Type extends MessageType<GetCalendarEntryResponse
         return message;
     }
     internalBinaryWrite(message: GetCalendarEntryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.calendar.CalendarEntry entry = 1; */
+        /* resources.calendar.entries.CalendarEntry entry = 1; */
         if (message.entry)
             CalendarEntry.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1173,7 +1195,7 @@ class CreateOrUpdateCalendarEntryRequest$Type extends MessageType<CreateOrUpdate
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.calendar.CalendarEntry entry */ 1:
+                case /* resources.calendar.entries.CalendarEntry entry */ 1:
                     message.entry = CalendarEntry.internalBinaryRead(reader, reader.uint32(), options, message.entry);
                     break;
                 case /* repeated int32 user_ids */ 2:
@@ -1195,7 +1217,7 @@ class CreateOrUpdateCalendarEntryRequest$Type extends MessageType<CreateOrUpdate
         return message;
     }
     internalBinaryWrite(message: CreateOrUpdateCalendarEntryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.calendar.CalendarEntry entry = 1; */
+        /* resources.calendar.entries.CalendarEntry entry = 1; */
         if (message.entry)
             CalendarEntry.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* repeated int32 user_ids = 2; */
@@ -1233,7 +1255,7 @@ class CreateOrUpdateCalendarEntryResponse$Type extends MessageType<CreateOrUpdat
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.calendar.CalendarEntry entry */ 1:
+                case /* resources.calendar.entries.CalendarEntry entry */ 1:
                     message.entry = CalendarEntry.internalBinaryRead(reader, reader.uint32(), options, message.entry);
                     break;
                 default:
@@ -1248,7 +1270,7 @@ class CreateOrUpdateCalendarEntryResponse$Type extends MessageType<CreateOrUpdat
         return message;
     }
     internalBinaryWrite(message: CreateOrUpdateCalendarEntryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.calendar.CalendarEntry entry = 1; */
+        /* resources.calendar.entries.CalendarEntry entry = 1; */
         if (message.entry)
             CalendarEntry.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1524,7 +1546,7 @@ class ListCalendarEntryRSVPResponse$Type extends MessageType<ListCalendarEntryRS
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.calendar.CalendarEntryRSVP entries */ 2:
+                case /* repeated resources.calendar.entries.CalendarEntryRSVP entries */ 2:
                     message.entries.push(CalendarEntryRSVP.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1542,7 +1564,7 @@ class ListCalendarEntryRSVPResponse$Type extends MessageType<ListCalendarEntryRS
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.calendar.CalendarEntryRSVP entries = 2; */
+        /* repeated resources.calendar.entries.CalendarEntryRSVP entries = 2; */
         for (let i = 0; i < message.entries.length; i++)
             CalendarEntryRSVP.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1576,7 +1598,7 @@ class RSVPCalendarEntryRequest$Type extends MessageType<RSVPCalendarEntryRequest
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.calendar.CalendarEntryRSVP entry */ 1:
+                case /* resources.calendar.entries.CalendarEntryRSVP entry */ 1:
                     message.entry = CalendarEntryRSVP.internalBinaryRead(reader, reader.uint32(), options, message.entry);
                     break;
                 case /* bool subscribe */ 2:
@@ -1597,7 +1619,7 @@ class RSVPCalendarEntryRequest$Type extends MessageType<RSVPCalendarEntryRequest
         return message;
     }
     internalBinaryWrite(message: RSVPCalendarEntryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.calendar.CalendarEntryRSVP entry = 1; */
+        /* resources.calendar.entries.CalendarEntryRSVP entry = 1; */
         if (message.entry)
             CalendarEntryRSVP.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* bool subscribe = 2; */
@@ -1634,7 +1656,7 @@ class RSVPCalendarEntryResponse$Type extends MessageType<RSVPCalendarEntryRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional resources.calendar.CalendarEntryRSVP entry */ 1:
+                case /* optional resources.calendar.entries.CalendarEntryRSVP entry */ 1:
                     message.entry = CalendarEntryRSVP.internalBinaryRead(reader, reader.uint32(), options, message.entry);
                     break;
                 default:
@@ -1649,7 +1671,7 @@ class RSVPCalendarEntryResponse$Type extends MessageType<RSVPCalendarEntryRespon
         return message;
     }
     internalBinaryWrite(message: RSVPCalendarEntryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional resources.calendar.CalendarEntryRSVP entry = 1; */
+        /* optional resources.calendar.entries.CalendarEntryRSVP entry = 1; */
         if (message.entry)
             CalendarEntryRSVP.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

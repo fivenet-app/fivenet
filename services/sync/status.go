@@ -3,10 +3,10 @@ package sync
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
@@ -16,10 +16,10 @@ func (s *Server) GetStatus(
 ) (*pbsync.GetStatusResponse, error) {
 	resp := &pbsync.GetStatusResponse{}
 
-	tJobs := tables.Jobs()
-	tUsers := tables.User()
-	tVehicles := tables.OwnedVehicles()
-	tLicenses := tables.Licenses()
+	tJobs := table.FivenetJobs
+	tUsers := table.FivenetUser
+	tVehicles := table.FivenetOwnedVehicles
+	tLicenses := table.FivenetLicenses
 
 	// Jobs
 	jobsStmt := tJobs.
@@ -32,8 +32,24 @@ func (s *Server) GetStatus(
 	if err := jobsStmt.QueryContext(ctx, s.db, &jobsCount); err != nil {
 		return nil, err
 	}
-	resp.Jobs = &sync.DataStatus{
+	resp.Jobs = &syncdata.DataStatus{
 		Count: jobsCount.Total,
+	}
+
+	// Accounts
+	// Users
+	accountsStmt := tUsers.
+		SELECT(
+			mysql.COUNT(tUsers.ID),
+		).
+		FROM(tUsers)
+
+	var accountsCount database.DataCount
+	if err := accountsStmt.QueryContext(ctx, s.db, &accountsCount); err != nil {
+		return nil, err
+	}
+	resp.Accounts = &syncdata.DataStatus{
+		Count: accountsCount.Total,
 	}
 
 	// Users
@@ -47,7 +63,7 @@ func (s *Server) GetStatus(
 	if err := usersStmt.QueryContext(ctx, s.db, &usersCount); err != nil {
 		return nil, err
 	}
-	resp.Users = &sync.DataStatus{
+	resp.Users = &syncdata.DataStatus{
 		Count: usersCount.Total,
 	}
 
@@ -62,7 +78,7 @@ func (s *Server) GetStatus(
 	if err := vehiclesStmt.QueryContext(ctx, s.db, &vehiclesCount); err != nil {
 		return nil, err
 	}
-	resp.Vehicles = &sync.DataStatus{
+	resp.Vehicles = &syncdata.DataStatus{
 		Count: vehiclesCount.Total,
 	}
 
@@ -77,7 +93,7 @@ func (s *Server) GetStatus(
 	if err := licensesStmt.QueryContext(ctx, s.db, &licensesCount); err != nil {
 		return nil, err
 	}
-	resp.Licenses = &sync.DataStatus{
+	resp.Licenses = &syncdata.DataStatus{
 		Count: licensesCount.Total,
 	}
 

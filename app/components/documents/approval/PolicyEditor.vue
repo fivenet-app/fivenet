@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ApprovalRuleKind, OnEditBehavior } from '~~/gen/ts/resources/documents/approval';
+import { ApprovalRuleKind, OnEditBehavior } from '~~/gen/ts/resources/documents/approval/approval';
 
 defineProps<{
     disabled?: boolean;

@@ -27,6 +27,7 @@ const (
 	AuthService_ForgotPassword_FullMethodName    = "/services.auth.AuthService/ForgotPassword"
 	AuthService_GetCharacters_FullMethodName     = "/services.auth.AuthService/GetCharacters"
 	AuthService_ChooseCharacter_FullMethodName   = "/services.auth.AuthService/ChooseCharacter"
+	AuthService_ImpersonateJob_FullMethodName    = "/services.auth.AuthService/ImpersonateJob"
 	AuthService_GetAccountInfo_FullMethodName    = "/services.auth.AuthService/GetAccountInfo"
 	AuthService_DeleteSocialLogin_FullMethodName = "/services.auth.AuthService/DeleteSocialLogin"
 	AuthService_SetSuperuserMode_FullMethodName  = "/services.auth.AuthService/SetSuperuserMode"
@@ -47,6 +48,7 @@ type AuthServiceClient interface {
 	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*ForgotPasswordResponse, error)
 	GetCharacters(ctx context.Context, in *GetCharactersRequest, opts ...grpc.CallOption) (*GetCharactersResponse, error)
 	ChooseCharacter(ctx context.Context, in *ChooseCharacterRequest, opts ...grpc.CallOption) (*ChooseCharacterResponse, error)
+	ImpersonateJob(ctx context.Context, in *ImpersonateJobRequest, opts ...grpc.CallOption) (*ImpersonateJobResponse, error)
 	GetAccountInfo(ctx context.Context, in *GetAccountInfoRequest, opts ...grpc.CallOption) (*GetAccountInfoResponse, error)
 	DeleteSocialLogin(ctx context.Context, in *DeleteSocialLoginRequest, opts ...grpc.CallOption) (*DeleteSocialLoginResponse, error)
 	SetSuperuserMode(ctx context.Context, in *SetSuperuserModeRequest, opts ...grpc.CallOption) (*SetSuperuserModeResponse, error)
@@ -140,6 +142,16 @@ func (c *authServiceClient) ChooseCharacter(ctx context.Context, in *ChooseChara
 	return out, nil
 }
 
+func (c *authServiceClient) ImpersonateJob(ctx context.Context, in *ImpersonateJobRequest, opts ...grpc.CallOption) (*ImpersonateJobResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ImpersonateJobResponse)
+	err := c.cc.Invoke(ctx, AuthService_ImpersonateJob_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *authServiceClient) GetAccountInfo(ctx context.Context, in *GetAccountInfoRequest, opts ...grpc.CallOption) (*GetAccountInfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAccountInfoResponse)
@@ -185,6 +197,7 @@ type AuthServiceServer interface {
 	ForgotPassword(context.Context, *ForgotPasswordRequest) (*ForgotPasswordResponse, error)
 	GetCharacters(context.Context, *GetCharactersRequest) (*GetCharactersResponse, error)
 	ChooseCharacter(context.Context, *ChooseCharacterRequest) (*ChooseCharacterResponse, error)
+	ImpersonateJob(context.Context, *ImpersonateJobRequest) (*ImpersonateJobResponse, error)
 	GetAccountInfo(context.Context, *GetAccountInfoRequest) (*GetAccountInfoResponse, error)
 	DeleteSocialLogin(context.Context, *DeleteSocialLoginRequest) (*DeleteSocialLoginResponse, error)
 	SetSuperuserMode(context.Context, *SetSuperuserModeRequest) (*SetSuperuserModeResponse, error)
@@ -221,6 +234,9 @@ func (UnimplementedAuthServiceServer) GetCharacters(context.Context, *GetCharact
 }
 func (UnimplementedAuthServiceServer) ChooseCharacter(context.Context, *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChooseCharacter not implemented")
+}
+func (UnimplementedAuthServiceServer) ImpersonateJob(context.Context, *ImpersonateJobRequest) (*ImpersonateJobResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ImpersonateJob not implemented")
 }
 func (UnimplementedAuthServiceServer) GetAccountInfo(context.Context, *GetAccountInfoRequest) (*GetAccountInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccountInfo not implemented")
@@ -396,6 +412,24 @@ func _AuthService_ChooseCharacter_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_ImpersonateJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImpersonateJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).ImpersonateJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_ImpersonateJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).ImpersonateJob(ctx, req.(*ImpersonateJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AuthService_GetAccountInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAccountInfoRequest)
 	if err := dec(in); err != nil {
@@ -488,6 +522,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChooseCharacter",
 			Handler:    _AuthService_ChooseCharacter_Handler,
+		},
+		{
+			MethodName: "ImpersonateJob",
+			Handler:    _AuthService_ImpersonateJob_Handler,
 		},
 		{
 			MethodName: "GetAccountInfo",

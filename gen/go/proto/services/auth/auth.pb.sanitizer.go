@@ -4,7 +4,7 @@
 package auth
 
 import (
-	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -28,15 +28,6 @@ func (m *ChangePasswordRequest) Sanitize() error {
 func (m *ChangePasswordResponse) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	// Field: Expires
-	if m.Expires != nil {
-		if v, ok := any(m.GetExpires()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil
@@ -135,6 +126,9 @@ func (m *ChooseCharacterResponse) Sanitize() error {
 		}
 
 	}
+
+	// Field: Token
+	m.Token = htmlsanitizer.Sanitize(m.Token)
 
 	// Field: Username
 	m.Username = htmlsanitizer.Sanitize(m.Username)
@@ -307,6 +301,71 @@ func (m *GetCharactersResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *ImpersonateJobRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *ImpersonateJobResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Attributes
+	for idx, item := range m.Attributes {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Char
+	if m.Char != nil {
+		if v, ok := any(m.GetChar()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Expires
+	if m.Expires != nil {
+		if v, ok := any(m.GetExpires()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Permissions
+	for idx, item := range m.Permissions {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Token
+	m.Token = htmlsanitizer.Sanitize(m.Token)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *LoginRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -441,6 +500,9 @@ func (m *SetSuperuserModeResponse) Sanitize() error {
 		}
 
 	}
+
+	// Field: Token
+	m.Token = htmlsanitizer.Sanitize(m.Token)
 
 	return nil
 }

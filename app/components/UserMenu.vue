@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui';
-import { useDashboard } from '@nuxt/ui/utils/dashboard';
 import LanguageSwitcherModal from './partials/LanguageSwitcherModal.vue';
 
 defineProps<{
@@ -13,7 +12,7 @@ const { t } = useI18n();
 
 const overlay = useOverlay();
 
-const { toggleSearch } = useDashboard({ toggleSearch: () => {} });
+const { isCommandSearchOpen } = useDashboard();
 
 const languageSwitcherModal = overlay.create(LanguageSwitcherModal);
 
@@ -40,7 +39,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
             label: t('common.commandpalette'),
             icon: 'i-mdi-terminal',
             kbds: ['CTRL', 'K'],
-            onClick: () => toggleSearch && toggleSearch(),
+            onClick: () => (isCommandSearchOpen.value = true),
         },
         {
             label: t('components.language_switcher.title'),

@@ -11,7 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../users/users";
+import { UserShort } from "../users/short/user";
 import { I18NItem } from "../common/i18n";
 import { Timestamp } from "../timestamp/timestamp";
 /**
@@ -68,7 +68,7 @@ export interface Data {
      */
     link?: Link;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort caused_by = 2
+     * @generated from protobuf field: optional resources.users.short.UserShort caused_by = 2
      */
     causedBy?: UserShort;
     /**
@@ -288,7 +288,7 @@ class Data$Type extends MessageType<Data> {
                 case /* optional resources.notifications.Link link */ 1:
                     message.link = Link.internalBinaryRead(reader, reader.uint32(), options, message.link);
                     break;
-                case /* optional resources.users.UserShort caused_by */ 2:
+                case /* optional resources.users.short.UserShort caused_by */ 2:
                     message.causedBy = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.causedBy);
                     break;
                 case /* optional resources.notifications.CalendarData calendar */ 3:
@@ -309,7 +309,7 @@ class Data$Type extends MessageType<Data> {
         /* optional resources.notifications.Link link = 1; */
         if (message.link)
             Link.internalBinaryWrite(message.link, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.users.UserShort caused_by = 2; */
+        /* optional resources.users.short.UserShort caused_by = 2; */
         if (message.causedBy)
             UserShort.internalBinaryWrite(message.causedBy, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.notifications.CalendarData calendar = 3; */

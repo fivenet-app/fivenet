@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: codegen/itemslen/itemslen.proto
 
+//go:build !protoopaque
+
 package itemslen
 
 import (
@@ -43,7 +45,7 @@ var File_codegen_itemslen_itemslen_proto protoreflect.FileDescriptor
 const file_codegen_itemslen_itemslen_proto_rawDesc = "" +
 	"\n" +
 	"\x1fcodegen/itemslen/itemslen.proto\x12\x10codegen.itemslen\x1a google/protobuf/descriptor.proto:9\n" +
-	"\aenabled\x12\x1d.google.protobuf.FieldOptions\x18\xb9\x8e\x03 \x01(\bR\aenabledBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen;itemslenb\x06proto3"
+	"\aenabled\x12\x1d.google.protobuf.FieldOptions\x18\xb9\x8e\x03 \x01(\bR\aenabledBMZKgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen;itemslenb\x06proto3"
 
 var file_codegen_itemslen_itemslen_proto_goTypes = []any{
 	(*descriptorpb.FieldOptions)(nil), // 0: google.protobuf.FieldOptions

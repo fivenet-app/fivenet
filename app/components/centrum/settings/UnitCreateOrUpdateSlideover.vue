@@ -6,9 +6,8 @@ import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import { UnitAttribute } from '~~/gen/ts/resources/centrum/attributes';
-import type { Unit } from '~~/gen/ts/resources/centrum/units';
-import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
+import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units/access/access';
+import { type Unit, UnitAttribute } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { defaultUnitIcon } from '../helpers';
 

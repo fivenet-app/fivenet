@@ -19,6 +19,8 @@ const { t } = useI18n();
 
 const overlay = useOverlay();
 
+const { accountId } = useAuth();
+
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
@@ -26,9 +28,10 @@ const settingsAccountsClient = await getSettingsAccountsClient();
 
 const schema = z.object({
     license: z.coerce.string().max(64).optional(),
-    enabled: z.coerce.boolean().default(true),
+    onlyDisabled: z.coerce.boolean().default(false),
     username: z.coerce.string().max(64).optional(),
     externalId: z.coerce.string().max(64).optional(),
+    group: z.coerce.string().max(64).optional(),
 
     sorting: z
         .object({
@@ -54,7 +57,7 @@ const {
     error,
 } = useLazyAsyncData(
     () =>
-        `settings-accounts-${query.license}-${query.enabled}-${query.username}-${query.externalId}-${JSON.stringify(query.sorting)}-${query.page}`,
+        `settings-accounts-${query.license}-${query.onlyDisabled}-${query.username}-${query.externalId}-${JSON.stringify(query.sorting)}-${query.page}`,
     () => listAccounts(),
 );
 
@@ -65,10 +68,11 @@ async function listAccounts(): Promise<ListAccountsResponse> {
                 offset: calculateOffset(query.page, accounts.value?.pagination),
             },
             sort: query.sorting,
-            enabled: query.enabled,
+            onlyDisabled: query.onlyDisabled,
             license: query.license,
             username: query.username,
             externalId: query.externalId,
+            group: query.group,
         });
         const { response } = await call;
 
@@ -122,18 +126,20 @@ const columns = computed(
                                 },
                             }),
                         ]),
-                        h(UTooltip, { text: t('common.delete') }, [
-                            h(UButton, {
-                                variant: 'link',
-                                icon: 'i-mdi-delete',
-                                color: 'error',
-                                onClick: () => {
-                                    confirmModal.open({
-                                        confirm: async () => deleteAccount(row.original.id),
-                                    });
-                                },
-                            }),
-                        ]),
+                        row.original.id !== accountId.value
+                            ? h(UTooltip, { text: t('common.delete') }, [
+                                  h(UButton, {
+                                      variant: 'link',
+                                      icon: 'i-mdi-delete',
+                                      color: 'error',
+                                      onClick: () => {
+                                          confirmModal.open({
+                                              confirm: async () => deleteAccount(row.original.id),
+                                          });
+                                      },
+                                  }),
+                              ])
+                            : undefined,
                     ]),
             },
             {
@@ -154,9 +160,8 @@ const columns = computed(
                         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
-                sortable: true,
                 cell: ({ row }) =>
-                    h(UTooltip, { text: `${t('common.id')}: ${row.original.id}` }, [
+                    h(UTooltip, { text: `${t('common.id', 1)}: ${row.original.id}` }, [
                         h(
                             'span',
                             { class: 'text-highlighted' },
@@ -172,6 +177,12 @@ const columns = computed(
                         color: row.original.enabled ? 'success' : 'error',
                         label: row.original.enabled ? t('common.yes') : t('common.no'),
                     }),
+            },
+            {
+                accessorKey: 'group',
+                header: t('common.group', 2),
+                cell: ({ row }) =>
+                    h('pre', { class: 'text-highlighted' }, row.original.groups?.groups.join(', ') || t('common.na')),
             },
             {
                 accessorKey: 'lastChar',
@@ -215,7 +226,6 @@ const columns = computed(
                         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
-                sortable: true,
                 cell: ({ row }) => h('pre', { class: 'text-highlighted' }, row.original.license),
             },
         ] as TableColumn<Account>[],
@@ -253,6 +263,7 @@ const columns = computed(
                                 :placeholder="$t('common.license')"
                                 block
                                 leading-icon="i-mdi-search"
+                                class="w-full"
                             >
                                 <template #trailing>
                                     <UKbd value="/" />
@@ -262,12 +273,12 @@ const columns = computed(
 
                         <UFormField
                             class="flex flex-initial flex-col"
-                            name="enabled"
-                            :label="$t('common.enabled')"
+                            name="onlyDisabled"
+                            :label="$t('common.only_disabled')"
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <div class="flex flex-1 items-center">
-                                <USwitch v-model="query.enabled" />
+                                <USwitch v-model="query.onlyDisabled" />
                             </div>
                         </UFormField>
                     </div>
@@ -294,6 +305,7 @@ const columns = computed(
                                         name="username"
                                         :placeholder="$t('common.username')"
                                         block
+                                        class="w-full"
                                     />
                                 </UFormField>
 
@@ -308,6 +320,7 @@ const columns = computed(
                                         name="externalId"
                                         :placeholder="$t('components.auth.SocialLogins.external_id')"
                                         block
+                                        class="w-full"
                                     />
                                 </UFormField>
                             </div>
@@ -328,6 +341,7 @@ const columns = computed(
                 />
 
                 <UTable
+                    v-else
                     v-model:sorting="query.sorting.columns"
                     class="flex-1"
                     :loading="isRequestPending(status)"

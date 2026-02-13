@@ -12,9 +12,9 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Coords } from "../livemap/coords";
-import { License } from "../users/licenses";
+import { License } from "../users/licenses/licenses";
 import { Vehicle } from "../vehicles/vehicles";
-import { User } from "../users/users";
+import { User } from "../users/user";
 import { Job } from "../jobs/jobs";
 /**
  * @generated from protobuf message resources.sync.DataStatus
@@ -57,7 +57,7 @@ export interface DataVehicles {
  */
 export interface DataLicenses {
     /**
-     * @generated from protobuf field: repeated resources.users.License licenses = 1
+     * @generated from protobuf field: repeated resources.users.licenses.License licenses = 1
      */
     licenses: License[];
 }
@@ -133,6 +133,32 @@ export interface LastCharID {
      * @generated from protobuf field: optional int32 last_char_id = 2
      */
     lastCharId?: number;
+}
+/**
+ * @generated from protobuf message resources.sync.DataAccounts
+ */
+export interface DataAccounts {
+    /**
+     * @generated from protobuf field: repeated resources.sync.AccountUpdate account_updates = 1
+     */
+    accountUpdates: AccountUpdate[];
+}
+/**
+ * @generated from protobuf message resources.sync.AccountUpdate
+ */
+export interface AccountUpdate {
+    /**
+     * @generated from protobuf field: string license = 1
+     */
+    license: string;
+    /**
+     * @generated from protobuf field: optional string group = 2
+     */
+    group?: string;
+    /**
+     * @generated from protobuf field: repeated string groups = 3
+     */
+    groups: string[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DataStatus$Type extends MessageType<DataStatus> {
@@ -341,7 +367,7 @@ class DataLicenses$Type extends MessageType<DataLicenses> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.License licenses */ 1:
+                case /* repeated resources.users.licenses.License licenses */ 1:
                     message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -356,7 +382,7 @@ class DataLicenses$Type extends MessageType<DataLicenses> {
         return message;
     }
     internalBinaryWrite(message: DataLicenses, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.License licenses = 1; */
+        /* repeated resources.users.licenses.License licenses = 1; */
         for (let i = 0; i < message.licenses.length; i++)
             License.internalBinaryWrite(message.licenses[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -664,3 +690,112 @@ class LastCharID$Type extends MessageType<LastCharID> {
  * @generated MessageType for protobuf message resources.sync.LastCharID
  */
 export const LastCharID = new LastCharID$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DataAccounts$Type extends MessageType<DataAccounts> {
+    constructor() {
+        super("resources.sync.DataAccounts", [
+            { no: 1, name: "account_updates", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AccountUpdate, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DataAccounts>): DataAccounts {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.accountUpdates = [];
+        if (value !== undefined)
+            reflectionMergePartial<DataAccounts>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DataAccounts): DataAccounts {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.sync.AccountUpdate account_updates */ 1:
+                    message.accountUpdates.push(AccountUpdate.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DataAccounts, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.sync.AccountUpdate account_updates = 1; */
+        for (let i = 0; i < message.accountUpdates.length; i++)
+            AccountUpdate.internalBinaryWrite(message.accountUpdates[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.sync.DataAccounts
+ */
+export const DataAccounts = new DataAccounts$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AccountUpdate$Type extends MessageType<AccountUpdate> {
+    constructor() {
+        super("resources.sync.AccountUpdate", [
+            { no: 1, name: "license", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 2, name: "group", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "groups", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<AccountUpdate>): AccountUpdate {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.license = "";
+        message.groups = [];
+        if (value !== undefined)
+            reflectionMergePartial<AccountUpdate>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AccountUpdate): AccountUpdate {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string license */ 1:
+                    message.license = reader.string();
+                    break;
+                case /* optional string group */ 2:
+                    message.group = reader.string();
+                    break;
+                case /* repeated string groups */ 3:
+                    message.groups.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AccountUpdate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string license = 1; */
+        if (message.license !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.license);
+        /* optional string group = 2; */
+        if (message.group !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.group);
+        /* repeated string groups = 3; */
+        for (let i = 0; i < message.groups.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.groups[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.sync.AccountUpdate
+ */
+export const AccountUpdate = new AccountUpdate$Type();

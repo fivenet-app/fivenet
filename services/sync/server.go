@@ -8,15 +8,15 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	pkggrpc "github.com/fivenet-app/fivenet/v2025/pkg/grpc"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	pkggrpc "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -34,8 +34,7 @@ type Server struct {
 
 	dispatches *dispatches.DispatchDB
 
-	esxCompat bool
-	tokens    []string
+	tokens []string
 
 	lastDBSyncVersion  atomic.Pointer[string]
 	lastSyncedData     atomic.Int64
@@ -72,8 +71,7 @@ func NewServer(p Params) Result {
 
 		dispatches: p.DispatchDB,
 
-		esxCompat: p.Config.Database.ESXCompat,
-		tokens:    p.Config.Sync.APITokens,
+		tokens: p.Config.Sync.APITokens,
 
 		lastDBSyncVersion: atomic.Pointer[string]{},
 	}
@@ -105,7 +103,7 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 		}
 	}
 
-	t, err := auth.GetTokenFromGRPCContext(ctx)
+	t, err := auth.GetAccTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, err
 	}

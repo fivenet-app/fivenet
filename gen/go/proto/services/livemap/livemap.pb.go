@@ -4,16 +4,17 @@
 // 	protoc        (unknown)
 // source: services/livemap/livemap.proto
 
+//go:build !protoopaque
+
 package livemap
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	livemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	markers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -25,7 +26,7 @@ const (
 )
 
 type StreamRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -55,13 +56,20 @@ func (x *StreamRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StreamRequest.ProtoReflect.Descriptor instead.
-func (*StreamRequest) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{0}
+type StreamRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 StreamRequest_builder) Build() *StreamRequest {
+	m0 := &StreamRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type StreamResponse struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
+	state      protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserOnDuty *bool                  `protobuf:"varint,1,opt,name=user_on_duty,json=userOnDuty,proto3,oneof" json:"user_on_duty,omitempty"`
 	// Types that are valid to be assigned to Data:
 	//
@@ -98,11 +106,6 @@ func (x *StreamResponse) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use StreamResponse.ProtoReflect.Descriptor instead.
-func (*StreamResponse) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *StreamResponse) GetUserOnDuty() bool {
@@ -164,6 +167,215 @@ func (x *StreamResponse) GetUserDeletes() *UserDeletes {
 	return nil
 }
 
+func (x *StreamResponse) SetUserOnDuty(v bool) {
+	x.UserOnDuty = &v
+}
+
+func (x *StreamResponse) SetJobs(v *JobsList) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &StreamResponse_Jobs{v}
+}
+
+func (x *StreamResponse) SetMarkers(v *MarkerMarkersUpdates) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &StreamResponse_Markers{v}
+}
+
+func (x *StreamResponse) SetSnapshot(v *Snapshot) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &StreamResponse_Snapshot{v}
+}
+
+func (x *StreamResponse) SetUserUpdates(v *UserUpdates) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &StreamResponse_UserUpdates{v}
+}
+
+func (x *StreamResponse) SetUserDeletes(v *UserDeletes) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &StreamResponse_UserDeletes{v}
+}
+
+func (x *StreamResponse) HasUserOnDuty() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserOnDuty != nil
+}
+
+func (x *StreamResponse) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.Data != nil
+}
+
+func (x *StreamResponse) HasJobs() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*StreamResponse_Jobs)
+	return ok
+}
+
+func (x *StreamResponse) HasMarkers() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*StreamResponse_Markers)
+	return ok
+}
+
+func (x *StreamResponse) HasSnapshot() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*StreamResponse_Snapshot)
+	return ok
+}
+
+func (x *StreamResponse) HasUserUpdates() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*StreamResponse_UserUpdates)
+	return ok
+}
+
+func (x *StreamResponse) HasUserDeletes() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*StreamResponse_UserDeletes)
+	return ok
+}
+
+func (x *StreamResponse) ClearUserOnDuty() {
+	x.UserOnDuty = nil
+}
+
+func (x *StreamResponse) ClearData() {
+	x.Data = nil
+}
+
+func (x *StreamResponse) ClearJobs() {
+	if _, ok := x.Data.(*StreamResponse_Jobs); ok {
+		x.Data = nil
+	}
+}
+
+func (x *StreamResponse) ClearMarkers() {
+	if _, ok := x.Data.(*StreamResponse_Markers); ok {
+		x.Data = nil
+	}
+}
+
+func (x *StreamResponse) ClearSnapshot() {
+	if _, ok := x.Data.(*StreamResponse_Snapshot); ok {
+		x.Data = nil
+	}
+}
+
+func (x *StreamResponse) ClearUserUpdates() {
+	if _, ok := x.Data.(*StreamResponse_UserUpdates); ok {
+		x.Data = nil
+	}
+}
+
+func (x *StreamResponse) ClearUserDeletes() {
+	if _, ok := x.Data.(*StreamResponse_UserDeletes); ok {
+		x.Data = nil
+	}
+}
+
+const StreamResponse_Data_not_set_case case_StreamResponse_Data = 0
+const StreamResponse_Jobs_case case_StreamResponse_Data = 2
+const StreamResponse_Markers_case case_StreamResponse_Data = 3
+const StreamResponse_Snapshot_case case_StreamResponse_Data = 4
+const StreamResponse_UserUpdates_case case_StreamResponse_Data = 5
+const StreamResponse_UserDeletes_case case_StreamResponse_Data = 6
+
+func (x *StreamResponse) WhichData() case_StreamResponse_Data {
+	if x == nil {
+		return StreamResponse_Data_not_set_case
+	}
+	switch x.Data.(type) {
+	case *StreamResponse_Jobs:
+		return StreamResponse_Jobs_case
+	case *StreamResponse_Markers:
+		return StreamResponse_Markers_case
+	case *StreamResponse_Snapshot:
+		return StreamResponse_Snapshot_case
+	case *StreamResponse_UserUpdates:
+		return StreamResponse_UserUpdates_case
+	case *StreamResponse_UserDeletes:
+		return StreamResponse_UserDeletes_case
+	default:
+		return StreamResponse_Data_not_set_case
+	}
+}
+
+type StreamResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserOnDuty *bool
+	// Fields of oneof Data:
+	Jobs        *JobsList
+	Markers     *MarkerMarkersUpdates
+	Snapshot    *Snapshot
+	UserUpdates *UserUpdates
+	UserDeletes *UserDeletes
+	// -- end of Data
+}
+
+func (b0 StreamResponse_builder) Build() *StreamResponse {
+	m0 := &StreamResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserOnDuty = b.UserOnDuty
+	if b.Jobs != nil {
+		x.Data = &StreamResponse_Jobs{b.Jobs}
+	}
+	if b.Markers != nil {
+		x.Data = &StreamResponse_Markers{b.Markers}
+	}
+	if b.Snapshot != nil {
+		x.Data = &StreamResponse_Snapshot{b.Snapshot}
+	}
+	if b.UserUpdates != nil {
+		x.Data = &StreamResponse_UserUpdates{b.UserUpdates}
+	}
+	if b.UserDeletes != nil {
+		x.Data = &StreamResponse_UserDeletes{b.UserDeletes}
+	}
+	return m0
+}
+
+type case_StreamResponse_Data protoreflect.FieldNumber
+
+func (x case_StreamResponse_Data) String() string {
+	md := file_services_livemap_livemap_proto_msgTypes[1].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isStreamResponse_Data interface {
 	isStreamResponse_Data()
 }
@@ -199,7 +411,7 @@ func (*StreamResponse_UserUpdates) isStreamResponse_Data() {}
 func (*StreamResponse_UserDeletes) isStreamResponse_Data() {}
 
 type JobsList struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Users         []*jobs.Job            `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
 	Markers       []*jobs.Job            `protobuf:"bytes,2,rep,name=markers,proto3" json:"markers,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -231,11 +443,6 @@ func (x *JobsList) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobsList.ProtoReflect.Descriptor instead.
-func (*JobsList) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *JobsList) GetUsers() []*jobs.Job {
 	if x != nil {
 		return x.Users
@@ -250,9 +457,33 @@ func (x *JobsList) GetMarkers() []*jobs.Job {
 	return nil
 }
 
+func (x *JobsList) SetUsers(v []*jobs.Job) {
+	x.Users = v
+}
+
+func (x *JobsList) SetMarkers(v []*jobs.Job) {
+	x.Markers = v
+}
+
+type JobsList_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Users   []*jobs.Job
+	Markers []*jobs.Job
+}
+
+func (b0 JobsList_builder) Build() *JobsList {
+	m0 := &JobsList{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Users = b.Users
+	x.Markers = b.Markers
+	return m0
+}
+
 type MarkerMarkersUpdates struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Updated       []*livemap.MarkerMarker `protobuf:"bytes,1,rep,name=updated,proto3" json:"updated,omitempty"`
+	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
+	Updated       []*markers.MarkerMarker `protobuf:"bytes,1,rep,name=updated,proto3" json:"updated,omitempty"`
 	Deleted       []int64                 `protobuf:"varint,2,rep,packed,name=deleted,proto3" json:"deleted,omitempty"`
 	Part          int32                   `protobuf:"varint,3,opt,name=part,proto3" json:"part,omitempty"`
 	Partial       bool                    `protobuf:"varint,4,opt,name=partial,proto3" json:"partial,omitempty"`
@@ -285,12 +516,7 @@ func (x *MarkerMarkersUpdates) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MarkerMarkersUpdates.ProtoReflect.Descriptor instead.
-func (*MarkerMarkersUpdates) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *MarkerMarkersUpdates) GetUpdated() []*livemap.MarkerMarker {
+func (x *MarkerMarkersUpdates) GetUpdated() []*markers.MarkerMarker {
 	if x != nil {
 		return x.Updated
 	}
@@ -318,6 +544,42 @@ func (x *MarkerMarkersUpdates) GetPartial() bool {
 	return false
 }
 
+func (x *MarkerMarkersUpdates) SetUpdated(v []*markers.MarkerMarker) {
+	x.Updated = v
+}
+
+func (x *MarkerMarkersUpdates) SetDeleted(v []int64) {
+	x.Deleted = v
+}
+
+func (x *MarkerMarkersUpdates) SetPart(v int32) {
+	x.Part = v
+}
+
+func (x *MarkerMarkersUpdates) SetPartial(v bool) {
+	x.Partial = v
+}
+
+type MarkerMarkersUpdates_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Updated []*markers.MarkerMarker
+	Deleted []int64
+	Part    int32
+	Partial bool
+}
+
+func (b0 MarkerMarkersUpdates_builder) Build() *MarkerMarkersUpdates {
+	m0 := &MarkerMarkersUpdates{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Updated = b.Updated
+	x.Deleted = b.Deleted
+	x.Part = b.Part
+	x.Partial = b.Partial
+	return m0
+}
+
 // A roll-up of the entire USERLOC bucket.
 // Published every N seconds on `$KV.user_locations._snapshot`
 // with the headers:
@@ -325,10 +587,10 @@ func (x *MarkerMarkersUpdates) GetPartial() bool {
 //	Nats-Rollup: all
 //	KV-Operation: ROLLUP
 type Snapshot struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// All currently-known user markers, already filtered for
 	// obsolete PURGE/DELETE events.
-	Markers       []*livemap.UserMarker `protobuf:"bytes,1,rep,name=markers,proto3" json:"markers,omitempty"`
+	Markers       []*markers.UserMarker `protobuf:"bytes,1,rep,name=markers,proto3" json:"markers,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -358,21 +620,36 @@ func (x *Snapshot) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Snapshot.ProtoReflect.Descriptor instead.
-func (*Snapshot) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *Snapshot) GetMarkers() []*livemap.UserMarker {
+func (x *Snapshot) GetMarkers() []*markers.UserMarker {
 	if x != nil {
 		return x.Markers
 	}
 	return nil
 }
 
+func (x *Snapshot) SetMarkers(v []*markers.UserMarker) {
+	x.Markers = v
+}
+
+type Snapshot_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// All currently-known user markers, already filtered for
+	// obsolete PURGE/DELETE events.
+	Markers []*markers.UserMarker
+}
+
+func (b0 Snapshot_builder) Build() *Snapshot {
+	m0 := &Snapshot{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Markers = b.Markers
+	return m0
+}
+
 type UserUpdates struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Updates       []*livemap.UserMarker  `protobuf:"bytes,1,rep,name=updates,proto3" json:"updates,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Updates       []*markers.UserMarker  `protobuf:"bytes,1,rep,name=updates,proto3" json:"updates,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -402,20 +679,33 @@ func (x *UserUpdates) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserUpdates.ProtoReflect.Descriptor instead.
-func (*UserUpdates) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *UserUpdates) GetUpdates() []*livemap.UserMarker {
+func (x *UserUpdates) GetUpdates() []*markers.UserMarker {
 	if x != nil {
 		return x.Updates
 	}
 	return nil
 }
 
+func (x *UserUpdates) SetUpdates(v []*markers.UserMarker) {
+	x.Updates = v
+}
+
+type UserUpdates_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Updates []*markers.UserMarker
+}
+
+func (b0 UserUpdates_builder) Build() *UserUpdates {
+	m0 := &UserUpdates{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Updates = b.Updates
+	return m0
+}
+
 type UserDeletes struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Deletes       []*UserDelete          `protobuf:"bytes,1,rep,name=deletes,proto3" json:"deletes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -446,11 +736,6 @@ func (x *UserDeletes) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserDeletes.ProtoReflect.Descriptor instead.
-func (*UserDeletes) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *UserDeletes) GetDeletes() []*UserDelete {
 	if x != nil {
 		return x.Deletes
@@ -458,8 +743,26 @@ func (x *UserDeletes) GetDeletes() []*UserDelete {
 	return nil
 }
 
+func (x *UserDeletes) SetDeletes(v []*UserDelete) {
+	x.Deletes = v
+}
+
+type UserDeletes_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Deletes []*UserDelete
+}
+
+func (b0 UserDeletes_builder) Build() *UserDeletes {
+	m0 := &UserDeletes{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Deletes = b.Deletes
+	return m0
+}
+
 type UserDelete struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// The user ID of an user marker that was deleted.
 	Id int32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	// The job of the user that was deleted.
@@ -493,11 +796,6 @@ func (x *UserDelete) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserDelete.ProtoReflect.Descriptor instead.
-func (*UserDelete) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *UserDelete) GetId() int32 {
 	if x != nil {
 		return x.Id
@@ -512,9 +810,35 @@ func (x *UserDelete) GetJob() string {
 	return ""
 }
 
+func (x *UserDelete) SetId(v int32) {
+	x.Id = v
+}
+
+func (x *UserDelete) SetJob(v string) {
+	x.Job = v
+}
+
+type UserDelete_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// The user ID of an user marker that was deleted.
+	Id int32
+	// The job of the user that was deleted.
+	Job string
+}
+
+func (b0 UserDelete_builder) Build() *UserDelete {
+	m0 := &UserDelete{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Job = b.Job
+	return m0
+}
+
 type CreateOrUpdateMarkerRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Marker        *livemap.MarkerMarker  `protobuf:"bytes,1,opt,name=marker,proto3" json:"marker,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Marker        *markers.MarkerMarker  `protobuf:"bytes,1,opt,name=marker,proto3" json:"marker,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -544,21 +868,45 @@ func (x *CreateOrUpdateMarkerRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateMarkerRequest.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateMarkerRequest) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *CreateOrUpdateMarkerRequest) GetMarker() *livemap.MarkerMarker {
+func (x *CreateOrUpdateMarkerRequest) GetMarker() *markers.MarkerMarker {
 	if x != nil {
 		return x.Marker
 	}
 	return nil
 }
 
+func (x *CreateOrUpdateMarkerRequest) SetMarker(v *markers.MarkerMarker) {
+	x.Marker = v
+}
+
+func (x *CreateOrUpdateMarkerRequest) HasMarker() bool {
+	if x == nil {
+		return false
+	}
+	return x.Marker != nil
+}
+
+func (x *CreateOrUpdateMarkerRequest) ClearMarker() {
+	x.Marker = nil
+}
+
+type CreateOrUpdateMarkerRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Marker *markers.MarkerMarker
+}
+
+func (b0 CreateOrUpdateMarkerRequest_builder) Build() *CreateOrUpdateMarkerRequest {
+	m0 := &CreateOrUpdateMarkerRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Marker = b.Marker
+	return m0
+}
+
 type CreateOrUpdateMarkerResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Marker        *livemap.MarkerMarker  `protobuf:"bytes,1,opt,name=marker,proto3" json:"marker,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Marker        *markers.MarkerMarker  `protobuf:"bytes,1,opt,name=marker,proto3" json:"marker,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -588,20 +936,44 @@ func (x *CreateOrUpdateMarkerResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateOrUpdateMarkerResponse.ProtoReflect.Descriptor instead.
-func (*CreateOrUpdateMarkerResponse) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *CreateOrUpdateMarkerResponse) GetMarker() *livemap.MarkerMarker {
+func (x *CreateOrUpdateMarkerResponse) GetMarker() *markers.MarkerMarker {
 	if x != nil {
 		return x.Marker
 	}
 	return nil
 }
 
+func (x *CreateOrUpdateMarkerResponse) SetMarker(v *markers.MarkerMarker) {
+	x.Marker = v
+}
+
+func (x *CreateOrUpdateMarkerResponse) HasMarker() bool {
+	if x == nil {
+		return false
+	}
+	return x.Marker != nil
+}
+
+func (x *CreateOrUpdateMarkerResponse) ClearMarker() {
+	x.Marker = nil
+}
+
+type CreateOrUpdateMarkerResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Marker *markers.MarkerMarker
+}
+
+func (b0 CreateOrUpdateMarkerResponse_builder) Build() *CreateOrUpdateMarkerResponse {
+	m0 := &CreateOrUpdateMarkerResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Marker = b.Marker
+	return m0
+}
+
 type DeleteMarkerRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -632,11 +1004,6 @@ func (x *DeleteMarkerRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteMarkerRequest.ProtoReflect.Descriptor instead.
-func (*DeleteMarkerRequest) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{10}
-}
-
 func (x *DeleteMarkerRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -644,8 +1011,26 @@ func (x *DeleteMarkerRequest) GetId() int64 {
 	return 0
 }
 
+func (x *DeleteMarkerRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type DeleteMarkerRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 DeleteMarkerRequest_builder) Build() *DeleteMarkerRequest {
+	m0 := &DeleteMarkerRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type DeleteMarkerResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -675,16 +1060,23 @@ func (x *DeleteMarkerResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteMarkerResponse.ProtoReflect.Descriptor instead.
-func (*DeleteMarkerResponse) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{11}
+type DeleteMarkerResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteMarkerResponse_builder) Build() *DeleteMarkerResponse {
+	m0 := &DeleteMarkerResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 var File_services_livemap_livemap_proto protoreflect.FileDescriptor
 
 const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/livemap/livemap.proto\x12\x10services.livemap\x1a\x19codegen/perms/perms.proto\x1a\x19resources/jobs/jobs.proto\x1a%resources/livemap/marker_marker.proto\x1a#resources/livemap/user_marker.proto\"\x0f\n" +
+	"\x1eservices/livemap/livemap.proto\x12\x10services.livemap\x1a\x19codegen/perms/perms.proto\x1a\x19resources/jobs/jobs.proto\x1a-resources/livemap/markers/marker_marker.proto\x1a+resources/livemap/markers/user_marker.proto\"\x0f\n" +
 	"\rStreamRequest\"\x88\x03\n" +
 	"\x0eStreamResponse\x12%\n" +
 	"\fuser_on_duty\x18\x01 \x01(\bH\x01R\n" +
@@ -698,26 +1090,26 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\r_user_on_duty\"d\n" +
 	"\bJobsList\x12)\n" +
 	"\x05users\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x05users\x12-\n" +
-	"\amarkers\x18\x02 \x03(\v2\x13.resources.jobs.JobR\amarkers\"\x99\x01\n" +
-	"\x14MarkerMarkersUpdates\x129\n" +
-	"\aupdated\x18\x01 \x03(\v2\x1f.resources.livemap.MarkerMarkerR\aupdated\x12\x18\n" +
+	"\amarkers\x18\x02 \x03(\v2\x13.resources.jobs.JobR\amarkers\"\xa1\x01\n" +
+	"\x14MarkerMarkersUpdates\x12A\n" +
+	"\aupdated\x18\x01 \x03(\v2'.resources.livemap.markers.MarkerMarkerR\aupdated\x12\x18\n" +
 	"\adeleted\x18\x02 \x03(\x03R\adeleted\x12\x12\n" +
 	"\x04part\x18\x03 \x01(\x05R\x04part\x12\x18\n" +
-	"\apartial\x18\x04 \x01(\bR\apartial\"C\n" +
-	"\bSnapshot\x127\n" +
-	"\amarkers\x18\x01 \x03(\v2\x1d.resources.livemap.UserMarkerR\amarkers\"F\n" +
-	"\vUserUpdates\x127\n" +
-	"\aupdates\x18\x01 \x03(\v2\x1d.resources.livemap.UserMarkerR\aupdates\"E\n" +
+	"\apartial\x18\x04 \x01(\bR\apartial\"K\n" +
+	"\bSnapshot\x12?\n" +
+	"\amarkers\x18\x01 \x03(\v2%.resources.livemap.markers.UserMarkerR\amarkers\"N\n" +
+	"\vUserUpdates\x12?\n" +
+	"\aupdates\x18\x01 \x03(\v2%.resources.livemap.markers.UserMarkerR\aupdates\"E\n" +
 	"\vUserDeletes\x126\n" +
 	"\adeletes\x18\x01 \x03(\v2\x1c.services.livemap.UserDeleteR\adeletes\".\n" +
 	"\n" +
 	"UserDelete\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x10\n" +
-	"\x03job\x18\x02 \x01(\tR\x03job\"V\n" +
-	"\x1bCreateOrUpdateMarkerRequest\x127\n" +
-	"\x06marker\x18\x01 \x01(\v2\x1f.resources.livemap.MarkerMarkerR\x06marker\"W\n" +
-	"\x1cCreateOrUpdateMarkerResponse\x127\n" +
-	"\x06marker\x18\x01 \x01(\v2\x1f.resources.livemap.MarkerMarkerR\x06marker\"%\n" +
+	"\x03job\x18\x02 \x01(\tR\x03job\"^\n" +
+	"\x1bCreateOrUpdateMarkerRequest\x12?\n" +
+	"\x06marker\x18\x01 \x01(\v2'.resources.livemap.markers.MarkerMarkerR\x06marker\"_\n" +
+	"\x1cCreateOrUpdateMarkerResponse\x12?\n" +
+	"\x06marker\x18\x01 \x01(\v2'.resources.livemap.markers.MarkerMarkerR\x06marker\"%\n" +
 	"\x13DeleteMarkerRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x16\n" +
 	"\x14DeleteMarkerResponse2\xde\x03\n" +
@@ -730,19 +1122,7 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\x92\x01\n" +
 	"\fDeleteMarker\x12%.services.livemap.DeleteMarkerRequest\x1a&.services.livemap.DeleteMarkerResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
 	"\x06Access\x18\x01\"\x03Own\"\n" +
-	"Lower_Rank\"\tSame_Rank\"\x03Any\x1a\x19\xea\xf3\x18\x15\bZ\x12\x11i-mdi-map-outlineBLZJgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap;livemapb\x06proto3"
-
-var (
-	file_services_livemap_livemap_proto_rawDescOnce sync.Once
-	file_services_livemap_livemap_proto_rawDescData []byte
-)
-
-func file_services_livemap_livemap_proto_rawDescGZIP() []byte {
-	file_services_livemap_livemap_proto_rawDescOnce.Do(func() {
-		file_services_livemap_livemap_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_livemap_livemap_proto_rawDesc), len(file_services_livemap_livemap_proto_rawDesc)))
-	})
-	return file_services_livemap_livemap_proto_rawDescData
-}
+	"Lower_Rank\"\tSame_Rank\"\x03Any\x1a\x19\xea\xf3\x18\x15\bZ\x12\x11i-mdi-map-outlineBLZJgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap;livemapb\x06proto3"
 
 var file_services_livemap_livemap_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_services_livemap_livemap_proto_goTypes = []any{
@@ -759,8 +1139,8 @@ var file_services_livemap_livemap_proto_goTypes = []any{
 	(*DeleteMarkerRequest)(nil),          // 10: services.livemap.DeleteMarkerRequest
 	(*DeleteMarkerResponse)(nil),         // 11: services.livemap.DeleteMarkerResponse
 	(*jobs.Job)(nil),                     // 12: resources.jobs.Job
-	(*livemap.MarkerMarker)(nil),         // 13: resources.livemap.MarkerMarker
-	(*livemap.UserMarker)(nil),           // 14: resources.livemap.UserMarker
+	(*markers.MarkerMarker)(nil),         // 13: resources.livemap.markers.MarkerMarker
+	(*markers.UserMarker)(nil),           // 14: resources.livemap.markers.UserMarker
 }
 var file_services_livemap_livemap_proto_depIdxs = []int32{
 	2,  // 0: services.livemap.StreamResponse.jobs:type_name -> services.livemap.JobsList
@@ -770,12 +1150,12 @@ var file_services_livemap_livemap_proto_depIdxs = []int32{
 	6,  // 4: services.livemap.StreamResponse.user_deletes:type_name -> services.livemap.UserDeletes
 	12, // 5: services.livemap.JobsList.users:type_name -> resources.jobs.Job
 	12, // 6: services.livemap.JobsList.markers:type_name -> resources.jobs.Job
-	13, // 7: services.livemap.MarkerMarkersUpdates.updated:type_name -> resources.livemap.MarkerMarker
-	14, // 8: services.livemap.Snapshot.markers:type_name -> resources.livemap.UserMarker
-	14, // 9: services.livemap.UserUpdates.updates:type_name -> resources.livemap.UserMarker
+	13, // 7: services.livemap.MarkerMarkersUpdates.updated:type_name -> resources.livemap.markers.MarkerMarker
+	14, // 8: services.livemap.Snapshot.markers:type_name -> resources.livemap.markers.UserMarker
+	14, // 9: services.livemap.UserUpdates.updates:type_name -> resources.livemap.markers.UserMarker
 	7,  // 10: services.livemap.UserDeletes.deletes:type_name -> services.livemap.UserDelete
-	13, // 11: services.livemap.CreateOrUpdateMarkerRequest.marker:type_name -> resources.livemap.MarkerMarker
-	13, // 12: services.livemap.CreateOrUpdateMarkerResponse.marker:type_name -> resources.livemap.MarkerMarker
+	13, // 11: services.livemap.CreateOrUpdateMarkerRequest.marker:type_name -> resources.livemap.markers.MarkerMarker
+	13, // 12: services.livemap.CreateOrUpdateMarkerResponse.marker:type_name -> resources.livemap.markers.MarkerMarker
 	0,  // 13: services.livemap.LivemapService.Stream:input_type -> services.livemap.StreamRequest
 	8,  // 14: services.livemap.LivemapService.CreateOrUpdateMarker:input_type -> services.livemap.CreateOrUpdateMarkerRequest
 	10, // 15: services.livemap.LivemapService.DeleteMarker:input_type -> services.livemap.DeleteMarkerRequest

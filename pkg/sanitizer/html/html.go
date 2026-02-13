@@ -8,8 +8,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	imageproxy "github.com/fivenet-app/fivenet/v2025/pkg/server/images"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	imageproxy "github.com/fivenet-app/fivenet/v2026/pkg/server/images"
 	"github.com/microcosm-cc/bluemonday"
 	"go.uber.org/fx"
 )

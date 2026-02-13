@@ -12,8 +12,9 @@ import {
 import RequestUserModal from '~/components/qualifications/request/RequestUserModal.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
-import { QualificationExamMode, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import { AccessLevel } from '~~/gen/ts/resources/qualifications/access/access';
+import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
+import { RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import AccessBadges from '../partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
@@ -483,7 +484,7 @@ const requestUserModal = overlay.create(RequestUserModal);
             <div v-else class="flex min-h-full w-full max-w-full flex-1 flex-col overflow-y-hidden">
                 <div v-if="!canDo.grade && qualification.content === undefined" class="p-4 sm:p-4">
                     <UAlert
-                        icon="i-mdi-information"
+                        icon="i-mdi-information-outline"
                         color="info"
                         variant="subtle"
                         :description="$t('components.qualifications.content_unavailable')"
@@ -517,7 +518,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                                     <UAlert
                                         v-else
                                         icon="i-mdi-info"
-                                        color="error"
+                                        color="warning"
                                         variant="subtle"
                                         :description="$t('components.qualifications.content_unavailable')"
                                     />

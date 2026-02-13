@@ -3,7 +3,7 @@ import { StackedBar } from '@unovis/ts';
 import { VisAxis, VisStackedBar, VisTooltip, VisXYContainer } from '@unovis/vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
-import type { LabelCount } from '~~/gen/ts/resources/jobs/labels';
+import type { LabelCount } from '~~/gen/ts/resources/jobs/labels/labels';
 import type { GetColleagueLabelsStatsResponse } from '~~/gen/ts/services/jobs/jobs';
 
 defineEmits<{

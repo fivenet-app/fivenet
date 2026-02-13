@@ -9,7 +9,7 @@ import "resources/common/database/database.proto";
 import "resources/file/file.proto";
 import "resources/file/filestore.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/filestore;filestore";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/filestore;filestore";
 
 message ListFilesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];

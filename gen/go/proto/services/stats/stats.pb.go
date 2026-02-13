@@ -4,14 +4,15 @@
 // 	protoc        (unknown)
 // source: services/stats/stats.proto
 
+//go:build !protoopaque
+
 package stats
 
 import (
-	stats "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/stats"
+	stats "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/stats"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,7 +24,7 @@ const (
 )
 
 type GetStatsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -53,13 +54,20 @@ func (x *GetStatsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetStatsRequest.ProtoReflect.Descriptor instead.
-func (*GetStatsRequest) Descriptor() ([]byte, []int) {
-	return file_services_stats_stats_proto_rawDescGZIP(), []int{0}
+type GetStatsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 GetStatsRequest_builder) Build() *GetStatsRequest {
+	m0 := &GetStatsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetStatsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Stats         map[string]*stats.Stat `protobuf:"bytes,1,rep,name=stats,proto3" json:"stats,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -90,16 +98,29 @@ func (x *GetStatsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetStatsResponse.ProtoReflect.Descriptor instead.
-func (*GetStatsResponse) Descriptor() ([]byte, []int) {
-	return file_services_stats_stats_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *GetStatsResponse) GetStats() map[string]*stats.Stat {
 	if x != nil {
 		return x.Stats
 	}
 	return nil
+}
+
+func (x *GetStatsResponse) SetStats(v map[string]*stats.Stat) {
+	x.Stats = v
+}
+
+type GetStatsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Stats map[string]*stats.Stat
+}
+
+func (b0 GetStatsResponse_builder) Build() *GetStatsResponse {
+	m0 := &GetStatsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Stats = b.Stats
+	return m0
 }
 
 var File_services_stats_stats_proto protoreflect.FileDescriptor
@@ -115,19 +136,7 @@ const file_services_stats_stats_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12+\n" +
 	"\x05value\x18\x02 \x01(\v2\x15.resources.stats.StatR\x05value:\x028\x012]\n" +
 	"\fStatsService\x12M\n" +
-	"\bGetStats\x12\x1f.services.stats.GetStatsRequest\x1a .services.stats.GetStatsResponseBHZFgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/stats;statsb\x06proto3"
-
-var (
-	file_services_stats_stats_proto_rawDescOnce sync.Once
-	file_services_stats_stats_proto_rawDescData []byte
-)
-
-func file_services_stats_stats_proto_rawDescGZIP() []byte {
-	file_services_stats_stats_proto_rawDescOnce.Do(func() {
-		file_services_stats_stats_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_stats_stats_proto_rawDesc), len(file_services_stats_stats_proto_rawDesc)))
-	})
-	return file_services_stats_stats_proto_rawDescData
-}
+	"\bGetStats\x12\x1f.services.stats.GetStatsRequest\x1a .services.stats.GetStatsResponseBHZFgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/stats;statsb\x06proto3"
 
 var file_services_stats_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_services_stats_stats_proto_goTypes = []any{

@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package resources.centrum.units.access;
+
+import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "resources/qualifications/qualifications.proto";
+import "resources/timestamp/timestamp.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units/access;unitsaccess";
+
+enum UnitAccessLevel {
+  UNIT_ACCESS_LEVEL_UNSPECIFIED = 0;
+  UNIT_ACCESS_LEVEL_BLOCKED = 1;
+  UNIT_ACCESS_LEVEL_JOIN = 2;
+}
+
+message UnitAccess {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  repeated UnitJobAccess jobs = 1 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"job_access\""
+  ];
+  repeated UnitQualificationAccess qualifications = 3 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"qualification_access\""
+  ];
+}
+
+message UnitJobAccess {
+  int64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  int64 target_id = 3;
+  string job = 4 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
+  int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];
+  optional string job_grade_label = 7 [(buf.validate.field).string.max_len = 50];
+  UnitAccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
+}
+
+message UnitUserAccess {}
+
+message UnitQualificationAccess {
+  int64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  int64 target_id = 3;
+  int64 qualification_id = 4;
+  optional resources.qualifications.QualificationShort qualification = 5;
+  UnitAccessLevel access = 6 [(buf.validate.field).enum.defined_only = true];
+}

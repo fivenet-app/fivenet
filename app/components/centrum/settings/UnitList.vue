@@ -10,7 +10,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import Pagination from '~/components/partials/Pagination.vue';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import type { Unit } from '~~/gen/ts/resources/centrum/units';
+import type { Unit } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
 

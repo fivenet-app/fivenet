@@ -5,22 +5,23 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
-	pbwiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki"
-	permswiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorswiki "github.com/fivenet-app/fivenet/v2025/services/wiki/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
+	wikiaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
+	wikiactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/activity"
+	pbwiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki"
+	permswiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorswiki "github.com/fivenet-app/fivenet/v2026/services/wiki/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/gosimple/slug"
@@ -102,7 +103,7 @@ func (s *Server) ListPages(
 								tPAccess.TargetID.EQ(subPage.ID),
 								tPAccess.Access.IS_NOT_NULL(),
 								tPAccess.Access.GT_EQ(
-									mysql.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)),
+									mysql.Int32(int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
 								),
 								mysql.OR(
 									tPAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
@@ -134,7 +135,7 @@ func (s *Server) ListPages(
 					tPAccess.TargetID.EQ(tPageShort.ID),
 					tPAccess.Access.IS_NOT_NULL(),
 					tPAccess.Access.GT_EQ(
-						mysql.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)),
+						mysql.Int32(int32(wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
 
 					mysql.OR(
@@ -253,7 +254,7 @@ func (s *Server) GetPage(
 		ctx,
 		req.GetId(),
 		userInfo,
-		wiki.AccessLevel_ACCESS_LEVEL_VIEW,
+		wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -301,7 +302,7 @@ func (s *Server) getPageAccess(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
 	pageId int64,
-) (*wiki.PageAccess, error) {
+) (*wikiaccess.PageAccess, error) {
 	jobsAccess, err := s.access.Jobs.List(ctx, s.db, pageId)
 	if err != nil {
 		return nil, errorswiki.ErrFailedQuery
@@ -322,7 +323,7 @@ func (s *Server) getPageAccess(
 		}
 	}
 
-	return &wiki.PageAccess{
+	return &wikiaccess.PageAccess{
 		Jobs:  jobsAccess,
 		Users: usersAccess,
 	}, nil
@@ -336,7 +337,7 @@ func (s *Server) getPage(
 	userInfo *userinfo.UserInfo,
 ) (*wiki.Page, error) {
 	tPage := table.FivenetWikiPages.AS("page")
-	tCreator := tables.User().AS("creator")
+	tCreator := table.FivenetUser.AS("creator")
 
 	columns := mysql.ProjectionList{
 		tPage.ID,
@@ -436,7 +437,7 @@ func (s *Server) CreatePage(
 			ctx,
 			req.GetParentId(),
 			userInfo,
-			wiki.AccessLevel_ACCESS_LEVEL_VIEW,
+			wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -448,12 +449,12 @@ func (s *Server) CreatePage(
 
 	job := s.enricher.GetJobByName(userInfo.GetJob())
 
-	pageAccess := &wiki.PageAccess{
-		Jobs: []*wiki.PageJobAccess{
+	pageAccess := &wikiaccess.PageAccess{
+		Jobs: []*wikiaccess.PageJobAccess{
 			{
 				Job:          userInfo.GetJob(),
 				MinimumGrade: userInfo.GetJobGrade(),
-				Access:       wiki.AccessLevel_ACCESS_LEVEL_EDIT,
+				Access:       wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 			},
 		},
 	}
@@ -462,10 +463,10 @@ func (s *Server) CreatePage(
 
 		if highestGrade.GetGrade() > userInfo.GetJobGrade() {
 			// If the user's job grade is lower than the highest grade, add an access entry for the highest grade
-			pageAccess.Jobs = append(pageAccess.Jobs, &wiki.PageJobAccess{
+			pageAccess.Jobs = append(pageAccess.Jobs, &wikiaccess.PageJobAccess{
 				Job:          job.GetName(),
 				MinimumGrade: highestGrade.GetGrade(),
-				Access:       wiki.AccessLevel_ACCESS_LEVEL_EDIT,
+				Access:       wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 			})
 		}
 	}
@@ -526,9 +527,9 @@ func (s *Server) CreatePage(
 		Id:  lastId,
 	}
 
-	if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
+	if _, err := s.addPageActivity(ctx, tx, &wikiactivity.PageActivity{
 		PageId:       resp.GetId(),
-		ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_CREATED,
+		ActivityType: wikiactivity.PageActivityType_PAGE_ACTIVITY_TYPE_CREATED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.GetJob(),
 	}); err != nil {
@@ -561,7 +562,7 @@ func (s *Server) UpdatePage(
 		ctx,
 		req.GetPage().GetId(),
 		userInfo,
-		wiki.AccessLevel_ACCESS_LEVEL_EDIT,
+		wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -587,7 +588,7 @@ func (s *Server) UpdatePage(
 			ctx,
 			req.GetPage().GetParentId(),
 			userInfo,
-			wiki.AccessLevel_ACCESS_LEVEL_VIEW,
+			wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -637,10 +638,10 @@ func (s *Server) UpdatePage(
 
 	if req.GetPage().GetAccess().IsEmpty() {
 		// Ensure at least one access entry allowing the user's rank and higher to "edit" the page
-		req.Page.Access.Jobs = append(req.Page.Access.Jobs, &wiki.PageJobAccess{
+		req.Page.Access.Jobs = append(req.Page.Access.Jobs, &wikiaccess.PageJobAccess{
 			Job:          userInfo.GetJob(),
 			MinimumGrade: userInfo.GetJobGrade(),
-			Access:       wiki.AccessLevel_ACCESS_LEVEL_EDIT,
+			Access:       wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 		})
 	}
 
@@ -710,7 +711,7 @@ func (s *Server) UpdatePage(
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 	if added > 0 || deleted > 0 {
-		diff.FilesChange = &wiki.PageFilesChange{
+		diff.FilesChange = &wikiactivity.PageFilesChange{
 			Added:   added,
 			Deleted: deleted,
 		}
@@ -718,13 +719,13 @@ func (s *Server) UpdatePage(
 
 	// Only store activity if there are actual changes
 	if diff.HasChanges() {
-		if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
+		if _, err := s.addPageActivity(ctx, tx, &wikiactivity.PageActivity{
 			PageId:       req.GetPage().GetId(),
-			ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_UPDATED,
+			ActivityType: wikiactivity.PageActivityType_PAGE_ACTIVITY_TYPE_UPDATED,
 			CreatorId:    &userInfo.UserId,
 			CreatorJob:   userInfo.GetJob(),
-			Data: &wiki.PageActivityData{
-				Data: &wiki.PageActivityData_Updated{
+			Data: &wikiactivity.PageActivityData{
+				Data: &wikiactivity.PageActivityData_Updated{
 					Updated: diff,
 				},
 			},
@@ -738,9 +739,9 @@ func (s *Server) UpdatePage(
 	}
 
 	if oldPage.GetMeta().GetDraft() != req.GetPage().GetMeta().GetDraft() {
-		if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
+		if _, err := s.addPageActivity(ctx, tx, &wikiactivity.PageActivity{
 			PageId:       req.GetPage().GetId(),
-			ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_DRAFT_TOGGLED,
+			ActivityType: wikiactivity.PageActivityType_PAGE_ACTIVITY_TYPE_DRAFT_TOGGLED,
 			CreatorId:    &userInfo.UserId,
 			CreatorJob:   userInfo.GetJob(),
 		}); err != nil {
@@ -765,10 +766,10 @@ func (s *Server) UpdatePage(
 
 	s.collabServer.SendTargetSaved(ctx, page.GetId())
 
-	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
-		Type:      notifications.ObjectType_OBJECT_TYPE_WIKI_PAGE,
+	s.notifi.SendObjectEvent(ctx, &notificationsclientview.ObjectEvent{
+		Type:      notificationsclientview.ObjectType_OBJECT_TYPE_WIKI_PAGE,
 		Id:        &page.Id,
-		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+		EventType: notificationsclientview.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
 
 		UserId: &userInfo.UserId,
 		Job:    &userInfo.Job,
@@ -784,7 +785,7 @@ func (s *Server) handlePageAccessChange(
 	tx qrm.DB,
 	pageId int64,
 	userInfo *userinfo.UserInfo,
-	access *wiki.PageAccess,
+	access *wikiaccess.PageAccess,
 	addActivity bool,
 ) error {
 	changes, err := s.access.HandleAccessChanges(
@@ -803,20 +804,20 @@ func (s *Server) handlePageAccessChange(
 	}
 
 	if addActivity && !changes.IsEmpty() {
-		if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
+		if _, err := s.addPageActivity(ctx, tx, &wikiactivity.PageActivity{
 			PageId:       pageId,
-			ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_ACCESS_UPDATED,
+			ActivityType: wikiactivity.PageActivityType_PAGE_ACTIVITY_TYPE_ACCESS_UPDATED,
 			CreatorId:    &userInfo.UserId,
 			CreatorJob:   userInfo.GetJob(),
-			Data: &wiki.PageActivityData{
-				Data: &wiki.PageActivityData_AccessUpdated{
-					AccessUpdated: &wiki.PageAccessUpdated{
-						Jobs: &wiki.PageAccessJobsDiff{
+			Data: &wikiactivity.PageActivityData{
+				Data: &wikiactivity.PageActivityData_AccessUpdated{
+					AccessUpdated: &wikiactivity.PageAccessUpdated{
+						Jobs: &wikiactivity.PageAccessJobsDiff{
 							ToCreate: changes.Jobs.ToCreate,
 							ToUpdate: changes.Jobs.ToUpdate,
 							ToDelete: changes.Jobs.ToDelete,
 						},
-						Users: &wiki.PageAccessUsersDiff{
+						Users: &wikiactivity.PageAccessUsersDiff{
 							ToCreate: changes.Users.ToCreate,
 							ToUpdate: changes.Users.ToUpdate,
 							ToDelete: changes.Users.ToDelete,
@@ -844,7 +845,7 @@ func (s *Server) DeletePage(
 		ctx,
 		req.GetId(),
 		userInfo,
-		wiki.AccessLevel_ACCESS_LEVEL_EDIT,
+		wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)

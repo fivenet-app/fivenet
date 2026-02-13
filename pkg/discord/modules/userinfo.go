@@ -15,12 +15,13 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/utils/httputil"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
-	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	jobssettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/settings"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
+	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
@@ -128,16 +129,16 @@ func (g *UserInfo) Plan(ctx context.Context) (*discordtypes.State, []discord.Emb
 					if !slices.Contains(member.RoleIDs, g.unemployedRole.ID) ||
 						settings.GetUserInfoSyncSettings().
 							GetUnemployedMode() !=
-							jobs.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE {
+							jobssettings.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE {
 						return nil, nil
 					}
 				}
 
 				switch settings.GetUserInfoSyncSettings().GetUnemployedMode() {
-				case jobs.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
+				case jobssettings.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
 					user.Roles.Sum = append(user.Roles.Sum, g.unemployedRole)
 
-				case jobs.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
+				case jobssettings.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
 					kick := true
 					user.Kick = &kick
 					user.KickReason = fmt.Sprintf(
@@ -257,7 +258,7 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 		jobs = append(jobs, mysql.String(job))
 	}
 
-	tUsers := tables.User().AS("users")
+	tUsers := table.FivenetUser.AS("users")
 
 	stmt := tAccsOauth2.
 		SELECT(
@@ -276,11 +277,8 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 		).
 		FROM(
 			tAccsOauth2.
-				INNER_JOIN(tAccs,
-					tAccs.ID.EQ(tAccsOauth2.AccountID),
-				).
 				INNER_JOIN(tUsers,
-					tUsers.Identifier.LIKE(mysql.CONCAT(mysql.String("%"), tAccs.License)),
+					tUsers.AccountID.EQ(tAccsOauth2.AccountID),
 				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(

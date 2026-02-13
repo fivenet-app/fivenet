@@ -7,7 +7,13 @@
 
 package model
 
+import (
+	"time"
+)
+
 type FivenetJobs struct {
-	Name  string  `sql:"primary_key" json:"name"`
-	Label *string `json:"label"`
+	Name      string     `sql:"primary_key" json:"name"`
+	Label     *string    `json:"label"`
+	CreatedAt *time.Time `json:"created_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
 }

@@ -8,9 +8,10 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/oauth2/providers"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/providers"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
@@ -73,12 +74,12 @@ func (m *MockUserInfoStore) getAccountInfo(
 	ctx context.Context,
 	provider string,
 	userInfo *providers.UserInfo,
-) (*model.FivenetAccounts, error) {
+) (*accounts.Account, error) {
 	args := m.Called(ctx, provider, userInfo)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*model.FivenetAccounts), args.Error(1)
+	return args.Get(0).(*accounts.Account), args.Error(1)
 }
 
 func TestCallback_InvalidState(t *testing.T) {
@@ -224,9 +225,9 @@ func TestCallback_LoginSuccess(t *testing.T) {
 
 	mockUserInfoStore := &MockUserInfoStore{}
 	mockUserInfoStore.On("getAccountInfo", mock.Anything, "test-provider", mockUserInfo).
-		Return(&model.FivenetAccounts{
-			ID:       123,
-			Username: &mockUserInfo.Username,
+		Return(&accounts.Account{
+			Id:       123,
+			Username: mockUserInfo.Username,
 			License:  "license",
 		}, nil)
 	mockUserInfoStore.On("updateUserInfo", mock.Anything, int64(123), "test-provider", mockUserInfo).
@@ -260,7 +261,7 @@ func TestCallback_LoginSuccess(t *testing.T) {
 	assert.Contains(
 		t,
 		w.Header().Get("Location"),
-		"/auth/login?oauth2Login=success&u=testuser&exp=",
+		"/auth/login?oauth2Login=success&u=testuser",
 	)
 	mockProvider.AssertExpectations(t)
 }
@@ -286,9 +287,9 @@ func TestCallback_ConnectError(t *testing.T) {
 
 	mockUserInfoStore := &MockUserInfoStore{}
 	mockUserInfoStore.On("getAccountInfo", mock.Anything, "test-provider", mockUserInfo).
-		Return(&model.FivenetAccounts{
-			ID:       123,
-			Username: &mockUserInfo.Username,
+		Return(&accounts.Account{
+			Id:       123,
+			Username: mockUserInfo.Username,
 			License:  "license",
 		}, nil)
 
@@ -332,7 +333,7 @@ func TestCallback_ConnectErrorAlreadyInUse(t *testing.T) {
 	router.Use(sess)
 
 	tm := auth.NewTokenMgr("secret")
-	token, err := tm.NewWithClaims(&auth.CitizenInfoClaims{
+	token, err := tm.FromCombinedClaims(&authclaims.CombinedClaims{
 		AccID:    123,
 		Username: "testuser",
 	})
@@ -390,7 +391,7 @@ func TestCallback_ConnectFlow(t *testing.T) {
 	router.Use(sess)
 
 	tm := auth.NewTokenMgr("secret")
-	token, err := tm.NewWithClaims(&auth.CitizenInfoClaims{
+	token, err := tm.FromCombinedClaims(&authclaims.CombinedClaims{
 		AccID:    123,
 		Username: "testuser",
 	})
@@ -408,9 +409,9 @@ func TestCallback_ConnectFlow(t *testing.T) {
 
 	mockUserInfoStore := &MockUserInfoStore{}
 	mockUserInfoStore.On("getAccountInfo", mock.Anything, "test-provider", mockUserInfo).
-		Return(&model.FivenetAccounts{
-			ID:       123,
-			Username: &mockUserInfo.Username,
+		Return(&accounts.Account{
+			Id:       123,
+			Username: mockUserInfo.Username,
 			License:  "license",
 		}, nil)
 	mockUserInfoStore.On("storeUserInfo", mock.Anything, int64(123), "test-provider", mockUserInfo).

@@ -22,13 +22,7 @@ const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
 
-const selectedJob = ref<undefined | Job>(
-    jobs.value.find((j) => j.name === activeChar.value?.job) ?? {
-        name: activeChar.value?.job ?? 'na',
-        label: activeChar.value?.jobLabel ?? 'N/A',
-        grades: [],
-    },
-);
+const selectedJob = ref<Job | undefined>();
 
 watch(activeChar, () => {
     if (!activeChar.value) {
@@ -45,11 +39,18 @@ watch(activeChar, () => {
 
 watchOnce(jobs, () => (selectedJob.value = jobs.value.find((j) => j.name === activeChar.value?.job)));
 
-watch(selectedJob, async () => {
-    if (activeChar.value?.job === selectedJob.value?.name) return;
+watchDebounced(
+    selectedJob,
+    async () => {
+        if (activeChar.value?.job === selectedJob.value?.name) return;
 
-    await setSuperuserMode(isSuperuser.value, selectedJob.value);
-});
+        await setSuperuserMode(isSuperuser.value, selectedJob.value);
+    },
+    {
+        debounce: 100,
+        maxWait: 600,
+    },
+);
 
 const items = computed(
     () =>
@@ -59,9 +60,7 @@ const items = computed(
                 icon: 'i-mdi-square-root',
                 type: 'link' as const,
                 active: isSuperuser.value,
-                onSelect: () => {
-                    authStore.setSuperuserMode(!isSuperuser.value);
-                },
+                onSelect: () => authStore.setSuperuserMode(!isSuperuser.value),
             },
         ] satisfies NavigationMenuItem[],
 );

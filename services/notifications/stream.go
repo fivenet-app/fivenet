@@ -9,20 +9,21 @@ import (
 	"sync"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	notifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbnotifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
-	natsutils "github.com/fivenet-app/fivenet/v2025/pkg/nats"
-	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
-	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
-	pbmailer "github.com/fivenet-app/fivenet/v2025/services/mailer"
+	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
+	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
+	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbnotifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/notifications"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/grpcws"
+	natsutils "github.com/fivenet-app/fivenet/v2026/pkg/nats"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
+	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
+	pbmailer "github.com/fivenet-app/fivenet/v2026/services/mailer"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/nats-io/nats.go/jetstream"
@@ -104,7 +105,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	if err != nil {
 		return errswrap.NewError(err, ErrFailedStream)
 	}
-	clientViewSubject := []string{}
+	clientViewSubjects := []string{}
 
 	notificationCount, err := s.getNotificationCount(ctx, userInfo.GetUserId())
 	if err != nil {
@@ -157,8 +158,8 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 			}
 
 			switch d := msg.GetData().(type) {
-			case *pbnotifications.StreamRequest_ClientView:
-				clientView := d.ClientView
+			case *pbnotifications.StreamRequest_Clientview:
+				clientView := d.Clientview
 				if clientView == nil {
 					continue // Skip nil client view
 				}
@@ -170,7 +171,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				cfg := info.Config
 
 				// If client view is not "unspecified", add specific subject for it
-				if clientView.Id != nil && clientView.GetType() > notifications.ObjectType_OBJECT_TYPE_UNSPECIFIED {
+				if clientView.Id != nil && clientView.GetType() > notificationsclientview.ObjectType_OBJECT_TYPE_UNSPECIFIED {
 					gAccess := access.GetAccess(clientView.GetType().ToAccessKey())
 					if gAccess != nil {
 						check, err := gAccess.CanUserAccessTarget(gctx, clientView.GetId(), userInfo, 2)
@@ -191,7 +192,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					}
 
 					// Generate subject for the client view
-					clientViewSubject = []string{
+					clientViewSubjects = []string{
 						fmt.Sprintf("%s.%s.%s.%d", notifi.BaseSubject, notifi.ObjectTopic, clientView.GetType().ToNatsKey(), clientView.GetId()),
 					}
 				}
@@ -200,7 +201,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				cfg.FilterSubjects = []string{}
 				cfg.FilterSubjects = append(cfg.FilterSubjects, baseSubjects...)
 				cfg.FilterSubjects = append(cfg.FilterSubjects, additionalSubjects...)
-				cfg.FilterSubjects = append(cfg.FilterSubjects, clientViewSubject...)
+				cfg.FilterSubjects = append(cfg.FilterSubjects, clientViewSubjects...)
 				subjectsMu.Unlock()
 
 				// Update consumer
@@ -266,23 +267,23 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				topic, parts := notifi.SplitSubject(m.Subject())
 				switch topic {
 				case notifi.UserTopic:
-					var dest notifications.UserEvent
+					var dest notificationsevents.UserEvent
 					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
 					switch d := dest.GetData().(type) {
-					case *notifications.UserEvent_Notification:
+					case *notificationsevents.UserEvent_Notification:
 						notificationCount++
 
-					case *notifications.UserEvent_NotificationsReadCount:
+					case *notificationsevents.UserEvent_NotificationsReadCount:
 						if notificationCount-d.NotificationsReadCount <= 0 {
 							notificationCount = 0
 						} else {
 							notificationCount -= d.NotificationsReadCount
 						}
 
-					case *notifications.UserEvent_UserInfoChanged:
+					case *notificationsevents.UserEvent_UserInfoChanged:
 						currentUserInfo.Job = d.UserInfoChanged.GetNewJob()
 						currentUserInfo.JobGrade = d.UserInfoChanged.GetNewJobGrade()
 
@@ -302,7 +303,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						// Rebuild filter subjects with the new user info
 						cfg.FilterSubjects = append(cfg.FilterSubjects, baseSubjects...)
 						cfg.FilterSubjects = append(cfg.FilterSubjects, additionalSubjects...)
-						cfg.FilterSubjects = append(cfg.FilterSubjects, clientViewSubject...)
+						cfg.FilterSubjects = append(cfg.FilterSubjects, clientViewSubjects...)
 						subjectsMu.Unlock()
 
 						// Update consumer subjects
@@ -319,7 +320,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					}
 
 				case notifi.JobTopic:
-					var dest notifications.JobEvent
+					var dest notificationsevents.JobEvent
 					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
@@ -343,7 +344,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					if currentUserInfo.GetJobGrade() < int32(grade) {
 						continue
 					}
-					var dest notifications.JobGradeEvent
+					var dest notificationsevents.JobGradeEvent
 					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
@@ -356,7 +357,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					}
 
 				case notifi.SystemTopic:
-					var dest notifications.SystemEvent
+					var dest notificationsevents.SystemEvent
 					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
@@ -369,7 +370,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					}
 
 				case notifi.ObjectTopic:
-					var dest notifications.ObjectEvent
+					var dest notificationsclientview.ObjectEvent
 					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
@@ -380,9 +381,9 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					}
 
 					// Check if the user has access to the object for job specific objects
-					if dest.GetType() != notifications.ObjectType_OBJECT_TYPE_UNSPECIFIED &&
-						dest.GetType() != notifications.ObjectType_OBJECT_TYPE_DOCUMENT &&
-						dest.GetType() != notifications.ObjectType_OBJECT_TYPE_WIKI_PAGE {
+					if dest.GetType() != notificationsclientview.ObjectType_OBJECT_TYPE_UNSPECIFIED &&
+						dest.GetType() != notificationsclientview.ObjectType_OBJECT_TYPE_DOCUMENT &&
+						dest.GetType() != notificationsclientview.ObjectType_OBJECT_TYPE_WIKI_PAGE {
 						// No job specified or job doesn't match the user's job
 						if dest.Job == nil || userInfo.GetJob() != dest.GetJob() {
 							continue
@@ -397,7 +398,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					}
 
 				case notifi.MailerTopic:
-					var dest mailer.MailerEvent
+					var dest mailerevents.MailerEvent
 					if err := protoutils.UnmarshalPartialJSON(m.Data(), &dest); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}

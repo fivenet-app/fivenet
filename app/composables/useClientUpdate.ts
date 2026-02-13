@@ -1,5 +1,5 @@
 import mitt from 'mitt';
-import type { ObjectEvent, ObjectType } from '~~/gen/ts/resources/notifications/client_view';
+import type { ObjectEvent, ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 
 type ObjectEvents = {
     ready: boolean;
@@ -18,7 +18,7 @@ export function useClientUpdate(objType: ObjectType, callback: (event: ObjectEve
     const notifications = useNotificationsStore();
     const { ready } = storeToRefs(notifications);
 
-    let clientViewSent = false;
+    let clientviewSent = false;
     const sendClientView = async (objId: number) => {
         if (ready.value) {
             notifications.sendClientView(objType, objId);
@@ -36,14 +36,14 @@ export function useClientUpdate(objType: ObjectType, callback: (event: ObjectEve
             });
         }
 
-        clientViewSent = true;
+        clientviewSent = true;
     };
 
     onMounted(() => notifications.onClientUpdate(objType, callback));
     onUnmounted(() => {
         notifications.offClientUpdate(objType, callback);
 
-        if (clientViewSent) {
+        if (clientviewSent) {
             notifications.sendClientView(objType); // Reset the client view after unmounting
         }
     });

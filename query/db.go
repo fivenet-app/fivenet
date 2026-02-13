@@ -9,10 +9,9 @@ import (
 	"strings"
 
 	"github.com/XSAM/otelsql"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/dsn"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/reqs"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/dsn"
+	"github.com/fivenet-app/fivenet/v2026/pkg/reqs"
 	"github.com/go-jet/jet/v2/qrm"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/prometheus/client_golang/prometheus"
@@ -75,7 +74,7 @@ func SetupDB(p Params) (Result, error) {
 	// Run DB migrations unless explicitly skipped via environment variable.
 	if !p.Config.Database.SkipMigrations {
 		var err error
-		if req, err = MigrateDB(p.Logger, p.Config.Database.DSN, p.Config.IgnoreRequirements, p.Config.Database.ESXCompat, p.Config.Database.DisableLocking); err != nil {
+		if req, err = MigrateDB(p.Logger, p.Config.Database.DSN, p.Config.IgnoreRequirements, p.Config.Database.DisableLocking); err != nil {
 			// In Debug mode only warn about "no migration found for version" errors, as they are common during development.
 			if !(p.Config.Mode == "debug" &&
 				strings.Contains(err.Error(), "no migration found for version")) {
@@ -107,11 +106,6 @@ func SetupDB(p Params) (Result, error) {
 	))
 	if err != nil {
 		return res, err
-	}
-
-	// Setup tables "helper" vars to work with ESX directly if enabled in config.
-	if p.Config.Database.ESXCompat {
-		tables.EnableESXCompat()
 	}
 
 	// Configure connection pool settings.

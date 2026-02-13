@@ -33,6 +33,7 @@ type options struct {
 	websocketChannelMaxStreamCount int
 	allowNonRootResources          bool
 	endpointsFunc                  *func() []string
+	validateTokenFunc              func(token string) (bool, error)
 }
 
 func evaluateOptions(opts []Option) *options {
@@ -175,5 +176,12 @@ func WithWebsocketChannelMaxStreamCount(websocketChannelMaxStreamCount int) Opti
 func WithWebsocketCompressionMode(compressionMode websocket.CompressionMode) Option {
 	return func(o *options) {
 		o.websocketCompressionMode = compressionMode
+	}
+}
+
+// WithValidateTokenFunc sets the function used to validate authentication tokens.
+func WithValidateTokenFunc(validateTokenFunc func(token string) (bool, error)) Option {
+	return func(o *options) {
+		o.validateTokenFunc = validateTokenFunc
 	}
 }

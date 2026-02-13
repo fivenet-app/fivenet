@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { logger } from '~/components/documents/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -7,7 +6,7 @@ import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
-import type { Template } from '~~/gen/ts/resources/documents/templates';
+import type { Template } from '~~/gen/ts/resources/documents/templates/templates';
 
 const props = defineProps<{
     templateId: number;
@@ -21,6 +20,8 @@ const authStore = useAuthStore();
 const clipboardStore = useClipboardStore();
 
 const { activeChar } = storeToRefs(authStore);
+
+const logger = useLogger('📃 Doc Templates');
 
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
 

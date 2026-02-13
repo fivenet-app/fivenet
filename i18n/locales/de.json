@@ -124,7 +124,6 @@
             "title": "Weiterleitung",
             "subtitle": "Sie verlassen nun FiveNet.",
             "description": "Bitte beachten Sie, dass Sie auf eine andere Website weitergeleitet werden, für deren Inhalt wir nicht verantwortlich sind und für die unsere Datenschutzbestimmungen nicht gelten.",
-
             "goto": "Sollte die automatische Weiterleitung nicht funktionieren, klicken Sie bitte hier!",
             "countdown": "Sie werden in {0} Sekunden weitergeleitet..."
         },
@@ -199,7 +198,6 @@
         "settings": {
             "features": {
                 "properties": "Stelle deine Job Eigenschaften ein (e.g., Mitarbeiter-Marker-Farbe).",
-                "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
                 "audit_log": "Ein Protokoll der Aktionen, die von Ihren Kollegen durchgeführt wurden.",
                 "limiter": "Einschränken, welche Informationen Fraktionen sehen können (z. B. Mitarbeiterstandorte, Einsätze).",
                 "laws": "Erstellen und Aktualisieren der Gesetzbücher des Staates.",
@@ -208,7 +206,8 @@
                 "settings": "Verwalten von FiveNet-Einstellungen.",
                 "cron": "Status der Hintergrundaufgaben anzeigen.",
                 "accounts": "Auflisten und verwalten von FiveNet Konten.",
-                "dispatch_center": "Verknüpfung zur Verwaltung der Leitstellen-Einstellungen."
+                "dispatch_center": "Verknüpfung zur Verwaltung der Leitstellen-Einstellungen.",
+                "jobs": "Liste der Berufe in deiner FiveNet-Instanz."
             },
             "roles": {
                 "title": "Rollen",
@@ -235,6 +234,9 @@
             },
             "accounts": {
                 "title": "Konten"
+            },
+            "jobs": {
+                "title": "Berufe"
             }
         },
         "wiki": {
@@ -284,7 +286,7 @@
         "close": "Schließen | Geschlossen",
         "open": "Öffnen | Offen",
         "last_used": "Zuletzt Genutzt",
-        "rank": "Rang",
+        "rank": "Rang | Ränge",
         "playtime": "Spielzeit",
         "choose": "Auswählen",
         "clipboard": "Zwischenablage",
@@ -607,18 +609,8 @@
         "suffix": "Suffix",
         "grade": "Benoten",
         "sort_direction": "Sortierrichtung",
-        "font": "Schriftart",
-        "default": "Standard",
         "case_sensitive": "Groß-/Kleinschreibung beachten",
-        "rows": "Zeilen",
-        "cols": "Spalten",
-        "with_header_row": "Mit Kopfzeile",
-        "url": "URL",
-        "link": "Verlinken",
-        "unlink": "Auflösen",
-        "editor": "Editor",
         "source_code": "Quellcode",
-        "insert": "Einfügen",
         "allowed_file_types": "PNG, JPG (MAX. 2000x1500px)",
         "default_lang": "Standardsprache",
         "selected": "Keine ausgewählt | {n} ausgewählt | {n} ausgewählt",
@@ -751,7 +743,14 @@
         "fullscreen_exit": "Vollbildmodus verlassen",
         "browser": "Browser",
         "registered_since": "Registriert seit",
-        "no_content": "(Noch kein Inhalt vorhanden)"
+        "no_content": "(Noch kein Inhalt vorhanden)",
+        "impersonate": "Imitieren",
+        "group": "Gruppe | Gruppen",
+        "websocket": "WebSocket",
+        "ranks": "Keine Ränge | {n} Rang | {n} Ränge",
+        "only_disabled": "Nur Deaktivierte",
+        "impersonation_active": "Sie imitieren derzeit {label} ({number}.",
+        "stop_impersonation": "Imitation beenden"
     },
     "components": {
         "partials": {
@@ -831,7 +830,7 @@
                         "insert_custom": "Benutzerdefiniert einfügen",
                         "custom_placeholder": "E.g. now | date \"01/02/2006 15:04\"",
                         "categories": {
-                            "date": "Date",
+                            "date": "Datum",
                             "active_char": "Aktiver Benutzer"
                         }
                     },
@@ -851,7 +850,20 @@
                 },
                 "invisible_characters": "Unsichtbare Zeichen anzeigen/verbergen",
                 "font_size": "Schriftgröße",
-                "focus_mode": "Fokus-Modus"
+                "focus_mode": "Fokus-Modus",
+                "insert": "Einfügen",
+                "url": "URL",
+                "unlink": "Link entfernen",
+                "rows": "Zeilen",
+                "cols": "Spalten",
+                "with_header_row": "Mit Kopfzeile",
+                "add_column_before": "Spalte davor einfügen",
+                "add_column_after": "Spalte danach einfügen",
+                "delete_column": "Spalte löschen",
+                "add_row_before": "Zeile davor einfügen",
+                "add_row_after": "Zeile danach einfügen",
+                "delete_row": "Zeile löschen",
+                "default": "Standard"
             },
             "signature_pad": {
                 "pen_color": "Stiftfarbe",
@@ -1150,14 +1162,6 @@
                 "set_absence_date": "Urlaub eintragen",
                 "set_profile_picture": "Profilbild aktualisieren"
             }
-        },
-        "bodycheckup": {
-            "title": "Körper Untersuchung",
-            "no_points": "Keine Punkte ausgewählt!",
-            "bmi_calculator": "BMI-Rechner",
-            "bmi": "Body-Mass-Index",
-            "mass": "Gewicht (in KG)",
-            "height": "Größe (in Metern)"
         },
         "hints": {
             "start_text": "Wussten Sie schon...?",
@@ -1566,6 +1570,10 @@
                 },
                 "effective_permissions": {
                     "description": "Liste der effektiven Berechtigungen für die ausgewählte Rolle (beachten Sie, dass Sie die Auswirkungen Ihrer Änderungen erst dann sehen können, wenn Sie Ihre aktuellen Änderungen an der Rolle abspeichern). Die effektiven Berechtigungen sind die tatsächlich den Benutzer mit dieser Rolle vergebenen Berechtigungen. Die effektiven Berechtigungen werden durch Kombination der Rolleneigenschaften und der Job-Rang-Berechtigungen des Benutzers ermittelt."
+                },
+                "impersonate_confirm": {
+                    "title": "Sind Sie sicher, dass Sie diese Rolle imitieren möchten?",
+                    "description": "Sie werden abgemeldet und mit den Berechtigungen dieser Rolle erneut angemeldet. Um zurückzuwechseln, müssen Sie den Charakterauswahl-Dialog verwenden."
                 }
             },
             "app_config": {
@@ -1662,6 +1670,11 @@
                             }
                         }
                     }
+                },
+                "livemap": {
+                    "title": "Livemap",
+                    "description": "Einstellungen für die Livemap.",
+                    "enable_cayo_perico": "Cayo Perico auf der Livemap anzeigen"
                 }
             },
             "accounts": {
@@ -1685,9 +1698,42 @@
                     "last_activity_received": "Letzte empfangene Aktivität",
                     "last_dbsync_version": "Letzte gesehene DB Sync Version"
                 },
-                "title": "System-Status"
+                "title": "System-Status",
+                "new_version_available": "Neue Version verfügbar"
             },
-            "system_settings": "System-Einstellungen"
+            "system_settings": "System-Einstellungen",
+            "attr_view": {
+                "templates": {
+                    "no_perms": {
+                        "title": "Keine Berechtigungen",
+                        "description": "Zum schnellen zurücksetzen der Rollen-Berechtigungen."
+                    },
+                    "job_police": {
+                        "title": "Polizei Job Vorlage",
+                        "description": "Beispielvorlage für den Polizei Job, die auch als Grundlage für andere Staatsberufe verwendet werden kann (Zugriffe auf Berufe/Ränge müssen in den Berechtigungen manuell aktiviert werden)."
+                    },
+                    "job_neutral": {
+                        "title": "Neutrale Job Vorlage",
+                        "description": "Beispielvorlage für neutrale Jobs, die als Grundlage für neutrale Berufe (e.g., Mechaniker, Café) verwendet werden kann (Zugriffe auf Berufe/Ränge müssen in den Berechtigungen manuell aktiviert werden)."
+                    },
+                    "job_gang": {
+                        "title": "Gang Job Vorlage",
+                        "description": "Beispielvorlage für Gang Jobs, die als Grundlage für Gang Berufe verwendet werden kann (Zugriffe auf Berufe/Ränge müssen in den Berechtigungen manuell aktiviert werden)."
+                    },
+                    "full_perms": {
+                        "title": "Volle Berechtigungen",
+                        "description": "Alle Berechtigungen und Attribute sind aktiviert (Nur auf den Beruf selbst ist Zugriff erlaubt; Berufe/Ränge müssen eigenhändig in den Berechtigungen aktiviert werden.)"
+                    }
+                },
+                "template_apply": {
+                    "title": "Vorlagen-Berechtigungen \"{name}\" auf Rolle anwenden",
+                    "description": "Dadurch werden alle Berechtigungen der Rolle mit denen aus der Vorlage überschrieben. Sind Sie sicher, dass Sie fortfahren möchten?"
+                },
+                "template_note": {
+                    "title": "Hinweis zu den Begrenzer-Vorlagen",
+                    "description": "Die Vorlagen sind nicht perfekt und erfordern möglicherweise einige Anpassungen nach der Anwendung, insbesondere bezüglich der Zugriffe auf Job-Ränge. Bitte überprüfen Sie die Berechtigungen nach der Anwendung einer Vorlage sorgfältig."
+                }
+            }
         },
         "fabric_editor": {
             "text": "Text",
@@ -1851,7 +1897,7 @@
             },
             "no_permission": {
                 "title": "Du hast keine Berechtigung dazu!",
-                "content": "Keine Berechtigung um zu {path} gehen."
+                "content": "Keine Berechtigung um zu {path} zu navigieren."
             },
             "oauth2_connect": {
                 "success": {
@@ -1970,10 +2016,6 @@
         "category_created": {
             "title": "Kategorie erstellt!",
             "content": "Kategorie wurde erfolgreich erstellt"
-        },
-        "bodycheckup": {
-            "title": "Körper Untersuchung: Zusammenfassung kopiert",
-            "content": "Zusammenfassung wurde zur Zwischenablage hinzugefügt."
         },
         "livemap": {
             "failed_loading_postals": {
@@ -2126,7 +2168,7 @@
                     "content": "Dokument wurde geschlossen."
                 }
             },
-            "client_view_update": {
+            "clientview_update": {
                 "title": "Dokument wurde aktualisiert",
                 "content": "Das Dokument wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um das Dokument neu zu laden."
             }
@@ -2144,26 +2186,26 @@
                 "title": "Bürger-ID kopiert",
                 "content": "Bürger-ID in die Zwischenablage kopiert."
             },
-            "client_view_update": {
+            "clientview_update": {
                 "title": "Bürger aktualisiert",
                 "content": "Der Bürger wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um die Bürgerdaten neu zu laden."
             }
         },
         "wiki": {
-            "client_view_update": {
+            "clientview_update": {
                 "title": "Seite wurde aktualisiert",
                 "content": "Die Seite wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um die Seite neu zu laden."
             }
         },
         "jobs": {
             "colleague": {
-                "client_view_update": {
+                "clientview_update": {
                     "title": "Kollege wurde aktualisiert",
                     "content": "Der Kollege wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um den Kollegen neu zu laden."
                 }
             },
             "conduct": {
-                "client_view_update": {
+                "clientview_update": {
                     "title": "Führungsregister-Eintrag wurde aktualisiert",
                     "content": "Der Führungsregister-Eintrag wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um den Führungsregister-Eintrag neu zu laden."
                 }
@@ -2194,7 +2236,10 @@
         "AuthService": {
             "ErrGenericAccount": "Fehler beim Anzeigen/ Aktualisieren ihres Accounts.",
             "ErrAccountCreateFailed": "Bitte überprüfen sie ihren Registrierungstoken!",
-            "ErrInvalidLogin": "Falscher Username oder Passwort!",
+            "ErrInvalidLogin": {
+                "content": "Bitte überprüfen sie ihren Username und Passwort, und versuchen sie es erneut.",
+                "title": "Falscher Username oder Passwort!"
+            },
             "ErrNoAccount": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen.",
             "ErrNoCharFound": "Keine(n) Charakter für deinen Account gefunden.",
             "ErrGenericLogin": "Fehler bei der Anmeldung, bitte versuche es erneut.",
@@ -2203,15 +2248,22 @@
             "ErrChangePassword": "Fehler beim Ändern Ihres Passworts!",
             "ErrForgotPassword": "Fehler beim zurücksetzen ihres Passworts!",
             "ErrAccountExistsFailed": "Bitte nutzen Sie die Passwort vergessen Funktion!",
-            "ErrSignupDisabled": "Konto-Erstellung ist deaktiviert!",
-            "ErrAccountDuplicate": "Benutzername bereits verwendet, bitte nutzen Sie einen anderen Benutzernamen.",
+            "ErrSignupDisabled": {
+                "title": "Konto-Erstellung ist deaktiviert!",
+                "content": "Die Konto-Erstellung ist deaktiviert. Bitte kontaktieren Sie Ihre FiveNet-Administratoren für weitere Informationen."
+            },
+            "ErrAccountDuplicate": {
+                "title": "Benutzername bereits verwendet!",
+                "content": "Benutzername bereits verwendet, bitte nutzen Sie einen anderen Benutzernamen."
+            },
             "ErrChangeUsername": "Fehler beim Ändern des Benutzernamen!",
-            "ErrBadUsername": "Bitte stellen Sie sicher, dass der jetzige Benutzername korrekt ist! Versuchen es mit einem anderen neuen Benutzernamen erneut.",
+            "ErrBadUsername": "Bitte stellen Sie sicher, dass der jetzige Benutzername korrekt ist! Versuchen es erneut.",
             "ErrCharLock": {
                 "title": "Charakter-Sperre ist aktiv!",
                 "content": "Bitte wählen Sie einen verfügbaren Charakter aus und versuchen Sie es erneut."
             },
-            "ErrNotSuperuser": "Sie sind kein Superuser! Bitte wenden Sie sich an Ihre FiveNet-Administratoren, um dieses Problem zu melden."
+            "ErrNotSuperuser": "Sie sind kein Superuser! Bitte wenden Sie sich an Ihre FiveNet-Administratoren, um dieses Problem zu melden.",
+            "ErrImpersonateJobInvalid": "Ungültiger Job-Grad zum Ausgeben."
         },
         "CompletorService": {
             "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"
@@ -2395,11 +2447,11 @@
                 "title": "Genehmigungsaufgabe bereits bearbeitet!",
                 "content": "Diese Genehmigungsaufgabe wurde bereits genehmigt/abgelehnt."
             },
-            "ErrDocAccessInvalid": "Dokumenten-Zugriff: Ungültiger Beruf oder Rang angegeben!",
             "ErrApprovalSignatureRequired": {
                 "title": "Genehmigungsunterschrift erforderlich!",
                 "content": "Sie müssen eine Unterschrift leisten, um dieses Dokument zu genehmigen."
             },
+            "ErrDocAccessInvalid": "Dokumenten-Zugriff: Ungültiger Beruf oder Rang angegeben!",
             "ErrApprovalDocIsDraft": {
                 "title": "Dokument ist ein Entwurf!",
                 "content": "Nur veröffentlichte Dokumente können genehmigt werden."
@@ -2421,6 +2473,10 @@
             "ErrDiscordConnectRequired": {
                 "title": "Sie müssen Ihr Discord-Konto verbunden haben!",
                 "content": "Bitte stellen Sie sicher, dass Ihr Discord-Konto mit FiveNet verbunden ist."
+            },
+            "ErrCannotDeleteOwnAccount": {
+                "title": "Du kannst deinen eigenen Account nicht löschen!",
+                "content": "Bitte logge dich mit einem anderen Account ein, um diesen Account zu löschen."
             }
         },
         "Filestore": {
@@ -3575,9 +3631,9 @@
             "have_full": "{origin} muss {comparator} {minimum} {unit} {verb}",
             "be_full": "{origin} muss {comparator} {minimum} sein"
         },
-        "starts_with": "Ungültige Zeichenkette: muss mit „{prefix}“ beginnen",
-        "ends_with": "Ungültige Zeichenkette: muss mit „{suffix}“ enden",
-        "includes": "Ungültige Zeichenkette: muss „{includes}“ enthalten",
+        "starts_with": "Ungültige Zeichenkette: muss mit \"{prefix}\" beginnen",
+        "ends_with": "Ungültige Zeichenkette: muss mit \"{suffix}\" enden",
+        "includes": "Ungültige Zeichenkette: muss \"{includes}\" enthalten",
         "regex": "Ungültige Zeichenkette: Muster {pattern} erforderlich",
         "invalid_format_noun": "Ungültige(r/s) {noun}",
         "not_multiple_of": "Ungültige Zahl: muss ein Vielfaches von {divisor} sein",

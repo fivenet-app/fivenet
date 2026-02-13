@@ -1,7 +1,7 @@
 package audit
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 )
 
 // Noop implements IAuditer but does nothing. Useful for disabling audit logging in certain environments.

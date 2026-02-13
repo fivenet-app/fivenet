@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package resources.documents.relations;
+
+import "buf/validate/validate.proto";
+import "resources/documents/documents.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/short/user.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations;documentsrelations";
+
+enum DocRelation {
+  DOC_RELATION_UNSPECIFIED = 0;
+  DOC_RELATION_MENTIONED = 1;
+  DOC_RELATION_TARGETS = 2;
+  DOC_RELATION_CAUSED = 3;
+}
+
+message DocumentRelation {
+  optional int64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+
+  int64 document_id = 3;
+  optional resources.documents.DocumentShort document = 4 [(tagger.tags) = "alias:\"document\""];
+
+  int32 source_user_id = 5 [
+    (buf.validate.field).int32.gt = 0,
+    (tagger.tags) = "alias:\"source_user_id\""
+  ];
+  optional resources.users.short.UserShort source_user = 6 [(tagger.tags) = "alias:\"source_user\""];
+
+  DocRelation relation = 7 [
+    (buf.validate.field).enum.defined_only = true,
+    (tagger.tags) = "alias:\"relation\""
+  ];
+
+  int32 target_user_id = 8 [
+    (buf.validate.field).int32.gt = 0,
+    (tagger.tags) = "alias:\"target_user_id\""
+  ];
+  optional resources.users.short.UserShort target_user = 9 [(tagger.tags) = "alias:\"target_user\""];
+}

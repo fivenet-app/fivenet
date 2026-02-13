@@ -9,7 +9,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueName from '../colleagues/ColleagueName.vue';
 
@@ -222,9 +222,12 @@ const { game } = useAppConfig();
                         </UFormField>
 
                         <UFormField v-if="can('jobs.TimeclockService/ListTimeclock').value" label="&nbsp;">
-                            <UButton to="/jobs/timeclock" icon="i-mdi-arrow-left">
-                                {{ $t('common.timeclock') }}
-                            </UButton>
+                            <UButton
+                                to="/jobs/timeclock"
+                                icon="i-mdi-arrow-left"
+                                variant="subtle"
+                                :label="$t('common.timeclock')"
+                            />
                         </UFormField>
                     </UForm>
                 </template>

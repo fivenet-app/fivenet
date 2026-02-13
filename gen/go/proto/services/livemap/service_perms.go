@@ -4,9 +4,9 @@
 package livemap
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permkeys "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 )
 
 func init() {
@@ -19,7 +19,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.LivemapServiceCreateOrUpdateMarkerAccessPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
@@ -32,7 +32,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.LivemapServiceDeleteMarkerAccessPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
@@ -45,11 +45,11 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:  permkeys.LivemapServiceStreamMarkersPermField,
-					Type: permissions.JobListAttributeType,
+					Type: permissionsattributes.JobListAttributeType,
 				},
 				{
 					Key:  permkeys.LivemapServiceStreamPlayersPermField,
-					Type: permissions.JobGradeListAttributeType,
+					Type: permissionsattributes.JobGradeListAttributeType,
 				},
 			},
 			Order: 9000,

@@ -26,6 +26,7 @@ const settingsAccountsClient = await getSettingsAccountsClient();
 const schema = z.object({
     enabled: z.coerce.boolean().default(true),
     lastChar: z.coerce.number().optional(),
+    groups: z.coerce.string().array().max(5).optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -63,7 +64,10 @@ async function updateAccount(values: Schema): Promise<UpdateAccountResponse | un
 }
 
 function setFromProps(): void {
+    if (!account.value) return;
+
     state.enabled = account.value.enabled;
+    state.groups = account.value.groups?.groups ?? [];
 }
 
 setFromProps();
@@ -79,39 +83,41 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="`${$t('components.settings.accounts.edit_account')}: ${account.username} (${account.id})`">
+    <UModal
+        :title="`${$t('components.settings.accounts.edit_account')}: ${account.username} (${$t('common.id')}: ${account.id})`"
+    >
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                <div>
-                    <UFormField class="flex-1" name="enabled" :label="$t('common.enabled')" required>
-                        <USwitch v-model="state.enabled" name="enabled" />
-                    </UFormField>
-                </div>
+            <UForm ref="formRef" class="space-y-4" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField class="flex-1" name="enabled" :label="$t('common.enabled')" required>
+                    <USwitch v-model="state.enabled" name="enabled" />
+                </UFormField>
 
-                <div>
-                    <UFormField class="flex-1" name="oauth2Accounts" :label="$t('components.auth.SocialLogins.title')">
-                        <div class="flex flex-col gap-2">
-                            <DataNoDataBlock
-                                v-if="account.oauth2Accounts.length === 0"
-                                :type="$t('components.auth.SocialLogins.title')"
+                <UFormField class="flex-1" name="groups" :label="$t('common.group', 2)">
+                    <UInputTags v-model="state.groups" disabled />
+                </UFormField>
+
+                <UFormField class="flex-1" name="oauth2Accounts" :label="$t('components.auth.SocialLogins.title')">
+                    <div class="flex flex-col gap-2">
+                        <DataNoDataBlock
+                            v-if="account.oauth2Accounts.length === 0"
+                            :type="$t('components.auth.SocialLogins.title')"
+                        />
+
+                        <template v-else>
+                            <AccountSocialLogin
+                                v-for="connection in account.oauth2Accounts"
+                                :key="connection.providerName"
+                                :account-id="account.id"
+                                :connection="connection"
+                                @deleted="
+                                    account.oauth2Accounts = account.oauth2Accounts.filter(
+                                        (c) => c.providerName !== connection.providerName,
+                                    )
+                                "
                             />
-
-                            <template v-else>
-                                <AccountSocialLogin
-                                    v-for="connection in account.oauth2Accounts"
-                                    :key="connection.providerName"
-                                    :account-id="account.id"
-                                    :connection="connection"
-                                    @deleted="
-                                        account.oauth2Accounts = account.oauth2Accounts.filter(
-                                            (c) => c.providerName !== connection.providerName,
-                                        )
-                                    "
-                                />
-                            </template>
-                        </div>
-                    </UFormField>
-                </div>
+                        </template>
+                    </div>
+                </UFormField>
             </UForm>
         </template>
 

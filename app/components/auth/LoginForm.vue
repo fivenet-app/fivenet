@@ -57,7 +57,7 @@ const passwordVisibility = ref(false);
 </script>
 
 <template>
-    <UForm class="space-y-4" :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm class="space-y-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <UFormField name="username" :label="$t('common.username')">
             <UInput
                 v-model="state.username"

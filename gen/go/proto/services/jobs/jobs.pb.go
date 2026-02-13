@@ -4,18 +4,21 @@
 // 	protoc        (unknown)
 // source: services/jobs/jobs.proto
 
+//go:build !protoopaque
+
 package jobs
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	colleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
+	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -27,7 +30,7 @@ const (
 )
 
 type ListColleaguesRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
@@ -65,11 +68,6 @@ func (x *ListColleaguesRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListColleaguesRequest.ProtoReflect.Descriptor instead.
-func (*ListColleaguesRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ListColleaguesRequest) GetPagination() *database.PaginationRequest {
@@ -135,10 +133,143 @@ func (x *ListColleaguesRequest) GetNameSuffix() string {
 	return ""
 }
 
+func (x *ListColleaguesRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListColleaguesRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListColleaguesRequest) SetSearch(v string) {
+	x.Search = v
+}
+
+func (x *ListColleaguesRequest) SetUserIds(v []int32) {
+	x.UserIds = v
+}
+
+func (x *ListColleaguesRequest) SetUserOnly(v bool) {
+	x.UserOnly = &v
+}
+
+func (x *ListColleaguesRequest) SetAbsent(v bool) {
+	x.Absent = &v
+}
+
+func (x *ListColleaguesRequest) SetLabelIds(v []int64) {
+	x.LabelIds = v
+}
+
+func (x *ListColleaguesRequest) SetNamePrefix(v string) {
+	x.NamePrefix = &v
+}
+
+func (x *ListColleaguesRequest) SetNameSuffix(v string) {
+	x.NameSuffix = &v
+}
+
+func (x *ListColleaguesRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListColleaguesRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListColleaguesRequest) HasUserOnly() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserOnly != nil
+}
+
+func (x *ListColleaguesRequest) HasAbsent() bool {
+	if x == nil {
+		return false
+	}
+	return x.Absent != nil
+}
+
+func (x *ListColleaguesRequest) HasNamePrefix() bool {
+	if x == nil {
+		return false
+	}
+	return x.NamePrefix != nil
+}
+
+func (x *ListColleaguesRequest) HasNameSuffix() bool {
+	if x == nil {
+		return false
+	}
+	return x.NameSuffix != nil
+}
+
+func (x *ListColleaguesRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListColleaguesRequest) ClearSort() {
+	x.Sort = nil
+}
+
+func (x *ListColleaguesRequest) ClearUserOnly() {
+	x.UserOnly = nil
+}
+
+func (x *ListColleaguesRequest) ClearAbsent() {
+	x.Absent = nil
+}
+
+func (x *ListColleaguesRequest) ClearNamePrefix() {
+	x.NamePrefix = nil
+}
+
+func (x *ListColleaguesRequest) ClearNameSuffix() {
+	x.NameSuffix = nil
+}
+
+type ListColleaguesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	Search     string
+	UserIds    []int32
+	UserOnly   *bool
+	Absent     *bool
+	LabelIds   []int64
+	NamePrefix *string
+	NameSuffix *string
+}
+
+func (b0 ListColleaguesRequest_builder) Build() *ListColleaguesRequest {
+	m0 := &ListColleaguesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.Search = b.Search
+	x.UserIds = b.UserIds
+	x.UserOnly = b.UserOnly
+	x.Absent = b.Absent
+	x.LabelIds = b.LabelIds
+	x.NamePrefix = b.NamePrefix
+	x.NameSuffix = b.NameSuffix
+	return m0
+}
+
 type ListColleaguesResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Colleagues    []*jobs.Colleague            `protobuf:"bytes,2,rep,name=colleagues,proto3" json:"colleagues,omitempty"`
+	Colleagues    []*colleagues.Colleague      `protobuf:"bytes,2,rep,name=colleagues,proto3" json:"colleagues,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -168,11 +299,6 @@ func (x *ListColleaguesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListColleaguesResponse.ProtoReflect.Descriptor instead.
-func (*ListColleaguesResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListColleaguesResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -180,15 +306,50 @@ func (x *ListColleaguesResponse) GetPagination() *database.PaginationResponse {
 	return nil
 }
 
-func (x *ListColleaguesResponse) GetColleagues() []*jobs.Colleague {
+func (x *ListColleaguesResponse) GetColleagues() []*colleagues.Colleague {
 	if x != nil {
 		return x.Colleagues
 	}
 	return nil
 }
 
+func (x *ListColleaguesResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListColleaguesResponse) SetColleagues(v []*colleagues.Colleague) {
+	x.Colleagues = v
+}
+
+func (x *ListColleaguesResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListColleaguesResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListColleaguesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Colleagues []*colleagues.Colleague
+}
+
+func (b0 ListColleaguesResponse_builder) Build() *ListColleaguesResponse {
+	m0 := &ListColleaguesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Colleagues = b.Colleagues
+	return m0
+}
+
 type GetSelfRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -218,14 +379,21 @@ func (x *GetSelfRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetSelfRequest.ProtoReflect.Descriptor instead.
-func (*GetSelfRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{2}
+type GetSelfRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 GetSelfRequest_builder) Build() *GetSelfRequest {
+	m0 := &GetSelfRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetSelfResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Colleague     *jobs.Colleague        `protobuf:"bytes,1,opt,name=colleague,proto3" json:"colleague,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Colleague     *colleagues.Colleague  `protobuf:"bytes,1,opt,name=colleague,proto3" json:"colleague,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -255,20 +423,44 @@ func (x *GetSelfResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetSelfResponse.ProtoReflect.Descriptor instead.
-func (*GetSelfResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *GetSelfResponse) GetColleague() *jobs.Colleague {
+func (x *GetSelfResponse) GetColleague() *colleagues.Colleague {
 	if x != nil {
 		return x.Colleague
 	}
 	return nil
 }
 
+func (x *GetSelfResponse) SetColleague(v *colleagues.Colleague) {
+	x.Colleague = v
+}
+
+func (x *GetSelfResponse) HasColleague() bool {
+	if x == nil {
+		return false
+	}
+	return x.Colleague != nil
+}
+
+func (x *GetSelfResponse) ClearColleague() {
+	x.Colleague = nil
+}
+
+type GetSelfResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Colleague *colleagues.Colleague
+}
+
+func (b0 GetSelfResponse_builder) Build() *GetSelfResponse {
+	m0 := &GetSelfResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Colleague = b.Colleague
+	return m0
+}
+
 type GetColleagueRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	InfoOnly      *bool                  `protobuf:"varint,2,opt,name=info_only,json=infoOnly,proto3,oneof" json:"info_only,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -300,11 +492,6 @@ func (x *GetColleagueRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetColleagueRequest.ProtoReflect.Descriptor instead.
-func (*GetColleagueRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *GetColleagueRequest) GetUserId() int32 {
 	if x != nil {
 		return x.UserId
@@ -319,9 +506,44 @@ func (x *GetColleagueRequest) GetInfoOnly() bool {
 	return false
 }
 
+func (x *GetColleagueRequest) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *GetColleagueRequest) SetInfoOnly(v bool) {
+	x.InfoOnly = &v
+}
+
+func (x *GetColleagueRequest) HasInfoOnly() bool {
+	if x == nil {
+		return false
+	}
+	return x.InfoOnly != nil
+}
+
+func (x *GetColleagueRequest) ClearInfoOnly() {
+	x.InfoOnly = nil
+}
+
+type GetColleagueRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId   int32
+	InfoOnly *bool
+}
+
+func (b0 GetColleagueRequest_builder) Build() *GetColleagueRequest {
+	m0 := &GetColleagueRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.InfoOnly = b.InfoOnly
+	return m0
+}
+
 type GetColleagueResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Colleague     *jobs.Colleague        `protobuf:"bytes,1,opt,name=colleague,proto3" json:"colleague,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Colleague     *colleagues.Colleague  `protobuf:"bytes,1,opt,name=colleague,proto3" json:"colleague,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -351,25 +573,49 @@ func (x *GetColleagueResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetColleagueResponse.ProtoReflect.Descriptor instead.
-func (*GetColleagueResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *GetColleagueResponse) GetColleague() *jobs.Colleague {
+func (x *GetColleagueResponse) GetColleague() *colleagues.Colleague {
 	if x != nil {
 		return x.Colleague
 	}
 	return nil
 }
 
+func (x *GetColleagueResponse) SetColleague(v *colleagues.Colleague) {
+	x.Colleague = v
+}
+
+func (x *GetColleagueResponse) HasColleague() bool {
+	if x == nil {
+		return false
+	}
+	return x.Colleague != nil
+}
+
+func (x *GetColleagueResponse) ClearColleague() {
+	x.Colleague = nil
+}
+
+type GetColleagueResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Colleague *colleagues.Colleague
+}
+
+func (b0 GetColleagueResponse_builder) Build() *GetColleagueResponse {
+	m0 := &GetColleagueResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Colleague = b.Colleague
+	return m0
+}
+
 type ListColleagueActivityRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	UserIds       []int32                      `protobuf:"varint,3,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
-	ActivityTypes []jobs.ColleagueActivityType `protobuf:"varint,4,rep,packed,name=activity_types,json=activityTypes,proto3,enum=resources.jobs.ColleagueActivityType" json:"activity_types,omitempty"`
+	UserIds       []int32                          `protobuf:"varint,3,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	ActivityTypes []activity.ColleagueActivityType `protobuf:"varint,4,rep,packed,name=activity_types,json=activityTypes,proto3,enum=resources.jobs.colleagues.activity.ColleagueActivityType" json:"activity_types,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -399,11 +645,6 @@ func (x *ListColleagueActivityRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListColleagueActivityRequest.ProtoReflect.Descriptor instead.
-func (*ListColleagueActivityRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *ListColleagueActivityRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -425,17 +666,76 @@ func (x *ListColleagueActivityRequest) GetUserIds() []int32 {
 	return nil
 }
 
-func (x *ListColleagueActivityRequest) GetActivityTypes() []jobs.ColleagueActivityType {
+func (x *ListColleagueActivityRequest) GetActivityTypes() []activity.ColleagueActivityType {
 	if x != nil {
 		return x.ActivityTypes
 	}
 	return nil
 }
 
+func (x *ListColleagueActivityRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListColleagueActivityRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListColleagueActivityRequest) SetUserIds(v []int32) {
+	x.UserIds = v
+}
+
+func (x *ListColleagueActivityRequest) SetActivityTypes(v []activity.ColleagueActivityType) {
+	x.ActivityTypes = v
+}
+
+func (x *ListColleagueActivityRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListColleagueActivityRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListColleagueActivityRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListColleagueActivityRequest) ClearSort() {
+	x.Sort = nil
+}
+
+type ListColleagueActivityRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	UserIds       []int32
+	ActivityTypes []activity.ColleagueActivityType
+}
+
+func (b0 ListColleagueActivityRequest_builder) Build() *ListColleagueActivityRequest {
+	m0 := &ListColleagueActivityRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.UserIds = b.UserIds
+	x.ActivityTypes = b.ActivityTypes
+	return m0
+}
+
 type ListColleagueActivityResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Activity      []*jobs.ColleagueActivity    `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
+	state         protoimpl.MessageState        `protogen:"hybrid.v1"`
+	Pagination    *database.PaginationResponse  `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Activity      []*activity.ColleagueActivity `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -465,11 +765,6 @@ func (x *ListColleagueActivityResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListColleagueActivityResponse.ProtoReflect.Descriptor instead.
-func (*ListColleagueActivityResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *ListColleagueActivityResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -477,17 +772,52 @@ func (x *ListColleagueActivityResponse) GetPagination() *database.PaginationResp
 	return nil
 }
 
-func (x *ListColleagueActivityResponse) GetActivity() []*jobs.ColleagueActivity {
+func (x *ListColleagueActivityResponse) GetActivity() []*activity.ColleagueActivity {
 	if x != nil {
 		return x.Activity
 	}
 	return nil
 }
 
+func (x *ListColleagueActivityResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListColleagueActivityResponse) SetActivity(v []*activity.ColleagueActivity) {
+	x.Activity = v
+}
+
+func (x *ListColleagueActivityResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListColleagueActivityResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListColleagueActivityResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Activity   []*activity.ColleagueActivity
+}
+
+func (b0 ListColleagueActivityResponse_builder) Build() *ListColleagueActivityResponse {
+	m0 := &ListColleagueActivityResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Activity = b.Activity
+	return m0
+}
+
 type SetColleaguePropsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Props         *jobs.ColleagueProps   `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
-	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	state         protoimpl.MessageState     `protogen:"hybrid.v1"`
+	Props         *colleagues.ColleagueProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	Reason        string                     `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -517,12 +847,7 @@ func (x *SetColleaguePropsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetColleaguePropsRequest.ProtoReflect.Descriptor instead.
-func (*SetColleaguePropsRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *SetColleaguePropsRequest) GetProps() *jobs.ColleagueProps {
+func (x *SetColleaguePropsRequest) GetProps() *colleagues.ColleagueProps {
 	if x != nil {
 		return x.Props
 	}
@@ -536,9 +861,44 @@ func (x *SetColleaguePropsRequest) GetReason() string {
 	return ""
 }
 
+func (x *SetColleaguePropsRequest) SetProps(v *colleagues.ColleagueProps) {
+	x.Props = v
+}
+
+func (x *SetColleaguePropsRequest) SetReason(v string) {
+	x.Reason = v
+}
+
+func (x *SetColleaguePropsRequest) HasProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.Props != nil
+}
+
+func (x *SetColleaguePropsRequest) ClearProps() {
+	x.Props = nil
+}
+
+type SetColleaguePropsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Props  *colleagues.ColleagueProps
+	Reason string
+}
+
+func (b0 SetColleaguePropsRequest_builder) Build() *SetColleaguePropsRequest {
+	m0 := &SetColleaguePropsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Props = b.Props
+	x.Reason = b.Reason
+	return m0
+}
+
 type SetColleaguePropsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Props         *jobs.ColleagueProps   `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	state         protoimpl.MessageState     `protogen:"hybrid.v1"`
+	Props         *colleagues.ColleagueProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -568,20 +928,44 @@ func (x *SetColleaguePropsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetColleaguePropsResponse.ProtoReflect.Descriptor instead.
-func (*SetColleaguePropsResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *SetColleaguePropsResponse) GetProps() *jobs.ColleagueProps {
+func (x *SetColleaguePropsResponse) GetProps() *colleagues.ColleagueProps {
 	if x != nil {
 		return x.Props
 	}
 	return nil
 }
 
+func (x *SetColleaguePropsResponse) SetProps(v *colleagues.ColleagueProps) {
+	x.Props = v
+}
+
+func (x *SetColleaguePropsResponse) HasProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.Props != nil
+}
+
+func (x *SetColleaguePropsResponse) ClearProps() {
+	x.Props = nil
+}
+
+type SetColleaguePropsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Props *colleagues.ColleagueProps
+}
+
+func (b0 SetColleaguePropsResponse_builder) Build() *SetColleaguePropsResponse {
+	m0 := &SetColleaguePropsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Props = b.Props
+	return m0
+}
+
 type GetColleagueLabelsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Search        *string                `protobuf:"bytes,1,opt,name=search,proto3,oneof" json:"search,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -612,11 +996,6 @@ func (x *GetColleagueLabelsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetColleagueLabelsRequest.ProtoReflect.Descriptor instead.
-func (*GetColleagueLabelsRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{10}
-}
-
 func (x *GetColleagueLabelsRequest) GetSearch() string {
 	if x != nil && x.Search != nil {
 		return *x.Search
@@ -624,9 +1003,38 @@ func (x *GetColleagueLabelsRequest) GetSearch() string {
 	return ""
 }
 
+func (x *GetColleagueLabelsRequest) SetSearch(v string) {
+	x.Search = &v
+}
+
+func (x *GetColleagueLabelsRequest) HasSearch() bool {
+	if x == nil {
+		return false
+	}
+	return x.Search != nil
+}
+
+func (x *GetColleagueLabelsRequest) ClearSearch() {
+	x.Search = nil
+}
+
+type GetColleagueLabelsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Search *string
+}
+
+func (b0 GetColleagueLabelsRequest_builder) Build() *GetColleagueLabelsRequest {
+	m0 := &GetColleagueLabelsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Search = b.Search
+	return m0
+}
+
 type GetColleagueLabelsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Labels        []*jobs.Label          `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -656,21 +1064,34 @@ func (x *GetColleagueLabelsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetColleagueLabelsResponse.ProtoReflect.Descriptor instead.
-func (*GetColleagueLabelsResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *GetColleagueLabelsResponse) GetLabels() []*jobs.Label {
+func (x *GetColleagueLabelsResponse) GetLabels() []*labels.Label {
 	if x != nil {
 		return x.Labels
 	}
 	return nil
 }
 
+func (x *GetColleagueLabelsResponse) SetLabels(v []*labels.Label) {
+	x.Labels = v
+}
+
+type GetColleagueLabelsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Labels []*labels.Label
+}
+
+func (b0 GetColleagueLabelsResponse_builder) Build() *GetColleagueLabelsResponse {
+	m0 := &GetColleagueLabelsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Labels = b.Labels
+	return m0
+}
+
 type ManageLabelsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Labels        []*jobs.Label          `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -700,21 +1121,34 @@ func (x *ManageLabelsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ManageLabelsRequest.ProtoReflect.Descriptor instead.
-func (*ManageLabelsRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *ManageLabelsRequest) GetLabels() []*jobs.Label {
+func (x *ManageLabelsRequest) GetLabels() []*labels.Label {
 	if x != nil {
 		return x.Labels
 	}
 	return nil
 }
 
+func (x *ManageLabelsRequest) SetLabels(v []*labels.Label) {
+	x.Labels = v
+}
+
+type ManageLabelsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Labels []*labels.Label
+}
+
+func (b0 ManageLabelsRequest_builder) Build() *ManageLabelsRequest {
+	m0 := &ManageLabelsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Labels = b.Labels
+	return m0
+}
+
 type ManageLabelsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Labels        []*jobs.Label          `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -744,20 +1178,33 @@ func (x *ManageLabelsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ManageLabelsResponse.ProtoReflect.Descriptor instead.
-func (*ManageLabelsResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *ManageLabelsResponse) GetLabels() []*jobs.Label {
+func (x *ManageLabelsResponse) GetLabels() []*labels.Label {
 	if x != nil {
 		return x.Labels
 	}
 	return nil
 }
 
+func (x *ManageLabelsResponse) SetLabels(v []*labels.Label) {
+	x.Labels = v
+}
+
+type ManageLabelsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Labels []*labels.Label
+}
+
+func (b0 ManageLabelsResponse_builder) Build() *ManageLabelsResponse {
+	m0 := &ManageLabelsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Labels = b.Labels
+	return m0
+}
+
 type GetColleagueLabelsStatsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	LabelIds      []int64                `protobuf:"varint,1,rep,packed,name=label_ids,json=labelIds,proto3" json:"label_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -788,11 +1235,6 @@ func (x *GetColleagueLabelsStatsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetColleagueLabelsStatsRequest.ProtoReflect.Descriptor instead.
-func (*GetColleagueLabelsStatsRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{14}
-}
-
 func (x *GetColleagueLabelsStatsRequest) GetLabelIds() []int64 {
 	if x != nil {
 		return x.LabelIds
@@ -800,9 +1242,27 @@ func (x *GetColleagueLabelsStatsRequest) GetLabelIds() []int64 {
 	return nil
 }
 
+func (x *GetColleagueLabelsStatsRequest) SetLabelIds(v []int64) {
+	x.LabelIds = v
+}
+
+type GetColleagueLabelsStatsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	LabelIds []int64
+}
+
+func (b0 GetColleagueLabelsStatsRequest_builder) Build() *GetColleagueLabelsStatsRequest {
+	m0 := &GetColleagueLabelsStatsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.LabelIds = b.LabelIds
+	return m0
+}
+
 type GetColleagueLabelsStatsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Count         []*jobs.LabelCount     `protobuf:"bytes,1,rep,name=count,proto3" json:"count,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Count         []*labels.LabelCount   `protobuf:"bytes,1,rep,name=count,proto3" json:"count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -832,20 +1292,33 @@ func (x *GetColleagueLabelsStatsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetColleagueLabelsStatsResponse.ProtoReflect.Descriptor instead.
-func (*GetColleagueLabelsStatsResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{15}
-}
-
-func (x *GetColleagueLabelsStatsResponse) GetCount() []*jobs.LabelCount {
+func (x *GetColleagueLabelsStatsResponse) GetCount() []*labels.LabelCount {
 	if x != nil {
 		return x.Count
 	}
 	return nil
 }
 
+func (x *GetColleagueLabelsStatsResponse) SetCount(v []*labels.LabelCount) {
+	x.Count = v
+}
+
+type GetColleagueLabelsStatsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Count []*labels.LabelCount
+}
+
+func (b0 GetColleagueLabelsStatsResponse_builder) Build() *GetColleagueLabelsStatsResponse {
+	m0 := &GetColleagueLabelsStatsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Count = b.Count
+	return m0
+}
+
 type GetMOTDRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -875,13 +1348,20 @@ func (x *GetMOTDRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetMOTDRequest.ProtoReflect.Descriptor instead.
-func (*GetMOTDRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{16}
+type GetMOTDRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 GetMOTDRequest_builder) Build() *GetMOTDRequest {
+	m0 := &GetMOTDRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type GetMOTDResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Motd          string                 `protobuf:"bytes,1,opt,name=motd,proto3" json:"motd,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -912,11 +1392,6 @@ func (x *GetMOTDResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetMOTDResponse.ProtoReflect.Descriptor instead.
-func (*GetMOTDResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{17}
-}
-
 func (x *GetMOTDResponse) GetMotd() string {
 	if x != nil {
 		return x.Motd
@@ -924,8 +1399,26 @@ func (x *GetMOTDResponse) GetMotd() string {
 	return ""
 }
 
+func (x *GetMOTDResponse) SetMotd(v string) {
+	x.Motd = v
+}
+
+type GetMOTDResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Motd string
+}
+
+func (b0 GetMOTDResponse_builder) Build() *GetMOTDResponse {
+	m0 := &GetMOTDResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Motd = b.Motd
+	return m0
+}
+
 type SetMOTDRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Motd          string                 `protobuf:"bytes,1,opt,name=motd,proto3" json:"motd,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -956,11 +1449,6 @@ func (x *SetMOTDRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetMOTDRequest.ProtoReflect.Descriptor instead.
-func (*SetMOTDRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{18}
-}
-
 func (x *SetMOTDRequest) GetMotd() string {
 	if x != nil {
 		return x.Motd
@@ -968,8 +1456,26 @@ func (x *SetMOTDRequest) GetMotd() string {
 	return ""
 }
 
+func (x *SetMOTDRequest) SetMotd(v string) {
+	x.Motd = v
+}
+
+type SetMOTDRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Motd string
+}
+
+func (b0 SetMOTDRequest_builder) Build() *SetMOTDRequest {
+	m0 := &SetMOTDRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Motd = b.Motd
+	return m0
+}
+
 type SetMOTDResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Motd          string                 `protobuf:"bytes,1,opt,name=motd,proto3" json:"motd,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1000,11 +1506,6 @@ func (x *SetMOTDResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetMOTDResponse.ProtoReflect.Descriptor instead.
-func (*SetMOTDResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{19}
-}
-
 func (x *SetMOTDResponse) GetMotd() string {
 	if x != nil {
 		return x.Motd
@@ -1012,11 +1513,29 @@ func (x *SetMOTDResponse) GetMotd() string {
 	return ""
 }
 
+func (x *SetMOTDResponse) SetMotd(v string) {
+	x.Motd = v
+}
+
+type SetMOTDResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Motd string
+}
+
+func (b0 SetMOTDResponse_builder) Build() *SetMOTDResponse {
+	m0 := &SetMOTDResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Motd = b.Motd
+	return m0
+}
+
 var File_services_jobs_jobs_proto protoreflect.FileDescriptor
 
 const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/jobs/jobs.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1dresources/jobs/activity.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\"\xbc\x03\n" +
+	"\x18services/jobs/jobs.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a1resources/jobs/colleagues/activity/activity.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a\"resources/jobs/labels/labels.proto\"\xbc\x03\n" +
 	"\x15ListColleaguesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1036,55 +1555,55 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"_user_onlyB\t\n" +
 	"\a_absentB\x0e\n" +
 	"\f_name_prefixB\x0e\n" +
-	"\f_name_suffix\"\xa8\x01\n" +
+	"\f_name_suffix\"\xb3\x01\n" +
 	"\x16ListColleaguesResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12?\n" +
+	"pagination\x12J\n" +
 	"\n" +
-	"colleagues\x18\x02 \x03(\v2\x19.resources.jobs.ColleagueB\x04\xc8\xf3\x18\x01R\n" +
+	"colleagues\x18\x02 \x03(\v2$.resources.jobs.colleagues.ColleagueB\x04\xc8\xf3\x18\x01R\n" +
 	"colleagues\"\x10\n" +
-	"\x0eGetSelfRequest\"J\n" +
-	"\x0fGetSelfResponse\x127\n" +
-	"\tcolleague\x18\x01 \x01(\v2\x19.resources.jobs.ColleagueR\tcolleague\"^\n" +
+	"\x0eGetSelfRequest\"U\n" +
+	"\x0fGetSelfResponse\x12B\n" +
+	"\tcolleague\x18\x01 \x01(\v2$.resources.jobs.colleagues.ColleagueR\tcolleague\"^\n" +
 	"\x13GetColleagueRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12 \n" +
 	"\tinfo_only\x18\x02 \x01(\bH\x00R\binfoOnly\x88\x01\x01B\f\n" +
 	"\n" +
-	"_info_only\"O\n" +
-	"\x14GetColleagueResponse\x127\n" +
-	"\tcolleague\x18\x01 \x01(\v2\x19.resources.jobs.ColleagueR\tcolleague\"\x98\x02\n" +
+	"_info_only\"Z\n" +
+	"\x14GetColleagueResponse\x12B\n" +
+	"\tcolleague\x18\x01 \x01(\v2$.resources.jobs.colleagues.ColleagueR\tcolleague\"\xac\x02\n" +
 	"\x1cListColleagueActivityRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x19\n" +
-	"\buser_ids\x18\x03 \x03(\x05R\auserIds\x12L\n" +
-	"\x0eactivity_types\x18\x04 \x03(\x0e2%.resources.jobs.ColleagueActivityTypeR\ractivityTypesB\a\n" +
-	"\x05_sort\"\xb3\x01\n" +
+	"\buser_ids\x18\x03 \x03(\x05R\auserIds\x12`\n" +
+	"\x0eactivity_types\x18\x04 \x03(\x0e29.resources.jobs.colleagues.activity.ColleagueActivityTypeR\ractivityTypesB\a\n" +
+	"\x05_sort\"\xc7\x01\n" +
 	"\x1dListColleagueActivityResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12C\n" +
-	"\bactivity\x18\x02 \x03(\v2!.resources.jobs.ColleagueActivityB\x04\xc8\xf3\x18\x01R\bactivity\"p\n" +
-	"\x18SetColleaguePropsRequest\x124\n" +
-	"\x05props\x18\x01 \x01(\v2\x1e.resources.jobs.ColleaguePropsR\x05props\x12\x1e\n" +
-	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"Q\n" +
-	"\x19SetColleaguePropsResponse\x124\n" +
-	"\x05props\x18\x01 \x01(\v2\x1e.resources.jobs.ColleaguePropsR\x05props\"C\n" +
+	"pagination\x12W\n" +
+	"\bactivity\x18\x02 \x03(\v25.resources.jobs.colleagues.activity.ColleagueActivityB\x04\xc8\xf3\x18\x01R\bactivity\"{\n" +
+	"\x18SetColleaguePropsRequest\x12?\n" +
+	"\x05props\x18\x01 \x01(\v2).resources.jobs.colleagues.ColleaguePropsR\x05props\x12\x1e\n" +
+	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\\\n" +
+	"\x19SetColleaguePropsResponse\x12?\n" +
+	"\x05props\x18\x01 \x01(\v2).resources.jobs.colleagues.ColleaguePropsR\x05props\"C\n" +
 	"\x19GetColleagueLabelsRequest\x12\x1b\n" +
 	"\x06search\x18\x01 \x01(\tH\x00R\x06search\x88\x01\x01B\t\n" +
-	"\a_search\"K\n" +
-	"\x1aGetColleagueLabelsResponse\x12-\n" +
-	"\x06labels\x18\x01 \x03(\v2\x15.resources.jobs.LabelR\x06labels\"D\n" +
-	"\x13ManageLabelsRequest\x12-\n" +
-	"\x06labels\x18\x01 \x03(\v2\x15.resources.jobs.LabelR\x06labels\"E\n" +
-	"\x14ManageLabelsResponse\x12-\n" +
-	"\x06labels\x18\x01 \x03(\v2\x15.resources.jobs.LabelR\x06labels\"=\n" +
+	"\a_search\"R\n" +
+	"\x1aGetColleagueLabelsResponse\x124\n" +
+	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"K\n" +
+	"\x13ManageLabelsRequest\x124\n" +
+	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"L\n" +
+	"\x14ManageLabelsResponse\x124\n" +
+	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"=\n" +
 	"\x1eGetColleagueLabelsStatsRequest\x12\x1b\n" +
-	"\tlabel_ids\x18\x01 \x03(\x03R\blabelIds\"S\n" +
-	"\x1fGetColleagueLabelsStatsResponse\x120\n" +
-	"\x05count\x18\x01 \x03(\v2\x1a.resources.jobs.LabelCountR\x05count\"\x10\n" +
+	"\tlabel_ids\x18\x01 \x03(\x03R\blabelIds\"Z\n" +
+	"\x1fGetColleagueLabelsStatsResponse\x127\n" +
+	"\x05count\x18\x01 \x03(\v2!.resources.jobs.labels.LabelCountR\x05count\"\x10\n" +
 	"\x0eGetMOTDRequest\"%\n" +
 	"\x0fGetMOTDResponse\x12\x12\n" +
 	"\x04motd\x18\x01 \x01(\tR\x04motd\".\n" +
@@ -1110,19 +1629,7 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\fManageLabels\x12\".services.jobs.ManageLabelsRequest\x1a#.services.jobs.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8e\x01\n" +
 	"\x17GetColleagueLabelsStats\x12-.services.jobs.GetColleagueLabelsStatsRequest\x1a..services.jobs.GetColleagueLabelsStatsResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fGetColleague\x12U\n" +
 	"\aGetMOTD\x12\x1d.services.jobs.GetMOTDRequest\x1a\x1e.services.jobs.GetMOTDResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12P\n" +
-	"\aSetMOTD\x12\x1d.services.jobs.SetMOTDRequest\x1a\x1e.services.jobs.SetMOTDResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x1f\xea\xf3\x18\x1b\b<\x12\x17i-mdi-briefcase-outlineBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
-
-var (
-	file_services_jobs_jobs_proto_rawDescOnce sync.Once
-	file_services_jobs_jobs_proto_rawDescData []byte
-)
-
-func file_services_jobs_jobs_proto_rawDescGZIP() []byte {
-	file_services_jobs_jobs_proto_rawDescOnce.Do(func() {
-		file_services_jobs_jobs_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_jobs_jobs_proto_rawDesc), len(file_services_jobs_jobs_proto_rawDesc)))
-	})
-	return file_services_jobs_jobs_proto_rawDescData
-}
+	"\aSetMOTD\x12\x1d.services.jobs.SetMOTDRequest\x1a\x1e.services.jobs.SetMOTDResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x1f\xea\xf3\x18\x1b\b<\x12\x17i-mdi-briefcase-outlineBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var file_services_jobs_jobs_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_services_jobs_jobs_proto_goTypes = []any{
@@ -1149,31 +1656,31 @@ var file_services_jobs_jobs_proto_goTypes = []any{
 	(*database.PaginationRequest)(nil),      // 20: resources.common.database.PaginationRequest
 	(*database.Sort)(nil),                   // 21: resources.common.database.Sort
 	(*database.PaginationResponse)(nil),     // 22: resources.common.database.PaginationResponse
-	(*jobs.Colleague)(nil),                  // 23: resources.jobs.Colleague
-	(jobs.ColleagueActivityType)(0),         // 24: resources.jobs.ColleagueActivityType
-	(*jobs.ColleagueActivity)(nil),          // 25: resources.jobs.ColleagueActivity
-	(*jobs.ColleagueProps)(nil),             // 26: resources.jobs.ColleagueProps
-	(*jobs.Label)(nil),                      // 27: resources.jobs.Label
-	(*jobs.LabelCount)(nil),                 // 28: resources.jobs.LabelCount
+	(*colleagues.Colleague)(nil),            // 23: resources.jobs.colleagues.Colleague
+	(activity.ColleagueActivityType)(0),     // 24: resources.jobs.colleagues.activity.ColleagueActivityType
+	(*activity.ColleagueActivity)(nil),      // 25: resources.jobs.colleagues.activity.ColleagueActivity
+	(*colleagues.ColleagueProps)(nil),       // 26: resources.jobs.colleagues.ColleagueProps
+	(*labels.Label)(nil),                    // 27: resources.jobs.labels.Label
+	(*labels.LabelCount)(nil),               // 28: resources.jobs.labels.LabelCount
 }
 var file_services_jobs_jobs_proto_depIdxs = []int32{
 	20, // 0: services.jobs.ListColleaguesRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	21, // 1: services.jobs.ListColleaguesRequest.sort:type_name -> resources.common.database.Sort
 	22, // 2: services.jobs.ListColleaguesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	23, // 3: services.jobs.ListColleaguesResponse.colleagues:type_name -> resources.jobs.Colleague
-	23, // 4: services.jobs.GetSelfResponse.colleague:type_name -> resources.jobs.Colleague
-	23, // 5: services.jobs.GetColleagueResponse.colleague:type_name -> resources.jobs.Colleague
+	23, // 3: services.jobs.ListColleaguesResponse.colleagues:type_name -> resources.jobs.colleagues.Colleague
+	23, // 4: services.jobs.GetSelfResponse.colleague:type_name -> resources.jobs.colleagues.Colleague
+	23, // 5: services.jobs.GetColleagueResponse.colleague:type_name -> resources.jobs.colleagues.Colleague
 	20, // 6: services.jobs.ListColleagueActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	21, // 7: services.jobs.ListColleagueActivityRequest.sort:type_name -> resources.common.database.Sort
-	24, // 8: services.jobs.ListColleagueActivityRequest.activity_types:type_name -> resources.jobs.ColleagueActivityType
+	24, // 8: services.jobs.ListColleagueActivityRequest.activity_types:type_name -> resources.jobs.colleagues.activity.ColleagueActivityType
 	22, // 9: services.jobs.ListColleagueActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	25, // 10: services.jobs.ListColleagueActivityResponse.activity:type_name -> resources.jobs.ColleagueActivity
-	26, // 11: services.jobs.SetColleaguePropsRequest.props:type_name -> resources.jobs.ColleagueProps
-	26, // 12: services.jobs.SetColleaguePropsResponse.props:type_name -> resources.jobs.ColleagueProps
-	27, // 13: services.jobs.GetColleagueLabelsResponse.labels:type_name -> resources.jobs.Label
-	27, // 14: services.jobs.ManageLabelsRequest.labels:type_name -> resources.jobs.Label
-	27, // 15: services.jobs.ManageLabelsResponse.labels:type_name -> resources.jobs.Label
-	28, // 16: services.jobs.GetColleagueLabelsStatsResponse.count:type_name -> resources.jobs.LabelCount
+	25, // 10: services.jobs.ListColleagueActivityResponse.activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
+	26, // 11: services.jobs.SetColleaguePropsRequest.props:type_name -> resources.jobs.colleagues.ColleagueProps
+	26, // 12: services.jobs.SetColleaguePropsResponse.props:type_name -> resources.jobs.colleagues.ColleagueProps
+	27, // 13: services.jobs.GetColleagueLabelsResponse.labels:type_name -> resources.jobs.labels.Label
+	27, // 14: services.jobs.ManageLabelsRequest.labels:type_name -> resources.jobs.labels.Label
+	27, // 15: services.jobs.ManageLabelsResponse.labels:type_name -> resources.jobs.labels.Label
+	28, // 16: services.jobs.GetColleagueLabelsStatsResponse.count:type_name -> resources.jobs.labels.LabelCount
 	0,  // 17: services.jobs.JobsService.ListColleagues:input_type -> services.jobs.ListColleaguesRequest
 	2,  // 18: services.jobs.JobsService.GetSelf:input_type -> services.jobs.GetSelfRequest
 	4,  // 19: services.jobs.JobsService.GetColleague:input_type -> services.jobs.GetColleagueRequest

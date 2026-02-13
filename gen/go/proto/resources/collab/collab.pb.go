@@ -4,14 +4,15 @@
 // 	protoc        (unknown)
 // source: resources/collab/collab.proto
 
+//go:build !protoopaque
+
 package collab
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/audit"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/audit"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -66,13 +67,8 @@ func (x ClientRole) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ClientRole.Descriptor instead.
-func (ClientRole) EnumDescriptor() ([]byte, []int) {
-	return file_resources_collab_collab_proto_rawDescGZIP(), []int{0}
-}
-
 type ClientPacket struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Msg:
 	//
 	//	*ClientPacket_Hello
@@ -107,11 +103,6 @@ func (x *ClientPacket) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ClientPacket.ProtoReflect.Descriptor instead.
-func (*ClientPacket) Descriptor() ([]byte, []int) {
-	return file_resources_collab_collab_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ClientPacket) GetMsg() isClientPacket_Msg {
@@ -157,6 +148,170 @@ func (x *ClientPacket) GetAwareness() *AwarenessPing {
 	return nil
 }
 
+func (x *ClientPacket) SetHello(v *CollabInit) {
+	if v == nil {
+		x.Msg = nil
+		return
+	}
+	x.Msg = &ClientPacket_Hello{v}
+}
+
+func (x *ClientPacket) SetSyncStep(v *SyncStep) {
+	if v == nil {
+		x.Msg = nil
+		return
+	}
+	x.Msg = &ClientPacket_SyncStep{v}
+}
+
+func (x *ClientPacket) SetYjsUpdate(v *YjsUpdate) {
+	if v == nil {
+		x.Msg = nil
+		return
+	}
+	x.Msg = &ClientPacket_YjsUpdate{v}
+}
+
+func (x *ClientPacket) SetAwareness(v *AwarenessPing) {
+	if v == nil {
+		x.Msg = nil
+		return
+	}
+	x.Msg = &ClientPacket_Awareness{v}
+}
+
+func (x *ClientPacket) HasMsg() bool {
+	if x == nil {
+		return false
+	}
+	return x.Msg != nil
+}
+
+func (x *ClientPacket) HasHello() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Msg.(*ClientPacket_Hello)
+	return ok
+}
+
+func (x *ClientPacket) HasSyncStep() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Msg.(*ClientPacket_SyncStep)
+	return ok
+}
+
+func (x *ClientPacket) HasYjsUpdate() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Msg.(*ClientPacket_YjsUpdate)
+	return ok
+}
+
+func (x *ClientPacket) HasAwareness() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Msg.(*ClientPacket_Awareness)
+	return ok
+}
+
+func (x *ClientPacket) ClearMsg() {
+	x.Msg = nil
+}
+
+func (x *ClientPacket) ClearHello() {
+	if _, ok := x.Msg.(*ClientPacket_Hello); ok {
+		x.Msg = nil
+	}
+}
+
+func (x *ClientPacket) ClearSyncStep() {
+	if _, ok := x.Msg.(*ClientPacket_SyncStep); ok {
+		x.Msg = nil
+	}
+}
+
+func (x *ClientPacket) ClearYjsUpdate() {
+	if _, ok := x.Msg.(*ClientPacket_YjsUpdate); ok {
+		x.Msg = nil
+	}
+}
+
+func (x *ClientPacket) ClearAwareness() {
+	if _, ok := x.Msg.(*ClientPacket_Awareness); ok {
+		x.Msg = nil
+	}
+}
+
+const ClientPacket_Msg_not_set_case case_ClientPacket_Msg = 0
+const ClientPacket_Hello_case case_ClientPacket_Msg = 1
+const ClientPacket_SyncStep_case case_ClientPacket_Msg = 2
+const ClientPacket_YjsUpdate_case case_ClientPacket_Msg = 3
+const ClientPacket_Awareness_case case_ClientPacket_Msg = 4
+
+func (x *ClientPacket) WhichMsg() case_ClientPacket_Msg {
+	if x == nil {
+		return ClientPacket_Msg_not_set_case
+	}
+	switch x.Msg.(type) {
+	case *ClientPacket_Hello:
+		return ClientPacket_Hello_case
+	case *ClientPacket_SyncStep:
+		return ClientPacket_SyncStep_case
+	case *ClientPacket_YjsUpdate:
+		return ClientPacket_YjsUpdate_case
+	case *ClientPacket_Awareness:
+		return ClientPacket_Awareness_case
+	default:
+		return ClientPacket_Msg_not_set_case
+	}
+}
+
+type ClientPacket_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof Msg:
+	// Must be the first message
+	Hello     *CollabInit
+	SyncStep  *SyncStep
+	YjsUpdate *YjsUpdate
+	Awareness *AwarenessPing
+	// -- end of Msg
+}
+
+func (b0 ClientPacket_builder) Build() *ClientPacket {
+	m0 := &ClientPacket{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Hello != nil {
+		x.Msg = &ClientPacket_Hello{b.Hello}
+	}
+	if b.SyncStep != nil {
+		x.Msg = &ClientPacket_SyncStep{b.SyncStep}
+	}
+	if b.YjsUpdate != nil {
+		x.Msg = &ClientPacket_YjsUpdate{b.YjsUpdate}
+	}
+	if b.Awareness != nil {
+		x.Msg = &ClientPacket_Awareness{b.Awareness}
+	}
+	return m0
+}
+
+type case_ClientPacket_Msg protoreflect.FieldNumber
+
+func (x case_ClientPacket_Msg) String() string {
+	md := file_resources_collab_collab_proto_msgTypes[0].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isClientPacket_Msg interface {
 	isClientPacket_Msg()
 }
@@ -187,7 +342,7 @@ func (*ClientPacket_YjsUpdate) isClientPacket_Msg() {}
 func (*ClientPacket_Awareness) isClientPacket_Msg() {}
 
 type CollabInit struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	TargetId      int64                  `protobuf:"varint,1,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -218,11 +373,6 @@ func (x *CollabInit) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CollabInit.ProtoReflect.Descriptor instead.
-func (*CollabInit) Descriptor() ([]byte, []int) {
-	return file_resources_collab_collab_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *CollabInit) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
@@ -230,8 +380,26 @@ func (x *CollabInit) GetTargetId() int64 {
 	return 0
 }
 
+func (x *CollabInit) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+type CollabInit_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	TargetId int64
+}
+
+func (b0 CollabInit_builder) Build() *CollabInit {
+	m0 := &CollabInit{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.TargetId = b.TargetId
+	return m0
+}
+
 type SyncStep struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Step          int32                  `protobuf:"varint,1,opt,name=step,proto3" json:"step,omitempty"`
 	Data          []byte                 `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	ReceiverId    *uint64                `protobuf:"varint,3,opt,name=receiver_id,json=receiverId,proto3,oneof" json:"receiver_id,omitempty"`
@@ -264,11 +432,6 @@ func (x *SyncStep) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SyncStep.ProtoReflect.Descriptor instead.
-func (*SyncStep) Descriptor() ([]byte, []int) {
-	return file_resources_collab_collab_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *SyncStep) GetStep() int32 {
 	if x != nil {
 		return x.Step
@@ -290,8 +453,52 @@ func (x *SyncStep) GetReceiverId() uint64 {
 	return 0
 }
 
+func (x *SyncStep) SetStep(v int32) {
+	x.Step = v
+}
+
+func (x *SyncStep) SetData(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.Data = v
+}
+
+func (x *SyncStep) SetReceiverId(v uint64) {
+	x.ReceiverId = &v
+}
+
+func (x *SyncStep) HasReceiverId() bool {
+	if x == nil {
+		return false
+	}
+	return x.ReceiverId != nil
+}
+
+func (x *SyncStep) ClearReceiverId() {
+	x.ReceiverId = nil
+}
+
+type SyncStep_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Step       int32
+	Data       []byte
+	ReceiverId *uint64
+}
+
+func (b0 SyncStep_builder) Build() *SyncStep {
+	m0 := &SyncStep{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Step = b.Step
+	x.Data = b.Data
+	x.ReceiverId = b.ReceiverId
+	return m0
+}
+
 type YjsUpdate struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -322,11 +529,6 @@ func (x *YjsUpdate) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use YjsUpdate.ProtoReflect.Descriptor instead.
-func (*YjsUpdate) Descriptor() ([]byte, []int) {
-	return file_resources_collab_collab_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *YjsUpdate) GetData() []byte {
 	if x != nil {
 		return x.Data
@@ -334,8 +536,29 @@ func (x *YjsUpdate) GetData() []byte {
 	return nil
 }
 
+func (x *YjsUpdate) SetData(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.Data = v
+}
+
+type YjsUpdate_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Data []byte
+}
+
+func (b0 YjsUpdate_builder) Build() *YjsUpdate {
+	m0 := &YjsUpdate{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Data = b.Data
+	return m0
+}
+
 type AwarenessPing struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -366,11 +589,6 @@ func (x *AwarenessPing) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AwarenessPing.ProtoReflect.Descriptor instead.
-func (*AwarenessPing) Descriptor() ([]byte, []int) {
-	return file_resources_collab_collab_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *AwarenessPing) GetData() []byte {
 	if x != nil {
 		return x.Data
@@ -378,8 +596,29 @@ func (x *AwarenessPing) GetData() []byte {
 	return nil
 }
 
+func (x *AwarenessPing) SetData(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.Data = v
+}
+
+type AwarenessPing_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Data []byte
+}
+
+func (b0 AwarenessPing_builder) Build() *AwarenessPing {
+	m0 := &AwarenessPing{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Data = b.Data
+	return m0
+}
+
 type ServerPacket struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Who generated this packet (same ID used in awareness)
 	SenderId uint64 `protobuf:"varint,1,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
 	// Types that are valid to be assigned to Msg:
@@ -419,11 +658,6 @@ func (x *ServerPacket) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ServerPacket.ProtoReflect.Descriptor instead.
-func (*ServerPacket) Descriptor() ([]byte, []int) {
-	return file_resources_collab_collab_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ServerPacket) GetSenderId() uint64 {
@@ -503,6 +737,263 @@ func (x *ServerPacket) GetClientUpdate() *ClientUpdate {
 	return nil
 }
 
+func (x *ServerPacket) SetSenderId(v uint64) {
+	x.SenderId = v
+}
+
+func (x *ServerPacket) SetHandshake(v *CollabHandshake) {
+	if v == nil {
+		x.Msg = nil
+		return
+	}
+	x.Msg = &ServerPacket_Handshake{v}
+}
+
+func (x *ServerPacket) SetSyncStep(v *SyncStep) {
+	if v == nil {
+		x.Msg = nil
+		return
+	}
+	x.Msg = &ServerPacket_SyncStep{v}
+}
+
+func (x *ServerPacket) SetYjsUpdate(v *YjsUpdate) {
+	if v == nil {
+		x.Msg = nil
+		return
+	}
+	x.Msg = &ServerPacket_YjsUpdate{v}
+}
+
+func (x *ServerPacket) SetAwareness(v *AwarenessPing) {
+	if v == nil {
+		x.Msg = nil
+		return
+	}
+	x.Msg = &ServerPacket_Awareness{v}
+}
+
+func (x *ServerPacket) SetTargetSaved(v *TargetSaved) {
+	if v == nil {
+		x.Msg = nil
+		return
+	}
+	x.Msg = &ServerPacket_TargetSaved{v}
+}
+
+func (x *ServerPacket) SetPromote(v *FirstPromote) {
+	if v == nil {
+		x.Msg = nil
+		return
+	}
+	x.Msg = &ServerPacket_Promote{v}
+}
+
+func (x *ServerPacket) SetClientUpdate(v *ClientUpdate) {
+	if v == nil {
+		x.Msg = nil
+		return
+	}
+	x.Msg = &ServerPacket_ClientUpdate{v}
+}
+
+func (x *ServerPacket) HasMsg() bool {
+	if x == nil {
+		return false
+	}
+	return x.Msg != nil
+}
+
+func (x *ServerPacket) HasHandshake() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Msg.(*ServerPacket_Handshake)
+	return ok
+}
+
+func (x *ServerPacket) HasSyncStep() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Msg.(*ServerPacket_SyncStep)
+	return ok
+}
+
+func (x *ServerPacket) HasYjsUpdate() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Msg.(*ServerPacket_YjsUpdate)
+	return ok
+}
+
+func (x *ServerPacket) HasAwareness() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Msg.(*ServerPacket_Awareness)
+	return ok
+}
+
+func (x *ServerPacket) HasTargetSaved() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Msg.(*ServerPacket_TargetSaved)
+	return ok
+}
+
+func (x *ServerPacket) HasPromote() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Msg.(*ServerPacket_Promote)
+	return ok
+}
+
+func (x *ServerPacket) HasClientUpdate() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Msg.(*ServerPacket_ClientUpdate)
+	return ok
+}
+
+func (x *ServerPacket) ClearMsg() {
+	x.Msg = nil
+}
+
+func (x *ServerPacket) ClearHandshake() {
+	if _, ok := x.Msg.(*ServerPacket_Handshake); ok {
+		x.Msg = nil
+	}
+}
+
+func (x *ServerPacket) ClearSyncStep() {
+	if _, ok := x.Msg.(*ServerPacket_SyncStep); ok {
+		x.Msg = nil
+	}
+}
+
+func (x *ServerPacket) ClearYjsUpdate() {
+	if _, ok := x.Msg.(*ServerPacket_YjsUpdate); ok {
+		x.Msg = nil
+	}
+}
+
+func (x *ServerPacket) ClearAwareness() {
+	if _, ok := x.Msg.(*ServerPacket_Awareness); ok {
+		x.Msg = nil
+	}
+}
+
+func (x *ServerPacket) ClearTargetSaved() {
+	if _, ok := x.Msg.(*ServerPacket_TargetSaved); ok {
+		x.Msg = nil
+	}
+}
+
+func (x *ServerPacket) ClearPromote() {
+	if _, ok := x.Msg.(*ServerPacket_Promote); ok {
+		x.Msg = nil
+	}
+}
+
+func (x *ServerPacket) ClearClientUpdate() {
+	if _, ok := x.Msg.(*ServerPacket_ClientUpdate); ok {
+		x.Msg = nil
+	}
+}
+
+const ServerPacket_Msg_not_set_case case_ServerPacket_Msg = 0
+const ServerPacket_Handshake_case case_ServerPacket_Msg = 2
+const ServerPacket_SyncStep_case case_ServerPacket_Msg = 3
+const ServerPacket_YjsUpdate_case case_ServerPacket_Msg = 4
+const ServerPacket_Awareness_case case_ServerPacket_Msg = 5
+const ServerPacket_TargetSaved_case case_ServerPacket_Msg = 6
+const ServerPacket_Promote_case case_ServerPacket_Msg = 7
+const ServerPacket_ClientUpdate_case case_ServerPacket_Msg = 8
+
+func (x *ServerPacket) WhichMsg() case_ServerPacket_Msg {
+	if x == nil {
+		return ServerPacket_Msg_not_set_case
+	}
+	switch x.Msg.(type) {
+	case *ServerPacket_Handshake:
+		return ServerPacket_Handshake_case
+	case *ServerPacket_SyncStep:
+		return ServerPacket_SyncStep_case
+	case *ServerPacket_YjsUpdate:
+		return ServerPacket_YjsUpdate_case
+	case *ServerPacket_Awareness:
+		return ServerPacket_Awareness_case
+	case *ServerPacket_TargetSaved:
+		return ServerPacket_TargetSaved_case
+	case *ServerPacket_Promote:
+		return ServerPacket_Promote_case
+	case *ServerPacket_ClientUpdate:
+		return ServerPacket_ClientUpdate_case
+	default:
+		return ServerPacket_Msg_not_set_case
+	}
+}
+
+type ServerPacket_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Who generated this packet (same ID used in awareness)
+	SenderId uint64
+	// Fields of oneof Msg:
+	Handshake    *CollabHandshake
+	SyncStep     *SyncStep
+	YjsUpdate    *YjsUpdate
+	Awareness    *AwarenessPing
+	TargetSaved  *TargetSaved
+	Promote      *FirstPromote
+	ClientUpdate *ClientUpdate
+	// -- end of Msg
+}
+
+func (b0 ServerPacket_builder) Build() *ServerPacket {
+	m0 := &ServerPacket{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.SenderId = b.SenderId
+	if b.Handshake != nil {
+		x.Msg = &ServerPacket_Handshake{b.Handshake}
+	}
+	if b.SyncStep != nil {
+		x.Msg = &ServerPacket_SyncStep{b.SyncStep}
+	}
+	if b.YjsUpdate != nil {
+		x.Msg = &ServerPacket_YjsUpdate{b.YjsUpdate}
+	}
+	if b.Awareness != nil {
+		x.Msg = &ServerPacket_Awareness{b.Awareness}
+	}
+	if b.TargetSaved != nil {
+		x.Msg = &ServerPacket_TargetSaved{b.TargetSaved}
+	}
+	if b.Promote != nil {
+		x.Msg = &ServerPacket_Promote{b.Promote}
+	}
+	if b.ClientUpdate != nil {
+		x.Msg = &ServerPacket_ClientUpdate{b.ClientUpdate}
+	}
+	return m0
+}
+
+type case_ServerPacket_Msg protoreflect.FieldNumber
+
+func (x case_ServerPacket_Msg) String() string {
+	md := file_resources_collab_collab_proto_msgTypes[5].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
 type isServerPacket_Msg interface {
 	isServerPacket_Msg()
 }
@@ -550,7 +1041,7 @@ func (*ServerPacket_Promote) isServerPacket_Msg() {}
 func (*ServerPacket_ClientUpdate) isServerPacket_Msg() {}
 
 type CollabHandshake struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	ClientId      uint64                 `protobuf:"varint,1,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -581,11 +1072,6 @@ func (x *CollabHandshake) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CollabHandshake.ProtoReflect.Descriptor instead.
-func (*CollabHandshake) Descriptor() ([]byte, []int) {
-	return file_resources_collab_collab_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *CollabHandshake) GetClientId() uint64 {
 	if x != nil {
 		return x.ClientId
@@ -593,8 +1079,26 @@ func (x *CollabHandshake) GetClientId() uint64 {
 	return 0
 }
 
+func (x *CollabHandshake) SetClientId(v uint64) {
+	x.ClientId = v
+}
+
+type CollabHandshake_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ClientId uint64
+}
+
+func (b0 CollabHandshake_builder) Build() *CollabHandshake {
+	m0 := &CollabHandshake{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ClientId = b.ClientId
+	return m0
+}
+
 type TargetSaved struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	TargetId      int64                  `protobuf:"varint,1,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -625,11 +1129,6 @@ func (x *TargetSaved) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TargetSaved.ProtoReflect.Descriptor instead.
-func (*TargetSaved) Descriptor() ([]byte, []int) {
-	return file_resources_collab_collab_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *TargetSaved) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
@@ -637,8 +1136,26 @@ func (x *TargetSaved) GetTargetId() int64 {
 	return 0
 }
 
+func (x *TargetSaved) SetTargetId(v int64) {
+	x.TargetId = v
+}
+
+type TargetSaved_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	TargetId int64
+}
+
+func (b0 TargetSaved_builder) Build() *TargetSaved {
+	m0 := &TargetSaved{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.TargetId = b.TargetId
+	return m0
+}
+
 type FirstPromote struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -668,13 +1185,20 @@ func (x *FirstPromote) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use FirstPromote.ProtoReflect.Descriptor instead.
-func (*FirstPromote) Descriptor() ([]byte, []int) {
-	return file_resources_collab_collab_proto_rawDescGZIP(), []int{8}
+type FirstPromote_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 FirstPromote_builder) Build() *FirstPromote {
+	m0 := &FirstPromote{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ClientUpdate struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Joined        bool                   `protobuf:"varint,1,opt,name=joined,proto3" json:"joined,omitempty"`
 	ClientId      uint64                 `protobuf:"varint,2,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
 	Label         *string                `protobuf:"bytes,3,opt,name=label,proto3,oneof" json:"label,omitempty"`
@@ -707,11 +1231,6 @@ func (x *ClientUpdate) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ClientUpdate.ProtoReflect.Descriptor instead.
-func (*ClientUpdate) Descriptor() ([]byte, []int) {
-	return file_resources_collab_collab_proto_rawDescGZIP(), []int{9}
-}
-
 func (x *ClientUpdate) GetJoined() bool {
 	if x != nil {
 		return x.Joined
@@ -731,6 +1250,47 @@ func (x *ClientUpdate) GetLabel() string {
 		return *x.Label
 	}
 	return ""
+}
+
+func (x *ClientUpdate) SetJoined(v bool) {
+	x.Joined = v
+}
+
+func (x *ClientUpdate) SetClientId(v uint64) {
+	x.ClientId = v
+}
+
+func (x *ClientUpdate) SetLabel(v string) {
+	x.Label = &v
+}
+
+func (x *ClientUpdate) HasLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.Label != nil
+}
+
+func (x *ClientUpdate) ClearLabel() {
+	x.Label = nil
+}
+
+type ClientUpdate_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Joined   bool
+	ClientId uint64
+	Label    *string
+}
+
+func (b0 ClientUpdate_builder) Build() *ClientUpdate {
+	m0 := &ClientUpdate{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Joined = b.Joined
+	x.ClientId = b.ClientId
+	x.Label = b.Label
+	return m0
 }
 
 var File_resources_collab_collab_proto protoreflect.FileDescriptor
@@ -783,19 +1343,7 @@ const file_resources_collab_collab_proto_rawDesc = "" +
 	"ClientRole\x12\x1b\n" +
 	"\x17CLIENT_ROLE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12CLIENT_ROLE_READER\x10\x01\x12\x16\n" +
-	"\x12CLIENT_ROLE_WRITER\x10\x02BKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab;collabb\x06proto3"
-
-var (
-	file_resources_collab_collab_proto_rawDescOnce sync.Once
-	file_resources_collab_collab_proto_rawDescData []byte
-)
-
-func file_resources_collab_collab_proto_rawDescGZIP() []byte {
-	file_resources_collab_collab_proto_rawDescOnce.Do(func() {
-		file_resources_collab_collab_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_collab_collab_proto_rawDesc), len(file_resources_collab_collab_proto_rawDesc)))
-	})
-	return file_resources_collab_collab_proto_rawDescData
-}
+	"\x12CLIENT_ROLE_WRITER\x10\x02BKZIgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/collab;collabb\x06proto3"
 
 var file_resources_collab_collab_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_collab_collab_proto_msgTypes = make([]protoimpl.MessageInfo, 10)

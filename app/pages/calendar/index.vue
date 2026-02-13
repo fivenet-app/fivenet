@@ -9,9 +9,10 @@ import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrU
 import EntryViewSlideover from '~/components/calendar/entry/EntryViewSlideover.vue';
 import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCalendarStore } from '~/stores/calendar';
-import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
+import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import type { ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
 
 useHead({
@@ -49,6 +50,7 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
             offset: calculateOffset(page.value, calendarsData.value?.pagination),
         },
         onlyPublic: false,
+        calendarIds: [],
     });
 
     if (activeCalendarIds.value.length === 0) {
@@ -305,7 +307,7 @@ const viewOptions = [
             <UDashboardToolbar>
                 <template #default>
                     <div class="flex flex-1 items-center justify-between">
-                        <UPopover :content="{ side: 'bottom', align: 'start' }">
+                        <UPopover :content="{ side: 'bottom', align: 'start' }" arrow>
                             <UButton
                                 color="neutral"
                                 icon="i-mdi-calendar"
@@ -315,7 +317,7 @@ const viewOptions = [
                             />
 
                             <template #content>
-                                <div class="p-4">
+                                <div class="p-2">
                                     <DataPendingBlock
                                         v-if="isRequestPending(calendarsStatus)"
                                         :message="$t('common.loading', [$t('common.calendar')])"
@@ -326,6 +328,11 @@ const viewOptions = [
                                         :title="$t('common.unable_to_load', [$t('common.calendar')])"
                                         :error="calendarsError"
                                         :retry="calendarsRefresh"
+                                    />
+                                    <DataNoDataBlock
+                                        v-else-if="!calendars || calendars.length === 0"
+                                        :type="$t('common.calendar')"
+                                        icon="i-mdi-calendar"
                                     />
 
                                     <div v-else class="grid grid-cols-1 gap-2 sm:grid-cols-2">

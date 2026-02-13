@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/stores/centrum';
-import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 
 defineProps<{
     popoverClass?: string;

@@ -11,11 +11,12 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Duration } from "../../google/protobuf/duration";
 import { File } from "../file/file";
-import { ExamQuestions } from "./exam";
-import { QualificationAccess } from "./access";
-import { UserShort } from "../users/users";
+import { ExamQuestions } from "./exam/exam";
+import { QualificationExamSettings } from "./exam/exam";
+import { QualificationExamMode } from "./exam/exam";
+import { QualificationAccess } from "./access/access";
+import { UserShort } from "../users/short/user";
 import { Content } from "../common/content/content";
 import { Timestamp } from "../timestamp/timestamp";
 /**
@@ -79,7 +80,7 @@ export interface Qualification {
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 15
+     * @generated from protobuf field: optional resources.users.short.UserShort creator = 15
      */
     creator?: UserShort;
     /**
@@ -87,7 +88,7 @@ export interface Qualification {
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: resources.qualifications.QualificationAccess access = 17
+     * @generated from protobuf field: resources.qualifications.access.QualificationAccess access = 17
      */
     access?: QualificationAccess;
     /**
@@ -103,15 +104,15 @@ export interface Qualification {
      */
     discordSettings?: QualificationDiscordSettings;
     /**
-     * @generated from protobuf field: resources.qualifications.QualificationExamMode exam_mode = 21
+     * @generated from protobuf field: resources.qualifications.exam.QualificationExamMode exam_mode = 21
      */
     examMode: QualificationExamMode;
     /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationExamSettings exam_settings = 22
+     * @generated from protobuf field: optional resources.qualifications.exam.QualificationExamSettings exam_settings = 22
      */
     examSettings?: QualificationExamSettings;
     /**
-     * @generated from protobuf field: optional resources.qualifications.ExamQuestions exam = 23
+     * @generated from protobuf field: optional resources.qualifications.exam.ExamQuestions exam = 23
      */
     exam?: ExamQuestions;
     /**
@@ -192,7 +193,7 @@ export interface QualificationShort {
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 15
+     * @generated from protobuf field: optional resources.users.short.UserShort creator = 15
      */
     creator?: UserShort;
     /**
@@ -204,11 +205,11 @@ export interface QualificationShort {
      */
     requirements: QualificationRequirement[];
     /**
-     * @generated from protobuf field: resources.qualifications.QualificationExamMode exam_mode = 21
+     * @generated from protobuf field: resources.qualifications.exam.QualificationExamMode exam_mode = 21
      */
     examMode: QualificationExamMode;
     /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationExamSettings exam_settings = 22
+     * @generated from protobuf field: optional resources.qualifications.exam.QualificationExamSettings exam_settings = 22
      */
     examSettings?: QualificationExamSettings;
     /**
@@ -255,27 +256,6 @@ export interface QualificationDiscordSettings {
     roleFormat?: string;
 }
 /**
- * @generated from protobuf message resources.qualifications.QualificationExamSettings
- */
-export interface QualificationExamSettings {
-    /**
-     * @generated from protobuf field: google.protobuf.Duration time = 1
-     */
-    time?: Duration;
-    /**
-     * @generated from protobuf field: bool auto_grade = 2
-     */
-    autoGrade: boolean;
-    /**
-     * @generated from protobuf field: resources.qualifications.AutoGradeMode auto_grade_mode = 3
-     */
-    autoGradeMode: AutoGradeMode;
-    /**
-     * @generated from protobuf field: int32 minimum_points = 4
-     */
-    minimumPoints: number;
-}
-/**
  * @generated from protobuf message resources.qualifications.QualificationRequest
  */
 export interface QualificationRequest {
@@ -300,7 +280,7 @@ export interface QualificationRequest {
      */
     userId: number;
     /**
-     * @generated from protobuf field: resources.users.UserShort user = 6
+     * @generated from protobuf field: resources.users.short.UserShort user = 6
      */
     user?: UserShort;
     /**
@@ -324,7 +304,7 @@ export interface QualificationRequest {
      */
     approverId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort approver = 12
+     * @generated from protobuf field: optional resources.users.short.UserShort approver = 12
      */
     approver?: UserShort;
     /**
@@ -361,7 +341,7 @@ export interface QualificationResult {
      */
     userId: number;
     /**
-     * @generated from protobuf field: resources.users.UserShort user = 7
+     * @generated from protobuf field: resources.users.short.UserShort user = 7
      */
     user?: UserShort;
     /**
@@ -381,51 +361,13 @@ export interface QualificationResult {
      */
     creatorId: number;
     /**
-     * @generated from protobuf field: resources.users.UserShort creator = 12
+     * @generated from protobuf field: resources.users.short.UserShort creator = 12
      */
     creator?: UserShort;
     /**
      * @generated from protobuf field: string creator_job = 13
      */
     creatorJob: string;
-}
-/**
- * @generated from protobuf enum resources.qualifications.QualificationExamMode
- */
-export enum QualificationExamMode {
-    /**
-     * @generated from protobuf enum value: QUALIFICATION_EXAM_MODE_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: QUALIFICATION_EXAM_MODE_DISABLED = 1;
-     */
-    DISABLED = 1,
-    /**
-     * @generated from protobuf enum value: QUALIFICATION_EXAM_MODE_REQUEST_NEEDED = 2;
-     */
-    REQUEST_NEEDED = 2,
-    /**
-     * @generated from protobuf enum value: QUALIFICATION_EXAM_MODE_ENABLED = 3;
-     */
-    ENABLED = 3
-}
-/**
- * @generated from protobuf enum resources.qualifications.AutoGradeMode
- */
-export enum AutoGradeMode {
-    /**
-     * @generated from protobuf enum value: AUTO_GRADE_MODE_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: AUTO_GRADE_MODE_STRICT = 1;
-     */
-    STRICT = 1,
-    /**
-     * @generated from protobuf enum value: AUTO_GRADE_MODE_PARTIAL_CREDIT = 2;
-     */
-    PARTIAL_CREDIT = 2
 }
 /**
  * @generated from protobuf enum resources.qualifications.RequestStatus
@@ -505,7 +447,7 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 18, name: "requirements", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationRequirement },
             { no: 19, name: "discord_sync_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 20, name: "discord_settings", kind: "message", T: () => QualificationDiscordSettings },
-            { no: 21, name: "exam_mode", kind: "enum", T: () => ["resources.qualifications.QualificationExamMode", QualificationExamMode, "QUALIFICATION_EXAM_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 21, name: "exam_mode", kind: "enum", T: () => ["resources.qualifications.exam.QualificationExamMode", QualificationExamMode, "QUALIFICATION_EXAM_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 22, name: "exam_settings", kind: "message", T: () => QualificationExamSettings },
             { no: 23, name: "exam", kind: "message", T: () => ExamQuestions },
             { no: 24, name: "result", kind: "message", T: () => QualificationResult },
@@ -582,13 +524,13 @@ class Qualification$Type extends MessageType<Qualification> {
                 case /* optional int32 creator_id */ 14:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 15:
+                case /* optional resources.users.short.UserShort creator */ 15:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
                 case /* string creator_job */ 16:
                     message.creatorJob = reader.string();
                     break;
-                case /* resources.qualifications.QualificationAccess access */ 17:
+                case /* resources.qualifications.access.QualificationAccess access */ 17:
                     message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 case /* repeated resources.qualifications.QualificationRequirement requirements */ 18:
@@ -600,13 +542,13 @@ class Qualification$Type extends MessageType<Qualification> {
                 case /* optional resources.qualifications.QualificationDiscordSettings discord_settings */ 20:
                     message.discordSettings = QualificationDiscordSettings.internalBinaryRead(reader, reader.uint32(), options, message.discordSettings);
                     break;
-                case /* resources.qualifications.QualificationExamMode exam_mode */ 21:
+                case /* resources.qualifications.exam.QualificationExamMode exam_mode */ 21:
                     message.examMode = reader.int32();
                     break;
-                case /* optional resources.qualifications.QualificationExamSettings exam_settings */ 22:
+                case /* optional resources.qualifications.exam.QualificationExamSettings exam_settings */ 22:
                     message.examSettings = QualificationExamSettings.internalBinaryRead(reader, reader.uint32(), options, message.examSettings);
                     break;
-                case /* optional resources.qualifications.ExamQuestions exam */ 23:
+                case /* optional resources.qualifications.exam.ExamQuestions exam */ 23:
                     message.exam = ExamQuestions.internalBinaryRead(reader, reader.uint32(), options, message.exam);
                     break;
                 case /* optional resources.qualifications.QualificationResult result */ 24:
@@ -678,13 +620,13 @@ class Qualification$Type extends MessageType<Qualification> {
         /* optional int32 creator_id = 14; */
         if (message.creatorId !== undefined)
             writer.tag(14, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 15; */
+        /* optional resources.users.short.UserShort creator = 15; */
         if (message.creator)
             UserShort.internalBinaryWrite(message.creator, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
         /* string creator_job = 16; */
         if (message.creatorJob !== "")
             writer.tag(16, WireType.LengthDelimited).string(message.creatorJob);
-        /* resources.qualifications.QualificationAccess access = 17; */
+        /* resources.qualifications.access.QualificationAccess access = 17; */
         if (message.access)
             QualificationAccess.internalBinaryWrite(message.access, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.qualifications.QualificationRequirement requirements = 18; */
@@ -696,13 +638,13 @@ class Qualification$Type extends MessageType<Qualification> {
         /* optional resources.qualifications.QualificationDiscordSettings discord_settings = 20; */
         if (message.discordSettings)
             QualificationDiscordSettings.internalBinaryWrite(message.discordSettings, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.QualificationExamMode exam_mode = 21; */
+        /* resources.qualifications.exam.QualificationExamMode exam_mode = 21; */
         if (message.examMode !== 0)
             writer.tag(21, WireType.Varint).int32(message.examMode);
-        /* optional resources.qualifications.QualificationExamSettings exam_settings = 22; */
+        /* optional resources.qualifications.exam.QualificationExamSettings exam_settings = 22; */
         if (message.examSettings)
             QualificationExamSettings.internalBinaryWrite(message.examSettings, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.qualifications.ExamQuestions exam = 23; */
+        /* optional resources.qualifications.exam.ExamQuestions exam = 23; */
         if (message.exam)
             ExamQuestions.internalBinaryWrite(message.exam, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.qualifications.QualificationResult result = 24; */
@@ -750,7 +692,7 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
             { no: 15, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 16, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 18, name: "requirements", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationRequirement },
-            { no: 21, name: "exam_mode", kind: "enum", T: () => ["resources.qualifications.QualificationExamMode", QualificationExamMode, "QUALIFICATION_EXAM_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 21, name: "exam_mode", kind: "enum", T: () => ["resources.qualifications.exam.QualificationExamMode", QualificationExamMode, "QUALIFICATION_EXAM_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 22, name: "exam_settings", kind: "message", T: () => QualificationExamSettings },
             { no: 24, name: "result", kind: "message", T: () => QualificationResult }
         ]);
@@ -816,7 +758,7 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
                 case /* optional int32 creator_id */ 14:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 15:
+                case /* optional resources.users.short.UserShort creator */ 15:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
                 case /* string creator_job */ 16:
@@ -825,10 +767,10 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
                 case /* repeated resources.qualifications.QualificationRequirement requirements */ 18:
                     message.requirements.push(QualificationRequirement.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* resources.qualifications.QualificationExamMode exam_mode */ 21:
+                case /* resources.qualifications.exam.QualificationExamMode exam_mode */ 21:
                     message.examMode = reader.int32();
                     break;
-                case /* optional resources.qualifications.QualificationExamSettings exam_settings */ 22:
+                case /* optional resources.qualifications.exam.QualificationExamSettings exam_settings */ 22:
                     message.examSettings = QualificationExamSettings.internalBinaryRead(reader, reader.uint32(), options, message.examSettings);
                     break;
                 case /* optional resources.qualifications.QualificationResult result */ 24:
@@ -885,7 +827,7 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
         /* optional int32 creator_id = 14; */
         if (message.creatorId !== undefined)
             writer.tag(14, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 15; */
+        /* optional resources.users.short.UserShort creator = 15; */
         if (message.creator)
             UserShort.internalBinaryWrite(message.creator, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
         /* string creator_job = 16; */
@@ -894,10 +836,10 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
         /* repeated resources.qualifications.QualificationRequirement requirements = 18; */
         for (let i = 0; i < message.requirements.length; i++)
             QualificationRequirement.internalBinaryWrite(message.requirements[i], writer.tag(18, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.QualificationExamMode exam_mode = 21; */
+        /* resources.qualifications.exam.QualificationExamMode exam_mode = 21; */
         if (message.examMode !== 0)
             writer.tag(21, WireType.Varint).int32(message.examMode);
-        /* optional resources.qualifications.QualificationExamSettings exam_settings = 22; */
+        /* optional resources.qualifications.exam.QualificationExamSettings exam_settings = 22; */
         if (message.examSettings)
             QualificationExamSettings.internalBinaryWrite(message.examSettings, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.qualifications.QualificationResult result = 24; */
@@ -1044,76 +986,6 @@ class QualificationDiscordSettings$Type extends MessageType<QualificationDiscord
  */
 export const QualificationDiscordSettings = new QualificationDiscordSettings$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class QualificationExamSettings$Type extends MessageType<QualificationExamSettings> {
-    constructor() {
-        super("resources.qualifications.QualificationExamSettings", [
-            { no: 1, name: "time", kind: "message", T: () => Duration, options: { "buf.validate.field": { required: true, duration: { lt: { seconds: "1036800" }, gte: { seconds: "300" } } } } },
-            { no: 2, name: "auto_grade", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "auto_grade_mode", kind: "enum", T: () => ["resources.qualifications.AutoGradeMode", AutoGradeMode, "AUTO_GRADE_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 4, name: "minimum_points", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
-        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
-    }
-    create(value?: PartialMessage<QualificationExamSettings>): QualificationExamSettings {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.autoGrade = false;
-        message.autoGradeMode = 0;
-        message.minimumPoints = 0;
-        if (value !== undefined)
-            reflectionMergePartial<QualificationExamSettings>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationExamSettings): QualificationExamSettings {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* google.protobuf.Duration time */ 1:
-                    message.time = Duration.internalBinaryRead(reader, reader.uint32(), options, message.time);
-                    break;
-                case /* bool auto_grade */ 2:
-                    message.autoGrade = reader.bool();
-                    break;
-                case /* resources.qualifications.AutoGradeMode auto_grade_mode */ 3:
-                    message.autoGradeMode = reader.int32();
-                    break;
-                case /* int32 minimum_points */ 4:
-                    message.minimumPoints = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: QualificationExamSettings, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* google.protobuf.Duration time = 1; */
-        if (message.time)
-            Duration.internalBinaryWrite(message.time, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* bool auto_grade = 2; */
-        if (message.autoGrade !== false)
-            writer.tag(2, WireType.Varint).bool(message.autoGrade);
-        /* resources.qualifications.AutoGradeMode auto_grade_mode = 3; */
-        if (message.autoGradeMode !== 0)
-            writer.tag(3, WireType.Varint).int32(message.autoGradeMode);
-        /* int32 minimum_points = 4; */
-        if (message.minimumPoints !== 0)
-            writer.tag(4, WireType.Varint).int32(message.minimumPoints);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.qualifications.QualificationExamSettings
- */
-export const QualificationExamSettings = new QualificationExamSettings$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class QualificationRequest$Type extends MessageType<QualificationRequest> {
     constructor() {
         super("resources.qualifications.QualificationRequest", [
@@ -1160,7 +1032,7 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
                 case /* int32 user_id */ 5:
                     message.userId = reader.int32();
                     break;
-                case /* resources.users.UserShort user */ 6:
+                case /* resources.users.short.UserShort user */ 6:
                     message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
                 case /* optional string user_comment */ 7:
@@ -1178,7 +1050,7 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
                 case /* optional int32 approver_id */ 11:
                     message.approverId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort approver */ 12:
+                case /* optional resources.users.short.UserShort approver */ 12:
                     message.approver = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.approver);
                     break;
                 case /* optional string approver_job */ 13:
@@ -1211,7 +1083,7 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
         /* int32 user_id = 5; */
         if (message.userId !== 0)
             writer.tag(5, WireType.Varint).int32(message.userId);
-        /* resources.users.UserShort user = 6; */
+        /* resources.users.short.UserShort user = 6; */
         if (message.user)
             UserShort.internalBinaryWrite(message.user, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* optional string user_comment = 7; */
@@ -1229,7 +1101,7 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
         /* optional int32 approver_id = 11; */
         if (message.approverId !== undefined)
             writer.tag(11, WireType.Varint).int32(message.approverId);
-        /* optional resources.users.UserShort approver = 12; */
+        /* optional resources.users.short.UserShort approver = 12; */
         if (message.approver)
             UserShort.internalBinaryWrite(message.approver, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         /* optional string approver_job = 13; */
@@ -1300,7 +1172,7 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
                 case /* int32 user_id */ 6:
                     message.userId = reader.int32();
                     break;
-                case /* resources.users.UserShort user */ 7:
+                case /* resources.users.short.UserShort user */ 7:
                     message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
                 case /* resources.qualifications.ResultStatus status */ 8:
@@ -1315,7 +1187,7 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
                 case /* int32 creator_id */ 11:
                     message.creatorId = reader.int32();
                     break;
-                case /* resources.users.UserShort creator */ 12:
+                case /* resources.users.short.UserShort creator */ 12:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
                 case /* string creator_job */ 13:
@@ -1351,7 +1223,7 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
         /* int32 user_id = 6; */
         if (message.userId !== 0)
             writer.tag(6, WireType.Varint).int32(message.userId);
-        /* resources.users.UserShort user = 7; */
+        /* resources.users.short.UserShort user = 7; */
         if (message.user)
             UserShort.internalBinaryWrite(message.user, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* resources.qualifications.ResultStatus status = 8; */
@@ -1366,7 +1238,7 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
         /* int32 creator_id = 11; */
         if (message.creatorId !== 0)
             writer.tag(11, WireType.Varint).int32(message.creatorId);
-        /* resources.users.UserShort creator = 12; */
+        /* resources.users.short.UserShort creator = 12; */
         if (message.creator)
             UserShort.internalBinaryWrite(message.creator, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         /* string creator_job = 13; */

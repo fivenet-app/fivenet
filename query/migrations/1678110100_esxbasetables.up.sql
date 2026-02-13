@@ -65,7 +65,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `idx_users_dateofbirth` (`dateofbirth`),
   FULLTEXT KEY `idx_users_firstname_lastname_fulltext` (`firstname`,`lastname`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1;
-{{- end }}
 
 -- Table: owned_vehicles - Add `model` index for better sorting performance if the table exists
 set @x := (
@@ -109,5 +108,9 @@ set @x := (select 1 from information_schema.statistics where table_name = 'users
 set @sql := if( @x is null or @x > 0, 'select ''users job index exists.''', 'ALTER TABLE users ADD KEY `idx_users_job` (`job`);');
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
+{{- else }}
+-- Dummy operation to ensure migration runs without errors when ESX compatibility mode is disabled for new installations
+SELECT 1;
+{{- end }}
 
 COMMIT;

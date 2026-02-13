@@ -5,16 +5,15 @@ package resources.qualifications;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
-import "google/protobuf/duration.proto";
 import "resources/common/content/content.proto";
 import "resources/file/file.proto";
-import "resources/qualifications/access.proto";
-import "resources/qualifications/exam.proto";
+import "resources/qualifications/access/access.proto";
+import "resources/qualifications/exam/exam.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
+import "resources/users/short/user.proto";
 import "tagger/tagger.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications;qualifications";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications;qualifications";
 
 message Qualification {
   int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
@@ -49,15 +48,15 @@ message Qualification {
   ];
   resources.common.content.Content content = 13;
   optional int32 creator_id = 14 [(buf.validate.field).int32.gt = 0];
-  optional resources.users.UserShort creator = 15 [(tagger.tags) = "alias:\"creator\""];
+  optional resources.users.short.UserShort creator = 15 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 16 [(buf.validate.field).string.max_len = 20];
-  resources.qualifications.QualificationAccess access = 17;
+  resources.qualifications.access.QualificationAccess access = 17;
   repeated QualificationRequirement requirements = 18;
   bool discord_sync_enabled = 19;
   optional QualificationDiscordSettings discord_settings = 20;
-  QualificationExamMode exam_mode = 21 [(buf.validate.field).enum.defined_only = true];
-  optional QualificationExamSettings exam_settings = 22;
-  optional resources.qualifications.ExamQuestions exam = 23;
+  resources.qualifications.exam.QualificationExamMode exam_mode = 21 [(buf.validate.field).enum.defined_only = true];
+  optional resources.qualifications.exam.QualificationExamSettings exam_settings = 22;
+  optional resources.qualifications.exam.ExamQuestions exam = 23;
   optional QualificationResult result = 24;
   optional QualificationRequest request = 25;
   bool label_sync_enabled = 26;
@@ -103,11 +102,11 @@ message QualificationShort {
     }
   ];
   optional int32 creator_id = 14 [(buf.validate.field).int32.gt = 0];
-  optional resources.users.UserShort creator = 15 [(tagger.tags) = "alias:\"creator\""];
+  optional resources.users.short.UserShort creator = 15 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 16 [(buf.validate.field).string.max_len = 20];
   repeated QualificationRequirement requirements = 18;
-  QualificationExamMode exam_mode = 21 [(buf.validate.field).enum.defined_only = true];
-  optional QualificationExamSettings exam_settings = 22;
+  resources.qualifications.exam.QualificationExamMode exam_mode = 21 [(buf.validate.field).enum.defined_only = true];
+  optional resources.qualifications.exam.QualificationExamSettings exam_settings = 22;
   optional QualificationResult result = 24;
 }
 
@@ -124,34 +123,6 @@ message QualificationDiscordSettings {
 
   optional string role_name = 1 [(buf.validate.field).string.max_len = 64];
   optional string role_format = 2 [(buf.validate.field).string.max_len = 64];
-}
-
-enum QualificationExamMode {
-  QUALIFICATION_EXAM_MODE_UNSPECIFIED = 0;
-  QUALIFICATION_EXAM_MODE_DISABLED = 1;
-  QUALIFICATION_EXAM_MODE_REQUEST_NEEDED = 2;
-  QUALIFICATION_EXAM_MODE_ENABLED = 3;
-}
-
-message QualificationExamSettings {
-  option (codegen.dbscanner.dbscanner) = {enabled: true};
-
-  google.protobuf.Duration time = 1 [
-    (buf.validate.field).duration = {
-      lt: {seconds: 1036800} /* 24 hours */
-      gte: {seconds: 300} /* 5 minutes */
-    },
-    (buf.validate.field).required = true
-  ];
-  bool auto_grade = 2;
-  AutoGradeMode auto_grade_mode = 3 [(buf.validate.field).enum.defined_only = true];
-  int32 minimum_points = 4;
-}
-
-enum AutoGradeMode {
-  AUTO_GRADE_MODE_UNSPECIFIED = 0;
-  AUTO_GRADE_MODE_STRICT = 1;
-  AUTO_GRADE_MODE_PARTIAL_CREDIT = 2;
 }
 
 enum RequestStatus {
@@ -173,7 +144,7 @@ message QualificationRequest {
     (buf.validate.field).int32.gte = 0,
     (tagger.tags) = "sql:\"primary_key\""
   ];
-  resources.users.UserShort user = 6 [(tagger.tags) = "alias:\"user\""];
+  resources.users.short.UserShort user = 6 [(tagger.tags) = "alias:\"user\""];
   optional string user_comment = 7 [
     (buf.validate.field).string = {max_len: 512},
     (codegen.sanitizer.sanitizer) = {
@@ -191,7 +162,7 @@ message QualificationRequest {
     }
   ];
   optional int32 approver_id = 11 [(buf.validate.field).int32.gt = 0];
-  optional resources.users.UserShort approver = 12 [(tagger.tags) = "alias:\"approver\""];
+  optional resources.users.short.UserShort approver = 12 [(tagger.tags) = "alias:\"approver\""];
   optional string approver_job = 13;
 }
 
@@ -209,7 +180,7 @@ message QualificationResult {
   int64 qualification_id = 4;
   optional QualificationShort qualification = 5;
   int32 user_id = 6 [(buf.validate.field).int32.gte = 0];
-  resources.users.UserShort user = 7 [(tagger.tags) = "alias:\"user\""];
+  resources.users.short.UserShort user = 7 [(tagger.tags) = "alias:\"user\""];
   ResultStatus status = 8 [(buf.validate.field).enum.defined_only = true];
   optional float score = 9 [(buf.validate.field).float = {
     gte: 0
@@ -223,6 +194,6 @@ message QualificationResult {
     }
   ];
   int32 creator_id = 11 [(buf.validate.field).int32.gt = 0];
-  resources.users.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
+  resources.users.short.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
 }

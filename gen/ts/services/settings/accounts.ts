@@ -12,7 +12,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../../resources/users/users";
+import { UserShort } from "../../resources/users/short/user";
 import { Account } from "../../resources/accounts/accounts";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Sort } from "../../resources/common/database/database";
@@ -36,9 +36,9 @@ export interface ListAccountsRequest {
      */
     license?: string;
     /**
-     * @generated from protobuf field: optional bool enabled = 4
+     * @generated from protobuf field: optional bool only_disabled = 4
      */
-    enabled?: boolean;
+    onlyDisabled?: boolean;
     /**
      * @generated from protobuf field: optional string username = 5
      */
@@ -47,6 +47,10 @@ export interface ListAccountsRequest {
      * @generated from protobuf field: optional string external_id = 6
      */
     externalId?: string;
+    /**
+     * @generated from protobuf field: optional string group = 7
+     */
+    group?: string;
 }
 /**
  * @generated from protobuf message services.settings.ListAccountsResponse
@@ -80,7 +84,7 @@ export interface CreateAccountRequest {
     /**
      * Allow creating a char at the same time (only when dbsync is used)
      *
-     * @generated from protobuf field: optional resources.users.UserShort char = 4
+     * @generated from protobuf field: optional resources.users.short.UserShort char = 4
      */
     char?: UserShort;
 }
@@ -158,9 +162,10 @@ class ListAccountsRequest$Type extends MessageType<ListAccountsRequest> {
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "license", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 4, name: "enabled", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "only_disabled", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "username", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 6, name: "external_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } }
+            { no: 6, name: "external_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
+            { no: 7, name: "group", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<ListAccountsRequest>): ListAccountsRequest {
@@ -183,14 +188,17 @@ class ListAccountsRequest$Type extends MessageType<ListAccountsRequest> {
                 case /* optional string license */ 3:
                     message.license = reader.string();
                     break;
-                case /* optional bool enabled */ 4:
-                    message.enabled = reader.bool();
+                case /* optional bool only_disabled */ 4:
+                    message.onlyDisabled = reader.bool();
                     break;
                 case /* optional string username */ 5:
                     message.username = reader.string();
                     break;
                 case /* optional string external_id */ 6:
                     message.externalId = reader.string();
+                    break;
+                case /* optional string group */ 7:
+                    message.group = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -213,15 +221,18 @@ class ListAccountsRequest$Type extends MessageType<ListAccountsRequest> {
         /* optional string license = 3; */
         if (message.license !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.license);
-        /* optional bool enabled = 4; */
-        if (message.enabled !== undefined)
-            writer.tag(4, WireType.Varint).bool(message.enabled);
+        /* optional bool only_disabled = 4; */
+        if (message.onlyDisabled !== undefined)
+            writer.tag(4, WireType.Varint).bool(message.onlyDisabled);
         /* optional string username = 5; */
         if (message.username !== undefined)
             writer.tag(5, WireType.LengthDelimited).string(message.username);
         /* optional string external_id = 6; */
         if (message.externalId !== undefined)
             writer.tag(6, WireType.LengthDelimited).string(message.externalId);
+        /* optional string group = 7; */
+        if (message.group !== undefined)
+            writer.tag(7, WireType.LengthDelimited).string(message.group);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -318,7 +329,7 @@ class CreateAccountRequest$Type extends MessageType<CreateAccountRequest> {
                 case /* optional int32 last_char */ 3:
                     message.lastChar = reader.int32();
                     break;
-                case /* optional resources.users.UserShort char */ 4:
+                case /* optional resources.users.short.UserShort char */ 4:
                     message.char = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.char);
                     break;
                 default:
@@ -342,7 +353,7 @@ class CreateAccountRequest$Type extends MessageType<CreateAccountRequest> {
         /* optional int32 last_char = 3; */
         if (message.lastChar !== undefined)
             writer.tag(3, WireType.Varint).int32(message.lastChar);
-        /* optional resources.users.UserShort char = 4; */
+        /* optional resources.users.short.UserShort char = 4; */
         if (message.char)
             UserShort.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

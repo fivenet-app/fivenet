@@ -4,14 +4,14 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
 // GetEntry retrieves a single user access entry by its ID, joining with user_short for additional user info.
 func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id int64) (T, error) {
-	tUsers := tables.User().AS("user_short")
+	tUsers := table.FivenetUser.AS("user_short")
 
 	stmt := a.selectTable.
 		SELECT(

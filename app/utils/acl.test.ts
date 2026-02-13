@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { QualificationExamMode, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
+import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import { checkAccess } from './acl';
 
 describe('checkAccess', () => {

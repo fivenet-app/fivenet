@@ -14,30 +14,30 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { DocumentPin } from "../../resources/documents/pins";
-import { Category } from "../../resources/documents/category";
-import { DocRelation } from "../../resources/documents/documents";
-import { DocActivityData } from "../../resources/documents/activity";
-import { DocRequest } from "../../resources/documents/requests";
-import { DocActivity } from "../../resources/documents/activity";
-import { DocActivityType } from "../../resources/documents/activity";
+import { DocumentPin } from "../../resources/documents/pins/pins";
+import { Category } from "../../resources/documents/category/category";
+import { DocRelation } from "../../resources/documents/relations/relations";
+import { DocActivityData } from "../../resources/documents/activity/activity";
+import { DocRequest } from "../../resources/documents/requests/requests";
+import { DocActivity } from "../../resources/documents/activity/activity";
+import { DocActivityType } from "../../resources/documents/activity/activity";
 import { File } from "../../resources/file/file";
 import { DocumentMeta } from "../../resources/documents/documents";
 import { Content } from "../../resources/common/content/content";
 import { ContentType } from "../../resources/common/content/content";
-import { Comment } from "../../resources/documents/comment";
-import { DocumentRelation } from "../../resources/documents/documents";
-import { DocumentReference } from "../../resources/documents/documents";
-import { DocumentAccess } from "../../resources/documents/access";
+import { Comment } from "../../resources/documents/comment/comment";
+import { DocumentRelation } from "../../resources/documents/relations/relations";
+import { DocumentReference } from "../../resources/documents/references/references";
+import { DocumentAccess } from "../../resources/documents/access/access";
 import { Document } from "../../resources/documents/documents";
 import { DocumentShort } from "../../resources/documents/documents";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
-import { Template } from "../../resources/documents/templates";
-import { TemplateData } from "../../resources/documents/templates";
-import { TemplateShort } from "../../resources/documents/templates";
+import { Template } from "../../resources/documents/templates/templates";
+import { TemplateData } from "../../resources/documents/templates/templates";
+import { TemplateShort } from "../../resources/documents/templates/templates";
 // Templates
 
 /**
@@ -50,7 +50,7 @@ export interface ListTemplatesRequest {
  */
 export interface ListTemplatesResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.TemplateShort templates = 1
+     * @generated from protobuf field: repeated resources.documents.templates.TemplateShort templates = 1
      */
     templates: TemplateShort[];
 }
@@ -63,7 +63,7 @@ export interface GetTemplateRequest {
      */
     templateId: number;
     /**
-     * @generated from protobuf field: optional resources.documents.TemplateData data = 2
+     * @generated from protobuf field: optional resources.documents.templates.TemplateData data = 2
      */
     data?: TemplateData;
     /**
@@ -76,7 +76,7 @@ export interface GetTemplateRequest {
  */
 export interface GetTemplateResponse {
     /**
-     * @generated from protobuf field: resources.documents.Template template = 1
+     * @generated from protobuf field: resources.documents.templates.Template template = 1
      */
     template?: Template;
     /**
@@ -89,7 +89,7 @@ export interface GetTemplateResponse {
  */
 export interface CreateTemplateRequest {
     /**
-     * @generated from protobuf field: resources.documents.Template template = 1
+     * @generated from protobuf field: resources.documents.templates.Template template = 1
      */
     template?: Template;
 }
@@ -107,7 +107,7 @@ export interface CreateTemplateResponse {
  */
 export interface UpdateTemplateRequest {
     /**
-     * @generated from protobuf field: resources.documents.Template template = 1
+     * @generated from protobuf field: resources.documents.templates.Template template = 1
      */
     template?: Template;
 }
@@ -116,7 +116,7 @@ export interface UpdateTemplateRequest {
  */
 export interface UpdateTemplateResponse {
     /**
-     * @generated from protobuf field: resources.documents.Template template = 1
+     * @generated from protobuf field: resources.documents.templates.Template template = 1
      */
     template?: Template;
 }
@@ -223,7 +223,7 @@ export interface GetDocumentResponse {
      */
     document?: Document;
     /**
-     * @generated from protobuf field: resources.documents.DocumentAccess access = 2
+     * @generated from protobuf field: resources.documents.access.DocumentAccess access = 2
      */
     access?: DocumentAccess;
 }
@@ -241,7 +241,7 @@ export interface GetDocumentReferencesRequest {
  */
 export interface GetDocumentReferencesResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.DocumentReference references = 1
+     * @generated from protobuf field: repeated resources.documents.references.DocumentReference references = 1
      */
     references: DocumentReference[];
 }
@@ -259,7 +259,7 @@ export interface GetDocumentRelationsRequest {
  */
 export interface GetDocumentRelationsResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.DocumentRelation relations = 1
+     * @generated from protobuf field: repeated resources.documents.relations.DocumentRelation relations = 1
      */
     relations: DocumentRelation[];
 }
@@ -268,7 +268,7 @@ export interface GetDocumentRelationsResponse {
  */
 export interface AddDocumentReferenceRequest {
     /**
-     * @generated from protobuf field: resources.documents.DocumentReference reference = 1
+     * @generated from protobuf field: resources.documents.references.DocumentReference reference = 1
      */
     reference?: DocumentReference;
 }
@@ -300,7 +300,7 @@ export interface RemoveDocumentReferenceResponse {
  */
 export interface AddDocumentRelationRequest {
     /**
-     * @generated from protobuf field: resources.documents.DocumentRelation relation = 1
+     * @generated from protobuf field: resources.documents.relations.DocumentRelation relation = 1
      */
     relation?: DocumentRelation;
 }
@@ -351,7 +351,7 @@ export interface GetCommentsResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.documents.Comment comments = 2
+     * @generated from protobuf field: repeated resources.documents.comment.Comment comments = 2
      */
     comments: Comment[];
 }
@@ -360,7 +360,7 @@ export interface GetCommentsResponse {
  */
 export interface PostCommentRequest {
     /**
-     * @generated from protobuf field: resources.documents.Comment comment = 1
+     * @generated from protobuf field: resources.documents.comment.Comment comment = 1
      */
     comment?: Comment;
 }
@@ -369,7 +369,7 @@ export interface PostCommentRequest {
  */
 export interface PostCommentResponse {
     /**
-     * @generated from protobuf field: resources.documents.Comment comment = 1
+     * @generated from protobuf field: resources.documents.comment.Comment comment = 1
      */
     comment?: Comment;
 }
@@ -378,7 +378,7 @@ export interface PostCommentResponse {
  */
 export interface EditCommentRequest {
     /**
-     * @generated from protobuf field: resources.documents.Comment comment = 1
+     * @generated from protobuf field: resources.documents.comment.Comment comment = 1
      */
     comment?: Comment;
 }
@@ -387,7 +387,7 @@ export interface EditCommentRequest {
  */
 export interface EditCommentResponse {
     /**
-     * @generated from protobuf field: resources.documents.Comment comment = 1
+     * @generated from protobuf field: resources.documents.comment.Comment comment = 1
      */
     comment?: Comment;
 }
@@ -481,7 +481,7 @@ export interface CreateDocumentRequest {
      */
     templateId?: number;
     /**
-     * @generated from protobuf field: optional resources.documents.TemplateData template_data = 3
+     * @generated from protobuf field: optional resources.documents.templates.TemplateData template_data = 3
      */
     templateData?: TemplateData;
 }
@@ -527,7 +527,7 @@ export interface UpdateDocumentRequest {
      */
     meta?: DocumentMeta;
     /**
-     * @generated from protobuf field: optional resources.documents.DocumentAccess access = 11
+     * @generated from protobuf field: optional resources.documents.access.DocumentAccess access = 11
      */
     access?: DocumentAccess;
     /**
@@ -552,7 +552,7 @@ export interface ListDocumentActivityRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: repeated resources.documents.DocActivityType activity_types = 3
+     * @generated from protobuf field: repeated resources.documents.activity.DocActivityType activity_types = 3
      */
     activityTypes: DocActivityType[];
 }
@@ -565,7 +565,7 @@ export interface ListDocumentActivityResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.documents.DocActivity activity = 2
+     * @generated from protobuf field: repeated resources.documents.activity.DocActivity activity = 2
      */
     activity: DocActivity[];
 }
@@ -591,7 +591,7 @@ export interface ListDocumentReqsResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.documents.DocRequest requests = 2
+     * @generated from protobuf field: repeated resources.documents.requests.DocRequest requests = 2
      */
     requests: DocRequest[];
 }
@@ -604,7 +604,7 @@ export interface CreateDocumentReqRequest {
      */
     documentId: number;
     /**
-     * @generated from protobuf field: resources.documents.DocActivityType request_type = 2
+     * @generated from protobuf field: resources.documents.activity.DocActivityType request_type = 2
      */
     requestType: DocActivityType;
     /**
@@ -612,7 +612,7 @@ export interface CreateDocumentReqRequest {
      */
     reason?: string;
     /**
-     * @generated from protobuf field: optional resources.documents.DocActivityData data = 4
+     * @generated from protobuf field: optional resources.documents.activity.DocActivityData data = 4
      */
     data?: DocActivityData;
 }
@@ -621,7 +621,7 @@ export interface CreateDocumentReqRequest {
  */
 export interface CreateDocumentReqResponse {
     /**
-     * @generated from protobuf field: resources.documents.DocRequest request = 1
+     * @generated from protobuf field: resources.documents.requests.DocRequest request = 1
      */
     request?: DocRequest;
 }
@@ -642,7 +642,7 @@ export interface UpdateDocumentReqRequest {
      */
     reason?: string;
     /**
-     * @generated from protobuf field: optional resources.documents.DocActivityData data = 4
+     * @generated from protobuf field: optional resources.documents.activity.DocActivityData data = 4
      */
     data?: DocActivityData;
     /**
@@ -655,7 +655,7 @@ export interface UpdateDocumentReqRequest {
  */
 export interface UpdateDocumentReqResponse {
     /**
-     * @generated from protobuf field: resources.documents.DocRequest request = 1
+     * @generated from protobuf field: resources.documents.requests.DocRequest request = 1
      */
     request?: DocRequest;
 }
@@ -689,7 +689,7 @@ export interface GetDocumentAccessRequest {
  */
 export interface GetDocumentAccessResponse {
     /**
-     * @generated from protobuf field: resources.documents.DocumentAccess access = 1
+     * @generated from protobuf field: resources.documents.access.DocumentAccess access = 1
      */
     access?: DocumentAccess;
 }
@@ -702,7 +702,7 @@ export interface SetDocumentAccessRequest {
      */
     documentId: number;
     /**
-     * @generated from protobuf field: resources.documents.DocumentAccess access = 2
+     * @generated from protobuf field: resources.documents.access.DocumentAccess access = 2
      */
     access?: DocumentAccess;
 }
@@ -728,7 +728,7 @@ export interface ListUserDocumentsRequest {
      */
     userId: number;
     /**
-     * @generated from protobuf field: repeated resources.documents.DocRelation relations = 4
+     * @generated from protobuf field: repeated resources.documents.relations.DocRelation relations = 4
      */
     relations: DocRelation[];
     /**
@@ -745,7 +745,7 @@ export interface ListUserDocumentsResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.documents.DocumentRelation relations = 2
+     * @generated from protobuf field: repeated resources.documents.relations.DocumentRelation relations = 2
      */
     relations: DocumentRelation[];
 }
@@ -761,7 +761,7 @@ export interface ListCategoriesRequest {
  */
 export interface ListCategoriesResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.Category categories = 1
+     * @generated from protobuf field: repeated resources.documents.category.Category categories = 1
      */
     categories: Category[];
 }
@@ -770,7 +770,7 @@ export interface ListCategoriesResponse {
  */
 export interface CreateOrUpdateCategoryRequest {
     /**
-     * @generated from protobuf field: resources.documents.Category category = 1
+     * @generated from protobuf field: resources.documents.category.Category category = 1
      */
     category?: Category;
 }
@@ -779,7 +779,7 @@ export interface CreateOrUpdateCategoryRequest {
  */
 export interface CreateOrUpdateCategoryResponse {
     /**
-     * @generated from protobuf field: resources.documents.Category category = 1
+     * @generated from protobuf field: resources.documents.category.Category category = 1
      */
     category?: Category;
 }
@@ -852,7 +852,7 @@ export interface ToggleDocumentPinRequest {
  */
 export interface ToggleDocumentPinResponse {
     /**
-     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 1
+     * @generated from protobuf field: optional resources.documents.pins.DocumentPin pin = 1
      */
     pin?: DocumentPin;
 }
@@ -941,7 +941,7 @@ class ListTemplatesResponse$Type extends MessageType<ListTemplatesResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.TemplateShort templates */ 1:
+                case /* repeated resources.documents.templates.TemplateShort templates */ 1:
                     message.templates.push(TemplateShort.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -956,7 +956,7 @@ class ListTemplatesResponse$Type extends MessageType<ListTemplatesResponse> {
         return message;
     }
     internalBinaryWrite(message: ListTemplatesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.TemplateShort templates = 1; */
+        /* repeated resources.documents.templates.TemplateShort templates = 1; */
         for (let i = 0; i < message.templates.length; i++)
             TemplateShort.internalBinaryWrite(message.templates[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -993,7 +993,7 @@ class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
                 case /* int64 template_id */ 1:
                     message.templateId = reader.int64().toNumber();
                     break;
-                case /* optional resources.documents.TemplateData data */ 2:
+                case /* optional resources.documents.templates.TemplateData data */ 2:
                     message.data = TemplateData.internalBinaryRead(reader, reader.uint32(), options, message.data);
                     break;
                 case /* optional bool render */ 3:
@@ -1014,7 +1014,7 @@ class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
         /* int64 template_id = 1; */
         if (message.templateId !== 0)
             writer.tag(1, WireType.Varint).int64(message.templateId);
-        /* optional resources.documents.TemplateData data = 2; */
+        /* optional resources.documents.templates.TemplateData data = 2; */
         if (message.data)
             TemplateData.internalBinaryWrite(message.data, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* optional bool render = 3; */
@@ -1050,7 +1050,7 @@ class GetTemplateResponse$Type extends MessageType<GetTemplateResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Template template */ 1:
+                case /* resources.documents.templates.Template template */ 1:
                     message.template = Template.internalBinaryRead(reader, reader.uint32(), options, message.template);
                     break;
                 case /* bool rendered */ 2:
@@ -1068,7 +1068,7 @@ class GetTemplateResponse$Type extends MessageType<GetTemplateResponse> {
         return message;
     }
     internalBinaryWrite(message: GetTemplateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Template template = 1; */
+        /* resources.documents.templates.Template template = 1; */
         if (message.template)
             Template.internalBinaryWrite(message.template, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* bool rendered = 2; */
@@ -1102,7 +1102,7 @@ class CreateTemplateRequest$Type extends MessageType<CreateTemplateRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Template template */ 1:
+                case /* resources.documents.templates.Template template */ 1:
                     message.template = Template.internalBinaryRead(reader, reader.uint32(), options, message.template);
                     break;
                 default:
@@ -1117,7 +1117,7 @@ class CreateTemplateRequest$Type extends MessageType<CreateTemplateRequest> {
         return message;
     }
     internalBinaryWrite(message: CreateTemplateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Template template = 1; */
+        /* resources.documents.templates.Template template = 1; */
         if (message.template)
             Template.internalBinaryWrite(message.template, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1195,7 +1195,7 @@ class UpdateTemplateRequest$Type extends MessageType<UpdateTemplateRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Template template */ 1:
+                case /* resources.documents.templates.Template template */ 1:
                     message.template = Template.internalBinaryRead(reader, reader.uint32(), options, message.template);
                     break;
                 default:
@@ -1210,7 +1210,7 @@ class UpdateTemplateRequest$Type extends MessageType<UpdateTemplateRequest> {
         return message;
     }
     internalBinaryWrite(message: UpdateTemplateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Template template = 1; */
+        /* resources.documents.templates.Template template = 1; */
         if (message.template)
             Template.internalBinaryWrite(message.template, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1241,7 +1241,7 @@ class UpdateTemplateResponse$Type extends MessageType<UpdateTemplateResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Template template */ 1:
+                case /* resources.documents.templates.Template template */ 1:
                     message.template = Template.internalBinaryRead(reader, reader.uint32(), options, message.template);
                     break;
                 default:
@@ -1256,7 +1256,7 @@ class UpdateTemplateResponse$Type extends MessageType<UpdateTemplateResponse> {
         return message;
     }
     internalBinaryWrite(message: UpdateTemplateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Template template = 1; */
+        /* resources.documents.templates.Template template = 1; */
         if (message.template)
             Template.internalBinaryWrite(message.template, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1620,7 +1620,7 @@ class GetDocumentResponse$Type extends MessageType<GetDocumentResponse> {
                 case /* resources.documents.Document document */ 1:
                     message.document = Document.internalBinaryRead(reader, reader.uint32(), options, message.document);
                     break;
-                case /* resources.documents.DocumentAccess access */ 2:
+                case /* resources.documents.access.DocumentAccess access */ 2:
                     message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -1638,7 +1638,7 @@ class GetDocumentResponse$Type extends MessageType<GetDocumentResponse> {
         /* resources.documents.Document document = 1; */
         if (message.document)
             Document.internalBinaryWrite(message.document, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.DocumentAccess access = 2; */
+        /* resources.documents.access.DocumentAccess access = 2; */
         if (message.access)
             DocumentAccess.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1717,7 +1717,7 @@ class GetDocumentReferencesResponse$Type extends MessageType<GetDocumentReferenc
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.DocumentReference references */ 1:
+                case /* repeated resources.documents.references.DocumentReference references */ 1:
                     message.references.push(DocumentReference.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1732,7 +1732,7 @@ class GetDocumentReferencesResponse$Type extends MessageType<GetDocumentReferenc
         return message;
     }
     internalBinaryWrite(message: GetDocumentReferencesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.DocumentReference references = 1; */
+        /* repeated resources.documents.references.DocumentReference references = 1; */
         for (let i = 0; i < message.references.length; i++)
             DocumentReference.internalBinaryWrite(message.references[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1811,7 +1811,7 @@ class GetDocumentRelationsResponse$Type extends MessageType<GetDocumentRelations
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.DocumentRelation relations */ 1:
+                case /* repeated resources.documents.relations.DocumentRelation relations */ 1:
                     message.relations.push(DocumentRelation.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1826,7 +1826,7 @@ class GetDocumentRelationsResponse$Type extends MessageType<GetDocumentRelations
         return message;
     }
     internalBinaryWrite(message: GetDocumentRelationsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.DocumentRelation relations = 1; */
+        /* repeated resources.documents.relations.DocumentRelation relations = 1; */
         for (let i = 0; i < message.relations.length; i++)
             DocumentRelation.internalBinaryWrite(message.relations[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1857,7 +1857,7 @@ class AddDocumentReferenceRequest$Type extends MessageType<AddDocumentReferenceR
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.DocumentReference reference */ 1:
+                case /* resources.documents.references.DocumentReference reference */ 1:
                     message.reference = DocumentReference.internalBinaryRead(reader, reader.uint32(), options, message.reference);
                     break;
                 default:
@@ -1872,7 +1872,7 @@ class AddDocumentReferenceRequest$Type extends MessageType<AddDocumentReferenceR
         return message;
     }
     internalBinaryWrite(message: AddDocumentReferenceRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.DocumentReference reference = 1; */
+        /* resources.documents.references.DocumentReference reference = 1; */
         if (message.reference)
             DocumentReference.internalBinaryWrite(message.reference, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2035,7 +2035,7 @@ class AddDocumentRelationRequest$Type extends MessageType<AddDocumentRelationReq
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.DocumentRelation relation */ 1:
+                case /* resources.documents.relations.DocumentRelation relation */ 1:
                     message.relation = DocumentRelation.internalBinaryRead(reader, reader.uint32(), options, message.relation);
                     break;
                 default:
@@ -2050,7 +2050,7 @@ class AddDocumentRelationRequest$Type extends MessageType<AddDocumentRelationReq
         return message;
     }
     internalBinaryWrite(message: AddDocumentRelationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.DocumentRelation relation = 1; */
+        /* resources.documents.relations.DocumentRelation relation = 1; */
         if (message.relation)
             DocumentRelation.internalBinaryWrite(message.relation, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2272,7 +2272,7 @@ class GetCommentsResponse$Type extends MessageType<GetCommentsResponse> {
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.documents.Comment comments */ 2:
+                case /* repeated resources.documents.comment.Comment comments */ 2:
                     message.comments.push(Comment.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -2290,7 +2290,7 @@ class GetCommentsResponse$Type extends MessageType<GetCommentsResponse> {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.Comment comments = 2; */
+        /* repeated resources.documents.comment.Comment comments = 2; */
         for (let i = 0; i < message.comments.length; i++)
             Comment.internalBinaryWrite(message.comments[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2321,7 +2321,7 @@ class PostCommentRequest$Type extends MessageType<PostCommentRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Comment comment */ 1:
+                case /* resources.documents.comment.Comment comment */ 1:
                     message.comment = Comment.internalBinaryRead(reader, reader.uint32(), options, message.comment);
                     break;
                 default:
@@ -2336,7 +2336,7 @@ class PostCommentRequest$Type extends MessageType<PostCommentRequest> {
         return message;
     }
     internalBinaryWrite(message: PostCommentRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Comment comment = 1; */
+        /* resources.documents.comment.Comment comment = 1; */
         if (message.comment)
             Comment.internalBinaryWrite(message.comment, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2367,7 +2367,7 @@ class PostCommentResponse$Type extends MessageType<PostCommentResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Comment comment */ 1:
+                case /* resources.documents.comment.Comment comment */ 1:
                     message.comment = Comment.internalBinaryRead(reader, reader.uint32(), options, message.comment);
                     break;
                 default:
@@ -2382,7 +2382,7 @@ class PostCommentResponse$Type extends MessageType<PostCommentResponse> {
         return message;
     }
     internalBinaryWrite(message: PostCommentResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Comment comment = 1; */
+        /* resources.documents.comment.Comment comment = 1; */
         if (message.comment)
             Comment.internalBinaryWrite(message.comment, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2413,7 +2413,7 @@ class EditCommentRequest$Type extends MessageType<EditCommentRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Comment comment */ 1:
+                case /* resources.documents.comment.Comment comment */ 1:
                     message.comment = Comment.internalBinaryRead(reader, reader.uint32(), options, message.comment);
                     break;
                 default:
@@ -2428,7 +2428,7 @@ class EditCommentRequest$Type extends MessageType<EditCommentRequest> {
         return message;
     }
     internalBinaryWrite(message: EditCommentRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Comment comment = 1; */
+        /* resources.documents.comment.Comment comment = 1; */
         if (message.comment)
             Comment.internalBinaryWrite(message.comment, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2459,7 +2459,7 @@ class EditCommentResponse$Type extends MessageType<EditCommentResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Comment comment */ 1:
+                case /* resources.documents.comment.Comment comment */ 1:
                     message.comment = Comment.internalBinaryRead(reader, reader.uint32(), options, message.comment);
                     break;
                 default:
@@ -2474,7 +2474,7 @@ class EditCommentResponse$Type extends MessageType<EditCommentResponse> {
         return message;
     }
     internalBinaryWrite(message: EditCommentResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Comment comment = 1; */
+        /* resources.documents.comment.Comment comment = 1; */
         if (message.comment)
             Comment.internalBinaryWrite(message.comment, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2623,7 +2623,7 @@ class DeleteDocumentRequest$Type extends MessageType<DeleteDocumentRequest> {
     constructor() {
         super("services.documents.DeleteDocumentRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"id\"" } },
-            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "0", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
+            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "0", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<DeleteDocumentRequest>): DeleteDocumentRequest {
@@ -2922,7 +2922,7 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
                 case /* optional int64 template_id */ 2:
                     message.templateId = reader.int64().toNumber();
                     break;
-                case /* optional resources.documents.TemplateData template_data */ 3:
+                case /* optional resources.documents.templates.TemplateData template_data */ 3:
                     message.templateData = TemplateData.internalBinaryRead(reader, reader.uint32(), options, message.templateData);
                     break;
                 default:
@@ -2943,7 +2943,7 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
         /* optional int64 template_id = 2; */
         if (message.templateId !== undefined)
             writer.tag(2, WireType.Varint).int64(message.templateId);
-        /* optional resources.documents.TemplateData template_data = 3; */
+        /* optional resources.documents.templates.TemplateData template_data = 3; */
         if (message.templateData)
             TemplateData.internalBinaryWrite(message.templateData, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -3054,7 +3054,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
                 case /* resources.documents.DocumentMeta meta */ 7:
                     message.meta = DocumentMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
                     break;
-                case /* optional resources.documents.DocumentAccess access */ 11:
+                case /* optional resources.documents.access.DocumentAccess access */ 11:
                     message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 case /* repeated resources.file.File files */ 12:
@@ -3093,7 +3093,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         /* resources.documents.DocumentMeta meta = 7; */
         if (message.meta)
             DocumentMeta.internalBinaryWrite(message.meta, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.DocumentAccess access = 11; */
+        /* optional resources.documents.access.DocumentAccess access = 11; */
         if (message.access)
             DocumentAccess.internalBinaryWrite(message.access, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.file.File files = 12; */
@@ -3115,7 +3115,7 @@ class ListDocumentActivityRequest$Type extends MessageType<ListDocumentActivityR
         super("services.documents.ListDocumentActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { in: [13, 14, 15, 16, 17, 18] } } } } } }
+            { no: 3, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.activity.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { in: [13, 14, 15, 16, 17, 18] } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListDocumentActivityRequest>): ListDocumentActivityRequest {
@@ -3137,7 +3137,7 @@ class ListDocumentActivityRequest$Type extends MessageType<ListDocumentActivityR
                 case /* int64 document_id */ 2:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* repeated resources.documents.DocActivityType activity_types */ 3:
+                case /* repeated resources.documents.activity.DocActivityType activity_types */ 3:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.activityTypes.push(reader.int32());
@@ -3162,7 +3162,7 @@ class ListDocumentActivityRequest$Type extends MessageType<ListDocumentActivityR
         /* int64 document_id = 2; */
         if (message.documentId !== 0)
             writer.tag(2, WireType.Varint).int64(message.documentId);
-        /* repeated resources.documents.DocActivityType activity_types = 3; */
+        /* repeated resources.documents.activity.DocActivityType activity_types = 3; */
         if (message.activityTypes.length) {
             writer.tag(3, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.activityTypes.length; i++)
@@ -3202,7 +3202,7 @@ class ListDocumentActivityResponse$Type extends MessageType<ListDocumentActivity
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.documents.DocActivity activity */ 2:
+                case /* repeated resources.documents.activity.DocActivity activity */ 2:
                     message.activity.push(DocActivity.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -3220,7 +3220,7 @@ class ListDocumentActivityResponse$Type extends MessageType<ListDocumentActivity
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.DocActivity activity = 2; */
+        /* repeated resources.documents.activity.DocActivity activity = 2; */
         for (let i = 0; i < message.activity.length; i++)
             DocActivity.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -3310,7 +3310,7 @@ class ListDocumentReqsResponse$Type extends MessageType<ListDocumentReqsResponse
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.documents.DocRequest requests */ 2:
+                case /* repeated resources.documents.requests.DocRequest requests */ 2:
                     message.requests.push(DocRequest.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -3328,7 +3328,7 @@ class ListDocumentReqsResponse$Type extends MessageType<ListDocumentReqsResponse
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.DocRequest requests = 2; */
+        /* repeated resources.documents.requests.DocRequest requests = 2; */
         for (let i = 0; i < message.requests.length; i++)
             DocRequest.internalBinaryWrite(message.requests[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -3346,7 +3346,7 @@ class CreateDocumentReqRequest$Type extends MessageType<CreateDocumentReqRequest
     constructor() {
         super("services.documents.CreateDocumentReqRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "request_type", kind: "enum", T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "buf.validate.field": { enum: { in: [13, 14, 15, 16, 17, 18] } } } },
+            { no: 2, name: "request_type", kind: "enum", T: () => ["resources.documents.activity.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "buf.validate.field": { enum: { in: [13, 14, 15, 16, 17, 18] } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 4, name: "data", kind: "message", T: () => DocActivityData }
         ]);
@@ -3367,13 +3367,13 @@ class CreateDocumentReqRequest$Type extends MessageType<CreateDocumentReqRequest
                 case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* resources.documents.DocActivityType request_type */ 2:
+                case /* resources.documents.activity.DocActivityType request_type */ 2:
                     message.requestType = reader.int32();
                     break;
                 case /* optional string reason */ 3:
                     message.reason = reader.string();
                     break;
-                case /* optional resources.documents.DocActivityData data */ 4:
+                case /* optional resources.documents.activity.DocActivityData data */ 4:
                     message.data = DocActivityData.internalBinaryRead(reader, reader.uint32(), options, message.data);
                     break;
                 default:
@@ -3391,13 +3391,13 @@ class CreateDocumentReqRequest$Type extends MessageType<CreateDocumentReqRequest
         /* int64 document_id = 1; */
         if (message.documentId !== 0)
             writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* resources.documents.DocActivityType request_type = 2; */
+        /* resources.documents.activity.DocActivityType request_type = 2; */
         if (message.requestType !== 0)
             writer.tag(2, WireType.Varint).int32(message.requestType);
         /* optional string reason = 3; */
         if (message.reason !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.reason);
-        /* optional resources.documents.DocActivityData data = 4; */
+        /* optional resources.documents.activity.DocActivityData data = 4; */
         if (message.data)
             DocActivityData.internalBinaryWrite(message.data, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -3428,7 +3428,7 @@ class CreateDocumentReqResponse$Type extends MessageType<CreateDocumentReqRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.DocRequest request */ 1:
+                case /* resources.documents.requests.DocRequest request */ 1:
                     message.request = DocRequest.internalBinaryRead(reader, reader.uint32(), options, message.request);
                     break;
                 default:
@@ -3443,7 +3443,7 @@ class CreateDocumentReqResponse$Type extends MessageType<CreateDocumentReqRespon
         return message;
     }
     internalBinaryWrite(message: CreateDocumentReqResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.DocRequest request = 1; */
+        /* resources.documents.requests.DocRequest request = 1; */
         if (message.request)
             DocRequest.internalBinaryWrite(message.request, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -3490,7 +3490,7 @@ class UpdateDocumentReqRequest$Type extends MessageType<UpdateDocumentReqRequest
                 case /* optional string reason */ 3:
                     message.reason = reader.string();
                     break;
-                case /* optional resources.documents.DocActivityData data */ 4:
+                case /* optional resources.documents.activity.DocActivityData data */ 4:
                     message.data = DocActivityData.internalBinaryRead(reader, reader.uint32(), options, message.data);
                     break;
                 case /* bool accepted */ 5:
@@ -3517,7 +3517,7 @@ class UpdateDocumentReqRequest$Type extends MessageType<UpdateDocumentReqRequest
         /* optional string reason = 3; */
         if (message.reason !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.reason);
-        /* optional resources.documents.DocActivityData data = 4; */
+        /* optional resources.documents.activity.DocActivityData data = 4; */
         if (message.data)
             DocActivityData.internalBinaryWrite(message.data, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* bool accepted = 5; */
@@ -3551,7 +3551,7 @@ class UpdateDocumentReqResponse$Type extends MessageType<UpdateDocumentReqRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.DocRequest request */ 1:
+                case /* resources.documents.requests.DocRequest request */ 1:
                     message.request = DocRequest.internalBinaryRead(reader, reader.uint32(), options, message.request);
                     break;
                 default:
@@ -3566,7 +3566,7 @@ class UpdateDocumentReqResponse$Type extends MessageType<UpdateDocumentReqRespon
         return message;
     }
     internalBinaryWrite(message: UpdateDocumentReqResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.DocRequest request = 1; */
+        /* resources.documents.requests.DocRequest request = 1; */
         if (message.request)
             DocRequest.internalBinaryWrite(message.request, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -3729,7 +3729,7 @@ class GetDocumentAccessResponse$Type extends MessageType<GetDocumentAccessRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.DocumentAccess access */ 1:
+                case /* resources.documents.access.DocumentAccess access */ 1:
                     message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -3744,7 +3744,7 @@ class GetDocumentAccessResponse$Type extends MessageType<GetDocumentAccessRespon
         return message;
     }
     internalBinaryWrite(message: GetDocumentAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.DocumentAccess access = 1; */
+        /* resources.documents.access.DocumentAccess access = 1; */
         if (message.access)
             DocumentAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -3780,7 +3780,7 @@ class SetDocumentAccessRequest$Type extends MessageType<SetDocumentAccessRequest
                 case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* resources.documents.DocumentAccess access */ 2:
+                case /* resources.documents.access.DocumentAccess access */ 2:
                     message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -3798,7 +3798,7 @@ class SetDocumentAccessRequest$Type extends MessageType<SetDocumentAccessRequest
         /* int64 document_id = 1; */
         if (message.documentId !== 0)
             writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* resources.documents.DocumentAccess access = 2; */
+        /* resources.documents.access.DocumentAccess access = 2; */
         if (message.access)
             DocumentAccess.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -3856,7 +3856,7 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 4, name: "relations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.DocRelation", DocRelation, "DOC_RELATION_"], options: { "buf.validate.field": { repeated: { maxItems: "3" } } } },
+            { no: 4, name: "relations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.relations.DocRelation", DocRelation, "DOC_RELATION_"], options: { "buf.validate.field": { repeated: { maxItems: "3" } } } },
             { no: 5, name: "closed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -3882,7 +3882,7 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
                 case /* int32 user_id */ 3:
                     message.userId = reader.int32();
                     break;
-                case /* repeated resources.documents.DocRelation relations */ 4:
+                case /* repeated resources.documents.relations.DocRelation relations */ 4:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.relations.push(reader.int32());
@@ -3913,7 +3913,7 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
         /* int32 user_id = 3; */
         if (message.userId !== 0)
             writer.tag(3, WireType.Varint).int32(message.userId);
-        /* repeated resources.documents.DocRelation relations = 4; */
+        /* repeated resources.documents.relations.DocRelation relations = 4; */
         if (message.relations.length) {
             writer.tag(4, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.relations.length; i++)
@@ -3956,7 +3956,7 @@ class ListUserDocumentsResponse$Type extends MessageType<ListUserDocumentsRespon
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.documents.DocumentRelation relations */ 2:
+                case /* repeated resources.documents.relations.DocumentRelation relations */ 2:
                     message.relations.push(DocumentRelation.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -3974,7 +3974,7 @@ class ListUserDocumentsResponse$Type extends MessageType<ListUserDocumentsRespon
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.DocumentRelation relations = 2; */
+        /* repeated resources.documents.relations.DocumentRelation relations = 2; */
         for (let i = 0; i < message.relations.length; i++)
             DocumentRelation.internalBinaryWrite(message.relations[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -4044,7 +4044,7 @@ class ListCategoriesResponse$Type extends MessageType<ListCategoriesResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.Category categories */ 1:
+                case /* repeated resources.documents.category.Category categories */ 1:
                     message.categories.push(Category.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -4059,7 +4059,7 @@ class ListCategoriesResponse$Type extends MessageType<ListCategoriesResponse> {
         return message;
     }
     internalBinaryWrite(message: ListCategoriesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.Category categories = 1; */
+        /* repeated resources.documents.category.Category categories = 1; */
         for (let i = 0; i < message.categories.length; i++)
             Category.internalBinaryWrite(message.categories[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -4090,7 +4090,7 @@ class CreateOrUpdateCategoryRequest$Type extends MessageType<CreateOrUpdateCateg
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Category category */ 1:
+                case /* resources.documents.category.Category category */ 1:
                     message.category = Category.internalBinaryRead(reader, reader.uint32(), options, message.category);
                     break;
                 default:
@@ -4105,7 +4105,7 @@ class CreateOrUpdateCategoryRequest$Type extends MessageType<CreateOrUpdateCateg
         return message;
     }
     internalBinaryWrite(message: CreateOrUpdateCategoryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Category category = 1; */
+        /* resources.documents.category.Category category = 1; */
         if (message.category)
             Category.internalBinaryWrite(message.category, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -4136,7 +4136,7 @@ class CreateOrUpdateCategoryResponse$Type extends MessageType<CreateOrUpdateCate
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Category category */ 1:
+                case /* resources.documents.category.Category category */ 1:
                     message.category = Category.internalBinaryRead(reader, reader.uint32(), options, message.category);
                     break;
                 default:
@@ -4151,7 +4151,7 @@ class CreateOrUpdateCategoryResponse$Type extends MessageType<CreateOrUpdateCate
         return message;
     }
     internalBinaryWrite(message: CreateOrUpdateCategoryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Category category = 1; */
+        /* resources.documents.category.Category category = 1; */
         if (message.category)
             Category.internalBinaryWrite(message.category, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -4436,7 +4436,7 @@ class ToggleDocumentPinResponse$Type extends MessageType<ToggleDocumentPinRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional resources.documents.DocumentPin pin */ 1:
+                case /* optional resources.documents.pins.DocumentPin pin */ 1:
                     message.pin = DocumentPin.internalBinaryRead(reader, reader.uint32(), options, message.pin);
                     break;
                 default:
@@ -4451,7 +4451,7 @@ class ToggleDocumentPinResponse$Type extends MessageType<ToggleDocumentPinRespon
         return message;
     }
     internalBinaryWrite(message: ToggleDocumentPinResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional resources.documents.DocumentPin pin = 1; */
+        /* optional resources.documents.pins.DocumentPin pin = 1; */
         if (message.pin)
             DocumentPin.internalBinaryWrite(message.pin, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

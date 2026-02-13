@@ -25,6 +25,7 @@
 // source: services/settings/system.proto
 // source: services/stats/stats.proto
 // source: services/sync/sync.proto
+// source: services/sync/v2/sync.proto
 // source: services/vehicles/vehicles.proto
 // source: services/wiki/collab.proto
 // source: services/wiki/wiki.proto
@@ -32,6 +33,11 @@
 package goproto
 
 var PermsRemap = map[string][]string{
+	// Service: auth.AuthService
+	"auth.AuthService/ImpersonateJob": []string{
+		"settings.SettingsService/UpdateRolePerms",
+	},
+
 	// Service: calendar.CalendarService
 	"calendar.CalendarService/CreateOrUpdateCalendarEntry": []string{
 		"Any",

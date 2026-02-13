@@ -9,7 +9,7 @@
 package permssettings
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 )
 
 const (

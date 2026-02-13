@@ -11,13 +11,14 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Workflow } from "./workflow";
 import { File } from "../file/file";
-import { DocumentPin } from "./pins";
-import { UserShort } from "../users/users";
+import { WorkflowUserState } from "./workflow/workflow";
+import { WorkflowState } from "./workflow/workflow";
+import { DocumentPin } from "./pins/pins";
+import { UserShort } from "../users/short/user";
 import { Content } from "../common/content/content";
 import { ContentType } from "../common/content/content";
-import { Category } from "./category";
+import { Category } from "./category/category";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.documents.Document
@@ -44,7 +45,7 @@ export interface Document {
      */
     categoryId?: number;
     /**
-     * @generated from protobuf field: optional resources.documents.Category category = 6
+     * @generated from protobuf field: optional resources.documents.category.Category category = 6
      */
     category?: Category;
     /**
@@ -80,7 +81,7 @@ export interface Document {
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 12
+     * @generated from protobuf field: optional resources.users.short.UserShort creator = 12
      */
     creator?: UserShort;
     /**
@@ -100,15 +101,15 @@ export interface Document {
      */
     templateId?: number;
     /**
-     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 17
+     * @generated from protobuf field: optional resources.documents.pins.DocumentPin pin = 17
      */
     pin?: DocumentPin;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 18
+     * @generated from protobuf field: optional resources.documents.workflow.WorkflowState workflow_state = 18
      */
     workflowState?: WorkflowState;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 19
+     * @generated from protobuf field: optional resources.documents.workflow.WorkflowUserState workflow_user = 19
      */
     workflowUser?: WorkflowUserState;
     /**
@@ -141,7 +142,7 @@ export interface DocumentShort {
      */
     categoryId?: number;
     /**
-     * @generated from protobuf field: optional resources.documents.Category category = 6
+     * @generated from protobuf field: optional resources.documents.category.Category category = 6
      */
     category?: Category;
     /**
@@ -173,7 +174,7 @@ export interface DocumentShort {
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 12
+     * @generated from protobuf field: optional resources.users.short.UserShort creator = 12
      */
     creator?: UserShort;
     /**
@@ -189,15 +190,15 @@ export interface DocumentShort {
      */
     meta?: DocumentMeta;
     /**
-     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 17
+     * @generated from protobuf field: optional resources.documents.pins.DocumentPin pin = 17
      */
     pin?: DocumentPin;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 18
+     * @generated from protobuf field: optional resources.documents.workflow.WorkflowState workflow_state = 18
      */
     workflowState?: WorkflowState;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 19
+     * @generated from protobuf field: optional resources.documents.workflow.WorkflowUserState workflow_user = 19
      */
     workflowUser?: WorkflowUserState;
 }
@@ -278,204 +279,12 @@ export interface DocumentMeta {
      * @generated from protobuf field: optional int32 ap_policies_active = 22
      */
     apPoliciesActive?: number;
-}
-/**
- * @generated from protobuf message resources.documents.DocumentReference
- */
-export interface DocumentReference {
     /**
-     * @generated from protobuf field: optional int64 id = 1
+     * Number of comments on the document
+     *
+     * @generated from protobuf field: optional int32 comment_count = 23
      */
-    id?: number;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: int64 source_document_id = 3
-     */
-    sourceDocumentId: number;
-    /**
-     * @generated from protobuf field: optional resources.documents.DocumentShort source_document = 4
-     */
-    sourceDocument?: DocumentShort;
-    /**
-     * @generated from protobuf field: resources.documents.DocReference reference = 5
-     */
-    reference: DocReference;
-    /**
-     * @generated from protobuf field: int64 target_document_id = 6
-     */
-    targetDocumentId: number;
-    /**
-     * @generated from protobuf field: optional resources.documents.DocumentShort target_document = 7
-     */
-    targetDocument?: DocumentShort;
-    /**
-     * @generated from protobuf field: optional int32 creator_id = 8
-     */
-    creatorId?: number;
-    /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 9
-     */
-    creator?: UserShort;
-}
-/**
- * @generated from protobuf message resources.documents.DocumentRelation
- */
-export interface DocumentRelation {
-    /**
-     * @generated from protobuf field: optional int64 id = 1
-     */
-    id?: number;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: int64 document_id = 3
-     */
-    documentId: number;
-    /**
-     * @generated from protobuf field: optional resources.documents.DocumentShort document = 4
-     */
-    document?: DocumentShort;
-    /**
-     * @generated from protobuf field: int32 source_user_id = 5
-     */
-    sourceUserId: number;
-    /**
-     * @generated from protobuf field: optional resources.users.UserShort source_user = 6
-     */
-    sourceUser?: UserShort;
-    /**
-     * @generated from protobuf field: resources.documents.DocRelation relation = 7
-     */
-    relation: DocRelation;
-    /**
-     * @generated from protobuf field: int32 target_user_id = 8
-     */
-    targetUserId: number;
-    /**
-     * @generated from protobuf field: optional resources.users.UserShort target_user = 9
-     */
-    targetUser?: UserShort;
-}
-/**
- * @generated from protobuf message resources.documents.WorkflowState
- */
-export interface WorkflowState {
-    /**
-     * @generated from protobuf field: int64 document_id = 1
-     */
-    documentId: number;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp next_reminder_time = 2
-     */
-    nextReminderTime?: Timestamp;
-    /**
-     * @generated from protobuf field: optional int32 next_reminder_count = 3
-     */
-    nextReminderCount?: number;
-    /**
-     * @generated from protobuf field: int32 reminder_count = 5
-     */
-    reminderCount: number;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp auto_close_time = 4
-     */
-    autoCloseTime?: Timestamp;
-    /**
-     * @generated from protobuf field: optional resources.documents.Workflow workflow = 6
-     */
-    workflow?: Workflow;
-    /**
-     * @generated from protobuf field: optional resources.documents.DocumentShort document = 7
-     */
-    document?: DocumentShort;
-}
-/**
- * @generated from protobuf message resources.documents.WorkflowUserState
- */
-export interface WorkflowUserState {
-    /**
-     * @generated from protobuf field: int64 document_id = 1
-     */
-    documentId: number;
-    /**
-     * @generated from protobuf field: int32 user_id = 2
-     */
-    userId: number;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp manual_reminder_time = 3
-     */
-    manualReminderTime?: Timestamp;
-    /**
-     * @generated from protobuf field: optional string manual_reminder_message = 4
-     */
-    manualReminderMessage?: string;
-    /**
-     * @generated from protobuf field: int32 reminder_count = 5
-     */
-    reminderCount: number;
-    /**
-     * @generated from protobuf field: int32 max_reminder_count = 6
-     */
-    maxReminderCount: number;
-    /**
-     * @generated from protobuf field: optional resources.documents.Workflow workflow = 7
-     */
-    workflow?: Workflow;
-    /**
-     * @generated from protobuf field: optional resources.documents.DocumentShort document = 8
-     */
-    document?: DocumentShort;
-}
-/**
- * @generated from protobuf enum resources.documents.DocReference
- */
-export enum DocReference {
-    /**
-     * @generated from protobuf enum value: DOC_REFERENCE_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: DOC_REFERENCE_LINKED = 1;
-     */
-    LINKED = 1,
-    /**
-     * @generated from protobuf enum value: DOC_REFERENCE_SOLVES = 2;
-     */
-    SOLVES = 2,
-    /**
-     * @generated from protobuf enum value: DOC_REFERENCE_CLOSES = 3;
-     */
-    CLOSES = 3,
-    /**
-     * @generated from protobuf enum value: DOC_REFERENCE_DEPRECATES = 4;
-     */
-    DEPRECATES = 4
-}
-/**
- * @generated from protobuf enum resources.documents.DocRelation
- */
-export enum DocRelation {
-    /**
-     * @generated from protobuf enum value: DOC_RELATION_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: DOC_RELATION_MENTIONED = 1;
-     */
-    MENTIONED = 1,
-    /**
-     * @generated from protobuf enum value: DOC_RELATION_TARGETS = 2;
-     */
-    TARGETS = 2,
-    /**
-     * @generated from protobuf enum value: DOC_RELATION_CAUSED = 3;
-     */
-    CAUSED = 3
+    commentCount?: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Document$Type extends MessageType<Document> {
@@ -536,7 +345,7 @@ class Document$Type extends MessageType<Document> {
                 case /* optional int64 category_id */ 5:
                     message.categoryId = reader.int64().toNumber();
                     break;
-                case /* optional resources.documents.Category category */ 6:
+                case /* optional resources.documents.category.Category category */ 6:
                     message.category = Category.internalBinaryRead(reader, reader.uint32(), options, message.category);
                     break;
                 case /* string title */ 7:
@@ -560,7 +369,7 @@ class Document$Type extends MessageType<Document> {
                 case /* optional int32 creator_id */ 11:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 12:
+                case /* optional resources.users.short.UserShort creator */ 12:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
                 case /* string creator_job */ 13:
@@ -575,13 +384,13 @@ class Document$Type extends MessageType<Document> {
                 case /* optional int64 template_id */ 16:
                     message.templateId = reader.int64().toNumber();
                     break;
-                case /* optional resources.documents.DocumentPin pin */ 17:
+                case /* optional resources.documents.pins.DocumentPin pin */ 17:
                     message.pin = DocumentPin.internalBinaryRead(reader, reader.uint32(), options, message.pin);
                     break;
-                case /* optional resources.documents.WorkflowState workflow_state */ 18:
+                case /* optional resources.documents.workflow.WorkflowState workflow_state */ 18:
                     message.workflowState = WorkflowState.internalBinaryRead(reader, reader.uint32(), options, message.workflowState);
                     break;
-                case /* optional resources.documents.WorkflowUserState workflow_user */ 19:
+                case /* optional resources.documents.workflow.WorkflowUserState workflow_user */ 19:
                     message.workflowUser = WorkflowUserState.internalBinaryRead(reader, reader.uint32(), options, message.workflowUser);
                     break;
                 case /* repeated resources.file.File files */ 20:
@@ -614,7 +423,7 @@ class Document$Type extends MessageType<Document> {
         /* optional int64 category_id = 5; */
         if (message.categoryId !== undefined)
             writer.tag(5, WireType.Varint).int64(message.categoryId);
-        /* optional resources.documents.Category category = 6; */
+        /* optional resources.documents.category.Category category = 6; */
         if (message.category)
             Category.internalBinaryWrite(message.category, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* string title = 7; */
@@ -632,7 +441,7 @@ class Document$Type extends MessageType<Document> {
         /* optional int32 creator_id = 11; */
         if (message.creatorId !== undefined)
             writer.tag(11, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 12; */
+        /* optional resources.users.short.UserShort creator = 12; */
         if (message.creator)
             UserShort.internalBinaryWrite(message.creator, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         /* string creator_job = 13; */
@@ -647,13 +456,13 @@ class Document$Type extends MessageType<Document> {
         /* optional int64 template_id = 16; */
         if (message.templateId !== undefined)
             writer.tag(16, WireType.Varint).int64(message.templateId);
-        /* optional resources.documents.DocumentPin pin = 17; */
+        /* optional resources.documents.pins.DocumentPin pin = 17; */
         if (message.pin)
             DocumentPin.internalBinaryWrite(message.pin, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowState workflow_state = 18; */
+        /* optional resources.documents.workflow.WorkflowState workflow_state = 18; */
         if (message.workflowState)
             WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowUserState workflow_user = 19; */
+        /* optional resources.documents.workflow.WorkflowUserState workflow_user = 19; */
         if (message.workflowUser)
             WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.file.File files = 20; */
@@ -730,7 +539,7 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
                 case /* optional int64 category_id */ 5:
                     message.categoryId = reader.int64().toNumber();
                     break;
-                case /* optional resources.documents.Category category */ 6:
+                case /* optional resources.documents.category.Category category */ 6:
                     message.category = Category.internalBinaryRead(reader, reader.uint32(), options, message.category);
                     break;
                 case /* string title */ 7:
@@ -751,7 +560,7 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
                 case /* optional int32 creator_id */ 11:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 12:
+                case /* optional resources.users.short.UserShort creator */ 12:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
                 case /* string creator_job */ 13:
@@ -763,13 +572,13 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
                 case /* resources.documents.DocumentMeta meta */ 15:
                     message.meta = DocumentMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
                     break;
-                case /* optional resources.documents.DocumentPin pin */ 17:
+                case /* optional resources.documents.pins.DocumentPin pin */ 17:
                     message.pin = DocumentPin.internalBinaryRead(reader, reader.uint32(), options, message.pin);
                     break;
-                case /* optional resources.documents.WorkflowState workflow_state */ 18:
+                case /* optional resources.documents.workflow.WorkflowState workflow_state */ 18:
                     message.workflowState = WorkflowState.internalBinaryRead(reader, reader.uint32(), options, message.workflowState);
                     break;
-                case /* optional resources.documents.WorkflowUserState workflow_user */ 19:
+                case /* optional resources.documents.workflow.WorkflowUserState workflow_user */ 19:
                     message.workflowUser = WorkflowUserState.internalBinaryRead(reader, reader.uint32(), options, message.workflowUser);
                     break;
                 default:
@@ -799,7 +608,7 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         /* optional int64 category_id = 5; */
         if (message.categoryId !== undefined)
             writer.tag(5, WireType.Varint).int64(message.categoryId);
-        /* optional resources.documents.Category category = 6; */
+        /* optional resources.documents.category.Category category = 6; */
         if (message.category)
             Category.internalBinaryWrite(message.category, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* string title = 7; */
@@ -814,7 +623,7 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         /* optional int32 creator_id = 11; */
         if (message.creatorId !== undefined)
             writer.tag(11, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 12; */
+        /* optional resources.users.short.UserShort creator = 12; */
         if (message.creator)
             UserShort.internalBinaryWrite(message.creator, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         /* string creator_job = 13; */
@@ -826,13 +635,13 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         /* resources.documents.DocumentMeta meta = 15; */
         if (message.meta)
             DocumentMeta.internalBinaryWrite(message.meta, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.DocumentPin pin = 17; */
+        /* optional resources.documents.pins.DocumentPin pin = 17; */
         if (message.pin)
             DocumentPin.internalBinaryWrite(message.pin, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowState workflow_state = 18; */
+        /* optional resources.documents.workflow.WorkflowState workflow_state = 18; */
         if (message.workflowState)
             WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowUserState workflow_user = 19; */
+        /* optional resources.documents.workflow.WorkflowUserState workflow_user = 19; */
         if (message.workflowUser)
             WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
         /* optional uint32 word_count = 21; */
@@ -868,7 +677,8 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
             { no: 19, name: "ap_declined_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 20, name: "ap_pending_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 21, name: "ap_any_declined", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 22, name: "ap_policies_active", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 22, name: "ap_policies_active", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 23, name: "comment_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<DocumentMeta>): DocumentMeta {
@@ -929,6 +739,9 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
                 case /* optional int32 ap_policies_active */ 22:
                     message.apPoliciesActive = reader.int32();
                     break;
+                case /* optional int32 comment_count */ 23:
+                    message.commentCount = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -983,6 +796,9 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
         /* optional int32 ap_policies_active = 22; */
         if (message.apPoliciesActive !== undefined)
             writer.tag(22, WireType.Varint).int32(message.apPoliciesActive);
+        /* optional int32 comment_count = 23; */
+        if (message.commentCount !== undefined)
+            writer.tag(23, WireType.Varint).int32(message.commentCount);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -993,403 +809,3 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
  * @generated MessageType for protobuf message resources.documents.DocumentMeta
  */
 export const DocumentMeta = new DocumentMeta$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DocumentReference$Type extends MessageType<DocumentReference> {
-    constructor() {
-        super("resources.documents.DocumentReference", [
-            { no: 1, name: "id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "source_document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"source_document_id\"" } },
-            { no: 4, name: "source_document", kind: "message", T: () => DocumentShort, options: { "tagger.tags": "alias:\"source_document\"" } },
-            { no: 5, name: "reference", kind: "enum", T: () => ["resources.documents.DocReference", DocReference, "DOC_REFERENCE_"], options: { "buf.validate.field": { enum: { definedOnly: true } }, "tagger.tags": "alias:\"reference\"" } },
-            { no: 6, name: "target_document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"target_document_id\"" } },
-            { no: 7, name: "target_document", kind: "message", T: () => DocumentShort, options: { "tagger.tags": "alias:\"target_document\"" } },
-            { no: 8, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 9, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"ref_creator\"" } }
-        ]);
-    }
-    create(value?: PartialMessage<DocumentReference>): DocumentReference {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.sourceDocumentId = 0;
-        message.reference = 0;
-        message.targetDocumentId = 0;
-        if (value !== undefined)
-            reflectionMergePartial<DocumentReference>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DocumentReference): DocumentReference {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* optional int64 id */ 1:
-                    message.id = reader.int64().toNumber();
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 2:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* int64 source_document_id */ 3:
-                    message.sourceDocumentId = reader.int64().toNumber();
-                    break;
-                case /* optional resources.documents.DocumentShort source_document */ 4:
-                    message.sourceDocument = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.sourceDocument);
-                    break;
-                case /* resources.documents.DocReference reference */ 5:
-                    message.reference = reader.int32();
-                    break;
-                case /* int64 target_document_id */ 6:
-                    message.targetDocumentId = reader.int64().toNumber();
-                    break;
-                case /* optional resources.documents.DocumentShort target_document */ 7:
-                    message.targetDocument = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.targetDocument);
-                    break;
-                case /* optional int32 creator_id */ 8:
-                    message.creatorId = reader.int32();
-                    break;
-                case /* optional resources.users.UserShort creator */ 9:
-                    message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DocumentReference, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional int64 id = 1; */
-        if (message.id !== undefined)
-            writer.tag(1, WireType.Varint).int64(message.id);
-        /* optional resources.timestamp.Timestamp created_at = 2; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* int64 source_document_id = 3; */
-        if (message.sourceDocumentId !== 0)
-            writer.tag(3, WireType.Varint).int64(message.sourceDocumentId);
-        /* optional resources.documents.DocumentShort source_document = 4; */
-        if (message.sourceDocument)
-            DocumentShort.internalBinaryWrite(message.sourceDocument, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.DocReference reference = 5; */
-        if (message.reference !== 0)
-            writer.tag(5, WireType.Varint).int32(message.reference);
-        /* int64 target_document_id = 6; */
-        if (message.targetDocumentId !== 0)
-            writer.tag(6, WireType.Varint).int64(message.targetDocumentId);
-        /* optional resources.documents.DocumentShort target_document = 7; */
-        if (message.targetDocument)
-            DocumentShort.internalBinaryWrite(message.targetDocument, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* optional int32 creator_id = 8; */
-        if (message.creatorId !== undefined)
-            writer.tag(8, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 9; */
-        if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.DocumentReference
- */
-export const DocumentReference = new DocumentReference$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DocumentRelation$Type extends MessageType<DocumentRelation> {
-    constructor() {
-        super("resources.documents.DocumentRelation", [
-            { no: 1, name: "id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 4, name: "document", kind: "message", T: () => DocumentShort, options: { "tagger.tags": "alias:\"document\"" } },
-            { no: 5, name: "source_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } }, "tagger.tags": "alias:\"source_user_id\"" } },
-            { no: 6, name: "source_user", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"source_user\"" } },
-            { no: 7, name: "relation", kind: "enum", T: () => ["resources.documents.DocRelation", DocRelation, "DOC_RELATION_"], options: { "buf.validate.field": { enum: { definedOnly: true } }, "tagger.tags": "alias:\"relation\"" } },
-            { no: 8, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } }, "tagger.tags": "alias:\"target_user_id\"" } },
-            { no: 9, name: "target_user", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"target_user\"" } }
-        ]);
-    }
-    create(value?: PartialMessage<DocumentRelation>): DocumentRelation {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentId = 0;
-        message.sourceUserId = 0;
-        message.relation = 0;
-        message.targetUserId = 0;
-        if (value !== undefined)
-            reflectionMergePartial<DocumentRelation>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DocumentRelation): DocumentRelation {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* optional int64 id */ 1:
-                    message.id = reader.int64().toNumber();
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 2:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* int64 document_id */ 3:
-                    message.documentId = reader.int64().toNumber();
-                    break;
-                case /* optional resources.documents.DocumentShort document */ 4:
-                    message.document = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.document);
-                    break;
-                case /* int32 source_user_id */ 5:
-                    message.sourceUserId = reader.int32();
-                    break;
-                case /* optional resources.users.UserShort source_user */ 6:
-                    message.sourceUser = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.sourceUser);
-                    break;
-                case /* resources.documents.DocRelation relation */ 7:
-                    message.relation = reader.int32();
-                    break;
-                case /* int32 target_user_id */ 8:
-                    message.targetUserId = reader.int32();
-                    break;
-                case /* optional resources.users.UserShort target_user */ 9:
-                    message.targetUser = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.targetUser);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DocumentRelation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional int64 id = 1; */
-        if (message.id !== undefined)
-            writer.tag(1, WireType.Varint).int64(message.id);
-        /* optional resources.timestamp.Timestamp created_at = 2; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* int64 document_id = 3; */
-        if (message.documentId !== 0)
-            writer.tag(3, WireType.Varint).int64(message.documentId);
-        /* optional resources.documents.DocumentShort document = 4; */
-        if (message.document)
-            DocumentShort.internalBinaryWrite(message.document, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* int32 source_user_id = 5; */
-        if (message.sourceUserId !== 0)
-            writer.tag(5, WireType.Varint).int32(message.sourceUserId);
-        /* optional resources.users.UserShort source_user = 6; */
-        if (message.sourceUser)
-            UserShort.internalBinaryWrite(message.sourceUser, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.DocRelation relation = 7; */
-        if (message.relation !== 0)
-            writer.tag(7, WireType.Varint).int32(message.relation);
-        /* int32 target_user_id = 8; */
-        if (message.targetUserId !== 0)
-            writer.tag(8, WireType.Varint).int32(message.targetUserId);
-        /* optional resources.users.UserShort target_user = 9; */
-        if (message.targetUser)
-            UserShort.internalBinaryWrite(message.targetUser, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.DocumentRelation
- */
-export const DocumentRelation = new DocumentRelation$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class WorkflowState$Type extends MessageType<WorkflowState> {
-    constructor() {
-        super("resources.documents.WorkflowState", [
-            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "next_reminder_time", kind: "message", T: () => Timestamp },
-            { no: 3, name: "next_reminder_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 5, name: "reminder_count", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 10, gte: 1 } } } },
-            { no: 4, name: "auto_close_time", kind: "message", T: () => Timestamp },
-            { no: 6, name: "workflow", kind: "message", T: () => Workflow, options: { "tagger.tags": "alias:\"workflow\"" } },
-            { no: 7, name: "document", kind: "message", T: () => DocumentShort }
-        ]);
-    }
-    create(value?: PartialMessage<WorkflowState>): WorkflowState {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentId = 0;
-        message.reminderCount = 0;
-        if (value !== undefined)
-            reflectionMergePartial<WorkflowState>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WorkflowState): WorkflowState {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 document_id */ 1:
-                    message.documentId = reader.int64().toNumber();
-                    break;
-                case /* optional resources.timestamp.Timestamp next_reminder_time */ 2:
-                    message.nextReminderTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.nextReminderTime);
-                    break;
-                case /* optional int32 next_reminder_count */ 3:
-                    message.nextReminderCount = reader.int32();
-                    break;
-                case /* int32 reminder_count */ 5:
-                    message.reminderCount = reader.int32();
-                    break;
-                case /* optional resources.timestamp.Timestamp auto_close_time */ 4:
-                    message.autoCloseTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.autoCloseTime);
-                    break;
-                case /* optional resources.documents.Workflow workflow */ 6:
-                    message.workflow = Workflow.internalBinaryRead(reader, reader.uint32(), options, message.workflow);
-                    break;
-                case /* optional resources.documents.DocumentShort document */ 7:
-                    message.document = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.document);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: WorkflowState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 document_id = 1; */
-        if (message.documentId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* optional resources.timestamp.Timestamp next_reminder_time = 2; */
-        if (message.nextReminderTime)
-            Timestamp.internalBinaryWrite(message.nextReminderTime, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional int32 next_reminder_count = 3; */
-        if (message.nextReminderCount !== undefined)
-            writer.tag(3, WireType.Varint).int32(message.nextReminderCount);
-        /* optional resources.timestamp.Timestamp auto_close_time = 4; */
-        if (message.autoCloseTime)
-            Timestamp.internalBinaryWrite(message.autoCloseTime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* int32 reminder_count = 5; */
-        if (message.reminderCount !== 0)
-            writer.tag(5, WireType.Varint).int32(message.reminderCount);
-        /* optional resources.documents.Workflow workflow = 6; */
-        if (message.workflow)
-            Workflow.internalBinaryWrite(message.workflow, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.DocumentShort document = 7; */
-        if (message.document)
-            DocumentShort.internalBinaryWrite(message.document, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.WorkflowState
- */
-export const WorkflowState = new WorkflowState$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class WorkflowUserState$Type extends MessageType<WorkflowUserState> {
-    constructor() {
-        super("resources.documents.WorkflowUserState", [
-            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 3, name: "manual_reminder_time", kind: "message", T: () => Timestamp },
-            { no: 4, name: "manual_reminder_message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 5, name: "reminder_count", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 10, gte: 1 } } } },
-            { no: 6, name: "max_reminder_count", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 10, gte: 1 } } } },
-            { no: 7, name: "workflow", kind: "message", T: () => Workflow, options: { "tagger.tags": "alias:\"workflow\"" } },
-            { no: 8, name: "document", kind: "message", T: () => DocumentShort }
-        ]);
-    }
-    create(value?: PartialMessage<WorkflowUserState>): WorkflowUserState {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentId = 0;
-        message.userId = 0;
-        message.reminderCount = 0;
-        message.maxReminderCount = 0;
-        if (value !== undefined)
-            reflectionMergePartial<WorkflowUserState>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WorkflowUserState): WorkflowUserState {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 document_id */ 1:
-                    message.documentId = reader.int64().toNumber();
-                    break;
-                case /* int32 user_id */ 2:
-                    message.userId = reader.int32();
-                    break;
-                case /* optional resources.timestamp.Timestamp manual_reminder_time */ 3:
-                    message.manualReminderTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.manualReminderTime);
-                    break;
-                case /* optional string manual_reminder_message */ 4:
-                    message.manualReminderMessage = reader.string();
-                    break;
-                case /* int32 reminder_count */ 5:
-                    message.reminderCount = reader.int32();
-                    break;
-                case /* int32 max_reminder_count */ 6:
-                    message.maxReminderCount = reader.int32();
-                    break;
-                case /* optional resources.documents.Workflow workflow */ 7:
-                    message.workflow = Workflow.internalBinaryRead(reader, reader.uint32(), options, message.workflow);
-                    break;
-                case /* optional resources.documents.DocumentShort document */ 8:
-                    message.document = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.document);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: WorkflowUserState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 document_id = 1; */
-        if (message.documentId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* int32 user_id = 2; */
-        if (message.userId !== 0)
-            writer.tag(2, WireType.Varint).int32(message.userId);
-        /* optional resources.timestamp.Timestamp manual_reminder_time = 3; */
-        if (message.manualReminderTime)
-            Timestamp.internalBinaryWrite(message.manualReminderTime, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional string manual_reminder_message = 4; */
-        if (message.manualReminderMessage !== undefined)
-            writer.tag(4, WireType.LengthDelimited).string(message.manualReminderMessage);
-        /* int32 reminder_count = 5; */
-        if (message.reminderCount !== 0)
-            writer.tag(5, WireType.Varint).int32(message.reminderCount);
-        /* int32 max_reminder_count = 6; */
-        if (message.maxReminderCount !== 0)
-            writer.tag(6, WireType.Varint).int32(message.maxReminderCount);
-        /* optional resources.documents.Workflow workflow = 7; */
-        if (message.workflow)
-            Workflow.internalBinaryWrite(message.workflow, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.DocumentShort document = 8; */
-        if (message.document)
-            DocumentShort.internalBinaryWrite(message.document, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.WorkflowUserState
- */
-export const WorkflowUserState = new WorkflowUserState$Type();

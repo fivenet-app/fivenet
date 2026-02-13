@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NuxtImg } from '#components';
 import { getSettingsAccountsClient } from '~~/gen/ts/clients';
-import type { OAuth2Account } from '~~/gen/ts/resources/accounts/oauth2';
+import type { OAuth2Account } from '~~/gen/ts/resources/accounts/oauth2/oauth2';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
@@ -42,10 +42,10 @@ const provider = computed(() => auth.providers.find((p) => p.name === props.conn
 </script>
 
 <template>
-    <UPageCard>
+    <UPageCard :ui="{ body: 'w-full' }">
         <template #title>
-            <div class="flex flex-1 gap-2">
-                <UButton class="inline-flex flex-1 gap-2" variant="ghost" external :to="provider?.homepage" target="_blank">
+            <div class="flex w-full flex-1 gap-2">
+                <UButton class="flex flex-1 gap-2" variant="ghost" external :to="provider?.homepage" target="_blank">
                     <NuxtImg
                         v-if="!provider?.icon?.startsWith('i-')"
                         class="size-8"
@@ -61,7 +61,7 @@ const provider = computed(() => auth.providers.find((p) => p.name === props.conn
                         :style="provider.name === 'discord' && { color: '#7289da' }"
                     />
 
-                    <div class="flex items-center gap-1.5 text-base font-semibold text-highlighted">
+                    <div class="flex-1 items-center text-base font-semibold text-highlighted">
                         {{ provider?.label }}
                     </div>
                 </UButton>
@@ -79,11 +79,11 @@ const provider = computed(() => auth.providers.find((p) => p.name === props.conn
         </template>
 
         <template v-if="connection" #footer>
-            <div class="inline-flex items-center gap-4">
+            <div class="inline-flex items-center gap-4 px-2">
                 <template v-if="connection">
                     <UAvatar size="lg" :src="connection.avatar" :alt="$t('common.image')" />
 
-                    <UTooltip :text="`ID: ${connection.externalId}`">
+                    <UTooltip :text="`${$t('common.id')}: ${connection.externalId}`">
                         <span class="text-left">
                             {{ connection.username }}
                         </span>

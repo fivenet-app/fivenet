@@ -12,15 +12,15 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Colleague } from "../../resources/jobs/colleagues";
-import { TimeclockEntry } from "../../resources/jobs/timeclock";
+import { Colleague } from "../../resources/jobs/colleagues/colleagues";
+import { TimeclockEntry } from "../../resources/jobs/timeclock/timeclock";
 import { Timestamp } from "../../resources/timestamp/timestamp";
-import { TimeclockWeeklyStats } from "../../resources/jobs/timeclock";
-import { TimeclockStats } from "../../resources/jobs/timeclock";
+import { TimeclockWeeklyStats } from "../../resources/jobs/timeclock/timeclock";
+import { TimeclockStats } from "../../resources/jobs/timeclock/timeclock";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { DateRange } from "../../resources/common/database/database";
-import { TimeclockMode } from "../../resources/jobs/timeclock";
-import { TimeclockViewMode } from "../../resources/jobs/timeclock";
+import { TimeclockMode } from "../../resources/jobs/timeclock/timeclock";
+import { TimeclockViewMode } from "../../resources/jobs/timeclock/timeclock";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Time Clock
@@ -40,11 +40,11 @@ export interface ListTimeclockRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: resources.jobs.TimeclockViewMode user_mode = 3
+     * @generated from protobuf field: resources.jobs.timeclock.TimeclockViewMode user_mode = 3
      */
     userMode: TimeclockViewMode;
     /**
-     * @generated from protobuf field: resources.jobs.TimeclockMode mode = 4
+     * @generated from protobuf field: resources.jobs.timeclock.TimeclockMode mode = 4
      */
     mode: TimeclockMode;
     /**
@@ -69,11 +69,11 @@ export interface ListTimeclockResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: resources.jobs.TimeclockStats stats = 2
+     * @generated from protobuf field: resources.jobs.timeclock.TimeclockStats stats = 2
      */
     stats?: TimeclockStats;
     /**
-     * @generated from protobuf field: repeated resources.jobs.TimeclockWeeklyStats stats_weekly = 3
+     * @generated from protobuf field: repeated resources.jobs.timeclock.TimeclockWeeklyStats stats_weekly = 3
      */
     statsWeekly: TimeclockWeeklyStats[];
     /**
@@ -110,7 +110,7 @@ export interface TimeclockDay {
      */
     date?: Timestamp;
     /**
-     * @generated from protobuf field: repeated resources.jobs.TimeclockEntry entries = 2
+     * @generated from protobuf field: repeated resources.jobs.timeclock.TimeclockEntry entries = 2
      */
     entries: TimeclockEntry[];
     /**
@@ -127,7 +127,7 @@ export interface TimeclockWeekly {
      */
     date?: Timestamp;
     /**
-     * @generated from protobuf field: repeated resources.jobs.TimeclockEntry entries = 2
+     * @generated from protobuf field: repeated resources.jobs.timeclock.TimeclockEntry entries = 2
      */
     entries: TimeclockEntry[];
     /**
@@ -144,7 +144,7 @@ export interface TimeclockRange {
      */
     date?: Timestamp;
     /**
-     * @generated from protobuf field: repeated resources.jobs.TimeclockEntry entries = 2
+     * @generated from protobuf field: repeated resources.jobs.timeclock.TimeclockEntry entries = 2
      */
     entries: TimeclockEntry[];
     /**
@@ -166,11 +166,11 @@ export interface GetTimeclockStatsRequest {
  */
 export interface GetTimeclockStatsResponse {
     /**
-     * @generated from protobuf field: resources.jobs.TimeclockStats stats = 1
+     * @generated from protobuf field: resources.jobs.timeclock.TimeclockStats stats = 1
      */
     stats?: TimeclockStats;
     /**
-     * @generated from protobuf field: repeated resources.jobs.TimeclockWeeklyStats weekly = 2
+     * @generated from protobuf field: repeated resources.jobs.timeclock.TimeclockWeeklyStats weekly = 2
      */
     weekly: TimeclockWeeklyStats[];
 }
@@ -202,7 +202,7 @@ export interface ListInactiveEmployeesResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.jobs.Colleague colleagues = 2
+     * @generated from protobuf field: repeated resources.jobs.colleagues.Colleague colleagues = 2
      */
     colleagues: Colleague[];
 }
@@ -212,8 +212,8 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
         super("services.jobs.ListTimeclockRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "user_mode", kind: "enum", T: () => ["resources.jobs.TimeclockViewMode", TimeclockViewMode, "TIMECLOCK_VIEW_MODE_"] },
-            { no: 4, name: "mode", kind: "enum", T: () => ["resources.jobs.TimeclockMode", TimeclockMode, "TIMECLOCK_MODE_"] },
+            { no: 3, name: "user_mode", kind: "enum", T: () => ["resources.jobs.timeclock.TimeclockViewMode", TimeclockViewMode, "TIMECLOCK_VIEW_MODE_"] },
+            { no: 4, name: "mode", kind: "enum", T: () => ["resources.jobs.timeclock.TimeclockMode", TimeclockMode, "TIMECLOCK_MODE_"] },
             { no: 5, name: "date", kind: "message", T: () => DateRange },
             { no: 6, name: "per_day", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 7, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "15" } } } }
@@ -240,10 +240,10 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
                 case /* optional resources.common.database.Sort sort */ 2:
                     message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
                     break;
-                case /* resources.jobs.TimeclockViewMode user_mode */ 3:
+                case /* resources.jobs.timeclock.TimeclockViewMode user_mode */ 3:
                     message.userMode = reader.int32();
                     break;
-                case /* resources.jobs.TimeclockMode mode */ 4:
+                case /* resources.jobs.timeclock.TimeclockMode mode */ 4:
                     message.mode = reader.int32();
                     break;
                 case /* optional resources.common.database.DateRange date */ 5:
@@ -277,10 +277,10 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
         /* optional resources.common.database.Sort sort = 2; */
         if (message.sort)
             Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.TimeclockViewMode user_mode = 3; */
+        /* resources.jobs.timeclock.TimeclockViewMode user_mode = 3; */
         if (message.userMode !== 0)
             writer.tag(3, WireType.Varint).int32(message.userMode);
-        /* resources.jobs.TimeclockMode mode = 4; */
+        /* resources.jobs.timeclock.TimeclockMode mode = 4; */
         if (message.mode !== 0)
             writer.tag(4, WireType.Varint).int32(message.mode);
         /* optional resources.common.database.DateRange date = 5; */
@@ -334,10 +334,10 @@ class ListTimeclockResponse$Type extends MessageType<ListTimeclockResponse> {
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* resources.jobs.TimeclockStats stats */ 2:
+                case /* resources.jobs.timeclock.TimeclockStats stats */ 2:
                     message.stats = TimeclockStats.internalBinaryRead(reader, reader.uint32(), options, message.stats);
                     break;
-                case /* repeated resources.jobs.TimeclockWeeklyStats stats_weekly */ 3:
+                case /* repeated resources.jobs.timeclock.TimeclockWeeklyStats stats_weekly */ 3:
                     message.statsWeekly.push(TimeclockWeeklyStats.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* services.jobs.TimeclockDay daily */ 4:
@@ -373,10 +373,10 @@ class ListTimeclockResponse$Type extends MessageType<ListTimeclockResponse> {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.TimeclockStats stats = 2; */
+        /* resources.jobs.timeclock.TimeclockStats stats = 2; */
         if (message.stats)
             TimeclockStats.internalBinaryWrite(message.stats, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.TimeclockWeeklyStats stats_weekly = 3; */
+        /* repeated resources.jobs.timeclock.TimeclockWeeklyStats stats_weekly = 3; */
         for (let i = 0; i < message.statsWeekly.length; i++)
             TimeclockWeeklyStats.internalBinaryWrite(message.statsWeekly[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* services.jobs.TimeclockDay daily = 4; */
@@ -423,7 +423,7 @@ class TimeclockDay$Type extends MessageType<TimeclockDay> {
                 case /* resources.timestamp.Timestamp date */ 1:
                     message.date = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.date);
                     break;
-                case /* repeated resources.jobs.TimeclockEntry entries */ 2:
+                case /* repeated resources.jobs.timeclock.TimeclockEntry entries */ 2:
                     message.entries.push(TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* int64 sum */ 3:
@@ -444,7 +444,7 @@ class TimeclockDay$Type extends MessageType<TimeclockDay> {
         /* resources.timestamp.Timestamp date = 1; */
         if (message.date)
             Timestamp.internalBinaryWrite(message.date, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.TimeclockEntry entries = 2; */
+        /* repeated resources.jobs.timeclock.TimeclockEntry entries = 2; */
         for (let i = 0; i < message.entries.length; i++)
             TimeclockEntry.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* int64 sum = 3; */
@@ -485,7 +485,7 @@ class TimeclockWeekly$Type extends MessageType<TimeclockWeekly> {
                 case /* resources.timestamp.Timestamp date */ 1:
                     message.date = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.date);
                     break;
-                case /* repeated resources.jobs.TimeclockEntry entries */ 2:
+                case /* repeated resources.jobs.timeclock.TimeclockEntry entries */ 2:
                     message.entries.push(TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* int64 sum */ 3:
@@ -506,7 +506,7 @@ class TimeclockWeekly$Type extends MessageType<TimeclockWeekly> {
         /* resources.timestamp.Timestamp date = 1; */
         if (message.date)
             Timestamp.internalBinaryWrite(message.date, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.TimeclockEntry entries = 2; */
+        /* repeated resources.jobs.timeclock.TimeclockEntry entries = 2; */
         for (let i = 0; i < message.entries.length; i++)
             TimeclockEntry.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* int64 sum = 3; */
@@ -547,7 +547,7 @@ class TimeclockRange$Type extends MessageType<TimeclockRange> {
                 case /* resources.timestamp.Timestamp date */ 1:
                     message.date = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.date);
                     break;
-                case /* repeated resources.jobs.TimeclockEntry entries */ 2:
+                case /* repeated resources.jobs.timeclock.TimeclockEntry entries */ 2:
                     message.entries.push(TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* int64 sum */ 3:
@@ -568,7 +568,7 @@ class TimeclockRange$Type extends MessageType<TimeclockRange> {
         /* resources.timestamp.Timestamp date = 1; */
         if (message.date)
             Timestamp.internalBinaryWrite(message.date, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.TimeclockEntry entries = 2; */
+        /* repeated resources.jobs.timeclock.TimeclockEntry entries = 2; */
         for (let i = 0; i < message.entries.length; i++)
             TimeclockEntry.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* int64 sum = 3; */
@@ -650,10 +650,10 @@ class GetTimeclockStatsResponse$Type extends MessageType<GetTimeclockStatsRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.TimeclockStats stats */ 1:
+                case /* resources.jobs.timeclock.TimeclockStats stats */ 1:
                     message.stats = TimeclockStats.internalBinaryRead(reader, reader.uint32(), options, message.stats);
                     break;
-                case /* repeated resources.jobs.TimeclockWeeklyStats weekly */ 2:
+                case /* repeated resources.jobs.timeclock.TimeclockWeeklyStats weekly */ 2:
                     message.weekly.push(TimeclockWeeklyStats.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -668,10 +668,10 @@ class GetTimeclockStatsResponse$Type extends MessageType<GetTimeclockStatsRespon
         return message;
     }
     internalBinaryWrite(message: GetTimeclockStatsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.TimeclockStats stats = 1; */
+        /* resources.jobs.timeclock.TimeclockStats stats = 1; */
         if (message.stats)
             TimeclockStats.internalBinaryWrite(message.stats, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.TimeclockWeeklyStats weekly = 2; */
+        /* repeated resources.jobs.timeclock.TimeclockWeeklyStats weekly = 2; */
         for (let i = 0; i < message.weekly.length; i++)
             TimeclockWeeklyStats.internalBinaryWrite(message.weekly[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -768,7 +768,7 @@ class ListInactiveEmployeesResponse$Type extends MessageType<ListInactiveEmploye
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.jobs.Colleague colleagues */ 2:
+                case /* repeated resources.jobs.colleagues.Colleague colleagues */ 2:
                     message.colleagues.push(Colleague.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -786,7 +786,7 @@ class ListInactiveEmployeesResponse$Type extends MessageType<ListInactiveEmploye
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.Colleague colleagues = 2; */
+        /* repeated resources.jobs.colleagues.Colleague colleagues = 2; */
         for (let i = 0; i < message.colleagues.length; i++)
             Colleague.internalBinaryWrite(message.colleagues[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

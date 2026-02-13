@@ -14,7 +14,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { ToggleItem } from '~/utils/types';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
-import { DocRelation, type DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { DocRelation, type DocumentRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import type { ListUserDocumentsResponse } from '~~/gen/ts/services/documents/documents';
 
 const props = defineProps<{
@@ -137,7 +137,6 @@ const columns = computed(
                         onClick: () => column.toggleSorting(isSorted === 'asc'),
                     });
                 },
-                sortable: true,
                 cell: ({ row }) => h(GenericTime, { value: row.original.createdAt }),
             },
             {

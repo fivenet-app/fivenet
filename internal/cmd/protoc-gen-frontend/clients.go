@@ -6,7 +6,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	pgs "github.com/lyft/protoc-gen-star/v2"
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )
@@ -85,7 +85,6 @@ func (p *ClientsModule) Execute(
 				}
 
 				importPath := strings.ReplaceAll(string(s.File().Name()), ".proto", "") + ".client"
-
 				data.Svcs[categoryName] = append(data.Svcs[categoryName], svcClientInfo{
 					Svc:    utils.StringFirstToLower(strings.ReplaceAll(sName, "Service", "")),
 					Client: sName + "Client",
@@ -112,7 +111,7 @@ import { useGRPCTransport } from '~/composables/useGRPCTransport';
     {{- range $svc := $service }}
 
 // Factory for {{ $sName }}.{{ $svc.Svc }} client.
-export async function get{{ title $sName }}{{ title $svc.Svc }}Client() {
+export async function get{{ replace (title $sName) ".v" "V" }}{{ title $svc.Svc }}Client() {
     const { {{ $svc.Client }} } = await import('~~/gen/ts/{{ $svc.Import }}');
     return new {{ $svc.Client }}(useGRPCTransport());
 }

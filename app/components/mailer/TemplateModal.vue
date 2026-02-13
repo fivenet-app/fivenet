@@ -7,7 +7,7 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
-import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
+import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
 import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
 import { canAccess } from './helpers';
 import TemplateEditForm from './TemplateEditForm.vue';

@@ -3,7 +3,7 @@ package croner
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 )
 
 type NoopCron struct {

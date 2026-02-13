@@ -5,14 +5,16 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -27,14 +29,15 @@ func (s *Server) ListAccounts(
 	req *pbsettings.ListAccountsRequest,
 ) (*pbsettings.ListAccountsResponse, error) {
 	var t mysql.ReadableTable = tAccounts
+
 	condition := mysql.Bool(true)
 	if req.License != nil && req.GetLicense() != "" {
 		condition = condition.AND(
 			tAccounts.License.LIKE(mysql.String(fmt.Sprintf("%%%s%%", req.GetLicense()))),
 		)
 	}
-	if req.Enabled != nil {
-		condition = condition.AND(tAccounts.Enabled.EQ(mysql.Bool(req.GetEnabled())))
+	if req.GetOnlyDisabled() {
+		condition = condition.AND(tAccounts.Enabled.EQ(mysql.Bool(false)))
 	}
 	if req.Username != nil && req.GetUsername() != "" {
 		condition = condition.AND(
@@ -45,8 +48,14 @@ func (s *Server) ListAccounts(
 		condition = condition.AND(
 			tOauth2.ExternalID.LIKE(mysql.String(fmt.Sprintf("%%%s%%", req.GetExternalId()))),
 		)
-		t = t.INNER_JOIN(tOauth2,
-			tOauth2.AccountID.EQ(tAccounts.ID),
+		t = t.
+			INNER_JOIN(tOauth2,
+				tOauth2.AccountID.EQ(tAccounts.ID),
+			)
+	}
+	if req.Group != nil && req.GetGroup() != "" {
+		condition = condition.AND(
+			dbutils.JSON_CONTAINS(tAccounts.Groups, mysql.String(req.GetGroup())),
 		)
 	}
 
@@ -131,6 +140,7 @@ func (s *Server) ListAccounts(
 			tAccounts.Enabled,
 			tAccounts.Username,
 			tAccounts.License,
+			tAccounts.Groups,
 			tAccounts.LastChar,
 			tOauth2.AccountID,
 			tOauth2.CreatedAt,
@@ -165,6 +175,7 @@ func (s *Server) getAccount(ctx context.Context, id int64) (*accounts.Account, e
 			tAccounts.Enabled,
 			tAccounts.Username,
 			tAccounts.License,
+			tAccounts.Groups,
 			tAccounts.LastChar,
 		).
 		FROM(tAccounts).
@@ -259,6 +270,12 @@ func (s *Server) DeleteAccount(
 	ctx context.Context,
 	req *pbsettings.DeleteAccountRequest,
 ) (*pbsettings.DeleteAccountResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	if userInfo.GetAccountId() == req.GetId() {
+		return nil, errorssettings.ErrCannotDeleteOwnAccount
+	}
+
 	tAccounts := table.FivenetAccounts
 
 	stmt := tAccounts.

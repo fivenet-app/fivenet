@@ -4,15 +4,16 @@
 // 	protoc        (unknown)
 // source: resources/common/i18n.proto
 
+//go:build !protoopaque
+
 package common
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -25,7 +26,7 @@ const (
 
 // Wrapped translated message for the client
 type I18NItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	Parameters    map[string]string      `protobuf:"bytes,2,rep,name=parameters,proto3" json:"parameters,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
@@ -57,11 +58,6 @@ func (x *I18NItem) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use I18NItem.ProtoReflect.Descriptor instead.
-func (*I18NItem) Descriptor() ([]byte, []int) {
-	return file_resources_common_i18n_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *I18NItem) GetKey() string {
 	if x != nil {
 		return x.Key
@@ -76,6 +72,30 @@ func (x *I18NItem) GetParameters() map[string]string {
 	return nil
 }
 
+func (x *I18NItem) SetKey(v string) {
+	x.Key = v
+}
+
+func (x *I18NItem) SetParameters(v map[string]string) {
+	x.Parameters = v
+}
+
+type I18NItem_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Key        string
+	Parameters map[string]string
+}
+
+func (b0 I18NItem_builder) Build() *I18NItem {
+	m0 := &I18NItem{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Key = b.Key
+	x.Parameters = b.Parameters
+	return m0
+}
+
 var File_resources_common_i18n_proto protoreflect.FileDescriptor
 
 const file_resources_common_i18n_proto_rawDesc = "" +
@@ -88,19 +108,7 @@ const file_resources_common_i18n_proto_rawDesc = "" +
 	"parameters\x1a=\n" +
 	"\x0fParametersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01:\x06\xe2\xf3\x18\x02\b\x01BKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;commonb\x06proto3"
-
-var (
-	file_resources_common_i18n_proto_rawDescOnce sync.Once
-	file_resources_common_i18n_proto_rawDescData []byte
-)
-
-func file_resources_common_i18n_proto_rawDescGZIP() []byte {
-	file_resources_common_i18n_proto_rawDescOnce.Do(func() {
-		file_resources_common_i18n_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_common_i18n_proto_rawDesc), len(file_resources_common_i18n_proto_rawDesc)))
-	})
-	return file_resources_common_i18n_proto_rawDescData
-}
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01:\x06\xe2\xf3\x18\x02\b\x01BKZIgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common;commonb\x06proto3"
 
 var file_resources_common_i18n_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_common_i18n_proto_goTypes = []any{

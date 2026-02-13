@@ -6,12 +6,12 @@ import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
-import "resources/jobs/colleagues.proto";
-import "resources/jobs/timeclock.proto";
+import "resources/jobs/colleagues/colleagues.proto";
+import "resources/jobs/timeclock/timeclock.proto";
 import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobs";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobs";
 
 // Time Clock
 
@@ -19,8 +19,8 @@ message ListTimeclockRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  resources.jobs.TimeclockViewMode user_mode = 3;
-  resources.jobs.TimeclockMode mode = 4;
+  resources.jobs.timeclock.TimeclockViewMode user_mode = 3;
+  resources.jobs.timeclock.TimeclockMode mode = 4;
   optional resources.common.database.DateRange date = 5;
   bool per_day = 6;
   repeated int32 user_ids = 7 [(buf.validate.field).repeated.max_items = 15];
@@ -28,8 +28,8 @@ message ListTimeclockRequest {
 
 message ListTimeclockResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  resources.jobs.TimeclockStats stats = 2;
-  repeated resources.jobs.TimeclockWeeklyStats stats_weekly = 3;
+  resources.jobs.timeclock.TimeclockStats stats = 2;
+  repeated resources.jobs.timeclock.TimeclockWeeklyStats stats_weekly = 3;
 
   oneof entries {
     option (buf.validate.oneof).required = true;
@@ -42,19 +42,19 @@ message ListTimeclockResponse {
 
 message TimeclockDay {
   resources.timestamp.Timestamp date = 1;
-  repeated resources.jobs.TimeclockEntry entries = 2;
+  repeated resources.jobs.timeclock.TimeclockEntry entries = 2;
   int64 sum = 3;
 }
 
 message TimeclockWeekly {
   resources.timestamp.Timestamp date = 1 [(tagger.tags) = "sql:\"primary_key\""];
-  repeated resources.jobs.TimeclockEntry entries = 2;
+  repeated resources.jobs.timeclock.TimeclockEntry entries = 2;
   int64 sum = 3;
 }
 
 message TimeclockRange {
   resources.timestamp.Timestamp date = 1 [(tagger.tags) = "sql:\"primary_key\""];
-  repeated resources.jobs.TimeclockEntry entries = 2;
+  repeated resources.jobs.timeclock.TimeclockEntry entries = 2;
   int64 sum = 3;
 }
 
@@ -63,8 +63,8 @@ message GetTimeclockStatsRequest {
 }
 
 message GetTimeclockStatsResponse {
-  resources.jobs.TimeclockStats stats = 1;
-  repeated resources.jobs.TimeclockWeeklyStats weekly = 2;
+  resources.jobs.timeclock.TimeclockStats stats = 1;
+  repeated resources.jobs.timeclock.TimeclockWeeklyStats weekly = 2;
 }
 
 message ListInactiveEmployeesRequest {
@@ -76,7 +76,7 @@ message ListInactiveEmployeesRequest {
 
 message ListInactiveEmployeesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.jobs.Colleague colleagues = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.jobs.colleagues.Colleague colleagues = 2 [(codegen.itemslen.enabled) = true];
 }
 
 service TimeclockService {

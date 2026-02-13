@@ -3,8 +3,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import { DocRelation } from '~~/gen/ts/resources/documents/documents';
-import { UserActivityType, type UserActivity } from '~~/gen/ts/resources/users/activity';
+import { DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
+import { UserActivityType, type UserActivity } from '~~/gen/ts/resources/users/activity/activity';
 
 const props = defineProps<{
     activity: UserActivity;
@@ -54,9 +54,8 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                     <div class="flex items-center justify-between">
                         <p class="inline-flex gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
-                            <span>
-                                {{ activity.reason }}
-                            </span>
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <span v-html="activity.reason" />
                         </p>
 
                         <p v-if="activity.sourceUser" class="inline-flex text-sm">
@@ -163,9 +162,8 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                     <div class="flex items-center justify-between">
                         <p class="inline-flex gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
-                            <span>
-                                {{ activity.reason }}
-                            </span>
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <span v-html="activity.reason" />
                         </p>
 
                         <p v-if="activity.sourceUser" class="inline-flex text-sm">
@@ -203,9 +201,8 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                     <div class="flex items-center justify-between">
                         <p class="inline-flex gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
-                            <span>
-                                {{ activity.reason }}
-                            </span>
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <span v-html="activity.reason" />
                         </p>
 
                         <p v-if="activity.sourceUser" class="inline-flex text-sm">
@@ -265,9 +262,8 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                     <div class="flex items-center justify-between">
                         <p class="inline-flex gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
-                            <span>
-                                {{ activity.reason }}
-                            </span>
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <span v-html="activity.reason" />
                         </p>
 
                         <p v-if="activity.sourceUser" class="inline-flex text-sm">
@@ -308,9 +304,8 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                     <div class="flex items-center justify-between">
                         <p class="inline-flex gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
-                            <span>
-                                {{ activity.reason }}
-                            </span>
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <span v-html="activity.reason" />
                         </p>
 
                         <p v-if="activity.sourceUser" class="inline-flex text-sm">
@@ -366,9 +361,8 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                     <div class="flex items-center justify-between">
                         <p class="inline-flex gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
-                            <span>
-                                {{ activity.reason }}
-                            </span>
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <span v-html="activity.reason" />
                         </p>
 
                         <p v-if="activity.sourceUser" class="inline-flex text-sm">
@@ -408,9 +402,8 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                     <div class="flex items-center justify-between">
                         <p class="inline-flex gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
-                            <span>
-                                {{ activity.reason }}
-                            </span>
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <span v-html="activity.reason" />
                         </p>
 
                         <p v-if="activity.sourceUser" class="inline-flex text-sm">
@@ -511,9 +504,8 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                     <div class="flex items-center justify-between">
                         <p class="inline-flex gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
-                            <span>
-                                {{ activity.reason }}
-                            </span>
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <span v-html="activity.reason" />
                         </p>
 
                         <p v-if="activity.sourceUser" class="inline-flex text-sm">
@@ -545,9 +537,8 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                     <div class="flex items-center justify-between">
                         <p class="inline-flex gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
-                            <span>
-                                {{ activity.reason }}
-                            </span>
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <span v-html="activity.reason" />
                         </p>
 
                         <p v-if="activity.sourceUser" class="inline-flex text-sm">

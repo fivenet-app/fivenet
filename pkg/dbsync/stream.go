@@ -7,19 +7,18 @@ import (
 	"strings"
 	"time"
 
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2025/pkg/version"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 func (s *Sync) RunStream(ctx context.Context) {
-	defer s.wg.Done()
-
 	for range 3 {
-		s.wg.Add(1)
-		go s.streamWorker(ctx)
+		s.wg.Go(func() {
+			s.streamWorker(ctx)
+		})
 	}
 
 	for {
@@ -66,8 +65,10 @@ func (s *Sync) runStream(ctx context.Context) error {
 					st.Message(),
 					"unexpected HTTP status code received from server: 524",
 				) {
-					// TODO find a better way to detect Cloudflare timeouts
-					s.logger.Debug("stream ended with Cloudflare timeout", zap.Error(err))
+					s.logger.Debug(
+						"stream ended with gateway timeout (524; Cloudflare?)",
+						zap.Error(err),
+					)
 					return nil
 				}
 
@@ -83,8 +84,6 @@ func (s *Sync) runStream(ctx context.Context) error {
 }
 
 func (s *Sync) streamWorker(ctx context.Context) {
-	defer s.wg.Done()
-
 	for {
 		select {
 		case <-ctx.Done():

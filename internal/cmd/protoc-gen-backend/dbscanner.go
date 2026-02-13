@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	dbscannerpb "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	dbscannerpb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	pgs "github.com/lyft/protoc-gen-star/v2"
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )
@@ -130,7 +130,7 @@ package {{ package .F }}
 import (
 	"database/sql/driver"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/paulmach/orb"
 	"google.golang.org/protobuf/proto"
 )
@@ -141,6 +141,11 @@ func (x *{{ $message }}) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
 		return {{ $info.Unmarshal }}([]byte(t), x)
+    case *string:
+        if t == nil {
+            return nil
+        }
+        return {{ $info.Unmarshal }}([]byte(*t), x)
 	case []byte:
 		return {{ $info.Unmarshal }}(t, x)
 	}

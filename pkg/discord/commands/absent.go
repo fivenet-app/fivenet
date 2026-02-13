@@ -11,17 +11,17 @@ import (
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/utils/json/option"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	permsjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs/perms"
-	lang "github.com/fivenet-app/fivenet/v2025/i18n"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
-	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/timeutils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
+	lang "github.com/fivenet-app/fivenet/v2026/i18n"
+	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
+	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/timeutils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	dateparser "github.com/markusmobius/go-dateparser"
@@ -29,7 +29,6 @@ import (
 
 var (
 	tAccsOauth2        = table.FivenetAccountsOauth2
-	tAccs              = table.FivenetAccounts
 	tColleagueProps    = table.FivenetJobColleagueProps
 	tColleagueActivity = table.FivenetJobColleagueActivity
 )
@@ -288,7 +287,7 @@ func (c *AbsentCommand) getUserIDByJobAndDiscordID(
 	job string,
 	discordId discord.UserID,
 ) (int32, int32, error) {
-	tUsers := tables.User().AS("user")
+	tUsers := table.FivenetUser.AS("user")
 
 	stmt := tAccsOauth2.
 		SELECT(
@@ -297,12 +296,9 @@ func (c *AbsentCommand) getUserIDByJobAndDiscordID(
 		).
 		FROM(
 			tAccsOauth2.
-				INNER_JOIN(tAccs,
-					tAccs.ID.EQ(tAccsOauth2.AccountID),
-				).
 				INNER_JOIN(tUsers,
 					mysql.AND(
-						tUsers.Identifier.LIKE(mysql.CONCAT(mysql.String("%"), tAccs.License)),
+						tUsers.AccountID.EQ(tAccsOauth2.AccountID),
 						tUsers.Job.EQ(mysql.String(job)),
 					)),
 		).
@@ -343,7 +339,7 @@ func (c *AbsentCommand) createAbsenceForUser(
 		)).
 		LIMIT(1)
 
-	props := jobs.ColleagueProps{}
+	props := jobscolleagues.ColleagueProps{}
 	if err := checkStmt.QueryContext(ctx, c.db, &props); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return false, err
@@ -403,11 +399,11 @@ func (c *AbsentCommand) createAbsenceForUser(
 			job,
 			charId,
 			charId,
-			jobs.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE,
+			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE,
 			reason,
-			&jobs.ColleagueActivityData{
-				Data: &jobs.ColleagueActivityData_AbsenceDate{
-					AbsenceDate: &jobs.AbsenceDateChange{
+			&colleaguesactivity.ColleagueActivityData{
+				Data: &colleaguesactivity.ColleagueActivityData_AbsenceDate{
+					AbsenceDate: &colleaguesactivity.AbsenceDateChange{
 						AbsenceBegin: timestamp.New(absenceBegin),
 						AbsenceEnd:   timestamp.New(absenceEnd),
 					},

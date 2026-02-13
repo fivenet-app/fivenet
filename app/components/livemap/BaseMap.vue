@@ -23,10 +23,10 @@ import 'leaflet.heat';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
 import { simpleGraticule } from '~/composables/leaflet/L.SimpleGraticule';
 import { useLivemapStore } from '~/stores/livemap';
-import { backgroundColorList, tileLayers } from '~/types/livemap';
-import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
-import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
+import { backgroundColorList, overlayCayoPericoBounds, tileLayers } from '~/types/livemap';
+import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
+import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
 import ClusterPickerCard from './ClusterPickerCard.vue';
 import LayerControls from './controls/LayerControls.vue';
 import HeatmapLayer from './HeatmapLayer.vue';
@@ -43,6 +43,8 @@ const emit = defineEmits<{
 }>();
 
 const { can } = useAuth();
+
+const { game } = useAppConfig();
 
 const settingsStore = useSettingsStore();
 const { livemapTileLayer, livemapLayers, livemap: livemapSettings } = storeToRefs(settingsStore);
@@ -273,14 +275,17 @@ async function onMapReady(m: Map): Promise<void> {
         map.eachLayer((layer) => {
             const name = (layer.options as { name?: string })['name'];
             if (name === undefined) return;
-            if (!livemapLayers.value.find((l) => l.key === name)?.visible) {
-                hiddenCount++;
-                return;
-            }
+            const hidden = !livemapLayers.value.find((l) => l.key === name)?.visible;
 
             eachMarkerIn(layer, (m) => {
                 const pos = map.latLngToContainerPoint(m.getLatLng());
-                if (pos.distanceTo(px) <= radiusPx && !hits.find((hit) => stamp(hit) === stamp(m))) hits.push(m);
+                if (pos.distanceTo(px) > radiusPx || hits.find((hit) => stamp(hit) === stamp(m))) return;
+
+                if (hidden) {
+                    hiddenCount++;
+                } else {
+                    hits.push(m);
+                }
             });
         });
         return { hits: hits, hiddenCount: hiddenCount };
@@ -349,9 +354,7 @@ defineExpose({
     mapResize,
 });
 
-onBeforeUnmount(() => {
-    map = undefined;
-});
+onBeforeUnmount(() => (map = undefined));
 </script>
 
 <template>
@@ -382,7 +385,13 @@ onBeforeUnmount(() => {
                 :visible="livemapTileLayer === layer.key"
                 :min-zoom="1"
                 :max-zoom="layer.options?.maxZoom || 7"
-                :attribution="layer.options?.attribution || ''"
+                :attribution="layer.options?.attribution || undefined"
+            />
+
+            <LImageOverlay
+                v-if="game.livemap?.enableCayoPerico"
+                :url="`/images/livemap/overlays/cayo-perico/${livemapTileLayer}.webp`"
+                :bounds="overlayCayoPericoBounds"
             />
 
             <ZoomControls />

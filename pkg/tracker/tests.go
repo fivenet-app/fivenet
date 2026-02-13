@@ -3,10 +3,10 @@ package tracker
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
+	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
+	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/fx"
 )
@@ -14,11 +14,11 @@ import (
 type TestTracker struct {
 	ITracker
 
-	broker *broker.Broker[*store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker]]
+	broker *broker.Broker[*store.KeyValueEntry[livemapmarkers.UserMarker, *livemapmarkers.UserMarker]]
 
 	jobs       []string
-	usersCache *xsync.Map[string, *xsync.Map[int32, *livemap.UserMarker]]
-	usersIDs   *xsync.Map[int32, *livemap.UserMarker]
+	usersCache *xsync.Map[string, *xsync.Map[int32, *livemapmarkers.UserMarker]]
+	usersIDs   *xsync.Map[int32, *livemapmarkers.UserMarker]
 }
 
 type TestParams struct {
@@ -29,10 +29,10 @@ type TestParams struct {
 
 func NewForTests(p TestParams) ITracker {
 	t := &TestTracker{
-		usersCache: xsync.NewMap[string, *xsync.Map[int32, *livemap.UserMarker]](),
-		usersIDs:   xsync.NewMap[int32, *livemap.UserMarker](),
+		usersCache: xsync.NewMap[string, *xsync.Map[int32, *livemapmarkers.UserMarker]](),
+		usersIDs:   xsync.NewMap[int32, *livemapmarkers.UserMarker](),
 
-		broker: broker.New[*store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker]](),
+		broker: broker.New[*store.KeyValueEntry[livemapmarkers.UserMarker, *livemapmarkers.UserMarker]](),
 	}
 
 	brokerCtx, brokerCancel := context.WithCancel(context.Background())
@@ -55,7 +55,10 @@ func (s *TestTracker) ListTrackedJobs() []string {
 	return s.jobs
 }
 
-func (s *TestTracker) GetUserByJobAndID(job string, userId int32) (*livemap.UserMarker, bool) {
+func (s *TestTracker) GetUserByJobAndID(
+	job string,
+	userId int32,
+) (*livemapmarkers.UserMarker, bool) {
 	users, ok := s.usersCache.Load(job)
 	if !ok {
 		return nil, false
@@ -77,7 +80,7 @@ func (s *TestTracker) IsUserOnDuty(userId int32) bool {
 	return true
 }
 
-func (s *TestTracker) GetUserMarkerById(id int32) (*livemap.UserMarker, bool) {
+func (s *TestTracker) GetUserMarkerById(id int32) (*livemapmarkers.UserMarker, bool) {
 	info, ok := s.usersIDs.Load(id)
 	if !ok {
 		return nil, false
@@ -88,21 +91,21 @@ func (s *TestTracker) GetUserMarkerById(id int32) (*livemap.UserMarker, bool) {
 
 func (s *TestTracker) Subscribe(
 	_ context.Context,
-) (store.IKVWatcher[livemap.UserMarker, *livemap.UserMarker], error) {
-	return &TestKVWatcher[livemap.UserMarker, *livemap.UserMarker]{
+) (store.IKVWatcher[livemapmarkers.UserMarker, *livemapmarkers.UserMarker], error) {
+	return &TestKVWatcher[livemapmarkers.UserMarker, *livemapmarkers.UserMarker]{
 		broker: s.broker,
 	}, nil
 }
 
 type TestKVWatcher[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
-	broker *broker.Broker[*store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker]]
+	broker *broker.Broker[*store.KeyValueEntry[livemapmarkers.UserMarker, *livemapmarkers.UserMarker]]
 }
 
 func (w *TestKVWatcher[T, U]) Stop() error {
 	return nil
 }
 
-func (w *TestKVWatcher[T, U]) Updates() <-chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker] {
+func (w *TestKVWatcher[T, U]) Updates() <-chan *store.KeyValueEntry[livemapmarkers.UserMarker, *livemapmarkers.UserMarker] {
 	return w.broker.Subscribe()
 }
 

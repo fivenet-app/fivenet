@@ -12,12 +12,12 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { LabelCount } from "../../resources/jobs/labels";
-import { Label } from "../../resources/jobs/labels";
-import { ColleagueProps } from "../../resources/jobs/colleagues";
-import { ColleagueActivity } from "../../resources/jobs/activity";
-import { ColleagueActivityType } from "../../resources/jobs/activity";
-import { Colleague } from "../../resources/jobs/colleagues";
+import { LabelCount } from "../../resources/jobs/labels/labels";
+import { Label } from "../../resources/jobs/labels/labels";
+import { ColleagueProps } from "../../resources/jobs/colleagues/colleagues";
+import { ColleagueActivity } from "../../resources/jobs/colleagues/activity/activity";
+import { ColleagueActivityType } from "../../resources/jobs/colleagues/activity/activity";
+import { Colleague } from "../../resources/jobs/colleagues/colleagues";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
@@ -75,7 +75,7 @@ export interface ListColleaguesResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.jobs.Colleague colleagues = 2
+     * @generated from protobuf field: repeated resources.jobs.colleagues.Colleague colleagues = 2
      */
     colleagues: Colleague[];
 }
@@ -89,7 +89,7 @@ export interface GetSelfRequest {
  */
 export interface GetSelfResponse {
     /**
-     * @generated from protobuf field: resources.jobs.Colleague colleague = 1
+     * @generated from protobuf field: resources.jobs.colleagues.Colleague colleague = 1
      */
     colleague?: Colleague;
 }
@@ -111,7 +111,7 @@ export interface GetColleagueRequest {
  */
 export interface GetColleagueResponse {
     /**
-     * @generated from protobuf field: resources.jobs.Colleague colleague = 1
+     * @generated from protobuf field: resources.jobs.colleagues.Colleague colleague = 1
      */
     colleague?: Colleague;
 }
@@ -134,7 +134,7 @@ export interface ListColleagueActivityRequest {
      */
     userIds: number[];
     /**
-     * @generated from protobuf field: repeated resources.jobs.ColleagueActivityType activity_types = 4
+     * @generated from protobuf field: repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types = 4
      */
     activityTypes: ColleagueActivityType[];
 }
@@ -147,7 +147,7 @@ export interface ListColleagueActivityResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.jobs.ColleagueActivity activity = 2
+     * @generated from protobuf field: repeated resources.jobs.colleagues.activity.ColleagueActivity activity = 2
      */
     activity: ColleagueActivity[];
 }
@@ -156,7 +156,7 @@ export interface ListColleagueActivityResponse {
  */
 export interface SetColleaguePropsRequest {
     /**
-     * @generated from protobuf field: resources.jobs.ColleagueProps props = 1
+     * @generated from protobuf field: resources.jobs.colleagues.ColleagueProps props = 1
      */
     props?: ColleagueProps;
     /**
@@ -169,7 +169,7 @@ export interface SetColleaguePropsRequest {
  */
 export interface SetColleaguePropsResponse {
     /**
-     * @generated from protobuf field: resources.jobs.ColleagueProps props = 1
+     * @generated from protobuf field: resources.jobs.colleagues.ColleagueProps props = 1
      */
     props?: ColleagueProps;
 }
@@ -187,7 +187,7 @@ export interface GetColleagueLabelsRequest {
  */
 export interface GetColleagueLabelsResponse {
     /**
-     * @generated from protobuf field: repeated resources.jobs.Label labels = 1
+     * @generated from protobuf field: repeated resources.jobs.labels.Label labels = 1
      */
     labels: Label[];
 }
@@ -196,7 +196,7 @@ export interface GetColleagueLabelsResponse {
  */
 export interface ManageLabelsRequest {
     /**
-     * @generated from protobuf field: repeated resources.jobs.Label labels = 1
+     * @generated from protobuf field: repeated resources.jobs.labels.Label labels = 1
      */
     labels: Label[];
 }
@@ -205,7 +205,7 @@ export interface ManageLabelsRequest {
  */
 export interface ManageLabelsResponse {
     /**
-     * @generated from protobuf field: repeated resources.jobs.Label labels = 1
+     * @generated from protobuf field: repeated resources.jobs.labels.Label labels = 1
      */
     labels: Label[];
 }
@@ -223,7 +223,7 @@ export interface GetColleagueLabelsStatsRequest {
  */
 export interface GetColleagueLabelsStatsResponse {
     /**
-     * @generated from protobuf field: repeated resources.jobs.LabelCount count = 1
+     * @generated from protobuf field: repeated resources.jobs.labels.LabelCount count = 1
      */
     count: LabelCount[];
 }
@@ -405,7 +405,7 @@ class ListColleaguesResponse$Type extends MessageType<ListColleaguesResponse> {
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.jobs.Colleague colleagues */ 2:
+                case /* repeated resources.jobs.colleagues.Colleague colleagues */ 2:
                     message.colleagues.push(Colleague.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -423,7 +423,7 @@ class ListColleaguesResponse$Type extends MessageType<ListColleaguesResponse> {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.Colleague colleagues = 2; */
+        /* repeated resources.jobs.colleagues.Colleague colleagues = 2; */
         for (let i = 0; i < message.colleagues.length; i++)
             Colleague.internalBinaryWrite(message.colleagues[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -492,7 +492,7 @@ class GetSelfResponse$Type extends MessageType<GetSelfResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.Colleague colleague */ 1:
+                case /* resources.jobs.colleagues.Colleague colleague */ 1:
                     message.colleague = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.colleague);
                     break;
                 default:
@@ -507,7 +507,7 @@ class GetSelfResponse$Type extends MessageType<GetSelfResponse> {
         return message;
     }
     internalBinaryWrite(message: GetSelfResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.Colleague colleague = 1; */
+        /* resources.jobs.colleagues.Colleague colleague = 1; */
         if (message.colleague)
             Colleague.internalBinaryWrite(message.colleague, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -592,7 +592,7 @@ class GetColleagueResponse$Type extends MessageType<GetColleagueResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.Colleague colleague */ 1:
+                case /* resources.jobs.colleagues.Colleague colleague */ 1:
                     message.colleague = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.colleague);
                     break;
                 default:
@@ -607,7 +607,7 @@ class GetColleagueResponse$Type extends MessageType<GetColleagueResponse> {
         return message;
     }
     internalBinaryWrite(message: GetColleagueResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.Colleague colleague = 1; */
+        /* resources.jobs.colleagues.Colleague colleague = 1; */
         if (message.colleague)
             Colleague.internalBinaryWrite(message.colleague, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -627,7 +627,7 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.ColleagueActivityType", ColleagueActivityType, "COLLEAGUE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10" } } } }
+            { no: 4, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.colleagues.activity.ColleagueActivityType", ColleagueActivityType, "COLLEAGUE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10" } } } }
         ]);
     }
     create(value?: PartialMessage<ListColleagueActivityRequest>): ListColleagueActivityRequest {
@@ -656,7 +656,7 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
                     else
                         message.userIds.push(reader.int32());
                     break;
-                case /* repeated resources.jobs.ColleagueActivityType activity_types */ 4:
+                case /* repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types */ 4:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.activityTypes.push(reader.int32());
@@ -688,7 +688,7 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
                 writer.int32(message.userIds[i]);
             writer.join();
         }
-        /* repeated resources.jobs.ColleagueActivityType activity_types = 4; */
+        /* repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types = 4; */
         if (message.activityTypes.length) {
             writer.tag(4, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.activityTypes.length; i++)
@@ -728,7 +728,7 @@ class ListColleagueActivityResponse$Type extends MessageType<ListColleagueActivi
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.jobs.ColleagueActivity activity */ 2:
+                case /* repeated resources.jobs.colleagues.activity.ColleagueActivity activity */ 2:
                     message.activity.push(ColleagueActivity.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -746,7 +746,7 @@ class ListColleagueActivityResponse$Type extends MessageType<ListColleagueActivi
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.ColleagueActivity activity = 2; */
+        /* repeated resources.jobs.colleagues.activity.ColleagueActivity activity = 2; */
         for (let i = 0; i < message.activity.length; i++)
             ColleagueActivity.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -779,7 +779,7 @@ class SetColleaguePropsRequest$Type extends MessageType<SetColleaguePropsRequest
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.ColleagueProps props */ 1:
+                case /* resources.jobs.colleagues.ColleagueProps props */ 1:
                     message.props = ColleagueProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
                 case /* string reason */ 2:
@@ -797,7 +797,7 @@ class SetColleaguePropsRequest$Type extends MessageType<SetColleaguePropsRequest
         return message;
     }
     internalBinaryWrite(message: SetColleaguePropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.ColleagueProps props = 1; */
+        /* resources.jobs.colleagues.ColleagueProps props = 1; */
         if (message.props)
             ColleagueProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* string reason = 2; */
@@ -831,7 +831,7 @@ class SetColleaguePropsResponse$Type extends MessageType<SetColleaguePropsRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.ColleagueProps props */ 1:
+                case /* resources.jobs.colleagues.ColleagueProps props */ 1:
                     message.props = ColleagueProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
                 default:
@@ -846,7 +846,7 @@ class SetColleaguePropsResponse$Type extends MessageType<SetColleaguePropsRespon
         return message;
     }
     internalBinaryWrite(message: SetColleaguePropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.ColleagueProps props = 1; */
+        /* resources.jobs.colleagues.ColleagueProps props = 1; */
         if (message.props)
             ColleagueProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -924,7 +924,7 @@ class GetColleagueLabelsResponse$Type extends MessageType<GetColleagueLabelsResp
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.jobs.Label labels */ 1:
+                case /* repeated resources.jobs.labels.Label labels */ 1:
                     message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -939,7 +939,7 @@ class GetColleagueLabelsResponse$Type extends MessageType<GetColleagueLabelsResp
         return message;
     }
     internalBinaryWrite(message: GetColleagueLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.jobs.Label labels = 1; */
+        /* repeated resources.jobs.labels.Label labels = 1; */
         for (let i = 0; i < message.labels.length; i++)
             Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -971,7 +971,7 @@ class ManageLabelsRequest$Type extends MessageType<ManageLabelsRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.jobs.Label labels */ 1:
+                case /* repeated resources.jobs.labels.Label labels */ 1:
                     message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -986,7 +986,7 @@ class ManageLabelsRequest$Type extends MessageType<ManageLabelsRequest> {
         return message;
     }
     internalBinaryWrite(message: ManageLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.jobs.Label labels = 1; */
+        /* repeated resources.jobs.labels.Label labels = 1; */
         for (let i = 0; i < message.labels.length; i++)
             Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1018,7 +1018,7 @@ class ManageLabelsResponse$Type extends MessageType<ManageLabelsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.jobs.Label labels */ 1:
+                case /* repeated resources.jobs.labels.Label labels */ 1:
                     message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1033,7 +1033,7 @@ class ManageLabelsResponse$Type extends MessageType<ManageLabelsResponse> {
         return message;
     }
     internalBinaryWrite(message: ManageLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.jobs.Label labels = 1; */
+        /* repeated resources.jobs.labels.Label labels = 1; */
         for (let i = 0; i < message.labels.length; i++)
             Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1120,7 +1120,7 @@ class GetColleagueLabelsStatsResponse$Type extends MessageType<GetColleagueLabel
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.jobs.LabelCount count */ 1:
+                case /* repeated resources.jobs.labels.LabelCount count */ 1:
                     message.count.push(LabelCount.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1135,7 +1135,7 @@ class GetColleagueLabelsStatsResponse$Type extends MessageType<GetColleagueLabel
         return message;
     }
     internalBinaryWrite(message: GetColleagueLabelsStatsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.jobs.LabelCount count = 1; */
+        /* repeated resources.jobs.labels.LabelCount count = 1; */
         for (let i = 0; i < message.count.length; i++)
             LabelCount.internalBinaryWrite(message.count[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

@@ -2,7 +2,7 @@
 package filestore
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )

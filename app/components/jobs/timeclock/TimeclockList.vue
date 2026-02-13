@@ -14,10 +14,11 @@ import { useCompletorStore } from '~/stores/completor';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
-import { TimeclockMode, TimeclockViewMode } from '~~/gen/ts/resources/jobs/timeclock';
+import { TimeclockMode, TimeclockViewMode } from '~~/gen/ts/resources/jobs/timeclock/timeclock';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 import ColleagueName from '../colleagues/ColleagueName.vue';
+import TimeclockStatsDrawer from './TimeclockStatsDrawer.vue';
 import TimeclockTimeline from './TimeclockTimeline.vue';
 
 const props = withDefaults(
@@ -186,7 +187,6 @@ const columns = computed(() => [
     {
         accessorKey: 'date',
         header: t('common.date'),
-        sortable: true,
         meta: {
             class: {
                 td:
@@ -203,7 +203,6 @@ const columns = computed(() => [
     {
         accessorKey: 'name',
         header: t('common.name'),
-        sortable: canAccessAll.value && props.userId === undefined,
         meta: {
             class: {
                 td: props.userId === undefined && query.viewMode === TimeclockViewMode.ALL ? '' : 'hidden',
@@ -214,7 +213,6 @@ const columns = computed(() => [
     {
         accessorKey: 'rank',
         header: t('common.rank'),
-        sortable: true,
         meta: {
             class: {
                 td:
@@ -237,7 +235,6 @@ const columns = computed(() => [
     {
         accessorKey: 'time',
         header: t('common.time'),
-        sortable: true,
     },
 ]);
 
@@ -621,27 +618,13 @@ const { game } = useAppConfig();
                                     :ui="{ leadingIcon: 'hidden sm:block' }"
                                 />
 
-                                <UDrawer>
-                                    <UButton
-                                        :label="$t('common.stats')"
-                                        color="neutral"
-                                        variant="subtle"
-                                        icon="i-mdi-graph-line"
-                                        :ui="{ leadingIcon: 'hidden sm:block' }"
-                                    />
-
-                                    <template #content>
-                                        <div class="p-4">
-                                            <LazyJobsTimeclockStatsBlock
-                                                :weekly="data?.statsWeekly"
-                                                :stats="data?.stats"
-                                                hide-header
-                                                :failed="!!error"
-                                                :loading="isRequestPending(status)"
-                                            />
-                                        </div>
-                                    </template>
-                                </UDrawer>
+                                <TimeclockStatsDrawer
+                                    :stats="data?.stats"
+                                    :weekly="data?.statsWeekly"
+                                    hide-header
+                                    :error="error"
+                                    :loading="isRequestPending(status)"
+                                />
                             </UFieldGroup>
                         </div>
 

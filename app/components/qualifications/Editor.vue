@@ -13,14 +13,17 @@ import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
-import type { ExamQuestionSeparator, ExamQuestionYesNo } from '~~/gen/ts/resources/qualifications/exam';
+import { AccessLevel } from '~~/gen/ts/resources/qualifications/access/access';
 import {
-    type Qualification,
-    type QualificationRequirement,
-    type QualificationShort,
+    type ExamQuestionSeparator,
+    type ExamQuestionYesNo,
     AutoGradeMode,
     QualificationExamMode,
+} from '~~/gen/ts/resources/qualifications/exam/exam';
+import type {
+    Qualification,
+    QualificationRequirement,
+    QualificationShort,
 } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UpdateQualificationRequest, UpdateQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import BackButton from '../partials/BackButton.vue';

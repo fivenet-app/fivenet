@@ -3,17 +3,17 @@ package qualifications
 import (
 	"database/sql"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
-	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
+	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -71,7 +71,7 @@ type Server struct {
 	notif    notifi.INotifi
 	st       storage.IStorage
 
-	access *access.Grouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, access.DummyQualificationAccess[qualifications.AccessLevel], *access.DummyQualificationAccess[qualifications.AccessLevel], qualifications.AccessLevel]
+	access *access.Grouped[qualificationsaccess.QualificationJobAccess, *qualificationsaccess.QualificationJobAccess, qualificationsaccess.QualificationUserAccess, *qualificationsaccess.QualificationUserAccess, access.DummyQualificationAccess[qualificationsaccess.AccessLevel], *access.DummyQualificationAccess[qualificationsaccess.AccessLevel], qualificationsaccess.AccessLevel]
 
 	fHandler *filestore.Handler[int64]
 }
@@ -115,7 +115,7 @@ func NewServer(p Params) *Server {
 		notif:    p.Notif,
 		st:       p.Storage,
 
-		access: access.NewGrouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, access.DummyQualificationAccess[qualifications.AccessLevel], *access.DummyQualificationAccess[qualifications.AccessLevel], qualifications.AccessLevel](
+		access: access.NewGrouped[qualificationsaccess.QualificationJobAccess, *qualificationsaccess.QualificationJobAccess, qualificationsaccess.QualificationUserAccess, *qualificationsaccess.QualificationUserAccess, access.DummyQualificationAccess[qualificationsaccess.AccessLevel], *access.DummyQualificationAccess[qualificationsaccess.AccessLevel], qualificationsaccess.AccessLevel](
 			p.DB,
 			table.FivenetQualifications,
 			&access.TargetTableColumns{
@@ -124,7 +124,7 @@ func NewServer(p Params) *Server {
 				CreatorID:  table.FivenetQualifications.CreatorID,
 				CreatorJob: table.FivenetQualifications.CreatorJob,
 			},
-			access.NewJobs[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.AccessLevel](
+			access.NewJobs[qualificationsaccess.QualificationJobAccess, *qualificationsaccess.QualificationJobAccess, qualificationsaccess.AccessLevel](
 				table.FivenetQualificationsAccess,
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{

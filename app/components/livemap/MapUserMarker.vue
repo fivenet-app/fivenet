@@ -4,7 +4,7 @@ import { MapMarkerIcon } from 'mdi-vue3';
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
-import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
+import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
 import UnitDetailsSlideover from '../centrum/units/UnitDetailsSlideover.vue';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 import { checkIfCanAccessColleague } from '../jobs/colleagues/helpers';

@@ -4,19 +4,21 @@
 // 	protoc        (unknown)
 // source: services/wiki/wiki.proto
 
+//go:build !protoopaque
+
 package wiki
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	wiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	wiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
+	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/activity"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -28,7 +30,7 @@ const (
 )
 
 type ListPagesRequest struct {
-	state      protoimpl.MessageState      `protogen:"open.v1"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
@@ -62,11 +64,6 @@ func (x *ListPagesRequest) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListPagesRequest.ProtoReflect.Descriptor instead.
-func (*ListPagesRequest) Descriptor() ([]byte, []int) {
-	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ListPagesRequest) GetPagination() *database.PaginationRequest {
@@ -104,8 +101,106 @@ func (x *ListPagesRequest) GetSearch() string {
 	return ""
 }
 
+func (x *ListPagesRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListPagesRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListPagesRequest) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *ListPagesRequest) SetRootOnly(v bool) {
+	x.RootOnly = &v
+}
+
+func (x *ListPagesRequest) SetSearch(v string) {
+	x.Search = &v
+}
+
+func (x *ListPagesRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListPagesRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListPagesRequest) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *ListPagesRequest) HasRootOnly() bool {
+	if x == nil {
+		return false
+	}
+	return x.RootOnly != nil
+}
+
+func (x *ListPagesRequest) HasSearch() bool {
+	if x == nil {
+		return false
+	}
+	return x.Search != nil
+}
+
+func (x *ListPagesRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListPagesRequest) ClearSort() {
+	x.Sort = nil
+}
+
+func (x *ListPagesRequest) ClearJob() {
+	x.Job = nil
+}
+
+func (x *ListPagesRequest) ClearRootOnly() {
+	x.RootOnly = nil
+}
+
+func (x *ListPagesRequest) ClearSearch() {
+	x.Search = nil
+}
+
+type ListPagesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Sort       *database.Sort
+	// Search params
+	Job      *string
+	RootOnly *bool
+	Search   *string
+}
+
+func (b0 ListPagesRequest_builder) Build() *ListPagesRequest {
+	m0 := &ListPagesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.Job = b.Job
+	x.RootOnly = b.RootOnly
+	x.Search = b.Search
+	return m0
+}
+
 type ListPagesResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Pages         []*wiki.PageShort            `protobuf:"bytes,2,rep,name=pages,proto3" json:"pages,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -137,11 +232,6 @@ func (x *ListPagesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListPagesResponse.ProtoReflect.Descriptor instead.
-func (*ListPagesResponse) Descriptor() ([]byte, []int) {
-	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListPagesResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -156,8 +246,43 @@ func (x *ListPagesResponse) GetPages() []*wiki.PageShort {
 	return nil
 }
 
+func (x *ListPagesResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListPagesResponse) SetPages(v []*wiki.PageShort) {
+	x.Pages = v
+}
+
+func (x *ListPagesResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListPagesResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListPagesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Pages      []*wiki.PageShort
+}
+
+func (b0 ListPagesResponse_builder) Build() *ListPagesResponse {
+	m0 := &ListPagesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Pages = b.Pages
+	return m0
+}
+
 type GetPageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -188,11 +313,6 @@ func (x *GetPageRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetPageRequest.ProtoReflect.Descriptor instead.
-func (*GetPageRequest) Descriptor() ([]byte, []int) {
-	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *GetPageRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -200,8 +320,26 @@ func (x *GetPageRequest) GetId() int64 {
 	return 0
 }
 
+func (x *GetPageRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type GetPageRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 GetPageRequest_builder) Build() *GetPageRequest {
+	m0 := &GetPageRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type GetPageResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Page          *wiki.Page             `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -232,11 +370,6 @@ func (x *GetPageResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetPageResponse.ProtoReflect.Descriptor instead.
-func (*GetPageResponse) Descriptor() ([]byte, []int) {
-	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{3}
-}
-
 func (x *GetPageResponse) GetPage() *wiki.Page {
 	if x != nil {
 		return x.Page
@@ -244,8 +377,37 @@ func (x *GetPageResponse) GetPage() *wiki.Page {
 	return nil
 }
 
+func (x *GetPageResponse) SetPage(v *wiki.Page) {
+	x.Page = v
+}
+
+func (x *GetPageResponse) HasPage() bool {
+	if x == nil {
+		return false
+	}
+	return x.Page != nil
+}
+
+func (x *GetPageResponse) ClearPage() {
+	x.Page = nil
+}
+
+type GetPageResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Page *wiki.Page
+}
+
+func (b0 GetPageResponse_builder) Build() *GetPageResponse {
+	m0 := &GetPageResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Page = b.Page
+	return m0
+}
+
 type CreatePageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	ParentId      *int64                 `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
 	ContentType   content.ContentType    `protobuf:"varint,2,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -277,11 +439,6 @@ func (x *CreatePageRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreatePageRequest.ProtoReflect.Descriptor instead.
-func (*CreatePageRequest) Descriptor() ([]byte, []int) {
-	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{4}
-}
-
 func (x *CreatePageRequest) GetParentId() int64 {
 	if x != nil && x.ParentId != nil {
 		return *x.ParentId
@@ -296,8 +453,43 @@ func (x *CreatePageRequest) GetContentType() content.ContentType {
 	return content.ContentType(0)
 }
 
+func (x *CreatePageRequest) SetParentId(v int64) {
+	x.ParentId = &v
+}
+
+func (x *CreatePageRequest) SetContentType(v content.ContentType) {
+	x.ContentType = v
+}
+
+func (x *CreatePageRequest) HasParentId() bool {
+	if x == nil {
+		return false
+	}
+	return x.ParentId != nil
+}
+
+func (x *CreatePageRequest) ClearParentId() {
+	x.ParentId = nil
+}
+
+type CreatePageRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ParentId    *int64
+	ContentType content.ContentType
+}
+
+func (b0 CreatePageRequest_builder) Build() *CreatePageRequest {
+	m0 := &CreatePageRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ParentId = b.ParentId
+	x.ContentType = b.ContentType
+	return m0
+}
+
 type CreatePageResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -329,11 +521,6 @@ func (x *CreatePageResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreatePageResponse.ProtoReflect.Descriptor instead.
-func (*CreatePageResponse) Descriptor() ([]byte, []int) {
-	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{5}
-}
-
 func (x *CreatePageResponse) GetJob() string {
 	if x != nil {
 		return x.Job
@@ -348,8 +535,32 @@ func (x *CreatePageResponse) GetId() int64 {
 	return 0
 }
 
+func (x *CreatePageResponse) SetJob(v string) {
+	x.Job = v
+}
+
+func (x *CreatePageResponse) SetId(v int64) {
+	x.Id = v
+}
+
+type CreatePageResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job string
+	Id  int64
+}
+
+func (b0 CreatePageResponse_builder) Build() *CreatePageResponse {
+	m0 := &CreatePageResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	x.Id = b.Id
+	return m0
+}
+
 type UpdatePageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Page          *wiki.Page             `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -380,11 +591,6 @@ func (x *UpdatePageRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdatePageRequest.ProtoReflect.Descriptor instead.
-func (*UpdatePageRequest) Descriptor() ([]byte, []int) {
-	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{6}
-}
-
 func (x *UpdatePageRequest) GetPage() *wiki.Page {
 	if x != nil {
 		return x.Page
@@ -392,8 +598,37 @@ func (x *UpdatePageRequest) GetPage() *wiki.Page {
 	return nil
 }
 
+func (x *UpdatePageRequest) SetPage(v *wiki.Page) {
+	x.Page = v
+}
+
+func (x *UpdatePageRequest) HasPage() bool {
+	if x == nil {
+		return false
+	}
+	return x.Page != nil
+}
+
+func (x *UpdatePageRequest) ClearPage() {
+	x.Page = nil
+}
+
+type UpdatePageRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Page *wiki.Page
+}
+
+func (b0 UpdatePageRequest_builder) Build() *UpdatePageRequest {
+	m0 := &UpdatePageRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Page = b.Page
+	return m0
+}
+
 type UpdatePageResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Page          *wiki.Page             `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -424,11 +659,6 @@ func (x *UpdatePageResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdatePageResponse.ProtoReflect.Descriptor instead.
-func (*UpdatePageResponse) Descriptor() ([]byte, []int) {
-	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{7}
-}
-
 func (x *UpdatePageResponse) GetPage() *wiki.Page {
 	if x != nil {
 		return x.Page
@@ -436,8 +666,37 @@ func (x *UpdatePageResponse) GetPage() *wiki.Page {
 	return nil
 }
 
+func (x *UpdatePageResponse) SetPage(v *wiki.Page) {
+	x.Page = v
+}
+
+func (x *UpdatePageResponse) HasPage() bool {
+	if x == nil {
+		return false
+	}
+	return x.Page != nil
+}
+
+func (x *UpdatePageResponse) ClearPage() {
+	x.Page = nil
+}
+
+type UpdatePageResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Page *wiki.Page
+}
+
+func (b0 UpdatePageResponse_builder) Build() *UpdatePageResponse {
+	m0 := &UpdatePageResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Page = b.Page
+	return m0
+}
+
 type DeletePageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -468,11 +727,6 @@ func (x *DeletePageRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeletePageRequest.ProtoReflect.Descriptor instead.
-func (*DeletePageRequest) Descriptor() ([]byte, []int) {
-	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{8}
-}
-
 func (x *DeletePageRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -480,8 +734,26 @@ func (x *DeletePageRequest) GetId() int64 {
 	return 0
 }
 
+func (x *DeletePageRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type DeletePageRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 DeletePageRequest_builder) Build() *DeletePageRequest {
+	m0 := &DeletePageRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
 type DeletePageResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -511,13 +783,20 @@ func (x *DeletePageResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeletePageResponse.ProtoReflect.Descriptor instead.
-func (*DeletePageResponse) Descriptor() ([]byte, []int) {
-	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{9}
+type DeletePageResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeletePageResponse_builder) Build() *DeletePageResponse {
+	m0 := &DeletePageResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
 }
 
 type ListPageActivityRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	PageId        int64                       `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -549,11 +828,6 @@ func (x *ListPageActivityRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListPageActivityRequest.ProtoReflect.Descriptor instead.
-func (*ListPageActivityRequest) Descriptor() ([]byte, []int) {
-	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{10}
-}
-
 func (x *ListPageActivityRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
@@ -568,10 +842,45 @@ func (x *ListPageActivityRequest) GetPageId() int64 {
 	return 0
 }
 
+func (x *ListPageActivityRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListPageActivityRequest) SetPageId(v int64) {
+	x.PageId = v
+}
+
+func (x *ListPageActivityRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListPageActivityRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListPageActivityRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	PageId     int64
+}
+
+func (b0 ListPageActivityRequest_builder) Build() *ListPageActivityRequest {
+	m0 := &ListPageActivityRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.PageId = b.PageId
+	return m0
+}
+
 type ListPageActivityResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
+	state         protoimpl.MessageState       `protogen:"hybrid.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Activity      []*wiki.PageActivity         `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
+	Activity      []*activity.PageActivity     `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -601,11 +910,6 @@ func (x *ListPageActivityResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListPageActivityResponse.ProtoReflect.Descriptor instead.
-func (*ListPageActivityResponse) Descriptor() ([]byte, []int) {
-	return file_services_wiki_wiki_proto_rawDescGZIP(), []int{11}
-}
-
 func (x *ListPageActivityResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
@@ -613,18 +917,53 @@ func (x *ListPageActivityResponse) GetPagination() *database.PaginationResponse 
 	return nil
 }
 
-func (x *ListPageActivityResponse) GetActivity() []*wiki.PageActivity {
+func (x *ListPageActivityResponse) GetActivity() []*activity.PageActivity {
 	if x != nil {
 		return x.Activity
 	}
 	return nil
 }
 
+func (x *ListPageActivityResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListPageActivityResponse) SetActivity(v []*activity.PageActivity) {
+	x.Activity = v
+}
+
+func (x *ListPageActivityResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListPageActivityResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListPageActivityResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Activity   []*activity.PageActivity
+}
+
+func (b0 ListPageActivityResponse_builder) Build() *ListPageActivityResponse {
+	m0 := &ListPageActivityResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Activity = b.Activity
+	return m0
+}
+
 var File_services_wiki_wiki_proto protoreflect.FileDescriptor
 
 const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/wiki/wiki.proto\x12\rservices.wiki\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1dresources/wiki/activity.proto\x1a\x19resources/wiki/page.proto\"\x9a\x02\n" +
+	"\x18services/wiki/wiki.proto\x12\rservices.wiki\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a&resources/wiki/activity/activity.proto\x1a\x19resources/wiki/page.proto\"\x9a\x02\n" +
 	"\x10ListPagesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -666,12 +1005,12 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x17\n" +
-	"\apage_id\x18\x02 \x01(\x03R\x06pageId\"\xa9\x01\n" +
+	"\apage_id\x18\x02 \x01(\x03R\x06pageId\"\xb2\x01\n" +
 	"\x18ListPageActivityResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12>\n" +
-	"\bactivity\x18\x02 \x03(\v2\x1c.resources.wiki.PageActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xf9\x05\n" +
+	"pagination\x12G\n" +
+	"\bactivity\x18\x02 \x03(\v2%.resources.wiki.activity.PageActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xf9\x05\n" +
 	"\vWikiService\x12V\n" +
 	"\tListPages\x12\x1f.services.wiki.ListPagesRequest\x1a .services.wiki.ListPagesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12[\n" +
 	"\aGetPage\x12\x1d.services.wiki.GetPageRequest\x1a\x1e.services.wiki.GetPageResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tListPages\x12Y\n" +
@@ -688,19 +1027,7 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
 	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1e\xd2\xf3\x18\x1a\b\x012\n" +
 	"CreatePage2\n" +
-	"UpdatePage(\x01\x1a\x13\xea\xf3\x18\x0f\bn\x12\vi-mdi-brainBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wikib\x06proto3"
-
-var (
-	file_services_wiki_wiki_proto_rawDescOnce sync.Once
-	file_services_wiki_wiki_proto_rawDescData []byte
-)
-
-func file_services_wiki_wiki_proto_rawDescGZIP() []byte {
-	file_services_wiki_wiki_proto_rawDescOnce.Do(func() {
-		file_services_wiki_wiki_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_wiki_wiki_proto_rawDesc), len(file_services_wiki_wiki_proto_rawDesc)))
-	})
-	return file_services_wiki_wiki_proto_rawDescData
-}
+	"UpdatePage(\x01\x1a\x13\xea\xf3\x18\x0f\bn\x12\vi-mdi-brainBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki;wikib\x06proto3"
 
 var file_services_wiki_wiki_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_services_wiki_wiki_proto_goTypes = []any{
@@ -722,7 +1049,7 @@ var file_services_wiki_wiki_proto_goTypes = []any{
 	(*wiki.PageShort)(nil),              // 15: resources.wiki.PageShort
 	(*wiki.Page)(nil),                   // 16: resources.wiki.Page
 	(content.ContentType)(0),            // 17: resources.common.content.ContentType
-	(*wiki.PageActivity)(nil),           // 18: resources.wiki.PageActivity
+	(*activity.PageActivity)(nil),       // 18: resources.wiki.activity.PageActivity
 	(*file.UploadFileRequest)(nil),      // 19: resources.file.UploadFileRequest
 	(*file.UploadFileResponse)(nil),     // 20: resources.file.UploadFileResponse
 }
@@ -737,7 +1064,7 @@ var file_services_wiki_wiki_proto_depIdxs = []int32{
 	16, // 7: services.wiki.UpdatePageResponse.page:type_name -> resources.wiki.Page
 	12, // 8: services.wiki.ListPageActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	14, // 9: services.wiki.ListPageActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	18, // 10: services.wiki.ListPageActivityResponse.activity:type_name -> resources.wiki.PageActivity
+	18, // 10: services.wiki.ListPageActivityResponse.activity:type_name -> resources.wiki.activity.PageActivity
 	0,  // 11: services.wiki.WikiService.ListPages:input_type -> services.wiki.ListPagesRequest
 	2,  // 12: services.wiki.WikiService.GetPage:input_type -> services.wiki.GetPageRequest
 	4,  // 13: services.wiki.WikiService.CreatePage:input_type -> services.wiki.CreatePageRequest

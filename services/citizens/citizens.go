@@ -6,21 +6,23 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbcitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens"
-	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
+	userslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels"
+	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
+	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -40,7 +42,7 @@ func (s *Server) ListCitizens(
 ) (*pbcitizens.ListCitizensResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 
 	selectors := dbutils.Columns{
 		tUser.Firstname,
@@ -261,7 +263,7 @@ func (s *Server) GetUser(
 
 	grpc_audit.SetTargetUser(ctx, req.GetUserId(), "")
 
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 
 	selectors := dbutils.Columns{
 		tUser.Firstname,
@@ -381,15 +383,15 @@ func (s *Server) GetUser(
 	}
 
 	if resp.GetUser().GetProps() == nil {
-		resp.User.Props = &users.UserProps{
+		resp.User.Props = &usersprops.UserProps{
 			UserId: resp.GetUser().GetUserId(),
 		}
 	}
 
 	// Check if user can see licenses and fetch them
 	if !infoOnly && fields.Contains("Licenses") {
-		tLicenses := tables.Licenses()
-		tCitizensLicenses := tables.UserLicenses()
+		tLicenses := table.FivenetLicenses
+		tCitizensLicenses := table.FivenetUserLicenses
 
 		stmt := tUser.
 			SELECT(
@@ -399,7 +401,7 @@ func (s *Server) GetUser(
 			FROM(
 				tCitizensLicenses.
 					INNER_JOIN(tUser,
-						tCitizensLicenses.Owner.EQ(tUser.Identifier),
+						tCitizensLicenses.UserID.EQ(tUser.ID),
 					).
 					LEFT_JOIN(tLicenses,
 						tLicenses.Type.EQ(tCitizensLicenses.Type)),
@@ -465,8 +467,8 @@ func (s *Server) SetUserProps(
 		props.TrafficInfractionPoints = &ZeroTrafficInfractionPoints
 	}
 	if props.GetLabels() == nil {
-		props.Labels = &users.Labels{
-			List: []*users.Label{},
+		props.Labels = &userslabels.Labels{
+			List: []*userslabels.Label{},
 		}
 	}
 
@@ -483,7 +485,7 @@ func (s *Server) SetUserProps(
 	}
 
 	resp := &pbcitizens.SetUserPropsResponse{
-		Props: &users.UserProps{},
+		Props: &usersprops.UserProps{},
 	}
 
 	// Field Permission Check
@@ -497,7 +499,7 @@ func (s *Server) SetUserProps(
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	tUser := tables.User().AS("user")
+	tUser := table.FivenetUser.AS("user")
 
 	stmt := tUser.
 		SELECT(
@@ -581,17 +583,17 @@ func (s *Server) SetUserProps(
 		}
 
 		if req.Props.Labels.List == nil {
-			req.Props.Labels.List = []*users.Label{}
+			req.Props.Labels.List = []*userslabels.Label{}
 		}
 
-		slices.SortFunc(req.GetProps().GetLabels().GetList(), func(a, b *users.Label) int {
+		slices.SortFunc(req.GetProps().GetLabels().GetList(), func(a, b *userslabels.Label) int {
 			return strings.Compare(a.GetName(), b.GetName())
 		})
 
 		added, _ := utils.SlicesDifferenceFunc(
 			props.GetLabels().GetList(),
 			req.GetProps().GetLabels().GetList(),
-			func(in *users.Label) int64 {
+			func(in *userslabels.Label) int64 {
 				return in.GetId()
 			},
 		)
@@ -624,7 +626,7 @@ func (s *Server) SetUserProps(
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if err := users.CreateUserActivities(ctx, tx, activities...); err != nil {
+	if err := usersactivity.CreateUserActivities(ctx, tx, activities...); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
@@ -641,7 +643,10 @@ func (s *Server) SetUserProps(
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
+	s.getUserProps(ctx, userInfo, req.GetProps().GetUserId())
+
 	resp.Props = user.GetUser().GetProps()
+
 	// Set Job info if set
 	if resp.GetProps() != nil && resp.Props.JobName != nil {
 		grade := s.cfg.Game.StartJobGrade
@@ -656,10 +661,10 @@ func (s *Server) SetUserProps(
 	}
 
 	userId := int64(user.GetUser().GetUserId())
-	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
-		Type:      notifications.ObjectType_OBJECT_TYPE_CITIZEN,
+	s.notifi.SendObjectEvent(ctx, &notificationsclientview.ObjectEvent{
+		Type:      notificationsclientview.ObjectType_OBJECT_TYPE_CITIZEN,
 		Id:        &userId,
-		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+		EventType: notificationsclientview.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
 
 		UserId: &userInfo.UserId,
 		Job:    &userInfo.Job,
@@ -674,7 +679,7 @@ func (s *Server) getUserProps(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
 	userId int32,
-) (*users.UserProps, error) {
+) (*usersprops.UserProps, error) {
 	tUserProps := tUserProps.AS("user_props")
 	tFiles := table.FivenetFiles.AS("mugshot")
 
@@ -702,7 +707,7 @@ func (s *Server) getUserProps(
 		).
 		LIMIT(1)
 
-	var dest users.UserProps
+	var dest usersprops.UserProps
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err

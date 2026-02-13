@@ -4,13 +4,14 @@
 // 	protoc        (unknown)
 // source: resources/livemap/coords.proto
 
+//go:build !protoopaque
+
 package livemap
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -22,7 +23,7 @@ const (
 )
 
 type Coords struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	X             float64                `protobuf:"fixed64,1,opt,name=x,proto3" json:"x,omitempty"`
 	Y             float64                `protobuf:"fixed64,2,opt,name=y,proto3" json:"y,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -54,11 +55,6 @@ func (x *Coords) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Coords.ProtoReflect.Descriptor instead.
-func (*Coords) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_coords_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *Coords) GetX() float64 {
 	if x != nil {
 		return x.X
@@ -73,6 +69,30 @@ func (x *Coords) GetY() float64 {
 	return 0
 }
 
+func (x *Coords) SetX(v float64) {
+	x.X = v
+}
+
+func (x *Coords) SetY(v float64) {
+	x.Y = v
+}
+
+type Coords_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	X float64
+	Y float64
+}
+
+func (b0 Coords_builder) Build() *Coords {
+	m0 := &Coords{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.X = b.X
+	x.Y = b.Y
+	return m0
+}
+
 var File_resources_livemap_coords_proto protoreflect.FileDescriptor
 
 const file_resources_livemap_coords_proto_rawDesc = "" +
@@ -80,19 +100,7 @@ const file_resources_livemap_coords_proto_rawDesc = "" +
 	"\x1eresources/livemap/coords.proto\x12\x11resources.livemap\"$\n" +
 	"\x06Coords\x12\f\n" +
 	"\x01x\x18\x01 \x01(\x01R\x01x\x12\f\n" +
-	"\x01y\x18\x02 \x01(\x01R\x01yBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemapb\x06proto3"
-
-var (
-	file_resources_livemap_coords_proto_rawDescOnce sync.Once
-	file_resources_livemap_coords_proto_rawDescData []byte
-)
-
-func file_resources_livemap_coords_proto_rawDescGZIP() []byte {
-	file_resources_livemap_coords_proto_rawDescOnce.Do(func() {
-		file_resources_livemap_coords_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_livemap_coords_proto_rawDesc), len(file_resources_livemap_coords_proto_rawDesc)))
-	})
-	return file_resources_livemap_coords_proto_rawDescData
-}
+	"\x01y\x18\x02 \x01(\x01R\x01yBMZKgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap;livemapb\x06proto3"
 
 var file_resources_livemap_coords_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_livemap_coords_proto_goTypes = []any{

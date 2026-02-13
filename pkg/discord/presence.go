@@ -6,7 +6,7 @@ import (
 
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	"go.uber.org/zap"
 )
 

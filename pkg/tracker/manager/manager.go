@@ -9,22 +9,21 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	pbtracker "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/tracker"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
-	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatchers"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/helpers"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
+	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
+	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	pbtracker "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/tracker"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2026/pkg/coords/postals"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatchers"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
@@ -57,8 +56,8 @@ type Manager struct {
 
 	refreshTicker *time.Ticker
 
-	userByIDStore     *store.Store[livemap.UserMarker, *livemap.UserMarker]
-	userLocStore      *store.Store[livemap.UserMarker, *livemap.UserMarker]
+	userByIDStore     *store.Store[livemapmarkers.UserMarker, *livemapmarkers.UserMarker]
+	userLocStore      *store.Store[livemapmarkers.UserMarker, *livemapmarkers.UserMarker]
 	userMappingsStore *store.Store[pbtracker.UserMapping, *pbtracker.UserMapping]
 }
 
@@ -159,12 +158,12 @@ func New(p Params) (*Manager, error) {
 		}
 		m.userMappingsStore = userMappingsStore
 
-		userLocStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](
+		userLocStore, err := store.New[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](
 			ctxStartup,
 			storeLogger,
 			p.JS,
 			tracker.BucketUserLoc,
-			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
+			store.WithLocks[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](nil),
 		)
 		if err != nil {
 			return fmt.Errorf("failed to create user location store. %w", err)
@@ -174,14 +173,14 @@ func New(p Params) (*Manager, error) {
 		}
 		m.userLocStore = userLocStore
 
-		byID, err := store.New[livemap.UserMarker, *livemap.UserMarker](
+		byID, err := store.New[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](
 			ctxStartup,
 			storeLogger,
 			p.JS,
 			tracker.BucketUserLocByID,
-			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
+			store.WithLocks[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](nil),
 			store.WithOnUpdateFn(
-				func(ctx context.Context, _ *livemap.UserMarker, newValue *livemap.UserMarker) (*livemap.UserMarker, error) {
+				func(ctx context.Context, _ *livemapmarkers.UserMarker, newValue *livemapmarkers.UserMarker) (*livemapmarkers.UserMarker, error) {
 					if newValue == nil {
 						return nil, nil
 					}
@@ -208,7 +207,7 @@ func New(p Params) (*Manager, error) {
 				},
 			),
 			store.WithOnDeleteFn(func(ctx context.Context,
-				key string, um *livemap.UserMarker,
+				key string, um *livemapmarkers.UserMarker,
 			) error {
 				if um == nil {
 					return nil
@@ -310,13 +309,13 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 	m.logger.Debug("refreshing user tracker cache")
 
 	tLocs := tLocs.AS("user_marker")
-	tUsers := tables.User().AS("user")
+	tUsers := table.FivenetUser.AS("user")
 	tFallbackJobProps := tJobProps.AS("fallback_job_props")
 	tFallbackColleagueProps := tColleagueProps.AS("fallback_colleague_props")
 
 	stmt := tLocs.
 		SELECT(
-			tLocs.Identifier,
+			tLocs.UserID,
 			tLocs.Job,
 			tLocs.JobGrade,
 			tLocs.X,
@@ -354,7 +353,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 		FROM(
 			tLocs.
 				INNER_JOIN(tUsers,
-					tLocs.Identifier.EQ(tUsers.Identifier),
+					tLocs.UserID.EQ(tUsers.ID),
 				).
 				LEFT_JOIN(tJobProps,
 					tJobProps.Job.EQ(tLocs.Job),
@@ -379,7 +378,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 			tLocs.UpdatedAt.GT_EQ(mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(4, mysql.HOUR))),
 		))
 
-	var dest []*livemap.UserMarker
+	var dest []*livemapmarkers.UserMarker
 	if err := stmt.QueryContext(ctx, m.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
@@ -415,7 +414,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 		}
 
 		if dest[i].Color == nil {
-			defaultColor := jobs.DefaultLivemapMarkerColor
+			defaultColor := jobsprops.DefaultLivemapMarkerColor
 			dest[i].Color = &defaultColor
 		}
 

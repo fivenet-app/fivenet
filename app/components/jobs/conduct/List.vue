@@ -16,7 +16,7 @@ import { useCompletorStore } from '~/stores/completor';
 import { getJobsConductClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
-import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
+import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct/conduct';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
 import ColleagueName from '../colleagues/ColleagueName.vue';
@@ -173,7 +173,6 @@ const columns = computed(
                         `#${row.original.id}`,
                         row.original.draft ? h(DraftBadge, { label: undefined }) : null,
                     ]),
-                sortable: true,
             },
             {
                 accessorKey: 'createdAt',
@@ -201,7 +200,6 @@ const columns = computed(
                     h(UBadge, { color: conductTypesToBadgeColor(row.original.type) }, () =>
                         t(`enums.jobs.ConductType.${ConductType[row.original.type ?? 0]}`),
                     ),
-                sortable: true,
             },
             {
                 accessorKey: 'message',

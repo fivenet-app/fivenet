@@ -7,9 +7,9 @@ import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/i18n.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
+import "resources/users/short/user.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notifications";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications;notifications";
 
 enum NotificationType {
   NOTIFICATION_TYPE_UNSPECIFIED = 0;
@@ -43,7 +43,7 @@ message Data {
   option (codegen.dbscanner.dbscanner) = {enabled: true};
 
   optional Link link = 1;
-  optional resources.users.UserShort caused_by = 2;
+  optional resources.users.short.UserShort caused_by = 2;
   optional CalendarData calendar = 3;
 }
 

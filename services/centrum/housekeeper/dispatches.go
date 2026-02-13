@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -158,9 +158,9 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 				),
 			),
 			tDispatchStatus.Status.NOT_IN(
-				mysql.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
-				mysql.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
-				mysql.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
+				mysql.Int32(int32(centrumdispatches.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
+				mysql.Int32(int32(centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
+				mysql.Int32(int32(centrumdispatches.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
 			),
 			tDispatch.CreatedAt.LT_EQ(
 				mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(60, mysql.MINUTE)),
@@ -174,7 +174,7 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 	var dest []*struct {
 		DispatchID int64
 		Jobs       []string
-		Status     centrum.StatusDispatch
+		Status     centrumdispatches.StatusDispatch
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return err
@@ -183,13 +183,13 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 	s.logger.Debug("canceling expired dispatches", zap.Int("dispatch_count", len(dest)))
 	for _, ds := range dest {
 		// Ignore already cancelled dispatches
-		if ds.Status == centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED {
+		if ds.Status == centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED {
 			continue
 		}
 
 		// Add "too old" attribute when we are able to retrieve the dispatch
 		if dsp, err := s.dispatches.Get(ctx, ds.DispatchID); err == nil && dsp != nil {
-			if err := s.dispatches.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD); err != nil {
+			if err := s.dispatches.AddAttributeToDispatch(ctx, dsp, centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD); err != nil {
 				s.logger.Error(
 					"failed to add too old attribute to cancelled dispatch",
 					zap.Int64("dispatch_id", ds.DispatchID),
@@ -198,10 +198,10 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 			}
 		}
 
-		if _, err := s.dispatches.UpdateStatus(ctx, ds.DispatchID, &centrum.DispatchStatus{
+		if _, err := s.dispatches.UpdateStatus(ctx, ds.DispatchID, &centrumdispatches.DispatchStatus{
 			CreatedAt:  timestamp.Now(),
 			DispatchId: ds.DispatchID,
-			Status:     centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+			Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 		}); err != nil {
 			s.logger.Error(
 				"failed to cancel dispatch",

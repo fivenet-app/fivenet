@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	calendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
+	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -15,7 +15,7 @@ func (s *Server) checkIfUserHasAccessToCalendarEntry(
 	calendarId int64,
 	entryId int64,
 	userInfo *userinfo.UserInfo,
-	access calendar.AccessLevel,
+	access calendaraccess.AccessLevel,
 	publicOk bool,
 ) (bool, error) {
 	out, err := s.checkIfUserHasAccessToCalendarEntryIDs(ctx, userInfo, publicOk, entryId)

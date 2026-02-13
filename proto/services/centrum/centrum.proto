@@ -6,16 +6,16 @@ import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
-import "resources/centrum/dispatchers.proto";
-import "resources/centrum/dispatches.proto";
-import "resources/centrum/settings.proto";
-import "resources/centrum/units.proto";
+import "resources/centrum/dispatchers/dispatchers.proto";
+import "resources/centrum/dispatches/dispatches.proto";
+import "resources/centrum/settings/settings.proto";
+import "resources/centrum/units/units.proto";
 import "resources/common/database/database.proto";
 import "resources/jobs/jobs.proto";
-import "resources/livemap/heatmap.proto";
+import "resources/livemap/heatmap/heatmap.proto";
 import "resources/timestamp/timestamp.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum;centrum";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrum";
 
 // Common
 
@@ -32,34 +32,34 @@ message ListUnitActivityRequest {
 message GetSettingsRequest {}
 
 message GetSettingsResponse {
-  resources.centrum.Settings settings = 1;
-  resources.centrum.EffectiveAccess effective_access = 2;
+  resources.centrum.settings.Settings settings = 1;
+  resources.centrum.settings.EffectiveAccess effective_access = 2;
 }
 
 message UpdateSettingsRequest {
-  resources.centrum.Settings settings = 1;
+  resources.centrum.settings.Settings settings = 1;
 }
 
 message UpdateSettingsResponse {
-  resources.centrum.Settings settings = 1;
+  resources.centrum.settings.Settings settings = 1;
 }
 
 // Unit Management
 
 message ListUnitsRequest {
-  repeated resources.centrum.StatusUnit status = 1 [(buf.validate.field).repeated.items.enum.defined_only = true];
+  repeated resources.centrum.units.StatusUnit status = 1 [(buf.validate.field).repeated.items.enum.defined_only = true];
 }
 
 message ListUnitsResponse {
-  repeated resources.centrum.Unit units = 1 [(codegen.itemslen.enabled) = true];
+  repeated resources.centrum.units.Unit units = 1 [(codegen.itemslen.enabled) = true];
 }
 
 message CreateOrUpdateUnitRequest {
-  resources.centrum.Unit unit = 1 [(buf.validate.field).required = true];
+  resources.centrum.units.Unit unit = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateUnitResponse {
-  resources.centrum.Unit unit = 1;
+  resources.centrum.units.Unit unit = 1;
 }
 
 message DeleteUnitRequest {
@@ -70,7 +70,7 @@ message DeleteUnitResponse {}
 
 message UpdateUnitStatusRequest {
   int64 unit_id = 1;
-  resources.centrum.StatusUnit status = 2 [(buf.validate.field).enum.defined_only = true];
+  resources.centrum.units.StatusUnit status = 2 [(buf.validate.field).enum.defined_only = true];
   optional string reason = 3 [
     (buf.validate.field).string.max_len = 255,
     (codegen.sanitizer.sanitizer) = {enabled: true}
@@ -95,7 +95,7 @@ message GetDispatchHeatmapRequest {}
 
 message GetDispatchHeatmapResponse {
   int32 max_entries = 1;
-  repeated resources.livemap.HeatmapEntry entries = 2;
+  repeated resources.livemap.heatmap.HeatmapEntry entries = 2;
 }
 
 message UpdateDispatchersRequest {
@@ -103,12 +103,12 @@ message UpdateDispatchersRequest {
 }
 
 message UpdateDispatchersResponse {
-  resources.centrum.Dispatchers dispatchers = 1;
+  resources.centrum.dispatchers.Dispatchers dispatchers = 1;
 }
 
 message ListUnitActivityResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.centrum.UnitStatus activity = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.centrum.units.UnitStatus activity = 2 [(codegen.itemslen.enabled) = true];
 }
 
 // Dispatch Management
@@ -121,15 +121,15 @@ message TakeControlResponse {}
 
 message ListDispatchesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.centrum.StatusDispatch status = 2 [(buf.validate.field).repeated.items.enum.defined_only = true];
-  repeated resources.centrum.StatusDispatch not_status = 3 [(buf.validate.field).repeated.items.enum.defined_only = true];
+  repeated resources.centrum.dispatches.StatusDispatch status = 2 [(buf.validate.field).repeated.items.enum.defined_only = true];
+  repeated resources.centrum.dispatches.StatusDispatch not_status = 3 [(buf.validate.field).repeated.items.enum.defined_only = true];
   repeated int64 ids = 4 [(buf.validate.field).repeated.max_items = 10];
   optional string postal = 5 [(buf.validate.field).string.max_len = 12];
 }
 
 message ListDispatchesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.centrum.Dispatch dispatches = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.centrum.dispatches.Dispatch dispatches = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message GetDispatchRequest {
@@ -137,23 +137,23 @@ message GetDispatchRequest {
 }
 
 message GetDispatchResponse {
-  resources.centrum.Dispatch dispatch = 1;
+  resources.centrum.dispatches.Dispatch dispatch = 1;
 }
 
 message CreateDispatchRequest {
-  resources.centrum.Dispatch dispatch = 1 [(buf.validate.field).required = true];
+  resources.centrum.dispatches.Dispatch dispatch = 1 [(buf.validate.field).required = true];
 }
 
 message CreateDispatchResponse {
-  resources.centrum.Dispatch dispatch = 1;
+  resources.centrum.dispatches.Dispatch dispatch = 1;
 }
 
 message UpdateDispatchRequest {
-  resources.centrum.Dispatch dispatch = 1 [(buf.validate.field).required = true];
+  resources.centrum.dispatches.Dispatch dispatch = 1 [(buf.validate.field).required = true];
 }
 
 message UpdateDispatchResponse {
-  resources.centrum.Dispatch dispatch = 1;
+  resources.centrum.dispatches.Dispatch dispatch = 1;
 }
 
 message DeleteDispatchRequest {
@@ -170,7 +170,7 @@ message ListDispatchTargetJobsResponse {
 
 message UpdateDispatchStatusRequest {
   int64 dispatch_id = 1;
-  resources.centrum.StatusDispatch status = 2 [(buf.validate.field).enum.defined_only = true];
+  resources.centrum.dispatches.StatusDispatch status = 2 [(buf.validate.field).enum.defined_only = true];
   optional string reason = 3 [
     (buf.validate.field).string.max_len = 255,
     (codegen.sanitizer.sanitizer) = {enabled: true}
@@ -194,7 +194,7 @@ message AssignDispatchResponse {}
 
 message ListDispatchActivityResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.centrum.DispatchStatus activity = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.centrum.dispatches.DispatchStatus activity = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message JoinUnitRequest {
@@ -202,12 +202,12 @@ message JoinUnitRequest {
 }
 
 message JoinUnitResponse {
-  resources.centrum.Unit unit = 1;
+  resources.centrum.units.Unit unit = 1;
 }
 
 message TakeDispatchRequest {
   repeated int64 dispatch_ids = 1 [(buf.validate.field).repeated.min_items = 1];
-  resources.centrum.TakeDispatchResp resp = 2 [(buf.validate.field).enum.defined_only = true];
+  resources.centrum.dispatches.TakeDispatchResp resp = 2 [(buf.validate.field).enum.defined_only = true];
   optional string reason = 3 [
     (buf.validate.field).string.max_len = 255,
     (codegen.sanitizer.sanitizer) = {enabled: true}
@@ -218,16 +218,16 @@ message TakeDispatchResponse {}
 
 message StreamHandshake {
   resources.timestamp.Timestamp server_time = 1;
-  resources.centrum.Settings settings = 2;
-  resources.centrum.EffectiveAccess access = 3;
+  resources.centrum.settings.Settings settings = 2;
+  resources.centrum.settings.EffectiveAccess access = 3;
 }
 
 message LatestState {
-  resources.centrum.JobDispatchers dispatchers = 1;
+  resources.centrum.dispatchers.JobDispatchers dispatchers = 1;
   optional int64 own_unit_id = 2;
   // Send the current units and dispatches
-  repeated resources.centrum.Unit units = 3;
-  repeated resources.centrum.Dispatch dispatches = 4;
+  repeated resources.centrum.units.Unit units = 3;
+  repeated resources.centrum.dispatches.Dispatch dispatches = 4;
 }
 
 message StreamRequest {}
@@ -239,17 +239,17 @@ message StreamResponse {
     StreamHandshake handshake = 1;
     LatestState latest_state = 2;
 
-    resources.centrum.Settings settings = 3;
-    resources.centrum.EffectiveAccess access = 4;
-    resources.centrum.Dispatchers dispatchers = 5;
+    resources.centrum.settings.Settings settings = 3;
+    resources.centrum.settings.EffectiveAccess access = 4;
+    resources.centrum.dispatchers.Dispatchers dispatchers = 5;
 
     int64 unit_deleted = 6;
-    resources.centrum.Unit unit_updated = 7;
-    resources.centrum.UnitStatus unit_status = 8;
+    resources.centrum.units.Unit unit_updated = 7;
+    resources.centrum.units.UnitStatus unit_status = 8;
 
     int64 dispatch_deleted = 9;
-    resources.centrum.Dispatch dispatch_updated = 10;
-    resources.centrum.DispatchStatus dispatch_status = 11;
+    resources.centrum.dispatches.Dispatch dispatch_updated = 10;
+    resources.centrum.dispatches.DispatchStatus dispatch_status = 11;
   }
 }
 

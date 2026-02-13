@@ -1,8 +1,11 @@
-import { useGRPCWebsocketTransport } from './grpc/grpcws';
+import { useGRPCWebsocketTransport } from './grpcws';
 
 export function collectDebugInfo(): string {
     const authStore = useAuthStore();
-    const { activeChar, sessionExpiration, attributes, permissions } = storeToRefs(authStore);
+    const { activeChar, attributes, permissions } = storeToRefs(authStore);
+
+    const authSessionStore = useAuthSessionStore();
+    const { userInfo } = storeToRefs(authSessionStore);
 
     const settingsStore = useSettingsStore();
 
@@ -12,7 +15,7 @@ export function collectDebugInfo(): string {
 
     return `## Debug Info
 - Version: ${APP_VERSION} / ${settingsStore.version}
-- Access Token Expiration: ${sessionExpiration.value ? sessionExpiration.value.toISOString() : 'N/A'}
+- Access Token Expiration: ${userInfo.value?.expiration ? userInfo.value.expiration.toISOString() : 'N/A'}
 - NUI: ${settingsStore.nuiEnabled ? 'Enabled' : 'Disabled'} (${settingsStore.nuiResourceName ?? 'N/A'})
 - WebSocket Status: ${webSocket.status.value}
 - Active Char ID: ${activeChar.value ? activeChar.value.userId : 'N/A'} (Identifier: ${activeChar.value ? activeChar.value.identifier : 'N/A'})

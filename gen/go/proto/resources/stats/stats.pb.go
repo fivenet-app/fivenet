@@ -4,13 +4,14 @@
 // 	protoc        (unknown)
 // source: resources/stats/stats.proto
 
+//go:build !protoopaque
+
 package stats
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -22,7 +23,7 @@ const (
 )
 
 type Stat struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Value         *int32                 `protobuf:"varint,1,opt,name=value,proto3,oneof" json:"value,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -53,16 +54,40 @@ func (x *Stat) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Stat.ProtoReflect.Descriptor instead.
-func (*Stat) Descriptor() ([]byte, []int) {
-	return file_resources_stats_stats_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *Stat) GetValue() int32 {
 	if x != nil && x.Value != nil {
 		return *x.Value
 	}
 	return 0
+}
+
+func (x *Stat) SetValue(v int32) {
+	x.Value = &v
+}
+
+func (x *Stat) HasValue() bool {
+	if x == nil {
+		return false
+	}
+	return x.Value != nil
+}
+
+func (x *Stat) ClearValue() {
+	x.Value = nil
+}
+
+type Stat_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Value *int32
+}
+
+func (b0 Stat_builder) Build() *Stat {
+	m0 := &Stat{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Value = b.Value
+	return m0
 }
 
 var File_resources_stats_stats_proto protoreflect.FileDescriptor
@@ -72,19 +97,7 @@ const file_resources_stats_stats_proto_rawDesc = "" +
 	"\x1bresources/stats/stats.proto\x12\x0fresources.stats\"+\n" +
 	"\x04Stat\x12\x19\n" +
 	"\x05value\x18\x01 \x01(\x05H\x00R\x05value\x88\x01\x01B\b\n" +
-	"\x06_valueBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/stats;statsb\x06proto3"
-
-var (
-	file_resources_stats_stats_proto_rawDescOnce sync.Once
-	file_resources_stats_stats_proto_rawDescData []byte
-)
-
-func file_resources_stats_stats_proto_rawDescGZIP() []byte {
-	file_resources_stats_stats_proto_rawDescOnce.Do(func() {
-		file_resources_stats_stats_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_stats_stats_proto_rawDesc), len(file_resources_stats_stats_proto_rawDesc)))
-	})
-	return file_resources_stats_stats_proto_rawDescData
-}
+	"\x06_valueBIZGgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/stats;statsb\x06proto3"
 
 var file_resources_stats_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_stats_stats_proto_goTypes = []any{

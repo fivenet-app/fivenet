@@ -6,23 +6,25 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/collab"
-	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
-	pkggrpc "github.com/fivenet-app/fivenet/v2025/pkg/grpc"
-	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
-	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentsstamps "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps"
+	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/collab"
+	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
+	pkggrpc "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
+	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
+	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -124,10 +126,10 @@ type Server struct {
 	ui            userinfo.UserInfoRetriever
 	notifi        notifi.INotifi
 
-	access         *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
-	templateAccess *access.Grouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
+	access         *access.Grouped[documentsaccess.DocumentJobAccess, *documentsaccess.DocumentJobAccess, documentsaccess.DocumentUserAccess, *documentsaccess.DocumentUserAccess, access.DummyQualificationAccess[documentsaccess.AccessLevel], *access.DummyQualificationAccess[documentsaccess.AccessLevel], documentsaccess.AccessLevel]
+	templateAccess *access.Grouped[documentstemplates.TemplateJobAccess, *documentstemplates.TemplateJobAccess, documentstemplates.TemplateUserAccess, *documentstemplates.TemplateUserAccess, access.DummyQualificationAccess[documentsaccess.AccessLevel], *access.DummyQualificationAccess[documentsaccess.AccessLevel], documentsaccess.AccessLevel]
 
-	signingStampAccess *access.Grouped[documents.StampJobAccess, *documents.StampJobAccess, access.DummyUserAccess[documents.StampAccessLevel], *access.DummyUserAccess[documents.StampAccessLevel], access.DummyQualificationAccess[documents.StampAccessLevel], *access.DummyQualificationAccess[documents.StampAccessLevel], documents.StampAccessLevel]
+	signingStampAccess *access.Grouped[documentsstamps.StampJobAccess, *documentsstamps.StampJobAccess, access.DummyUserAccess[documentsstamps.StampAccessLevel], *access.DummyUserAccess[documentsstamps.StampAccessLevel], access.DummyQualificationAccess[documentsstamps.StampAccessLevel], *access.DummyQualificationAccess[documentsstamps.StampAccessLevel], documentsstamps.StampAccessLevel]
 
 	collabServer *collab.CollabServer
 	fHandler     *filestore.Handler[int64]
@@ -189,7 +191,7 @@ func NewServer(p Params) Result {
 				ctx,
 				targetId,
 				userInfo,
-				documents.AccessLevel(access),
+				documentsaccess.AccessLevel(access),
 			)
 		},
 	})
@@ -208,7 +210,7 @@ func NewServer(p Params) Result {
 		notifi:        p.Notif,
 
 		access: docAccess,
-		templateAccess: access.NewGrouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
+		templateAccess: access.NewGrouped[documentstemplates.TemplateJobAccess, *documentstemplates.TemplateJobAccess, documentstemplates.TemplateUserAccess, *documentstemplates.TemplateUserAccess, access.DummyQualificationAccess[documentsaccess.AccessLevel], *access.DummyQualificationAccess[documentsaccess.AccessLevel], documentsaccess.AccessLevel](
 			p.DB,
 			table.FivenetDocumentsTemplates,
 			&access.TargetTableColumns{
@@ -217,7 +219,7 @@ func NewServer(p Params) Result {
 				CreatorID:  nil,
 				CreatorJob: table.FivenetDocumentsTemplates.CreatorJob,
 			},
-			access.NewJobs[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.AccessLevel](
+			access.NewJobs[documentstemplates.TemplateJobAccess, *documentstemplates.TemplateJobAccess, documentsaccess.AccessLevel](
 				table.FivenetDocumentsTemplatesAccess,
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
@@ -253,7 +255,7 @@ func NewServer(p Params) Result {
 			nil,
 		),
 
-		signingStampAccess: access.NewGrouped[documents.StampJobAccess, *documents.StampJobAccess, access.DummyUserAccess[documents.StampAccessLevel], *access.DummyUserAccess[documents.StampAccessLevel], access.DummyQualificationAccess[documents.StampAccessLevel], *access.DummyQualificationAccess[documents.StampAccessLevel], documents.StampAccessLevel](
+		signingStampAccess: access.NewGrouped[documentsstamps.StampJobAccess, *documentsstamps.StampJobAccess, access.DummyUserAccess[documentsstamps.StampAccessLevel], *access.DummyUserAccess[documentsstamps.StampAccessLevel], access.DummyQualificationAccess[documentsstamps.StampAccessLevel], *access.DummyQualificationAccess[documentsstamps.StampAccessLevel], documentsstamps.StampAccessLevel](
 			p.DB,
 			table.FivenetDocumentsStampsAccess,
 			&access.TargetTableColumns{
@@ -262,7 +264,7 @@ func NewServer(p Params) Result {
 				CreatorID:  nil,
 				CreatorJob: nil,
 			},
-			access.NewJobs[documents.StampJobAccess, *documents.StampJobAccess, documents.StampAccessLevel](
+			access.NewJobs[documentsstamps.StampJobAccess, *documentsstamps.StampJobAccess, documentsstamps.StampAccessLevel](
 				table.FivenetDocumentsStampsAccess,
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
@@ -322,12 +324,12 @@ func NewServer(p Params) Result {
 func newAccess(
 	db *sql.DB,
 ) *access.Grouped[
-	documents.DocumentJobAccess, *documents.DocumentJobAccess,
-	documents.DocumentUserAccess, *documents.DocumentUserAccess,
-	access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel],
-	documents.AccessLevel,
+	documentsaccess.DocumentJobAccess, *documentsaccess.DocumentJobAccess,
+	documentsaccess.DocumentUserAccess, *documentsaccess.DocumentUserAccess,
+	access.DummyQualificationAccess[documentsaccess.AccessLevel], *access.DummyQualificationAccess[documentsaccess.AccessLevel],
+	documentsaccess.AccessLevel,
 ] {
-	return access.NewGrouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
+	return access.NewGrouped[documentsaccess.DocumentJobAccess, *documentsaccess.DocumentJobAccess, documentsaccess.DocumentUserAccess, *documentsaccess.DocumentUserAccess, access.DummyQualificationAccess[documentsaccess.AccessLevel], *access.DummyQualificationAccess[documentsaccess.AccessLevel], documentsaccess.AccessLevel](
 		db,
 		table.FivenetDocuments,
 		&access.TargetTableColumns{
@@ -336,7 +338,7 @@ func newAccess(
 			CreatorID:  table.FivenetDocuments.CreatorID,
 			CreatorJob: table.FivenetDocuments.CreatorJob,
 		},
-		access.NewJobs[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.AccessLevel](
+		access.NewJobs[documentsaccess.DocumentJobAccess, *documentsaccess.DocumentJobAccess, documentsaccess.AccessLevel](
 			table.FivenetDocumentsAccess,
 			&access.JobAccessColumns{
 				BaseAccessColumns: access.BaseAccessColumns{
@@ -358,7 +360,7 @@ func newAccess(
 				MinimumGrade: table.FivenetDocumentsAccess.AS("document_job_access").MinimumGrade,
 			},
 		),
-		access.NewUsers[documents.DocumentUserAccess, *documents.DocumentUserAccess, documents.AccessLevel](
+		access.NewUsers[documentsaccess.DocumentUserAccess, *documentsaccess.DocumentUserAccess, documentsaccess.AccessLevel](
 			table.FivenetDocumentsAccess,
 			&access.UserAccessColumns{
 				BaseAccessColumns: access.BaseAccessColumns{

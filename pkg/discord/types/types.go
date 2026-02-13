@@ -2,7 +2,7 @@ package discordtypes
 
 import (
 	"github.com/diamondburned/arikawa/v3/discord"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 )
 
 type Roles []*Role

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package resources.jobs.conduct;
+
+import "buf/validate/validate.proto";
+import "resources/common/content/content.proto";
+import "resources/file/file.proto";
+import "resources/jobs/colleagues/colleagues.proto";
+import "resources/timestamp/timestamp.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct;jobsconduct";
+
+enum ConductType {
+  CONDUCT_TYPE_UNSPECIFIED = 0;
+  CONDUCT_TYPE_NEUTRAL = 1;
+  CONDUCT_TYPE_POSITIVE = 2;
+  CONDUCT_TYPE_NEGATIVE = 3;
+  CONDUCT_TYPE_WARNING = 4;
+  CONDUCT_TYPE_SUSPENSION = 5;
+  CONDUCT_TYPE_NOTE = 6;
+}
+
+message ConductEntry {
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  string job = 5 [(buf.validate.field).string.max_len = 20];
+  ConductType type = 6 [(buf.validate.field).enum.defined_only = true];
+  bool draft = 7;
+  resources.common.content.Content message = 8;
+  repeated resources.file.File files = 9 [(tagger.tags) = "alias:\"files\""];
+  optional resources.timestamp.Timestamp expires_at = 10;
+  int32 target_user_id = 11 [(buf.validate.field).int32.gt = 0];
+  optional resources.jobs.colleagues.Colleague target_user = 12 [(tagger.tags) = "alias:\"target_user\""];
+  int32 creator_id = 13 [(buf.validate.field).int32.gt = 0];
+  optional resources.jobs.colleagues.Colleague creator = 14 [(tagger.tags) = "alias:\"creator\""];
+}

@@ -4,15 +4,15 @@ import (
 	"os"
 	"testing"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbvehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles"
-	"github.com/fivenet-app/fivenet/v2025/internal/modules"
-	"github.com/fivenet-app/fivenet/v2025/internal/tests/servers"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	grpcserver "github.com/fivenet-app/fivenet/v2025/pkg/grpc"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
+	"github.com/fivenet-app/fivenet/v2026/internal/modules"
+	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
+	grpcserver "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
+	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -23,9 +23,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	// All tests assume esx compat mode
-	tables.EnableESXCompat()
-
 	code := m.Run()
 	os.Exit(code)
 }
@@ -45,7 +42,6 @@ func TestListVehicles(t *testing.T) {
 			Enabled:   true,
 			UserId:    3,
 			License:   "db7e039146d5bf1b6781e7bc1bef31f0bb1298ea",
-			Group:     "user",
 			Job:       "doj",
 			JobGrade:  16,
 		},
@@ -77,10 +73,10 @@ func TestListVehicles(t *testing.T) {
 	client := pbvehicles.NewVehiclesServiceClient(clientConn)
 
 	tm := auth.NewTokenMgr("")
-	token, err := tm.NewWithClaims(&auth.CitizenInfoClaims{
+	token, err := tm.FromCombinedClaims(&authclaims.CombinedClaims{
 		AccID:    3,
 		Username: "user-3",
-		CharID:   3,
+		UserID:   3,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:   "fivenet",
 			Subject:  "db7e039146d5bf1b6781e7bc1bef31f0bb1298ea",

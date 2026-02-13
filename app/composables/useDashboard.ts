@@ -6,6 +6,7 @@ const _useDashboard = () => {
     const isDashboardSidebarSlideoverOpen = ref(false);
     const isHelpSlideoverOpen = ref(false);
     const isNotificationSlideoverOpen = ref(false);
+    const isCommandSearchOpen = ref(false);
 
     const overlay = useOverlay();
 
@@ -37,6 +38,7 @@ const _useDashboard = () => {
         () => {
             isHelpSlideoverOpen.value = false;
             isNotificationSlideoverOpen.value = false;
+            isCommandSearchOpen.value = false;
         },
     );
 
@@ -48,6 +50,7 @@ const _useDashboard = () => {
         isDashboardSidebarSlideoverOpen,
         isHelpSlideoverOpen,
         isNotificationSlideoverOpen,
+        isCommandSearchOpen,
     };
 };
 

@@ -3,15 +3,16 @@ package documents
 import (
 	context "context"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -27,7 +28,7 @@ func (s *Server) GetDocumentAccess(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -71,7 +72,7 @@ func (s *Server) SetDocumentAccess(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_ACCESS,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_ACCESS,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -105,7 +106,7 @@ func (s *Server) SetDocumentAccess(
 func (s *Server) getDocumentAccess(
 	ctx context.Context,
 	documentId int64,
-) (*documents.DocumentAccess, error) {
+) (*documentsaccess.DocumentAccess, error) {
 	jobAccess, err := s.access.Jobs.List(ctx, s.db, documentId)
 	if err != nil {
 		return nil, err
@@ -116,7 +117,7 @@ func (s *Server) getDocumentAccess(
 		return nil, err
 	}
 
-	return &documents.DocumentAccess{
+	return &documentsaccess.DocumentAccess{
 		Jobs:  jobAccess,
 		Users: userAccess,
 	}, nil
@@ -127,7 +128,7 @@ func (s *Server) handleDocumentAccessChange(
 	tx qrm.DB,
 	documentId int64,
 	userInfo *userinfo.UserInfo,
-	access *documents.DocumentAccess,
+	access *documentsaccess.DocumentAccess,
 	addActivity bool,
 ) error {
 	// Validate job access entries
@@ -155,20 +156,20 @@ func (s *Server) handleDocumentAccessChange(
 	}
 
 	if addActivity && !changes.IsEmpty() {
-		if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
+		if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 			DocumentId:   documentId,
-			ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED,
+			ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED,
 			CreatorId:    &userInfo.UserId,
 			CreatorJob:   userInfo.GetJob(),
-			Data: &documents.DocActivityData{
-				Data: &documents.DocActivityData_AccessUpdated{
-					AccessUpdated: &documents.DocAccessUpdated{
-						Jobs: &documents.DocAccessJobsDiff{
+			Data: &documentsactivity.DocActivityData{
+				Data: &documentsactivity.DocActivityData_AccessUpdated{
+					AccessUpdated: &documentsactivity.DocAccessUpdated{
+						Jobs: &documentsactivity.DocAccessJobsDiff{
 							ToCreate: changes.Jobs.ToCreate,
 							ToUpdate: changes.Jobs.ToUpdate,
 							ToDelete: changes.Jobs.ToDelete,
 						},
-						Users: &documents.DocAccessUsersDiff{
+						Users: &documentsactivity.DocAccessUsersDiff{
 							ToCreate: changes.Users.ToCreate,
 							ToUpdate: changes.Users.ToUpdate,
 							ToDelete: changes.Users.ToDelete,

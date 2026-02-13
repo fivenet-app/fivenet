@@ -4,14 +4,14 @@ package services.completor;
 
 import "buf/validate/validate.proto";
 import "codegen/perms/perms.proto";
-import "resources/documents/category.proto";
+import "resources/documents/category/category.proto";
 import "resources/jobs/jobs.proto";
 import "resources/laws/laws.proto";
-import "resources/users/labels.proto";
-import "resources/users/users.proto";
+import "resources/users/labels/labels.proto";
+import "resources/users/short/user.proto";
 import "tagger/tagger.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor;completor";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor;completor";
 
 message CompleteCitizensRequest {
   string search = 1 [(buf.validate.field).string.max_len = 64];
@@ -22,7 +22,7 @@ message CompleteCitizensRequest {
 }
 
 message CompleteCitizensResponse {
-  repeated resources.users.UserShort users = 1 [(tagger.tags) = "alias:\"user\""];
+  repeated resources.users.short.UserShort users = 1 [(tagger.tags) = "alias:\"user\""];
 }
 
 message CompleteJobsRequest {
@@ -40,7 +40,7 @@ message CompleteDocumentCategoriesRequest {
 }
 
 message CompleteDocumentCategoriesResponse {
-  repeated resources.documents.Category categories = 1;
+  repeated resources.documents.category.Category categories = 1;
 }
 
 message ListLawBooksRequest {}
@@ -54,7 +54,7 @@ message CompleteCitizenLabelsRequest {
 }
 
 message CompleteCitizenLabelsResponse {
-  repeated resources.users.Label labels = 1;
+  repeated resources.users.labels.Label labels = 1;
 }
 
 service CompletorService {

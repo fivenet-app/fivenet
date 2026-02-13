@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package resources.grpcws;
+
+import "buf/validate/validate.proto";
+import "codegen/audit/redacted.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/grpcws;grpcws";
+
+message GrpcFrame {
+  uint32 stream_id = 1;
+
+  oneof payload {
+    option (buf.validate.oneof).required = true;
+
+    Ping ping = 3;
+    Header header = 4;
+    Body body = 5;
+    Complete complete = 6;
+    Failure failure = 7;
+    Cancel cancel = 8;
+  }
+}
+
+message Ping {
+  bool pong = 1;
+}
+
+message Header {
+  string operation = 1;
+  map<string, HeaderValue> headers = 2;
+  int32 status = 3;
+}
+
+message HeaderValue {
+  repeated string value = 1;
+}
+
+message Body {
+  bytes data = 1 [(codegen.audit.redacted) = true];
+  bool complete = 2;
+}
+
+message Complete {}
+
+message Failure {
+  string error_message = 1;
+  string error_status = 2;
+  map<string, HeaderValue> headers = 3;
+}
+
+message Cancel {}

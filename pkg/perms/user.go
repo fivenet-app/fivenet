@@ -3,9 +3,9 @@ package perms
 import (
 	"slices"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
+	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms/collections"
 	"github.com/pkg/errors"
 )
 
@@ -31,7 +31,7 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 
 	perms := make(collections.Permissions, len(ps))
 	for i := range ps {
-		perms[i] = &permissions.Permission{
+		perms[i] = &permissionspermissions.Permission{
 			Id:        ps[i].ID,
 			Category:  string(ps[i].Category),
 			Name:      string(ps[i].Name),

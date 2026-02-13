@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { BadgeProps } from '@nuxt/ui';
-import type { Category } from '~~/gen/ts/resources/documents/category';
+import type { Category } from '~~/gen/ts/resources/documents/category/category';
 
 const props = withDefaults(
     defineProps<{

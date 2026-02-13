@@ -12,9 +12,9 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { Perms } from '~~/gen/ts/perms';
-import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
+import { ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { User } from '~~/gen/ts/resources/users/users';
+import type { User } from '~~/gen/ts/resources/users/user';
 
 definePageMeta({
     title: 'pages.citizens.id.title',
@@ -94,8 +94,8 @@ function addToClipboard(): void {
 // Handle the client update event
 const { sendClientView } = useClientUpdate(ObjectType.CITIZEN, () =>
     notifications.add({
-        title: { key: 'notifications.citizens.client_view_update.title', parameters: {} },
-        description: { key: 'notifications.citizens.client_view_update.content', parameters: {} },
+        title: { key: 'notifications.citizens.clientview_update.title', parameters: {} },
+        description: { key: 'notifications.citizens.clientview_update.content', parameters: {} },
         duration: 7500,
         type: NotificationType.INFO,
         actions: [

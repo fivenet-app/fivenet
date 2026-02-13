@@ -13,7 +13,7 @@ import { useClipboardStore } from '~/stores/clipboard';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { User } from '~~/gen/ts/resources/users/users';
+import type { User } from '~~/gen/ts/resources/users/user';
 import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizens/citizens';
 import LabelModal from './LabelModal.vue';
 
@@ -132,7 +132,6 @@ const columns = computed(() =>
                         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
-                sortable: true,
             },
             {
                 accessorKey: 'jobLabel',
@@ -199,7 +198,6 @@ const columns = computed(() =>
                               onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                           });
                       },
-                      sortable: true,
                       cell: ({ row }) => row.original.props?.trafficInfractionPoints,
                   }
                 : undefined,
@@ -222,7 +220,6 @@ const columns = computed(() =>
                               onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                           });
                       },
-                      sortable: true,
                       cell: ({ row }) =>
                           row.original.props?.openFines !== undefined && row.original.props?.openFines > 0
                               ? new Intl.NumberFormat(display.intlLocale, {

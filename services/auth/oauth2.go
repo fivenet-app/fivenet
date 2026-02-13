@@ -4,13 +4,13 @@ import (
 	"context"
 	"slices"
 
-	pbauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsauth "github.com/fivenet-app/fivenet/v2025/services/auth/errors"
+	pbauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -27,12 +27,12 @@ func (s *Server) DeleteSocialLogin(
 
 	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.oauth2_provider", req.GetProvider()})
 
-	token, err := auth.GetTokenFromGRPCContext(ctx)
+	token, err := auth.GetAccTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errorsgrpcauth.ErrInvalidToken
 	}
 
-	claims, err := s.tm.ParseWithClaims(token)
+	claims, err := s.tm.ParseAccToken(token)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
 	}

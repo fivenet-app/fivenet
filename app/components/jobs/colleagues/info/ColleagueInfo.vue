@@ -4,7 +4,7 @@ import SelfServiceAbsenceDateModal from '~/components/jobs/colleagues/SelfServic
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import ColleagueName from '../ColleagueName.vue';
 

@@ -5,13 +5,13 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
+	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *UnitDB) updateInKV(ctx context.Context, id int64, unit *centrum.Unit) error {
-	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Unit) (*centrum.Unit, bool, error) {
+func (s *UnitDB) updateInKV(ctx context.Context, id int64, unit *centrumunits.Unit) error {
+	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrumunits.Unit) (*centrumunits.Unit, bool, error) {
 		if existing == nil {
 			return unit, unit != nil, nil
 		}
@@ -33,11 +33,11 @@ func (s *UnitDB) deleteInKV(ctx context.Context, id int64) error {
 	return s.store.Delete(ctx, centrumutils.IdKey(id))
 }
 
-func (s *UnitDB) Get(ctx context.Context, id int64) (*centrum.Unit, error) {
+func (s *UnitDB) Get(ctx context.Context, id int64) (*centrumunits.Unit, error) {
 	return s.store.GetOrLoad(ctx, centrumutils.IdKey(id))
 }
 
-func (s *UnitDB) List(_ context.Context, jobs []string) []*centrum.Unit {
+func (s *UnitDB) List(_ context.Context, jobs []string) []*centrumunits.Unit {
 	if jobs == nil {
 		jobs = []string{""}
 	}
@@ -52,7 +52,7 @@ func (s *UnitDB) List(_ context.Context, jobs []string) []*centrum.Unit {
 		return false
 	})
 
-	us := []*centrum.Unit{}
+	us := []*centrumunits.Unit{}
 	for _, key := range keys {
 		uid, err := centrumutils.ExtractIDString(key)
 		if err != nil {
@@ -69,7 +69,7 @@ func (s *UnitDB) List(_ context.Context, jobs []string) []*centrum.Unit {
 		us = append(us, unit)
 	}
 
-	slices.SortFunc(us, func(a, b *centrum.Unit) int {
+	slices.SortFunc(us, func(a, b *centrumunits.Unit) int {
 		return strings.Compare(a.GetName(), b.GetName())
 	})
 
@@ -79,13 +79,13 @@ func (s *UnitDB) List(_ context.Context, jobs []string) []*centrum.Unit {
 func (s *UnitDB) Filter(
 	ctx context.Context,
 	jobs []string,
-	statuses []centrum.StatusUnit,
-	notStatuses []centrum.StatusUnit,
-	filterFn func(unit *centrum.Unit) bool,
-) []*centrum.Unit {
+	statuses []centrumunits.StatusUnit,
+	notStatuses []centrumunits.StatusUnit,
+	filterFn func(unit *centrumunits.Unit) bool,
+) []*centrumunits.Unit {
 	us := s.List(ctx, jobs)
 
-	us = slices.DeleteFunc(us, func(unit *centrum.Unit) bool {
+	us = slices.DeleteFunc(us, func(unit *centrumunits.Unit) bool {
 		// Include statuses that should be listed
 		if len(statuses) > 0 && unit.GetStatus() != nil &&
 			!slices.Contains(statuses, unit.GetStatus().GetStatus()) {
@@ -110,9 +110,9 @@ func (s *UnitDB) Filter(
 func (s *UnitDB) updateStatusInKV(
 	ctx context.Context,
 	id int64,
-	status *centrum.UnitStatus,
+	status *centrumunits.UnitStatus,
 ) error {
-	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Unit) (*centrum.Unit, bool, error) {
+	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrumunits.Unit) (*centrumunits.Unit, bool, error) {
 		if existing == nil {
 			return existing, false, nil
 		}

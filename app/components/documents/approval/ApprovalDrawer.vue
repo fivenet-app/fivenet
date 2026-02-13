@@ -8,7 +8,7 @@ import {
     ApprovalTaskStatus,
     OnEditBehavior,
     type ApprovalPolicy,
-} from '~~/gen/ts/resources/documents/approval';
+} from '~~/gen/ts/resources/documents/approval/approval';
 import type { DocumentMeta, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import ApprovalList from './ApprovalList.vue';
 import PolicyForm from './PolicyForm.vue';

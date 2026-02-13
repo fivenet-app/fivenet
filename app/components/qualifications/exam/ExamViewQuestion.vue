@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
-import type { ExamResponse } from '~~/gen/ts/resources/qualifications/exam';
+import type { ExamResponse } from '~~/gen/ts/resources/qualifications/exam/exam';
 
 const props = withDefaults(
     defineProps<{

@@ -7,7 +7,7 @@ import "codegen/sanitizer/sanitizer.proto";
 import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settings";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settings";
 
 message BannerMessage {
   string id = 1 [
@@ -42,6 +42,7 @@ message BannerMessage {
       strip_html_tags: true
     }
   ];
+
   resources.timestamp.Timestamp created_at = 5 [(tagger.tags) = "json:\"createdAt\""];
   optional resources.timestamp.Timestamp expires_at = 6 [(tagger.tags) = "json:\"expiresAt\""];
 }

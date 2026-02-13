@@ -12,7 +12,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Stamp } from "../../resources/documents/stamp";
+import { Stamp } from "../../resources/documents/stamps/stamp";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 /**
@@ -39,7 +39,7 @@ export interface ListUsableStampsResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.documents.Stamp stamps = 2
+     * @generated from protobuf field: repeated resources.documents.stamps.Stamp stamps = 2
      */
     stamps: Stamp[];
 }
@@ -48,7 +48,7 @@ export interface ListUsableStampsResponse {
  */
 export interface UpsertStampRequest {
     /**
-     * @generated from protobuf field: resources.documents.Stamp stamp = 1
+     * @generated from protobuf field: resources.documents.stamps.Stamp stamp = 1
      */
     stamp?: Stamp;
 }
@@ -57,7 +57,7 @@ export interface UpsertStampRequest {
  */
 export interface UpsertStampResponse {
     /**
-     * @generated from protobuf field: resources.documents.Stamp stamp = 1
+     * @generated from protobuf field: resources.documents.stamps.Stamp stamp = 1
      */
     stamp?: Stamp;
 }
@@ -151,7 +151,7 @@ class ListUsableStampsResponse$Type extends MessageType<ListUsableStampsResponse
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.documents.Stamp stamps */ 2:
+                case /* repeated resources.documents.stamps.Stamp stamps */ 2:
                     message.stamps.push(Stamp.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -169,7 +169,7 @@ class ListUsableStampsResponse$Type extends MessageType<ListUsableStampsResponse
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.Stamp stamps = 2; */
+        /* repeated resources.documents.stamps.Stamp stamps = 2; */
         for (let i = 0; i < message.stamps.length; i++)
             Stamp.internalBinaryWrite(message.stamps[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -200,7 +200,7 @@ class UpsertStampRequest$Type extends MessageType<UpsertStampRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Stamp stamp */ 1:
+                case /* resources.documents.stamps.Stamp stamp */ 1:
                     message.stamp = Stamp.internalBinaryRead(reader, reader.uint32(), options, message.stamp);
                     break;
                 default:
@@ -215,7 +215,7 @@ class UpsertStampRequest$Type extends MessageType<UpsertStampRequest> {
         return message;
     }
     internalBinaryWrite(message: UpsertStampRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Stamp stamp = 1; */
+        /* resources.documents.stamps.Stamp stamp = 1; */
         if (message.stamp)
             Stamp.internalBinaryWrite(message.stamp, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -246,7 +246,7 @@ class UpsertStampResponse$Type extends MessageType<UpsertStampResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Stamp stamp */ 1:
+                case /* resources.documents.stamps.Stamp stamp */ 1:
                     message.stamp = Stamp.internalBinaryRead(reader, reader.uint32(), options, message.stamp);
                     break;
                 default:
@@ -261,7 +261,7 @@ class UpsertStampResponse$Type extends MessageType<UpsertStampResponse> {
         return message;
     }
     internalBinaryWrite(message: UpsertStampResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Stamp stamp = 1; */
+        /* resources.documents.stamps.Stamp stamp = 1; */
         if (message.stamp)
             Stamp.internalBinaryWrite(message.stamp, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

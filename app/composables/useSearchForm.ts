@@ -17,6 +17,12 @@ function fmtDate(d: Date) {
 }
 
 /**
+ * List of query params to ignore when syncing form state
+ * (e.g. active tab that are not part the form(s))
+ */
+export const ignoredQueryParams: readonly string[] = ['tab'] as const;
+
+/**
  * key:    unique identifier for this form (only for store lookup)
  * schema: your ZodObject describing the form state (with any .default()s you want)
  */
@@ -26,14 +32,13 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
     const router = useRouter();
     const store = useSearchesStore();
 
-    // Step 1: compute your baseline defaults
+    // 1. Compute your baseline defaults
     const defaults: State = schema.parse({});
 
-    // Step 2: load any existing state from the central store
-    //           or fall back to defaults if none yet
+    // 2. Load any existing state from the central store or fall back to defaults if none yet
     const base = store.getSearch<State>(key) ?? defaults;
 
-    // Step 3: build a "raw" override object from URL params
+    // 3. Build a "raw" override object from URL params
     const raw = {} as Partial<State>;
     for (const field of Object.keys(schema.shape) as Array<keyof State>) {
         const core = getCoreSchema(schema.shape[field] as z.ZodType);
@@ -72,7 +77,7 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
         }
     }
 
-    // Step 4: Merge defaults ← store ← raw, then validate
+    // 4. Merge defaults ← store ← raw, then validate
     const merged: State = (() => {
         const result = schema.safeParse({ ...defaults, ...base, ...raw });
         if (result.success) {
@@ -83,7 +88,7 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
         }
     })();
 
-    // Step 5: Put or patch the reactive in the central store
+    // 5. Put or patch the reactive in the central store
     let state = store.getSearch<State>(key);
     if (state) {
         Object.assign(state, merged);
@@ -92,14 +97,16 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
         store.setSearch(key, state);
     }
 
-    // Step 6: Watch it -> sync back to URL & store
+    // 6. Watch it -> sync back to URL & store
     watch(
         state,
         (s) => {
             const q: Record<string, string> = {};
-            if (route.query.tab) {
-                // FIXME otherwise the tab query param is lost when using the search form
-                q.tab = String(route.query.tab);
+            // Preserve non-form (ignored) query params
+            for (const [k, v] of Object.entries(route.query)) {
+                if (ignoredQueryParams.includes(k)) {
+                    q[k] = String(v);
+                }
             }
 
             for (const [k, v] of Object.entries(s) as [keyof State, any][]) {

@@ -2,7 +2,7 @@
 import EmailInfoPopover from '~/components/mailer/EmailInfoPopover.vue';
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
-import type { User } from '~~/gen/ts/resources/users/users';
+import type { User } from '~~/gen/ts/resources/users/user';
 
 defineProps<{
     user: User;

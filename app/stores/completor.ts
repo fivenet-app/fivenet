@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { getCompletorCompletorClient, getJobsJobsClient } from '~~/gen/ts/clients';
-import type { Category } from '~~/gen/ts/resources/documents/category';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import type { Category } from '~~/gen/ts/resources/documents/category/category';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { LawBook } from '~~/gen/ts/resources/laws/laws';
-import type { Label } from '~~/gen/ts/resources/users/labels';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { Label } from '~~/gen/ts/resources/users/labels/labels';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
 import type { ListColleaguesRequest } from '~~/gen/ts/services/jobs/jobs';
 
@@ -17,7 +17,6 @@ export const useCompletorStore = defineStore(
     () => {
         /**
          * Cached job list.
-         * @type {Ref<Job[]>}
          */
         const jobs = ref<Job[]>([]);
 
@@ -34,10 +33,9 @@ export const useCompletorStore = defineStore(
          * Fetch job list and cache it in state.
          * @returns {Promise<Job[]>} - The list of jobs.
          */
-        const listJobs = async (): Promise<Job[]> => {
-            if (jobs.value.length > 0) {
-                return jobs.value;
-            }
+        const listJobs = async (refresh = false): Promise<Job[]> => {
+            if (jobs.value.length > 0 && !refresh) return jobs.value;
+
             jobs.value = await completeJobs({});
             return jobs.value;
         };

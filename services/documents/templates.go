@@ -7,16 +7,17 @@ import (
 	"html/template"
 
 	"github.com/Masterminds/sprig/v3"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	permsdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -57,7 +58,7 @@ func (s *Server) ListTemplates(
 					mysql.AND(
 						tDTemplatesAccess.TargetID.EQ(tDTemplates.ID),
 						tDTemplatesAccess.Access.GT_EQ(
-							mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
+							mysql.Int32(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
 						),
 					),
 				).
@@ -104,7 +105,7 @@ func (s *Server) GetTemplate(
 		ctx,
 		req.GetTemplateId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -146,7 +147,10 @@ func (s *Server) GetTemplate(
 	return resp, nil
 }
 
-func (s *Server) getTemplate(ctx context.Context, templateId int64) (*documents.Template, error) {
+func (s *Server) getTemplate(
+	ctx context.Context,
+	templateId int64,
+) (*documentstemplates.Template, error) {
 	tDTemplates := table.FivenetDocumentsTemplates.AS("template")
 
 	stmt := tDTemplates.
@@ -186,7 +190,7 @@ func (s *Server) getTemplate(ctx context.Context, templateId int64) (*documents.
 		)).
 		LIMIT(1)
 
-	var dest documents.Template
+	var dest documentstemplates.Template
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, err
 	}
@@ -199,8 +203,8 @@ func (s *Server) getTemplate(ctx context.Context, templateId int64) (*documents.
 }
 
 func (s *Server) renderTemplate(
-	docTmpl *documents.Template,
-	data *documents.TemplateData,
+	docTmpl *documentstemplates.Template,
+	data *documentstemplates.TemplateData,
 ) (string, string, string, error) {
 	// Render Title template
 	titleTpl, err := template.
@@ -258,8 +262,8 @@ func (s *Server) CreateTemplate(
 ) (*pbdocuments.CreateTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if documents.TemplateAccessHasDuplicates(req.GetTemplate().GetJobAccess()) ||
-		documents.DocumentAccessHasDuplicates(req.GetTemplate().GetContentAccess()) {
+	if documentstemplates.TemplateAccessHasDuplicates(req.GetTemplate().GetJobAccess()) ||
+		documentsaccess.DocumentAccessHasDuplicates(req.GetTemplate().GetContentAccess()) {
 		return nil, errorsdocuments.ErrTemplateAccessDuplicate
 	}
 
@@ -361,7 +365,7 @@ func (s *Server) UpdateTemplate(
 		ctx,
 		req.GetTemplate().GetId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -370,8 +374,8 @@ func (s *Server) UpdateTemplate(
 		return nil, errorsdocuments.ErrTemplateNoPerms
 	}
 
-	if documents.TemplateAccessHasDuplicates(req.GetTemplate().GetJobAccess()) ||
-		documents.DocumentAccessHasDuplicates(req.GetTemplate().GetContentAccess()) {
+	if documentstemplates.TemplateAccessHasDuplicates(req.GetTemplate().GetJobAccess()) ||
+		documentsaccess.DocumentAccessHasDuplicates(req.GetTemplate().GetContentAccess()) {
 		return nil, errorsdocuments.ErrTemplateAccessDuplicate
 	}
 
@@ -475,7 +479,7 @@ func (s *Server) DeleteTemplate(
 		ctx,
 		req.GetId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

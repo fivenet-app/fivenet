@@ -84,8 +84,6 @@ if (nuiEnabled.value) {
     });
 }
 
-const baseMapRef = useTemplateRef('baseMapRef');
-
 const inititedDebounced = useDebounce(initiated, 750);
 const stoppingLivemapDebounced = useDebounce(stoppingLivemap, 500);
 const stoppingCentrumDebounced = useDebounce(stoppingCentrum, 500);

@@ -6,7 +6,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { Perms } from '~~/gen/ts/perms';
-import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
+import { ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { GetColleagueResponse } from '~~/gen/ts/services/jobs/jobs';
@@ -85,8 +85,8 @@ function updateColleageAbsence(value: { userId: number; absenceBegin?: Timestamp
 // Handle the client update event
 const { sendClientView } = useClientUpdate(ObjectType.JOBS_COLLEAGUE, () =>
     notifications.add({
-        title: { key: 'notifications.jobs.colleague.client_view_update.title', parameters: {} },
-        description: { key: 'notifications.jobs.colleague.client_view_update.content', parameters: {} },
+        title: { key: 'notifications.jobs.colleague.clientview_update.title', parameters: {} },
+        description: { key: 'notifications.jobs.colleague.clientview_update.content', parameters: {} },
         duration: 7500,
         type: NotificationType.INFO,
         actions: [

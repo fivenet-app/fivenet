@@ -6,15 +6,15 @@ import (
 	"strings"
 	"testing"
 
-	pbauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth"
-	permsauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth/perms"
-	"github.com/fivenet-app/fivenet/v2025/internal/modules"
-	"github.com/fivenet-app/fivenet/v2025/internal/tests/proto"
-	"github.com/fivenet-app/fivenet/v2025/internal/tests/servers"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	grpcserver "github.com/fivenet-app/fivenet/v2025/pkg/grpc"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	errorsauth "github.com/fivenet-app/fivenet/v2025/services/auth/errors"
+	pbauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth"
+	permsauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth/perms"
+	"github.com/fivenet-app/fivenet/v2026/internal/modules"
+	"github.com/fivenet-app/fivenet/v2026/internal/tests/proto"
+	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
+	grpcserver "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
@@ -25,9 +25,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	// All tests assume esx compat mode
-	tables.EnableESXCompat()
-
 	code := m.Run()
 	os.Exit(code)
 }
@@ -100,23 +97,23 @@ func TestFullAuthFlow(t *testing.T) {
 	foundAuthed := -1
 	foundToken := -1
 	for i, c := range cookies {
-		if strings.HasPrefix(c, "fivenet_authed=") {
+		if strings.HasPrefix(c, auth.AuthedCookieName+"=") {
 			foundAuthed = i
 		}
-		if strings.HasPrefix(c, "fivenet_token=") {
+		if strings.HasPrefix(c, auth.AccCookieName+"=") {
 			foundToken = i
 		}
 	}
-	require.True(foundAuthed != -1, "Expected a cookie starting with 'fivenet_authed='")
-	require.True(foundToken != -1, "Expected a cookie starting with 'fivenet_token='")
+	require.True(foundAuthed != -1, "Expected a cookie starting with '"+auth.AuthedCookieName+"='")
+	require.True(foundToken != -1, "Expected a cookie starting with '"+auth.AccCookieName+"='")
 
 	cookie, err := http.ParseSetCookie(cookies[foundToken])
 	require.NoError(err)
-	userToken := cookie.Value
-	assert.NotEmpty(userToken)
+	accountToken := cookie.Value
+	assert.NotEmpty(accountToken)
 
 	// user-3: Create authenticated metadate and get characters (only has one char)
-	md := metadata.New(map[string]string{"Authorization": "Bearer " + userToken})
+	md := metadata.New(map[string]string{"Authorization": "Bearer " + accountToken})
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	getCharsReq := &pbauth.GetCharactersRequest{}
 	getCharsRes, err := client.GetCharacters(ctx, getCharsReq)
@@ -124,7 +121,7 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NotNil(getCharsRes)
 	if getCharsRes == nil {
 		assert.FailNow(
-			"user-3: Empty char list returned for valid account that should have 2 chars",
+			"user-3: Empty getchar response returned for valid account that should have 2 chars in total",
 		)
 	}
 	assert.Len(getCharsRes.GetChars(), 1)
@@ -145,23 +142,23 @@ func TestFullAuthFlow(t *testing.T) {
 	foundAuthed = -1
 	foundToken = -1
 	for i, c := range cookies {
-		if strings.HasPrefix(c, "fivenet_authed=") {
+		if strings.HasPrefix(c, auth.AuthedCookieName+"=") {
 			foundAuthed = i
 		}
-		if strings.HasPrefix(c, "fivenet_token=") {
+		if strings.HasPrefix(c, auth.AccCookieName+"=") {
 			foundToken = i
 		}
 	}
-	require.True(foundAuthed != -1, "Expected a cookie starting with 'fivenet_authed='")
-	require.True(foundToken != -1, "Expected a cookie starting with 'fivenet_token='")
+	require.True(foundAuthed != -1, "Expected a cookie starting with '"+auth.AuthedCookieName+"='")
+	require.True(foundToken != -1, "Expected a cookie starting with '"+auth.AccCookieName+"='")
 
 	cookie, err = http.ParseSetCookie(cookies[foundToken])
 	require.NoError(err)
-	userToken = cookie.Value
-	assert.NotEmpty(userToken)
+	accountToken = cookie.Value
+	assert.NotEmpty(accountToken)
 
 	// user-1: Create authenticated metadate and get characters
-	md = metadata.New(map[string]string{"Authorization": "Bearer " + userToken})
+	md = metadata.New(map[string]string{"Cookie": cookie.String()})
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	getCharsReq = &pbauth.GetCharactersRequest{}
 	getCharsRes, err = client.GetCharacters(ctx, getCharsReq)
@@ -207,6 +204,10 @@ func TestFullAuthFlow(t *testing.T) {
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
 	require.NoError(err)
 	assert.NotNil(chooseCharRes)
+	if chooseCharRes != nil {
+		assert.NotEmpty(chooseCharRes.Token)
+		assert.Equal("user-1", chooseCharRes.Username)
+	}
 
 	// user-1: Choose valid character, now we allow "choose char" perm for the job role
 	err = srv.ps.UpdateRolePermissions(ctx, role.GetId(), perms.AddPerm{
@@ -220,5 +221,18 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NotNil(chooseCharRes)
 	if chooseCharRes != nil {
 		assert.NotNil(chooseCharRes.GetChar())
+		assert.NotEmpty(chooseCharRes.Token)
+		assert.Equal("user-1", chooseCharRes.Username)
+	}
+
+	accInfoResp, err := client.GetAccountInfo(ctx, &pbauth.GetAccountInfoRequest{})
+	require.NoError(err)
+	assert.NotNil(accInfoResp)
+	if accInfoResp != nil {
+		assert.NotNil(accInfoResp)
+		if accInfoResp.GetAccount() != nil {
+			acc := accInfoResp.GetAccount()
+			assert.Equal("user-1", acc.GetUsername())
+		}
 	}
 }

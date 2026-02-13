@@ -7,18 +7,19 @@ import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "resources/accounts/accounts.proto";
 import "resources/common/database/database.proto";
-import "resources/users/users.proto";
+import "resources/users/short/user.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settings";
 
 message ListAccountsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
   optional string license = 3 [(buf.validate.field).string.max_len = 64];
-  optional bool enabled = 4;
+  optional bool only_disabled = 4;
   optional string username = 5 [(buf.validate.field).string.max_len = 64];
   optional string external_id = 6 [(buf.validate.field).string.max_len = 128];
+  optional string group = 7 [(buf.validate.field).string.max_len = 64];
 }
 
 message ListAccountsResponse {
@@ -31,7 +32,7 @@ message CreateAccountRequest {
   string username = 2 [(buf.validate.field).string.max_len = 64];
   optional int32 last_char = 3;
   // Allow creating a char at the same time (only when dbsync is used)
-  optional resources.users.UserShort char = 4;
+  optional resources.users.short.UserShort char = 4;
 }
 
 message CreateAccountResponse {

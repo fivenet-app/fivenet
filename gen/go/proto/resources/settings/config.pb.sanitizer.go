@@ -4,7 +4,7 @@
 package settings
 
 import (
-	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -56,6 +56,15 @@ func (m *AppConfig) Sanitize() error {
 	// Field: JobInfo
 	if m.JobInfo != nil {
 		if v, ok := any(m.GetJobInfo()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Livemap
+	if m.Livemap != nil {
+		if v, ok := any(m.GetLivemap()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -259,6 +268,16 @@ func (m *Links) Sanitize() error {
 	// Field: PrivacyPolicy
 	if m.PrivacyPolicy != nil {
 		*m.PrivacyPolicy = htmlsanitizer.StripHTMLTags(*m.PrivacyPolicy)
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *Livemap) Sanitize() error {
+	if m == nil {
+		return nil
 	}
 
 	return nil

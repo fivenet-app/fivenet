@@ -4,16 +4,17 @@
 // 	protoc        (unknown)
 // source: resources/laws/laws.proto
 
+//go:build !protoopaque
+
 package laws
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -25,7 +26,7 @@ const (
 )
 
 type LawBook struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -59,11 +60,6 @@ func (x *LawBook) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use LawBook.ProtoReflect.Descriptor instead.
-func (*LawBook) Descriptor() ([]byte, []int) {
-	return file_resources_laws_laws_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *LawBook) GetId() int64 {
@@ -108,8 +104,89 @@ func (x *LawBook) GetLaws() []*Law {
 	return nil
 }
 
+func (x *LawBook) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *LawBook) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *LawBook) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *LawBook) SetName(v string) {
+	x.Name = v
+}
+
+func (x *LawBook) SetDescription(v string) {
+	x.Description = &v
+}
+
+func (x *LawBook) SetLaws(v []*Law) {
+	x.Laws = v
+}
+
+func (x *LawBook) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *LawBook) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *LawBook) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Description != nil
+}
+
+func (x *LawBook) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *LawBook) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *LawBook) ClearDescription() {
+	x.Description = nil
+}
+
+type LawBook_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id          int64
+	CreatedAt   *timestamp.Timestamp
+	UpdatedAt   *timestamp.Timestamp
+	Name        string
+	Description *string
+	Laws        []*Law
+}
+
+func (b0 LawBook_builder) Build() *LawBook {
+	m0 := &LawBook{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.Name = b.Name
+	x.Description = b.Description
+	x.Laws = b.Laws
+	return m0
+}
+
 type Law struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"law.id" sql:"primary_key"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -147,11 +224,6 @@ func (x *Law) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Law.ProtoReflect.Descriptor instead.
-func (*Law) Descriptor() ([]byte, []int) {
-	return file_resources_laws_laws_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Law) GetId() int64 {
@@ -224,6 +296,155 @@ func (x *Law) GetStvoPoints() uint32 {
 	return 0
 }
 
+func (x *Law) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *Law) SetCreatedAt(v *timestamp.Timestamp) {
+	x.CreatedAt = v
+}
+
+func (x *Law) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
+func (x *Law) SetLawbookId(v int64) {
+	x.LawbookId = v
+}
+
+func (x *Law) SetName(v string) {
+	x.Name = v
+}
+
+func (x *Law) SetDescription(v string) {
+	x.Description = &v
+}
+
+func (x *Law) SetHint(v string) {
+	x.Hint = &v
+}
+
+func (x *Law) SetFine(v uint32) {
+	x.Fine = &v
+}
+
+func (x *Law) SetDetentionTime(v uint32) {
+	x.DetentionTime = &v
+}
+
+func (x *Law) SetStvoPoints(v uint32) {
+	x.StvoPoints = &v
+}
+
+func (x *Law) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.CreatedAt != nil
+}
+
+func (x *Law) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
+}
+
+func (x *Law) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Description != nil
+}
+
+func (x *Law) HasHint() bool {
+	if x == nil {
+		return false
+	}
+	return x.Hint != nil
+}
+
+func (x *Law) HasFine() bool {
+	if x == nil {
+		return false
+	}
+	return x.Fine != nil
+}
+
+func (x *Law) HasDetentionTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.DetentionTime != nil
+}
+
+func (x *Law) HasStvoPoints() bool {
+	if x == nil {
+		return false
+	}
+	return x.StvoPoints != nil
+}
+
+func (x *Law) ClearCreatedAt() {
+	x.CreatedAt = nil
+}
+
+func (x *Law) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
+func (x *Law) ClearDescription() {
+	x.Description = nil
+}
+
+func (x *Law) ClearHint() {
+	x.Hint = nil
+}
+
+func (x *Law) ClearFine() {
+	x.Fine = nil
+}
+
+func (x *Law) ClearDetentionTime() {
+	x.DetentionTime = nil
+}
+
+func (x *Law) ClearStvoPoints() {
+	x.StvoPoints = nil
+}
+
+type Law_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id            int64
+	CreatedAt     *timestamp.Timestamp
+	UpdatedAt     *timestamp.Timestamp
+	LawbookId     int64
+	Name          string
+	Description   *string
+	Hint          *string
+	Fine          *uint32
+	DetentionTime *uint32
+	StvoPoints    *uint32
+}
+
+func (b0 Law_builder) Build() *Law {
+	m0 := &Law{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.CreatedAt = b.CreatedAt
+	x.UpdatedAt = b.UpdatedAt
+	x.LawbookId = b.LawbookId
+	x.Name = b.Name
+	x.Description = b.Description
+	x.Hint = b.Hint
+	x.Fine = b.Fine
+	x.DetentionTime = b.DetentionTime
+	x.StvoPoints = b.StvoPoints
+	return m0
+}
+
 var File_resources_laws_laws_proto protoreflect.FileDescriptor
 
 const file_resources_laws_laws_proto_rawDesc = "" +
@@ -263,19 +484,7 @@ const file_resources_laws_laws_proto_rawDesc = "" +
 	"\x05_hintB\a\n" +
 	"\x05_fineB\x11\n" +
 	"\x0f_detention_timeB\x0e\n" +
-	"\f_stvo_pointsBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws;lawsb\x06proto3"
-
-var (
-	file_resources_laws_laws_proto_rawDescOnce sync.Once
-	file_resources_laws_laws_proto_rawDescData []byte
-)
-
-func file_resources_laws_laws_proto_rawDescGZIP() []byte {
-	file_resources_laws_laws_proto_rawDescOnce.Do(func() {
-		file_resources_laws_laws_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_laws_laws_proto_rawDesc), len(file_resources_laws_laws_proto_rawDesc)))
-	})
-	return file_resources_laws_laws_proto_rawDescData
-}
+	"\f_stvo_pointsBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/laws;lawsb\x06proto3"
 
 var file_resources_laws_laws_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_laws_laws_proto_goTypes = []any{

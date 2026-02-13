@@ -8,7 +8,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useMailerStore } from '~/stores/mailer';
 import type { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
+import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
 
 useHead({
     title: 'pages.mailer.manage.title',

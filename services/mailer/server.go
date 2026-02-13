@@ -3,14 +3,14 @@ package mailer
 import (
 	"database/sql"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
+	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 )
@@ -61,7 +61,7 @@ type Server struct {
 	enricher *mstlystcdata.UserAwareEnricher
 	js       *events.JSWrapper
 
-	access *access.Grouped[mailer.JobAccess, *mailer.JobAccess, mailer.UserAccess, *mailer.UserAccess, mailer.QualificationAccess, *mailer.QualificationAccess, mailer.AccessLevel]
+	access *access.Grouped[maileraccess.JobAccess, *maileraccess.JobAccess, maileraccess.UserAccess, *maileraccess.UserAccess, maileraccess.QualificationAccess, *maileraccess.QualificationAccess, maileraccess.AccessLevel]
 }
 
 type Params struct {
@@ -88,7 +88,7 @@ func NewServer(p Params) *Server {
 				DeletedAt: table.FivenetMailerEmails.DeletedAt,
 				CreatorID: table.FivenetMailerEmails.UserID,
 			},
-			access.NewJobs[mailer.JobAccess, *mailer.JobAccess, mailer.AccessLevel](
+			access.NewJobs[maileraccess.JobAccess, *maileraccess.JobAccess, maileraccess.AccessLevel](
 				table.FivenetMailerEmailsAccess,
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
@@ -110,7 +110,7 @@ func NewServer(p Params) *Server {
 					MinimumGrade: table.FivenetMailerEmailsAccess.AS("job_access").MinimumGrade,
 				},
 			),
-			access.NewUsers[mailer.UserAccess, *mailer.UserAccess, mailer.AccessLevel](
+			access.NewUsers[maileraccess.UserAccess, *maileraccess.UserAccess, maileraccess.AccessLevel](
 				table.FivenetMailerEmailsAccess,
 				&access.UserAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
@@ -130,7 +130,7 @@ func NewServer(p Params) *Server {
 					UserID: table.FivenetMailerEmailsAccess.AS("user_access").UserID,
 				},
 			),
-			access.NewQualifications[mailer.QualificationAccess, *mailer.QualificationAccess, mailer.AccessLevel](
+			access.NewQualifications[maileraccess.QualificationAccess, *maileraccess.QualificationAccess, maileraccess.AccessLevel](
 				table.FivenetMailerEmailsAccess,
 				&access.QualificationAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{

@@ -8,10 +8,12 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import AttrViewAttr from '~/components/settings/attrs/AttrViewAttr.vue';
 import { getSettingsSystemClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
-import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
+import { AttributeValues, type RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
+import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/resources/settings/perms';
 import type { GetJobLimitsResponse } from '~~/gen/ts/services/settings/system';
+import AttrTemplates from './AttrTemplates.vue';
+import type { AttributeTemplate, PermissionTemplate } from './templates';
 
 const props = defineProps<{
     job: string;
@@ -25,6 +27,8 @@ const { t } = useI18n();
 
 const { isSuperuser } = useAuth();
 
+const { game } = useAppConfig();
+
 const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
@@ -37,6 +41,10 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(`settings-limiter-${props.job}`, () => getJobLimits(props.job));
+
+const completorStore = useCompletorStore();
+const { jobs } = storeToRefs(completorStore);
+const { listJobs } = completorStore;
 
 const changed = ref(false);
 
@@ -371,6 +379,133 @@ async function deleteFaction(job: string): Promise<void> {
     }
 }
 
+function applyTemplate(permissions: PermissionTemplate[], attributes: AttributeTemplate[]): void {
+    changed.value = true;
+    if (permissions.length === 0 && attributes.length === 0) {
+        // If no permissions or attributes, just clear everything
+        permStates.value.clear();
+        attrList.value.forEach((attr) => {
+            if (attr.maxValues?.validValues.oneofKind === 'stringList') {
+                attr.maxValues = {
+                    validValues: {
+                        oneofKind: 'stringList',
+                        stringList: {
+                            strings: [],
+                        },
+                    },
+                };
+            } else if (attr.maxValues?.validValues.oneofKind === 'jobList') {
+                attr.maxValues = {
+                    validValues: {
+                        oneofKind: 'jobList',
+                        jobList: {
+                            strings: [],
+                        },
+                    },
+                };
+            } else if (attr.maxValues?.validValues.oneofKind === 'jobGradeList') {
+                attr.maxValues = {
+                    validValues: {
+                        oneofKind: 'jobGradeList',
+                        jobGradeList: {
+                            fineGrained: false,
+                            jobs: {},
+                            grades: {},
+                        },
+                    },
+                };
+            }
+        });
+        return;
+    }
+
+    // Handle special case where permissions is length 1 and has only Superuser permission, which means all permissions should be applied
+    if (permissions.length === 1 && permissions[0]!.category === 'Superuser' && permissions[0]!.name === 'Superuser') {
+        permList.value.forEach((perm) => {
+            permStates.value.set(perm.id, true);
+        });
+        attrList.value.forEach((attr) => {
+            if (!attr.validValues) return;
+
+            if (attr.validValues.validValues.oneofKind === 'stringList') {
+                attr.maxValues = AttributeValues.clone(attr.validValues);
+            } else if (attr.validValues.validValues.oneofKind === 'jobList') {
+                attr.maxValues = {
+                    validValues: {
+                        oneofKind: 'jobList',
+                        jobList: {
+                            strings: [props.job],
+                        },
+                    },
+                };
+            } else if (attr.validValues.validValues.oneofKind === 'jobGradeList') {
+                const jobsObj: Record<string, number> = {};
+                const job = jobs.value.find((j) => j.name === props.job);
+                const maxGrade =
+                    job && job.grades.length > 0 ? Math.max(...job.grades.map((g) => g.grade)) : game.startJobGrade;
+                jobsObj[props.job] = maxGrade;
+
+                attr.maxValues = {
+                    validValues: {
+                        oneofKind: 'jobGradeList',
+                        jobGradeList: {
+                            fineGrained: false,
+                            jobs: jobsObj,
+                            grades: {},
+                        },
+                    },
+                };
+            }
+        });
+    } else {
+        permissions.forEach((perm) => {
+            const p = permList.value.find((v) => v.category === perm.category && v.name === perm.name);
+            if (p) {
+                permStates.value.set(p.id, true);
+            }
+        });
+
+        attributes.forEach((attr) => {
+            const a = attrList.value.find((v) => v.category === attr.category && v.key === attr.key);
+            if (!a) return;
+
+            if (!attr.validValues) {
+                a.maxValues = undefined;
+            } else if (attr.validValues?.validValues.oneofKind === 'stringList') {
+                a.maxValues = AttributeValues.clone(attr.validValues);
+            } else if (attr.validValues?.validValues.oneofKind === 'jobList') {
+                a.maxValues = {
+                    validValues: {
+                        oneofKind: 'jobList',
+                        jobList: {
+                            strings: [props.job],
+                        },
+                    },
+                };
+            } else if (attr.validValues?.validValues.oneofKind === 'jobGradeList') {
+                const jobsObj: Record<string, number> = {};
+                const job = jobs.value.find((j) => j.name === props.job);
+                const maxGrade =
+                    job && job.grades.length > 0 ? Math.max(...job.grades.map((g) => g.grade)) : game.startJobGrade;
+                jobsObj[props.job] = maxGrade;
+
+                a.maxValues = {
+                    validValues: {
+                        oneofKind: 'jobGradeList',
+                        jobGradeList: {
+                            fineGrained: false,
+                            jobs: jobsObj,
+                            grades: {},
+                        },
+                    },
+                };
+            }
+        });
+    }
+}
+
+onBeforeMount(async () => listJobs());
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
@@ -499,6 +634,10 @@ const confirmModal = overlay.create(ConfirmModal);
                             </div>
                         </template>
                     </UAccordion>
+
+                    <USeparator class="my-2" />
+
+                    <AttrTemplates @apply-template="(permissions, attributes) => applyTemplate(permissions, attributes)" />
                 </div>
             </template>
         </div>

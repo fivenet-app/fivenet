@@ -2,9 +2,9 @@
 import { z } from 'zod';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
-import { ApprovalAssigneeKind, type ApprovalPolicy } from '~~/gen/ts/resources/documents/approval';
+import { ApprovalAssigneeKind, type ApprovalPolicy } from '~~/gen/ts/resources/documents/approval/approval';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 withDefaults(
     defineProps<{

@@ -1,21 +1,21 @@
 import type { DuplexStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
-import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
+import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { notificationsEvents } from '~/composables/useClientUpdate';
 import type { Notification } from '~/types/notifications';
 import { getNotificationsNotificationsClient } from '~~/gen/ts/clients';
-import type { ObjectEvent, ObjectType } from '~~/gen/ts/resources/notifications/client_view';
+import type { ObjectEvent, ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 import {
     NotificationCategory,
     NotificationType,
     type Notification as ProtoNotification,
 } from '~~/gen/ts/resources/notifications/notifications';
-import type { UserInfoChanged } from '~~/gen/ts/resources/userinfo/user_info';
+import type { UserInfoChanged } from '~~/gen/ts/resources/userinfo/userinfo';
 import type { MarkNotificationsRequest, StreamRequest, StreamResponse } from '~~/gen/ts/services/notifications/notifications';
 import { useCalendarStore } from './calendar';
 import { useMailerStore } from './mailer';
 
-const logger = useLogger('📣 Notificator');
+export const logger = useLogger('📣 Notificator');
 
 // In seconds
 const maxBackoffTime = 20;
@@ -212,7 +212,6 @@ export const useNotificationsStore = defineStore(
             if (abort.value !== undefined) return;
 
             logger.debug('Starting Stream');
-            abort.value = new AbortController();
             reconnecting.value = true;
 
             const notificationsNotificationsClient = await getNotificationsNotificationsClient();
@@ -223,6 +222,7 @@ export const useNotificationsStore = defineStore(
             const mailerStore = useMailerStore();
 
             try {
+                abort.value = new AbortController();
                 currentStream = notificationsNotificationsClient.stream({ abort: abort.value.signal });
                 setStreamReadyState(true);
 
@@ -376,8 +376,8 @@ export const useNotificationsStore = defineStore(
             try {
                 await currentStream?.requests.send({
                     data: {
-                        oneofKind: 'clientView',
-                        clientView: {
+                        oneofKind: 'clientview',
+                        clientview: {
                             type: viewType,
                             id: id,
                         },

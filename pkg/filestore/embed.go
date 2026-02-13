@@ -8,11 +8,11 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	pbfilestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/filestore"
-	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	pbfilestore "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/filestore"
+	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
@@ -309,7 +309,7 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID int64) error
 	err = h.joinTable.
 		SELECT(mysql.COUNT(h.fileCol).AS("count")).
 		FROM(h.joinTable).
-		WHERE(mysql.AND(h.fileCol.EQ(mysql.Int64(fileID)))).
+		WHERE(h.fileCol.EQ(mysql.Int64(fileID))).
 		QueryContext(ctx, tx, &refs)
 	if err != nil {
 		return err
@@ -373,7 +373,7 @@ func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int6
 	err := tFiles.
 		SELECT(tFiles.ID.AS("id")).
 		WHERE(tFiles.FilePath.EQ(mysql.String(key))).
-		FOR(mysql.UPDATE()). // ← row-lock
+		FOR(mysql.UPDATE()). // Row-lock
 		QueryContext(ctx, tx, &fileId)
 
 	switch {
