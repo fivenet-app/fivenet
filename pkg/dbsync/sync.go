@@ -100,7 +100,9 @@ func New(p Params) (*Sync, error) {
 
 func (s *Sync) createGRPCClient() error {
 	// Create GRPC client for sync if destination is given
-	if s.cfg.Load().Destination.URL != "" {
+	cfg := s.cfg.Load()
+	api := cfg.Destination.API
+	if api.URL != "" {
 		transportCreds := auth.NewCredentials()
 		if !s.cfg.Load().Destination.Insecure {
 			transportCreds = credentials.NewTLS(&tls.Config{
@@ -110,13 +112,13 @@ func (s *Sync) createGRPCClient() error {
 		}
 
 		cli, err := grpc.NewClient(
-			s.cfg.Load().Destination.URL,
+			api.URL,
 			grpc.WithTransportCredentials(transportCreds),
 			// Require transport security for release mode
 			grpc.WithPerRPCCredentials(
 				auth.NewClientTokenAuth(
-					s.cfg.Load().Destination.Token,
-					s.cfg.Load().Mode == "release",
+					api.Token,
+					cfg.Mode == "release",
 				),
 			),
 		)

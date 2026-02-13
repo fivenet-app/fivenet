@@ -14,29 +14,8 @@ watchConfig: true
 
 stateFile: "dbsync.state.yaml"
 
-# The target FiveNet instance to sync data to (the instance must have the sync API enabled and you need a valid token)
-destination:
-  # Your FiveNet Hostname, with port if your port is not 443 (HTTPS),
-  # requires the FiveNet instance to **use HTTPS**.
-  # ! Make sure to not include the protocol (http:// or https://) here!
-  # ! Don't include a trailing slash!
-  #
-  # Example:
-  # 'https://demo.fivenet.app'   -> 'demo.fivenet.app:443'
-  # 'https://fivenet.example.com' -> 'fivenet.example.com:443'
-  url: "fivenet.example.com"
-  token: "YOUR_SYNC_API_TOKEN"
-  # Disable TLS verification (not recommended)
-  insecure: false
-  # Sync Interval can also be specified per table in the `tables:` section
-  syncInterval: 3s
-  # If you want to test your configuration without actually syncing data to FiveNet, you can enable the `dryRun` mode,
-  # which will log the data that would be synced instead of sending it to FiveNet.
-  # This is useful for testing and debugging your configuration.
-  dryRun: false
-
-# Your gameservers' database details
-# Changes to the source require a restart of the dbsync.
+# Your **gameservers' database** details
+# Changes to the source require a restart of the dbsync!
 source:
   # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
   # Please note that the `parseTime` parameter is always set to true
@@ -62,6 +41,34 @@ source:
 
   # Interval in which base data (jobs, job grades, licenses) is re-synced fully
   baseDataResyncInterval: 5m
+
+# The target FiveNet instance to sync data to (the instance must have the sync API enabled
+# and you need a valid token)
+destination:
+  # Sync method to use, currently only `api` is supported, which uses the FiveNet Sync API to sync data to FiveNet.
+  method: "api"
+  # Your FiveNet Sync API details.
+  api:
+    # Your FiveNet Hostname, with port if your port is not 443 (HTTPS),
+    # requires the FiveNet instance to **use HTTPS**.
+    # ! Make sure to not include the protocol (http:// or https://) here!
+    # ! Don't include a trailing slash!
+    #
+    # Example:
+    # 'https://demo.fivenet.app'   -> 'demo.fivenet.app:443'
+    # 'https://fivenet.example.com' -> 'fivenet.example.com:443'
+    url: "fivenet.example.com"
+    token: "YOUR_SYNC_API_TOKEN"
+    # Disable TLS verification (not recommended)
+    insecure: false
+
+  # Sync Interval can also be specified per table in the `tables:` section
+  syncInterval: 3s
+  # If you want to test your configuration without actually syncing data to FiveNet
+  # you can enable the `dryRun` mode,
+  # which will log the data that would be synced instead of sending it to FiveNet.
+  # This is useful for testing and debugging your configuration.
+  dryRun: false
 
 # A query for each "piece of data" FiveNet needs to function
 # The example table names + columns and queries are for the ESX framework
@@ -94,7 +101,8 @@ tables:
       #- pattern: '^off_'
       #  action: drop
 
-  # Job grades for the jobs, e.g., "police" job has the grades "0", "1", "2", etc. with different labels and names.
+  # Job grades for the jobs, e.g., "police" job has the grades "0", "1", "2", etc. with different
+  # labels and names.
   jobGrades:
     enabled: true
     # Name of the table for this data (in case you are using a custom query or are joining

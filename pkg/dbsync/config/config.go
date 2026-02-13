@@ -126,6 +126,19 @@ func (s *Config) LoadConfig() error {
 		return fmt.Errorf("failed to read config file data into the system. %w", err)
 	}
 
+	// If the destination URL or token is set, populate the API config for backward
+	// compatibility with older config versions
+	if c.Destination.URL != "" || c.Destination.Token != "" {
+		c.Destination.API = DBSyncDestinationAPI{
+			URL:      c.Destination.URL,
+			Token:    c.Destination.Token,
+			Insecure: c.Destination.Insecure,
+		}
+
+		c.Destination.URL = ""
+		c.Destination.Token = ""
+	}
+
 	if err := c.Init(); err != nil {
 		return fmt.Errorf("failed to initialize config. %w", err)
 	}
@@ -143,15 +156,14 @@ func (s *Config) LoadConfig() error {
 
 	if err := validate.Struct(c); err != nil {
 		// Build detailed validation error message
-		msg := "Invalid FiveNet DBSync config detected:\n"
+		var msg strings.Builder
+		msg.WriteString("Invalid FiveNet DBSync config detected:\n")
 		for _, validationErr := range err.(validator.ValidationErrors) {
-			msg += fmt.Sprintf(
-				"- Field `%s` violated %s validation.\n",
+			fmt.Fprintf(&msg, "- Field `%s` violated %s validation.\n",
 				validationErr.StructNamespace(),
-				validationErr.Tag(),
-			)
+				validationErr.Tag())
 		}
-		return fmt.Errorf("%s", msg)
+		return fmt.Errorf("%s", msg.String())
 	}
 
 	s.cfg.Store(c)
@@ -194,8 +206,8 @@ type DBSyncConfig struct {
 
 	StateFile string `default:"dbsync.state.yaml" yaml:"stateFile"`
 
-	Destination DBSyncDestination `yaml:"destination"`
 	Source      DBSyncSource      `yaml:"source"`
+	Destination DBSyncDestination `yaml:"destination"`
 
 	Tables DBSyncSourceTables `yaml:"tables"`
 
@@ -212,14 +224,28 @@ type DBSyncSource struct {
 	BaseDataResyncInterval time.Duration `default:"5m" yaml:"baseDataResyncInterval" validate:"gte=1"`
 }
 
+type DBSyncMethod string
+
+const (
+	DBSyncModeAPI DBSyncMethod = "api"
+	DBSyncModeDB  DBSyncMethod = "db"
+)
+
 type DBSyncDestination struct {
+	DBSyncDestinationAPI `yaml:",inline" mapstructure:",squash"`
+
+	Method DBSyncMethod `default:"api" yaml:"method"`
+
+	API DBSyncDestinationAPI `yaml:"api"`
+
+	SyncInterval time.Duration `default:"5s"    yaml:"syncInterval" validate:"gte=1"`
+	DryRun       bool          `default:"false" yaml:"dryRun"`
+}
+
+type DBSyncDestinationAPI struct {
 	URL      string `yaml:"url"`
 	Token    string `yaml:"token"`
 	Insecure bool   `yaml:"insecure"`
-
-	SyncInterval time.Duration `default:"5s" yaml:"syncInterval" validate:"gte=1"`
-
-	DryRun bool `default:"false" yaml:"dryRun"`
 }
 
 type DBSyncSourceTables struct {
