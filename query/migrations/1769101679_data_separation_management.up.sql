@@ -289,4 +289,7 @@ ALTER TABLE `fivenet_documents_meta` ADD COLUMN `comment_count` int(11) NOT NULL
 ALTER TABLE `fivenet_jobs` ADD COLUMN `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) AFTER `label`;
 ALTER TABLE `fivenet_jobs` ADD COLUMN `deleted_at` datetime(3) DEFAULT NULL AFTER `created_at`;
 
+-- Table: `fivenet_calendar` - Fix job inserted as empty string and not NULL in some cases.
+UPDATE `fivenet_calendar` SET `job` = NULL WHERE `job` = '';
+
 COMMIT;

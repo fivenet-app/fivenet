@@ -55,9 +55,24 @@ function copyLinkToClipboard(): void {
 }
 
 const canDo = computed(() => ({
-    share: checkCalendarAccess(data.value?.entry?.calendar?.access, entry.value?.creator, AccessLevel.SHARE),
-    edit: checkCalendarAccess(data.value?.entry?.calendar?.access, entry.value?.creator, AccessLevel.EDIT),
-    manage: checkCalendarAccess(data.value?.entry?.calendar?.access, entry.value?.creator, AccessLevel.MANAGE),
+    share: checkCalendarAccess(
+        data.value?.entry?.calendar?.access,
+        entry.value?.creator,
+        AccessLevel.SHARE,
+        data.value?.entry?.calendar?.creatorJob,
+    ),
+    edit: checkCalendarAccess(
+        data.value?.entry?.calendar?.access,
+        entry.value?.creator,
+        AccessLevel.EDIT,
+        data.value?.entry?.calendar?.creatorJob,
+    ),
+    manage: checkCalendarAccess(
+        data.value?.entry?.calendar?.access,
+        entry.value?.creator,
+        AccessLevel.MANAGE,
+        data.value?.entry?.calendar?.creatorJob,
+    ),
 }));
 
 const confirmModal = overlay.create(ConfirmModal);

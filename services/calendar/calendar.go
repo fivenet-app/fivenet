@@ -339,7 +339,7 @@ func (s *Server) CreateCalendar(
 			tCalendar.CreatorJob,
 		).
 		VALUES(
-			req.GetCalendar().GetJob(),
+			req.GetCalendar().Job,
 			req.GetCalendar().GetName(),
 			req.GetCalendar().GetDescription(),
 			req.GetCalendar().GetPublic(),

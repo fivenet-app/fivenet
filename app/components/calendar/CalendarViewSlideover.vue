@@ -38,12 +38,11 @@ const calendar = computed(() => data.value?.calendar);
 <template>
     <USlideover :title="`${$t('common.calendar')}: ${calendar?.name ?? $t('common.calendar')}`" :overlay="false">
         <template #actions>
-            <div class="flex items-center justify-between gap-2">
+            <div v-if="calendar" class="flex items-center justify-between gap-2">
                 <UTooltip
                     v-if="
-                        calendar &&
                         can('calendar.CalendarService/CreateCalendar').value &&
-                        checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT)
+                        checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT, calendar?.creatorJob)
                     "
                     :text="$t('common.edit')"
                 >
@@ -59,7 +58,7 @@ const calendar = computed(() => data.value?.calendar);
                 </UTooltip>
 
                 <UTooltip
-                    v-if="calendar && checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE)"
+                    v-if="checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE, calendar?.creatorJob)"
                     :text="$t('common.delete')"
                 >
                     <UButton
@@ -90,9 +89,9 @@ const calendar = computed(() => data.value?.calendar);
                 <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                     <OpenClosedBadge :closed="calendar.closed" />
 
-                    <UBadge class="inline-flex gap-1" color="neutral" icon="i-mdi-account">
-                        <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
-                        <CitizenInfoPopover :user="calendar.creator" show-avatar-in-name />
+                    <UBadge class="inline-flex gap-1 text-xs" color="neutral" icon="i-mdi-account">
+                        <span class="font-medium">{{ $t('common.created_by') }}</span>
+                        <CitizenInfoPopover :user="calendar.creator" show-avatar-in-name text-class="text-xs" />
                     </UBadge>
 
                     <UBadge

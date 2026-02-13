@@ -750,7 +750,8 @@
         "ranks": "No Ranks | {n} Rank | {n} Ranks",
         "only_disabled": "Only Disabled",
         "impersonation_active": "You are currently impersonating {label} ({number}).",
-        "stop_impersonation": "Stop Impersonation"
+        "stop_impersonation": "Stop Impersonation",
+        "all_day": "All Day"
     },
     "components": {
         "partials": {

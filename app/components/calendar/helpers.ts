@@ -5,15 +5,12 @@ export function checkCalendarAccess(
     access: CalendarAccess | undefined,
     creator: UserShort | undefined,
     level: AccessLevel,
+    creatorJob?: string,
 ): boolean {
     const { activeChar, isSuperuser } = useAuth();
-    if (isSuperuser.value) {
-        return true;
-    }
+    if (isSuperuser.value) return true;
 
-    if (activeChar.value === null) {
-        return false;
-    }
+    if (activeChar.value === null) return false;
 
-    return checkAccess(activeChar.value, access, creator, level);
+    return checkAccess(activeChar.value, access, creator, level, creatorJob);
 }

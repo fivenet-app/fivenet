@@ -275,6 +275,16 @@ const viewOptions = [
                 </template>
 
                 <template #right>
+                    <div class="hidden xl:inline">
+                        <UButton
+                            icon="i-mdi-calendar-today"
+                            :disabled="isRequestPending(calendarsStatus)"
+                            @click="resetToToday"
+                        >
+                            {{ $t('common.today') }}
+                        </UButton>
+                    </div>
+
                     <UFieldGroup
                         v-if="can('calendar.CalendarService/CreateCalendar').value || hasEditAccessToCalendar"
                         class="inline-flex w-full xl:hidden"
@@ -304,7 +314,7 @@ const viewOptions = [
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar>
+            <UDashboardToolbar :ui="{ root: 'flex xl:hidden' }">
                 <template #default>
                     <div class="flex flex-1 items-center justify-between">
                         <UPopover :content="{ side: 'bottom', align: 'start' }" arrow>

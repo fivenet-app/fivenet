@@ -481,7 +481,7 @@ export const useCalendarStore = defineStore(
             return !!calendars.value.find((c) => {
                 if (c.job === undefined && c.creatorId === activeChar.value?.userId) return true;
 
-                return checkCalendarAccess(c.access, c.creator, AccessLevel.EDIT);
+                return checkCalendarAccess(c.access, c.creator, AccessLevel.EDIT, c.creatorJob);
             });
         });
 

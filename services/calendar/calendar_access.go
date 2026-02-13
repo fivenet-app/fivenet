@@ -61,7 +61,7 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(
 		tCalendar.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 	)
 	if publicOk {
-		condition = tCalendar.Public.IS_TRUE()
+		condition = condition.OR(tCalendar.Public.IS_TRUE())
 	}
 
 	var accessExists mysql.BoolExpression

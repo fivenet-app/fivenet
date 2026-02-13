@@ -39,7 +39,8 @@ const schema = z.object({
     calendar: z.custom<CalendarShort>().optional(),
     title: z.coerce.string().min(3).max(512),
     startTime: z.date(),
-    endTime: z.date(),
+    endTime: z.date().optional(),
+    allDay: z.coerce.boolean().default(false),
     content: z.custom<JSONContent | string>().optional(),
     closed: z.coerce.boolean(),
     rsvpOpen: z.coerce.boolean(),
@@ -53,6 +54,7 @@ const state = reactive<Schema>({
     title: '',
     startTime: addHours(new Date(), 1),
     endTime: addHours(new Date(), 2),
+    allDay: false,
     content: '',
     closed: false,
     rsvpOpen: true,
@@ -79,7 +81,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
                 calendarId: values.calendar?.id,
                 title: values.title,
                 startTime: toTimestamp(values.startTime),
-                endTime: toTimestamp(values.endTime),
+                endTime: values.allDay ? undefined : toTimestamp(values.endTime),
                 content: {
                     contentType: ContentType.TIPTAP_JSON,
                     version: '',
@@ -114,7 +116,8 @@ function setFromProps(): void {
     if (entry.calendar) state.calendar = entry.calendar;
     state.title = entry.title;
     state.startTime = toDate(entry.startTime);
-    state.endTime = toDate(entry.endTime);
+    state.endTime = entry.endTime ? toDate(entry.endTime) : undefined;
+    state.allDay = state.endTime === undefined;
     state.content = entry.content?.tiptapJson
         ? (Struct.toJson(entry.content.tiptapJson) as JSONContent)
         : (entry.content?.rawHtml ?? '');
@@ -129,6 +132,8 @@ watch(props, async () => refresh());
 watch(
     () => state.startTime,
     () => {
+        if (!state.endTime) return;
+
         const endTime = state.endTime;
 
         if (state.startTime && !isSameDay(state.startTime, state.endTime)) {
@@ -241,11 +246,23 @@ const formRef = useTemplateRef('formRef');
                         />
                     </UFormField>
 
-                    <UFormField class="flex-1" name="startTime" :label="$t('common.begins_at')" required>
-                        <InputDatePicker v-model="state.startTime" clearable time class="w-full" />
-                    </UFormField>
+                    <div class="flex flex-1 flex-row gap-2">
+                        <UFormField class="flex-1" name="startTime" :label="$t('common.begins_at')" required>
+                            <InputDatePicker
+                                v-model="state.startTime"
+                                clearable
+                                :date-format="!state.allDay ? undefined : 'date'"
+                                :time="!state.allDay"
+                                class="w-full"
+                            />
+                        </UFormField>
 
-                    <UFormField class="flex-1" name="endTime" :label="$t('common.ends_at')" required>
+                        <UFormField name="allDay" :label="$t('common.all_day')">
+                            <USwitch v-model="state.allDay" />
+                        </UFormField>
+                    </div>
+
+                    <UFormField v-if="!state.allDay" class="flex-1" name="endTime" :label="$t('common.ends_at')" required>
                         <InputDatePicker v-model="state.endTime" clearable time class="w-full" />
                     </UFormField>
 

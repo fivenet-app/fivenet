@@ -750,7 +750,8 @@
         "ranks": "Keine Ränge | {n} Rang | {n} Ränge",
         "only_disabled": "Nur Deaktivierte",
         "impersonation_active": "Sie imitieren derzeit {label} ({number}.",
-        "stop_impersonation": "Imitation beenden"
+        "stop_impersonation": "Imitation beenden",
+        "all_day": "Ganztägig"
     },
     "components": {
         "partials": {
