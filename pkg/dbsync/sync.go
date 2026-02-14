@@ -11,6 +11,7 @@ import (
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -123,7 +124,30 @@ func (s *Sync) createGRPCClient() error {
 		}
 		s.cli = cli
 		s.syncCli = pbsync.NewSyncServiceClient(cli)
+
+		if err := s.getSyncStatus(s.ctx); err != nil {
+			s.logger.Error("failed to get sync status", zap.Error(err))
+		}
 	}
+
+	return nil
+}
+
+func (s *Sync) getSyncStatus(ctx context.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	resp, err := s.syncCli.GetStatus(ctx, &pbsync.GetStatusRequest{})
+	if err != nil {
+		cancel()
+		return fmt.Errorf("failed to connect to sync service. %w", err)
+	}
+
+	out, err := protoutils.MarshalToPrettyJSON(resp)
+	if err != nil {
+		return fmt.Errorf("failed to marshal sync status response. %w", err)
+	}
+	s.logger.Info("sync status", zap.String("status", string(out)))
 
 	return nil
 }
