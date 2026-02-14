@@ -243,10 +243,13 @@ type DBSyncDestination struct {
 }
 
 type DBSyncDestinationAPI struct {
-	URL               string `yaml:"url"`
-	Token             string `yaml:"token"`
-	Insecure          bool   `yaml:"insecure"`
-	TransportSecurity bool   `yaml:"transportSecurity" default:"true"`
+	URL   string `yaml:"url"`
+	Token string `yaml:"token"`
+
+	Timeout time.Duration `yaml:"timeout" default:"15s" validate:"gte=1"`
+
+	Insecure          bool `yaml:"insecure"`
+	TransportSecurity bool `yaml:"transportSecurity" default:"true"`
 }
 
 type DBSyncSourceTables struct {

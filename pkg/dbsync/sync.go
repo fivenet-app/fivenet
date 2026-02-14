@@ -87,6 +87,10 @@ func New(p Params) (*Sync, error) {
 		return nil, fmt.Errorf("failed to load dbsync state. %w", err)
 	}
 
+	if err := s.createGRPCClient(); err != nil {
+		return nil, fmt.Errorf("failed to create sync API gRPC client. %w", err)
+	}
+
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(s.start))
@@ -124,22 +128,19 @@ func (s *Sync) createGRPCClient() error {
 		}
 		s.cli = cli
 		s.syncCli = pbsync.NewSyncServiceClient(cli)
-
-		if err := s.getSyncStatus(s.ctx); err != nil {
-			s.logger.Error("failed to get sync status", zap.Error(err))
-		}
 	}
 
 	return nil
 }
 
 func (s *Sync) getSyncStatus(ctx context.Context) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	timeout := s.cfg.Load().Destination.API.Timeout
+
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	resp, err := s.syncCli.GetStatus(ctx, &pbsync.GetStatusRequest{})
 	if err != nil {
-		cancel()
 		return fmt.Errorf("failed to connect to sync service. %w", err)
 	}
 
@@ -147,7 +148,7 @@ func (s *Sync) getSyncStatus(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to marshal sync status response. %w", err)
 	}
-	s.logger.Info("sync status", zap.String("status", string(out)))
+	s.logger.Info("sync API status", zap.String("status", string(out)))
 
 	return nil
 }
@@ -159,10 +160,6 @@ func (s *Sync) start() error {
 	s.logger.Info("starting dbsync process")
 
 	s.ctx, s.cancel = context.WithCancel(context.Background())
-
-	if err := s.createGRPCClient(); err != nil {
-		return err
-	}
 
 	// Setup table syncers
 	syncer := &syncer{
@@ -180,12 +177,9 @@ func (s *Sync) start() error {
 	s.wg.Go(func() {
 		s.Run(s.ctx)
 	})
-
-	if s.syncCli != nil {
-		s.wg.Go(func() {
-			s.RunStream(s.ctx)
-		})
-	}
+	s.wg.Go(func() {
+		s.RunStream(s.ctx)
+	})
 
 	return nil
 }
@@ -229,9 +223,9 @@ func (s *Sync) restart() error {
 }
 
 func (s *Sync) Run(ctx context.Context) {
-	s.logger.Info("started dbsync loop")
-
 	for {
+		s.logger.Info("started dbsync loop")
+
 		if err := s.run(ctx); err != nil {
 			s.logger.Error("error during sync run", zap.Error(err))
 		}
@@ -240,12 +234,16 @@ func (s *Sync) Run(ctx context.Context) {
 		case <-ctx.Done():
 			return
 
-		case <-time.After(10 * time.Second):
+		case <-time.After(5 * time.Second):
 		}
 	}
 }
 
 func (s *Sync) run(ctx context.Context) error {
+	if err := s.getSyncStatus(s.ctx); err != nil {
+		s.logger.Error("failed to get sync status", zap.Error(err))
+	}
+
 	var wg sync.WaitGroup
 	// On startup sync base data (jobs, job grades and license types) before the "main" sync loop starts,
 	// then sync in 5 minute interval to keep the data fresh
@@ -277,8 +275,10 @@ func (s *Sync) run(ctx context.Context) error {
 		}
 
 		for {
-			if err := s.users.Sync(ctx); err != nil {
+			if count, err := s.users.Sync(ctx); err != nil {
 				s.logger.Error("error during users sync", zap.Error(err))
+			} else {
+				s.logger.Info("users synced", zap.Int64("count", count))
 			}
 
 			select {
@@ -297,8 +297,10 @@ func (s *Sync) run(ctx context.Context) error {
 		}
 
 		for {
-			if err := s.vehicles.Sync(ctx); err != nil {
+			if count, err := s.vehicles.Sync(ctx); err != nil {
 				s.logger.Error("error during vehicles sync", zap.Error(err))
+			} else {
+				s.logger.Info("vehicles synced", zap.Int64("count", count))
 			}
 
 			select {
@@ -317,8 +319,10 @@ func (s *Sync) run(ctx context.Context) error {
 		}
 
 		for {
-			if err := s.accounts.Sync(ctx); err != nil {
+			if count, err := s.accounts.Sync(ctx); err != nil {
 				s.logger.Error("error during accounts sync", zap.Error(err))
+			} else {
+				s.logger.Info("accounts synced", zap.Int64("count", count))
 			}
 
 			select {
@@ -339,16 +343,20 @@ func (s *Sync) syncBaseData(ctx context.Context) error {
 	errs := multierr.Combine()
 
 	if s.cfg.Load().Tables.Jobs.Enabled {
-		if err := s.jobs.Sync(ctx); err != nil {
+		if count, err := s.jobs.Sync(ctx); err != nil {
 			errs = multierr.Append(errs, err)
 			s.logger.Error("error during jobs sync", zap.Error(err))
+		} else {
+			s.logger.Info("jobs synced", zap.Int64("count", count))
 		}
 	}
 
 	if s.cfg.Load().Tables.Licenses.Enabled {
-		if err := s.licenses.Sync(ctx); err != nil {
+		if count, err := s.licenses.Sync(ctx); err != nil {
 			errs = multierr.Append(errs, err)
 			s.logger.Error("error during licenses sync", zap.Error(err))
+		} else {
+			s.logger.Info("licenses synced", zap.Int64("count", count))
 		}
 	}
 

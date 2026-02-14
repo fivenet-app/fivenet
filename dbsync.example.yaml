@@ -59,6 +59,9 @@ destination:
     # 'https://fivenet.example.com' -> 'fivenet.example.com:443'
     url: "fivenet.example.com"
     token: "YOUR_SYNC_API_TOKEN"
+    # Timeout for API requests
+    timeout: 5s
+
     # Disable TLS verification (not recommended)
     insecure: false
     # Advanced: Only disable if you know what you are doing!

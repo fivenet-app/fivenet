@@ -26,22 +26,21 @@ func newAccountsSync(s *syncer, state *dbsyncconfig.TableSyncState) *accountsSyn
 	}
 }
 
-func (s *accountsSync) Sync(ctx context.Context) error {
+func (s *accountsSync) Sync(ctx context.Context) (int64, error) {
 	accounts, err := s.fetchAccounts(ctx)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	s.logger.Debug("accountsSync", zap.Int("len", len(accounts)))
 
 	if len(accounts) == 0 {
-		return nil
+		return 0, nil
 	}
 
-	// Log a warning when no jobs are left after filtering
-	if len(accounts) == 0 {
-		s.logger.Warn("no jobs left after filtering")
-		return nil
+	count := int64(len(accounts))
+	if count == 0 {
+		return 0, nil
 	}
 
 	// Sync jobs to FiveNet server
@@ -53,13 +52,13 @@ func (s *accountsSync) Sync(ctx context.Context) error {
 				},
 			},
 		}); err != nil {
-			return err
+			return 0, err
 		}
 	}
 
 	s.state.Set(0, nil)
 
-	return nil
+	return count, nil
 }
 
 func (s *accountsSync) fetchAccounts(ctx context.Context) ([]*syncactivity.AccountUpdate, error) {

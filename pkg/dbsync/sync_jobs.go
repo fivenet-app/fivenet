@@ -26,28 +26,28 @@ func newJobsSync(s *syncer, state *dbsyncconfig.TableSyncState) *jobsSync {
 	}
 }
 
-func (s *jobsSync) Sync(ctx context.Context) error {
+func (s *jobsSync) Sync(ctx context.Context) (int64, error) {
 	jobs, err := s.fetchJobs(ctx)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	s.logger.Debug("jobsSync", zap.Int("len", len(jobs)))
-
-	if len(jobs) == 0 {
-		return nil
+	count := int64(len(jobs))
+	s.logger.Debug("jobsSync", zap.Int64("len", count))
+	if count == 0 {
+		return 0, nil
 	}
 
 	hasFilters := len(s.cfg.Tables.Jobs.Filters) > 0
 	jobs, err = s.applyFiltersAndRetrieveGrades(ctx, jobs, hasFilters)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	// Log a warning when no jobs are left after filtering
-	if hasFilters && len(jobs) == 0 {
+	if hasFilters && count == 0 {
 		s.logger.Warn("no jobs left after filtering")
-		return nil
+		return 0, nil
 	}
 
 	// Sync jobs to FiveNet server
@@ -59,13 +59,13 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 				},
 			},
 		}); err != nil {
-			return err
+			return 0, err
 		}
 	}
 
 	s.state.Set(0, nil)
 
-	return nil
+	return count, nil
 }
 
 func (s *jobsSync) fetchJobs(ctx context.Context) ([]*jobs.Job, error) {

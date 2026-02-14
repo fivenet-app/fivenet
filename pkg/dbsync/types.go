@@ -11,7 +11,13 @@ import (
 	"go.uber.org/zap"
 )
 
+type ISyncer interface {
+	Sync(context.Context) (int64, error)
+}
+
 type syncer struct {
+	ISyncer
+
 	logger *zap.Logger
 	db     *sql.DB
 

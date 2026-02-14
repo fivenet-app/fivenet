@@ -32,7 +32,7 @@ func newUsersSync(s *syncer, state *dbsyncconfig.TableSyncState) *usersSync {
 	}
 }
 
-func (s *usersSync) Sync(ctx context.Context) error {
+func (s *usersSync) Sync(ctx context.Context) (int64, error) {
 	limit := int64(150)
 	offset := s.getInitialOffset()
 	s.logger.Debug("usersSync", zap.Int64("offset", offset))
@@ -44,31 +44,31 @@ func (s *usersSync) Sync(ctx context.Context) error {
 
 	us, err := s.fetchUsers(ctx, q)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	s.logger.Debug("usersSync", zap.Int("len", len(us)))
-
+	count := int64(len(us))
+	s.logger.Debug("usersSync", zap.Int64("len", count))
 	if len(us) == 0 {
 		s.logger.Debug("no users found to sync, resetting state offset")
 		s.state.Set(0, nil)
 		s.resetLastCheckIfNotSynced()
-		return nil
+		return 0, nil
 	}
 
-	offset, err = s.updateSyncState(int64(len(us)), offset, limit)
+	offset, err = s.updateSyncState(count, offset, limit)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
-		return err
+		return 0, err
 	}
 	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
-		return err
+		return 0, err
 	}
 	if err := s.retrieveAndAttachPhoneNumbers(ctx, us); err != nil {
-		return err
+		return 0, err
 	}
 
 	s.applyFiltersAndTransformations(us, sQuery)
@@ -80,15 +80,15 @@ func (s *usersSync) Sync(ctx context.Context) error {
 			},
 		},
 	}); err != nil {
-		return err
+		return 0, err
 	}
 
 	s.logger.Debug("usersSync", zap.Bool("syncedUp", s.state.GetSyncedUp()))
 
-	lastUserId := strconv.FormatInt(int64(us[len(us)-1].GetUserId()), 10)
+	lastUserId := strconv.FormatInt(int64(us[count-1].GetUserId()), 10)
 	s.state.Set(offset+limit, &lastUserId)
 
-	return nil
+	return count, nil
 }
 
 func (s *usersSync) getInitialOffset() int64 {

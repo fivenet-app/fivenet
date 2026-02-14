@@ -25,7 +25,7 @@ func newLicensesSync(s *syncer, state *dbsyncconfig.TableSyncState) *licensesSyn
 	}
 }
 
-func (s *licensesSync) Sync(ctx context.Context) error {
+func (s *licensesSync) Sync(ctx context.Context) (int64, error) {
 	limit := int64(200)
 
 	q := s.cfg.Tables.Licenses.GetQuery(s.state, 0, limit)
@@ -34,14 +34,14 @@ func (s *licensesSync) Sync(ctx context.Context) error {
 	licenses := []*userslicenses.License{}
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, &licenses); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return 0, err
 		}
 	}
 
-	s.logger.Debug("licensesSync", zap.Int("len", len(licenses)))
-
-	if len(licenses) == 0 {
-		return nil
+	count := int64(len(licenses))
+	s.logger.Debug("licensesSync", zap.Int64("len", count))
+	if count == 0 {
+		return 0, nil
 	}
 
 	// Sync licenses to FiveNet server
@@ -53,11 +53,11 @@ func (s *licensesSync) Sync(ctx context.Context) error {
 				},
 			},
 		}); err != nil {
-			return err
+			return 0, err
 		}
 	}
 
 	s.state.Set(0, nil)
 
-	return nil
+	return count, nil
 }

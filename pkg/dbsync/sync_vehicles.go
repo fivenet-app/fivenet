@@ -26,7 +26,7 @@ func newVehiclesSync(s *syncer, state *dbsyncconfig.TableSyncState) *vehiclesSyn
 	}
 }
 
-func (s *vehiclesSync) Sync(ctx context.Context) error {
+func (s *vehiclesSync) Sync(ctx context.Context) (int64, error) {
 	limit := int64(500)
 	var offset int64
 	sOffset := s.state.GetOffset()
@@ -46,15 +46,15 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 	vehicles := []*vehicles.Vehicle{}
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, &vehicles); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return 0, err
 		}
 	}
 
-	s.logger.Debug("vehiclesSync", zap.Int("len", len(vehicles)))
-
+	count := int64(len(vehicles))
+	s.logger.Debug("vehiclesSync", zap.Int64("len", count))
 	if len(vehicles) == 0 {
 		s.state.Set(0, nil)
-		return nil
+		return 0, nil
 	}
 
 	// Sync vehicles to FiveNet server
@@ -66,19 +66,19 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 				},
 			},
 		}); err != nil {
-			return fmt.Errorf("failed to send vehicles data to FiveNet server. %w", err)
+			return 0, fmt.Errorf("failed to send vehicles data to FiveNet server. %w", err)
 		}
 	}
 
 	// If less vehicles than limit are returned, we probably have reached the "end" of the table
 	// and need to reset the offset to 0
-	if int64(len(vehicles)) < limit {
+	if count < limit {
 		offset = 0
 		s.state.SetSyncedUp(true)
 	}
 
-	lastPlate := vehicles[len(vehicles)-1].GetPlate()
+	lastPlate := vehicles[count-1].GetPlate()
 	s.state.Set(limit+offset, &lastPlate)
 
-	return nil
+	return count, nil
 }
