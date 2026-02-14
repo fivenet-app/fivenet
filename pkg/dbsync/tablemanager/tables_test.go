@@ -125,6 +125,8 @@ func TestTableManager_addUpdatedAtColumnToTable(t *testing.T) {
 	// Mock database responses
 	mock.ExpectExec("ALTER TABLE `test_table` ADD `updated_at` datetime\\(3\\) on update CURRENT_TIMESTAMP\\(3\\) NULL").
 		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec("ALTER TABLE `test_table` ADD INDEX `idx_test_table_updated_at` \\(`updated_at`\\)").
+		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	err = tableManager.addUpdatedAtColumnToTable(ctx, db, tableName, columnName)
 	assert.NoError(t, err)
