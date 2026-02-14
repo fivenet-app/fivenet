@@ -11,10 +11,25 @@
     "lockFileMaintenance": {
         "enabled": true
     },
-    "packageRules": [{
-        "matchDepTypes": ["resolutions"],
-        "enabled": false
-    }],
+    "packageRules": [
+        {
+            "matchDepTypes": ["resolutions"],
+            "enabled": false
+        },
+        {
+            "matchManagers": ["gomod"],
+            "groupName": "go modules",
+            "groupSlug": "go-modules"
+        },
+        {
+            "matchManagers": ["gomod"],
+            "matchDepTypes": ["golang"],
+            "matchDepNames": ["go"],
+            "groupName": "go toolchain",
+            "groupSlug": "go-toolchain",
+            "rangeStrategy": "bump"
+        }
+    ],
     "postUpdateOptions": ["gomodTidy", "pnpmDedupe"],
     "nix": {
         "enabled": true
