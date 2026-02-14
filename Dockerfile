@@ -1,7 +1,7 @@
-# syntax=docker/dockerfile:1.20-labs
+# syntax=docker/dockerfile:1.21-labs
 
 # Frontend Build
-FROM docker.io/library/node:24.13.0-alpine3.22 AS nodebuilder
+FROM docker.io/library/node:24.13.1-alpine3.22 AS nodebuilder
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ RUN apk add --no-cache git && \
         pnpm generate
 
 # Livemap Tiles Layer for improved caching
-FROM docker.io/library/alpine:3.23.2 AS livemaptiles
+FROM docker.io/library/alpine:3.23.3 AS livemaptiles
 
 WORKDIR /app
 
@@ -26,7 +26,7 @@ RUN find ./public/images/livemap/ \
         -exec rm -rf {} +
 
 # Iconify icon sets for backend server
-FROM docker.io/library/alpine:3.23.2 AS iconsets
+FROM docker.io/library/alpine:3.23.3 AS iconsets
 
 WORKDIR /app
 
@@ -45,7 +45,7 @@ RUN apk add --no-cache git && \
     find . -type f ! -name '*.json' -delete
 
 # Backend Build
-FROM docker.io/library/golang:1.25.5 AS gobuilder
+FROM docker.io/library/golang:1.26.0 AS gobuilder
 
 WORKDIR /go/src/github.com/fivenet-app/fivenet/v2026/
 
@@ -56,7 +56,7 @@ RUN apt-get update && \
     make build-go
 
 # Final Image
-FROM docker.io/library/alpine:3.23.2
+FROM docker.io/library/alpine:3.23.3
 
 WORKDIR /app
 
