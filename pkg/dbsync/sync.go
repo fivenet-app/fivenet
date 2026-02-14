@@ -26,6 +26,7 @@ var Module = fx.Module("dbsync",
 )
 
 type Sync struct {
+	mu sync.Mutex
 	wg *sync.WaitGroup
 
 	logger *zap.Logger
@@ -128,6 +129,9 @@ func (s *Sync) createGRPCClient() error {
 }
 
 func (s *Sync) start() error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	s.logger.Info("starting dbsync process")
 
 	s.ctx, s.cancel = context.WithCancel(context.Background())
@@ -163,7 +167,12 @@ func (s *Sync) start() error {
 }
 
 func (s *Sync) stop() error {
-	s.cancel()
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.cancel != nil {
+		s.cancel()
+	}
 
 	s.wg.Wait()
 
