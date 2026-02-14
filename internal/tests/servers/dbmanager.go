@@ -45,6 +45,8 @@ func NewDBServer(t *testing.T, setup bool) *dbServer {
 }
 
 func (m *dbServer) Setup(ctx context.Context) {
+	image, tag := loadDockerComposeServiceImage(m.t, "mysql")
+
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
 	var err error
 	m.pool, err = dockertest.NewPool("")
@@ -58,11 +60,11 @@ func (m *dbServer) Setup(ctx context.Context) {
 		m.t.Fatalf("could not connect to Docker: %q", err)
 	}
 
-	// pulls an image, creates a container based on it and runs it
+	// Pulls image, creates a container based on it and runs it
 	m.resource, err = m.pool.RunWithOptions(
 		&dockertest.RunOptions{
-			Repository: "docker.io/library/mysql",
-			Tag:        "9.4.0",
+			Repository: image,
+			Tag:        tag,
 			Env: []string{
 				"MYSQL_ROOT_PASSWORD=secret",
 				"MYSQL_USER=fivenet",
