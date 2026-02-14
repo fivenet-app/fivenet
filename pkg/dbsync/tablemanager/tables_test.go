@@ -43,11 +43,15 @@ func TestTableManager_CheckTables(t *testing.T) {
 		WithArgs("vehicles").
 		WillReturnRows(sqlmock.NewRows([]string{"TABLE_NAME"}).AddRow("vehicles"))
 
+	// Query table info
 	mock.ExpectQuery("SELECT c.COLUMN_NAME FROM information_schema.COLUMNS c WHERE c.TABLE_SCHEMA = DATABASE\\(\\) AND c.TABLE_NAME = \\? AND LOWER\\(c.EXTRA\\) LIKE '%on update current_timestamp%' LIMIT 1").
 		WithArgs("vehicles").
 		WillReturnRows(sqlmock.NewRows([]string{"COLUMN_NAME"}))
 
+	// Add updated_at column and index to table
 	mock.ExpectExec("ALTER TABLE `vehicles` ADD `updated_at` datetime\\(3\\) on update CURRENT_TIMESTAMP\\(3\\) NULL").
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec("ALTER TABLE `vehicles` ADD INDEX `idx_vehicles_updated_at` \\(`updated_at`\\)").
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	err = tableManager.CheckTables(ctx, db, tables)
@@ -96,6 +100,7 @@ func TestTableManager_checkIfTableHasUpdatedAtColumn(t *testing.T) {
 	tableName := "test_table"
 
 	// Mock database responses
+	// Query table info
 	mock.ExpectQuery("SELECT c.COLUMN_NAME FROM information_schema.COLUMNS c WHERE c.TABLE_SCHEMA = DATABASE\\(\\) AND c.TABLE_NAME = \\? AND LOWER\\(c.EXTRA\\) LIKE '%on update current_timestamp%' LIMIT 1").
 		WithArgs(tableName).
 		WillReturnRows(sqlmock.NewRows([]string{"COLUMN_NAME"}).AddRow("updated_at"))
@@ -123,6 +128,7 @@ func TestTableManager_addUpdatedAtColumnToTable(t *testing.T) {
 	columnName := "updated_at"
 
 	// Mock database responses
+	// Add updated_at column and index to table
 	mock.ExpectExec("ALTER TABLE `test_table` ADD `updated_at` datetime\\(3\\) on update CURRENT_TIMESTAMP\\(3\\) NULL").
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec("ALTER TABLE `test_table` ADD INDEX `idx_test_table_updated_at` \\(`updated_at`\\)").
