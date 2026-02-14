@@ -9,7 +9,7 @@ export const tileLayers = [
     {
         key: 'postal',
         label: 'components.livemap.tile_layers.postal',
-        url: '/images/livemap/tiles/postal/{z}/{x}/{y}.png',
+        url: '/images/livemap/tiles/postal/{z}/{x}/{y}.webp',
         options: {
             attribution: '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
             maxZoom: 7,
@@ -18,7 +18,7 @@ export const tileLayers = [
     {
         key: 'satelite',
         label: 'components.livemap.tile_layers.satelite',
-        url: '/images/livemap/tiles/satelite/{z}/{x}/{y}.png',
+        url: '/images/livemap/tiles/satelite/{z}/{x}/{y}.webp',
         options: {
             attribution: '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>',
             maxZoom: 7,

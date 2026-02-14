@@ -1,5 +1,5 @@
 <p align="center">
-    <img alt="FiveNet Logo" src="public/images/social-card.png" width="640" />
+    <img alt="FiveNet Logo" src="public/images/social-card.webp" width="640" />
 </p>
 
 # FiveNet
@@ -8,7 +8,7 @@
 
 [![Go](https://img.shields.io/badge/Go-%2300ADD8.svg?&logo=go&logoColor=white)](https://go.dev/) [![Nuxt.js](https://img.shields.io/badge/Nuxt.js-00DC82?logo=nuxtdotjs&logoColor=fff)](https://nuxt.com/) [![Nuxt UI Pro](https://img.shields.io/badge/Made%20with-Nuxt%20UI%20Pro-00DC82?logo=nuxt.js&labelColor=020420)](https://ui.nuxt.com/pro) [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)](#) [![NATS.io](https://img.shields.io/badge/nats.io-gray.svg?logo=natsdotio)](https://nats.io/) [![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](https://www.docker.com/)
 
-![FiveNet Overview Screenshot](.github/readme/overview.png)
+![FiveNet Overview Screenshot](.github/readme/overview.webp)
 
 For more screenshots and a detailed overview of the features, please check out the [FiveNet documentation](https://fivenet.app/getting-started/features).
 

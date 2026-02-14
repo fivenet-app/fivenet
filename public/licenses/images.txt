@@ -13,7 +13,7 @@ the icons were downloaded under a Flaticon Premium license.
 
 Attributions per File:
 
-- `public/images/broken_image.png` - Flaticon (https://www.flaticon.com/free-icon/image_17798162)
+- `public/images/broken_image.webp` - Flaticon (https://www.flaticon.com/free-icon/image_17798162; converted from PNG to WebP)
 
 Note: Reuse of these images or icons outside of the FiveNet project may require
 a separate Flaticon license.

@@ -34,7 +34,7 @@ const version = APP_VERSION;
             color="neutral"
             variant="ghost"
             :avatar="{
-                src: '/images/logo.png',
+                src: '/images/logo.webp',
                 alt: 'FiveNet',
             }"
             :ui="{ base: collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)', leadingAvatar: 'rounded-none' }"

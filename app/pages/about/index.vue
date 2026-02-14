@@ -88,7 +88,7 @@ const faqs = [
                             >
                                 <NuxtImg
                                     class="w-3xl max-w-none rounded-xl bg-default shadow-xl ring-1 ring-gray-400/10 sm:w-228"
-                                    src="/images/screenshots/overview.png"
+                                    src="/images/screenshots/overview.webp"
                                     alt="FiveNet Overview - Screenshot"
                                     loading="lazy"
                                 />

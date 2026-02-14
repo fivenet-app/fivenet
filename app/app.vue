@@ -30,8 +30,8 @@ useSeoMeta({
     applicationName: 'FiveNet',
     title: 'FiveNet',
     ogTitle: 'FiveNet',
-    ogImage: '/images/social-card.png',
-    twitterImage: '/images/social-card.png',
+    ogImage: '/images/social-card.webp',
+    twitterImage: '/images/social-card.webp',
     twitterCard: 'summary_large_image',
 });
 

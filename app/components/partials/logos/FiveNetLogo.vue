@@ -1,3 +1,3 @@
 <template>
-    <NuxtImg src="/images/logo.png" alt="FiveNet Logo" title="FiveNet" loading="lazy" />
+    <NuxtImg src="/images/logo.webp" alt="FiveNet Logo" title="FiveNet" loading="lazy" />
 </template>

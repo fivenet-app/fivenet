@@ -26,7 +26,7 @@ export function generateDiscordConnectURL(provider: string, redirect?: string, p
 
 export const safeImagePaths = ['/api/image_proxy', '/api/filestore'] as const;
 
-export const brokenImageURL = '/images/broken_image.png' as const;
+export const brokenImageURL = '/images/broken_image.webp' as const;
 
 export function cleanupImageURL(path: string | File | undefined, fallback?: string | undefined): string | undefined {
     if (path === undefined) return fallback;

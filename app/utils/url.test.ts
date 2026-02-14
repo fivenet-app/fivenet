@@ -51,9 +51,9 @@ describe('useImageURL', () => {
 
     it('should return a broken image URL when the filePath is undefined and fallback is set', () => {
         const filePath = ref(undefined);
-        const imageURL = useImageURL(filePath, '/images/broken_image.png');
+        const imageURL = useImageURL(filePath, '/images/broken_image.webp');
 
-        expect(imageURL.value).toBe('/images/broken_image.png');
+        expect(imageURL.value).toBe('/images/broken_image.webp');
     });
 
     it('should return the resolved path when filePath is a valid object', () => {
