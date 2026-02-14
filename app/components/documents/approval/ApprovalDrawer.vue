@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import {
@@ -211,17 +210,19 @@ const taskFormDrawer = overlay.create(TaskForm);
                                     </div>
                                 </template>
 
-                                <div v-if="policy" class="flex flex-col gap-2">
+                                <div class="flex flex-col gap-2">
                                     <UBadge
                                         :label="
-                                            $t(`enums.documents.ApprovalRuleKind.${ApprovalRuleKind[policy?.ruleKind ?? 0]}`)
+                                            $t(
+                                                `enums.documents.ApprovalRuleKind.${ApprovalRuleKind[policy?.ruleKind ?? ApprovalRuleKind.REQUIRE_ALL]}`,
+                                            )
                                         "
                                         color="neutral"
                                         variant="outline"
                                     />
 
                                     <UBadge
-                                        v-if="policy.ruleKind !== ApprovalRuleKind.REQUIRE_ALL"
+                                        v-if="policy?.ruleKind !== ApprovalRuleKind.REQUIRE_ALL"
                                         :label="`${$t('common.required')}: ${(policy?.requiredCount ?? 0) > 0 ? policy?.requiredCount : $t('common.all')} ${$t('common.approvals', (policy?.requiredCount ?? 0) > 0 ? (policy?.requiredCount ?? 0) : 2)}`"
                                         color="neutral"
                                         variant="outline"
@@ -229,7 +230,9 @@ const taskFormDrawer = overlay.create(TaskForm);
 
                                     <UBadge
                                         :label="
-                                            $t(`enums.documents.OnEditBehavior.${OnEditBehavior[policy?.onEditBehavior ?? 0]}`)
+                                            $t(
+                                                `enums.documents.OnEditBehavior.${OnEditBehavior[policy?.onEditBehavior ?? OnEditBehavior.KEEP_PROGRESS]}`,
+                                            )
                                         "
                                         color="info"
                                         variant="outline"
@@ -253,10 +256,6 @@ const taskFormDrawer = overlay.create(TaskForm);
                                     />
                                 </div>
 
-                                <div v-else>
-                                    <DataNoDataBlock icon="i-mdi-approval" :type="$t('common.policy')" :padded="false" />
-                                </div>
-
                                 <template
                                     v-if="
                                         can('documents.ApprovalService/UpsertApprovalPolicy').value ||
@@ -269,7 +268,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                                             v-if="can('documents.ApprovalService/UpsertApprovalPolicy').value"
                                             block
                                             :label="$t('common.policy')"
-                                            :trailing-icon="policy ? 'i-mdi-pencil' : 'i-mdi-plus'"
+                                            trailing-icon="i-mdi-pencil"
                                             @click="
                                                 policyForm.open({
                                                     documentId: props.documentId,

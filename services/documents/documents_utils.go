@@ -2,6 +2,7 @@ package documents
 
 import (
 	context "context"
+	"errors"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
@@ -381,7 +382,14 @@ func (s *Server) getDocumentMeta(
 
 	dest := &documents.DocumentMeta{}
 	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
+
+	if dest.DocumentId == 0 {
+		// No meta found, return "default" values
+		dest.DocumentId = documentId
 	}
 
 	return dest, nil
