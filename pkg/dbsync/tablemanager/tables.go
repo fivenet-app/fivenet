@@ -1,4 +1,4 @@
-package dbsync
+package dbsynctablemanager
 
 import (
 	"context"
@@ -11,9 +11,9 @@ import (
 	"go.uber.org/zap"
 )
 
-var TableManagerModule = fx.Module(
+var Module = fx.Module(
 	"dbsync.table_manager",
-	fx.Provide(NewTableManager),
+	fx.Provide(New),
 )
 
 type TableManager struct {
@@ -33,7 +33,7 @@ type TableManagerParams struct {
 	Config *dbsyncconfig.Config
 }
 
-func NewTableManager(p TableManagerParams) *TableManager {
+func New(p TableManagerParams) *TableManager {
 	t := &TableManager{
 		logger: p.Logger.Named("dbsync.table_manager"),
 		dryRun: !p.Config.Load().TableManager.Enabled,
@@ -152,29 +152,45 @@ func (t *TableManager) checkIfTableHasUpdatedAtColumn(
 	return true, nil
 }
 
-// addUpdatedAtColumnToTable adds a new column to the specified table that automatically updates
-// its value to the current timestamp whenever the row is updated using MySQLs `ON UPDATE` system.
+// addUpdatedAtColumnToTable adds a new column and index to the specified table that automatically
+// updates its value to the current timestamp whenever the row is updated using MySQLs `ON UPDATE`
+// system.
 func (t *TableManager) addUpdatedAtColumnToTable(
 	ctx context.Context,
 	db qrm.Executable,
 	tableName string,
 	columnName string,
 ) error {
-	query := `ALTER TABLE ` + "`" + tableName + "` " +
-		`ADD ` + "`" + columnName + "`" + ` datetime(3) on update CURRENT_TIMESTAMP(3) NULL`
-	if _, err := db.ExecContext(ctx, query); err != nil {
-		t.logger.Debug(
-			"alter table on updated time column to table",
-			zap.String("column_name", columnName),
-			zap.String("table_name", tableName),
-			zap.String("query", query),
-		)
-		return fmt.Errorf(
-			"failed to add on update timestamp column (%q) to table %q. %w",
-			columnName,
+	queries := []string{
+		fmt.Sprintf(
+			"ALTER TABLE `%s` ADD `%s` datetime(3) on update CURRENT_TIMESTAMP(3) NULL",
 			tableName,
-			err,
-		)
+			columnName,
+		),
+		fmt.Sprintf(
+			"ALTER TABLE `%s` ADD INDEX `idx_%s_%s` (`%s`)",
+			tableName,
+			tableName,
+			columnName,
+			columnName,
+		),
+	}
+
+	for _, query := range queries {
+		if _, err := db.ExecContext(ctx, query); err != nil {
+			t.logger.Debug(
+				"alter table on updated time column/index to table",
+				zap.String("column_name", columnName),
+				zap.String("table_name", tableName),
+				zap.String("query", query),
+			)
+			return fmt.Errorf(
+				"failed to add on update timestamp column/index (%q) to table %q. %w",
+				columnName,
+				tableName,
+				err,
+			)
+		}
 	}
 
 	return nil

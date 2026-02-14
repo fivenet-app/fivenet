@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbsync"
+	dbsynctablemanager "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/tablemanager"
 	"github.com/fivenet-app/fivenet/v2026/pkg/demo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/commands"
@@ -86,7 +87,7 @@ func FxDiscordOpts() []fx.Option {
 
 func FxDBSyncOpts() []fx.Option {
 	return []fx.Option{
-		fx.Invoke(func(*dbsync.TableManager) {}),
+		fx.Invoke(func(*dbsynctablemanager.TableManager) {}),
 		fx.Invoke(func(*dbsync.Sync) {}),
 	}
 }

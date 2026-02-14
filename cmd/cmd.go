@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/crypt"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbsync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
+	dbsynctablemanager "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/tablemanager"
 	"github.com/fivenet-app/fivenet/v2026/pkg/demo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/commands"
@@ -142,7 +143,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		demo.Module,
 		updatecheck.Module,
 		dbsync.Module,
-		dbsync.TableManagerModule,
+		dbsynctablemanager.Module,
 		dbsyncconfig.StateModule,
 
 		userinfo.PollerModule,

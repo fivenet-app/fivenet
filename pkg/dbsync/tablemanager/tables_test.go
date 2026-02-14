@@ -1,4 +1,4 @@
-package dbsync
+package dbsynctablemanager
 
 import (
 	"testing"
