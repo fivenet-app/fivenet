@@ -22,7 +22,7 @@ WORKDIR /app
 COPY ./public/images/livemap/ ./public/images/livemap/
 
 RUN find ./public/images/livemap/ \
-        ! -path '*/tiles*' -and ! -path './public/images/livemap/' \
+        ! -path '*/tiles*' -and ! -path '*/overlays*' -and ! -path './public/images/livemap/' \
         -exec rm -rf {} +
 
 # Iconify icon sets for backend server
