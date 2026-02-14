@@ -8,7 +8,12 @@ import (
 	"unicode/utf8"
 )
 
-func CleanStorageKey(input string) (string, error) {
+var (
+	ErrEmptyPathSegment = errors.New("empty path segment not allowed")
+	ErrEmptyPath        = errors.New("empty path")
+)
+
+func CleanStoragePath(input string, emptyOk bool) (string, error) {
 	// Forbid invalid UTF-8
 	if !utf8.ValidString(input) {
 		return "", errors.New("invalid utf-8")
@@ -36,8 +41,8 @@ func CleanStorageKey(input string) (string, error) {
 	// Disallow any empty and ".." path segments
 	parts := strings.SplitSeq(input, "/")
 	for p := range parts {
-		if p == "" {
-			return "", errors.New("empty path segment not allowed")
+		if p == "" && !emptyOk {
+			return "", ErrEmptyPathSegment
 		}
 		if p == ".." {
 			return "", errors.New("dotdot segment not allowed")
@@ -49,15 +54,25 @@ func CleanStorageKey(input string) (string, error) {
 	clean = strings.TrimPrefix(clean, "/")
 
 	if clean == "" || clean == "." {
-		return "", errors.New("empty path")
+		if !emptyOk {
+			return "", ErrEmptyPath
+		}
 	}
 
 	// Prevent escaping: Anything starting with ".." is traversal
 	if clean == ".." || strings.HasPrefix(clean, "../") {
 		return "", errors.New("path traversal detected")
 	}
+	// Re-add trailing slash if it was present in the input and empty segments are allowed
+	if emptyOk && strings.HasSuffix(input, "/") {
+		clean += "/"
+	}
 
 	return clean, nil
+}
+
+func CleanStorageKey(input string) (string, error) {
+	return CleanStoragePath(input, false)
 }
 
 func hasWindowsDrivePrefix(s string) bool {
@@ -71,8 +86,15 @@ func hasWindowsDrivePrefix(s string) bool {
 	return s[1] == ':'
 }
 
-func FSRootPath(prefix string, key string) (string, error) {
+func FSRootFile(prefix string, key string) (string, error) {
+	return FSRootPath(prefix, key, false)
+}
+
+func FSRootPath(prefix string, key string, emptyOk bool) (string, error) {
 	if key == "" || key == "." || key == ".." {
+		if emptyOk {
+			return "", nil
+		}
 		return "", errors.New("empty key")
 	}
 	// Forbid NUL byte (defensive check)
@@ -87,8 +109,8 @@ func FSRootPath(prefix string, key string) (string, error) {
 	// Disallow any empty and ".." path segments
 	parts := strings.SplitSeq(key, "/")
 	for p := range parts {
-		if p == "" {
-			return "", errors.New("empty path segment not allowed")
+		if p == "" && !emptyOk {
+			return "", ErrEmptyPathSegment
 		}
 		if p == ".." {
 			return "", errors.New("dotdot segment not allowed")
@@ -105,11 +127,16 @@ func FSRootPath(prefix string, key string) (string, error) {
 
 	// Disallow leading ".." segments in the final relative path
 	clean := filepath.Clean(rel)
-	if clean == "." {
+	if clean == "." && !emptyOk {
 		return "", errors.New("invalid path")
 	}
 	if clean == ".." || strings.HasPrefix(clean, ".."+string(filepath.Separator)) {
 		return "", errors.New("path traversal detected")
+	}
+
+	// Re-add trailing slash if it was present in the input and empty segments are allowed
+	if emptyOk && strings.HasSuffix(key, "/") {
+		clean += "/"
 	}
 
 	return clean, nil

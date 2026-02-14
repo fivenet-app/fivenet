@@ -66,7 +66,7 @@ func (s *Wrapper) List(
 	offset int,
 	pageSize int,
 ) ([]*FileInfo, error) {
-	key, err := utils.CleanStorageKey(key)
+	key, err := utils.CleanStoragePath(key, true)
 	if err != nil {
 		return nil, ErrInvalidPath
 	}

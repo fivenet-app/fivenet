@@ -59,7 +59,7 @@ func NewFilesystem(p Params) (IStorage, error) {
 // Get retrieves a file and its metadata from the filesystem.
 // Returns an open file and ObjectInfo, or an error if not found or invalid.
 func (s *Filesystem) Get(ctx context.Context, key string) (IObject, IObjectInfo, error) {
-	key, err := utils.FSRootPath(filepath.Join(s.prefix), key)
+	key, err := utils.FSRootFile(filepath.Join(s.prefix), key)
 	if err != nil {
 		return nil, nil, ErrInvalidPath
 	}
@@ -93,7 +93,7 @@ func (s *Filesystem) Get(ctx context.Context, key string) (IObject, IObjectInfo,
 
 // Stat returns metadata for a file in the filesystem, or an error if not found or invalid.
 func (s *Filesystem) Stat(ctx context.Context, key string) (IObjectInfo, error) {
-	key, err := utils.FSRootPath(filepath.Join(s.prefix), key)
+	key, err := utils.FSRootFile(filepath.Join(s.prefix), key)
 	if err != nil {
 		return nil, ErrInvalidPath
 	}
@@ -125,7 +125,7 @@ func (s *Filesystem) Put(
 	size int64,
 	contentType string,
 ) (string, error) {
-	key, err := utils.FSRootPath(filepath.Join(s.prefix), key)
+	key, err := utils.FSRootFile(filepath.Join(s.prefix), key)
 	if err != nil {
 		return "", ErrInvalidPath
 	}
@@ -150,7 +150,7 @@ func (s *Filesystem) Put(
 
 // Delete removes a file from the filesystem. Returns nil if the file does not exist.
 func (s *Filesystem) Delete(ctx context.Context, key string) error {
-	key, err := utils.FSRootPath(filepath.Join(s.prefix), key)
+	key, err := utils.FSRootFile(filepath.Join(s.prefix), key)
 	if err != nil {
 		return ErrInvalidPath
 	}
@@ -172,7 +172,7 @@ func (s *Filesystem) List(
 	offset int,
 	pageSize int,
 ) ([]*FileInfo, error) {
-	key, err := utils.FSRootPath(filepath.Join(s.prefix), key)
+	key, err := utils.FSRootFile(filepath.Join(s.prefix), key)
 	if err != nil {
 		return nil, ErrInvalidPath
 	}

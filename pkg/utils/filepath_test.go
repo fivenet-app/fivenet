@@ -7,6 +7,50 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestCleanStoragePath(t *testing.T) {
+	tests := []struct {
+		name      string
+		input     string
+		emptyOk   bool
+		expected  string
+		expectErr bool
+	}{
+		{
+			name:      "Path with trailing slash",
+			input:     "images/test123/",
+			emptyOk:   true,
+			expected:  "images/test123/",
+			expectErr: false,
+		},
+		{
+			name:      "Empty prefix",
+			input:     "document.pdf",
+			emptyOk:   false,
+			expected:  "document.pdf",
+			expectErr: false,
+		},
+		{
+			name:      "Empty",
+			input:     "",
+			emptyOk:   true,
+			expected:  "",
+			expectErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := CleanStoragePath(tt.input, tt.emptyOk)
+			if tt.expectErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
 func TestCleanStorageKey(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -139,6 +183,54 @@ func TestFSRootPath(t *testing.T) {
 		name      string
 		prefix    string
 		key       string
+		emptyOk   bool
+		expected  string
+		expectErr bool
+	}{
+		{
+			name:      "Path with trailing slash",
+			prefix:    "images",
+			key:       "test123/",
+			emptyOk:   true,
+			expected:  "images/test123/",
+			expectErr: false,
+		},
+		{
+			name:      "Empty prefix",
+			prefix:    "",
+			key:       "document.pdf",
+			emptyOk:   false,
+			expected:  "document.pdf",
+			expectErr: false,
+		},
+		{
+			name:      "Empty",
+			prefix:    "",
+			key:       "",
+			emptyOk:   true,
+			expected:  "",
+			expectErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := FSRootPath(tt.prefix, tt.key, tt.emptyOk)
+			if tt.expectErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestFSRootFile(t *testing.T) {
+	tests := []struct {
+		name      string
+		prefix    string
+		key       string
 		expected  string
 		expectErr bool
 	}{
@@ -193,7 +285,7 @@ func TestFSRootPath(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := FSRootPath(tt.prefix, tt.key)
+			got, err := FSRootFile(tt.prefix, tt.key)
 			if tt.expectErr {
 				assert.Error(t, err)
 				assert.Empty(t, got)

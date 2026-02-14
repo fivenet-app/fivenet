@@ -3,7 +3,6 @@ package filestore
 import (
 	"context"
 	"errors"
-	"path/filepath"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
@@ -13,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/grpc"
 )
@@ -28,11 +28,13 @@ func (s *Server) ListFiles(
 	}
 
 	filePath := ""
-	if req.Path != nil {
-		filePath = filepath.Clean(req.GetPath())
-	}
-	if filePath == "" {
-		filePath = "/"
+	if req.GetPath() != "" {
+		// Empty is okay here because it means "list from root".
+		fp, err := utils.CleanStoragePath(req.GetPath(), true)
+		if err != nil {
+			return nil, err
+		}
+		filePath = fp
 	}
 
 	pag, _ := req.GetPagination().GetResponseWithPageSize(database.NoTotalCount, listFilesPageSize)
