@@ -132,8 +132,9 @@ export default defineNuxtConfig({
             charset: 'utf-8',
             viewport: 'width=device-width, initial-scale=1',
             link: [
-                { rel: 'icon', type: 'image/webp', href: '/images/logo.webp' },
+                { rel: 'shortcut icon', href: '/favicon.ico' },
                 { rel: 'icon', type: 'image/png', href: '/images/logo.png' },
+                { rel: 'apple-touch-icon', href: '/images/logo.png' },
             ],
             meta: [{ name: 'darkreader-lock', content: '' }],
         },
