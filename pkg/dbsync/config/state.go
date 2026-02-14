@@ -120,7 +120,8 @@ func (s *TableSyncState) Set(offset int64, lastId *string) {
 	s.dss.mu.Lock()
 	defer s.dss.mu.Unlock()
 
-	now := time.Now()
+	// Subtract 1 minute to account for potential clock skew and ensure no records are missed
+	now := time.Now().Add(-1 * time.Minute)
 	s.LastCheck = &now
 	s.Offset = offset
 	s.LastID = lastId

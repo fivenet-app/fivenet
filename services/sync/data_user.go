@@ -162,7 +162,7 @@ func (s *Server) handleUsersData(
 
 		for _, user := range toCreate {
 			var accountIdStmt mysql.SelectStatement = nil
-			if user.GetIdentifier() != "" {
+			if user.GetUserId() <= 0 || user.GetIdentifier() != "" {
 				accountIdStmt = tAccounts.
 					SELECT(
 						mysql.COALESCE(tAccounts.ID, mysql.NULL),
