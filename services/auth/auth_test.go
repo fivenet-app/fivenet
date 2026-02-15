@@ -104,8 +104,12 @@ func TestFullAuthFlow(t *testing.T) {
 			foundToken = i
 		}
 	}
-	require.True(foundAuthed != -1, "Expected a cookie starting with '"+auth.AuthedCookieName+"='")
-	require.True(foundToken != -1, "Expected a cookie starting with '"+auth.AccCookieName+"='")
+	require.NotEqual(
+		-1,
+		foundAuthed,
+		"Expected a cookie starting with '"+auth.AuthedCookieName+"='",
+	)
+	require.NotEqual(-1, foundToken, "Expected a cookie starting with '"+auth.AccCookieName+"='")
 
 	cookie, err := http.ParseSetCookie(cookies[foundToken])
 	require.NoError(err)
@@ -149,8 +153,12 @@ func TestFullAuthFlow(t *testing.T) {
 			foundToken = i
 		}
 	}
-	require.True(foundAuthed != -1, "Expected a cookie starting with '"+auth.AuthedCookieName+"='")
-	require.True(foundToken != -1, "Expected a cookie starting with '"+auth.AccCookieName+"='")
+	require.NotEqual(
+		-1,
+		foundAuthed,
+		"Expected a cookie starting with '"+auth.AuthedCookieName+"='",
+	)
+	require.NotEqual(-1, foundToken, "Expected a cookie starting with '"+auth.AccCookieName+"='")
 
 	cookie, err = http.ParseSetCookie(cookies[foundToken])
 	require.NoError(err)

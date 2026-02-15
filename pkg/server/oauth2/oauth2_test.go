@@ -404,7 +404,7 @@ func TestCallback_ConnectFlow(t *testing.T) {
 		Avatar:   "profile_picture.png",
 	}
 	redirectUrl := "https://example.com/redirect-url?state="
-	mockProvider.On("GetRedirect", mock.Anything).Return(redirectUrl)
+	mockProvider.On("GetRedirect", mock.Anything).Return(redirectUrl, nil)
 	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(mockUserInfo, nil)
 
 	mockUserInfoStore := &MockUserInfoStore{}
