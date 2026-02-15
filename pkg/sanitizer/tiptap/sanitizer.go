@@ -73,13 +73,41 @@ func normalizeColor(v any) (string, bool) {
 	if s == "" {
 		return "", true
 	}
-	// keep named colors you support, else hex
+	// Keep named colors you support, else hex
 	if hexColor.MatchString(s) {
 		return strings.ToLower(s), true
 	}
-	// allow a small whitelist of named colors, e.g., "red", "yellow"
+	// Allow a small whitelist of named colors, e.g., "red", "yellow"
 	switch strings.ToLower(s) {
-	case "yellow", "red", "green", "blue", "gray", "black", "white":
+	case "black",
+		"white",
+		"gray",
+		// Primary - Default
+		"green",
+		"teal",
+		"cyan",
+		"sky",
+		"blue",
+		"indigo",
+		"violet",
+		// Primary - Custom
+		"yellow",
+		"amber",
+		"lime",
+		"emerald",
+		"fuchsia",
+		"rose",
+		"pink",
+		"orange",
+		"red",
+		"purple",
+		// Additional named HTML/CSS colors
+		// https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/named-color
+		"silver",
+		"maroon",
+		"olive",
+		"navy",
+		"aqua":
 		return s, true
 	}
 	return "", false
