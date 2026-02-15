@@ -199,9 +199,9 @@ const confirmModal = overlay.create(ConfirmModal);
                         <span>{{ $t('common.deleted') }}</span>
                     </div>
 
-                    <div v-if="comment.creatorId === activeChar?.userId || isSuperuser">
+                    <UFieldGroup v-if="comment.creatorId === activeChar?.userId || isSuperuser">
                         <UTooltip v-if="canComment" :text="$t('common.edit')">
-                            <UButton v-if="canComment" variant="link" icon="i-mdi-pencil" @click="editing = true" />
+                            <UButton variant="link" icon="i-mdi-pencil" @click="editing = true" />
                         </UTooltip>
 
                         <UTooltip v-if="can('documents.DocumentsService/DeleteComment').value" :text="$t('common.delete')">
@@ -216,10 +216,10 @@ const confirmModal = overlay.create(ConfirmModal);
                                 "
                             />
                         </UTooltip>
-                    </div>
+                    </UFieldGroup>
                 </div>
 
-                <div class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-900">
+                <div class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
                     <CustomContentRenderer v-if="comment.content" :value="comment.content" />
                 </div>
             </div>
@@ -243,7 +243,13 @@ const confirmModal = overlay.create(ConfirmModal);
                     </UFormField>
 
                     <div class="mt-2 shrink-0">
-                        <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit" :label="$t('common.edit')" />
+                        <UButton
+                            type="submit"
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                            trailing-icon="i-mdi-comment-edit"
+                            :label="$t('common.edit')"
+                        />
                     </div>
                 </UForm>
             </div>

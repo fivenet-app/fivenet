@@ -200,37 +200,36 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <div>
         <div ref="commentsEl">
-            <template v-if="canComment">
-                <div v-if="!closed && canComment" class="flex items-start space-x-4">
-                    <div class="min-w-0 flex-1">
-                        <UForm class="relative" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                            <UFormField name="content" :ui="{ error: 'hidden' }">
-                                <ClientOnly>
-                                    <TiptapEditor
-                                        v-model="state.content"
-                                        name="content"
-                                        :placeholder="$t('components.documents.document_comments.add_comment')"
-                                        wrapper-class="min-h-44"
-                                        disable-images
-                                        :limit="1250"
-                                        history-type="document_comments"
-                                        :saving="saving"
-                                    />
-                                </ClientOnly>
-                            </UFormField>
-
-                            <div class="mt-2 shrink-0">
-                                <UButton
-                                    type="submit"
-                                    :disabled="!canSubmit"
-                                    :loading="!canSubmit"
-                                    :label="$t('common.post')"
+            <div v-if="canComment && !closed" class="flex items-start space-x-4">
+                <div class="min-w-0 flex-1">
+                    <UForm class="relative" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                        <UFormField name="content" :ui="{ error: 'hidden' }">
+                            <ClientOnly>
+                                <TiptapEditor
+                                    v-model="state.content"
+                                    name="content"
+                                    :placeholder="$t('components.documents.document_comments.add_comment')"
+                                    wrapper-class="min-h-44"
+                                    disable-images
+                                    :limit="1250"
+                                    history-type="document_comments"
+                                    :saving="saving"
                                 />
-                            </div>
-                        </UForm>
-                    </div>
+                            </ClientOnly>
+                        </UFormField>
+
+                        <div class="mt-2 shrink-0">
+                            <UButton
+                                type="submit"
+                                :disabled="!canSubmit"
+                                :loading="!canSubmit"
+                                :label="$t('common.post')"
+                                trailing-icon="i-mdi-comment-plus"
+                            />
+                        </div>
+                    </UForm>
                 </div>
-            </template>
+            </div>
         </div>
 
         <div class="mt-2">
@@ -253,6 +252,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     :key="comment.id"
                     v-model="data.comments[idx]"
                     :document-id="documentId"
+                    :can-comment="canComment"
                     @deleted="removeComment(comment.id)"
                 />
             </ul>
