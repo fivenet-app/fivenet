@@ -220,6 +220,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                     >
                                         {{ $t('common.assign') }}
                                     </UButton>
+
                                     <UButton
                                         v-if="canDo('TakeDispatch') && canAccessDispatch.participate"
                                         icon="i-mdi-plus"

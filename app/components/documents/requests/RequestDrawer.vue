@@ -166,38 +166,40 @@ const formRef = useTemplateRef('formRef');
                 class="mx-auto w-full max-w-(--breakpoint-xl)"
                 @submit="onSubmitThrottle"
             >
-                <div v-if="canDo.create" class="flex flex-row gap-2 md:flex-col">
-                    <UFormField class="flex-1" name="requestsType" :label="$t('common.type', 2)" required>
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.requestType"
-                                class="w-full"
-                                :items="availableRequestTypes"
-                                value-key="key"
-                                :placeholder="$t('common.type')"
-                                :search-input="{ placeholder: $t('common.search_field') }"
-                            >
-                                <template v-if="state.requestType" #default>
-                                    {{ $t(`enums.documents.DocActivityType.${DocActivityType[state.requestType]}`, 2) }}
-                                </template>
+                <template v-if="canDo.create">
+                    <div class="flex flex-row gap-2 md:flex-col">
+                        <UFormField class="flex-1" name="requestsType" :label="$t('common.type', 2)" required>
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="state.requestType"
+                                    class="w-full"
+                                    :items="availableRequestTypes"
+                                    value-key="key"
+                                    :placeholder="$t('common.type')"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                >
+                                    <template v-if="state.requestType" #default>
+                                        {{ $t(`enums.documents.DocActivityType.${DocActivityType[state.requestType]}`, 2) }}
+                                    </template>
 
-                                <template #item-label="{ item }">
-                                    {{ $t(`enums.documents.DocActivityType.${DocActivityType[item.key]}`, 2) }}
-                                </template>
+                                    <template #item-label="{ item }">
+                                        {{ $t(`enums.documents.DocActivityType.${DocActivityType[item.key]}`, 2) }}
+                                    </template>
 
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.type', 2)]) }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormField>
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.type', 2)]) }}
+                                    </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormField>
 
-                    <UFormField name="reason" :label="$t('common.reason')" required>
-                        <UTextarea v-model="state.reason" :placeholder="$t('common.reason')" :rows="4" class="w-full" />
-                    </UFormField>
-                </div>
+                        <UFormField name="reason" :label="$t('common.reason')" required>
+                            <UTextarea v-model="state.reason" :placeholder="$t('common.reason')" :rows="4" class="w-full" />
+                        </UFormField>
+                    </div>
 
-                <USeparator class="my-2" />
+                    <USeparator class="my-2" />
+                </template>
 
                 <ul v-if="isRequestPending(status)" class="mb-6 divide-y divide-default rounded-md" role="list">
                     <li v-for="idx in 2" :key="idx" class="flex justify-between gap-x-4 py-4">

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import type { GetTimeclockStatsResponse } from '~~/gen/ts/services/jobs/timeclock';
 
@@ -68,17 +69,11 @@ watchDebounced(
             <h2 class="inline-flex w-full items-center justify-between text-lg font-semibold">
                 {{ $t('common.timeclock') }}
 
-                <UTooltip :text="$t('common.refresh')">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-refresh"
-                        :disabled="loading || loadingState"
-                        :label="$t('common.refresh')"
-                        :loading="loading || loadingState"
-                        :ui="{ label: 'hidden sm:inline-flex' }"
-                        @click="() => refresh()"
-                    />
-                </UTooltip>
+                <RefreshButton
+                    :disabled="loading || loadingState"
+                    :loading="isRequestPending(status)"
+                    @click="() => refresh()"
+                />
             </h2>
         </template>
 

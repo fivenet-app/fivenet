@@ -189,7 +189,7 @@ func (s *Server) ListColleagues(
 		case rankColumn:
 			fallthrough
 		default:
-			columns = append(columns, tColleague.JobGrade)
+			columns = append(columns, tUserJobs.Grade)
 		}
 
 		for _, column := range columns {
@@ -201,7 +201,7 @@ func (s *Server) ListColleagues(
 		}
 	} else {
 		orderBys = append(orderBys,
-			tColleague.JobGrade.ASC(),
+			tUserJobs.Grade.ASC(),
 			tColleague.Firstname.ASC(),
 			tColleague.Lastname.ASC(),
 		)
@@ -337,7 +337,6 @@ func (s *Server) getColleague(
 		tColleague.Lastname,
 		tUserJobs.Job.AS("colleague.job"),
 		tUserJobs.Grade.AS("colleague.job_grade"),
-		tColleague.JobGrade,
 		tColleague.Dateofbirth,
 		tColleague.PhoneNumber,
 		tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
@@ -797,7 +796,10 @@ func (s *Server) ListColleagueActivity(
 
 	tColleagueActivity := tColleagueActivity.AS("colleague_activity")
 	tTargetColleague := table.FivenetUser.AS("target_user")
+	tTargetUserJobs := table.FivenetUserJobs.AS("target_user_jobs")
+
 	tSourceUser := tTargetColleague.AS("source_user")
+	tSourceUserJobs := table.FivenetUserJobs.AS("source_user_jobs")
 
 	condition := tColleagueActivity.Job.EQ(mysql.String(userInfo.GetJob()))
 
@@ -958,6 +960,8 @@ func (s *Server) ListColleagueActivity(
 			tColleagueActivity.Reason,
 			tColleagueActivity.Data,
 			tTargetColleague.ID,
+			tTargetUserJobs.Job.AS("target_user.job"),
+			tTargetUserJobs.Grade.AS("target_user.job_grade"),
 			tTargetColleague.Job,
 			tTargetColleague.JobGrade,
 			tTargetColleague.Firstname,
@@ -973,8 +977,8 @@ func (s *Server) ListColleagueActivity(
 			tTargetColleagueProps.NamePrefix,
 			tTargetColleagueProps.NameSuffix,
 			tSourceUser.ID,
-			tSourceUser.Job,
-			tSourceUser.JobGrade,
+			tSourceUserJobs.Job.AS("source_user.job"),
+			tSourceUserJobs.Grade.AS("source_user.job_grade"),
 			tSourceUser.Firstname,
 			tSourceUser.Lastname,
 			tSourceUser.Dateofbirth,
@@ -986,6 +990,12 @@ func (s *Server) ListColleagueActivity(
 			tColleagueActivity.
 				INNER_JOIN(tTargetColleague,
 					tTargetColleague.ID.EQ(tColleagueActivity.TargetUserID),
+				).
+				LEFT_JOIN(tTargetUserJobs,
+					mysql.AND(
+						tTargetUserJobs.UserID.EQ(tTargetColleague.ID),
+						tTargetUserJobs.Job.EQ(mysql.String(userInfo.GetJob())),
+					),
 				).
 				LEFT_JOIN(tTargetUserProps,
 					tTargetUserProps.UserID.EQ(tTargetColleague.ID),
@@ -1001,6 +1011,12 @@ func (s *Server) ListColleagueActivity(
 				).
 				LEFT_JOIN(tSourceUser,
 					tSourceUser.ID.EQ(tColleagueActivity.SourceUserID),
+				).
+				LEFT_JOIN(tSourceUserJobs,
+					mysql.AND(
+						tSourceUserJobs.UserID.EQ(tSourceUser.ID),
+						tSourceUserJobs.Job.EQ(mysql.String(userInfo.GetJob())),
+					),
 				).
 				LEFT_JOIN(tSourceUserProps,
 					tSourceUserProps.UserID.EQ(tSourceUser.ID),

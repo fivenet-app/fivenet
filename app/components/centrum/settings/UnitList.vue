@@ -202,8 +202,9 @@ const confirmModal = overlay.create(ConfirmModal);
 
                     <UButton
                         v-if="can('centrum.CentrumService/CreateOrUpdateUnit').value"
-                        trailing-icon="i-mdi-plus"
                         color="neutral"
+                        variant="outline"
+                        trailing-icon="i-mdi-plus"
                         @click="
                             unitCreateOrUpdateSlideover.open({
                                 onCreated: async () => refresh(),

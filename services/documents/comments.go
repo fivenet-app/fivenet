@@ -657,6 +657,8 @@ func (s *Server) updateCommentsCount(
 		return err
 	}
 
+	tDMeta := table.FivenetDocumentsMeta
+
 	updateStmt := tDMeta.
 		INSERT(
 			tDMeta.DocumentID,

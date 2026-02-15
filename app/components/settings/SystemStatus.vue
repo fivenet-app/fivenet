@@ -22,7 +22,12 @@ async function getStatus() {
 </script>
 
 <template>
-    <UCard :title="$t('components.settings.system_status.title')" icon="i-mdi-server" :ui="{ body: 'p-2 sm:p-2' }">
+    <UCard
+        :title="$t('components.settings.system_status.title')"
+        icon="i-mdi-server"
+        variant="subtle"
+        :ui="{ body: 'p-2 sm:p-2' }"
+    >
         <template #header>
             <div class="flex items-center gap-2">
                 <UIcon name="i-mdi-server" class="size-5 text-primary" />

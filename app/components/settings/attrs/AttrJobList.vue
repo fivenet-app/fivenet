@@ -183,11 +183,12 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             <UButton
                                 :disabled="state.job === undefined || !canSubmit"
                                 :loading="!canSubmit"
+                                color="neutral"
+                                variant="outline"
                                 icon="i-mdi-plus"
+                                :label="$t('common.create')"
                                 @click="onSubmitThrottle"
-                            >
-                                {{ $t('common.create') }}
-                            </UButton>
+                            />
                         </UFormField>
                     </UForm>
 

@@ -2,6 +2,7 @@
 <script lang="ts" setup>
 import type { AsyncDataRequestStatus } from '#app';
 import type { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
+import RefreshButton from './RefreshButton.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -144,20 +145,12 @@ function onClickNext() {
             </div>
             <div v-else></div>
 
-            <UTooltip v-if="refresh" :text="$t('common.refresh')">
-                <UButton
-                    class="p-px"
-                    variant="link"
-                    icon="i-mdi-refresh"
-                    :disabled="loadingState || isRequestPending(status)"
-                    :loading="loadingState || isRequestPending(status)"
-                    @click="refresh()"
-                >
-                    <span class="hidden @md/pagination:block">
-                        {{ $t('common.refresh') }}
-                    </span>
-                </UButton>
-            </UTooltip>
+            <RefreshButton
+                v-if="refresh"
+                :disabled="loadingState || isRequestPending(status)"
+                :loading="loadingState || isRequestPending(status)"
+                label-class="hidden @md/pagination:block"
+            />
 
             <template v-if="!hideButtons">
                 <UPagination

@@ -8,6 +8,7 @@ import FindCalendarDrawer from '~/components/calendar/FindCalendarDrawer.vue';
 import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
 import EntryViewSlideover from '~/components/calendar/entry/EntryViewSlideover.vue';
 import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -524,16 +525,11 @@ const viewOptions = [
                 </UFormField>
 
                 <div class="inline-flex items-center">
-                    <UTooltip :text="$t('common.refresh')">
-                        <UButton
-                            icon="i-mdi-refresh"
-                            variant="outline"
-                            :disabled="isRequestPending(status) || loadingState"
-                            :loading="isRequestPending(status) || loadingState"
-                            :label="$t('common.refresh')"
-                            @click="refresh()"
-                        />
-                    </UTooltip>
+                    <RefreshButton
+                        :disabled="isRequestPending(status) || loadingState"
+                        :loading="isRequestPending(status) || loadingState"
+                        @click="() => refresh()"
+                    />
                 </div>
 
                 <div class="inline-flex items-center">
@@ -645,18 +641,12 @@ const viewOptions = [
                     </ClientOnly>
                 </UFormField>
 
-                <UTooltip class="inline-flex w-full" :text="$t('common.refresh')">
-                    <UButton
-                        class="w-full"
-                        icon="i-mdi-refresh"
-                        variant="outline"
-                        :disabled="isRequestPending(status) || loadingState"
-                        :loading="isRequestPending(status) || loadingState"
-                        @click="refresh()"
-                    >
-                        {{ $t('common.refresh') }}
-                    </UButton>
-                </UTooltip>
+                <RefreshButton
+                    variant="outline"
+                    :disabled="isRequestPending(status) || loadingState"
+                    :loading="isRequestPending(status) || loadingState"
+                    @click="() => refresh()"
+                />
 
                 <UButton
                     class="font-semibold"

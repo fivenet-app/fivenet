@@ -693,6 +693,7 @@ const formRef = useTemplateRef('formRef');
                                 to="https://fivenet.app/user-guides/documents/templates"
                                 external
                                 link-target="_blank"
+                                variant="subtle"
                             />
 
                             <UFormField

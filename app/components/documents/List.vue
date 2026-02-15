@@ -196,7 +196,13 @@ defineShortcuts({
                     </UFieldGroup>
 
                     <UTooltip v-if="can('documents.DocumentsService/UpdateDocument').value" :text="$t('common.create')">
-                        <UButton trailing-icon="i-mdi-plus" color="neutral" truncate @click="templateDrawer.open({})">
+                        <UButton
+                            color="neutral"
+                            variant="outline"
+                            trailing-icon="i-mdi-plus"
+                            truncate
+                            @click="templateDrawer.open({})"
+                        >
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.document', 1) }}
                             </span>

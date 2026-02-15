@@ -10,6 +10,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { Perms } from '~~/gen/ts/perms';
 import { ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
@@ -156,13 +157,7 @@ const isOpen = ref(false);
                 <template #right>
                     <PartialsBackButton fallback-to="/citizens" />
 
-                    <UButton
-                        icon="i-mdi-refresh"
-                        :label="$t('common.refresh')"
-                        :loading="isRequestPending(status)"
-                        :ui="{ label: 'hidden sm:inline-flex' }"
-                        @click="() => refresh()"
-                    />
+                    <RefreshButton :loading="isRequestPending(status)" @click="() => refresh()" />
                 </template>
             </UDashboardNavbar>
 

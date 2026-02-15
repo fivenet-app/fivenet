@@ -25,6 +25,7 @@ import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/doc
 import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
 import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue';
 import DraftBadge from '../partials/DraftBadge.vue';
+import RefreshButton from '../partials/RefreshButton.vue';
 import ScrollToTop from '../partials/ScrollToTop.vue';
 import ApprovalDrawer from './approval/ApprovalDrawer.vue';
 import ReminderDrawer from './ReminderDrawer.vue';
@@ -275,13 +276,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                 <template #right>
                     <PartialsBackButton to="/documents" />
 
-                    <UButton
-                        icon="i-mdi-refresh"
-                        :label="$t('common.refresh')"
-                        :loading="isRequestPending(status)"
-                        :ui="{ label: 'hidden sm:inline-flex' }"
-                        @click="() => refresh()"
-                    />
+                    <RefreshButton :loading="isRequestPending(status)" @click="() => refresh()" />
 
                     <UFieldGroup class="inline-flex">
                         <IDCopyBadge

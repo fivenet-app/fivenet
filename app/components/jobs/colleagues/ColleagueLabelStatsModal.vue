@@ -2,6 +2,7 @@
 import { StackedBar } from '@unovis/ts';
 import { VisAxis, VisStackedBar, VisTooltip, VisXYContainer } from '@unovis/vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { LabelCount } from '~~/gen/ts/resources/jobs/labels/labels';
 import type { GetColleagueLabelsStatsResponse } from '~~/gen/ts/services/jobs/jobs';
@@ -80,9 +81,13 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
             <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
-                <UTooltip :text="$t('common.refresh')">
-                    <UButton icon="i-mdi-refresh" :loading="!canSubmit" :disabled="!canSubmit" @click="() => refresh()" />
-                </UTooltip>
+                <RefreshButton
+                    variant="solid"
+                    :loading="!canSubmit"
+                    :disabled="!canSubmit"
+                    icon-only
+                    @click="() => refresh()"
+                />
             </UFieldGroup>
         </template>
     </UModal>

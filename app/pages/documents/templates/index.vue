@@ -47,7 +47,7 @@ const templatesListRef = useTemplateRef('templatesListRef');
                     </UButton>
 
                     <UTooltip v-if="can('documents.DocumentsService/CreateTemplate').value" :text="$t('common.create')">
-                        <UButton to="/documents/templates/create" color="neutral" trailing-icon="i-mdi-plus">
+                        <UButton to="/documents/templates/create" color="neutral" variant="outline" trailing-icon="i-mdi-plus">
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.template') }}
                             </span>

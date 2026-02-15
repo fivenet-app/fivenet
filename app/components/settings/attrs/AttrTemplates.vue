@@ -60,7 +60,7 @@ const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
-    <UCollapsible>
+    <UCollapsible class="mb-4">
         <UButton :label="$t('common.template', 2)" block color="neutral" variant="subtle" trailing-icon="i-mdi-chevron-down" />
 
         <template #content>
@@ -84,7 +84,7 @@ const confirmModal = overlay.create(ConfirmModal);
                             <UButton
                                 :label="$t('common.apply')"
                                 color="red"
-                                variant="subtle"
+                                variant="outline"
                                 icon="i-mdi-plus"
                                 @click="
                                     confirmModal.open({

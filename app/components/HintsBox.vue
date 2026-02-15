@@ -44,10 +44,12 @@ const hints = computed(() =>
         :title="$t('components.hints.start_text')"
         :ui="{
             wrapper: 'flex-row gap-2',
-            leadingIcon: 'size-6',
             body: 'p-0 sm:p-0',
             root: 'block',
+            title: 'text-sm',
+            container: 'gap-y-2',
         }"
+        variant="subtle"
         v-bind="$attrs"
     >
         <UCarousel
@@ -61,7 +63,7 @@ const hints = computed(() =>
         >
             <div class="box-border w-full min-w-0">
                 <div class="flex min-w-0 flex-wrap items-center gap-3 overflow-hidden">
-                    <p class="min-w-0 flex-1 [overflow-wrap:anywhere] break-words hyphens-auto whitespace-normal">
+                    <p class="min-w-0 flex-1 text-sm [overflow-wrap:anywhere] break-words hyphens-auto whitespace-normal">
                         {{ $t(`components.hints.${hint.key}.content`) }}
                     </p>
 

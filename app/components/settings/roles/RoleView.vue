@@ -5,6 +5,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
 import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -450,9 +451,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             />
                         </UTooltip>
 
-                        <UTooltip :text="$t('common.refresh')">
-                            <UButton variant="link" icon="i-mdi-refresh" color="primary" @click="refresh()" />
-                        </UTooltip>
+                        <RefreshButton :loading="isRequestPending(status)" icon-only @click="() => refresh()" />
 
                         <UTooltip :text="$t('common.delete')">
                             <UButton

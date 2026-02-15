@@ -3,6 +3,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import { ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval/approval';
 import type { DeleteApprovalTasksResponse, ListApprovalTasksResponse } from '~~/gen/ts/services/documents/approval';
@@ -63,9 +64,7 @@ async function removeTask(id: number): Promise<DeleteApprovalTasksResponse> {
 
                 <slot name="header" :refresh="refresh" />
 
-                <UTooltip :text="$t('common.refresh')">
-                    <UButton variant="link" icon="i-mdi-refresh" @click="() => refresh()" />
-                </UTooltip>
+                <RefreshButton :loading="isRequestPending(status)" icon-only @click="() => refresh()" />
             </div>
         </template>
 

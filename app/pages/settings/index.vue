@@ -125,7 +125,7 @@ const superuserItems = computed<CardElements>(() => [
                 <SystemStatus v-if="isSuperuser" />
 
                 <template v-if="isSuperuser">
-                    <UCard :title="$t('components.settings.system_settings')" icon="i-mdi-administrator">
+                    <UCard :title="$t('components.settings.system_settings')" icon="i-mdi-administrator" variant="subtle">
                         <template #header>
                             <div class="flex items-center gap-2">
                                 <UIcon name="i-mdi-administrator" class="size-5 text-primary" />

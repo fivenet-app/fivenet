@@ -3,6 +3,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import PageSearch from '~/components/wiki/PageSearch.vue';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
@@ -77,16 +78,7 @@ const wikiService = await useWikiWiki();
                 </template>
 
                 <template #right>
-                    <UTooltip :text="$t('common.refresh')">
-                        <UButton
-                            :label="$t('common.refresh')"
-                            icon="i-mdi-refresh"
-                            :loading="isRequestPending(status)"
-                            @click="() => refresh()"
-                        >
-                            {{ $t('common.refresh') }}
-                        </UButton>
-                    </UTooltip>
+                    <RefreshButton :loading="isRequestPending(status)" @click="() => refresh()" />
 
                     <UTooltip v-if="can('wiki.WikiService/UpdatePage').value" :text="$t('common.create')">
                         <UButton color="neutral" variant="outline" trailing-icon="i-mdi-plus" @click="wikiService.createPage()">

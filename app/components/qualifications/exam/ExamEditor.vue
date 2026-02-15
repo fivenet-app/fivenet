@@ -137,7 +137,7 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
             </UPageCard>
 
             <div class="mb-2">
-                <UPageCard class="mb-4" :ui="{ title: 'inline-flex flex-1', body: 'flex w-full' }">
+                <UPageCard class="mb-4" variant="subtle" :ui="{ title: 'inline-flex flex-1', body: 'flex w-full' }">
                     <template #title>
                         <h2>{{ $t('common.question', 2) }}</h2>
                         <div class="flex-1" />

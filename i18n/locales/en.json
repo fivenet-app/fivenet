@@ -977,7 +977,8 @@
                     "description": "Count self-approvals towards required approvals."
                 },
                 "self_approve_allowed_badge": "Self-approvals allowed",
-                "self_approve_disallowed_badge": "Self-approvals not allowed"
+                "self_approve_disallowed_badge": "Self-approvals not allowed",
+                "recompute_counters": "Recompute approval counters"
             }
         },
         "livemap": {

@@ -17,6 +17,7 @@ import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue';
 import DraftBadge from '../partials/DraftBadge.vue';
 import GenericImg from '../partials/elements/GenericImg.vue';
+import RefreshButton from '../partials/RefreshButton.vue';
 import ScrollToTop from '../partials/ScrollToTop.vue';
 import List from './activity/List.vue';
 import { checkPageAccess } from './helpers';
@@ -221,6 +222,7 @@ const scrollRef = useTemplateRef('scrollRef');
                     <UButton
                         v-if="can('wiki.WikiService/UpdatePage').value"
                         color="neutral"
+                        variant="outline"
                         trailing-icon="i-mdi-plus"
                         @click="wikiService.createPage(page?.parentId ?? page?.id)"
                     >
@@ -297,9 +299,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             :ui="{ root: 'py-4', wrapper: 'py-4', title: !page.meta.title ? 'italic' : '' }"
                         >
                             <template #links>
-                                <UTooltip :text="$t('common.refresh')">
-                                    <UButton variant="link" icon="i-mdi-refresh" @click="refresh()" />
-                                </UTooltip>
+                                <RefreshButton :loading="isRequestPending(status)" icon-only @click="() => refresh()" />
 
                                 <UTooltip
                                     v-if="

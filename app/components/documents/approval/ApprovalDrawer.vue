@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import {
     ApprovalRuleKind,
@@ -197,15 +198,12 @@ const taskFormDrawer = overlay.create(TaskForm);
                                         </UCollapsible>
 
                                         <div>
-                                            <UTooltip :text="$t('common.refresh')">
-                                                <UButton
-                                                    icon="i-mdi-refresh"
-                                                    size="sm"
-                                                    variant="link"
-                                                    :loading="!policy && isRequestPending(status)"
-                                                    @click="() => refresh()"
-                                                />
-                                            </UTooltip>
+                                            <RefreshButton
+                                                icon="i-mdi-refresh"
+                                                :loading="!policy && isRequestPending(status)"
+                                                icon-only
+                                                @click="() => refresh()"
+                                            />
                                         </div>
                                     </div>
                                 </template>
@@ -268,6 +266,8 @@ const taskFormDrawer = overlay.create(TaskForm);
                                             v-if="can('documents.ApprovalService/UpsertApprovalPolicy').value"
                                             block
                                             :label="$t('common.policy')"
+                                            color="neutral"
+                                            variant="outline"
                                             trailing-icon="i-mdi-pencil"
                                             @click="
                                                 policyForm.open({
@@ -278,12 +278,14 @@ const taskFormDrawer = overlay.create(TaskForm);
                                             "
                                         />
 
-                                        <UButton
-                                            v-if="can('documents.ApprovalService/RevokeApproval').value"
-                                            icon="i-mdi-calculator-variant"
-                                            variant="outline"
-                                            @click="() => recomputeApprovalPolicyCounters()"
-                                        />
+                                        <UTooltip :text="$t('components.documents.approval.recompute_counters')">
+                                            <UButton
+                                                v-if="can('documents.ApprovalService/RevokeApproval').value"
+                                                icon="i-mdi-calculator-variant"
+                                                variant="outline"
+                                                @click="() => recomputeApprovalPolicyCounters()"
+                                            />
+                                        </UTooltip>
                                     </UFieldGroup>
                                 </template>
                             </UCard>
@@ -303,7 +305,8 @@ const taskFormDrawer = overlay.create(TaskForm);
                                 >
                                     <UButton
                                         :disabled="!policy"
-                                        variant="link"
+                                        color="neutral"
+                                        variant="outline"
                                         :label="$t('common.create')"
                                         trailing-icon="i-mdi-task-add"
                                         @click="

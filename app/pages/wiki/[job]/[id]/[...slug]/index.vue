@@ -2,6 +2,7 @@
 import type { TypedRouteFromName } from '#build/typed-router';
 import type { NavigationMenuItem } from '@nuxt/ui';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import PageList from '~/components/wiki/PageList.vue';
 import PageView from '~/components/wiki/PageView.vue';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
@@ -116,15 +117,12 @@ const navItems = computed(() => pages.value?.map((p) => mapPageToNavItem(p)) ?? 
                 <ClientOnly>
                     <PageList :items="navItems" />
 
-                    <UTooltip :text="$t('common.refresh')">
-                        <UButton
-                            class="mt-1 -ml-2"
-                            variant="link"
-                            icon="i-mdi-refresh"
-                            :loading="isRequestPending(pagesStatus)"
-                            @click="() => pagesRefresh()"
-                        />
-                    </UTooltip>
+                    <RefreshButton
+                        class="mt-1 -ml-2"
+                        :loading="isRequestPending(pagesStatus)"
+                        icon-only
+                        @click="() => pagesRefresh()"
+                    />
                 </ClientOnly>
             </UPageAside>
         </template>

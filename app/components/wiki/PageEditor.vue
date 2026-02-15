@@ -20,6 +20,7 @@ import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
+import RefreshButton from '../partials/RefreshButton.vue';
 import { checkPageAccess, pageToURL } from './helpers';
 
 const props = defineProps<{
@@ -125,7 +126,11 @@ const state = reactive<Schema>({
     files: [],
 });
 
-const { data: pages, refresh: pagesRefresh } = useLazyAsyncData(`wiki-pages-id:${props.pageId}-editor`, () => listPages(), {
+const {
+    data: pages,
+    refresh: pagesRefresh,
+    status: pagesStatus,
+} = useLazyAsyncData(`wiki-pages-id:${props.pageId}-editor`, () => listPages(), {
     default: () => [] as PageShort[],
 });
 
@@ -532,9 +537,12 @@ const formRef = useTemplateRef('formRef');
                                                         </USelectMenu>
                                                     </ClientOnly>
 
-                                                    <UTooltip :text="$t('common.refresh')">
-                                                        <UButton variant="link" icon="i-mdi-refresh" @click="pagesRefresh()" />
-                                                    </UTooltip>
+                                                    <RefreshButton
+                                                        class="mt-1 -ml-2"
+                                                        :loading="isRequestPending(pagesStatus)"
+                                                        icon-only
+                                                        @click="() => pagesRefresh()"
+                                                    />
                                                 </div>
                                             </UFormField>
 

@@ -64,6 +64,7 @@ function categorySelected(idx: number): void {
                     <UTooltip v-if="can('documents.DocumentsService/CreateOrUpdateCategory').value" :text="$t('common.create')">
                         <UButton
                             color="neutral"
+                            variant="outline"
                             trailing-icon="i-mdi-plus"
                             @click="
                                 categoryCreateOrUpdateModal.open({

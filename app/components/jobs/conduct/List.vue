@@ -382,11 +382,12 @@ const columns = computed(
                             <UFormField
                                 v-if="can('jobs.ConductService/CreateConductEntry').value"
                                 class="flex-initial"
-                                :label="$t('common.create')"
+                                label="&nbsp;"
                             >
                                 <UButton
                                     trailing-icon="i-mdi-plus"
                                     color="neutral"
+                                    variant="outline"
                                     truncate
                                     :label="$t('common.create')"
                                     @click="

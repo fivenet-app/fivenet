@@ -90,6 +90,8 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
 
                     <UTooltip :text="$t('common.add')">
                         <UButton
+                            color="neutral"
+                            variant="outline"
                             icon="i-mdi-plus"
                             :label="$t('common.add')"
                             @click="

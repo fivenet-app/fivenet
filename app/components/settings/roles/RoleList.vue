@@ -173,6 +173,8 @@ const confirmModal = overlay.create(ConfirmModal);
                                 class="flex-initial justify-end"
                                 :disabled="state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit"
                                 :loading="!canSubmit"
+                                color="neutral"
+                                variant="outline"
                                 icon="i-mdi-plus"
                                 @click="
                                     confirmModal.open({
@@ -191,7 +193,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     </UForm>
 
                     <div>
-                        <SingleHint class="my-2" hint-id="settings_roles_list" />
+                        <SingleHint class="my-2" hint-id="settings_roles_list" variant="subtle" />
 
                         <DataErrorBlock
                             v-if="error"
@@ -212,7 +214,7 @@ const confirmModal = overlay.create(ConfirmModal);
 
                         <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
 
-                        <SingleHint class="mt-2" hint-id="settings_roles_superuser" />
+                        <SingleHint class="mt-2" hint-id="settings_roles_superuser" variant="subtle" />
                     </div>
                 </div>
 

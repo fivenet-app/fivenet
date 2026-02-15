@@ -26,6 +26,7 @@ import DraftBadge from '../partials/DraftBadge.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import IDCopyBadge from '../partials/IDCopyBadge.vue';
 import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
+import RefreshButton from '../partials/RefreshButton.vue';
 import TutorView from './tutor/TutorView.vue';
 
 const props = defineProps<{
@@ -194,13 +195,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                 <template #right>
                     <PartialsBackButton to="/qualifications" />
 
-                    <UButton
-                        icon="i-mdi-refresh"
-                        :label="$t('common.refresh')"
-                        :loading="isRequestPending(status)"
-                        :ui="{ label: 'hidden sm:inline-flex' }"
-                        @click="() => refresh()"
-                    />
+                    <RefreshButton :loading="isRequestPending(status)" @click="() => refresh()" />
 
                     <UFieldGroup class="inline-flex">
                         <IDCopyBadge
