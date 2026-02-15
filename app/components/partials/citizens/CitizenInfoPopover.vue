@@ -33,7 +33,7 @@ const props = withDefaults(
 
 const { can, activeChar } = useAuth();
 
-const { popover } = useAppConfig();
+const { game, popover } = useAppConfig();
 
 const citizensCitizensClient = await getCitizensCitizensClient();
 
@@ -73,14 +73,10 @@ const user = computed(() =>
         : undefined,
 );
 
-const { game } = useAppConfig();
-
 const opened = ref(false);
 
 watchOnce(opened, async () => {
-    if (props.user) {
-        useTimeoutFn(async () => refresh(), popover.waitTime);
-    }
+    if (props.user) useTimeoutFn(async () => refresh(), popover.waitTime);
 });
 </script>
 
@@ -92,6 +88,7 @@ watchOnce(opened, async () => {
             <slot name="after" />
         </span>
     </template>
+
     <UPopover v-else>
         <UButton
             class="p-0"

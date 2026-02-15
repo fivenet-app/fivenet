@@ -31,7 +31,7 @@ const props = withDefaults(
 
 const { can, activeChar } = useAuth();
 
-const { popover } = useAppConfig();
+const { game, popover } = useAppConfig();
 
 const jobsJobsClient = await getJobsJobsClient();
 
@@ -65,8 +65,6 @@ const user = computed(() =>
         : undefined,
 );
 
-const { game } = useAppConfig();
-
 const opened = ref(false);
 watchOnce(opened, async () => {
     if (props.user) {
@@ -83,6 +81,7 @@ watchOnce(opened, async () => {
             <slot name="after" />
         </span>
     </template>
+
     <UPopover v-else>
         <UButton
             class="inline-flex items-center gap-1 p-px"
