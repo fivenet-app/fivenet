@@ -159,7 +159,7 @@ func (s *Config) LoadConfig() error {
 		var msg strings.Builder
 		msg.WriteString("Invalid FiveNet DBSync config detected:\n")
 		for _, validationErr := range err.(validator.ValidationErrors) {
-			fmt.Fprintf(&msg, "- Field `%s` violated %s validation.\n",
+			fmt.Fprintf(&msg, "- Field %q violated %s validation.\n",
 				validationErr.StructNamespace(),
 				validationErr.Tag())
 		}
@@ -383,7 +383,7 @@ func (c *JobGradesTable) GetQuery(
 		return q
 	}
 
-	where = append(where, fmt.Sprintf("`%s` = ?", c.Columns.JobName))
+	where = append(where, fmt.Sprintf("%#q = ?", c.Columns.JobName))
 	where = append(where, getWhereCondition(c.DBSyncTable, state))
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"job_grade.job_name": c.Columns.JobName,

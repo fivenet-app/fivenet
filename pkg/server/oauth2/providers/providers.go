@@ -1,58 +1,25 @@
 package providers
 
 import (
-	"context"
-	"time"
+	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
-	"golang.org/x/oauth2"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/types"
 )
 
-type IProvider interface {
-	SetOauthConfig(cfg *oauth2.Config)
-	SetMapping(mapping *config.OAuth2Mapping)
+type ProviderFactory func(cfg *config.OAuth2Provider) types.IProvider
 
-	GetName() string
+var providerFactories = map[string]ProviderFactory{}
 
-	GetRedirect(state string) string
-	GetUserInfo(ctx context.Context, code string) (*UserInfo, error)
+func GetProvider(cfg *config.OAuth2Provider) (types.IProvider, error) {
+	fn, ok := providerFactories[string(cfg.Type)]
+	if !ok {
+		return nil, fmt.Errorf("invalid oauth2 provider %q type given", cfg.Type)
+	}
+
+	return fn(cfg), nil
 }
 
-type BaseProvider struct {
-	oauthConfig *oauth2.Config
-	mapping     *config.OAuth2Mapping
-
-	DefaultAvatar string
-	UserInfoURL   string
-
-	Name string
-}
-
-func (b *BaseProvider) SetOauthConfig(cfg *oauth2.Config) {
-	b.oauthConfig = cfg
-}
-
-func (b *BaseProvider) SetMapping(mapping *config.OAuth2Mapping) {
-	b.mapping = mapping
-}
-
-func (b *BaseProvider) GetName() string {
-	return b.Name
-}
-
-func (b *BaseProvider) GetRedirect(state string) string {
-	return b.oauthConfig.AuthCodeURL(state)
-}
-
-type UserInfo struct {
-	ID       string
-	Username string
-	Avatar   string
-
-	RefreshToken *string
-	AccessToken  *string
-	Scope        *string
-	TokenType    *string
-	ExpiresIn    *int64
-	ObtainedAt   *time.Time
+func RegisterProvider(name string, factory ProviderFactory) {
+	providerFactories[name] = factory
 }

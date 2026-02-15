@@ -87,7 +87,7 @@ func (m *ItemsLenModule) generate(fs []pgs.File) {
 				data.Targets[msg.Name().UpperCamelCase().String()] = fields
 			}
 			m.Debugf(
-				"ItemsLen: %s has %d annotated repeated fields",
+				"ItemsLen: %q has %d annotated repeated fields",
 				msg.Name().String(),
 				len(fields),
 			)

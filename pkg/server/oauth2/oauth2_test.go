@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
-	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/providers"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/types"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
@@ -23,26 +23,26 @@ import (
 )
 
 type MockProvider struct {
+	types.BaseProvider
 	mock.Mock
-	providers.BaseProvider
 }
 
-func (m *MockProvider) GetRedirect(state string) string {
+func (m *MockProvider) GetRedirect(state string) (string, error) {
 	args := m.Called(state)
-	return args.String(0)
+	return args.String(0), args.Error(1)
 }
 
-func (m *MockProvider) GetUserInfo(ctx context.Context, code string) (*providers.UserInfo, error) {
+func (m *MockProvider) GetUserInfo(ctx context.Context, code string) (*types.UserInfo, error) {
 	args := m.Called(ctx, code)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*providers.UserInfo), args.Error(1)
+	return args.Get(0).(*types.UserInfo), args.Error(1)
 }
 
 func createMockProvider() *MockProvider {
 	mockProvider := new(MockProvider)
-	mockProvider.Name = "test-provider"
+	mockProvider.SetName("test-provider")
 	return mockProvider
 }
 
@@ -54,7 +54,7 @@ func (m *MockUserInfoStore) storeUserInfo(
 	ctx context.Context,
 	accountId int64,
 	provider string,
-	userInfo *providers.UserInfo,
+	userInfo *types.UserInfo,
 ) error {
 	args := m.Called(ctx, accountId, provider, userInfo)
 	return args.Error(0)
@@ -64,7 +64,7 @@ func (m *MockUserInfoStore) updateUserInfo(
 	ctx context.Context,
 	accountId int64,
 	provider string,
-	userInfo *providers.UserInfo,
+	userInfo *types.UserInfo,
 ) error {
 	args := m.Called(ctx, accountId, provider, userInfo)
 	return args.Error(0)
@@ -73,7 +73,7 @@ func (m *MockUserInfoStore) updateUserInfo(
 func (m *MockUserInfoStore) getAccountInfo(
 	ctx context.Context,
 	provider string,
-	userInfo *providers.UserInfo,
+	userInfo *types.UserInfo,
 ) (*accounts.Account, error) {
 	args := m.Called(ctx, provider, userInfo)
 	if args.Get(0) == nil {
@@ -153,7 +153,7 @@ func TestCallback_ProviderError(t *testing.T) {
 
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
-		oauthConfigs: map[string]providers.IProvider{
+		oauthConfigs: map[string]types.IProvider{
 			"test-provider": mockProvider,
 		},
 	}
@@ -216,7 +216,7 @@ func TestCallback_LoginSuccess(t *testing.T) {
 	router.Use(sess)
 
 	mockProvider := createMockProvider()
-	mockUserInfo := &providers.UserInfo{
+	mockUserInfo := &types.UserInfo{
 		ID:       "123",
 		Username: "testuser",
 		Avatar:   "profile_picture.png",
@@ -235,7 +235,7 @@ func TestCallback_LoginSuccess(t *testing.T) {
 
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
-		oauthConfigs: map[string]providers.IProvider{
+		oauthConfigs: map[string]types.IProvider{
 			"test-provider": mockProvider,
 		},
 		userInfoStore: mockUserInfoStore,
@@ -278,7 +278,7 @@ func TestCallback_ConnectError(t *testing.T) {
 	tm := auth.NewTokenMgr("secret")
 
 	mockProvider := createMockProvider()
-	mockUserInfo := &providers.UserInfo{
+	mockUserInfo := &types.UserInfo{
 		ID:       "123",
 		Username: "testuser",
 		Avatar:   "profile_picture.png",
@@ -295,7 +295,7 @@ func TestCallback_ConnectError(t *testing.T) {
 
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
-		oauthConfigs: map[string]providers.IProvider{
+		oauthConfigs: map[string]types.IProvider{
 			"test-provider": mockProvider,
 		},
 		userInfoStore: mockUserInfoStore,
@@ -340,7 +340,7 @@ func TestCallback_ConnectErrorAlreadyInUse(t *testing.T) {
 	require.NoError(t, err)
 
 	mockProvider := createMockProvider()
-	mockUserInfo := &providers.UserInfo{
+	mockUserInfo := &types.UserInfo{
 		ID:       "123",
 		Username: "testuser",
 		Avatar:   "profile_picture.png",
@@ -353,7 +353,7 @@ func TestCallback_ConnectErrorAlreadyInUse(t *testing.T) {
 
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
-		oauthConfigs: map[string]providers.IProvider{
+		oauthConfigs: map[string]types.IProvider{
 			"test-provider": mockProvider,
 		},
 		userInfoStore: mockUserInfoStore,
@@ -398,7 +398,7 @@ func TestCallback_ConnectFlow(t *testing.T) {
 	require.NoError(t, err)
 
 	mockProvider := createMockProvider()
-	mockUserInfo := &providers.UserInfo{
+	mockUserInfo := &types.UserInfo{
 		ID:       "123",
 		Username: "testuser",
 		Avatar:   "profile_picture.png",
@@ -418,7 +418,7 @@ func TestCallback_ConnectFlow(t *testing.T) {
 		Return(nil)
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
-		oauthConfigs: map[string]providers.IProvider{
+		oauthConfigs: map[string]types.IProvider{
 			"test-provider": mockProvider,
 		},
 		userInfoStore: mockUserInfoStore,

@@ -128,22 +128,57 @@ audit:
   retentionDays: 90
 
 oauth2:
+  # List of OAuth2 Providers
   providers:
+    # Example for Discord OAuth2 provider configuration
     - name: "discord"
+      type: "discord"
       label: "Discord"
       homepage: "https://discord.com"
-      icon: "i-simple-icons-discord" # or an image URL
+      # Iconify icon or image URL (used in the frontend, e.g., for the login button)
+      icon: "i-simple-icons-discord"
       #defaultAvatar: ""
-      type: "discord"
       redirectURL: "https://localhost:3000/api/oauth2/callback/discord"
       clientID: "your_discord_oauth2_client_id"
       clientSecret: "your_discord_oauth2_client_secret"
       scopes:
         - guilds
         - identify
+      # The endpoints section is optional for the Discord provider since the
+      # implementation uses the default Discord OAuth2 endpoints.
+      # It can be used to override the default endpoints if needed.
+      #endpoints:
+      #  authURL: "https://discord.com/api/oauth2/authorize"
+      #  tokenURL: "https://discord.com/api/oauth2/token"
+      #  userInfoURL: "https://discord.com/api/users/@me"
+    # Example for generic OAuth2 provider configuration
+    - name: "my_generic_provider"
+      type: "generic"
+      label: "Generic OAuth2 Provider"
+      homepage: "https://example.com"
+      # Iconify icon or image URL (used in the frontend, e.g., for the login button)
+      icon: "i-simple-icons-openid"
+      defaultAvatar: "https://example.com/images/avatar-default.svg"
+      # Redirect URL must point to your FiveNet server and match the redirect URL configured in your OAuth2 provider settings.
+      # Example: https://YOUR_FIVENET_DOMAIN_NAME/api/oauth2/callback/OAUTH_PROVIDER_NAME
+      redirectURL: "http://example.com/api/oauth2/callback/my_generic_provider"
+      clientID: "your_generic_oauth2_client_id"
+      clientSecret: "your_generic_oauth2_client_secret"
+      scopes:
+        - openid
+        - nickname
+        - profile
       endpoints:
-        authURL: "https://discord.com/api/oauth2/authorize"
-        tokenURL: "https://discord.com/api/oauth2/token"
+        # The authURL and tokenURL of your OAuth2 provider.
+        authURL: "https://example.com/oauth2/authorize"
+        tokenURL: "https://example.com/oauth2/token"
+        # User information URL to fetch user info after obtaining the access token.
+        userInfoURL: "https://example.com/oauth2/user-info"
+      # The mapping section defines how to extract user information from the OAuth2 provider's response.
+      mapping:
+        id: "sub"
+        username: "nickname"
+        avatar: "picture"
 
 postalsFile: ".output/public/data/postals.json"
 

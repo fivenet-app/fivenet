@@ -909,7 +909,7 @@ func (s *Server) SetSuperuserMode(
 		// Only set job if requested
 		job, jobGrade, jProps, err := s.getJobWithProps(ctx, req.GetJob())
 		if err != nil {
-			return nil, errswrap.NewError(fmt.Errorf("failed to get job props for '%s' job. %w", req.GetJob(), err), errorsauth.ErrGenericLogin)
+			return nil, errswrap.NewError(fmt.Errorf("failed to get job props for %q job. %w", req.GetJob(), err), errorsauth.ErrGenericLogin)
 		}
 		jobProps = jProps
 

@@ -65,10 +65,11 @@ func (s *Server) ListColleagues(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
+	tUserJobs := table.FivenetUserJobs
 	tColleague := table.FivenetUser.AS("colleague")
 
 	condition := mysql.AND(
-		tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
+		tUserJobs.Job.EQ(mysql.String(userInfo.GetJob())),
 		s.customDB.Conditions.User.GetFilter(tColleague.Alias()),
 	)
 
@@ -145,6 +146,9 @@ func (s *Server) ListColleagues(
 		OPTIMIZER_HINTS(mysql.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(
 			tColleague.
+				INNER_JOIN(tUserJobs,
+					tUserJobs.UserID.EQ(tColleague.ID),
+				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(
 						tColleagueProps.UserID.EQ(tColleague.ID),
@@ -206,8 +210,8 @@ func (s *Server) ListColleagues(
 	stmt := tColleague.
 		SELECT(
 			tColleague.ID,
-			tColleague.Job,
-			tColleague.JobGrade,
+			tUserJobs.Job.AS("colleague.job"),
+			tUserJobs.Grade.AS("colleague.job_grade"),
 			tColleague.Firstname,
 			tColleague.Lastname,
 			tColleague.Dateofbirth,
@@ -225,6 +229,9 @@ func (s *Server) ListColleagues(
 		OPTIMIZER_HINTS(mysql.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(
 			tColleague.
+				INNER_JOIN(tUserJobs,
+					tUserJobs.UserID.EQ(tColleague.ID),
+				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tColleague.ID),
 				).
@@ -322,12 +329,14 @@ func (s *Server) getColleague(
 	userId int32,
 	withColumns mysql.ProjectionList,
 ) (*jobscolleagues.Colleague, error) {
+	tUserJobs := table.FivenetUserJobs
 	tColleague := table.FivenetUser.AS("colleague")
 
 	columns := mysql.ProjectionList{
 		tColleague.Firstname,
 		tColleague.Lastname,
-		tColleague.Job,
+		tUserJobs.Job.AS("colleague.job"),
+		tUserJobs.Grade.AS("colleague.job_grade"),
 		tColleague.JobGrade,
 		tColleague.Dateofbirth,
 		tColleague.PhoneNumber,
@@ -350,6 +359,9 @@ func (s *Server) getColleague(
 		).
 		FROM(
 			tColleague.
+				INNER_JOIN(tUserJobs,
+					tUserJobs.UserID.EQ(tColleague.ID),
+				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tColleague.ID),
 				).

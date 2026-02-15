@@ -18,7 +18,7 @@ func getWhereCondition(
 		return ""
 	}
 
-	return fmt.Sprintf("`%s` >= '%s'\n",
+	return fmt.Sprintf("%#q >= '%s'\n",
 		*table.UpdatedTimeColumn,
 		state.LastCheck.Format("2006-01-02 15:04:05"),
 	)
@@ -67,10 +67,10 @@ func buildQueryFromColumns(
 			continue
 		}
 
-		columnsList = append(columnsList, fmt.Sprintf("`%s` AS `%s`", column, alias))
+		columnsList = append(columnsList, fmt.Sprintf("%#q AS %#q", column, alias))
 	}
 
-	q := fmt.Sprintf("SELECT %s\nFROM `%s`\n",
+	q := fmt.Sprintf("SELECT %s\nFROM %#q\n",
 		strings.Join(columnsList, ", "),
 		tableName,
 	)

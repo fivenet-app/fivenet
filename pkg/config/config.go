@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/zaputils"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap/zapcore"
+	"golang.org/x/oauth2"
 )
 
 type Config struct {
@@ -295,6 +296,7 @@ type OAuth2ProviderType string
 const (
 	OAuth2ProviderGeneric OAuth2ProviderType = "generic"
 	OAuth2ProviderDiscord OAuth2ProviderType = "discord"
+	OAuth2ProviderSteam   OAuth2ProviderType = "steam"
 )
 
 type OAuth2Provider struct {
@@ -310,6 +312,20 @@ type OAuth2Provider struct {
 	Scopes        []string           `yaml:"scopes"`
 	Endpoints     OAuth2Endpoints    `yaml:"endpoints"`
 	Mapping       *OAuth2Mapping     `yaml:"omitempty,mapping"`
+}
+
+func (p OAuth2Provider) GetOAuth2Config() *oauth2.Config {
+	return &oauth2.Config{
+		RedirectURL:  p.RedirectURL,
+		ClientID:     p.ClientID,
+		ClientSecret: p.ClientSecret,
+		Scopes:       p.Scopes,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:   p.Endpoints.AuthURL,
+			TokenURL:  p.Endpoints.TokenURL,
+			AuthStyle: oauth2.AuthStyleInParams,
+		},
+	}
 }
 
 type OAuth2Endpoints struct {

@@ -76,7 +76,7 @@ func NewS3(p Params) (IStorage, error) {
 			}
 			if !exists {
 				return fmt.Errorf(
-					"storage: s3 bucket '%s' doesn't exist/can't access",
+					"storage: s3 bucket %q doesn't exist/can't access",
 					s.bucketName,
 				)
 			}

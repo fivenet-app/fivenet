@@ -84,11 +84,11 @@ func (i *I18n) translateWithFallback(lang, key string, vars map[string]any) (str
 			return replaceVars(selectPluralForm(v, vars), vars), nil
 
 		default:
-			return "", fmt.Errorf("invalid translation format for key '%s' in language '%s'", key, l)
+			return "", fmt.Errorf("invalid translation format for key %q in language %q", key, l)
 		}
 	}
 
-	return "", fmt.Errorf("translation for key '%s' not found in any language", key)
+	return "", fmt.Errorf("translation for key %q not found in any language", key)
 }
 
 // getNestedValue retrieves a value from nested maps.
@@ -101,7 +101,7 @@ func getNestedValue(data map[string]any, keys []string) (any, error) {
 		}
 		val, ok = m[key]
 		if !ok {
-			return nil, fmt.Errorf("key '%s' not found", key)
+			return nil, fmt.Errorf("key %q not found", key)
 		}
 	}
 	return val, nil

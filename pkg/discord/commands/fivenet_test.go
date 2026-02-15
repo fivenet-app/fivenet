@@ -47,11 +47,7 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 				Title:       "FiveNet",
 				Description: "FiveNet is also available in your browser! Link to the FiveNet web app.",
 				URL:         cfg.HTTP.PublicURL,
-				Thumbnail: &discord.EmbedThumbnail{
-					URL:    "https://cdn.discordapp.com/app-icons/1101207666652618865/94429951df15108c737949ff2770cd8f.png",
-					Height: 128,
-					Width:  128,
-				},
+				Thumbnail:   embeds.EmbedThumbnailLogo,
 				Footer: &discord.EmbedFooter{
 					Text: embeds.EmbedFooterMadeBy.Text,
 					Icon: embeds.EmbedFooterMadeBy.Icon,

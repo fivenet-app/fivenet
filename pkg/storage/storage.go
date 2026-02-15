@@ -34,7 +34,7 @@ type Params struct {
 func New(p Params) (IStorage, error) {
 	fn, ok := storageFactories[p.Cfg.Storage.Type]
 	if !ok {
-		return nil, fmt.Errorf("invalid storage '%s' factory given", p.Cfg.Storage.Type)
+		return nil, fmt.Errorf("invalid storage %q type given", p.Cfg.Storage.Type)
 	}
 
 	st, err := fn(p)

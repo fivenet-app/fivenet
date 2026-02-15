@@ -10,7 +10,7 @@ import (
 	accountsoauth2 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts/oauth2"
 	"github.com/fivenet-app/fivenet/v2026/pkg/crypt"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/providers"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/types"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -22,18 +22,18 @@ type userInfoStore interface {
 		ctx context.Context,
 		accountId int64,
 		provider string,
-		userInfo *providers.UserInfo,
+		userInfo *types.UserInfo,
 	) error
 	updateUserInfo(
 		ctx context.Context,
 		accountId int64,
 		provider string,
-		userInfo *providers.UserInfo,
+		userInfo *types.UserInfo,
 	) error
 	getAccountInfo(
 		ctx context.Context,
 		provider string,
-		userInfo *providers.UserInfo,
+		userInfo *types.UserInfo,
 	) (*accounts.Account, error)
 }
 
@@ -49,7 +49,7 @@ type oauth2UserInfo struct {
 func (o *oauth2UserInfo) getAccountInfo(
 	ctx context.Context,
 	provider string,
-	userInfo *providers.UserInfo,
+	userInfo *types.UserInfo,
 ) (*accounts.Account, error) {
 	stmt := tOauth2.
 		SELECT(
@@ -87,7 +87,7 @@ func (o *oauth2UserInfo) storeUserInfo(
 	ctx context.Context,
 	accountId int64,
 	provider string,
-	userInfo *providers.UserInfo,
+	userInfo *types.UserInfo,
 ) error {
 	accessToken, err := o.crypt.EncryptPointerString(userInfo.AccessToken)
 	if err != nil {
@@ -157,7 +157,7 @@ func (o *oauth2UserInfo) updateUserInfo(
 	ctx context.Context,
 	accountId int64,
 	provider string,
-	userInfo *providers.UserInfo,
+	userInfo *types.UserInfo,
 ) error {
 	expiresIn := int64(0)
 	if userInfo.ExpiresIn != nil {

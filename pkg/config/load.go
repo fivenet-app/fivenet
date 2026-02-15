@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"reflect"
@@ -134,12 +135,12 @@ func Load() (Result, error) {
 		msg := "Invalid FiveNet config detected:\n"
 		for _, validationErr := range err.(validator.ValidationErrors) {
 			msg += fmt.Sprintf(
-				"- Field `%s` violated %s validation.\n",
+				"- Field %q violated %s validation.\n",
 				validationErr.StructNamespace(),
 				validationErr.Tag(),
 			)
 		}
-		return res, fmt.Errorf("%s", msg)
+		return res, errors.New(msg)
 	}
 
 	return res, nil

@@ -204,7 +204,7 @@ func (g *QualificationsSync) planUsers(
 						tUsers.ID.EQ(tQualificationsResults.UserID),
 					).
 					INNER_JOIN(tAccs,
-						tAccs.License.LIKE(mysql.RawString("SUBSTRING_INDEX(`users`.`identifier`, ':', -1)")),
+						tAccs.ID.EQ(tUsers.AccountID),
 					).
 					INNER_JOIN(tAccsOauth2,
 						tAccsOauth2.AccountID.EQ(tAccs.ID),

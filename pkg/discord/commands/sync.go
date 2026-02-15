@@ -54,12 +54,8 @@ func (c *SyncCommand) getBaseResponse() *api.InteractionResponseData {
 				Provider: &discord.EmbedProvider{
 					Name: "FiveNet",
 				},
-				Thumbnail: &discord.EmbedThumbnail{
-					URL:    "https://cdn.discordapp.com/app-icons/1101207666652618865/94429951df15108c737949ff2770cd8f.png",
-					Width:  128,
-					Height: 128,
-				},
-				Footer: embeds.EmbedFooterMadeBy,
+				Thumbnail: embeds.EmbedThumbnailLogo,
+				Footer:    embeds.EmbedFooterMadeBy,
 			},
 		},
 	}

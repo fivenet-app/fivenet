@@ -13,13 +13,15 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/providers"
+	_ "github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/providers/discord"
+	_ "github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/providers/generic"
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2/types"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"golang.org/x/oauth2"
 )
 
 const (
@@ -72,15 +74,16 @@ type OAuth2 struct {
 	// domain is the cookie/session domain.
 	domain string
 	// oauthConfigs maps provider names to their configuration and logic.
-	oauthConfigs map[string]providers.IProvider
+	oauthConfigs map[string]types.IProvider
 	// userInfoStore handles user info storage and retrieval.
 	userInfoStore userInfoStore
 }
 
-// New creates a new OAuth2 handler with all configured providers.
-func New(p Params) *OAuth2 {
+// New creates a new OAuth2 handler with all configured types.
+func New(p Params) (*OAuth2, error) {
+	// No providers configured, return nil to indicate OAuth2 is not enabled
 	if len(p.Config.OAuth2.Providers) == 0 {
-		return nil
+		return nil, nil
 	}
 
 	o := &OAuth2{
@@ -88,7 +91,7 @@ func New(p Params) *OAuth2 {
 		db:           p.DB,
 		tm:           p.TM,
 		domain:       p.Config.HTTP.Sessions.Domain,
-		oauthConfigs: make(map[string]providers.IProvider, len(p.Config.OAuth2.Providers)),
+		oauthConfigs: make(map[string]types.IProvider, len(p.Config.OAuth2.Providers)),
 		userInfoStore: &oauth2UserInfo{
 			db:    p.DB,
 			crypt: p.Crypt,
@@ -96,45 +99,20 @@ func New(p Params) *OAuth2 {
 	}
 
 	for _, p := range p.Config.OAuth2.Providers {
-		cfg := &oauth2.Config{
-			RedirectURL:  p.RedirectURL,
-			ClientID:     p.ClientID,
-			ClientSecret: p.ClientSecret,
-			Scopes:       p.Scopes,
-			Endpoint: oauth2.Endpoint{
-				AuthURL:   p.Endpoints.AuthURL,
-				TokenURL:  p.Endpoints.TokenURL,
-				AuthStyle: oauth2.AuthStyleInParams,
-			},
+		provider, err := providers.GetProvider(p)
+		if err != nil {
+			o.logger.Error(
+				"invalid oauth2 provider type given",
+				zap.String("provider_type", string(p.Type)),
+				zap.Error(err),
+			)
+			continue
 		}
-		var provider providers.IProvider
-		switch p.Type {
-		case config.OAuth2ProviderDiscord:
-			provider = &providers.Discord{
-				BaseProvider: providers.BaseProvider{
-					Name: p.Name,
-				},
-			}
-
-		case config.OAuth2ProviderGeneric:
-			fallthrough
-		default:
-			provider = &providers.Generic{
-				BaseProvider: providers.BaseProvider{
-					Name:          p.Name,
-					UserInfoURL:   p.Endpoints.UserInfoURL,
-					DefaultAvatar: p.DefaultAvatar,
-				},
-			}
-		}
-
-		provider.SetOauthConfig(cfg)
-		provider.SetMapping(p.Mapping)
 
 		o.oauthConfigs[p.Name] = provider
 	}
 
-	return o
+	return o, nil
 }
 
 // RegisterHTTP registers the OAuth2 login and callback endpoints on the given Gin engine.
@@ -252,12 +230,22 @@ func (o *OAuth2) Login(c *gin.Context) {
 		return
 	}
 
-	// Redirect to provider for login
-	c.Redirect(http.StatusTemporaryRedirect, provider.GetRedirect(state))
+	// Get and redirect to provider for login
+	redirect, err := provider.GetRedirect(state)
+	if err != nil {
+		o.logger.Error(
+			"failed to get redirect url from provider",
+			zap.String("provider", provider.GetName()),
+			zap.Error(err),
+		)
+		o.handleRedirect(c, connectOnly, false, "provider_failed")
+		return
+	}
+	c.Redirect(http.StatusTemporaryRedirect, redirect)
 }
 
 // GetProvider retrieves the OAuth2 provider from the request context and name is case-insensitive.
-func (o *OAuth2) GetProvider(providerName string) (providers.IProvider, error) {
+func (o *OAuth2) GetProvider(providerName string) (types.IProvider, error) {
 	if providerName == "" {
 		return nil, errors.New("no provider found in path")
 	}
@@ -354,8 +342,8 @@ func (o *OAuth2) handleConnectOnlyCallback(
 	c *gin.Context,
 	_ sessions.Session,
 	token string,
-	provider providers.IProvider,
-	userInfo *providers.UserInfo,
+	provider types.IProvider,
+	userInfo *types.UserInfo,
 	redirect string,
 ) {
 	claims, err := o.tm.ParseAccToken(token)
@@ -388,11 +376,11 @@ func (o *OAuth2) handleConnectOnlyCallback(
 func (o *OAuth2) handleLoginCallback(
 	c *gin.Context,
 	_ sessions.Session,
-	provider providers.IProvider,
+	provider types.IProvider,
 	userInfo interface{},
 	connectOnly bool,
 ) {
-	uInfo, ok := userInfo.(*providers.UserInfo)
+	uInfo, ok := userInfo.(*types.UserInfo)
 	if !ok {
 		o.logger.Error(
 			"userInfo type assertion failed in handleLoginCallback",

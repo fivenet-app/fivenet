@@ -2,6 +2,8 @@ package htmlsanitizer
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSVGSanitize(t *testing.T) {
@@ -40,14 +42,7 @@ func TestSVGSanitize(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := SanitizeSVG(tt.input)
-			if tt.expected != result {
-				t.Errorf(
-					"SanitizeSVG failed for test '%s':\nexpected:\n%s\ngot:\n%s",
-					tt.name,
-					tt.expected,
-					result,
-				)
-			}
+			assert.Equal(t, tt.expected, result, tt.name)
 		})
 	}
 }

@@ -163,15 +163,14 @@ func (t *TableManager) addUpdatedAtColumnToTable(
 ) error {
 	queries := []string{
 		fmt.Sprintf(
-			"ALTER TABLE `%s` ADD `%s` datetime(3) on update CURRENT_TIMESTAMP(3) NULL",
+			"ALTER TABLE %#q ADD %#q datetime(3) on update CURRENT_TIMESTAMP(3) NULL",
 			tableName,
 			columnName,
 		),
 		fmt.Sprintf(
-			"ALTER TABLE `%s` ADD INDEX `idx_%s_%s` (`%s`)",
+			"ALTER TABLE %#q ADD INDEX %#q (%#q)",
 			tableName,
-			tableName,
-			columnName,
+			fmt.Sprintf("idx_%s_%s", columnName, tableName),
 			columnName,
 		),
 	}

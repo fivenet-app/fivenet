@@ -432,7 +432,7 @@ func (s *usersSync) retrievePhoneNumbers(
 func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 	wheres := []string{}
 	if userId != 0 {
-		wheres = append(wheres, fmt.Sprintf("`%s` = %d", s.cfg.Tables.Users.Columns.ID, userId))
+		wheres = append(wheres, fmt.Sprintf("%#q = %d", s.cfg.Tables.Users.Columns.ID, userId))
 	}
 	q := s.cfg.Tables.Users.GetQuery(s.state, 0, 1, wheres...)
 	s.logger.Debug("users sync query", zap.String("query", q))
