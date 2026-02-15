@@ -118,6 +118,8 @@ const updateCurvedTextFillColor = (val: string) => {
 
 <template>
     <div class="flex flex-col gap-4 overflow-y-auto p-2 text-sm">
+        <slot name="sidebar-top" />
+
         <EditorSettings />
 
         <UCard>

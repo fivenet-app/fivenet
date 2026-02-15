@@ -38,7 +38,11 @@ const svgData = defineModel<string>({ required: true });
             </div>
 
             <!-- Sidebar on the right with fixed width -->
-            <EditorSidebar class="w-full max-w-sm min-w-64 shrink-0 border-l border-l-default bg-default" />
+            <EditorSidebar class="w-full max-w-sm min-w-64 shrink-0 border-l border-l-default bg-default">
+                <template #sidebar-top>
+                    <slot name="sidebar-top" />
+                </template>
+            </EditorSidebar>
         </div>
     </div>
 </template>

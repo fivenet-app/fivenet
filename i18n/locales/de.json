@@ -1754,7 +1754,11 @@
             "placeholder": "Platzhalter",
             "rectangle": "Rechteck",
             "circle": "Kreis",
-            "input": "Eingabe"
+            "input": "Eingabe",
+            "height": "Höhe",
+            "width": "Breite",
+            "snap_threshold": "Einrast-Schwelle",
+            "canvas_settings": "Leinwand-Einstellungen"
         },
         "notepad": {
             "title": "Notizblock",

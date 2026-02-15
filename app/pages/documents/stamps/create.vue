@@ -91,7 +91,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </template>
 
         <template #body>
-            <EditorWrapper v-model="state.svgData" :max-width="900" :max-height="350" background-color="#ffffff" />
+            <EditorWrapper v-model="state.svgData" :max-width="900" :max-height="350" background-color="#ffffff">
+                <template #sidebar-top> TODO input field for stamp name </template>
+            </EditorWrapper>
         </template>
     </UDashboardPanel>
 </template>

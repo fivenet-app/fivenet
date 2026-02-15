@@ -1754,7 +1754,11 @@
             "placeholder": "Placeholder",
             "rectangle": "Rectangle",
             "circle": "Circle",
-            "input": "Input"
+            "input": "Input",
+            "height": "Height",
+            "width": "Width",
+            "snap_threshold": "Snap Threshold",
+            "canvas_settings": "Canvas Settings"
         },
         "notepad": {
             "title": "Notepad",
