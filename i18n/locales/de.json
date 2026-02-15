@@ -749,7 +749,7 @@
         "websocket": "WebSocket",
         "ranks": "Keine Ränge | {n} Rang | {n} Ränge",
         "only_disabled": "Nur Deaktivierte",
-        "impersonation_active": "Sie imitieren derzeit \"{label}\" ({number}).",
+        "impersonation_active": "Sie imitieren derzeit {job}.",
         "stop_impersonation": "Imitation beenden",
         "all_day": "Ganztägig"
     },
@@ -2044,9 +2044,13 @@
             }
         },
         "superuser_menu": {
-            "setsuperusermode": {
-                "title": "Superuser Modus",
-                "content": "Superuser Modus gewechselt (current job: {job})."
+            "enabled_mode": {
+                "title": "Superuser Modus Aktiviert",
+                "content": "Beruf gewechselt zu {job}."
+            },
+            "disabled_mode": {
+                "title": "Superuser Modus Deaktiviert",
+                "content": "Sie wurden zurück zu Ihrem ursprünglichen Beruf gewechselt."
             }
         },
         "system": {

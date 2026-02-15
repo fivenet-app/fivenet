@@ -364,16 +364,27 @@ export const useAuthStore = defineStore(
                 }
 
                 // Notify user about the change
-                notifications.add({
-                    title: { key: 'notifications.superuser_menu.setsuperusermode.title', parameters: {} },
-                    description: {
-                        key: 'notifications.superuser_menu.setsuperusermode.content',
-                        parameters: {
-                            job: job?.label ?? activeChar.value?.jobLabel ?? 'N/A',
+                if (superuser) {
+                    notifications.add({
+                        title: { key: 'notifications.superuser_menu.enabled_mode.title', parameters: {} },
+                        description: {
+                            key: 'notifications.superuser_menu.enabled_mode.content',
+                            parameters: {
+                                job: response.char?.jobLabel ?? job?.label ?? activeChar.value?.jobLabel ?? 'N/A',
+                            },
                         },
-                    },
-                    type: NotificationType.INFO,
-                });
+                        type: NotificationType.INFO,
+                    });
+                } else {
+                    notifications.add({
+                        title: { key: 'notifications.superuser_menu.disabled_mode.title', parameters: {} },
+                        description: {
+                            key: 'notifications.superuser_menu.disabled_mode.content',
+                            parameters: {},
+                        },
+                        type: NotificationType.INFO,
+                    });
+                }
 
                 // Update state with response data
                 setActiveChar(response.char!);

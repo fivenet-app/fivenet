@@ -749,7 +749,7 @@
         "websocket": "WebSocket",
         "ranks": "No Ranks | {n} Rank | {n} Ranks",
         "only_disabled": "Only Disabled",
-        "impersonation_active": "You are currently impersonating \"{label}\" ({number}).",
+        "impersonation_active": "You are currently impersonating {job}.",
         "stop_impersonation": "Stop Impersonation",
         "all_day": "All Day"
     },
@@ -2044,9 +2044,13 @@
             }
         },
         "superuser_menu": {
-            "setsuperusermode": {
-                "title": "Superuser Mode",
-                "content": "Superuser Mode changed (current job: {job})."
+            "enabled_mode": {
+                "title": "Superuser Mode Enabled",
+                "content": "Job switched to {job}."
+            },
+            "disabled_mode": {
+                "title": "Superuser Mode Disabled",
+                "content": "You have been switched back to your original job."
             }
         },
         "system": {

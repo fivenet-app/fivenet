@@ -14,6 +14,7 @@ const authStore = useAuthStore();
 const { impersonateJob, setSuperuserMode } = authStore;
 
 const foundJob = computed(() => jobs.value.find((j) => j.name === props.job));
+const foundJobGrade = computed(() => foundJob.value?.grades.find((g) => g.grade === props.jobGrade));
 
 onBeforeMount(async () => listJobs());
 </script>
@@ -22,8 +23,7 @@ onBeforeMount(async () => listJobs());
     <UBanner
         :title="
             $t('common.impersonation_active', {
-                label: foundJob?.grades.find((g) => g.grade === jobGrade)?.label ?? jobGrade,
-                number: jobGrade,
+                job: `${foundJobGrade?.label ?? jobGrade}${isSuperuser ? `&nbsp;-&nbsp;${foundJob?.label ?? job}` : ''} (${jobGrade})`,
             })
         "
         icon="i-mdi-drama-masks"
