@@ -749,7 +749,7 @@
         "websocket": "WebSocket",
         "ranks": "Keine Ränge | {n} Rang | {n} Ränge",
         "only_disabled": "Nur Deaktivierte",
-        "impersonation_active": "Sie imitieren derzeit {label} ({number}.",
+        "impersonation_active": "Sie imitieren derzeit \"{label}\" ({number}).",
         "stop_impersonation": "Imitation beenden",
         "all_day": "Ganztägig"
     },

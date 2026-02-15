@@ -71,7 +71,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <template #right>
                     <PartialsBackButton fallback-to="/documents" />
 
-                    <UTooltip v-if="can('documents.StampsService/UpsertStamp').value" :text="$t('common.coming_soon')">
+                    <UTooltip v-if="can('documents.StampsService/UpsertStamp').value" :text="$t('common.save', 1)">
                         <UButton trailing-icon="i-mdi-content-save" color="neutral" variant="outline" truncate>
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.save', 1) }}

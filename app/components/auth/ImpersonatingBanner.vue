@@ -8,8 +8,10 @@ const completorStore = useCompletorStore();
 const { listJobs } = completorStore;
 const { jobs } = storeToRefs(completorStore);
 
+const { isSuperuser } = useAuth();
+
 const authStore = useAuthStore();
-const { impersonateJob } = authStore;
+const { impersonateJob, setSuperuserMode } = authStore;
 
 const foundJob = computed(() => jobs.value.find((j) => j.name === props.job));
 
@@ -20,8 +22,8 @@ onBeforeMount(async () => listJobs());
     <UBanner
         :title="
             $t('common.impersonation_active', {
-                label: foundJob?.label ?? job,
-                number: foundJob?.grades.find((g) => g.grade === jobGrade)?.label ?? jobGrade,
+                label: foundJob?.grades.find((g) => g.grade === jobGrade)?.label ?? jobGrade,
+                number: jobGrade,
             })
         "
         icon="i-mdi-drama-masks"
@@ -31,6 +33,6 @@ onBeforeMount(async () => listJobs());
             trailingIcon: 'i-mdi-exit-run',
             label: $t('common.stop_impersonation'),
         }"
-        @close="impersonateJob(-1)"
+        @close="() => (isSuperuser ? setSuperuserMode(false) : impersonateJob(-1))"
     />
 </template>

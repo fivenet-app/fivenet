@@ -950,6 +950,14 @@ func (s *Server) SetSuperuserMode(
 	userClaims := auth.MapUserToClaims(account.ID, char)
 	superuser := userInfo.GetSuperuser()
 	userClaims.Superuser = &superuser
+	if req.GetSuperuser() {
+		userClaims.Impersonate = &authclaims.UserImpersonate{
+			Job:      char.GetJob(),
+			JobGrade: char.GetJobGrade(),
+		}
+	} else {
+		userClaims.Impersonate = nil
+	}
 
 	userToken, err := s.tm.FromUserClaims(userClaims)
 	if err != nil {

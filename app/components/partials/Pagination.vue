@@ -150,6 +150,7 @@ function onClickNext() {
                 :disabled="loadingState || isRequestPending(status)"
                 :loading="loadingState || isRequestPending(status)"
                 label-class="hidden @md/pagination:block"
+                @click="() => refresh?.()"
             />
 
             <template v-if="!hideButtons">

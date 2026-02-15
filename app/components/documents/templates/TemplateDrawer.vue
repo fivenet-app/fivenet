@@ -107,7 +107,7 @@ const filteredRequirementTypes = computed(() => {
         :ui="{ container: 'flex-1', content: 'min-h-[70%]', title: 'flex flex-row gap-2 justify-between', body: 'h-full' }"
     >
         <template #title>
-            <span>{{ $t('common.template', 2) }}{{ template ? ` - ${template?.title}` : '' }}</span>
+            <span class="flex-1">{{ $t('common.template', 2) }}{{ template ? ` - ${template?.title}` : '' }}</span>
 
             <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
         </template>
@@ -115,7 +115,7 @@ const filteredRequirementTypes = computed(() => {
         <template #body>
             <div class="mx-auto w-full max-w-[80%] min-w-3/4">
                 <template v-if="steps.selectTemplate">
-                    <UButton block @click="clipboardDialog()">
+                    <UButton block icon="i-mdi-plus" @click="clipboardDialog()">
                         {{ $t('components.documents.templates.templates_modal.no_template') }}
                     </UButton>
 
