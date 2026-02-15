@@ -75,7 +75,7 @@ const response = useVModel(props, 'modelValue', emit);
                     <UButton
                         class="w-20"
                         :variant="response.response?.response.yesno.value ? 'solid' : 'outline'"
-                        color="green"
+                        color="success"
                         :label="$t('common.yes')"
                         block
                         :disabled="disabled"

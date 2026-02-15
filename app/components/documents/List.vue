@@ -378,7 +378,7 @@ defineShortcuts({
                                                             v-if="!query.closed"
                                                             class="size-4"
                                                             name="i-mdi-lock-open-variant"
-                                                            color="green"
+                                                            color="success"
                                                         />
                                                         <UIcon v-else class="size-4" name="i-mdi-lock" color="error" />
                                                     </template>
@@ -399,7 +399,7 @@ defineShortcuts({
                                                             v-if="!item.value"
                                                             class="size-4"
                                                             name="i-mdi-lock-open-variant"
-                                                            color="green"
+                                                            color="success"
                                                         />
                                                         <UIcon v-else class="size-4" name="i-mdi-lock" color="error" />
                                                     </template>

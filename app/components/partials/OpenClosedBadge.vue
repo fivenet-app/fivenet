@@ -10,7 +10,7 @@ defineProps<Props>();
 
 <template>
     <UBadge
-        :color="closed ? 'error' : 'green'"
+        :color="closed ? 'error' : 'success'"
         :icon="closed ? 'i-mdi-lock' : 'i-mdi-lock-open-variant'"
         :label="closed ? $t('common.close', 2) : $t('common.open', 2)"
         v-bind="$attrs"

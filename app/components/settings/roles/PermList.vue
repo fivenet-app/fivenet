@@ -81,7 +81,7 @@ watch(props, setFromProps);
                                     </div>
 
                                     <UFieldGroup class="inline-flex flex-initial">
-                                        <UButton color="green" variant="solid" icon="i-mdi-check" disabled />
+                                        <UButton color="success" variant="solid" icon="i-mdi-check" disabled />
                                     </UFieldGroup>
                                 </div>
 

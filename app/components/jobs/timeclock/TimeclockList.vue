@@ -569,7 +569,7 @@ const { game } = useAppConfig();
 
                     <UBadge
                         v-if="row.original.startTime !== undefined && row.original.endTime === undefined"
-                        color="green"
+                        color="success"
                         :label="$t('common.active')"
                     />
                 </template>

@@ -89,7 +89,7 @@ const { website } = useAppConfig();
                     <UButton
                         class="flex-1"
                         block
-                        color="green"
+                        color="success"
                         :variant="cookiesState === true ? 'soft' : 'solid'"
                         @click="
                             cookiesState = true;

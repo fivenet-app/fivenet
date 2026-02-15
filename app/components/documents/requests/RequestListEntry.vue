@@ -118,7 +118,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                     <UButton
                         class="flex-1"
                         block
-                        color="green"
+                        color="success"
                         icon="i-mdi-check-bold"
                         :disabled="!canSubmit"
                         :loading="!canSubmit"

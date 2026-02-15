@@ -72,51 +72,61 @@ func (i *IconifyAPI) RegisterHTTP(e *gin.Engine) {
 			i.server.HandlerFunc().ServeHTTP(c.Writer, c.Request)
 		})
 	} else {
-		// Proxy requests to iconify API if enabled (make sure the request is a valid json icon request)
-		e.GET("/api/icons/:path", func(c *gin.Context) {
-			// Validate the request and build the target URL
-			path := c.Param("path")
-			query := c.Request.URL.Query()
-			if !validateIconRequest(path, query) {
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid icon request"})
-				return
-			}
-
-			// Build the target URL for the iconify API request
-			targetURL, err := buildTargetURL(i.apiURL, path, query)
-			if err != nil {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to build proxy request"})
-				return
-			}
-			if len(targetURL) > 1024 {
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "request URL too long"})
-				return
-			}
-
-			req, err := http.NewRequestWithContext(c.Request.Context(), http.MethodGet, targetURL, nil)
-			if err != nil {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to create proxy request"})
-				return
-			}
-			req.Header.Set("User-Agent", c.Request.UserAgent())
-			req.Header.Set("Accept", "application/json")
-
-			resp, err := i.client.Do(req)
-			if err != nil {
-				c.AbortWithStatusJSON(http.StatusBadGateway, gin.H{"error": "failed to proxy request"})
-				return
-			}
-			defer resp.Body.Close()
-
-			if resp.StatusCode != http.StatusOK {
-				c.Writer.Header().Set("Content-Type", "application/json")
-				c.AbortWithStatusJSON(resp.StatusCode, gin.H{"error": "failed to fetch icon data"})
-				return
-			}
-
-			c.DataFromReader(http.StatusOK, resp.ContentLength, "application/json", resp.Body, nil)
-		})
+		i.registerProxyHandler(e)
 	}
+}
+
+func (i *IconifyAPI) registerProxyHandler(e *gin.Engine) {
+	// Proxy requests to iconify API if enabled (make sure the request is a valid json icon request)
+	e.GET("/api/icons/:path", func(c *gin.Context) {
+		// Validate the request and build the target URL
+		path := c.Param("path")
+		query := c.Request.URL.Query()
+		if !validateIconRequest(path, query) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid icon request"})
+			return
+		}
+
+		// Build the target URL for the iconify API request
+		targetURL, err := buildTargetURL(i.apiURL, path, query)
+		if err != nil {
+			c.AbortWithStatusJSON(
+				http.StatusInternalServerError,
+				gin.H{"error": "failed to build proxy request"},
+			)
+			return
+		}
+		if len(targetURL) > 1024 {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "request URL too long"})
+			return
+		}
+
+		req, err := http.NewRequestWithContext(c.Request.Context(), http.MethodGet, targetURL, nil)
+		if err != nil {
+			c.AbortWithStatusJSON(
+				http.StatusInternalServerError,
+				gin.H{"error": "failed to create proxy request"},
+			)
+			return
+		}
+		req.Header.Set("User-Agent", c.Request.UserAgent())
+		req.Header.Set("Accept", "application/json")
+
+		resp, err := i.client.Do(req)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadGateway, gin.H{"error": "failed to proxy request"})
+			return
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			c.Writer.Header().Set("Content-Type", "application/json")
+			c.AbortWithStatusJSON(resp.StatusCode, gin.H{"error": "failed to fetch icon data"})
+			return
+		}
+
+		c.DataFromReader(http.StatusOK, resp.ContentLength, "application/json", resp.Body, nil)
+	})
 }
 
 func validateIconRequest(path string, query url.Values) bool {

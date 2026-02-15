@@ -174,7 +174,7 @@ const formRef = useTemplateRef('formRef');
                                             v-if="!query.closed"
                                             class="size-4"
                                             name="i-mdi-lock-open-variant"
-                                            color="green"
+                                            color="success"
                                         />
                                         <UIcon v-else class="size-4" name="i-mdi-lock" color="error" />
                                     </template>
@@ -190,7 +190,12 @@ const formRef = useTemplateRef('formRef');
                             <template #item-label="{ item }">
                                 <div class="inline-flex items-center gap-1 truncate">
                                     <template v-if="typeof item.value === 'boolean'">
-                                        <UIcon v-if="!item.value" class="size-4" name="i-mdi-lock-open-variant" color="green" />
+                                        <UIcon
+                                            v-if="!item.value"
+                                            class="size-4"
+                                            name="i-mdi-lock-open-variant"
+                                            color="success"
+                                        />
                                         <UIcon v-else class="size-4" name="i-mdi-lock" color="error" />
                                     </template>
 

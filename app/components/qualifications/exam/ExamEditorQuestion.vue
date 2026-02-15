@@ -456,7 +456,7 @@ watch(
                         <UFieldGroup>
                             <UButton
                                 :model-value="question.answer!.answer.yesno.value"
-                                color="green"
+                                color="success"
                                 :label="$t('common.yes')"
                                 :variant="question.answer!.answer.yesno.value ? 'solid' : 'outline'"
                                 :disabled="disabled"

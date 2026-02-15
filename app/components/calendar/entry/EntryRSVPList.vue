@@ -123,7 +123,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     block
                     :disabled="!canSubmit || disabled"
                     :loading="!canSubmit"
-                    color="green"
+                    color="success"
                     :variant="ownEntry?.response === RsvpResponses.YES ? 'soft' : 'solid'"
                     @click="onSubmitThrottle(RsvpResponses.YES)"
                 >

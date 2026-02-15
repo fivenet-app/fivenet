@@ -142,7 +142,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
             <UFieldGroup class="inline-flex w-full">
                 <UButton
                     class="flex-1"
-                    color="green"
+                    color="success"
                     :disabled="!canTakeDispatch || !canSubmit"
                     :loading="!canSubmit"
                     @click="onSubmitThrottle(TakeDispatchResp.ACCEPTED)"

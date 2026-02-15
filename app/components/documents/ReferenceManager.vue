@@ -230,7 +230,7 @@ const columnsClipboard = computed(
                                     {
                                         default: () =>
                                             h(UButton, {
-                                                color: 'green',
+                                                color: 'success',
                                                 icon: 'i-mdi-check',
                                                 onClick: () => addReferenceClipboard(row.original, DocReference.SOLVES),
                                             }),
@@ -312,7 +312,7 @@ const columnsNew = computed(
                                     {
                                         default: () =>
                                             h(UButton, {
-                                                color: 'green',
+                                                color: 'success',
                                                 icon: 'i-mdi-check',
                                                 onClick: () => addReference(row.original, DocReference.SOLVES),
                                             }),

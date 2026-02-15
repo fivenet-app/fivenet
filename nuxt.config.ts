@@ -303,19 +303,9 @@ export default defineNuxtConfig({
         heat: true,
     },
 
-    $production: {
-        icon: {
-            iconifyApiEndpoint: '/api/icons',
-        },
-    },
-
     $development: {
         icon: {
             iconifyApiEndpoint: 'https://api.iconify.design',
-            provider: 'iconify',
-            clientBundle: {
-                scan: true,
-            },
         },
     },
 

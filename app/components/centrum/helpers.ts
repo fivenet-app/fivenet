@@ -225,7 +225,7 @@ const steps: {
     ping: boolean;
 }[] = [
     { variant: 'solid', class: '', ping: false }, // 0-10%
-    { variant: 'solid', color: 'green', class: 'bg-green-200!', ping: false }, // 10-20%
+    { variant: 'solid', color: 'success', class: 'bg-green-200!', ping: false }, // 10-20%
     { variant: 'solid', color: 'warning', class: 'bg-yellow-200!', ping: false }, // 20-30%
     { variant: 'solid', color: 'warning', class: 'bg-yellow-400!', ping: false }, // 30-40%
     { variant: 'solid', color: 'orange', class: 'bg-orange-300!', ping: false }, // 40-50%

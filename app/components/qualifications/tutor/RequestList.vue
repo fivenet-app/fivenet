@@ -172,7 +172,7 @@ const columns = computed(
                                 h(UButton, {
                                     variant: 'link',
                                     icon: 'i-mdi-check-bold',
-                                    color: 'green',
+                                    color: 'success',
                                     onClick: () => {
                                         requestTutorModal.open({
                                             request: row.original,

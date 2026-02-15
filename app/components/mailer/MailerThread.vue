@@ -249,7 +249,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                     >
                         <UButton
                             :icon="!threadState?.unread ? 'i-mdi-check-circle-outline' : 'i-mdi-check-circle'"
-                            :color="!threadState?.unread ? 'neutral' : 'green'"
+                            :color="!threadState?.unread ? 'neutral' : 'success'"
                             variant="ghost"
                             @click="
                                 async () => {

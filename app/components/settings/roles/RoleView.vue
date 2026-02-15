@@ -521,7 +521,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     >
                                         <UFieldGroup class="inline-flex flex-initial">
                                             <UButton
-                                                color="green"
+                                                color="success"
                                                 :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
                                                 icon="i-mdi-check"
                                                 :disabled="!canUpdate"

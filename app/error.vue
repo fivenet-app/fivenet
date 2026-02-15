@@ -150,7 +150,7 @@ const isDev = import.meta.dev;
                                 class="flex-1"
                                 block
                                 size="lg"
-                                color="green"
+                                color="success"
                                 :disabled="buttonDisabled"
                                 :label="$t !== undefined ? $t('common.retry') : 'Retry'"
                                 @click="() => handleError(route.fullPath)"
