@@ -61,7 +61,7 @@ func TestTranslateWithFallback(t *testing.T) {
 			key:      "nonexistent.key",
 			vars:     nil,
 			expected: "",
-			err:      "translation for key 'nonexistent.key' not found in any language",
+			err:      "translation for key \"nonexistent.key\" not found in any language",
 		},
 		{
 			name:     "Plural form translation",

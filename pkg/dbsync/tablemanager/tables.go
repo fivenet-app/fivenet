@@ -170,7 +170,7 @@ func (t *TableManager) addUpdatedAtColumnToTable(
 		fmt.Sprintf(
 			"ALTER TABLE %#q ADD INDEX %#q (%#q)",
 			tableName,
-			fmt.Sprintf("idx_%s_%s", columnName, tableName),
+			fmt.Sprintf("idx_%s_%s", tableName, columnName),
 			columnName,
 		),
 	}
