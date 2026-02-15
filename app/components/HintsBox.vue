@@ -20,10 +20,6 @@ const hints = computed(() =>
                 to: { name: 'user-settings', query: { tab: 'settings' }, hash: '#' },
             },
             {
-                key: 'documenteditor',
-                to: { name: 'user-settings', query: { tab: 'settings' }, hash: '#' },
-            },
-            {
                 key: 'sociallogin_discord',
                 to: { name: 'auth-account-info', query: { tab: 'oauth2Connections' }, hash: '#' },
                 hide: discord.botEnabled,

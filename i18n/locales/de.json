@@ -1171,9 +1171,6 @@
             "startpage": {
                 "content": "Die Startseite von FiveNet können Sie in Ihren Kontoinformationen festlegen."
             },
-            "documenteditor": {
-                "content": "Sie können in den Benutzer-Einstellungen einen dunklen Modus für den Editor aktivieren."
-            },
             "template_editor_templating": {
                 "content": "Sie können Golang HTML Templating im oberen Feld benutzen. Für kopierbereite-Ausschnitte und Tricks folgen Sie dem Link."
             },

@@ -1171,9 +1171,6 @@
             "startpage": {
                 "content": "You can set the start page FiveNet opens up on in your Account information."
             },
-            "documenteditor": {
-                "content": "You can enable a dark mode for the document editor."
-            },
             "template_editor_templating": {
                 "content": "You can use Golang HTML templating in the above field. For template snippets follow the link."
             },
@@ -1310,7 +1307,7 @@
                 "title": "User Settings",
                 "subtitle": "Customize your user experience and manage your settings.",
                 "set_startpage": {
-                    "title": "Start Page after character selector",
+                    "title": "Start Page after character selection",
                     "no_char_selected": "To select a start page you must select a character first."
                 },
                 "app_theme": {
