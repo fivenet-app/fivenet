@@ -53,6 +53,15 @@ func (m *AppConfig) Sanitize() error {
 		}
 	}
 
+	// Field: Game
+	if m.Game != nil {
+		if v, ok := any(m.GetGame()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: JobInfo
 	if m.JobInfo != nil {
 		if v, ok := any(m.GetJobInfo()).(interface{ Sanitize() error }); ok {
@@ -213,6 +222,34 @@ func (m *Display) Sanitize() error {
 	// Field: IntlLocale
 	if m.IntlLocale != nil {
 		*m.IntlLocale = htmlsanitizer.StripHTMLTags(*m.IntlLocale)
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *Game) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: MaxWantedDurationUser
+	if m.MaxWantedDurationUser != nil {
+		if v, ok := any(m.GetMaxWantedDurationUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: MaxWantedDurationVehicle
+	if m.MaxWantedDurationVehicle != nil {
+		if v, ok := any(m.GetMaxWantedDurationVehicle()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

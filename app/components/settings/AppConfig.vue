@@ -155,6 +155,12 @@ const schema = z.object({
     livemap: z.object({
         enableCayoPerico: z.coerce.boolean().default(true),
     }),
+    game: z.object({
+        maxWantedDurationUserEnabled: z.coerce.boolean().default(false),
+        maxWantedDurationUser: zodDurationSchema.optional(),
+        maxWantedDurationVehicleEnabled: z.coerce.boolean().default(false),
+        maxWantedDurationVehicle: zodDurationSchema.optional(),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -215,6 +221,10 @@ const state = reactive<Schema>({
     livemap: {
         enableCayoPerico: true,
     },
+    game: {
+        maxWantedDurationUserEnabled: false,
+        maxWantedDurationVehicleEnabled: false,
+    },
 });
 
 async function updateAppConfig(values: Schema): Promise<void> {
@@ -249,6 +259,16 @@ async function updateAppConfig(values: Schema): Promise<void> {
     };
     config.value.config.quickButtons = values.quickButtons;
     config.value.config.livemap = values.livemap;
+    config.value.config.game = {
+        maxWantedDurationUserEnabled: values.game.maxWantedDurationUserEnabled,
+        maxWantedDurationUser: values.game.maxWantedDurationUser
+            ? toDuration(values.game.maxWantedDurationUser * 24 * 60 * 60) // Convert days to seconds
+            : undefined,
+        maxWantedDurationVehicleEnabled: values.game.maxWantedDurationVehicleEnabled,
+        maxWantedDurationVehicle: values.game.maxWantedDurationVehicle
+            ? toDuration(values.game.maxWantedDurationVehicle * 24 * 60 * 60) // Convert days to seconds
+            : undefined,
+    };
 
     try {
         const { response } = await settingsConfigClient.updateAppConfig({
@@ -344,6 +364,19 @@ function setSettingsValues(): void {
 
     if (config.value.config.livemap) {
         state.livemap = config.value.config.livemap;
+    }
+
+    if (config.value.config.game) {
+        state.game.maxWantedDurationUserEnabled = config.value.config.game.maxWantedDurationUserEnabled;
+        if (config.value.config.game.maxWantedDurationUser) {
+            state.game.maxWantedDurationUser = fromDuration(config.value.config.game.maxWantedDurationUser) / (24 * 60 * 60); // Convert seconds to days
+        }
+
+        state.game.maxWantedDurationVehicleEnabled = config.value.config.game.maxWantedDurationVehicleEnabled;
+        if (config.value.config.game.maxWantedDurationVehicle) {
+            state.game.maxWantedDurationVehicle =
+                fromDuration(config.value.config.game.maxWantedDurationVehicle) / (24 * 60 * 60); // Convert seconds to days
+        }
     }
 }
 
@@ -724,9 +757,8 @@ const formRef = useTemplateRef('formRef');
                                 name="userTracker.refreshTime"
                                 :label="$t('components.settings.app_config.jobs_users.user_tracker.refresh_time')"
                             >
-                                <UInput
+                                <UInputNumber
                                     v-model="state.userTracker.refreshTime"
-                                    type="number"
                                     :min="1"
                                     :step="0.01"
                                     :placeholder="$t('common.duration')"
@@ -740,9 +772,8 @@ const formRef = useTemplateRef('formRef');
                                 name="userTracker.dbRefreshTime"
                                 :label="$t('components.settings.app_config.jobs_users.user_tracker.db_refresh_time')"
                             >
-                                <UInput
+                                <UInputNumber
                                     v-model="state.userTracker.dbRefreshTime"
-                                    type="number"
                                     :min="1"
                                     :step="0.01"
                                     :placeholder="$t('common.duration')"
@@ -902,6 +933,55 @@ const formRef = useTemplateRef('formRef');
                     </template>
 
                     <template #game>
+                        <UPageCard
+                            :title="$t('components.settings.app_config.game.max_wanted_duration.title')"
+                            :description="$t('components.settings.app_config.game.max_wanted_duration.description')"
+                        >
+                            <UFormField
+                                :label="$t('components.settings.app_config.game.max_wanted_duration.enabled_user')"
+                                name="game.maxWantedDurationUserEnabled"
+                            >
+                                <USwitch v-model="state.game.maxWantedDurationUserEnabled" />
+                            </UFormField>
+
+                            <UFormField
+                                :label="$t('components.settings.app_config.game.max_wanted_duration.max')"
+                                name="game.maxWantedDurationUser"
+                            >
+                                <UInputNumber
+                                    v-model="state.game.maxWantedDurationUser"
+                                    :min="1"
+                                    :step="1"
+                                    :max="3650"
+                                    :placeholder="$t('common.duration')"
+                                    class="w-full"
+                                    :format-options="{ style: 'unit', unit: 'day', unitDisplay: 'long' }"
+                                />
+                            </UFormField>
+
+                            <UFormField
+                                :label="$t('components.settings.app_config.game.max_wanted_duration.enabled_vehicle')"
+                                name="game.maxWantedDurationVehicleEnabled"
+                            >
+                                <USwitch v-model="state.game.maxWantedDurationVehicleEnabled" />
+                            </UFormField>
+
+                            <UFormField
+                                :label="$t('components.settings.app_config.game.max_wanted_duration.max')"
+                                name="game.maxWantedDurationVehicle"
+                            >
+                                <UInputNumber
+                                    v-model="state.game.maxWantedDurationVehicle"
+                                    :min="1"
+                                    :step="1"
+                                    :max="3650"
+                                    :placeholder="$t('common.duration')"
+                                    class="w-full"
+                                    :format-options="{ style: 'unit', unit: 'day', unitDisplay: 'long' }"
+                                />
+                            </UFormField>
+                        </UPageCard>
+
                         <UPageCard
                             :title="$t('components.settings.app_config.quick_buttons.penalty_calculator.title')"
                             :description="$t('components.settings.app_config.quick_buttons.penalty_calculator.description')"

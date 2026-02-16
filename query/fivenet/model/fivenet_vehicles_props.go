@@ -15,5 +15,7 @@ type FivenetVehiclesProps struct {
 	Plate        string     `sql:"primary_key" json:"plate"`
 	UpdatedAt    *time.Time `json:"updated_at"`
 	Wanted       bool       `json:"wanted"`
+	WantedAt     *time.Time `json:"wanted_at"`
+	WantedTill   *time.Time `json:"wanted_till"`
 	WantedReason *string    `json:"wanted_reason"`
 }

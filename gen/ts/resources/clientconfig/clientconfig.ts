@@ -12,6 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { BannerMessage } from "../settings/banner";
+import { Duration } from "../../google/protobuf/duration";
 import { Data } from "../settings/data";
 import { QuickButtons } from "../settings/config";
 /**
@@ -157,6 +158,22 @@ export interface Game {
      * @generated from protobuf field: resources.clientconfig.Livemap livemap = 3
      */
     livemap?: Livemap;
+    /**
+     * @generated from protobuf field: bool max_wanted_duration_user_enabled = 4
+     */
+    maxWantedDurationUserEnabled: boolean;
+    /**
+     * @generated from protobuf field: optional google.protobuf.Duration max_wanted_duration_user = 5
+     */
+    maxWantedDurationUser?: Duration;
+    /**
+     * @generated from protobuf field: bool max_wanted_duration_vehicle_enabled = 6
+     */
+    maxWantedDurationVehicleEnabled: boolean;
+    /**
+     * @generated from protobuf field: optional google.protobuf.Duration max_wanted_duration_vehicle = 7
+     */
+    maxWantedDurationVehicle?: Duration;
 }
 /**
  * @generated from protobuf message resources.clientconfig.Livemap
@@ -669,13 +686,19 @@ class Game$Type extends MessageType<Game> {
         super("resources.clientconfig.Game", [
             { no: 1, name: "unemployed_job_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"unemployedJobName\"" } },
             { no: 2, name: "start_job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "tagger.tags": "json:\"startJobGrade\"" } },
-            { no: 3, name: "livemap", kind: "message", T: () => Livemap }
+            { no: 3, name: "livemap", kind: "message", T: () => Livemap },
+            { no: 4, name: "max_wanted_duration_user_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "max_wanted_duration_user", kind: "message", T: () => Duration },
+            { no: 6, name: "max_wanted_duration_vehicle_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "max_wanted_duration_vehicle", kind: "message", T: () => Duration }
         ]);
     }
     create(value?: PartialMessage<Game>): Game {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.unemployedJobName = "";
         message.startJobGrade = 0;
+        message.maxWantedDurationUserEnabled = false;
+        message.maxWantedDurationVehicleEnabled = false;
         if (value !== undefined)
             reflectionMergePartial<Game>(this, message, value);
         return message;
@@ -693,6 +716,18 @@ class Game$Type extends MessageType<Game> {
                     break;
                 case /* resources.clientconfig.Livemap livemap */ 3:
                     message.livemap = Livemap.internalBinaryRead(reader, reader.uint32(), options, message.livemap);
+                    break;
+                case /* bool max_wanted_duration_user_enabled */ 4:
+                    message.maxWantedDurationUserEnabled = reader.bool();
+                    break;
+                case /* optional google.protobuf.Duration max_wanted_duration_user */ 5:
+                    message.maxWantedDurationUser = Duration.internalBinaryRead(reader, reader.uint32(), options, message.maxWantedDurationUser);
+                    break;
+                case /* bool max_wanted_duration_vehicle_enabled */ 6:
+                    message.maxWantedDurationVehicleEnabled = reader.bool();
+                    break;
+                case /* optional google.protobuf.Duration max_wanted_duration_vehicle */ 7:
+                    message.maxWantedDurationVehicle = Duration.internalBinaryRead(reader, reader.uint32(), options, message.maxWantedDurationVehicle);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -715,6 +750,18 @@ class Game$Type extends MessageType<Game> {
         /* resources.clientconfig.Livemap livemap = 3; */
         if (message.livemap)
             Livemap.internalBinaryWrite(message.livemap, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* bool max_wanted_duration_user_enabled = 4; */
+        if (message.maxWantedDurationUserEnabled !== false)
+            writer.tag(4, WireType.Varint).bool(message.maxWantedDurationUserEnabled);
+        /* optional google.protobuf.Duration max_wanted_duration_user = 5; */
+        if (message.maxWantedDurationUser)
+            Duration.internalBinaryWrite(message.maxWantedDurationUser, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* bool max_wanted_duration_vehicle_enabled = 6; */
+        if (message.maxWantedDurationVehicleEnabled !== false)
+            writer.tag(6, WireType.Varint).bool(message.maxWantedDurationVehicleEnabled);
+        /* optional google.protobuf.Duration max_wanted_duration_vehicle = 7; */
+        if (message.maxWantedDurationVehicle)
+            Duration.internalBinaryWrite(message.maxWantedDurationVehicle, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

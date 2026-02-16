@@ -2526,6 +2526,7 @@ Dummy - DO NOT USE!
 | `quick_buttons` | [QuickButtons](#resourcessettingsQuickButtons) |  |  |
 | `data` | [Data](#resourcessettingsData) |  |  |
 | `livemap` | [Livemap](#resourcessettingsLivemap) |  |  |
+| `game` | [Game](#resourcessettingsGame) |  |  |
 
 
 
@@ -2580,6 +2581,20 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `intl_locale` | [string](#string) | optional | IETF BCP 47 language tag (e.g. "en-US", "de-DE") |
 | `currency_name` | [string](#string) |  | ISO 4217 currency code (e.g. "USD", "EUR") |
+
+
+
+
+
+### resources.settings.Game
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `max_wanted_duration_user_enabled` | [bool](#bool) |  |  |
+| `max_wanted_duration_user` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
+| `max_wanted_duration_vehicle_enabled` | [bool](#bool) |  |  |
+| `max_wanted_duration_vehicle` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
 
 
 
@@ -2839,6 +2854,10 @@ Dummy - DO NOT USE!
 | `unemployed_job_name` | [string](#string) |  |  |
 | `start_job_grade` | [int32](#int32) |  |  |
 | `livemap` | [Livemap](#resourcesclientconfigLivemap) |  |  |
+| `max_wanted_duration_user_enabled` | [bool](#bool) |  |  |
+| `max_wanted_duration_user` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
+| `max_wanted_duration_vehicle_enabled` | [bool](#bool) |  |  |
+| `max_wanted_duration_vehicle` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
 
 
 

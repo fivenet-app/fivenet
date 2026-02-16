@@ -1651,7 +1651,14 @@
                 },
                 "game": {
                     "tab": "Spiel",
-                    "description": "Einstellungen, die rollenspielrelevantes Verhalten beeinflussen."
+                    "description": "Einstellungen, die rollenspielrelevantes Verhalten beeinflussen.",
+                    "max_wanted_duration": {
+                        "title": "Maximale Fahndungsdauer",
+                        "description": "Die maximale Dauer, für die Personen und Fahrzeuge auf der Fahndungsliste bleiben kann, bevor sie automatisch entfernt wird.",
+                        "enabled_user": "Aktivieren für Bürger",
+                        "enabled_vehicle": "Aktivieren für Fahrzeuge",
+                        "max": "Maximale Dauer (in Tagen)"
+                    }
                 },
                 "quick_buttons": {
                     "penalty_calculator": {
