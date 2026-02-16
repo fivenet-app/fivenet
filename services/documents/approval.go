@@ -183,8 +183,6 @@ func (s *Server) ListApprovalTasksInbox(
 		}
 	}
 
-	fmt.Println(countStmt.DebugSql())
-
 	resp := &pbdocuments.ListApprovalTasksInboxResponse{
 		Tasks: []*documentsapproval.ApprovalTask{},
 	}
