@@ -887,6 +887,7 @@ func (s *Server) createApprovalTasks(
 				tApprovalTasks.CreatorID,
 				tApprovalTasks.CreatorJob,
 			)
+
 		for slot := have.C + 1; slot <= slots; slot++ {
 			ins = ins.VALUES(
 				documentId,

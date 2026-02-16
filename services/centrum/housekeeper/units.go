@@ -226,7 +226,7 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 			zap.Any("mapping", userUnit),
 		)
 
-		// TODO this isn't working as intended at the moment..
+		// FIXME this isn't working as intended at the moment..
 		/*
 			// Unset unit id for user when user is not in any unit
 			if err := s.tracker.UnsetUnitIDForUser(ctx, userId); err != nil {
