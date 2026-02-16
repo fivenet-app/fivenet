@@ -773,11 +773,11 @@ func (s *Server) handleDocumentPublish(
 		return nil
 	}
 
-	now := time.Now()
+	now := timestamp.New(time.Now().Truncate(time.Second))
 
 	// Fill in and create new approval policy
 	newPol := &documentsapproval.ApprovalPolicy{
-		SnapshotDate: timestamp.New(now),
+		SnapshotDate: now,
 	}
 	if apr.GetPolicy() != nil {
 		newPol.RuleKind = apr.GetPolicy().GetRuleKind()
@@ -812,7 +812,7 @@ func (s *Server) handleDocumentPublish(
 	for _, task := range apr.GetTasks() {
 		var dueAt *timestamp.Timestamp
 		if task.GetDueInDays() > 0 {
-			dueTime := now.AddDate(0, 0, int(task.GetDueInDays()))
+			dueTime := now.AsTime().AddDate(0, 0, int(task.GetDueInDays()))
 			dueAt = timestamp.New(dueTime)
 		}
 

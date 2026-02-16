@@ -77,6 +77,50 @@ function addToClipboard(): void {
     });
 }
 
+const canDo = computed(() => ({
+    status:
+        can('documents.DocumentsService/ToggleDocument').value &&
+        checkDocAccess(
+            doc.value?.access,
+            doc.value?.document?.creator,
+            AccessLevel.STATUS,
+            'documents.DocumentsService/ToggleDocument',
+            doc.value?.document?.creatorJob,
+        ),
+    edit:
+        can('documents.DocumentsService/UpdateDocument').value &&
+        checkDocAccess(
+            doc.value?.access,
+            doc.value?.document?.creator,
+            AccessLevel.ACCESS,
+            'documents.DocumentsService/UpdateDocument',
+            doc.value?.document?.creatorJob,
+        ),
+    pin: can('documents.DocumentsService/ToggleDocumentPin').value,
+    requests: can('documents.DocumentsService/ListDocumentReqs').value,
+    approve: can('documents.DocumentsService/ListDocuments').value,
+    reminder: can('documents.DocumentsService/SetDocumentReminder').value,
+    takeOwnership:
+        (doc.value?.document?.creatorJob === activeChar.value?.job || isSuperuser.value) &&
+        can('documents.DocumentsService/ChangeDocumentOwner').value &&
+        checkDocAccess(
+            doc.value?.access,
+            doc.value?.document?.creator,
+            AccessLevel.EDIT,
+            'documents.DocumentsService/ChangeDocumentOwner',
+            doc.value?.document?.creatorJob,
+        ),
+    delete:
+        can('documents.DocumentsService/DeleteDocument').value &&
+        checkDocAccess(
+            doc.value?.access,
+            doc.value?.document?.creator,
+            AccessLevel.EDIT,
+            'documents.DocumentsService/DeleteDocument',
+            doc.value?.document?.creatorJob,
+        ),
+}));
+
 const requestDrawer = overlay.create(RequestDrawer);
 const approvalDrawer = overlay.create(ApprovalDrawer);
 
@@ -102,6 +146,7 @@ async function openApprovalDrawer(): Promise<void> {
             documentId: props.documentId,
             doc: doc.value!.document!,
             docMeta: doc.value!.document!.meta,
+            canEdit: canDo.value.edit,
             'onUpdate:docMeta': ($event) => {
                 if (doc.value?.document) doc.value.document.meta = $event;
             },
@@ -291,22 +336,26 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar v-if="doc" class="p-1 print:hidden">
+            <UDashboardToolbar
+                v-if="
+                    doc &&
+                    (canDo.status ||
+                        canDo.edit ||
+                        canDo.pin ||
+                        canDo.requests ||
+                        canDo.approve ||
+                        canDo.reminder ||
+                        canDo.takeOwnership ||
+                        canDo.delete)
+                "
+                class="p-1 print:hidden"
+            >
                 <template #default>
                     <div
                         class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto"
                     >
                         <UTooltip
-                            v-if="
-                                can('documents.DocumentsService/ToggleDocument').value &&
-                                checkDocAccess(
-                                    doc.access,
-                                    doc.document?.creator,
-                                    AccessLevel.STATUS,
-                                    'documents.DocumentsService/ToggleDocument',
-                                    doc?.document?.creatorJob,
-                                )
-                            "
+                            v-if="canDo.status"
                             class="flex-1"
                             :text="`${$t('common.open', 1)}/ ${$t('common.close')}`"
                             :kbds="['D', 'T']"
@@ -321,21 +370,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                             />
                         </UTooltip>
 
-                        <UTooltip
-                            v-if="
-                                can('documents.DocumentsService/UpdateDocument').value &&
-                                checkDocAccess(
-                                    doc.access,
-                                    doc.document?.creator,
-                                    AccessLevel.ACCESS,
-                                    'documents.DocumentsService/UpdateDocument',
-                                    doc?.document?.creatorJob,
-                                )
-                            "
-                            class="flex-1"
-                            :text="$t('common.edit')"
-                            :kbds="['D', 'E']"
-                        >
+                        <UTooltip v-if="canDo.edit" class="flex-1" :text="$t('common.edit')" :kbds="['D', 'E']">
                             <UButton
                                 block
                                 :to="{
@@ -349,11 +384,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                             />
                         </UTooltip>
 
-                        <UTooltip
-                            v-if="can('documents.DocumentsService/ToggleDocumentPin').value"
-                            class="flex flex-1"
-                            :text="`${$t('common.pin', 1)}/ ${$t('common.unpin')}`"
-                        >
+                        <UTooltip v-if="canDo.pin" class="flex flex-1" :text="`${$t('common.pin', 1)}/ ${$t('common.unpin')}`">
                             <UDropdownMenu
                                 :items="
                                     (
@@ -398,12 +429,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                             </UDropdownMenu>
                         </UTooltip>
 
-                        <UTooltip
-                            v-if="can('documents.DocumentsService/ListDocumentReqs').value"
-                            class="flex-1"
-                            :text="$t('common.request', 2)"
-                            :kbds="['D', 'R']"
-                        >
+                        <UTooltip v-if="canDo.requests" class="flex-1" :text="$t('common.request', 2)" :kbds="['D', 'R']">
                             <UButton
                                 block
                                 color="neutral"
@@ -415,7 +441,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                         </UTooltip>
 
                         <UTooltip
-                            v-if="can('documents.DocumentsService/ListDocuments').value"
+                            v-if="canDo.approve"
                             class="flex-1"
                             :text="
                                 doc?.document?.meta?.draft
@@ -434,11 +460,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                             />
                         </UTooltip>
 
-                        <UTooltip
-                            v-if="can('documents.DocumentsService/SetDocumentReminder').value"
-                            class="flex-1"
-                            :text="$t('common.reminder')"
-                        >
+                        <UTooltip v-if="canDo.reminder" class="flex-1" :text="$t('common.reminder')">
                             <UButton
                                 block
                                 color="neutral"
@@ -458,17 +480,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                         </UTooltip>
 
                         <UTooltip
-                            v-if="
-                                (doc?.document?.creatorJob === activeChar?.job || isSuperuser) &&
-                                can('documents.DocumentsService/ChangeDocumentOwner').value &&
-                                checkDocAccess(
-                                    doc.access,
-                                    doc?.document?.creator,
-                                    AccessLevel.EDIT,
-                                    'documents.DocumentsService/ChangeDocumentOwner',
-                                    doc?.document?.creatorJob,
-                                )
-                            "
+                            v-if="canDo.takeOwnership"
                             class="flex-1"
                             :text="$t('components.documents.document_view.take_ownership')"
                         >
@@ -487,20 +499,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                             />
                         </UTooltip>
 
-                        <UTooltip
-                            v-if="
-                                can('documents.DocumentsService/DeleteDocument').value &&
-                                checkDocAccess(
-                                    doc.access,
-                                    doc.document?.creator,
-                                    AccessLevel.EDIT,
-                                    'documents.DocumentsService/DeleteDocument',
-                                    doc?.document?.creatorJob,
-                                )
-                            "
-                            class="flex-1"
-                            :text="$t('common.delete')"
-                        >
+                        <UTooltip v-if="canDo.delete" class="flex-1" :text="$t('common.delete')">
                             <UButton
                                 block
                                 :color="!doc.document?.deletedAt ? 'error' : 'success'"

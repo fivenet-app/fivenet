@@ -4,6 +4,7 @@ import { z } from 'zod';
 import SignaturePad from '~/components/partials/SignaturePad.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import { type ApprovalPolicy, ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval/approval';
+import type { DocumentMeta } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
@@ -12,6 +13,8 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
+    (e: 'update:policy', v: ApprovalPolicy): void;
+    (e: 'update:docMeta', v: DocumentMeta): void;
     (e: 'close', v: boolean): void;
 }>();
 
@@ -50,7 +53,8 @@ async function onSubmit(values: FormSubmitEvent<Schema>) {
         });
         const { response } = await call;
 
-        response.policy;
+        if (response.policy) emits('update:policy', response.policy);
+        if (response.docMeta) emits('update:docMeta', response.docMeta);
 
         emits('close', true);
         isOpen.value = false;

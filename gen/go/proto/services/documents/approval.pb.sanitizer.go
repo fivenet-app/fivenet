@@ -73,6 +73,15 @@ func (m *DecideApprovalResponse) Sanitize() error {
 		}
 	}
 
+	// Field: DocMeta
+	if m.DocMeta != nil {
+		if v, ok := any(m.GetDocMeta()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Policy
 	if m.Policy != nil {
 		if v, ok := any(m.GetPolicy()).(interface{ Sanitize() error }); ok {
@@ -413,6 +422,15 @@ func (m *UpsertApprovalPolicyRequest) Sanitize() error {
 func (m *UpsertApprovalPolicyResponse) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: DocMeta
+	if m.DocMeta != nil {
+		if v, ok := any(m.GetDocMeta()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: Policy

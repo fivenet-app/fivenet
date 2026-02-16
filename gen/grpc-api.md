@@ -8830,6 +8830,7 @@ A declarative "ensure" for tasks under one policy/snapshot. Exactly one target m
 | `approval` | [resources.documents.approval.Approval](#resourcesdocumentsapprovalApproval) |  |  |
 | `task` | [resources.documents.approval.ApprovalTask](#resourcesdocumentsapprovalApprovalTask) |  |  |
 | `policy` | [resources.documents.approval.ApprovalPolicy](#resourcesdocumentsapprovalApprovalPolicy) |  |  |
+| `doc_meta` | [resources.documents.DocumentMeta](#resourcesdocumentsDocumentMeta) |  |  |
 
 
 
@@ -9041,6 +9042,7 @@ List approvals (artifacts) for a policy/snapshot. If snapshot_date is unset, ser
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `policy` | [resources.documents.approval.ApprovalPolicy](#resourcesdocumentsapprovalApprovalPolicy) |  |  |
+| `doc_meta` | [resources.documents.DocumentMeta](#resourcesdocumentsDocumentMeta) |  |  |
 
 
 

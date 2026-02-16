@@ -1,28 +1,41 @@
 package dbutils
 
 import (
+	"time"
+
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
 // TimestampToMySQL converts a google.protobuf.Timestamp (wrapped in our resources.timestamp.Timestamp type)
 // to a Jet mysql expression that can be NULL.
-func TimestampToMySQL(ts *timestamp.Timestamp) mysql.Expression {
+func TimestampToMySQL(ts *timestamp.Timestamp) mysql.DateTimeExpression {
 	if ts == nil {
-		return mysql.NULL
+		return mysql.DateTimeExp(mysql.NULL)
 	}
 
 	return mysql.DateTimeT(ts.AsTime())
 }
 
-// DateTimeToMySQL converts a google.protobuf.Timestamp (wrapped in our resources.timestamp.Timestamp type)
+// TimestampToMySQLDateTime converts a google.protobuf.Timestamp (wrapped in our resources.timestamp.Timestamp type)
 // to a Jet mysql expression that can be NULL.
-func DateTimeToMySQL(ts *timestamp.Timestamp) mysql.Expression {
+func TimestampToMySQLDateTime(ts *timestamp.Timestamp) mysql.DateTimeExpression {
 	if ts == nil {
-		return mysql.NULL
+		return mysql.DateTimeExp(mysql.NULL)
 	}
 
 	return mysql.DateTimeT(ts.AsTime())
+}
+
+// TimestampToMySQLDateTimeSec converts a google.protobuf.Timestamp (wrapped in our resources.timestamp.Timestamp type)
+// to a Jet mysql expression that can be NULL.
+func TimestampToMySQLDateTimeSec(ts *timestamp.Timestamp) mysql.DateTimeExpression {
+	if ts == nil {
+		return mysql.DateTimeExp(mysql.NULL)
+	}
+
+	// Truncate to seconds
+	return mysql.DateTimeT(ts.AsTime().Truncate(time.Second))
 }
 
 // Int64P helper for nullable int64 (IDs), assumes that 0 is null.

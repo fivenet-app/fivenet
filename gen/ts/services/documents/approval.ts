@@ -97,6 +97,10 @@ export interface UpsertApprovalPolicyResponse {
      * @generated from protobuf field: resources.documents.approval.ApprovalPolicy policy = 1
      */
     policy?: ApprovalPolicy;
+    /**
+     * @generated from protobuf field: resources.documents.DocumentMeta doc_meta = 2
+     */
+    docMeta?: DocumentMeta;
 }
 /**
  * @generated from protobuf message services.documents.ListApprovalTasksRequest
@@ -354,6 +358,10 @@ export interface DecideApprovalResponse {
      * @generated from protobuf field: resources.documents.approval.ApprovalPolicy policy = 3
      */
     policy?: ApprovalPolicy;
+    /**
+     * @generated from protobuf field: resources.documents.DocumentMeta doc_meta = 4
+     */
+    docMeta?: DocumentMeta;
 }
 /**
  * @generated from protobuf message services.documents.ReopenApprovalTaskRequest
@@ -672,7 +680,8 @@ export const UpsertApprovalPolicyRequest = new UpsertApprovalPolicyRequest$Type(
 class UpsertApprovalPolicyResponse$Type extends MessageType<UpsertApprovalPolicyResponse> {
     constructor() {
         super("services.documents.UpsertApprovalPolicyResponse", [
-            { no: 1, name: "policy", kind: "message", T: () => ApprovalPolicy }
+            { no: 1, name: "policy", kind: "message", T: () => ApprovalPolicy },
+            { no: 2, name: "doc_meta", kind: "message", T: () => DocumentMeta }
         ]);
     }
     create(value?: PartialMessage<UpsertApprovalPolicyResponse>): UpsertApprovalPolicyResponse {
@@ -689,6 +698,9 @@ class UpsertApprovalPolicyResponse$Type extends MessageType<UpsertApprovalPolicy
                 case /* resources.documents.approval.ApprovalPolicy policy */ 1:
                     message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
+                case /* resources.documents.DocumentMeta doc_meta */ 2:
+                    message.docMeta = DocumentMeta.internalBinaryRead(reader, reader.uint32(), options, message.docMeta);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -704,6 +716,9 @@ class UpsertApprovalPolicyResponse$Type extends MessageType<UpsertApprovalPolicy
         /* resources.documents.approval.ApprovalPolicy policy = 1; */
         if (message.policy)
             ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.DocumentMeta doc_meta = 2; */
+        if (message.docMeta)
+            DocumentMeta.internalBinaryWrite(message.docMeta, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1470,7 +1485,8 @@ class DecideApprovalResponse$Type extends MessageType<DecideApprovalResponse> {
         super("services.documents.DecideApprovalResponse", [
             { no: 1, name: "approval", kind: "message", T: () => Approval },
             { no: 2, name: "task", kind: "message", T: () => ApprovalTask },
-            { no: 3, name: "policy", kind: "message", T: () => ApprovalPolicy }
+            { no: 3, name: "policy", kind: "message", T: () => ApprovalPolicy },
+            { no: 4, name: "doc_meta", kind: "message", T: () => DocumentMeta }
         ]);
     }
     create(value?: PartialMessage<DecideApprovalResponse>): DecideApprovalResponse {
@@ -1493,6 +1509,9 @@ class DecideApprovalResponse$Type extends MessageType<DecideApprovalResponse> {
                 case /* resources.documents.approval.ApprovalPolicy policy */ 3:
                     message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
+                case /* resources.documents.DocumentMeta doc_meta */ 4:
+                    message.docMeta = DocumentMeta.internalBinaryRead(reader, reader.uint32(), options, message.docMeta);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1514,6 +1533,9 @@ class DecideApprovalResponse$Type extends MessageType<DecideApprovalResponse> {
         /* resources.documents.approval.ApprovalPolicy policy = 3; */
         if (message.policy)
             ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.DocumentMeta doc_meta = 4; */
+        if (message.docMeta)
+            DocumentMeta.internalBinaryWrite(message.docMeta, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

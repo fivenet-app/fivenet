@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import { ApprovalRuleKind, OnEditBehavior, type ApprovalPolicy } from '~~/gen/ts/resources/documents/approval/approval';
+import type { DocumentMeta } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import PolicyEditor from './PolicyEditor.vue';
 
@@ -11,6 +12,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
+    (e: 'update:docMeta', v: DocumentMeta): void;
     (e: 'close', v: boolean): void;
 }>();
 
@@ -79,6 +81,7 @@ async function upsertPolicy(values: Schema): Promise<void> {
     const { response } = await call;
 
     policy.value = response.policy;
+    if (response.docMeta) emits('update:docMeta', response.docMeta);
 
     emits('close', true);
 

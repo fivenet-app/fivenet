@@ -20,6 +20,7 @@ import TaskStatusBadge from './TaskStatusBadge.vue';
 const props = defineProps<{
     documentId: number;
     doc: DocumentShort;
+    canEdit?: boolean;
 }>();
 
 defineEmits<{
@@ -81,6 +82,7 @@ async function recomputeApprovalPolicyCounters() {
 const policyForm = overlay.create(PolicyForm, {
     props: {
         documentId: props.documentId,
+        'onUpdate:docMeta': ($event) => (docMeta.value = $event),
     },
 });
 
@@ -300,11 +302,10 @@ const taskFormDrawer = overlay.create(TaskForm);
 
                             <TaskList :document-id="documentId" @refresh="() => refresh()">
                                 <template
-                                    v-if="can('documents.ApprovalService/UpsertApprovalTasks').value"
+                                    v-if="can('documents.ApprovalService/UpsertApprovalTasks').value && canEdit"
                                     #header="{ refresh: tasksRefresh }"
                                 >
                                     <UButton
-                                        :disabled="!policy"
                                         color="neutral"
                                         variant="outline"
                                         :label="$t('common.create')"
@@ -333,6 +334,8 @@ const taskFormDrawer = overlay.create(TaskForm);
                         v-model:policy="policy"
                         :document-id="documentId"
                         :approve="true"
+                        @update:doc-meta="($event) => (docMeta = $event)"
+                        @update:policy="($event) => (policy = $event)"
                         @close="(val) => val && refresh()"
                     >
                         <UButton color="success" icon="i-mdi-check-bold" block size="lg" :label="$t('common.approve')" />
@@ -342,6 +345,8 @@ const taskFormDrawer = overlay.create(TaskForm);
                         v-model:policy="policy"
                         :document-id="documentId"
                         :approve="false"
+                        @update:doc-meta="($event) => (docMeta = $event)"
+                        @update:policy="($event) => (policy = $event)"
                         @close="(val) => val && refresh()"
                     >
                         <UButton color="red" icon="i-mdi-close-bold" block size="lg" :label="$t('common.decline')" />

@@ -44,6 +44,7 @@ message UpsertApprovalPolicyRequest {
 
 message UpsertApprovalPolicyResponse {
   resources.documents.approval.ApprovalPolicy policy = 1;
+  resources.documents.DocumentMeta doc_meta = 2;
 }
 
 message ListApprovalTasksRequest {
@@ -158,6 +159,7 @@ message DecideApprovalResponse {
   resources.documents.approval.Approval approval = 1;
   resources.documents.approval.ApprovalTask task = 2;
   resources.documents.approval.ApprovalPolicy policy = 3;
+  resources.documents.DocumentMeta doc_meta = 4;
 }
 
 message ReopenApprovalTaskRequest {
