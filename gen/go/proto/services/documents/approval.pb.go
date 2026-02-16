@@ -37,9 +37,10 @@ type ListApprovalTasksInboxRequest struct {
 	// - unset/null: include all documents (drafts and non-drafts)
 	// - false: only non-draft documents
 	// - true: only draft documents
-	OnlyDrafts    *bool `protobuf:"varint,3,opt,name=only_drafts,json=onlyDrafts,proto3,oneof" json:"only_drafts,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	OnlyDrafts      *bool `protobuf:"varint,3,opt,name=only_drafts,json=onlyDrafts,proto3,oneof" json:"only_drafts,omitempty"`
+	NotAlreadyActed *bool `protobuf:"varint,4,opt,name=not_already_acted,json=notAlreadyActed,proto3,oneof" json:"not_already_acted,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ListApprovalTasksInboxRequest) Reset() {
@@ -88,6 +89,13 @@ func (x *ListApprovalTasksInboxRequest) GetOnlyDrafts() bool {
 	return false
 }
 
+func (x *ListApprovalTasksInboxRequest) GetNotAlreadyActed() bool {
+	if x != nil && x.NotAlreadyActed != nil {
+		return *x.NotAlreadyActed
+	}
+	return false
+}
+
 func (x *ListApprovalTasksInboxRequest) SetPagination(v *database.PaginationRequest) {
 	x.Pagination = v
 }
@@ -98,6 +106,10 @@ func (x *ListApprovalTasksInboxRequest) SetStatuses(v []approval.ApprovalTaskSta
 
 func (x *ListApprovalTasksInboxRequest) SetOnlyDrafts(v bool) {
 	x.OnlyDrafts = &v
+}
+
+func (x *ListApprovalTasksInboxRequest) SetNotAlreadyActed(v bool) {
+	x.NotAlreadyActed = &v
 }
 
 func (x *ListApprovalTasksInboxRequest) HasPagination() bool {
@@ -114,12 +126,23 @@ func (x *ListApprovalTasksInboxRequest) HasOnlyDrafts() bool {
 	return x.OnlyDrafts != nil
 }
 
+func (x *ListApprovalTasksInboxRequest) HasNotAlreadyActed() bool {
+	if x == nil {
+		return false
+	}
+	return x.NotAlreadyActed != nil
+}
+
 func (x *ListApprovalTasksInboxRequest) ClearPagination() {
 	x.Pagination = nil
 }
 
 func (x *ListApprovalTasksInboxRequest) ClearOnlyDrafts() {
 	x.OnlyDrafts = nil
+}
+
+func (x *ListApprovalTasksInboxRequest) ClearNotAlreadyActed() {
+	x.NotAlreadyActed = nil
 }
 
 type ListApprovalTasksInboxRequest_builder struct {
@@ -131,7 +154,8 @@ type ListApprovalTasksInboxRequest_builder struct {
 	// - unset/null: include all documents (drafts and non-drafts)
 	// - false: only non-draft documents
 	// - true: only draft documents
-	OnlyDrafts *bool
+	OnlyDrafts      *bool
+	NotAlreadyActed *bool
 }
 
 func (b0 ListApprovalTasksInboxRequest_builder) Build() *ListApprovalTasksInboxRequest {
@@ -141,6 +165,7 @@ func (b0 ListApprovalTasksInboxRequest_builder) Build() *ListApprovalTasksInboxR
 	x.Pagination = b.Pagination
 	x.Statuses = b.Statuses
 	x.OnlyDrafts = b.OnlyDrafts
+	x.NotAlreadyActed = b.NotAlreadyActed
 	return m0
 }
 
@@ -2161,15 +2186,17 @@ var File_services_documents_approval_proto protoreflect.FileDescriptor
 
 const file_services_documents_approval_proto_rawDesc = "" +
 	"\n" +
-	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a+resources/documents/approval/approval.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\"\xf1\x01\n" +
+	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a+resources/documents/approval/approval.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\"\xb8\x02\n" +
 	"\x1dListApprovalTasksInboxRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12L\n" +
 	"\bstatuses\x18\x02 \x03(\x0e20.resources.documents.approval.ApprovalTaskStatusR\bstatuses\x12$\n" +
 	"\vonly_drafts\x18\x03 \x01(\bH\x00R\n" +
-	"onlyDrafts\x88\x01\x01B\x0e\n" +
-	"\f_only_drafts\"\xb7\x01\n" +
+	"onlyDrafts\x88\x01\x01\x12/\n" +
+	"\x11not_already_acted\x18\x04 \x01(\bH\x01R\x0fnotAlreadyActed\x88\x01\x01B\x0e\n" +
+	"\f_only_draftsB\x14\n" +
+	"\x12_not_already_acted\"\xb7\x01\n" +
 	"\x1eListApprovalTasksInboxResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +

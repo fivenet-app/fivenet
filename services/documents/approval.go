@@ -84,28 +84,44 @@ func (s *Server) ListApprovalTasksInbox(
 	)
 
 	// NOT already approved/declined in this round
-	notAlreadyActed := mysql.NOT(
-		mysql.EXISTS(
-			mysql.SELECT(mysql.Int(1)).
-				FROM(tApprovals).
-				WHERE(mysql.AND(
-					tApprovals.DocumentID.EQ(tApprovalTasks.DocumentID),
-					tApprovals.SnapshotDate.EQ(tApprovalTasks.SnapshotDate),
-					tApprovals.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-					tApprovals.Status.IN(
-						mysql.Int32(
-							int32(documentsapproval.ApprovalStatus_APPROVAL_STATUS_APPROVED),
+	var notAlreadyActed mysql.BoolExpression
+	if req.GetNotAlreadyActed() {
+		notAlreadyActed = mysql.NOT(
+			mysql.EXISTS(
+				mysql.SELECT(mysql.Int(1)).
+					FROM(tApprovals).
+					WHERE(mysql.AND(
+						tApprovals.DocumentID.EQ(tApprovalTasks.DocumentID),
+						tApprovals.SnapshotDate.EQ(tApprovalTasks.SnapshotDate),
+						tApprovals.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+						tApprovals.Status.IN(
+							mysql.Int32(
+								int32(documentsapproval.ApprovalStatus_APPROVAL_STATUS_APPROVED),
+							),
+							mysql.Int32(
+								int32(documentsapproval.ApprovalStatus_APPROVAL_STATUS_DECLINED),
+							),
 						),
-						mysql.Int32(
-							int32(documentsapproval.ApprovalStatus_APPROVAL_STATUS_DECLINED),
-						),
-					),
-				)),
-		),
-	)
+					)),
+			),
+		)
+	} else {
+		notAlreadyActed = mysql.Bool(true)
+	}
 
 	// For JOB groups: only the smallest slot_no
 	t2 := tApprovalTasks.AS("t2")
+
+	statuses := make([]mysql.Expression, 0, len(req.GetStatuses()))
+	if len(req.GetStatuses()) > 0 {
+		for _, st := range req.GetStatuses() {
+			statuses = append(statuses, mysql.Int32(int32(st)))
+		}
+	} else {
+		statuses = append(statuses,
+			mysql.Int32(int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING)),
+		)
+	}
 
 	maxSlotThisGroup := t2.
 		SELECT(mysql.MAX(t2.SlotNo)).
@@ -120,11 +136,7 @@ func (s *Server) ListApprovalTasksInbox(
 				EQ(mysql.StringExp(mysql.COALESCE(tApprovalTasks.Job, mysql.String("")))),
 			mysql.IntExp(mysql.COALESCE(t2.MinimumGrade, mysql.Int32(-1))).
 				EQ(mysql.IntExp(mysql.COALESCE(tApprovalTasks.MinimumGrade, mysql.Int32(-1)))),
-			t2.Status.EQ(
-				mysql.Int32(
-					int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING),
-				),
-			),
+			t2.Status.IN(statuses...),
 		)).
 		LIMIT(1)
 
@@ -144,20 +156,8 @@ func (s *Server) ListApprovalTasksInbox(
 		eligible,
 		notAlreadyActed,
 		onlyFirstSlot,
+		tApprovalTasks.Status.IN(statuses...),
 	)
-	if len(req.GetStatuses()) > 0 {
-		vals := make([]mysql.Expression, 0, len(req.GetStatuses()))
-		for _, st := range req.GetStatuses() {
-			vals = append(vals, mysql.Int32(int32(st)))
-		}
-		condition = condition.AND(tApprovalTasks.Status.IN(vals...))
-	} else {
-		condition = condition.AND(
-			tApprovalTasks.Status.EQ(
-				mysql.Int32(int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING)),
-			),
-		)
-	}
 
 	if req.OnlyDrafts != nil {
 		condition = condition.AND(tDocumentShort.Draft.EQ(mysql.Bool(req.GetOnlyDrafts())))
@@ -910,6 +910,9 @@ func (s *Server) createApprovalTasks(
 				userInfo.GetJob(),
 			)
 		}
+
+		// TODO how should we handle duplicates in the database? This mainly concerns completed tasks that would need to be updated in case the count is increased.
+
 		if _, err := ins.ExecContext(ctx, tx); err != nil {
 			return 0, 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -1523,7 +1526,6 @@ func (s *Server) DecideApproval(
 				ORDER_BY(tApprovalTasks.SlotNo.ASC(), tApprovalTasks.CreatedAt.ASC()).
 				LIMIT(1)
 
-			fmt.Println(stmt.DebugSql())
 			err = stmt.QueryContext(ctx, tx, &candidate)
 			if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

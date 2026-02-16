@@ -28,7 +28,14 @@ const { data, status, error, refresh } = useLazyAsyncData(`documents-approval-ta
 async function listApprovalTasks(): Promise<ListApprovalTasksResponse> {
     const call = approvalClient.listApprovalTasks({
         documentId: props.documentId,
-        statuses: [ApprovalTaskStatus.PENDING, ApprovalTaskStatus.EXPIRED, ApprovalTaskStatus.CANCELLED],
+        statuses: [
+            ApprovalTaskStatus.PENDING,
+            ApprovalTaskStatus.APPROVED,
+            ApprovalTaskStatus.DECLINED,
+            ApprovalTaskStatus.EXPIRED,
+            ApprovalTaskStatus.COMPLETED,
+            ApprovalTaskStatus.CANCELLED,
+        ],
     });
     const { response } = await call;
 

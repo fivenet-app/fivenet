@@ -21,6 +21,7 @@ message ListApprovalTasksInboxRequest {
   // - false: only non-draft documents
   // - true: only draft documents
   optional bool only_drafts = 3;
+  optional bool not_already_acted = 4;
 }
 
 message ListApprovalTasksInboxResponse {

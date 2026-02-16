@@ -30,14 +30,15 @@ const (
 )
 
 type ListApprovalTasksInboxRequest struct {
-	state                  protoimpl.MessageState        `protogen:"opaque.v1"`
-	xxx_hidden_Pagination  *database.PaginationRequest   `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Statuses    []approval.ApprovalTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.approval.ApprovalTaskStatus"`
-	xxx_hidden_OnlyDrafts  bool                          `protobuf:"varint,3,opt,name=only_drafts,json=onlyDrafts,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state                      protoimpl.MessageState        `protogen:"opaque.v1"`
+	xxx_hidden_Pagination      *database.PaginationRequest   `protobuf:"bytes,1,opt,name=pagination,proto3"`
+	xxx_hidden_Statuses        []approval.ApprovalTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.approval.ApprovalTaskStatus"`
+	xxx_hidden_OnlyDrafts      bool                          `protobuf:"varint,3,opt,name=only_drafts,json=onlyDrafts,proto3,oneof"`
+	xxx_hidden_NotAlreadyActed bool                          `protobuf:"varint,4,opt,name=not_already_acted,json=notAlreadyActed,proto3,oneof"`
+	XXX_raceDetectHookData     protoimpl.RaceDetectHookData
+	XXX_presence               [1]uint32
+	unknownFields              protoimpl.UnknownFields
+	sizeCache                  protoimpl.SizeCache
 }
 
 func (x *ListApprovalTasksInboxRequest) Reset() {
@@ -86,6 +87,13 @@ func (x *ListApprovalTasksInboxRequest) GetOnlyDrafts() bool {
 	return false
 }
 
+func (x *ListApprovalTasksInboxRequest) GetNotAlreadyActed() bool {
+	if x != nil {
+		return x.xxx_hidden_NotAlreadyActed
+	}
+	return false
+}
+
 func (x *ListApprovalTasksInboxRequest) SetPagination(v *database.PaginationRequest) {
 	x.xxx_hidden_Pagination = v
 }
@@ -96,7 +104,12 @@ func (x *ListApprovalTasksInboxRequest) SetStatuses(v []approval.ApprovalTaskSta
 
 func (x *ListApprovalTasksInboxRequest) SetOnlyDrafts(v bool) {
 	x.xxx_hidden_OnlyDrafts = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
+}
+
+func (x *ListApprovalTasksInboxRequest) SetNotAlreadyActed(v bool) {
+	x.xxx_hidden_NotAlreadyActed = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
 }
 
 func (x *ListApprovalTasksInboxRequest) HasPagination() bool {
@@ -113,6 +126,13 @@ func (x *ListApprovalTasksInboxRequest) HasOnlyDrafts() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
+func (x *ListApprovalTasksInboxRequest) HasNotAlreadyActed() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
 func (x *ListApprovalTasksInboxRequest) ClearPagination() {
 	x.xxx_hidden_Pagination = nil
 }
@@ -120,6 +140,11 @@ func (x *ListApprovalTasksInboxRequest) ClearPagination() {
 func (x *ListApprovalTasksInboxRequest) ClearOnlyDrafts() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
 	x.xxx_hidden_OnlyDrafts = false
+}
+
+func (x *ListApprovalTasksInboxRequest) ClearNotAlreadyActed() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_NotAlreadyActed = false
 }
 
 type ListApprovalTasksInboxRequest_builder struct {
@@ -131,7 +156,8 @@ type ListApprovalTasksInboxRequest_builder struct {
 	// - unset/null: include all documents (drafts and non-drafts)
 	// - false: only non-draft documents
 	// - true: only draft documents
-	OnlyDrafts *bool
+	OnlyDrafts      *bool
+	NotAlreadyActed *bool
 }
 
 func (b0 ListApprovalTasksInboxRequest_builder) Build() *ListApprovalTasksInboxRequest {
@@ -141,8 +167,12 @@ func (b0 ListApprovalTasksInboxRequest_builder) Build() *ListApprovalTasksInboxR
 	x.xxx_hidden_Pagination = b.Pagination
 	x.xxx_hidden_Statuses = b.Statuses
 	if b.OnlyDrafts != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
 		x.xxx_hidden_OnlyDrafts = *b.OnlyDrafts
+	}
+	if b.NotAlreadyActed != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
+		x.xxx_hidden_NotAlreadyActed = *b.NotAlreadyActed
 	}
 	return m0
 }
@@ -2215,15 +2245,17 @@ var File_services_documents_approval_proto protoreflect.FileDescriptor
 
 const file_services_documents_approval_proto_rawDesc = "" +
 	"\n" +
-	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a+resources/documents/approval/approval.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\"\xf1\x01\n" +
+	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a+resources/documents/approval/approval.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\"\xb8\x02\n" +
 	"\x1dListApprovalTasksInboxRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12L\n" +
 	"\bstatuses\x18\x02 \x03(\x0e20.resources.documents.approval.ApprovalTaskStatusR\bstatuses\x12$\n" +
 	"\vonly_drafts\x18\x03 \x01(\bH\x00R\n" +
-	"onlyDrafts\x88\x01\x01B\x0e\n" +
-	"\f_only_drafts\"\xb7\x01\n" +
+	"onlyDrafts\x88\x01\x01\x12/\n" +
+	"\x11not_already_acted\x18\x04 \x01(\bH\x01R\x0fnotAlreadyActed\x88\x01\x01B\x0e\n" +
+	"\f_only_draftsB\x14\n" +
+	"\x12_not_already_acted\"\xb7\x01\n" +
 	"\x1eListApprovalTasksInboxResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +

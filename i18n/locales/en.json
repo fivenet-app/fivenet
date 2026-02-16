@@ -751,7 +751,8 @@
         "only_disabled": "Only Disabled",
         "impersonation_active": "You are currently impersonating {job}.",
         "stop_impersonation": "Stop Impersonation",
-        "all_day": "All Day"
+        "all_day": "All Day",
+        "only_not_already_acted": "Only Not Already Acted"
     },
     "components": {
         "partials": {

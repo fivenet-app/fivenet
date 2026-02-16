@@ -8888,6 +8888,7 @@ Only one policy per document is supported currently.
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `statuses` | [resources.documents.approval.ApprovalTaskStatus](#resourcesdocumentsapprovalApprovalTaskStatus) | repeated |  |
 | `only_drafts` | [bool](#bool) | optional | Controls inclusion of drafts in the result: - unset/null: include all documents (drafts and non-drafts) - false: only non-draft documents - true: only draft documents |
+| `not_already_acted` | [bool](#bool) | optional |  |
 
 
 

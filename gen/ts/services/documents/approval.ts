@@ -42,6 +42,10 @@ export interface ListApprovalTasksInboxRequest {
      * @generated from protobuf field: optional bool only_drafts = 3
      */
     onlyDrafts?: boolean;
+    /**
+     * @generated from protobuf field: optional bool not_already_acted = 4
+     */
+    notAlreadyActed?: boolean;
 }
 /**
  * @generated from protobuf message services.documents.ListApprovalTasksInboxResponse
@@ -413,7 +417,8 @@ class ListApprovalTasksInboxRequest$Type extends MessageType<ListApprovalTasksIn
         super("services.documents.ListApprovalTasksInboxRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.approval.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } },
-            { no: 3, name: "only_drafts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "only_drafts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "not_already_acted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListApprovalTasksInboxRequest>): ListApprovalTasksInboxRequest {
@@ -441,6 +446,9 @@ class ListApprovalTasksInboxRequest$Type extends MessageType<ListApprovalTasksIn
                 case /* optional bool only_drafts */ 3:
                     message.onlyDrafts = reader.bool();
                     break;
+                case /* optional bool not_already_acted */ 4:
+                    message.notAlreadyActed = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -466,6 +474,9 @@ class ListApprovalTasksInboxRequest$Type extends MessageType<ListApprovalTasksIn
         /* optional bool only_drafts = 3; */
         if (message.onlyDrafts !== undefined)
             writer.tag(3, WireType.Varint).bool(message.onlyDrafts);
+        /* optional bool not_already_acted = 4; */
+        if (message.notAlreadyActed !== undefined)
+            writer.tag(4, WireType.Varint).bool(message.notAlreadyActed);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

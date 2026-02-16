@@ -751,7 +751,8 @@
         "only_disabled": "Nur Deaktivierte",
         "impersonation_active": "Sie imitieren derzeit {job}.",
         "stop_impersonation": "Imitation beenden",
-        "all_day": "Ganztägig"
+        "all_day": "Ganztägig",
+        "only_not_already_acted": "Nur nicht Bearbeitete"
     },
     "components": {
         "partials": {

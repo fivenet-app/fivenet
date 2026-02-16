@@ -53,6 +53,7 @@ const onlyDrafts: ToggleItem<boolean | undefined>[] = [
 const schema = z.object({
     statuses: z.enum(ApprovalTaskStatus).array().max(statuses.value.length).default([ApprovalTaskStatus.PENDING]),
     onlyDrafts: z.coerce.boolean().optional(),
+    notAlreadyActed: z.coerce.boolean().default(true),
     sorting: z
         .object({
             columns: z
@@ -72,8 +73,9 @@ const schema = z.object({
 
 const query = useSearchForm('documents-approvals', schema);
 
-const { data, status, error, refresh } = useLazyAsyncData(`documents-approvals-${JSON.stringify(query)}`, () =>
-    listApprovalTasksInbox(),
+const { data, status, error, refresh } = useLazyAsyncData(
+    () => `documents-approvals-${JSON.stringify(query)}`,
+    () => listApprovalTasksInbox(),
 );
 
 async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse> {
@@ -83,6 +85,7 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
         },
         statuses: query.statuses,
         onlyDrafts: query.onlyDrafts,
+        notAlreadyActed: query.notAlreadyActed,
     });
     const { response } = await call;
 
@@ -154,6 +157,10 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>
+                        </UFormField>
+
+                        <UFormField name="notAlreadyActed" :label="$t('common.only_not_already_acted')">
+                            <USwitch v-model="query.notAlreadyActed" />
                         </UFormField>
                     </div>
                 </UForm>
