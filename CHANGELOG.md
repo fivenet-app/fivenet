@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.2.0] - 2026-02-16
+
+### 🐛 Bug Fixes
+
+- Cleanup oauth2 providers
+- Oauth2 test case
+- Tablemanager and i18n tests after %s -> %q changes
+- Ui inconsistencies and doc post comment error
+- Doc comment editing button not showing
+- Improve access badges format and info shown
+- More translations for fabric editor components
+- Improve impersonation integration with superuser
+- Move impersonating banner to top and make it slimmer
+- Split superuser mode activated/deactivated notification
+- Color "green" used where it should "success" color instead
+- Remove outdated hint
+- Add base html/css named colors to sanitizer
+- Doc approval snap date issues and task selection
+- Approval task inbox list
+- Remove debug print log
+- Change housekeeper units comment to FIXME instead of TODO
+
 ## [2026.1.2] - 2026-01-18
 
 ### 🐛 Bug Fixes
