@@ -13,12 +13,14 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	centrumbot "github.com/fivenet-app/fivenet/v2026/services/centrum/bot"
 	centrumhousekeeper "github.com/fivenet-app/fivenet/v2026/services/centrum/housekeeper"
+	pbcitizens "github.com/fivenet-app/fivenet/v2026/services/citizens"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/services/documents"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/services/jobs"
+	pbvehicles "github.com/fivenet-app/fivenet/v2026/services/vehicles"
 	"go.uber.org/fx"
 )
 
-const stopTimeout = 180 // seconds
+const defaultStopTimeout = 180 // seconds
 
 // Option groups for fx modules, to be reused across commands.
 
@@ -66,14 +68,11 @@ func FxTrackerOpts() []fx.Option {
 	}
 }
 
-func FxJobsHousekeeperOpts() []fx.Option {
+func FxServiceHousekeeperOpts() []fx.Option {
 	return []fx.Option{
+		fx.Invoke(func(*pbcitizens.Housekeeper) {}),
 		fx.Invoke(func(*pbjobs.Housekeeper) {}),
-	}
-}
-
-func FxDocumentsWorkflowOpts() []fx.Option {
-	return []fx.Option{
+		fx.Invoke(func(*pbvehicles.Housekeeper) {}),
 		fx.Invoke(func(*pbdocuments.Workflow) {}),
 	}
 }

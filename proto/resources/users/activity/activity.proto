@@ -108,6 +108,7 @@ message LicenseChange {
 
 message WantedChange {
   bool wanted = 1;
+  bool auto = 2;
 }
 
 message TrafficInfractionPointsChange {

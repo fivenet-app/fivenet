@@ -33,18 +33,20 @@ type UserProps struct {
 	xxx_hidden_UserId                           int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3"`
 	xxx_hidden_UpdatedAt                        *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3,oneof"`
 	xxx_hidden_Wanted                           bool                   `protobuf:"varint,3,opt,name=wanted,proto3,oneof"`
-	xxx_hidden_JobName                          *string                `protobuf:"bytes,4,opt,name=job_name,json=jobName,proto3,oneof"`
-	xxx_hidden_Job                              *jobs.Job              `protobuf:"bytes,5,opt,name=job,proto3,oneof"`
-	xxx_hidden_JobGradeNumber                   int32                  `protobuf:"varint,6,opt,name=job_grade_number,json=jobGradeNumber,proto3,oneof"`
-	xxx_hidden_JobGrade                         *jobs.JobGrade         `protobuf:"bytes,7,opt,name=job_grade,json=jobGrade,proto3,oneof"`
-	xxx_hidden_TrafficInfractionPoints          uint32                 `protobuf:"varint,8,opt,name=traffic_infraction_points,json=trafficInfractionPoints,proto3,oneof"`
-	xxx_hidden_TrafficInfractionPointsUpdatedAt *timestamp.Timestamp   `protobuf:"bytes,9,opt,name=traffic_infraction_points_updated_at,json=trafficInfractionPointsUpdatedAt,proto3,oneof"`
-	xxx_hidden_OpenFines                        int64                  `protobuf:"varint,10,opt,name=open_fines,json=openFines,proto3,oneof"`
-	xxx_hidden_BloodType                        *string                `protobuf:"bytes,11,opt,name=blood_type,json=bloodType,proto3,oneof"`
-	xxx_hidden_MugshotFileId                    int64                  `protobuf:"varint,12,opt,name=mugshot_file_id,json=mugshotFileId,proto3,oneof"`
-	xxx_hidden_Mugshot                          *file.File             `protobuf:"bytes,13,opt,name=mugshot,proto3,oneof"`
-	xxx_hidden_Labels                           *labels.Labels         `protobuf:"bytes,14,opt,name=labels,proto3,oneof"`
-	xxx_hidden_Email                            *string                `protobuf:"bytes,15,opt,name=email,proto3,oneof"`
+	xxx_hidden_WantedAt                         *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=wanted_at,json=wantedAt,proto3,oneof"`
+	xxx_hidden_WantedTill                       *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=wanted_till,json=wantedTill,proto3,oneof"`
+	xxx_hidden_JobName                          *string                `protobuf:"bytes,6,opt,name=job_name,json=jobName,proto3,oneof"`
+	xxx_hidden_Job                              *jobs.Job              `protobuf:"bytes,7,opt,name=job,proto3,oneof"`
+	xxx_hidden_JobGradeNumber                   int32                  `protobuf:"varint,8,opt,name=job_grade_number,json=jobGradeNumber,proto3,oneof"`
+	xxx_hidden_JobGrade                         *jobs.JobGrade         `protobuf:"bytes,9,opt,name=job_grade,json=jobGrade,proto3,oneof"`
+	xxx_hidden_TrafficInfractionPoints          uint32                 `protobuf:"varint,10,opt,name=traffic_infraction_points,json=trafficInfractionPoints,proto3,oneof"`
+	xxx_hidden_TrafficInfractionPointsUpdatedAt *timestamp.Timestamp   `protobuf:"bytes,11,opt,name=traffic_infraction_points_updated_at,json=trafficInfractionPointsUpdatedAt,proto3,oneof"`
+	xxx_hidden_OpenFines                        int64                  `protobuf:"varint,12,opt,name=open_fines,json=openFines,proto3,oneof"`
+	xxx_hidden_BloodType                        *string                `protobuf:"bytes,13,opt,name=blood_type,json=bloodType,proto3,oneof"`
+	xxx_hidden_MugshotFileId                    int64                  `protobuf:"varint,14,opt,name=mugshot_file_id,json=mugshotFileId,proto3,oneof"`
+	xxx_hidden_Mugshot                          *file.File             `protobuf:"bytes,15,opt,name=mugshot,proto3,oneof"`
+	xxx_hidden_Labels                           *labels.Labels         `protobuf:"bytes,16,opt,name=labels,proto3,oneof"`
+	xxx_hidden_Email                            *string                `protobuf:"bytes,17,opt,name=email,proto3,oneof"`
 	XXX_raceDetectHookData                      protoimpl.RaceDetectHookData
 	XXX_presence                                [1]uint32
 	unknownFields                               protoimpl.UnknownFields
@@ -95,6 +97,20 @@ func (x *UserProps) GetWanted() bool {
 		return x.xxx_hidden_Wanted
 	}
 	return false
+}
+
+func (x *UserProps) GetWantedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_WantedAt
+	}
+	return nil
+}
+
+func (x *UserProps) GetWantedTill() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_WantedTill
+	}
+	return nil
 }
 
 func (x *UserProps) GetJobName() string {
@@ -200,12 +216,20 @@ func (x *UserProps) SetUpdatedAt(v *timestamp.Timestamp) {
 
 func (x *UserProps) SetWanted(v bool) {
 	x.xxx_hidden_Wanted = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 15)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 17)
+}
+
+func (x *UserProps) SetWantedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_WantedAt = v
+}
+
+func (x *UserProps) SetWantedTill(v *timestamp.Timestamp) {
+	x.xxx_hidden_WantedTill = v
 }
 
 func (x *UserProps) SetJobName(v string) {
 	x.xxx_hidden_JobName = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 15)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 17)
 }
 
 func (x *UserProps) SetJob(v *jobs.Job) {
@@ -214,7 +238,7 @@ func (x *UserProps) SetJob(v *jobs.Job) {
 
 func (x *UserProps) SetJobGradeNumber(v int32) {
 	x.xxx_hidden_JobGradeNumber = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 15)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 17)
 }
 
 func (x *UserProps) SetJobGrade(v *jobs.JobGrade) {
@@ -223,7 +247,7 @@ func (x *UserProps) SetJobGrade(v *jobs.JobGrade) {
 
 func (x *UserProps) SetTrafficInfractionPoints(v uint32) {
 	x.xxx_hidden_TrafficInfractionPoints = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 15)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 17)
 }
 
 func (x *UserProps) SetTrafficInfractionPointsUpdatedAt(v *timestamp.Timestamp) {
@@ -232,17 +256,17 @@ func (x *UserProps) SetTrafficInfractionPointsUpdatedAt(v *timestamp.Timestamp) 
 
 func (x *UserProps) SetOpenFines(v int64) {
 	x.xxx_hidden_OpenFines = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 15)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 17)
 }
 
 func (x *UserProps) SetBloodType(v string) {
 	x.xxx_hidden_BloodType = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 15)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 17)
 }
 
 func (x *UserProps) SetMugshotFileId(v int64) {
 	x.xxx_hidden_MugshotFileId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 15)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 17)
 }
 
 func (x *UserProps) SetMugshot(v *file.File) {
@@ -255,7 +279,7 @@ func (x *UserProps) SetLabels(v *labels.Labels) {
 
 func (x *UserProps) SetEmail(v string) {
 	x.xxx_hidden_Email = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 15)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 16, 17)
 }
 
 func (x *UserProps) HasUpdatedAt() bool {
@@ -272,11 +296,25 @@ func (x *UserProps) HasWanted() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
+func (x *UserProps) HasWantedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_WantedAt != nil
+}
+
+func (x *UserProps) HasWantedTill() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_WantedTill != nil
+}
+
 func (x *UserProps) HasJobName() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
 }
 
 func (x *UserProps) HasJob() bool {
@@ -290,7 +328,7 @@ func (x *UserProps) HasJobGradeNumber() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
 }
 
 func (x *UserProps) HasJobGrade() bool {
@@ -304,7 +342,7 @@ func (x *UserProps) HasTrafficInfractionPoints() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
 }
 
 func (x *UserProps) HasTrafficInfractionPointsUpdatedAt() bool {
@@ -318,21 +356,21 @@ func (x *UserProps) HasOpenFines() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
 }
 
 func (x *UserProps) HasBloodType() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 12)
 }
 
 func (x *UserProps) HasMugshotFileId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 13)
 }
 
 func (x *UserProps) HasMugshot() bool {
@@ -353,7 +391,7 @@ func (x *UserProps) HasEmail() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 14)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 16)
 }
 
 func (x *UserProps) ClearUpdatedAt() {
@@ -365,8 +403,16 @@ func (x *UserProps) ClearWanted() {
 	x.xxx_hidden_Wanted = false
 }
 
+func (x *UserProps) ClearWantedAt() {
+	x.xxx_hidden_WantedAt = nil
+}
+
+func (x *UserProps) ClearWantedTill() {
+	x.xxx_hidden_WantedTill = nil
+}
+
 func (x *UserProps) ClearJobName() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
 	x.xxx_hidden_JobName = nil
 }
 
@@ -375,7 +421,7 @@ func (x *UserProps) ClearJob() {
 }
 
 func (x *UserProps) ClearJobGradeNumber() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
 	x.xxx_hidden_JobGradeNumber = 0
 }
 
@@ -384,7 +430,7 @@ func (x *UserProps) ClearJobGrade() {
 }
 
 func (x *UserProps) ClearTrafficInfractionPoints() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
 	x.xxx_hidden_TrafficInfractionPoints = 0
 }
 
@@ -393,17 +439,17 @@ func (x *UserProps) ClearTrafficInfractionPointsUpdatedAt() {
 }
 
 func (x *UserProps) ClearOpenFines() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
 	x.xxx_hidden_OpenFines = 0
 }
 
 func (x *UserProps) ClearBloodType() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 10)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 12)
 	x.xxx_hidden_BloodType = nil
 }
 
 func (x *UserProps) ClearMugshotFileId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 13)
 	x.xxx_hidden_MugshotFileId = 0
 }
 
@@ -416,7 +462,7 @@ func (x *UserProps) ClearLabels() {
 }
 
 func (x *UserProps) ClearEmail() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 14)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 16)
 	x.xxx_hidden_Email = nil
 }
 
@@ -426,6 +472,8 @@ type UserProps_builder struct {
 	UserId                           int32
 	UpdatedAt                        *timestamp.Timestamp
 	Wanted                           *bool
+	WantedAt                         *timestamp.Timestamp
+	WantedTill                       *timestamp.Timestamp
 	JobName                          *string
 	Job                              *jobs.Job
 	JobGradeNumber                   *int32
@@ -447,40 +495,42 @@ func (b0 UserProps_builder) Build() *UserProps {
 	x.xxx_hidden_UserId = b.UserId
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	if b.Wanted != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 15)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 17)
 		x.xxx_hidden_Wanted = *b.Wanted
 	}
+	x.xxx_hidden_WantedAt = b.WantedAt
+	x.xxx_hidden_WantedTill = b.WantedTill
 	if b.JobName != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 15)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 17)
 		x.xxx_hidden_JobName = b.JobName
 	}
 	x.xxx_hidden_Job = b.Job
 	if b.JobGradeNumber != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 15)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 17)
 		x.xxx_hidden_JobGradeNumber = *b.JobGradeNumber
 	}
 	x.xxx_hidden_JobGrade = b.JobGrade
 	if b.TrafficInfractionPoints != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 15)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 17)
 		x.xxx_hidden_TrafficInfractionPoints = *b.TrafficInfractionPoints
 	}
 	x.xxx_hidden_TrafficInfractionPointsUpdatedAt = b.TrafficInfractionPointsUpdatedAt
 	if b.OpenFines != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 15)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 17)
 		x.xxx_hidden_OpenFines = *b.OpenFines
 	}
 	if b.BloodType != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 15)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 17)
 		x.xxx_hidden_BloodType = b.BloodType
 	}
 	if b.MugshotFileId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 15)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 17)
 		x.xxx_hidden_MugshotFileId = *b.MugshotFileId
 	}
 	x.xxx_hidden_Mugshot = b.Mugshot
 	x.xxx_hidden_Labels = b.Labels
 	if b.Email != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 15)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 16, 17)
 		x.xxx_hidden_Email = b.Email
 	}
 	return m0
@@ -490,30 +540,36 @@ var File_resources_users_props_props_proto protoreflect.FileDescriptor
 
 const file_resources_users_props_props_proto_rawDesc = "" +
 	"\n" +
-	"!resources/users/props/props.proto\x12\x15resources.users.props\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19resources/file/file.proto\x1a\x19resources/jobs/jobs.proto\x1a#resources/timestamp/timestamp.proto\x1a#resources/users/labels/labels.proto\x1a\x13tagger/tagger.proto\"\xaa\b\n" +
+	"!resources/users/props/props.proto\x12\x15resources.users.props\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19resources/file/file.proto\x1a\x19resources/jobs/jobs.proto\x1a#resources/timestamp/timestamp.proto\x1a#resources/users/labels/labels.proto\x1a\x13tagger/tagger.proto\"\xd0\t\n" +
 	"\tUserProps\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12B\n" +
 	"\n" +
 	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12\x1b\n" +
-	"\x06wanted\x18\x03 \x01(\bH\x01R\x06wanted\x88\x01\x01\x120\n" +
-	"\bjob_name\x18\x04 \x01(\tB\x10\x9a\x84\x9e\x03\valias:\"job\"H\x02R\ajobName\x88\x01\x01\x12*\n" +
-	"\x03job\x18\x05 \x01(\v2\x13.resources.jobs.JobH\x03R\x03job\x88\x01\x01\x12E\n" +
-	"\x10job_grade_number\x18\x06 \x01(\x05B\x16\x9a\x84\x9e\x03\x11alias:\"job_grade\"H\x04R\x0ejobGradeNumber\x88\x01\x01\x12:\n" +
-	"\tjob_grade\x18\a \x01(\v2\x18.resources.jobs.JobGradeH\x05R\bjobGrade\x88\x01\x01\x12?\n" +
-	"\x19traffic_infraction_points\x18\b \x01(\rH\x06R\x17trafficInfractionPoints\x88\x01\x01\x12s\n" +
-	"$traffic_infraction_points_updated_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\aR trafficInfractionPointsUpdatedAt\x88\x01\x01\x12\"\n" +
+	"\x06wanted\x18\x03 \x01(\bH\x01R\x06wanted\x88\x01\x01\x12@\n" +
+	"\twanted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\bwantedAt\x88\x01\x01\x12D\n" +
+	"\vwanted_till\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\n" +
+	"wantedTill\x88\x01\x01\x120\n" +
+	"\bjob_name\x18\x06 \x01(\tB\x10\x9a\x84\x9e\x03\valias:\"job\"H\x04R\ajobName\x88\x01\x01\x12*\n" +
+	"\x03job\x18\a \x01(\v2\x13.resources.jobs.JobH\x05R\x03job\x88\x01\x01\x12E\n" +
+	"\x10job_grade_number\x18\b \x01(\x05B\x16\x9a\x84\x9e\x03\x11alias:\"job_grade\"H\x06R\x0ejobGradeNumber\x88\x01\x01\x12:\n" +
+	"\tjob_grade\x18\t \x01(\v2\x18.resources.jobs.JobGradeH\aR\bjobGrade\x88\x01\x01\x12?\n" +
+	"\x19traffic_infraction_points\x18\n" +
+	" \x01(\rH\bR\x17trafficInfractionPoints\x88\x01\x01\x12s\n" +
+	"$traffic_infraction_points_updated_at\x18\v \x01(\v2\x1e.resources.timestamp.TimestampH\tR trafficInfractionPointsUpdatedAt\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"open_fines\x18\n" +
-	" \x01(\x03H\bR\topenFines\x88\x01\x01\x12\"\n" +
+	"open_fines\x18\f \x01(\x03H\n" +
+	"R\topenFines\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"blood_type\x18\v \x01(\tH\tR\tbloodType\x88\x01\x01\x12+\n" +
-	"\x0fmugshot_file_id\x18\f \x01(\x03H\n" +
-	"R\rmugshotFileId\x88\x01\x01\x12I\n" +
-	"\amugshot\x18\r \x01(\v2\x14.resources.file.FileB\x14\x9a\x84\x9e\x03\x0falias:\"mugshot\"H\vR\amugshot\x88\x01\x01\x12;\n" +
-	"\x06labels\x18\x0e \x01(\v2\x1e.resources.users.labels.LabelsH\fR\x06labels\x88\x01\x01\x12#\n" +
-	"\x05email\x18\x0f \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\rR\x05email\x88\x01\x01B\r\n" +
+	"blood_type\x18\r \x01(\tH\vR\tbloodType\x88\x01\x01\x12+\n" +
+	"\x0fmugshot_file_id\x18\x0e \x01(\x03H\fR\rmugshotFileId\x88\x01\x01\x12I\n" +
+	"\amugshot\x18\x0f \x01(\v2\x14.resources.file.FileB\x14\x9a\x84\x9e\x03\x0falias:\"mugshot\"H\rR\amugshot\x88\x01\x01\x12;\n" +
+	"\x06labels\x18\x10 \x01(\v2\x1e.resources.users.labels.LabelsH\x0eR\x06labels\x88\x01\x01\x12#\n" +
+	"\x05email\x18\x11 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x0fR\x05email\x88\x01\x01B\r\n" +
 	"\v_updated_atB\t\n" +
-	"\a_wantedB\v\n" +
+	"\a_wantedB\f\n" +
+	"\n" +
+	"_wanted_atB\x0e\n" +
+	"\f_wanted_tillB\v\n" +
 	"\t_job_nameB\x06\n" +
 	"\x04_jobB\x13\n" +
 	"\x11_job_grade_numberB\f\n" +
@@ -540,16 +596,18 @@ var file_resources_users_props_props_proto_goTypes = []any{
 }
 var file_resources_users_props_props_proto_depIdxs = []int32{
 	1, // 0: resources.users.props.UserProps.updated_at:type_name -> resources.timestamp.Timestamp
-	2, // 1: resources.users.props.UserProps.job:type_name -> resources.jobs.Job
-	3, // 2: resources.users.props.UserProps.job_grade:type_name -> resources.jobs.JobGrade
-	1, // 3: resources.users.props.UserProps.traffic_infraction_points_updated_at:type_name -> resources.timestamp.Timestamp
-	4, // 4: resources.users.props.UserProps.mugshot:type_name -> resources.file.File
-	5, // 5: resources.users.props.UserProps.labels:type_name -> resources.users.labels.Labels
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	1, // 1: resources.users.props.UserProps.wanted_at:type_name -> resources.timestamp.Timestamp
+	1, // 2: resources.users.props.UserProps.wanted_till:type_name -> resources.timestamp.Timestamp
+	2, // 3: resources.users.props.UserProps.job:type_name -> resources.jobs.Job
+	3, // 4: resources.users.props.UserProps.job_grade:type_name -> resources.jobs.JobGrade
+	1, // 5: resources.users.props.UserProps.traffic_infraction_points_updated_at:type_name -> resources.timestamp.Timestamp
+	4, // 6: resources.users.props.UserProps.mugshot:type_name -> resources.file.File
+	5, // 7: resources.users.props.UserProps.labels:type_name -> resources.users.labels.Labels
+	8, // [8:8] is the sub-list for method output_type
+	8, // [8:8] is the sub-list for method input_type
+	8, // [8:8] is the sub-list for extension type_name
+	8, // [8:8] is the sub-list for extension extendee
+	0, // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_props_props_proto_init() }

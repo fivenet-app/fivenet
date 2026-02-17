@@ -182,6 +182,10 @@ export interface WantedChange {
      * @generated from protobuf field: bool wanted = 1
      */
     wanted: boolean;
+    /**
+     * @generated from protobuf field: bool auto = 2
+     */
+    auto: boolean;
 }
 /**
  * @generated from protobuf message resources.users.activity.TrafficInfractionPointsChange
@@ -725,12 +729,14 @@ export const LicenseChange = new LicenseChange$Type();
 class WantedChange$Type extends MessageType<WantedChange> {
     constructor() {
         super("resources.users.activity.WantedChange", [
-            { no: 1, name: "wanted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "wanted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "auto", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<WantedChange>): WantedChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.wanted = false;
+        message.auto = false;
         if (value !== undefined)
             reflectionMergePartial<WantedChange>(this, message, value);
         return message;
@@ -742,6 +748,9 @@ class WantedChange$Type extends MessageType<WantedChange> {
             switch (fieldNo) {
                 case /* bool wanted */ 1:
                     message.wanted = reader.bool();
+                    break;
+                case /* bool auto */ 2:
+                    message.auto = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -758,6 +767,9 @@ class WantedChange$Type extends MessageType<WantedChange> {
         /* bool wanted = 1; */
         if (message.wanted !== false)
             writer.tag(1, WireType.Varint).bool(message.wanted);
+        /* bool auto = 2; */
+        if (message.auto !== false)
+            writer.tag(2, WireType.Varint).bool(message.auto);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

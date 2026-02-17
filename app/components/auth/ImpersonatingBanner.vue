@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const props = defineProps<{
-    job: string;
-    jobGrade: number;
+    job?: string;
+    jobGrade?: number;
 }>();
 
 const completorStore = useCompletorStore();

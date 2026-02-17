@@ -33,6 +33,7 @@ message AppConfig {
   QuickButtons quick_buttons = 11;
   Data data = 12;
   Livemap livemap = 13;
+  Game game = 14;
 }
 
 message Auth {
@@ -246,4 +247,11 @@ message PenaltyCalculatorWarn {
 
 message Livemap {
   bool enable_cayo_perico = 1;
+}
+
+message Game {
+  bool max_wanted_duration_user_enabled = 4;
+  optional google.protobuf.Duration max_wanted_duration_user = 5;
+  bool max_wanted_duration_vehicle_enabled = 6;
+  optional google.protobuf.Duration max_wanted_duration_vehicle = 7;
 }

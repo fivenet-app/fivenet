@@ -32,6 +32,14 @@ export interface VehicleProps {
      * @generated from protobuf field: optional string wanted_reason = 4
      */
     wantedReason?: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp wanted_at = 5
+     */
+    wantedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp wanted_till = 6
+     */
+    wantedTill?: Timestamp;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class VehicleProps$Type extends MessageType<VehicleProps> {
@@ -40,7 +48,9 @@ class VehicleProps$Type extends MessageType<VehicleProps> {
             { no: 1, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
             { no: 2, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "wanted_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
+            { no: 4, name: "wanted_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 5, name: "wanted_at", kind: "message", T: () => Timestamp },
+            { no: 6, name: "wanted_till", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<VehicleProps>): VehicleProps {
@@ -67,6 +77,12 @@ class VehicleProps$Type extends MessageType<VehicleProps> {
                 case /* optional string wanted_reason */ 4:
                     message.wantedReason = reader.string();
                     break;
+                case /* optional resources.timestamp.Timestamp wanted_at */ 5:
+                    message.wantedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.wantedAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp wanted_till */ 6:
+                    message.wantedTill = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.wantedTill);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -91,6 +107,12 @@ class VehicleProps$Type extends MessageType<VehicleProps> {
         /* optional string wanted_reason = 4; */
         if (message.wantedReason !== undefined)
             writer.tag(4, WireType.LengthDelimited).string(message.wantedReason);
+        /* optional resources.timestamp.Timestamp wanted_at = 5; */
+        if (message.wantedAt)
+            Timestamp.internalBinaryWrite(message.wantedAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp wanted_till = 6; */
+        if (message.wantedTill)
+            Timestamp.internalBinaryWrite(message.wantedTill, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

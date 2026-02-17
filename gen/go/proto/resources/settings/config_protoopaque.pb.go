@@ -91,6 +91,7 @@ type AppConfig struct {
 	xxx_hidden_QuickButtons  *QuickButtons          `protobuf:"bytes,11,opt,name=quick_buttons,json=quickButtons,proto3"`
 	xxx_hidden_Data          *Data                  `protobuf:"bytes,12,opt,name=data,proto3"`
 	xxx_hidden_Livemap       *Livemap               `protobuf:"bytes,13,opt,name=livemap,proto3"`
+	xxx_hidden_Game          *Game                  `protobuf:"bytes,14,opt,name=game,proto3"`
 	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
 	XXX_presence             [1]uint32
 	unknownFields            protoimpl.UnknownFields
@@ -216,9 +217,16 @@ func (x *AppConfig) GetLivemap() *Livemap {
 	return nil
 }
 
+func (x *AppConfig) GetGame() *Game {
+	if x != nil {
+		return x.xxx_hidden_Game
+	}
+	return nil
+}
+
 func (x *AppConfig) SetVersion(v string) {
 	x.xxx_hidden_Version = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 13)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 14)
 }
 
 func (x *AppConfig) SetDefaultLocale(v string) {
@@ -267,6 +275,10 @@ func (x *AppConfig) SetData(v *Data) {
 
 func (x *AppConfig) SetLivemap(v *Livemap) {
 	x.xxx_hidden_Livemap = v
+}
+
+func (x *AppConfig) SetGame(v *Game) {
+	x.xxx_hidden_Game = v
 }
 
 func (x *AppConfig) HasVersion() bool {
@@ -353,6 +365,13 @@ func (x *AppConfig) HasLivemap() bool {
 	return x.xxx_hidden_Livemap != nil
 }
 
+func (x *AppConfig) HasGame() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Game != nil
+}
+
 func (x *AppConfig) ClearVersion() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_Version = nil
@@ -402,6 +421,10 @@ func (x *AppConfig) ClearLivemap() {
 	x.xxx_hidden_Livemap = nil
 }
 
+func (x *AppConfig) ClearGame() {
+	x.xxx_hidden_Game = nil
+}
+
 type AppConfig_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -418,6 +441,7 @@ type AppConfig_builder struct {
 	QuickButtons  *QuickButtons
 	Data          *Data
 	Livemap       *Livemap
+	Game          *Game
 }
 
 func (b0 AppConfig_builder) Build() *AppConfig {
@@ -425,7 +449,7 @@ func (b0 AppConfig_builder) Build() *AppConfig {
 	b, x := &b0, m0
 	_, _ = b, x
 	if b.Version != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 13)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 14)
 		x.xxx_hidden_Version = b.Version
 	}
 	x.xxx_hidden_DefaultLocale = b.DefaultLocale
@@ -440,6 +464,7 @@ func (b0 AppConfig_builder) Build() *AppConfig {
 	x.xxx_hidden_QuickButtons = b.QuickButtons
 	x.xxx_hidden_Data = b.Data
 	x.xxx_hidden_Livemap = b.Livemap
+	x.xxx_hidden_Game = b.Game
 	return m0
 }
 
@@ -2174,11 +2199,132 @@ func (b0 Livemap_builder) Build() *Livemap {
 	return m0
 }
 
+type Game struct {
+	state                                      protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_MaxWantedDurationUserEnabled    bool                   `protobuf:"varint,4,opt,name=max_wanted_duration_user_enabled,json=maxWantedDurationUserEnabled,proto3"`
+	xxx_hidden_MaxWantedDurationUser           *durationpb.Duration   `protobuf:"bytes,5,opt,name=max_wanted_duration_user,json=maxWantedDurationUser,proto3,oneof"`
+	xxx_hidden_MaxWantedDurationVehicleEnabled bool                   `protobuf:"varint,6,opt,name=max_wanted_duration_vehicle_enabled,json=maxWantedDurationVehicleEnabled,proto3"`
+	xxx_hidden_MaxWantedDurationVehicle        *durationpb.Duration   `protobuf:"bytes,7,opt,name=max_wanted_duration_vehicle,json=maxWantedDurationVehicle,proto3,oneof"`
+	unknownFields                              protoimpl.UnknownFields
+	sizeCache                                  protoimpl.SizeCache
+}
+
+func (x *Game) Reset() {
+	*x = Game{}
+	mi := &file_resources_settings_config_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Game) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Game) ProtoMessage() {}
+
+func (x *Game) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_settings_config_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *Game) GetMaxWantedDurationUserEnabled() bool {
+	if x != nil {
+		return x.xxx_hidden_MaxWantedDurationUserEnabled
+	}
+	return false
+}
+
+func (x *Game) GetMaxWantedDurationUser() *durationpb.Duration {
+	if x != nil {
+		return x.xxx_hidden_MaxWantedDurationUser
+	}
+	return nil
+}
+
+func (x *Game) GetMaxWantedDurationVehicleEnabled() bool {
+	if x != nil {
+		return x.xxx_hidden_MaxWantedDurationVehicleEnabled
+	}
+	return false
+}
+
+func (x *Game) GetMaxWantedDurationVehicle() *durationpb.Duration {
+	if x != nil {
+		return x.xxx_hidden_MaxWantedDurationVehicle
+	}
+	return nil
+}
+
+func (x *Game) SetMaxWantedDurationUserEnabled(v bool) {
+	x.xxx_hidden_MaxWantedDurationUserEnabled = v
+}
+
+func (x *Game) SetMaxWantedDurationUser(v *durationpb.Duration) {
+	x.xxx_hidden_MaxWantedDurationUser = v
+}
+
+func (x *Game) SetMaxWantedDurationVehicleEnabled(v bool) {
+	x.xxx_hidden_MaxWantedDurationVehicleEnabled = v
+}
+
+func (x *Game) SetMaxWantedDurationVehicle(v *durationpb.Duration) {
+	x.xxx_hidden_MaxWantedDurationVehicle = v
+}
+
+func (x *Game) HasMaxWantedDurationUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_MaxWantedDurationUser != nil
+}
+
+func (x *Game) HasMaxWantedDurationVehicle() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_MaxWantedDurationVehicle != nil
+}
+
+func (x *Game) ClearMaxWantedDurationUser() {
+	x.xxx_hidden_MaxWantedDurationUser = nil
+}
+
+func (x *Game) ClearMaxWantedDurationVehicle() {
+	x.xxx_hidden_MaxWantedDurationVehicle = nil
+}
+
+type Game_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	MaxWantedDurationUserEnabled    bool
+	MaxWantedDurationUser           *durationpb.Duration
+	MaxWantedDurationVehicleEnabled bool
+	MaxWantedDurationVehicle        *durationpb.Duration
+}
+
+func (b0 Game_builder) Build() *Game {
+	m0 := &Game{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_MaxWantedDurationUserEnabled = b.MaxWantedDurationUserEnabled
+	x.xxx_hidden_MaxWantedDurationUser = b.MaxWantedDurationUser
+	x.xxx_hidden_MaxWantedDurationVehicleEnabled = b.MaxWantedDurationVehicleEnabled
+	x.xxx_hidden_MaxWantedDurationVehicle = b.MaxWantedDurationVehicle
+	return m0
+}
+
 var File_resources_settings_config_proto protoreflect.FileDescriptor
 
 const file_resources_settings_config_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\xc7\x05\n" +
+	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\xf5\x05\n" +
 	"\tAppConfig\x12\x1d\n" +
 	"\aversion\x18\x01 \x01(\tH\x00R\aversion\x88\x01\x01\x12%\n" +
 	"\x0edefault_locale\x18\b \x01(\tR\rdefaultLocale\x12,\n" +
@@ -2193,7 +2339,8 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	" \x01(\v2\x1b.resources.settings.DisplayR\adisplay\x12E\n" +
 	"\rquick_buttons\x18\v \x01(\v2 .resources.settings.QuickButtonsR\fquickButtons\x12,\n" +
 	"\x04data\x18\f \x01(\v2\x18.resources.settings.DataR\x04data\x125\n" +
-	"\alivemap\x18\r \x01(\v2\x1b.resources.settings.LivemapR\alivemap:\b\xe2\xf3\x18\x04\b\x01\x18\x01B\n" +
+	"\alivemap\x18\r \x01(\v2\x1b.resources.settings.LivemapR\alivemap\x12,\n" +
+	"\x04game\x18\x0e \x01(\v2\x18.resources.settings.GameR\x04game:\b\xe2\xf3\x18\x04\b\x01\x18\x01B\n" +
 	"\n" +
 	"\b_version\"S\n" +
 	"\x04Auth\x12%\n" +
@@ -2282,7 +2429,14 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\f_stvo_pointsB\x0f\n" +
 	"\r_warn_message\"7\n" +
 	"\aLivemap\x12,\n" +
-	"\x12enable_cayo_perico\x18\x01 \x01(\bR\x10enableCayoPerico*\xde\x01\n" +
+	"\x12enable_cayo_perico\x18\x01 \x01(\bR\x10enableCayoPerico\"\x91\x03\n" +
+	"\x04Game\x12F\n" +
+	" max_wanted_duration_user_enabled\x18\x04 \x01(\bR\x1cmaxWantedDurationUserEnabled\x12W\n" +
+	"\x18max_wanted_duration_user\x18\x05 \x01(\v2\x19.google.protobuf.DurationH\x00R\x15maxWantedDurationUser\x88\x01\x01\x12L\n" +
+	"#max_wanted_duration_vehicle_enabled\x18\x06 \x01(\bR\x1fmaxWantedDurationVehicleEnabled\x12]\n" +
+	"\x1bmax_wanted_duration_vehicle\x18\a \x01(\v2\x19.google.protobuf.DurationH\x01R\x18maxWantedDurationVehicle\x88\x01\x01B\x1b\n" +
+	"\x19_max_wanted_duration_userB\x1e\n" +
+	"\x1c_max_wanted_duration_vehicle*\xde\x01\n" +
 	"\x16DiscordBotPresenceType\x12)\n" +
 	"%DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eDISCORD_BOT_PRESENCE_TYPE_GAME\x10\x01\x12'\n" +
@@ -2291,7 +2445,7 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\x1fDISCORD_BOT_PRESENCE_TYPE_WATCH\x10\x04BOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
 
 var file_resources_settings_config_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_settings_config_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_resources_settings_config_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_resources_settings_config_proto_goTypes = []any{
 	(DiscordBotPresenceType)(0),                // 0: resources.settings.DiscordBotPresenceType
 	(*AppConfig)(nil),                          // 1: resources.settings.AppConfig
@@ -2312,9 +2466,10 @@ var file_resources_settings_config_proto_goTypes = []any{
 	(*PenaltyCalculatorDetentionTimeUnit)(nil), // 16: resources.settings.PenaltyCalculatorDetentionTimeUnit
 	(*PenaltyCalculatorWarn)(nil),              // 17: resources.settings.PenaltyCalculatorWarn
 	(*Livemap)(nil),                            // 18: resources.settings.Livemap
-	(*Data)(nil),                               // 19: resources.settings.Data
-	(*durationpb.Duration)(nil),                // 20: google.protobuf.Duration
-	(*BannerMessage)(nil),                      // 21: resources.settings.BannerMessage
+	(*Game)(nil),                               // 19: resources.settings.Game
+	(*Data)(nil),                               // 20: resources.settings.Data
+	(*durationpb.Duration)(nil),                // 21: google.protobuf.Duration
+	(*BannerMessage)(nil),                      // 22: resources.settings.BannerMessage
 }
 var file_resources_settings_config_proto_depIdxs = []int32{
 	2,  // 0: resources.settings.AppConfig.auth:type_name -> resources.settings.Auth
@@ -2326,25 +2481,28 @@ var file_resources_settings_config_proto_depIdxs = []int32{
 	12, // 6: resources.settings.AppConfig.system:type_name -> resources.settings.System
 	13, // 7: resources.settings.AppConfig.display:type_name -> resources.settings.Display
 	14, // 8: resources.settings.AppConfig.quick_buttons:type_name -> resources.settings.QuickButtons
-	19, // 9: resources.settings.AppConfig.data:type_name -> resources.settings.Data
+	20, // 9: resources.settings.AppConfig.data:type_name -> resources.settings.Data
 	18, // 10: resources.settings.AppConfig.livemap:type_name -> resources.settings.Livemap
-	4,  // 11: resources.settings.Perms.default:type_name -> resources.settings.Perm
-	6,  // 12: resources.settings.Website.links:type_name -> resources.settings.Links
-	8,  // 13: resources.settings.JobInfo.unemployed_job:type_name -> resources.settings.UnemployedJob
-	20, // 14: resources.settings.UserTracker.refresh_time:type_name -> google.protobuf.Duration
-	20, // 15: resources.settings.UserTracker.db_refresh_time:type_name -> google.protobuf.Duration
-	20, // 16: resources.settings.Discord.sync_interval:type_name -> google.protobuf.Duration
-	11, // 17: resources.settings.Discord.bot_presence:type_name -> resources.settings.DiscordBotPresence
-	0,  // 18: resources.settings.DiscordBotPresence.type:type_name -> resources.settings.DiscordBotPresenceType
-	21, // 19: resources.settings.System.banner_message:type_name -> resources.settings.BannerMessage
-	15, // 20: resources.settings.QuickButtons.penalty_calculator:type_name -> resources.settings.PenaltyCalculator
-	16, // 21: resources.settings.PenaltyCalculator.detention_time_unit:type_name -> resources.settings.PenaltyCalculatorDetentionTimeUnit
-	17, // 22: resources.settings.PenaltyCalculator.warn_settings:type_name -> resources.settings.PenaltyCalculatorWarn
-	23, // [23:23] is the sub-list for method output_type
-	23, // [23:23] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	19, // 11: resources.settings.AppConfig.game:type_name -> resources.settings.Game
+	4,  // 12: resources.settings.Perms.default:type_name -> resources.settings.Perm
+	6,  // 13: resources.settings.Website.links:type_name -> resources.settings.Links
+	8,  // 14: resources.settings.JobInfo.unemployed_job:type_name -> resources.settings.UnemployedJob
+	21, // 15: resources.settings.UserTracker.refresh_time:type_name -> google.protobuf.Duration
+	21, // 16: resources.settings.UserTracker.db_refresh_time:type_name -> google.protobuf.Duration
+	21, // 17: resources.settings.Discord.sync_interval:type_name -> google.protobuf.Duration
+	11, // 18: resources.settings.Discord.bot_presence:type_name -> resources.settings.DiscordBotPresence
+	0,  // 19: resources.settings.DiscordBotPresence.type:type_name -> resources.settings.DiscordBotPresenceType
+	22, // 20: resources.settings.System.banner_message:type_name -> resources.settings.BannerMessage
+	15, // 21: resources.settings.QuickButtons.penalty_calculator:type_name -> resources.settings.PenaltyCalculator
+	16, // 22: resources.settings.PenaltyCalculator.detention_time_unit:type_name -> resources.settings.PenaltyCalculatorDetentionTimeUnit
+	17, // 23: resources.settings.PenaltyCalculator.warn_settings:type_name -> resources.settings.PenaltyCalculatorWarn
+	21, // 24: resources.settings.Game.max_wanted_duration_user:type_name -> google.protobuf.Duration
+	21, // 25: resources.settings.Game.max_wanted_duration_vehicle:type_name -> google.protobuf.Duration
+	26, // [26:26] is the sub-list for method output_type
+	26, // [26:26] is the sub-list for method input_type
+	26, // [26:26] is the sub-list for extension type_name
+	26, // [26:26] is the sub-list for extension extendee
+	0,  // [0:26] is the sub-list for field type_name
 }
 
 func init() { file_resources_settings_config_proto_init() }
@@ -2362,13 +2520,14 @@ func file_resources_settings_config_proto_init() {
 	file_resources_settings_config_proto_msgTypes[14].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[15].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[16].OneofWrappers = []any{}
+	file_resources_settings_config_proto_msgTypes[18].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_settings_config_proto_rawDesc), len(file_resources_settings_config_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   18,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

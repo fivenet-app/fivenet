@@ -180,6 +180,24 @@ func (m *Game) Sanitize() error {
 		}
 	}
 
+	// Field: MaxWantedDurationUser
+	if m.MaxWantedDurationUser != nil {
+		if v, ok := any(m.GetMaxWantedDurationUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: MaxWantedDurationVehicle
+	if m.MaxWantedDurationVehicle != nil {
+		if v, ok := any(m.GetMaxWantedDurationVehicle()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: UnemployedJobName
 	m.UnemployedJobName = htmlsanitizer.Sanitize(m.UnemployedJobName)
 

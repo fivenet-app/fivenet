@@ -26,9 +26,27 @@ func (m *VehicleProps) Sanitize() error {
 		}
 	}
 
+	// Field: WantedAt
+	if m.WantedAt != nil {
+		if v, ok := any(m.GetWantedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: WantedReason
 	if m.WantedReason != nil {
 		*m.WantedReason = htmlsanitizer.Sanitize(*m.WantedReason)
+	}
+
+	// Field: WantedTill
+	if m.WantedTill != nil {
+		if v, ok := any(m.GetWantedTill()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

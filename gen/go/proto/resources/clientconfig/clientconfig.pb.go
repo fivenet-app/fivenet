@@ -13,6 +13,7 @@ import (
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	reflect "reflect"
 	unsafe "unsafe"
 )
@@ -791,12 +792,16 @@ func (b0 FeatureGates_builder) Build() *FeatureGates {
 }
 
 type Game struct {
-	state             protoimpl.MessageState `protogen:"hybrid.v1"`
-	UnemployedJobName string                 `protobuf:"bytes,1,opt,name=unemployed_job_name,json=unemployedJobName,proto3" json:"unemployedJobName"`
-	StartJobGrade     int32                  `protobuf:"varint,2,opt,name=start_job_grade,json=startJobGrade,proto3" json:"startJobGrade"`
-	Livemap           *Livemap               `protobuf:"bytes,3,opt,name=livemap,proto3" json:"livemap,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                           protoimpl.MessageState `protogen:"hybrid.v1"`
+	UnemployedJobName               string                 `protobuf:"bytes,1,opt,name=unemployed_job_name,json=unemployedJobName,proto3" json:"unemployedJobName"`
+	StartJobGrade                   int32                  `protobuf:"varint,2,opt,name=start_job_grade,json=startJobGrade,proto3" json:"startJobGrade"`
+	Livemap                         *Livemap               `protobuf:"bytes,3,opt,name=livemap,proto3" json:"livemap,omitempty"`
+	MaxWantedDurationUserEnabled    bool                   `protobuf:"varint,4,opt,name=max_wanted_duration_user_enabled,json=maxWantedDurationUserEnabled,proto3" json:"max_wanted_duration_user_enabled,omitempty"`
+	MaxWantedDurationUser           *durationpb.Duration   `protobuf:"bytes,5,opt,name=max_wanted_duration_user,json=maxWantedDurationUser,proto3,oneof" json:"max_wanted_duration_user,omitempty"`
+	MaxWantedDurationVehicleEnabled bool                   `protobuf:"varint,6,opt,name=max_wanted_duration_vehicle_enabled,json=maxWantedDurationVehicleEnabled,proto3" json:"max_wanted_duration_vehicle_enabled,omitempty"`
+	MaxWantedDurationVehicle        *durationpb.Duration   `protobuf:"bytes,7,opt,name=max_wanted_duration_vehicle,json=maxWantedDurationVehicle,proto3,oneof" json:"max_wanted_duration_vehicle,omitempty"`
+	unknownFields                   protoimpl.UnknownFields
+	sizeCache                       protoimpl.SizeCache
 }
 
 func (x *Game) Reset() {
@@ -845,6 +850,34 @@ func (x *Game) GetLivemap() *Livemap {
 	return nil
 }
 
+func (x *Game) GetMaxWantedDurationUserEnabled() bool {
+	if x != nil {
+		return x.MaxWantedDurationUserEnabled
+	}
+	return false
+}
+
+func (x *Game) GetMaxWantedDurationUser() *durationpb.Duration {
+	if x != nil {
+		return x.MaxWantedDurationUser
+	}
+	return nil
+}
+
+func (x *Game) GetMaxWantedDurationVehicleEnabled() bool {
+	if x != nil {
+		return x.MaxWantedDurationVehicleEnabled
+	}
+	return false
+}
+
+func (x *Game) GetMaxWantedDurationVehicle() *durationpb.Duration {
+	if x != nil {
+		return x.MaxWantedDurationVehicle
+	}
+	return nil
+}
+
 func (x *Game) SetUnemployedJobName(v string) {
 	x.UnemployedJobName = v
 }
@@ -857,6 +890,22 @@ func (x *Game) SetLivemap(v *Livemap) {
 	x.Livemap = v
 }
 
+func (x *Game) SetMaxWantedDurationUserEnabled(v bool) {
+	x.MaxWantedDurationUserEnabled = v
+}
+
+func (x *Game) SetMaxWantedDurationUser(v *durationpb.Duration) {
+	x.MaxWantedDurationUser = v
+}
+
+func (x *Game) SetMaxWantedDurationVehicleEnabled(v bool) {
+	x.MaxWantedDurationVehicleEnabled = v
+}
+
+func (x *Game) SetMaxWantedDurationVehicle(v *durationpb.Duration) {
+	x.MaxWantedDurationVehicle = v
+}
+
 func (x *Game) HasLivemap() bool {
 	if x == nil {
 		return false
@@ -864,16 +913,42 @@ func (x *Game) HasLivemap() bool {
 	return x.Livemap != nil
 }
 
+func (x *Game) HasMaxWantedDurationUser() bool {
+	if x == nil {
+		return false
+	}
+	return x.MaxWantedDurationUser != nil
+}
+
+func (x *Game) HasMaxWantedDurationVehicle() bool {
+	if x == nil {
+		return false
+	}
+	return x.MaxWantedDurationVehicle != nil
+}
+
 func (x *Game) ClearLivemap() {
 	x.Livemap = nil
+}
+
+func (x *Game) ClearMaxWantedDurationUser() {
+	x.MaxWantedDurationUser = nil
+}
+
+func (x *Game) ClearMaxWantedDurationVehicle() {
+	x.MaxWantedDurationVehicle = nil
 }
 
 type Game_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	UnemployedJobName string
-	StartJobGrade     int32
-	Livemap           *Livemap
+	UnemployedJobName               string
+	StartJobGrade                   int32
+	Livemap                         *Livemap
+	MaxWantedDurationUserEnabled    bool
+	MaxWantedDurationUser           *durationpb.Duration
+	MaxWantedDurationVehicleEnabled bool
+	MaxWantedDurationVehicle        *durationpb.Duration
 }
 
 func (b0 Game_builder) Build() *Game {
@@ -883,6 +958,10 @@ func (b0 Game_builder) Build() *Game {
 	x.UnemployedJobName = b.UnemployedJobName
 	x.StartJobGrade = b.StartJobGrade
 	x.Livemap = b.Livemap
+	x.MaxWantedDurationUserEnabled = b.MaxWantedDurationUserEnabled
+	x.MaxWantedDurationUser = b.MaxWantedDurationUser
+	x.MaxWantedDurationVehicleEnabled = b.MaxWantedDurationVehicleEnabled
+	x.MaxWantedDurationVehicle = b.MaxWantedDurationVehicle
 	return m0
 }
 
@@ -1225,7 +1304,7 @@ var File_resources_clientconfig_clientconfig_proto protoreflect.FileDescriptor
 
 const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\n" +
-	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1fresources/settings/banner.proto\x1a\x1fresources/settings/config.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\xd2\x05\n" +
+	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1fresources/settings/config.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\xd2\x05\n" +
 	"\fClientConfig\x12\x18\n" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12@\n" +
 	"\x0edefault_locale\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14json:\"defaultLocale\"R\rdefaultLocale\x120\n" +
@@ -1261,11 +1340,17 @@ const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\n" +
 	"\b_imprintB\x11\n" +
 	"\x0f_privacy_policy\"\x0e\n" +
-	"\fFeatureGates\"\xd3\x01\n" +
+	"\fFeatureGates\"\xde\x04\n" +
 	"\x04Game\x12M\n" +
 	"\x13unemployed_job_name\x18\x01 \x01(\tB\x1d\x9a\x84\x9e\x03\x18json:\"unemployedJobName\"R\x11unemployedJobName\x12A\n" +
 	"\x0fstart_job_grade\x18\x02 \x01(\x05B\x19\x9a\x84\x9e\x03\x14json:\"startJobGrade\"R\rstartJobGrade\x129\n" +
-	"\alivemap\x18\x03 \x01(\v2\x1f.resources.clientconfig.LivemapR\alivemap\"7\n" +
+	"\alivemap\x18\x03 \x01(\v2\x1f.resources.clientconfig.LivemapR\alivemap\x12F\n" +
+	" max_wanted_duration_user_enabled\x18\x04 \x01(\bR\x1cmaxWantedDurationUserEnabled\x12W\n" +
+	"\x18max_wanted_duration_user\x18\x05 \x01(\v2\x19.google.protobuf.DurationH\x00R\x15maxWantedDurationUser\x88\x01\x01\x12L\n" +
+	"#max_wanted_duration_vehicle_enabled\x18\x06 \x01(\bR\x1fmaxWantedDurationVehicleEnabled\x12]\n" +
+	"\x1bmax_wanted_duration_vehicle\x18\a \x01(\v2\x19.google.protobuf.DurationH\x01R\x18maxWantedDurationVehicle\x88\x01\x01B\x1b\n" +
+	"\x19_max_wanted_duration_userB\x1e\n" +
+	"\x1c_max_wanted_duration_vehicle\"7\n" +
 	"\aLivemap\x12,\n" +
 	"\x12enable_cayo_perico\x18\x01 \x01(\bR\x10enableCayoPerico\"\x98\x02\n" +
 	"\x06System\x12V\n" +
@@ -1303,7 +1388,8 @@ var file_resources_clientconfig_clientconfig_proto_goTypes = []any{
 	nil,                            // 12: resources.clientconfig.OTLPFrontend.HeadersEntry
 	(*settings.QuickButtons)(nil),  // 13: resources.settings.QuickButtons
 	(*settings.Data)(nil),          // 14: resources.settings.Data
-	(*settings.BannerMessage)(nil), // 15: resources.settings.BannerMessage
+	(*durationpb.Duration)(nil),    // 15: google.protobuf.Duration
+	(*settings.BannerMessage)(nil), // 16: resources.settings.BannerMessage
 }
 var file_resources_clientconfig_clientconfig_proto_depIdxs = []int32{
 	1,  // 0: resources.clientconfig.ClientConfig.auth:type_name -> resources.clientconfig.Auth
@@ -1318,14 +1404,16 @@ var file_resources_clientconfig_clientconfig_proto_depIdxs = []int32{
 	2,  // 9: resources.clientconfig.Auth.providers:type_name -> resources.clientconfig.ProviderConfig
 	5,  // 10: resources.clientconfig.Website.links:type_name -> resources.clientconfig.Links
 	8,  // 11: resources.clientconfig.Game.livemap:type_name -> resources.clientconfig.Livemap
-	15, // 12: resources.clientconfig.System.banner_message:type_name -> resources.settings.BannerMessage
-	10, // 13: resources.clientconfig.System.otlp:type_name -> resources.clientconfig.OTLPFrontend
-	12, // 14: resources.clientconfig.OTLPFrontend.headers:type_name -> resources.clientconfig.OTLPFrontend.HeadersEntry
-	15, // [15:15] is the sub-list for method output_type
-	15, // [15:15] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	15, // 12: resources.clientconfig.Game.max_wanted_duration_user:type_name -> google.protobuf.Duration
+	15, // 13: resources.clientconfig.Game.max_wanted_duration_vehicle:type_name -> google.protobuf.Duration
+	16, // 14: resources.clientconfig.System.banner_message:type_name -> resources.settings.BannerMessage
+	10, // 15: resources.clientconfig.System.otlp:type_name -> resources.clientconfig.OTLPFrontend
+	12, // 16: resources.clientconfig.OTLPFrontend.headers:type_name -> resources.clientconfig.OTLPFrontend.HeadersEntry
+	17, // [17:17] is the sub-list for method output_type
+	17, // [17:17] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_resources_clientconfig_clientconfig_proto_init() }
@@ -1335,6 +1423,7 @@ func file_resources_clientconfig_clientconfig_proto_init() {
 	}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[5].OneofWrappers = []any{}
+	file_resources_clientconfig_clientconfig_proto_msgTypes[7].OneofWrappers = []any{}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[9].OneofWrappers = []any{}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[11].OneofWrappers = []any{}
 	type x struct{}

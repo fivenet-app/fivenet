@@ -151,4 +151,8 @@ func (x *AppConfig) Default() {
 		maxLeeway := DefaultPenaltyCalculatorMaxLeeway
 		x.QuickButtons.PenaltyCalculator.MaxLeeway = &maxLeeway
 	}
+
+	if x.GetGame() == nil {
+		x.Game = &Game{}
+	}
 }

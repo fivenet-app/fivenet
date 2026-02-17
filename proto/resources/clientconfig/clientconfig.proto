@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.clientconfig;
 
+import "google/protobuf/duration.proto";
 import "resources/settings/banner.proto";
 import "resources/settings/config.proto";
 import "resources/settings/data.proto";
@@ -59,6 +60,11 @@ message Game {
   int32 start_job_grade = 2 [(tagger.tags) = "json:\"startJobGrade\""];
 
   Livemap livemap = 3;
+
+  bool max_wanted_duration_user_enabled = 4;
+  optional google.protobuf.Duration max_wanted_duration_user = 5;
+  bool max_wanted_duration_vehicle_enabled = 6;
+  optional google.protobuf.Duration max_wanted_duration_vehicle = 7;
 }
 
 message Livemap {

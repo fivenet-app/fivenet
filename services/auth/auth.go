@@ -705,14 +705,41 @@ func (s *Server) ChooseCharacter(
 
 	grpc_audit.SetUser(ctx, char.UserId, char.Job)
 
+	// Ensure can be superuser is set on account claims
 	accClaims := auth.MapAccountToClaims(account)
 	if canBeSuperuser && currentAccClaims.CanBeSuperuser {
 		accClaims.CanBeSuperuser = currentAccClaims.CanBeSuperuser
 	}
+
+	// Ensure superuser is set on user claims
 	userClaims := auth.MapUserToClaims(account.Id, char)
 	if canBeSuperuser && currentUserClaims != nil && currentUserClaims.Superuser != nil &&
 		*currentUserClaims.Superuser {
 		userClaims.Superuser = currentUserClaims.Superuser
+	}
+	// Based on impersonation, (re-)set the job and grade of the user
+	if currentUserClaims != nil && currentUserClaims.OriginalJob != nil {
+		if userClaims.Superuser != nil && *userClaims.Superuser {
+			// Set "original" job of user
+			if currentUserClaims.Job != nil {
+				userClaims.Job = currentUserClaims.Job
+				char.Job = *currentUserClaims.Job
+			} else {
+				userClaims.Job = nil
+			}
+			if currentUserClaims.JobGrade != nil {
+				userClaims.JobGrade = currentUserClaims.JobGrade
+				char.JobGrade = *currentUserClaims.JobGrade
+			} else {
+				userClaims.JobGrade = nil
+			}
+
+			userClaims.OriginalJob = currentUserClaims.OriginalJob
+
+			s.enricher.EnrichJobInfo(char)
+		}
+	} else {
+		userClaims.OriginalJob = nil
 	}
 
 	if err := s.setCookies(ctx, accClaims); err != nil {
@@ -810,27 +837,33 @@ func (s *Server) ImpersonateJob(
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 
-	canBeSuperuser := account.Groups.ContainsAnyGroup(s.superuserGroups) ||
-		slices.Contains(s.superuserUsers, accClaims.Subject)
+	userClaims := auth.MapUserToClaims(acc.ID, char)
+	// Carry over superuser status
+	if accClaims.CanBeSuperuser {
+		superuser := userInfo.GetSuperuser()
+		userClaims.Superuser = &superuser
+	}
 
 	if imp {
+		// Set original job of user
+		userClaims.OriginalJob = &authclaims.UserJobInfo{
+			Job:      char.GetJob(),
+			JobGrade: char.GetJobGrade(),
+		}
+
+		// Set user job to requested impersonation job + grade
 		char.Job = job.GetName()
 		char.JobGrade = grade.GetGrade()
+	} else {
+		userClaims.OriginalJob = nil
 	}
+
+	canBeSuperuser := account.Groups.ContainsAnyGroup(s.superuserGroups) ||
+		slices.Contains(s.superuserUsers, accClaims.Subject)
 
 	ps, attrs, err := s.listUserPerms(ctx, char, canBeSuperuser, userInfo.Superuser)
 	if err != nil {
 		return nil, err
-	}
-
-	userClaims := auth.MapUserToClaims(acc.ID, char)
-	if imp {
-		userClaims.Impersonate = &authclaims.UserImpersonate{
-			Job:      job.GetName(),
-			JobGrade: grade.GetGrade(),
-		}
-	} else {
-		userClaims.Impersonate = nil
 	}
 
 	userToken, err := s.tm.FromUserClaims(userClaims)
@@ -892,29 +925,26 @@ func (s *Server) SetSuperuserMode(
 		)
 	}
 
+	origJob := char.GetJob()
+	origGrade := char.GetJobGrade()
+
 	var jobProps *jobsprops.JobProps
 	var ps []*permissionspermissions.Permission
 	var attrs []*permissionsattributes.RoleAttribute
 
 	// Reset job when switching off superuser mode
-	if !req.GetSuperuser() {
-		userInfo.Job = char.GetJob()
-		userInfo.JobGrade = char.GetJobGrade()
-
-		ps, attrs, err = s.listUserPerms(ctx, char, true, false)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get user perms. %w", err)
-		}
-	} else {
+	if req.GetSuperuser() {
 		// Only set job if requested
 		job, jobGrade, jProps, err := s.getJobWithProps(ctx, req.GetJob())
 		if err != nil {
-			return nil, errswrap.NewError(fmt.Errorf("failed to get job props for %q job. %w", req.GetJob(), err), errorsauth.ErrGenericLogin)
+			return nil, errswrap.NewError(
+				fmt.Errorf("failed to get job props for %q job. %w", req.GetJob(), err),
+				errorsauth.ErrGenericLogin,
+			)
 		}
 		jobProps = jProps
 
-		userInfo.Job = job.GetName()
-		userInfo.JobGrade = jobGrade
+		userInfo.Superuser = true
 
 		char.Job = job.GetName()
 		char.JobGrade = jobGrade
@@ -924,9 +954,12 @@ func (s *Server) SetSuperuserMode(
 			auth.PermCanBeSuperuser,
 			auth.PermSuperuser,
 		}
+	} else {
+		ps, attrs, err = s.listUserPerms(ctx, char, true, false)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get user perms. %w", err)
+		}
 	}
-
-	userInfo.Superuser = req.GetSuperuser()
 
 	// Load account data for token creation
 	account, err := s.getAccountFromDB(
@@ -950,13 +983,15 @@ func (s *Server) SetSuperuserMode(
 	userClaims := auth.MapUserToClaims(account.ID, char)
 	superuser := userInfo.GetSuperuser()
 	userClaims.Superuser = &superuser
+
 	if req.GetSuperuser() {
-		userClaims.Impersonate = &authclaims.UserImpersonate{
-			Job:      char.GetJob(),
-			JobGrade: char.GetJobGrade(),
+		// Set original job of user
+		userClaims.OriginalJob = &authclaims.UserJobInfo{
+			Job:      origJob,
+			JobGrade: origGrade,
 		}
 	} else {
-		userClaims.Impersonate = nil
+		userClaims.OriginalJob = nil
 	}
 
 	userToken, err := s.tm.FromUserClaims(userClaims)

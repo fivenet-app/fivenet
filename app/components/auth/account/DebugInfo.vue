@@ -96,6 +96,7 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
                 <span>
                     <code>{{ version }}</code> / <code>{{ settingsStore.version }}</code>
                 </span>
+
                 <CopyToClipboardButton :value="`${version}/ ${settingsStore.version}`" />
             </div>
         </UFormField>
@@ -106,6 +107,7 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
                     <code>{{ browserName }}</code> (<code>{{ browserPlatform }}</code
                     >)
                 </span>
+
                 <CopyToClipboardButton :value="browserName" />
             </div>
         </UFormField>
@@ -120,6 +122,7 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
                 <span>
                     {{ activeChar.userId }}
                 </span>
+
                 <CopyToClipboardButton :value="activeChar.userId" />
             </div>
         </UFormField>
@@ -132,6 +135,7 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
         >
             <div class="inline-flex w-full justify-between">
                 <span>{{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})</span>
+
                 <CopyToClipboardButton :value="`${activeChar.job} (${$t('common.rank')}: ${activeChar.jobGrade})`" />
             </div>
         </UFormField>
@@ -169,7 +173,9 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
                         searchesStore.clear();
                     "
                 />
+
                 <UButton block :label="$t('components.debug_info.reset_local_storage')" @click="() => resetLocalStorage()" />
+
                 <UButton
                     block
                     color="error"
@@ -177,24 +183,28 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
                     to="/api/clear-site-data"
                     :label="$t('components.debug_info.factory_reset')"
                 />
+
                 <UButton
                     block
                     color="neutral"
                     :label="$t('components.debug_info.test_notifications')"
                     @click="() => sendTestNotifications()"
                 />
+
                 <UButton
                     block
                     color="neutral"
                     :label="$t('components.debug_info.trigger_banner_message')"
                     @click="() => triggerBannerMessage()"
                 />
+
                 <UButton
                     block
                     color="neutral"
                     :label="$t('components.debug_info.trigger_error')"
                     @click="() => triggerErrorPage()"
                 />
+
                 <UButton
                     block
                     color="neutral"

@@ -29,6 +29,8 @@ type VehicleProps struct {
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Wanted        *bool                  `protobuf:"varint,3,opt,name=wanted,proto3,oneof" json:"wanted,omitempty"`
 	WantedReason  *string                `protobuf:"bytes,4,opt,name=wanted_reason,json=wantedReason,proto3,oneof" json:"wanted_reason,omitempty"`
+	WantedAt      *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=wanted_at,json=wantedAt,proto3,oneof" json:"wanted_at,omitempty"`
+	WantedTill    *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=wanted_till,json=wantedTill,proto3,oneof" json:"wanted_till,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -86,6 +88,20 @@ func (x *VehicleProps) GetWantedReason() string {
 	return ""
 }
 
+func (x *VehicleProps) GetWantedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.WantedAt
+	}
+	return nil
+}
+
+func (x *VehicleProps) GetWantedTill() *timestamp.Timestamp {
+	if x != nil {
+		return x.WantedTill
+	}
+	return nil
+}
+
 func (x *VehicleProps) SetPlate(v string) {
 	x.Plate = v
 }
@@ -100,6 +116,14 @@ func (x *VehicleProps) SetWanted(v bool) {
 
 func (x *VehicleProps) SetWantedReason(v string) {
 	x.WantedReason = &v
+}
+
+func (x *VehicleProps) SetWantedAt(v *timestamp.Timestamp) {
+	x.WantedAt = v
+}
+
+func (x *VehicleProps) SetWantedTill(v *timestamp.Timestamp) {
+	x.WantedTill = v
 }
 
 func (x *VehicleProps) HasUpdatedAt() bool {
@@ -123,6 +147,20 @@ func (x *VehicleProps) HasWantedReason() bool {
 	return x.WantedReason != nil
 }
 
+func (x *VehicleProps) HasWantedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.WantedAt != nil
+}
+
+func (x *VehicleProps) HasWantedTill() bool {
+	if x == nil {
+		return false
+	}
+	return x.WantedTill != nil
+}
+
 func (x *VehicleProps) ClearUpdatedAt() {
 	x.UpdatedAt = nil
 }
@@ -135,6 +173,14 @@ func (x *VehicleProps) ClearWantedReason() {
 	x.WantedReason = nil
 }
 
+func (x *VehicleProps) ClearWantedAt() {
+	x.WantedAt = nil
+}
+
+func (x *VehicleProps) ClearWantedTill() {
+	x.WantedTill = nil
+}
+
 type VehicleProps_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -142,6 +188,8 @@ type VehicleProps_builder struct {
 	UpdatedAt    *timestamp.Timestamp
 	Wanted       *bool
 	WantedReason *string
+	WantedAt     *timestamp.Timestamp
+	WantedTill   *timestamp.Timestamp
 }
 
 func (b0 VehicleProps_builder) Build() *VehicleProps {
@@ -152,6 +200,8 @@ func (b0 VehicleProps_builder) Build() *VehicleProps {
 	x.UpdatedAt = b.UpdatedAt
 	x.Wanted = b.Wanted
 	x.WantedReason = b.WantedReason
+	x.WantedAt = b.WantedAt
+	x.WantedTill = b.WantedTill
 	return m0
 }
 
@@ -159,16 +209,22 @@ var File_resources_vehicles_props_props_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_props_props_proto_rawDesc = "" +
 	"\n" +
-	"$resources/vehicles/props/props.proto\x12\x18resources.vehicles.props\x1a#resources/timestamp/timestamp.proto\"\xdb\x01\n" +
+	"$resources/vehicles/props/props.proto\x12\x18resources.vehicles.props\x1a#resources/timestamp/timestamp.proto\"\x81\x03\n" +
 	"\fVehicleProps\x12\x14\n" +
 	"\x05plate\x18\x01 \x01(\tR\x05plate\x12B\n" +
 	"\n" +
 	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12\x1b\n" +
 	"\x06wanted\x18\x03 \x01(\bH\x01R\x06wanted\x88\x01\x01\x12(\n" +
-	"\rwanted_reason\x18\x04 \x01(\tH\x02R\fwantedReason\x88\x01\x01B\r\n" +
+	"\rwanted_reason\x18\x04 \x01(\tH\x02R\fwantedReason\x88\x01\x01\x12@\n" +
+	"\twanted_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\bwantedAt\x88\x01\x01\x12D\n" +
+	"\vwanted_till\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x04R\n" +
+	"wantedTill\x88\x01\x01B\r\n" +
 	"\v_updated_atB\t\n" +
 	"\a_wantedB\x10\n" +
-	"\x0e_wanted_reasonBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props;vehiclespropsb\x06proto3"
+	"\x0e_wanted_reasonB\f\n" +
+	"\n" +
+	"_wanted_atB\x0e\n" +
+	"\f_wanted_tillBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props;vehiclespropsb\x06proto3"
 
 var file_resources_vehicles_props_props_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_vehicles_props_props_proto_goTypes = []any{
@@ -177,11 +233,13 @@ var file_resources_vehicles_props_props_proto_goTypes = []any{
 }
 var file_resources_vehicles_props_props_proto_depIdxs = []int32{
 	1, // 0: resources.vehicles.props.VehicleProps.updated_at:type_name -> resources.timestamp.Timestamp
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	1, // 1: resources.vehicles.props.VehicleProps.wanted_at:type_name -> resources.timestamp.Timestamp
+	1, // 2: resources.vehicles.props.VehicleProps.wanted_till:type_name -> resources.timestamp.Timestamp
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_resources_vehicles_props_props_proto_init() }

@@ -6,6 +6,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 func BuildClientConfig(
@@ -18,37 +19,47 @@ func BuildClientConfig(
 		quickButtons = proto.Clone(appCfg.GetQuickButtons()).(*settings.QuickButtons)
 	}
 
+	var displayIntlLocale *string
+	if appCfg.GetDisplay().GetIntlLocale() != "" {
+		displayIntlLocale = proto.String(appCfg.GetDisplay().GetIntlLocale())
+	}
+
 	clientCfg := &ClientConfig{
 		Version: version.Version,
 
-		DefaultLocale: appCfg.DefaultLocale,
+		DefaultLocale: appCfg.GetDefaultLocale(),
 
 		Auth: &Auth{
-			SignupEnabled: appCfg.Auth.GetSignupEnabled(),
-			LastCharLock:  appCfg.Auth.GetLastCharLock(),
+			SignupEnabled: appCfg.GetAuth().GetSignupEnabled(),
+			LastCharLock:  appCfg.GetAuth().GetLastCharLock(),
 			Providers:     providers,
 		},
 		Discord: &Discord{
-			BotEnabled: appCfg.Discord.BotId != nil && appCfg.Discord.GetBotId() != "",
+			BotEnabled: appCfg.GetDiscord().GetBotId() != "",
 		},
 		Website: &Website{
 			Links: &Links{
-				Imprint:       appCfg.Website.GetLinks().Imprint,
-				PrivacyPolicy: appCfg.Website.GetLinks().PrivacyPolicy,
+				Imprint:       appCfg.GetWebsite().GetLinks().Imprint,
+				PrivacyPolicy: appCfg.GetWebsite().GetLinks().PrivacyPolicy,
 			},
-			StatsPage: appCfg.Website.GetStatsPage(),
+			StatsPage: appCfg.GetWebsite().GetStatsPage(),
 		},
 		FeatureGates: &FeatureGates{},
 		Game: &Game{
-			UnemployedJobName: appCfg.JobInfo.GetUnemployedJob().GetName(),
+			UnemployedJobName: appCfg.GetJobInfo().GetUnemployedJob().GetName(),
 			StartJobGrade:     cfg.Game.StartJobGrade,
 
 			Livemap: &Livemap{
-				EnableCayoPerico: appCfg.Livemap.GetEnableCayoPerico(),
+				EnableCayoPerico: appCfg.GetLivemap().GetEnableCayoPerico(),
 			},
+
+			MaxWantedDurationUserEnabled:    appCfg.GetGame().GetMaxWantedDurationUserEnabled(),
+			MaxWantedDurationUser:           proto.Clone(appCfg.GetGame().GetMaxWantedDurationUser()).(*durationpb.Duration),
+			MaxWantedDurationVehicleEnabled: appCfg.GetGame().GetMaxWantedDurationVehicleEnabled(),
+			MaxWantedDurationVehicle:        proto.Clone(appCfg.GetGame().GetMaxWantedDurationVehicle()).(*durationpb.Duration),
 		},
 		System: &System{
-			BannerMessageEnabled: appCfg.System.GetBannerMessageEnabled(),
+			BannerMessageEnabled: appCfg.GetSystem().GetBannerMessageEnabled(),
 			Otlp: &OTLPFrontend{
 				Enabled: cfg.OTLP.Enabled,
 				Url:     cfg.OTLP.Frontend.URL,
@@ -56,24 +67,17 @@ func BuildClientConfig(
 			},
 		},
 		Display: &Display{
-			IntlLocale:   appCfg.Display.IntlLocale,
-			CurrencyName: appCfg.Display.CurrencyName,
+			IntlLocale:   displayIntlLocale,
+			CurrencyName: appCfg.GetDisplay().GetCurrencyName(),
 		},
 		QuickButtons: quickButtons,
 		Data: &settings.Data{
-			Mode: appCfg.Data.GetMode(),
+			Mode: appCfg.GetData().GetMode(),
 		},
 	}
 
-	if appCfg.System.GetBannerMessage() != nil {
-		clientCfg.System.BannerMessage = &settings.BannerMessage{
-			Id:        appCfg.System.GetBannerMessage().GetId(),
-			Title:     appCfg.System.GetBannerMessage().GetTitle(),
-			Icon:      appCfg.System.GetBannerMessage().Icon,
-			Color:     appCfg.System.GetBannerMessage().Color,
-			CreatedAt: appCfg.System.GetBannerMessage().GetCreatedAt(),
-			ExpiresAt: appCfg.System.GetBannerMessage().GetExpiresAt(),
-		}
+	if appCfg.GetSystem().GetBannerMessage() != nil {
+		clientCfg.System.BannerMessage = proto.Clone(appCfg.GetSystem().GetBannerMessage()).(*settings.BannerMessage)
 	}
 
 	return clientCfg

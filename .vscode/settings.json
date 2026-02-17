@@ -12,6 +12,7 @@
         "fmt",
         "--stdin"
     ],
+    "go.testTimeout": "240s",
     "javascript.preferences.quoteStyle": "single",
     "typescript.preferences.quoteStyle": "single",
     "i18n-ally.localesPaths": [

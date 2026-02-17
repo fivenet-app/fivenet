@@ -1051,6 +1051,7 @@ func (b0 LicenseChange_builder) Build() *LicenseChange {
 type WantedChange struct {
 	state             protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Wanted bool                   `protobuf:"varint,1,opt,name=wanted,proto3"`
+	xxx_hidden_Auto   bool                   `protobuf:"varint,2,opt,name=auto,proto3"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -1087,14 +1088,26 @@ func (x *WantedChange) GetWanted() bool {
 	return false
 }
 
+func (x *WantedChange) GetAuto() bool {
+	if x != nil {
+		return x.xxx_hidden_Auto
+	}
+	return false
+}
+
 func (x *WantedChange) SetWanted(v bool) {
 	x.xxx_hidden_Wanted = v
+}
+
+func (x *WantedChange) SetAuto(v bool) {
+	x.xxx_hidden_Auto = v
 }
 
 type WantedChange_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Wanted bool
+	Auto   bool
 }
 
 func (b0 WantedChange_builder) Build() *WantedChange {
@@ -1102,6 +1115,7 @@ func (b0 WantedChange_builder) Build() *WantedChange {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Wanted = b.Wanted
+	x.xxx_hidden_Auto = b.Auto
 	return m0
 }
 
@@ -1813,9 +1827,10 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\x03new\x18\x02 \x01(\tR\x03new\"d\n" +
 	"\rLicenseChange\x12\x14\n" +
 	"\x05added\x18\x01 \x01(\bR\x05added\x12=\n" +
-	"\blicenses\x18\x02 \x03(\v2!.resources.users.licenses.LicenseR\blicenses\"&\n" +
+	"\blicenses\x18\x02 \x03(\v2!.resources.users.licenses.LicenseR\blicenses\":\n" +
 	"\fWantedChange\x12\x16\n" +
-	"\x06wanted\x18\x01 \x01(\bR\x06wanted\"C\n" +
+	"\x06wanted\x18\x01 \x01(\bR\x06wanted\x12\x12\n" +
+	"\x04auto\x18\x02 \x01(\bR\x04auto\"C\n" +
 	"\x1dTrafficInfractionPointsChange\x12\x10\n" +
 	"\x03old\x18\x01 \x01(\rR\x03old\x12\x10\n" +
 	"\x03new\x18\x02 \x01(\rR\x03new\".\n" +

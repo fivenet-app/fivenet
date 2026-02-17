@@ -298,6 +298,7 @@ func (s *Server) getVehicleProps(
 			tVehicleProps.UpdatedAt,
 			tVehicleProps.Wanted,
 			tVehicleProps.WantedReason,
+			tVehicleProps.WantedAt,
 		).
 		FROM(tVehicleProps).
 		WHERE(

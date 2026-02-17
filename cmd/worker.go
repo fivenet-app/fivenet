@@ -9,9 +9,7 @@ import (
 type WorkerCmd struct {
 	ModuleCentrum        bool `default:"true" help:"Start Centrum bot and housekeeper module"`
 	ModuleUserTracker    bool `default:"true" help:"Start User tracker module"`
-	ModuleJobsTimeclock  bool `default:"true" help:"Start Jobs timeclock housekeeper module"`
-	ModuleDocsWorkflow   bool `default:"true" help:"Start Docstore Workflow module"`
-	ModuleHousekeeper    bool `default:"true" help:"Start Housekeepr module"`
+	ModuleHousekeeper    bool `default:"true" help:"Start Housekeepr modules"`
 	ModuleUserInfoPoller bool `default:"true" help:"Start UserInfo poller module"`
 }
 
@@ -28,13 +26,8 @@ func (c *WorkerCmd) Run(_ *Context) error {
 	if c.ModuleUserTracker {
 		fxOpts = append(fxOpts, FxTrackerOpts()...)
 	}
-	if c.ModuleJobsTimeclock {
-		fxOpts = append(fxOpts, FxJobsHousekeeperOpts()...)
-	}
-	if c.ModuleDocsWorkflow {
-		fxOpts = append(fxOpts, FxDocumentsWorkflowOpts()...)
-	}
 	if c.ModuleHousekeeper {
+		fxOpts = append(fxOpts, FxServiceHousekeeperOpts()...)
 		fxOpts = append(fxOpts, FxHousekeeperOpts()...)
 		fxOpts = append(fxOpts, fx.Invoke(func(*storage.MetricsCollector) {}))
 	}

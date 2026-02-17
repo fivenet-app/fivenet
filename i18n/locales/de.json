@@ -1651,7 +1651,14 @@
                 },
                 "game": {
                     "tab": "Spiel",
-                    "description": "Einstellungen, die rollenspielrelevantes Verhalten beeinflussen."
+                    "description": "Einstellungen, die rollenspielrelevantes Verhalten beeinflussen.",
+                    "max_wanted_duration": {
+                        "title": "Maximale Fahndungsdauer",
+                        "description": "Die maximale Dauer, für die Personen und Fahrzeuge auf der Fahndungsliste bleiben kann, bevor sie automatisch entfernt wird.",
+                        "enabled_user": "Aktivieren für Bürger",
+                        "enabled_vehicle": "Aktivieren für Fahrzeuge",
+                        "max": "Maximale Dauer (in Tagen)"
+                    }
                 },
                 "quick_buttons": {
                     "penalty_calculator": {
@@ -2277,7 +2284,8 @@
                 "content": "Bitte wählen Sie einen verfügbaren Charakter aus und versuchen Sie es erneut."
             },
             "ErrNotSuperuser": "Sie sind kein Superuser! Bitte wenden Sie sich an Ihre FiveNet-Administratoren, um dieses Problem zu melden.",
-            "ErrImpersonateJobInvalid": "Ungültiger Job-Grad zum Ausgeben."
+            "ErrImpersonateJobInvalid": "Ungültiger Job-Grad zum Ausgeben.",
+            "ErrReauthRequired": "Erneute Authentifizierung erforderlich!"
         },
         "CompletorService": {
             "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"

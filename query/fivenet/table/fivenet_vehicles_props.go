@@ -20,6 +20,8 @@ type fivenetVehiclesPropsTable struct {
 	Plate        mysql.ColumnString
 	UpdatedAt    mysql.ColumnTimestamp
 	Wanted       mysql.ColumnBool
+	WantedAt     mysql.ColumnTimestamp
+	WantedTill   mysql.ColumnTimestamp
 	WantedReason mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
@@ -65,9 +67,11 @@ func newFivenetVehiclesPropsTableImpl(schemaName, tableName, alias string) fiven
 		PlateColumn        = mysql.StringColumn("plate")
 		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
 		WantedColumn       = mysql.BoolColumn("wanted")
+		WantedAtColumn     = mysql.TimestampColumn("wanted_at")
+		WantedTillColumn   = mysql.TimestampColumn("wanted_till")
 		WantedReasonColumn = mysql.StringColumn("wanted_reason")
-		allColumns         = mysql.ColumnList{PlateColumn, UpdatedAtColumn, WantedColumn, WantedReasonColumn}
-		mutableColumns     = mysql.ColumnList{UpdatedAtColumn, WantedColumn, WantedReasonColumn}
+		allColumns         = mysql.ColumnList{PlateColumn, UpdatedAtColumn, WantedColumn, WantedAtColumn, WantedTillColumn, WantedReasonColumn}
+		mutableColumns     = mysql.ColumnList{UpdatedAtColumn, WantedColumn, WantedAtColumn, WantedTillColumn, WantedReasonColumn}
 		defaultColumns     = mysql.ColumnList{WantedColumn}
 	)
 
@@ -78,6 +82,8 @@ func newFivenetVehiclesPropsTableImpl(schemaName, tableName, alias string) fiven
 		Plate:        PlateColumn,
 		UpdatedAt:    UpdatedAtColumn,
 		Wanted:       WantedColumn,
+		WantedAt:     WantedAtColumn,
+		WantedTill:   WantedTillColumn,
 		WantedReason: WantedReasonColumn,
 
 		AllColumns:     allColumns,

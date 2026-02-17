@@ -15,6 +15,8 @@ type FivenetUserProps struct {
 	UserID                           int32      `json:"user_id"`
 	UpdatedAt                        *time.Time `json:"updated_at"`
 	Wanted                           *bool      `json:"wanted"`
+	WantedAt                         *time.Time `json:"wanted_at"`
+	WantedTill                       *time.Time `json:"wanted_till"`
 	Job                              *string    `json:"job"`
 	JobGrade                         *int32     `json:"job_grade"`
 	TrafficInfractionPoints          *uint32    `json:"traffic_infraction_points"`

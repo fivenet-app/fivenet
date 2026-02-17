@@ -70,6 +70,10 @@ export interface AppConfig {
      * @generated from protobuf field: resources.settings.Livemap livemap = 13
      */
     livemap?: Livemap;
+    /**
+     * @generated from protobuf field: resources.settings.Game game = 14
+     */
+    game?: Game;
 }
 /**
  * @generated from protobuf message resources.settings.Auth
@@ -333,6 +337,27 @@ export interface Livemap {
     enableCayoPerico: boolean;
 }
 /**
+ * @generated from protobuf message resources.settings.Game
+ */
+export interface Game {
+    /**
+     * @generated from protobuf field: bool max_wanted_duration_user_enabled = 4
+     */
+    maxWantedDurationUserEnabled: boolean;
+    /**
+     * @generated from protobuf field: optional google.protobuf.Duration max_wanted_duration_user = 5
+     */
+    maxWantedDurationUser?: Duration;
+    /**
+     * @generated from protobuf field: bool max_wanted_duration_vehicle_enabled = 6
+     */
+    maxWantedDurationVehicleEnabled: boolean;
+    /**
+     * @generated from protobuf field: optional google.protobuf.Duration max_wanted_duration_vehicle = 7
+     */
+    maxWantedDurationVehicle?: Duration;
+}
+/**
  * @generated from protobuf enum resources.settings.DiscordBotPresenceType
  */
 export enum DiscordBotPresenceType {
@@ -373,7 +398,8 @@ class AppConfig$Type extends MessageType<AppConfig> {
             { no: 10, name: "display", kind: "message", T: () => Display },
             { no: 11, name: "quick_buttons", kind: "message", T: () => QuickButtons },
             { no: 12, name: "data", kind: "message", T: () => Data },
-            { no: 13, name: "livemap", kind: "message", T: () => Livemap }
+            { no: 13, name: "livemap", kind: "message", T: () => Livemap },
+            { no: 14, name: "game", kind: "message", T: () => Game }
         ], { "codegen.dbscanner.dbscanner": { enabled: true, partial: true } });
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
@@ -427,6 +453,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
                 case /* resources.settings.Livemap livemap */ 13:
                     message.livemap = Livemap.internalBinaryRead(reader, reader.uint32(), options, message.livemap);
                     break;
+                case /* resources.settings.Game game */ 14:
+                    message.game = Game.internalBinaryRead(reader, reader.uint32(), options, message.game);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -478,6 +507,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
         /* resources.settings.Livemap livemap = 13; */
         if (message.livemap)
             Livemap.internalBinaryWrite(message.livemap, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
+        /* resources.settings.Game game = 14; */
+        if (message.game)
+            Game.internalBinaryWrite(message.game, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1470,3 +1502,72 @@ class Livemap$Type extends MessageType<Livemap> {
  * @generated MessageType for protobuf message resources.settings.Livemap
  */
 export const Livemap = new Livemap$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Game$Type extends MessageType<Game> {
+    constructor() {
+        super("resources.settings.Game", [
+            { no: 4, name: "max_wanted_duration_user_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "max_wanted_duration_user", kind: "message", T: () => Duration },
+            { no: 6, name: "max_wanted_duration_vehicle_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "max_wanted_duration_vehicle", kind: "message", T: () => Duration }
+        ]);
+    }
+    create(value?: PartialMessage<Game>): Game {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.maxWantedDurationUserEnabled = false;
+        message.maxWantedDurationVehicleEnabled = false;
+        if (value !== undefined)
+            reflectionMergePartial<Game>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Game): Game {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool max_wanted_duration_user_enabled */ 4:
+                    message.maxWantedDurationUserEnabled = reader.bool();
+                    break;
+                case /* optional google.protobuf.Duration max_wanted_duration_user */ 5:
+                    message.maxWantedDurationUser = Duration.internalBinaryRead(reader, reader.uint32(), options, message.maxWantedDurationUser);
+                    break;
+                case /* bool max_wanted_duration_vehicle_enabled */ 6:
+                    message.maxWantedDurationVehicleEnabled = reader.bool();
+                    break;
+                case /* optional google.protobuf.Duration max_wanted_duration_vehicle */ 7:
+                    message.maxWantedDurationVehicle = Duration.internalBinaryRead(reader, reader.uint32(), options, message.maxWantedDurationVehicle);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Game, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool max_wanted_duration_user_enabled = 4; */
+        if (message.maxWantedDurationUserEnabled !== false)
+            writer.tag(4, WireType.Varint).bool(message.maxWantedDurationUserEnabled);
+        /* optional google.protobuf.Duration max_wanted_duration_user = 5; */
+        if (message.maxWantedDurationUser)
+            Duration.internalBinaryWrite(message.maxWantedDurationUser, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* bool max_wanted_duration_vehicle_enabled = 6; */
+        if (message.maxWantedDurationVehicleEnabled !== false)
+            writer.tag(6, WireType.Varint).bool(message.maxWantedDurationVehicleEnabled);
+        /* optional google.protobuf.Duration max_wanted_duration_vehicle = 7; */
+        if (message.maxWantedDurationVehicle)
+            Duration.internalBinaryWrite(message.maxWantedDurationVehicle, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.settings.Game
+ */
+export const Game = new Game$Type();
