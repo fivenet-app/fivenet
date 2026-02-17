@@ -14,15 +14,16 @@ type AccountInfoClaims struct {
 type UserInfoClaims struct {
 	jwt.RegisteredClaims
 
-	AccID       int64            `json:"aid"`
-	UserID      int32            `json:"uid"`
-	Job         *string          `json:"jb,omitempty"`
-	JobGrade    *int32           `json:"jbg,omitempty"`
-	Superuser   *bool            `json:"su,omitempty"`
-	Impersonate *UserImpersonate `json:"imp,omitempty"`
+	AccID    int64   `json:"aid"`
+	UserID   int32   `json:"uid"`
+	Job      *string `json:"jb,omitempty"`
+	JobGrade *int32  `json:"jbg,omitempty"`
+
+	Superuser   *bool        `json:"su,omitempty"`
+	OriginalJob *UserJobInfo `json:"og,omitempty"`
 }
 
-type UserImpersonate struct {
+type UserJobInfo struct {
 	Job      string `json:"jb"`
 	JobGrade int32  `json:"jbg"`
 }
@@ -39,11 +40,12 @@ type CombinedClaims struct {
 	CanBeSuperuser bool     `json:"wheel"`
 
 	// UserInfoClaims fields
-	UserID      int32            `json:"uid"`
-	Job         *string          `json:"jb,omitempty"`
-	JobGrade    *int32           `json:"jbg,omitempty"`
-	Superuser   *bool            `json:"su,omitempty"`
-	Impersonate *UserImpersonate `json:"imp,omitempty"`
+	UserID   int32   `json:"uid"`
+	Job      *string `json:"jb,omitempty"`
+	JobGrade *int32  `json:"jbg,omitempty"`
+
+	Superuser   *bool        `json:"su,omitempty"`
+	OriginalJob *UserJobInfo `json:"og,omitempty"`
 }
 
 func (c *CombinedClaims) GetAccountInfoClaims() *AccountInfoClaims {
@@ -63,6 +65,6 @@ func (c *CombinedClaims) GetUserInfoClaims() *UserInfoClaims {
 		Job:              c.Job,
 		JobGrade:         c.JobGrade,
 		Superuser:        c.Superuser,
-		Impersonate:      c.Impersonate,
+		OriginalJob:      c.OriginalJob,
 	}
 }

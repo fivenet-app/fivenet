@@ -20,9 +20,9 @@ const (
 	AuthUserJobCtxTag      = "auth.usrjob"
 	AuthUserJobGradeCtxTag = "auth.usrjobg"
 
-	AuthUserImpersonateCtxTag         = "auth.imp"
-	AuthUserImpersonateJobCtxTag      = "auth.impjob"
-	AuthUserImpersonateJobGradeCtxTag = "auth.impjobg"
+	AuthUserOriginalCtxTag         = "auth.og"
+	AuthUserOriginalJobCtxTag      = "auth.ogjob"
+	AuthUserOriginalJobGradeCtxTag = "auth.ogjobg"
 )
 
 const (
@@ -116,24 +116,21 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, _ string) (context.Context,
 	fields := logging.Fields{
 		AuthSubCtxTag, accClaims.Subject,
 		AuthAccIDCtxTag, accClaims.AccID,
-		AuthActiveCharIDCtxTag, userClaims.UserID,
+		AuthActiveCharIDCtxTag, userInfo.GetUserId(),
 		AuthUserJobCtxTag, userInfo.GetJob(),
 		AuthUserJobGradeCtxTag, userInfo.GetJobGrade(),
 	}
-	if userClaims.Impersonate != nil {
+	if userClaims.OriginalJob != nil {
 		fields = append(fields,
-			AuthUserImpersonateCtxTag, true,
-			AuthUserImpersonateJobCtxTag, userClaims.Impersonate.Job,
-			AuthUserImpersonateJobGradeCtxTag, userClaims.Impersonate.JobGrade,
+			AuthUserOriginalCtxTag, true,
+			AuthUserOriginalJobCtxTag, userClaims.OriginalJob.Job,
+			AuthUserOriginalJobGradeCtxTag, userClaims.OriginalJob.JobGrade,
 		)
+
+		// TODO check if the original job is still existing
 	}
 
 	newCtx := logging.InjectFields(ctx, fields)
-
-	if userClaims.Impersonate != nil {
-		userInfo.Job = userClaims.Impersonate.Job
-		userInfo.JobGrade = userClaims.Impersonate.JobGrade
-	}
 
 	if userInfo.LastChar != nil && userInfo.GetLastChar() != userInfo.GetUserId() &&
 		g.appCfg.Get().Auth.GetLastCharLock() {

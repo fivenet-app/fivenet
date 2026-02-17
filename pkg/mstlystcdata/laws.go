@@ -95,8 +95,10 @@ func (c *Laws) RegisterCronjobHandlers(h *croner.Handlers) error {
 			c.logger.Error("failed to refresh laws in cache", zap.Error(err))
 			return err
 		}
+
 		return nil
 	})
+
 	return nil
 }
 

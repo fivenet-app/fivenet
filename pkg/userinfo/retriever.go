@@ -260,6 +260,15 @@ func (r *Retriever) GetUserInfoFromClaims(
 		userInfo.Superuser = true
 	}
 
+	// If the claims contain job info, override the user info with it
+	if userClaims.OriginalJob != nil {
+		if (userInfo.Job == userClaims.OriginalJob.Job ||
+			userInfo.JobGrade == userClaims.OriginalJob.JobGrade) && !userInfo.Superuser {
+			userInfo.Job = userClaims.OriginalJob.Job
+			userInfo.JobGrade = userClaims.OriginalJob.JobGrade
+		}
+	}
+
 	return userInfo, nil
 }
 
