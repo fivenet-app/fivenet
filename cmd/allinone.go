@@ -15,11 +15,10 @@ func (c *AllInOneCmd) Run(_ *Context) error {
 	fxOpts = append(fxOpts, FxDemoOpts()...)
 	fxOpts = append(fxOpts, FxUserInfoPollerOpts()...)
 	fxOpts = append(fxOpts, FxCronerOpts()...)
-	fxOpts = append(fxOpts, FxJobsHousekeeperOpts()...)
+	fxOpts = append(fxOpts, FxServiceHousekeeperOpts()...)
 	fxOpts = append(fxOpts, FxHousekeeperOpts()...)
 	fxOpts = append(fxOpts, FxCentrumOpts()...)
 	fxOpts = append(fxOpts, FxTrackerOpts()...)
-	fxOpts = append(fxOpts, FxDocumentsWorkflowOpts()...)
 
 	app := fx.New(fxOpts...)
 	app.Run()

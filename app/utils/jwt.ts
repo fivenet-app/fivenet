@@ -23,7 +23,7 @@ export type JWTUserInfoClaimsType = JWTBaseClaimsType & {
     jb?: string;
     jbg?: number;
     su?: boolean;
-    imp?: {
+    og?: {
         jb: string;
         jbg: number;
     };
@@ -42,7 +42,7 @@ export class JWTUserInfoClaims {
 
     readonly superAdmin?: boolean;
 
-    readonly impersonation?: {
+    readonly originalJob?: {
         readonly job: string;
         readonly jobGrade: number;
     };
@@ -60,10 +60,10 @@ export class JWTUserInfoClaims {
 
         this.superAdmin = claims.su;
 
-        if (claims.imp) {
-            this.impersonation = {
-                job: claims.imp.jb,
-                jobGrade: claims.imp.jbg,
+        if (claims.og) {
+            this.originalJob = {
+                job: claims.og.jb,
+                jobGrade: claims.og.jbg,
             };
         }
     }

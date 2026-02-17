@@ -2284,7 +2284,8 @@
                 "content": "Bitte wählen Sie einen verfügbaren Charakter aus und versuchen Sie es erneut."
             },
             "ErrNotSuperuser": "Sie sind kein Superuser! Bitte wenden Sie sich an Ihre FiveNet-Administratoren, um dieses Problem zu melden.",
-            "ErrImpersonateJobInvalid": "Ungültiger Job-Grad zum Ausgeben."
+            "ErrImpersonateJobInvalid": "Ungültiger Job-Grad zum Ausgeben.",
+            "ErrReauthRequired": "Erneute Authentifizierung erforderlich!"
         },
         "CompletorService": {
             "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"

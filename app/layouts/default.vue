@@ -390,11 +390,7 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
             </template>
         </UDashboardSidebar>
 
-        <ImpersonatingBanner
-            v-if="userInfo?.impersonation"
-            :job="userInfo?.impersonation?.job"
-            :job-grade="userInfo?.impersonation?.jobGrade"
-        />
+        <ImpersonatingBanner v-if="userInfo?.originalJob" :job="userInfo?.job" :job-grade="userInfo?.jobGrade" />
 
         <slot />
 

@@ -2284,7 +2284,8 @@
                 "content": "Please select an available character and try again."
             },
             "ErrNotSuperuser": "You are not a superuser! Please contact your FiveNet administrators to report this issue.",
-            "ErrImpersonateJobInvalid": "You can't impersonate this job grade!"
+            "ErrImpersonateJobInvalid": "You can't impersonate this job grade!",
+            "ErrReauthRequired": "Re-authentication required!"
         },
         "CompletorService": {
             "ErrFailedSearch": "Failed to search the data!"

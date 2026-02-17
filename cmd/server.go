@@ -17,7 +17,7 @@ func (c *ServerCmd) Run(_ *Context) error {
 
 	if c.ModuleCronAgent {
 		fxOpts = append(fxOpts, FxCronerOpts()...)
-		fxOpts = append(fxOpts, FxJobsHousekeeperOpts()...)
+		fxOpts = append(fxOpts, FxServiceHousekeeperOpts()...)
 		fxOpts = append(fxOpts, FxHousekeeperOpts()...)
 	}
 

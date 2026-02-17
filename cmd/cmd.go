@@ -149,7 +149,9 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		userinfo.PollerModule,
 		userinfo.RetrieverModule,
 
+		pbcitizens.HousekeeperModule,
 		pbjobs.HousekeeperModule,
+		pbvehicles.HousekeeperModule,
 		pbdocuments.WorkflowModule,
 		pkgfilestore.Module,
 
