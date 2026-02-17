@@ -814,7 +814,7 @@ type DataUser struct {
 	Lastname             *string                `protobuf:"bytes,8,opt,name=lastname,proto3,oneof" json:"lastname,omitempty" alias:"user.lastname"`
 	Dateofbirth          string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty" alias:"user.dateofbirth"`
 	Sex                  *string                `protobuf:"bytes,10,opt,name=sex,proto3,oneof" json:"sex,omitempty" alias:"user.sex"`
-	Height               *string                `protobuf:"bytes,11,opt,name=height,proto3,oneof" json:"height,omitempty" alias:"user.height"`
+	Height               *float32               `protobuf:"fixed32,11,opt,name=height,proto3,oneof" json:"height,omitempty" alias:"user.height"`
 	PhoneNumber          *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty" alias:"user.phone_number"`
 	PhoneNumbers         []*users.PhoneNumber   `protobuf:"bytes,19,rep,name=phone_numbers,json=phoneNumbers,proto3" json:"phone_numbers,omitempty" alias:"user.phone_numbers"`
 	Visum                *int32                 `protobuf:"varint,13,opt,name=visum,proto3,oneof" json:"visum,omitempty" alias:"user.visum"`
@@ -929,11 +929,11 @@ func (x *DataUser) GetSex() string {
 	return ""
 }
 
-func (x *DataUser) GetHeight() string {
+func (x *DataUser) GetHeight() float32 {
 	if x != nil && x.Height != nil {
 		return *x.Height
 	}
-	return ""
+	return 0
 }
 
 func (x *DataUser) GetPhoneNumber() string {
@@ -1036,7 +1036,7 @@ func (x *DataUser) SetSex(v string) {
 	x.Sex = &v
 }
 
-func (x *DataUser) SetHeight(v string) {
+func (x *DataUser) SetHeight(v float32) {
 	x.Height = &v
 }
 
@@ -1207,7 +1207,7 @@ type DataUser_builder struct {
 	Lastname             *string
 	Dateofbirth          string
 	Sex                  *string
-	Height               *string
+	Height               *float32
 	PhoneNumber          *string
 	PhoneNumbers         []*users.PhoneNumber
 	Visum                *int32
@@ -1304,7 +1304,7 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\vdateofbirth\x18\t \x01(\tB\x1d\x9a\x84\x9e\x03\x18alias:\"user.dateofbirth\"R\vdateofbirth\x12,\n" +
 	"\x03sex\x18\n" +
 	" \x01(\tB\x15\x9a\x84\x9e\x03\x10alias:\"user.sex\"H\x03R\x03sex\x88\x01\x01\x125\n" +
-	"\x06height\x18\v \x01(\tB\x18\x9a\x84\x9e\x03\x13alias:\"user.height\"H\x04R\x06height\x88\x01\x01\x12F\n" +
+	"\x06height\x18\v \x01(\x02B\x18\x9a\x84\x9e\x03\x13alias:\"user.height\"H\x04R\x06height\x88\x01\x01\x12F\n" +
 	"\fphone_number\x18\f \x01(\tB\x1e\x9a\x84\x9e\x03\x19alias:\"user.phone_number\"H\x05R\vphoneNumber\x88\x01\x01\x12b\n" +
 	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberB\x1f\x9a\x84\x9e\x03\x1aalias:\"user.phone_numbers\"R\fphoneNumbers\x122\n" +
 	"\x05visum\x18\r \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"user.visum\"H\x06R\x05visum\x88\x01\x01\x12;\n" +

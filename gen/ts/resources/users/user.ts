@@ -112,9 +112,9 @@ export interface User {
      */
     sex?: string;
     /**
-     * @generated from protobuf field: optional string height = 11
+     * @generated from protobuf field: optional float height = 11
      */
-    height?: string;
+    height?: number;
     /**
      * @generated from protobuf field: optional string phone_number = 12
      */
@@ -347,7 +347,7 @@ class User$Type extends MessageType<User> {
             { no: 8, name: "lastname", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "1", maxLen: "50" } } } },
             { no: 9, name: "dateofbirth", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { maxLen: "10" } } } },
             { no: 10, name: "sex", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "2" } } } },
-            { no: 11, name: "height", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 11, name: "height", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
             { no: 12, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 19, name: "phone_numbers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PhoneNumber, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", repeated: { maxItems: "5" } } } },
             { no: 13, name: "visum", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
@@ -412,8 +412,8 @@ class User$Type extends MessageType<User> {
                 case /* optional string sex */ 10:
                     message.sex = reader.string();
                     break;
-                case /* optional string height */ 11:
-                    message.height = reader.string();
+                case /* optional float height */ 11:
+                    message.height = reader.float();
                     break;
                 case /* optional string phone_number */ 12:
                     message.phoneNumber = reader.string();
@@ -481,9 +481,9 @@ class User$Type extends MessageType<User> {
         /* optional string sex = 10; */
         if (message.sex !== undefined)
             writer.tag(10, WireType.LengthDelimited).string(message.sex);
-        /* optional string height = 11; */
+        /* optional float height = 11; */
         if (message.height !== undefined)
-            writer.tag(11, WireType.LengthDelimited).string(message.height);
+            writer.tag(11, WireType.Bit32).float(message.height);
         /* optional string phone_number = 12; */
         if (message.phoneNumber !== undefined)
             writer.tag(12, WireType.LengthDelimited).string(message.phoneNumber);

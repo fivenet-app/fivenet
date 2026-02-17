@@ -118,11 +118,6 @@ func (m *DataUser) Sanitize() error {
 	// Field: Firstname
 	m.Firstname = htmlsanitizer.Sanitize(m.Firstname)
 
-	// Field: Height
-	if m.Height != nil {
-		*m.Height = htmlsanitizer.Sanitize(*m.Height)
-	}
-
 	// Field: Identifier
 	m.Identifier = htmlsanitizer.Sanitize(m.Identifier)
 

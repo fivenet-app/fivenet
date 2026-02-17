@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UBadge, UButton } from '#components';
+import { UBadge, UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -202,6 +202,60 @@ const columns = computed(() =>
                 : undefined,
             {
                 id: 'actions',
+                cell: ({ row }) =>
+                    h(
+                        'div',
+                        { class: 'flex flex-col justify-end md:flex-row' },
+                        [
+                            attrStringList('vehicles.VehiclesService/ListVehicles', 'Fields').value.length > 0 || isSuperuser
+                                ? h(
+                                      UTooltip,
+                                      { text: t('common.propertie', 2) },
+                                      {
+                                          default: () =>
+                                              h(VehicleInfoPopover, {
+                                                  modelValue: row.original,
+                                                  'onUpdate:modelValue': (val: Vehicle) =>
+                                                      updateVehicle(row.original.plate, val),
+                                              }),
+                                      },
+                                  )
+                                : null,
+                            !props.hideCopy
+                                ? h(
+                                      UTooltip,
+                                      { text: t('components.clipboard.clipboard_button.add') },
+                                      {
+                                          default: () =>
+                                              h(UButton, {
+                                                  variant: 'link',
+                                                  icon: 'i-mdi-clipboard-plus',
+                                                  onClick: () => addToClipboard(row.original),
+                                              }),
+                                      },
+                                  )
+                                : null,
+                            !props.hideCitizenLink &&
+                            row.original.ownerId !== undefined &&
+                            can('citizens.CitizensService/ListCitizens').value
+                                ? h(
+                                      UTooltip,
+                                      { text: t('common.show') },
+                                      {
+                                          default: () =>
+                                              h(UButton, {
+                                                  variant: 'link',
+                                                  icon: 'i-mdi-account-eye',
+                                                  to: {
+                                                      name: 'citizens-id',
+                                                      params: { id: row.original.ownerId },
+                                                  },
+                                              }),
+                                      },
+                                  )
+                                : null,
+                        ].filter(Boolean),
+                    ),
             },
         ] as TableColumn<Vehicle>[]
     ).flatMap((item) => (item !== undefined ? [item] : [])),
@@ -303,40 +357,6 @@ defineShortcuts({
         <template v-if="!hideOwner" #owner-cell="{ row: vehicle }">
             <p v-if="vehicle.original.jobLabel" class="text-highlighted">{{ vehicle.original.jobLabel }}</p>
             <CitizenInfoPopover v-if="vehicle.original.owner" :user="vehicle.original.owner" />
-        </template>
-
-        <template #actions-cell="{ row: vehicle }">
-            <div class="flex flex-col justify-end md:flex-row">
-                <UTooltip
-                    v-if="attrStringList('vehicles.VehiclesService/ListVehicles', 'Fields').value.length > 0 || isSuperuser"
-                    :text="$t('common.propertie', 2)"
-                >
-                    <VehicleInfoPopover
-                        :model-value="vehicle.original"
-                        @update:model-value="updateVehicle(vehicle.original.plate, $event)"
-                    />
-                </UTooltip>
-
-                <UTooltip v-if="!hideCopy" :text="$t('components.clipboard.clipboard_button.add')">
-                    <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(vehicle.original)" />
-                </UTooltip>
-
-                <UTooltip
-                    v-if="
-                        !hideCitizenLink && vehicle.original.owner?.userId && can('citizens.CitizensService/ListCitizens').value
-                    "
-                    :text="$t('common.show')"
-                >
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-account-eye"
-                        :to="{
-                            name: 'citizens-id',
-                            params: { id: vehicle.original.owner.userId },
-                        }"
-                    />
-                </UTooltip>
-            </div>
         </template>
     </UTable>
 

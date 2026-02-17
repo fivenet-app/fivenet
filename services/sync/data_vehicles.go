@@ -18,6 +18,7 @@ func (s *Server) handleVehiclesData(
 	}
 
 	tVehicles := table.FivenetOwnedVehicles
+	tUsers := table.FivenetUser
 
 	stmt := tVehicles.
 		INSERT(
@@ -31,10 +32,13 @@ func (s *Server) handleVehiclesData(
 
 	for _, vehicle := range data.Vehicles.GetVehicles() {
 		var ownerId mysql.Expression
-		if vehicle.OwnerIdentifier != nil && vehicle.GetOwnerIdentifier() != "" {
-			ownerId = mysql.String(vehicle.GetOwnerIdentifier())
-		} else if vehicle.OwnerId != nil {
+		if vehicle.OwnerId != nil && vehicle.GetOwnerId() != 0 {
 			ownerId = mysql.Int32(vehicle.GetOwnerId())
+		} else if vehicle.OwnerIdentifier != nil && vehicle.GetOwnerIdentifier() != "" {
+			// Use a subquery to find the user ID based on the owner identifier
+			ownerId = tUsers.
+				SELECT(tUsers.ID).
+				WHERE(tUsers.Identifier.EQ(mysql.String(vehicle.GetOwnerIdentifier())))
 		}
 
 		stmt = stmt.VALUES(

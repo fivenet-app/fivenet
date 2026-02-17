@@ -34,6 +34,8 @@ const schema = z.object({
     trafficInfractionPoints: z.coerce.number().nonnegative().optional(),
     openFines: z.coerce.number().nonnegative().optional(),
     dateofbirth: z.coerce.string().max(10).optional(),
+    height: z.coerce.number().nonnegative().array().max(2).default([0, 250]),
+
     sorting: z
         .object({
             columns: z
@@ -81,6 +83,12 @@ async function listCitizens(): Promise<ListCitizensResponse> {
         }
         if (query.dateofbirth) {
             req.dateofbirth = query.dateofbirth;
+        }
+        if (query.height[0] && query.height[0] > 0) {
+            req.minHeight = query.height[0];
+        }
+        if (query.height[1] && query.height[1] < 250) {
+            req.maxHeight = query.height[1];
         }
 
         const call = citizensCitizensClient.listCitizens(req);
@@ -329,7 +337,7 @@ defineShortcuts({
                                 v-maska
                                 type="text"
                                 name="dateofbirth"
-                                :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
+                                placeholder="DD.MM.YYYY"
                                 class="w-full"
                                 data-maska="##.##.####"
                             />
@@ -362,60 +370,86 @@ defineShortcuts({
                         />
 
                         <template #content>
-                            <div class="flex flex-row gap-2">
-                                <UFormField
-                                    v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value"
-                                    class="flex-1"
-                                    name="phoneNumber"
-                                    :label="$t('common.phone_number')"
-                                >
-                                    <UInput
-                                        v-model="query.phoneNumber"
-                                        type="tel"
+                            <div class="flex flex-col gap-1">
+                                <div class="flex flex-row gap-2">
+                                    <UFormField
+                                        v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value"
+                                        class="flex-1"
                                         name="phoneNumber"
-                                        :placeholder="$t('common.phone_number')"
-                                        class="w-full"
-                                    />
-                                </UFormField>
+                                        :label="$t('common.phone_number')"
+                                    >
+                                        <UInput
+                                            v-model="query.phoneNumber"
+                                            type="tel"
+                                            name="phoneNumber"
+                                            :placeholder="$t('common.phone_number')"
+                                            class="w-full"
+                                        />
+                                    </UFormField>
 
-                                <UFormField
-                                    v-if="
-                                        attr('citizens.CitizensService/ListCitizens', 'Fields', 'TrafficInfractionPoints').value
-                                    "
-                                    class="flex-1"
-                                    name="trafficInfractionPoints"
-                                    :label="$t('common.traffic_infraction_points', 2)"
-                                >
-                                    <UInputNumber
-                                        v-model="query.trafficInfractionPoints"
+                                    <UFormField class="flex-1" name="height" :label="$t('common.height')">
+                                        <div class="flex w-full flex-col items-center gap-1 pr-1">
+                                            <USlider
+                                                v-model="query.height"
+                                                name="height"
+                                                :min="0"
+                                                :step="1"
+                                                :max="250"
+                                                class="w-full"
+                                                :placeholder="`${$t('common.height')} (cm)`"
+                                            />
+
+                                            <div class="inline-flex w-full flex-1 items-center justify-between gap-px">
+                                                <span>{{ query.height[0] ?? 0 }}cm</span>
+                                                <span>{{ query.height[1] ?? 250 }}cm</span>
+                                            </div>
+                                        </div>
+                                    </UFormField>
+                                </div>
+
+                                <div class="flex flex-row gap-2">
+                                    <UFormField
+                                        v-if="
+                                            attr('citizens.CitizensService/ListCitizens', 'Fields', 'TrafficInfractionPoints')
+                                                .value
+                                        "
+                                        class="flex-1"
                                         name="trafficInfractionPoints"
-                                        :min="0"
-                                        :placeholder="$t('common.traffic_infraction_points')"
-                                        class="w-full"
-                                    />
-                                </UFormField>
+                                        :label="$t('common.traffic_infraction_points', 2)"
+                                    >
+                                        <UInputNumber
+                                            v-model="query.trafficInfractionPoints"
+                                            name="trafficInfractionPoints"
+                                            :min="0"
+                                            :placeholder="$t('common.traffic_infraction_points')"
+                                            class="w-full"
+                                        />
+                                    </UFormField>
 
-                                <UFormField
-                                    v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value"
-                                    class="flex-1"
-                                    name="openFines"
-                                    :label="$t('components.citizens.List.open_fine')"
-                                >
-                                    <UInputNumber
-                                        v-model="query.openFines"
+                                    <UFormField
+                                        v-if="
+                                            attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value
+                                        "
+                                        class="flex-1"
                                         name="openFines"
-                                        :min="0"
-                                        :step="1000"
-                                        :placeholder="`${$t('common.fine')}`"
-                                        class="w-full"
-                                        :format-options="{
-                                            style: 'currency',
-                                            currency: display.currencyName,
-                                            currencyDisplay: 'code',
-                                            currencySign: 'accounting',
-                                        }"
-                                    />
-                                </UFormField>
+                                        :label="$t('components.citizens.List.open_fine')"
+                                    >
+                                        <UInputNumber
+                                            v-model="query.openFines"
+                                            name="openFines"
+                                            :min="0"
+                                            :step="1000"
+                                            :placeholder="`${$t('common.fine')}`"
+                                            class="w-full"
+                                            :format-options="{
+                                                style: 'currency',
+                                                currency: display.currencyName,
+                                                currencyDisplay: 'code',
+                                                currencySign: 'accounting',
+                                            }"
+                                        />
+                                    </UFormField>
+                                </div>
                             </div>
                         </template>
                     </UCollapsible>

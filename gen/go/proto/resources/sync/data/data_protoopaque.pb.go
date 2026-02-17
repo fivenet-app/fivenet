@@ -847,7 +847,7 @@ type DataUser struct {
 	xxx_hidden_Lastname             *string                `protobuf:"bytes,8,opt,name=lastname,proto3,oneof"`
 	xxx_hidden_Dateofbirth          string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3"`
 	xxx_hidden_Sex                  *string                `protobuf:"bytes,10,opt,name=sex,proto3,oneof"`
-	xxx_hidden_Height               *string                `protobuf:"bytes,11,opt,name=height,proto3,oneof"`
+	xxx_hidden_Height               float32                `protobuf:"fixed32,11,opt,name=height,proto3,oneof"`
 	xxx_hidden_PhoneNumber          *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof"`
 	xxx_hidden_PhoneNumbers         *[]*users.PhoneNumber  `protobuf:"bytes,19,rep,name=phone_numbers,json=phoneNumbers,proto3"`
 	xxx_hidden_Visum                int32                  `protobuf:"varint,13,opt,name=visum,proto3,oneof"`
@@ -978,14 +978,11 @@ func (x *DataUser) GetSex() string {
 	return ""
 }
 
-func (x *DataUser) GetHeight() string {
+func (x *DataUser) GetHeight() float32 {
 	if x != nil {
-		if x.xxx_hidden_Height != nil {
-			return *x.xxx_hidden_Height
-		}
-		return ""
+		return x.xxx_hidden_Height
 	}
-	return ""
+	return 0
 }
 
 func (x *DataUser) GetPhoneNumber() string {
@@ -1102,8 +1099,8 @@ func (x *DataUser) SetSex(v string) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 20)
 }
 
-func (x *DataUser) SetHeight(v string) {
-	x.xxx_hidden_Height = &v
+func (x *DataUser) SetHeight(v float32) {
+	x.xxx_hidden_Height = v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 20)
 }
 
@@ -1243,7 +1240,7 @@ func (x *DataUser) ClearSex() {
 
 func (x *DataUser) ClearHeight() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
-	x.xxx_hidden_Height = nil
+	x.xxx_hidden_Height = 0
 }
 
 func (x *DataUser) ClearPhoneNumber() {
@@ -1289,7 +1286,7 @@ type DataUser_builder struct {
 	Lastname             *string
 	Dateofbirth          string
 	Sex                  *string
-	Height               *string
+	Height               *float32
 	PhoneNumber          *string
 	PhoneNumbers         []*users.PhoneNumber
 	Visum                *int32
@@ -1329,7 +1326,7 @@ func (b0 DataUser_builder) Build() *DataUser {
 	}
 	if b.Height != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 20)
-		x.xxx_hidden_Height = b.Height
+		x.xxx_hidden_Height = *b.Height
 	}
 	if b.PhoneNumber != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 20)
@@ -1416,7 +1413,7 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\vdateofbirth\x18\t \x01(\tB\x1d\x9a\x84\x9e\x03\x18alias:\"user.dateofbirth\"R\vdateofbirth\x12,\n" +
 	"\x03sex\x18\n" +
 	" \x01(\tB\x15\x9a\x84\x9e\x03\x10alias:\"user.sex\"H\x03R\x03sex\x88\x01\x01\x125\n" +
-	"\x06height\x18\v \x01(\tB\x18\x9a\x84\x9e\x03\x13alias:\"user.height\"H\x04R\x06height\x88\x01\x01\x12F\n" +
+	"\x06height\x18\v \x01(\x02B\x18\x9a\x84\x9e\x03\x13alias:\"user.height\"H\x04R\x06height\x88\x01\x01\x12F\n" +
 	"\fphone_number\x18\f \x01(\tB\x1e\x9a\x84\x9e\x03\x19alias:\"user.phone_number\"H\x05R\vphoneNumber\x88\x01\x01\x12b\n" +
 	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberB\x1f\x9a\x84\x9e\x03\x1aalias:\"user.phone_numbers\"R\fphoneNumbers\x122\n" +
 	"\x05visum\x18\r \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"user.visum\"H\x06R\x05visum\x88\x01\x01\x12;\n" +

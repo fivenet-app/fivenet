@@ -197,7 +197,7 @@ func (s *Server) handleUsersData(
 					tUsers.JobGrade.SET(mysql.IntExp(mysql.Raw("VALUES(`job_grade`)"))),
 					tUsers.Sex.SET(mysql.StringExp(mysql.Raw("VALUES(`sex`)"))),
 					tUsers.PhoneNumber.SET(mysql.StringExp(mysql.Raw("VALUES(`phone_number`)"))),
-					tUsers.Height.SET(mysql.StringExp(mysql.Raw("VALUES(`height`)"))),
+					tUsers.Height.SET(mysql.FloatExp(mysql.Raw("VALUES(`height`)"))),
 					tUsers.Visum.SET(mysql.IntExp(mysql.Raw("VALUES(`visum`)"))),
 					tUsers.Playtime.SET(mysql.IntExp(mysql.Raw("VALUES(`playtime`)"))),
 				)

@@ -291,7 +291,7 @@ type User struct {
 	Lastname             string                 `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
 	Dateofbirth          string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
 	Sex                  *string                `protobuf:"bytes,10,opt,name=sex,proto3,oneof" json:"sex,omitempty"`
-	Height               *string                `protobuf:"bytes,11,opt,name=height,proto3,oneof" json:"height,omitempty"`
+	Height               *float32               `protobuf:"fixed32,11,opt,name=height,proto3,oneof" json:"height,omitempty"`
 	PhoneNumber          *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
 	PhoneNumbers         []*PhoneNumber         `protobuf:"bytes,19,rep,name=phone_numbers,json=phoneNumbers,proto3" json:"phone_numbers,omitempty"`
 	Visum                *int32                 `protobuf:"varint,13,opt,name=visum,proto3,oneof" json:"visum,omitempty"`
@@ -406,11 +406,11 @@ func (x *User) GetSex() string {
 	return ""
 }
 
-func (x *User) GetHeight() string {
+func (x *User) GetHeight() float32 {
 	if x != nil && x.Height != nil {
 		return *x.Height
 	}
-	return ""
+	return 0
 }
 
 func (x *User) GetPhoneNumber() string {
@@ -513,7 +513,7 @@ func (x *User) SetSex(v string) {
 	x.Sex = &v
 }
 
-func (x *User) SetHeight(v string) {
+func (x *User) SetHeight(v float32) {
 	x.Height = &v
 }
 
@@ -673,7 +673,7 @@ type User_builder struct {
 	Lastname             string
 	Dateofbirth          string
 	Sex                  *string
-	Height               *string
+	Height               *float32
 	PhoneNumber          *string
 	PhoneNumbers         []*PhoneNumber
 	Visum                *int32
@@ -1085,7 +1085,7 @@ const file_resources_users_user_proto_rawDesc = "" +
 	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12\x15\n" +
 	"\x03sex\x18\n" +
 	" \x01(\tH\x02R\x03sex\x88\x01\x01\x12\x1b\n" +
-	"\x06height\x18\v \x01(\tH\x03R\x06height\x88\x01\x01\x12&\n" +
+	"\x06height\x18\v \x01(\x02H\x03R\x06height\x88\x01\x01\x12&\n" +
 	"\fphone_number\x18\f \x01(\tH\x04R\vphoneNumber\x88\x01\x01\x12A\n" +
 	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberR\fphoneNumbers\x12\x19\n" +
 	"\x05visum\x18\r \x01(\x05H\x05R\x05visum\x88\x01\x01\x12\x1f\n" +

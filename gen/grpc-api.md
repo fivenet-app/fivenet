@@ -604,7 +604,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `lastname` | [string](#string) |  |  |
 | `dateofbirth` | [string](#string) |  |  |
 | `sex` | [string](#string) | optional |  |
-| `height` | [string](#string) | optional |  |
+| `height` | [float](#float) | optional |  |
 | `phone_number` | [string](#string) | optional |  |
 | `phone_numbers` | [PhoneNumber](#resourcesusersPhoneNumber) | repeated |  |
 | `visum` | [int32](#int32) | optional |  |
@@ -6595,7 +6595,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `lastname` | [string](#string) | optional |  |
 | `dateofbirth` | [string](#string) |  |  |
 | `sex` | [string](#string) | optional |  |
-| `height` | [string](#string) | optional |  |
+| `height` | [float](#float) | optional |  |
 | `phone_number` | [string](#string) | optional |  |
 | `phone_numbers` | [resources.users.PhoneNumber](#resourcesusersPhoneNumber) | repeated |  |
 | `visum` | [int32](#int32) | optional |  |
@@ -8561,6 +8561,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `traffic_infraction_points` | [uint32](#uint32) | optional |  |
 | `dateofbirth` | [string](#string) | optional |  |
 | `open_fines` | [int64](#int64) | optional |  |
+| `min_height` | [float](#float) | optional | Height range search (in cm) |
+| `max_height` | [float](#float) | optional |  |
 
 
 

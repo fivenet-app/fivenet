@@ -22,7 +22,7 @@ type FivenetUser struct {
 	Lastname      *string    `json:"lastname"`
 	Dateofbirth   *string    `json:"dateofbirth"`
 	Sex           *string    `json:"sex"`
-	Height        *string    `json:"height"`
+	Height        *float64   `json:"height"`
 	PhoneNumber   *string    `json:"phone_number"`
 	Disabled      *bool      `json:"disabled"`
 	Visum         *int32     `json:"visum"`

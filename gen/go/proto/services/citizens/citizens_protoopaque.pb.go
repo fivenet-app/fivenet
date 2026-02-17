@@ -41,6 +41,8 @@ type ListCitizensRequest struct {
 	xxx_hidden_TrafficInfractionPoints uint32                      `protobuf:"varint,6,opt,name=traffic_infraction_points,json=trafficInfractionPoints,proto3,oneof"`
 	xxx_hidden_Dateofbirth             *string                     `protobuf:"bytes,7,opt,name=dateofbirth,proto3,oneof"`
 	xxx_hidden_OpenFines               int64                       `protobuf:"varint,8,opt,name=open_fines,json=openFines,proto3,oneof"`
+	xxx_hidden_MinHeight               float32                     `protobuf:"fixed32,9,opt,name=min_height,json=minHeight,proto3,oneof"`
+	xxx_hidden_MaxHeight               float32                     `protobuf:"fixed32,10,opt,name=max_height,json=maxHeight,proto3,oneof"`
 	XXX_raceDetectHookData             protoimpl.RaceDetectHookData
 	XXX_presence                       [1]uint32
 	unknownFields                      protoimpl.UnknownFields
@@ -134,6 +136,20 @@ func (x *ListCitizensRequest) GetOpenFines() int64 {
 	return 0
 }
 
+func (x *ListCitizensRequest) GetMinHeight() float32 {
+	if x != nil {
+		return x.xxx_hidden_MinHeight
+	}
+	return 0
+}
+
+func (x *ListCitizensRequest) GetMaxHeight() float32 {
+	if x != nil {
+		return x.xxx_hidden_MaxHeight
+	}
+	return 0
+}
+
 func (x *ListCitizensRequest) SetPagination(v *database.PaginationRequest) {
 	x.xxx_hidden_Pagination = v
 }
@@ -148,27 +164,37 @@ func (x *ListCitizensRequest) SetSearch(v string) {
 
 func (x *ListCitizensRequest) SetWanted(v bool) {
 	x.xxx_hidden_Wanted = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 8)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 10)
 }
 
 func (x *ListCitizensRequest) SetPhoneNumber(v string) {
 	x.xxx_hidden_PhoneNumber = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 8)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 10)
 }
 
 func (x *ListCitizensRequest) SetTrafficInfractionPoints(v uint32) {
 	x.xxx_hidden_TrafficInfractionPoints = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 8)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 10)
 }
 
 func (x *ListCitizensRequest) SetDateofbirth(v string) {
 	x.xxx_hidden_Dateofbirth = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 8)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 10)
 }
 
 func (x *ListCitizensRequest) SetOpenFines(v int64) {
 	x.xxx_hidden_OpenFines = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 8)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 10)
+}
+
+func (x *ListCitizensRequest) SetMinHeight(v float32) {
+	x.xxx_hidden_MinHeight = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 10)
+}
+
+func (x *ListCitizensRequest) SetMaxHeight(v float32) {
+	x.xxx_hidden_MaxHeight = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 10)
 }
 
 func (x *ListCitizensRequest) HasPagination() bool {
@@ -220,6 +246,20 @@ func (x *ListCitizensRequest) HasOpenFines() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
 }
 
+func (x *ListCitizensRequest) HasMinHeight() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
+}
+
+func (x *ListCitizensRequest) HasMaxHeight() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
+}
+
 func (x *ListCitizensRequest) ClearPagination() {
 	x.xxx_hidden_Pagination = nil
 }
@@ -253,6 +293,16 @@ func (x *ListCitizensRequest) ClearOpenFines() {
 	x.xxx_hidden_OpenFines = 0
 }
 
+func (x *ListCitizensRequest) ClearMinHeight() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	x.xxx_hidden_MinHeight = 0
+}
+
+func (x *ListCitizensRequest) ClearMaxHeight() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	x.xxx_hidden_MaxHeight = 0
+}
+
 type ListCitizensRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -265,6 +315,9 @@ type ListCitizensRequest_builder struct {
 	TrafficInfractionPoints *uint32
 	Dateofbirth             *string
 	OpenFines               *int64
+	// Height range search (in cm)
+	MinHeight *float32
+	MaxHeight *float32
 }
 
 func (b0 ListCitizensRequest_builder) Build() *ListCitizensRequest {
@@ -275,24 +328,32 @@ func (b0 ListCitizensRequest_builder) Build() *ListCitizensRequest {
 	x.xxx_hidden_Sort = b.Sort
 	x.xxx_hidden_Search = b.Search
 	if b.Wanted != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 8)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 10)
 		x.xxx_hidden_Wanted = *b.Wanted
 	}
 	if b.PhoneNumber != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 8)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 10)
 		x.xxx_hidden_PhoneNumber = b.PhoneNumber
 	}
 	if b.TrafficInfractionPoints != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 8)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 10)
 		x.xxx_hidden_TrafficInfractionPoints = *b.TrafficInfractionPoints
 	}
 	if b.Dateofbirth != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 8)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 10)
 		x.xxx_hidden_Dateofbirth = b.Dateofbirth
 	}
 	if b.OpenFines != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 8)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 10)
 		x.xxx_hidden_OpenFines = *b.OpenFines
+	}
+	if b.MinHeight != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 10)
+		x.xxx_hidden_MinHeight = *b.MinHeight
+	}
+	if b.MaxHeight != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 10)
+		x.xxx_hidden_MaxHeight = *b.MaxHeight
 	}
 	return m0
 }
@@ -1216,7 +1277,7 @@ var File_services_citizens_citizens_proto protoreflect.FileDescriptor
 
 const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
-	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a'resources/users/activity/activity.proto\x1a#resources/users/labels/labels.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\"\xe8\x03\n" +
+	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a'resources/users/activity/activity.proto\x1a#resources/users/labels/labels.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\"\xce\x04\n" +
 	"\x13ListCitizensRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1228,13 +1289,20 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\x19traffic_infraction_points\x18\x06 \x01(\rH\x03R\x17trafficInfractionPoints\x88\x01\x01\x12%\n" +
 	"\vdateofbirth\x18\a \x01(\tH\x04R\vdateofbirth\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"open_fines\x18\b \x01(\x03H\x05R\topenFines\x88\x01\x01B\a\n" +
+	"open_fines\x18\b \x01(\x03H\x05R\topenFines\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"min_height\x18\t \x01(\x02H\x06R\tminHeight\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"max_height\x18\n" +
+	" \x01(\x02H\aR\tmaxHeight\x88\x01\x01B\a\n" +
 	"\x05_sortB\t\n" +
 	"\a_wantedB\x0f\n" +
 	"\r_phone_numberB\x1c\n" +
 	"\x1a_traffic_infraction_pointsB\x0e\n" +
 	"\f_dateofbirthB\r\n" +
-	"\v_open_fines\"\x98\x01\n" +
+	"\v_open_finesB\r\n" +
+	"\v_min_heightB\r\n" +
+	"\v_max_height\"\x98\x01\n" +
 	"\x14ListCitizensResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +

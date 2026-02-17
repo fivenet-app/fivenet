@@ -60,6 +60,16 @@ export interface ListCitizensRequest {
      * @generated from protobuf field: optional int64 open_fines = 8
      */
     openFines?: number;
+    /**
+     * Height range search (in cm)
+     *
+     * @generated from protobuf field: optional float min_height = 9
+     */
+    minHeight?: number;
+    /**
+     * @generated from protobuf field: optional float max_height = 10
+     */
+    maxHeight?: number;
 }
 /**
  * @generated from protobuf message services.citizens.ListCitizensResponse
@@ -211,7 +221,9 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
             { no: 5, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 6, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
             { no: 7, name: "dateofbirth", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "10" } } } },
-            { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 9, name: "min_height", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 10, name: "max_height", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
     create(value?: PartialMessage<ListCitizensRequest>): ListCitizensRequest {
@@ -250,6 +262,12 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
                 case /* optional int64 open_fines */ 8:
                     message.openFines = reader.int64().toNumber();
                     break;
+                case /* optional float min_height */ 9:
+                    message.minHeight = reader.float();
+                    break;
+                case /* optional float max_height */ 10:
+                    message.maxHeight = reader.float();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -286,6 +304,12 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
         /* optional int64 open_fines = 8; */
         if (message.openFines !== undefined)
             writer.tag(8, WireType.Varint).int64(message.openFines);
+        /* optional float min_height = 9; */
+        if (message.minHeight !== undefined)
+            writer.tag(9, WireType.Bit32).float(message.minHeight);
+        /* optional float max_height = 10; */
+        if (message.maxHeight !== undefined)
+            writer.tag(10, WireType.Bit32).float(message.maxHeight);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

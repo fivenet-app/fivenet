@@ -95,7 +95,7 @@ message User {
     min_len: 1
     max_len: 2
   }];
-  optional string height = 11;
+  optional float height = 11;
 
   optional string phone_number = 12 [(buf.validate.field).string.max_len = 20];
   repeated PhoneNumber phone_numbers = 19 [

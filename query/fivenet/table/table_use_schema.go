@@ -107,7 +107,7 @@ func UseSchema(schema string) {
 	FivenetWikiPagesAccess = FivenetWikiPagesAccess.FromSchema(schema)
 	FivenetWikiPagesActivity = FivenetWikiPagesActivity.FromSchema(schema)
 	FivenetWikiPagesFiles = FivenetWikiPagesFiles.FromSchema(schema)
-	GksphoneJobMessage = GksphoneJobMessage.FromSchema(schema)
+    GksphoneJobMessage = GksphoneJobMessage.FromSchema(schema)
 	GksphoneSettings = GksphoneSettings.FromSchema(schema)
 	PhonePhones = PhonePhones.FromSchema(schema)
 	PhoneServicesChannels = PhoneServicesChannels.FromSchema(schema)

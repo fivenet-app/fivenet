@@ -42,8 +42,11 @@ type ListCitizensRequest struct {
 	TrafficInfractionPoints *uint32 `protobuf:"varint,6,opt,name=traffic_infraction_points,json=trafficInfractionPoints,proto3,oneof" json:"traffic_infraction_points,omitempty"`
 	Dateofbirth             *string `protobuf:"bytes,7,opt,name=dateofbirth,proto3,oneof" json:"dateofbirth,omitempty"`
 	OpenFines               *int64  `protobuf:"varint,8,opt,name=open_fines,json=openFines,proto3,oneof" json:"open_fines,omitempty"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	// Height range search (in cm)
+	MinHeight     *float32 `protobuf:"fixed32,9,opt,name=min_height,json=minHeight,proto3,oneof" json:"min_height,omitempty"`
+	MaxHeight     *float32 `protobuf:"fixed32,10,opt,name=max_height,json=maxHeight,proto3,oneof" json:"max_height,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListCitizensRequest) Reset() {
@@ -127,6 +130,20 @@ func (x *ListCitizensRequest) GetOpenFines() int64 {
 	return 0
 }
 
+func (x *ListCitizensRequest) GetMinHeight() float32 {
+	if x != nil && x.MinHeight != nil {
+		return *x.MinHeight
+	}
+	return 0
+}
+
+func (x *ListCitizensRequest) GetMaxHeight() float32 {
+	if x != nil && x.MaxHeight != nil {
+		return *x.MaxHeight
+	}
+	return 0
+}
+
 func (x *ListCitizensRequest) SetPagination(v *database.PaginationRequest) {
 	x.Pagination = v
 }
@@ -157,6 +174,14 @@ func (x *ListCitizensRequest) SetDateofbirth(v string) {
 
 func (x *ListCitizensRequest) SetOpenFines(v int64) {
 	x.OpenFines = &v
+}
+
+func (x *ListCitizensRequest) SetMinHeight(v float32) {
+	x.MinHeight = &v
+}
+
+func (x *ListCitizensRequest) SetMaxHeight(v float32) {
+	x.MaxHeight = &v
 }
 
 func (x *ListCitizensRequest) HasPagination() bool {
@@ -208,6 +233,20 @@ func (x *ListCitizensRequest) HasOpenFines() bool {
 	return x.OpenFines != nil
 }
 
+func (x *ListCitizensRequest) HasMinHeight() bool {
+	if x == nil {
+		return false
+	}
+	return x.MinHeight != nil
+}
+
+func (x *ListCitizensRequest) HasMaxHeight() bool {
+	if x == nil {
+		return false
+	}
+	return x.MaxHeight != nil
+}
+
 func (x *ListCitizensRequest) ClearPagination() {
 	x.Pagination = nil
 }
@@ -236,6 +275,14 @@ func (x *ListCitizensRequest) ClearOpenFines() {
 	x.OpenFines = nil
 }
 
+func (x *ListCitizensRequest) ClearMinHeight() {
+	x.MinHeight = nil
+}
+
+func (x *ListCitizensRequest) ClearMaxHeight() {
+	x.MaxHeight = nil
+}
+
 type ListCitizensRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -248,6 +295,9 @@ type ListCitizensRequest_builder struct {
 	TrafficInfractionPoints *uint32
 	Dateofbirth             *string
 	OpenFines               *int64
+	// Height range search (in cm)
+	MinHeight *float32
+	MaxHeight *float32
 }
 
 func (b0 ListCitizensRequest_builder) Build() *ListCitizensRequest {
@@ -262,6 +312,8 @@ func (b0 ListCitizensRequest_builder) Build() *ListCitizensRequest {
 	x.TrafficInfractionPoints = b.TrafficInfractionPoints
 	x.Dateofbirth = b.Dateofbirth
 	x.OpenFines = b.OpenFines
+	x.MinHeight = b.MinHeight
+	x.MaxHeight = b.MaxHeight
 	return m0
 }
 
@@ -1170,7 +1222,7 @@ var File_services_citizens_citizens_proto protoreflect.FileDescriptor
 
 const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
-	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a'resources/users/activity/activity.proto\x1a#resources/users/labels/labels.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\"\xe8\x03\n" +
+	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a'resources/users/activity/activity.proto\x1a#resources/users/labels/labels.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\"\xce\x04\n" +
 	"\x13ListCitizensRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1182,13 +1234,20 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\x19traffic_infraction_points\x18\x06 \x01(\rH\x03R\x17trafficInfractionPoints\x88\x01\x01\x12%\n" +
 	"\vdateofbirth\x18\a \x01(\tH\x04R\vdateofbirth\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"open_fines\x18\b \x01(\x03H\x05R\topenFines\x88\x01\x01B\a\n" +
+	"open_fines\x18\b \x01(\x03H\x05R\topenFines\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"min_height\x18\t \x01(\x02H\x06R\tminHeight\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"max_height\x18\n" +
+	" \x01(\x02H\aR\tmaxHeight\x88\x01\x01B\a\n" +
 	"\x05_sortB\t\n" +
 	"\a_wantedB\x0f\n" +
 	"\r_phone_numberB\x1c\n" +
 	"\x1a_traffic_infraction_pointsB\x0e\n" +
 	"\f_dateofbirthB\r\n" +
-	"\v_open_fines\"\x98\x01\n" +
+	"\v_open_finesB\r\n" +
+	"\v_min_heightB\r\n" +
+	"\v_max_height\"\x98\x01\n" +
 	"\x14ListCitizensResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +

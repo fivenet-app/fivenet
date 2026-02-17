@@ -133,12 +133,27 @@ func (s *Server) ListCitizens(
 		)
 	}
 
-	if req.Dateofbirth != nil && req.GetDateofbirth() != "" {
+	if req.GetDateofbirth() != "" {
 		dateofbirth := dbutils.PrepareForLikeSearch(req.GetDateofbirth())
 
 		condition = condition.AND(
 			tUser.Dateofbirth.LIKE(
 				mysql.String(dateofbirth),
+			),
+		)
+	}
+
+	if req.GetMinHeight() > 0 {
+		condition = condition.AND(
+			tUser.Height.GT_EQ(
+				mysql.Float(float64(req.GetMinHeight())),
+			),
+		)
+	}
+	if req.GetMaxHeight() > 0 {
+		condition = condition.AND(
+			tUser.Height.LT_EQ(
+				mysql.Float(float64(req.GetMaxHeight())),
 			),
 		)
 	}

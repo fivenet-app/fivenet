@@ -25,6 +25,10 @@ message ListCitizensRequest {
   optional uint32 traffic_infraction_points = 6;
   optional string dateofbirth = 7 [(buf.validate.field).string.max_len = 10];
   optional int64 open_fines = 8;
+
+  // Height range search (in cm)
+  optional float min_height = 9;
+  optional float max_height = 10;
 }
 
 message ListCitizensResponse {

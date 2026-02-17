@@ -27,7 +27,7 @@ type fivenetUserTable struct {
 	Lastname      mysql.ColumnString
 	Dateofbirth   mysql.ColumnString
 	Sex           mysql.ColumnString
-	Height        mysql.ColumnString
+	Height        mysql.ColumnFloat
 	PhoneNumber   mysql.ColumnString
 	Disabled      mysql.ColumnBool
 	Visum         mysql.ColumnInteger
@@ -87,7 +87,7 @@ func newFivenetUserTableImpl(schemaName, tableName, alias string) fivenetUserTab
 		LastnameColumn      = mysql.StringColumn("lastname")
 		DateofbirthColumn   = mysql.StringColumn("dateofbirth")
 		SexColumn           = mysql.StringColumn("sex")
-		HeightColumn        = mysql.StringColumn("height")
+		HeightColumn        = mysql.FloatColumn("height")
 		PhoneNumberColumn   = mysql.StringColumn("phone_number")
 		DisabledColumn      = mysql.BoolColumn("disabled")
 		VisumColumn         = mysql.IntegerColumn("visum")
