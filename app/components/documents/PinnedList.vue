@@ -47,6 +47,9 @@ async function togglePin(documentId: number, state: boolean, personal: boolean):
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller('lg');
+const is2xl = breakpoints.greaterOrEqual('2xl');
+
+watch(is2xl, (val) => (open.value = (val && !open.value) || val), { immediate: true });
 
 const editing = ref(false);
 </script>
