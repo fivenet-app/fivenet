@@ -497,8 +497,6 @@ export const useCentrumStore = defineStore(
                         acls.value = resp.change.handshake.access;
 
                         if (resp.change.handshake.settings) {
-                            setOrUpdateSettings(resp.change.handshake.settings);
-
                             if (!resp.change.handshake.settings.enabled) {
                                 notifications.add({
                                     title: { key: 'notifications.centrum.disabled.title', parameters: {} },
@@ -507,7 +505,18 @@ export const useCentrumStore = defineStore(
                                     actions: getNotificationActions(),
                                 });
                                 logger.info('Centrum is disabled for job.');
+                            } else if (settings.value !== undefined) {
+                                // Settings were updated via event
+                                notifications.add({
+                                    title: { key: 'notifications.centrum.enabled.title', parameters: {} },
+                                    description: { key: 'notifications.centrum.enabled.content', parameters: {} },
+                                    type: NotificationType.INFO,
+                                    actions: getNotificationActions(),
+                                });
+                                logger.info('Centrum is enabled for job.');
                             }
+
+                            setOrUpdateSettings(resp.change.handshake.settings);
                         }
                     } else if (resp.change.oneofKind === 'latestState') {
                         logger.info(

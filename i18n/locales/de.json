@@ -2016,6 +2016,10 @@
             "disabled": {
                 "title": "Leitstelle ist deaktiviert!",
                 "content": "Ihre Leitstelle ist nicht aktiviert, bitte kontaktieren Sie Ihre Fraktionsleitung."
+            },
+            "enabled": {
+                "title": "Leitstelle ist aktiviert!",
+                "content": "Ihre Leitstelle ist jetzt aktiviert, Sie können Einsätze annehmen und verwalten."
             }
         },
         "components": {

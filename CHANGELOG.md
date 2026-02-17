@@ -4,6 +4,41 @@ All notable changes to this project will be documented in this file.
 
 ## [2026.2.0] - 2026-02-16
 
+This version includes changes from v2026.1.3 that had been created to fix module versioning issues.
+
+### 🏗️ Breaking changes
+
+- ESX Compatibility mode has been removed in favor of DBSync.
+	1. You need to setup the DBSync to query and sync your gameserver's data.
+	2. Update FiveNet to at least this release.
+	3. Start up your FiveNet server with the new version/release so it runs the latest database migrations.
+ 	4. Stop your FiveNet instance and stop the DBSync before continuing.
+	5. Take a data only (no `CREATE TABLE` statements) dump of the `fivenet_*` database tables.
+	6. Delete all `fivenet_*` tables in your current database.
+	7. Start up your FiveNet server again so it re-creates all fivenet_* tables.
+	8. Run the DBSync and wait for all data (e.g., users, vehicles) to be synced to the FiveNet table (e.g., `fivenet_user`).
+	9. Now you should be able to restore the data only dump of the `fivenet_*` tables.
+
+- Document Editor now uses Tiptap JSON format (wrapped in a basic Proto message).
+	- It is recommended to migrate any HTML documents to the JSON format, example command: `fivenet migrations docstojson --dry-run`, when you are sure that the affected documents are correct, run `fivenet migrations docstojson --no-dry-run` to actually apply the migrations.
+
+### 🚀 Features
+
+- Data separation and management design implemented
+- Re-organize and split proto files
+- Cleanup proto messages and structure
+- Update go generated sql models/tables
+- Improve account editing logic and data separation migrations
+- Add superuser jobs list
+- Add table update logic (adding/deleting columns/rows)
+- Add basic limiter role perms and attrs templates
+- Restructure dbsync code
+- Improve jwt token usage on client-side
+- Add cayo perico island livemap app toggle
+- Introduce user jobs sync for multi job systems
+- Add dbsync logic for user phone numbers
+- Create index in dbsync tablemanager
+
 ### 🐛 Bug Fixes
 
 - Cleanup oauth2 providers
@@ -23,6 +58,50 @@ All notable changes to this project will be documented in this file.
 - Approval task inbox list
 - Remove debug print log
 - Change housekeeper units comment to FIXME instead of TODO
+- Start replacing typed routes and cleanup content funcs on client-
+- Use user_id for user locations instead of identifier
+- Sql migrations and change test cases as needed
+- Sql testdata
+- Send ErrNoUserInfo when no account is found
+- Add titles to more auth service errors
+- Add missing db conn parameter example and add wip v2 sync api
+- Proto generated clients.ts using wrong import
+- Users sync and add comments count to document meta
+- Improve audit log entry copy text button
+- Jobs pages permissions
+- Citizen activity reason
+- Auth perms check superuser logic
+- Restart notifications stream on superuser mode switch
+- Websocket re-auth logic missing
+- Link chars to account ids on login for now
+- Improve document references and relations tables
+- Update .nuxtrc
+- Cleanup app plugins and update nuxt-update
+- Move cayo perico overlay coords to separate file
+- Split timeclock stats drawer into separate component
+- Correct cluster picker hidden marker count
+- Add missing icons for document approval feature
+- Typecheck complaints
+- Js jwt tests
+- Issues with user licenses and jobs sync
+- Update dbsync example config
+- Move sync api details to separate struct in config
+- Grpc transport insecure logic
+- Document relations by default including documens the user created
+- Comment count display in doc view
+- Calendar creation issue and add all day events
+- Nil issue in dbsync
+- Issues with docs not having a meta entry
+- Add sync getstatus call on start
+- Log synced count
+- Dbsync subtract from last check time to prevent data loss
+- Livemap overlays not included in images
+- Dbsync tablemanager test case
+- Update livemap tiles submodule
+- Add apple-touch-icon to rel entries
+- Filestore admin file list
+- Dbsync tablemanager test case failure
+- Get mysql image for tests from docker-compose.dev.yaml
 
 ## [2026.1.2] - 2026-01-18
 

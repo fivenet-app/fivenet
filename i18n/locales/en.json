@@ -2016,6 +2016,10 @@
             "disabled": {
                 "title": "Dispatch center is disabled!",
                 "content": "You job's dispatch center is disabled, please contact your job leader."
+            },
+            "enabled": {
+                "title": "Dispatch center enabled!",
+                "content": "You job's dispatch center is now enabled, you can accept and manage dispatches."
             }
         },
         "components": {
