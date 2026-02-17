@@ -32,6 +32,7 @@ async function resetLocalStorage(): Promise<void> {
 
     if (import.meta.client) {
         window.localStorage.clear();
+        window.sessionStorage.clear();
     }
 
     await navigateTo('/');
@@ -133,10 +134,18 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
             name="activeCharJob"
             :label="$t('common.job')"
         >
-            <div class="inline-flex w-full justify-between">
-                <span>{{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})</span>
+            <div class="flex w-full items-center justify-between">
+                <div class="flex flex-col gap-1">
+                    <div>{{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})</div>
 
-                <CopyToClipboardButton :value="`${activeChar.job} (${$t('common.rank')}: ${activeChar.jobGrade})`" />
+                    <div v-if="userInfo?.originalJob">
+                        {{ userInfo.originalJob.job }} ({{ $t('common.rank') }}: {{ userInfo.originalJob.jobGrade }})
+                    </div>
+                </div>
+
+                <div>
+                    <CopyToClipboardButton :value="`${activeChar.job} (${$t('common.rank')}: ${activeChar.jobGrade})`" />
+                </div>
             </div>
         </UFormField>
 
