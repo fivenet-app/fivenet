@@ -45,6 +45,10 @@ type AbsentCommand struct {
 }
 
 func NewAbsentCommand(p CommandParams) (Command, error) {
+	if p.BotState == nil {
+		return nil, nil
+	}
+
 	return &AbsentCommand{
 		l:     p.L,
 		db:    p.DB,

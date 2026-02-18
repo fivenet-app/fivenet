@@ -24,7 +24,7 @@ var EmbedFooterVersion = &discord.EmbedFooter{
 
 var EmbedFooterMadeBy = &discord.EmbedFooter{
 	Text: "Made by Galexrt",
-	Icon: "https://cdn.discordapp.com/profile_pictures/290472392084422658/58e38b558fb3a54b4864584e7b7297f6.png",
+	Icon: "https://galexrt.moe/favicon.png",
 }
 
 var EmbedThumbnailLogo = &discord.EmbedThumbnail{

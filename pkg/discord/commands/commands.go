@@ -32,7 +32,7 @@ func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("discord.bot").Named("commands")
 }
 
-var Module = fx.Module("discord_commands",
+var Module = fx.Module("discord.commands",
 	fx.Provide(
 		New,
 	),
@@ -70,8 +70,6 @@ type Cmds struct {
 	dc     *state.State
 
 	router *cmdroute.Router
-
-	cmds []Command
 }
 
 func New(p Params) *Cmds {
@@ -85,8 +83,6 @@ func New(p Params) *Cmds {
 		dc:     p.DC,
 
 		router: cmdroute.NewRouter(),
-
-		cmds: p.Commands,
 	}
 
 	c.router.Use(newMiddlewareLogger(c.logger))
@@ -94,34 +90,30 @@ func New(p Params) *Cmds {
 	c.router.Use(cmdroute.Deferrable(p.DC, cmdroute.DeferOpts{}))
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		if err := c.registerCommands(); err != nil {
-			return fmt.Errorf("failed to register commands. %w", err)
+		c.logger.Info("registering commands", zap.Int("count", len(p.Commands)))
+
+		commands := []api.CreateCommandData{}
+		for _, cmd := range p.Commands {
+			if cmd == nil {
+				continue
+			}
+
+			cmdData := cmd.RegisterCommand(c.router)
+			commands = append(commands, cmdData)
+
+			metricCommandCalls.WithLabelValues(cmdData.Name).Set(0)
 		}
+
+		if err := cmdroute.OverwriteCommands(c.dc, commands); err != nil {
+			return fmt.Errorf("cannot update discord bot commands. %w", err)
+		}
+
+		c.dc.AddInteractionHandler(c.router)
 
 		return nil
 	}))
 
 	return c
-}
-
-func (c *Cmds) registerCommands() error {
-	c.logger.Info("registering commands", zap.Int("count", len(c.cmds)))
-
-	commands := []api.CreateCommandData{}
-	for _, cmd := range c.cmds {
-		cmdData := cmd.RegisterCommand(c.router)
-		commands = append(commands, cmdData)
-
-		metricCommandCalls.WithLabelValues(cmdData.Name).Set(0)
-	}
-
-	if err := cmdroute.OverwriteCommands(c.dc, commands); err != nil {
-		return fmt.Errorf("cannot update discord bot commands. %w", err)
-	}
-
-	c.dc.AddInteractionHandler(c.router)
-
-	return nil
 }
 
 func newMiddlewareLogger(logger *zap.Logger) cmdroute.Middleware {

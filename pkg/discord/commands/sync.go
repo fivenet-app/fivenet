@@ -19,6 +19,10 @@ type SyncCommand struct {
 }
 
 func NewSyncCommand(p CommandParams) (Command, error) {
+	if p.BotState == nil {
+		return nil, nil
+	}
+
 	return &SyncCommand{
 			l:   p.L,
 			b:   p.BotState,

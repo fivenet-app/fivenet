@@ -356,10 +356,15 @@ type DispatchCenter struct {
 type Discord struct {
 	Enabled      bool                `default:"false" yaml:"enabled"`
 	DryRun       bool                `default:"false" yaml:"dryRun"`
+	Sync         bool                `default:"true"  yaml:"sync"`
 	Token        string              `                yaml:"token"`
 	UserInfoSync DiscordUserInfoSync `                yaml:"userInfoSync"`
 	GroupSync    DiscordGroupSync    `                yaml:"groupSync"`
 	Commands     DiscordCommands     `                yaml:"commands"`
+}
+
+func (c *Discord) IsAnyEnabled() bool {
+	return c.Enabled || c.Sync || c.Commands.Enabled
 }
 
 type DiscordPresence struct {
@@ -392,6 +397,11 @@ type DiscordGroupRole struct {
 
 type DiscordCommands struct {
 	Enabled bool `default:"false" yaml:"enabled"`
+
+	Absent  bool `default:"true" yaml:"absent"`
+	Fivenet bool `default:"true" yaml:"fivenet"`
+	Help    bool `default:"true" yaml:"help"`
+	Sync    bool `default:"true" yaml:"sync"`
 }
 
 type Game struct {

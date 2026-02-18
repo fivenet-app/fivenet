@@ -40,7 +40,7 @@ func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("discord.bot")
 }
 
-var BotModule = fx.Module("discord_bot",
+var BotModule = fx.Module("discord.bot",
 	fx.Provide(
 		New,
 	),
@@ -98,6 +98,7 @@ type Bot struct {
 	syncTimer *time.Timer
 	syncTime  atomic.Pointer[time.Duration]
 
+	enabled      bool
 	dc           *state.State
 	activeGuilds *xsync.Map[discord.GuildID, *Guild]
 }
@@ -110,11 +111,6 @@ type Result struct {
 }
 
 func New(p BotParams) Result {
-	// Discord bot not enabled
-	if !p.Config.Discord.Enabled {
-		return Result{}
-	}
-
 	cancelCtx, cancel := context.WithCancel(context.Background())
 
 	b := &Bot{
@@ -130,11 +126,17 @@ func New(p BotParams) Result {
 		wg:     sync.WaitGroup{},
 		workCh: make(chan *Guild, 3),
 
+		enabled:      p.Config.Discord.Enabled && p.Config.Discord.Sync,
 		dc:           p.Discord,
 		activeGuilds: xsync.NewMap[discord.GuildID, *Guild](),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		// Discord bot or sync not enabled
+		if !b.enabled {
+			return nil
+		}
+
 		// Setup sync timer
 		syncInterval := b.appCfg.Get().Discord.GetSyncInterval().AsDuration()
 		b.syncTime.Store(&syncInterval)
@@ -392,6 +394,12 @@ func (b *Bot) getJobGuildsFromDB(ctx context.Context) ([]*jobGuild, error) {
 }
 
 func (b *Bot) runSync(ctx context.Context) error {
+	// Discord bot or sync not enabled
+	if !b.enabled {
+		b.logger.Warn("skipping discord sync since bot or sync is not enabled")
+		return nil
+	}
+
 	if err := b.getGuilds(ctx); err != nil {
 		return fmt.Errorf("failed to get guilds. %w", err)
 	}

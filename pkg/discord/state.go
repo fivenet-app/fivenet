@@ -29,7 +29,7 @@ type StateParams struct {
 
 func NewDCState(p StateParams) *state.State {
 	// Discord bot not enabled
-	if !p.Config.Discord.Enabled {
+	if !p.Config.Discord.IsAnyEnabled() {
 		return nil
 	}
 

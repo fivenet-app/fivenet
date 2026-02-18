@@ -64,7 +64,7 @@ func (c *HelpCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommand
 
 		Choices: []discord.StringChoice{},
 
-		Required: true,
+		Required: false,
 	}
 	cmdData.Options = append(cmdData.Options, choices)
 
@@ -92,8 +92,10 @@ func (c *HelpCommand) HandleCommand(
 	messageId := "discord.commands.help.empty"
 
 	options := cmd.Options
+	firstOption := options[0].Value.String()
+
 	if len(options) > 0 {
-		option := strings.ReplaceAll(strings.ToLower(options[0].Value.String()), "\"", "")
+		option := strings.ReplaceAll(strings.ToLower(firstOption), "\"", "")
 
 		if slices.Contains(helpTopics, option) {
 			messageId = "discord.commands.help." + option
@@ -113,6 +115,7 @@ func (c *HelpCommand) HandleCommand(
 					URL:  c.url,
 				},
 				Thumbnail: embeds.EmbedThumbnailLogo,
+				Color:     embeds.ColorInfo,
 				Footer:    embeds.EmbedFooterMadeBy,
 			},
 		},

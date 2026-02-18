@@ -2859,7 +2859,8 @@
         "commands": {
             "fivenet": {
                 "desc": "Link zur FiveNet Web App.",
-                "summary": "FiveNet auch im Browser nutzen! Link zur FiveNet Web App."
+                "summary": "FiveNet auch im Browser nutzen! Link zur FiveNet Web App.",
+                "open_link": "FiveNet Web App öffnen"
             },
             "help": {
                 "name": "hilfe",

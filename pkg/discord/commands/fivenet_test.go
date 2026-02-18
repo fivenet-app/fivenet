@@ -3,12 +3,10 @@ package commands
 import (
 	"testing"
 
-	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
 	"github.com/diamondburned/arikawa/v3/discord"
 	lang "github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
-	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -40,37 +38,42 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 		Locale: discord.EnglishUS,
 	}
 
-	expectedData := &api.InteractionResponseData{
-		Embeds: &[]discord.Embed{
-			{
-				Type:        discord.LinkEmbed,
-				Title:       "FiveNet",
-				Description: "FiveNet is also available in your browser! Link to the FiveNet web app.",
-				URL:         cfg.HTTP.PublicURL,
-				Thumbnail:   embeds.EmbedThumbnailLogo,
-				Footer: &discord.EmbedFooter{
-					Text: embeds.EmbedFooterMadeBy.Text,
-					Icon: embeds.EmbedFooterMadeBy.Icon,
-				},
-				Provider: &discord.EmbedProvider{
-					Name: "FiveNet",
-					URL:  url,
-				},
-			},
-		},
-	}
-
 	// English
 	resp := router.HandleInteraction(interactionEvent)
 	require.NotNil(t, resp.Data)
+	// Check embeds
 	assert.Len(t, *resp.Data.Embeds, 1)
-	assert.Equal(t, (*resp.Data.Embeds)[0].Description, (*expectedData.Embeds)[0].Description)
+	assert.Equal(
+		t,
+		"FiveNet is also available in your browser! Link to the FiveNet web app.",
+		(*resp.Data.Embeds)[0].Description,
+	)
+	// Check components
+	require.True(t, (*resp.Data.Components)[0].Type() == discord.ActionRowComponentType)
+	actionRow, ok := (*resp.Data.Components)[0].(*discord.ActionRowComponent)
+	require.True(t, ok)
+
+	button := (*actionRow)[0].(*discord.ButtonComponent)
+	assert.Equal(t, "Open FiveNet", button.Label)
+	assert.Equal(t, discord.LinkButtonStyle(url), button.Style)
 
 	// German
 	interactionEvent.Locale = "de"
-	(*expectedData.Embeds)[0].Description = "FiveNet auch im Browser nutzen! Link zur FiveNet Web App."
 	resp = router.HandleInteraction(interactionEvent)
 	require.NotNil(t, resp.Data)
+	// Check embeds
 	assert.Len(t, *resp.Data.Embeds, 1)
-	assert.Equal(t, (*resp.Data.Embeds)[0].Description, (*expectedData.Embeds)[0].Description)
+	assert.Equal(
+		t,
+		"FiveNet auch im Browser nutzen! Link zur FiveNet Web App.",
+		(*resp.Data.Embeds)[0].Description,
+	)
+	// Check components
+	require.True(t, (*resp.Data.Components)[0].Type() == discord.ActionRowComponentType)
+	actionRow, ok = (*resp.Data.Components)[0].(*discord.ActionRowComponent)
+	require.True(t, ok)
+
+	button = (*actionRow)[0].(*discord.ButtonComponent)
+	assert.Equal(t, "FiveNet Web App öffnen", button.Label)
+	assert.Equal(t, discord.LinkButtonStyle(url), button.Style)
 }

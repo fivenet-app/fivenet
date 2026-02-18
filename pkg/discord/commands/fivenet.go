@@ -50,17 +50,26 @@ func (c *FivenetCommand) HandleCommand(
 		Flags: discord.EphemeralMessage,
 		Embeds: &[]discord.Embed{
 			{
+				Type:        discord.LinkEmbed,
 				Title:       "FiveNet",
 				Description: localizer("discord.commands.fivenet.summary", nil),
 				URL:         c.url,
-				Type:        discord.LinkEmbed,
+				Thumbnail:   embeds.EmbedThumbnailLogo,
 				Provider: &discord.EmbedProvider{
 					Name: "FiveNet",
 					URL:  c.url,
 				},
-				Thumbnail: embeds.EmbedThumbnailLogo,
-				Footer:    embeds.EmbedFooterMadeBy,
+				Color:  embeds.ColorInfo,
+				Footer: embeds.EmbedFooterMadeBy,
 			},
 		},
+		Components: discord.ComponentsPtr(
+			&discord.ActionRowComponent{
+				&discord.ButtonComponent{
+					Label: localizer("discord.commands.fivenet.open_link", nil),
+					Style: discord.LinkButtonStyle(c.url),
+				},
+			},
+		),
 	}
 }
