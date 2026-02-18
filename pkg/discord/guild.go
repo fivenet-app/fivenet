@@ -63,6 +63,7 @@ func NewGuild(
 	guild discord.Guild,
 	job string,
 	_ time.Time,
+	oauth2ProviderName string,
 ) (*Guild, error) {
 	ctx, cancel := context.WithCancel(ctx)
 
@@ -98,16 +99,18 @@ func NewGuild(
 
 	g.base = modules.NewBaseModule(ctx, g.logger.Named("module"),
 		g.bot.db, g.bot.dc, g.guild, g.job, g.bot.cfg, g.bot.appCfg, g.bot.enricher,
-		settings,
+		oauth2ProviderName, settings,
 	)
 
 	ms := []string{}
-	ms = append(ms, "qualifications")
 	if b.cfg.GroupSync.Enabled {
 		ms = append(ms, "groupsync")
 	}
 	if b.cfg.UserInfoSync.Enabled {
 		ms = append(ms, "userinfo")
+	}
+	if b.cfg.Qualifications.Enabled {
+		ms = append(ms, "qualifications")
 	}
 
 	g.logger.Debug("getting discord guild modules", zap.Strings("dc_modules", ms))
@@ -186,7 +189,7 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 
 	errs := multierr.Combine()
 	channelId := discord.NullChannelID
-	if settings.IsStatusLogEnabled() {
+	if settings.IsStatusLogEnabled() && false { // TODO
 		chId, err := strconv.ParseUint(settings.GetStatusLogSettings().GetChannelId(), 10, 64)
 		if err != nil {
 			errs = multierr.Append(
@@ -241,6 +244,8 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 		Time: timestamp.Now(),
 		Plan: b.String(),
 	})
+
+	fmt.Printf("%s - Plan Diff:\n%s\n", g.job, b.String())
 
 	if !plan.DryRun {
 		pLogs, err := plan.Apply(g.ctx, g.bot.dc)

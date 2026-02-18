@@ -291,6 +291,15 @@ type OAuth2 struct {
 	Providers []*OAuth2Provider
 }
 
+func (c *OAuth2) GetProviderByType(t OAuth2ProviderType) *OAuth2Provider {
+	for _, provider := range c.Providers {
+		if provider.Type == t {
+			return provider
+		}
+	}
+	return nil
+}
+
 type OAuth2ProviderType string
 
 const (
@@ -354,13 +363,15 @@ type DispatchCenter struct {
 }
 
 type Discord struct {
-	Enabled      bool                `default:"false" yaml:"enabled"`
-	DryRun       bool                `default:"false" yaml:"dryRun"`
-	Sync         bool                `default:"true"  yaml:"sync"`
-	Token        string              `                yaml:"token"`
-	UserInfoSync DiscordUserInfoSync `                yaml:"userInfoSync"`
-	GroupSync    DiscordGroupSync    `                yaml:"groupSync"`
-	Commands     DiscordCommands     `                yaml:"commands"`
+	Enabled bool   `default:"false" yaml:"enabled"`
+	DryRun  bool   `default:"false" yaml:"dryRun"`
+	Sync    bool   `default:"true"  yaml:"sync"`
+	Token   string `                yaml:"token"`
+
+	UserInfoSync   DiscordUserInfoSync       `yaml:"userInfoSync"`
+	GroupSync      DiscordGroupSync          `yaml:"groupSync"`
+	Qualifications DiscordQualificationsSync `yaml:"qualifications"`
+	Commands       DiscordCommands           `yaml:"commands"`
 }
 
 func (c *Discord) IsAnyEnabled() bool {
@@ -386,6 +397,10 @@ type DiscordUserInfoSync struct {
 type DiscordGroupSync struct {
 	Enabled bool                        `default:"false" yaml:"enabled"`
 	Mapping map[string]DiscordGroupRole `                yaml:"omitempty,mapping"`
+}
+
+type DiscordQualificationsSync struct {
+	Enabled bool `default:"false" yaml:"enabled"`
 }
 
 type DiscordGroupRole struct {

@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
@@ -41,9 +43,26 @@ type qualificationsEntry struct {
 }
 
 type qualificationUserMapping struct {
-	AccountID  int64  `alias:"account_id"`
-	ExternalID string `alias:"external_id"`
-	Job        string `alias:"job"`
+	AccountID  int64            `alias:"account_id"`
+	ExternalID string           `alias:"external_id"`
+	Jobs       []*users.UserJob `alias:"jobs"`
+}
+
+func (u *qualificationUserMapping) HasJob(job string) bool {
+	return slices.ContainsFunc(u.Jobs, func(j *users.UserJob) bool {
+		return j.GetJob() == job
+	})
+}
+
+func (u *qualificationUserMapping) GetJobInfo(job string) *users.UserJob {
+	idx := slices.IndexFunc(u.Jobs, func(j *users.UserJob) bool {
+		return j.GetJob() == job
+	})
+	if idx == -1 {
+		return nil
+	}
+
+	return u.Jobs[idx]
 }
 
 func init() {
@@ -177,12 +196,8 @@ func (g *QualificationsSync) planUsers(
 
 	errs := multierr.Combine()
 
-	jobs := []mysql.Expression{mysql.String(g.job)}
-	for _, job := range g.appCfg.Get().Discord.GetIgnoredJobs() {
-		jobs = append(jobs, mysql.String(job))
-	}
-
 	tUsers := table.FivenetUser.AS("users")
+	tUserJobs := table.FivenetUserJobs.AS("user_jobs")
 
 	users := discordtypes.Users{}
 	for qualificationId, role := range qualificationRoles {
@@ -190,7 +205,9 @@ func (g *QualificationsSync) planUsers(
 			SELECT(
 				tAccsOauth2.AccountID.AS("qualification_user_mapping.account_id"),
 				tAccsOauth2.ExternalID.AS("qualification_user_mapping.external_id"),
-				tUsers.Job.AS("qualification_user_mapping.job"),
+				// User's jobs
+				tUserJobs.Job.AS("jobs.job"),
+				tUserJobs.Grade.AS("jobs.grade"),
 			).
 			FROM(
 				tQualificationsResults.
@@ -200,24 +217,24 @@ func (g *QualificationsSync) planUsers(
 							tQualifications.DeletedAt.IS_NULL(),
 						),
 					).
+					INNER_JOIN(tAccsOauth2,
+						tAccsOauth2.AccountID.EQ(tUsers.AccountID),
+					).
 					INNER_JOIN(tUsers,
 						tUsers.ID.EQ(tQualificationsResults.UserID),
 					).
-					INNER_JOIN(tAccs,
-						tAccs.ID.EQ(tUsers.AccountID),
-					).
-					INNER_JOIN(tAccsOauth2,
-						tAccsOauth2.AccountID.EQ(tAccs.ID),
+					INNER_JOIN(tUserJobs,
+						tUserJobs.UserID.EQ(tUsers.ID),
 					),
 			).
 			WHERE(mysql.AND(
+				tAccsOauth2.Provider.EQ(mysql.String("discord")),
 				tQualificationsResults.QualificationID.EQ(mysql.Int64(qualificationId)),
 				tQualificationsResults.DeletedAt.IS_NULL(),
 				tQualificationsResults.Status.EQ(
 					mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
 				),
-				tQualifications.Job.IN(jobs...),
-				tAccsOauth2.Provider.EQ(mysql.String("discord")),
+				tQualifications.Job.EQ(mysql.String(g.job)),
 			))
 
 		var dest []*qualificationUserMapping
@@ -240,10 +257,10 @@ func (g *QualificationsSync) planUsers(
 			user := &discordtypes.User{
 				ID:    discord.UserID(externalId),
 				Roles: &discordtypes.UserRoles{},
-				Job:   u.Job,
+				Jobs:  u.Jobs,
 			}
 
-			if u.Job != g.job {
+			if u.HasJob(g.job) {
 				users.Add(user)
 				continue
 			}

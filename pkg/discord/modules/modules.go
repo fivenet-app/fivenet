@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"slices"
 	"sync/atomic"
 
 	"github.com/diamondburned/arikawa/v3/discord"
@@ -21,7 +20,6 @@ import (
 
 var (
 	tAccsOauth2     = table.FivenetAccountsOauth2
-	tAccs           = table.FivenetAccounts
 	tColleagueProps = table.FivenetJobColleagueProps
 )
 
@@ -57,6 +55,8 @@ type BaseModule struct {
 	appCfg   appconfig.IConfig
 	enricher *mstlystcdata.Enricher
 
+	oauth2ProviderName string
+
 	settings atomic.Pointer[jobssettings.DiscordSyncSettings]
 }
 
@@ -70,6 +70,7 @@ func NewBaseModule(
 	cfg *config.Discord,
 	appCfg appconfig.IConfig,
 	enricher *mstlystcdata.Enricher,
+	oauth2ProviderName string,
 	settings *jobssettings.DiscordSyncSettings,
 ) *BaseModule {
 	bm := &BaseModule{
@@ -83,6 +84,8 @@ func NewBaseModule(
 		appCfg:   appCfg,
 		enricher: enricher,
 
+		oauth2ProviderName: oauth2ProviderName,
+
 		settings: atomic.Pointer[jobssettings.DiscordSyncSettings]{},
 	}
 	bm.settings.Store(settings)
@@ -94,13 +97,10 @@ func (m *BaseModule) SetSettings(settings *jobssettings.DiscordSyncSettings) {
 	m.settings.Store(settings)
 }
 
-func (m *BaseModule) checkIfJobIgnored(job string) bool {
-	// Ignore certain jobs when syncing (e.g., "temporary" jobs), example:
-	// "ambulance" job Discord, and an user is currently in the ignored job, e.g., "army".
-	ignoredJobs := m.appCfg.Get().Discord.GetIgnoredJobs()
-	if m.job != job && slices.Contains(ignoredJobs, job) {
-		return true
+func (m *BaseModule) GetOAuth2ProviderName() string {
+	if m.oauth2ProviderName != "" {
+		return m.oauth2ProviderName
 	}
-
-	return false
+	// Sane default
+	return "discord"
 }

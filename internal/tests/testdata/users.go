@@ -6,6 +6,10 @@ func ptr(s string) *string {
 	return &s
 }
 
+func ptrFloat(f float64) *float64 {
+	return &f
+}
+
 var Users = []*users.User{
 	{
 		UserId:      1,
@@ -16,7 +20,7 @@ var Users = []*users.User{
 		Lastname:    "Clockwork",
 		Sex:         ptr("f"),
 		Dateofbirth: "08.04.2003",
-		Height:      ptr("182"),
+		Height:      ptrFloat(182),
 	},
 	{
 		UserId:      2,
@@ -27,7 +31,7 @@ var Users = []*users.User{
 		Lastname:    "Scott",
 		Sex:         ptr("m"),
 		Dateofbirth: "01.08.1982",
-		Height:      ptr("185"),
+		Height:      ptrFloat(185),
 	},
 	{
 		UserId:      3,
@@ -38,7 +42,7 @@ var Users = []*users.User{
 		Lastname:    "Striker",
 		Sex:         ptr("m"),
 		Dateofbirth: "28.10.1990",
-		Height:      ptr("186"),
+		Height:      ptrFloat(186),
 	},
 	{
 		UserId:      4,
@@ -49,7 +53,7 @@ var Users = []*users.User{
 		Lastname:    "Scott",
 		Sex:         ptr("m"),
 		Dateofbirth: "15.06.1990",
-		Height:      ptr("180"),
+		Height:      ptrFloat(180),
 	},
 	{
 		UserId:      5,
@@ -60,6 +64,6 @@ var Users = []*users.User{
 		Lastname:    "Hans",
 		Sex:         ptr("m"),
 		Dateofbirth: "10.02.1991",
-		Height:      ptr("178"),
+		Height:      ptrFloat(178),
 	},
 }

@@ -13,6 +13,9 @@ import (
 func (x *QuickButtons) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
+		if t == "" {
+			return nil
+		}
 		return protoutils.UnmarshalPartialJSON([]byte(t), x)
 	case *string:
 		if t == nil {
@@ -20,6 +23,9 @@ func (x *QuickButtons) Scan(value any) error {
 		}
 		return protoutils.UnmarshalPartialJSON([]byte(*t), x)
 	case []byte:
+		if len(t) == 0 {
+			return nil
+		}
 		return protoutils.UnmarshalPartialJSON(t, x)
 	}
 	return nil

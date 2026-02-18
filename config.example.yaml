@@ -197,14 +197,10 @@ dispatchCenter:
 
 discord:
   enabled: true
+  dryRun: false
   token: "your_discord_bot_token"
   sync: false
-  userInfoSync:
-    enabled: false
-    gradeRoleFormat: "[%grade%] %grade_label%"
-    employeeRoleFormat: "%s Employees"
-    unemployedRoleName: "Citizen"
-    jobsAbsceneRoleName: "Absent"
+
   groupSync:
     enabled: false
     mapping:
@@ -217,6 +213,14 @@ discord:
         roleName: "Teamleitung"
         #permissions: 0
         #color: "#9B59B6"
+  userInfoSync:
+    enabled: false
+    gradeRoleFormat: "[%grade%] %grade_label%"
+    employeeRoleFormat: "%s Employees"
+    unemployedRoleName: "Citizen"
+    jobsAbsceneRoleName: "Absent"
+  qualifications:
+    enabled: false
   commands:
     enabled: true
 

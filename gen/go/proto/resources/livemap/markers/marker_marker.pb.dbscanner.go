@@ -13,6 +13,9 @@ import (
 func (x *MarkerData) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
+		if t == "" {
+			return nil
+		}
 		return proto.Unmarshal([]byte(t), x)
 	case *string:
 		if t == nil {
@@ -20,6 +23,9 @@ func (x *MarkerData) Scan(value any) error {
 		}
 		return proto.Unmarshal([]byte(*t), x)
 	case []byte:
+		if len(t) == 0 {
+			return nil
+		}
 		return proto.Unmarshal(t, x)
 	}
 	return nil

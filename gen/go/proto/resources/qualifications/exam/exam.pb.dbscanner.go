@@ -14,6 +14,9 @@ import (
 func (x *ExamGrading) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
+		if t == "" {
+			return nil
+		}
 		return protojson.Unmarshal([]byte(t), x)
 	case *string:
 		if t == nil {
@@ -21,6 +24,9 @@ func (x *ExamGrading) Scan(value any) error {
 		}
 		return protojson.Unmarshal([]byte(*t), x)
 	case []byte:
+		if len(t) == 0 {
+			return nil
+		}
 		return protojson.Unmarshal(t, x)
 	}
 	return nil
@@ -40,6 +46,9 @@ func (x *ExamGrading) Value() (driver.Value, error) {
 func (x *ExamQuestionAnswerData) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
+		if t == "" {
+			return nil
+		}
 		return protojson.Unmarshal([]byte(t), x)
 	case *string:
 		if t == nil {
@@ -47,6 +56,9 @@ func (x *ExamQuestionAnswerData) Scan(value any) error {
 		}
 		return protojson.Unmarshal([]byte(*t), x)
 	case []byte:
+		if len(t) == 0 {
+			return nil
+		}
 		return protojson.Unmarshal(t, x)
 	}
 	return nil
@@ -66,6 +78,9 @@ func (x *ExamQuestionAnswerData) Value() (driver.Value, error) {
 func (x *ExamQuestionData) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
+		if t == "" {
+			return nil
+		}
 		return protojson.Unmarshal([]byte(t), x)
 	case *string:
 		if t == nil {
@@ -73,6 +88,9 @@ func (x *ExamQuestionData) Scan(value any) error {
 		}
 		return protojson.Unmarshal([]byte(*t), x)
 	case []byte:
+		if len(t) == 0 {
+			return nil
+		}
 		return protojson.Unmarshal(t, x)
 	}
 	return nil
@@ -92,6 +110,9 @@ func (x *ExamQuestionData) Value() (driver.Value, error) {
 func (x *ExamResponses) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
+		if t == "" {
+			return nil
+		}
 		return protojson.Unmarshal([]byte(t), x)
 	case *string:
 		if t == nil {
@@ -99,6 +120,9 @@ func (x *ExamResponses) Scan(value any) error {
 		}
 		return protojson.Unmarshal([]byte(*t), x)
 	case []byte:
+		if len(t) == 0 {
+			return nil
+		}
 		return protojson.Unmarshal(t, x)
 	}
 	return nil
@@ -118,6 +142,9 @@ func (x *ExamResponses) Value() (driver.Value, error) {
 func (x *QualificationExamSettings) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
+		if t == "" {
+			return nil
+		}
 		return protojson.Unmarshal([]byte(t), x)
 	case *string:
 		if t == nil {
@@ -125,6 +152,9 @@ func (x *QualificationExamSettings) Scan(value any) error {
 		}
 		return protojson.Unmarshal([]byte(*t), x)
 	case []byte:
+		if len(t) == 0 {
+			return nil
+		}
 		return protojson.Unmarshal(t, x)
 	}
 	return nil

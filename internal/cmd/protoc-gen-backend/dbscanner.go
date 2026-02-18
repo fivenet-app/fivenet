@@ -140,13 +140,19 @@ import (
 func (x *{{ $message }}) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
+		if t == "" {
+		    return nil
+		}
 		return {{ $info.Unmarshal }}([]byte(t), x)
     case *string:
-        if t == nil {
-            return nil
-        }
-        return {{ $info.Unmarshal }}([]byte(*t), x)
+		if t == nil {
+		    return nil
+		}
+		return {{ $info.Unmarshal }}([]byte(*t), x)
 	case []byte:
+		if len(t) == 0 {
+			return nil
+		}
 		return {{ $info.Unmarshal }}(t, x)
 	}
 	return nil

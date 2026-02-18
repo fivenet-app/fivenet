@@ -18,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	jobssettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/settings"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
@@ -51,19 +52,35 @@ type UserInfo struct {
 }
 
 type userRoleMapping struct {
-	AccountID  int64  `alias:"account_id"`
-	ExternalID string `alias:"external_id"`
-	UserID     int32  `alias:"user_id"`
-	Job        string `alias:"job"`
-	JobGrade   int32  `alias:"job_grade"`
-	Firstname  string `alias:"firstname"`
-	Lastname   string `alias:"lastname"`
+	AccountID  int64            `alias:"account_id"`
+	ExternalID string           `alias:"external_id"`
+	UserID     int32            `alias:"user_id"`
+	Firstname  string           `alias:"firstname"`
+	Lastname   string           `alias:"lastname"`
+	Jobs       []*users.UserJob `alias:"jobs"`
 
 	// Job Props
 	NamePrefix   string               `alias:"name_prefix"`
 	NameSuffix   string               `alias:"name_suffix"`
 	AbsenceBegin *timestamp.Timestamp `alias:"absence_begin"`
 	AbsenceEnd   *timestamp.Timestamp `alias:"absence_end"`
+}
+
+func (u *userRoleMapping) HasJob(job string) bool {
+	return slices.ContainsFunc(u.Jobs, func(j *users.UserJob) bool {
+		return j.GetJob() == job
+	})
+}
+
+func (u *userRoleMapping) GetJobInfo(job string) *users.UserJob {
+	idx := slices.IndexFunc(u.Jobs, func(j *users.UserJob) bool {
+		return j.GetJob() == job
+	})
+	if idx == -1 {
+		return nil
+	}
+
+	return u.Jobs[idx]
 }
 
 func init() {
@@ -117,21 +134,11 @@ func (g *UserInfo) Plan(ctx context.Context) (*discordtypes.State, []discord.Emb
 		handlers = append(
 			handlers,
 			func(ctx context.Context, guildId discord.GuildID, member discord.Member, user *discordtypes.User) ([]discord.Embed, error) {
-				if user.Job == g.job {
+				if slices.ContainsFunc(
+					user.Jobs,
+					func(job *users.UserJob) bool { return job.GetJob() == g.job },
+				) {
 					return nil, nil
-				}
-
-				if g.checkIfJobIgnored(user.Job) {
-					user.Job = g.job
-
-					// If the user has an ignored job, we don't want to remove the unemployed role if they have it
-					// Additionally we want to prevent a kick if the unemployed mode is set to kick and the user has an ignored job
-					if !slices.Contains(member.RoleIDs, g.unemployedRole.ID) ||
-						settings.GetUserInfoSyncSettings().
-							GetUnemployedMode() !=
-							jobssettings.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE {
-						return nil, nil
-					}
 				}
 
 				switch settings.GetUserInfoSyncSettings().GetUnemployedMode() {
@@ -193,8 +200,6 @@ func (g *UserInfo) planRoles(job *jobs.Job) discordtypes.Roles {
 			Name:   settings.GetUserInfoSyncSettings().GetUnemployedRoleName(),
 			Module: userInfoRoleModuleUnemployed,
 			Job:    g.job,
-
-			KeepIfJobDifferent: true,
 		}
 		roles = append(roles, g.unemployedRole)
 	} else {
@@ -253,22 +258,19 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 	logs := []discord.Embed{}
 	settings := g.settings.Load()
 
-	jobs := []mysql.Expression{mysql.String(g.job)}
-	for _, job := range g.appCfg.Get().Discord.GetIgnoredJobs() {
-		jobs = append(jobs, mysql.String(job))
-	}
-
 	tUsers := table.FivenetUser.AS("users")
+	tUserJobs := table.FivenetUserJobs.AS("user_jobs")
 
 	stmt := tAccsOauth2.
 		SELECT(
 			tAccsOauth2.AccountID.AS("userrolemapping.account_id"),
 			tAccsOauth2.ExternalID.AS("userrolemapping.external_id"),
 			tUsers.ID.AS("userrolemapping.user_id"),
-			tUsers.Job.AS("userrolemapping.job"),
-			tUsers.JobGrade.AS("userrolemapping.job_grade"),
 			tUsers.Firstname.AS("userrolemapping.firstname"),
 			tUsers.Lastname.AS("userrolemapping.lastname"),
+			// User's jobs
+			tUserJobs.Job.AS("jobs.job"),
+			tUserJobs.Grade.AS("jobs.grade"),
 			// Job Props
 			tColleagueProps.NamePrefix.AS("userrolemapping.name_prefix"),
 			tColleagueProps.NameSuffix.AS("userrolemapping.name_suffix"),
@@ -280,6 +282,9 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 				INNER_JOIN(tUsers,
 					tUsers.AccountID.EQ(tAccsOauth2.AccountID),
 				).
+				INNER_JOIN(tUserJobs,
+					tUserJobs.UserID.EQ(tUsers.ID),
+				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(
 						tColleagueProps.UserID.EQ(tUsers.ID),
@@ -289,7 +294,7 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 		).
 		WHERE(mysql.AND(
 			tAccsOauth2.Provider.EQ(mysql.String("discord")),
-			tUsers.Job.IN(jobs...),
+			tUserJobs.Job.EQ(mysql.String(g.job)),
 		)).
 		ORDER_BY(tUsers.ID.ASC())
 
@@ -314,10 +319,11 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 		user := &discordtypes.User{
 			ID:    discord.UserID(externalId),
 			Roles: &discordtypes.UserRoles{},
-			Job:   u.Job,
+			Jobs:  u.Jobs,
 		}
 
-		if u.Job != g.job {
+		userInfo := u.GetJobInfo(g.job)
+		if userInfo != nil {
 			users.Add(user)
 			continue
 		}
@@ -337,7 +343,7 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 					Description: fmt.Sprintf(
 						"Discord ID: %d, Rank: %d",
 						externalId,
-						u.JobGrade,
+						userInfo.GetGrade(),
 					),
 					Author: embeds.EmbedAuthor,
 					Color:  embeds.ColorWarn,
@@ -355,7 +361,7 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 			}
 		}
 
-		user.Roles.Sum, err = g.getUserRoles(u.Job, u.JobGrade)
+		user.Roles.Sum, err = g.getUserRoles(userInfo.GetJob(), userInfo.GetGrade())
 		if err != nil {
 			g.logger.Warn(
 				fmt.Sprintf("failed to get user's job roles %d", externalId),
@@ -366,7 +372,8 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 		}
 
 		for _, mapping := range settings.GetUserInfoSyncSettings().GetGroupMapping() {
-			if u.JobGrade < mapping.GetFromGrade() || u.JobGrade > mapping.GetToGrade() {
+			if userInfo.GetGrade() < mapping.GetFromGrade() ||
+				userInfo.GetGrade() > mapping.GetToGrade() {
 				continue
 			}
 
@@ -484,10 +491,6 @@ func (g *UserInfo) constructUserNickname(
 
 func (g *UserInfo) getUserRoles(job string, grade int32) (discordtypes.Roles, error) {
 	userRoles := discordtypes.Roles{}
-
-	if g.checkIfJobIgnored(job) {
-		return userRoles, nil
-	}
 
 	role, ok := g.jobGradeRoles[grade]
 	if !ok {

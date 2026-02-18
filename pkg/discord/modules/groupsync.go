@@ -11,7 +11,9 @@ import (
 	"strings"
 
 	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
@@ -29,9 +31,9 @@ type GroupSync struct {
 }
 
 type groupSyncUser struct {
-	ExternalID string `alias:"external_id"`
-	Group      string `alias:"group"`
-	UserID     int32  `alias:"user_id"`
+	ExternalID string                  `alias:"external_id"`
+	Groups     *accounts.AccountGroups `alias:"group"`
+	UserID     int32                   `alias:"user_id"`
 	SameJob    bool
 }
 
@@ -118,29 +120,35 @@ func (g *GroupSync) planUsers(
 	users := discordtypes.Users{}
 	logs := []discord.Embed{}
 
-	serverGroups := []mysql.Expression{}
-	for sGroup := range g.cfg.GroupSync.Mapping {
-		serverGroups = append(serverGroups, mysql.String(sGroup))
-	}
-
+	tAccount := table.FivenetAccounts.AS("accounts")
 	tUsers := table.FivenetUser.AS("users")
+
+	conditions := []mysql.BoolExpression{
+		tAccsOauth2.Provider.EQ(mysql.String("discord")),
+		tAccount.Groups.IS_NOT_NULL(),
+	}
+	for sGroup := range g.cfg.GroupSync.Mapping {
+		conditions = append(conditions,
+			dbutils.JSON_CONTAINS(tAccount.Groups, mysql.String(sGroup)),
+		)
+	}
 
 	stmt := tAccsOauth2.
 		SELECT(
 			tAccsOauth2.ExternalID.AS("groupsyncuser.external_id"),
-			tUsers.Group.AS("groupsyncuser.group"),
+			tAccount.Groups.AS("groupsyncuser.groups"),
 			tUsers.ID.AS("groupsyncuser.user_id"),
 		).
 		FROM(
 			tAccsOauth2.
+				INNER_JOIN(tAccount,
+					tAccount.ID.EQ(tAccsOauth2.AccountID),
+				).
 				INNER_JOIN(tUsers,
 					tUsers.ID.EQ(tAccsOauth2.AccountID),
 				),
 		).
-		WHERE(mysql.AND(
-			tAccsOauth2.Provider.EQ(mysql.String("discord")),
-			tUsers.Group.IN(serverGroups...),
-		))
+		WHERE(mysql.AND(conditions...))
 
 	var dest []*groupSyncUser
 	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
@@ -151,66 +159,68 @@ func (g *GroupSync) planUsers(
 
 	errs := multierr.Combine()
 	for _, user := range dest {
-		// Get group config based on users group
-		groupCfg, ok := g.cfg.GroupSync.Mapping[user.Group]
-		if !ok {
-			continue
-		}
-
-		if groupCfg.NotSameJob {
-			has, err := g.checkIfUserIsPartOfJob(ctx, user.UserID, g.job)
-			if err != nil {
-				g.logger.Error(
-					fmt.Sprintf("failed to check if user has char in job %s", user.ExternalID),
-					zap.String("group", user.Group),
-					zap.Error(err),
-				)
+		for _, group := range user.Groups.GetGroups() {
+			// Get group config based on user's groups
+			groupCfg, ok := g.cfg.GroupSync.Mapping[group]
+			if !ok {
 				continue
 			}
-			if has {
-				g.logger.Debug(
-					fmt.Sprintf(
-						"member %s is part of same job, not setting to group",
-						user.ExternalID,
-					),
-					zap.String("group", user.Group),
-				)
-				user.SameJob = true
-				continue
-			}
-		}
 
-		idx := slices.IndexFunc(roles, func(role *discordtypes.Role) bool {
-			return role.Name == groupCfg.RoleName
-		})
-		if idx == -1 {
-			logs = append(logs, discord.Embed{
-				Title: fmt.Sprintf(
-					"Group Sync: Failed to find dc role for group %s",
-					groupCfg.RoleName,
-				),
-				Description: fmt.Sprintf("For DC ID %s", user.ExternalID),
-				Author:      embeds.EmbedAuthor,
-				Color:       embeds.ColorInfo,
+			if groupCfg.NotSameJob {
+				has, err := g.checkIfUserIsPartOfJob(ctx, user.UserID, g.job)
+				if err != nil {
+					g.logger.Error(
+						fmt.Sprintf("failed to check if user has char in job %s", user.ExternalID),
+						zap.String("group", group),
+						zap.Error(err),
+					)
+					continue
+				}
+				if has {
+					g.logger.Debug(
+						fmt.Sprintf(
+							"member %s is part of same job, not setting to group",
+							user.ExternalID,
+						),
+						zap.String("group", group),
+					)
+					user.SameJob = true
+					continue
+				}
+			}
+
+			idx := slices.IndexFunc(roles, func(role *discordtypes.Role) bool {
+				return role.Name == groupCfg.RoleName
 			})
-			continue
-		}
+			if idx == -1 {
+				logs = append(logs, discord.Embed{
+					Title: fmt.Sprintf(
+						"Group Sync: Failed to find dc role for group %s",
+						groupCfg.RoleName,
+					),
+					Description: fmt.Sprintf("For DC ID %s", user.ExternalID),
+					Author:      embeds.EmbedAuthor,
+					Color:       embeds.ColorInfo,
+				})
+				continue
+			}
 
-		externalId, err := strconv.ParseUint(user.ExternalID, 10, 64)
-		if err != nil {
-			errs = multierr.Append(
-				errs,
-				fmt.Errorf("failed to parse oauth2 external id %d. %w", externalId, err),
-			)
-			continue
-		}
+			externalId, err := strconv.ParseUint(user.ExternalID, 10, 64)
+			if err != nil {
+				errs = multierr.Append(
+					errs,
+					fmt.Errorf("failed to parse oauth2 external id %d. %w", externalId, err),
+				)
+				continue
+			}
 
-		users.Add(&discordtypes.User{
-			ID: discord.UserID(externalId),
-			Roles: &discordtypes.UserRoles{
-				Sum: []*discordtypes.Role{roles[idx]},
-			},
-		})
+			users.Add(&discordtypes.User{
+				ID: discord.UserID(externalId),
+				Roles: &discordtypes.UserRoles{
+					Sum: []*discordtypes.Role{roles[idx]},
+				},
+			})
+		}
 	}
 
 	return users, logs, errs

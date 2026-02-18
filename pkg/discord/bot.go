@@ -34,7 +34,7 @@ import (
 	"go.uber.org/zap"
 )
 
-const botWorkerCount = 3
+const botWorkerCount = 1
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("discord.bot")
@@ -92,6 +92,8 @@ type Bot struct {
 	appCfg   appconfig.IConfig
 	perms    perms.Permissions
 
+	oauth2ProviderName string
+
 	wg     sync.WaitGroup
 	workCh chan *Guild
 
@@ -113,6 +115,11 @@ type Result struct {
 func New(p BotParams) Result {
 	cancelCtx, cancel := context.WithCancel(context.Background())
 
+	oauth2ProviderName := "discord"
+	if provider := p.Config.OAuth2.GetProviderByType(config.OAuth2ProviderDiscord); provider != nil {
+		oauth2ProviderName = provider.Name
+	}
+
 	b := &Bot{
 		logger:   p.Logger,
 		tracer:   p.TP.Tracer("discord.bot"),
@@ -122,6 +129,8 @@ func New(p BotParams) Result {
 		cfg:      &p.Config.Discord,
 		appCfg:   p.AppConfig,
 		perms:    p.Perms,
+
+		oauth2ProviderName: oauth2ProviderName,
 
 		wg:     sync.WaitGroup{},
 		workCh: make(chan *Guild, 3),
@@ -353,7 +362,14 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 			continue
 		}
 
-		g, err := NewGuild(ctx, b, guilds[idx], guildInfo.Job, guildInfo.LastSync.AsTime())
+		g, err := NewGuild(
+			ctx,
+			b,
+			guilds[idx],
+			guildInfo.Job,
+			guildInfo.LastSync.AsTime(),
+			b.oauth2ProviderName,
+		)
 		if err != nil {
 			return err
 		}

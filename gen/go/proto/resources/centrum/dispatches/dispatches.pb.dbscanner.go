@@ -14,6 +14,9 @@ import (
 func (x *DispatchAttributes) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
+		if t == "" {
+			return nil
+		}
 		return protojson.Unmarshal([]byte(t), x)
 	case *string:
 		if t == nil {
@@ -21,6 +24,9 @@ func (x *DispatchAttributes) Scan(value any) error {
 		}
 		return protojson.Unmarshal([]byte(*t), x)
 	case []byte:
+		if len(t) == 0 {
+			return nil
+		}
 		return protojson.Unmarshal(t, x)
 	}
 	return nil
@@ -40,6 +46,9 @@ func (x *DispatchAttributes) Value() (driver.Value, error) {
 func (x *DispatchReferences) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
+		if t == "" {
+			return nil
+		}
 		return protojson.Unmarshal([]byte(t), x)
 	case *string:
 		if t == nil {
@@ -47,6 +56,9 @@ func (x *DispatchReferences) Scan(value any) error {
 		}
 		return protojson.Unmarshal([]byte(*t), x)
 	case []byte:
+		if len(t) == 0 {
+			return nil
+		}
 		return protojson.Unmarshal(t, x)
 	}
 	return nil

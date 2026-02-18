@@ -1,7 +1,10 @@
 package discordtypes
 
 import (
+	"slices"
+
 	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 )
 
@@ -23,8 +26,6 @@ type Role struct {
 	Color       *discord.Color       `yaml:"color,omitempty"`
 	Permissions *discord.Permissions `yaml:"permissions,omitempty"`
 	Job         string               `yaml:"-"`
-
-	KeepIfJobDifferent bool `yaml:"-"`
 
 	Module string `yaml:"module,omitempty"`
 }
@@ -51,14 +52,31 @@ func (u Users) ToSlice() []*User {
 }
 
 type User struct {
-	ID       discord.UserID `yaml:"userDiscordId"`
-	Nickname *string        `yaml:"nickname,omitempty"`
-	Job      string         `yaml:"-"`
+	ID       discord.UserID   `yaml:"userDiscordId"`
+	Nickname *string          `yaml:"nickname,omitempty"`
+	Jobs     []*users.UserJob `yaml:"-"`
 
 	Roles *UserRoles `yaml:"roles"`
 
 	Kick       *bool  `yaml:"kick,omitempty"`
 	KickReason string `yaml:"kickReason,omitempty"`
+}
+
+func (u *User) HasJob(job string) bool {
+	return slices.ContainsFunc(u.Jobs, func(j *users.UserJob) bool {
+		return j.GetJob() == job
+	})
+}
+
+func (u *User) GetJobInfo(job string) *users.UserJob {
+	idx := slices.IndexFunc(u.Jobs, func(j *users.UserJob) bool {
+		return j.GetJob() == job
+	})
+	if idx == -1 {
+		return nil
+	}
+
+	return u.Jobs[idx]
 }
 
 type UserRoles struct {
