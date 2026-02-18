@@ -27,6 +27,11 @@ var EmbedFooterMadeBy = &discord.EmbedFooter{
 	Icon: "https://galexrt.moe/favicon.png",
 }
 
+var EmbedFooterFiveNet = &discord.EmbedFooter{
+	Text: "FiveNet",
+	Icon: "https://raw.githubusercontent.com/fivenet-app/fivenet/main/public/images/logo-200x200.webp",
+}
+
 var EmbedThumbnailLogo = &discord.EmbedThumbnail{
 	URL:    "https://cdn.discordapp.com/app-icons/1101207666652618865/94429951df15108c737949ff2770cd8f.png",
 	Width:  128,

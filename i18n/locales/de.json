@@ -2871,7 +2871,7 @@
                 },
                 "empty": {
                     "title": "Kein Hilfe-Thema ausgewählt!",
-                    "msg": "Verfügbare Themen:\n* discord\n* registrierung"
+                    "msg": "Wählen Sie eines der verfügbaren Hilfe-Themen aus."
                 },
                 "discord": {
                     "name": "discord",
@@ -2884,6 +2884,12 @@
                     "desc": "Informationen rundum die FiveNet Account Registrierung.",
                     "title": "FiveNet Account Registrierung",
                     "msg": "1. Tritt dem Gameserver bei.\n2. Wenn du im Spiel bist, benutze den Befehl `/fivenet`, um Ihren **Registrierungs-Token** abzurufen.\n3. Klicke auf den Registrierungs-Token und Ihr Browser sollte automatisch die FiveNet-Registrierungsseite öffnen.\n4. Dort füllen Sie das Registrierungsformular aus, geben einen Benutzernamen und ein Passwort an, und schon können Sie den \"Konto erstellen\"-Knopf nutzen.\n5. Sie sollten nun in der Lage sein, sich mit dem gewählten Benutzernamen und Passwort anzumelden.\n\n(Falls Ihr Browser die FiveNet-Registrierungsseite nicht automatisch öffnet, [hier]({url}/auth/registration/) gelangen Sie zur FiveNet-Registrierungsseite)"
+                },
+                "browser": {
+                    "name": "browser",
+                    "desc": "Informationen, wie Sie auf FiveNet über Ihren Browser zugreifen können.",
+                    "title": "Zugriff auf FiveNet im Browser",
+                    "msg": "FiveNet ist auch per Browser verfügbar!\nSie können darauf zugreifen, indem Sie zu {url} navigieren und sich mit demselben Konto anmelden, das Sie im Spiel für das Tablet nutzen."
                 }
             },
             "absent": {

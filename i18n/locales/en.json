@@ -2871,7 +2871,7 @@
                 },
                 "empty": {
                     "title": "No help topic chosen!",
-                    "msg": "Available topics:\n* discord\n* registration"
+                    "msg": "Choose one of the available help topics below."
                 },
                 "discord": {
                     "name": "discord",
@@ -2884,6 +2884,12 @@
                     "desc": "Info regarding FiveNet Account registration.",
                     "title": "FiveNet Account Registration",
                     "msg": "1. Join the gameserver.\n2. When connected and in-game, use the `/fivenet` command to retrieve your **registration token**.\n3. Click on the registration token and your browser will open the FiveNet registration page automatically.\n4. Now fill in the registration form, with an username and password, and you should be ready to create your account.\n5. You should now be able to login with the chosen username and password.\n\n(In case your browser doesn't automatically, [click me]({url}/auth/registration/) to get to the FiveNet registration page)"
+                },
+                "browser": {
+                    "name": "browser",
+                    "desc": "Info how to access FiveNet via your browser.",
+                    "title": "Accessing FiveNet in your browser",
+                    "msg": "FiveNet is also available in your browser!\nYou can access it by navigating to {url} and logging in as you would in-game with the same account."
                 }
             },
             "absent": {

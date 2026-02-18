@@ -14,8 +14,9 @@ import (
 )
 
 var helpTopics = []string{
-	"discord",
 	"registration",
+	"browser",
+	"discord",
 }
 
 type HelpCommand struct {
@@ -80,6 +81,10 @@ func (c *HelpCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommand
 
 	router.Add("help", c)
 
+	for _, opt := range helpTopics {
+		router.AddComponent(fmt.Sprintf("help_%s", opt), c)
+	}
+
 	return cmdData
 }
 
@@ -87,37 +92,74 @@ func (c *HelpCommand) HandleCommand(
 	ctx context.Context,
 	cmd cmdroute.CommandData,
 ) *api.InteractionResponseData {
-	localizer := c.l.Translator(string(cmd.Event.Locale))
-
-	messageId := "discord.commands.help.empty"
-
 	options := cmd.Options
-	firstOption := options[0].Value.String()
-
+	var topic string
 	if len(options) > 0 {
-		option := strings.ReplaceAll(strings.ToLower(firstOption), "\"", "")
-
-		if slices.Contains(helpTopics, option) {
-			messageId = "discord.commands.help." + option
-		}
+		topic = strings.ReplaceAll(strings.ToLower(options[0].Value.String()), "\"", "")
 	}
+
+	return c.getHelpTopicResponse(cmd.Event.Locale, topic)
+}
+
+func (c *HelpCommand) HandleComponent(
+	ctx context.Context,
+	data cmdroute.ComponentData,
+) *api.InteractionResponse {
+	parts := strings.Split(string(data.ComponentInteraction.ID()), "_")
+	return &api.InteractionResponse{
+		Type: api.MessageInteractionWithSource,
+		Data: c.getHelpTopicResponse(data.Event.Locale, parts[1]),
+	}
+}
+
+func (c *HelpCommand) getHelpTopicResponse(
+	locale discord.Language,
+	topic string,
+) *api.InteractionResponseData {
+	localizer := c.l.Translator(string(locale))
+
+	var title string
+	var desc string
+
+	if len(topic) > 0 && slices.Contains(helpTopics, topic) {
+		messageId := "discord.commands.help." + topic
+		title = localizer(messageId+".title", nil)
+		desc = localizer(messageId+".msg", map[string]any{"url": c.url})
+	} else {
+		messageId := "discord.commands.help.empty"
+		title = localizer(messageId+".title", nil)
+		desc = localizer(messageId+".msg", nil)
+	}
+
+	helpOpts := []discord.InteractiveComponent{}
+	for _, opt := range helpTopics {
+		btnStyle := discord.SecondaryButtonStyle()
+		if opt == topic {
+			btnStyle = discord.PrimaryButtonStyle()
+		}
+
+		helpOpts = append(helpOpts, &discord.ButtonComponent{
+			Label:    localizer(fmt.Sprintf("discord.commands.help.%s.title", opt), nil),
+			CustomID: discord.ComponentID(fmt.Sprintf("help_%s", opt)),
+			Style:    btnStyle,
+		})
+	}
+	actionRow := discord.ActionRowComponent(helpOpts)
 
 	return &api.InteractionResponseData{
 		Flags: discord.EphemeralMessage,
 		Embeds: &[]discord.Embed{
 			{
-				Title: localizer(messageId+".title", nil),
-				Description: localizer(messageId+".msg",
-					map[string]any{"url": c.url}),
-				URL: c.url,
+				Title:       title,
+				Description: desc,
 				Provider: &discord.EmbedProvider{
 					Name: "FiveNet",
 					URL:  c.url,
 				},
-				Thumbnail: embeds.EmbedThumbnailLogo,
-				Color:     embeds.ColorInfo,
-				Footer:    embeds.EmbedFooterMadeBy,
+				Color:  embeds.ColorInfo,
+				Footer: embeds.EmbedFooterFiveNet,
 			},
 		},
+		Components: discord.ComponentsPtr(&actionRow),
 	}
 }

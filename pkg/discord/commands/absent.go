@@ -118,7 +118,7 @@ func (c *AbsentCommand) getBaseResponse() *api.InteractionResponseData {
 					Name: "FiveNet",
 				},
 				Thumbnail: embeds.EmbedThumbnailLogo,
-				Footer:    embeds.EmbedFooterMadeBy,
+				Footer:    embeds.EmbedFooterFiveNet,
 			},
 		},
 	}
