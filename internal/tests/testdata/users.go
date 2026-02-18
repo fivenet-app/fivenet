@@ -6,7 +6,7 @@ func ptr(s string) *string {
 	return &s
 }
 
-func ptrFloat(f float64) *float64 {
+func ptrFloat(f float32) *float32 {
 	return &f
 }
 
