@@ -126,8 +126,6 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, _ string) (context.Context,
 			AuthUserOriginalJobCtxTag, userClaims.OriginalJob.Job,
 			AuthUserOriginalJobGradeCtxTag, userClaims.OriginalJob.JobGrade,
 		)
-
-		// TODO check if the original job is still existing
 	}
 
 	newCtx := logging.InjectFields(ctx, fields)

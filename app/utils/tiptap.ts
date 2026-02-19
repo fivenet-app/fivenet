@@ -339,6 +339,7 @@ export function isEmptyRichContentDoc(content: RichTextHtmlNode | null | undefin
     // Check if all top-level nodes are empty paragraphs
     let nodes = content.content[0]?.content || [];
     if (nodes.length === 0) {
+        // FIXME needs to be made more resilient to different content structures
         nodes = content.content;
     }
     for (const node of nodes) {

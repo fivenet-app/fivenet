@@ -260,12 +260,18 @@ func (r *Retriever) GetUserInfoFromClaims(
 		userInfo.Superuser = true
 	}
 
-	// If the claims contain job info, override the user info with it
+	// If the user has an original job in their claims, check if the userInfo matches that job + grade.
 	if userClaims.OriginalJob != nil {
-		if (userInfo.Job == userClaims.OriginalJob.Job ||
-			userInfo.JobGrade == userClaims.OriginalJob.JobGrade) && !userInfo.Superuser {
+		// Check that the current user's info from the database matches the original job and grade in the claims.
+		// If not, it means the user's job has changed since the token was issued.
+		if !userInfo.Superuser && (userInfo.GetJob() != userClaims.OriginalJob.Job ||
+			userInfo.GetJobGrade() != userClaims.OriginalJob.JobGrade) {
 			userInfo.Job = userClaims.OriginalJob.Job
 			userInfo.JobGrade = userClaims.OriginalJob.JobGrade
+		} else if userClaims.Job != nil && userClaims.JobGrade != nil {
+			// Ensure that the job and job grade are used to override the userInfo.
+			userInfo.Job = *userClaims.Job
+			userInfo.JobGrade = *userClaims.JobGrade
 		}
 	}
 
