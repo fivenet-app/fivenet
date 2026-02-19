@@ -76,3 +76,11 @@ func SummaryFromText(text string, maxChars int) string {
 
 	return strings.TrimSpace(string(r[:maxChars]))
 }
+
+func GetLicenseFromIdentifier(identifier string) string {
+	parts := strings.SplitN(identifier, ":", 2)
+	if len(parts) < 2 {
+		return identifier
+	}
+	return parts[1]
+}

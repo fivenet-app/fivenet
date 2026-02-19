@@ -131,220 +131,258 @@ func (s *Server) handleUsersData(
 		}
 	}
 
-	tAccounts := table.FivenetAccounts
-
 	rowsAffected := int64(0)
 	if len(toCreate) > 0 {
-		// Begin transaction
-		tx, err := s.db.BeginTx(ctx, nil)
-		if err != nil {
-			return 0, err
-		}
-		// Defer a rollback in case anything fails
-		defer tx.Rollback()
-
-		stmt := tUsers.
-			INSERT(
-				tUsers.ID,
-				tUsers.AccountID,
-				tUsers.Identifier,
-				tUsers.Firstname,
-				tUsers.Lastname,
-				tUsers.Dateofbirth,
-				tUsers.Job,
-				tUsers.JobGrade,
-				tUsers.Sex,
-				tUsers.PhoneNumber,
-				tUsers.Height,
-				tUsers.Visum,
-				tUsers.Playtime,
-			)
-
 		for _, user := range toCreate {
-			var accountIdStmt mysql.SelectStatement = nil
-			if user.GetUserId() <= 0 || user.GetIdentifier() != "" {
-				accountIdStmt = tAccounts.
-					SELECT(
-						mysql.COALESCE(tAccounts.ID, mysql.NULL),
-					).
-					FROM(tAccounts).
-					WHERE(tAccounts.License.EQ(mysql.String(getLicenseFromIdentifier(user.GetIdentifier())))).
-					LIMIT(1)
-			}
-
-			insertStmt := stmt.
-				VALUES(
-					user.GetUserId(),
-					accountIdStmt,
-					user.Identifier,
-					user.Firstname,
-					user.Lastname,
-					user.GetDateofbirth(),
-					user.GetJob(),
-					user.GetJobGrade(),
-					user.Sex,
-					user.PhoneNumber,
-					user.Height,
-					user.Visum,
-					user.Playtime,
-				).
-				ON_DUPLICATE_KEY_UPDATE(
-					tUsers.AccountID.SET(mysql.IntExp(mysql.Raw("VALUES(`account_id`)"))),
-					tUsers.Firstname.SET(mysql.StringExp(mysql.Raw("VALUES(`firstname`)"))),
-					tUsers.Lastname.SET(mysql.StringExp(mysql.Raw("VALUES(`lastname`)"))),
-					tUsers.Dateofbirth.SET(mysql.StringExp(mysql.Raw("VALUES(`dateofbirth`)"))),
-					tUsers.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
-					tUsers.JobGrade.SET(mysql.IntExp(mysql.Raw("VALUES(`job_grade`)"))),
-					tUsers.Sex.SET(mysql.StringExp(mysql.Raw("VALUES(`sex`)"))),
-					tUsers.PhoneNumber.SET(mysql.StringExp(mysql.Raw("VALUES(`phone_number`)"))),
-					tUsers.Height.SET(mysql.FloatExp(mysql.Raw("VALUES(`height`)"))),
-					tUsers.Visum.SET(mysql.IntExp(mysql.Raw("VALUES(`visum`)"))),
-					tUsers.Playtime.SET(mysql.IntExp(mysql.Raw("VALUES(`playtime`)"))),
-				)
-
-			res, err := insertStmt.ExecContext(ctx, tx)
+			affected, err := s.createUser(ctx, user)
 			if err != nil {
-				return 0, fmt.Errorf("failed to execute user insert statement. %w", err)
-			}
-			rows, err := res.RowsAffected()
-			if err != nil {
-				return 0, fmt.Errorf("failed to retrieve rows affected for user insert. %w", err)
-			}
-
-			rowsAffected += rows
-
-			if err := s.handleCitizenLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
 				return 0, fmt.Errorf(
-					"failed to handle user licenses for user %d (%s). %w",
+					"failed to create user %d (%s). %w",
 					user.GetUserId(),
 					user.GetIdentifier(),
 					err,
 				)
 			}
-
-			if err := s.handleCitizensJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
-				return 0, fmt.Errorf(
-					"failed to handle user jobs for user %d (%s). %w",
-					user.GetUserId(),
-					user.GetIdentifier(),
-					err,
-				)
-			}
-
-			if err := s.handleCitizensPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
-				return 0, fmt.Errorf(
-					"failed to handle user phone numbers for user %d (%s). %w",
-					user.GetUserId(),
-					user.GetIdentifier(),
-					err,
-				)
-			}
-		}
-
-		// Commit the transaction
-		if err := tx.Commit(); err != nil {
-			return 0, err
+			rowsAffected += affected
 		}
 	}
 
 	if len(toUpdate) > 0 {
-		// Begin transaction
-		tx, err := s.db.BeginTx(ctx, nil)
-		if err != nil {
-			return 0, err
-		}
-		// Defer a rollback in case anything fails
-		defer tx.Rollback()
-
-		for _, user := range toUpdate {
-			accountIdStmt := tAccounts.
-				SELECT(
-					mysql.COALESCE(tAccounts.ID, mysql.NULL),
-				).
-				FROM(tAccounts).
-				WHERE(tAccounts.License.EQ(mysql.String(getLicenseFromIdentifier(user.GetIdentifier())))).
-				LIMIT(1)
-
-			stmt := tUsers.
-				UPDATE(
-					tUsers.AccountID,
-					tUsers.Identifier,
-					tUsers.Firstname,
-					tUsers.Lastname,
-					tUsers.Dateofbirth,
-					tUsers.Job,
-					tUsers.JobGrade,
-					tUsers.Sex,
-					tUsers.PhoneNumber,
-					tUsers.Height,
-					tUsers.Visum,
-					tUsers.Playtime,
-				).
-				SET(
-					accountIdStmt,
-					user.Identifier,
-					user.Firstname,
-					user.Lastname,
-					user.Dateofbirth,
-					user.Job,
-					user.JobGrade,
-					user.Sex,
-					user.PhoneNumber,
-					user.Height,
-					user.Visum,
-					user.Playtime,
-				).
-				WHERE(
-					tUsers.ID.EQ(mysql.Int32(user.GetUserId())),
-				).
-				LIMIT(1)
-
-			res, err := stmt.ExecContext(ctx, tx)
+		for _, user := range toCreate {
+			affected, err := s.updateUser(ctx, user)
 			if err != nil {
-				return 0, fmt.Errorf("failed to execute user update statement. %w", err)
-			}
-			rows, err := res.RowsAffected()
-			if err != nil {
-				return 0, fmt.Errorf("failed to retrieve rows affected for user update. %w", err)
-			}
-
-			rowsAffected += rows
-
-			if err := s.handleCitizenLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
 				return 0, fmt.Errorf(
-					"failed to handle user licenses for user %d (%s). %w",
+					"failed to update user %d (%s). %w",
 					user.GetUserId(),
 					user.GetIdentifier(),
 					err,
 				)
 			}
-
-			if err := s.handleCitizensJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
-				return 0, fmt.Errorf(
-					"failed to handle user jobs for user %d (%s). %w",
-					user.GetUserId(),
-					user.GetIdentifier(),
-					err,
-				)
-			}
-
-			if err := s.handleCitizensPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
-				return 0, fmt.Errorf(
-					"failed to handle user phone numbers for user %d (%s). %w",
-					user.GetUserId(),
-					user.GetIdentifier(),
-					err,
-				)
-			}
-		}
-
-		// Commit the transaction
-		if err := tx.Commit(); err != nil {
-			return 0, err
+			rowsAffected += affected
 		}
 	}
 
 	return rowsAffected, nil
+}
+
+func (s *Server) createUser(
+	ctx context.Context,
+	user *syncdata.DataUser,
+) (int64, error) {
+	tAccounts := table.FivenetAccounts
+	tUsers := table.FivenetUser
+
+	stmt := tUsers.
+		INSERT(
+			tUsers.ID,
+			tUsers.AccountID,
+			tUsers.License,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Dateofbirth,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Sex,
+			tUsers.PhoneNumber,
+			tUsers.Height,
+			tUsers.Visum,
+			tUsers.Playtime,
+		)
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	var accountIdStmt mysql.SelectStatement = nil
+	if user.GetUserId() <= 0 || user.GetIdentifier() != "" {
+		accountIdStmt = tAccounts.
+			SELECT(
+				mysql.COALESCE(tAccounts.ID, mysql.NULL),
+			).
+			FROM(tAccounts).
+			WHERE(tAccounts.License.EQ(mysql.String(getLicenseFromIdentifier(user.GetIdentifier())))).
+			LIMIT(1)
+	}
+
+	insertStmt := stmt.
+		VALUES(
+			user.GetUserId(),
+			accountIdStmt,
+			utils.GetLicenseFromIdentifier(user.Identifier),
+			user.Identifier,
+			user.Firstname,
+			user.Lastname,
+			user.GetDateofbirth(),
+			user.GetJob(),
+			user.GetJobGrade(),
+			user.Sex,
+			user.PhoneNumber,
+			user.Height,
+			user.Visum,
+			user.Playtime,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tUsers.AccountID.SET(mysql.IntExp(mysql.Raw("VALUES(`account_id`)"))),
+			tUsers.Firstname.SET(mysql.StringExp(mysql.Raw("VALUES(`firstname`)"))),
+			tUsers.Lastname.SET(mysql.StringExp(mysql.Raw("VALUES(`lastname`)"))),
+			tUsers.Dateofbirth.SET(mysql.StringExp(mysql.Raw("VALUES(`dateofbirth`)"))),
+			tUsers.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
+			tUsers.JobGrade.SET(mysql.IntExp(mysql.Raw("VALUES(`job_grade`)"))),
+			tUsers.Sex.SET(mysql.StringExp(mysql.Raw("VALUES(`sex`)"))),
+			tUsers.PhoneNumber.SET(mysql.StringExp(mysql.Raw("VALUES(`phone_number`)"))),
+			tUsers.Height.SET(mysql.FloatExp(mysql.Raw("VALUES(`height`)"))),
+			tUsers.Visum.SET(mysql.IntExp(mysql.Raw("VALUES(`visum`)"))),
+			tUsers.Playtime.SET(mysql.IntExp(mysql.Raw("VALUES(`playtime`)"))),
+		)
+
+	res, err := insertStmt.ExecContext(ctx, tx)
+	if err != nil {
+		return 0, fmt.Errorf("failed to execute user insert statement. %w", err)
+	}
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("failed to retrieve rows affected for user insert. %w", err)
+	}
+
+	if err := s.handleCitizenLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
+		return 0, fmt.Errorf(
+			"failed to handle user licenses for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
+	}
+
+	if err := s.handleCitizensJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
+		return 0, fmt.Errorf(
+			"failed to handle user jobs for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
+	}
+
+	if err := s.handleCitizensPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
+		return 0, fmt.Errorf(
+			"failed to handle user phone numbers for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return 0, err
+	}
+
+	return rows, nil
+}
+
+func (s *Server) updateUser(
+	ctx context.Context,
+	user *syncdata.DataUser,
+) (int64, error) {
+	tAccounts := table.FivenetAccounts
+	tUsers := table.FivenetUser
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	accountIdStmt := tAccounts.
+		SELECT(
+			mysql.COALESCE(tAccounts.ID, mysql.NULL),
+		).
+		FROM(tAccounts).
+		WHERE(tAccounts.License.EQ(mysql.String(getLicenseFromIdentifier(user.GetIdentifier())))).
+		LIMIT(1)
+
+	stmt := tUsers.
+		UPDATE(
+			tUsers.AccountID,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Dateofbirth,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Sex,
+			tUsers.PhoneNumber,
+			tUsers.Height,
+			tUsers.Visum,
+			tUsers.Playtime,
+		).
+		SET(
+			accountIdStmt,
+			user.Identifier,
+			user.Firstname,
+			user.Lastname,
+			user.Dateofbirth,
+			user.Job,
+			user.JobGrade,
+			user.Sex,
+			user.PhoneNumber,
+			user.Height,
+			user.Visum,
+			user.Playtime,
+		).
+		WHERE(
+			tUsers.ID.EQ(mysql.Int32(user.GetUserId())),
+		).
+		LIMIT(1)
+
+	res, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return 0, fmt.Errorf("failed to execute user update statement. %w", err)
+	}
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("failed to retrieve rows affected for user update. %w", err)
+	}
+
+	if err := s.handleCitizenLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
+		return 0, fmt.Errorf(
+			"failed to handle user licenses for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
+	}
+
+	if err := s.handleCitizensJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
+		return 0, fmt.Errorf(
+			"failed to handle user jobs for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
+	}
+
+	if err := s.handleCitizensPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
+		return 0, fmt.Errorf(
+			"failed to handle user phone numbers for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return 0, err
+	}
+
+	return rows, nil
 }
 
 func (s *Server) handleCitizenLicenses(

@@ -14,6 +14,7 @@ import (
 type FivenetUser struct {
 	ID            int32      `sql:"primary_key" json:"id"`
 	AccountID     *int64     `json:"account_id"`
+	License       *string    `json:"license"`
 	Identifier    string     `json:"identifier"`
 	Group         *string    `json:"group"`
 	Job           *string    `json:"job"`
