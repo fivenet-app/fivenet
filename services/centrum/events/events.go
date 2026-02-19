@@ -22,7 +22,7 @@ const (
 
 func SplitSubject(subject string) (string, events.Topic, events.Type) {
 	split := strings.Split(subject, ".")
-	if len(split) < 3 {
+	if len(split) < 4 {
 		return "", "", ""
 	}
 

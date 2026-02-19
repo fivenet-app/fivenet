@@ -296,7 +296,7 @@ func New(p Params) *DispatchDB {
 
 					// Fallback to iterating over each job's locations map and delete the dispatch from the map by id
 					split := strings.Split(key, ".")
-					if len(split) < 1 {
+					if len(split) < 2 {
 						d.logger.Warn(
 							"unable to delete dispatch location, invalid key",
 							zap.String("store_dispatch_key", key),
