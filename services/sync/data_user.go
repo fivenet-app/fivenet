@@ -309,6 +309,7 @@ func (s *Server) updateUser(
 
 	stmt := tUsers.
 		UPDATE(
+			tUsers.ID,
 			tUsers.AccountID,
 			tUsers.License,
 			tUsers.Identifier,
@@ -324,6 +325,7 @@ func (s *Server) updateUser(
 			tUsers.Playtime,
 		).
 		SET(
+			user.GetUserId(),
 			accountIdStmt,
 			utils.GetLicenseFromIdentifier(user.Identifier),
 			user.Identifier,
@@ -338,9 +340,10 @@ func (s *Server) updateUser(
 			user.Visum,
 			user.Playtime,
 		).
-		WHERE(
+		WHERE(mysql.OR(
 			tUsers.ID.EQ(mysql.Int32(user.GetUserId())),
-		).
+			tUsers.Identifier.EQ(mysql.String(user.GetIdentifier())),
+		)).
 		LIMIT(1)
 
 	res, err := stmt.ExecContext(ctx, tx)
