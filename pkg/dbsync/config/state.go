@@ -62,6 +62,9 @@ func NewState(p StateParams) *State {
 	d.Users = &TableSyncState{
 		dss: d,
 	}
+	d.Accounts = &TableSyncState{
+		dss: d,
+	}
 	d.OwnedVehicles = &TableSyncState{
 		dss: d,
 	}
