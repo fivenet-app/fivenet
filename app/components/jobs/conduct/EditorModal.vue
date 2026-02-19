@@ -197,6 +197,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                 {{ $t('common.type') }}
                             </label>
                         </dt>
+
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="type">
                                 <ClientOnly>
@@ -234,11 +235,18 @@ const confirmModal = overlay.create(ConfirmModal);
                                 {{ $t('common.target') }}
                             </label>
                         </dt>
+
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="targetUserId">
                                 <SelectMenu
                                     v-model="state.targetUser"
-                                    :searchable="async (q: string) => await completorStore.completeColleagues(q)"
+                                    :searchable="
+                                        async (q: string) =>
+                                            await completorStore.completeColleagues(
+                                                q,
+                                                state.targetUser > 0 ? [state.targetUser] : [],
+                                            )
+                                    "
                                     searchable-key="completor-colleagues"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     :filter-fields="['firstname', 'lastname']"
@@ -276,6 +284,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                 {{ $t('common.content') }}
                             </label>
                         </dt>
+
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="message" :ui="{ error: 'hidden' }">
                                 <ClientOnly>
@@ -301,6 +310,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                 {{ $t('common.expires_at') }}?
                             </label>
                         </dt>
+
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="expiresAt">
                                 <InputDatePicker v-model="state.expiresAt" clearable time />

@@ -42,18 +42,13 @@ const { data, refresh, status, error } = useLazyAsyncData(`colleague-info-${user
 });
 
 async function getCitizen(id: number): Promise<Colleague> {
-    try {
-        const call = jobsJobsClient.getColleague({
-            userId: id,
-            infoOnly: true,
-        });
-        const { response } = await call;
+    const call = jobsJobsClient.getColleague({
+        userId: id,
+        infoOnly: true,
+    });
+    const { response } = await call;
 
-        return response.colleague!;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
+    return response.colleague!;
 }
 
 const user = computed(() =>
