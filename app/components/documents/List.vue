@@ -461,21 +461,23 @@ defineShortcuts({
                     </UCollapsible>
                 </UForm>
             </UDashboardToolbar>
+
+            <UDashboardToolbar :ui="{ root: 'min-h-[33px] p-0 sm:p-0 gap-0 sm:gap-0' }">
+                <UTabs
+                    v-model="activeTab"
+                    :content="false"
+                    :items="[
+                        { value: 'all', label: 'Alle Dokumente' },
+                        { value: 'own', label: 'Eigene Dokumente' },
+                    ]"
+                    size="xs"
+                    class="w-full"
+                    :ui="{ list: 'rounded-none' }"
+                />
+            </UDashboardToolbar>
         </template>
 
         <template #body>
-            <UTabs
-                v-model="activeTab"
-                :content="false"
-                :items="[
-                    { value: 'all', label: 'Alle Dokumente' },
-                    { value: 'own', label: 'Eigene Dokumente' },
-                ]"
-                size="xs"
-                class="w-full"
-                :ui="{ list: 'rounded-none' }"
-            />
-
             <DataErrorBlock
                 v-if="error"
                 :title="$t('common.unable_to_load', [$t('common.document', 2)])"
