@@ -50,11 +50,11 @@ const documentsDocumentsClient = await getDocumentsDocumentsClient();
 const schema = z.object({
     weight: z.coerce.number().min(0).max(999_999),
     title: z.coerce.string().min(3).max(255),
-    description: z.coerce.string().min(3).max(255),
+    description: z.coerce.string().max(255),
     color: z.coerce.string().max(7),
     icon: z.coerce.string().max(128).optional(),
     contentTitle: z.coerce.string().min(3).max(2048),
-    content: z.custom<string>().optional(),
+    content: z.coerce.string().optional(),
     contentState: z.union([z.coerce.string().min(1).max(512), z.coerce.string().length(0)]),
     category: z.custom<Category>().optional(),
     jobAccess: jobsAccessEntries(t).max(maxAccessEntries).default([]),
@@ -566,7 +566,6 @@ const formRef = useTemplateRef('formRef');
                                 name="description"
                                 :label="`${$t('common.template')} ${$t('common.description')}`"
                                 class="grid grid-cols-2 items-center gap-2"
-                                required
                             >
                                 <UTextarea
                                     v-model="state.description"
@@ -577,12 +576,7 @@ const formRef = useTemplateRef('formRef');
                                 />
                             </UFormField>
 
-                            <UFormField
-                                name="color"
-                                :label="$t('common.color')"
-                                class="grid grid-cols-2 items-center gap-2"
-                                required
-                            >
+                            <UFormField name="color" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
                                 <div class="flex flex-1 gap-1">
                                     <ColorPickerTW v-model="state.color" class="flex-1" />
                                 </div>
