@@ -7,6 +7,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import { getSettingsAccountsClient } from '~~/gen/ts/clients';
@@ -141,6 +142,11 @@ const columns = computed(
                               ])
                             : undefined,
                     ]),
+            },
+            {
+                accessorKey: 'id',
+                header: t('common.id'),
+                cell: ({ row }) => h(IDCopyBadge, { id: row.original.id, icon: 'i-mdi-content-copy', variant: 'link' }),
             },
             {
                 accessorKey: 'username',

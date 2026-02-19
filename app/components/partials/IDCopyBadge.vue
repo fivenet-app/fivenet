@@ -10,6 +10,7 @@ const props = withDefaults(
         content?: I18NItem;
         action?: (id: number | number | string) => void;
         hideIcon?: boolean;
+        icon?: string;
         variant?: ButtonProps['variant'];
         size?: ButtonProps['size'];
         disableTooltip?: boolean;
@@ -20,6 +21,7 @@ const props = withDefaults(
         content: undefined,
         action: undefined,
         hideIcon: false,
+        icon: 'i-mdi-fingerprint',
         variant: 'solid',
         size: 'sm',
         disableTooltip: false,
@@ -54,7 +56,7 @@ function click(): void {
     <UTooltip :text="disableTooltip ? undefined : $t('common.copy')">
         <UButton
             class="break-keep"
-            :icon="!hideIcon ? 'i-mdi-fingerprint' : undefined"
+            :icon="!hideIcon ? icon : undefined"
             :variant="variant"
             :size="size"
             @click.prevent="() => click()"
