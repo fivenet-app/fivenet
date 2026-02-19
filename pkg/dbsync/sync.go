@@ -170,9 +170,10 @@ func (s *Sync) start() error {
 	}
 	s.jobs = newJobsSync(syncer, s.state.Jobs)
 	s.licenses = newLicensesSync(syncer, s.state.Licenses)
+
+	s.accounts = newAccountsSync(syncer, s.state.Accounts)
 	s.users = newUsersSync(syncer, s.state.Users)
 	s.vehicles = newVehiclesSync(syncer, s.state.OwnedVehicles)
-	s.accounts = newAccountsSync(syncer, s.state.Accounts)
 
 	s.wg.Go(func() {
 		s.Run(s.ctx)

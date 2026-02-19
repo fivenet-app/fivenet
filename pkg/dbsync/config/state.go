@@ -52,17 +52,14 @@ func NewState(p StateParams) *State {
 	d.Jobs = &TableSyncState{
 		dss: d,
 	}
-	d.JobGrades = &TableSyncState{
-		dss: d,
-	}
 	d.Licenses = &TableSyncState{
 		dss: d,
 	}
 
-	d.Users = &TableSyncState{
+	d.Accounts = &TableSyncState{
 		dss: d,
 	}
-	d.Accounts = &TableSyncState{
+	d.Users = &TableSyncState{
 		dss: d,
 	}
 	d.OwnedVehicles = &TableSyncState{
@@ -85,6 +82,23 @@ func (s *State) Load() error {
 
 	if err := yaml.Unmarshal(out, s); err != nil {
 		return err
+	}
+
+	if s.Jobs == nil {
+		s.Jobs = &TableSyncState{dss: s}
+	}
+	if s.Licenses == nil {
+		s.Licenses = &TableSyncState{dss: s}
+	}
+
+	if s.Accounts == nil {
+		s.Accounts = &TableSyncState{dss: s}
+	}
+	if s.Users == nil {
+		s.Users = &TableSyncState{dss: s}
+	}
+	if s.OwnedVehicles == nil {
+		s.OwnedVehicles = &TableSyncState{dss: s}
 	}
 
 	return nil
