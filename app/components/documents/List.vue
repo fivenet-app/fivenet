@@ -23,7 +23,7 @@ import TemplateDrawer from './templates/TemplateDrawer.vue';
 
 const { t } = useI18n();
 
-const { can } = useAuth();
+const { activeChar, can } = useAuth();
 
 const overlay = useOverlay();
 
@@ -64,6 +64,10 @@ const schema = z.object({
     closed: z.coerce.boolean().optional(),
     categories: z.coerce.number().array().max(3).default([]),
     onlyDrafts: z.coerce.boolean().optional(),
+
+    // Custom options
+    own: z.coerce.boolean().optional(),
+
     sorting: z
         .object({
             columns: z
@@ -134,6 +138,23 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
         throw e;
     }
 }
+
+const activeTab = computed({
+    get() {
+        if (query.own) {
+            return 'own';
+        }
+        return 'all';
+    },
+    set(value: string) {
+        query.own = value === 'own';
+        if (query.own) {
+            query.creators = [activeChar.value!.userId];
+        } else {
+            query.creators = [];
+        }
+    },
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -350,6 +371,10 @@ defineShortcuts({
                                         trailing
                                         value-key="userId"
                                     >
+                                        <template #default="{ modelValue }">
+                                            {{ $t('common.selected', modelValue?.length ?? 0) }}
+                                        </template>
+
                                         <template #item-label="{ item }">
                                             {{ userToLabel(item) }}
                                         </template>
@@ -439,6 +464,18 @@ defineShortcuts({
         </template>
 
         <template #body>
+            <UTabs
+                v-model="activeTab"
+                :content="false"
+                :items="[
+                    { value: 'all', label: 'Alle Dokumente' },
+                    { value: 'own', label: 'Eigene Dokumente' },
+                ]"
+                size="xs"
+                class="w-full"
+                :ui="{ list: 'rounded-0' }"
+            />
+
             <DataErrorBlock
                 v-if="error"
                 :title="$t('common.unable_to_load', [$t('common.document', 2)])"
