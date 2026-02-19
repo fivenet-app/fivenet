@@ -225,7 +225,10 @@ func (s *Server) createUser(
 			user.Playtime,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
+			tUsers.ID.SET(mysql.IntExp(mysql.Raw("VALUES(`id`)"))),
 			tUsers.AccountID.SET(mysql.IntExp(mysql.Raw("VALUES(`account_id`)"))),
+			tUsers.License.SET(mysql.StringExp(mysql.Raw("VALUES(`license`)"))),
+			tUsers.Identifier.SET(mysql.StringExp(mysql.Raw("VALUES(`identifier`)"))),
 			tUsers.Firstname.SET(mysql.StringExp(mysql.Raw("VALUES(`firstname`)"))),
 			tUsers.Lastname.SET(mysql.StringExp(mysql.Raw("VALUES(`lastname`)"))),
 			tUsers.Dateofbirth.SET(mysql.StringExp(mysql.Raw("VALUES(`dateofbirth`)"))),
