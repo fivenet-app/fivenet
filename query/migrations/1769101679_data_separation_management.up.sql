@@ -91,44 +91,6 @@ ALTER TABLE `fivenet_user` ADD CONSTRAINT `fk_fivenet_user_account_id` FOREIGN K
 ALTER TABLE `fivenet_user` ADD COLUMN `deleted_at` datetime(3) DEFAULT NULL AFTER `last_seen`;
 ALTER TABLE `fivenet_user` ADD COLUMN `deleted_reason` VARCHAR(255) DEFAULT NULL AFTER `deleted_at`;
 
--- Table: `fivenet_user` - Migrate existing users from `users` to `fivenet_user` table
-INSERT INTO `fivenet_user` (
-    id,
-    identifier,
-    `group`,
-    job,
-    job_grade,
-    firstname,
-    lastname,
-    dateofbirth,
-    sex,
-    height,
-    phone_number,
-    disabled,
-    visum,
-    playtime,
-    created_at,
-    last_seen
-)
-SELECT
-    id,
-    identifier,
-    `group`,
-    job,
-    job_grade,
-    firstname,
-    lastname,
-    dateofbirth,
-    sex,
-    height,
-    phone_number,
-    disabled,
-    visum,
-    playtime,
-    created_at,
-    last_seen
-FROM `users`;
-
 -- Table: `fivenet_user` - Fill in `account_id` for existing users with "matching" accounts
 UPDATE `fivenet_user` u
 JOIN `fivenet_accounts` a ON SUBSTRING_INDEX(u.`identifier`, ':', -1) = a.`license`
@@ -192,19 +154,6 @@ ALTER TABLE `fivenet_wiki_pages_activity` ADD CONSTRAINT `fk_fivenet_wiki_pages_
 ALTER TABLE `fivenet_user_licenses` ADD COLUMN `user_id` int(11) NOT NULL FIRST;
 ALTER TABLE `fivenet_user_licenses` ADD PRIMARY KEY (`type`, `user_id`);
 
-INSERT
-	INTO
-	fivenet_user_licenses (`user_id`,
-	`type`,
-	`owner`)
-SELECT
-	u.id,
-	ul.`type`,
-	ul.`owner`
-FROM
-	user_licenses ul
-INNER JOIN users u ON (u.identifier = ul.`owner`);
-
 -- Table: `fivenet_user_licenses` - Migrate `owner` (identifier) to `user_id`
 UPDATE `fivenet_user_licenses` ul
 JOIN `fivenet_user` u ON ul.`owner` = u.`identifier`
@@ -224,9 +173,6 @@ ALTER TABLE `fivenet_owned_vehicles` DROP INDEX `idx_fivenet_owned_vehicles_owne
 ALTER TABLE `fivenet_owned_vehicles` DROP INDEX `idx_fivenet_owned_vehicles_owner_model_type`;
 
 ALTER TABLE `fivenet_owned_vehicles` ADD COLUMN `user_id` int(11) NULL AFTER `owner`;
-
-INSERT INTO `fivenet_owned_vehicles` (`owner`, `user_id`, `job`, `plate`, `model`, `type`)
-SELECT `owner`, NULL, NULL, `plate`, `model`, `type` FROM `owned_vehicles`;
 
 -- Table: `fivenet_owned_vehicles` - Migrate `owner` (identifier) to `user_id`
 UPDATE `fivenet_owned_vehicles` owv
