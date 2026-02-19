@@ -310,6 +310,7 @@ func (s *Server) updateUser(
 	stmt := tUsers.
 		UPDATE(
 			tUsers.AccountID,
+			tUsers.License,
 			tUsers.Identifier,
 			tUsers.Firstname,
 			tUsers.Lastname,
@@ -324,6 +325,7 @@ func (s *Server) updateUser(
 		).
 		SET(
 			accountIdStmt,
+			utils.GetLicenseFromIdentifier(user.Identifier),
 			user.Identifier,
 			user.Firstname,
 			user.Lastname,
