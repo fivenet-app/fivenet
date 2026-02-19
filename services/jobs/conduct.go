@@ -3,6 +3,7 @@ package jobs
 import (
 	"context"
 	"errors"
+	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
@@ -421,11 +422,12 @@ func (s *Server) CreateConductEntry(
 	}
 	req.Entry.Id = lastId
 
-	entry, err := s.getConductEntry(ctx, req.GetEntry().GetId(), true)
+	entry, err := s.getConductEntry(ctx, lastId, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
+	grpc_audit.AddMeta(ctx, "conduct.id", strconv.Itoa(int(lastId)))
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return &pbjobs.CreateConductEntryResponse{

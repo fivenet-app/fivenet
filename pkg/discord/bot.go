@@ -34,7 +34,7 @@ import (
 	"go.uber.org/zap"
 )
 
-const botWorkerCount = 1
+const botWorkerCount = 3
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("discord.bot")

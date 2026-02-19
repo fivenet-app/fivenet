@@ -273,10 +273,13 @@ func AddMeta(ctx context.Context, key, val string) {
 	if e := FromContext(ctx); e != nil {
 		e.set(func(a *audit.AuditEntry) {
 			// ensure a.Meta is a map<string,string> in your proto
-			if a.Meta == nil {
+			if a.GetMeta() == nil {
 				a.Meta = &audit.AuditEntryMeta{
 					Meta: make(map[string]string),
 				}
+			}
+			if a.GetMeta().GetMeta() == nil {
+				a.Meta.Meta = make(map[string]string, 1)
 			}
 			a.Meta.Meta[key] = val
 		})

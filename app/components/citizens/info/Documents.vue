@@ -44,7 +44,7 @@ const schema = z.object({
         .array()
         .max(docRelations.length)
         .default(docRelationsEnum.map((r) => DocRelation[r.name as keyof typeof DocRelation])),
-    includeCreated: z.coerce.boolean().optional().default(false),
+    includeCreated: z.coerce.boolean().optional().default(true),
 
     sorting: z
         .object({

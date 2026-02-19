@@ -42,7 +42,7 @@ func (s *Server) getConductEntry(
 		).
 		FROM(
 			tConduct.
-				INNER_JOIN(tColleague,
+				LEFT_JOIN(tColleague,
 					tColleague.ID.EQ(tConduct.TargetUserID),
 				).
 				LEFT_JOIN(tCreator,
