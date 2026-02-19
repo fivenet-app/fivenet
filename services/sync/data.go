@@ -124,11 +124,8 @@ func (s *Server) handleAccountsData(
 
 	for _, account := range data.Accounts.GetAccountUpdates() {
 		var groups *accounts.AccountGroups
-		gs := account.GetGroups()
-		if len(gs) > 0 {
-			groups = &accounts.AccountGroups{
-				Groups: gs,
-			}
+		if account.GetGroups() != nil && len(account.GetGroups().GetGroups()) > 0 {
+			groups = account.GetGroups()
 		} else if account.GetGroup() != "" {
 			groups = &accounts.AccountGroups{
 				Groups: []string{account.GetGroup()},

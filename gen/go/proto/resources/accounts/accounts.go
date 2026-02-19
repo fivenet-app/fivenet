@@ -55,6 +55,20 @@ func (ag *AccountGroups) ContainsAnyGroup(groups []string) bool {
 	return false
 }
 
+func (ag *AccountGroups) AddGroup(group string) {
+	if ag == nil {
+		ag = &AccountGroups{
+			Groups: []string{},
+		}
+	}
+
+	if ag.ContainsAnyGroup([]string{group}) {
+		return
+	}
+
+	ag.Groups = append(ag.Groups, group)
+}
+
 func (ag *AccountGroups) Equal(in *AccountGroups) bool {
 	if ag == nil || in == nil {
 		return false

@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { AccountGroups } from "../../accounts/accounts";
 import { ColleagueProps as ColleagueProps$ } from "../../jobs/colleagues/colleagues";
 import { UserProps as UserProps$ } from "../../users/props/props";
 /**
@@ -124,9 +125,9 @@ export interface AccountUpdate {
      */
     group?: string;
     /**
-     * @generated from protobuf field: repeated string groups = 3
+     * @generated from protobuf field: resources.accounts.AccountGroups groups = 3
      */
-    groups: string[];
+    groups?: AccountGroups;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserOAuth2Conn$Type extends MessageType<UserOAuth2Conn> {
@@ -456,13 +457,12 @@ class AccountUpdate$Type extends MessageType<AccountUpdate> {
         super("resources.sync.activity.AccountUpdate", [
             { no: 1, name: "license", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 2, name: "group", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "groups", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "groups", kind: "message", T: () => AccountGroups, options: { "tagger.tags": "alias:\"groups\"" } }
         ]);
     }
     create(value?: PartialMessage<AccountUpdate>): AccountUpdate {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.license = "";
-        message.groups = [];
         if (value !== undefined)
             reflectionMergePartial<AccountUpdate>(this, message, value);
         return message;
@@ -478,8 +478,8 @@ class AccountUpdate$Type extends MessageType<AccountUpdate> {
                 case /* optional string group */ 2:
                     message.group = reader.string();
                     break;
-                case /* repeated string groups */ 3:
-                    message.groups.push(reader.string());
+                case /* resources.accounts.AccountGroups groups */ 3:
+                    message.groups = AccountGroups.internalBinaryRead(reader, reader.uint32(), options, message.groups);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -499,9 +499,9 @@ class AccountUpdate$Type extends MessageType<AccountUpdate> {
         /* optional string group = 2; */
         if (message.group !== undefined)
             writer.tag(2, WireType.LengthDelimited).string(message.group);
-        /* repeated string groups = 3; */
-        for (let i = 0; i < message.groups.length; i++)
-            writer.tag(3, WireType.LengthDelimited).string(message.groups[i]);
+        /* resources.accounts.AccountGroups groups = 3; */
+        if (message.groups)
+            AccountGroups.internalBinaryWrite(message.groups, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

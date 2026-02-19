@@ -73,5 +73,13 @@ func (s *accountsSync) fetchAccounts(ctx context.Context) ([]*syncactivity.Accou
 		}
 	}
 
+	for _, acc := range accountsResults {
+		if acc.GetGroup() != "" && acc.GetGroups() != nil {
+			// If both Group and Groups are set, we prioritize Groups and add the single Group to it
+			acc.GetGroups().AddGroup(acc.GetGroup())
+			acc.Group = nil
+		}
+	}
+
 	return accountsResults, nil
 }

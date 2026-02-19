@@ -6430,7 +6430,7 @@ User related events
 | ----- | ---- | ----- | ----------- |
 | `license` | [string](#string) |  |  |
 | `group` | [string](#string) | optional |  |
-| `groups` | [string](#string) | repeated |  |
+| `groups` | [resources.accounts.AccountGroups](#resourcesaccountsAccountGroups) |  |  |
 
 
 

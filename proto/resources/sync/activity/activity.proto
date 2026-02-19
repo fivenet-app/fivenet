@@ -3,8 +3,10 @@ syntax = "proto3";
 package resources.sync.activity;
 
 import "buf/validate/validate.proto";
+import "resources/accounts/accounts.proto";
 import "resources/jobs/colleagues/colleagues.proto";
 import "resources/users/props/props.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity;syncactivity";
 
@@ -48,5 +50,5 @@ message AccountUpdate {
   string license = 1 [(buf.validate.field).string.max_len = 64];
 
   optional string group = 2;
-  repeated string groups = 3;
+  resources.accounts.AccountGroups groups = 3 [(tagger.tags) = "alias:\"groups\""];
 }

@@ -20,11 +20,12 @@ func (m *AccountUpdate) Sanitize() error {
 	}
 
 	// Field: Groups
-	for idx, item := range m.Groups {
-		_, _ = idx, item
-
-		m.Groups[idx] = htmlsanitizer.Sanitize(m.Groups[idx])
-
+	if m.Groups != nil {
+		if v, ok := any(m.GetGroups()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: License

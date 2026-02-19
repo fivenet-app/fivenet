@@ -9,8 +9,10 @@
 package syncactivity
 
 import (
+	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	colleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
+	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -639,10 +641,10 @@ func (b0 TimeclockUpdate_builder) Build() *TimeclockUpdate {
 }
 
 type AccountUpdate struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_License     string                 `protobuf:"bytes,1,opt,name=license,proto3"`
-	xxx_hidden_Group       *string                `protobuf:"bytes,2,opt,name=group,proto3,oneof"`
-	xxx_hidden_Groups      []string               `protobuf:"bytes,3,rep,name=groups,proto3"`
+	state                  protoimpl.MessageState  `protogen:"opaque.v1"`
+	xxx_hidden_License     string                  `protobuf:"bytes,1,opt,name=license,proto3"`
+	xxx_hidden_Group       *string                 `protobuf:"bytes,2,opt,name=group,proto3,oneof"`
+	xxx_hidden_Groups      *accounts.AccountGroups `protobuf:"bytes,3,opt,name=groups,proto3"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -691,7 +693,7 @@ func (x *AccountUpdate) GetGroup() string {
 	return ""
 }
 
-func (x *AccountUpdate) GetGroups() []string {
+func (x *AccountUpdate) GetGroups() *accounts.AccountGroups {
 	if x != nil {
 		return x.xxx_hidden_Groups
 	}
@@ -707,7 +709,7 @@ func (x *AccountUpdate) SetGroup(v string) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
-func (x *AccountUpdate) SetGroups(v []string) {
+func (x *AccountUpdate) SetGroups(v *accounts.AccountGroups) {
 	x.xxx_hidden_Groups = v
 }
 
@@ -718,9 +720,20 @@ func (x *AccountUpdate) HasGroup() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
+func (x *AccountUpdate) HasGroups() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Groups != nil
+}
+
 func (x *AccountUpdate) ClearGroup() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
 	x.xxx_hidden_Group = nil
+}
+
+func (x *AccountUpdate) ClearGroups() {
+	x.xxx_hidden_Groups = nil
 }
 
 type AccountUpdate_builder struct {
@@ -728,7 +741,7 @@ type AccountUpdate_builder struct {
 
 	License string
 	Group   *string
-	Groups  []string
+	Groups  *accounts.AccountGroups
 }
 
 func (b0 AccountUpdate_builder) Build() *AccountUpdate {
@@ -748,7 +761,7 @@ var File_resources_sync_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_sync_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"&resources/sync/activity/activity.proto\x12\x17resources.sync.activity\x1a*resources/jobs/colleagues/colleagues.proto\x1a!resources/users/props/props.proto\"\x92\x01\n" +
+	"&resources/sync/activity/activity.proto\x12\x17resources.sync.activity\x1a!resources/accounts/accounts.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\x92\x01\n" +
 	"\x0eUserOAuth2Conn\x12#\n" +
 	"\rprovider_name\x18\x01 \x01(\tR\fproviderName\x12\x1e\n" +
 	"\n" +
@@ -783,11 +796,11 @@ const file_resources_sync_activity_activity_proto_rawDesc = "" +
 	"\x0fTimeclockUpdate\x12\x10\n" +
 	"\x03job\x18\x01 \x01(\tR\x03job\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x14\n" +
-	"\x05start\x18\x03 \x01(\bR\x05start\"f\n" +
+	"\x05start\x18\x03 \x01(\bR\x05start\"\x9e\x01\n" +
 	"\rAccountUpdate\x12\x18\n" +
 	"\alicense\x18\x01 \x01(\tR\alicense\x12\x19\n" +
-	"\x05group\x18\x02 \x01(\tH\x00R\x05group\x88\x01\x01\x12\x16\n" +
-	"\x06groups\x18\x03 \x03(\tR\x06groupsB\b\n" +
+	"\x05group\x18\x02 \x01(\tH\x00R\x05group\x88\x01\x01\x12N\n" +
+	"\x06groups\x18\x03 \x01(\v2!.resources.accounts.AccountGroupsB\x13\x9a\x84\x9e\x03\x0ealias:\"groups\"R\x06groupsB\b\n" +
 	"\x06_groupBXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity;syncactivityb\x06proto3"
 
 var file_resources_sync_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
@@ -800,15 +813,17 @@ var file_resources_sync_activity_activity_proto_goTypes = []any{
 	(*AccountUpdate)(nil),             // 5: resources.sync.activity.AccountUpdate
 	(*props.UserProps)(nil),           // 6: resources.users.props.UserProps
 	(*colleagues.ColleagueProps)(nil), // 7: resources.jobs.colleagues.ColleagueProps
+	(*accounts.AccountGroups)(nil),    // 8: resources.accounts.AccountGroups
 }
 var file_resources_sync_activity_activity_proto_depIdxs = []int32{
 	6, // 0: resources.sync.activity.UserProps.props:type_name -> resources.users.props.UserProps
 	7, // 1: resources.sync.activity.ColleagueProps.props:type_name -> resources.jobs.colleagues.ColleagueProps
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	8, // 2: resources.sync.activity.AccountUpdate.groups:type_name -> resources.accounts.AccountGroups
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_resources_sync_activity_activity_proto_init() }

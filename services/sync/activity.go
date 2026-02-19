@@ -403,22 +403,39 @@ func (s *Server) handleAccountUpdate(
 	ctx context.Context,
 	data *pbsync.AddActivityRequest_AccountUpdate,
 ) error {
-	d := data.AccountUpdate
+	account := data.AccountUpdate
 
 	tAccounts := table.FivenetAccounts
 
 	updateSets := []any{}
-	if d.Groups != nil {
-		groups, err := (&accounts.AccountGroups{
-			Groups: d.GetGroups(),
-		}).Value()
-		if err != nil {
-			return fmt.Errorf("failed to marshal account groups. %w", err)
+	if account.Groups != nil {
+		var groups *accounts.AccountGroups
+		if account.GetGroups() != nil && len(account.GetGroups().GetGroups()) > 0 {
+			groups = account.GetGroups()
+		} else if account.GetGroup() != "" {
+			groups = &accounts.AccountGroups{
+				Groups: []string{account.GetGroup()},
+			}
+		}
+
+		var gs mysql.StringExpression = mysql.StringExp(mysql.NULL)
+		if groups != nil {
+			o, err := groups.Value()
+			if err != nil {
+				s.logger.Warn(
+					"failed to convert groups to string (driver value). setting to null",
+					zap.String("license", account.GetLicense()),
+					zap.Error(err),
+				)
+			}
+			if o != nil {
+				gs = mysql.String(o.(string))
+			}
 		}
 
 		updateSets = append(
 			updateSets,
-			tAccounts.Groups.SET(mysql.String(groups.(string))),
+			tAccounts.Groups.SET(gs),
 		)
 	}
 
@@ -433,7 +450,7 @@ func (s *Server) handleAccountUpdate(
 		}
 
 		stmt = stmt.
-			WHERE(tAccounts.License.EQ(mysql.String(d.License))).
+			WHERE(tAccounts.License.EQ(mysql.String(account.License))).
 			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
