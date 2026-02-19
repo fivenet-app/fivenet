@@ -150,15 +150,12 @@ func collectInlineText(node any, b *strings.Builder) {
 		// Inline image token (stable & readable)
 		attrs, _ := m["attrs"].(map[string]any)
 		alt, _ := attrs["alt"].(string)
-		src, _ := attrs["src"].(string)
 
 		// Avoid dumping huge URLs into diffs unless you really want that:
 		if alt != "" {
 			b.WriteString("[Image alt=\"")
 			b.WriteString(alt)
 			b.WriteString("\"]")
-		} else if src != "" {
-			b.WriteString("[Image]")
 		} else {
 			b.WriteString("[Image]")
 		}

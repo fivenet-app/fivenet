@@ -139,7 +139,7 @@ func (s *usersSync) applyFiltersAndTransformations(
 	hasFilters := len(sQuery.Filters.Jobs) > 0
 
 	foundNullUserId := false
-	for i := 0; i < len(us); i++ {
+	for i := range slices.Backward(us) {
 		if us[i].GetUserId() <= 0 {
 			foundNullUserId = true
 			s.logger.Debug(
@@ -154,7 +154,9 @@ func (s *usersSync) applyFiltersAndTransformations(
 		}
 
 		if hasFilters {
-			if s.applyFilters(us, i, sQuery) {
+			if s.applyFilters(us[i], sQuery) {
+				// Remove "skipped" user
+				us = slices.Delete(us, i, i+1)
 				continue
 			}
 		}
@@ -219,21 +221,21 @@ func (s *usersSync) applyValueMapping(user *syncdata.DataUser) {
 }
 
 func (s *usersSync) applyFilters(
-	us []*syncdata.DataUser,
-	k int,
+	us *syncdata.DataUser,
 	sQuery dbsyncconfig.UsersTable,
 ) bool {
 	for _, filter := range sQuery.Filters.Jobs {
-		if filter.CompiledPattern.MatchString(us[k].GetJob()) {
+		if filter.CompiledPattern.MatchString(us.GetJob()) {
 			switch filter.Action {
 			case dbsyncconfig.FilterActionDrop:
-				us = append(us[:k], us[k+1:]...)
 				return true
+
 			case dbsyncconfig.FilterActionReplace:
-				us[k].Job = filter.CompiledPattern.ReplaceAllString(
-					us[k].GetJob(),
+				us.Job = filter.CompiledPattern.ReplaceAllString(
+					us.GetJob(),
 					filter.Replacement,
 				)
+
 			default:
 				s.logger.Warn("unknown filter action", zap.String("action", string(filter.Action)))
 			}
@@ -273,7 +275,12 @@ func (s *usersSync) retrieveAndAttachLicenses(ctx context.Context, us []*syncdat
 		if err != nil {
 			errs = multierr.Append(
 				errs,
-				fmt.Errorf("failed to retrieve users %s licenses. %w", us[k].GetIdentifier(), err),
+				fmt.Errorf(
+					"failed to retrieve user %d (%s) licenses. %w",
+					us[k].GetUserId(),
+					us[k].GetIdentifier(),
+					err,
+				),
 			)
 		}
 		us[k].Licenses = licenses

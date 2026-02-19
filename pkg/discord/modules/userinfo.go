@@ -307,34 +307,53 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 
 	errs := multierr.Combine()
 	for _, u := range dest {
-		externalId, err := strconv.ParseUint(u.ExternalID, 10, 64)
+		user, ls, err := g.planUser(u, settings)
 		if err != nil {
-			errs = multierr.Append(
-				errs,
-				fmt.Errorf("failed to parse user oauth2 external id %d. %w", externalId, err),
-			)
+			errs = multierr.Append(errs, fmt.Errorf("failed to plan user %d. %w", u.UserID, err))
 			continue
 		}
+		logs = append(logs, ls...)
 
-		user := &discordtypes.User{
-			ID:    discord.UserID(externalId),
-			Roles: &discordtypes.UserRoles{},
-			Jobs:  u.Jobs,
-		}
-
-		userInfo := u.GetJobInfo(g.job)
-		if userInfo != nil {
+		if user != nil {
 			users.Add(user)
-			continue
 		}
+	}
 
-		member, err := g.discord.Member(g.guild.ID, discord.UserID(externalId))
-		if err != nil {
-			var restErr *httputil.HTTPError
-			if errors.As(err, &restErr) &&
-				restErr.Status == http.StatusNotFound {
-				// Add log about employee not being on discord
-				logs = append(logs, discord.Embed{
+	return users, logs, errs
+}
+
+func (g *UserInfo) planUser(
+	u *userRoleMapping,
+	settings *jobssettings.DiscordSyncSettings,
+) (*discordtypes.User, []discord.Embed, error) {
+	externalId, err := strconv.ParseUint(u.ExternalID, 10, 64)
+	if err != nil {
+		return nil, nil, fmt.Errorf(
+			"failed to parse user oauth2 external id %d. %w",
+			externalId,
+			err,
+		)
+	}
+
+	user := &discordtypes.User{
+		ID:    discord.UserID(externalId),
+		Roles: &discordtypes.UserRoles{},
+		Jobs:  u.Jobs,
+	}
+
+	userInfo := u.GetJobInfo(g.job)
+	if userInfo == nil {
+		return user, nil, nil
+	}
+
+	member, err := g.discord.Member(g.guild.ID, discord.UserID(externalId))
+	if err != nil {
+		var restErr *httputil.HTTPError
+		if errors.As(err, &restErr) &&
+			restErr.Status == http.StatusNotFound {
+			// Add log about employee not being on discord
+			return nil, []discord.Embed{
+				{
 					Title: fmt.Sprintf(
 						"UserInfo: Employee not found on Discord: %s %s",
 						u.Firstname,
@@ -347,61 +366,57 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 					),
 					Author: embeds.EmbedAuthor,
 					Color:  embeds.ColorWarn,
-				})
-				continue
-			}
-
-			errs = multierr.Append(errs, fmt.Errorf("discord API returned an error. %w", err))
-			continue
+				},
+			}, nil
 		}
 
-		if settings.GetUserInfoSyncSettings().GetSyncNicknames() {
-			if name := g.getUserNickname(member, strings.TrimSpace(u.Firstname), strings.TrimSpace(u.Lastname), u.NamePrefix, u.NameSuffix); name != nil {
-				user.Nickname = name
-			}
-		}
-
-		user.Roles.Sum, err = g.getUserRoles(userInfo.GetJob(), userInfo.GetGrade())
-		if err != nil {
-			g.logger.Warn(
-				fmt.Sprintf("failed to get user's job roles %d", externalId),
-				zap.Int32("user_id", u.UserID),
-				zap.Error(err),
-			)
-			continue
-		}
-
-		for _, mapping := range settings.GetUserInfoSyncSettings().GetGroupMapping() {
-			if userInfo.GetGrade() < mapping.GetFromGrade() ||
-				userInfo.GetGrade() > mapping.GetToGrade() {
-				continue
-			}
-
-			role, ok := g.groupRoles[mapping.GetName()]
-			if !ok {
-				return nil, logs, fmt.Errorf(
-					"failed to find role for group mapping %s",
-					mapping.GetName(),
-				)
-			}
-
-			user.Roles.Sum = append(user.Roles.Sum, role)
-		}
-
-		if settings.GetUserInfoSyncSettings().GetEmployeeRoleEnabled() &&
-			g.employeeRole != nil {
-			user.Roles.Sum = append(user.Roles.Sum, g.employeeRole)
-		}
-
-		if settings.GetJobsAbsence() && g.absenceRole != nil &&
-			g.isUserAbsent(u.AbsenceBegin, u.AbsenceEnd) {
-			user.Roles.Sum = append(user.Roles.Sum, g.absenceRole)
-		}
-
-		users.Add(user)
+		return nil, nil, fmt.Errorf("discord API returned an error. %w", err)
 	}
 
-	return users, logs, errs
+	if settings.GetUserInfoSyncSettings().GetSyncNicknames() {
+		if name := g.getUserNickname(member, strings.TrimSpace(u.Firstname), strings.TrimSpace(u.Lastname), u.NamePrefix, u.NameSuffix); name != nil {
+			user.Nickname = name
+		}
+	}
+
+	user.Roles.Sum, err = g.getUserRoles(userInfo.GetJob(), userInfo.GetGrade())
+	if err != nil {
+		g.logger.Warn(
+			fmt.Sprintf("failed to get user's job roles %d", externalId),
+			zap.Int32("user_id", u.UserID),
+			zap.Error(err),
+		)
+		return nil, nil, nil
+	}
+
+	for _, mapping := range settings.GetUserInfoSyncSettings().GetGroupMapping() {
+		if userInfo.GetGrade() < mapping.GetFromGrade() ||
+			userInfo.GetGrade() > mapping.GetToGrade() {
+			continue
+		}
+
+		role, ok := g.groupRoles[mapping.GetName()]
+		if !ok {
+			return nil, nil, fmt.Errorf(
+				"failed to find role for group mapping %s",
+				mapping.GetName(),
+			)
+		}
+
+		user.Roles.Sum = append(user.Roles.Sum, role)
+	}
+
+	if settings.GetUserInfoSyncSettings().GetEmployeeRoleEnabled() &&
+		g.employeeRole != nil {
+		user.Roles.Sum = append(user.Roles.Sum, g.employeeRole)
+	}
+
+	if settings.GetJobsAbsence() && g.absenceRole != nil &&
+		g.isUserAbsent(u.AbsenceBegin, u.AbsenceEnd) {
+		user.Roles.Sum = append(user.Roles.Sum, g.absenceRole)
+	}
+
+	return user, nil, nil
 }
 
 func (g *UserInfo) getUserNickname(

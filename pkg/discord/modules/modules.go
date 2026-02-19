@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sync/atomic"
 
+	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/state"
 	jobssettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/settings"
@@ -17,6 +18,17 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"go.uber.org/zap"
 )
+
+type IState interface {
+	Member(guildID discord.GuildID, userID discord.UserID) (*discord.Member, error)
+
+	AddRole(
+		guildID discord.GuildID,
+		userID discord.UserID,
+		roleID discord.RoleID,
+		data api.AddRoleData,
+	) error
+}
 
 var (
 	tAccsOauth2     = table.FivenetAccountsOauth2
@@ -48,7 +60,7 @@ type BaseModule struct {
 	ctx      context.Context
 	logger   *zap.Logger
 	db       *sql.DB
-	discord  *state.State
+	discord  IState
 	guild    discord.Guild
 	job      string
 	cfg      *config.Discord
