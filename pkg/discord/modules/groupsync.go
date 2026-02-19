@@ -32,7 +32,7 @@ type GroupSync struct {
 
 type groupSyncUser struct {
 	ExternalID string                  `alias:"external_id"`
-	Groups     *accounts.AccountGroups `alias:"group"`
+	Groups     *accounts.AccountGroups `alias:"groups"`
 	UserID     int32                   `alias:"user_id"`
 	SameJob    bool
 }
@@ -52,6 +52,11 @@ func (g *GroupSync) GetName() string {
 }
 
 func (g *GroupSync) Plan(ctx context.Context) (*discordtypes.State, []discord.Embed, error) {
+	if len(g.cfg.GroupSync.Mapping) == 0 {
+		// Nothind to do
+		return nil, nil, nil
+	}
+
 	roles := g.planRoles()
 
 	users, logs, err := g.planUsers(ctx, roles)
@@ -123,15 +128,18 @@ func (g *GroupSync) planUsers(
 	tAccount := table.FivenetAccounts.AS("accounts")
 	tUsers := table.FivenetUser.AS("users")
 
-	conditions := []mysql.BoolExpression{
-		tAccsOauth2.Provider.EQ(mysql.String("discord")),
-		tAccount.Groups.IS_NOT_NULL(),
-	}
+	groupsConditions := []mysql.BoolExpression{}
 	for sGroup := range g.cfg.GroupSync.Mapping {
-		conditions = append(conditions,
+		groupsConditions = append(groupsConditions,
 			dbutils.JSON_CONTAINS(tAccount.Groups, mysql.String(sGroup)),
 		)
 	}
+
+	condition := mysql.AND(
+		tAccsOauth2.Provider.EQ(mysql.String("discord")),
+		tAccount.Groups.IS_NOT_NULL(),
+		mysql.OR(groupsConditions...),
+	)
 
 	stmt := tAccsOauth2.
 		SELECT(
@@ -148,7 +156,7 @@ func (g *GroupSync) planUsers(
 					tUsers.ID.EQ(tAccsOauth2.AccountID),
 				),
 		).
-		WHERE(mysql.AND(conditions...))
+		WHERE(condition)
 
 	var dest []*groupSyncUser
 	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
