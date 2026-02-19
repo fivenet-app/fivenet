@@ -473,7 +473,7 @@ defineShortcuts({
                 ]"
                 size="xs"
                 class="w-full"
-                :ui="{ list: 'rounded-0' }"
+                :ui="{ list: 'rounded-none' }"
             />
 
             <DataErrorBlock
