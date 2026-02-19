@@ -32,7 +32,7 @@ func newUsersSync(s *syncer, state *dbsyncconfig.TableSyncState) *usersSync {
 	}
 }
 
-func (s *usersSync) Sync(ctx context.Context) (int64, int64, error) {
+func (s *usersSync) Sync(ctx context.Context) (int64, int64, int64, error) {
 	limit := int64(150)
 	offset := s.getInitialOffset()
 	s.logger.Debug("usersSync", zap.Int64("offset", offset))
@@ -44,7 +44,7 @@ func (s *usersSync) Sync(ctx context.Context) (int64, int64, error) {
 
 	us, err := s.fetchUsers(ctx, q)
 	if err != nil {
-		return 0, offset, err
+		return 0, offset, 0, err
 	}
 
 	count := int64(len(us))
@@ -53,22 +53,22 @@ func (s *usersSync) Sync(ctx context.Context) (int64, int64, error) {
 		s.logger.Debug("no users found to sync, resetting state offset")
 		s.state.Set(0, nil)
 		s.resetLastCheckIfNotSynced()
-		return 0, offset, nil
+		return 0, offset, 0, nil
 	}
 
 	offset, err = s.updateSyncState(count, offset, limit)
 	if err != nil {
-		return 0, offset, err
+		return 0, offset, 0, err
 	}
 
 	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
-		return 0, offset, err
+		return 0, offset, 0, err
 	}
 	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
-		return 0, offset, err
+		return 0, offset, 0, err
 	}
 	if err := s.retrieveAndAttachPhoneNumbers(ctx, us); err != nil {
-		return 0, offset, err
+		return 0, offset, 0, err
 	}
 
 	s.applyFiltersAndTransformations(us, sQuery)
@@ -80,15 +80,16 @@ func (s *usersSync) Sync(ctx context.Context) (int64, int64, error) {
 			},
 		},
 	}); err != nil {
-		return 0, offset, err
+		return 0, offset, 0, err
 	}
 
 	s.logger.Debug("usersSync", zap.Bool("syncedUp", s.state.GetSyncedUp()))
 
-	lastUserId := strconv.FormatInt(int64(us[count-1].GetUserId()), 10)
+	lastId := int64(us[count-1].GetUserId())
+	lastUserId := strconv.FormatInt(lastId, 10)
 	s.state.Set(offset+limit, &lastUserId)
 
-	return count, offset, nil
+	return count, offset, lastId, nil
 }
 
 func (s *usersSync) getInitialOffset() int64 {
@@ -139,31 +140,31 @@ func (s *usersSync) applyFiltersAndTransformations(
 	hasFilters := len(sQuery.Filters.Jobs) > 0
 
 	foundNullUserId := false
-	for i := range slices.Backward(us) {
-		if us[i].GetUserId() <= 0 {
+	for i, u := range slices.Backward(us) {
+		if u.GetUserId() <= 0 {
 			foundNullUserId = true
 			s.logger.Debug(
 				"user with null/zero id found",
-				zap.String("identifier", us[i].GetIdentifier()),
+				zap.String("identifier", u.GetIdentifier()),
 			)
 			continue
 		}
 
 		if s.cfg.Tables.Users.ValueMapping != nil {
-			s.applyValueMapping(us[i])
+			s.applyValueMapping(u)
 		}
 
 		if hasFilters {
-			if s.applyFilters(us[i], sQuery) {
+			if s.applyFilters(u, sQuery) {
 				// Remove "skipped" user
 				us = slices.Delete(us, i, i+1)
 				continue
 			}
 		}
 
-		s.splitNamesIfRequired(us[i])
-		s.parseDateOfBirth(us[i])
-		s.cleanupUserJob(us[i])
+		s.splitNamesIfRequired(u)
+		s.parseDateOfBirth(u)
+		s.cleanupUserJob(u)
 	}
 
 	if foundNullUserId {

@@ -276,10 +276,10 @@ func (s *Sync) run(ctx context.Context) error {
 		}
 
 		for {
-			if count, offset, err := s.users.Sync(ctx); err != nil {
+			if count, offset, lastId, err := s.users.Sync(ctx); err != nil {
 				s.logger.Error("error during users sync", zap.Error(err))
 			} else {
-				s.logger.Info("users synced", zap.Int64("count", count), zap.Int64("offset", offset))
+				s.logger.Info("users synced", zap.Int64("count", count), zap.Int64("offset", offset), zap.Int64("last_id", lastId))
 			}
 
 			select {
@@ -298,10 +298,10 @@ func (s *Sync) run(ctx context.Context) error {
 		}
 
 		for {
-			if count, offset, err := s.vehicles.Sync(ctx); err != nil {
+			if count, offset, plate, err := s.vehicles.Sync(ctx); err != nil {
 				s.logger.Error("error during vehicles sync", zap.Error(err))
 			} else {
-				s.logger.Info("vehicles synced", zap.Int64("count", count), zap.Int64("offset", offset))
+				s.logger.Info("vehicles synced", zap.Int64("count", count), zap.Int64("offset", offset), zap.String("last_plate", plate))
 			}
 
 			select {

@@ -91,7 +91,7 @@ func (s *Server) getTimeclockWeeklyStats(
 			}
 
 			if len(dest) > i {
-				if dest[i].GetCalendarWeek() == lastCalendarWeek-1 {
+				if s.GetCalendarWeek() == lastCalendarWeek-1 {
 					lastCalendarWeek--
 					continue
 				}
