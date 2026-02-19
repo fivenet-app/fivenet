@@ -149,20 +149,22 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: number): Promise<
     }
 }
 
-async function setFromData(): Promise<void> {
+async function setFromProps(): Promise<void> {
     if (!entry.value) return;
 
-    state.targetUser = entry.value.targetUserId ?? 0;
-    state.type = entry.value.type ?? ConductType.NOTE;
+    state.draft = entry.value.draft;
+    state.targetUser = entry.value.targetUserId;
+    state.type = entry.value.type;
     state.message = entry.value.message?.tiptapJson
         ? (Struct.toJson(entry.value.message.tiptapJson) as JSONContent)
         : (entry.value.message?.rawHtml ?? '');
+    state.files = entry.value.files ?? [];
     state.expiresAt = entry.value.expiresAt ? toDate(entry.value.expiresAt) : undefined;
 }
 
-watch(entry, () => setFromData());
-
-onBeforeMount(() => setFromData());
+setFromProps();
+watch(entry, () => setFromProps());
+onBeforeMount(() => setFromProps());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -237,7 +239,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         </dt>
 
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="targetUserId">
+                            <UFormField name="targetUser">
                                 <SelectMenu
                                     v-model="state.targetUser"
                                     :searchable="

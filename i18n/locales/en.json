@@ -752,7 +752,8 @@
         "impersonation_active": "You are currently impersonating {job}.",
         "stop_impersonation": "Stop Impersonation",
         "all_day": "All Day",
-        "only_not_already_acted": "Only Not Already Acted"
+        "only_not_already_acted": "Only Not Already Acted",
+        "never": "Never"
     },
     "components": {
         "partials": {
@@ -1133,8 +1134,7 @@
         "jobs": {
             "conduct": {
                 "List": {
-                    "show_expired": "Show Expired",
-                    "no_expiration": "No Expiration."
+                    "show_expired": "Show Expired"
                 },
                 "CreateOrUpdateModal": {
                     "create": {

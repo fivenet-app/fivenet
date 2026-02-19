@@ -191,7 +191,7 @@ const columns = computed(
                 cell: ({ row }) =>
                     row.original.expiresAt
                         ? h(GenericTime, { value: row.original.expiresAt, type: 'date', class: 'font-semibold' })
-                        : t('components.jobs.conduct.List.no_expiration'),
+                        : t('common.never'),
             },
             {
                 accessorKey: 'type',

@@ -752,7 +752,8 @@
         "impersonation_active": "Sie imitieren derzeit {job}.",
         "stop_impersonation": "Imitation beenden",
         "all_day": "Ganztägig",
-        "only_not_already_acted": "Nur nicht Bearbeitete"
+        "only_not_already_acted": "Nur nicht Bearbeitete",
+        "never": "Nie"
     },
     "components": {
         "partials": {
@@ -1133,8 +1134,7 @@
         "jobs": {
             "conduct": {
                 "List": {
-                    "show_expired": "Zeige Abgelaufene",
-                    "no_expiration": "Kein Verfallsdatum."
+                    "show_expired": "Zeige Abgelaufene"
                 },
                 "CreateOrUpdateModal": {
                     "create": {

@@ -113,6 +113,7 @@ func (s *Server) ListConductEntries(
 	pag, limit := req.GetPagination().GetResponse(count.Total)
 	resp := &pbjobs.ListConductEntriesResponse{
 		Pagination: pag,
+		Entries:    []*jobsconduct.ConductEntry{},
 	}
 	if count.Total <= 0 {
 		return resp, nil
@@ -196,7 +197,7 @@ func (s *Server) ListConductEntries(
 		).
 		FROM(
 			tConduct.
-				INNER_JOIN(tColleague,
+				LEFT_JOIN(tColleague,
 					tColleague.ID.EQ(tConduct.TargetUserID),
 				).
 				LEFT_JOIN(tUserUserProps,
@@ -329,7 +330,7 @@ func (s *Server) GetConductEntry(
 		).
 		FROM(
 			tConduct.
-				INNER_JOIN(tColleague,
+				LEFT_JOIN(tColleague,
 					tColleague.ID.EQ(tConduct.TargetUserID),
 				).
 				LEFT_JOIN(tUserUserProps,
@@ -361,6 +362,10 @@ func (s *Server) GetConductEntry(
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
+	}
+
+	if resp.GetEntry().GetId() == 0 {
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	files, err := s.fHandler.ListFilesForParentID(ctx, req.GetId())

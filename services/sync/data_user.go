@@ -249,16 +249,7 @@ func (s *Server) createUser(
 		return 0, fmt.Errorf("failed to retrieve rows affected for user insert. %w", err)
 	}
 
-	if err := s.handleCitizenLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
-		return 0, fmt.Errorf(
-			"failed to handle user licenses for user %d (%s). %w",
-			user.GetUserId(),
-			user.GetIdentifier(),
-			err,
-		)
-	}
-
-	if err := s.handleCitizensJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
+	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user jobs for user %d (%s). %w",
 			user.GetUserId(),
@@ -267,7 +258,16 @@ func (s *Server) createUser(
 		)
 	}
 
-	if err := s.handleCitizensPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
+	if err := s.handleUserLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
+		return 0, fmt.Errorf(
+			"failed to handle user licenses for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
+	}
+
+	if err := s.handleUserPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user phone numbers for user %d (%s). %w",
 			user.GetUserId(),
@@ -352,16 +352,7 @@ func (s *Server) updateUser(
 		return 0, fmt.Errorf("failed to retrieve rows affected for user update. %w", err)
 	}
 
-	if err := s.handleCitizenLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
-		return 0, fmt.Errorf(
-			"failed to handle user licenses for user %d (%s). %w",
-			user.GetUserId(),
-			user.GetIdentifier(),
-			err,
-		)
-	}
-
-	if err := s.handleCitizensJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
+	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user jobs for user %d (%s). %w",
 			user.GetUserId(),
@@ -370,7 +361,16 @@ func (s *Server) updateUser(
 		)
 	}
 
-	if err := s.handleCitizensPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
+	if err := s.handleUserLicenses(ctx, tx, user.GetUserId(), user.GetLicenses()); err != nil {
+		return 0, fmt.Errorf(
+			"failed to handle user licenses for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
+	}
+
+	if err := s.handleUserPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user phone numbers for user %d (%s). %w",
 			user.GetUserId(),
@@ -387,7 +387,7 @@ func (s *Server) updateUser(
 	return rows, nil
 }
 
-func (s *Server) handleCitizenLicenses(
+func (s *Server) handleUserLicenses(
 	ctx context.Context,
 	tx *sql.Tx,
 	userId int32,
@@ -480,7 +480,7 @@ func (s *Server) handleCitizenLicenses(
 	return nil
 }
 
-func (s *Server) handleCitizensJobs(
+func (s *Server) handleUserJobs(
 	ctx context.Context,
 	tx *sql.Tx,
 	userId int32,
@@ -531,7 +531,7 @@ func (s *Server) handleCitizensJobs(
 	if err := selectStmt.QueryContext(ctx, tx, &currentJobs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf(
-				"failed to query current user licenses for user ID %d. %w",
+				"failed to query current user jobs for user ID %d. %w",
 				userId,
 				err,
 			)
@@ -565,7 +565,7 @@ func (s *Server) handleCitizensJobs(
 		}
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return fmt.Errorf("failed to execute user licenses insert statement. %w", err)
+			return fmt.Errorf("failed to execute user jobs insert statement. %w", err)
 		}
 	}
 
@@ -584,7 +584,7 @@ func (s *Server) handleCitizensJobs(
 			LIMIT(25)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return fmt.Errorf("failed to execute user licenses delete statement. %w", err)
+			return fmt.Errorf("failed to execute user jobs delete statement. %w", err)
 		}
 	}
 
@@ -628,7 +628,7 @@ func compareJobs(currentJobs, jobs []*users.UserJob) (toAdd, toUpdate, toRemove 
 	return toAdd, toUpdate, toRemove
 }
 
-func (s *Server) handleCitizensPhoneNumbers(
+func (s *Server) handleUserPhoneNumbers(
 	ctx context.Context,
 	tx *sql.Tx,
 	userId int32,

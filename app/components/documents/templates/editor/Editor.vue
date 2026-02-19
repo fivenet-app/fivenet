@@ -593,7 +593,7 @@ const formRef = useTemplateRef('formRef');
                                     <IconSelectMenu
                                         v-model="state.icon"
                                         class="flex-1"
-                                        :hex-color="state.color"
+                                        :color="state.color"
                                         :fallback-icon="FileOutlineIcon"
                                     />
 
@@ -710,6 +710,7 @@ const formRef = useTemplateRef('formRef');
                                         class="mx-auto min-h-120 w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                         :extensions="extensions"
                                         :limit="125_000"
+                                        content-type="html"
                                     >
                                         <template #toolbar="{ editor }">
                                             <ToolbarButtons :editor="editor" />

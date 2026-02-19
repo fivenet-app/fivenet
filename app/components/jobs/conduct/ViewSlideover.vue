@@ -81,7 +81,8 @@ if (props.entry.id > 0) {
                         {{ $t('common.expires_at') }}
                     </dt>
                     <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                        <GenericTime :value="entry.expiresAt" />
+                        <GenericTime v-if="entry.expiresAt" :value="entry.expiresAt" />
+                        <span v-else>{{ $t('common.never') }}</span>
                     </dd>
                 </div>
 
