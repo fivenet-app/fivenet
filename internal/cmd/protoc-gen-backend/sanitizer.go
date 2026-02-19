@@ -190,7 +190,7 @@ func (m *{{ $key }}) Sanitize() error {
             {{- $lastOneOf = $f.F.OneOf.Message.Name }}
         {{ else if $f.Tiptap }}
         if m.{{ $f.Name }} != nil {
-            err := tiptapsanitizer.SanitizeStruct(m.Get{{ $f.Name }}(), 100000, 20)
+            err := tiptapsanitizer.SanitizeStruct(m.Get{{ $f.Name }}(), 1_000_000, 20)
             if err != nil {
                 return err
             }

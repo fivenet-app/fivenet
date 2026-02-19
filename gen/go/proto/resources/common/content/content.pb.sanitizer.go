@@ -31,7 +31,7 @@ func (m *Content) Sanitize() error {
 
 	// Field: TiptapJson
 	if m.TiptapJson != nil {
-		err := tiptapsanitizer.SanitizeStruct(m.GetTiptapJson(), 100000, 20)
+		err := tiptapsanitizer.SanitizeStruct(m.GetTiptapJson(), 1_000_000, 20)
 		if err != nil {
 			return err
 		}
