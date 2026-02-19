@@ -12,6 +12,7 @@ import (
 
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
@@ -131,7 +132,7 @@ func (g *GroupSync) planUsers(
 	groupsConditions := []mysql.BoolExpression{}
 	for sGroup := range g.cfg.GroupSync.Mapping {
 		groupsConditions = append(groupsConditions,
-			dbutils.JSON_CONTAINS(tAccount.Groups, mysql.String(sGroup)),
+			dbutils.JSON_CONTAINS(tAccount.Groups, mysql.String("\""+sGroup+"\"")),
 		)
 	}
 
@@ -239,19 +240,20 @@ func (g *GroupSync) checkIfUserIsPartOfJob(
 	userId int32,
 	job string,
 ) (bool, error) {
-	tUsers := table.FivenetUser
+	tUserJobs := table.FivenetUserJobs
 
-	stmt := tUsers.
+	stmt := tUserJobs.
 		SELECT(
-			tUsers.ID.AS("id"),
+			tUserJobs.Job,
+			tUserJobs.Grade,
 		).
-		FROM(tUsers).
+		FROM(tUserJobs).
 		WHERE(mysql.AND(
-			tUsers.ID.EQ(mysql.Int32(userId)),
-			tUsers.Job.EQ(mysql.String(job)),
+			tUserJobs.UserID.EQ(mysql.Int32(userId)),
+			tUserJobs.Job.EQ(mysql.String(job)),
 		))
 
-	var dest []int32
+	var dest []*users.UserJob
 	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return false, err

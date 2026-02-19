@@ -61,6 +61,13 @@ var (
 		Name:      "guilds_total_count",
 		Help:      "Total count of Discord guilds being ready.",
 	})
+
+	metricSyncDuration = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: admin.MetricsNamespace,
+		Subsystem: "discord_bot",
+		Name:      "sync_duration_seconds",
+		Help:      "Duration of the last sync operation in seconds.",
+	}, []string{"job_name"})
 )
 
 type BotParams struct {
@@ -160,11 +167,30 @@ func New(p BotParams) Result {
 						return
 
 					case guild := <-b.workCh:
+						var elapsed time.Duration
+
 						func() {
 							logger := b.logger.With(
 								zap.String("job", guild.job),
 								zap.Uint64("discord_guild_id", uint64(guild.gid)),
 							)
+
+							start := time.Now()
+							defer func() {
+								elapsed = time.Since(start)
+								// Recover from a panic and set err accordingly
+								if e := recover(); e != nil {
+									var err error
+									if er, ok := e.(error); ok {
+										err = fmt.Errorf("recovered from panic. %w", er)
+									} else {
+										//nolint:errorlint // `er` is not guaranteed to be an error type, so we want it to be treated as a "string" here.
+										err = fmt.Errorf("recovered from panic. %v", er)
+									}
+
+									logger.Error("discord guild sync panic", zap.Error(err))
+								}
+							}()
 
 							// Ignore the cooldown for the periodic sync
 							if err := guild.Run(true); err != nil {
@@ -176,6 +202,9 @@ func New(p BotParams) Result {
 								metricLastSync.WithLabelValues(guild.job, "success").SetToCurrentTime()
 							}
 						}()
+
+						metricSyncDuration.With(prometheus.Labels{"job_name": guild.job}).
+							Set(elapsed.Seconds())
 					}
 				}
 			})

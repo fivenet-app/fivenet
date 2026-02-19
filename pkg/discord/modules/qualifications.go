@@ -188,7 +188,10 @@ func (g *QualificationsSync) planUsers(
 			}
 			index, err := strconv.ParseInt(sGroup, 10, 64)
 			if err != nil {
-				return nil, logs, err
+				return nil, logs, fmt.Errorf(
+					"failed to parse qualification id from groups. %w",
+					err,
+				)
 			}
 			qualificationRoles[index] = role
 		}
