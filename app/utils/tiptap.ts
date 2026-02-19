@@ -337,7 +337,11 @@ export function isEmptyRichContentDoc(content: RichTextHtmlNode | null | undefin
     if (!content || !content.content || content.content.length === 0) return true;
 
     // Check if all top-level nodes are empty paragraphs
-    for (const node of content.content[0]?.content || []) {
+    let nodes = content.content[0]?.content || [];
+    if (nodes.length === 0) {
+        nodes = content.content;
+    }
+    for (const node of nodes) {
         if (node.type === NodeType.ELEMENT && node.tag === 'p') {
             if (node.content && node.content.length > 0) {
                 // Paragraph has content
