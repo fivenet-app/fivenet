@@ -129,6 +129,10 @@ func (s *Server) handleAccountsData(
 			groups = &accounts.AccountGroups{
 				Groups: gs,
 			}
+		} else if account.GetGroup() != "" {
+			groups = &accounts.AccountGroups{
+				Groups: []string{account.GetGroup()},
+			}
 		}
 
 		stmt = stmt.VALUES(
