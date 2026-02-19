@@ -3,7 +3,6 @@ package sync
 import (
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
@@ -250,12 +249,4 @@ func (s *Server) DeleteData(
 	return &pbsync.DeleteDataResponse{
 		AffectedRows: rowsAffected,
 	}, nil
-}
-
-func getLicenseFromIdentifier(identifier string) string {
-	parts := strings.SplitN(identifier, ":", 2)
-	if len(parts) == 2 {
-		return parts[1]
-	}
-	return identifier
 }

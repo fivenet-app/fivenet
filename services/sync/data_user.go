@@ -172,6 +172,25 @@ func (s *Server) createUser(
 	tAccounts := table.FivenetAccounts
 	tUsers := table.FivenetUser
 
+	var accountIdStmt mysql.SelectStatement = nil
+	if user.GetIdentifier() != "" {
+		accountIdStmt = tAccounts.
+			SELECT(
+				mysql.COALESCE(tAccounts.ID, mysql.NULL),
+			).
+			FROM(tAccounts).
+			WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(user.GetIdentifier())))).
+			LIMIT(1)
+	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	stmt := tUsers.
 		INSERT(
 			tUsers.ID,
@@ -188,28 +207,7 @@ func (s *Server) createUser(
 			tUsers.Height,
 			tUsers.Visum,
 			tUsers.Playtime,
-		)
-
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return 0, err
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
-	var accountIdStmt mysql.SelectStatement = nil
-	if user.GetUserId() <= 0 || user.GetIdentifier() != "" {
-		accountIdStmt = tAccounts.
-			SELECT(
-				mysql.COALESCE(tAccounts.ID, mysql.NULL),
-			).
-			FROM(tAccounts).
-			WHERE(tAccounts.License.EQ(mysql.String(getLicenseFromIdentifier(user.GetIdentifier())))).
-			LIMIT(1)
-	}
-
-	insertStmt := stmt.
+		).
 		VALUES(
 			user.GetUserId(),
 			accountIdStmt,
@@ -240,7 +238,7 @@ func (s *Server) createUser(
 			tUsers.Playtime.SET(mysql.IntExp(mysql.Raw("VALUES(`playtime`)"))),
 		)
 
-	res, err := insertStmt.ExecContext(ctx, tx)
+	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
 		return 0, fmt.Errorf("failed to execute user insert statement. %w", err)
 	}
@@ -304,7 +302,7 @@ func (s *Server) updateUser(
 			mysql.COALESCE(tAccounts.ID, mysql.NULL),
 		).
 		FROM(tAccounts).
-		WHERE(tAccounts.License.EQ(mysql.String(getLicenseFromIdentifier(user.GetIdentifier())))).
+		WHERE(tAccounts.License.EQ(mysql.String(utils.GetLicenseFromIdentifier(user.GetIdentifier())))).
 		LIMIT(1)
 
 	stmt := tUsers.
@@ -568,7 +566,10 @@ func (s *Server) handleUserJobs(
 		}
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return fmt.Errorf("failed to execute user jobs insert statement. %w", err)
+			return fmt.Errorf(
+				"failed to execute user jobs insert statement. %w",
+				err,
+			)
 		}
 	}
 
