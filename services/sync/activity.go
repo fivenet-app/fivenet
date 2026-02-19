@@ -407,9 +407,8 @@ func (s *Server) handleAccountUpdate(
 
 	tAccounts := table.FivenetAccounts
 
-	updateSets := []any{}
+	var groups *accounts.AccountGroups
 	if account.Groups != nil {
-		var groups *accounts.AccountGroups
 		if account.GetGroups() != nil && len(account.GetGroups().GetGroups()) > 0 {
 			groups = account.GetGroups()
 		} else if account.GetGroup() != "" {
@@ -417,45 +416,20 @@ func (s *Server) handleAccountUpdate(
 				Groups: []string{account.GetGroup()},
 			}
 		}
-
-		var gs mysql.StringExpression = mysql.StringExp(mysql.NULL)
-		if groups != nil {
-			o, err := groups.Value()
-			if err != nil {
-				s.logger.Warn(
-					"failed to convert groups to string (driver value). setting to null",
-					zap.String("license", account.GetLicense()),
-					zap.Error(err),
-				)
-			}
-			if o != nil {
-				gs = mysql.String(o.(string))
-			}
-		}
-
-		updateSets = append(
-			updateSets,
-			tAccounts.Groups.SET(gs),
-		)
 	}
 
-	if len(updateSets) > 0 {
-		stmt := tAccounts.
-			UPDATE()
+	stmt := tAccounts.
+		UPDATE(
+			tAccounts.Groups,
+		).
+		SET(
+			groups,
+		).
+		WHERE(tAccounts.License.EQ(mysql.String(account.License))).
+		LIMIT(1)
 
-		if len(updateSets) == 1 {
-			stmt = stmt.SET(updateSets[0])
-		} else {
-			stmt = stmt.SET(updateSets[0], updateSets[1:]...)
-		}
-
-		stmt = stmt.
-			WHERE(tAccounts.License.EQ(mysql.String(account.License))).
-			LIMIT(1)
-
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return fmt.Errorf("failed to update account. %w", err)
-		}
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return fmt.Errorf("failed to update account. %w", err)
 	}
 
 	return nil

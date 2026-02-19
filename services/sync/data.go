@@ -113,15 +113,7 @@ func (s *Server) handleAccountsData(
 
 	tAccounts := table.FivenetAccounts
 
-	stmt := tAccounts.
-		INSERT(
-			tAccounts.License,
-			tAccounts.Groups,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tAccounts.Groups.SET(mysql.StringExp(mysql.Raw("VALUES(`groups`)"))),
-		)
-
+	rowsAffected := int64(0)
 	for _, account := range data.Accounts.GetAccountUpdates() {
 		var groups *accounts.AccountGroups
 		if account.GetGroups() != nil && len(account.GetGroups().GetGroups()) > 0 {
@@ -132,19 +124,29 @@ func (s *Server) handleAccountsData(
 			}
 		}
 
-		stmt = stmt.VALUES(
-			account.GetLicense(),
-			groups,
-		)
-	}
+		stmt := tAccounts.
+			UPDATE(
+				tAccounts.License,
+				tAccounts.Groups,
+			).
+			SET(
+				account.GetLicense(),
+				groups,
+			).
+			WHERE(
+				tAccounts.License.EQ(mysql.String(account.License)),
+			).
+			LIMIT(1)
 
-	res, err := stmt.ExecContext(ctx, s.db)
-	if err != nil {
-		return 0, fmt.Errorf("failed to execute accounts insert statement. %w", err)
-	}
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		return 0, fmt.Errorf("failed to retrieve rows affected for accounts insert. %w", err)
+		res, err := stmt.ExecContext(ctx, s.db)
+		if err != nil {
+			return 0, fmt.Errorf("failed to execute accounts insert statement. %w", err)
+		}
+		rows, err := res.RowsAffected()
+		if err != nil {
+			return 0, fmt.Errorf("failed to retrieve rows affected for accounts insert. %w", err)
+		}
+		rowsAffected += rows
 	}
 
 	return rowsAffected, nil
