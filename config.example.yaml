@@ -199,10 +199,10 @@ discord:
   enabled: true
   dryRun: false
   token: "your_discord_bot_token"
-  sync: false
+  sync: true
 
   groupSync:
-    enabled: false
+    enabled: true
     mapping:
       fraktionsverwaltung:
         roleName: "Fraktionsverwaltung"
@@ -214,13 +214,13 @@ discord:
         #permissions: 0
         #color: "#9B59B6"
   userInfoSync:
-    enabled: false
+    enabled: true
     gradeRoleFormat: "[%grade%] %grade_label%"
     employeeRoleFormat: "%s Employees"
     unemployedRoleName: "Citizen"
     jobsAbsceneRoleName: "Absent"
   qualifications:
-    enabled: false
+    enabled: true
   commands:
     enabled: true
 
