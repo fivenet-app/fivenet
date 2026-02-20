@@ -10065,6 +10065,28 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 
+### services.documents.GetStampRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.GetStampResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `stamp` | [resources.documents.stamps.Stamp](#resourcesdocumentsstampsStamp) |  |  |
+
+
+
+
+
 ### services.documents.ListUsableStampsRequest
 
 
@@ -10122,6 +10144,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | `ListUsableStamps` | [ListUsableStampsRequest](#servicesdocumentsListUsableStampsRequest) | [ListUsableStampsResponse](#servicesdocumentsListUsableStampsResponse) | |
+| `GetStamp` | [GetStampRequest](#servicesdocumentsGetStampRequest) | [GetStampResponse](#servicesdocumentsGetStampResponse) | |
 | `UpsertStamp` | [UpsertStampRequest](#servicesdocumentsUpsertStampRequest) | [UpsertStampResponse](#servicesdocumentsUpsertStampResponse) | |
 | `DeleteStamp` | [DeleteStampRequest](#servicesdocumentsDeleteStampRequest) | [DeleteStampResponse](#servicesdocumentsDeleteStampResponse) | |
 

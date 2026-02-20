@@ -238,6 +238,7 @@ export const grpcMethods = [
 	'documents.FormsService/GetForm',
 	'documents.FormsService/ListForms',
 	'documents.StampsService/ListUsableStamps',
+	'documents.StampsService/GetStamp',
 	'documents.StampsService/UpsertStamp',
 	'documents.StampsService/DeleteStamp',
 	'filestore.FilestoreService/Upload',

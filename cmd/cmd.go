@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/alecthomas/kong"
-	// fx Modules imports.
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
 	"github.com/fivenet-app/fivenet/v2026/pkg/audit"
@@ -142,6 +141,8 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		crypt.Module,
 		demo.Module,
 		updatecheck.Module,
+
+		// DBSync
 		dbsync.Module,
 		dbsynctablemanager.Module,
 		dbsyncconfig.StateModule,

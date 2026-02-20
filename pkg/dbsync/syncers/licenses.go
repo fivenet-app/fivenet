@@ -1,4 +1,4 @@
-package dbsync
+package syncers
 
 import (
 	"context"
@@ -12,23 +12,20 @@ import (
 	"go.uber.org/zap"
 )
 
-type licensesSync struct {
-	*syncer
-
-	state *dbsyncconfig.TableSyncState
+type LicensesSync struct {
+	*Syncer
 }
 
-func newLicensesSync(s *syncer, state *dbsyncconfig.TableSyncState) *licensesSync {
-	return &licensesSync{
-		syncer: s,
-		state:  state,
+func NewLicensesSync(s *Syncer, state *dbsyncconfig.TableSyncState) *LicensesSync {
+	return &LicensesSync{
+		Syncer: s,
 	}
 }
 
-func (s *licensesSync) Sync(ctx context.Context) (int64, error) {
+func (s *LicensesSync) Sync(ctx context.Context) (int64, error) {
 	limit := int64(200)
 
-	q := s.cfg.Tables.Licenses.GetQuery(s.state, 0, limit)
+	q := s.cfg.Tables.Licenses.GetQuery(0, limit)
 	s.logger.Debug("licenses sync query", zap.String("query", q))
 
 	licenses := []*userslicenses.License{}
@@ -56,8 +53,6 @@ func (s *licensesSync) Sync(ctx context.Context) (int64, error) {
 			return 0, err
 		}
 	}
-
-	s.state.Set(0, nil)
 
 	return count, nil
 }

@@ -3741,7 +3741,8 @@
                 "duplicate_job_grade": "A job and grade were selected multiple times. Please select each job and grade only once.",
                 "duplicate_user": "A citizen was selected multiple times. Please select each citizen only once.",
                 "duplicate_qualification": "A qualification was selected multiple times. Please select each qualification only once."
-            }
+            },
+            "user": "An user must be selected."
         }
     }
 }

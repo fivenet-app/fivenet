@@ -3741,7 +3741,8 @@
                 "duplicate_job_grade": "Ein Beruf und Rang wurden mehrfach ausgewählt. Bitte wählen Sie jeden Beruf und Rang nur einmal aus.",
                 "duplicate_user": "Ein Bürger wurde mehrfach ausgewählt. Bitte wählen Sie jeden Bürger nur einmal aus.",
                 "duplicate_qualification": "Eine Qualifikation wurde mehrfach ausgewählt. Bitte wählen Sie jede Qualifikation nur einmal aus."
-            }
+            },
+            "user": "Ein Bürger muss ausgewählt werden."
         }
     }
 }

@@ -252,6 +252,9 @@ tables:
         #- pattern: '^ambulance$'
         #  action: replace
         #  replacement: 'ems'
+    # Interval in which a batch of the user data is "re-synced". A "step" is a single batch of users that is re-synced,
+    # to ensure eventual consistency of the data when an update has been missed for whatever reason.
+    resyncInterval: 12s
 
   # Licenses of a user
   userLicenses:
@@ -352,6 +355,10 @@ tables:
     #  ORDER BY `vehicle.plate`
     #  LIMIT $limit
     #  OFFSET $offset;
+    #
+    # Interval in which a batch of vehicles data is "re-synced". A "step" is a single batch of vehicles that is re-synced,
+    # to ensure eventual consistency of the data when an update has been missed for whatever reason.
+    resyncInterval: 30s
 
   # Accounts - Used to, e.g., sync group(s) by license, to accounts.
   accounts:
@@ -386,8 +393,10 @@ tableManager:
 # Limit the amount of data to sync per query, this is useful to prevent syncing too much data at once which can cause performance issues or timeouts.
 # The default numbers are the maximum allowed by the sync API, you can lower them if you experience performance issues or timeouts, but you cannot increase them above these values.
 limits:
+  # Base data
   jobs: 200
   licenses: 200
-  users: 150
-  vehicles: 500
+  # Main data
   accounts: 100
+  users: 150
+  vehicles: 400

@@ -44,6 +44,24 @@ export interface ListUsableStampsResponse {
     stamps: Stamp[];
 }
 /**
+ * @generated from protobuf message services.documents.GetStampRequest
+ */
+export interface GetStampRequest {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+}
+/**
+ * @generated from protobuf message services.documents.GetStampResponse
+ */
+export interface GetStampResponse {
+    /**
+     * @generated from protobuf field: resources.documents.stamps.Stamp stamp = 1
+     */
+    stamp?: Stamp;
+}
+/**
  * @generated from protobuf message services.documents.UpsertStampRequest
  */
 export interface UpsertStampRequest {
@@ -182,6 +200,99 @@ class ListUsableStampsResponse$Type extends MessageType<ListUsableStampsResponse
  * @generated MessageType for protobuf message services.documents.ListUsableStampsResponse
  */
 export const ListUsableStampsResponse = new ListUsableStampsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetStampRequest$Type extends MessageType<GetStampRequest> {
+    constructor() {
+        super("services.documents.GetStampRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<GetStampRequest>): GetStampRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        if (value !== undefined)
+            reflectionMergePartial<GetStampRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetStampRequest): GetStampRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetStampRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.GetStampRequest
+ */
+export const GetStampRequest = new GetStampRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetStampResponse$Type extends MessageType<GetStampResponse> {
+    constructor() {
+        super("services.documents.GetStampResponse", [
+            { no: 1, name: "stamp", kind: "message", T: () => Stamp }
+        ]);
+    }
+    create(value?: PartialMessage<GetStampResponse>): GetStampResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetStampResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetStampResponse): GetStampResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.documents.stamps.Stamp stamp */ 1:
+                    message.stamp = Stamp.internalBinaryRead(reader, reader.uint32(), options, message.stamp);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetStampResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.stamps.Stamp stamp = 1; */
+        if (message.stamp)
+            Stamp.internalBinaryWrite(message.stamp, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.GetStampResponse
+ */
+export const GetStampResponse = new GetStampResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UpsertStampRequest$Type extends MessageType<UpsertStampRequest> {
     constructor() {
@@ -364,6 +475,7 @@ export const DeleteStampResponse = new DeleteStampResponse$Type();
  */
 export const StampsService = new ServiceType("services.documents.StampsService", [
     { name: "ListUsableStamps", options: { "codegen.perms.perms": { enabled: true } }, I: ListUsableStampsRequest, O: ListUsableStampsResponse },
+    { name: "GetStamp", options: { "codegen.perms.perms": { enabled: true, name: "ListUsableStamps" } }, I: GetStampRequest, O: GetStampResponse },
     { name: "UpsertStamp", options: { "codegen.perms.perms": { enabled: true } }, I: UpsertStampRequest, O: UpsertStampResponse },
     { name: "DeleteStamp", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteStampRequest, O: DeleteStampResponse }
 ], { "codegen.perms.perms_svc": { order: 57, icon: "i-mdi-stamper" } });

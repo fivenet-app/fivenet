@@ -101,7 +101,40 @@ func (s *Server) ListUsableStamps(
 	return resp, nil
 }
 
-func (s *Server) getStamp(ctx context.Context, stampID int64) (*documentsstamps.Stamp, error) {
+func (s *Server) GetStamp(
+	ctx context.Context,
+	req *pbdocuments.GetStampRequest,
+) (*pbdocuments.GetStampResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	check, err := s.signingStampAccess.CanUserAccessTarget(
+		ctx,
+		req.GetId(),
+		userInfo,
+		documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_USE,
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errorsdocuments.ErrPermissionDenied
+	}
+
+	stamp, err := s.getStamp(ctx, req.GetId(), true)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	return &pbdocuments.GetStampResponse{
+		Stamp: stamp,
+	}, nil
+}
+
+func (s *Server) getStamp(
+	ctx context.Context,
+	stampId int64,
+	withAccess bool,
+) (*documentsstamps.Stamp, error) {
 	tStamp := table.FivenetDocumentsStamps.AS("stamp")
 
 	stmt := mysql.
@@ -114,7 +147,7 @@ func (s *Server) getStamp(ctx context.Context, stampID int64) (*documentsstamps.
 		).
 		FROM(tStamp).
 		WHERE(mysql.AND(
-			tStamp.ID.EQ(mysql.Int64(stampID)),
+			tStamp.ID.EQ(mysql.Int64(stampId)),
 		)).
 		LIMIT(1)
 
@@ -125,6 +158,16 @@ func (s *Server) getStamp(ctx context.Context, stampID int64) (*documentsstamps.
 
 	if stamp.Id == 0 {
 		return nil, nil
+	}
+
+	if withAccess {
+		accessList, err := s.signingStampAccess.Jobs.List(ctx, s.db, stampId)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+		stamp.Access = &documentsstamps.StampAccess{
+			Jobs: accessList,
+		}
 	}
 
 	return &stamp, nil
@@ -248,7 +291,7 @@ func (s *Server) UpsertStamp(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	stamp, err := s.getStamp(ctx, st.GetId())
+	stamp, err := s.getStamp(ctx, st.GetId(), true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}

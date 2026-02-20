@@ -1,4 +1,4 @@
-package dbsync
+package syncers
 
 import (
 	"context"
@@ -13,20 +13,17 @@ import (
 	"go.uber.org/zap"
 )
 
-type jobsSync struct {
-	*syncer
-
-	state *dbsyncconfig.TableSyncState
+type JobsSync struct {
+	*Syncer
 }
 
-func newJobsSync(s *syncer, state *dbsyncconfig.TableSyncState) *jobsSync {
-	return &jobsSync{
-		syncer: s,
-		state:  state,
+func NewJobsSync(s *Syncer, state *dbsyncconfig.TableSyncState) *JobsSync {
+	return &JobsSync{
+		Syncer: s,
 	}
 }
 
-func (s *jobsSync) Sync(ctx context.Context) (int64, error) {
+func (s *JobsSync) Sync(ctx context.Context) (int64, error) {
 	jobs, err := s.fetchJobs(ctx)
 	if err != nil {
 		return 0, err
@@ -63,14 +60,12 @@ func (s *jobsSync) Sync(ctx context.Context) (int64, error) {
 		}
 	}
 
-	s.state.Set(0, nil)
-
 	return count, nil
 }
 
-func (s *jobsSync) fetchJobs(ctx context.Context) ([]*jobs.Job, error) {
+func (s *JobsSync) fetchJobs(ctx context.Context) ([]*jobs.Job, error) {
 	limit := int64(200)
-	q := s.cfg.Tables.Jobs.GetQuery(s.state, 0, limit)
+	q := s.cfg.Tables.Jobs.GetQuery(0, limit)
 	s.logger.Debug("jobs sync query", zap.String("query", q))
 
 	jobsResults := []*jobs.Job{}
@@ -83,7 +78,7 @@ func (s *jobsSync) fetchJobs(ctx context.Context) ([]*jobs.Job, error) {
 	return jobsResults, nil
 }
 
-func (s *jobsSync) applyFiltersAndRetrieveGrades(
+func (s *JobsSync) applyFiltersAndRetrieveGrades(
 	ctx context.Context,
 	js []*jobs.Job,
 	hasFilters bool,
@@ -138,7 +133,7 @@ func (s *jobsSync) applyFiltersAndRetrieveGrades(
 	return js, nil
 }
 
-func (s *jobsSync) getGrades(ctx context.Context, job string) ([]*jobs.JobGrade, error) {
+func (s *JobsSync) getGrades(ctx context.Context, job string) ([]*jobs.JobGrade, error) {
 	query := s.cfg.Tables.JobGrades.GetQuery(nil, 0, 200)
 
 	grades := []*jobs.JobGrade{}

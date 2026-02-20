@@ -203,6 +203,131 @@ func (b0 ListUsableStampsResponse_builder) Build() *ListUsableStampsResponse {
 	return m0
 }
 
+type GetStampRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetStampRequest) Reset() {
+	*x = GetStampRequest{}
+	mi := &file_services_documents_stamps_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetStampRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetStampRequest) ProtoMessage() {}
+
+func (x *GetStampRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_documents_stamps_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *GetStampRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *GetStampRequest) SetId(v int64) {
+	x.Id = v
+}
+
+type GetStampRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id int64
+}
+
+func (b0 GetStampRequest_builder) Build() *GetStampRequest {
+	m0 := &GetStampRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	return m0
+}
+
+type GetStampResponse struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Stamp         *stamps.Stamp          `protobuf:"bytes,1,opt,name=stamp,proto3" json:"stamp,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetStampResponse) Reset() {
+	*x = GetStampResponse{}
+	mi := &file_services_documents_stamps_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetStampResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetStampResponse) ProtoMessage() {}
+
+func (x *GetStampResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_documents_stamps_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *GetStampResponse) GetStamp() *stamps.Stamp {
+	if x != nil {
+		return x.Stamp
+	}
+	return nil
+}
+
+func (x *GetStampResponse) SetStamp(v *stamps.Stamp) {
+	x.Stamp = v
+}
+
+func (x *GetStampResponse) HasStamp() bool {
+	if x == nil {
+		return false
+	}
+	return x.Stamp != nil
+}
+
+func (x *GetStampResponse) ClearStamp() {
+	x.Stamp = nil
+}
+
+type GetStampResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Stamp *stamps.Stamp
+}
+
+func (b0 GetStampResponse_builder) Build() *GetStampResponse {
+	m0 := &GetStampResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Stamp = b.Stamp
+	return m0
+}
+
 type UpsertStampRequest struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Stamp         *stamps.Stamp          `protobuf:"bytes,1,opt,name=stamp,proto3" json:"stamp,omitempty"`
@@ -212,7 +337,7 @@ type UpsertStampRequest struct {
 
 func (x *UpsertStampRequest) Reset() {
 	*x = UpsertStampRequest{}
-	mi := &file_services_documents_stamps_proto_msgTypes[2]
+	mi := &file_services_documents_stamps_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -224,7 +349,7 @@ func (x *UpsertStampRequest) String() string {
 func (*UpsertStampRequest) ProtoMessage() {}
 
 func (x *UpsertStampRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_stamps_proto_msgTypes[2]
+	mi := &file_services_documents_stamps_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -280,7 +405,7 @@ type UpsertStampResponse struct {
 
 func (x *UpsertStampResponse) Reset() {
 	*x = UpsertStampResponse{}
-	mi := &file_services_documents_stamps_proto_msgTypes[3]
+	mi := &file_services_documents_stamps_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -292,7 +417,7 @@ func (x *UpsertStampResponse) String() string {
 func (*UpsertStampResponse) ProtoMessage() {}
 
 func (x *UpsertStampResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_stamps_proto_msgTypes[3]
+	mi := &file_services_documents_stamps_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -348,7 +473,7 @@ type DeleteStampRequest struct {
 
 func (x *DeleteStampRequest) Reset() {
 	*x = DeleteStampRequest{}
-	mi := &file_services_documents_stamps_proto_msgTypes[4]
+	mi := &file_services_documents_stamps_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -360,7 +485,7 @@ func (x *DeleteStampRequest) String() string {
 func (*DeleteStampRequest) ProtoMessage() {}
 
 func (x *DeleteStampRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_stamps_proto_msgTypes[4]
+	mi := &file_services_documents_stamps_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -404,7 +529,7 @@ type DeleteStampResponse struct {
 
 func (x *DeleteStampResponse) Reset() {
 	*x = DeleteStampResponse{}
-	mi := &file_services_documents_stamps_proto_msgTypes[5]
+	mi := &file_services_documents_stamps_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -416,7 +541,7 @@ func (x *DeleteStampResponse) String() string {
 func (*DeleteStampResponse) ProtoMessage() {}
 
 func (x *DeleteStampResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_stamps_proto_msgTypes[5]
+	mi := &file_services_documents_stamps_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -455,48 +580,58 @@ const file_services_documents_stamps_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12?\n" +
-	"\x06stamps\x18\x02 \x03(\v2!.resources.documents.stamps.StampB\x04\xc8\xf3\x18\x01R\x06stamps\"M\n" +
+	"\x06stamps\x18\x02 \x03(\v2!.resources.documents.stamps.StampB\x04\xc8\xf3\x18\x01R\x06stamps\"!\n" +
+	"\x0fGetStampRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"K\n" +
+	"\x10GetStampResponse\x127\n" +
+	"\x05stamp\x18\x01 \x01(\v2!.resources.documents.stamps.StampR\x05stamp\"M\n" +
 	"\x12UpsertStampRequest\x127\n" +
 	"\x05stamp\x18\x01 \x01(\v2!.resources.documents.stamps.StampR\x05stamp\"N\n" +
 	"\x13UpsertStampResponse\x127\n" +
 	"\x05stamp\x18\x01 \x01(\v2!.resources.documents.stamps.StampR\x05stamp\"/\n" +
 	"\x12DeleteStampRequest\x12\x19\n" +
 	"\bstamp_id\x18\x01 \x01(\x03R\astampId\"\x15\n" +
-	"\x13DeleteStampResponse2\xed\x02\n" +
+	"\x13DeleteStampResponse2\xde\x03\n" +
 	"\rStampsService\x12u\n" +
-	"\x10ListUsableStamps\x12+.services.documents.ListUsableStampsRequest\x1a,.services.documents.ListUsableStampsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12f\n" +
+	"\x10ListUsableStamps\x12+.services.documents.ListUsableStampsRequest\x1a,.services.documents.ListUsableStampsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12o\n" +
+	"\bGetStamp\x12#.services.documents.GetStampRequest\x1a$.services.documents.GetStampResponse\"\x18\xd2\xf3\x18\x14\b\x01\x1a\x10ListUsableStamps\x12f\n" +
 	"\vUpsertStamp\x12&.services.documents.UpsertStampRequest\x1a'.services.documents.UpsertStampResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12f\n" +
 	"\vDeleteStamp\x12&.services.documents.DeleteStampRequest\x1a'.services.documents.DeleteStampResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x15\xea\xf3\x18\x11\b9\x12\ri-mdi-stamperBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
-var file_services_documents_stamps_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_services_documents_stamps_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_services_documents_stamps_proto_goTypes = []any{
 	(*ListUsableStampsRequest)(nil),     // 0: services.documents.ListUsableStampsRequest
 	(*ListUsableStampsResponse)(nil),    // 1: services.documents.ListUsableStampsResponse
-	(*UpsertStampRequest)(nil),          // 2: services.documents.UpsertStampRequest
-	(*UpsertStampResponse)(nil),         // 3: services.documents.UpsertStampResponse
-	(*DeleteStampRequest)(nil),          // 4: services.documents.DeleteStampRequest
-	(*DeleteStampResponse)(nil),         // 5: services.documents.DeleteStampResponse
-	(*database.PaginationRequest)(nil),  // 6: resources.common.database.PaginationRequest
-	(*database.PaginationResponse)(nil), // 7: resources.common.database.PaginationResponse
-	(*stamps.Stamp)(nil),                // 8: resources.documents.stamps.Stamp
+	(*GetStampRequest)(nil),             // 2: services.documents.GetStampRequest
+	(*GetStampResponse)(nil),            // 3: services.documents.GetStampResponse
+	(*UpsertStampRequest)(nil),          // 4: services.documents.UpsertStampRequest
+	(*UpsertStampResponse)(nil),         // 5: services.documents.UpsertStampResponse
+	(*DeleteStampRequest)(nil),          // 6: services.documents.DeleteStampRequest
+	(*DeleteStampResponse)(nil),         // 7: services.documents.DeleteStampResponse
+	(*database.PaginationRequest)(nil),  // 8: resources.common.database.PaginationRequest
+	(*database.PaginationResponse)(nil), // 9: resources.common.database.PaginationResponse
+	(*stamps.Stamp)(nil),                // 10: resources.documents.stamps.Stamp
 }
 var file_services_documents_stamps_proto_depIdxs = []int32{
-	6, // 0: services.documents.ListUsableStampsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	7, // 1: services.documents.ListUsableStampsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	8, // 2: services.documents.ListUsableStampsResponse.stamps:type_name -> resources.documents.stamps.Stamp
-	8, // 3: services.documents.UpsertStampRequest.stamp:type_name -> resources.documents.stamps.Stamp
-	8, // 4: services.documents.UpsertStampResponse.stamp:type_name -> resources.documents.stamps.Stamp
-	0, // 5: services.documents.StampsService.ListUsableStamps:input_type -> services.documents.ListUsableStampsRequest
-	2, // 6: services.documents.StampsService.UpsertStamp:input_type -> services.documents.UpsertStampRequest
-	4, // 7: services.documents.StampsService.DeleteStamp:input_type -> services.documents.DeleteStampRequest
-	1, // 8: services.documents.StampsService.ListUsableStamps:output_type -> services.documents.ListUsableStampsResponse
-	3, // 9: services.documents.StampsService.UpsertStamp:output_type -> services.documents.UpsertStampResponse
-	5, // 10: services.documents.StampsService.DeleteStamp:output_type -> services.documents.DeleteStampResponse
-	8, // [8:11] is the sub-list for method output_type
-	5, // [5:8] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	8,  // 0: services.documents.ListUsableStampsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	9,  // 1: services.documents.ListUsableStampsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	10, // 2: services.documents.ListUsableStampsResponse.stamps:type_name -> resources.documents.stamps.Stamp
+	10, // 3: services.documents.GetStampResponse.stamp:type_name -> resources.documents.stamps.Stamp
+	10, // 4: services.documents.UpsertStampRequest.stamp:type_name -> resources.documents.stamps.Stamp
+	10, // 5: services.documents.UpsertStampResponse.stamp:type_name -> resources.documents.stamps.Stamp
+	0,  // 6: services.documents.StampsService.ListUsableStamps:input_type -> services.documents.ListUsableStampsRequest
+	2,  // 7: services.documents.StampsService.GetStamp:input_type -> services.documents.GetStampRequest
+	4,  // 8: services.documents.StampsService.UpsertStamp:input_type -> services.documents.UpsertStampRequest
+	6,  // 9: services.documents.StampsService.DeleteStamp:input_type -> services.documents.DeleteStampRequest
+	1,  // 10: services.documents.StampsService.ListUsableStamps:output_type -> services.documents.ListUsableStampsResponse
+	3,  // 11: services.documents.StampsService.GetStamp:output_type -> services.documents.GetStampResponse
+	5,  // 12: services.documents.StampsService.UpsertStamp:output_type -> services.documents.UpsertStampResponse
+	7,  // 13: services.documents.StampsService.DeleteStamp:output_type -> services.documents.DeleteStampResponse
+	10, // [10:14] is the sub-list for method output_type
+	6,  // [6:10] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_services_documents_stamps_proto_init() }
@@ -511,7 +646,7 @@ func file_services_documents_stamps_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_documents_stamps_proto_rawDesc), len(file_services_documents_stamps_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

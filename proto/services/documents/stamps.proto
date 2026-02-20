@@ -21,6 +21,14 @@ message ListUsableStampsResponse {
   repeated resources.documents.stamps.Stamp stamps = 2 [(codegen.itemslen.enabled) = true];
 }
 
+message GetStampRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message GetStampResponse {
+  resources.documents.stamps.Stamp stamp = 1;
+}
+
 message UpsertStampRequest {
   resources.documents.stamps.Stamp stamp = 1 [(buf.validate.field).required = true];
 }
@@ -44,6 +52,13 @@ service StampsService {
   rpc ListUsableStamps(ListUsableStampsRequest) returns (ListUsableStampsResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }
+  rpc GetStamp(GetStampRequest) returns (GetStampResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListUsableStamps"
+    };
+  }
+
   rpc UpsertStamp(UpsertStampRequest) returns (UpsertStampResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }

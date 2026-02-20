@@ -226,6 +226,11 @@ var PermsRemap = map[string][]string{
 		"documents.DocumentsService/UpdateDocument",
 	},
 
+	// Service: documents.StampsService
+	"documents.StampsService/GetStamp": []string{
+		"documents.StampsService/ListUsableStamps",
+	},
+
 	// Service: filestore.FilestoreService
 	"filestore.FilestoreService/DeleteFile": []string{
 		"Superuser",

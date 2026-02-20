@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	StampsService_ListUsableStamps_FullMethodName = "/services.documents.StampsService/ListUsableStamps"
+	StampsService_GetStamp_FullMethodName         = "/services.documents.StampsService/GetStamp"
 	StampsService_UpsertStamp_FullMethodName      = "/services.documents.StampsService/UpsertStamp"
 	StampsService_DeleteStamp_FullMethodName      = "/services.documents.StampsService/DeleteStamp"
 )
@@ -29,6 +30,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StampsServiceClient interface {
 	ListUsableStamps(ctx context.Context, in *ListUsableStampsRequest, opts ...grpc.CallOption) (*ListUsableStampsResponse, error)
+	GetStamp(ctx context.Context, in *GetStampRequest, opts ...grpc.CallOption) (*GetStampResponse, error)
 	UpsertStamp(ctx context.Context, in *UpsertStampRequest, opts ...grpc.CallOption) (*UpsertStampResponse, error)
 	DeleteStamp(ctx context.Context, in *DeleteStampRequest, opts ...grpc.CallOption) (*DeleteStampResponse, error)
 }
@@ -45,6 +47,16 @@ func (c *stampsServiceClient) ListUsableStamps(ctx context.Context, in *ListUsab
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListUsableStampsResponse)
 	err := c.cc.Invoke(ctx, StampsService_ListUsableStamps_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *stampsServiceClient) GetStamp(ctx context.Context, in *GetStampRequest, opts ...grpc.CallOption) (*GetStampResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetStampResponse)
+	err := c.cc.Invoke(ctx, StampsService_GetStamp_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,6 +88,7 @@ func (c *stampsServiceClient) DeleteStamp(ctx context.Context, in *DeleteStampRe
 // for forward compatibility.
 type StampsServiceServer interface {
 	ListUsableStamps(context.Context, *ListUsableStampsRequest) (*ListUsableStampsResponse, error)
+	GetStamp(context.Context, *GetStampRequest) (*GetStampResponse, error)
 	UpsertStamp(context.Context, *UpsertStampRequest) (*UpsertStampResponse, error)
 	DeleteStamp(context.Context, *DeleteStampRequest) (*DeleteStampResponse, error)
 	mustEmbedUnimplementedStampsServiceServer()
@@ -90,6 +103,9 @@ type UnimplementedStampsServiceServer struct{}
 
 func (UnimplementedStampsServiceServer) ListUsableStamps(context.Context, *ListUsableStampsRequest) (*ListUsableStampsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUsableStamps not implemented")
+}
+func (UnimplementedStampsServiceServer) GetStamp(context.Context, *GetStampRequest) (*GetStampResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStamp not implemented")
 }
 func (UnimplementedStampsServiceServer) UpsertStamp(context.Context, *UpsertStampRequest) (*UpsertStampResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpsertStamp not implemented")
@@ -132,6 +148,24 @@ func _StampsService_ListUsableStamps_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(StampsServiceServer).ListUsableStamps(ctx, req.(*ListUsableStampsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StampsService_GetStamp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStampRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StampsServiceServer).GetStamp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StampsService_GetStamp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StampsServiceServer).GetStamp(ctx, req.(*GetStampRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -182,6 +216,10 @@ var StampsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUsableStamps",
 			Handler:    _StampsService_ListUsableStamps_Handler,
+		},
+		{
+			MethodName: "GetStamp",
+			Handler:    _StampsService_GetStamp_Handler,
 		},
 		{
 			MethodName: "UpsertStamp",

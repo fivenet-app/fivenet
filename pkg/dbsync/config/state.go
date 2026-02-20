@@ -1,7 +1,9 @@
 package dbsyncconfig
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"os"
 	"sync"
 	"time"
@@ -20,6 +22,8 @@ var StateModule = fx.Module("dbsync.state",
 type StateParams struct {
 	fx.In
 
+	LC fx.Lifecycle
+
 	Logger *zap.Logger
 	Config *Config
 }
@@ -31,17 +35,20 @@ type State struct {
 
 	filepath string `yaml:"-"`
 
-	Jobs      *TableSyncState `yaml:"jobs"`
-	JobGrades *TableSyncState `yaml:"jobGrades"`
-	Licenses  *TableSyncState `yaml:"licenses"`
+	Jobs     *TableSyncState `yaml:"jobs"`
+	Licenses *TableSyncState `yaml:"licenses"`
 
-	Accounts      *TableSyncState `yaml:"accounts"`
-	Users         *TableSyncState `yaml:"users"`
-	OwnedVehicles *TableSyncState `yaml:"ownedVehicles"`
+	Accounts *TableSyncState `yaml:"accounts"`
+
+	Users       *TableSyncState `yaml:"users"`
+	UsersResync *TableSyncState `yaml:"usersResync"`
+
+	Vehicles       *TableSyncState `yaml:"vehicles"`
+	VehiclesResync *TableSyncState `yaml:"vehiclesResync"`
 }
 
 func NewState(p StateParams) *State {
-	d := &State{
+	s := &State{
 		mu: sync.RWMutex{},
 
 		logger: p.Logger.Named("dbsync.state"),
@@ -49,27 +56,26 @@ func NewState(p StateParams) *State {
 		filepath: p.Config.Load().StateFile,
 	}
 
-	d.Jobs = &TableSyncState{
-		dss: d,
-	}
-	d.Licenses = &TableSyncState{
-		dss: d,
-	}
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		// Load dbsync state from file if exists
+		if err := s.load(); err != nil {
+			return fmt.Errorf("failed to load dbsync state. %w", err)
+		}
 
-	d.Accounts = &TableSyncState{
-		dss: d,
-	}
-	d.Users = &TableSyncState{
-		dss: d,
-	}
-	d.OwnedVehicles = &TableSyncState{
-		dss: d,
-	}
+		return nil
+	}))
+	p.LC.Append(fx.StopHook(func(ctxStartup context.Context) error {
+		if err := s.Save(); err != nil {
+			return fmt.Errorf("failed to save state. %w", err)
+		}
 
-	return d
+		return nil
+	}))
+
+	return s
 }
 
-func (s *State) Load() error {
+func (s *State) load() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -94,11 +100,19 @@ func (s *State) Load() error {
 	if s.Accounts == nil {
 		s.Accounts = &TableSyncState{dss: s}
 	}
+
 	if s.Users == nil {
 		s.Users = &TableSyncState{dss: s}
 	}
-	if s.OwnedVehicles == nil {
-		s.OwnedVehicles = &TableSyncState{dss: s}
+	if s.UsersResync == nil {
+		s.UsersResync = &TableSyncState{dss: s}
+	}
+
+	if s.Vehicles == nil {
+		s.Vehicles = &TableSyncState{dss: s}
+	}
+	if s.VehiclesResync == nil {
+		s.VehiclesResync = &TableSyncState{dss: s}
 	}
 
 	return nil

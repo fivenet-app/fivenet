@@ -1,4 +1,4 @@
-package dbsync
+package syncers
 
 import (
 	"context"
@@ -13,20 +13,32 @@ import (
 	"go.uber.org/zap"
 )
 
-type vehiclesSync struct {
-	*syncer
+type VehiclesSync struct {
+	*Syncer
 
-	state *dbsyncconfig.TableSyncState
+	state         *dbsyncconfig.TableSyncState
+	saveLastCheck bool
 }
 
-func newVehiclesSync(s *syncer, state *dbsyncconfig.TableSyncState) *vehiclesSync {
-	return &vehiclesSync{
-		syncer: s,
+func NewVehiclesSync(
+	s *Syncer,
+	state *dbsyncconfig.TableSyncState,
+	saveLastCheck bool,
+) *VehiclesSync {
+	return &VehiclesSync{
+		Syncer: s,
 		state:  state,
+
+		saveLastCheck: saveLastCheck,
 	}
 }
 
-func (s *vehiclesSync) Sync(ctx context.Context) (int64, int64, string, error) {
+func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, error) {
+	// Ensure last check is nil when we don't want to save it
+	if !s.saveLastCheck {
+		s.state.SetLastCheck(nil)
+	}
+
 	limit := int64(500)
 	var offset int64
 	sOffset := s.state.GetOffset()
@@ -84,4 +96,8 @@ func (s *vehiclesSync) Sync(ctx context.Context) (int64, int64, string, error) {
 	s.state.Set(limit+offset, &lastPlate)
 
 	return count, offset, lastPlate, nil
+}
+
+func (s *VehiclesSync) Resync(ctx context.Context) error {
+	return nil
 }

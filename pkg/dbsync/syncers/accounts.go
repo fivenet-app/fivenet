@@ -1,4 +1,4 @@
-package dbsync
+package syncers
 
 import (
 	"context"
@@ -13,20 +13,23 @@ import (
 	"go.uber.org/zap"
 )
 
-type accountsSync struct {
-	*syncer
+type AccountsSync struct {
+	*Syncer
 
 	state *dbsyncconfig.TableSyncState
 }
 
-func newAccountsSync(s *syncer, state *dbsyncconfig.TableSyncState) *accountsSync {
-	return &accountsSync{
-		syncer: s,
+func NewAccountsSync(
+	s *Syncer,
+	state *dbsyncconfig.TableSyncState,
+) *AccountsSync {
+	return &AccountsSync{
+		Syncer: s,
 		state:  state,
 	}
 }
 
-func (s *accountsSync) Sync(ctx context.Context) (int64, error) {
+func (s *AccountsSync) Sync(ctx context.Context) (int64, error) {
 	accounts, err := s.fetchAccounts(ctx)
 	if err != nil {
 		return 0, err
@@ -61,7 +64,7 @@ func (s *accountsSync) Sync(ctx context.Context) (int64, error) {
 	return count, nil
 }
 
-func (s *accountsSync) fetchAccounts(ctx context.Context) ([]*syncactivity.AccountUpdate, error) {
+func (s *AccountsSync) fetchAccounts(ctx context.Context) ([]*syncactivity.AccountUpdate, error) {
 	limit := int64(200)
 	q := s.cfg.Tables.Accounts.GetQuery(s.state, 0, limit)
 	s.logger.Debug("accounts sync query", zap.String("query", q))

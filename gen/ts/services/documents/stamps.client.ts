@@ -9,6 +9,8 @@ import type { DeleteStampResponse } from "./stamps";
 import type { DeleteStampRequest } from "./stamps";
 import type { UpsertStampResponse } from "./stamps";
 import type { UpsertStampRequest } from "./stamps";
+import type { GetStampResponse } from "./stamps";
+import type { GetStampRequest } from "./stamps";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { ListUsableStampsResponse } from "./stamps";
 import type { ListUsableStampsRequest } from "./stamps";
@@ -22,6 +24,10 @@ export interface IStampsServiceClient {
      * @generated from protobuf rpc: ListUsableStamps
      */
     listUsableStamps(input: ListUsableStampsRequest, options?: RpcOptions): UnaryCall<ListUsableStampsRequest, ListUsableStampsResponse>;
+    /**
+     * @generated from protobuf rpc: GetStamp
+     */
+    getStamp(input: GetStampRequest, options?: RpcOptions): UnaryCall<GetStampRequest, GetStampResponse>;
     /**
      * @generated from protobuf rpc: UpsertStamp
      */
@@ -48,17 +54,24 @@ export class StampsServiceClient implements IStampsServiceClient, ServiceInfo {
         return stackIntercept<ListUsableStampsRequest, ListUsableStampsResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @generated from protobuf rpc: GetStamp
+     */
+    getStamp(input: GetStampRequest, options?: RpcOptions): UnaryCall<GetStampRequest, GetStampResponse> {
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetStampRequest, GetStampResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: UpsertStamp
      */
     upsertStamp(input: UpsertStampRequest, options?: RpcOptions): UnaryCall<UpsertStampRequest, UpsertStampResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpsertStampRequest, UpsertStampResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteStamp
      */
     deleteStamp(input: DeleteStampRequest, options?: RpcOptions): UnaryCall<DeleteStampRequest, DeleteStampResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteStampRequest, DeleteStampResponse>("unary", this._transport, method, opt, input);
     }
 }

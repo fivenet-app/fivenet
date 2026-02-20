@@ -10,6 +10,7 @@ import (
 
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbsync/syncers"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"go.uber.org/fx"
@@ -41,13 +42,20 @@ type Sync struct {
 	cli     *grpc.ClientConn
 	syncCli pbsync.SyncServiceClient
 
-	jobs     *jobsSync
-	licenses *licensesSync
-	users    *usersSync
-	vehicles *vehiclesSync
-	accounts *accountsSync
-
 	streamCh chan *pbsync.StreamResponse
+
+	// Base data syncers
+	jobs     *syncers.JobsSync
+	licenses *syncers.LicensesSync
+
+	// Main data syncers
+	accounts *syncers.AccountsSync
+
+	users       *syncers.UsersSync
+	usersResync *syncers.UsersSync
+
+	vehicles       *syncers.VehiclesSync
+	vehiclesResync *syncers.VehiclesSync
 }
 
 type Params struct {
@@ -81,11 +89,6 @@ func New(p Params) (*Sync, error) {
 	}
 
 	p.Config.SetupWatch(logger.Named("config"), s.restart)
-
-	// Load dbsync state from file if exists
-	if err := s.state.Load(); err != nil {
-		return nil, fmt.Errorf("failed to load dbsync state. %w", err)
-	}
 
 	if err := s.createGRPCClient(); err != nil {
 		return nil, fmt.Errorf("failed to create sync API gRPC client. %w", err)
@@ -161,26 +164,27 @@ func (s *Sync) start() error {
 
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 
-	// Setup table syncers
-	syncer := &syncer{
-		logger: s.logger,
-		db:     s.db,
-		cfg:    s.cfg.Load(),
-		cli:    s.syncCli,
+	// Setup data syncers
+	syncer := syncers.New(s.logger, s.db, s.cfg.Load(), s.syncCli)
+	s.jobs = syncers.NewJobsSync(syncer, s.state.Jobs)
+	s.licenses = syncers.NewLicensesSync(syncer, s.state.Licenses)
+
+	s.accounts = syncers.NewAccountsSync(syncer, s.state.Accounts)
+	s.users = syncers.NewUsersSync(syncer, s.state.Users, true)
+	s.usersResync = syncers.NewUsersSync(syncer, s.state.UsersResync, false)
+	s.vehicles = syncers.NewVehiclesSync(syncer, s.state.Vehicles, true)
+	s.vehiclesResync = syncers.NewVehiclesSync(syncer, s.state.VehiclesResync, false)
+
+	s.wg.Go(func() {
+		s.runLoop(s.ctx)
+	})
+
+	// Run stream only when not in dry run mode
+	if !s.cfg.Load().Destination.DryRun {
+		s.wg.Go(func() {
+			s.RunStream(s.ctx)
+		})
 	}
-	s.jobs = newJobsSync(syncer, s.state.Jobs)
-	s.licenses = newLicensesSync(syncer, s.state.Licenses)
-
-	s.accounts = newAccountsSync(syncer, s.state.Accounts)
-	s.users = newUsersSync(syncer, s.state.Users)
-	s.vehicles = newVehiclesSync(syncer, s.state.OwnedVehicles)
-
-	s.wg.Go(func() {
-		s.Run(s.ctx)
-	})
-	s.wg.Go(func() {
-		s.RunStream(s.ctx)
-	})
 
 	return nil
 }
@@ -198,10 +202,6 @@ func (s *Sync) stop() error {
 	var errs error
 	if err := s.cli.Close(); err != nil {
 		errs = multierr.Append(errs, fmt.Errorf("failed to close gRPC client. %w", err))
-	}
-
-	if err := s.state.Save(); err != nil {
-		errs = multierr.Append(errs, fmt.Errorf("failed to save state. %w", err))
 	}
 
 	return errs
@@ -223,7 +223,7 @@ func (s *Sync) restart() error {
 	return nil
 }
 
-func (s *Sync) Run(ctx context.Context) {
+func (s *Sync) runLoop(ctx context.Context) {
 	for {
 		s.logger.Info("started dbsync loop")
 
@@ -245,95 +245,129 @@ func (s *Sync) run(ctx context.Context) error {
 		s.logger.Error("failed to get sync status", zap.Error(err))
 	}
 
-	var wg sync.WaitGroup
-	// On startup sync base data (jobs, job grades and license types) before the "main" sync loop starts,
-	// then sync in 5 minute interval to keep the data fresh
-	if err := s.syncBaseData(ctx); err != nil {
-		s.logger.Error("error during initial base data sync", zap.Error(err))
-		return err
-	}
-
-	// Base data sync loop
-	wg.Go(func() {
-		for {
-			s.syncBaseData(ctx)
-
-			select {
-			case <-ctx.Done():
-				return
-
-			case <-time.After(5 * time.Minute):
-			}
-		}
-	})
-
 	cfg := s.cfg.Load().Tables
 
+	var wg sync.WaitGroup
+	if cfg.Jobs.Enabled || cfg.Licenses.Enabled {
+		// On startup sync base data (jobs, job grades and license types) before the "main" sync loop starts,
+		// then sync in 5 minute interval to keep the data fresh
+		if err := s.syncBaseData(ctx); err != nil {
+			s.logger.Error("error during initial base data sync", zap.Error(err))
+			return err
+		}
+
+		// Base data sync loop
+		wg.Go(func() {
+			for {
+				select {
+				case <-ctx.Done():
+					return
+
+				case <-time.After(5 * time.Minute):
+				}
+
+				s.syncBaseData(ctx)
+			}
+		})
+	}
+
 	// User data sync loop
-	wg.Go(func() {
-		if !cfg.Users.Enabled {
-			return
-		}
+	if cfg.Users.Enabled {
+		wg.Go(func() {
+			for {
+				if count, offset, lastId, err := s.users.Sync(ctx); err != nil {
+					s.logger.Error("error during users sync", zap.Error(err))
+				} else {
+					s.logger.Info("users synced", zap.Int64("count", count), zap.Int64("offset", offset), zap.String("last_id", lastId))
+				}
 
-		for {
-			if count, offset, lastId, err := s.users.Sync(ctx); err != nil {
-				s.logger.Error("error during users sync", zap.Error(err))
-			} else {
-				s.logger.Info("users synced", zap.Int64("count", count), zap.Int64("offset", offset), zap.Int64("last_id", lastId))
+				select {
+				case <-ctx.Done():
+					return
+
+				case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Users)):
+				}
 			}
+		})
 
-			select {
-			case <-ctx.Done():
-				return
+		if cfg.Users.ResyncInterval != nil && *cfg.Users.ResyncInterval > 0 {
+			resyncInterval := *cfg.Users.ResyncInterval
+			wg.Go(func() {
+				for {
+					select {
+					case <-ctx.Done():
+						return
 
-			case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Users)):
-			}
+					case <-time.After(resyncInterval):
+						if count, offset, lastId, err := s.usersResync.Sync(ctx); err != nil {
+							s.logger.Error("error during users resync", zap.Error(err))
+						} else {
+							s.logger.Info("users resynced", zap.Int64("count", count), zap.Int64("offset", offset), zap.String("last_id", lastId))
+						}
+					}
+				}
+			})
 		}
-	})
+	}
 
 	// Vehicles data sync loop
-	wg.Go(func() {
-		if !cfg.Vehicles.Enabled {
-			return
-		}
+	if cfg.Vehicles.Enabled {
+		wg.Go(func() {
+			for {
+				if count, offset, plate, err := s.vehicles.Sync(ctx); err != nil {
+					s.logger.Error("error during vehicles sync", zap.Error(err))
+				} else {
+					s.logger.Info("vehicles synced", zap.Int64("count", count), zap.Int64("offset", offset), zap.String("last_plate", plate))
+				}
 
-		for {
-			if count, offset, plate, err := s.vehicles.Sync(ctx); err != nil {
-				s.logger.Error("error during vehicles sync", zap.Error(err))
-			} else {
-				s.logger.Info("vehicles synced", zap.Int64("count", count), zap.Int64("offset", offset), zap.String("last_plate", plate))
+				select {
+				case <-ctx.Done():
+					return
+
+				case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Vehicles)):
+				}
 			}
+		})
 
-			select {
-			case <-ctx.Done():
-				return
+		if cfg.Vehicles.ResyncInterval != nil && *cfg.Vehicles.ResyncInterval > 0 {
+			resyncInterval := *cfg.Vehicles.ResyncInterval
+			wg.Go(func() {
+				for {
+					select {
+					case <-ctx.Done():
+						return
 
-			case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Vehicles)):
-			}
+					case <-time.After(resyncInterval):
+						if count, offset, lastId, err := s.vehiclesResync.Sync(ctx); err != nil {
+							s.logger.Error("error during vehicles resync", zap.Error(err))
+						} else {
+							s.logger.Info("vehicles resynced", zap.Int64("count", count), zap.Int64("offset", offset), zap.String("last_id", lastId))
+						}
+					}
+				}
+			})
 		}
-	})
+	}
 
 	// Accounts data sync loop
-	wg.Go(func() {
-		if !cfg.Accounts.Enabled {
-			return
-		}
+	if cfg.Accounts.Enabled {
+		wg.Go(func() {
+			for {
+				if count, err := s.accounts.Sync(ctx); err != nil {
+					s.logger.Error("error during accounts sync", zap.Error(err))
+				} else {
+					s.logger.Info("accounts synced", zap.Int64("count", count))
+				}
 
-		for {
-			if count, err := s.accounts.Sync(ctx); err != nil {
-				s.logger.Error("error during accounts sync", zap.Error(err))
-			} else {
-				s.logger.Info("accounts synced", zap.Int64("count", count))
+				select {
+				case <-ctx.Done():
+					return
+
+				case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Users)):
+				}
 			}
-
-			select {
-			case <-ctx.Done():
-				return
-
-			case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Users)):
-			}
-		}
-	})
+		})
+	}
 
 	wg.Wait()
 

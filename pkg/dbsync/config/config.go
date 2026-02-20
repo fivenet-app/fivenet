@@ -258,14 +258,14 @@ type DBSyncSourceTables struct {
 
 	Licenses LicensesTable `yaml:"licenses"`
 
+	Accounts AccountsTable `yaml:"accounts"`
+
 	Users            UsersTable            `yaml:"users"`
 	UserLicenses     UserLicensesTable     `yaml:"userLicenses"`
 	UserJobs         UserJobsTable         `yaml:"userJobs"`
 	UserPhoneNumbers UserPhoneNumbersTable `yaml:"userPhoneNumbers"`
 
 	Vehicles VehiclesTable `yaml:"vehicles"`
-
-	Accounts AccountsTable `yaml:"accounts"`
 }
 
 func (c *DBSyncSourceTables) GetAllTables() []DBSyncTable {
@@ -275,26 +275,23 @@ func (c *DBSyncSourceTables) GetAllTables() []DBSyncTable {
 		return tables
 	}
 
+	// Base data
 	if c.Jobs.Enabled {
 		tables = append(tables, c.Jobs.DBSyncTable)
-	}
-	if c.JobGrades.Enabled {
-		tables = append(tables, c.JobGrades.DBSyncTable)
 	}
 	if c.Licenses.Enabled {
 		tables = append(tables, c.Licenses.DBSyncTable)
 	}
+
+	// Main data
+	if c.Accounts.Enabled {
+		tables = append(tables, c.Accounts.DBSyncTable)
+	}
 	if c.Users.Enabled {
 		tables = append(tables, c.Users.DBSyncTable)
 	}
-	if c.UserLicenses.Enabled {
-		tables = append(tables, c.UserLicenses.DBSyncTable)
-	}
 	if c.Vehicles.Enabled {
 		tables = append(tables, c.Vehicles.DBSyncTable)
-	}
-	if c.Accounts.Enabled {
-		tables = append(tables, c.Accounts.DBSyncTable)
 	}
 
 	return tables
@@ -344,16 +341,15 @@ type JobsTable struct {
 }
 
 func (c *JobsTable) GetQuery(
-	state *TableSyncState,
 	offset int64,
 	limit int64,
 	where ...string,
 ) string {
 	if c.Query != nil {
-		return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+		return prepareStringQuery(*c.Query, c.DBSyncTable, nil, offset, limit)
 	}
 
-	where = append(where, getWhereCondition(c.DBSyncTable, state))
+	where = append(where, getWhereCondition(c.DBSyncTable, nil))
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"job.name":  c.Columns.Name,
 		"job.label": c.Columns.Label,
@@ -407,15 +403,14 @@ type LicensesTable struct {
 }
 
 func (c *LicensesTable) GetQuery(
-	state *TableSyncState,
 	offset int64,
 	limit int64,
 	where ...string,
 ) string {
 	if c.Query != nil {
-		return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+		return prepareStringQuery(*c.Query, c.DBSyncTable, nil, offset, limit)
 	}
-	where = append(where, getWhereCondition(c.DBSyncTable, state))
+	where = append(where, getWhereCondition(c.DBSyncTable, nil))
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"license.type":  c.Columns.Type,
 		"license.label": c.Columns.Label,
@@ -439,6 +434,8 @@ type UsersTable struct {
 	IgnoreEmptyName bool `default:"true" yaml:"ignoreEmptyName"`
 
 	Filters UsersFilters `yaml:"filters"`
+
+	ResyncInterval *time.Duration `yaml:"resyncInterval,omitempty" validate:"omitempty,gte=1"`
 }
 
 func (c *UsersTable) GetQuery(
@@ -532,16 +529,15 @@ type UserLicensesTable struct {
 }
 
 func (c *UserLicensesTable) GetQuery(
-	state *TableSyncState,
 	offset int64,
 	limit int64,
 	where ...string,
 ) string {
 	if c.Query != nil {
-		return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+		return prepareStringQuery(*c.Query, c.DBSyncTable, nil, offset, limit)
 	}
 
-	where = append(where, getWhereCondition(c.DBSyncTable, state))
+	where = append(where, getWhereCondition(c.DBSyncTable, nil))
 	where = append(where, "`"+c.Columns.OwnerIdentifier+"` = $identifier")
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"license.type":  c.Columns.Type,
@@ -559,12 +555,11 @@ type UserJobsTable struct {
 }
 
 func (c *UserJobsTable) GetQuery(
-	state *TableSyncState,
 	offset int64,
 	limit int64,
 	where ...string,
 ) string {
-	return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+	return prepareStringQuery(*c.Query, c.DBSyncTable, nil, offset, limit)
 }
 
 type UserPhoneNumbersTable struct {
@@ -572,18 +567,19 @@ type UserPhoneNumbersTable struct {
 }
 
 func (c *UserPhoneNumbersTable) GetQuery(
-	state *TableSyncState,
 	offset int64,
 	limit int64,
 	where ...string,
 ) string {
-	return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+	return prepareStringQuery(*c.Query, c.DBSyncTable, nil, offset, limit)
 }
 
 type VehiclesTable struct {
 	DBSyncTable `yaml:",inline" mapstructure:",squash"`
 
 	Columns VehiclesColumns `yaml:"columns"`
+
+	ResyncInterval *time.Duration `yaml:"resyncInterval,omitempty" validate:"omitempty,gte=1"`
 }
 
 func (c *VehiclesTable) GetQuery(
@@ -662,6 +658,12 @@ func (c *DBSyncConfig) Init() error {
 		}
 	}
 
+	// Unset updatedTimeColumn for tables where it's not applicable, to avoid confusion.
+	c.Tables.JobGrades.UpdatedTimeColumn = nil
+	c.Tables.UserJobs.UpdatedTimeColumn = nil
+	c.Tables.UserLicenses.UpdatedTimeColumn = nil
+	c.Tables.UserPhoneNumbers.UpdatedTimeColumn = nil
+
 	return nil
 }
 
@@ -677,9 +679,7 @@ type SyncLimits struct {
 	Jobs     int64 `default:"200" yaml:"jobs"     validate:"omitempty,gte=1,lte=200"`
 	Licenses int64 `default:"200" yaml:"licenses" validate:"omitempty,gte=1,lte=200"`
 
-	Users int64 `default:"150" yaml:"users" validate:"omitempty,gte=1,lte=300"`
-
-	Vehicles int64 `default:"500" yaml:"vehicles" validate:"omitempty,gte=1,lte=500"`
-
 	Accounts int64 `default:"100" yaml:"accounts" validate:"omitempty,gte=1,lte=100"`
+	Users    int64 `default:"150" yaml:"users"    validate:"omitempty,gte=1,lte=300"`
+	Vehicles int64 `default:"500" yaml:"vehicles" validate:"omitempty,gte=1,lte=500"`
 }

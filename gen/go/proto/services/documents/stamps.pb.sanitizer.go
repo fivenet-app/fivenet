@@ -25,6 +25,35 @@ func (m *DeleteStampResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *GetStampRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *GetStampResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Stamp
+	if m.Stamp != nil {
+		if v, ok := any(m.GetStamp()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListUsableStampsRequest) Sanitize() error {
 	if m == nil {
 		return nil

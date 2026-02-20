@@ -31,6 +31,8 @@ const emit = defineEmits<{
     (e: 'updated', entry: ConductEntry): void;
 }>();
 
+const { t } = useI18n();
+
 const overlay = useOverlay();
 
 const authStore = useAuthStore();
@@ -54,7 +56,7 @@ const cTypes = ref<{ status: ConductType }[]>([
 ]);
 
 const schema = z.object({
-    targetUser: z.coerce.number().positive(),
+    targetUserId: z.coerce.number({ error: t('zod.custom.user') }).positive(),
     type: z.enum(ConductType),
     draft: z.coerce.boolean().default(false),
     message: z.custom<JSONContent | string>().optional(),
@@ -65,7 +67,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    targetUser: 0,
+    targetUserId: 0,
     type: ConductType.NOTE,
     draft: false,
     message: undefined,
@@ -126,7 +128,7 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: number): Promise<
                     tiptapJson: Struct.fromJsonString(JSON.stringify(values.message)),
                 },
                 files: values.files,
-                targetUserId: values.targetUser,
+                targetUserId: values.targetUserId,
                 expiresAt: values.expiresAt ? toTimestamp(values.expiresAt) : undefined,
             },
         };
@@ -153,7 +155,7 @@ async function setFromProps(): Promise<void> {
     if (!entry.value) return;
 
     state.draft = entry.value.draft;
-    state.targetUser = entry.value.targetUserId;
+    state.targetUserId = entry.value.targetUserId;
     state.type = entry.value.type;
     state.message = entry.value.message?.tiptapJson
         ? (Struct.toJson(entry.value.message.tiptapJson) as JSONContent)
@@ -233,20 +235,20 @@ const confirmModal = overlay.create(ConfirmModal);
 
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
-                            <label class="block text-sm leading-6 font-medium" for="targetUser">
+                            <label class="block text-sm leading-6 font-medium" for="targetUserId">
                                 {{ $t('common.target') }}
                             </label>
                         </dt>
 
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="targetUser">
+                            <UFormField name="targetUserId">
                                 <SelectMenu
-                                    v-model="state.targetUser"
+                                    v-model="state.targetUserId"
                                     :searchable="
                                         async (q: string) =>
                                             await completorStore.completeColleagues(
                                                 q,
-                                                state.targetUser > 0 ? [state.targetUser] : [],
+                                                state.targetUserId > 0 ? [state.targetUserId] : [],
                                             )
                                     "
                                     searchable-key="completor-colleagues"
@@ -260,9 +262,9 @@ const confirmModal = overlay.create(ConfirmModal);
                                 >
                                     <template #default="{ items }">
                                         <ColleagueName
-                                            v-if="items?.find((c) => c.userId === state.targetUser)"
+                                            v-if="items?.find((c) => c.userId === state.targetUserId)"
                                             class="truncate"
-                                            :colleague="items.find((c) => c.userId === state.targetUser)!"
+                                            :colleague="items.find((c) => c.userId === state.targetUserId)!"
                                             birthday
                                         />
                                         <span v-else>&nbsp;</span>

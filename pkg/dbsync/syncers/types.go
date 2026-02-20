@@ -1,4 +1,4 @@
-package dbsync
+package syncers
 
 import (
 	"context"
@@ -11,13 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type ISyncer interface {
-	Sync(context.Context) (int64, error)
-}
-
-type syncer struct {
-	ISyncer
-
+type Syncer struct {
 	logger *zap.Logger
 	db     *sql.DB
 
@@ -26,7 +20,21 @@ type syncer struct {
 	cli pbsync.SyncServiceClient
 }
 
-func (s *syncer) sendData(ctx context.Context, data *pbsync.SendDataRequest) error {
+func New(
+	logger *zap.Logger,
+	db *sql.DB,
+	cfg *dbsyncconfig.DBSyncConfig,
+	cli pbsync.SyncServiceClient,
+) *Syncer {
+	return &Syncer{
+		logger: logger,
+		db:     db,
+		cfg:    cfg,
+		cli:    cli,
+	}
+}
+
+func (s *Syncer) sendData(ctx context.Context, data *pbsync.SendDataRequest) error {
 	if s.cfg.Destination.DryRun {
 		s.logger.Info("dry run enabled, not sending data to server")
 		out, err := json.MarshalIndent(data, "", "  ")
@@ -43,5 +51,6 @@ func (s *syncer) sendData(ctx context.Context, data *pbsync.SendDataRequest) err
 			return fmt.Errorf("failed to send data to server. %w", err)
 		}
 	}
+
 	return nil
 }

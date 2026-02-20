@@ -1,4 +1,4 @@
-package dbsync
+package syncers
 
 import (
 	"context"
@@ -19,22 +19,30 @@ import (
 	"go.uber.org/zap"
 )
 
-type usersSync struct {
-	*syncer
+type UsersSync struct {
+	*Syncer
 
-	state *dbsyncconfig.TableSyncState
+	state         *dbsyncconfig.TableSyncState
+	saveLastCheck bool
 }
 
-func newUsersSync(s *syncer, state *dbsyncconfig.TableSyncState) *usersSync {
-	return &usersSync{
-		syncer: s,
+func NewUsersSync(s *Syncer, state *dbsyncconfig.TableSyncState, saveLastCheck bool) *UsersSync {
+	return &UsersSync{
+		Syncer: s,
 		state:  state,
+
+		saveLastCheck: saveLastCheck,
 	}
 }
 
-func (s *usersSync) Sync(ctx context.Context) (int64, int64, int64, error) {
+func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, error) {
+	// Ensure last check is nil when we don't want to save it
+	if !s.saveLastCheck {
+		s.state.SetLastCheck(nil)
+	}
+
 	limit := int64(150)
-	offset := s.getInitialOffset()
+	offset := s.state.GetOffset()
 	s.logger.Debug("usersSync", zap.Int64("offset", offset))
 
 	s.resetLastCheckIfNotSynced()
@@ -44,7 +52,7 @@ func (s *usersSync) Sync(ctx context.Context) (int64, int64, int64, error) {
 
 	us, err := s.fetchUsers(ctx, q)
 	if err != nil {
-		return 0, offset, 0, err
+		return 0, offset, "0", err
 	}
 
 	count := int64(len(us))
@@ -53,25 +61,25 @@ func (s *usersSync) Sync(ctx context.Context) (int64, int64, int64, error) {
 		s.logger.Debug("no users found to sync, resetting state offset")
 		s.state.Set(0, nil)
 		s.resetLastCheckIfNotSynced()
-		return 0, offset, 0, nil
+		return 0, offset, "0", nil
 	}
 
 	offset, err = s.updateSyncState(count, offset, limit)
 	if err != nil {
-		return 0, offset, 0, err
+		return 0, offset, "0", err
 	}
+
+	us = s.applyFiltersAndTransformations(us, sQuery)
 
 	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
-		return 0, offset, 0, err
+		return 0, offset, "0", err
 	}
 	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
-		return 0, offset, 0, err
+		return 0, offset, "0", err
 	}
 	if err := s.retrieveAndAttachPhoneNumbers(ctx, us); err != nil {
-		return 0, offset, 0, err
+		return 0, offset, "0", err
 	}
-
-	s.applyFiltersAndTransformations(us, sQuery)
 
 	if err := s.sendData(ctx, &pbsync.SendDataRequest{
 		Data: &pbsync.SendDataRequest_Users{
@@ -80,7 +88,7 @@ func (s *usersSync) Sync(ctx context.Context) (int64, int64, int64, error) {
 			},
 		},
 	}); err != nil {
-		return 0, offset, 0, err
+		return 0, offset, "0", err
 	}
 
 	s.logger.Debug("usersSync", zap.Bool("syncedUp", s.state.GetSyncedUp()))
@@ -89,24 +97,16 @@ func (s *usersSync) Sync(ctx context.Context) (int64, int64, int64, error) {
 	lastUserId := strconv.FormatInt(lastId, 10)
 	s.state.Set(offset+limit, &lastUserId)
 
-	return count, offset, lastId, nil
+	return count, offset, lastUserId, nil
 }
 
-func (s *usersSync) getInitialOffset() int64 {
-	offset := s.state.GetOffset()
-	if s.state != nil && offset > 0 {
-		return offset
-	}
-	return 0
-}
-
-func (s *usersSync) resetLastCheckIfNotSynced() {
+func (s *UsersSync) resetLastCheckIfNotSynced() {
 	if !s.state.GetSyncedUp() {
 		s.state.SetLastCheck(nil)
 	}
 }
 
-func (s *usersSync) fetchUsers(ctx context.Context, query string) ([]*syncdata.DataUser, error) {
+func (s *UsersSync) fetchUsers(ctx context.Context, query string) ([]*syncdata.DataUser, error) {
 	s.logger.Debug("accounts sync query", zap.String("query", query))
 
 	us := []*syncdata.DataUser{}
@@ -119,7 +119,7 @@ func (s *usersSync) fetchUsers(ctx context.Context, query string) ([]*syncdata.D
 	return us, nil
 }
 
-func (s *usersSync) updateSyncState(usersCount int64, offset, limit int64) (int64, error) {
+func (s *UsersSync) updateSyncState(usersCount int64, offset, limit int64) (int64, error) {
 	if usersCount < limit {
 		offset = 0
 		s.state.SetSyncedUp(true)
@@ -127,10 +127,10 @@ func (s *usersSync) updateSyncState(usersCount int64, offset, limit int64) (int6
 	return offset, nil
 }
 
-func (s *usersSync) applyFiltersAndTransformations(
+func (s *UsersSync) applyFiltersAndTransformations(
 	us []*syncdata.DataUser,
 	sQuery dbsyncconfig.UsersTable,
-) {
+) []*syncdata.DataUser {
 	if s.cfg.Tables.Users.IgnoreEmptyName {
 		us = slices.DeleteFunc(us, func(in *syncdata.DataUser) bool {
 			return in == nil || (in.GetFirstname() == "" && in.GetLastname() == "")
@@ -172,9 +172,11 @@ func (s *usersSync) applyFiltersAndTransformations(
 			"some queried users have null or zero id, which have been skipped during processing",
 		)
 	}
+
+	return us
 }
 
-func (s *usersSync) cleanupUserJob(user *syncdata.DataUser) {
+func (s *UsersSync) cleanupUserJob(user *syncdata.DataUser) {
 	if len(user.Jobs) == 0 {
 		// If no jobs are set, create one from the user job field
 		user.Jobs = []*users.UserJob{
@@ -215,13 +217,13 @@ func (s *usersSync) cleanupUserJob(user *syncdata.DataUser) {
 	}
 }
 
-func (s *usersSync) applyValueMapping(user *syncdata.DataUser) {
+func (s *UsersSync) applyValueMapping(user *syncdata.DataUser) {
 	if user.Sex != nil && !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
 		s.cfg.Tables.Users.ValueMapping.Sex.Process(user.Sex)
 	}
 }
 
-func (s *usersSync) applyFilters(
+func (s *UsersSync) applyFilters(
 	us *syncdata.DataUser,
 	sQuery dbsyncconfig.UsersTable,
 ) bool {
@@ -245,7 +247,7 @@ func (s *usersSync) applyFilters(
 	return false
 }
 
-func (s *usersSync) splitNamesIfRequired(user *syncdata.DataUser) {
+func (s *UsersSync) splitNamesIfRequired(user *syncdata.DataUser) {
 	if s.cfg.Tables.Users.SplitName && user.GetLastname() == "" {
 		ss := strings.Split(user.GetFirstname(), " ")
 		if len(ss) > 1 {
@@ -255,7 +257,7 @@ func (s *usersSync) splitNamesIfRequired(user *syncdata.DataUser) {
 	}
 }
 
-func (s *usersSync) parseDateOfBirth(user *syncdata.DataUser) {
+func (s *UsersSync) parseDateOfBirth(user *syncdata.DataUser) {
 	for _, format := range s.cfg.Tables.Users.DateOfBirth.Formats {
 		parsedTime, err := time.Parse(format, user.GetDateofbirth())
 		if err == nil {
@@ -265,7 +267,7 @@ func (s *usersSync) parseDateOfBirth(user *syncdata.DataUser) {
 	}
 }
 
-func (s *usersSync) retrieveAndAttachLicenses(ctx context.Context, us []*syncdata.DataUser) error {
+func (s *UsersSync) retrieveAndAttachLicenses(ctx context.Context, us []*syncdata.DataUser) error {
 	if !s.cfg.Tables.UserLicenses.Enabled {
 		return nil
 	}
@@ -290,12 +292,12 @@ func (s *usersSync) retrieveAndAttachLicenses(ctx context.Context, us []*syncdat
 	return errs
 }
 
-func (s *usersSync) retrieveLicenses(
+func (s *UsersSync) retrieveLicenses(
 	ctx context.Context,
 	userId int32,
 	identifier string,
 ) ([]*userslicenses.License, error) {
-	q := s.cfg.Tables.UserLicenses.GetQuery(s.state, 0, 100)
+	q := s.cfg.Tables.UserLicenses.GetQuery(0, 100)
 	s.logger.Debug("users licenses sync query", zap.String("query", q))
 
 	args := []any{}
@@ -321,7 +323,7 @@ func (s *usersSync) retrieveLicenses(
 	return licenses, nil
 }
 
-func (s *usersSync) retrieveAndAttachJobs(ctx context.Context, us []*syncdata.DataUser) error {
+func (s *UsersSync) retrieveAndAttachJobs(ctx context.Context, us []*syncdata.DataUser) error {
 	if !s.cfg.Tables.UserJobs.Enabled {
 		return nil
 	}
@@ -346,12 +348,12 @@ func (s *usersSync) retrieveAndAttachJobs(ctx context.Context, us []*syncdata.Da
 	return errs
 }
 
-func (s *usersSync) retrieveJobs(
+func (s *UsersSync) retrieveJobs(
 	ctx context.Context,
 	userId int32,
 	identifier string,
 ) ([]*users.UserJob, error) {
-	q := s.cfg.Tables.UserJobs.GetQuery(s.state, 0, 10)
+	q := s.cfg.Tables.UserJobs.GetQuery(0, 10)
 	s.logger.Debug("users jobs sync query", zap.String("query", q))
 
 	args := []any{}
@@ -377,7 +379,7 @@ func (s *usersSync) retrieveJobs(
 	return jobs, nil
 }
 
-func (s *usersSync) retrieveAndAttachPhoneNumbers(
+func (s *UsersSync) retrieveAndAttachPhoneNumbers(
 	ctx context.Context,
 	us []*syncdata.DataUser,
 ) error {
@@ -405,13 +407,13 @@ func (s *usersSync) retrieveAndAttachPhoneNumbers(
 	return errs
 }
 
-func (s *usersSync) retrievePhoneNumbers(
+func (s *UsersSync) retrievePhoneNumbers(
 	ctx context.Context,
 	userId int32,
 	identifier string,
 ) ([]*users.PhoneNumber, error) {
-	q := s.cfg.Tables.UserPhoneNumbers.GetQuery(s.state, 0, 10)
-	s.logger.Debug("users jobs sync query", zap.String("query", q))
+	q := s.cfg.Tables.UserPhoneNumbers.GetQuery(0, 10)
+	s.logger.Debug("users phone numbers sync query", zap.String("query", q))
 
 	args := []any{}
 	if strings.Contains(q, "$userId") {
@@ -437,7 +439,7 @@ func (s *usersSync) retrievePhoneNumbers(
 }
 
 // Sync an individual user's info.
-func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
+func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 	wheres := []string{}
 	if userId != 0 {
 		wheres = append(wheres, fmt.Sprintf("%#q = %d", s.cfg.Tables.Users.Columns.ID, userId))
