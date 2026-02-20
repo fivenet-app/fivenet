@@ -2,15 +2,18 @@ package settings
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
+	"github.com/fivenet-app/fivenet/v2026/services/sync"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -147,4 +150,24 @@ func (s *Server) UpdateJobLimits(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbsettings.UpdateJobLimitsResponse{}, nil
+}
+
+func (s *Server) TriggerUserSync(
+	ctx context.Context,
+	req *pbsettings.TriggerUserSyncRequest,
+) (*pbsettings.TriggerUserSyncResponse, error) {
+	logging.InjectFields(ctx, logging.Fields{"fivenet.sync.user_id", req.GetUserId()})
+
+	_, err := s.js.PublishProto(
+		ctx,
+		fmt.Sprintf("%s.%s", sync.BaseSubject, sync.TopicUser),
+		&pbsync.StreamResponse{
+			UserId: req.GetUserId(),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pbsettings.TriggerUserSyncResponse{}, nil
 }

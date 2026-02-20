@@ -338,6 +338,7 @@ export const grpcMethods = [
 	'settings.SystemService/GetJobLimits',
 	'settings.SystemService/UpdateJobLimits',
 	'settings.SystemService/DeleteFaction',
+	'settings.SystemService/TriggerUserSync',
 	'stats.StatsService/GetStats',
 	'sync.SyncService/GetStatus',
 	'sync.SyncService/AddActivity',

@@ -700,6 +700,106 @@ func (b0 GetStatusResponse_builder) Build() *GetStatusResponse {
 	return m0
 }
 
+type TriggerUserSyncRequest struct {
+	state             protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_UserId int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *TriggerUserSyncRequest) Reset() {
+	*x = TriggerUserSyncRequest{}
+	mi := &file_services_settings_system_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TriggerUserSyncRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TriggerUserSyncRequest) ProtoMessage() {}
+
+func (x *TriggerUserSyncRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_system_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *TriggerUserSyncRequest) GetUserId() int32 {
+	if x != nil {
+		return x.xxx_hidden_UserId
+	}
+	return 0
+}
+
+func (x *TriggerUserSyncRequest) SetUserId(v int32) {
+	x.xxx_hidden_UserId = v
+}
+
+type TriggerUserSyncRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId int32
+}
+
+func (b0 TriggerUserSyncRequest_builder) Build() *TriggerUserSyncRequest {
+	m0 := &TriggerUserSyncRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_UserId = b.UserId
+	return m0
+}
+
+type TriggerUserSyncResponse struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TriggerUserSyncResponse) Reset() {
+	*x = TriggerUserSyncResponse{}
+	mi := &file_services_settings_system_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TriggerUserSyncResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TriggerUserSyncResponse) ProtoMessage() {}
+
+func (x *TriggerUserSyncResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_system_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type TriggerUserSyncResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 TriggerUserSyncResponse_builder) Build() *TriggerUserSyncResponse {
+	m0 := &TriggerUserSyncResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
 var File_services_settings_system_proto protoreflect.FileDescriptor
 
 const file_services_settings_system_proto_rawDesc = "" +
@@ -735,15 +835,19 @@ const file_services_settings_system_proto_rawDesc = "" +
 	"\x15DeleteFactionResponse\"\x12\n" +
 	"\x10GetStatusRequest\"M\n" +
 	"\x11GetStatusResponse\x128\n" +
-	"\x06status\x18\x01 \x01(\v2 .resources.settings.SystemStatusR\x06status2\xe6\x04\n" +
+	"\x06status\x18\x01 \x01(\v2 .resources.settings.SystemStatusR\x06status\"1\n" +
+	"\x16TriggerUserSyncRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\"\x19\n" +
+	"\x17TriggerUserSyncResponse2\xe3\x05\n" +
 	"\rSystemService\x12i\n" +
 	"\tGetStatus\x12#.services.settings.GetStatusRequest\x1a$.services.settings.GetStatusResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x81\x01\n" +
 	"\x11GetAllPermissions\x12+.services.settings.GetAllPermissionsRequest\x1a,.services.settings.GetAllPermissionsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12r\n" +
 	"\fGetJobLimits\x12&.services.settings.GetJobLimitsRequest\x1a'.services.settings.GetJobLimitsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12{\n" +
 	"\x0fUpdateJobLimits\x12).services.settings.UpdateJobLimitsRequest\x1a*.services.settings.UpdateJobLimitsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
-	"\rDeleteFaction\x12'.services.settings.DeleteFactionRequest\x1a(.services.settings.DeleteFactionResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\rDeleteFaction\x12'.services.settings.DeleteFactionRequest\x1a(.services.settings.DeleteFactionResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12{\n" +
+	"\x0fTriggerUserSync\x12).services.settings.TriggerUserSyncRequest\x1a*.services.settings.TriggerUserSyncResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
-var file_services_settings_system_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_services_settings_system_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_services_settings_system_proto_goTypes = []any{
 	(*GetAllPermissionsRequest)(nil),  // 0: services.settings.GetAllPermissionsRequest
 	(*GetAllPermissionsResponse)(nil), // 1: services.settings.GetAllPermissionsResponse
@@ -755,32 +859,36 @@ var file_services_settings_system_proto_goTypes = []any{
 	(*DeleteFactionResponse)(nil),     // 7: services.settings.DeleteFactionResponse
 	(*GetStatusRequest)(nil),          // 8: services.settings.GetStatusRequest
 	(*GetStatusResponse)(nil),         // 9: services.settings.GetStatusResponse
-	(*permissions.Permission)(nil),    // 10: resources.permissions.permissions.Permission
-	(*attributes.RoleAttribute)(nil),  // 11: resources.permissions.attributes.RoleAttribute
-	(*settings.PermsUpdate)(nil),      // 12: resources.settings.PermsUpdate
-	(*settings.AttrsUpdate)(nil),      // 13: resources.settings.AttrsUpdate
-	(*settings.SystemStatus)(nil),     // 14: resources.settings.SystemStatus
+	(*TriggerUserSyncRequest)(nil),    // 10: services.settings.TriggerUserSyncRequest
+	(*TriggerUserSyncResponse)(nil),   // 11: services.settings.TriggerUserSyncResponse
+	(*permissions.Permission)(nil),    // 12: resources.permissions.permissions.Permission
+	(*attributes.RoleAttribute)(nil),  // 13: resources.permissions.attributes.RoleAttribute
+	(*settings.PermsUpdate)(nil),      // 14: resources.settings.PermsUpdate
+	(*settings.AttrsUpdate)(nil),      // 15: resources.settings.AttrsUpdate
+	(*settings.SystemStatus)(nil),     // 16: resources.settings.SystemStatus
 }
 var file_services_settings_system_proto_depIdxs = []int32{
-	10, // 0: services.settings.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.permissions.Permission
-	11, // 1: services.settings.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
-	10, // 2: services.settings.GetJobLimitsResponse.permissions:type_name -> resources.permissions.permissions.Permission
-	11, // 3: services.settings.GetJobLimitsResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
-	12, // 4: services.settings.UpdateJobLimitsRequest.perms:type_name -> resources.settings.PermsUpdate
-	13, // 5: services.settings.UpdateJobLimitsRequest.attrs:type_name -> resources.settings.AttrsUpdate
-	14, // 6: services.settings.GetStatusResponse.status:type_name -> resources.settings.SystemStatus
+	12, // 0: services.settings.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.permissions.Permission
+	13, // 1: services.settings.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
+	12, // 2: services.settings.GetJobLimitsResponse.permissions:type_name -> resources.permissions.permissions.Permission
+	13, // 3: services.settings.GetJobLimitsResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
+	14, // 4: services.settings.UpdateJobLimitsRequest.perms:type_name -> resources.settings.PermsUpdate
+	15, // 5: services.settings.UpdateJobLimitsRequest.attrs:type_name -> resources.settings.AttrsUpdate
+	16, // 6: services.settings.GetStatusResponse.status:type_name -> resources.settings.SystemStatus
 	8,  // 7: services.settings.SystemService.GetStatus:input_type -> services.settings.GetStatusRequest
 	0,  // 8: services.settings.SystemService.GetAllPermissions:input_type -> services.settings.GetAllPermissionsRequest
 	2,  // 9: services.settings.SystemService.GetJobLimits:input_type -> services.settings.GetJobLimitsRequest
 	4,  // 10: services.settings.SystemService.UpdateJobLimits:input_type -> services.settings.UpdateJobLimitsRequest
 	6,  // 11: services.settings.SystemService.DeleteFaction:input_type -> services.settings.DeleteFactionRequest
-	9,  // 12: services.settings.SystemService.GetStatus:output_type -> services.settings.GetStatusResponse
-	1,  // 13: services.settings.SystemService.GetAllPermissions:output_type -> services.settings.GetAllPermissionsResponse
-	3,  // 14: services.settings.SystemService.GetJobLimits:output_type -> services.settings.GetJobLimitsResponse
-	5,  // 15: services.settings.SystemService.UpdateJobLimits:output_type -> services.settings.UpdateJobLimitsResponse
-	7,  // 16: services.settings.SystemService.DeleteFaction:output_type -> services.settings.DeleteFactionResponse
-	12, // [12:17] is the sub-list for method output_type
-	7,  // [7:12] is the sub-list for method input_type
+	10, // 12: services.settings.SystemService.TriggerUserSync:input_type -> services.settings.TriggerUserSyncRequest
+	9,  // 13: services.settings.SystemService.GetStatus:output_type -> services.settings.GetStatusResponse
+	1,  // 14: services.settings.SystemService.GetAllPermissions:output_type -> services.settings.GetAllPermissionsResponse
+	3,  // 15: services.settings.SystemService.GetJobLimits:output_type -> services.settings.GetJobLimitsResponse
+	5,  // 16: services.settings.SystemService.UpdateJobLimits:output_type -> services.settings.UpdateJobLimitsResponse
+	7,  // 17: services.settings.SystemService.DeleteFaction:output_type -> services.settings.DeleteFactionResponse
+	11, // 18: services.settings.SystemService.TriggerUserSync:output_type -> services.settings.TriggerUserSyncResponse
+	13, // [13:19] is the sub-list for method output_type
+	7,  // [7:13] is the sub-list for method input_type
 	7,  // [7:7] is the sub-list for extension type_name
 	7,  // [7:7] is the sub-list for extension extendee
 	0,  // [0:7] is the sub-list for field type_name
@@ -799,7 +907,7 @@ func file_services_settings_system_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_settings_system_proto_rawDesc), len(file_services_settings_system_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

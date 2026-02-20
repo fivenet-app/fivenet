@@ -51,6 +51,12 @@ message GetStatusResponse {
   resources.settings.SystemStatus status = 1;
 }
 
+message TriggerUserSyncRequest {
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+}
+
+message TriggerUserSyncResponse {}
+
 service SystemService {
   rpc GetStatus(GetStatusRequest) returns (GetStatusResponse) {
     option (codegen.perms.perms) = {
@@ -78,6 +84,13 @@ service SystemService {
     };
   }
   rpc DeleteFaction(DeleteFactionRequest) returns (DeleteFactionResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+
+  rpc TriggerUserSync(TriggerUserSyncRequest) returns (TriggerUserSyncResponse) {
     option (codegen.perms.perms) = {
       enabled: true
       name: "Superuser"

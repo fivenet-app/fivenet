@@ -454,6 +454,9 @@ var PermsRemap = map[string][]string{
 	"settings.SystemService/GetStatus": []string{
 		"Superuser",
 	},
+	"settings.SystemService/TriggerUserSync": []string{
+		"Superuser",
+	},
 	"settings.SystemService/UpdateJobLimits": []string{
 		"Superuser",
 	},

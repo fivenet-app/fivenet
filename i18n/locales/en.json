@@ -753,7 +753,8 @@
         "stop_impersonation": "Stop Impersonation",
         "all_day": "All Day",
         "only_not_already_acted": "Only Not Already Acted",
-        "never": "Never"
+        "never": "Never",
+        "request_sync": "Request Sync"
     },
     "components": {
         "partials": {

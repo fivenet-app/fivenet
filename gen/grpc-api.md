@@ -8650,6 +8650,23 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+
+### services.citizens.TriggerUserSyncRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+
+
+
+
+
+### services.citizens.TriggerUserSyncResponse
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -12635,6 +12652,23 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
+### services.settings.TriggerUserSyncRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+
+
+
+
+
+### services.settings.TriggerUserSyncResponse
+
+
+
+
+
 ### services.settings.UpdateJobLimitsRequest
 
 
@@ -12669,6 +12703,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `GetJobLimits` | [GetJobLimitsRequest](#servicessettingsGetJobLimitsRequest) | [GetJobLimitsResponse](#servicessettingsGetJobLimitsResponse) | |
 | `UpdateJobLimits` | [UpdateJobLimitsRequest](#servicessettingsUpdateJobLimitsRequest) | [UpdateJobLimitsResponse](#servicessettingsUpdateJobLimitsResponse) | |
 | `DeleteFaction` | [DeleteFactionRequest](#servicessettingsDeleteFactionRequest) | [DeleteFactionResponse](#servicessettingsDeleteFactionResponse) | |
+| `TriggerUserSync` | [TriggerUserSyncRequest](#servicessettingsTriggerUserSyncRequest) | [TriggerUserSyncResponse](#servicessettingsTriggerUserSyncResponse) | |
 
  <!-- end services -->
 

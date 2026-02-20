@@ -24,6 +24,7 @@ const (
 	SystemService_GetJobLimits_FullMethodName      = "/services.settings.SystemService/GetJobLimits"
 	SystemService_UpdateJobLimits_FullMethodName   = "/services.settings.SystemService/UpdateJobLimits"
 	SystemService_DeleteFaction_FullMethodName     = "/services.settings.SystemService/DeleteFaction"
+	SystemService_TriggerUserSync_FullMethodName   = "/services.settings.SystemService/TriggerUserSync"
 )
 
 // SystemServiceClient is the client API for SystemService service.
@@ -35,6 +36,7 @@ type SystemServiceClient interface {
 	GetJobLimits(ctx context.Context, in *GetJobLimitsRequest, opts ...grpc.CallOption) (*GetJobLimitsResponse, error)
 	UpdateJobLimits(ctx context.Context, in *UpdateJobLimitsRequest, opts ...grpc.CallOption) (*UpdateJobLimitsResponse, error)
 	DeleteFaction(ctx context.Context, in *DeleteFactionRequest, opts ...grpc.CallOption) (*DeleteFactionResponse, error)
+	TriggerUserSync(ctx context.Context, in *TriggerUserSyncRequest, opts ...grpc.CallOption) (*TriggerUserSyncResponse, error)
 }
 
 type systemServiceClient struct {
@@ -95,6 +97,16 @@ func (c *systemServiceClient) DeleteFaction(ctx context.Context, in *DeleteFacti
 	return out, nil
 }
 
+func (c *systemServiceClient) TriggerUserSync(ctx context.Context, in *TriggerUserSyncRequest, opts ...grpc.CallOption) (*TriggerUserSyncResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TriggerUserSyncResponse)
+	err := c.cc.Invoke(ctx, SystemService_TriggerUserSync_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SystemServiceServer is the server API for SystemService service.
 // All implementations must embed UnimplementedSystemServiceServer
 // for forward compatibility.
@@ -104,6 +116,7 @@ type SystemServiceServer interface {
 	GetJobLimits(context.Context, *GetJobLimitsRequest) (*GetJobLimitsResponse, error)
 	UpdateJobLimits(context.Context, *UpdateJobLimitsRequest) (*UpdateJobLimitsResponse, error)
 	DeleteFaction(context.Context, *DeleteFactionRequest) (*DeleteFactionResponse, error)
+	TriggerUserSync(context.Context, *TriggerUserSyncRequest) (*TriggerUserSyncResponse, error)
 	mustEmbedUnimplementedSystemServiceServer()
 }
 
@@ -128,6 +141,9 @@ func (UnimplementedSystemServiceServer) UpdateJobLimits(context.Context, *Update
 }
 func (UnimplementedSystemServiceServer) DeleteFaction(context.Context, *DeleteFactionRequest) (*DeleteFactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFaction not implemented")
+}
+func (UnimplementedSystemServiceServer) TriggerUserSync(context.Context, *TriggerUserSyncRequest) (*TriggerUserSyncResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TriggerUserSync not implemented")
 }
 func (UnimplementedSystemServiceServer) mustEmbedUnimplementedSystemServiceServer() {}
 func (UnimplementedSystemServiceServer) testEmbeddedByValue()                       {}
@@ -240,6 +256,24 @@ func _SystemService_DeleteFaction_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SystemService_TriggerUserSync_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TriggerUserSyncRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServiceServer).TriggerUserSync(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SystemService_TriggerUserSync_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServiceServer).TriggerUserSync(ctx, req.(*TriggerUserSyncRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SystemService_ServiceDesc is the grpc.ServiceDesc for SystemService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +300,10 @@ var SystemService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteFaction",
 			Handler:    _SystemService_DeleteFaction_Handler,
+		},
+		{
+			MethodName: "TriggerUserSync",
+			Handler:    _SystemService_TriggerUserSync_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

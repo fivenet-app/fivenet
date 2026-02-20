@@ -10,7 +10,7 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useClipboardStore } from '~/stores/clipboard';
-import { getCitizensCitizensClient } from '~~/gen/ts/clients';
+import { getCitizensCitizensClient, getSettingsSystemClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/user';
@@ -19,7 +19,7 @@ import LabelModal from './LabelModal.vue';
 
 const { t } = useI18n();
 
-const { attr, can } = useAuth();
+const { attr, can, isSuperuser } = useAuth();
 
 const overlay = useOverlay();
 
@@ -270,6 +270,33 @@ const columns = computed(() =>
                                       },
                                   }),
                               ]),
+                              isSuperuser.value
+                                  ? h(UTooltip, { text: t('common.request_sync') }, [
+                                        h(UButton, {
+                                            variant: 'link',
+                                            icon: 'i-mdi-sync',
+                                            onClick: async () => {
+                                                try {
+                                                    const settingsSystemClient = await getSettingsSystemClient();
+                                                    await settingsSystemClient.triggerUserSync({
+                                                        userId: row.original.userId ?? 0,
+                                                    });
+
+                                                    notifications.add({
+                                                        title: { key: 'notifications.action_successful.title', parameters: {} },
+                                                        description: {
+                                                            key: 'notifications.action_successful.content',
+                                                            parameters: {},
+                                                        },
+                                                        type: NotificationType.SUCCESS,
+                                                    });
+                                                } catch (e) {
+                                                    handleGRPCError(e as RpcError);
+                                                }
+                                            },
+                                        }),
+                                    ])
+                                  : null,
                           ]),
                   }
                 : undefined,

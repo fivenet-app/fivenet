@@ -5,6 +5,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { SystemService } from "./system";
+import type { TriggerUserSyncResponse } from "./system";
+import type { TriggerUserSyncRequest } from "./system";
 import type { DeleteFactionResponse } from "./system";
 import type { DeleteFactionRequest } from "./system";
 import type { UpdateJobLimitsResponse } from "./system";
@@ -42,6 +44,10 @@ export interface ISystemServiceClient {
      * @generated from protobuf rpc: DeleteFaction
      */
     deleteFaction(input: DeleteFactionRequest, options?: RpcOptions): UnaryCall<DeleteFactionRequest, DeleteFactionResponse>;
+    /**
+     * @generated from protobuf rpc: TriggerUserSync
+     */
+    triggerUserSync(input: TriggerUserSyncRequest, options?: RpcOptions): UnaryCall<TriggerUserSyncRequest, TriggerUserSyncResponse>;
 }
 /**
  * @generated from protobuf service services.settings.SystemService
@@ -86,5 +92,12 @@ export class SystemServiceClient implements ISystemServiceClient, ServiceInfo {
     deleteFaction(input: DeleteFactionRequest, options?: RpcOptions): UnaryCall<DeleteFactionRequest, DeleteFactionResponse> {
         const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteFactionRequest, DeleteFactionResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: TriggerUserSync
+     */
+    triggerUserSync(input: TriggerUserSyncRequest, options?: RpcOptions): UnaryCall<TriggerUserSyncRequest, TriggerUserSyncResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<TriggerUserSyncRequest, TriggerUserSyncResponse>("unary", this._transport, method, opt, input);
     }
 }

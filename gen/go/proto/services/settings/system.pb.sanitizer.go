@@ -163,6 +163,26 @@ func (m *GetStatusResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *TriggerUserSyncRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *TriggerUserSyncResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateJobLimitsRequest) Sanitize() error {
 	if m == nil {
 		return nil

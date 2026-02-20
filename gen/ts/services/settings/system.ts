@@ -119,6 +119,20 @@ export interface GetStatusResponse {
      */
     status?: SystemStatus;
 }
+/**
+ * @generated from protobuf message services.settings.TriggerUserSyncRequest
+ */
+export interface TriggerUserSyncRequest {
+    /**
+     * @generated from protobuf field: int32 user_id = 1
+     */
+    userId: number;
+}
+/**
+ * @generated from protobuf message services.settings.TriggerUserSyncResponse
+ */
+export interface TriggerUserSyncResponse {
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class GetAllPermissionsRequest$Type extends MessageType<GetAllPermissionsRequest> {
     constructor() {
@@ -606,6 +620,91 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
  * @generated MessageType for protobuf message services.settings.GetStatusResponse
  */
 export const GetStatusResponse = new GetStatusResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TriggerUserSyncRequest$Type extends MessageType<TriggerUserSyncRequest> {
+    constructor() {
+        super("services.settings.TriggerUserSyncRequest", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
+        ]);
+    }
+    create(value?: PartialMessage<TriggerUserSyncRequest>): TriggerUserSyncRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<TriggerUserSyncRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TriggerUserSyncRequest): TriggerUserSyncRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TriggerUserSyncRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.TriggerUserSyncRequest
+ */
+export const TriggerUserSyncRequest = new TriggerUserSyncRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TriggerUserSyncResponse$Type extends MessageType<TriggerUserSyncResponse> {
+    constructor() {
+        super("services.settings.TriggerUserSyncResponse", []);
+    }
+    create(value?: PartialMessage<TriggerUserSyncResponse>): TriggerUserSyncResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<TriggerUserSyncResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TriggerUserSyncResponse): TriggerUserSyncResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TriggerUserSyncResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.TriggerUserSyncResponse
+ */
+export const TriggerUserSyncResponse = new TriggerUserSyncResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.settings.SystemService
  */
@@ -614,5 +713,6 @@ export const SystemService = new ServiceType("services.settings.SystemService", 
     { name: "GetAllPermissions", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: GetAllPermissionsRequest, O: GetAllPermissionsResponse },
     { name: "GetJobLimits", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: GetJobLimitsRequest, O: GetJobLimitsResponse },
     { name: "UpdateJobLimits", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: UpdateJobLimitsRequest, O: UpdateJobLimitsResponse },
-    { name: "DeleteFaction", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DeleteFactionRequest, O: DeleteFactionResponse }
+    { name: "DeleteFaction", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DeleteFactionRequest, O: DeleteFactionResponse },
+    { name: "TriggerUserSync", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: TriggerUserSyncRequest, O: TriggerUserSyncResponse }
 ]);
