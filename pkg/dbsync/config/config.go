@@ -594,10 +594,10 @@ func (c *VehiclesTable) GetQuery(
 
 	where = append(where, getWhereCondition(c.DBSyncTable, state))
 	return buildQueryFromColumns(c.TableName, map[string]string{
-		"vehicle.owner": c.Columns.OwnerIdentifier,
-		"vehicle.plate": c.Columns.Plate,
-		"vehicle.type":  c.Columns.Type,
-		"vehicle.model": c.Columns.Model,
+		"vehicle.ownerIdentifier": c.Columns.OwnerIdentifier,
+		"vehicle.plate":           c.Columns.Plate,
+		"vehicle.type":            c.Columns.Type,
+		"vehicle.model":           c.Columns.Model,
 	}, where, offset, limit, []string{c.Columns.Plate, c.Columns.OwnerIdentifier})
 }
 
