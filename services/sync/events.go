@@ -16,13 +16,13 @@ const (
 	TopicUser events.Topic = "user"
 )
 
-func splitSubject(subject string) (string, events.Topic) {
+func splitSubject(subject string) (events.Subject, events.Topic) {
 	split := strings.Split(subject, ".")
-	if len(split) < 3 {
+	if len(split) < 2 {
 		return "", ""
 	}
 
-	return split[1], events.Topic(split[2])
+	return events.Subject(split[0]), events.Topic(split[1])
 }
 
 // BuildSubject structure "BASE_SUJBECT.TOPIC".

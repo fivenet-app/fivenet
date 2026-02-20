@@ -21,6 +21,7 @@ func (s *Sync) RunStream(ctx context.Context) {
 		})
 	}
 
+	s.logger.Info("starting sync stream")
 	for {
 		if err := s.runStream(ctx); err != nil {
 			s.logger.Warn("error during sync stream, restarting in a second", zap.Error(err))

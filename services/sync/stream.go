@@ -89,45 +89,55 @@ func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_Stream
 
 			select {
 			case <-gctx.Done():
-				return gctx.Err()
+				return nil
 
 			case msgCh <- msg:
 			}
 		}
 	})
 
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
-
-		case msg := <-msgCh:
-			// "Forward" dbsync event via this stream
-			if msg == nil {
-				s.logger.Warn("nil dbsync event received via message queue")
+	g.Go(func() error {
+		for {
+			select {
+			case <-gctx.Done():
 				return nil
-			}
 
-			if err := msg.Ack(); err != nil {
-				s.logger.Error("failed to ack dbsync event", zap.Error(err))
-			}
-
-			_, topic := splitSubject(msg.Subject())
-			switch topic {
-			case TopicUser:
-				dest := &pbsync.StreamResponse{}
-				if err := protojson.Unmarshal(msg.Data(), dest); err != nil {
-					return fmt.Errorf("failed to unmarshal dbsync event data. %w", err)
+			case msg := <-msgCh:
+				// "Forward" dbsync event via this stream
+				if msg == nil {
+					s.logger.Warn("nil dbsync event received via message queue")
+					return nil
 				}
 
-				if dest.GetUserId() == 0 {
-					continue
+				if err := msg.Ack(); err != nil {
+					s.logger.Error("failed to ack dbsync event", zap.Error(err))
 				}
 
-				if err := srv.Send(dest); err != nil {
-					return fmt.Errorf("failed to send stream response. %w", err)
+				_, topic := splitSubject(msg.Subject())
+				switch topic {
+				case TopicUser:
+					dest := &pbsync.StreamResponse{}
+					if err := protojson.Unmarshal(msg.Data(), dest); err != nil {
+						return fmt.Errorf("failed to unmarshal dbsync event data. %w", err)
+					}
+
+					if dest.GetUserId() == 0 {
+						continue
+					}
+
+					if err := srv.Send(dest); err != nil {
+						return fmt.Errorf("failed to send stream response. %w", err)
+					}
+
+				default:
+					s.logger.Warn(
+						"received dbsync event with unknown topic",
+						zap.String("topic", string(topic)),
+					)
 				}
 			}
 		}
-	}
+	})
+
+	return g.Wait()
 }

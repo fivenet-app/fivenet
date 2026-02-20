@@ -80,6 +80,7 @@ RUN apk --no-cache add ca-certificates tini tzdata && \
 ## Copy built files from the builder stages
 COPY --from=livemaptiles /app/public/images/livemap/ ./.output/public/images/livemap/
 COPY --from=iconsets /app/icons/ ./icons/
+COPY --from=nodebuilder /app/.output/public/ ./.output/public/
 COPY --from=gobuilder /go/src/github.com/fivenet-app/fivenet/v2026/fivenet /usr/local/bin
 
 USER 2000
