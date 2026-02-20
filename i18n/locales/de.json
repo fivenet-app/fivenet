@@ -753,7 +753,8 @@
         "stop_impersonation": "Imitation beenden",
         "all_day": "Ganztägig",
         "only_not_already_acted": "Nur nicht Bearbeitete",
-        "never": "Nie"
+        "never": "Nie",
+        "request_sync": "Synchronisierung anfordern"
     },
     "components": {
         "partials": {

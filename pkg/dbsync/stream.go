@@ -90,6 +90,10 @@ func (s *Sync) streamWorker(ctx context.Context) {
 			return
 
 		case in := <-s.streamCh:
+			s.logger.Info(
+				"received sync stream message",
+				zap.Int32("user_id", in.GetUserId()),
+			)
 			if err := s.users.SyncUser(ctx, in.GetUserId()); err != nil {
 				s.logger.Error(
 					"error during single user sync",

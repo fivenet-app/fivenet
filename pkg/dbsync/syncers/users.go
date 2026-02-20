@@ -459,32 +459,42 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, &user); err != nil {
 		return err
 	}
+	us := []*syncdata.DataUser{user}
 
-	if err := s.retrieveAndAttachLicenses(ctx, []*syncdata.DataUser{user}); err != nil {
+	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
 		return err
 	}
-	if err := s.retrieveAndAttachJobs(ctx, []*syncdata.DataUser{user}); err != nil {
+	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
 		return err
 	}
-	if err := s.retrieveAndAttachPhoneNumbers(ctx, []*syncdata.DataUser{user}); err != nil {
+	if err := s.retrieveAndAttachPhoneNumbers(ctx, us); err != nil {
 		return err
 	}
 
 	s.splitNamesIfRequired(user)
 	s.parseDateOfBirth(user)
 	s.cleanupUserJob(user)
+	us = s.applyFiltersAndTransformations(us, s.cfg.Tables.Users)
 
-	if s.cli != nil {
+	if len(us) > 0 && s.cli != nil {
 		if err := s.sendData(ctx, &pbsync.SendDataRequest{
 			Data: &pbsync.SendDataRequest_Users{
 				Users: &syncdata.DataUsers{
-					Users: []*syncdata.DataUser{user},
+					Users: us,
 				},
 			},
 		}); err != nil {
 			return err
 		}
 	}
+
+	s.logger.Debug(
+		"user data",
+		zap.Int32("user_id", user.GetUserId()),
+		zap.String("job", user.GetJob()),
+		zap.Int32("job_grade", user.GetJobGrade()),
+		zap.Int("jobs_len", len(user.GetJobs())),
+	)
 
 	return nil
 }
