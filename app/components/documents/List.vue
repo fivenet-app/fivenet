@@ -461,20 +461,6 @@ defineShortcuts({
                     </UCollapsible>
                 </UForm>
             </UDashboardToolbar>
-
-            <UDashboardToolbar :ui="{ root: 'min-h-[33px] p-0 sm:p-0 gap-0 sm:gap-0' }">
-                <UTabs
-                    v-model="activeTab"
-                    :content="false"
-                    :items="[
-                        { value: 'all', label: 'Alle Dokumente' },
-                        { value: 'own', label: 'Eigene Dokumente' },
-                    ]"
-                    size="xs"
-                    class="w-full"
-                    :ui="{ list: 'rounded-none' }"
-                />
-            </UDashboardToolbar>
         </template>
 
         <template #body>
@@ -511,6 +497,20 @@ defineShortcuts({
 
         <template #footer>
             <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+
+            <UDashboardToolbar :ui="{ root: 'min-h-[33px] p-0 sm:p-0 gap-0 sm:gap-0' }">
+                <UTabs
+                    v-model="activeTab"
+                    :content="false"
+                    :items="[
+                        { value: 'all', label: 'Alle Dokumente' },
+                        { value: 'own', label: 'Eigene Dokumente' },
+                    ]"
+                    size="xs"
+                    class="w-full"
+                    :ui="{ list: 'rounded-none' }"
+                />
+            </UDashboardToolbar>
 
             <slot name="footer" />
         </template>

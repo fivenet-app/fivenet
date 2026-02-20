@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"math/rand/v2"
 	"slices"
 	"strings"
 
@@ -12,11 +13,19 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
+
+var bloodTypes = []string{
+	"A+", "A-",
+	"B+", "B-",
+	"AB+", "AB-",
+	"O+", "O-",
+}
 
 func (s *Server) handleUsersData(
 	ctx context.Context,
@@ -277,12 +286,50 @@ func (s *Server) createUser(
 		)
 	}
 
+	if err := s.setUserBloodType(ctx, tx, user.GetUserId()); err != nil {
+		return 0, fmt.Errorf(
+			"failed to set user blood type for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
+	}
+
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return 0, err
 	}
 
 	return rows, nil
+}
+
+func (s *Server) setUserBloodType(
+	ctx context.Context,
+	tx *sql.Tx,
+	userId int32,
+) error {
+	tUserProps := table.FivenetUserProps
+
+	idx := rand.IntN(len(bloodTypes))
+	bloodType := bloodTypes[idx]
+
+	stmt := tUserProps.
+		INSERT(
+			tUserProps.UserID,
+			tUserProps.BloodType,
+		).
+		VALUES(
+			userId,
+			bloodType,
+		)
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		if !dbutils.IsDuplicateError(err) {
+			return fmt.Errorf("failed to execute user blood type insert statement. %w", err)
+		}
+	}
+
+	return nil
 }
 
 func (s *Server) updateUser(
