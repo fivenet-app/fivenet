@@ -148,7 +148,7 @@ func (s *Server) handleUsersData(
 	}
 
 	if len(toUpdate) > 0 {
-		for _, user := range toCreate {
+		for _, user := range toUpdate {
 			affected, err := s.updateUser(ctx, user)
 			if err != nil {
 				return 0, fmt.Errorf(
