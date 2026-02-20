@@ -40,7 +40,7 @@ async function getTemplate(): Promise<Template> {
 
         const call = documentsDocumentsClient.getTemplate({
             templateId: props.templateId,
-            data,
+            data: data,
             render: true,
         });
         const { response } = await call;

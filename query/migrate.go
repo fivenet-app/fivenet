@@ -145,3 +145,17 @@ func MigrateDB(
 
 	return req, db.Close()
 }
+
+func GetMigrationState(ctx context.Context, db *sql.DB) (version uint, dirty bool, err error) {
+	m, err := NewMigrate(db, false)
+	if err != nil {
+		return 0, false, fmt.Errorf("failed to create migration instance. %w", err)
+	}
+
+	version, dirty, err = m.Version()
+	if err != nil {
+		return 0, false, fmt.Errorf("failed to get migration version. %w", err)
+	}
+
+	return version, dirty, nil
+}

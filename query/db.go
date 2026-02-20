@@ -124,14 +124,14 @@ func SetupDB(p Params) (Result, error) {
 	// Setup SQL Prometheus metrics collector for DB stats.
 	prometheus.MustRegister(collectors.NewDBStatsCollector(db, "fivenet"))
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	if req != nil {
 		// Replace db connection with the one we just created
 		req.ReplaceDB(db)
 	} else {
 		req = reqs.NewDBReqs(db)
-
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
 
 		// Collect requirement errors if any
 		var errs error
@@ -158,6 +158,15 @@ func SetupDB(p Params) (Result, error) {
 		if !p.Config.IgnoreRequirements && errs != nil {
 			return res, errs
 		}
+	}
+
+	if p.Config.Database.SkipMigrations {
+		// If migrations were skipped, we still need to set the migration state in the requirements.
+		version, dirty, err := GetMigrationState(ctx, db)
+		if err != nil {
+			return res, fmt.Errorf("failed to get migration state. %w", err)
+		}
+		req.SetMigrationState(version, dirty)
 	}
 
 	res.DB = db

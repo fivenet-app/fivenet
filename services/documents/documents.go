@@ -36,7 +36,7 @@ import (
 )
 
 const (
-	DocsDefaultPageSize = 16
+	DocsDefaultPageSize = 20
 	DocSummaryLength    = 128
 )
 

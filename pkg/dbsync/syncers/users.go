@@ -165,6 +165,14 @@ func (s *UsersSync) applyFiltersAndTransformations(
 		s.splitNamesIfRequired(u)
 		s.parseDateOfBirth(u)
 		s.cleanupUserJob(u)
+
+		s.logger.Debug(
+			"user data",
+			zap.Int32("user_id", u.GetUserId()),
+			zap.String("job", u.GetJob()),
+			zap.Int32("job_grade", u.GetJobGrade()),
+			zap.Int("jobs_len", len(u.GetJobs())),
+		)
 	}
 
 	if foundNullUserId {
