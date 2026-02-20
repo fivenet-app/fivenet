@@ -47,7 +47,7 @@ type State struct {
 	VehiclesResync *TableSyncState `yaml:"vehiclesResync"`
 }
 
-func NewState(p StateParams) *State {
+func NewState(p StateParams) (*State, error) {
 	s := &State{
 		mu: sync.RWMutex{},
 
@@ -72,7 +72,7 @@ func NewState(p StateParams) *State {
 		return nil
 	}))
 
-	return s
+	return s, nil
 }
 
 func (s *State) load() error {
@@ -92,27 +92,41 @@ func (s *State) load() error {
 
 	if s.Jobs == nil {
 		s.Jobs = &TableSyncState{dss: s}
+	} else {
+		s.Jobs.dss = s
 	}
 	if s.Licenses == nil {
 		s.Licenses = &TableSyncState{dss: s}
+	} else {
+		s.Licenses.dss = s
 	}
 
 	if s.Accounts == nil {
 		s.Accounts = &TableSyncState{dss: s}
+	} else {
+		s.Accounts.dss = s
 	}
 
 	if s.Users == nil {
 		s.Users = &TableSyncState{dss: s}
+	} else {
+		s.Users.dss = s
 	}
 	if s.UsersResync == nil {
 		s.UsersResync = &TableSyncState{dss: s}
+	} else {
+		s.UsersResync.dss = s
 	}
 
 	if s.Vehicles == nil {
 		s.Vehicles = &TableSyncState{dss: s}
+	} else {
+		s.Vehicles.dss = s
 	}
 	if s.VehiclesResync == nil {
 		s.VehiclesResync = &TableSyncState{dss: s}
+	} else {
+		s.VehiclesResync.dss = s
 	}
 
 	return nil
