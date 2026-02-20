@@ -17,8 +17,10 @@ import (
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 )
 
 var Module = fx.Module("dbsync",
@@ -199,12 +201,18 @@ func (s *Sync) stop() error {
 
 	s.wg.Wait()
 
-	var errs error
-	if err := s.cli.Close(); err != nil {
-		errs = multierr.Append(errs, fmt.Errorf("failed to close gRPC client. %w", err))
+	if s.cli != nil {
+		if err := s.cli.Close(); err != nil {
+			st := status.Convert(err)
+			if st.Code() == codes.Unavailable || st.Code() == codes.Canceled {
+				return nil
+			}
+
+			return fmt.Errorf("failed to close gRPC client. %w", err)
+		}
 	}
 
-	return errs
+	return nil
 }
 
 func (s *Sync) restart() error {
