@@ -23,10 +23,10 @@ func (s *Server) handleVehiclesData(
 	stmt := tVehicles.
 		INSERT(
 			tVehicles.UserID,
+			tVehicles.Job,
 			tVehicles.Plate,
 			tVehicles.Model,
 			tVehicles.Type,
-			tVehicles.Job,
 			tVehicles.Data,
 		)
 
@@ -43,25 +43,23 @@ func (s *Server) handleVehiclesData(
 
 		stmt = stmt.VALUES(
 			ownerId,
+			vehicle.Job,
 			vehicle.GetPlate(),
 			vehicle.Model,
 			vehicle.GetType(),
-			vehicle.Job,
 			mysql.NULL,
 		)
 	}
 
-	assignments := []mysql.ColumnAssigment{
-		tVehicles.UserID.SET(mysql.IntExp(mysql.Raw("VALUES(`user_id`)"))),
-		tVehicles.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
-		tVehicles.Plate.SET(mysql.StringExp(mysql.Raw("VALUES(`plate`)"))),
-		tVehicles.Model.SET(mysql.StringExp(mysql.Raw("VALUES(`model`)"))),
-		tVehicles.Type.SET(mysql.StringExp(mysql.Raw("VALUES(`type`)"))),
-		tVehicles.Data.SET(mysql.StringExp(mysql.Raw("VALUES(`data`)"))),
-	}
-
 	stmt = stmt.
-		ON_DUPLICATE_KEY_UPDATE(assignments...)
+		ON_DUPLICATE_KEY_UPDATE(
+			tVehicles.UserID.SET(mysql.IntExp(mysql.Raw("VALUES(`user_id`)"))),
+			tVehicles.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
+			tVehicles.Plate.SET(mysql.StringExp(mysql.Raw("VALUES(`plate`)"))),
+			tVehicles.Model.SET(mysql.StringExp(mysql.Raw("VALUES(`model`)"))),
+			tVehicles.Type.SET(mysql.StringExp(mysql.Raw("VALUES(`type`)"))),
+			tVehicles.Data.SET(mysql.StringExp(mysql.Raw("VALUES(`data`)"))),
+		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {

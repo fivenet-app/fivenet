@@ -27,11 +27,6 @@ var bloodTypes = []string{
 	"O+", "O-",
 }
 
-type userExisting struct {
-	UserID     int32  `alias:"user_id"`
-	Identifier string `alias:"identifier"`
-}
-
 func (s *Server) handleUsersData(
 	ctx context.Context,
 	data *pbsync.SendDataRequest_Users,
@@ -123,7 +118,7 @@ func (s *Server) handleUsersData(
 			tUsers.ID.IN(userIds...),
 		)
 
-	var existing []*userExisting
+	var existing []int32
 	if err := checkStmt.QueryContext(ctx, s.db, &existing); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return 0, fmt.Errorf("failed to query existing users. %w", err)
@@ -136,8 +131,8 @@ func (s *Server) handleUsersData(
 		toCreate = data.Users.GetUsers()
 	} else {
 		for _, user := range data.Users.GetUsers() {
-			if idx := slices.IndexFunc(existing, func(e *userExisting) bool {
-				return e.UserID == user.GetUserId()
+			if idx := slices.IndexFunc(existing, func(userId int32) bool {
+				return userId == user.GetUserId()
 			}); idx == -1 {
 				toCreate = append(toCreate, user)
 			} else {
