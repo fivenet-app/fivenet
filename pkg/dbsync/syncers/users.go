@@ -456,7 +456,7 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 	s.logger.Debug("users sync query", zap.String("query", q))
 
 	user := &syncdata.DataUser{}
-	if _, err := qrm.Query(ctx, s.db, q, []any{}, &user); err != nil {
+	if _, err := qrm.Query(ctx, s.db, q, []any{}, user); err != nil {
 		return err
 	}
 	us := []*syncdata.DataUser{user}
