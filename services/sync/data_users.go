@@ -27,6 +27,11 @@ var bloodTypes = []string{
 	"O+", "O-",
 }
 
+type userExisting struct {
+	UserID     int32  `alias:"user_id"`
+	Identifier string `alias:"identifier"`
+}
+
 func (s *Server) handleUsersData(
 	ctx context.Context,
 	data *pbsync.SendDataRequest_Users,
@@ -110,14 +115,15 @@ func (s *Server) handleUsersData(
 
 	checkStmt := tUsers.
 		SELECT(
-			tUsers.ID,
+			tUsers.ID.AS("user_id"),
+			tUsers.Identifier.AS("identifier"),
 		).
 		FROM(tUsers).
 		WHERE(
 			tUsers.ID.IN(userIds...),
 		)
 
-	var existing []int32
+	var existing []*userExisting
 	if err := checkStmt.QueryContext(ctx, s.db, &existing); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return 0, fmt.Errorf("failed to query existing users. %w", err)
@@ -130,8 +136,8 @@ func (s *Server) handleUsersData(
 		toCreate = data.Users.GetUsers()
 	} else {
 		for _, user := range data.Users.GetUsers() {
-			if idx := slices.IndexFunc(existing, func(userId int32) bool {
-				return userId == user.GetUserId()
+			if idx := slices.IndexFunc(existing, func(e *userExisting) bool {
+				return e.UserID == user.GetUserId()
 			}); idx == -1 {
 				toCreate = append(toCreate, user)
 			} else {
@@ -167,6 +173,36 @@ func (s *Server) handleUsersData(
 					err,
 				)
 			}
+
+			// Duplicate entry for identifier? Remove the duplicate entry and try updating again.
+			// E.g., char transfer can cause this.
+			if affected == -1 {
+				// Remove user by identifier
+				stmt := tUsers.
+					DELETE().
+					WHERE(tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))).
+					LIMIT(1)
+
+				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+					return 0, fmt.Errorf(
+						"failed to delete duplicate user %d with identifier %s. %w",
+						user.GetUserId(),
+						user.GetIdentifier(),
+						err,
+					)
+				}
+
+				affected, err = s.updateUser(ctx, user)
+				if err != nil {
+					return 0, fmt.Errorf(
+						"failed to update user %d (%s) after duplicate removal. %w",
+						user.GetUserId(),
+						user.GetIdentifier(),
+						err,
+					)
+				}
+			}
+
 			rowsAffected += affected
 		}
 	}
@@ -396,6 +432,10 @@ func (s *Server) updateUser(
 
 	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
+		if dbutils.IsDuplicateError(err) {
+			// Signal that an user with this **identifier** should be removed, as there is a duplicate entry for the identifier
+			return -1, nil
+		}
 		return 0, fmt.Errorf("failed to execute user update statement. %w", err)
 	}
 	rows, err := res.RowsAffected()
