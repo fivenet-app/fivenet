@@ -215,10 +215,7 @@ func (g *QualificationsSync) planUsers(
 			FROM(
 				tQualificationsResults.
 					INNER_JOIN(tQualifications,
-						mysql.AND(
-							tQualifications.ID.EQ(tQualificationsResults.QualificationID),
-							tQualifications.DeletedAt.IS_NULL(),
-						),
+						tQualifications.ID.EQ(tQualificationsResults.QualificationID),
 					).
 					INNER_JOIN(tAccsOauth2,
 						tAccsOauth2.AccountID.EQ(tUsers.AccountID),
@@ -232,12 +229,13 @@ func (g *QualificationsSync) planUsers(
 			).
 			WHERE(mysql.AND(
 				tAccsOauth2.Provider.EQ(mysql.String("discord")),
+				tQualifications.Job.EQ(mysql.String(g.job)),
+				tQualifications.DeletedAt.IS_NULL(),
 				tQualificationsResults.QualificationID.EQ(mysql.Int64(qualificationId)),
 				tQualificationsResults.DeletedAt.IS_NULL(),
 				tQualificationsResults.Status.EQ(
 					mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
 				),
-				tQualifications.Job.EQ(mysql.String(g.job)),
 			))
 
 		var dest []*qualificationUserMapping
