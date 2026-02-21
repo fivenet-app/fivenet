@@ -754,7 +754,8 @@
         "all_day": "Ganztägig",
         "only_not_already_acted": "Nur nicht Bearbeitete",
         "never": "Nie",
-        "request_sync": "Synchronisierung anfordern"
+        "request_sync": "Synchronisierung anfordern",
+        "own_documents": "Eigene Dokumente"
     },
     "components": {
         "partials": {
@@ -1764,7 +1765,8 @@
             "height": "Höhe",
             "width": "Breite",
             "snap_threshold": "Einrast-Schwelle",
-            "canvas_settings": "Leinwand-Einstellungen"
+            "canvas_settings": "Leinwand-Einstellungen",
+            "no_object_selected": "Kein Objekt ausgewählt"
         },
         "notepad": {
             "title": "Notizblock",

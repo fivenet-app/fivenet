@@ -503,8 +503,8 @@ defineShortcuts({
                     v-model="activeTab"
                     :content="false"
                     :items="[
-                        { value: 'all', label: 'Alle Dokumente' },
-                        { value: 'own', label: 'Eigene Dokumente' },
+                        { value: 'all', label: $t('common.all_documents') },
+                        { value: 'own', label: $t('common.own_documents') },
                     ]"
                     size="xs"
                     class="w-full"

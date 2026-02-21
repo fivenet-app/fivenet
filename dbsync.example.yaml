@@ -234,11 +234,15 @@ tables:
       outputFormat: "02.01.2006" # DD.MM.YYYY
     valueMapping:
       # This allows to map values to different values for FiveNet
-      # E.g., the sex of a char must be either `m`, `f`, or `d`
+      # E.g., the sex of a char must be either `f`, `m`, or `d`
       sex:
         fallback: 'm'
         values:
-          '1': 'f'
+          'f': 'f'
+          'm': 'm'
+          # E.g., if your server uses `male` and `female` instead of `m` and `f`, you can map them like this:
+          #'female': 'f'
+          #'male': 'm'
     # If the firstname or lastname is empty or null, do not sync the user at all
     ignoreEmptyNames: true
     # Filters allow to modify certain values before they are sent to FiveNet

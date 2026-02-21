@@ -336,16 +336,23 @@ export function isEmptyDoc(content: Struct | JSONContent | null | undefined): bo
 export function isEmptyRichContentDoc(content: RichTextHtmlNode | null | undefined): boolean {
     if (!content || !content.content || content.content.length === 0) return true;
 
-    // Check if all top-level nodes are empty paragraphs
-    let nodes = content.content[0]?.content || [];
+    // Check if all any top-level nodes are not empty
+    let nodes: RichTextHtmlNode[] = [];
+    for (let i = 0; i < 3; i++) {
+        nodes = content.content[i]?.content ?? [];
+        if (nodes.length > 0) break;
+    }
     if (nodes.length === 0) {
-        // FIXME needs to be made more resilient to different content structures
         nodes = content.content;
     }
     for (const node of nodes) {
-        if (node.type === NodeType.ELEMENT && node.tag === 'p') {
-            if (node.content && node.content.length > 0) {
-                // Paragraph has content
+        if (node.type === NodeType.ELEMENT) {
+            if (node.tag === 'p') {
+                if (node.content && node.content.length > 0) {
+                    // Paragraph has content
+                    return false;
+                }
+            } else if (node.tag === 'img') {
                 return false;
             }
         } else {

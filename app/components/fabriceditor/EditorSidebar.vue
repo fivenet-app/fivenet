@@ -461,7 +461,7 @@ const updateCurvedTextFillColor = (val: string) => {
             </template>
 
             <!-- No selection -->
-            <div v-else class="text-sm text-muted">No object selected.</div>
+            <div v-else class="text-sm text-muted">{{ $t('components.fabric_editor.no_object_selected') }}</div>
         </UCard>
 
         <EditorShapes />

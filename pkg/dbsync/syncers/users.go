@@ -226,8 +226,10 @@ func (s *UsersSync) cleanupUserJob(user *syncdata.DataUser) {
 }
 
 func (s *UsersSync) applyValueMapping(user *syncdata.DataUser) {
-	if user.Sex != nil && !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
-		s.cfg.Tables.Users.ValueMapping.Sex.Process(user.Sex)
+	if !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
+		if sex := s.cfg.Tables.Users.ValueMapping.Sex.Process(user.GetSex()); sex != "" {
+			user.Sex = &sex
+		}
 	}
 }
 

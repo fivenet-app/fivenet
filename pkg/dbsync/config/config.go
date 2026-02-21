@@ -503,19 +503,16 @@ func (c *ValueMapping) IsEmpty() bool {
 	return len(c.Values) == 0
 }
 
-func (c *ValueMapping) Process(input *string) {
-	if input == nil {
-		return
+func (c *ValueMapping) Process(input string) string {
+	val, ok := c.Values[input]
+	if ok {
+		return val
+	} else if c.Fallback != nil && *c.Fallback != "" {
+		// Only return fallback if it's not an empty string
+		return *c.Fallback
 	}
 
-	val, ok := c.Values[*input]
-	if !ok {
-		if c.Fallback != nil {
-			*input = *c.Fallback
-		}
-	} else {
-		*input = val
-	}
+	return input
 }
 
 type UsersFilters struct {

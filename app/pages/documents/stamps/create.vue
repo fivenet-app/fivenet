@@ -61,39 +61,49 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
-        <template #header>
-            <UDashboardNavbar :title="$t('common.stamp', 2)">
-                <template #leading>
-                    <UDashboardSidebarCollapse />
-                </template>
+    <UForm :state="state" :schema="schema" @submit="onSubmitThrottle">
+        <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+            <template #header>
+                <UDashboardNavbar :title="$t('common.stamp', 2)">
+                    <template #leading>
+                        <UDashboardSidebarCollapse />
+                    </template>
 
-                <template #right>
-                    <PartialsBackButton fallback-to="/documents" />
+                    <template #right>
+                        <PartialsBackButton fallback-to="/documents" />
 
-                    <UTooltip v-if="can('documents.StampsService/UpsertStamp').value" :text="$t('common.save', 1)">
-                        <UButton trailing-icon="i-mdi-content-save" color="neutral" variant="outline" truncate>
-                            <span class="hidden truncate sm:block">
-                                {{ $t('common.save', 1) }}
-                            </span>
-                        </UButton>
-                    </UTooltip>
-                </template>
-            </UDashboardNavbar>
+                        <UTooltip v-if="can('documents.StampsService/UpsertStamp').value" :text="$t('common.save', 1)">
+                            <UButton trailing-icon="i-mdi-content-save" color="neutral" variant="outline" truncate>
+                                <span class="hidden truncate sm:block">
+                                    {{ $t('common.save', 1) }}
+                                </span>
+                            </UButton>
+                        </UTooltip>
+                    </template>
+                </UDashboardNavbar>
 
-            <UDashboardToolbar class="p-1 print:hidden">
-                <template #default>
-                    <UForm :state="state" :schema="schema" @submit="onSubmitThrottle">
+                <UDashboardToolbar class="p-1 print:hidden">
+                    <template #default>
                         <EditorToolbar />
-                    </UForm>
-                </template>
-            </UDashboardToolbar>
-        </template>
+                    </template>
+                </UDashboardToolbar>
+            </template>
 
-        <template #body>
-            <EditorWrapper v-model="state.svgData" :max-width="900" :max-height="350" background-color="#ffffff">
-                <template #sidebar-top> TODO input field for stamp name </template>
-            </EditorWrapper>
-        </template>
-    </UDashboardPanel>
+            <template #body>
+                <EditorWrapper v-model="state.svgData" :max-width="900" :max-height="350" background-color="#ffffff">
+                    <template #sidebar-top>
+                        <UCard>
+                            <template #header>
+                                {{ $t('pages.documents.stamps.create') }}
+                            </template>
+
+                            <UFormField name="name" :label="$t('common.name')">
+                                <UInput v-model="state.name" type="text" />
+                            </UFormField>
+                        </UCard>
+                    </template>
+                </EditorWrapper>
+            </template>
+        </UDashboardPanel>
+    </UForm>
 </template>

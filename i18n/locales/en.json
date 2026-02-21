@@ -754,7 +754,8 @@
         "all_day": "All Day",
         "only_not_already_acted": "Only Not Already Acted",
         "never": "Never",
-        "request_sync": "Request Sync"
+        "request_sync": "Request Sync",
+        "own_documents": "Own Documents"
     },
     "components": {
         "partials": {
@@ -1764,7 +1765,8 @@
             "height": "Height",
             "width": "Width",
             "snap_threshold": "Snap Threshold",
-            "canvas_settings": "Canvas Settings"
+            "canvas_settings": "Canvas Settings",
+            "no_object_selected": "No object selected"
         },
         "notepad": {
             "title": "Notepad",
