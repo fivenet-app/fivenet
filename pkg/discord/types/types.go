@@ -79,6 +79,17 @@ func (u *User) GetJobInfo(job string) *users.UserJob {
 	return u.Jobs[idx]
 }
 
+func (u *User) AddRole(r *Role) {
+	if u.Roles == nil {
+		u.Roles = &UserRoles{}
+	}
+	if !slices.ContainsFunc(u.Roles.Sum, func(role *Role) bool {
+		return role.ID == r.ID
+	}) {
+		u.Roles.Sum = append(u.Roles.Sum, r)
+	}
+}
+
 type UserRoles struct {
 	Sum Roles `yaml:"-"`
 

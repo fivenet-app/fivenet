@@ -35,6 +35,8 @@ type groupSyncUser struct {
 	ExternalID string                  `alias:"external_id"`
 	Groups     *accounts.AccountGroups `alias:"groups"`
 	UserID     int32                   `alias:"user_id"`
+
+	JobChecked bool
 	SameJob    bool
 }
 
@@ -168,14 +170,39 @@ func (g *GroupSync) planUsers(
 
 	errs := multierr.Combine()
 	for _, user := range dest {
-		for _, group := range user.Groups.GetGroups() {
-			// Get group config based on user's groups
-			groupCfg, ok := g.cfg.GroupSync.Mapping[group]
-			if !ok {
-				continue
-			}
+		u, l, err := g.planUser(ctx, user, roles)
+		if err != nil {
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf("failed to plan user %s: %w", user.ExternalID, err),
+			)
+		}
+		logs = append(logs, l...)
 
-			if groupCfg.NotSameJob {
+		if u != nil {
+			users.Add(u)
+		}
+	}
+
+	return users, logs, errs
+}
+
+func (g *GroupSync) planUser(
+	ctx context.Context,
+	user *groupSyncUser,
+	roles discordtypes.Roles,
+) (*discordtypes.User, []discord.Embed, error) {
+	var u *discordtypes.User
+	for _, group := range user.Groups.GetGroups() {
+		// Get group config based on user's groups
+		groupCfg, ok := g.cfg.GroupSync.Mapping[group]
+		if !ok {
+			continue
+		}
+
+		if groupCfg.NotSameJob {
+			// Only check user's job once per user if any of the groupshave `NotSameJob` set to true
+			if !user.JobChecked {
 				has, err := g.checkIfUserIsPartOfJob(ctx, user.UserID, g.job)
 				if err != nil {
 					g.logger.Error(
@@ -185,54 +212,60 @@ func (g *GroupSync) planUsers(
 					)
 					continue
 				}
-				if has {
-					g.logger.Debug(
-						fmt.Sprintf(
-							"member %s is part of same job, not setting to group",
-							user.ExternalID,
-						),
-						zap.String("group", group),
-					)
-					user.SameJob = true
-					continue
-				}
+				user.JobChecked = true
+				user.SameJob = has
 			}
 
-			idx := slices.IndexFunc(roles, func(role *discordtypes.Role) bool {
-				return role.Name == groupCfg.RoleName
-			})
-			if idx == -1 {
-				logs = append(logs, discord.Embed{
-					Title: fmt.Sprintf(
-						"Group Sync: Failed to find dc role for group %s",
-						groupCfg.RoleName,
+			if user.SameJob {
+				g.logger.Debug(
+					fmt.Sprintf(
+						"member %s is part of same job, not setting to group",
+						user.ExternalID,
 					),
-					Description: fmt.Sprintf("For DC ID %s", user.ExternalID),
-					Author:      embeds.EmbedAuthor,
-					Color:       embeds.ColorInfo,
-				})
-				continue
-			}
-
-			externalId, err := strconv.ParseUint(user.ExternalID, 10, 64)
-			if err != nil {
-				errs = multierr.Append(
-					errs,
-					fmt.Errorf("failed to parse oauth2 external id %d. %w", externalId, err),
+					zap.String("group", group),
 				)
+				user.SameJob = true
 				continue
 			}
+		}
 
-			users.Add(&discordtypes.User{
+		idx := slices.IndexFunc(roles, func(role *discordtypes.Role) bool {
+			return role.Name == groupCfg.RoleName
+		})
+		if idx == -1 {
+			return nil, []discord.Embed{{
+				Title: fmt.Sprintf(
+					"Group Sync: Failed to find dc role for group %s",
+					groupCfg.RoleName,
+				),
+				Description: fmt.Sprintf("For DC ID %s", user.ExternalID),
+				Author:      embeds.EmbedAuthor,
+				Color:       embeds.ColorInfo,
+			}}, nil
+		}
+
+		externalId, err := strconv.ParseUint(user.ExternalID, 10, 64)
+		if err != nil {
+			return nil, nil, fmt.Errorf(
+				"failed to parse oauth2 external id %d. %w",
+				externalId,
+				err,
+			)
+		}
+
+		if u == nil {
+			u = &discordtypes.User{
 				ID: discord.UserID(externalId),
 				Roles: &discordtypes.UserRoles{
 					Sum: []*discordtypes.Role{roles[idx]},
 				},
-			})
+			}
+		} else {
+			u.AddRole(roles[idx])
 		}
 	}
 
-	return users, logs, errs
+	return u, nil, nil
 }
 
 func (g *GroupSync) checkIfUserIsPartOfJob(
@@ -251,7 +284,8 @@ func (g *GroupSync) checkIfUserIsPartOfJob(
 		WHERE(mysql.AND(
 			tUserJobs.UserID.EQ(mysql.Int32(userId)),
 			tUserJobs.Job.EQ(mysql.String(job)),
-		))
+		)).
+		LIMIT(10)
 
 	var dest []*users.UserJob
 	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
