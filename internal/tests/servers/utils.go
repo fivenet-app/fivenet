@@ -33,20 +33,20 @@ func loadDockerComposeServiceImage(t *testing.T, service string) (string, string
 	// Open the docker-compose file
 	file, err := os.Open(dockerComposePath)
 	if err != nil {
-		panic(fmt.Errorf("failed to open docker-compose.dev.yaml file: %w", err))
+		panic(fmt.Errorf("failed to open docker-compose.dev.yaml file. %w", err))
 	}
 	defer file.Close()
 
 	// Read the file content
 	content, err := io.ReadAll(file)
 	if err != nil {
-		panic(fmt.Errorf("failed to read docker-compose.dev.yaml file: %w", err))
+		panic(fmt.Errorf("failed to read docker-compose.dev.yaml file. %w", err))
 	}
 
 	// Unmarshal the YAML content into the struct
 	var compose dockerCompose
 	if err := yaml.Unmarshal(content, &compose); err != nil {
-		panic(fmt.Errorf("failed to parse docker-compose.dev.yaml file: %w", err))
+		panic(fmt.Errorf("failed to parse docker-compose.dev.yaml file. %w", err))
 	}
 
 	serviceData, ok := compose.Services[service]

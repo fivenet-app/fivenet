@@ -174,7 +174,7 @@ func (g *GroupSync) planUsers(
 		if err != nil {
 			errs = multierr.Append(
 				errs,
-				fmt.Errorf("failed to plan user %s: %w", user.ExternalID, err),
+				fmt.Errorf("failed to plan user %s. %w", user.ExternalID, err),
 			)
 		}
 		logs = append(logs, l...)

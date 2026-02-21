@@ -61,13 +61,13 @@ func (t *TableManager) CheckTables(
 		}
 
 		if err := t.checkIfTableExists(ctx, db, table.TableName); err != nil {
-			return fmt.Errorf("table %q check failed: %w", table.TableName, err)
+			return fmt.Errorf("table %q check failed. %w", table.TableName, err)
 		}
 
 		hasUpdatedAt, err := t.checkIfTableHasUpdatedAtColumn(ctx, db, table.TableName)
 		if err != nil {
 			return fmt.Errorf(
-				"table %q updated_at column check failed: %w",
+				"table %q updated_at column check failed. %w",
 				table.TableName,
 				err,
 			)
@@ -88,7 +88,7 @@ func (t *TableManager) CheckTables(
 			columnName := *table.UpdatedTimeColumn
 			if err := t.addUpdatedAtColumnToTable(ctx, db, table.TableName, columnName); err != nil {
 				return fmt.Errorf(
-					"adding updated_at column to table %q failed: %w",
+					"adding updated_at column to table %q failed. %w",
 					table.TableName,
 					err,
 				)

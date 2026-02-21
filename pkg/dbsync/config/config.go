@@ -645,7 +645,7 @@ func (c *DBSyncConfig) Init() error {
 		var err error
 		filter.CompiledPattern, err = regexp.Compile(filter.Pattern)
 		if err != nil {
-			return fmt.Errorf("failed to compile regex for filter %d: %w", k, err)
+			return fmt.Errorf("failed to compile regex for filter %d. %w", k, err)
 		}
 	}
 
@@ -654,7 +654,7 @@ func (c *DBSyncConfig) Init() error {
 		var err error
 		filter.CompiledPattern, err = regexp.Compile(filter.Pattern)
 		if err != nil {
-			return fmt.Errorf("failed to compile regex for user job filter %d: %w", k, err)
+			return fmt.Errorf("failed to compile regex for user job filter %d. %w", k, err)
 		}
 	}
 

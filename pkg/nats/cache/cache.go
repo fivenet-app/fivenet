@@ -112,7 +112,8 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 	var ready atomic.Bool
 	var wg sync.WaitGroup
 
-	wg.Go(func() {
+	wg.Add(1)
+	go func() {
 		defer watcher.Stop()
 		updateCh := watcher.Updates()
 
@@ -120,6 +121,7 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 			select {
 			case <-ctx.Done():
 				return
+
 			case entry := <-updateCh:
 				if entry == nil {
 					if !ready.Swap(true) {
@@ -149,7 +151,7 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 				}
 			}
 		}
-	})
+	}()
 
 	go func() {
 		for {

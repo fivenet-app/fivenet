@@ -220,8 +220,9 @@ func (p *Poller) doBatch(ctx context.Context) error {
 			tUser.
 				INNER_JOIN(
 					tAccount,
-					tAccount.License.LIKE(
-						mysql.RawString("SUBSTRING_INDEX(`users`.`identifier`, ':', -1)"),
+					mysql.OR(
+						tAccount.ID.EQ(tUser.AccountID),
+						tAccount.License.EQ(tUser.License),
 					),
 				),
 		).
