@@ -101,9 +101,7 @@ func TestNats_MultipleLocks(t *testing.T) {
 	tracker := int32(0)
 	var wg sync.WaitGroup
 	for i := range 500 {
-		wg.Add(1)
-		go func(i int) {
-			defer wg.Done()
+		wg.Go(func() {
 			<-time.After(time.Duration(200+rand.Float64()*(2000-200+1)) * time.Millisecond)
 			n, err := getNatsClient(ctx, js, "basic")
 			require.NoError(t, err)
@@ -127,7 +125,7 @@ func TestNats_MultipleLocks(t *testing.T) {
 			if err != nil {
 				t.Errorf("Unlock() %s error = %v: %d", connName, err, n.getRev("LOCK."+lockKey))
 			}
-		}(i)
+		})
 	}
 
 	wg.Wait()

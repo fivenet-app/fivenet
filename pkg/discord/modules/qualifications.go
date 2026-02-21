@@ -218,11 +218,11 @@ func (g *QualificationsSync) planUsers(
 					INNER_JOIN(tQualifications,
 						tQualifications.ID.EQ(tQualificationsResults.QualificationID),
 					).
-					INNER_JOIN(tAccsOauth2,
-						tAccsOauth2.AccountID.EQ(tUsers.AccountID),
-					).
 					INNER_JOIN(tUsers,
 						tUsers.ID.EQ(tQualificationsResults.UserID),
+					).
+					INNER_JOIN(tAccsOauth2,
+						tAccsOauth2.AccountID.EQ(tUsers.AccountID),
 					).
 					INNER_JOIN(tUserJobs,
 						tUserJobs.UserID.EQ(tUsers.ID),

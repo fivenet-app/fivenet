@@ -170,14 +170,11 @@ func NewServer(p Params) Result {
 			return fmt.Errorf("failed to register stream. %w", err)
 		}
 
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-
+		s.wg.Go(func() {
 			if err := s.loadData(ctxCancel); err != nil {
 				s.logger.Error("failed to load initial centrum data", zap.Error(err))
 			}
-		}()
+		})
 
 		return nil
 	}))

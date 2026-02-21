@@ -123,14 +123,11 @@ func New(p Params) Result {
 
 		s.le.Start()
 
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-
+		s.wg.Go(func() {
 			if err := s.runDeleteOldDispatches(ctxCancel, nil); err != nil {
 				s.logger.Error("failed to delete old dispatches on startup")
 			}
-		}()
+		})
 
 		return nil
 	}))

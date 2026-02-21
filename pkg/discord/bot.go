@@ -188,7 +188,11 @@ func New(p BotParams) Result {
 										err = fmt.Errorf("recovered from panic. %v", er)
 									}
 
-									logger.Error("discord guild sync panic", zap.Error(err))
+									logger.Error(
+										"discord guild sync panic",
+										zap.Error(err),
+										zap.StackSkip("stacktrace", 2),
+									)
 								}
 							}()
 
