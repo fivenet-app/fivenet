@@ -50,11 +50,10 @@ type Guild struct {
 	bot    *Bot
 	guild  discord.Guild
 
-	base    *modules.BaseModule
-	modules []modules.Module
-
 	settings *atomic.Pointer[jobssettings.DiscordSyncSettings]
-	events   *broker.Broker[any]
+	modules  []modules.Module
+
+	events *broker.Broker[any]
 }
 
 func NewGuild(
@@ -83,12 +82,13 @@ func NewGuild(
 
 		logger: b.logger.Named("guild").
 			With(zap.String("job", job), zap.Uint64("discord_guild_id", uint64(guild.ID))),
-		bot:     b,
-		guild:   guild,
-		modules: []modules.Module{},
+		bot:   b,
+		guild: guild,
 
 		settings: &atomic.Pointer[jobssettings.DiscordSyncSettings]{},
-		events:   events,
+		modules:  []modules.Module{},
+
+		events: events,
 	}
 
 	settings, _, err := g.getSyncSettings(ctx)
@@ -97,9 +97,9 @@ func NewGuild(
 	}
 	g.settings.Store(settings)
 
-	g.base = modules.NewBaseModule(ctx, g.logger.Named("module"),
+	base := modules.NewBaseModule(ctx, g.logger.Named("module"),
 		g.bot.db, g.bot.dc, g.guild, g.job, g.bot.cfg, g.bot.appCfg, g.bot.enricher,
-		oauth2ProviderName, settings,
+		oauth2ProviderName, g.settings,
 	)
 
 	ms := []string{}
@@ -116,7 +116,7 @@ func NewGuild(
 	g.logger.Debug("getting discord guild modules", zap.Strings("dc_modules", ms))
 	errs := multierr.Combine()
 	for _, module := range ms {
-		m, err := modules.GetModule(module, g.base, g.events)
+		m, err := modules.GetModule(module, base, g.events)
 		if err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("%s. %w", module, err))
 			continue
@@ -178,7 +178,7 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 	if err != nil {
 		return errors.New("failed to get guild sync settings")
 	}
-	g.base.SetSettings(settings)
+	g.settings.Store(settings)
 	if planDiff == nil {
 		planDiff = &jobssettings.DiscordSyncChanges{}
 	}
@@ -244,8 +244,6 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 		Time: timestamp.Now(),
 		Plan: b.String(),
 	})
-
-	fmt.Printf("%s - Plan Diff:\n%s\n", g.job, b.String())
 
 	if !plan.DryRun {
 		pLogs, err := plan.Apply(g.ctx, g.bot.dc)

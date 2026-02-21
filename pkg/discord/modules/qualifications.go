@@ -93,6 +93,7 @@ func (g *QualificationsSync) Plan(
 		).
 		FROM(tQualifications).
 		WHERE(mysql.AND(
+			tQualifications.DeletedAt.IS_NULL(),
 			tQualifications.CreatorJob.EQ(mysql.String(g.job)),
 			tQualifications.DiscordSyncEnabled.IS_TRUE(),
 		))
@@ -228,7 +229,6 @@ func (g *QualificationsSync) planUsers(
 					),
 			).
 			WHERE(mysql.AND(
-				tAccsOauth2.Provider.EQ(mysql.String("discord")),
 				tQualifications.Job.EQ(mysql.String(g.job)),
 				tQualifications.DeletedAt.IS_NULL(),
 				tQualificationsResults.QualificationID.EQ(mysql.Int64(qualificationId)),
@@ -236,6 +236,8 @@ func (g *QualificationsSync) planUsers(
 				tQualificationsResults.Status.EQ(
 					mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
 				),
+				tAccsOauth2.Provider.EQ(mysql.String("discord")),
+				tUsers.AccountID.IS_NOT_NULL(),
 			))
 
 		var dest []*qualificationUserMapping

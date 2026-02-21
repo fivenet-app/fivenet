@@ -323,7 +323,7 @@ func (b *Bot) start(ctx context.Context) error {
 
 func (b *Bot) syncLoop(ctx context.Context) {
 	for {
-		b.logger.Info("running discord sync")
+		b.logger.Info("running discord sync", zap.Bool("dry_run", b.cfg.DryRun))
 		func() {
 			ctx, span := b.tracer.Start(ctx, "discord_bot")
 			defer span.End()

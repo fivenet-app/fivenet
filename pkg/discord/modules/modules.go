@@ -69,7 +69,7 @@ type BaseModule struct {
 
 	oauth2ProviderName string
 
-	settings atomic.Pointer[jobssettings.DiscordSyncSettings]
+	settings *atomic.Pointer[jobssettings.DiscordSyncSettings]
 }
 
 func NewBaseModule(
@@ -83,7 +83,7 @@ func NewBaseModule(
 	appCfg appconfig.IConfig,
 	enricher *mstlystcdata.Enricher,
 	oauth2ProviderName string,
-	settings *jobssettings.DiscordSyncSettings,
+	settings *atomic.Pointer[jobssettings.DiscordSyncSettings],
 ) *BaseModule {
 	bm := &BaseModule{
 		ctx:      ctx,
@@ -98,15 +98,10 @@ func NewBaseModule(
 
 		oauth2ProviderName: oauth2ProviderName,
 
-		settings: atomic.Pointer[jobssettings.DiscordSyncSettings]{},
+		settings: settings,
 	}
-	bm.settings.Store(settings)
 
 	return bm
-}
-
-func (m *BaseModule) SetSettings(settings *jobssettings.DiscordSyncSettings) {
-	m.settings.Store(settings)
 }
 
 func (m *BaseModule) GetOAuth2ProviderName() string {
