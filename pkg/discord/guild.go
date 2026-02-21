@@ -189,7 +189,7 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 
 	errs := multierr.Combine()
 	channelId := discord.NullChannelID
-	if settings.IsStatusLogEnabled() && false { // TODO
+	if settings.IsStatusLogEnabled() {
 		chId, err := strconv.ParseUint(settings.GetStatusLogSettings().GetChannelId(), 10, 64)
 		if err != nil {
 			errs = multierr.Append(

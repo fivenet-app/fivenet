@@ -156,7 +156,10 @@ func (g *GroupSync) planUsers(
 					tAccount.ID.EQ(tAccsOauth2.AccountID),
 				).
 				INNER_JOIN(tUsers,
-					tUsers.ID.EQ(tAccsOauth2.AccountID),
+					mysql.OR(
+						tUsers.ID.EQ(tAccsOauth2.AccountID),
+						tUsers.License.EQ(tAccount.License),
+					),
 				),
 		).
 		WHERE(condition)
