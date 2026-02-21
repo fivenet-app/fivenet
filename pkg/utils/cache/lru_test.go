@@ -116,11 +116,9 @@ func TestLRUCacheConcurrentAccess(t *testing.T) {
 	cache := NewLRUCache[int, int](100)
 	wg := sync.WaitGroup{}
 	for i := range 100 {
-		wg.Add(1)
-		go func(i int) {
-			defer wg.Done()
+		wg.Go(func() {
 			cache.Put(i, i*10, 0)
-		}(i)
+		})
 	}
 	wg.Wait()
 	for i := range 100 {

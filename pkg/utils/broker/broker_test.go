@@ -33,10 +33,8 @@ func TestBrokerStart(t *testing.T) {
 
 	// Test publishing
 	var wg sync.WaitGroup
-	wg.Add(2)
 
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		select {
 		case msg := <-sub1:
 			require.Equal(1, msg.ID, "unexpected ID received on sub1")
@@ -45,10 +43,9 @@ func TestBrokerStart(t *testing.T) {
 		case <-time.After(1 * time.Second):
 			t.Error("timeout waiting for message on sub1")
 		}
-	}()
+	})
 
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		select {
 		case msg := <-sub2:
 			require.NotNil(msg)
@@ -58,7 +55,7 @@ func TestBrokerStart(t *testing.T) {
 		case <-time.After(1 * time.Second):
 			t.Error("timeout waiting for message on sub2")
 		}
-	}()
+	})
 
 	broker.Publish(testMessage{ID: 1, Data: "test"})
 	wg.Wait()

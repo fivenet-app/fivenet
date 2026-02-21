@@ -64,8 +64,6 @@ type AuditStorer struct {
 	tracer trace.Tracer
 	// db is the database connection for storing audit logs.
 	db *sql.DB
-	// wg is a wait group for managing worker goroutines.
-	wg sync.WaitGroup
 	// input is the channel for incoming audit entries to be processed.
 	input chan *audit.AuditEntry
 }
@@ -95,7 +93,6 @@ func New(p Params) IAuditer {
 		logger: p.Logger.Named("audit"),
 		tracer: p.TP.Tracer("audit"),
 		db:     p.DB,
-		wg:     sync.WaitGroup{},
 		input:  make(chan *audit.AuditEntry, bufferSize),
 	}
 
@@ -108,11 +105,11 @@ func New(p Params) IAuditer {
 		MinDays: p.Config.Audit.RetentionDays,
 	})
 
+	wg := sync.WaitGroup{}
 	// Start worker goroutines for processing audit entries.
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		for range workerCount {
-			a.wg.Add(1)
-			go a.worker(ctxCancel)
+			wg.Go(func() { a.worker(ctxCancel) })
 		}
 		return nil
 	}))
@@ -120,7 +117,7 @@ func New(p Params) IAuditer {
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 		close(a.input)
-		a.wg.Wait()
+		wg.Wait()
 		return nil
 	}))
 
@@ -129,8 +126,6 @@ func New(p Params) IAuditer {
 
 // worker processes audit entries from the input channel and stores them in the database.
 func (a *AuditStorer) worker(ctx context.Context) {
-	defer a.wg.Done()
-
 	for {
 		select {
 		case <-ctx.Done():

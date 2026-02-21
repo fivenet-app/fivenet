@@ -152,7 +152,7 @@ func (le *LeaderElector) retryLoop() {
 			return
 
 		case <-t.C:
-			if !le.isLeader {
+			if !le.isLeaderSafe() {
 				le.tryAcquire()
 			}
 		}
@@ -221,18 +221,22 @@ func (le *LeaderElector) promote() {
 		go le.onStarted(le.leadershipCtx)
 	}
 
-	go le.heartbeatLoop()
+	go le.heartbeatLoop(le.leadershipCtx)
 }
 
 // heartbeatLoop refreshes the key while leader.
-func (le *LeaderElector) heartbeatLoop() {
+func (le *LeaderElector) heartbeatLoop(ctx context.Context) {
 	t := time.NewTicker(le.heartbeat)
 	defer t.Stop()
 
 	for {
 		select {
+		case <-ctx.Done():
+			return
+
 		case <-le.ctx.Done():
 			return
+
 		case <-t.C:
 			if _, err := le.kv.Put(le.ctx, le.key, nil); err != nil {
 				le.logger.Warn("failed to refresh key", zap.Error(err))
@@ -241,4 +245,12 @@ func (le *LeaderElector) heartbeatLoop() {
 			}
 		}
 	}
+}
+
+// isLeaderSafe returns the leadership flag under lock to avoid races.
+func (le *LeaderElector) isLeaderSafe() bool {
+	le.mu.Lock()
+	defer le.mu.Unlock()
+
+	return le.isLeader
 }

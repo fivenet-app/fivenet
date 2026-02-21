@@ -239,15 +239,9 @@ func (w *Workflow) handleDocuments(
 	// Run at max 3 handlers at once
 	workChannel := make(chan *workflowState, 3)
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		for state := range workChannel {
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-
+			wg.Go(func() {
 				if state == nil || state.State == nil {
 					return
 				}
@@ -256,9 +250,9 @@ func (w *Workflow) handleDocuments(
 					w.logger.Error("error during workflow state handling",
 						zap.Int64("document_id", state.DocumentId), zap.Error(err))
 				}
-			}()
+			})
 		}
-	}()
+	})
 
 	for _, ws := range dest {
 		workChannel <- ws

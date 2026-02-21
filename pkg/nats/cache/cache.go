@@ -111,9 +111,8 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 
 	var ready atomic.Bool
 	var wg sync.WaitGroup
-	wg.Add(1)
 
-	go func() {
+	wg.Go(func() {
 		defer watcher.Stop()
 		updateCh := watcher.Updates()
 
@@ -137,8 +136,10 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 				switch entry.Operation() {
 				case jetstream.KeyValuePut:
 					c.handleWatcherPut(key, entry)
+
 				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
 					c.handleWatcherDelete(key)
+
 				default:
 					c.logger.Error(
 						"unknown key operation received",
@@ -148,7 +149,7 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 				}
 			}
 		}
-	}()
+	})
 
 	go func() {
 		for {
@@ -158,6 +159,7 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 			select {
 			case <-ctx.Done():
 				return
+
 			case <-time.After(15 * time.Second):
 			}
 		}
@@ -329,5 +331,6 @@ func (c *Cache[T, U]) Clear(ctx context.Context) error {
 			errs = multierr.Append(errs, err)
 		}
 	}
+
 	return errs
 }

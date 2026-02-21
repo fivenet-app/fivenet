@@ -88,11 +88,9 @@ func NewManager(p Params) *Manager {
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		b.wg.Add(1)
-		go func() {
-			defer b.wg.Done()
+		b.wg.Go(func() {
 			b.Run(ctx)
-		}()
+		})
 
 		return nil
 	}))
@@ -140,11 +138,9 @@ func (b *Manager) startBot(ctx context.Context, job string) error {
 	bot := NewBot(ctx, b.logger, b.tracker, b.helpers, b.settings, b.units, b.dispatches, job)
 	b.bots.Store(job, bot)
 
-	b.wg.Add(1)
-	go func() {
-		defer b.wg.Done()
+	b.wg.Go(func() {
 		bot.Run()
-	}()
+	})
 
 	metricBotActive.WithLabelValues(job).Set(1)
 

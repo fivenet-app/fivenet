@@ -195,6 +195,7 @@ func (g *GroupSync) planUser(
 	var u *discordtypes.User
 	for _, group := range user.Groups.GetGroups() {
 		// Get group config based on user's groups
+		group = strings.ToLower(strings.TrimSpace(group))
 		groupCfg, ok := g.cfg.GroupSync.Mapping[group]
 		if !ok {
 			continue

@@ -75,15 +75,9 @@ func (w *Workflow) handleDocumentsUsers(
 	// Run at max 3 handlers at once
 	workChannel := make(chan *workflowUserState, 3)
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		for state := range workChannel {
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-
+			wg.Go(func() {
 				if state == nil || state.State == nil {
 					return
 				}
@@ -99,9 +93,9 @@ func (w *Workflow) handleDocumentsUsers(
 						zap.Error(err),
 					)
 				}
-			}()
+			})
 		}
-	}()
+	})
 
 	for _, ws := range dest {
 		workChannel <- ws
