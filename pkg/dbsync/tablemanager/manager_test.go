@@ -49,7 +49,7 @@ func TestTableManager_CheckTables(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"COLUMN_NAME"}))
 
 	// Add updated_at column and index to table
-	mock.ExpectExec("ALTER TABLE `vehicles` ADD `updated_at` datetime\\(3\\) on update CURRENT_TIMESTAMP\\(3\\) NULL").
+	mock.ExpectExec("ALTER TABLE `vehicles` ADD `updated_at` datetime\\(3\\) on update current_timestamp\\(3\\) default current_timestamp\\(3\\)").
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec("ALTER TABLE `vehicles` ADD INDEX `idx_vehicles_updated_at` \\(`updated_at`\\)").
 		WillReturnResult(sqlmock.NewResult(0, 1))
@@ -129,7 +129,7 @@ func TestTableManager_addUpdatedAtColumnToTable(t *testing.T) {
 
 	// Mock database responses
 	// Add updated_at column and index to table
-	mock.ExpectExec("ALTER TABLE `test_table` ADD `updated_at` datetime\\(3\\) on update CURRENT_TIMESTAMP\\(3\\) NULL").
+	mock.ExpectExec("ALTER TABLE `test_table` ADD `updated_at` datetime\\(3\\) on update current_timestamp\\(3\\) default current_timestamp\\(3\\)").
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec("ALTER TABLE `test_table` ADD INDEX `idx_test_table_updated_at` \\(`updated_at`\\)").
 		WillReturnResult(sqlmock.NewResult(0, 1))
