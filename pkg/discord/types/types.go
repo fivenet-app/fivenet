@@ -84,7 +84,7 @@ func (u *User) AddRole(r *Role) {
 		u.Roles = &UserRoles{}
 	}
 	if !slices.ContainsFunc(u.Roles.Sum, func(role *Role) bool {
-		return role.ID == r.ID
+		return (role.ID != 0 && role.ID == r.ID) || role.Name == r.Name
 	}) {
 		u.Roles.Sum = append(u.Roles.Sum, r)
 	}
@@ -112,8 +112,6 @@ func (u *User) Merge(user *User) {
 	if user.KickReason != "" {
 		u.KickReason = user.KickReason
 	}
-
-	// u.Job = user.Job
 
 	if u.Roles == nil {
 		u.Roles = &UserRoles{}
