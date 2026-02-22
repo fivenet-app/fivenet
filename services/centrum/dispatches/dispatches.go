@@ -852,9 +852,10 @@ func (s *DispatchDB) UpdateAssignments(
 					)
 			}
 
-			stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-				tDispatchUnit.ExpiresAt.SET(mysql.RawTimestamp("VALUES(`expires_at`)")),
-			)
+			stmt = stmt.
+				ON_DUPLICATE_KEY_UPDATE(
+					tDispatchUnit.ExpiresAt.SET(mysql.RawTimestamp("VALUES(`expires_at`)")),
+				)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				if !dbutils.IsDuplicateError(err) {

@@ -22,7 +22,6 @@ const { auth } = useAppConfig();
 const { t } = useI18n();
 
 const authStore = useAuthStore();
-const { setUserToken } = authStore;
 const { username } = storeToRefs(authStore);
 
 const notifications = useNotificationsStore();
@@ -61,16 +60,9 @@ onMounted(async () => {
     const query = route.query;
     // `u` set, means social login was successful
     if (query.u && query.u !== '') {
-        logger.info('Got access token via query param (oauth2 login)');
-        // Read and attempt to parse token from user token cookie
-        const fivenetUsr = await cookieStore.get('fivenet_usr');
-        if (!fivenetUsr?.value) return;
+        logger.info('Got username via query param (oauth2 login)');
 
-        setUserToken(fivenetUsr.value);
         username.value = query.u as string;
-
-        // Remove the cookie after reading
-        await cookieStore.delete('fivenet_usr');
 
         notifications.add({
             title: { key: 'notifications.auth.oauth2_login.success.title', parameters: {} },

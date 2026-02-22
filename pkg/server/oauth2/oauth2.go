@@ -42,8 +42,8 @@ const (
 )
 
 var (
-	tAccs   = table.FivenetAccounts
-	tOauth2 = table.FivenetAccountsOauth2
+	tAccs      = table.FivenetAccounts
+	tAccOauth2 = table.FivenetAccountsOauth2
 )
 
 // Params contains dependencies for constructing the OAuth2 handler.
@@ -409,7 +409,7 @@ func (o *OAuth2) handleLoginCallback(
 		return
 	} else if account.Id == 0 {
 		o.logger.Error("invalid account id from userinfo", zap.String("provider", provider.GetName()), zap.Error(err))
-		o.handleRedirect(c, connectOnly, true, ReasonInternalError)
+		o.handleRedirect(c, connectOnly, false, ReasonInternalError)
 		return
 	}
 
@@ -436,7 +436,8 @@ func (o *OAuth2) handleLoginCallback(
 		return
 	}
 
-	c.SetCookie(auth.UserCookieName, newToken, 6*24*60*60, "/", o.domain, true, false)
+	// Set account token
+	c.SetCookie(auth.AccCookieName, newToken, 6*24*60*60, "/", o.domain, true, true)
 
 	c.Redirect(
 		http.StatusTemporaryRedirect,

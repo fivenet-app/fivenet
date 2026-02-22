@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	authclaims "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/claims"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/golang-jwt/jwt/v5"
 	"go.uber.org/fx"
 )
@@ -163,6 +164,7 @@ func MapUserToClaims(accId int64, user *users.User) *authclaims.UserInfoClaims {
 
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:   "fivenet",
+			Subject:  utils.GetLicenseFromIdentifier(user.Identifier),
 			ID:       strconv.FormatInt(int64(user.UserId), 10),
 			Audience: []string{"fivenet"},
 		},

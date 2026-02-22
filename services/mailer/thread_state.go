@@ -187,9 +187,10 @@ func (s *Server) setUnreadState(
 		)
 	}
 
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tThreadsUserState.Unread.SET(mysql.RawBool("VALUES(`unread`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tThreadsUserState.Unread.SET(mysql.RawBool("VALUES(`unread`)")),
+		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err

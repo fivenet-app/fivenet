@@ -51,21 +51,22 @@ func (o *oauth2UserInfo) getAccountInfo(
 	provider string,
 	userInfo *types.UserInfo,
 ) (*accounts.Account, error) {
-	stmt := tOauth2.
+	tAccs := tAccs.AS("account")
+	stmt := tAccOauth2.
 		SELECT(
 			tAccs.ID,
 			tAccs.Enabled,
 			tAccs.Username,
 			tAccs.License,
 		).
-		FROM(tOauth2.
+		FROM(tAccOauth2.
 			INNER_JOIN(tAccs,
-				tAccs.ID.EQ(tOauth2.AccountID),
+				tAccs.ID.EQ(tAccOauth2.AccountID),
 			),
 		).
 		WHERE(mysql.AND(
-			tOauth2.Provider.EQ(mysql.String(provider)),
-			tOauth2.ExternalID.EQ(mysql.String(userInfo.ID)),
+			tAccOauth2.Provider.EQ(mysql.String(provider)),
+			tAccOauth2.ExternalID.EQ(mysql.String(userInfo.ID)),
 			tAccs.Enabled.IS_TRUE(),
 		)).
 		LIMIT(1)
@@ -75,6 +76,9 @@ func (o *oauth2UserInfo) getAccountInfo(
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
+	}
+
+	if dest.Id == 0 {
 		return nil, nil
 	}
 
@@ -98,19 +102,19 @@ func (o *oauth2UserInfo) storeUserInfo(
 		return err
 	}
 
-	stmt := tOauth2.
+	stmt := tAccOauth2.
 		INSERT(
-			tOauth2.AccountID,
-			tOauth2.Provider,
-			tOauth2.ExternalID,
-			tOauth2.Username,
-			tOauth2.Avatar,
-			tOauth2.AccessToken,
-			tOauth2.RefreshToken,
-			tOauth2.TokenType,
-			tOauth2.Scope,
-			tOauth2.ExpiresIn,
-			tOauth2.ObtainedAt,
+			tAccOauth2.AccountID,
+			tAccOauth2.Provider,
+			tAccOauth2.ExternalID,
+			tAccOauth2.Username,
+			tAccOauth2.Avatar,
+			tAccOauth2.AccessToken,
+			tAccOauth2.RefreshToken,
+			tAccOauth2.TokenType,
+			tAccOauth2.Scope,
+			tAccOauth2.ExpiresIn,
+			tAccOauth2.ObtainedAt,
 		).
 		VALUES(
 			accountId,

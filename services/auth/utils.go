@@ -59,15 +59,10 @@ func (s *Server) destroyCookies(ctx context.Context) error {
 	accCookie.Expires = time.Time{}
 	accCookie.MaxAge = -1
 
-	tokenCookie := s.getCookieBase(auth.UserCookieName, "")
-	tokenCookie.Expires = time.Time{}
-	tokenCookie.MaxAge = -1
-
 	// Send the cookies back to the client
 	header := metadata.Pairs(
 		"set-cookie", accCookie.String(),
 		"set-cookie", authedCookie.String(),
-		"set-cookie", tokenCookie.String(),
 	)
 	return grpc.SendHeader(ctx, header)
 }
