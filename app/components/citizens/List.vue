@@ -253,23 +253,6 @@ const columns = computed(() =>
                       id: 'actions',
                       cell: ({ row }) =>
                           h('div', {}, [
-                              h(UTooltip, { text: t('components.clipboard.clipboard_button.add') }, [
-                                  h(UButton, {
-                                      variant: 'link',
-                                      icon: 'i-mdi-clipboard-plus',
-                                      onClick: () => addToClipboard(row.original),
-                                  }),
-                              ]),
-                              h(UTooltip, { text: t('common.show') }, [
-                                  h(UButton, {
-                                      variant: 'link',
-                                      icon: 'i-mdi-eye',
-                                      to: {
-                                          name: 'citizens-id',
-                                          params: { id: row.original.userId ?? 0 },
-                                      },
-                                  }),
-                              ]),
                               isSuperuser.value
                                   ? h(UTooltip, { text: t('common.request_sync') }, [
                                         h(UButton, {
@@ -297,6 +280,23 @@ const columns = computed(() =>
                                         }),
                                     ])
                                   : null,
+                              h(UTooltip, { text: t('components.clipboard.clipboard_button.add') }, [
+                                  h(UButton, {
+                                      variant: 'link',
+                                      icon: 'i-mdi-clipboard-plus',
+                                      onClick: () => addToClipboard(row.original),
+                                  }),
+                              ]),
+                              h(UTooltip, { text: t('common.show') }, [
+                                  h(UButton, {
+                                      variant: 'link',
+                                      icon: 'i-mdi-eye',
+                                      to: {
+                                          name: 'citizens-id',
+                                          params: { id: row.original.userId ?? 0 },
+                                      },
+                                  }),
+                              ]),
                           ]),
                   }
                 : undefined,

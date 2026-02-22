@@ -97,12 +97,12 @@ func (p *DBScannerModule) generate(fs []pgs.File) {
 				Marshal:   "protoutils.MarshalToJSON",
 			}
 
-			if val.Partial != nil && *val.Partial {
-				dbscanner.Unmarshal = "protoutils.UnmarshalPartialJSON"
-				dbscanner.Marshal = "protoutils.MarshalToJSON"
-			} else if val.NotJson != nil && *val.NotJson {
+			if val.NotJson != nil && *val.NotJson {
 				dbscanner.Unmarshal = "proto.Unmarshal"
 				dbscanner.Marshal = "proto.Marshal"
+			} else if val.Partial == nil || *val.Partial {
+				dbscanner.Unmarshal = "protoutils.UnmarshalPartialJSON"
+				dbscanner.Marshal = "protoutils.MarshalToJSON"
 			}
 
 			data.Messages[mName] = dbscanner

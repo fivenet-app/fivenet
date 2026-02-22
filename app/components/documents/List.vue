@@ -94,9 +94,9 @@ const { data, status, refresh, error } = useLazyAsyncData(`documents-${JSON.stri
 async function listDocuments(): Promise<ListDocumentsResponse> {
     const pagination = {
         offset: 0,
-        pageSize: 16,
+        pageSize: 20,
         end: 0,
-        totalCount: query.page * 16,
+        totalCount: query.page * 20,
 
         ...data.value?.pagination,
     };
@@ -181,7 +181,7 @@ defineShortcuts({
 
                 <template #right>
                     <UButton
-                        class="2xl:hidden"
+                        class=""
                         trailing-icon="i-mdi-pin"
                         color="neutral"
                         truncate

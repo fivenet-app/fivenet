@@ -7,7 +7,6 @@ import (
 	"database/sql/driver"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 // Scan implements driver.Valuer for protobuf Data.
@@ -17,17 +16,17 @@ func (x *Data) Scan(value any) error {
 		if t == "" {
 			return nil
 		}
-		return protojson.Unmarshal([]byte(t), x)
+		return protoutils.UnmarshalPartialJSON([]byte(t), x)
 	case *string:
 		if t == nil {
 			return nil
 		}
-		return protojson.Unmarshal([]byte(*t), x)
+		return protoutils.UnmarshalPartialJSON([]byte(*t), x)
 	case []byte:
 		if len(t) == 0 {
 			return nil
 		}
-		return protojson.Unmarshal(t, x)
+		return protoutils.UnmarshalPartialJSON(t, x)
 	}
 	return nil
 }

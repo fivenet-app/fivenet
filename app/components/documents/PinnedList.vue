@@ -63,15 +63,15 @@ const editing = ref(false);
         resizable
         :width="15"
         :min-size="12"
-        :max-size="30"
+        :max-size="28"
         :ui="{ body: 'p-1 sm:p-1 gap-0 sm:gap-0' }"
     >
         <template #header>
             <UDashboardNavbar :title="$t('common.pinned_document', 2)" :ui="{ toggle: '!hidden ' }">
                 <template #toggle>
                     <UButton
-                        class="lg:block 2xl:hidden"
-                        icon="i-mdi-menu"
+                        class="lg:block"
+                        :icon="open ? 'i-mdi-menu-open' : 'i-mdi-menu-open'"
                         variant="ghost"
                         color="neutral"
                         @click="open = !open"

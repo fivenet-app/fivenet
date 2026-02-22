@@ -8650,23 +8650,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-
-### services.citizens.TriggerUserSyncRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-
-
-
-
-
-### services.citizens.TriggerUserSyncResponse
-
-
-
-
  <!-- end messages -->
 
  <!-- end enums -->
