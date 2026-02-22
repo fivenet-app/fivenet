@@ -46,7 +46,7 @@ async function togglePin(documentId: number, state: boolean, personal: boolean):
 }
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller('lg');
+const isXl = breakpoints.smaller('xl');
 const is2xl = breakpoints.greaterOrEqual('2xl');
 
 watch(is2xl, (val) => (open.value = (val && !open.value) || val), { immediate: true });
@@ -56,7 +56,7 @@ const editing = ref(false);
 
 <template>
     <UDashboardPanel
-        v-if="!isMobile && open"
+        v-if="!isXl && open"
         id="documents-pinnedlist"
         class="overflow-x-hidden"
         breakpoint="2xl"

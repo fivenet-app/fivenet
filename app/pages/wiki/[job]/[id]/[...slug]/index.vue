@@ -96,7 +96,7 @@ function mapPageToNavItem(page: PageShort): NavigationMenuItem {
 
     const active = isActive(page);
     return {
-        label: page.title,
+        label: page.title || t('common.untitled'),
         to: `/wiki/${page.job}/${page.id}/${page.slug ?? ''}`,
         icon: page.deletedAt !== undefined ? 'i-mdi-delete' : page.draft ? 'i-mdi-pencil' : undefined,
         children: page.children.map((p) => mapPageToNavItem(p)),

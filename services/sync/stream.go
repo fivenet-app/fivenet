@@ -109,10 +109,6 @@ func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_Stream
 					return nil
 				}
 
-				if err := msg.Ack(); err != nil {
-					s.logger.Error("failed to ack dbsync event", zap.Error(err))
-				}
-
 				_, topic := splitSubject(msg.Subject())
 				switch topic {
 				case TopicUser:
