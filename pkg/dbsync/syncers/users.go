@@ -455,23 +455,27 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 	if userId != 0 {
 		wheres = append(wheres, fmt.Sprintf("%#q = %d", s.cfg.Tables.Users.Columns.ID, userId))
 	}
-	q := s.cfg.Tables.Users.GetQuery(s.state, 0, 1, wheres...)
+	q := s.cfg.Tables.Users.GetQuery(nil, 0, 1, wheres...)
 	s.logger.Debug("users sync query", zap.String("query", q))
 
 	user := &syncdata.DataUser{}
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, user); err != nil {
-		return err
+		return fmt.Errorf("failed to query single user %d. %w", userId, err)
 	}
 	us := []*syncdata.DataUser{user}
 
 	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
-		return err
+		return fmt.Errorf("failed to retrieve and attach jobs for user %d. %w", userId, err)
 	}
 	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
-		return err
+		return fmt.Errorf("failed to retrieve and attach licenses for user %d. %w", userId, err)
 	}
 	if err := s.retrieveAndAttachPhoneNumbers(ctx, us); err != nil {
-		return err
+		return fmt.Errorf(
+			"failed to retrieve and attach phone numbers for user %d. %w",
+			userId,
+			err,
+		)
 	}
 
 	s.splitNamesIfRequired(user)
@@ -487,7 +491,7 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 				},
 			},
 		}); err != nil {
-			return err
+			return fmt.Errorf("failed to send user data for user %d. %w", userId, err)
 		}
 	}
 
