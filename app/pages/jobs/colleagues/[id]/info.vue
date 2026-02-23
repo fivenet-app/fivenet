@@ -83,7 +83,7 @@ const { attr, can } = useAuth();
                                 :user-id="colleague.userId"
                                 @refresh="$emit('refresh')"
                             />
-                            <div v-else class="text-sm leading-6">
+                            <div v-else class="inline-flex gap-1 text-sm leading-6">
                                 <span>{{ $t('common.prefix') }}: {{ colleague?.props?.namePrefix ?? $t('common.na') }}</span>
                                 <span>{{ $t('common.suffix') }}: {{ colleague?.props?.nameSuffix ?? $t('common.na') }}</span>
                             </div>
