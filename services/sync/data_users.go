@@ -864,7 +864,8 @@ func comparePhoneNumbers(
 	for number, incomingPhoneNumber := range incomingPhoneNumbersMap {
 		if currentPhoneNumber, exists := currentPhoneNumbersMap[number]; exists {
 			// Check if the phone number needs an update
-			if currentPhoneNumber.GetIsPrimary() != incomingPhoneNumber.GetIsPrimary() {
+			if currentPhoneNumber.GetIsPrimary() != incomingPhoneNumber.GetIsPrimary() ||
+				currentPhoneNumber.GetNumber() != incomingPhoneNumber.GetNumber() {
 				toUpdate = append(toUpdate, incomingPhoneNumber)
 			}
 		} else {
