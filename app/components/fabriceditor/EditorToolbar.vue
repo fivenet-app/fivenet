@@ -2,6 +2,8 @@
 import type { DropdownMenuItem } from '@nuxt/ui';
 import { useFabricEditor } from '~/composables/useFabricEditor';
 
+const { t } = useI18n();
+
 // Get methods from composable to manipulate canvas
 const {
     exportJSON,
@@ -23,12 +25,12 @@ const {
 
 const exportMenuItems = computed<DropdownMenuItem[]>(() => [
     {
-        label: 'Export JSON',
+        label: t('components.fabric_editor.export_json'),
         icon: 'i-mdi-code-json',
         onClick: () => exportJSON(),
     },
     {
-        label: 'Export SVG',
+        label: t('components.fabric_editor.export_svg'),
         icon: 'i-mdi-svg',
         onClick: () => exportSVG(),
     },
@@ -39,7 +41,7 @@ const exportMenuItems = computed<DropdownMenuItem[]>(() => [
     <div
         class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto"
     >
-        <UTooltip>
+        <UTooltip :text="$t('components.fabric_editor.pick_color')">
             <UButton
                 variant="ghost"
                 icon="i-mdi-select-color"
@@ -48,29 +50,41 @@ const exportMenuItems = computed<DropdownMenuItem[]>(() => [
             />
         </UTooltip>
 
-        <UButtonGroup>
+        <UFieldGroup>
             <UTooltip :text="$t('common.undo')">
                 <UButton variant="ghost" icon="i-mdi-undo" @click="undo" />
             </UTooltip>
             <UTooltip :text="$t('common.redo')">
                 <UButton variant="ghost" icon="i-mdi-redo" @click="redo" />
             </UTooltip>
-        </UButtonGroup>
+        </UFieldGroup>
 
-        <UButtonGroup>
-            <UButton variant="ghost" icon="i-mdi-group" @click="groupObject">Group</UButton>
-            <UButton variant="ghost" icon="i-mdi-ungroup" @click="ungroupObject">Ungroup</UButton>
-        </UButtonGroup>
+        <UFieldGroup>
+            <UTooltip :text="$t('components.fabric_editor.group')">
+                <UButton variant="ghost" icon="i-mdi-group" @click="groupObject" />
+            </UTooltip>
+            <UTooltip :text="$t('components.fabric_editor.ungroup')">
+                <UButton variant="ghost" icon="i-mdi-ungroup" @click="ungroupObject" />
+            </UTooltip>
+        </UFieldGroup>
 
-        <UButtonGroup>
-            <UButton variant="ghost" icon="i-mdi-arrange-bring-forward" @click="bringToFront" />
-            <UButton variant="ghost" icon="i-mdi-arrange-bring-to-front" @click="bringForward" />
-            <UButton variant="ghost" icon="i-mdi-arrange-send-to-back" @click="sendToBack" />
-            <UButton variant="ghost" icon="i-mdi-arrange-send-backward" @click="sendBackward" />
-        </UButtonGroup>
+        <UFieldGroup>
+            <UTooltip :text="$t('components.fabric_editor.bring_forward')">
+                <UButton variant="ghost" icon="i-mdi-arrange-bring-forward" @click="bringToFront" />
+            </UTooltip>
+            <UTooltip :text="$t('components.fabric_editor.bring_to_front')">
+                <UButton variant="ghost" icon="i-mdi-arrange-bring-to-front" @click="bringForward" />
+            </UTooltip>
+            <UTooltip :text="$t('components.fabric_editor.send_to_back')">
+                <UButton variant="ghost" icon="i-mdi-arrange-send-to-back" @click="sendToBack" />
+            </UTooltip>
+            <UTooltip :text="$t('components.fabric_editor.send_backward')">
+                <UButton variant="ghost" icon="i-mdi-arrange-send-backward" @click="sendBackward" />
+            </UTooltip>
+        </UFieldGroup>
 
         <UDropdownMenu :items="exportMenuItems">
-            <UButton variant="ghost" icon="i-mdi-export">Export</UButton>
+            <UButton variant="ghost" icon="i-mdi-export" :label="$t('components.fabric_editor.export')" />
         </UDropdownMenu>
 
         <UFormField>
@@ -88,8 +102,19 @@ const exportMenuItems = computed<DropdownMenuItem[]>(() => [
                     }"
                 />
 
-                <UButton icon="i-mdi-fit-to-screen" @click="fitDocumentToView">Zoom to Fit</UButton>
-                <UButton variant="outline" icon="i-mdi-number-zero-circle-outline" @click="resetZoom">Reset</UButton>
+                <UFieldGroup>
+                    <UButton
+                        icon="i-mdi-fit-to-screen"
+                        :label="$t('components.fabric_editor.zoom_to_fit')"
+                        @click="fitDocumentToView"
+                    />
+                    <UButton
+                        variant="outline"
+                        icon="i-mdi-number-zero-circle-outline"
+                        :label="$t('components.fabric_editor.reset_zoom')"
+                        @click="resetZoom"
+                    />
+                </UFieldGroup>
             </div>
         </UFormField>
     </div>

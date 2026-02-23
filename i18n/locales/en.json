@@ -1766,7 +1766,29 @@
             "width": "Width",
             "snap_threshold": "Snap Threshold",
             "canvas_settings": "Canvas Settings",
-            "no_object_selected": "No object selected"
+            "no_object_selected": "No object selected",
+            "export": "Export",
+            "export_json": "Export JSON",
+            "export_svg": "Export SVG",
+            "group": "Group",
+            "ungroup": "Ungroup",
+            "zoom_to_fit": "Zoom to Fit",
+            "reset_zoom": "Reset Zoom",
+            "bring_forward": "Bring Forward",
+            "send_backward": "Send Backward",
+            "bring_to_front": "Bring to Front",
+            "send_to_back": "Send to Back",
+            "pick_color": "Pick Color",
+            "input_types": {
+                "text": "Text",
+                "number": "Number",
+                "date": "Date",
+                "date_and_time": "Date and Time",
+                "time": "Time",
+                "checkbox": "Checkbox",
+                "select": "Select",
+                "signature": "Signature"
+            }
         },
         "notepad": {
             "title": "Notepad",

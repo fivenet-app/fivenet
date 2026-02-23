@@ -1766,7 +1766,29 @@
             "width": "Breite",
             "snap_threshold": "Einrast-Schwelle",
             "canvas_settings": "Leinwand-Einstellungen",
-            "no_object_selected": "Kein Objekt ausgewählt"
+            "no_object_selected": "Kein Objekt ausgewählt",
+            "export": "Exportieren",
+            "export_json": "JSON exportieren",
+            "export_svg": "SVG exportieren",
+            "group": "Gruppieren",
+            "ungroup": "Gruppierung aufheben",
+            "zoom_to_fit": "An Bildschirm anpassen",
+            "reset_zoom": "Zoom zurücksetzen",
+            "bring_forward": "Eine Ebene nach vorne",
+            "send_backward": "Eine Ebene nach hinten",
+            "bring_to_front": "In den Vordergrund",
+            "send_to_back": "In den Hintergrund",
+            "pick_color": "Farbe auswählen",
+            "input_types": {
+                "text": "Text",
+                "number": "Nummer",
+                "date": "Datum",
+                "date_and_time": "Datum und Uhrzeit",
+                "time": "Uhrzeit",
+                "checkbox": "Kontrollkästchen",
+                "select": "Auswählen",
+                "signature": "Unterschrift"
+            }
         },
         "notepad": {
             "title": "Notizblock",

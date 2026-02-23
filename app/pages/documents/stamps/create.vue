@@ -61,7 +61,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UForm :state="state" :schema="schema" @submit="onSubmitThrottle">
+    <UForm :state="state" :schema="schema" class="flex w-full flex-1" @submit="onSubmitThrottle">
         <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
             <template #header>
                 <UDashboardNavbar :title="$t('common.stamp', 2)">
@@ -92,13 +92,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <template #body>
                 <EditorWrapper v-model="state.svgData" :max-width="900" :max-height="350" background-color="#ffffff">
                     <template #sidebar-top>
-                        <UCard>
+                        <UCard :ui="{ header: 'font-bold' }">
                             <template #header>
                                 {{ $t('pages.documents.stamps.create') }}
                             </template>
 
                             <UFormField name="name" :label="$t('common.name')">
-                                <UInput v-model="state.name" type="text" />
+                                <UInput v-model="state.name" type="text" class="w-full" />
                             </UFormField>
                         </UCard>
                     </template>

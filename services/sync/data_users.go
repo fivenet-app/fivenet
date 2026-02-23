@@ -697,8 +697,9 @@ func compareJobs(currentJobs, jobs []*users.UserJob) (toAdd, toUpdate, toRemove 
 	// Determine toAdd and toUpdate
 	for jobName, incomingJob := range incomingJobsMap {
 		if currentJob, exists := currentJobsMap[jobName]; exists {
-			// Check if the job needs an update (ignoring grade)
-			if currentJob.GetIsPrimary() != incomingJob.GetIsPrimary() {
+			// Check if the job needs an update by comparing isPrimary and grade
+			if currentJob.GetIsPrimary() != incomingJob.GetIsPrimary() ||
+				currentJob.GetGrade() != incomingJob.GetGrade() {
 				toUpdate = append(toUpdate, incomingJob)
 			}
 		} else {

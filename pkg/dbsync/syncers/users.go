@@ -254,6 +254,7 @@ func (s *UsersSync) applyFilters(
 			}
 		}
 	}
+
 	return false
 }
 

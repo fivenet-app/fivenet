@@ -349,14 +349,14 @@ const updateCurvedTextFillColor = (val: string) => {
                         <USelectMenu
                             :model-value="(activeObject as FabricHtmlInput).inputType"
                             :items="[
-                                { name: 'Text', value: 'text' },
-                                { name: 'Number', value: 'number' },
-                                { name: 'Date', value: 'date' },
-                                { name: 'Date & Time', value: 'datetime' },
-                                { name: 'Time', value: 'time' },
-                                { name: 'Checkbox', value: 'checkbox' },
-                                { name: 'Select', value: 'select' },
-                                { name: 'Signature', value: 'signature' },
+                                { name: $t('components.fabric_editor.input_types.text'), value: 'text' },
+                                { name: $t('components.fabric_editor.input_types.number'), value: 'number' },
+                                { name: $t('components.fabric_editor.input_types.date'), value: 'date' },
+                                { name: $t('components.fabric_editor.input_types.date_and_time'), value: 'datetime' },
+                                { name: $t('components.fabric_editor.input_types.time'), value: 'time' },
+                                { name: $t('components.fabric_editor.input_types.checkbox'), value: 'checkbox' },
+                                { name: $t('components.fabric_editor.input_types.select'), value: 'select' },
+                                { name: $t('components.fabric_editor.input_types.signature'), value: 'signature' },
                             ]"
                             label-key="name"
                             value-key="value"
