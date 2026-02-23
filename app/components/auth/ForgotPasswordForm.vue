@@ -6,16 +6,11 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { getAuthAuthClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const props = defineProps<{
-    modelValue: boolean;
-}>();
-
 const emit = defineEmits<{
-    (e: 'update:modelValue', val: boolean): void;
-    (e: 'toggle'): void;
+    (e: 'toggleTab'): void;
 }>();
 
-const canSubmit = useVModel(props, 'modelValue', emit);
+const canSubmit = defineModel<boolean>({ required: true });
 
 const notifications = useNotificationsStore();
 
@@ -50,7 +45,8 @@ async function forgotPassword(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        emit('toggle');
+        canSubmit.value = true;
+        emit('toggleTab');
     } catch (e) {
         const err = e as RpcError;
         accountError.value = err;

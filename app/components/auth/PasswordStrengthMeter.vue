@@ -18,7 +18,7 @@ const color = ref<ProgressProps['color']>('neutral');
 const result = computed(() => zxcvbn(props.input));
 
 watch(result, () => {
-    percent.value = (result.value.score * 100) / 3;
+    percent.value = Math.min((result.value.score * 100) / 3, 100);
     feedback.value = result.value.feedback.warning;
 
     if (props.input.trimEnd() === '') {

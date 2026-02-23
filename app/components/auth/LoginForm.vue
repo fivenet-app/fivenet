@@ -6,15 +6,7 @@ import { useAuthStore } from '~/stores/auth';
 import { useCookiesStore } from '~/stores/cookies';
 import { useSettingsStore } from '~/stores/settings';
 
-const props = defineProps<{
-    modelValue: boolean;
-}>();
-
-const emit = defineEmits<{
-    (e: 'update:modelValue', val: boolean): void;
-}>();
-
-const canSubmit = useVModel(props, 'modelValue', emit);
+const canSubmit = defineModel<boolean>({ required: true });
 
 const { auth } = useAppConfig();
 

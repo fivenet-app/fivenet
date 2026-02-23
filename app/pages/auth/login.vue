@@ -102,13 +102,13 @@ const canSubmit = ref(true);
         </template>
 
         <div class="space-y-4">
-            <UTabs v-model="selectedTab" class="w-full" :items="items">
+            <UTabs v-model="selectedTab" class="w-full" :items="items" :disabled="!canSubmit">
                 <template #login>
                     <LoginForm v-model="canSubmit" />
                 </template>
 
                 <template #forgotPassword>
-                    <ForgotPasswordForm v-model="canSubmit" @toggle="selectedTab = 'login'" />
+                    <ForgotPasswordForm v-model="canSubmit" @toggle-tab="selectedTab = 'login'" />
                 </template>
             </UTabs>
 
@@ -122,9 +122,8 @@ const canSubmit = ref(true);
                     trailing-icon="i-mdi-account-plus"
                     to="/auth/registration"
                     :disabled="!canSubmit"
-                >
-                    {{ $t('components.auth.LoginForm.register_account') }}
-                </UButton>
+                    :label="$t('components.auth.LoginForm.register_account')"
+                />
             </div>
         </div>
     </UPageCard>
