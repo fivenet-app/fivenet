@@ -819,6 +819,8 @@ const isLinkOpen = ref(false);
             </template>
         </UPopover>
 
+        <UButton label="Penalty Calc" @click="ed?.chain().insertPenaltyCalculator().run()" />
+
         <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.undo')">
                 <UButton
