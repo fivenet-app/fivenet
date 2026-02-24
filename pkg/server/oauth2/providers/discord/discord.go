@@ -27,7 +27,7 @@ type discordUser struct {
 	ID            string `json:"id"`
 	Username      string `json:"username"`
 	Discriminator string `json:"discriminator"`
-	Avatar        string `json:"profile_picture"`
+	Avatar        string `json:"avatar"`
 }
 
 func New(cfg *config.OAuth2Provider) types.IProvider {
@@ -94,7 +94,7 @@ func (p *Discord) decodeUserInfo(
 		ID:       dest.ID,
 		Username: username,
 		Avatar: fmt.Sprintf(
-			"https://cdn.discordapp.com/profile_pictures/%s/%s.png",
+			"https://cdn.discordapp.com/avatars/%s/%s.png",
 			dest.ID,
 			dest.Avatar,
 		),

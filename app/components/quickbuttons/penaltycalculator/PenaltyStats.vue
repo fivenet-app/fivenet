@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import type { PenaltiesSummary } from '~/components/quickbuttons/penaltycalculator/PenaltyCalculator.vue';
+import type { PenaltiesSummary } from '~/components/quickbuttons/penaltycalculator/helpers';
 
 const props = defineProps<{
     summary: PenaltiesSummary;
     reduction: number;
+    compact?: boolean;
 }>();
 
 const { display, quickButtons } = useAppConfig();
@@ -46,6 +47,7 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                 :ui="{
                     body: 'flex-1',
                     leadingIcon: 'mb-1',
+                    container: compact ? 'p-4 sm:p-4' : undefined,
                 }"
             >
                 <template #leading>
@@ -61,7 +63,7 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                 <template #description>
                     <div class="flex flex-col gap-1">
                         <div class="flex gap-1">
-                            <span class="text-4xl font-semibold tracking-tight">
+                            <span class="font-semibold tracking-tight" :class="compact ? 'text-2xl' : 'text-4xl'">
                                 {{ formatter.format(summary.fine ?? 0) }}
                             </span>
                         </div>
@@ -92,7 +94,7 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                 <template #description>
                     <div class="flex flex-col gap-1">
                         <div class="inline-flex gap-1">
-                            <span class="text-4xl font-semibold tracking-tight">
+                            <span class="font-semibold tracking-tight" :class="compact ? 'text-2xl' : 'text-4xl'">
                                 {{ summary.detentionTime }}
                             </span>
                             <span class="text-sm text-muted">
@@ -129,7 +131,7 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                 <template #description>
                     <div class="flex flex-col gap-1">
                         <div class="inline-flex gap-1">
-                            <span class="text-4xl font-semibold tracking-tight">
+                            <span class="font-semibold tracking-tight" :class="compact ? 'text-2xl' : 'text-4xl'">
                                 {{ summary.stvoPoints }}
                             </span>
                             <span class="text-sm text-muted">
@@ -163,7 +165,7 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
 
                 <template #description>
                     <div class="inline-flex gap-1">
-                        <span class="text-4xl font-semibold tracking-tight">
+                        <span class="font-semibold tracking-tight" :class="compact ? 'text-2xl' : 'text-4xl'">
                             {{ summary.count }}
                         </span>
                     </div>

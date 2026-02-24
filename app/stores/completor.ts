@@ -9,6 +9,8 @@ import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
 import type { ListColleaguesRequest } from '~~/gen/ts/services/jobs/jobs';
 
+const maxCacheAge = 10 * 60 * 1000; // 10 minutes
+
 /**
  * Pinia store for managing completor-related data fetching and caching.
  */
@@ -21,12 +23,23 @@ export const useCompletorStore = defineStore(
         const jobs = ref<Job[]>([]);
 
         /**
+         * Cached law books list.
+         */
+        const lawBooks = ref<
+            | {
+                  refreshedAt: number;
+                  data: LawBook[];
+              }
+            | undefined
+        >(undefined);
+
+        /**
          * Find a job by name.
          * @param {string} name - The name of the job to find.
          * @returns {Promise<Job | undefined>} - The job with the specified name, or undefined if not found.
          */
         const getJobByName = async (name: string): Promise<Job | undefined> => {
-            return listJobs().then((cachedJobs) => cachedJobs.find((j) => j.name === name));
+            return listJobs().then((jobs) => jobs.find((j) => j.name === name));
         };
 
         /**
@@ -162,12 +175,11 @@ export const useCompletorStore = defineStore(
          */
         const completeDocumentCategories = async (search: string): Promise<Category[]> => {
             const { can } = useAuth();
-            if (!can('completor.CompletorService/CompleteDocumentCategories').value) {
-                return [];
-            }
+            if (!can('completor.CompletorService/CompleteDocumentCategories').value) return [];
+
             const completorCompletorClient = await getCompletorCompletorClient();
             try {
-                const call = completorCompletorClient.completeDocumentCategories({ search });
+                const call = completorCompletorClient.completeDocumentCategories({ search: search });
                 const { response } = await call;
                 return response.categories;
             } catch (e) {
@@ -180,11 +192,25 @@ export const useCompletorStore = defineStore(
          * Fetch law books.
          * @returns {Promise<LawBook[]>} - The list of law books.
          */
-        const listLawBooks = async (): Promise<LawBook[]> => {
+        const listLawBooks = async (refresh = false): Promise<LawBook[]> => {
+            // Return cached law books if they are still valid and refresh is not requested
+            if (
+                lawBooks.value &&
+                lawBooks.value.data.length > 0 &&
+                Date.now() - lawBooks.value.refreshedAt < maxCacheAge &&
+                !refresh
+            )
+                return lawBooks.value.data;
+
             const completorCompletorClient = await getCompletorCompletorClient();
             try {
                 const call = completorCompletorClient.listLawBooks({});
                 const { response } = await call;
+
+                lawBooks.value = {
+                    refreshedAt: Date.now(),
+                    data: response.books,
+                };
                 return response.books;
             } catch (e) {
                 handleGRPCError(e as RpcError);

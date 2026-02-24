@@ -1,6 +1,11 @@
 <script lang="ts" setup>
 import SocialLogins from '~/components/auth/account/SocialLogins.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import type { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
+
+defineEmits<{
+    (e: 'refresh'): void;
+}>();
 
 const account = defineModel<GetAccountInfoResponse>('account', { required: true });
 
@@ -14,7 +19,16 @@ async function removeSocialLogin(provider: string): Promise<void> {
 
 <template>
     <div v-if="account?.oauth2Providers && account.oauth2Providers.length > 0">
-        <UPageCard :title="$t('components.auth.SocialLogins.title')" :description="$t('components.auth.SocialLogins.subtitle')">
+        <UPageCard
+            :description="$t('components.auth.SocialLogins.subtitle')"
+            :ui="{ body: 'w-full', wrapper: 'w-full', title: 'flex w-full flex-row' }"
+        >
+            <template #title>
+                <span class="flex-1">{{ $t('components.auth.SocialLogins.title') }}</span>
+
+                <RefreshButton @click="$emit('refresh')" />
+            </template>
+
             <SocialLogins
                 :providers="account.oauth2Providers"
                 :connections="account.oauth2Connections"

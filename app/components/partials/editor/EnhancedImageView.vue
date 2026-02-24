@@ -117,7 +117,7 @@ watch(
 </script>
 
 <template>
-    <NodeViewWrapper ref="nodeViewRoot" class="enhanced-image-nodeview" @blur="onBlur">
+    <NodeViewWrapper class="enhanced-image-nodeview" @blur="onBlur">
         <div class="relative w-full">
             <div class="relative" :style="node.attrs.style || ''">
                 <img

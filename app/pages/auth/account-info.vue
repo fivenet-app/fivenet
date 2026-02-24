@@ -133,7 +133,7 @@ onBeforeMount(async () => {
 
             <DataNoDataBlock v-else-if="!account" :type="`${$t('common.account')} ${$t('common.data')}`" icon="i-mdi-account" />
 
-            <NuxtPage v-else :account="account" />
+            <NuxtPage v-else :account="account" @refresh="() => refresh()" />
         </template>
     </UDashboardPanel>
 </template>

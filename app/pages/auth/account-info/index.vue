@@ -3,10 +3,15 @@ import ChangePasswordModal from '~/components/auth/account/ChangePasswordModal.v
 import ChangeUsernameModal from '~/components/auth/account/ChangeUsernameModal.vue';
 import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import type { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
 
 defineProps<{
     account: GetAccountInfoResponse;
+}>();
+
+defineEmits<{
+    (e: 'refresh'): void;
 }>();
 
 const overlay = useOverlay();
@@ -17,7 +22,16 @@ const changePasswordModal = overlay.create(ChangePasswordModal);
 
 <template>
     <div class="space-y-4">
-        <UPageCard :title="$t('components.auth.AccountInfo.title')" :description="$t('components.auth.AccountInfo.subtitle')">
+        <UPageCard
+            :description="$t('components.auth.AccountInfo.subtitle')"
+            :ui="{ body: 'w-full', wrapper: 'w-full', title: 'flex w-full flex-row' }"
+        >
+            <template #title>
+                <span class="flex-1">{{ $t('components.auth.AccountInfo.title') }}</span>
+
+                <RefreshButton @click="$emit('refresh')" />
+            </template>
+
             <UFormField class="grid grid-cols-2 items-center gap-2" name="createdAt" :label="$t('common.registered_since')">
                 <div class="inline-flex w-full justify-between gap-2">
                     <GenericTime :value="account.account?.createdAt" />

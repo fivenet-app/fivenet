@@ -579,10 +579,12 @@ func (s *Server) UpdateDocument(
 		var err error
 		tmpl, err = s.getTemplate(ctx, oldDoc.GetTemplateId())
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			if !errors.Is(err, qrm.ErrNoRows) {
+				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			}
 		}
 
-		if !s.checkAccessAgainstTemplate(tmpl, req.GetAccess()) {
+		if req != nil && !s.checkAccessAgainstTemplate(tmpl, req.GetAccess()) {
 			return nil, errorsdocuments.ErrDocRequiredAccessTemplate
 		}
 	}

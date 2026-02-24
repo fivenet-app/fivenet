@@ -25,8 +25,8 @@ import (
 )
 
 const (
-	// AccountInfoRedirBase is the base path for account info redirects.
-	AccountInfoRedirBase string = "/auth/account-info"
+	// AccountInfoOAuth2Path is the path for account info redirects.
+	AccountInfoOAuth2Path string = "/auth/account-info/oauth2"
 	// LoginRedirBase is the base path for login redirects.
 	LoginRedirBase string = "/auth/login"
 
@@ -141,7 +141,7 @@ func (o *OAuth2) handleRedirect(c *gin.Context, connectOnly bool, success bool, 
 	var redirURL string
 	if !success {
 		if connectOnly {
-			redirURL = AccountInfoRedirBase + "?oauth2Connect=failed&tab=oauth2Connections"
+			redirURL = AccountInfoOAuth2Path + "?oauth2Connect=failed&tab=oauth2Connections"
 		} else {
 			redirURL = LoginRedirBase + "?oauth2Login=failed"
 		}
@@ -150,7 +150,7 @@ func (o *OAuth2) handleRedirect(c *gin.Context, connectOnly bool, success bool, 
 		}
 	} else {
 		if connectOnly {
-			redirURL = AccountInfoRedirBase + "?oauth2Connect=success&tab=oauth2Connections"
+			redirURL = AccountInfoOAuth2Path + "?oauth2Connect=success&tab=oauth2Connections"
 		} else {
 			redirURL = LoginRedirBase + "?oauth2Login=success"
 		}
@@ -195,7 +195,7 @@ func (o *OAuth2) Login(c *gin.Context) {
 		sess.Set(SessionKeyRedirect, up)
 	}
 
-	tokenVal, err := c.Cookie("fivenet_token")
+	tokenVal, err := c.Cookie(auth.AccCookieName)
 	if err != nil && connectOnly {
 		o.logger.Error("failed to get token cookie for connect only request", zap.Error(err))
 		o.handleRedirect(c, false, false, "invalid_request_token")

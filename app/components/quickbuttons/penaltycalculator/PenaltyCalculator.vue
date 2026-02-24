@@ -9,6 +9,7 @@ import PenaltySummaryTable from '~/components/quickbuttons/penaltycalculator/Pen
 import { useCompletorStore } from '~/stores/completor';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { calculatePenaltySummary, type SelectedPenalty } from './helpers';
 
 const { display, quickButtons } = useAppConfig();
 
@@ -18,18 +19,6 @@ const notifications = useNotificationsStore();
 const { t, d, n } = useI18n();
 
 const { data: lawBooks, status, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
-
-export type SelectedPenalty = {
-    law: Law;
-    count: number;
-};
-
-export type PenaltiesSummary = {
-    fine: number;
-    detentionTime: number;
-    stvoPoints: number;
-    count: number;
-};
 
 const formatter = new Intl.NumberFormat(display.intlLocale, {
     style: 'currency',
@@ -41,19 +30,9 @@ const querySearchRaw = ref('');
 const querySearch = computed(() => querySearchRaw.value.trim().toLowerCase());
 
 const selectedPenalties = useState<SelectedPenalty[]>('quickButton:penaltyCalculator:selected', () => [] as SelectedPenalty[]);
+const reduction = useState<number>('quickButton:penaltyCalculator:reduction', () => 0);
 
-const summary = computed(() => ({
-    fine: selectedPenalties.value.reduce((acc, curr) => acc + (curr.law.fine ? curr.law.fine * curr.count : 0), 0),
-    detentionTime: selectedPenalties.value.reduce(
-        (acc, curr) => acc + (curr.law.detentionTime ? curr.law.detentionTime * curr.count : 0),
-        0,
-    ),
-    stvoPoints: selectedPenalties.value.reduce(
-        (acc, curr) => acc + (curr.law.stvoPoints ? curr.law.stvoPoints * curr.count : 0),
-        0,
-    ),
-    count: selectedPenalties.value.reduce((acc, curr) => acc + curr.count, 0),
-}));
+const summary = computed(() => calculatePenaltySummary(selectedPenalties.value));
 
 const filteredLawBooks = computed(() =>
     lawBooks.value
@@ -85,7 +64,6 @@ const filteredLawBooks = computed(() =>
         }),
 );
 
-const reduction = ref<number>(0);
 const leeway = computed(() => reduction.value / 100);
 const maxLeeway = computed(() => quickButtons.penaltyCalculator?.maxLeeway ?? 25);
 
@@ -93,7 +71,7 @@ function getNameForLawBookId(id: number): string | undefined {
     return lawBooks.value?.filter((b) => b.id === id)[0]?.name;
 }
 
-async function copySummary(): Promise<void> {
+function copySummary(): void {
     let text =
         t('components.penaltycalculator.title') +
         ` (` +
@@ -136,7 +114,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
         type: NotificationType.INFO,
     });
 
-    await copyToClipboardWrapper(text);
+    copyToClipboardWrapper(text);
 }
 
 function updateLaw(selected: SelectedPenalty): void {

@@ -3,7 +3,7 @@ import { UIcon, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { SelectedPenalty } from '~/components/quickbuttons/penaltycalculator/PenaltyCalculator.vue';
+import type { SelectedPenalty } from '~/components/quickbuttons/penaltycalculator/helpers';
 import type { LawBook } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{
