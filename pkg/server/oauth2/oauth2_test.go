@@ -94,9 +94,13 @@ func TestCallback_InvalidState(t *testing.T) {
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
 	}
-	router.GET("/callback/:provider", oauth.Callback)
+	oauth.RegisterHTTP(router)
 
-	req := httptest.NewRequest(http.MethodGet, "/callback/test-provider?state=invalid", nil)
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/api/oauth2/callback/test-provider?state=invalid",
+		nil,
+	)
 	c.Request = req
 
 	sess(c)
@@ -122,9 +126,13 @@ func TestCallback_InvalidProvider(t *testing.T) {
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
 	}
-	router.GET("/callback/:provider", oauth.Callback)
+	oauth.RegisterHTTP(router)
 
-	req := httptest.NewRequest(http.MethodGet, "/callback/invalid-provider?state=valid", nil)
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/api/oauth2/callback/invalid-provider?state=valid",
+		nil,
+	)
 	c.Request = req
 
 	sess(c)
@@ -157,11 +165,11 @@ func TestCallback_ProviderError(t *testing.T) {
 			"test-provider": mockProvider,
 		},
 	}
-	router.GET("/callback/:provider", oauth.Callback)
+	oauth.RegisterHTTP(router)
 
 	req := httptest.NewRequest(
 		http.MethodGet,
-		"/callback/test-provider?state=valid&code=test-code",
+		"/api/oauth2/callback/test-provider?state=valid&code=test-code",
 		nil,
 	)
 	c.Request = req
@@ -190,9 +198,13 @@ func TestCallback_LoginProviderError(t *testing.T) {
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
 	}
-	router.GET("/login/:provider", oauth.Callback)
+	oauth.RegisterHTTP(router)
 
-	req := httptest.NewRequest(http.MethodGet, "/login/invalid-provider?state=valid", nil)
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/api/oauth2/login/invalid-provider?state=valid",
+		nil,
+	)
 	c.Request = req
 
 	sess(c)
@@ -241,11 +253,11 @@ func TestCallback_LoginSuccess(t *testing.T) {
 		userInfoStore: mockUserInfoStore,
 		tm:            auth.NewTokenMgr("secret"),
 	}
-	router.GET("/callback/:provider", oauth.Callback)
+	oauth.RegisterHTTP(router)
 
 	req := httptest.NewRequest(
 		http.MethodGet,
-		"/callback/test-provider?state=valid&code=test-code",
+		"/api/oauth2/callback/test-provider?state=valid&code=test-code",
 		nil,
 	)
 	c.Request = req
@@ -301,11 +313,11 @@ func TestCallback_ConnectError(t *testing.T) {
 		userInfoStore: mockUserInfoStore,
 		tm:            tm,
 	}
-	router.GET("/callback/:provider", oauth.Callback)
+	oauth.RegisterHTTP(router)
 
 	req := httptest.NewRequest(
 		http.MethodGet,
-		"/callback/test-provider?state=valid&code=test-code",
+		"/api/oauth2/callback/test-provider?state=valid&code=test-code",
 		nil,
 	)
 	c.Request = req
@@ -359,11 +371,11 @@ func TestCallback_ConnectErrorAlreadyInUse(t *testing.T) {
 		userInfoStore: mockUserInfoStore,
 		tm:            tm,
 	}
-	router.GET("/callback/:provider", oauth.Callback)
+	oauth.RegisterHTTP(router)
 
 	req := httptest.NewRequest(
 		http.MethodGet,
-		"/callback/test-provider?state=valid&code=test-code",
+		"/api/oauth2/callback/test-provider?state=valid&code=test-code",
 		nil,
 	)
 	c.Request = req
@@ -424,12 +436,15 @@ func TestCallback_ConnectFlow(t *testing.T) {
 		userInfoStore: mockUserInfoStore,
 		tm:            tm,
 	}
-	router.GET("/login/:provider", oauth.Login)
-	router.GET("/callback/:provider", oauth.Callback)
+	oauth.RegisterHTTP(router)
 
-	req := httptest.NewRequest(http.MethodGet, "/login/test-provider?connect-only=true", nil)
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/api/oauth2/login/test-provider?connect-only=true",
+		nil,
+	)
 	req.AddCookie(&http.Cookie{
-		Name:  "fivenet_token",
+		Name:  auth.AccCookieName,
 		Value: token,
 	})
 	c.Request = req
@@ -443,6 +458,7 @@ func TestCallback_ConnectFlow(t *testing.T) {
 	session := sessions.DefaultMany(c, "fivenet_oauth2_state")
 	state := session.Get("state")
 	assert.NotEmpty(t, state)
+	require.NotNil(t, state)
 	require.NoError(t, session.Save())
 
 	req.AddCookie(&http.Cookie{
@@ -451,7 +467,9 @@ func TestCallback_ConnectFlow(t *testing.T) {
 	})
 
 	stateVal := state.(string)
-	req.URL, err = url.Parse("/callback/test-provider?state=" + stateVal + "&code=test-code")
+	req.URL, err = url.Parse(
+		"/api/oauth2/callback/test-provider?state=" + stateVal + "&code=test-code",
+	)
 	require.NoError(t, err)
 	c.Request = req
 	sess(c)
@@ -461,7 +479,7 @@ func TestCallback_ConnectFlow(t *testing.T) {
 	assert.Equal(t, http.StatusTemporaryRedirect, w.Code)
 	assert.Equal(
 		t,
-		"/auth/account-info?oauth2Connect=success&tab=oauth2Connections#",
+		"/auth/account-info/oauth2?oauth2Connect=success&tab=oauth2Connections#",
 		w.Header().Get("Location"),
 	)
 	mockProvider.AssertExpectations(t)
