@@ -7,7 +7,7 @@ const props = defineProps<{
     compact?: boolean;
 }>();
 
-const { display, quickButtons } = useAppConfig();
+const { quickButtons } = useAppConfig();
 
 const leeway = computed(() => props.reduction / 100);
 
@@ -31,11 +31,7 @@ const highlight = computed(() => {
     return result;
 });
 
-const formatter = new Intl.NumberFormat(display.intlLocale, {
-    style: 'currency',
-    currency: display.currencyName,
-    trailingZeroDisplay: 'stripIfInteger',
-});
+const numberFormatter = useIntlNumberFormat();
 </script>
 
 <template>
@@ -64,11 +60,13 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                     <div class="flex flex-col gap-1">
                         <div class="flex gap-1">
                             <span class="font-semibold tracking-tight" :class="compact ? 'text-2xl' : 'text-4xl'">
-                                {{ formatter.format(summary.fine ?? 0) }}
+                                {{ numberFormatter.format(summary.fine ?? 0) }}
                             </span>
                         </div>
 
-                        <span v-if="leeway > 0 && summary.fine > 0"> ({{ formatter.format(-(summary.fine * leeway)) }}) </span>
+                        <span v-if="leeway > 0 && summary.fine > 0">
+                            ({{ numberFormatter.format(-(summary.fine * leeway)) }})
+                        </span>
                     </div>
                 </template>
             </UPageCard>

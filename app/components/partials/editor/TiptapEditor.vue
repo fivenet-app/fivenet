@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { EditorContentType, EditorEmojiMenuItem, FormError } from '@nuxt/ui';
+import type { EditorContentType, EditorEmojiMenuItem, EditorSuggestionMenuItem, FormError } from '@nuxt/ui';
 import type { ClientStreamingCall, RpcOptions } from '@protobuf-ts/runtime-rpc';
 import { generateJSON, getSchema, type Extensions, type JSONContent } from '@tiptap/core';
 import Collaboration from '@tiptap/extension-collaboration';
@@ -78,6 +78,8 @@ const files = defineModel<FileGrpc[]>('files', { default: () => [] });
 const logger = useLogger('📄 Editor' + (props.name ? ` ${props.name}` : ''));
 
 const { activeChar } = useAuth();
+
+const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
 const { editor: editorSettings } = storeToRefs(settingsStore);
@@ -404,6 +406,86 @@ watch(
     { deep: true },
 );
 
+const items: EditorSuggestionMenuItem[][] = [
+    [
+        {
+            type: 'label',
+            label: t('common.text'),
+        },
+        {
+            kind: 'paragraph',
+            label: t('components.partials.tiptap_editor.paragraph'),
+            icon: 'i-mdi-format-paragraph',
+        },
+        {
+            kind: 'heading',
+            level: 1,
+            label: t('components.partials.tiptap_editor.heading_1'),
+            icon: 'i-mdi-format-header-1',
+        },
+        {
+            kind: 'heading',
+            level: 2,
+            label: t('components.partials.tiptap_editor.heading_2'),
+            icon: 'i-mdi-format-header-2',
+        },
+        {
+            kind: 'heading',
+            level: 3,
+            label: t('components.partials.tiptap_editor.heading_3'),
+            icon: 'i-mdi-format-header-3',
+        },
+        {
+            kind: 'heading',
+            level: 4,
+            label: t('components.partials.tiptap_editor.heading_4'),
+            icon: 'i-mdi-format-header-4',
+        },
+    ],
+    [
+        {
+            type: 'label',
+            label: t('components.partials.tiptap_editor.lists'),
+        },
+        {
+            kind: 'bulletList',
+            label: t('components.partials.tiptap_editor.bullet_list'),
+            icon: 'i-mdi-format-list-bulleted',
+        },
+        {
+            kind: 'orderedList',
+            label: t('components.partials.tiptap_editor.ordered_list'),
+            icon: 'i-mdi-format-list-numbered',
+        },
+        {
+            kind: 'taskList',
+            label: t('components.partials.tiptap_editor.task_list'),
+            icon: 'i-mdi-format-list-checkbox',
+        },
+    ],
+    [
+        {
+            type: 'label',
+            label: t('components.partials.tiptap_editor.insert'),
+        },
+        {
+            kind: 'blockquote',
+            label: t('components.partials.tiptap_editor.block_quote'),
+            icon: 'i-mdi-format-quote-open',
+        },
+        {
+            kind: 'codeBlock',
+            label: t('components.partials.tiptap_editor.code_block'),
+            icon: 'i-mdi-code-block-braces',
+        },
+        {
+            kind: 'horizontalRule',
+            label: t('components.partials.tiptap_editor.horizontal_rule'),
+            icon: 'i-mdi-minus',
+        },
+    ],
+];
+
 onMounted(() => {
     if (props.enableCollab) return;
 
@@ -458,6 +540,8 @@ defineExpose<{
         <UEditorEmojiMenu :editor="editor" :items="emojiItems" />
 
         <UEditorDragHandle v-if="editor" :editor="editor" />
+
+        <UEditorSuggestionMenu :editor="editor" :items="items" />
 
         <UPopover
             :open="openLinkPopover"

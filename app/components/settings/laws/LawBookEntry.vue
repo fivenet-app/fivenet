@@ -24,8 +24,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const { display } = useAppConfig();
-
 const { can } = useAuth();
 
 const notifications = useNotificationsStore();
@@ -36,10 +34,7 @@ const laws = useVModel(props, 'laws', emit);
 
 const overlay = useOverlay();
 
-const formatter = new Intl.NumberFormat(display.intlLocale, {
-    style: 'currency',
-    currency: display.currencyName,
-});
+const numberFormatter = useIntlNumberFormat();
 
 const settingsLawsClient = await getSettingsLawsClient();
 
@@ -216,7 +211,7 @@ const columns = computed(
             {
                 accessorKey: 'fine',
                 header: t('common.fine'),
-                cell: ({ row }) => formatter.format(row.original.fine ?? 0),
+                cell: ({ row }) => numberFormatter.format(row.original.fine ?? 0),
             },
             {
                 accessorKey: 'detentionTime',

@@ -297,17 +297,6 @@ const isLinkOpen = ref(false);
                     @click="editorSettings.showInvisibleCharacters = !editorSettings.showInvisibleCharacters"
                 />
             </UTooltip>
-
-            <UTooltip :text="$t('components.partials.tiptap_editor.focus_mode')">
-                <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': editorSettings.focusMode }"
-                    :disabled="disabled"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-mdi-border-radius"
-                    @click="editorSettings.focusMode = !editorSettings.focusMode"
-                />
-            </UTooltip>
         </UFieldGroup>
 
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
@@ -449,7 +438,7 @@ const isLinkOpen = ref(false);
                 />
             </UTooltip>
 
-            <UTooltip :text="$t('components.partials.tiptap_editor.header_1')">
+            <UTooltip :text="$t('components.partials.tiptap_editor.heading_1')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.headingLevel === 1 }"
                     color="neutral"
@@ -460,7 +449,7 @@ const isLinkOpen = ref(false);
                 />
             </UTooltip>
 
-            <UTooltip :text="$t('components.partials.tiptap_editor.header_2')">
+            <UTooltip :text="$t('components.partials.tiptap_editor.heading_2')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.headingLevel === 2 }"
                     color="neutral"
@@ -471,7 +460,7 @@ const isLinkOpen = ref(false);
                 />
             </UTooltip>
 
-            <UTooltip :text="$t('components.partials.tiptap_editor.header_3')">
+            <UTooltip :text="$t('components.partials.tiptap_editor.heading_3')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.headingLevel === 3 }"
                     color="neutral"
@@ -482,7 +471,7 @@ const isLinkOpen = ref(false);
                 />
             </UTooltip>
 
-            <UTooltip :text="$t('components.partials.tiptap_editor.header_4')">
+            <UTooltip :text="$t('components.partials.tiptap_editor.heading_4')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.headingLevel === 4 }"
                     color="neutral"
@@ -493,7 +482,7 @@ const isLinkOpen = ref(false);
                 />
             </UTooltip>
 
-            <UTooltip :text="$t('components.partials.tiptap_editor.header_5')">
+            <UTooltip :text="$t('components.partials.tiptap_editor.heading_5')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.headingLevel === 5 }"
                     color="neutral"
@@ -504,7 +493,7 @@ const isLinkOpen = ref(false);
                 />
             </UTooltip>
 
-            <UTooltip :text="$t('components.partials.tiptap_editor.header_6')">
+            <UTooltip :text="$t('components.partials.tiptap_editor.heading_6')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.headingLevel === 6 }"
                     color="neutral"
@@ -691,17 +680,6 @@ const isLinkOpen = ref(false);
         </UPopover>
 
         <UFieldGroup>
-            <UTooltip :text="$t('components.partials.tiptap_editor.code_block')">
-                <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.codeBlock }"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-mdi-code-block-braces"
-                    :disabled="disabled"
-                    @click="ed?.chain().focus().toggleCodeBlock().run()"
-                />
-            </UTooltip>
-
             <UTooltip :text="$t('components.partials.tiptap_editor.block_quote')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.blockquote }"
@@ -710,6 +688,17 @@ const isLinkOpen = ref(false);
                     icon="i-mdi-format-quote-open"
                     :disabled="disabled"
                     @click="ed?.chain().focus().toggleBlockquote().run()"
+                />
+            </UTooltip>
+
+            <UTooltip :text="$t('components.partials.tiptap_editor.code_block')">
+                <UButton
+                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.codeBlock }"
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-code-block-braces"
+                    :disabled="disabled"
+                    @click="ed?.chain().focus().toggleCodeBlock().run()"
                 />
             </UTooltip>
 
@@ -738,6 +727,17 @@ const isLinkOpen = ref(false);
         <slot name="toolbar" :editor="editor" :disabled="disabled" />
 
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
+
+        <UTooltip :text="$t('components.partials.tiptap_editor.focus_mode')">
+            <UButton
+                :class="{ 'bg-neutral-300 dark:bg-neutral-900': editorSettings.focusMode }"
+                :disabled="disabled"
+                color="neutral"
+                variant="ghost"
+                icon="i-mdi-border-radius"
+                @click="editorSettings.focusMode = !editorSettings.focusMode"
+            />
+        </UTooltip>
 
         <UPopover>
             <UTooltip :text="$t('components.partials.tiptap_editor.search_and_replace')">

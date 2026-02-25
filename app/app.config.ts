@@ -4,7 +4,6 @@ import type {
     Display,
     FeatureGates,
     Game,
-    Livemap,
     System,
     Website,
 } from '~~/gen/ts/resources/clientconfig/clientconfig';
@@ -35,13 +34,18 @@ export default defineAppConfig({
 
         livemap: {
             enableCayoPerico: true,
-        } as Livemap,
+        },
+
+        maxWantedDurationUserEnabled: false,
+        maxWantedDurationVehicleEnabled: false,
     } as Game,
     system: {
         bannerMessageEnabled: false,
 
         otlp: {
             enabled: false,
+            headers: {},
+            url: '',
         },
     } as System,
     display: {

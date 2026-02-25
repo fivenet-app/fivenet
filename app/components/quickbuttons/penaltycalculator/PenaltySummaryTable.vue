@@ -14,19 +14,13 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const { display } = useAppConfig();
-
 function getNameForLawBookId(id: number): string | undefined {
     return props.lawBooks?.filter((b) => b.id === id)[0]?.name;
 }
 
 const leeway = computed(() => props.reduction / 100);
 
-const formatter = new Intl.NumberFormat(display.intlLocale, {
-    style: 'currency',
-    currency: display.currencyName,
-    trailingZeroDisplay: 'stripIfInteger',
-});
+const numberFormatter = useIntlNumberFormat();
 
 const columns = computed(
     () =>
@@ -53,12 +47,12 @@ const columns = computed(
                 header: t('common.fine'),
                 cell: ({ row }) => {
                     return h('span', null, [
-                        formatter.format(row.original.law.fine ? row.original.law.fine * row.original.count : 0),
+                        numberFormatter.format(row.original.law.fine ? row.original.law.fine * row.original.count : 0),
                         (row.original.law.fine ?? 0) * row.original.count > 0 && leeway.value > 0
                             ? h(
                                   'span',
                                   null,
-                                  ` (${formatter.format(-Math.abs(row.original.law.fine ?? 0) * row.original.count * leeway.value)})`,
+                                  ` (${numberFormatter.format(-Math.abs(row.original.law.fine ?? 0) * row.original.count * leeway.value)})`,
                               )
                             : null,
                     ]);
@@ -124,11 +118,5 @@ const columns = computed(
         variant="outline"
     />
 
-    <UTable
-        v-else
-        class="max-w-full divide-y divide-default"
-        :columns="columns"
-        :data="selectedLaws"
-        :empty="$t('common.none_selected', [`${$t('common.crime')}`])"
-    />
+    <UTable v-else :columns="columns" :data="selectedLaws" :empty="$t('common.none_selected', [`${$t('common.crime')}`])" />
 </template>

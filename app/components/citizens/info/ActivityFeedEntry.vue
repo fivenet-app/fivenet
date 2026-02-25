@@ -10,12 +10,7 @@ const props = defineProps<{
     activity: UserActivity;
 }>();
 
-const { display } = useAppConfig();
-
-const formatter = new Intl.NumberFormat(display.intlLocale, {
-    style: 'currency',
-    currency: display.currencyName,
-});
+const numberFormatter = useIntlNumberFormat();
 </script>
 
 <template>
@@ -492,7 +487,7 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                             </template>
 
                             <span>
-                                {{ formatter.format(Math.abs(activity.data.data.fineChange.amount)) }}
+                                {{ numberFormatter.format(Math.abs(activity.data.data.fineChange.amount)) }}
                             </span>
                         </h3>
 

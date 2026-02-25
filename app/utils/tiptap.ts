@@ -340,24 +340,21 @@ export function isEmptyRichContentDoc(content: RichTextHtmlNode | null | undefin
     let nodes: RichTextHtmlNode[] = [];
     for (let i = 0; i < 3; i++) {
         nodes = content.content[i]?.content ?? [];
-        if (nodes.length > 0) break;
-    }
-    if (nodes.length === 0) {
-        nodes = content.content;
-    }
-    for (const node of nodes) {
-        if (node.type === NodeType.ELEMENT) {
-            if (node.tag === 'p') {
-                if (node.content && node.content.length > 0) {
-                    // Paragraph has content
+
+        for (const node of nodes) {
+            if (node.type === NodeType.ELEMENT) {
+                if (node.tag === 'p') {
+                    if ((node.content && node.content.length > 0) || (node.text && node.text.trim().length > 0)) {
+                        // Paragraph has content
+                        return false;
+                    }
+                } else if (node.tag === 'img') {
                     return false;
                 }
-            } else if (node.tag === 'img') {
+            } else {
+                // Found a non-paragraph node
                 return false;
             }
-        } else {
-            // Found a non-paragraph node
-            return false;
         }
     }
 

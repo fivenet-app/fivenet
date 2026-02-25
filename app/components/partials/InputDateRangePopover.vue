@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="R extends boolean, M extends boolean">
-import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date';
+import { CalendarDate, getLocalTimeZone } from '@internationalized/date';
 import type { CalendarProps } from '@nuxt/ui';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 
@@ -30,11 +30,7 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const { locale } = useI18n();
-
-const df = new DateFormatter(locale.value, {
-    dateStyle: 'medium',
-});
+const dateFormatter = useDateFormatter('medium');
 
 // State derived from modelValue
 const state = computed({
@@ -122,12 +118,12 @@ const smallerThanSm = breakpoints.smaller('sm');
         >
             <template v-if="modelValue?.start">
                 <template v-if="modelValue.end">
-                    {{ df.format(modelValue.start) }} -
-                    {{ df.format(modelValue.end) }}
+                    {{ dateFormatter.format(modelValue.start) }} -
+                    {{ dateFormatter.format(modelValue.end) }}
                 </template>
 
                 <template v-else>
-                    {{ df.format(modelValue.start) }}
+                    {{ dateFormatter.format(modelValue.start) }}
                 </template>
             </template>
             <template v-else> {{ $t('common.pick_date') }} </template>

@@ -1,13 +1,19 @@
 <script
     lang="ts"
     setup
-    generic="T extends Array<InputMenuItem>, VK extends GetItemKeys<T> | undefined = undefined, M extends boolean = false"
+    generic="
+        // Generic
+        A extends ArrayOrNested<InputMenuItem>,
+        VK extends GetItemKeys<A> | undefined = undefined,
+        M extends boolean = false,
+        T extends NestedItem<A> = NestedItem<A>
+    "
 >
 import type { InputMenuEmits, InputMenuItem, InputMenuProps, InputMenuSlots } from '@nuxt/ui';
-import type { GetItemKeys } from '@nuxt/ui/runtime/types/utils.js';
+import type { ArrayOrNested, GetItemKeys, NestedItem } from '@nuxt/ui/runtime/types/utils.js';
 
 interface Props<
-    T extends Array<InputMenuItem>,
+    T extends ArrayOrNested<InputMenuItem>,
     VK extends GetItemKeys<T> | undefined = undefined,
     M extends boolean = false,
 > extends /* @vue-ignore */ InputMenuProps<T, VK, M> {
@@ -15,9 +21,9 @@ interface Props<
     searchable?: (q: string) => Promise<T>;
 }
 
-const props = defineProps<Props<T, VK, M>>();
-defineSlots</* @vue-ignore */ InputMenuSlots<T, VK, M>>();
-defineEmits</* @vue-ignore */ InputMenuEmits<T, VK, M>>();
+const props = defineProps<Props<A, VK, M>>();
+defineSlots</* @vue-ignore */ InputMenuSlots<A, VK, M, T>>();
+defineEmits</* @vue-ignore */ InputMenuEmits<A, VK, M>>();
 
 const loading = ref(false);
 
@@ -27,7 +33,7 @@ const searchTermDebounced = debouncedRef(searchTerm, 200);
 const { data } = await useAsyncData(
     () => `${props.searchableKey}-${searchTermDebounced.value}`,
     async () => {
-        if (!props.searchable) return [];
+        if (props.searchable === undefined) return [];
 
         loading.value = true;
         const items = await props.searchable(searchTermDebounced.value);

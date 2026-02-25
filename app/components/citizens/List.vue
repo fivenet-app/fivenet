@@ -21,9 +21,12 @@ const { t } = useI18n();
 
 const { attr, can, isSuperuser } = useAuth();
 
+const { display } = useAppConfig();
+
 const overlay = useOverlay();
 
-const { display } = useAppConfig();
+const clipboardStore = useClipboardStore();
+const notifications = useNotificationsStore();
 
 const citizensCitizensClient = await getCitizensCitizensClient();
 
@@ -103,8 +106,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
 
 watchDebounced(query, async () => (await formRef.value?.validate({})) && refresh(), { debounce: 200, maxWait: 1250 });
 
-const clipboardStore = useClipboardStore();
-const notifications = useNotificationsStore();
+const numberFormatter = useIntlNumberFormat();
 
 function addToClipboard(user: User): void {
     clipboardStore.addUser(user);
@@ -230,10 +232,7 @@ const columns = computed(() =>
                       },
                       cell: ({ row }) =>
                           row.original.props?.openFines !== undefined && row.original.props?.openFines > 0
-                              ? new Intl.NumberFormat(display.intlLocale, {
-                                    style: 'currency',
-                                    currency: display.currencyName,
-                                }).format(row.original.props?.openFines)
+                              ? numberFormatter.format(row.original.props?.openFines)
                               : '',
                   }
                 : undefined,

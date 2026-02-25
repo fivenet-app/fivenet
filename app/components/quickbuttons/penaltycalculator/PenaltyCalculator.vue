@@ -11,7 +11,7 @@ import type { Law } from '~~/gen/ts/resources/laws/laws';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { calculatePenaltySummary, type SelectedPenalty } from './helpers';
 
-const { display, quickButtons } = useAppConfig();
+const { quickButtons } = useAppConfig();
 
 const completorStore = useCompletorStore();
 const notifications = useNotificationsStore();
@@ -20,11 +20,7 @@ const { t, d, n } = useI18n();
 
 const { data: lawBooks, status, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
 
-const formatter = new Intl.NumberFormat(display.intlLocale, {
-    style: 'currency',
-    currency: display.currencyName,
-    trailingZeroDisplay: 'stripIfInteger',
-});
+const numberFormatter = useIntlNumberFormat();
 
 const querySearchRaw = ref('');
 const querySearch = computed(() => querySearchRaw.value.trim().toLowerCase());
@@ -80,7 +76,7 @@ function copySummary(): void {
 
 ${t('common.fine')}: ${n(summary.value.fine, 'currency')}${
             leeway.value > 0 && summary.value.fine > 0
-                ? ` ${formatter.format(-Math.abs(summary.value.fine * leeway.value))}`
+                ? ` ${numberFormatter.format(-Math.abs(summary.value.fine * leeway.value))}`
                 : ''
         }
 ${t('common.detention_time')}: ${summary.value.detentionTime} ${t('common.month', summary.value.detentionTime)}${
@@ -156,7 +152,7 @@ const columns = computed(
             {
                 accessorKey: 'fine',
                 header: t('common.fine'),
-                cell: ({ row }) => formatter.format(row.original.fine ?? 0),
+                cell: ({ row }) => numberFormatter.format(row.original.fine ?? 0),
             },
             {
                 accessorKey: 'detentionTime',
