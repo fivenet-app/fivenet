@@ -180,14 +180,15 @@ export default class GrpcProvider extends ObservableV2<Events> {
                 }
 
                 case 'promote': {
-                    logger.info('Received promote: we are the new first client');
+                    logger.info('Received promote: we are the new first client. Authoritative:', this.authoritative);
 
                     // Only act if we were *not* authoritative so far.
                     if (!this.authoritative) {
                         this.authoritative = true;
-
-                        this.triggerSync(); // Step-0: seed the room (again), force sync
                     }
+
+                    // Trigger step-0 again to seed the room and force sync
+                    this.triggerSync();
                     break;
                 }
             }

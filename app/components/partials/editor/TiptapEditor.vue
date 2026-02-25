@@ -200,7 +200,7 @@ if (props.enableCollab && ydoc && yjsProvider) {
             seedDocument(yjsSchema!, modelValue.value);
         }
 
-        useTimeoutFn(() => (loading.value = false), 250);
+        useTimeoutFn(() => (loading.value = false), 150);
     };
     yjsProvider.on('sync', onSync);
 
