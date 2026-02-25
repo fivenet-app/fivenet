@@ -48,16 +48,14 @@ func (s *JobsSync) Sync(ctx context.Context) (int64, error) {
 	}
 
 	// Sync jobs to FiveNet server
-	if s.cli != nil {
-		if err := s.sendData(ctx, &pbsync.SendDataRequest{
-			Data: &pbsync.SendDataRequest_Jobs{
-				Jobs: &syncdata.DataJobs{
-					Jobs: jobs,
-				},
+	if err := s.sendData(ctx, &pbsync.SendDataRequest{
+		Data: &pbsync.SendDataRequest_Jobs{
+			Jobs: &syncdata.DataJobs{
+				Jobs: jobs,
 			},
-		}); err != nil {
-			return 0, err
-		}
+		},
+	}); err != nil {
+		return 0, err
 	}
 
 	return count, nil

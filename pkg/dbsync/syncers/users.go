@@ -14,24 +14,34 @@ import (
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/cache"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
+
+// userHashCacheTTL Cache user hash for 6 hours, which should be sufficient to cover the next few sync cycles and avoid memory bloat from caching too many hashes for long periods.
+const userHashCacheTTL = 6 * time.Hour
 
 type UsersSync struct {
 	*Syncer
 
 	state         *dbsyncconfig.TableSyncState
 	saveLastCheck bool
+
+	hashes *cache.LRUCache[int32, uint64]
 }
 
 func NewUsersSync(s *Syncer, state *dbsyncconfig.TableSyncState, saveLastCheck bool) *UsersSync {
 	return &UsersSync{
 		Syncer: s,
-		state:  state,
 
+		state:         state,
 		saveLastCheck: saveLastCheck,
+
+		// Cache up to 500 user hashes to avoid memory bloat, as this is only used to compare against the most recent hash for each user and not all historical hashes
+		hashes: cache.NewLRUCache[int32, uint64](500),
 	}
 }
 
@@ -79,6 +89,34 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, error) {
 	}
 	if err := s.retrieveAndAttachPhoneNumbers(ctx, us); err != nil {
 		return 0, offset, "0", err
+	}
+
+	for i, u := range slices.Backward(us) {
+		// Get hash of user data to compare with existing hash and skip sending if data is the same (treat as not updated)
+		_, hash, err := protoutils.JSONAndHash(u)
+		if err != nil {
+			s.logger.Warn(
+				"failed to compute user data hash, skipping hash check and treating as new/updated user",
+				zap.Int32("user_id", u.GetUserId()),
+				zap.String("identifier", u.GetIdentifier()),
+				zap.Error(err),
+			)
+		}
+
+		if existingHash, ok := s.hashes.Get(u.GetUserId()); ok {
+			if existingHash == hash {
+				s.logger.Debug(
+					"user data hash is the same as existing entry, skipping update for user",
+					zap.Int32("user_id", u.GetUserId()),
+					zap.String("identifier", u.GetIdentifier()),
+				)
+				// Remove "skipped" user
+				us = slices.Delete(us, i, i+1)
+				continue
+			}
+		} else {
+			s.hashes.Put(u.GetUserId(), hash, userHashCacheTTL)
+		}
 	}
 
 	if err := s.sendData(ctx, &pbsync.SendDataRequest{

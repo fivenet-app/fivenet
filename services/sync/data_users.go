@@ -17,6 +17,7 @@ import (
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -162,14 +163,14 @@ func (s *Server) handleUsersData(
 			} else {
 				// User already exists, check if data hash is different to determine if update is needed
 				existingUser := existing[idx]
-				_, hash, err := user.GetJSONAndHash()
+				_, hash, err := protoutils.JSONAndHash(user)
 				if err != nil {
 					return 0, fmt.Errorf("failed to get JSON and hash for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
 				}
 
 				// Skip update if data hash is the same, meaning data is identical and no update is needed
 				if existingUser.DataHash == hash {
-					s.logger.Info("User data hash is the same as existing entry, skipping update for user", zap.Int32("user_id", user.GetUserId()), zap.String("identifier", user.GetIdentifier()))
+					s.logger.Info("user data hash is the same as existing entry, skipping update for user", zap.Int32("user_id", user.GetUserId()), zap.String("identifier", user.GetIdentifier()))
 					continue
 				}
 
@@ -380,7 +381,7 @@ func (s *Server) createOrUpdateSyncUserEntry(
 	user *syncdata.DataUser,
 ) error {
 	// Marshal user data to JSON for storage in the sync table and hashing
-	out, hash, err := user.GetJSONAndHash()
+	out, hash, err := protoutils.JSONAndHash(user)
 	if err != nil {
 		return fmt.Errorf(
 			"failed to marshal user data to JSON for user %d (%s). %w",

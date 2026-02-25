@@ -1,6 +1,7 @@
 package protoutils
 
 import (
+	"github.com/cespare/xxhash/v2"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
@@ -25,4 +26,14 @@ func MarshalToPrettyJSON(m proto.Message) ([]byte, error) {
 		Multiline: true,
 		Indent:    "    ",
 	}.Marshal(m)
+}
+
+// JSONAndHash is a helper that returns the JSON representation of a proto message along with its xxhash hash.
+func JSONAndHash(m proto.Message) ([]byte, uint64, error) {
+	jsonBytes, err := MarshalToJSON(m)
+	if err != nil {
+		return nil, 0, err
+	}
+	hash := xxhash.Sum64(jsonBytes)
+	return jsonBytes, hash, nil
 }

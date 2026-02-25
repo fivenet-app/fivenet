@@ -42,16 +42,14 @@ func (s *LicensesSync) Sync(ctx context.Context) (int64, error) {
 	}
 
 	// Sync licenses to FiveNet server
-	if s.cli != nil {
-		if err := s.sendData(ctx, &pbsync.SendDataRequest{
-			Data: &pbsync.SendDataRequest_Licenses{
-				Licenses: &syncdata.DataLicenses{
-					Licenses: licenses,
-				},
+	if err := s.sendData(ctx, &pbsync.SendDataRequest{
+		Data: &pbsync.SendDataRequest_Licenses{
+			Licenses: &syncdata.DataLicenses{
+				Licenses: licenses,
 			},
-		}); err != nil {
-			return 0, err
-		}
+		},
+	}); err != nil {
+		return 0, err
 	}
 
 	return count, nil
