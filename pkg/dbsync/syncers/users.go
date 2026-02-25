@@ -51,7 +51,7 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, error) {
 		s.state.SetLastCheck(nil)
 	}
 
-	limit := int64(150)
+	limit := s.cfg.Limits.Users
 	offset := s.state.GetOffset()
 	s.logger.Debug("usersSync", zap.Int64("offset", offset))
 

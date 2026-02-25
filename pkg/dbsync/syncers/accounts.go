@@ -63,7 +63,7 @@ func (s *AccountsSync) Sync(ctx context.Context) (int64, error) {
 }
 
 func (s *AccountsSync) fetchAccounts(ctx context.Context) ([]*syncactivity.AccountUpdate, error) {
-	limit := int64(200)
+	limit := s.cfg.Limits.Accounts
 	q := s.cfg.Tables.Accounts.GetQuery(s.state, 0, limit)
 	s.logger.Debug("accounts sync query", zap.String("query", q))
 

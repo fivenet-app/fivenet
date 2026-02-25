@@ -49,7 +49,7 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, error) {
 		s.state.SetLastCheck(nil)
 	}
 
-	limit := int64(500)
+	limit := s.cfg.Limits.Vehicles
 	var offset int64
 	sOffset := s.state.GetOffset()
 	if s.state != nil && sOffset > 0 {

@@ -62,7 +62,7 @@ func (s *JobsSync) Sync(ctx context.Context) (int64, error) {
 }
 
 func (s *JobsSync) fetchJobs(ctx context.Context) ([]*jobs.Job, error) {
-	limit := int64(200)
+	limit := s.cfg.Limits.Jobs
 	q := s.cfg.Tables.Jobs.GetQuery(0, limit)
 	s.logger.Debug("jobs sync query", zap.String("query", q))
 
