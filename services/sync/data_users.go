@@ -8,8 +8,10 @@ import (
 	"math/rand/v2"
 	"slices"
 	"strings"
+	"time"
 
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
@@ -18,6 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/zap"
 )
 
 var bloodTypes = []string{
@@ -27,11 +30,29 @@ var bloodTypes = []string{
 	"O+", "O-",
 }
 
+var (
+	tAccounts             = table.FivenetAccounts
+	tUsers                = table.FivenetUser
+	tUserProps            = table.FivenetUserProps
+	tCitizensPhoneNumbers = table.FivenetUserPhoneNumbers
+	tCitizensLicenses     = table.FivenetUserLicenses
+	tCitizensJobs         = table.FivenetUserJobs
+
+	tSyncUser = table.FivenetSyncUser
+)
+
+type existingUser struct {
+	UserID     int32  `alias:"user_id"`
+	Identifier string `alias:"identifier"`
+	DataJSON   string `alias:"data_json"`
+	DataHash   uint64 `alias:"data_hash"`
+}
+
 func (s *Server) handleUsersData(
 	ctx context.Context,
 	data *pbsync.SendDataRequest_Users,
 ) (int64, error) {
-	tUsers := table.FivenetUser
+	syncedAt := time.Now()
 
 	userIds := []mysql.Expression{}
 	us := data.Users.GetUsers()
@@ -108,17 +129,20 @@ func (s *Server) handleUsersData(
 		}
 	}
 
-	checkStmt := tUsers.
+	checkStmt := tSyncUser.
 		SELECT(
-			tUsers.ID.AS("user_id"),
-			tUsers.Identifier.AS("identifier"),
+			tSyncUser.UserID.AS("user_id"),
+			tSyncUser.Identifier.AS("identifier"),
+			tSyncUser.DataJSON.AS("data_json"),
+			tSyncUser.DataHash.AS("data_hash"),
 		).
-		FROM(tUsers).
+		FROM(tSyncUser).
 		WHERE(
-			tUsers.ID.IN(userIds...),
-		)
+			tSyncUser.UserID.IN(userIds...),
+		).
+		LIMIT(int64(len(userIds)))
 
-	var existing []int32
+	var existing []*existingUser
 	if err := checkStmt.QueryContext(ctx, s.db, &existing); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return 0, fmt.Errorf("failed to query existing users. %w", err)
@@ -126,16 +150,29 @@ func (s *Server) handleUsersData(
 	}
 
 	toCreate, toUpdate := []*syncdata.DataUser{}, []*syncdata.DataUser{}
-	// Check which user ids already exist in the database and create/update them accordingly
+	// Check which users already exist in the database and check which to create/update accordingly
 	if len(existing) == 0 {
 		toCreate = data.Users.GetUsers()
 	} else {
 		for _, user := range data.Users.GetUsers() {
-			if idx := slices.IndexFunc(existing, func(userId int32) bool {
-				return userId == user.GetUserId()
+			if idx := slices.IndexFunc(existing, func(userId *existingUser) bool {
+				return userId.UserID == user.GetUserId()
 			}); idx == -1 {
 				toCreate = append(toCreate, user)
 			} else {
+				// User already exists, check if data hash is different to determine if update is needed
+				existingUser := existing[idx]
+				_, hash, err := user.GetJSONAndHash()
+				if err != nil {
+					return 0, fmt.Errorf("failed to get JSON and hash for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+				}
+
+				// Skip update if data hash is the same, meaning data is identical and no update is needed
+				if existingUser.DataHash == hash {
+					s.logger.Info("User data hash is the same as existing entry, skipping update for user", zap.Int32("user_id", user.GetUserId()), zap.String("identifier", user.GetIdentifier()))
+					continue
+				}
+
 				toUpdate = append(toUpdate, user)
 			}
 		}
@@ -144,7 +181,7 @@ func (s *Server) handleUsersData(
 	rowsAffected := int64(0)
 	if len(toCreate) > 0 {
 		for _, user := range toCreate {
-			affected, err := s.createUser(ctx, user)
+			affected, err := s.createUser(ctx, syncedAt, user)
 			if err != nil {
 				return 0, fmt.Errorf(
 					"failed to create user %d (%s). %w",
@@ -159,7 +196,7 @@ func (s *Server) handleUsersData(
 
 	if len(toUpdate) > 0 {
 		for _, user := range toUpdate {
-			affected, err := s.updateUser(ctx, user)
+			affected, err := s.updateUser(ctx, syncedAt, user)
 			if err != nil {
 				return 0, fmt.Errorf(
 					"failed to update user %d (%s). %w",
@@ -187,7 +224,7 @@ func (s *Server) handleUsersData(
 					)
 				}
 
-				affected, err = s.updateUser(ctx, user)
+				affected, err = s.updateUser(ctx, syncedAt, user)
 				if err != nil {
 					return 0, fmt.Errorf(
 						"failed to update user %d (%s) after duplicate removal. %w",
@@ -207,11 +244,9 @@ func (s *Server) handleUsersData(
 
 func (s *Server) createUser(
 	ctx context.Context,
+	syncedAt time.Time,
 	user *syncdata.DataUser,
 ) (int64, error) {
-	tAccounts := table.FivenetAccounts
-	tUsers := table.FivenetUser
-
 	var accountIdStmt mysql.SelectStatement = nil
 	if user.GetIdentifier() != "" {
 		accountIdStmt = tAccounts.
@@ -290,6 +325,10 @@ func (s *Server) createUser(
 		return 0, fmt.Errorf("failed to retrieve rows affected for user insert. %w", err)
 	}
 
+	if err := s.createOrUpdateSyncUserEntry(ctx, tx, syncedAt, user); err != nil {
+		return 0, err
+	}
+
 	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user jobs for user %d (%s). %w",
@@ -334,13 +373,60 @@ func (s *Server) createUser(
 	return rows, nil
 }
 
+func (s *Server) createOrUpdateSyncUserEntry(
+	ctx context.Context,
+	tx *sql.Tx,
+	syncedAt time.Time,
+	user *syncdata.DataUser,
+) error {
+	// Marshal user data to JSON for storage in the sync table and hashing
+	out, hash, err := user.GetJSONAndHash()
+	if err != nil {
+		return fmt.Errorf(
+			"failed to marshal user data to JSON for user %d (%s). %w",
+			user.GetUserId(),
+			user.GetIdentifier(),
+			err,
+		)
+	}
+
+	syncStmt := tSyncUser.
+		INSERT(
+			tSyncUser.UserID,
+			tSyncUser.Identifier,
+			tSyncUser.SourceUpdatedAt,
+			tSyncUser.LastSyncedAt,
+			tSyncUser.DataJSON,
+			tSyncUser.DataHash,
+		).
+		VALUES(
+			user.GetUserId(),
+			user.GetIdentifier(),
+			mysql.NULL,
+			timestamp.New(syncedAt),
+			out,
+			hash,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tSyncUser.Identifier.SET(mysql.StringExp(mysql.Raw("VALUES(`identifier`)"))),
+			tSyncUser.SourceUpdatedAt.SET(mysql.DateTimeExp(mysql.Raw("VALUES(`source_updated_at`)"))),
+			tSyncUser.LastSyncedAt.SET(mysql.DateTimeExp(mysql.Raw("VALUES(`last_synced_at`)"))),
+			tSyncUser.DataJSON.SET(mysql.StringExp(mysql.Raw("VALUES(`data_json`)"))),
+			tSyncUser.DataHash.SET(mysql.IntExp(mysql.Raw("VALUES(`data_hash`)"))),
+		)
+
+	if _, err := syncStmt.ExecContext(ctx, tx); err != nil {
+		return fmt.Errorf("failed to execute sync user insert statement. %w", err)
+	}
+
+	return nil
+}
+
 func (s *Server) setUserBloodType(
 	ctx context.Context,
 	tx *sql.Tx,
 	userId int32,
 ) error {
-	tUserProps := table.FivenetUserProps
-
 	idx := rand.IntN(len(bloodTypes))
 	bloodType := bloodTypes[idx]
 
@@ -365,11 +451,9 @@ func (s *Server) setUserBloodType(
 
 func (s *Server) updateUser(
 	ctx context.Context,
+	syncedAt time.Time,
 	user *syncdata.DataUser,
 ) (int64, error) {
-	tAccounts := table.FivenetAccounts
-	tUsers := table.FivenetUser
-
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -438,6 +522,10 @@ func (s *Server) updateUser(
 		return 0, fmt.Errorf("failed to retrieve rows affected for user update. %w", err)
 	}
 
+	if err := s.createOrUpdateSyncUserEntry(ctx, tx, syncedAt, user); err != nil {
+		return 0, err
+	}
+
 	if err := s.handleUserJobs(ctx, tx, user.GetUserId(), user.GetJobs()); err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user jobs for user %d (%s). %w",
@@ -479,8 +567,6 @@ func (s *Server) handleUserLicenses(
 	userId int32,
 	licenses []*userslicenses.License,
 ) error {
-	tCitizensLicenses := table.FivenetUserLicenses
-
 	if len(licenses) == 0 {
 		// User has no licenses? Delete all user licenses from the database.
 		stmt := tCitizensLicenses.
@@ -583,8 +669,6 @@ func (s *Server) handleUserJobs(
 
 		return strings.Compare(a.GetJob(), b.GetJob())
 	})
-
-	tCitizensJobs := table.FivenetUserJobs
 
 	if len(jobs) == 0 {
 		// User has no jobs? Delete all user jobs from the database.
@@ -735,8 +819,6 @@ func (s *Server) handleUserPhoneNumbers(
 
 		return strings.Compare(a.GetNumber(), b.GetNumber())
 	})
-
-	tCitizensPhoneNumbers := table.FivenetUserPhoneNumbers
 
 	if len(phoneNumbers) == 0 {
 		// User has no phone numbers? Delete all user phone numbers from the database.
