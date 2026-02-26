@@ -464,7 +464,6 @@ func (s *Server) GetCharacters(
 		).
 		WHERE(mysql.OR(
 			tUsers.AccountID.EQ(mysql.Int64(accClaims.AccID)),
-			// TODO remove when dbsync has been updated to set license on users
 			tUsers.License.EQ(mysql.String(acc.License)),
 		)).
 		ORDER_BY(tUsers.ID).

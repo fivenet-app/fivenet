@@ -221,7 +221,7 @@ func (t *Tracker) SetUserMapping(ctx context.Context, mapping *tracker.UserMappi
 	}
 
 	if mapping.UnitId != nil && mapping.GetUnitId() == 0 {
-		mapping.UnitId = nil // unset if zero
+		mapping.UnitId = nil // Unset if zero
 	}
 
 	if mapping.GetCreatedAt() == nil {

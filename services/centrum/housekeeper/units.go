@@ -220,7 +220,7 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 		}
 
 		s.logger.Warn(
-			"found user id with unit mapping that isn't in any unit anymore",
+			"found user with unit mapping that isn't in any unit anymore",
 			zap.Int32("user_id", userUnit.GetUserId()),
 			zap.Int32s("users_in_units", foundUserIds),
 			zap.Any("mapping", userUnit),
