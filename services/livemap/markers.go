@@ -3,6 +3,7 @@ package livemap
 import (
 	"context"
 	"errors"
+	"slices"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
@@ -204,6 +205,21 @@ func (s *Server) DeleteMarker(
 
 	if err := s.sendUpdateEvent(ctx, MarkerTopic, MarkerDelete, marker.GetJob(), marker); err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
+	}
+
+	// Add the marker id to the deleted markers cache for the specific job, so clients can remove it from their list if they have it cached
+	if markers, ok := s.markersDeletedCache.Load(marker.GetJob()); ok {
+		s.markersDeletedCache.Store(marker.GetJob(), append(markers, marker.GetId()))
+	}
+
+	// Remove the marker from the markers cache for the specific job, so clients won't get it in their list if they refresh
+	if markers, ok := s.markersCache.Load(marker.GetJob()); ok {
+		s.markersCache.Store(
+			marker.GetJob(),
+			slices.DeleteFunc(markers, func(m *livemapmarkers.MarkerMarker) bool {
+				return m.GetId() == marker.GetId()
+			}),
+		)
 	}
 
 	return &pblivemap.DeleteMarkerResponse{}, nil

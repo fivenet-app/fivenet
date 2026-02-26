@@ -247,6 +247,7 @@ func (s *Server) Stream(
 						Data: &pblivemap.StreamResponse_Markers{
 							Markers: &pblivemap.MarkerMarkersUpdates{
 								Deleted: []int64{*event.MarkerDelete},
+								Partial: true,
 							},
 						},
 					}

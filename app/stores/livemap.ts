@@ -127,6 +127,15 @@ export const useLivemapStore = defineStore(
             const m = markersUsers.value.get(marker.userId);
             if (!m) {
                 markersUsers.value.set(marker.userId, marker);
+
+                // Ensure the job of the user marker is in the users jobs list
+                if (!jobsUsers.value.find((j) => j.name === marker.job)) {
+                    jobsUsers.value.push({
+                        name: marker.job,
+                        label: marker.jobLabel,
+                        grades: [],
+                    });
+                }
             } else {
                 updateUserMarker(m, marker);
             }
@@ -247,7 +256,17 @@ export const useLivemapStore = defineStore(
                     foundMarkers.push(v.id);
                 }
                 addOrUpdateMarkerMarker(v);
+
+                // Ensure the job of the marker marker is in the markers jobs list
+                if (!jobsMarkers.value.find((j) => j.name === v.job)) {
+                    jobsMarkers.value.push({
+                        name: v.job,
+                        label: v.jobLabel,
+                        grades: [],
+                    });
+                }
             });
+
             markers.deleted.forEach((id: number) => markersMarkers.value.delete(id));
             if (!markers.partial && markers.part <= 0) {
                 let removedMarkers = 0;
