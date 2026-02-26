@@ -119,9 +119,9 @@ func (s *Server) listDocumentsQuery(
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tDocumentShort.CreatorJob,
-			tDWorkflow.DocumentID,
-			tDWorkflow.AutoCloseTime,
-			tDWorkflow.NextReminderTime,
+			tWorkflowState.DocumentID,
+			tWorkflowState.AutoCloseTime,
+			tWorkflowState.NextReminderTime,
 			tDocumentShort.State.AS("meta.state"),
 			tDocumentShort.Closed.AS("meta.closed"),
 			tDocumentShort.Draft.AS("meta.draft"),
@@ -174,8 +174,8 @@ func (s *Server) listDocumentsQuery(
 			LEFT_JOIN(tCreator,
 				tDocumentShort.CreatorID.EQ(tCreator.ID),
 			).
-			LEFT_JOIN(tDWorkflow,
-				tDWorkflow.DocumentID.EQ(tDocumentShort.ID),
+			LEFT_JOIN(tWorkflowState,
+				tWorkflowState.DocumentID.EQ(tDocumentShort.ID),
 			).
 			LEFT_JOIN(tDMeta,
 				tDMeta.DocumentID.EQ(tDocumentShort.ID),
@@ -277,9 +277,9 @@ func (s *Server) getDocumentQuery(
 			tDPins.State,
 			tDPins.Job,
 			tDPins.UserID,
-			tDWorkflow.DocumentID,
-			tDWorkflow.AutoCloseTime,
-			tDWorkflow.NextReminderTime,
+			tWorkflowState.DocumentID,
+			tWorkflowState.AutoCloseTime,
+			tWorkflowState.NextReminderTime,
 			tUserWorkflow.DocumentID,
 			tUserWorkflow.UserID,
 			tUserWorkflow.ManualReminderTime,
@@ -332,8 +332,8 @@ func (s *Server) getDocumentQuery(
 			LEFT_JOIN(tDPins,
 				tDPins.DocumentID.EQ(tDocument.ID),
 			).
-			LEFT_JOIN(tDWorkflow,
-				tDWorkflow.DocumentID.EQ(tDocument.ID),
+			LEFT_JOIN(tWorkflowState,
+				tWorkflowState.DocumentID.EQ(tDocument.ID),
 			).
 			LEFT_JOIN(tUserWorkflow,
 				mysql.AND(

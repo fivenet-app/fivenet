@@ -44,13 +44,13 @@ func (s *Server) createOrUpdateWorkflowState(
 		nextReminderTime = mysql.TimestampT(now.Add(reminder.GetDuration().AsDuration()))
 	}
 
-	tWorkflow := table.FivenetDocumentsWorkflowState
-	stmt := tWorkflow.
+	tWorkflowState := table.FivenetDocumentsWorkflowState
+	stmt := tWorkflowState.
 		INSERT(
-			tWorkflow.DocumentID,
-			tWorkflow.AutoCloseTime,
-			tWorkflow.NextReminderTime,
-			tWorkflow.NextReminderCount,
+			tWorkflowState.DocumentID,
+			tWorkflowState.AutoCloseTime,
+			tWorkflowState.NextReminderTime,
+			tWorkflowState.NextReminderCount,
 		).
 		VALUES(
 			documentId,
@@ -59,9 +59,9 @@ func (s *Server) createOrUpdateWorkflowState(
 			mysql.NULL,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tWorkflow.AutoCloseTime.SET(autoCloseTime),
-			tWorkflow.NextReminderTime.SET(nextReminderTime),
-			tWorkflow.NextReminderCount.SET(mysql.IntExp(mysql.NULL)),
+			tWorkflowState.AutoCloseTime.SET(autoCloseTime),
+			tWorkflowState.NextReminderTime.SET(nextReminderTime),
+			tWorkflowState.NextReminderCount.SET(mysql.IntExp(mysql.NULL)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {

@@ -30,7 +30,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var tDWorkflow = table.FivenetDocumentsWorkflowState.AS("workflow_state")
+var tWorkflowState = table.FivenetDocumentsWorkflowState.AS("workflow_state")
 
 var WorkflowModule = fx.Module(
 	"documents.workflow",
@@ -170,24 +170,24 @@ func (w *Workflow) handleDocuments(
 
 	dest := []*workflowState{}
 	for {
-		stmt := tDWorkflow.
+		stmt := tWorkflowState.
 			SELECT(
-				tDWorkflow.DocumentID.AS("document_id"),
-				tDWorkflow.DocumentID,
-				tDWorkflow.NextReminderTime,
-				tDWorkflow.NextReminderCount,
-				tDWorkflow.AutoCloseTime,
-				tDWorkflow.ReminderCount,
+				tWorkflowState.DocumentID.AS("document_id"),
+				tWorkflowState.DocumentID,
+				tWorkflowState.NextReminderTime,
+				tWorkflowState.NextReminderCount,
+				tWorkflowState.AutoCloseTime,
+				tWorkflowState.ReminderCount,
 				tDTemplates.Workflow.AS("workflow_state.workflow"),
 				tDocumentShort.Title,
 				tDocumentShort.CreatorID,
 				tDocumentShort.CreatorJob,
 			).
 			FROM(
-				tDWorkflow.
+				tWorkflowState.
 					INNER_JOIN(tDocumentShort,
 						mysql.AND(
-							tDocumentShort.ID.EQ(tDWorkflow.DocumentID),
+							tDocumentShort.ID.EQ(tWorkflowState.DocumentID),
 							tDocumentShort.DeletedAt.IS_NULL(),
 						),
 					).
@@ -199,12 +199,12 @@ func (w *Workflow) handleDocuments(
 					),
 			).
 			WHERE(mysql.AND(
-				tDWorkflow.DocumentID.GT(mysql.Int64(data.GetLastDocId())),
+				tWorkflowState.DocumentID.GT(mysql.Int64(data.GetLastDocId())),
 				mysql.AND( // Only auto close and auto remind docs that aren't closed and have an owner
 					tDocumentShort.Closed.IS_FALSE(),
 					mysql.OR(
-						tDWorkflow.NextReminderTime.LT_EQ(nowTs),
-						tDWorkflow.AutoCloseTime.LT_EQ(nowTs),
+						tWorkflowState.NextReminderTime.LT_EQ(nowTs),
+						tWorkflowState.AutoCloseTime.LT_EQ(nowTs),
 					),
 				),
 			)).
@@ -285,7 +285,7 @@ func (w *Workflow) handleWorkflowState(
 		// Delete document workflow state, auto reminders are not sent for a closed document
 		return w.deleteWorkflowState(ctx, state)
 	} else if state.GetNextReminderTime() != nil && time.Since(state.GetNextReminderTime().AsTime()) > 0 {
-		if doc != nil && doc.GetCreatorId() != 0 {
+		if doc != nil && doc.GetCreatorId() > 0 {
 			var reminderMessage string
 			if reminder := w.getAutoReminder(state); reminder != nil && reminder.GetMessage() != "" {
 				reminderMessage = reminder.GetMessage()
@@ -309,9 +309,11 @@ func (w *Workflow) handleWorkflowState(
 	// * document doesn't exist anymore
 	// * if we don't have a doc creator anymore
 	// * reached the max reminder count
+	// * auto close and next reminder time is nil
 	if doc == nil ||
 		doc.GetCreatorId() == 0 ||
-		state.GetReminderCount() >= documentsworkflow.MaxReminderCount {
+		state.GetReminderCount() >= documentsworkflow.MaxReminderCount ||
+		(state.GetNextReminderTime() == nil && state.GetAutoCloseTime() == nil) {
 		return w.deleteWorkflowState(ctx, state)
 	}
 
