@@ -47,16 +47,14 @@ func (s *AccountsSync) Sync(ctx context.Context) (int64, error) {
 	}
 
 	// Sync jobs to FiveNet server
-	if s.cli != nil {
-		if err := s.sendData(ctx, &pbsync.SendDataRequest{
-			Data: &pbsync.SendDataRequest_Accounts{
-				Accounts: &syncdata.DataAccounts{
-					AccountUpdates: accounts,
-				},
+	if err := s.sendData(ctx, &pbsync.SendDataRequest{
+		Data: &pbsync.SendDataRequest_Accounts{
+			Accounts: &syncdata.DataAccounts{
+				AccountUpdates: accounts,
 			},
-		}); err != nil {
-			return 0, err
-		}
+		},
+	}); err != nil {
+		return 0, err
 	}
 
 	s.state.Set(0, nil)
@@ -65,7 +63,7 @@ func (s *AccountsSync) Sync(ctx context.Context) (int64, error) {
 }
 
 func (s *AccountsSync) fetchAccounts(ctx context.Context) ([]*syncactivity.AccountUpdate, error) {
-	limit := int64(200)
+	limit := s.cfg.Limits.Accounts
 	q := s.cfg.Tables.Accounts.GetQuery(s.state, 0, limit)
 	s.logger.Debug("accounts sync query", zap.String("query", q))
 

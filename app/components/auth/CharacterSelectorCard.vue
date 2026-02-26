@@ -91,7 +91,7 @@ const { game } = useAppConfig();
                 :disabled="unavailable || !canSubmit"
                 :loading="!canSubmit"
                 :icon="unavailable ? 'i-mdi-lock' : undefined"
-                :label="$t(!unavailable ? 'common.choose' : 'components.auth.CharacterSelectorCard.disabled_char')"
+                :label="$t(!unavailable ? 'common.choose' : 'components.auth.character_selector_card.disabled_char')"
                 @click="selectChar"
             />
         </template>

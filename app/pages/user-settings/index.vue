@@ -43,11 +43,11 @@ watch(designDocumentListStyle, async () => {
 </script>
 
 <template>
-    <UPageCard :title="$t('common.theme')" :description="$t('components.auth.user_settings_panel.customization')">
+    <UPageCard :title="$t('common.theme')" :description="$t('components.auth.user_settings.customization')">
         <UFormField
             class="grid grid-cols-2 items-center gap-2"
             name="darkMode"
-            :label="$t('components.auth.user_settings_panel.color_mode')"
+            :label="$t('components.auth.user_settings.color_mode')"
         >
             <UColorModeSelect color="neutral" variant="outline" class="w-full" />
         </UFormField>
@@ -59,7 +59,7 @@ watch(designDocumentListStyle, async () => {
         <UFormField
             class="grid grid-cols-2 items-center gap-2"
             name="grayColor"
-            :label="$t('components.auth.user_settings_panel.background_color')"
+            :label="$t('components.auth.user_settings.background_color')"
         >
             <ColorPickerTW v-model="design.ui.gray" name="grayColor" class="w-full" />
         </UFormField>
@@ -67,8 +67,8 @@ watch(designDocumentListStyle, async () => {
         <UFormField
             class="grid grid-cols-2 items-center gap-2"
             name="streamerMode"
-            :label="$t('components.auth.user_settings_panel.streamer_mode.title')"
-            :description="$t('components.auth.user_settings_panel.streamer_mode.description')"
+            :label="$t('components.auth.user_settings.streamer_mode.title')"
+            :description="$t('components.auth.user_settings.streamer_mode.description')"
         >
             <USwitch v-model="streamerMode" name="streamerMode" />
         </UFormField>
@@ -76,19 +76,19 @@ watch(designDocumentListStyle, async () => {
         <UFormField
             class="grid grid-cols-2 items-center gap-2"
             name="designDocumentListStyle"
-            :label="$t('components.auth.user_settings_panel.documents_lists_style.title')"
+            :label="$t('components.auth.user_settings.documents_lists_style.title')"
         >
             <div class="inline-flex items-center gap-2 text-sm">
-                <span>{{ $t('components.auth.user_settings_panel.documents_lists_style.single') }}</span>
+                <span>{{ $t('components.auth.user_settings.documents_lists_style.single') }}</span>
                 <USwitch v-model="designDocumentListStyle" />
-                <span>{{ $t('components.auth.user_settings_panel.documents_lists_style.double') }}</span>
+                <span>{{ $t('components.auth.user_settings.documents_lists_style.double') }}</span>
             </div>
         </UFormField>
 
         <UFormField
             class="grid grid-cols-2 items-center gap-2"
             name="selectedHomepage"
-            :label="$t('components.auth.user_settings_panel.set_startpage.title')"
+            :label="$t('components.auth.user_settings.set_startpage.title')"
         >
             <ClientOnly v-if="activeChar">
                 <USelectMenu
@@ -99,13 +99,13 @@ watch(designDocumentListStyle, async () => {
                 />
             </ClientOnly>
             <p v-else class="text-sm">
-                {{ $t('components.auth.user_settings_panel.set_startpage.no_char_selected') }}
+                {{ $t('components.auth.user_settings.set_startpage.no_char_selected') }}
             </p>
         </UFormField>
 
         <UFormField
-            :label="$t('components.auth.user_settings_panel.events_disabled.label')"
-            :description="$t('components.auth.user_settings_panel.events_disabled.description')"
+            :label="$t('components.auth.user_settings.events_disabled.label')"
+            :description="$t('components.auth.user_settings.events_disabled.description')"
             name="eventsDisabled"
             class="grid grid-cols-2 items-center gap-2"
         >

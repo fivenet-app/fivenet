@@ -7,7 +7,7 @@ interface Props extends /* @vue-ignore */ BadgeProps {
     status?: StatusDispatch | undefined;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
     status: StatusDispatch.UNSPECIFIED,
 });
 </script>
@@ -15,8 +15,8 @@ withDefaults(defineProps<Props>(), {
 <template>
     <UBadge
         class="text-highlighted"
-        :class="dispatchStatusAnimate(status) ? 'animate-pulse' : ''"
-        :color="dispatchStatusToBadgeColor(status)"
+        :class="[dispatchStatusAnimate(props.status) ? 'animate-pulse' : '']"
+        :color="dispatchStatusToBadgeColor(props.status)"
         size="xs"
         :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[status ?? 0]}`)"
         v-bind="$attrs"

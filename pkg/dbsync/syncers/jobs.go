@@ -48,23 +48,21 @@ func (s *JobsSync) Sync(ctx context.Context) (int64, error) {
 	}
 
 	// Sync jobs to FiveNet server
-	if s.cli != nil {
-		if err := s.sendData(ctx, &pbsync.SendDataRequest{
-			Data: &pbsync.SendDataRequest_Jobs{
-				Jobs: &syncdata.DataJobs{
-					Jobs: jobs,
-				},
+	if err := s.sendData(ctx, &pbsync.SendDataRequest{
+		Data: &pbsync.SendDataRequest_Jobs{
+			Jobs: &syncdata.DataJobs{
+				Jobs: jobs,
 			},
-		}); err != nil {
-			return 0, err
-		}
+		},
+	}); err != nil {
+		return 0, err
 	}
 
 	return count, nil
 }
 
 func (s *JobsSync) fetchJobs(ctx context.Context) ([]*jobs.Job, error) {
-	limit := int64(200)
+	limit := s.cfg.Limits.Jobs
 	q := s.cfg.Tables.Jobs.GetQuery(0, limit)
 	s.logger.Debug("jobs sync query", zap.String("query", q))
 

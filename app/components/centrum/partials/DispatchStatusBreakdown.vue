@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
+import { dispatchStatusToBadgeColor } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/stores/centrum';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 
@@ -81,35 +81,35 @@ defineOptions({
                 <UIcon v-if="!counts" class="size-4 animate-spin" name="i-mdi-refresh" />
                 <div v-else class="flex flex-col gap-1 text-sm font-normal text-nowrap">
                     <div class="inline-flex justify-between gap-1.5">
-                        <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.UNASSIGNED)" size="sm">
+                        <UBadge class="px-2 py-1" :color="dispatchStatusToBadgeColor(StatusDispatch.UNASSIGNED)" size="sm">
                             {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.UNASSIGNED]}`) }}
                         </UBadge>
                         <p class="font-semibold">{{ counts?.unassigned }}</p>
                     </div>
 
                     <div class="inline-flex justify-between gap-1.5">
-                        <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.EN_ROUTE)" size="sm">
+                        <UBadge class="px-2 py-1" :color="dispatchStatusToBadgeColor(StatusDispatch.EN_ROUTE)" size="sm">
                             {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.EN_ROUTE]}`) }}
                         </UBadge>
                         <p class="font-semibold">{{ counts.enRoute }}</p>
                     </div>
 
                     <div class="inline-flex justify-between gap-1.5">
-                        <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.ON_SCENE)" size="sm">
+                        <UBadge class="px-2 py-1" :color="dispatchStatusToBadgeColor(StatusDispatch.ON_SCENE)" size="sm">
                             {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.ON_SCENE]}`) }}
                         </UBadge>
                         <p class="font-semibold">{{ counts.onScene }}</p>
                     </div>
 
                     <div class="inline-flex justify-between gap-1.5">
-                        <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.NEED_ASSISTANCE)" size="sm">
+                        <UBadge class="px-2 py-1" :color="dispatchStatusToBadgeColor(StatusDispatch.NEED_ASSISTANCE)" size="sm">
                             {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.NEED_ASSISTANCE]}`) }}
                         </UBadge>
                         <p class="font-semibold">{{ counts.needAssistance }}</p>
                     </div>
 
                     <div class="inline-flex justify-between gap-1.5">
-                        <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.COMPLETED)" size="sm">
+                        <UBadge class="px-2 py-1" :color="dispatchStatusToBadgeColor(StatusDispatch.COMPLETED)" size="sm">
                             {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.COMPLETED]}`) }}
                         </UBadge>
                         <p class="font-semibold">{{ counts.completed }}</p>

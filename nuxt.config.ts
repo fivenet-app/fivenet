@@ -21,7 +21,6 @@ export default defineNuxtConfig({
         '@nuxt/content',
         'nuxt-tiptap-editor',
         '@vueuse/nuxt',
-        '@vueuse/sound/nuxt',
         '@nuxtjs/leaflet',
         '@nuxt/test-utils/module',
     ],
@@ -294,9 +293,7 @@ export default defineNuxtConfig({
     tiptap: {},
 
     sound: {
-        sounds: {
-            scan: true,
-        },
+        scan: false,
     },
 
     leaflet: {

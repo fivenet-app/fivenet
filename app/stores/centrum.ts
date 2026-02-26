@@ -55,8 +55,9 @@ export const useCentrumStore = defineStore(
         const ownDispatches = ref<number[]>([]);
         const pendingDispatches = ref<number[]>([]);
 
-        const messageIncomdingSound = useSounds('/sounds/centrum/message-incoming.mp3');
-        const sosSound = useSounds('/sounds/centrum/morse-sos.mp3');
+        const dispatchSOS = useSounds('centrum.dispatchSOS');
+        const dispatchAssigned = useSounds('centrum.dispatchAssigned');
+        const dispatchCompleted = useSounds('centrum.dispatchCompleted');
 
         // Helpers
         /**
@@ -439,7 +440,7 @@ export const useCentrumStore = defineStore(
                     actions: getNotificationActions(),
                 });
 
-                messageIncomdingSound.play();
+                dispatchAssigned.play();
             }
         };
 
@@ -676,11 +677,16 @@ export const useCentrumStore = defineStore(
                             addFeedItem(ds);
                         }
 
-                        if (ds.status === StatusDispatch.ARCHIVED) {
+                        if (ds.status === StatusDispatch.COMPLETED) {
+                            // Play sound if one of the user's own dispatches got completed
+                            if (ownDispatches.value.includes(ds.dispatchId)) {
+                                dispatchCompleted.play();
+                            }
+                        } else if (ds.status === StatusDispatch.ARCHIVED) {
                             removeDispatch(ds.id);
                             continue;
                         } else if (ds.status === StatusDispatch.NEED_ASSISTANCE) {
-                            sosSound.play();
+                            dispatchSOS.play();
                         }
 
                         // If update is from the user

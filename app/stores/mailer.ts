@@ -109,7 +109,7 @@ export const useMailerStore = defineStore(
          */
         const addressBook = ref<{ label: string; name?: string }[]>([]);
 
-        const notificationSound = useSounds('/sounds/notification.mp3');
+        const notificationSound = useSounds('notification');
 
         /**
          * Handle updates to a thread.

@@ -94,6 +94,7 @@ func UseSchema(schema string) {
 	FivenetRbacRoles = FivenetRbacRoles.FromSchema(schema)
 	FivenetRbacRolesAttrs = FivenetRbacRolesAttrs.FromSchema(schema)
 	FivenetRbacRolesPermissions = FivenetRbacRolesPermissions.FromSchema(schema)
+	FivenetSyncUser = FivenetSyncUser.FromSchema(schema)
 	FivenetUser = FivenetUser.FromSchema(schema)
 	FivenetUserActivity = FivenetUserActivity.FromSchema(schema)
 	FivenetUserJobs = FivenetUserJobs.FromSchema(schema)
