@@ -79,20 +79,6 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, error) {
 		return 0, offset, "", nil
 	}
 
-	// Sync vehicles to FiveNet server
-	if err := s.sendData(ctx, &pbsync.SendDataRequest{
-		Data: &pbsync.SendDataRequest_Vehicles{
-			Vehicles: &syncdata.DataVehicles{
-				Vehicles: vehicles,
-			},
-		},
-	}); err != nil {
-		return 0, offset, "", fmt.Errorf(
-			"failed to send vehicles data to FiveNet server. %w",
-			err,
-		)
-	}
-
 	for i, v := range slices.Backward(vehicles) {
 		// Get hash of user data to compare with existing hash and skip sending if data is the same (treat as not updated)
 		_, hash, err := protoutils.JSONAndHash(v)
@@ -117,6 +103,26 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, error) {
 		} else {
 			s.hashes.Put(v.GetPlate(), hash, vehicleHashCacheTTL)
 		}
+	}
+
+	// No vehicles left to sync after hash check, return early
+	if len(vehicles) == 0 {
+		s.state.Set(0, nil)
+		return 0, offset, "", nil
+	}
+
+	// Sync vehicles to FiveNet server
+	if err := s.sendData(ctx, &pbsync.SendDataRequest{
+		Data: &pbsync.SendDataRequest_Vehicles{
+			Vehicles: &syncdata.DataVehicles{
+				Vehicles: vehicles,
+			},
+		},
+	}); err != nil {
+		return 0, offset, "", fmt.Errorf(
+			"failed to send vehicles data to FiveNet server. %w",
+			err,
+		)
 	}
 
 	// If less vehicles than limit are returned, we probably have reached the "end" of the table

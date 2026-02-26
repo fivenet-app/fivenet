@@ -119,6 +119,12 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, error) {
 		}
 	}
 
+	// No users left to sync after hash check, return early
+	if len(us) == 0 {
+		s.state.Set(0, nil)
+		return 0, offset, "", nil
+	}
+
 	if err := s.sendData(ctx, &pbsync.SendDataRequest{
 		Data: &pbsync.SendDataRequest_Users{
 			Users: &syncdata.DataUsers{
