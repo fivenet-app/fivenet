@@ -131,6 +131,7 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, error) {
 
 	s.logger.Debug("usersSync", zap.Bool("syncedUp", s.state.GetSyncedUp()))
 
+	count = int64(len(us))
 	lastId := int64(us[count-1].GetUserId())
 	lastUserId := strconv.FormatInt(lastId, 10)
 	s.state.Set(offset+limit, &lastUserId)

@@ -126,6 +126,7 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, error) {
 		s.state.SetSyncedUp(true)
 	}
 
+	count = int64(len(vehicles))
 	lastPlate := vehicles[count-1].GetPlate()
 	s.state.Set(limit+offset, &lastPlate)
 
