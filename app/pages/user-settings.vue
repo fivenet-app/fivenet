@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 useHead({
-    title: 'components.auth.user_settings_panel.title',
+    title: 'components.auth.user_settings.title',
 });
 
 definePageMeta({
-    title: 'components.auth.user_settings_panel.title',
+    title: 'components.auth.user_settings.title',
     requiresAuth: true,
     authTokenOnly: true,
     showCookieOptions: true,
@@ -30,7 +30,7 @@ const items = computed(() => [
 <template>
     <UDashboardPanel>
         <template #header>
-            <UDashboardNavbar :title="$t('components.auth.user_settings_panel.title')">
+            <UDashboardNavbar :title="$t('components.auth.user_settings.title')">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>

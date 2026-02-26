@@ -87,8 +87,8 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
                 icon="i-mdi-information-outline"
                 color="primary"
                 variant="subtle"
-                :title="$t('components.auth.CharacterSelectorCard.char_lock_alert.title')"
-                :description="$t('components.auth.CharacterSelectorCard.char_lock_alert.description')"
+                :title="$t('components.auth.character_selector_card.char_lock_alert.title')"
+                :description="$t('components.auth.character_selector_card.char_lock_alert.description')"
                 :ui="{ wrapper: 'relative overflow-hidden' }"
             />
         </UContainer>

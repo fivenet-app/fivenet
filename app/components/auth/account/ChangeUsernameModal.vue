@@ -64,24 +64,24 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="$t('components.auth.ChangeUsernameModal.change_username')" :prevent-close="!canSubmit">
+    <UModal :title="$t('components.auth.change_username_modal.change_username')" :prevent-close="!canSubmit">
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                <UFormField name="currentUsername" :label="$t('components.auth.ChangeUsernameModal.current_username')">
+                <UFormField name="currentUsername" :label="$t('components.auth.change_username_modal.current_username')">
                     <UInput
                         v-model="state.currentUsername"
                         type="text"
                         autocomplete="current-username"
-                        :placeholder="$t('components.auth.ChangeUsernameModal.current_username')"
+                        :placeholder="$t('components.auth.change_username_modal.current_username')"
                     />
                 </UFormField>
 
-                <UFormField name="newUsername" :label="$t('components.auth.ChangeUsernameModal.new_username')">
+                <UFormField name="newUsername" :label="$t('components.auth.change_username_modal.new_username')">
                     <UInput
                         v-model="state.newUsername"
                         type="text"
                         autocomplete="new-username"
-                        :placeholder="$t('components.auth.ChangeUsernameModal.new_username')"
+                        :placeholder="$t('components.auth.change_username_modal.new_username')"
                     />
                 </UFormField>
             </UForm>
@@ -96,7 +96,7 @@ const formRef = useTemplateRef('formRef');
                     block
                     :disabled="!canSubmit"
                     :loading="!canSubmit"
-                    :label="$t('components.auth.ChangeUsernameModal.change_username')"
+                    :label="$t('components.auth.change_username_modal.change_username')"
                     @click="formRef?.submit()"
                 />
             </UFieldGroup>

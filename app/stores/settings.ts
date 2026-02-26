@@ -42,6 +42,21 @@ export type SignatureSettings = {
     maxStrokeWidth: number;
 };
 
+export type AudioSettings = {
+    notificationsVolume: number;
+    sounds: AudioSoundsSettings;
+};
+
+export type AudioSoundsSettings = {
+    notification: NotificationSound;
+
+    'centrum.attention': NotificationSound;
+    'centrum.dispatchSOS': NotificationSound;
+    'centrum.dispatchAssigned': NotificationSound;
+    'centrum.dispatchUpdated': NotificationSound;
+    'centrum.dispatchCompleted': NotificationSound;
+};
+
 export const useSettingsStore = defineStore(
     'settings',
     () => {
@@ -88,8 +103,18 @@ export const useSettingsStore = defineStore(
             },
         });
 
-        const audio = ref({
+        const audio = ref<AudioSettings>({
             notificationsVolume: 0.15,
+
+            sounds: {
+                notification: { value: 'default' },
+
+                'centrum.attention': { value: 'default' },
+                'centrum.dispatchSOS': { value: 'default' },
+                'centrum.dispatchAssigned': { value: 'default' },
+                'centrum.dispatchUpdated': { value: 'none' },
+                'centrum.dispatchCompleted': { value: 'none' },
+            },
         });
 
         const calendar = ref({

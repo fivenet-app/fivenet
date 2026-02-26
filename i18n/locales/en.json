@@ -755,7 +755,8 @@
         "only_not_already_acted": "Only Not Already Acted",
         "never": "Never",
         "request_sync": "Request Sync",
-        "own_documents": "Own Documents"
+        "own_documents": "Own Documents",
+        "default": "Default"
     },
     "components": {
         "partials": {
@@ -1307,7 +1308,7 @@
                 "subtitle": "To create an account join the FiveM server and run {command} command.",
                 "open_server_account_management": "Click below to retrieve your registration token (you can also use {command})."
             },
-            "user_settings_panel": {
+            "user_settings": {
                 "title": "User Settings",
                 "subtitle": "Customize your user experience and manage your settings.",
                 "set_startpage": {
@@ -1335,7 +1336,7 @@
                 },
                 "calendar_notifications": {
                     "title": "Calendar Notifications",
-                    "subtitle": "Set the reminder times for calendar events to which you have responded with \"Yes\" and \"Maybe\".",
+                    "description": "Set the reminder times for calendar events to which you have responded with \"Yes\" and \"Maybe\".",
                     "reminder_times": {
                         "name": "Reminders to send before the event",
                         "start": "Start of Event"
@@ -1345,9 +1346,23 @@
                     "label": "Disable event effects",
                     "description": "Like snow flakes during Christmas time. Can improve performance on lower-end devices."
                 },
-                "color_mode": "Color Mode"
+                "color_mode": "Color Mode",
+                "sounds": {
+                    "title": "Sounds",
+                    "description": "Set the sounds used for notifications and other events. You can also set custom sounds to use for notifications in your FiveNet. Please note that the sounds are stored locally in your browser and will not be available on other devices or browsers. If you clear your browser data, the custom sounds will be removed and you will have to set them up again.",
+                    "custom_sound": "Custom Sound",
+                    "select_custom_sound": "Select Custom Sound File",
+                    "notification": "Notification Sound",
+                    "centrum": {
+                        "attention": "Attention Sound",
+                        "dispatch_sos": "Dispatch SOS",
+                        "dispatch_assigned": "Dispatch Assigned",
+                        "dispatch_updated": "Dispatch Updated",
+                        "dispatch_completed": "Dispatch Completed"
+                    }
+                }
             },
-            "ChangeUsernameModal": {
+            "change_username_modal": {
                 "change_username": "Change Username",
                 "current_username": "Current Username",
                 "new_username": "New Username"
@@ -1355,7 +1370,7 @@
             "CharacterSelector": {
                 "title": "Character Selector"
             },
-            "CharacterSelectorCard": {
+            "character_selector_card": {
                 "char_lock_alert": {
                     "title": "Char lock is active!",
                     "description": "Only your last online character, that was active on the server, can be accessed."

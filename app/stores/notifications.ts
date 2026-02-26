@@ -65,7 +65,7 @@ export const useNotificationsStore = defineStore(
          */
         const dismissedBannerMessageID = ref<string | undefined>();
 
-        const notificationSound = useSounds('/sounds/notification.mp3');
+        const notificationSound = useSounds('notification');
 
         // Actions
         /**

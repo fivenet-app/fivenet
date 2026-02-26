@@ -55,8 +55,8 @@ export const useCentrumStore = defineStore(
         const ownDispatches = ref<number[]>([]);
         const pendingDispatches = ref<number[]>([]);
 
-        const messageIncomdingSound = useSounds('/sounds/centrum/message-incoming.mp3');
-        const sosSound = useSounds('/sounds/centrum/morse-sos.mp3');
+        const messageIncomingSound = useSounds('centrum.dispatchAssigned');
+        const sosSound = useSounds('centrum.dispatchSOS');
 
         // Helpers
         /**
@@ -439,7 +439,7 @@ export const useCentrumStore = defineStore(
                     actions: getNotificationActions(),
                 });
 
-                messageIncomdingSound.play();
+                messageIncomingSound.play();
             }
         };
 

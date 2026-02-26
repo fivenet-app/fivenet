@@ -71,7 +71,7 @@ export const useCalendarStore = defineStore(
         /**
          * Notification sound for calendar events.
          */
-        const notificationSound = useSounds('/sounds/notification.mp3');
+        const notificationSound = useSounds('notification');
 
         // Actions
         /**

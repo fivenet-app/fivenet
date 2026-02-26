@@ -285,7 +285,7 @@ onBeforeRouteLeave(async (to) => {
     await stopStream(true);
 });
 
-const attentionSound = useSounds('/sounds/centrum/attention.mp3', { playbackRate: 1.85 });
+const attentionSound = useSounds('centrum.attention', { playbackRate: 1.85 });
 
 const unitCheckupStatusAge = 12.5 * 60 * 1000;
 const unitCheckupStatusReping = 15 * 60 * 1000;

@@ -755,7 +755,8 @@
         "only_not_already_acted": "Nur nicht Bearbeitete",
         "never": "Nie",
         "request_sync": "Synchronisierung anfordern",
-        "own_documents": "Eigene Dokumente"
+        "own_documents": "Eigene Dokumente",
+        "default": "Standard"
     },
     "components": {
         "partials": {
@@ -1307,7 +1308,7 @@
                 "subtitle": "Um ein Konto zu erstellen, treten Sie dem FiveM-Server bei und geben Sie den Befehl {command} ein.",
                 "open_server_account_management": "Klicken sie unten, um ihren Registrierungstoken zu erhalten (sie können auch den Befehl {command} nutzen)."
             },
-            "user_settings_panel": {
+            "user_settings": {
                 "title": "Benutzer-Einstellungen",
                 "subtitle": "Passen Sie Ihre Benutzererfahrung an und verwalten Sie Ihre Einstellungen.",
                 "set_startpage": {
@@ -1335,7 +1336,7 @@
                 },
                 "calendar_notifications": {
                     "title": "Kalendar Benachrichtigungen",
-                    "subtitle": "Legen Sie die Erinnerungszeiten für Kalenderereignisse fest, auf die Sie mit \"Ja\" und \"Vielleicht\" geantwortet haben.",
+                    "description": "Legen Sie die Erinnerungszeiten für Kalenderereignisse fest, auf die Sie mit \"Ja\" und \"Vielleicht\" geantwortet haben.",
                     "reminder_times": {
                         "name": "Vor dem Termin zu versendende Erinnerungen",
                         "start": "Beginn des Termines"
@@ -1345,9 +1346,23 @@
                     "label": "Event-Effekte deaktivieren",
                     "description": "Wie z.B. Schneeflocken zur Weihnachtszeit. Kann die Leistung auf schwächeren Geräten verbessern."
                 },
-                "color_mode": "Farbmodus"
+                "color_mode": "Farbmodus",
+                "sounds": {
+                    "title": "Sound-Einstellungen",
+                    "description": "Legen Sie die Sounds fest, die für Benachrichtigungen und andere Ereignisse verwendet werden. Sie können auch benutzerdefinierte Sounds für Benachrichtigungen in Ihrem FiveNet festlegen. Bitte beachten Sie, dass die Sounds lokal in Ihrem Browser gespeichert werden und auf anderen Geräten oder Browsern nicht verfügbar sind. Wenn Sie Ihre Browserdaten löschen, werden die benutzerdefinierten Sounds entfernt und Sie müssen sie erneut einrichten.",
+                    "custom_sound": "Benutzerdefinierter Sound",
+                    "select_custom_sound": "Wählen Sie einen benutzerdefinierten Sound aus",
+                    "notification": "Benachrichtigungs-Sounds",
+                    "centrum": {
+                        "attention": "Aufmerksamkeits-Sound",
+                        "dispatch_sos": "Einsatz SOS",
+                        "dispatch_assigned": "Einsatz Zugewiesen",
+                        "dispatch_updated": "Einsatz Aktualisiert",
+                        "dispatch_completed": "Einsatz Abgeschlossen"
+                    }
+                }
             },
-            "ChangeUsernameModal": {
+            "change_username_modal": {
                 "change_username": "Benutzername ändern",
                 "current_username": "Momentaner Benutzername",
                 "new_username": "Neuer Benutzername"
@@ -1355,7 +1370,7 @@
             "CharacterSelector": {
                 "title": "Charakter Auswahl"
             },
-            "CharacterSelectorCard": {
+            "character_selector_card": {
                 "char_lock_alert": {
                     "title": "Charakter-Sperre ist aktiv!",
                     "description": "Nur auf Ihren letzten Online-Charakter, der auf dem Server aktiv war, kann zugegriffen werden."
