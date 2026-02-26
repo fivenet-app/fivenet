@@ -47,8 +47,8 @@ const onlyDrafts: ToggleItem<boolean | undefined>[] = [
 ];
 
 const schema = z.object({
-    documentIds: z.coerce.string().max(16).optional(),
-    title: z.coerce
+    documentIds: z.string().max(16).optional(),
+    title: z
         .string()
         .max(64)
         .optional()

@@ -40,10 +40,10 @@ const { maxAccessEntries } = useAppConfig();
 const schema = z.object({
     name: z.coerce.string().min(3).max(24),
     initials: z.coerce.string().min(2).max(4),
-    description: z.union([z.coerce.string().min(1).max(255), z.coerce.string().length(0).optional()]),
+    description: z.union([z.string().min(1).max(255), z.string().length(0).optional()]),
     color: z.coerce.string().length(7),
-    icon: z.coerce.string().max(128).optional(),
-    homePostal: z.union([z.coerce.string().trim().min(1).max(48), z.coerce.string().trim().length(0).optional()]),
+    icon: z.string().max(128).optional(),
+    homePostal: z.union([z.string().trim().min(1).max(48), z.string().trim().length(0).optional()]),
     attributes: z.enum(UnitAttribute).array().max(5).default([]),
     access: z.object({
         jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),

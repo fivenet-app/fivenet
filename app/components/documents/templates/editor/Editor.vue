@@ -52,9 +52,9 @@ const schema = z.object({
     title: z.coerce.string().min(3).max(255),
     description: z.coerce.string().max(255),
     color: z.coerce.string().max(7),
-    icon: z.coerce.string().max(128).optional(),
+    icon: z.string().max(128).optional(),
     contentTitle: z.coerce.string().min(3).max(2048),
-    content: z.coerce.string().optional(),
+    content: z.string().optional(),
     contentState: z.union([z.coerce.string().min(1).max(512), z.coerce.string().length(0)]),
     category: z.custom<Category>().optional(),
     jobAccess: jobsAccessEntries(t).max(maxAccessEntries).default([]),
@@ -80,13 +80,13 @@ const schema = z.object({
                     z.object({
                         ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
                         userId: z.coerce.number(),
-                        job: z.coerce.string().optional(),
+                        job: z.string().optional(),
                         minimumGrade: z.coerce.number().min(game.startJobGrade).optional(),
                         label: z.string().max(120).optional(),
                         signatureRequired: z.coerce.boolean().default(false),
                         slots: z.coerce.number().min(1).max(10).optional().default(1),
                         dueInDays: z.coerce.number().min(1).optional(),
-                        comment: z.coerce.string().max(255).optional(),
+                        comment: z.string().max(255).optional(),
                     }),
                     z.object({
                         ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
@@ -97,7 +97,7 @@ const schema = z.object({
                         signatureRequired: z.coerce.boolean().default(false),
                         slots: z.coerce.number().min(1).max(10).optional().default(1),
                         dueInDays: z.coerce.number().min(1).optional(),
-                        comment: z.coerce.string().max(255).optional(),
+                        comment: z.string().max(255).optional(),
                     }),
                 ])
                 .array()

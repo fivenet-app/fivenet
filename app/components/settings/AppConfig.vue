@@ -73,8 +73,8 @@ const schema = z.object({
     }),
     website: z.object({
         links: z.object({
-            privacyPolicy: z.union([z.url().min(1).max(255).startsWith('https://'), z.coerce.string().length(0).optional()]),
-            imprint: z.union([z.url().min(1).max(255).startsWith('https://'), z.coerce.string().length(0).optional()]),
+            privacyPolicy: z.union([z.url().min(1).max(255).startsWith('https://'), z.string().length(0).optional()]),
+            imprint: z.union([z.url().min(1).max(255).startsWith('https://'), z.string().length(0).optional()]),
         }),
         statsPage: z.coerce.boolean(),
     }),
@@ -93,18 +93,15 @@ const schema = z.object({
     discord: z.object({
         enabled: z.coerce.boolean(),
         syncInterval: zodDurationSchema,
-        botId: z.coerce.string().optional(),
+        botId: z.string().optional(),
         botPermissions: z.coerce.number(),
-        inviteUrl: z.union([
-            z.url().min(1).max(255).startsWith('https://discord.com/'),
-            z.coerce.string().length(0).optional(),
-        ]),
+        inviteUrl: z.union([z.url().min(1).max(255).startsWith('https://discord.com/'), z.string().length(0).optional()]),
         ignoredJobs: z.coerce.string().array().max(99).default([]),
         botPresence: z
             .object({
                 type: z.enum(DiscordBotPresenceType),
-                status: z.coerce.string().max(255).optional(),
-                url: z.union([z.url({ protocol: /^https$/ }).max(255), z.coerce.string().length(0).optional()]),
+                status: z.string().max(255).optional(),
+                url: z.union([z.url({ protocol: /^https$/ }).max(255), z.string().length(0).optional()]),
             })
             .optional(),
     }),
@@ -129,8 +126,8 @@ const schema = z.object({
             .object({
                 detentionTimeUnit: z
                     .object({
-                        singular: z.coerce.string().max(32).optional(),
-                        plural: z.coerce.string().max(32).optional(),
+                        singular: z.string().max(32).optional(),
+                        plural: z.string().max(32).optional(),
                     })
                     .optional(),
                 maxCount: z.coerce.number().int().min(1).max(100).nonnegative().optional(),
@@ -141,7 +138,7 @@ const schema = z.object({
                         fine: z.coerce.number().int().min(0).max(999_999_999_999).optional(),
                         detentionTime: z.coerce.number().int().min(0).max(999_999_999_999).optional(),
                         stvoPoints: z.coerce.number().int().min(0).max(999_999_999_999).optional(),
-                        warnMessage: z.coerce.string().max(512).optional(),
+                        warnMessage: z.string().max(512).optional(),
                     })
                     .optional(),
             })

@@ -56,15 +56,15 @@ const schema = z.object({
     weight: z.coerce.number(),
     abbreviation: z.coerce.string().min(3).max(20),
     title: z.coerce.string().min(3).max(255),
-    description: z.union([z.coerce.string().min(3).max(512), z.coerce.string().length(0).optional()]),
+    description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
     content: z.custom<JSONContent | string>().optional(),
     closed: z.coerce.boolean(),
     draft: z.coerce.boolean(),
     public: z.coerce.boolean(),
     discordSyncEnabled: z.coerce.boolean(),
     discordSettings: z.object({
-        roleName: z.coerce.string().max(64).optional(),
-        roleFormat: z.coerce.string().max(64).optional(),
+        roleName: z.string().max(64).optional(),
+        roleFormat: z.string().max(64).optional(),
     }),
     examMode: z.enum(QualificationExamMode).default(QualificationExamMode.DISABLED),
     examSettings: examSettings,
@@ -74,7 +74,7 @@ const schema = z.object({
                 id: z.coerce.number(),
                 qualificationId: z.coerce.number().default(props.qualificationId),
                 title: z.coerce.string().min(0).max(512),
-                description: z.coerce.string().max(1024).optional(),
+                description: z.string().max(1024).optional(),
                 data: z
                     .object({
                         data: z.union([
@@ -89,7 +89,7 @@ const schema = z.object({
                                 oneofKind: z.literal('image'),
                                 image: z.object({
                                     image: z.custom<File>().optional(),
-                                    alt: z.coerce.string().max(128).optional(),
+                                    alt: z.string().max(128).optional(),
                                 }),
                             }),
                             z.object({
@@ -169,7 +169,7 @@ const schema = z.object({
         jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
     }),
     labelSyncEnabled: z.coerce.boolean(),
-    labelSyncFormat: z.coerce.string().max(128).optional(),
+    labelSyncFormat: z.string().max(128).optional(),
     files: z.custom<File>().array().max(5).default([]),
     requirements: z.custom<QualificationRequirement>().array().max(10).default([]),
 });

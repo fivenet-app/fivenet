@@ -39,7 +39,7 @@ const canDo = computed(() => ({
 
 const schema = z.object({
     name: z.coerce.string().min(3).max(255),
-    description: z.coerce.string().optional(),
+    description: z.string().optional(),
     private: z.coerce.boolean(),
     public: z.coerce.boolean(),
     closed: z.coerce.boolean(),

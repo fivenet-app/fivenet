@@ -28,11 +28,11 @@ const { streamerMode } = storeToRefs(settingsStore);
 const settingsAccountsClient = await getSettingsAccountsClient();
 
 const schema = z.object({
-    license: z.coerce.string().max(64).optional(),
+    license: z.string().max(64).optional(),
     onlyDisabled: z.coerce.boolean().default(false),
-    username: z.coerce.string().max(64).optional(),
-    externalId: z.coerce.string().max(64).optional(),
-    group: z.coerce.string().max(64).optional(),
+    username: z.string().max(64).optional(),
+    externalId: z.string().max(64).optional(),
+    group: z.string().max(64).optional(),
 
     sorting: z
         .object({

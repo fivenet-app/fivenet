@@ -31,12 +31,12 @@ const notifications = useNotificationsStore();
 const citizensCitizensClient = await getCitizensCitizensClient();
 
 const schema = z.object({
-    name: z.coerce.string().max(64).optional(),
-    phoneNumber: z.coerce.string().max(20).optional(),
+    name: z.string().max(64).optional(),
+    phoneNumber: z.string().max(20).optional(),
     wanted: z.coerce.boolean().optional(),
     trafficInfractionPoints: z.coerce.number().nonnegative().optional(),
     openFines: z.coerce.number().nonnegative().optional(),
-    dateofbirth: z.coerce.string().max(10).optional(),
+    dateofbirth: z.string().max(10).optional(),
     height: z.coerce.number().nonnegative().array().max(2).default([0, 250]),
 
     sorting: z

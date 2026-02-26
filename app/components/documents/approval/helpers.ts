@@ -45,13 +45,13 @@ export function getZApprovalTask(startJobGrade: number) {
         z.object({
             ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
             userId: z.coerce.number(),
-            job: z.coerce.string().optional(),
+            job: z.string().optional(),
             minimumGrade: z.coerce.number().min(startJobGrade).optional(),
             label: z.string().max(120).default(''),
             signatureRequired: z.coerce.boolean().default(false),
             slots: z.coerce.number().min(1).max(10).optional().default(1),
             dueAt: z.date().optional(),
-            comment: z.coerce.string().max(255).optional(),
+            comment: z.string().max(255).optional(),
         }),
         z.object({
             ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
@@ -62,7 +62,7 @@ export function getZApprovalTask(startJobGrade: number) {
             signatureRequired: z.coerce.boolean().default(false),
             slots: z.coerce.number().min(1).max(10).optional().default(1),
             dueAt: z.date().optional(),
-            comment: z.coerce.string().max(255).optional(),
+            comment: z.string().max(255).optional(),
         }),
     ]);
 }

@@ -26,7 +26,7 @@ const settingsAccountsClient = await getSettingsAccountsClient();
 const schema = z.object({
     enabled: z.coerce.boolean().default(true),
     lastChar: z.coerce.number().optional(),
-    groups: z.coerce.string().array().max(5).optional(),
+    groups: z.string().array().max(5).optional(),
 });
 
 type Schema = z.output<typeof schema>;
