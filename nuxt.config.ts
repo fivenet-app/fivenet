@@ -292,10 +292,6 @@ export default defineNuxtConfig({
 
     tiptap: {},
 
-    sound: {
-        scan: false,
-    },
-
     leaflet: {
         heat: true,
     },

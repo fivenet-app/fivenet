@@ -190,7 +190,7 @@ importers:
         specifier: 2.0.2
         version: 2.0.2
       howler:
-        specifier: ^2.2.4
+        specifier: 2.2.4
         version: 2.2.4
       leaflet:
         specifier: 1.9.4
@@ -287,7 +287,7 @@ importers:
         specifier: 3.15.12
         version: 3.15.12
       '@types/howler':
-        specifier: ^2.2.12
+        specifier: 2.2.12
         version: 2.2.12
       '@types/leaflet':
         specifier: 1.9.21
