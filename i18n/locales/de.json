@@ -1357,7 +1357,6 @@
                         "attention": "Aufmerksamkeits-Sound",
                         "dispatch_sos": "Einsatz SOS",
                         "dispatch_assigned": "Einsatz Zugewiesen",
-                        "dispatch_updated": "Einsatz Aktualisiert",
                         "dispatch_completed": "Einsatz Abgeschlossen"
                     }
                 }

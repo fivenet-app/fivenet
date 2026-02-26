@@ -1357,7 +1357,6 @@
                         "attention": "Attention Sound",
                         "dispatch_sos": "Dispatch SOS",
                         "dispatch_assigned": "Dispatch Assigned",
-                        "dispatch_updated": "Dispatch Updated",
                         "dispatch_completed": "Dispatch Completed"
                     }
                 }

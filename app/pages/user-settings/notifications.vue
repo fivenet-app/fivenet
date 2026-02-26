@@ -90,11 +90,6 @@ const sounds = computed<
             items: [soundDefaultItem, ...soundsBaseItems.value],
         },
         {
-            name: 'centrum.dispatchUpdated',
-            label: t('components.auth.user_settings.sounds.centrum.dispatch_updated'),
-            items: [...soundsBaseItems.value],
-        },
-        {
             name: 'centrum.dispatchCompleted',
             label: t('components.auth.user_settings.sounds.centrum.dispatch_completed'),
             items: [...soundsBaseItems.value],

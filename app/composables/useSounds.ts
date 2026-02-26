@@ -9,7 +9,6 @@ export type SoundKeys =
     | 'centrum.attention'
     | 'centrum.dispatchSOS'
     | 'centrum.dispatchAssigned'
-    | 'centrum.dispatchUpdated'
     | 'centrum.dispatchCompleted';
 
 export type NotificationSound = {
@@ -28,7 +27,6 @@ const SoundsRegister: Record<SoundKeys, string> = {
     'centrum.attention': '/sounds/centrum/attention.aac',
     'centrum.dispatchSOS': '/sounds/centrum/dispatch_sos.aac',
     'centrum.dispatchAssigned': '/sounds/centrum/dispatch_assigned.aac',
-    'centrum.dispatchUpdated': '/sounds/centrum/dispatch_updated.aac',
     'centrum.dispatchCompleted': '/sounds/centrum/dispatch_completed.aac',
 } as const;
 

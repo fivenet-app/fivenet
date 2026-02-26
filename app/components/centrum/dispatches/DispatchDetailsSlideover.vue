@@ -2,7 +2,7 @@
 import DispatchAssignModal from '~/components/centrum/dispatches//DispatchAssignModal.vue';
 import DispatchFeed from '~/components/centrum/dispatches/DispatchFeed.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
-import { checkDispatchAccess, dispatchStatusToBGColor, dispatchStatusToIcon } from '~/components/centrum/helpers';
+import { checkDispatchAccess, dispatchStatusToButtonColor, dispatchStatusToIcon } from '~/components/centrum/helpers';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import DispatchReferences from '~/components/centrum/partials/DispatchReferences.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
@@ -49,7 +49,7 @@ async function deleteDispatch(id: number): Promise<void> {
     }
 }
 
-const dispatchStatusColors = computed(() => dispatchStatusToBGColor(dispatch.value?.status?.status));
+const dispatchStatusColor = computed(() => dispatchStatusToButtonColor(dispatch.value?.status?.status));
 
 watch(dispatch, () => {
     if (dispatch.value === undefined) {
@@ -282,15 +282,12 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UButton
                                     class="rounded-sm px-2 py-1 text-sm font-semibold"
-                                    :class="dispatchStatusColors"
+                                    :color="dispatchStatusColor"
                                     :icon="dispatchStatusToIcon(dispatch.status?.status)"
                                     :disabled="!canAccessDispatch.participate"
                                     @click="dispatchStatusUpdateModal.open({ dispatchId: dispatch.id })"
                                 >
                                     {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
-                                    <span v-if="dispatch.status?.code">
-                                        ({{ $t('common.code') }}: '{{ dispatch.status.code }}')
-                                    </span>
                                 </UButton>
                             </dd>
                         </div>

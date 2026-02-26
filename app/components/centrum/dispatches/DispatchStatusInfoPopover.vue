@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches//DispatchDetailsByIDSlideover.vue';
 import { useCentrumStore } from '~/stores/centrum';
-import { type DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
-import { dispatchStatusToBGColor } from '../helpers';
+import type { DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import DispatchStatusBadge from '../partials/DispatchStatusBadge.vue';
 
 const props = defineProps<{
     status: DispatchStatus | undefined;
@@ -17,7 +17,6 @@ const dispatchDetailsByIDSlideover = overlay.create(DispatchDetailsByIDSlideover
 });
 
 const dispatch = props.status?.dispatchId ? centrumStore.dispatches.get(props.status.dispatchId) : undefined;
-const dispatchStatusColor = computed(() => dispatchStatusToBGColor(props.status?.status));
 </script>
 
 <template>
@@ -55,9 +54,7 @@ const dispatchStatusColor = computed(() => dispatchStatusToBGColor(props.status?
 
                 <p class="text-base leading-none font-semibold text-highlighted">DSP-{{ status.dispatchId }}</p>
 
-                <UBadge class="rounded-sm font-semibold" :class="dispatchStatusColor" size="xs">
-                    {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[status.status ?? 0]}`) }}
-                </UBadge>
+                <DispatchStatusBadge :status="status.status" />
 
                 <div v-if="dispatch" class="text-highlighted">
                     <p class="text-sm leading-none font-medium">
