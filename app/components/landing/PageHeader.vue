@@ -76,7 +76,7 @@ const { locale, setLocale } = useI18n();
                 <UButton
                     v-if="auth.signupEnabled"
                     class="hidden lg:flex"
-                    :label="$t('components.auth.RegistrationForm.title')"
+                    :label="$t('components.auth.registration_form.title')"
                     icon="i-mdi-account-plus"
                     trailing
                     color="neutral"

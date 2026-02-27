@@ -53,13 +53,10 @@ const items = computed<NavigationMenuItem[]>(
                 to: { name: 'jobs-conduct' },
                 permission: 'jobs.ConductService/ListConductEntries' as Perms,
             },
-        ].filter((t) => t.permission === undefined || can(t.permission).value) as {
-            label: string;
-            to: RoutesNamedLocations;
-            active?: boolean;
-            icon: string;
+        ].filter((t) => t.permission === undefined || can(t.permission).value) as (NavigationMenuItem & {
             permission?: Perms;
-        }[],
+            to: RoutesNamedLocations;
+        })[],
 );
 
 inject('links', items);
@@ -78,7 +75,7 @@ inject('links', items);
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar>
+            <UDashboardToolbar :ui="{ root: 'overflow-x-visible' }">
                 <UNavigationMenu orientation="horizontal" :items="items" class="-mx-1 flex-1" />
             </UDashboardToolbar>
         </template>

@@ -1296,23 +1296,25 @@
                 "connection_website": "Website des Anbieters öffnen",
                 "external_id": "Externe ID"
             },
-            "ForgotPassword": {
+            "forgot_password": {
                 "title": "Passwort vergessen",
                 "subtitle": "Um Ihr Passwort zurückzusetzen, treten Sie dem FiveM-Server bei und geben Sie den Befehl {command} ein, um einen neuen Registrierungstoken zu erhalten.",
                 "registration_token": "Registrierungstoken",
                 "submit_button": "Neues Passwort festlegen",
                 "back_to_login_button": "Zurück zur Anmeldung",
-                "create_error": "Es ist ein Fehler beim Festlegen Ihres neuen Passworts aufgetreten, bitte versuchen Sie es erneut!"
+                "create_error": "Es ist ein Fehler beim Festlegen Ihres neuen Passworts aufgetreten, bitte versuchen Sie es erneut!",
+                "subtitle_nui": "Klicken Sie unten, um Ihren Registrierungstoken zu erhalten (Sie können auf dem FiveM-Server auch den Befehl {command} verwenden)."
             },
-            "RegistrationForm": {
+            "registration_form": {
                 "title": "Konto erstellen",
                 "registration_token": "Registrierungstoken",
                 "submit_button": "Konto erstellen",
                 "back_to_login_button": "Zurück zur Anmeldung",
                 "create_error": "Es gab einen Fehler während dein Konto erstellt wurde, bitte versuche es erneut!",
                 "subtitle": "Um ein Konto zu erstellen, treten Sie dem FiveM-Server bei und geben Sie den Befehl {command} ein.",
-                "open_server_account_management": "Klicken sie unten, um ihren Registrierungstoken zu erhalten (sie können auch den Befehl {command} nutzen)."
+                "subtitle_nui": "Klicken sie unten, um ihren Registrierungstoken zu erhalten (sie können auf dem FiveM-Server auch den Befehl {command} nutzen)."
             },
+            "open_token_mgmt": "Registrierungstoken abrufen",
             "user_settings": {
                 "title": "Benutzer-Einstellungen",
                 "subtitle": "Passen Sie Ihre Benutzererfahrung an und verwalten Sie Ihre Einstellungen.",

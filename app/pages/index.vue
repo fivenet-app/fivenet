@@ -36,7 +36,7 @@ const links = computed<ButtonProps[]>(() =>
                   },
             auth.signupEnabled
                 ? {
-                      label: t('components.auth.RegistrationForm.title'),
+                      label: t('components.auth.registration_form.title'),
                       trailingIcon: 'i-mdi-account-plus',
                       color: 'neutral',
                       size: 'lg',

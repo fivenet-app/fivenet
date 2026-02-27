@@ -73,39 +73,40 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <div class="space-y-2">
         <h2 class="text-center text-3xl">
-            {{ $t('components.auth.RegistrationForm.title') }}
+            {{ $t('components.auth.registration_form.title') }}
         </h2>
 
         <UForm class="space-y-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UAlert v-if="!nuiEnabled" icon="i-mdi-info-circle">
-                <template #description>
-                    <I18nT keypath="components.auth.RegistrationForm.subtitle">
-                        <template #command>
-                            <UKbd class="h-7 min-w-[24px] text-[13px]" size="md" :ui="{ size: { md: '' } }">/fivenet</UKbd>
-                        </template>
-                    </I18nT>
-                </template>
-            </UAlert>
             <UAlert
-                v-else
                 icon="i-mdi-info-circle"
-                :actions="[
-                    {
-                        label: $t('common.open'),
-                        onClick: () => openTokenMgmt(),
-                    },
-                ]"
+                variant="subtle"
+                :actions="
+                    !nuiEnabled
+                        ? []
+                        : [
+                              {
+                                  label: $t('components.auth.open_token_mgmt'),
+                                  onClick: () => openTokenMgmt(),
+                              },
+                          ]
+                "
             >
                 <template #description>
-                    <I18nT keypath="components.auth.RegistrationForm.open_server_account_management">
+                    <I18nT
+                        :keypath="
+                            !nuiEnabled
+                                ? 'components.auth.registration_form.subtitle'
+                                : 'components.auth.registration_form.subtitle_nui'
+                        "
+                    >
                         <template #command>
-                            <UKbd class="h-7 min-w-[24px] text-[13px]" size="md" :ui="{ size: { md: '' } }">/fivenet</UKbd>
+                            <UKbd class="h-7 min-w-[24px] text-[13px] normal-case" size="md">/fivenet</UKbd>
                         </template>
                     </I18nT>
                 </template>
             </UAlert>
 
-            <UFormField name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
+            <UFormField name="registrationToken" :label="$t('components.auth.forgot_password.registration_token')">
                 <UInput
                     v-model="state.registrationToken"
                     type="text"
@@ -113,7 +114,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     aria-describedby="hint"
                     pattern="[0-9]*"
                     autocomplete="registrationToken"
-                    :placeholder="$t('components.auth.ForgotPassword.registration_token')"
+                    :placeholder="$t('components.auth.forgot_password.registration_token')"
                     :ui="{ root: 'w-full' }"
                 />
             </UFormField>
@@ -158,18 +159,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 block
                 :disabled="!canSubmit"
                 :loading="!canSubmit"
-                :label="$t('components.auth.RegistrationForm.submit_button')"
+                :label="$t('components.auth.registration_form.submit_button')"
             />
 
             <USeparator orientation="horizontal" color="primary" />
 
             <UButton block color="neutral" trailing-icon="i-mdi-login" :to="'/auth/login'" :disabled="!canSubmit">
-                {{ $t('components.auth.RegistrationForm.back_to_login_button') }}
+                {{ $t('components.auth.registration_form.back_to_login_button') }}
             </UButton>
 
             <DataErrorBlock
                 v-if="accountError"
-                :title="$t('components.auth.RegistrationForm.create_error')"
+                :title="$t('components.auth.registration_form.create_error')"
                 :error="accountError"
                 :close="() => (accountError = undefined)"
             />

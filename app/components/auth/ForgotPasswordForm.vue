@@ -14,6 +14,9 @@ const canSubmit = defineModel<boolean>({ required: true });
 
 const notifications = useNotificationsStore();
 
+const settingsStore = useSettingsStore();
+const { nuiEnabled } = storeToRefs(settingsStore);
+
 const authAuthClient = await getAuthAuthClient();
 
 const accountError = ref<RpcError | undefined>();
@@ -65,17 +68,36 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UForm class="space-y-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
-        <UAlert icon="i-mdi-info-circle">
+        <UAlert
+            icon="i-mdi-info-circle"
+            variant="subtle"
+            :actions="
+                !nuiEnabled
+                    ? []
+                    : [
+                          {
+                              label: $t('components.auth.open_token_mgmt'),
+                              onClick: () => openTokenMgmt(),
+                          },
+                      ]
+            "
+        >
             <template #description>
-                <I18nT keypath="components.auth.ForgotPassword.subtitle">
+                <I18nT
+                    :keypath="
+                        !nuiEnabled
+                            ? 'components.auth.forgot_password.subtitle'
+                            : 'components.auth.forgot_password.subtitle_nui'
+                    "
+                >
                     <template #command>
-                        <UKbd class="h-7 min-w-[24px] text-[13px]" size="md" :ui="{ size: { md: '' } }">/fivenet</UKbd>
+                        <UKbd class="h-7 min-w-[24px] text-[13px] normal-case" size="md">/fivenet</UKbd>
                     </template>
                 </I18nT>
             </template>
         </UAlert>
 
-        <UFormField name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
+        <UFormField name="registrationToken" :label="$t('components.auth.forgot_password.registration_token')">
             <UInput
                 v-model="state.registrationToken"
                 type="text"
@@ -83,7 +105,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 aria-describedby="hint"
                 pattern="[0-9]*"
                 autocomplete="registrationToken"
-                :placeholder="$t('components.auth.ForgotPassword.registration_token')"
+                :placeholder="$t('components.auth.forgot_password.registration_token')"
                 :ui="{ root: 'w-full' }"
             />
         </UFormField>
@@ -118,12 +140,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             block
             :disabled="!canSubmit"
             :loading="!canSubmit"
-            :label="$t('components.auth.ForgotPassword.submit_button')"
+            :label="$t('components.auth.forgot_password.submit_button')"
         />
 
         <DataErrorBlock
             v-if="accountError"
-            :title="$t('components.auth.ForgotPassword.create_error')"
+            :title="$t('components.auth.forgot_password.create_error')"
             :error="accountError"
             :close="() => (accountError = undefined)"
         />

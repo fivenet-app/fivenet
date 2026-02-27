@@ -202,7 +202,8 @@ func (s *Server) CreateAccount(
 		WHERE(mysql.AND(
 			tAccounts.ID.EQ(mysql.Int64(acc.ID)),
 			tAccounts.RegToken.EQ(mysql.String(req.GetRegToken())),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		if dbutils.IsDuplicateError(err) {
@@ -394,7 +395,8 @@ func (s *Server) ForgotPassword(
 		).
 		WHERE(
 			tAccounts.ID.EQ(mysql.Int64(acc.ID)),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
