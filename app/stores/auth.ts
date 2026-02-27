@@ -344,24 +344,12 @@ export const useAuthStore = defineStore(
                 });
                 const { response } = await call;
                 setUserToken(response.token, true);
-
+                setPermissions(response.permissions, response.attributes);
                 await navigateTo('/overview');
 
-                // Update permissions based on superuser mode
-                if (superuser) {
-                    const superuserPermission: Permission = {
-                        id: 0,
-                        category: 'Superuser',
-                        name: 'Superuser',
-                        guardName: 'superuser-superuser',
-                        val: true,
-                    };
-                    if (!permissions.value.some((p) => p.guardName === superuserPermission.guardName)) {
-                        permissions.value.push(superuserPermission);
-                    }
-                } else {
-                    permissions.value = permissions.value.filter((p) => p.guardName !== 'superuser-superuser');
-                }
+                // Update state with response data
+                setActiveChar(response.char!);
+                setJobProps(response.jobProps);
 
                 // Notify user about the change
                 if (superuser) {
@@ -385,11 +373,6 @@ export const useAuthStore = defineStore(
                         type: NotificationType.INFO,
                     });
                 }
-
-                // Update state with response data
-                setActiveChar(response.char!);
-                setPermissions(response.permissions, response.attributes);
-                setJobProps(response.jobProps);
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;

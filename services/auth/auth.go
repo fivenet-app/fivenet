@@ -928,6 +928,8 @@ func (s *Server) SetSuperuserMode(
 		if err != nil {
 			return nil, fmt.Errorf("failed to get user perms. %w", err)
 		}
+
+		userInfo.Superuser = false
 	}
 
 	// Load account data for token creation
