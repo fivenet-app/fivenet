@@ -41,5 +41,6 @@
     ],
     "tailwind-fold.foldStyle": "QUOTES",
     "prettier.prettierPath": "./node_modules/prettier",
-    "javascript.updateImportsOnFileMove.enabled": "never"
+    "javascript.updateImportsOnFileMove.enabled": "never",
+    "vitest.shellType": "terminal"
 }
