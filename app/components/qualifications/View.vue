@@ -197,7 +197,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                 </template>
 
                 <template #right>
-                    <PartialsBackButton to="/qualifications" />
+                    <PartialsBackButton />
 
                     <RefreshButton :loading="isRequestPending(status)" @click="() => refresh()" />
 

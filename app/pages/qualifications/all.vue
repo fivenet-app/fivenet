@@ -1,7 +1,6 @@
 <script lang="ts" setup>
+import List from '~/components/qualifications/List.vue';
 import ListPage from '~/components/qualifications/ListPage.vue';
-import RequestList from '~/components/qualifications/request/RequestList.vue';
-import ResultList from '~/components/qualifications/result/ResultList.vue';
 
 useHead({
     title: 'pages.qualifications.title',
@@ -16,10 +15,6 @@ definePageMeta({
 
 <template>
     <ListPage>
-        <div class="flex flex-col gap-4">
-            <ResultList />
-
-            <RequestList />
-        </div>
+        <List />
     </ListPage>
 </template>
