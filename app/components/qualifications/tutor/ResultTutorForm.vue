@@ -119,8 +119,8 @@ const formRef = useTemplateRef('formRef');
 <template>
     <UModal>
         <template #header>
-            <div class="flex items-center justify-between">
-                <h3 class="text-2xl leading-6 font-semibold">
+            <div class="flex w-full items-center justify-between">
+                <h3 class="flex-1 text-2xl leading-6 font-semibold">
                     {{ $t('components.qualifications.result_modal.title') }}
                 </h3>
 

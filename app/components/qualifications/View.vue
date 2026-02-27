@@ -177,7 +177,7 @@ const accordionItems = computed(() =>
     [
         qualification.value?.result
             ? { slot: 'result' as const, label: t('common.result', 1), icon: 'i-mdi-list-status', defaultOpen: true }
-            : qualification.value?.request
+            : qualification.value?.request !== undefined
               ? { slot: 'request' as const, label: t('common.request'), icon: 'i-mdi-mail', defaultOpen: true }
               : undefined,
         { slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
@@ -219,9 +219,10 @@ const requestUserModal = overlay.create(RequestUserModal);
             <UDashboardToolbar
                 v-if="
                     qualification &&
-                    (canDo.request ||
-                        canDo.take ||
-                        canDo.grade ||
+                    ((canDo.request && qualification.examMode !== QualificationExamMode.ENABLED) ||
+                        (canDo.take &&
+                            qualification.examMode !== QualificationExamMode.DISABLED &&
+                            qualification.result?.status !== ResultStatus.SUCCESSFUL) ||
                         canDo.edit ||
                         canDo.delete ||
                         (qualification.result !== undefined && qualification.result?.status !== ResultStatus.SUCCESSFUL))
@@ -492,18 +493,28 @@ const requestUserModal = overlay.create(RequestUserModal);
                 <UTabs
                     v-else
                     v-model="selectedTab"
-                    class="flex-1 flex-col overflow-y-hidden"
+                    class="flex-1 flex-col gap-0 overflow-y-hidden"
                     :items="items"
                     variant="link"
                     :ui="{
-                        content: 'flex flex-col flex-1 min-h-0 max-h-full overflow-y-hidden',
+                        content: 'flex flex-col flex-1 min-h-0 max-h-full overflow-y-hidden p-0 sm:p-0',
                         list: 'mx-auto max-w-(--breakpoint-xl)',
                     }"
                 >
                     <template #info>
                         <UDashboardPanel :ui="{ root: 'h-full min-h-0 overflow-y-auto' }">
                             <template #body>
-                                <div class="mx-auto w-full max-w-(--breakpoint-xl)">
+                                <div class="mx-auto w-full max-w-(--breakpoint-xl) space-y-4">
+                                    <UAlert
+                                        v-if="qualification.request?.status === RequestStatus.EXAM_GRADING"
+                                        :title="$t('components.qualifications.grading_in_progress.title')"
+                                        :description="$t('components.qualifications.grading_in_progress.description')"
+                                        color="info"
+                                        variant="subtle"
+                                        icon="i-mdi-clock"
+                                        :ui="{ icon: 'size-8', title: 'text-xl' }"
+                                    />
+
                                     <div
                                         v-if="qualification.content"
                                         class="w-full rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
@@ -521,106 +532,102 @@ const requestUserModal = overlay.create(RequestUserModal);
                                         :description="$t('components.qualifications.content_unavailable')"
                                     />
 
-                                    <UDashboardToolbar v-if="qualification" :ui="{ root: 'border-b-0' }">
-                                        <UAccordion :items="accordionItems" type="multiple" class="p-2 sm:p-2">
-                                            <template v-if="qualification.result" #result>
-                                                <UContainer class="mb-2">
-                                                    <div class="flex flex-col gap-1">
-                                                        <div class="inline-flex gap-1">
-                                                            <span class="font-semibold">{{ $t('common.result') }}:</span>
-                                                            <span
-                                                                :class="
-                                                                    resultStatusToTextColor(qualification.result?.status ?? 0)
-                                                                "
-                                                            >
-                                                                {{
-                                                                    $t(
-                                                                        `enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`,
-                                                                    )
-                                                                }}
-                                                            </span>
-                                                        </div>
-
-                                                        <div class="truncate">
-                                                            <span class="font-semibold">{{ $t('common.summary') }}:</span>
-                                                            {{ qualification.result?.summary }}
-                                                        </div>
-
-                                                        <div>
-                                                            <span class="font-semibold">{{ $t('common.score') }}:</span>
-                                                            {{ $t('common.point', qualification.result?.score ?? 0) }}
-                                                        </div>
-
-                                                        <div v-if="qualification.result?.creator" class="inline-flex gap-1">
-                                                            <span class="font-semibold">{{ $t('common.created_by') }}:</span>
-                                                            <CitizenInfoPopover :user="qualification.result?.creator" />
-                                                        </div>
+                                    <UAccordion v-if="qualification" :items="accordionItems" type="multiple" class="p-2 sm:p-2">
+                                        <template v-if="qualification.result" #result>
+                                            <UContainer class="mb-2">
+                                                <div class="flex flex-col gap-1">
+                                                    <div class="inline-flex gap-1">
+                                                        <span class="font-semibold">{{ $t('common.result') }}:</span>
+                                                        <span
+                                                            :class="resultStatusToTextColor(qualification.result?.status ?? 0)"
+                                                        >
+                                                            {{
+                                                                $t(
+                                                                    `enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`,
+                                                                )
+                                                            }}
+                                                        </span>
                                                     </div>
-                                                </UContainer>
-                                            </template>
 
-                                            <template v-if="qualification.request" #request>
-                                                <UContainer class="mb-2">
-                                                    <div class="flex flex-col gap-1">
-                                                        <div class="inline-flex gap-1">
-                                                            <span class="font-semibold">{{ $t('common.status') }}:</span>
-                                                            <span
-                                                                :class="
-                                                                    requestStatusToTextColor(qualification.request?.status ?? 0)
-                                                                "
-                                                            >
-                                                                {{
-                                                                    $t(
-                                                                        `enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`,
-                                                                    )
-                                                                }}
-                                                            </span>
-                                                        </div>
-
-                                                        <div>
-                                                            <span class="font-semibold"
-                                                                >{{ $t('common.request') }} {{ $t('common.message') }}:</span
-                                                            >
-                                                            {{ qualification.request?.userComment }}
-                                                        </div>
-
-                                                        <div>
-                                                            <span class="font-semibold">{{ $t('common.comment') }}:</span>
-                                                            {{ qualification.request?.approverComment ?? $t('common.na') }}
-                                                        </div>
-
-                                                        <div v-if="qualification.request.approvedAt" class="inline-flex gap-1">
-                                                            <span class="font-semibold">{{ $t('common.approved_at') }}:</span>
-                                                            <span class="inline-flex gap-1">
-                                                                <GenericTime :value="qualification.request?.approvedAt" />
-                                                            </span>
-                                                        </div>
-
-                                                        <div v-if="qualification.request.approver" class="inline-flex gap-1">
-                                                            <span class="font-semibold">{{ $t('common.approved_by') }}:</span>
-                                                            <CitizenInfoPopover :user="qualification.request?.approver" />
-                                                        </div>
+                                                    <div class="truncate">
+                                                        <span class="font-semibold">{{ $t('common.summary') }}:</span>
+                                                        {{ qualification.result?.summary }}
                                                     </div>
-                                                </UContainer>
-                                            </template>
 
-                                            <template #access>
-                                                <UContainer class="mb-2">
-                                                    <DataNoDataBlock
-                                                        v-if="!qualification.access || qualification.access?.jobs.length === 0"
-                                                        icon="i-mdi-file-search"
-                                                        :message="$t('common.not_found', [$t('common.access', 2)])"
-                                                    />
-                                                    <AccessBadges
-                                                        v-else
-                                                        :access-level="AccessLevel"
-                                                        :jobs="qualification?.access.jobs"
-                                                        i18n-key="enums.qualifications"
-                                                    />
-                                                </UContainer>
-                                            </template>
-                                        </UAccordion>
-                                    </UDashboardToolbar>
+                                                    <div>
+                                                        <span class="font-semibold">{{ $t('common.score') }}:</span>
+                                                        {{ $t('common.point', qualification.result?.score ?? 0) }}
+                                                    </div>
+
+                                                    <div v-if="qualification.result?.creator" class="inline-flex gap-1">
+                                                        <span class="font-semibold">{{ $t('common.created_by') }}:</span>
+                                                        <CitizenInfoPopover :user="qualification.result?.creator" />
+                                                    </div>
+                                                </div>
+                                            </UContainer>
+                                        </template>
+
+                                        <template v-if="qualification.request" #request>
+                                            <UContainer class="mb-2">
+                                                <div class="flex flex-col gap-1">
+                                                    <div class="inline-flex gap-1">
+                                                        <span class="font-semibold">{{ $t('common.status') }}:</span>
+                                                        <span
+                                                            :class="
+                                                                requestStatusToTextColor(qualification.request?.status ?? 0)
+                                                            "
+                                                        >
+                                                            {{
+                                                                $t(
+                                                                    `enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`,
+                                                                )
+                                                            }}
+                                                        </span>
+                                                    </div>
+
+                                                    <div>
+                                                        <span class="font-semibold"
+                                                            >{{ $t('common.request') }} {{ $t('common.message') }}:</span
+                                                        >
+                                                        {{ qualification.request?.userComment }}
+                                                    </div>
+
+                                                    <div>
+                                                        <span class="font-semibold">{{ $t('common.comment') }}:</span>
+                                                        {{ qualification.request?.approverComment ?? $t('common.na') }}
+                                                    </div>
+
+                                                    <div v-if="qualification.request.approvedAt" class="inline-flex gap-1">
+                                                        <span class="font-semibold">{{ $t('common.approved_at') }}:</span>
+                                                        <span class="inline-flex gap-1">
+                                                            <GenericTime :value="qualification.request?.approvedAt" />
+                                                        </span>
+                                                    </div>
+
+                                                    <div v-if="qualification.request.approver" class="inline-flex gap-1">
+                                                        <span class="font-semibold">{{ $t('common.approved_by') }}:</span>
+                                                        <CitizenInfoPopover :user="qualification.request?.approver" />
+                                                    </div>
+                                                </div>
+                                            </UContainer>
+                                        </template>
+
+                                        <template #access>
+                                            <UContainer class="mb-2">
+                                                <DataNoDataBlock
+                                                    v-if="!qualification.access || qualification.access?.jobs.length === 0"
+                                                    icon="i-mdi-file-search"
+                                                    :message="$t('common.not_found', [$t('common.access', 2)])"
+                                                />
+                                                <AccessBadges
+                                                    v-else
+                                                    :access-level="AccessLevel"
+                                                    :jobs="qualification?.access.jobs"
+                                                    i18n-key="enums.qualifications"
+                                                />
+                                            </UContainer>
+                                        </template>
+                                    </UAccordion>
                                 </div>
                             </template>
                         </UDashboardPanel>

@@ -756,7 +756,8 @@
         "never": "Nie",
         "request_sync": "Synchronisierung anfordern",
         "own_documents": "Eigene Dokumente",
-        "default": "Standard"
+        "default": "Standard",
+        "time_remaining": "Verbleibende Zeit"
     },
     "components": {
         "partials": {
@@ -1255,7 +1256,11 @@
             "remove_question": "Frage entfernen",
             "add_option": "Option hinzufügen",
             "remove_option": "Option entfernen",
-            "exam_mode": "Prüfungsmodus"
+            "exam_mode": "Prüfungsmodus",
+            "grading_in_progress": {
+                "title": "Benotung läuft",
+                "description": "Die Benotung Ihrer Prüfung wird gerade durchgeführt. Sobald die Benotung abgeschlossen ist, können Sie Ihre Ergebnisse einsehen."
+            }
         },
         "language_switcher": {
             "title": "Sprache wechseln"

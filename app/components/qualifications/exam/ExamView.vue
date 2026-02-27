@@ -4,7 +4,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
-import type { ExamQuestions, ExamUser } from '~~/gen/ts/resources/qualifications/exam/exam';
+import type { ExamQuestions, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam/exam';
 import type { GetExamInfoResponse, TakeExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import ExamViewQuestions from './ExamViewQuestions.vue';
 
@@ -42,6 +42,8 @@ async function takeExam(cancel = false): Promise<TakeExamResponse> {
         });
         const { response } = await call;
 
+        timesUp.value = response.timesUp;
+        examResponses.value = response.responses;
         exam.value = response.exam;
         examUser.value = response.examUser;
 
@@ -52,8 +54,10 @@ async function takeExam(cancel = false): Promise<TakeExamResponse> {
     }
 }
 
+const timesUp = ref(false);
 const exam = ref<ExamQuestions | undefined>();
 const examUser = ref<ExamUser | undefined>();
+const examResponses = ref<ExamResponses | undefined>();
 
 watch(data, async () => {
     if (data.value?.examUser?.endsAt !== undefined && data.value?.examUser?.endedAt === undefined) {
@@ -64,11 +68,18 @@ watch(data, async () => {
 
 <template>
     <ExamViewQuestions
-        v-if="data && exam && examUser && examUser?.endsAt"
+        v-if="data && exam && examUser && examUser?.endsAt && !examUser?.endedAt"
         :qualification-id="qualificationId"
         :exam="exam"
         :exam-user="examUser"
+        :exam-responses="examResponses"
         :qualification="data.qualification"
+        @submit="
+            () => {
+                examUser = undefined;
+                refresh();
+            }
+        "
     />
 
     <UDashboardPanel v-else>
@@ -84,28 +95,29 @@ watch(data, async () => {
             </UDashboardNavbar>
 
             <UDashboardToolbar v-if="data">
-                <template #default>
-                    <div class="flex justify-between gap-2">
-                        <div class="flex gap-2">
-                            <UBadge v-if="data?.qualification?.examSettings?.time" class="inline-flex gap-1" icon="i-mdi-clock">
-                                {{ $t('common.duration') }}: {{ fromDuration(data.qualification.examSettings.time) }}s
-                            </UBadge>
-                            <UBadge class="inline-flex gap-1" icon="i-mdi-question-mark">
-                                {{ $t('common.count') }}: {{ data?.questionCount }}
-                                {{ $t('common.question', data?.questionCount ?? 1) }}
-                            </UBadge>
-                        </div>
+                <template #left>
+                    <div class="flex gap-2">
+                        <UBadge v-if="data?.qualification?.examSettings?.time" class="inline-flex gap-1" icon="i-mdi-clock">
+                            {{ $t('common.duration') }}: {{ fromDuration(data.qualification.examSettings.time) }}s
+                        </UBadge>
+                        <UBadge class="inline-flex gap-1" icon="i-mdi-question-mark">
+                            {{ $t('common.count') }}: {{ data?.questionCount }}
+                            {{ $t('common.question', data?.questionCount ?? 1) }}
+                        </UBadge>
+                    </div>
+                </template>
 
-                        <div class="flex gap-2">
-                            <UBadge v-if="data.examUser?.startedAt">
-                                {{ $t('common.begins_at') }}
-                                {{ $d(toDate(data.examUser?.startedAt), 'long') }}
-                            </UBadge>
-                            <UBadge v-if="data?.examUser?.endsAt">
-                                {{ $t('common.ends_at') }}
-                                {{ $d(toDate(data?.examUser?.endsAt), 'long') }}
-                            </UBadge>
-                        </div>
+                <template #right>
+                    <div class="flex gap-2">
+                        <UBadge v-if="data.examUser?.startedAt">
+                            {{ $t('common.begins_at') }}
+                            {{ $d(toDate(data.examUser?.startedAt), 'long') }}
+                        </UBadge>
+
+                        <UBadge v-if="data?.examUser?.endsAt">
+                            {{ $t('common.ends_at') }}
+                            {{ $d(toDate(data?.examUser?.endsAt), 'long') }}
+                        </UBadge>
                     </div>
                 </template>
             </UDashboardToolbar>
@@ -127,11 +139,17 @@ watch(data, async () => {
 
             <template v-else>
                 <UCard>
-                    <UAlert v-if="data?.examUser?.endedAt || isPast(toDate(data?.examUser?.endsAt))">
-                        <h3 class="text-lg">
-                            {{ $t('components.qualifications.exam_view.times_up') }}
-                        </h3>
-                    </UAlert>
+                    <template v-if="data?.examUser?.endedAt || isPast(toDate(data.examUser?.endsAt))">
+                        <UAlert
+                            :title="$t('components.qualifications.exam_view.times_up')"
+                            color="info"
+                            variant="subtle"
+                            icon="i-mdi-clock"
+                            :ui="{ icon: 'size-8', title: 'text-xl' }"
+                        />
+
+                        <PartialsBackButton block :to="`/qualifications/${qualificationId}`" class="mt-4" />
+                    </template>
 
                     <UButton
                         v-else-if="!data?.examUser?.endedAt"
@@ -140,10 +158,13 @@ watch(data, async () => {
                         color="neutral"
                         icon="i-mdi-play"
                         block
-                        @click="takeExam(false)"
-                    >
-                        {{ $t('components.qualifications.take_test') }}
-                    </UButton>
+                        :label="$t('components.qualifications.take_test')"
+                        @click="
+                            () => {
+                                takeExam(false);
+                            }
+                        "
+                    />
                 </UCard>
             </template>
         </template>

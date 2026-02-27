@@ -701,66 +701,68 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                     </div>
                 </div>
 
-                <UAccordion
-                    :default-value="['access', 'comments']"
-                    class="print:hidden"
-                    type="multiple"
-                    :items="accordionItems"
-                >
-                    <template #relations>
-                        <UContainer class="mb-2">
-                            <Relations :document-id="documentId" :show-document="false" />
-                        </UContainer>
-                    </template>
+                <div class="mx-auto w-full max-w-(--breakpoint-xl)">
+                    <UAccordion
+                        :default-value="['access', 'comments']"
+                        class="print:hidden"
+                        type="multiple"
+                        :items="accordionItems"
+                    >
+                        <template #relations>
+                            <UContainer class="mb-2">
+                                <Relations :document-id="documentId" :show-document="false" />
+                            </UContainer>
+                        </template>
 
-                    <template #references>
-                        <UContainer class="mb-2">
-                            <References :document-id="documentId" :show-source="false" />
-                        </UContainer>
-                    </template>
+                        <template #references>
+                            <UContainer class="mb-2">
+                                <References :document-id="documentId" :show-source="false" />
+                            </UContainer>
+                        </template>
 
-                    <template #access>
-                        <UContainer class="mb-2">
-                            <DataNoDataBlock
-                                v-if="!doc.access || (doc.access?.jobs.length === 0 && doc.access?.users.length === 0)"
-                                icon="i-mdi-file-search"
-                                :message="$t('common.not_found', [$t('common.access', 2)])"
-                            />
+                        <template #access>
+                            <UContainer class="mb-2">
+                                <DataNoDataBlock
+                                    v-if="!doc.access || (doc.access?.jobs.length === 0 && doc.access?.users.length === 0)"
+                                    icon="i-mdi-file-search"
+                                    :message="$t('common.not_found', [$t('common.access', 2)])"
+                                />
 
-                            <AccessBadges
-                                v-else
-                                :access-level="AccessLevel"
-                                :jobs="doc.access.jobs"
-                                :users="doc.access.users"
-                                i18n-key="enums.documents"
-                            />
-                        </UContainer>
-                    </template>
+                                <AccessBadges
+                                    v-else
+                                    :access-level="AccessLevel"
+                                    :jobs="doc.access.jobs"
+                                    :users="doc.access.users"
+                                    i18n-key="enums.documents"
+                                />
+                            </UContainer>
+                        </template>
 
-                    <template #comments>
-                        <UContainer class="mb-2">
-                            <Comments
-                                id="comments"
-                                :document-id="documentId"
-                                :closed="doc.document?.meta?.closed"
-                                :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"
-                                @counted="($event) => setCommentCount($event)"
-                                @new-comment="doc.document?.meta?.commentCount && doc.document.meta.commentCount++"
-                                @deleted-comment="
-                                    doc.document?.meta?.commentCount &&
-                                    doc.document?.meta?.commentCount > 0 &&
-                                    doc.document.meta.commentCount--
-                                "
-                            />
-                        </UContainer>
-                    </template>
+                        <template #comments>
+                            <UContainer class="mb-2">
+                                <Comments
+                                    id="comments"
+                                    :document-id="documentId"
+                                    :closed="doc.document?.meta?.closed"
+                                    :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"
+                                    @counted="($event) => setCommentCount($event)"
+                                    @new-comment="doc.document?.meta?.commentCount && doc.document.meta.commentCount++"
+                                    @deleted-comment="
+                                        doc.document?.meta?.commentCount &&
+                                        doc.document?.meta?.commentCount > 0 &&
+                                        doc.document.meta.commentCount--
+                                    "
+                                />
+                            </UContainer>
+                        </template>
 
-                    <template v-if="can('documents.DocumentsService/ListDocumentActivity').value" #activity>
-                        <UContainer class="mb-2">
-                            <List :document-id="documentId" />
-                        </UContainer>
-                    </template>
-                </UAccordion>
+                        <template v-if="can('documents.DocumentsService/ListDocumentActivity').value" #activity>
+                            <UContainer class="mb-2">
+                                <List :document-id="documentId" />
+                            </UContainer>
+                        </template>
+                    </UAccordion>
+                </div>
 
                 <ScrollToTop :element="scrollRef" />
             </template>

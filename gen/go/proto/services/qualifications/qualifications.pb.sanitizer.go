@@ -625,6 +625,15 @@ func (m *TakeExamResponse) Sanitize() error {
 		}
 	}
 
+	// Field: Responses
+	if m.Responses != nil {
+		if v, ok := any(m.GetResponses()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 

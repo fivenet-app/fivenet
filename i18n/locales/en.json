@@ -756,7 +756,8 @@
         "never": "Never",
         "request_sync": "Request Sync",
         "own_documents": "Own Documents",
-        "default": "Default"
+        "default": "Default",
+        "time_remaining": "Time Remaining"
     },
     "components": {
         "partials": {
@@ -1255,7 +1256,11 @@
             "remove_question": "Remove Question",
             "add_option": "Add Option",
             "remove_option": "Remove Option",
-            "exam_mode": "Exam Mode"
+            "exam_mode": "Exam Mode",
+            "grading_in_progress": {
+                "title": "Grading in Progress",
+                "description": "Your exam is being graded. This may take a moment, please wait."
+            }
         },
         "language_switcher": {
             "title": "Switch language"

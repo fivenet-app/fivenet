@@ -102,68 +102,86 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
             />
             <DataNoDataBlock v-else-if="!data" :type="$t('common.exam')" icon="i-mdi-sigma" />
 
-            <ExamViewResult v-else-if="data.responses" :qualification-id="qualificationId" :responses="data.responses">
-                <template #question-after="{ question }">
-                    <div
-                        v-if="
-                            question.question.question?.data?.data.oneofKind !== 'separator' &&
-                            getGradingIndex(question.question.questionId) > -1
-                        "
-                        class="flex flex-row gap-2"
-                    >
-                        <div class="flex flex-col gap-2 md:flex-row">
-                            <UFormField :label="$t('common.corrected')">
-                                <div class="flex flex-col md:items-center">
-                                    <UCheckbox
-                                        v-model="
-                                            data.grading!.responses[getGradingIndex(question.question.questionId)]!.checked
-                                        "
-                                        :disabled="viewOnly"
-                                    />
+            <template v-if="data?.responses">
+                <DataNoDataBlock
+                    v-if="data.responses.responses.length === 0"
+                    :type="`${$t('common.answer', 2)}/${$t('common.question', 2)}`"
+                    icon="i-mdi-sigma"
+                />
+
+                <template v-else>
+                    <ExamViewResult :qualification-id="qualificationId" :responses="data.responses">
+                        <template #question-after="{ question }">
+                            <div
+                                v-if="
+                                    question.question.question?.data?.data.oneofKind !== 'separator' &&
+                                    getGradingIndex(question.question.questionId) > -1
+                                "
+                                class="flex flex-row gap-2"
+                            >
+                                <div class="flex flex-col gap-2 md:flex-row">
+                                    <UFormField :label="$t('common.corrected')">
+                                        <div class="flex flex-col md:items-center">
+                                            <UCheckbox
+                                                v-model="
+                                                    data.grading!.responses[getGradingIndex(question.question.questionId)]!
+                                                        .checked
+                                                "
+                                                :disabled="viewOnly"
+                                            />
+                                        </div>
+                                    </UFormField>
+
+                                    <UFormField :label="$t('common.points', 2)">
+                                        <UInputNumber
+                                            v-model="
+                                                data.grading!.responses[getGradingIndex(question.question.questionId)]!.points
+                                            "
+                                            class="max-w-24"
+                                            :step="0.5"
+                                            :min="0"
+                                            :max="question.question.question?.points"
+                                            :disabled="viewOnly"
+                                        />
+                                    </UFormField>
                                 </div>
-                            </UFormField>
+                            </div>
+                        </template>
 
-                            <UFormField :label="$t('common.points', 2)">
-                                <UInputNumber
-                                    v-model="data.grading!.responses[getGradingIndex(question.question.questionId)]!.points"
-                                    class="max-w-24"
-                                    :step="0.5"
-                                    :min="0"
-                                    :max="question.question.question?.points"
-                                    :disabled="viewOnly"
-                                />
-                            </UFormField>
-                        </div>
+                        <template #question-below="{ question }">
+                            <div
+                                v-if="
+                                    data.exam?.questions.find((q) => q.id === question.question.questionId)?.answer?.answerKey
+                                "
+                                class="flex flex-col gap-2"
+                            >
+                                <p class="text-sm font-semibold">{{ $t('common.answer_key') }}:</p>
+                                <p class="text-sm">
+                                    {{
+                                        data.exam?.questions.find((q) => q.id === question.question.questionId)?.answer
+                                            ?.answerKey
+                                    }}
+                                </p>
+                            </div>
+                        </template>
+                    </ExamViewResult>
+
+                    <div class="sticky bottom-0 flex flex-1 justify-end p-0.5">
+                        <UCard :ui="{ body: 'p-2 sm:p-2' }">
+                            <p class="text-sm">
+                                <span class="font-semibold">{{ $t('common.corrected') }}</span
+                                >: {{ correctCount }} / {{ totalQuestions }} {{ $t('common.question', 2) }}
+                            </p>
+                            <p class="text-sm">
+                                <span class="font-semibold">{{ $t('common.points', 2) }}</span
+                                >: {{ pointCount }} / {{ totalPoints }} {{ $t('common.points', 2) }}
+                            </p>
+                        </UCard>
                     </div>
+
+                    <USeparator v-if="!viewOnly" class="mt-2 mb-4" />
                 </template>
-
-                <template #question-below="{ question }">
-                    <div
-                        v-if="data.exam?.questions.find((q) => q.id === question.question.questionId)?.answer?.answerKey"
-                        class="flex flex-col gap-2"
-                    >
-                        <p class="text-sm font-semibold">{{ $t('common.answer_key') }}:</p>
-                        <p class="text-sm">
-                            {{ data.exam?.questions.find((q) => q.id === question.question.questionId)?.answer?.answerKey }}
-                        </p>
-                    </div>
-                </template>
-            </ExamViewResult>
-
-            <div class="sticky bottom-0 flex flex-1 justify-end p-0.5">
-                <UCard :ui="{ body: 'p-2 sm:p-2' }">
-                    <p class="text-sm">
-                        <span class="font-semibold">{{ $t('common.corrected') }}</span
-                        >: {{ correctCount }} / {{ totalQuestions }} {{ $t('common.question', 2) }}
-                    </p>
-                    <p class="text-sm">
-                        <span class="font-semibold">{{ $t('common.points', 2) }}</span
-                        >: {{ pointCount }} / {{ totalPoints }} {{ $t('common.points', 2) }}
-                    </p>
-                </UCard>
-            </div>
-
-            <USeparator v-if="!viewOnly" class="mt-2 mb-4" />
+            </template>
         </template>
     </ResultTutorForm>
 </template>

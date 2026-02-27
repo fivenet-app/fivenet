@@ -11827,6 +11827,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | ----- | ---- | ----- | ----------- |
 | `qualification_id` | [int64](#int64) |  |  |
 | `responses` | [resources.qualifications.exam.ExamResponses](#resourcesqualificationsexamExamResponses) |  |  |
+| `partial` | [bool](#bool) |  |  |
 
 
 
@@ -11862,6 +11863,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | ----- | ---- | ----- | ----------- |
 | `exam` | [resources.qualifications.exam.ExamQuestions](#resourcesqualificationsexamExamQuestions) |  |  |
 | `exam_user` | [resources.qualifications.exam.ExamUser](#resourcesqualificationsexamExamUser) |  |  |
+| `responses` | [resources.qualifications.exam.ExamResponses](#resourcesqualificationsexamExamResponses) |  |  |
+| `times_up` | [bool](#bool) |  |  |
 
 
 

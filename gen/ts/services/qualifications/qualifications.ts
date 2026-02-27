@@ -385,6 +385,14 @@ export interface TakeExamResponse {
      * @generated from protobuf field: resources.qualifications.exam.ExamUser exam_user = 2
      */
     examUser?: ExamUser;
+    /**
+     * @generated from protobuf field: resources.qualifications.exam.ExamResponses responses = 3
+     */
+    responses?: ExamResponses;
+    /**
+     * @generated from protobuf field: bool times_up = 4
+     */
+    timesUp: boolean;
 }
 /**
  * @generated from protobuf message services.qualifications.SubmitExamRequest
@@ -398,6 +406,10 @@ export interface SubmitExamRequest {
      * @generated from protobuf field: resources.qualifications.exam.ExamResponses responses = 2
      */
     responses?: ExamResponses;
+    /**
+     * @generated from protobuf field: bool partial = 3
+     */
+    partial: boolean;
 }
 /**
  * @generated from protobuf message services.qualifications.SubmitExamResponse
@@ -1930,11 +1942,14 @@ class TakeExamResponse$Type extends MessageType<TakeExamResponse> {
     constructor() {
         super("services.qualifications.TakeExamResponse", [
             { no: 1, name: "exam", kind: "message", T: () => ExamQuestions },
-            { no: 2, name: "exam_user", kind: "message", T: () => ExamUser }
+            { no: 2, name: "exam_user", kind: "message", T: () => ExamUser },
+            { no: 3, name: "responses", kind: "message", T: () => ExamResponses },
+            { no: 4, name: "times_up", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<TakeExamResponse>): TakeExamResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.timesUp = false;
         if (value !== undefined)
             reflectionMergePartial<TakeExamResponse>(this, message, value);
         return message;
@@ -1949,6 +1964,12 @@ class TakeExamResponse$Type extends MessageType<TakeExamResponse> {
                     break;
                 case /* resources.qualifications.exam.ExamUser exam_user */ 2:
                     message.examUser = ExamUser.internalBinaryRead(reader, reader.uint32(), options, message.examUser);
+                    break;
+                case /* resources.qualifications.exam.ExamResponses responses */ 3:
+                    message.responses = ExamResponses.internalBinaryRead(reader, reader.uint32(), options, message.responses);
+                    break;
+                case /* bool times_up */ 4:
+                    message.timesUp = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1968,6 +1989,12 @@ class TakeExamResponse$Type extends MessageType<TakeExamResponse> {
         /* resources.qualifications.exam.ExamUser exam_user = 2; */
         if (message.examUser)
             ExamUser.internalBinaryWrite(message.examUser, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.exam.ExamResponses responses = 3; */
+        if (message.responses)
+            ExamResponses.internalBinaryWrite(message.responses, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* bool times_up = 4; */
+        if (message.timesUp !== false)
+            writer.tag(4, WireType.Varint).bool(message.timesUp);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1983,12 +2010,14 @@ class SubmitExamRequest$Type extends MessageType<SubmitExamRequest> {
     constructor() {
         super("services.qualifications.SubmitExamRequest", [
             { no: 1, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "responses", kind: "message", T: () => ExamResponses }
+            { no: 2, name: "responses", kind: "message", T: () => ExamResponses },
+            { no: 3, name: "partial", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<SubmitExamRequest>): SubmitExamRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.qualificationId = 0;
+        message.partial = false;
         if (value !== undefined)
             reflectionMergePartial<SubmitExamRequest>(this, message, value);
         return message;
@@ -2003,6 +2032,9 @@ class SubmitExamRequest$Type extends MessageType<SubmitExamRequest> {
                     break;
                 case /* resources.qualifications.exam.ExamResponses responses */ 2:
                     message.responses = ExamResponses.internalBinaryRead(reader, reader.uint32(), options, message.responses);
+                    break;
+                case /* bool partial */ 3:
+                    message.partial = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2022,6 +2054,9 @@ class SubmitExamRequest$Type extends MessageType<SubmitExamRequest> {
         /* resources.qualifications.exam.ExamResponses responses = 2; */
         if (message.responses)
             ExamResponses.internalBinaryWrite(message.responses, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* bool partial = 3; */
+        if (message.partial !== false)
+            writer.tag(3, WireType.Varint).bool(message.partial);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

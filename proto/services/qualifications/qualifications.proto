@@ -158,11 +158,14 @@ message TakeExamRequest {
 message TakeExamResponse {
   resources.qualifications.exam.ExamQuestions exam = 1;
   resources.qualifications.exam.ExamUser exam_user = 2;
+  resources.qualifications.exam.ExamResponses responses = 3;
+  bool times_up = 4;
 }
 
 message SubmitExamRequest {
   int64 qualification_id = 1;
   resources.qualifications.exam.ExamResponses responses = 2;
+  bool partial = 3;
 }
 
 message SubmitExamResponse {

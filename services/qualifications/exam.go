@@ -185,10 +185,23 @@ func (s *Server) TakeExam(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
+	timesUp := false
+	if examUser != nil && examUser.GetEndsAt() != nil &&
+		time.Since(examUser.GetEndsAt().AsTime()) > 10*time.Second {
+		timesUp = true
+	}
+
 	var exam *qualificationsexam.ExamQuestions
-	if examUser == nil ||
-		(examUser.GetEndsAt() != nil && time.Since(examUser.GetEndsAt().AsTime()) < quali.GetExamSettings().GetTime().AsDuration()) {
+	if examUser == nil || !timesUp {
 		exam, err = s.getExamQuestions(ctx, s.db, req.GetQualificationId(), false)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	}
+
+	var responses *qualificationsexam.ExamResponses
+	if examUser != nil && !timesUp {
+		responses, _, err = s.getExamResponses(ctx, req.GetQualificationId(), userInfo.GetUserId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -234,8 +247,11 @@ func (s *Server) TakeExam(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbqualifications.TakeExamResponse{
-		Exam:     exam,
-		ExamUser: examUser,
+		Exam:      exam,
+		ExamUser:  examUser,
+		Responses: responses,
+
+		TimesUp: timesUp,
 	}, nil
 }
 
@@ -265,7 +281,7 @@ func (s *Server) SubmitExam(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	duration := 0 * time.Second
+	var duration time.Duration
 	endedAt := time.Now()
 	examUser, err := s.getExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
@@ -283,30 +299,6 @@ func (s *Server) SubmitExam(
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
-
-	tExamUser := table.FivenetQualificationsExamUsers
-	stmt := tExamUser.
-		INSERT(
-			tExamUser.QualificationID,
-			tExamUser.UserID,
-			tExamUser.EndedAt,
-		).
-		VALUES(
-			req.GetQualificationId(),
-			userInfo.GetUserId(),
-			mysql.DateTimeT(endedAt),
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tExamUser.EndedAt.SET(mysql.TimestampT(endedAt)),
-		)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		if !dbutils.IsDuplicateError(err) {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-
-		return nil, errorsqualifications.ErrFailedQuery
-	}
 
 	tExamResponses := table.FivenetQualificationsExamResponses
 	respStmt := tExamResponses.
@@ -330,38 +322,33 @@ func (s *Server) SubmitExam(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if quali.GetExamSettings() != nil && quali.GetExamSettings().GetAutoGrade() {
-		exam, err := s.getExamQuestions(ctx, tx, req.GetQualificationId(), true)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-		if exam != nil && len(exam.GetQuestions()) > 0 {
-			// Auto grading is enabled, we can grade the exam now
-			score, grading := exam.Grade(
-				quali.GetExamSettings().GetAutoGradeMode(),
-				req.GetResponses(),
+	// Only update the exam user if this is not a partial update, otherwise we might "end" the exam prematurely when the user is still working on it
+	if !req.GetPartial() {
+		tExamUser := table.FivenetQualificationsExamUsers
+		stmt := tExamUser.
+			INSERT(
+				tExamUser.QualificationID,
+				tExamUser.UserID,
+				tExamUser.EndedAt,
+			).
+			VALUES(
+				req.GetQualificationId(),
+				userInfo.GetUserId(),
+				mysql.DateTimeT(endedAt),
+			).
+			ON_DUPLICATE_KEY_UPDATE(
+				tExamUser.EndedAt.SET(mysql.TimestampT(endedAt)),
 			)
-			var status qualifications.ResultStatus
-			if score >= float32(quali.GetExamSettings().GetMinimumPoints()) {
-				status = qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL
-			} else {
-				status = qualifications.ResultStatus_RESULT_STATUS_FAILED
-			}
 
-			if _, err := s.createOrUpdateQualificationResult(ctx, tx, req.GetQualificationId(), 0, &userinfo.UserInfo{
-				Superuser: true,
-				Job:       quali.GetCreatorJob(),
-				UserId:    0,
-			}, userInfo.GetUserId(), status, &score, "", grading); err != nil {
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			if !dbutils.IsDuplicateError(err) {
 				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 			}
+
+			return nil, errorsqualifications.ErrFailedQuery
 		}
 
-		if err := s.updateRequestStatus(ctx, tx, req.GetQualificationId(), userInfo.GetUserId(), qualifications.RequestStatus_REQUEST_STATUS_COMPLETED); err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-	} else {
-		if err := s.updateRequestStatus(ctx, tx, req.GetQualificationId(), userInfo.GetUserId(), qualifications.RequestStatus_REQUEST_STATUS_EXAM_GRADING); err != nil {
+		if err := s.gradeExam(ctx, tx, req.GetQualificationId(), userInfo.GetUserId(), quali, req.GetResponses()); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
@@ -376,6 +363,53 @@ func (s *Server) SubmitExam(
 	return &pbqualifications.SubmitExamResponse{
 		Duration: durationpb.New(duration),
 	}, nil
+}
+
+func (s *Server) gradeExam(
+	ctx context.Context,
+	tx qrm.DB,
+	qualificationId int64,
+	userId int32,
+	quali *qualifications.Qualification,
+	responses *qualificationsexam.ExamResponses,
+) error {
+	if quali.GetExamSettings() != nil && quali.GetExamSettings().GetAutoGrade() {
+		exam, err := s.getExamQuestions(ctx, tx, qualificationId, true)
+		if err != nil {
+			return err
+		}
+		if exam != nil && len(exam.GetQuestions()) > 0 {
+			// Auto grading is enabled, we can grade the exam now
+			score, grading := exam.Grade(
+				quali.GetExamSettings().GetAutoGradeMode(),
+				responses,
+			)
+			var status qualifications.ResultStatus
+			if score >= float32(quali.GetExamSettings().GetMinimumPoints()) {
+				status = qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL
+			} else {
+				status = qualifications.ResultStatus_RESULT_STATUS_FAILED
+			}
+
+			if _, err := s.createOrUpdateQualificationResult(ctx, tx, qualificationId, 0, &userinfo.UserInfo{
+				Superuser: true,
+				Job:       quali.GetCreatorJob(),
+				UserId:    0,
+			}, userId, status, &score, "", grading); err != nil {
+				return err
+			}
+		}
+
+		if err := s.updateRequestStatus(ctx, tx, qualificationId, userId, qualifications.RequestStatus_REQUEST_STATUS_COMPLETED); err != nil {
+			return err
+		}
+	} else {
+		if err := s.updateRequestStatus(ctx, tx, qualificationId, userId, qualifications.RequestStatus_REQUEST_STATUS_EXAM_GRADING); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (s *Server) GetUserExam(

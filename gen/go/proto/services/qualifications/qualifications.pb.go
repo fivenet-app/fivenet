@@ -2240,6 +2240,8 @@ type TakeExamResponse struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Exam          *exam.ExamQuestions    `protobuf:"bytes,1,opt,name=exam,proto3" json:"exam,omitempty"`
 	ExamUser      *exam.ExamUser         `protobuf:"bytes,2,opt,name=exam_user,json=examUser,proto3" json:"exam_user,omitempty"`
+	Responses     *exam.ExamResponses    `protobuf:"bytes,3,opt,name=responses,proto3" json:"responses,omitempty"`
+	TimesUp       bool                   `protobuf:"varint,4,opt,name=times_up,json=timesUp,proto3" json:"times_up,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2283,12 +2285,34 @@ func (x *TakeExamResponse) GetExamUser() *exam.ExamUser {
 	return nil
 }
 
+func (x *TakeExamResponse) GetResponses() *exam.ExamResponses {
+	if x != nil {
+		return x.Responses
+	}
+	return nil
+}
+
+func (x *TakeExamResponse) GetTimesUp() bool {
+	if x != nil {
+		return x.TimesUp
+	}
+	return false
+}
+
 func (x *TakeExamResponse) SetExam(v *exam.ExamQuestions) {
 	x.Exam = v
 }
 
 func (x *TakeExamResponse) SetExamUser(v *exam.ExamUser) {
 	x.ExamUser = v
+}
+
+func (x *TakeExamResponse) SetResponses(v *exam.ExamResponses) {
+	x.Responses = v
+}
+
+func (x *TakeExamResponse) SetTimesUp(v bool) {
+	x.TimesUp = v
 }
 
 func (x *TakeExamResponse) HasExam() bool {
@@ -2305,6 +2329,13 @@ func (x *TakeExamResponse) HasExamUser() bool {
 	return x.ExamUser != nil
 }
 
+func (x *TakeExamResponse) HasResponses() bool {
+	if x == nil {
+		return false
+	}
+	return x.Responses != nil
+}
+
 func (x *TakeExamResponse) ClearExam() {
 	x.Exam = nil
 }
@@ -2313,11 +2344,17 @@ func (x *TakeExamResponse) ClearExamUser() {
 	x.ExamUser = nil
 }
 
+func (x *TakeExamResponse) ClearResponses() {
+	x.Responses = nil
+}
+
 type TakeExamResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Exam     *exam.ExamQuestions
-	ExamUser *exam.ExamUser
+	Exam      *exam.ExamQuestions
+	ExamUser  *exam.ExamUser
+	Responses *exam.ExamResponses
+	TimesUp   bool
 }
 
 func (b0 TakeExamResponse_builder) Build() *TakeExamResponse {
@@ -2326,6 +2363,8 @@ func (b0 TakeExamResponse_builder) Build() *TakeExamResponse {
 	_, _ = b, x
 	x.Exam = b.Exam
 	x.ExamUser = b.ExamUser
+	x.Responses = b.Responses
+	x.TimesUp = b.TimesUp
 	return m0
 }
 
@@ -2333,6 +2372,7 @@ type SubmitExamRequest struct {
 	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Responses       *exam.ExamResponses    `protobuf:"bytes,2,opt,name=responses,proto3" json:"responses,omitempty"`
+	Partial         bool                   `protobuf:"varint,3,opt,name=partial,proto3" json:"partial,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -2376,12 +2416,23 @@ func (x *SubmitExamRequest) GetResponses() *exam.ExamResponses {
 	return nil
 }
 
+func (x *SubmitExamRequest) GetPartial() bool {
+	if x != nil {
+		return x.Partial
+	}
+	return false
+}
+
 func (x *SubmitExamRequest) SetQualificationId(v int64) {
 	x.QualificationId = v
 }
 
 func (x *SubmitExamRequest) SetResponses(v *exam.ExamResponses) {
 	x.Responses = v
+}
+
+func (x *SubmitExamRequest) SetPartial(v bool) {
+	x.Partial = v
 }
 
 func (x *SubmitExamRequest) HasResponses() bool {
@@ -2400,6 +2451,7 @@ type SubmitExamRequest_builder struct {
 
 	QualificationId int64
 	Responses       *exam.ExamResponses
+	Partial         bool
 }
 
 func (b0 SubmitExamRequest_builder) Build() *SubmitExamRequest {
@@ -2408,6 +2460,7 @@ func (b0 SubmitExamRequest_builder) Build() *SubmitExamRequest {
 	_, _ = b, x
 	x.QualificationId = b.QualificationId
 	x.Responses = b.Responses
+	x.Partial = b.Partial
 	return m0
 }
 
@@ -2802,13 +2855,16 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\x0fTakeExamRequest\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x1b\n" +
 	"\x06cancel\x18\x02 \x01(\bH\x00R\x06cancel\x88\x01\x01B\t\n" +
-	"\a_cancel\"\x9a\x01\n" +
+	"\a_cancel\"\x81\x02\n" +
 	"\x10TakeExamResponse\x12@\n" +
 	"\x04exam\x18\x01 \x01(\v2,.resources.qualifications.exam.ExamQuestionsR\x04exam\x12D\n" +
-	"\texam_user\x18\x02 \x01(\v2'.resources.qualifications.exam.ExamUserR\bexamUser\"\x8a\x01\n" +
+	"\texam_user\x18\x02 \x01(\v2'.resources.qualifications.exam.ExamUserR\bexamUser\x12J\n" +
+	"\tresponses\x18\x03 \x01(\v2,.resources.qualifications.exam.ExamResponsesR\tresponses\x12\x19\n" +
+	"\btimes_up\x18\x04 \x01(\bR\atimesUp\"\xa4\x01\n" +
 	"\x11SubmitExamRequest\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12J\n" +
-	"\tresponses\x18\x02 \x01(\v2,.resources.qualifications.exam.ExamResponsesR\tresponses\"K\n" +
+	"\tresponses\x18\x02 \x01(\v2,.resources.qualifications.exam.ExamResponsesR\tresponses\x12\x18\n" +
+	"\apartial\x18\x03 \x01(\bR\apartial\"K\n" +
 	"\x12SubmitExamResponse\x125\n" +
 	"\bduration\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\bduration\"X\n" +
 	"\x12GetUserExamRequest\x12)\n" +
@@ -2928,49 +2984,50 @@ var file_services_qualifications_qualifications_proto_depIdxs = []int32{
 	46, // 25: services.qualifications.GetExamInfoResponse.exam_user:type_name -> resources.qualifications.exam.ExamUser
 	47, // 26: services.qualifications.TakeExamResponse.exam:type_name -> resources.qualifications.exam.ExamQuestions
 	46, // 27: services.qualifications.TakeExamResponse.exam_user:type_name -> resources.qualifications.exam.ExamUser
-	48, // 28: services.qualifications.SubmitExamRequest.responses:type_name -> resources.qualifications.exam.ExamResponses
-	49, // 29: services.qualifications.SubmitExamResponse.duration:type_name -> google.protobuf.Duration
-	47, // 30: services.qualifications.GetUserExamResponse.exam:type_name -> resources.qualifications.exam.ExamQuestions
-	46, // 31: services.qualifications.GetUserExamResponse.exam_user:type_name -> resources.qualifications.exam.ExamUser
-	48, // 32: services.qualifications.GetUserExamResponse.responses:type_name -> resources.qualifications.exam.ExamResponses
-	44, // 33: services.qualifications.GetUserExamResponse.grading:type_name -> resources.qualifications.exam.ExamGrading
-	0,  // 34: services.qualifications.QualificationsService.ListQualifications:input_type -> services.qualifications.ListQualificationsRequest
-	2,  // 35: services.qualifications.QualificationsService.GetQualification:input_type -> services.qualifications.GetQualificationRequest
-	4,  // 36: services.qualifications.QualificationsService.CreateQualification:input_type -> services.qualifications.CreateQualificationRequest
-	6,  // 37: services.qualifications.QualificationsService.UpdateQualification:input_type -> services.qualifications.UpdateQualificationRequest
-	8,  // 38: services.qualifications.QualificationsService.DeleteQualification:input_type -> services.qualifications.DeleteQualificationRequest
-	14, // 39: services.qualifications.QualificationsService.ListQualificationRequests:input_type -> services.qualifications.ListQualificationRequestsRequest
-	16, // 40: services.qualifications.QualificationsService.CreateOrUpdateQualificationRequest:input_type -> services.qualifications.CreateOrUpdateQualificationRequestRequest
-	18, // 41: services.qualifications.QualificationsService.DeleteQualificationReq:input_type -> services.qualifications.DeleteQualificationReqRequest
-	20, // 42: services.qualifications.QualificationsService.ListQualificationsResults:input_type -> services.qualifications.ListQualificationsResultsRequest
-	22, // 43: services.qualifications.QualificationsService.CreateOrUpdateQualificationResult:input_type -> services.qualifications.CreateOrUpdateQualificationResultRequest
-	24, // 44: services.qualifications.QualificationsService.DeleteQualificationResult:input_type -> services.qualifications.DeleteQualificationResultRequest
-	26, // 45: services.qualifications.QualificationsService.GetExamInfo:input_type -> services.qualifications.GetExamInfoRequest
-	28, // 46: services.qualifications.QualificationsService.TakeExam:input_type -> services.qualifications.TakeExamRequest
-	30, // 47: services.qualifications.QualificationsService.SubmitExam:input_type -> services.qualifications.SubmitExamRequest
-	32, // 48: services.qualifications.QualificationsService.GetUserExam:input_type -> services.qualifications.GetUserExamRequest
-	50, // 49: services.qualifications.QualificationsService.UploadFile:input_type -> resources.file.UploadFileRequest
-	1,  // 50: services.qualifications.QualificationsService.ListQualifications:output_type -> services.qualifications.ListQualificationsResponse
-	3,  // 51: services.qualifications.QualificationsService.GetQualification:output_type -> services.qualifications.GetQualificationResponse
-	5,  // 52: services.qualifications.QualificationsService.CreateQualification:output_type -> services.qualifications.CreateQualificationResponse
-	7,  // 53: services.qualifications.QualificationsService.UpdateQualification:output_type -> services.qualifications.UpdateQualificationResponse
-	9,  // 54: services.qualifications.QualificationsService.DeleteQualification:output_type -> services.qualifications.DeleteQualificationResponse
-	15, // 55: services.qualifications.QualificationsService.ListQualificationRequests:output_type -> services.qualifications.ListQualificationRequestsResponse
-	17, // 56: services.qualifications.QualificationsService.CreateOrUpdateQualificationRequest:output_type -> services.qualifications.CreateOrUpdateQualificationRequestResponse
-	19, // 57: services.qualifications.QualificationsService.DeleteQualificationReq:output_type -> services.qualifications.DeleteQualificationReqResponse
-	21, // 58: services.qualifications.QualificationsService.ListQualificationsResults:output_type -> services.qualifications.ListQualificationsResultsResponse
-	23, // 59: services.qualifications.QualificationsService.CreateOrUpdateQualificationResult:output_type -> services.qualifications.CreateOrUpdateQualificationResultResponse
-	25, // 60: services.qualifications.QualificationsService.DeleteQualificationResult:output_type -> services.qualifications.DeleteQualificationResultResponse
-	27, // 61: services.qualifications.QualificationsService.GetExamInfo:output_type -> services.qualifications.GetExamInfoResponse
-	29, // 62: services.qualifications.QualificationsService.TakeExam:output_type -> services.qualifications.TakeExamResponse
-	31, // 63: services.qualifications.QualificationsService.SubmitExam:output_type -> services.qualifications.SubmitExamResponse
-	33, // 64: services.qualifications.QualificationsService.GetUserExam:output_type -> services.qualifications.GetUserExamResponse
-	51, // 65: services.qualifications.QualificationsService.UploadFile:output_type -> resources.file.UploadFileResponse
-	50, // [50:66] is the sub-list for method output_type
-	34, // [34:50] is the sub-list for method input_type
-	34, // [34:34] is the sub-list for extension type_name
-	34, // [34:34] is the sub-list for extension extendee
-	0,  // [0:34] is the sub-list for field type_name
+	48, // 28: services.qualifications.TakeExamResponse.responses:type_name -> resources.qualifications.exam.ExamResponses
+	48, // 29: services.qualifications.SubmitExamRequest.responses:type_name -> resources.qualifications.exam.ExamResponses
+	49, // 30: services.qualifications.SubmitExamResponse.duration:type_name -> google.protobuf.Duration
+	47, // 31: services.qualifications.GetUserExamResponse.exam:type_name -> resources.qualifications.exam.ExamQuestions
+	46, // 32: services.qualifications.GetUserExamResponse.exam_user:type_name -> resources.qualifications.exam.ExamUser
+	48, // 33: services.qualifications.GetUserExamResponse.responses:type_name -> resources.qualifications.exam.ExamResponses
+	44, // 34: services.qualifications.GetUserExamResponse.grading:type_name -> resources.qualifications.exam.ExamGrading
+	0,  // 35: services.qualifications.QualificationsService.ListQualifications:input_type -> services.qualifications.ListQualificationsRequest
+	2,  // 36: services.qualifications.QualificationsService.GetQualification:input_type -> services.qualifications.GetQualificationRequest
+	4,  // 37: services.qualifications.QualificationsService.CreateQualification:input_type -> services.qualifications.CreateQualificationRequest
+	6,  // 38: services.qualifications.QualificationsService.UpdateQualification:input_type -> services.qualifications.UpdateQualificationRequest
+	8,  // 39: services.qualifications.QualificationsService.DeleteQualification:input_type -> services.qualifications.DeleteQualificationRequest
+	14, // 40: services.qualifications.QualificationsService.ListQualificationRequests:input_type -> services.qualifications.ListQualificationRequestsRequest
+	16, // 41: services.qualifications.QualificationsService.CreateOrUpdateQualificationRequest:input_type -> services.qualifications.CreateOrUpdateQualificationRequestRequest
+	18, // 42: services.qualifications.QualificationsService.DeleteQualificationReq:input_type -> services.qualifications.DeleteQualificationReqRequest
+	20, // 43: services.qualifications.QualificationsService.ListQualificationsResults:input_type -> services.qualifications.ListQualificationsResultsRequest
+	22, // 44: services.qualifications.QualificationsService.CreateOrUpdateQualificationResult:input_type -> services.qualifications.CreateOrUpdateQualificationResultRequest
+	24, // 45: services.qualifications.QualificationsService.DeleteQualificationResult:input_type -> services.qualifications.DeleteQualificationResultRequest
+	26, // 46: services.qualifications.QualificationsService.GetExamInfo:input_type -> services.qualifications.GetExamInfoRequest
+	28, // 47: services.qualifications.QualificationsService.TakeExam:input_type -> services.qualifications.TakeExamRequest
+	30, // 48: services.qualifications.QualificationsService.SubmitExam:input_type -> services.qualifications.SubmitExamRequest
+	32, // 49: services.qualifications.QualificationsService.GetUserExam:input_type -> services.qualifications.GetUserExamRequest
+	50, // 50: services.qualifications.QualificationsService.UploadFile:input_type -> resources.file.UploadFileRequest
+	1,  // 51: services.qualifications.QualificationsService.ListQualifications:output_type -> services.qualifications.ListQualificationsResponse
+	3,  // 52: services.qualifications.QualificationsService.GetQualification:output_type -> services.qualifications.GetQualificationResponse
+	5,  // 53: services.qualifications.QualificationsService.CreateQualification:output_type -> services.qualifications.CreateQualificationResponse
+	7,  // 54: services.qualifications.QualificationsService.UpdateQualification:output_type -> services.qualifications.UpdateQualificationResponse
+	9,  // 55: services.qualifications.QualificationsService.DeleteQualification:output_type -> services.qualifications.DeleteQualificationResponse
+	15, // 56: services.qualifications.QualificationsService.ListQualificationRequests:output_type -> services.qualifications.ListQualificationRequestsResponse
+	17, // 57: services.qualifications.QualificationsService.CreateOrUpdateQualificationRequest:output_type -> services.qualifications.CreateOrUpdateQualificationRequestResponse
+	19, // 58: services.qualifications.QualificationsService.DeleteQualificationReq:output_type -> services.qualifications.DeleteQualificationReqResponse
+	21, // 59: services.qualifications.QualificationsService.ListQualificationsResults:output_type -> services.qualifications.ListQualificationsResultsResponse
+	23, // 60: services.qualifications.QualificationsService.CreateOrUpdateQualificationResult:output_type -> services.qualifications.CreateOrUpdateQualificationResultResponse
+	25, // 61: services.qualifications.QualificationsService.DeleteQualificationResult:output_type -> services.qualifications.DeleteQualificationResultResponse
+	27, // 62: services.qualifications.QualificationsService.GetExamInfo:output_type -> services.qualifications.GetExamInfoResponse
+	29, // 63: services.qualifications.QualificationsService.TakeExam:output_type -> services.qualifications.TakeExamResponse
+	31, // 64: services.qualifications.QualificationsService.SubmitExam:output_type -> services.qualifications.SubmitExamResponse
+	33, // 65: services.qualifications.QualificationsService.GetUserExam:output_type -> services.qualifications.GetUserExamResponse
+	51, // 66: services.qualifications.QualificationsService.UploadFile:output_type -> resources.file.UploadFileResponse
+	51, // [51:67] is the sub-list for method output_type
+	35, // [35:51] is the sub-list for method input_type
+	35, // [35:35] is the sub-list for extension type_name
+	35, // [35:35] is the sub-list for extension extendee
+	0,  // [0:35] is the sub-list for field type_name
 }
 
 func init() { file_services_qualifications_qualifications_proto_init() }
