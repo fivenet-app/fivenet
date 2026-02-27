@@ -120,20 +120,24 @@ const canDo = computed(() => ({
         undefined,
         qualification.value?.creatorJob,
     ),
-    edit: checkQualificationAccess(
-        qualification.value?.access,
-        qualification.value?.creator,
-        AccessLevel.EDIT,
-        'qualifications.QualificationsService/UpdateQualification',
-        qualification.value?.creatorJob,
-    ),
-    delete: checkQualificationAccess(
-        qualification.value?.access,
-        qualification.value?.creator,
-        AccessLevel.EDIT,
-        'qualifications.QualificationsService/DeleteQualification',
-        qualification.value?.creatorJob,
-    ),
+    edit:
+        can('qualifications.QualificationsService/UpdateQualification').value &&
+        checkQualificationAccess(
+            qualification.value?.access,
+            qualification.value?.creator,
+            AccessLevel.EDIT,
+            'qualifications.QualificationsService/UpdateQualification',
+            qualification.value?.creatorJob,
+        ),
+    delete:
+        can('qualifications.QualificationsService/DeleteQualification').value &&
+        checkQualificationAccess(
+            qualification.value?.access,
+            qualification.value?.creator,
+            AccessLevel.EDIT,
+            'qualifications.QualificationsService/DeleteQualification',
+            qualification.value?.creatorJob,
+        ),
 }));
 
 watchOnce(data, async () => {
@@ -215,9 +219,12 @@ const requestUserModal = overlay.create(RequestUserModal);
             <UDashboardToolbar
                 v-if="
                     qualification &&
-                    (canDo.edit ||
-                        (qualification.result !== undefined && qualification.result?.status !== ResultStatus.SUCCESSFUL) ||
-                        canDo.request)
+                    (canDo.request ||
+                        canDo.take ||
+                        canDo.grade ||
+                        canDo.edit ||
+                        canDo.delete ||
+                        (qualification.result !== undefined && qualification.result?.status !== ResultStatus.SUCCESSFUL))
                 "
                 class="p-1 print:hidden"
             >
@@ -287,11 +294,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                             </UTooltip>
                         </template>
 
-                        <UTooltip
-                            v-if="can('qualifications.QualificationsService/UpdateQualification').value && canDo.edit"
-                            class="flex-1"
-                            :text="$t('common.edit')"
-                        >
+                        <UTooltip v-if="canDo.edit" class="flex-1" :text="$t('common.edit')">
                             <UButton
                                 block
                                 :to="{
@@ -306,7 +309,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                         </UTooltip>
 
                         <UTooltip
-                            v-if="can('qualifications.QualificationsService/DeleteQualification').value && canDo.delete"
+                            v-if="canDo.delete"
                             class="flex-1"
                             :text="!qualification.deletedAt ? $t('common.delete') : $t('common.restore')"
                         >
