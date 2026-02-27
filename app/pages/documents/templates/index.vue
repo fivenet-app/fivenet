@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import List from '~/components/documents/templates/List.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { TemplateShort } from '~~/gen/ts/resources/documents/templates/templates';
@@ -15,6 +16,12 @@ definePageMeta({
 
 const { can } = useAuth();
 
+const schema = z.object({
+    title: z.string().optional(),
+});
+
+const query = useSearchForm('documents-templates', schema);
+
 async function selected(t: TemplateShort | undefined): Promise<void> {
     if (!t) return;
 
@@ -22,6 +29,12 @@ async function selected(t: TemplateShort | undefined): Promise<void> {
 }
 
 const templatesListRef = useTemplateRef('templatesListRef');
+
+const inputRef = useTemplateRef('inputRef');
+
+defineShortcuts({
+    '/': () => inputRef.value?.inputRef?.focus(),
+});
 </script>
 
 <template>
@@ -55,10 +68,30 @@ const templatesListRef = useTemplateRef('templatesListRef');
                     </UTooltip>
                 </template>
             </UDashboardNavbar>
+
+            <UDashboardToolbar>
+                <UForm ref="formRef" class="my-2 flex w-full flex-1 flex-col gap-2" :schema="schema" :state="query">
+                    <UFormField class="flex-1" name="title" :label="$t('common.search')">
+                        <UInput
+                            ref="inputRef"
+                            v-model="query.title"
+                            type="text"
+                            name="title"
+                            :placeholder="$t('common.title')"
+                            class="w-full"
+                            leading-icon="i-mdi-search"
+                        >
+                            <template #trailing>
+                                <UKbd value="/" />
+                            </template>
+                        </UInput>
+                    </UFormField>
+                </UForm>
+            </UDashboardToolbar>
         </template>
 
         <template #body>
-            <List ref="templatesListRef" link @selected="selected($event)" />
+            <List ref="templatesListRef" link :search-title="query.title" @selected="selected($event)" />
         </template>
 
         <template #footer>

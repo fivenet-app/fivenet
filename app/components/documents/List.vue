@@ -162,9 +162,9 @@ watchDebounced(query, async () => (await formRef.value?.validate({})) && refresh
 
 const isPinnedDocumentsVisible = ref(false);
 
-const inputRef = useTemplateRef('inputRef');
-
 const templateDrawer = overlay.create(TemplateDrawer);
+
+const inputRef = useTemplateRef('inputRef');
 
 defineShortcuts({
     '/': () => inputRef.value?.inputRef?.focus(),

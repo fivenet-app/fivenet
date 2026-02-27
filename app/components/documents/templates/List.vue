@@ -8,6 +8,7 @@ import type { TemplateShort } from '~~/gen/ts/resources/documents/templates/temp
 
 const props = defineProps<{
     link?: boolean;
+    searchTitle?: string;
 }>();
 
 defineEmits<{
@@ -78,6 +79,10 @@ function selected(idx: number): TemplateShort | undefined {
     <DataNoDataBlock v-else-if="!templates || templates.length === 0" :type="$t('common.template', 2)" />
 
     <div v-else class="flex justify-center">
-        <CardsList :class="$attrs.class" :items="items" @selected="$emit('selected', selected($event))" />
+        <CardsList
+            :class="$attrs.class"
+            :items="items.filter((v) => v.title.toLowerCase().includes(props.searchTitle?.toLowerCase() ?? ''))"
+            @selected="$emit('selected', selected($event))"
+        />
     </div>
 </template>
