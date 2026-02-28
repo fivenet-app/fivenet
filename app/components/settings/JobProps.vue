@@ -573,6 +573,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                         value-key="id"
                                         :disabled="!canSubmit || !canEdit || userGuilds?.length === 0"
                                         size="lg"
+                                        class="w-full"
                                     >
                                         <template #default>
                                             <div class="inline-flex items-center gap-2">

@@ -122,7 +122,7 @@ func UpdateOAuth2Account(
 		return err
 	}
 
-	return err
+	return nil
 }
 
 func GetAccessToken(
