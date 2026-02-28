@@ -72,7 +72,7 @@ func RetrieveOAuth2Account(
 
 func UpdateOAuth2Account(
 	ctx context.Context,
-	db qrm.Executable,
+	tx qrm.Executable,
 	ct *crypt.Crypt,
 	accountId int64,
 	oauth2Acc *model.FivenetAccountsOauth2,
@@ -118,7 +118,7 @@ func UpdateOAuth2Account(
 		)).
 		LIMIT(1)
 
-	if _, err := stmt.ExecContext(ctx, db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 
@@ -127,7 +127,7 @@ func UpdateOAuth2Account(
 
 func GetAccessToken(
 	ctx context.Context,
-	db qrm.Executable,
+	tx qrm.Executable,
 	cryp *crypt.Crypt,
 	acc *model.FivenetAccountsOauth2,
 	clientID string,
@@ -158,7 +158,7 @@ func GetAccessToken(
 		acc.ExpiresIn = &expiresIn
 		acc.ObtainedAt = &now
 
-		if err := UpdateOAuth2Account(ctx, db, cryp, acc.AccountID, acc); err != nil {
+		if err := UpdateOAuth2Account(ctx, tx, cryp, acc.AccountID, acc); err != nil {
 			return "", err
 		}
 	}

@@ -171,6 +171,7 @@ func (o *oauth2UserInfo) updateUserInfo(
 	if err := accountsoauth2.UpdateOAuth2Account(ctx, o.db, o.crypt, accountId, &model.FivenetAccountsOauth2{
 		AccountID:    accountId,
 		ExternalID:   userInfo.ID,
+		Provider:     provider,
 		Username:     userInfo.Username,
 		Avatar:       userInfo.Avatar,
 		AccessToken:  userInfo.AccessToken,
