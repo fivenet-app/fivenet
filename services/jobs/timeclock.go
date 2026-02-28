@@ -3,7 +3,6 @@ package jobs
 import (
 	"context"
 	"errors"
-	"fmt"
 	"math"
 	"time"
 
@@ -272,8 +271,6 @@ func (s *Server) ListTimeclock(
 		ORDER_BY(orderBys...).
 		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
-
-	fmt.Println(stmt.DebugSql())
 
 	switch req.GetMode() {
 	case jobstimeclock.TimeclockMode_TIMECLOCK_MODE_UNSPECIFIED:
