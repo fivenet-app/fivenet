@@ -2306,8 +2306,14 @@
             "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!"
         },
         "AuthService": {
-            "ErrGenericAccount": "Fehler beim Anzeigen/ Aktualisieren ihres Accounts.",
-            "ErrAccountCreateFailed": "Bitte überprüfen sie ihren Registrierungstoken!",
+            "ErrGenericAccount": {
+                "title": "Fehler beim Anzeigen/ Aktualisieren ihres Accounts.",
+                "content": "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut."
+            },
+            "ErrAccountCreateFailed": {
+                "title": "Fehler bei der Kontoerstellung",
+                "content": "Bitte überprüfen sie ihren Registrierungstoken! ({code})"
+            },
             "ErrInvalidLogin": {
                 "content": "Bitte überprüfen sie ihren Username und Passwort, und versuchen sie es erneut.",
                 "title": "Falscher Username oder Passwort!"
@@ -2317,9 +2323,18 @@
             "ErrGenericLogin": "Fehler bei der Anmeldung, bitte versuche es erneut.",
             "ErrUnableToChooseChar": "Sie haben nicht genug Berechtigungen um den Charakter auszuwählen!",
             "ErrUpdateAccount": "Fehler beim Aktualisieren Ihres Benutzers!",
-            "ErrChangePassword": "Fehler beim Ändern Ihres Passworts!",
-            "ErrForgotPassword": "Fehler beim zurücksetzen ihres Passworts!",
-            "ErrAccountExistsFailed": "Bitte nutzen Sie die Passwort vergessen Funktion!",
+            "ErrChangePassword": {
+                "title": "Fehler beim Ändern des Passworts!",
+                "content": "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut. ({code})"
+            },
+            "ErrForgotPassword": {
+                "title": "Fehler beim Zurücksetzen des Passworts!",
+                "content": "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut."
+            },
+            "ErrAccountExistsFailed": {
+                "title": "Konto existiert bereits!",
+                "content": "Bitte nutzen Sie die Passwort vergessen Funktion!"
+            },
             "ErrSignupDisabled": {
                 "title": "Konto-Erstellung ist deaktiviert!",
                 "content": "Die Konto-Erstellung ist deaktiviert. Bitte kontaktieren Sie Ihre FiveNet-Administratoren für weitere Informationen."

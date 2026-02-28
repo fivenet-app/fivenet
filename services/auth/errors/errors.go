@@ -8,18 +8,18 @@ import (
 var (
 	ErrGenericAccount = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.AuthService.ErrGenericAccount"},
-		nil,
+		&common.I18NItem{Key: "errors.AuthService.ErrGenericAccount.content"},
+		&common.I18NItem{Key: "errors.AuthService.ErrGenericAccount.title"},
 	)
-	ErrAccountCreateFailed = common.NewI18nErr(
+	ErrAccountCreateFailed = common.NewI18nErrFunc(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.AuthService.ErrAccountCreateFailed"},
-		nil,
+		&common.I18NItem{Key: "errors.AuthService.ErrAccountCreateFailed.content"},
+		&common.I18NItem{Key: "errors.AuthService.ErrAccountCreateFailed.title"},
 	)
 	ErrAccountExistsFailed = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.AuthService.ErrAccountExistsFailed"},
-		nil,
+		&common.I18NItem{Key: "errors.AuthService.ErrAccountExistsFailed.content"},
+		&common.I18NItem{Key: "errors.AuthService.ErrAccountExistsFailed.title"},
 	)
 	ErrInvalidLogin = common.NewI18nErr(
 		codes.InvalidArgument,
@@ -51,15 +51,15 @@ var (
 		&common.I18NItem{Key: "errors.AuthService.ErrUpdateAccount"},
 		nil,
 	)
-	ErrChangePassword = common.NewI18nErr(
+	ErrChangePassword = common.NewI18nErrFunc(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.AuthService.ErrChangePassword"},
-		nil,
+		&common.I18NItem{Key: "errors.AuthService.ErrChangePassword.content"},
+		&common.I18NItem{Key: "errors.AuthService.ErrChangePassword.title"},
 	)
 	ErrForgotPassword = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.AuthService.ErrForgotPassword"},
-		nil,
+		&common.I18NItem{Key: "errors.AuthService.ErrForgotPassword.content"},
+		&common.I18NItem{Key: "errors.AuthService.ErrForgotPassword.title"},
 	)
 	ErrSignupDisabled = common.NewI18nErr(
 		codes.InvalidArgument,

@@ -174,7 +174,10 @@ func (s *Server) CreateAccount(
 			zap.Error(err),
 			zap.String("reg_token", req.GetRegToken()),
 		)
-		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
+		return nil, errswrap.NewError(
+			err,
+			errorsauth.ErrAccountCreateFailed(map[string]any{"code": "404"}),
+		)
 	}
 
 	if acc.Username != nil || acc.Password != nil {
@@ -185,7 +188,10 @@ func (s *Server) CreateAccount(
 
 	hashedPassword, err := hashPassword(req.GetPassword())
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
+		return nil, errswrap.NewError(
+			err,
+			errorsauth.ErrAccountCreateFailed(map[string]any{"code": "500"}),
+		)
 	}
 
 	stmt := tAccounts.
@@ -214,7 +220,10 @@ func (s *Server) CreateAccount(
 			"failed to update account in database during account creation",
 			zap.Error(err),
 		)
-		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
+		return nil, errswrap.NewError(
+			err,
+			errorsauth.ErrAccountCreateFailed(map[string]any{"code": "409"}),
+		)
 	}
 
 	return &pbauth.CreateAccountResponse{
@@ -232,7 +241,10 @@ func (s *Server) ChangePassword(
 	}
 	claims, err := s.tm.ParseAccToken(token)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
+		return nil, errswrap.NewError(
+			err,
+			errorsauth.ErrChangePassword(map[string]any{"code": "401"}),
+		)
 	}
 
 	acc, err := s.getAccountFromIDAndUsername(ctx, claims.AccID, claims.Username, true)
@@ -240,7 +252,10 @@ func (s *Server) ChangePassword(
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsgrpcauth.ErrNoUserInfo)
 		}
-		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
+		return nil, errswrap.NewError(
+			err,
+			errorsauth.ErrChangePassword(map[string]any{"code": "500"}),
+		)
 	}
 
 	// Account has no password set
@@ -250,12 +265,18 @@ func (s *Server) ChangePassword(
 
 	// Password check logic
 	if err := checkPassword(*acc.Password, req.GetCurrent()); err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
+		return nil, errswrap.NewError(
+			err,
+			errorsauth.ErrChangePassword(map[string]any{"code": "401"}),
+		)
 	}
 
 	hashedPassword, err := hashPassword(req.GetNew())
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
+		return nil, errswrap.NewError(
+			err,
+			errorsauth.ErrChangePassword(map[string]any{"code": "500"}),
+		)
 	}
 
 	pass := hashedPassword

@@ -2306,8 +2306,14 @@
             "ErrPermissionDenied": "You don't have permission to do that!"
         },
         "AuthService": {
-            "ErrGenericAccount": "Failed to get/ update your account, please try again.",
-            "ErrAccountCreateFailed": "Please check the token you have typed in!",
+            "ErrGenericAccount": {
+                "title": "Account error",
+                "content": "Failed to get/ update your account, please try again."
+            },
+            "ErrAccountCreateFailed": {
+                "title": "Account creation failed",
+                "content": "Please check the token you have typed in! ({code})"
+            },
             "ErrInvalidLogin": {
                 "content": "Please check your username and password and try again.",
                 "title": "Wrong username or password!"
@@ -2317,9 +2323,18 @@
             "ErrGenericLogin": "Failed to login you in, please try again.",
             "ErrUnableToChooseChar": "You don't have permission to select this character!",
             "ErrUpdateAccount": "Failed to update your account!",
-            "ErrChangePassword": "Failed to change your password!",
-            "ErrForgotPassword": "Failed to reset password!",
-            "ErrAccountExistsFailed": "Please use use the forgot password function!",
+            "ErrChangePassword": {
+                "title": "Failed to change your password!",
+                "content": "Please check your current password and try again. ({code})"
+            },
+            "ErrForgotPassword": {
+                "title": "Failed to reset password!",
+                "content": "Please check your email and try again."
+            },
+            "ErrAccountExistsFailed": {
+                "title": "Account already exists!",
+                "content": "Please use the forgot password function!"
+            },
             "ErrSignupDisabled": {
                 "title": "Account signup is disabled!",
                 "content": "Please contact your FiveNet administrator for help on this."
