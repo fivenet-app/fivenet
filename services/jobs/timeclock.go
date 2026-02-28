@@ -3,6 +3,7 @@ package jobs
 import (
 	"context"
 	"errors"
+	"fmt"
 	"math"
 	"time"
 
@@ -229,8 +230,8 @@ func (s *Server) ListTimeclock(
 			mysql.FloatColumn("agg.spent_time").AS("timeclock_entry.spent_time"),
 
 			tColleague.ID,
-			tColleague.Job,
-			tColleague.JobGrade,
+			tUserJobs.Job.AS("colleague.job"),
+			tUserJobs.Grade.AS("colleague.job_grade"),
 			tColleague.Firstname,
 			tColleague.Lastname,
 			tColleague.Dateofbirth,
@@ -249,6 +250,12 @@ func (s *Server) ListTimeclock(
 				INNER_JOIN(tColleague,
 					tColleague.ID.EQ(mysql.IntegerColumn("agg.user_id")),
 				).
+				INNER_JOIN(tUserJobs,
+					mysql.AND(
+						tUserJobs.UserID.EQ(tColleague.ID),
+						tUserJobs.Job.EQ(mysql.String(userInfo.GetJob())),
+					),
+				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tColleague.ID),
 				).
@@ -266,7 +273,7 @@ func (s *Server) ListTimeclock(
 		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 
-	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	fmt.Println(stmt.DebugSql())
 
 	switch req.GetMode() {
 	case jobstimeclock.TimeclockMode_TIMECLOCK_MODE_UNSPECIFIED:
@@ -288,7 +295,7 @@ func (s *Server) ListTimeclock(
 		for i := range data.GetEntries() {
 			if data.GetEntries()[i].GetUser() != nil {
 				if data.GetEntries()[i].GetUser().GetJob() != userInfo.GetJob() {
-					jobInfoFn(data.GetEntries()[i].GetUser())
+					s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
 				} else {
 					s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
 				}
@@ -313,7 +320,7 @@ func (s *Server) ListTimeclock(
 		for i := range data.GetEntries() {
 			if data.GetEntries()[i].GetUser() != nil {
 				if data.GetEntries()[i].GetUser().GetJob() != userInfo.GetJob() {
-					jobInfoFn(data.GetEntries()[i].GetUser())
+					s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
 				} else {
 					s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
 				}
@@ -338,7 +345,7 @@ func (s *Server) ListTimeclock(
 		data.Date = req.GetDate().GetEnd()
 		for i := range data.GetEntries() {
 			if data.GetEntries()[i].GetUser() != nil {
-				jobInfoFn(data.GetEntries()[i].GetUser())
+				s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
 			}
 
 			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
@@ -359,8 +366,8 @@ func (s *Server) ListTimeclock(
 				tTimeClock.EndTime,
 				tTimeClock.SpentTime,
 				tColleague.ID,
-				tColleague.Job,
-				tColleague.JobGrade,
+				tUserJobs.Job.AS("colleague.job"),
+				tUserJobs.Grade.AS("colleague.job_grade"),
 				tColleague.Firstname,
 				tColleague.Lastname,
 				tColleague.Dateofbirth,
@@ -378,6 +385,12 @@ func (s *Server) ListTimeclock(
 				tTimeClock.
 					INNER_JOIN(tColleague,
 						tColleague.ID.EQ(tTimeClock.UserID),
+					).
+					INNER_JOIN(tUserJobs,
+						mysql.AND(
+							tUserJobs.UserID.EQ(tColleague.ID),
+							tUserJobs.Job.EQ(mysql.String(userInfo.GetJob())),
+						),
 					).
 					LEFT_JOIN(tUserProps,
 						tUserProps.UserID.EQ(tColleague.ID),
@@ -405,7 +418,7 @@ func (s *Server) ListTimeclock(
 		data.Date = req.GetDate().GetEnd()
 		for i := range data.GetEntries() {
 			if data.GetEntries()[i].GetUser() != nil {
-				jobInfoFn(data.GetEntries()[i].GetUser())
+				s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
 			}
 
 			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))

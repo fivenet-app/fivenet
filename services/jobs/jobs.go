@@ -15,6 +15,7 @@ import (
 
 var (
 	tUserProps = table.FivenetUserProps
+	tUserJobs  = table.FivenetUserJobs
 	tJobProps  = table.FivenetJobProps
 )
 
