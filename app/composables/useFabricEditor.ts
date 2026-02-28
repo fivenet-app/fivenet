@@ -82,6 +82,10 @@ export const strokeDashes = [
 let instance: ReturnType<typeof createFabricEditor> | null = null;
 
 function createFabricEditor() {
+    const MIN_ZOOM = 0.1;
+    const MAX_ZOOM = 3;
+    const FIT_VIEW_PADDING = 0.9;
+
     // State
     const canvas = shallowRef<Canvas | null>(null);
     const canvasEl = ref<HTMLCanvasElement | null>(null);
@@ -116,6 +120,38 @@ function createFabricEditor() {
     const clipboard = ref<FabricObject | null>(null);
 
     const borderBox = shallowRef<Rect | null>(null);
+    let lastDocWidth = documentSize.value.width;
+    let lastDocHeight = documentSize.value.height;
+
+    const clampZoom = (value: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
+
+    const getViewportDimensions = () => {
+        if (!canvas.value) return null;
+
+        const c = canvas.value;
+        const containerEl = canvasContainer.value || c.getElement().parentElement;
+        return {
+            width: containerEl?.clientWidth || c.getWidth(),
+            height: containerEl?.clientHeight || c.getHeight(),
+        };
+    };
+
+    const setDocumentViewport = (nextZoom: number) => {
+        if (!canvas.value) return;
+
+        const dimensions = getViewportDimensions();
+        if (!dimensions) return;
+
+        const docWidth = documentSize.value.width;
+        const docHeight = documentSize.value.height;
+        const z = clampZoom(nextZoom);
+
+        const offsetX = Math.max(0, (dimensions.width - docWidth * z) / 2);
+        const offsetY = Math.max(0, (dimensions.height - docHeight * z) / 2);
+
+        canvas.value.setViewportTransform([z, 0, 0, z, offsetX, offsetY]);
+        canvas.value.requestRenderAll();
+    };
 
     // Methods
     const createBorder = () => {
@@ -149,7 +185,7 @@ function createFabricEditor() {
         });
         canvas.value = fabricCanvas;
         canvasEl.value = canvasContainerElement;
-        canvasContainer.value = canvasContainerElement.parentElement?.parentElement || null;
+        canvasContainer.value = canvasContainerElement.parentElement || null;
 
         const aligningGuidelines = new AligningGuidelines(fabricCanvas, {
             margin: 4,
@@ -166,18 +202,14 @@ function createFabricEditor() {
             const containerEl = canvasContainer.value;
             if (!containerEl) return;
 
-            // Keep track of element and window sizes
-            const ratio = window.devicePixelRatio || 1;
             const width = containerWidth.value;
             const height = containerHeight.value;
 
-            const canvasEl = canvas.value.getElement();
-            canvasEl.width = width * ratio;
-            canvasEl.height = height * ratio;
-            canvasEl.style.width = width + 'px';
-            canvasEl.style.height = height + 'px';
-
-            canvas.value.renderAll();
+            canvas.value.setDimensions({ width, height });
+            canvas.value.calcOffset();
+            // Keep the editable document centered on container resizes.
+            setDocumentViewport(canvas.value.getZoom() || 1);
+            canvas.value.requestRenderAll();
         };
 
         // Enable alignment guide snapping and selection events
@@ -200,21 +232,21 @@ function createFabricEditor() {
         saveHistory();
 
         createBorder();
+        fitDocumentToView();
 
-        // Zoom with mouse wheel
-        canvasContainer.value?.addEventListener('wheel', (evt) => {
+        const handleWheel = (evt: WheelEvent) => {
             const delta = (evt as WheelEvent).deltaY;
             let currentZoom = fabricCanvas.getZoom();
             currentZoom *= 0.999 ** delta;
-            currentZoom = Math.min(3, Math.max(0.1, currentZoom));
+            currentZoom = clampZoom(currentZoom);
             fabricCanvas.zoomToPoint(new Point({ x: evt.offsetX, y: evt.offsetY }), currentZoom);
             evt.preventDefault();
             evt.stopPropagation();
             zoom.value = currentZoom;
-        });
+        };
 
         // Panning with middle-click or ctrl
-        canvasContainer.value?.addEventListener('mousedown', (e) => {
+        const handleMouseDown = (e: MouseEvent) => {
             if (!canvas.value?.getActiveObject() && (e.button === 1 || e.ctrlKey)) {
                 isDragging.value = true;
                 lastPosX.value = e.clientX;
@@ -235,26 +267,32 @@ function createFabricEditor() {
 
                 copyToClipboardWrapper(hex);
             }
-        });
+        };
 
-        canvasContainer.value?.addEventListener('mousemove', (e) => {
+        const handleMouseMove = (e: MouseEvent) => {
             if (isDragging.value && canvas.value) {
-                const zoom = canvas.value.getZoom();
                 const vpt = canvas.value.viewportTransform!;
-                vpt[4] += (e.clientX - lastPosX.value) / zoom;
-                vpt[5] += (e.clientY - lastPosY.value) / zoom;
+                vpt[4] += e.clientX - lastPosX.value;
+                vpt[5] += e.clientY - lastPosY.value;
                 lastPosX.value = e.clientX;
                 lastPosY.value = e.clientY;
                 canvas.value.requestRenderAll();
             }
-        });
+        };
 
-        canvasContainer.value?.addEventListener('mouseup', () => {
+        const handleMouseUp = () => {
             isDragging.value = false;
             // Re-enable selection
             if (canvas.value) canvas.value.selection = true;
             canvas.value?.setCursor('default');
-        });
+        };
+
+        // Zoom with mouse wheel
+        canvasContainer.value?.addEventListener('wheel', handleWheel);
+        // Panning with middle-click or ctrl
+        canvasContainer.value?.addEventListener('mousedown', handleMouseDown);
+        canvasContainer.value?.addEventListener('mousemove', handleMouseMove);
+        canvasContainer.value?.addEventListener('mouseup', handleMouseUp);
 
         // Register keyboard events for shortcuts
         window.addEventListener('keydown', handleKeydown);
@@ -285,6 +323,11 @@ function createFabricEditor() {
                     borderBox.value.fill = documentSize.value.fill;
                 }
                 canvas.value.renderAll();
+                if (lastDocWidth !== documentSize.value.width || lastDocHeight !== documentSize.value.height) {
+                    lastDocWidth = documentSize.value.width;
+                    lastDocHeight = documentSize.value.height;
+                    fitDocumentToView();
+                }
             },
             { immediate: true, leading: true, trailing: true, throttle: 200, deep: true },
         );
@@ -299,6 +342,10 @@ function createFabricEditor() {
 
             // Cleanup event listeners and canvas instance on destroy
             window.removeEventListener('keydown', handleKeydown);
+            canvasContainer.value?.removeEventListener('wheel', handleWheel);
+            canvasContainer.value?.removeEventListener('mousedown', handleMouseDown);
+            canvasContainer.value?.removeEventListener('mousemove', handleMouseMove);
+            canvasContainer.value?.removeEventListener('mouseup', handleMouseUp);
 
             aligningGuidelines.dispose();
             canvas.value.dispose();
@@ -592,7 +639,14 @@ function createFabricEditor() {
 
     watch(zoom, (newZoom) => {
         if (canvas.value) {
-            canvas.value.setZoom(newZoom);
+            const z = clampZoom(newZoom);
+            if (Math.abs(canvas.value.getZoom() - z) < 0.0001) return;
+
+            const center = new Point({
+                x: canvas.value.getWidth() / 2,
+                y: canvas.value.getHeight() / 2,
+            });
+            canvas.value.zoomToPoint(center, z);
             canvas.value.requestRenderAll();
         }
     });
@@ -608,34 +662,22 @@ function createFabricEditor() {
     const fitDocumentToView = () => {
         if (!canvas.value) return;
 
-        const c = canvas.value;
+        const dimensions = getViewportDimensions();
+        if (!dimensions) return;
 
-        const container = c.getElement().parentElement;
-        if (!container) return;
+        // Use actual document size
+        const docWidth = documentSize.value.width;
+        const docHeight = documentSize.value.height;
 
-        const containerWidth = container.clientWidth;
-        const containerHeight = container.clientHeight;
-
-        // Use actual canvas doc size (not canvas element size!)
-        const docWidth = c.getWidth();
-        const docHeight = c.getHeight();
-
-        const z = Math.min(containerWidth / docWidth, containerHeight / docHeight) * 0.9; // add some margin
-
-        const offsetX = (containerWidth - docWidth * z) / 2;
-        const offsetY = (containerHeight - docHeight * z) / 2;
-
-        c.setZoom(z);
-        c.viewportTransform = [z, 0, 0, z, offsetX, offsetY];
-
-        c.requestRenderAll();
+        const z = clampZoom(Math.min(dimensions.width / docWidth, dimensions.height / docHeight) * FIT_VIEW_PADDING);
+        setDocumentViewport(z);
         zoom.value = z;
     };
 
     function resetZoom() {
-        if (canvas.value) {
-            zoom.value = 1;
-        }
+        if (!canvas.value) return;
+        setDocumentViewport(1);
+        zoom.value = 1;
     }
 
     const copySelected = async () => {

@@ -22,6 +22,8 @@ import (
 
 const (
 	qualificationsRoleModulePrefix = "Qualifications-"
+
+	qualificationsQueryLimit = 500
 )
 
 var (
@@ -34,7 +36,7 @@ type QualificationsSync struct {
 }
 
 type qualificationsEntry struct {
-	ID                 int64  `alias:"qualifications_entry.id"`
+	ID                 int64  `alias:"qualifications_entry.id"           sql:"primary_key"`
 	Abbreviation       string `alias:"qualifications_entry.abbreviation"`
 	QualificationTitle string `alias:"qualifications_entry.title"`
 
@@ -200,54 +202,35 @@ func (g *QualificationsSync) planUsers(
 
 	errs := multierr.Combine()
 
-	tUsers := table.FivenetUser.AS("users")
-	tUserJobs := table.FivenetUserJobs.AS("user_jobs")
-
 	users := discordtypes.Users{}
 	for qualificationId, role := range qualificationRoles {
-		stmt := tAccsOauth2.
-			SELECT(
-				tAccsOauth2.AccountID.AS("qualification_user_mapping.account_id"),
-				tAccsOauth2.ExternalID.AS("qualification_user_mapping.external_id"),
-				// User's jobs
-				tUserJobs.Job.AS("jobs.job"),
-				tUserJobs.Grade.AS("jobs.grade"),
-			).
-			FROM(
-				tQualificationsResults.
-					INNER_JOIN(tQualifications,
-						tQualifications.ID.EQ(tQualificationsResults.QualificationID),
-					).
-					INNER_JOIN(tUsers,
-						tUsers.ID.EQ(tQualificationsResults.UserID),
-					).
-					INNER_JOIN(tAccsOauth2,
-						tAccsOauth2.AccountID.EQ(tUsers.AccountID),
-					).
-					INNER_JOIN(tUserJobs,
-						tUserJobs.UserID.EQ(tUsers.ID),
-					),
-			).
-			WHERE(mysql.AND(
-				tQualifications.Job.EQ(mysql.String(g.job)),
-				tQualifications.DeletedAt.IS_NULL(),
-				tQualificationsResults.QualificationID.EQ(mysql.Int64(qualificationId)),
-				tQualificationsResults.DeletedAt.IS_NULL(),
-				tQualificationsResults.Status.EQ(
-					mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
-				),
-				tAccsOauth2.Provider.EQ(mysql.String("discord")),
-				tUsers.AccountID.IS_NOT_NULL(),
-			))
+		err := g.queryAndPlanUsersForQualification(ctx, qualificationId, role, &users)
+		if err != nil {
+			errs = multierr.Append(errs, err)
+			continue
+		}
+	}
 
-		var dest []*qualificationUserMapping
-		if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, logs, err
-			}
+	return users, logs, errs
+}
+
+func (g *QualificationsSync) queryAndPlanUsersForQualification(
+	ctx context.Context,
+	qualificationId int64,
+	role *discordtypes.Role,
+	users *discordtypes.Users,
+) error {
+	offset := int64(0)
+
+	var errs error
+	for {
+		userMappings, err := g.queryUsers(ctx, qualificationId, offset)
+		if err != nil {
+			errs = multierr.Append(errs, err)
+			break
 		}
 
-		for _, u := range dest {
+		for _, u := range userMappings {
 			externalId, err := strconv.ParseUint(u.ExternalID, 10, 64)
 			if err != nil {
 				errs = multierr.Append(
@@ -272,7 +255,70 @@ func (g *QualificationsSync) planUsers(
 
 			users.Add(user)
 		}
+
+		count := int64(len(userMappings))
+		if count < qualificationsQueryLimit {
+			break
+		}
+		offset += count
 	}
 
-	return users, logs, errs
+	return errs
+}
+
+func (g *QualificationsSync) queryUsers(
+	ctx context.Context,
+	qualificationId int64,
+	offset int64,
+) ([]*qualificationUserMapping, error) {
+	tUsers := table.FivenetUser.AS("users")
+	tUserJobs := table.FivenetUserJobs.AS("user_jobs")
+
+	stmt := tAccsOauth2.
+		SELECT(
+			tAccsOauth2.AccountID.AS("qualification_user_mapping.account_id"),
+			tAccsOauth2.ExternalID.AS("qualification_user_mapping.external_id"),
+			// User's jobs
+			tUserJobs.Job.AS("jobs.job"),
+			tUserJobs.Grade.AS("jobs.grade"),
+		).
+		FROM(
+			tQualificationsResults.
+				INNER_JOIN(tQualifications,
+					tQualifications.ID.EQ(tQualificationsResults.QualificationID),
+				).
+				INNER_JOIN(tUsers,
+					tUsers.ID.EQ(tQualificationsResults.UserID),
+				).
+				INNER_JOIN(tAccsOauth2,
+					tAccsOauth2.AccountID.EQ(tUsers.AccountID),
+				).
+				INNER_JOIN(tUserJobs,
+					mysql.AND(
+						tUserJobs.UserID.EQ(tUsers.ID),
+						tUserJobs.Job.EQ(mysql.String(g.job)),
+					),
+				),
+		).
+		WHERE(mysql.AND(
+			tAccsOauth2.Provider.EQ(mysql.String("discord")),
+			tQualifications.Job.EQ(mysql.String(g.job)),
+			tQualifications.DeletedAt.IS_NULL(),
+			tQualificationsResults.QualificationID.EQ(mysql.Int64(qualificationId)),
+			tQualificationsResults.DeletedAt.IS_NULL(),
+			tQualificationsResults.Status.EQ(
+				mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
+			),
+		)).
+		OFFSET(offset).
+		LIMIT(qualificationsQueryLimit)
+
+	var userMappings []*qualificationUserMapping
+	if err := stmt.QueryContext(ctx, g.db, &userMappings); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("failed to query qualification user mappings. %w", err)
+		}
+	}
+
+	return userMappings, nil
 }

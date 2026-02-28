@@ -24,13 +24,13 @@ const svgData = defineModel<string>({ required: true });
     <!-- Container: full-screen flex layout with top toolbar and content area -->
     <div class="flex h-full max-w-screen flex-col">
         <!-- Main content: canvas and sidebar -->
-        <div class="flex flex-1 overflow-hidden">
-            <div ref="canvasContainer" class="flex-1 overflow-hidden">
+        <div class="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
+            <div ref="canvasContainer" class="min-h-0 min-w-0 flex-1 overflow-hidden">
                 <!-- Canvas area fills remaining space -->
                 <EditorCanvas
                     v-model="svgData"
-                    :min-height="350"
-                    :min-width="900"
+                    :max-height="maxHeight"
+                    :max-width="maxWidth"
                     :background-color="backgroundColor"
                     :disabled="disabled"
                     v-bind="$attrs"
@@ -38,7 +38,7 @@ const svgData = defineModel<string>({ required: true });
             </div>
 
             <!-- Sidebar on the right with fixed width -->
-            <EditorSidebar class="w-full max-w-sm min-w-64 shrink-0 border-l border-l-default bg-default">
+            <EditorSidebar class="w-full shrink-0 border-l border-l-default bg-default lg:max-w-sm lg:min-w-64">
                 <template #sidebar-top>
                     <slot name="sidebar-top" />
                 </template>

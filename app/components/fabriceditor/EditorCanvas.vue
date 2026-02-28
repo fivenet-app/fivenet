@@ -16,10 +16,10 @@ const canvasEl = ref<HTMLCanvasElement | null>(null);
 const fabric = await import('fabric');
 
 // Get composable state and methods
-const { canvas, documentSize, initCanvas } = useFabricEditor();
+const { canvas, documentSize, initCanvas, fitDocumentToView } = useFabricEditor();
 
 watch(svgData, async (value) => {
-    if (!canvas || !value) return;
+    if (!canvas.value || !value) return;
 
     await fabric.loadSVGFromString(value, () => canvas.value?.renderAll());
 });
@@ -29,8 +29,8 @@ onMounted(async () => {
     const canvasElement = canvasEl.value!;
     // Set canvas dimensions to container size
     const parent = canvasElement.parentElement;
-    const width = props.maxWidth || parent?.clientWidth || 800;
-    const height = props.maxHeight || parent?.clientHeight || 600;
+    const width = parent?.clientWidth || 800;
+    const height = parent?.clientHeight || 600;
 
     // If max dimensions are provided, set them in document size and disable resize
     if (props.maxHeight) {
@@ -45,10 +45,7 @@ onMounted(async () => {
         documentSize.value.fill = props.backgroundColor;
     }
 
-    initCanvas(canvasElement, {
-        width,
-        height,
-    });
+    initCanvas(canvasElement, { width, height });
 
     if (svgData.value) {
         const loadedSvg = await fabric.loadSVGFromString(svgData.value);
@@ -60,6 +57,7 @@ onMounted(async () => {
             }
 
             canvas.value?.add(...loadedSvg.objects.filter((obj): obj is FabricObject => !!obj));
+            fitDocumentToView();
         }
     }
 

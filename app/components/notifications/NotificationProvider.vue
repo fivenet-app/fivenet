@@ -27,7 +27,11 @@ const calendarStore = useCalendarStore();
 const mailerStore = useMailerStore();
 
 async function checkAppointments(): Promise<void> {
-    await calendarStore.checkAppointments();
+    try {
+        await calendarStore.checkAppointments();
+    } catch (e) {
+        logger.error('Exception during check appointments call', e);
+    }
 }
 
 const { pause, resume } = useIntervalFn(

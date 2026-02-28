@@ -2,6 +2,8 @@
 import { FabricHtmlInput } from '~/composables/fabric/FabricHtmlInput';
 import { useFabricEditor } from '~/composables/useFabricEditor';
 
+const { t } = useI18n();
+
 // Get methods from composable to manipulate canvas
 const { addText, addCurvedText, addPlaceholder, addRectangle, addCircle, addImage, canvas } = useFabricEditor();
 
@@ -12,7 +14,7 @@ function addInput(): void {
     canvas.value?.add(input);
 }
 
-const text = ref<string>('Curved Text');
+const text = ref<string>(t('components.fabric_editor.curved_text.title').valueOf());
 </script>
 
 <template>

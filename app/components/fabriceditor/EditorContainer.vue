@@ -19,7 +19,7 @@ const modelValue = defineModel<string>({ required: true });
 <template>
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
-            <UDashboardNavbar class="print:hidden" :title="$t('pages.documents.id.title')">
+            <UDashboardNavbar class="print:hidden" :title="$t('pages.documents.stamps.title')">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>

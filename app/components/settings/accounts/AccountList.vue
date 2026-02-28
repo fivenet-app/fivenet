@@ -195,13 +195,10 @@ const columns = computed(
                 header: t('common.last_char'),
                 cell: ({ row }) =>
                     row.original.lastChar
-                        ? h(
-                              CitizenInfoPopover,
-                              {
-                                  userId: row.original.lastChar,
-                              },
-                              row.original.lastChar,
-                          )
+                        ? h(CitizenInfoPopover, {
+                              userId: row.original.lastChar,
+                              key: row.original.lastChar,
+                          })
                         : undefined,
             },
             {
