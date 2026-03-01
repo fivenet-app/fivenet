@@ -45,8 +45,7 @@ type qualificationsEntry struct {
 }
 
 type qualificationUserMapping struct {
-	AccountID  int64            `alias:"account_id"`
-	ExternalID string           `alias:"external_id"`
+	ExternalID string           `alias:"external_id" sql:"primary_key"`
 	Jobs       []*users.UserJob `alias:"jobs"`
 }
 
@@ -204,8 +203,7 @@ func (g *QualificationsSync) planUsers(
 
 	users := discordtypes.Users{}
 	for qualificationId, role := range qualificationRoles {
-		err := g.queryAndPlanUsersForQualification(ctx, qualificationId, role, &users)
-		if err != nil {
+		if err := g.queryAndPlanUsersForQualification(ctx, qualificationId, role, &users); err != nil {
 			errs = multierr.Append(errs, err)
 			continue
 		}
@@ -271,12 +269,12 @@ func (g *QualificationsSync) queryUsers(
 	qualificationId int64,
 	offset int64,
 ) ([]*qualificationUserMapping, error) {
+	tAccs := table.FivenetAccounts
 	tUsers := table.FivenetUser.AS("users")
 	tUserJobs := table.FivenetUserJobs.AS("user_jobs")
 
 	stmt := tAccsOauth2.
 		SELECT(
-			tAccsOauth2.AccountID.AS("qualification_user_mapping.account_id"),
 			tAccsOauth2.ExternalID.AS("qualification_user_mapping.external_id"),
 			// User's jobs
 			tUserJobs.Job.AS("jobs.job"),
@@ -290,8 +288,14 @@ func (g *QualificationsSync) queryUsers(
 				INNER_JOIN(tUsers,
 					tUsers.ID.EQ(tQualificationsResults.UserID),
 				).
+				INNER_JOIN(tAccs,
+					mysql.OR(
+						tAccs.ID.EQ(tUsers.AccountID),
+						tAccs.License.EQ(tUsers.License),
+					),
+				).
 				INNER_JOIN(tAccsOauth2,
-					tAccsOauth2.AccountID.EQ(tUsers.AccountID),
+					tAccsOauth2.AccountID.EQ(tAccs.ID),
 				).
 				INNER_JOIN(tUserJobs,
 					mysql.AND(
