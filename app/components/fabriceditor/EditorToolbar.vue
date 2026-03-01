@@ -9,8 +9,7 @@ const {
     exportJSON,
     exportSVG,
     zoom,
-    resetZoom,
-    fitDocumentToView,
+    fitToView,
     undo,
     redo,
     groupObject,
@@ -89,31 +88,23 @@ const exportMenuItems = computed<DropdownMenuItem[]>(() => [
 
         <UFormField>
             <div class="inline-flex gap-2">
-                <UInputNumber
-                    v-model="zoom"
-                    class="w-30"
-                    :step="0.1"
-                    :min="0.1"
-                    :max="3"
-                    decrement-icon="i-mdi-zoom-out"
-                    increment-icon="i-mdi-zoom-in"
-                    :format-options="{
-                        style: 'percent',
-                    }"
-                />
-
                 <UFieldGroup>
-                    <UButton
-                        icon="i-mdi-fit-to-screen"
-                        :label="$t('components.fabric_editor.zoom_to_fit')"
-                        @click="fitDocumentToView"
+                    <UInputNumber
+                        v-model="zoom"
+                        class="w-30"
+                        :step="0.1"
+                        :min="0.1"
+                        :max="3"
+                        decrement-icon="i-mdi-zoom-out"
+                        increment-icon="i-mdi-zoom-in"
+                        :format-options="{
+                            style: 'percent',
+                        }"
                     />
-                    <UButton
-                        variant="outline"
-                        icon="i-mdi-number-zero-circle-outline"
-                        :label="$t('components.fabric_editor.reset_zoom')"
-                        @click="resetZoom"
-                    />
+
+                    <UTooltip :text="$t('components.fabric_editor.zoom_to_fit')">
+                        <UButton icon="i-mdi-fit-to-screen" @click="fitToView" />
+                    </UTooltip>
                 </UFieldGroup>
             </div>
         </UFormField>

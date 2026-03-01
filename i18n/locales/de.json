@@ -795,6 +795,7 @@
                 "align_right": "Rechts ausrichten",
                 "align_justify": "Blocksatz",
                 "font_family": "Schriftart",
+                "default_font": "Standard",
                 "font_color": "Schriftfarbe",
                 "paragraph": "Absatz",
                 "heading_1": "Überschrift 1",

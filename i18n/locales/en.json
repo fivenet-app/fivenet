@@ -795,6 +795,7 @@
                 "align_right": "Align Right",
                 "align_justify": "Align Justify",
                 "font_family": "Font Family",
+                "default_font": "Default",
                 "font_color": "Font Color",
                 "paragraph": "Paragraph",
                 "heading_1": "Heading 1",

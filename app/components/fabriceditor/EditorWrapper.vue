@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import EditorCanvas from './EditorCanvas.vue';
+import type { FabricObject } from 'fabric';
 import EditorSidebar from './EditorSidebar.vue';
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         maxHeight?: number;
         maxWidth?: number;
@@ -17,24 +17,78 @@ withDefaults(
     },
 );
 
-const svgData = defineModel<string>({ required: true });
+const svgData = defineModel<string | undefined>({ required: true });
+
+const canvasContainer = useTemplateRef('canvasContainer');
+const canvasEl = useTemplateRef('canvasEl');
+
+const fabric = await import('fabric');
+
+// Get composable state and methods
+const { canvas, documentSize, initCanvas, fitToView } = useFabricEditor();
+
+onMounted(async () => {
+    if (!canvasContainer.value) {
+        console.error('EditorCanvas requires a container element');
+        return;
+    }
+    if (!canvasEl.value) {
+        console.error('EditorCanvas requires a canvas element');
+        return;
+    }
+
+    // Initialize Fabric canvas
+    const containerElement = canvasContainer.value;
+    // Set canvas dimensions to container size
+    const width = containerElement?.clientWidth || 800;
+    const height = containerElement?.clientHeight || 600;
+
+    // If max dimensions are provided, set them in document size and disable resize
+    if (props.maxHeight) {
+        documentSize.value.height = props.maxHeight;
+        documentSize.value.disabled = true;
+    }
+    if (props.maxWidth) {
+        documentSize.value.width = props.maxWidth;
+        documentSize.value.disabled = true;
+    }
+    if (props.backgroundColor) {
+        documentSize.value.fill = props.backgroundColor;
+    }
+
+    initCanvas(canvasContainer.value, canvasEl.value, { width, height });
+
+    if (svgData.value) {
+        const loadedSvg = await fabric.loadSVGFromString(svgData.value);
+
+        if (loadedSvg.objects) {
+            if (loadedSvg.options['width'] && loadedSvg.options['height']) {
+                documentSize.value.width = parseInt(loadedSvg.options['width']);
+                documentSize.value.height = parseInt(loadedSvg.options['height']);
+            }
+
+            canvas.value?.add(...loadedSvg.objects.filter((obj): obj is FabricObject => !!obj));
+        }
+    }
+
+    fitToView();
+
+    const emitChange = () => (svgData.value = canvas.value?.toSVG());
+    canvas.value?.on('object:added', emitChange);
+    canvas.value?.on('object:modified', emitChange);
+    canvas.value?.on('object:removed', emitChange);
+});
 </script>
 
 <template>
     <!-- Container: full-screen flex layout with top toolbar and content area -->
     <div class="flex h-full max-w-screen flex-col">
         <!-- Main content: canvas and sidebar -->
-        <div class="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
-            <div ref="canvasContainer" class="min-h-0 min-w-0 flex-1 overflow-hidden">
-                <!-- Canvas area fills remaining space -->
-                <EditorCanvas
-                    v-model="svgData"
-                    :max-height="maxHeight"
-                    :max-width="maxWidth"
-                    :background-color="backgroundColor"
-                    :disabled="disabled"
-                    v-bind="$attrs"
-                />
+        <div class="flex flex-1 flex-col overflow-hidden lg:flex-row">
+            <!-- Canvas container fills remaining space -->
+            <div ref="canvasContainer" class="min-w-0 flex-1 overflow-hidden">
+                <!-- The canvas element for Fabric.js -->
+                <canvas ref="canvasEl" class="h-full w-full" v-bind="$attrs" />
             </div>
 
             <!-- Sidebar on the right with fixed width -->

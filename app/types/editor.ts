@@ -118,7 +118,7 @@ export const highlightColors = [
 
 export const fonts = [
     {
-        label: 'components.partials.tiptap_editor.default',
+        label: 'components.partials.tiptap_editor.default_font',
         value: 'Public Sans',
     },
     {

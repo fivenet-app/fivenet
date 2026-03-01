@@ -79,19 +79,20 @@ export const strokeDashes = [
     { name: 'Small Dashes', value: [1, 1] },
 ];
 
+export const borderBoxName = 'document-border';
+
 let instance: ReturnType<typeof createFabricEditor> | null = null;
 
 function createFabricEditor() {
     const MIN_ZOOM = 0.1;
-    const MAX_ZOOM = 3;
-    const FIT_VIEW_PADDING = 0.9;
+    const MAX_ZOOM = 3.0;
 
     // State
     const canvas = shallowRef<Canvas | null>(null);
     const canvasEl = ref<HTMLCanvasElement | null>(null);
     const canvasContainer = ref<HTMLElement | null>(null);
     const activeObject = ref<FabricObject | null | undefined>(undefined);
-    const zoom = ref(1);
+    const zoom = ref<number>(1);
 
     const canvasWidth = ref(800);
     const canvasHeight = ref(600);
@@ -125,34 +126,6 @@ function createFabricEditor() {
 
     const clampZoom = (value: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
 
-    const getViewportDimensions = () => {
-        if (!canvas.value) return null;
-
-        const c = canvas.value;
-        const containerEl = canvasContainer.value || c.getElement().parentElement;
-        return {
-            width: containerEl?.clientWidth || c.getWidth(),
-            height: containerEl?.clientHeight || c.getHeight(),
-        };
-    };
-
-    const setDocumentViewport = (nextZoom: number) => {
-        if (!canvas.value) return;
-
-        const dimensions = getViewportDimensions();
-        if (!dimensions) return;
-
-        const docWidth = documentSize.value.width;
-        const docHeight = documentSize.value.height;
-        const z = clampZoom(nextZoom);
-
-        const offsetX = Math.max(0, (dimensions.width - docWidth * z) / 2);
-        const offsetY = Math.max(0, (dimensions.height - docHeight * z) / 2);
-
-        canvas.value.setViewportTransform([z, 0, 0, z, offsetX, offsetY]);
-        canvas.value.requestRenderAll();
-    };
-
     // Methods
     const createBorder = () => {
         const box = new Rect({
@@ -167,7 +140,7 @@ function createFabricEditor() {
             selectable: false,
             evented: false,
             excludeFromExport: true,
-            name: 'document-border',
+            name: borderBoxName,
         });
 
         canvas.value?.add(box);
@@ -176,16 +149,20 @@ function createFabricEditor() {
         borderBox.value = box;
     };
 
-    const initCanvas = (canvasContainerElement: HTMLCanvasElement, opts: Partial<CanvasOptions>) => {
-        const fabricCanvas = new Canvas(canvasContainerElement, {
+    const initCanvas = (
+        canvasContainerElement: HTMLElement,
+        canvasElement: HTMLCanvasElement,
+        opts: Partial<CanvasOptions>,
+    ) => {
+        const fabricCanvas = new Canvas(canvasElement, {
             backgroundColor: '#ffffff00', // Transparent
             selection: true,
             preserveObjectStacking: true,
             ...opts,
         });
         canvas.value = fabricCanvas;
-        canvasEl.value = canvasContainerElement;
-        canvasContainer.value = canvasContainerElement.parentElement || null;
+        canvasEl.value = canvasElement;
+        canvasContainer.value = canvasContainerElement || canvasElement.parentElement || null;
 
         const aligningGuidelines = new AligningGuidelines(fabricCanvas, {
             margin: 4,
@@ -202,14 +179,13 @@ function createFabricEditor() {
             const containerEl = canvasContainer.value;
             if (!containerEl) return;
 
-            const width = containerWidth.value;
-            const height = containerHeight.value;
+            // Prefer live DOM measurements; keep observer values as fallback.
+            const width = containerEl.clientWidth || containerWidth.value;
+            const height = containerEl.clientHeight || containerHeight.value;
+            if (width <= 0 || height <= 0) return;
 
-            canvas.value.setDimensions({ width, height });
+            canvas.value.setDimensions({ width: width, height: height });
             canvas.value.calcOffset();
-            // Keep the editable document centered on container resizes.
-            setDocumentViewport(canvas.value.getZoom() || 1);
-            canvas.value.requestRenderAll();
         };
 
         // Enable alignment guide snapping and selection events
@@ -232,16 +208,15 @@ function createFabricEditor() {
         saveHistory();
 
         createBorder();
-        fitDocumentToView();
 
         const handleWheel = (evt: WheelEvent) => {
+            evt.preventDefault();
+            evt.stopPropagation();
+
             const delta = (evt as WheelEvent).deltaY;
             let currentZoom = fabricCanvas.getZoom();
             currentZoom *= 0.999 ** delta;
             currentZoom = clampZoom(currentZoom);
-            fabricCanvas.zoomToPoint(new Point({ x: evt.offsetX, y: evt.offsetY }), currentZoom);
-            evt.preventDefault();
-            evt.stopPropagation();
             zoom.value = currentZoom;
         };
 
@@ -296,6 +271,9 @@ function createFabricEditor() {
 
         // Register keyboard events for shortcuts
         window.addEventListener('keydown', handleKeydown);
+        // Fallback for viewport/layout changes that are not always captured by element-size observers.
+        const handleWindowResize = () => resizeCanvas();
+        window.addEventListener('resize', handleWindowResize);
 
         watch(canvas, (c) => {
             if (!c) return;
@@ -326,7 +304,6 @@ function createFabricEditor() {
                 if (lastDocWidth !== documentSize.value.width || lastDocHeight !== documentSize.value.height) {
                     lastDocWidth = documentSize.value.width;
                     lastDocHeight = documentSize.value.height;
-                    fitDocumentToView();
                 }
             },
             { immediate: true, leading: true, trailing: true, throttle: 200, deep: true },
@@ -342,6 +319,7 @@ function createFabricEditor() {
 
             // Cleanup event listeners and canvas instance on destroy
             window.removeEventListener('keydown', handleKeydown);
+            window.removeEventListener('resize', handleWindowResize);
             canvasContainer.value?.removeEventListener('wheel', handleWheel);
             canvasContainer.value?.removeEventListener('mousedown', handleMouseDown);
             canvasContainer.value?.removeEventListener('mousemove', handleMouseMove);
@@ -351,6 +329,41 @@ function createFabricEditor() {
             canvas.value.dispose();
             canvas.value = null;
         });
+    };
+
+    watch(zoom, (newZoom) => {
+        if (!canvas.value) return;
+
+        const z = clampZoom(newZoom);
+        if (Math.abs(canvas.value.getZoom() - z) < 0.0001) return;
+
+        canvas.value.setZoom(z);
+    });
+
+    const fitToView = () => {
+        if (!canvas.value) return;
+
+        const objects = canvas.value.getObjects();
+        if (!objects.length) return;
+
+        const bounding = util.makeBoundingBoxFromPoints(objects.flatMap((obj) => obj.getCoords()));
+
+        const canvasWidth = canvas.value.getWidth();
+        const canvasHeight = canvas.value.getHeight();
+
+        const contentWidth = bounding.width;
+        const contentHeight = bounding.height;
+
+        const scale = Math.min(canvasWidth / contentWidth, canvasHeight / contentHeight) * 0.95; // little padding
+
+        const centerX = bounding.left + contentWidth / 2;
+        const centerY = bounding.top + contentHeight / 2;
+
+        canvas.value.setZoom(scale);
+
+        canvas.value.absolutePan(new Point(centerX * scale - canvasWidth / 2, centerY * scale - canvasHeight / 2));
+
+        canvas.value.requestRenderAll();
     };
 
     const isInputFocused = () => {
@@ -456,7 +469,7 @@ function createFabricEditor() {
     }
 
     // Alignment guides: snap moving object to canvas center or other objects
-    function onObjectMoving(e: CanvasEvents['object:moving']) {
+    const onObjectMoving = (e: CanvasEvents['object:moving']) => {
         const obj = e.target as import('fabric').Object;
         if (!obj) return;
         let snapped = false;
@@ -505,7 +518,7 @@ function createFabricEditor() {
             obj.setCoords(); // update object bounds
             canvas.value!.renderAll();
         }
-    }
+    };
 
     const saveHistory = () => {
         if (canvas.value) {
@@ -551,15 +564,15 @@ function createFabricEditor() {
         if (text.enterEditing) text.enterEditing();
     }
 
-    function addCurvedText(text: string, radius: number = 100, opts: FabricCurvedTextOptions = {}) {
+    const addCurvedText = (text: string, radius: number = 100, opts: FabricCurvedTextOptions = {}) => {
         if (!canvas.value) return;
 
         const curved = new FabricCurvedText(text, radius, opts);
         canvas.value.add(curved);
         canvas.value.setActiveObject(curved);
-    }
+    };
 
-    function addPlaceholder() {
+    const addPlaceholder = () => {
         if (!canvas.value) return;
         const placeholderText = new Textbox('{{placeholder}}', {
             left: 50,
@@ -574,9 +587,9 @@ function createFabricEditor() {
         canvas.value.add(placeholderText);
         canvas.value.setActiveObject(placeholderText);
         if (placeholderText.enterEditing) placeholderText.enterEditing();
-    }
+    };
 
-    function addRectangle() {
+    const addRectangle = () => {
         if (!canvas.value) return;
         const rect = new Rect({
             left: 80,
@@ -589,9 +602,9 @@ function createFabricEditor() {
         });
         canvas.value.add(rect);
         canvas.value.setActiveObject(rect);
-    }
+    };
 
-    function addCircle() {
+    const addCircle = () => {
         if (!canvas.value) return;
         const circle = new Circle({
             left: 200,
@@ -603,9 +616,9 @@ function createFabricEditor() {
         });
         canvas.value.add(circle);
         canvas.value.setActiveObject(circle);
-    }
+    };
 
-    function addImage(src: string) {
+    const addImage = (src: string) => {
         if (!canvas.value) return;
         const img = new Image();
         img.src = src;
@@ -618,67 +631,24 @@ function createFabricEditor() {
             canvas.value?.setActiveObject(fi);
             canvas.value?.requestRenderAll();
         };
-    }
+    };
 
-    function exportJSON() {
+    const exportJSON = () => {
         if (!canvas.value) return;
         // Include custom placeholder flag in JSON output
         const json = canvas.value.toDatalessJSON(['isPlaceholder']);
         exportedJSON.value = JSON.stringify(json);
         console.log('Canvas JSON:', exportedJSON.value); // (For debugging or external use)
-    }
+    };
 
-    function exportSVG() {
+    const exportSVG = () => {
         if (!canvas.value) return;
         exportedSVG.value = canvas.value.toSVG({
             width: documentSize.value.width + 'px',
             height: documentSize.value.height + 'px',
         });
         console.log('Canvas SVG:', exportedSVG.value);
-    }
-
-    watch(zoom, (newZoom) => {
-        if (canvas.value) {
-            const z = clampZoom(newZoom);
-            if (Math.abs(canvas.value.getZoom() - z) < 0.0001) return;
-
-            const center = new Point({
-                x: canvas.value.getWidth() / 2,
-                y: canvas.value.getHeight() / 2,
-            });
-            canvas.value.zoomToPoint(center, z);
-            canvas.value.requestRenderAll();
-        }
-    });
-
-    const updateCanvasSize = () => {
-        if (canvas.value) {
-            canvas.value.setDimensions({ width: canvasWidth.value, height: canvasHeight.value });
-            canvas.value.renderAll();
-            fitDocumentToView();
-        }
     };
-
-    const fitDocumentToView = () => {
-        if (!canvas.value) return;
-
-        const dimensions = getViewportDimensions();
-        if (!dimensions) return;
-
-        // Use actual document size
-        const docWidth = documentSize.value.width;
-        const docHeight = documentSize.value.height;
-
-        const z = clampZoom(Math.min(dimensions.width / docWidth, dimensions.height / docHeight) * FIT_VIEW_PADDING);
-        setDocumentViewport(z);
-        zoom.value = z;
-    };
-
-    function resetZoom() {
-        if (!canvas.value) return;
-        setDocumentViewport(1);
-        zoom.value = 1;
-    }
 
     const copySelected = async () => {
         if (!canvas.value) return;
@@ -822,6 +792,9 @@ function createFabricEditor() {
         pickedColor,
 
         initCanvas,
+
+        fitToView,
+
         addText,
         addCurvedText,
         addPlaceholder,
@@ -830,10 +803,6 @@ function createFabricEditor() {
         addImage,
         exportJSON,
         exportSVG,
-
-        updateCanvasSize,
-        fitDocumentToView,
-        resetZoom,
 
         undo,
         redo,
@@ -855,8 +824,7 @@ function createFabricEditor() {
 }
 
 export function useFabricEditor() {
-    if (!instance) {
-        instance = createFabricEditor();
-    }
+    if (!instance) instance = createFabricEditor();
+
     return instance;
 }

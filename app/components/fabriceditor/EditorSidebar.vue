@@ -156,18 +156,17 @@ const updateCurvedTextFillColor = (val: string) => {
                             class="w-full"
                             name="selectedFont"
                             :filter-fields="['label']"
-                            :items="fonts"
+                            :items="
+                                fonts.map((font) => ({
+                                    ...font,
+                                    label: font.label.includes('.') ? $t(font.label) : font.label,
+                                }))
+                            "
                             :placeholder="$t('components.partials.tiptap_editor.font_family', 1)"
                             value-key="value"
                             label-key="label"
                             @update:model-value="updateFontFamily"
                         >
-                            <template #item-label="{ item }">
-                                <span class="truncate" :style="{ fontFamily: item.value }">{{
-                                    item.label.includes('.') ? $t(item.label) : item.label
-                                }}</span>
-                            </template>
-
                             <template #empty>
                                 {{ $t('common.not_found', [$t('components.partials.tiptap_editor.font_family')]) }}
                             </template>
