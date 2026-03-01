@@ -264,14 +264,14 @@ func (s *Server) ChangePassword(
 	}
 
 	// Password check logic
-	if err := checkPassword(*acc.Password, req.GetCurrent()); err != nil {
+	if err := checkPassword(*acc.Password, req.GetCurrentPassword()); err != nil {
 		return nil, errswrap.NewError(
 			err,
 			errorsauth.ErrChangePassword(map[string]any{"code": "401"}),
 		)
 	}
 
-	hashedPassword, err := hashPassword(req.GetNew())
+	hashedPassword, err := hashPassword(req.GetNewPassword())
 	if err != nil {
 		return nil, errswrap.NewError(
 			err,
@@ -333,13 +333,11 @@ func (s *Server) ChangeUsername(
 		return nil, errswrap.NewError(err, errorsauth.ErrNoAccount)
 	}
 
+	username := normalizeUsername(req.GetNewUsername())
 	// Make sure current username matches the sent current username
-	if !strings.EqualFold(*acc.Username, req.GetCurrent()) {
+	if !strings.EqualFold(*acc.Username, username) {
 		return nil, errorsauth.ErrBadUsername
 	}
-
-	req.New = normalizeUsername(req.GetNew())
-	username := req.GetNew()
 
 	// New username is same as current username.. just return here.
 	resp := &pbauth.ChangeUsernameResponse{}

@@ -96,13 +96,13 @@ export interface CreateAccountResponse {
  */
 export interface ChangePasswordRequest {
     /**
-     * @generated from protobuf field: string current = 1
+     * @generated from protobuf field: string current_password = 1
      */
-    current: string;
+    currentPassword: string;
     /**
-     * @generated from protobuf field: string new = 2
+     * @generated from protobuf field: string new_password = 2
      */
-    new: string;
+    newPassword: string;
 }
 /**
  * @generated from protobuf message services.auth.ChangePasswordResponse
@@ -114,13 +114,13 @@ export interface ChangePasswordResponse {
  */
 export interface ChangeUsernameRequest {
     /**
-     * @generated from protobuf field: string current = 1
+     * @generated from protobuf field: string current_username = 1
      */
-    current: string;
+    currentUsername: string;
     /**
-     * @generated from protobuf field: string new = 2
+     * @generated from protobuf field: string new_username = 2
      */
-    new: string;
+    newUsername: string;
 }
 /**
  * @generated from protobuf message services.auth.ChangeUsernameResponse
@@ -636,14 +636,14 @@ export const CreateAccountResponse = new CreateAccountResponse$Type();
 class ChangePasswordRequest$Type extends MessageType<ChangePasswordRequest> {
     constructor() {
         super("services.auth.ChangePasswordRequest", [
-            { no: 1, name: "current", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.audit.redacted": true, "buf.validate.field": { string: { minLen: "6", maxBytes: "70" } } } },
-            { no: 2, name: "new", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.audit.redacted": true, "buf.validate.field": { string: { minLen: "6", maxBytes: "70" } } } }
+            { no: 1, name: "current_password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.audit.redacted": true, "buf.validate.field": { string: { minLen: "6", maxBytes: "70" } } } },
+            { no: 2, name: "new_password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.audit.redacted": true, "buf.validate.field": { string: { minLen: "6", maxBytes: "70" } } } }
         ]);
     }
     create(value?: PartialMessage<ChangePasswordRequest>): ChangePasswordRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.current = "";
-        message.new = "";
+        message.currentPassword = "";
+        message.newPassword = "";
         if (value !== undefined)
             reflectionMergePartial<ChangePasswordRequest>(this, message, value);
         return message;
@@ -653,11 +653,11 @@ class ChangePasswordRequest$Type extends MessageType<ChangePasswordRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string current */ 1:
-                    message.current = reader.string();
+                case /* string current_password */ 1:
+                    message.currentPassword = reader.string();
                     break;
-                case /* string new */ 2:
-                    message.new = reader.string();
+                case /* string new_password */ 2:
+                    message.newPassword = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -671,12 +671,12 @@ class ChangePasswordRequest$Type extends MessageType<ChangePasswordRequest> {
         return message;
     }
     internalBinaryWrite(message: ChangePasswordRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string current = 1; */
-        if (message.current !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.current);
-        /* string new = 2; */
-        if (message.new !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.new);
+        /* string current_password = 1; */
+        if (message.currentPassword !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.currentPassword);
+        /* string new_password = 2; */
+        if (message.newPassword !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.newPassword);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -729,14 +729,14 @@ export const ChangePasswordResponse = new ChangePasswordResponse$Type();
 class ChangeUsernameRequest$Type extends MessageType<ChangeUsernameRequest> {
     constructor() {
         super("services.auth.ChangeUsernameRequest", [
-            { no: 1, name: "current", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } } } },
-            { no: 2, name: "new", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
+            { no: 1, name: "current_username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } } } },
+            { no: 2, name: "new_username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<ChangeUsernameRequest>): ChangeUsernameRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.current = "";
-        message.new = "";
+        message.currentUsername = "";
+        message.newUsername = "";
         if (value !== undefined)
             reflectionMergePartial<ChangeUsernameRequest>(this, message, value);
         return message;
@@ -746,11 +746,11 @@ class ChangeUsernameRequest$Type extends MessageType<ChangeUsernameRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string current */ 1:
-                    message.current = reader.string();
+                case /* string current_username */ 1:
+                    message.currentUsername = reader.string();
                     break;
-                case /* string new */ 2:
-                    message.new = reader.string();
+                case /* string new_username */ 2:
+                    message.newUsername = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -764,12 +764,12 @@ class ChangeUsernameRequest$Type extends MessageType<ChangeUsernameRequest> {
         return message;
     }
     internalBinaryWrite(message: ChangeUsernameRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string current = 1; */
-        if (message.current !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.current);
-        /* string new = 2; */
-        if (message.new !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.new);
+        /* string current_username = 1; */
+        if (message.currentUsername !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.currentUsername);
+        /* string new_username = 2; */
+        if (message.newUsername !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.newUsername);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

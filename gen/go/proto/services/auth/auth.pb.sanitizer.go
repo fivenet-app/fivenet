@@ -14,11 +14,11 @@ func (m *ChangePasswordRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Current
-	m.Current = htmlsanitizer.Sanitize(m.Current)
+	// Field: CurrentPassword
+	m.CurrentPassword = htmlsanitizer.Sanitize(m.CurrentPassword)
 
-	// Field: New
-	m.New = htmlsanitizer.Sanitize(m.New)
+	// Field: NewPassword
+	m.NewPassword = htmlsanitizer.Sanitize(m.NewPassword)
 
 	return nil
 }
@@ -40,11 +40,11 @@ func (m *ChangeUsernameRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Current
-	m.Current = htmlsanitizer.Sanitize(m.Current)
+	// Field: CurrentUsername
+	m.CurrentUsername = htmlsanitizer.Sanitize(m.CurrentUsername)
 
-	// Field: New
-	m.New = htmlsanitizer.StripHTMLTags(m.New)
+	// Field: NewUsername
+	m.NewUsername = htmlsanitizer.StripHTMLTags(m.NewUsername)
 
 	return nil
 }

@@ -7294,8 +7294,8 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `current` | [string](#string) |  |  |
-| `new` | [string](#string) |  |  |
+| `current_password` | [string](#string) |  |  |
+| `new_password` | [string](#string) |  |  |
 
 
 
@@ -7312,8 +7312,8 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `current` | [string](#string) |  |  |
-| `new` | [string](#string) |  |  |
+| `current_username` | [string](#string) |  |  |
+| `new_username` | [string](#string) |  |  |
 
 
 

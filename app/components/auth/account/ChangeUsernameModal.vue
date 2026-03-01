@@ -35,8 +35,8 @@ const state = reactive<Schema>({
 async function changeUsername(values: Schema): Promise<void> {
     try {
         const call = authAuthClient.changeUsername({
-            current: values.currentUsername,
-            new: values.newUsername,
+            currentUsername: values.currentUsername,
+            newUsername: values.newUsername,
         });
         await call;
         emit('close', false);

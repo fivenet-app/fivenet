@@ -77,14 +77,14 @@ message CreateAccountResponse {
 }
 
 message ChangePasswordRequest {
-  string current = 1 [
+  string current_password = 1 [
     (buf.validate.field).string = {
       min_len: 6
       max_bytes: 70
     },
     (codegen.audit.redacted) = true
   ];
-  string new = 2 [
+  string new_password = 2 [
     (buf.validate.field).string = {
       min_len: 6
       max_bytes: 70
@@ -96,12 +96,12 @@ message ChangePasswordRequest {
 message ChangePasswordResponse {}
 
 message ChangeUsernameRequest {
-  string current = 1 [(buf.validate.field).string = {
+  string current_username = 1 [(buf.validate.field).string = {
     min_len: 3
     max_len: 24
     pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$"
   }];
-  string new = 2 [
+  string new_username = 2 [
     (buf.validate.field).string = {
       min_len: 3
       max_len: 24

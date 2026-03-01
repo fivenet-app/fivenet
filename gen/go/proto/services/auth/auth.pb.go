@@ -454,11 +454,11 @@ func (b0 CreateAccountResponse_builder) Build() *CreateAccountResponse {
 }
 
 type ChangePasswordRequest struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Current       string                 `protobuf:"bytes,1,opt,name=current,proto3" json:"current,omitempty"`
-	New           string                 `protobuf:"bytes,2,opt,name=new,proto3" json:"new,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
+	CurrentPassword string                 `protobuf:"bytes,1,opt,name=current_password,json=currentPassword,proto3" json:"current_password,omitempty"`
+	NewPassword     string                 `protobuf:"bytes,2,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ChangePasswordRequest) Reset() {
@@ -486,41 +486,41 @@ func (x *ChangePasswordRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *ChangePasswordRequest) GetCurrent() string {
+func (x *ChangePasswordRequest) GetCurrentPassword() string {
 	if x != nil {
-		return x.Current
+		return x.CurrentPassword
 	}
 	return ""
 }
 
-func (x *ChangePasswordRequest) GetNew() string {
+func (x *ChangePasswordRequest) GetNewPassword() string {
 	if x != nil {
-		return x.New
+		return x.NewPassword
 	}
 	return ""
 }
 
-func (x *ChangePasswordRequest) SetCurrent(v string) {
-	x.Current = v
+func (x *ChangePasswordRequest) SetCurrentPassword(v string) {
+	x.CurrentPassword = v
 }
 
-func (x *ChangePasswordRequest) SetNew(v string) {
-	x.New = v
+func (x *ChangePasswordRequest) SetNewPassword(v string) {
+	x.NewPassword = v
 }
 
 type ChangePasswordRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Current string
-	New     string
+	CurrentPassword string
+	NewPassword     string
 }
 
 func (b0 ChangePasswordRequest_builder) Build() *ChangePasswordRequest {
 	m0 := &ChangePasswordRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Current = b.Current
-	x.New = b.New
+	x.CurrentPassword = b.CurrentPassword
+	x.NewPassword = b.NewPassword
 	return m0
 }
 
@@ -568,11 +568,11 @@ func (b0 ChangePasswordResponse_builder) Build() *ChangePasswordResponse {
 }
 
 type ChangeUsernameRequest struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Current       string                 `protobuf:"bytes,1,opt,name=current,proto3" json:"current,omitempty"`
-	New           string                 `protobuf:"bytes,2,opt,name=new,proto3" json:"new,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"hybrid.v1"`
+	CurrentUsername string                 `protobuf:"bytes,1,opt,name=current_username,json=currentUsername,proto3" json:"current_username,omitempty"`
+	NewUsername     string                 `protobuf:"bytes,2,opt,name=new_username,json=newUsername,proto3" json:"new_username,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ChangeUsernameRequest) Reset() {
@@ -600,41 +600,41 @@ func (x *ChangeUsernameRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *ChangeUsernameRequest) GetCurrent() string {
+func (x *ChangeUsernameRequest) GetCurrentUsername() string {
 	if x != nil {
-		return x.Current
+		return x.CurrentUsername
 	}
 	return ""
 }
 
-func (x *ChangeUsernameRequest) GetNew() string {
+func (x *ChangeUsernameRequest) GetNewUsername() string {
 	if x != nil {
-		return x.New
+		return x.NewUsername
 	}
 	return ""
 }
 
-func (x *ChangeUsernameRequest) SetCurrent(v string) {
-	x.Current = v
+func (x *ChangeUsernameRequest) SetCurrentUsername(v string) {
+	x.CurrentUsername = v
 }
 
-func (x *ChangeUsernameRequest) SetNew(v string) {
-	x.New = v
+func (x *ChangeUsernameRequest) SetNewUsername(v string) {
+	x.NewUsername = v
 }
 
 type ChangeUsernameRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Current string
-	New     string
+	CurrentUsername string
+	NewUsername     string
 }
 
 func (b0 ChangeUsernameRequest_builder) Build() *ChangeUsernameRequest {
 	m0 := &ChangeUsernameRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Current = b.Current
-	x.New = b.New
+	x.CurrentUsername = b.CurrentUsername
+	x.NewUsername = b.NewUsername
 	return m0
 }
 
@@ -1850,14 +1850,14 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\bpassword\x18\x03 \x01(\tB\x04\xf0\xf3\x18\x01R\bpassword\"6\n" +
 	"\x15CreateAccountResponse\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\x03R\taccountId\"O\n" +
-	"\x15ChangePasswordRequest\x12\x1e\n" +
-	"\acurrent\x18\x01 \x01(\tB\x04\xf0\xf3\x18\x01R\acurrent\x12\x16\n" +
-	"\x03new\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\x03new\"\x18\n" +
-	"\x16ChangePasswordResponse\"M\n" +
-	"\x15ChangeUsernameRequest\x12\x18\n" +
-	"\acurrent\x18\x01 \x01(\tR\acurrent\x12\x1a\n" +
-	"\x03new\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x03new\"\x18\n" +
+	"account_id\x18\x01 \x01(\x03R\taccountId\"q\n" +
+	"\x15ChangePasswordRequest\x12/\n" +
+	"\x10current_password\x18\x01 \x01(\tB\x04\xf0\xf3\x18\x01R\x0fcurrentPassword\x12'\n" +
+	"\fnew_password\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\vnewPassword\"\x18\n" +
+	"\x16ChangePasswordResponse\"o\n" +
+	"\x15ChangeUsernameRequest\x12)\n" +
+	"\x10current_username\x18\x01 \x01(\tR\x0fcurrentUsername\x12+\n" +
+	"\fnew_username\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\vnewUsername\"\x18\n" +
 	"\x16ChangeUsernameResponse\"R\n" +
 	"\x15ForgotPasswordRequest\x12!\n" +
 	"\treg_token\x18\x01 \x01(\tB\x04\xf0\xf3\x18\x01R\bregToken\x12\x16\n" +

@@ -19,7 +19,7 @@ const authAuthClient = await getAuthAuthClient();
 const accountError = ref<RpcError | undefined>();
 
 const schema = z.object({
-    registrationToken: z.coerce.string().length(6),
+    registrationToken: z.coerce.string().length(6).trim(),
     username: z
         .string()
         .min(3)

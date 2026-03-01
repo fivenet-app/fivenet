@@ -28,8 +28,8 @@ const state = reactive<Schema>({
 async function changePassword(values: Schema): Promise<void> {
     try {
         const call = authAuthClient.changePassword({
-            current: values.currentPassword,
-            new: values.newPassword,
+            currentPassword: values.currentPassword,
+            newPassword: values.newPassword,
         });
         await call;
         emit('close', false);
