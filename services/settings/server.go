@@ -44,18 +44,18 @@ type Server struct {
 	pbsettings.AccountsServiceServer
 	pbsettings.SystemServiceServer
 
-	logger    *zap.Logger
-	db        *sql.DB
-	ps        perms.Permissions
-	enricher  *mstlystcdata.UserAwareEnricher
-	laws      *mstlystcdata.Laws
-	st        storage.IStorage
-	cfg       *config.Config
-	appCfg    appconfig.IConfig
-	js        *events.JSWrapper
-	cronState *croner.Registry
-	crypt     *crypt.Crypt
-	notifi    notifi.INotifi
+	logger       *zap.Logger
+	db           *sql.DB
+	ps           perms.Permissions
+	enricher     *mstlystcdata.UserAwareEnricher
+	laws         *mstlystcdata.Laws
+	st           storage.IStorage
+	cfg          *config.Config
+	appCfg       appconfig.IConfig
+	js           *events.JSWrapper
+	cronRegistry *croner.Registry
+	crypt        *crypt.Crypt
+	notifi       notifi.INotifi
 
 	jobPropsFileHandler *filestore.Handler[string]
 
@@ -71,18 +71,18 @@ type Server struct {
 type Params struct {
 	fx.In
 
-	Logger    *zap.Logger
-	DB        *sql.DB
-	PS        perms.Permissions
-	Enricher  *mstlystcdata.UserAwareEnricher
-	Laws      *mstlystcdata.Laws
-	Storage   storage.IStorage
-	Config    *config.Config
-	AppConfig appconfig.IConfig
-	JS        *events.JSWrapper
-	CronState *croner.Registry
-	Crypt     *crypt.Crypt
-	Notifi    notifi.INotifi
+	Logger       *zap.Logger
+	DB           *sql.DB
+	PS           perms.Permissions
+	Enricher     *mstlystcdata.UserAwareEnricher
+	Laws         *mstlystcdata.Laws
+	Storage      storage.IStorage
+	Config       *config.Config
+	AppConfig    appconfig.IConfig
+	JS           *events.JSWrapper
+	CronRegistry *croner.Registry
+	Crypt        *crypt.Crypt
+	Notifi       notifi.INotifi
 
 	SyncServer    *syncservice.Server
 	DBReq         *reqs.DBReqs
@@ -121,18 +121,18 @@ func NewServer(p Params) *Server {
 	}
 
 	s := &Server{
-		logger:    p.Logger,
-		db:        p.DB,
-		ps:        p.PS,
-		enricher:  p.Enricher,
-		laws:      p.Laws,
-		st:        p.Storage,
-		cfg:       p.Config,
-		appCfg:    p.AppConfig,
-		js:        p.JS,
-		cronState: p.CronState,
-		crypt:     p.Crypt,
-		notifi:    p.Notifi,
+		logger:       p.Logger,
+		db:           p.DB,
+		ps:           p.PS,
+		enricher:     p.Enricher,
+		laws:         p.Laws,
+		st:           p.Storage,
+		cfg:          p.Config,
+		appCfg:       p.AppConfig,
+		js:           p.JS,
+		cronRegistry: p.CronRegistry,
+		crypt:        p.Crypt,
+		notifi:       p.Notifi,
 
 		jobPropsFileHandler: fHandler,
 

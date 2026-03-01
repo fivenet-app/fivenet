@@ -287,20 +287,32 @@ func (c *AbsentCommand) getUserIDByJobAndDiscordID(
 	job string,
 	discordId discord.UserID,
 ) (int32, int32, error) {
+	tAccs := table.FivenetAccounts
 	tUsers := table.FivenetUser.AS("user")
+	tUserJobs := table.FivenetUserJobs.AS("user_jobs")
 
 	stmt := tAccsOauth2.
 		SELECT(
 			tUsers.ID.AS("user_id"),
-			tUsers.JobGrade.AS("job_grade"),
+			tUserJobs.Grade.AS("job_grade"),
 		).
 		FROM(
 			tAccsOauth2.
+				INNER_JOIN(tAccs,
+					tAccs.ID.EQ(tAccsOauth2.AccountID),
+				).
 				INNER_JOIN(tUsers,
-					mysql.AND(
+					mysql.OR(
 						tUsers.AccountID.EQ(tAccsOauth2.AccountID),
-						tUsers.Job.EQ(mysql.String(job)),
-					)),
+						tUsers.License.EQ(tAccs.License),
+					),
+				).
+				INNER_JOIN(tUserJobs,
+					mysql.AND(
+						tUserJobs.UserID.EQ(tUsers.ID),
+						tUserJobs.Job.EQ(mysql.String(job)),
+					),
+				),
 		).
 		WHERE(mysql.AND(
 			tAccsOauth2.Provider.EQ(mysql.String("discord")),

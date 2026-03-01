@@ -156,12 +156,7 @@ func (s *State) calculateUserUpdates(
 				return r.ID == role
 			}) {
 				r := s.Roles[idx]
-				// If the user is part of the job related to the role, don't remove it.
-				if user.HasJob(r.Job) {
-					continue
-				}
-
-				user.Roles.ToRemove = append(user.Roles.ToRemove, s.Roles[idx])
+				user.Roles.ToRemove = append(user.Roles.ToRemove, r)
 			}
 		}
 	}

@@ -4,12 +4,7 @@ import (
 	"database/sql"
 
 	pbfilestore "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/filestore"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
-	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -28,15 +23,9 @@ type Server struct {
 type Params struct {
 	fx.In
 
-	Logger    *zap.Logger
-	DB        *sql.DB
-	PS        perms.Permissions
-	Enricher  *mstlystcdata.Enricher
-	Laws      *mstlystcdata.Laws
-	Storage   storage.IStorage
-	Config    *config.Config
-	AppConfig appconfig.IConfig
-	CronState *croner.Registry
+	Logger  *zap.Logger
+	DB      *sql.DB
+	Storage storage.IStorage
 }
 
 func NewServer(p Params) *Server {

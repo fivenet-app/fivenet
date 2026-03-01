@@ -133,11 +133,6 @@ func (p *Plan) applyUsers(dc *state.State) ([]discord.Embed, error) {
 		}
 
 		for _, role := range user.Roles.ToRemove {
-			// If the user is part of the job related to the role, don't remove it.
-			if user.HasJob(role.Job) {
-				continue
-			}
-
 			if err := dc.RemoveRole(p.GuildID, user.ID, role.ID, api.AuditLogReason(role.Module)); err != nil {
 				errs = multierr.Append(
 					errs,

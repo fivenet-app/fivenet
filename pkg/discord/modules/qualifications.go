@@ -45,7 +45,8 @@ type qualificationsEntry struct {
 }
 
 type qualificationUserMapping struct {
-	ExternalID string           `alias:"external_id" sql:"primary_key"`
+	UserID     int32            `alias:"qualification_user_mapping.user_id" sql:"primary_key"`
+	ExternalID string           `alias:"external_id"                        sql:"primary_key"`
 	Jobs       []*users.UserJob `alias:"jobs"`
 }
 
@@ -258,6 +259,7 @@ func (g *QualificationsSync) queryUsers(
 	stmt := tAccsOauth2.
 		SELECT(
 			tAccsOauth2.ExternalID.AS("qualification_user_mapping.external_id"),
+			tUsers.ID.AS("qualification_user_mapping.user_id"),
 			// User's jobs
 			tUserJobs.Job.AS("jobs.job"),
 			tUserJobs.Grade.AS("jobs.grade"),

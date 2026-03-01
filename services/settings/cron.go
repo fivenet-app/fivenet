@@ -13,7 +13,7 @@ func (s *Server) ListCronjobs(
 	ctx context.Context,
 	req *pbsettings.ListCronjobsRequest,
 ) (*pbsettings.ListCronjobsResponse, error) {
-	jobs := s.cronState.ListCronjobs(ctx)
+	jobs := s.cronRegistry.ListCronjobs(ctx)
 
 	slices.SortFunc(jobs, func(a, b *cron.Cronjob) int {
 		if a == nil {
