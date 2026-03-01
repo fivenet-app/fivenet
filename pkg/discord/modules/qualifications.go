@@ -55,17 +55,6 @@ func (u *qualificationUserMapping) HasJob(job string) bool {
 	})
 }
 
-func (u *qualificationUserMapping) GetJobInfo(job string) *users.UserJob {
-	idx := slices.IndexFunc(u.Jobs, func(j *users.UserJob) bool {
-		return j.GetJob() == job
-	})
-	if idx == -1 {
-		return nil
-	}
-
-	return u.Jobs[idx]
-}
-
 func init() {
 	Modules["qualifications"] = NewQualifications
 }
@@ -238,20 +227,13 @@ func (g *QualificationsSync) queryAndPlanUsersForQualification(
 				continue
 			}
 
-			user := &discordtypes.User{
-				ID:    discord.UserID(externalId),
-				Roles: &discordtypes.UserRoles{},
-				Jobs:  u.Jobs,
-			}
-
-			if u.HasJob(g.job) {
-				users.Add(user)
-				continue
-			}
-
-			user.Roles.Sum = append(user.Roles.Sum, role)
-
-			users.Add(user)
+			users.Add(&discordtypes.User{
+				ID: discord.UserID(externalId),
+				Roles: &discordtypes.UserRoles{
+					Sum: []*discordtypes.Role{role},
+				},
+				Jobs: u.Jobs,
+			})
 		}
 
 		count := int64(len(userMappings))

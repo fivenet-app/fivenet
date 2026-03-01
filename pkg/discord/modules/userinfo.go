@@ -66,12 +66,6 @@ type userRoleMapping struct {
 	AbsenceEnd   *timestamp.Timestamp `alias:"absence_end"`
 }
 
-func (u *userRoleMapping) HasJob(job string) bool {
-	return slices.ContainsFunc(u.Jobs, func(j *users.UserJob) bool {
-		return j.GetJob() == job
-	})
-}
-
 func (u *userRoleMapping) GetJobInfo(job string) *users.UserJob {
 	idx := slices.IndexFunc(u.Jobs, func(j *users.UserJob) bool {
 		return j.GetJob() == job
