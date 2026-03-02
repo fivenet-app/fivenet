@@ -48,7 +48,10 @@ const { documentSize, snapThreshold } = useFabricEditor();
         </div>
 
         <UFormField :label="$t('components.fabric_editor.snap_threshold')">
-            <UInputNumber v-model="snapThreshold" size="xs" class="w-20" />
+            <div class="inline-flex items-center gap-1">
+                <UInputNumber v-model="snapThreshold" size="xs" class="w-20" />
+                <span class="text-xs text-muted">px</span>
+            </div>
         </UFormField>
     </UCard>
 </template>

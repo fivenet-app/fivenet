@@ -1,11 +1,20 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui';
 import { useFabricEditor } from '~/composables/useFabricEditor';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import ImportModal from './ImportModal.vue';
 
 const { t } = useI18n();
 
+const overlay = useOverlay();
+
 // Get methods from composable to manipulate canvas
 const {
+    history,
+    redoStack,
+
+    importJSON,
+    importSVG,
     exportJSON,
     exportSVG,
     zoom,
@@ -22,17 +31,87 @@ const {
     pickedColor,
 } = useFabricEditor();
 
-const exportMenuItems = computed<DropdownMenuItem[]>(() => [
-    {
-        label: t('components.fabric_editor.export_json'),
-        icon: 'i-mdi-code-json',
-        onClick: () => exportJSON(),
-    },
-    {
-        label: t('components.fabric_editor.export_svg'),
-        icon: 'i-mdi-svg',
-        onClick: () => exportSVG(),
-    },
+const importModal = overlay.create(ImportModal);
+
+const notifications = useNotificationsStore();
+
+const fileMenuItems = computed<DropdownMenuItem[][]>(() => [
+    [
+        {
+            label: t('components.fabric_editor.import.title'),
+            icon: 'i-mdi-import',
+            type: 'label',
+        },
+        {
+            label: t('components.fabric_editor.import.json'),
+            icon: 'i-mdi-code-json',
+            onClick: () =>
+                importModal.open({
+                    modelValue: '',
+                    'onUpdate:modelValue': async (value) => {
+                        try {
+                            await importJSON(value);
+                        } catch (e) {
+                            notifications.add({
+                                type: NotificationType.ERROR,
+                                title: {
+                                    key: 'components.fabric_editor.import.json_failed.title',
+                                },
+                                description: {
+                                    key: 'components.fabric_editor.import.json_failed.content',
+                                    parameters: {
+                                        msg: (e as Error).message,
+                                    },
+                                },
+                            });
+                            console.error('Invalid JSON', e);
+                        }
+                    },
+                }),
+        },
+        {
+            label: t('components.fabric_editor.import.svg'),
+            icon: 'i-mdi-svg',
+            onClick: () =>
+                importModal.open({
+                    modelValue: '',
+                    'onUpdate:modelValue': async (value) => {
+                        try {
+                            await importSVG(value);
+                        } catch (e) {
+                            notifications.add({
+                                type: NotificationType.ERROR,
+                                title: {
+                                    key: 'components.fabric_editor.import.svg_failed.title',
+                                },
+                                description: {
+                                    key: 'components.fabric_editor.import.svg_failed.content',
+                                    parameters: {
+                                        msg: (e as Error).message,
+                                    },
+                                },
+                            });
+                            console.error('Invalid SVG', e);
+                        }
+                    },
+                }),
+        },
+        {
+            label: t('components.fabric_editor.export.title'),
+            icon: 'i-mdi-export',
+            type: 'label',
+        },
+        {
+            label: t('components.fabric_editor.export.json'),
+            icon: 'i-mdi-code-json',
+            onClick: () => exportJSON(),
+        },
+        {
+            label: t('components.fabric_editor.export.svg'),
+            icon: 'i-mdi-svg',
+            onClick: () => exportSVG(),
+        },
+    ],
 ]);
 </script>
 
@@ -40,21 +119,13 @@ const exportMenuItems = computed<DropdownMenuItem[]>(() => [
     <div
         class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto"
     >
-        <UTooltip :text="$t('components.fabric_editor.pick_color')">
-            <UButton
-                variant="ghost"
-                icon="i-mdi-select-color"
-                :style="{ backgroundColor: pickedColor }"
-                @click="pickingColor = !pickingColor"
-            />
-        </UTooltip>
-
         <UFieldGroup>
             <UTooltip :text="$t('common.undo')">
-                <UButton variant="ghost" icon="i-mdi-undo" @click="undo" />
+                <UButton variant="ghost" icon="i-mdi-undo" :disabled="history.length === 0" @click="undo" />
             </UTooltip>
+
             <UTooltip :text="$t('common.redo')">
-                <UButton variant="ghost" icon="i-mdi-redo" @click="redo" />
+                <UButton variant="ghost" icon="i-mdi-redo" :disabled="redoStack.length === 0" @click="redo" />
             </UTooltip>
         </UFieldGroup>
 
@@ -82,9 +153,14 @@ const exportMenuItems = computed<DropdownMenuItem[]>(() => [
             </UTooltip>
         </UFieldGroup>
 
-        <UDropdownMenu :items="exportMenuItems">
-            <UButton variant="ghost" icon="i-mdi-export" :label="$t('components.fabric_editor.export')" />
-        </UDropdownMenu>
+        <UTooltip :text="$t('components.fabric_editor.pick_color')">
+            <UButton
+                variant="ghost"
+                icon="i-mdi-select-color"
+                :style="{ backgroundColor: pickedColor }"
+                @click="pickingColor = !pickingColor"
+            />
+        </UTooltip>
 
         <UFormField>
             <div class="inline-flex gap-2">
@@ -108,5 +184,9 @@ const exportMenuItems = computed<DropdownMenuItem[]>(() => [
                 </UFieldGroup>
             </div>
         </UFormField>
+
+        <UDropdownMenu :items="fileMenuItems">
+            <UButton variant="ghost" trailing-icon="i-mdi-menu-down" :label="$t('components.fabric_editor.file_menu')" />
+        </UDropdownMenu>
     </div>
 </template>

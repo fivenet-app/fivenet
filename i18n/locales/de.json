@@ -1790,9 +1790,25 @@
             "snap_threshold": "Einrast-Schwelle",
             "canvas_settings": "Leinwand-Einstellungen",
             "no_object_selected": "Kein Objekt ausgewählt",
-            "export": "Exportieren",
-            "export_json": "JSON exportieren",
-            "export_svg": "SVG exportieren",
+            "file_menu": "Datei",
+            "export": {
+                "title": "Exportieren",
+                "json": "JSON exportieren",
+                "svg": "SVG exportieren"
+            },
+            "import": {
+                "title": "Importieren",
+                "json": "JSON importieren",
+                "svg": "SVG importieren",
+                "json_failed": {
+                    "title": "JSON Import fehlgeschlagen",
+                    "description": "Der JSON-Import ist fehlgeschlagen. Fehler: {msg}"
+                },
+                "svg_failed": {
+                    "title": "SVG Import fehlgeschlagen",
+                    "description": "Der SVG-Import ist fehlgeschlagen. Fehler: {msg}"
+                }
+            },
             "group": "Gruppieren",
             "ungroup": "Gruppierung aufheben",
             "zoom_to_fit": "An Bildschirm anpassen",

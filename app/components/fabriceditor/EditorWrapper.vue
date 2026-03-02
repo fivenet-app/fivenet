@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import type { FabricObject } from 'fabric';
 import EditorSidebar from './EditorSidebar.vue';
 
 const props = withDefaults(
@@ -22,10 +21,8 @@ const svgData = defineModel<string | undefined>({ required: true });
 const canvasContainer = useTemplateRef('canvasContainer');
 const canvasEl = useTemplateRef('canvasEl');
 
-const fabric = await import('fabric');
-
 // Get composable state and methods
-const { canvas, documentSize, initCanvas, fitToView } = useFabricEditor();
+const { canvas, documentSize, initCanvas, importSVG, fitToView } = useFabricEditor();
 
 onMounted(async () => {
     if (!canvasContainer.value) {
@@ -58,18 +55,7 @@ onMounted(async () => {
 
     initCanvas(canvasContainer.value, canvasEl.value, { width, height });
 
-    if (svgData.value) {
-        const loadedSvg = await fabric.loadSVGFromString(svgData.value);
-
-        if (loadedSvg.objects) {
-            if (loadedSvg.options['width'] && loadedSvg.options['height']) {
-                documentSize.value.width = parseInt(loadedSvg.options['width']);
-                documentSize.value.height = parseInt(loadedSvg.options['height']);
-            }
-
-            canvas.value?.add(...loadedSvg.objects.filter((obj): obj is FabricObject => !!obj));
-        }
-    }
+    if (svgData.value && svgData.value !== '') importSVG(svgData.value);
 
     fitToView();
 

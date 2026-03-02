@@ -1790,9 +1790,25 @@
             "snap_threshold": "Snap Threshold",
             "canvas_settings": "Canvas Settings",
             "no_object_selected": "No object selected",
-            "export": "Export",
-            "export_json": "Export JSON",
-            "export_svg": "Export SVG",
+            "file_menu": "File",
+            "export": {
+                "title": "Export",
+                "json": "Export JSON",
+                "svg": "Export SVG"
+            },
+            "import": {
+                "title": "Import",
+                "svg": "Import SVG",
+                "json": "Import JSON",
+                "json_failed": {
+                    "title": "Failed to import JSON",
+                    "content": "JSON import failed. Error: {msg}"
+                },
+                "svg_failed": {
+                    "title": "Failed to import SVG",
+                    "content": "SVG import failed. Error: {msg}"
+                }
+            },
             "group": "Group",
             "ungroup": "Ungroup",
             "zoom_to_fit": "Zoom to Fit",

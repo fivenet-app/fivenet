@@ -7,6 +7,7 @@ import {
     FabricImage,
     type FabricObject,
     Group,
+    loadSVGFromString,
     Pattern,
     Point,
     Rect,
@@ -188,6 +189,8 @@ function createFabricEditor() {
             canvas.value.calcOffset();
         };
 
+        createBorder();
+
         // Enable alignment guide snapping and selection events
         fabricCanvas.on('object:moving', onObjectMoving);
         // Track active object
@@ -204,10 +207,6 @@ function createFabricEditor() {
         fabricCanvas.on('object:modified', saveHistory);
         fabricCanvas.on('object:added', saveHistory);
         fabricCanvas.on('object:removed', saveHistory);
-
-        saveHistory();
-
-        createBorder();
 
         const handleWheel = (evt: WheelEvent) => {
             evt.preventDefault();
@@ -515,7 +514,7 @@ function createFabricEditor() {
             }
         });
         if (snapped) {
-            obj.setCoords(); // update object bounds
+            obj.setCoords(); // Update object bounds
             canvas.value!.renderAll();
         }
     };
@@ -631,6 +630,34 @@ function createFabricEditor() {
             canvas.value?.setActiveObject(fi);
             canvas.value?.requestRenderAll();
         };
+    };
+
+    const importJSON = async (jsonStr: string) => {
+        if (!canvas.value) return;
+        try {
+            await canvas.value.loadFromJSON(jsonStr);
+
+            canvas.value.requestRenderAll();
+        } catch (error) {
+            console.error('Failed to import JSON:', error);
+        }
+    };
+
+    const importSVG = async (svgStr: string) => {
+        if (!canvas.value) return;
+        try {
+            const loadedSvg = await loadSVGFromString(svgStr);
+            canvas.value.add(...loadedSvg.objects.filter((obj): obj is FabricObject => !!obj));
+
+            if (loadedSvg.options['width'] && loadedSvg.options['height']) {
+                documentSize.value.width = parseInt(loadedSvg.options['width']);
+                documentSize.value.height = parseInt(loadedSvg.options['height']);
+            }
+
+            canvas.value.requestRenderAll();
+        } catch (error) {
+            console.error('Failed to import SVG:', error);
+        }
     };
 
     const exportJSON = () => {
@@ -801,9 +828,13 @@ function createFabricEditor() {
         addRectangle,
         addCircle,
         addImage,
+        importJSON,
+        importSVG,
         exportJSON,
         exportSVG,
 
+        history,
+        redoStack,
         undo,
         redo,
 
