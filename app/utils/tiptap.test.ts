@@ -141,4 +141,46 @@ describe('isEmptyRichContentDoc', () => {
 
         expect(isEmptyRichContentDoc(doc)).toBe(false);
     });
+
+    it('should return false for nested heading text content', () => {
+        const doc: RichTextHtmlNode = {
+            type: NodeType.DOC,
+            tag: 'body',
+            content: [
+                { type: NodeType.ELEMENT, tag: 'p', content: [], attrs: {} },
+                {
+                    type: NodeType.ELEMENT,
+                    tag: 'h3',
+                    content: [
+                        {
+                            type: NodeType.ELEMENT,
+                            tag: 'span',
+                            content: [
+                                {
+                                    type: NodeType.TEXT,
+                                    tag: 'strong',
+                                    content: [
+                                        {
+                                            type: NodeType.TEXT,
+                                            tag: 'text',
+                                            text: 'Test Dokument',
+                                            content: [],
+                                            attrs: {},
+                                        },
+                                    ],
+                                    attrs: {},
+                                },
+                            ],
+                            attrs: {},
+                        },
+                    ],
+                    attrs: {},
+                },
+                { type: NodeType.ELEMENT, tag: 'hr', content: [], attrs: {} },
+            ],
+            attrs: {},
+        };
+
+        expect(isEmptyRichContentDoc(doc)).toBe(false);
+    });
 });

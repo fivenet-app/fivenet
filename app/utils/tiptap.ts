@@ -334,29 +334,31 @@ export function isEmptyDoc(content: Struct | JSONContent | null | undefined): bo
 }
 
 export function isEmptyRichContentDoc(content: RichTextHtmlNode | null | undefined): boolean {
-    if (!content || !content.content || content.content.length === 0) return true;
+    if (!content) return true;
 
-    // Check if all any top-level nodes are not empty
-    let nodes: RichTextHtmlNode[] = [];
-    for (let i = 0; i < 3; i++) {
-        nodes = content.content[i]?.content ?? [];
+    const contentfulVoidTags = ['img', 'hr'];
+    const maxNodeVisits = 15;
+    let nodeVisits = 0;
 
-        for (const node of nodes) {
-            if (node.type === NodeType.ELEMENT) {
-                if (node.tag === 'p') {
-                    if ((node.content && node.content.length > 0) || (node.text && node.text.trim().length > 0)) {
-                        // Paragraph has content
-                        return false;
-                    }
-                } else if (node.tag === 'img') {
-                    return false;
-                }
-            } else {
-                // Found a non-paragraph node
-                return false;
-            }
+    const hasVisibleContent = (node: RichTextHtmlNode | null | undefined): boolean => {
+        if (!node) return false;
+        if (nodeVisits++ >= maxNodeVisits) {
+            // Max node visits reached; treat as non-empty to avoid false-empty results.
+            return true;
         }
-    }
 
-    return true;
+        if ((node.text ?? '').trim().length > 0) return true;
+
+        if (node.type === NodeType.ELEMENT && contentfulVoidTags.includes(node.tag.toLowerCase())) return true;
+
+        if (!node.content || node.content.length === 0) return false;
+
+        for (const child of node.content) {
+            if (hasVisibleContent(child)) return true;
+        }
+
+        return false;
+    };
+
+    return !hasVisibleContent(content);
 }
