@@ -1,0 +1,7 @@
+BEGIN;
+
+ALTER TABLE `fivenet_owned_vehicles` ADD COLUMN `updated_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) AFTER `data`;
+
+ALTER TABLE `fivenet_user` CHANGE `last_seen` `updated_at` timestamp(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) NULL;
+
+COMMIT;

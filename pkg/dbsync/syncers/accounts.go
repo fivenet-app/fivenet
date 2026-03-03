@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	syncactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
@@ -57,7 +58,8 @@ func (s *AccountsSync) Sync(ctx context.Context) (int64, error) {
 		return 0, err
 	}
 
-	s.state.Set(0, nil)
+	now := time.Now()
+	s.state.SetCursor(&now, nil)
 
 	return count, nil
 }

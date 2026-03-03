@@ -9,6 +9,7 @@
 package vehicles
 
 import (
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -27,6 +28,7 @@ const (
 type Vehicle struct {
 	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	Plate           string                 `protobuf:"bytes,1,opt,name=plate,proto3" json:"plate,omitempty"`
+	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Model           *string                `protobuf:"bytes,2,opt,name=model,proto3,oneof" json:"model,omitempty"`
 	Type            string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
 	OwnerId         *int32                 `protobuf:"varint,4,opt,name=owner_id,json=ownerId,proto3,oneof" json:"owner_id,omitempty"`
@@ -69,6 +71,13 @@ func (x *Vehicle) GetPlate() string {
 		return x.Plate
 	}
 	return ""
+}
+
+func (x *Vehicle) GetUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
 }
 
 func (x *Vehicle) GetModel() string {
@@ -131,6 +140,10 @@ func (x *Vehicle) SetPlate(v string) {
 	x.Plate = v
 }
 
+func (x *Vehicle) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.UpdatedAt = v
+}
+
 func (x *Vehicle) SetModel(v string) {
 	x.Model = &v
 }
@@ -161,6 +174,13 @@ func (x *Vehicle) SetJobLabel(v string) {
 
 func (x *Vehicle) SetProps(v *props.VehicleProps) {
 	x.Props = v
+}
+
+func (x *Vehicle) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.UpdatedAt != nil
 }
 
 func (x *Vehicle) HasModel() bool {
@@ -212,6 +232,10 @@ func (x *Vehicle) HasProps() bool {
 	return x.Props != nil
 }
 
+func (x *Vehicle) ClearUpdatedAt() {
+	x.UpdatedAt = nil
+}
+
 func (x *Vehicle) ClearModel() {
 	x.Model = nil
 }
@@ -244,6 +268,7 @@ type Vehicle_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Plate           string
+	UpdatedAt       *timestamp.Timestamp
 	Model           *string
 	Type            string
 	OwnerId         *int32
@@ -259,6 +284,7 @@ func (b0 Vehicle_builder) Build() *Vehicle {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.Plate = b.Plate
+	x.UpdatedAt = b.UpdatedAt
 	x.Model = b.Model
 	x.Type = b.Type
 	x.OwnerId = b.OwnerId
@@ -274,17 +300,21 @@ var File_resources_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	"!resources/vehicles/vehicles.proto\x12\x12resources.vehicles\x1a resources/users/short/user.proto\x1a$resources/vehicles/props/props.proto\"\xad\x03\n" +
+	"!resources/vehicles/vehicles.proto\x12\x12resources.vehicles\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a$resources/vehicles/props/props.proto\"\x80\x04\n" +
 	"\aVehicle\x12\x14\n" +
-	"\x05plate\x18\x01 \x01(\tR\x05plate\x12\x19\n" +
-	"\x05model\x18\x02 \x01(\tH\x00R\x05model\x88\x01\x01\x12\x12\n" +
+	"\x05plate\x18\x01 \x01(\tR\x05plate\x12B\n" +
+	"\n" +
+	"updated_at\x18\n" +
+	" \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12\x19\n" +
+	"\x05model\x18\x02 \x01(\tH\x01R\x05model\x88\x01\x01\x12\x12\n" +
 	"\x04type\x18\x03 \x01(\tR\x04type\x12\x1e\n" +
-	"\bowner_id\x18\x04 \x01(\x05H\x01R\aownerId\x88\x01\x01\x12.\n" +
-	"\x10owner_identifier\x18\x06 \x01(\tH\x02R\x0fownerIdentifier\x88\x01\x01\x12;\n" +
-	"\x05owner\x18\x05 \x01(\v2 .resources.users.short.UserShortH\x03R\x05owner\x88\x01\x01\x12\x15\n" +
-	"\x03job\x18\a \x01(\tH\x04R\x03job\x88\x01\x01\x12 \n" +
-	"\tjob_label\x18\b \x01(\tH\x05R\bjobLabel\x88\x01\x01\x12A\n" +
-	"\x05props\x18\t \x01(\v2&.resources.vehicles.props.VehiclePropsH\x06R\x05props\x88\x01\x01B\b\n" +
+	"\bowner_id\x18\x04 \x01(\x05H\x02R\aownerId\x88\x01\x01\x12.\n" +
+	"\x10owner_identifier\x18\x06 \x01(\tH\x03R\x0fownerIdentifier\x88\x01\x01\x12;\n" +
+	"\x05owner\x18\x05 \x01(\v2 .resources.users.short.UserShortH\x04R\x05owner\x88\x01\x01\x12\x15\n" +
+	"\x03job\x18\a \x01(\tH\x05R\x03job\x88\x01\x01\x12 \n" +
+	"\tjob_label\x18\b \x01(\tH\x06R\bjobLabel\x88\x01\x01\x12A\n" +
+	"\x05props\x18\t \x01(\v2&.resources.vehicles.props.VehiclePropsH\aR\x05props\x88\x01\x01B\r\n" +
+	"\v_updated_atB\b\n" +
 	"\x06_modelB\v\n" +
 	"\t_owner_idB\x13\n" +
 	"\x11_owner_identifierB\b\n" +
@@ -296,18 +326,20 @@ const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 
 var file_resources_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_vehicles_vehicles_proto_goTypes = []any{
-	(*Vehicle)(nil),            // 0: resources.vehicles.Vehicle
-	(*short.UserShort)(nil),    // 1: resources.users.short.UserShort
-	(*props.VehicleProps)(nil), // 2: resources.vehicles.props.VehicleProps
+	(*Vehicle)(nil),             // 0: resources.vehicles.Vehicle
+	(*timestamp.Timestamp)(nil), // 1: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),     // 2: resources.users.short.UserShort
+	(*props.VehicleProps)(nil),  // 3: resources.vehicles.props.VehicleProps
 }
 var file_resources_vehicles_vehicles_proto_depIdxs = []int32{
-	1, // 0: resources.vehicles.Vehicle.owner:type_name -> resources.users.short.UserShort
-	2, // 1: resources.vehicles.Vehicle.props:type_name -> resources.vehicles.props.VehicleProps
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	1, // 0: resources.vehicles.Vehicle.updated_at:type_name -> resources.timestamp.Timestamp
+	2, // 1: resources.vehicles.Vehicle.owner:type_name -> resources.users.short.UserShort
+	3, // 2: resources.vehicles.Vehicle.props:type_name -> resources.vehicles.props.VehicleProps
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_resources_vehicles_vehicles_proto_init() }

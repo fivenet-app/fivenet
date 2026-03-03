@@ -9,6 +9,7 @@
 package vehicles
 
 import (
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -27,6 +28,7 @@ const (
 type Vehicle struct {
 	state                      protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Plate           string                 `protobuf:"bytes,1,opt,name=plate,proto3"`
+	xxx_hidden_UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3,oneof"`
 	xxx_hidden_Model           *string                `protobuf:"bytes,2,opt,name=model,proto3,oneof"`
 	xxx_hidden_Type            string                 `protobuf:"bytes,3,opt,name=type,proto3"`
 	xxx_hidden_OwnerId         int32                  `protobuf:"varint,4,opt,name=owner_id,json=ownerId,proto3,oneof"`
@@ -71,6 +73,13 @@ func (x *Vehicle) GetPlate() string {
 		return x.xxx_hidden_Plate
 	}
 	return ""
+}
+
+func (x *Vehicle) GetUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_UpdatedAt
+	}
+	return nil
 }
 
 func (x *Vehicle) GetModel() string {
@@ -145,9 +154,13 @@ func (x *Vehicle) SetPlate(v string) {
 	x.xxx_hidden_Plate = v
 }
 
+func (x *Vehicle) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_UpdatedAt = v
+}
+
 func (x *Vehicle) SetModel(v string) {
 	x.xxx_hidden_Model = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 9)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 10)
 }
 
 func (x *Vehicle) SetType(v string) {
@@ -156,12 +169,12 @@ func (x *Vehicle) SetType(v string) {
 
 func (x *Vehicle) SetOwnerId(v int32) {
 	x.xxx_hidden_OwnerId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 9)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 10)
 }
 
 func (x *Vehicle) SetOwnerIdentifier(v string) {
 	x.xxx_hidden_OwnerIdentifier = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 9)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 10)
 }
 
 func (x *Vehicle) SetOwner(v *short.UserShort) {
@@ -170,37 +183,44 @@ func (x *Vehicle) SetOwner(v *short.UserShort) {
 
 func (x *Vehicle) SetJob(v string) {
 	x.xxx_hidden_Job = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 9)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 10)
 }
 
 func (x *Vehicle) SetJobLabel(v string) {
 	x.xxx_hidden_JobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 9)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 10)
 }
 
 func (x *Vehicle) SetProps(v *props.VehicleProps) {
 	x.xxx_hidden_Props = v
 }
 
+func (x *Vehicle) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_UpdatedAt != nil
+}
+
 func (x *Vehicle) HasModel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *Vehicle) HasOwnerId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *Vehicle) HasOwnerIdentifier() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
 }
 
 func (x *Vehicle) HasOwner() bool {
@@ -214,14 +234,14 @@ func (x *Vehicle) HasJob() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
 }
 
 func (x *Vehicle) HasJobLabel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *Vehicle) HasProps() bool {
@@ -231,18 +251,22 @@ func (x *Vehicle) HasProps() bool {
 	return x.xxx_hidden_Props != nil
 }
 
+func (x *Vehicle) ClearUpdatedAt() {
+	x.xxx_hidden_UpdatedAt = nil
+}
+
 func (x *Vehicle) ClearModel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
 	x.xxx_hidden_Model = nil
 }
 
 func (x *Vehicle) ClearOwnerId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
 	x.xxx_hidden_OwnerId = 0
 }
 
 func (x *Vehicle) ClearOwnerIdentifier() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
 	x.xxx_hidden_OwnerIdentifier = nil
 }
 
@@ -251,12 +275,12 @@ func (x *Vehicle) ClearOwner() {
 }
 
 func (x *Vehicle) ClearJob() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
 	x.xxx_hidden_Job = nil
 }
 
 func (x *Vehicle) ClearJobLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
 	x.xxx_hidden_JobLabel = nil
 }
 
@@ -268,6 +292,7 @@ type Vehicle_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Plate           string
+	UpdatedAt       *timestamp.Timestamp
 	Model           *string
 	Type            string
 	OwnerId         *int32
@@ -283,26 +308,27 @@ func (b0 Vehicle_builder) Build() *Vehicle {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Plate = b.Plate
+	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	if b.Model != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 9)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 10)
 		x.xxx_hidden_Model = b.Model
 	}
 	x.xxx_hidden_Type = b.Type
 	if b.OwnerId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 9)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 10)
 		x.xxx_hidden_OwnerId = *b.OwnerId
 	}
 	if b.OwnerIdentifier != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 9)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 10)
 		x.xxx_hidden_OwnerIdentifier = b.OwnerIdentifier
 	}
 	x.xxx_hidden_Owner = b.Owner
 	if b.Job != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 9)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 10)
 		x.xxx_hidden_Job = b.Job
 	}
 	if b.JobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 9)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 10)
 		x.xxx_hidden_JobLabel = b.JobLabel
 	}
 	x.xxx_hidden_Props = b.Props
@@ -313,17 +339,21 @@ var File_resources_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	"!resources/vehicles/vehicles.proto\x12\x12resources.vehicles\x1a resources/users/short/user.proto\x1a$resources/vehicles/props/props.proto\"\xad\x03\n" +
+	"!resources/vehicles/vehicles.proto\x12\x12resources.vehicles\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a$resources/vehicles/props/props.proto\"\x80\x04\n" +
 	"\aVehicle\x12\x14\n" +
-	"\x05plate\x18\x01 \x01(\tR\x05plate\x12\x19\n" +
-	"\x05model\x18\x02 \x01(\tH\x00R\x05model\x88\x01\x01\x12\x12\n" +
+	"\x05plate\x18\x01 \x01(\tR\x05plate\x12B\n" +
+	"\n" +
+	"updated_at\x18\n" +
+	" \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12\x19\n" +
+	"\x05model\x18\x02 \x01(\tH\x01R\x05model\x88\x01\x01\x12\x12\n" +
 	"\x04type\x18\x03 \x01(\tR\x04type\x12\x1e\n" +
-	"\bowner_id\x18\x04 \x01(\x05H\x01R\aownerId\x88\x01\x01\x12.\n" +
-	"\x10owner_identifier\x18\x06 \x01(\tH\x02R\x0fownerIdentifier\x88\x01\x01\x12;\n" +
-	"\x05owner\x18\x05 \x01(\v2 .resources.users.short.UserShortH\x03R\x05owner\x88\x01\x01\x12\x15\n" +
-	"\x03job\x18\a \x01(\tH\x04R\x03job\x88\x01\x01\x12 \n" +
-	"\tjob_label\x18\b \x01(\tH\x05R\bjobLabel\x88\x01\x01\x12A\n" +
-	"\x05props\x18\t \x01(\v2&.resources.vehicles.props.VehiclePropsH\x06R\x05props\x88\x01\x01B\b\n" +
+	"\bowner_id\x18\x04 \x01(\x05H\x02R\aownerId\x88\x01\x01\x12.\n" +
+	"\x10owner_identifier\x18\x06 \x01(\tH\x03R\x0fownerIdentifier\x88\x01\x01\x12;\n" +
+	"\x05owner\x18\x05 \x01(\v2 .resources.users.short.UserShortH\x04R\x05owner\x88\x01\x01\x12\x15\n" +
+	"\x03job\x18\a \x01(\tH\x05R\x03job\x88\x01\x01\x12 \n" +
+	"\tjob_label\x18\b \x01(\tH\x06R\bjobLabel\x88\x01\x01\x12A\n" +
+	"\x05props\x18\t \x01(\v2&.resources.vehicles.props.VehiclePropsH\aR\x05props\x88\x01\x01B\r\n" +
+	"\v_updated_atB\b\n" +
 	"\x06_modelB\v\n" +
 	"\t_owner_idB\x13\n" +
 	"\x11_owner_identifierB\b\n" +
@@ -335,18 +365,20 @@ const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 
 var file_resources_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_vehicles_vehicles_proto_goTypes = []any{
-	(*Vehicle)(nil),            // 0: resources.vehicles.Vehicle
-	(*short.UserShort)(nil),    // 1: resources.users.short.UserShort
-	(*props.VehicleProps)(nil), // 2: resources.vehicles.props.VehicleProps
+	(*Vehicle)(nil),             // 0: resources.vehicles.Vehicle
+	(*timestamp.Timestamp)(nil), // 1: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),     // 2: resources.users.short.UserShort
+	(*props.VehicleProps)(nil),  // 3: resources.vehicles.props.VehicleProps
 }
 var file_resources_vehicles_vehicles_proto_depIdxs = []int32{
-	1, // 0: resources.vehicles.Vehicle.owner:type_name -> resources.users.short.UserShort
-	2, // 1: resources.vehicles.Vehicle.props:type_name -> resources.vehicles.props.VehicleProps
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	1, // 0: resources.vehicles.Vehicle.updated_at:type_name -> resources.timestamp.Timestamp
+	2, // 1: resources.vehicles.Vehicle.owner:type_name -> resources.users.short.UserShort
+	3, // 2: resources.vehicles.Vehicle.props:type_name -> resources.vehicles.props.VehicleProps
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_resources_vehicles_vehicles_proto_init() }

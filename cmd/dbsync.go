@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"github.com/kardianos/service"
 	"go.uber.org/fx"
@@ -30,6 +31,7 @@ type DBSyncCmd struct {
 func getService() service.Service {
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, false, false)
 	fxOpts = append(fxOpts, FxDBSyncOpts()...)
+	fxOpts = append(fxOpts, fx.Invoke(func(admin.AdminServer) {}))
 
 	app := fx.New(fxOpts...)
 

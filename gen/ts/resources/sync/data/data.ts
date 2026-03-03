@@ -14,6 +14,7 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { UserProps } from "../../users/props/props";
 import { PhoneNumber } from "../../users/user";
 import { UserJob } from "../../users/user";
+import { Timestamp } from "../../timestamp/timestamp";
 import { AccountUpdate } from "../activity/activity";
 import { Coords } from "../../livemap/coords";
 import { License } from "../../users/licenses/licenses";
@@ -161,6 +162,10 @@ export interface DataUser {
      * @generated from protobuf field: string identifier = 2
      */
     identifier: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 21
+     */
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: string job = 3
      */
@@ -817,6 +822,7 @@ class DataUser$Type extends MessageType<DataUser> {
         super("resources.sync.data.DataUser", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } }, "tagger.tags": "alias:\"user.id\"" } },
             { no: 2, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } }, "tagger.tags": "alias:\"user.identifier\"" } },
+            { no: 21, name: "updated_at", kind: "message", T: () => Timestamp, options: { "tagger.tags": "alias:\"user.updated_at\"" } },
             { no: 3, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { maxLen: "20" } }, "tagger.tags": "alias:\"user.job\"" } },
             { no: 4, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } }, "tagger.tags": "alias:\"user.job_label\"" } },
             { no: 5, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", int32: { gte: 0 } }, "tagger.tags": "alias:\"user.job_grade\"" } },
@@ -862,6 +868,9 @@ class DataUser$Type extends MessageType<DataUser> {
                     break;
                 case /* string identifier */ 2:
                     message.identifier = reader.string();
+                    break;
+                case /* optional resources.timestamp.Timestamp updated_at */ 21:
+                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
                 case /* string job */ 3:
                     message.job = reader.string();
@@ -989,6 +998,9 @@ class DataUser$Type extends MessageType<DataUser> {
         /* repeated resources.users.UserJob jobs = 20; */
         for (let i = 0; i < message.jobs.length; i++)
             UserJob.internalBinaryWrite(message.jobs[i], writer.tag(20, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp updated_at = 21; */
+        if (message.updatedAt)
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -13,7 +13,6 @@ func TestBuildQueryFromColumns(t *testing.T) {
 		columns       map[string]string
 		conditions    []string
 		orderBy       []string
-		offset        int64
 		limit         int64
 		expectedQuery string
 	}{
@@ -25,9 +24,8 @@ func TestBuildQueryFromColumns(t *testing.T) {
 				"email":    "user_email",
 			},
 			conditions:    []string{"`updated_at` >= '2023-01-01 00:00:00'"},
-			offset:        10,
 			limit:         50,
-			expectedQuery: "SELECT `user_email` AS `email`, `user_id` AS `id`, `user_name` AS `username`\nFROM `users`\nWHERE `updated_at` >= '2023-01-01 00:00:00'\nLIMIT 50 OFFSET 10;",
+			expectedQuery: "SELECT `user_email` AS `email`, `user_id` AS `id`, `user_name` AS `username`\nFROM `users`\nWHERE `updated_at` >= '2023-01-01 00:00:00'\nLIMIT 50;",
 		},
 		{
 			tableName: "products",
@@ -37,9 +35,8 @@ func TestBuildQueryFromColumns(t *testing.T) {
 				"price": "product_price",
 			},
 			conditions:    []string{"`price` > 100"},
-			offset:        0,
 			limit:         20,
-			expectedQuery: "SELECT `product_id` AS `id`, `product_name` AS `name`, `product_price` AS `price`\nFROM `products`\nWHERE `price` > 100\nLIMIT 20 OFFSET 0;",
+			expectedQuery: "SELECT `product_id` AS `id`, `product_name` AS `name`, `product_price` AS `price`\nFROM `products`\nWHERE `price` > 100\nLIMIT 20;",
 		},
 		{
 			tableName: "user_licenses",
@@ -49,9 +46,8 @@ func TestBuildQueryFromColumns(t *testing.T) {
 			},
 			conditions:    []string{},
 			orderBy:       []string{"license.type", "license.name"},
-			offset:        10,
 			limit:         25,
-			expectedQuery: "SELECT `name_but_different` AS `license.name`, `type` AS `license.type`\nFROM `user_licenses`\nORDER BY license.type, license.name\nLIMIT 25 OFFSET 10;",
+			expectedQuery: "SELECT `name_but_different` AS `license.name`, `type` AS `license.type`\nFROM `user_licenses`\nORDER BY license.type, license.name\nLIMIT 25;",
 		},
 		{
 			tableName: "vehicles",
@@ -61,9 +57,8 @@ func TestBuildQueryFromColumns(t *testing.T) {
 			},
 			conditions:    []string{"`updated_at` >= '2023-01-01 00:00:00'"},
 			orderBy:       []string{"plate"},
-			offset:        10,
 			limit:         50,
-			expectedQuery: "SELECT `plate` AS `plate`\nFROM `vehicles`\nWHERE `updated_at` >= '2023-01-01 00:00:00'\nORDER BY plate\nLIMIT 50 OFFSET 10;",
+			expectedQuery: "SELECT `plate` AS `plate`\nFROM `vehicles`\nWHERE `updated_at` >= '2023-01-01 00:00:00'\nORDER BY plate\nLIMIT 50;",
 		},
 	}
 
@@ -72,7 +67,6 @@ func TestBuildQueryFromColumns(t *testing.T) {
 			test.tableName,
 			test.columns,
 			test.conditions,
-			test.offset,
 			test.limit,
 			test.orderBy,
 		)
@@ -87,44 +81,53 @@ func TestPrepareStringQuery(t *testing.T) {
 		query         string
 		table         DBSyncTable
 		state         *TableSyncState
-		offset        int64
 		limit         int64
 		expectedQuery string
 	}{
 		{
 			name:          "No state provided",
-			query:         "SELECT * FROM `users` $whereCondition LIMIT $limit OFFSET $offset",
+			query:         "SELECT * FROM `users` $whereCondition LIMIT $limit",
 			table:         DBSyncTable{},
 			state:         nil,
-			offset:        10,
 			limit:         50,
-			expectedQuery: "SELECT * FROM `users`  LIMIT 50 OFFSET 10",
+			expectedQuery: "SELECT * FROM `users`  LIMIT 50",
 		},
 		{
 			name:  "State with zero LastCheck",
-			query: "SELECT * FROM `users` $whereCondition LIMIT $limit OFFSET $offset",
+			query: "SELECT * FROM `users` $whereCondition LIMIT $limit",
 			table: DBSyncTable{
 				UpdatedTimeColumn: ptr("updated_at"),
 			},
 			state: &TableSyncState{
 				LastCheck: nil,
 			},
-			offset:        0,
 			limit:         20,
-			expectedQuery: "SELECT * FROM `users`  LIMIT 20 OFFSET 0",
+			expectedQuery: "SELECT * FROM `users`  LIMIT 20",
 		},
 		{
 			name:  "State with valid LastCheck",
-			query: "SELECT * FROM `users` $whereCondition LIMIT $limit OFFSET $offset",
+			query: "SELECT * FROM `users` $whereCondition LIMIT $limit",
 			table: DBSyncTable{
 				UpdatedTimeColumn: ptr("updated_at"),
 			},
 			state: &TableSyncState{
 				LastCheck: parseTime("2023-01-01 00:00:00"),
 			},
-			offset:        5,
 			limit:         15,
-			expectedQuery: "SELECT * FROM `users` WHERE `updated_at` >= '2023-01-01 00:00:00'\n LIMIT 15 OFFSET 5",
+			expectedQuery: "SELECT * FROM `users` WHERE `updated_at` >= '2023-01-01 00:00:00.000'\n LIMIT 15",
+		},
+		{
+			name:  "State with cursor tuple",
+			query: "SELECT * FROM `users` $whereCondition LIMIT $limit",
+			table: DBSyncTable{
+				UpdatedTimeColumn: ptr("updated_at"),
+			},
+			state: &TableSyncState{
+				LastCheck: parseTime("2023-01-01 00:00:00"),
+				LastID:    ptr("42"),
+			},
+			limit:         10,
+			expectedQuery: "SELECT * FROM `users` WHERE (`updated_at` > '2023-01-01 00:00:00.000' OR (`updated_at` = '2023-01-01 00:00:00.000' AND `id` > 42))\n LIMIT 10",
 		},
 	}
 
@@ -134,14 +137,24 @@ func TestPrepareStringQuery(t *testing.T) {
 				test.query,
 				test.table,
 				test.state,
-				test.offset,
 				test.limit,
+				"id",
 			)
 			if result != test.expectedQuery {
 				t.Errorf("Expected query:\n%s\nGot:\n%s", test.expectedQuery, result)
 			}
 		})
 	}
+}
+
+func TestGetWhereConditionIDOnly(t *testing.T) {
+	table := DBSyncTable{}
+	state := &TableSyncState{
+		LastID: ptr("XYZ-100"),
+	}
+
+	where := getWhereCondition(table, state, "plate")
+	assert.Equal(t, "`plate` > 'XYZ-100'\n", where)
 }
 
 func ptr(s string) *string {

@@ -25,7 +25,7 @@ func NewLicensesSync(s *Syncer, state *dbsyncconfig.TableSyncState) *LicensesSyn
 func (s *LicensesSync) Sync(ctx context.Context) (int64, error) {
 	limit := s.cfg.Limits.Licenses
 
-	q := s.cfg.Tables.Licenses.GetQuery(0, limit)
+	q := s.cfg.Tables.Licenses.GetQuery(limit)
 	s.logger.Debug("licenses sync query", zap.String("query", q))
 
 	licenses := []*userslicenses.License{}

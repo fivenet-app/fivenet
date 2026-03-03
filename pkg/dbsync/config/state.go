@@ -156,18 +156,23 @@ type TableSyncState struct {
 	dss *State
 
 	LastCheck *time.Time `yaml:"lastCheck"`
-	Offset    int64      `yaml:"offset"`
 	LastID    *string    `yaml:"lastId"`
 }
 
-func (s *TableSyncState) Set(offset int64, lastId *string) {
+func (s *TableSyncState) SetCursor(lastCheck *time.Time, lastId *string) {
+	if s == nil {
+		return
+	}
+	if s.dss == nil {
+		s.LastCheck = lastCheck
+		s.LastID = lastId
+		return
+	}
+
 	s.dss.mu.Lock()
 	defer s.dss.mu.Unlock()
 
-	// Subtract 1 minute to account for potential clock skew and ensure no records are missed
-	now := time.Now().Add(-1 * time.Minute)
-	s.LastCheck = &now
-	s.Offset = offset
+	s.LastCheck = lastCheck
 	s.LastID = lastId
 
 	if err := s.dss.save(); err != nil {
@@ -175,14 +180,70 @@ func (s *TableSyncState) Set(offset int64, lastId *string) {
 	}
 }
 
+func (s *TableSyncState) ResetCursor() {
+	s.SetCursor(nil, nil)
+}
+
 func (s *TableSyncState) SetLastCheck(t *time.Time) {
+	if s == nil {
+		return
+	}
+	if s.dss == nil {
+		s.LastCheck = t
+		return
+	}
+
 	s.dss.mu.Lock()
 	defer s.dss.mu.Unlock()
 	s.LastCheck = t
+
+	if err := s.dss.save(); err != nil {
+		s.dss.logger.Error("failed to save state", zap.Error(err))
+	}
 }
 
-func (s *TableSyncState) GetOffset() int64 {
+func (s *TableSyncState) GetLastCheck() *time.Time {
+	if s == nil {
+		return nil
+	}
+	if s.dss == nil {
+		if s.LastCheck == nil {
+			return nil
+		}
+		t := *s.LastCheck
+		return &t
+	}
+
 	s.dss.mu.RLock()
 	defer s.dss.mu.RUnlock()
-	return s.Offset
+
+	if s.LastCheck == nil {
+		return nil
+	}
+
+	t := *s.LastCheck
+	return &t
+}
+
+func (s *TableSyncState) GetLastID() *string {
+	if s == nil {
+		return nil
+	}
+	if s.dss == nil {
+		if s.LastID == nil {
+			return nil
+		}
+		v := *s.LastID
+		return &v
+	}
+
+	s.dss.mu.RLock()
+	defer s.dss.mu.RUnlock()
+
+	if s.LastID == nil {
+		return nil
+	}
+
+	v := *s.LastID
+	return &v
 }

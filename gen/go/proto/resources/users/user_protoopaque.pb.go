@@ -26,297 +26,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type UserShort struct {
-	state                           protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3"`
-	xxx_hidden_Job                  string                 `protobuf:"bytes,3,opt,name=job,proto3"`
-	xxx_hidden_JobLabel             *string                `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof"`
-	xxx_hidden_JobGrade             int32                  `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3"`
-	xxx_hidden_JobGradeLabel        *string                `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof"`
-	xxx_hidden_Firstname            string                 `protobuf:"bytes,7,opt,name=firstname,proto3"`
-	xxx_hidden_Lastname             string                 `protobuf:"bytes,8,opt,name=lastname,proto3"`
-	xxx_hidden_Dateofbirth          string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3"`
-	xxx_hidden_PhoneNumber          *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof"`
-	xxx_hidden_ProfilePictureFileId int64                  `protobuf:"varint,17,opt,name=profile_picture_file_id,json=profilePictureFileId,proto3,oneof"`
-	xxx_hidden_ProfilePicture       *string                `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof"`
-	XXX_raceDetectHookData          protoimpl.RaceDetectHookData
-	XXX_presence                    [1]uint32
-	unknownFields                   protoimpl.UnknownFields
-	sizeCache                       protoimpl.SizeCache
-}
-
-func (x *UserShort) Reset() {
-	*x = UserShort{}
-	mi := &file_resources_users_user_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserShort) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserShort) ProtoMessage() {}
-
-func (x *UserShort) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_users_user_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *UserShort) GetUserId() int32 {
-	if x != nil {
-		return x.xxx_hidden_UserId
-	}
-	return 0
-}
-
-func (x *UserShort) GetJob() string {
-	if x != nil {
-		return x.xxx_hidden_Job
-	}
-	return ""
-}
-
-func (x *UserShort) GetJobLabel() string {
-	if x != nil {
-		if x.xxx_hidden_JobLabel != nil {
-			return *x.xxx_hidden_JobLabel
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *UserShort) GetJobGrade() int32 {
-	if x != nil {
-		return x.xxx_hidden_JobGrade
-	}
-	return 0
-}
-
-func (x *UserShort) GetJobGradeLabel() string {
-	if x != nil {
-		if x.xxx_hidden_JobGradeLabel != nil {
-			return *x.xxx_hidden_JobGradeLabel
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *UserShort) GetFirstname() string {
-	if x != nil {
-		return x.xxx_hidden_Firstname
-	}
-	return ""
-}
-
-func (x *UserShort) GetLastname() string {
-	if x != nil {
-		return x.xxx_hidden_Lastname
-	}
-	return ""
-}
-
-func (x *UserShort) GetDateofbirth() string {
-	if x != nil {
-		return x.xxx_hidden_Dateofbirth
-	}
-	return ""
-}
-
-func (x *UserShort) GetPhoneNumber() string {
-	if x != nil {
-		if x.xxx_hidden_PhoneNumber != nil {
-			return *x.xxx_hidden_PhoneNumber
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *UserShort) GetProfilePictureFileId() int64 {
-	if x != nil {
-		return x.xxx_hidden_ProfilePictureFileId
-	}
-	return 0
-}
-
-func (x *UserShort) GetProfilePicture() string {
-	if x != nil {
-		if x.xxx_hidden_ProfilePicture != nil {
-			return *x.xxx_hidden_ProfilePicture
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *UserShort) SetUserId(v int32) {
-	x.xxx_hidden_UserId = v
-}
-
-func (x *UserShort) SetJob(v string) {
-	x.xxx_hidden_Job = v
-}
-
-func (x *UserShort) SetJobLabel(v string) {
-	x.xxx_hidden_JobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 11)
-}
-
-func (x *UserShort) SetJobGrade(v int32) {
-	x.xxx_hidden_JobGrade = v
-}
-
-func (x *UserShort) SetJobGradeLabel(v string) {
-	x.xxx_hidden_JobGradeLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 11)
-}
-
-func (x *UserShort) SetFirstname(v string) {
-	x.xxx_hidden_Firstname = v
-}
-
-func (x *UserShort) SetLastname(v string) {
-	x.xxx_hidden_Lastname = v
-}
-
-func (x *UserShort) SetDateofbirth(v string) {
-	x.xxx_hidden_Dateofbirth = v
-}
-
-func (x *UserShort) SetPhoneNumber(v string) {
-	x.xxx_hidden_PhoneNumber = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 11)
-}
-
-func (x *UserShort) SetProfilePictureFileId(v int64) {
-	x.xxx_hidden_ProfilePictureFileId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 11)
-}
-
-func (x *UserShort) SetProfilePicture(v string) {
-	x.xxx_hidden_ProfilePicture = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 11)
-}
-
-func (x *UserShort) HasJobLabel() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
-func (x *UserShort) HasJobGradeLabel() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
-}
-
-func (x *UserShort) HasPhoneNumber() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
-}
-
-func (x *UserShort) HasProfilePictureFileId() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
-}
-
-func (x *UserShort) HasProfilePicture() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
-}
-
-func (x *UserShort) ClearJobLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_JobLabel = nil
-}
-
-func (x *UserShort) ClearJobGradeLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
-	x.xxx_hidden_JobGradeLabel = nil
-}
-
-func (x *UserShort) ClearPhoneNumber() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
-	x.xxx_hidden_PhoneNumber = nil
-}
-
-func (x *UserShort) ClearProfilePictureFileId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
-	x.xxx_hidden_ProfilePictureFileId = 0
-}
-
-func (x *UserShort) ClearProfilePicture() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 10)
-	x.xxx_hidden_ProfilePicture = nil
-}
-
-type UserShort_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	UserId               int32
-	Job                  string
-	JobLabel             *string
-	JobGrade             int32
-	JobGradeLabel        *string
-	Firstname            string
-	Lastname             string
-	Dateofbirth          string
-	PhoneNumber          *string
-	ProfilePictureFileId *int64
-	ProfilePicture       *string
-}
-
-func (b0 UserShort_builder) Build() *UserShort {
-	m0 := &UserShort{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_UserId = b.UserId
-	x.xxx_hidden_Job = b.Job
-	if b.JobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 11)
-		x.xxx_hidden_JobLabel = b.JobLabel
-	}
-	x.xxx_hidden_JobGrade = b.JobGrade
-	if b.JobGradeLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 11)
-		x.xxx_hidden_JobGradeLabel = b.JobGradeLabel
-	}
-	x.xxx_hidden_Firstname = b.Firstname
-	x.xxx_hidden_Lastname = b.Lastname
-	x.xxx_hidden_Dateofbirth = b.Dateofbirth
-	if b.PhoneNumber != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 11)
-		x.xxx_hidden_PhoneNumber = b.PhoneNumber
-	}
-	if b.ProfilePictureFileId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 11)
-		x.xxx_hidden_ProfilePictureFileId = *b.ProfilePictureFileId
-	}
-	if b.ProfilePicture != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 11)
-		x.xxx_hidden_ProfilePicture = b.ProfilePicture
-	}
-	return m0
-}
-
 type User struct {
 	state                           protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_UserId               int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3"`
@@ -347,7 +56,7 @@ type User struct {
 
 func (x *User) Reset() {
 	*x = User{}
-	mi := &file_resources_users_user_proto_msgTypes[1]
+	mi := &file_resources_users_user_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -359,7 +68,7 @@ func (x *User) String() string {
 func (*User) ProtoMessage() {}
 
 func (x *User) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_users_user_proto_msgTypes[1]
+	mi := &file_resources_users_user_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -831,7 +540,7 @@ type PhoneNumber struct {
 
 func (x *PhoneNumber) Reset() {
 	*x = PhoneNumber{}
-	mi := &file_resources_users_user_proto_msgTypes[2]
+	mi := &file_resources_users_user_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -843,7 +552,7 @@ func (x *PhoneNumber) String() string {
 func (*PhoneNumber) ProtoMessage() {}
 
 func (x *PhoneNumber) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_users_user_proto_msgTypes[2]
+	mi := &file_resources_users_user_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -971,7 +680,7 @@ type UserJob struct {
 
 func (x *UserJob) Reset() {
 	*x = UserJob{}
-	mi := &file_resources_users_user_proto_msgTypes[3]
+	mi := &file_resources_users_user_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -983,7 +692,7 @@ func (x *UserJob) String() string {
 func (*UserJob) ProtoMessage() {}
 
 func (x *UserJob) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_users_user_proto_msgTypes[3]
+	mi := &file_resources_users_user_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1174,26 +883,7 @@ var File_resources_users_user_proto protoreflect.FileDescriptor
 
 const file_resources_users_user_proto_rawDesc = "" +
 	"\n" +
-	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\x8a\x04\n" +
-	"\tUserShort\x12(\n" +
-	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
-	"alias:\"id\"R\x06userId\x12\x10\n" +
-	"\x03job\x18\x03 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x04 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12\x1b\n" +
-	"\tjob_grade\x18\x05 \x01(\x05R\bjobGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\x06 \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12\x1c\n" +
-	"\tfirstname\x18\a \x01(\tR\tfirstname\x12\x1a\n" +
-	"\blastname\x18\b \x01(\tR\blastname\x12 \n" +
-	"\vdateofbirth\x18\t \x01(\tR\vdateofbirth\x12&\n" +
-	"\fphone_number\x18\f \x01(\tH\x02R\vphoneNumber\x88\x01\x01\x12:\n" +
-	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x03R\x14profilePictureFileId\x88\x01\x01\x12,\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tH\x04R\x0eprofilePicture\x88\x01\x01B\f\n" +
-	"\n" +
-	"_job_labelB\x12\n" +
-	"\x10_job_grade_labelB\x0f\n" +
-	"\r_phone_numberB\x1a\n" +
-	"\x18_profile_picture_file_idB\x12\n" +
-	"\x10_profile_pictureJ\x04\b\x02\x10\x03\"\xde\a\n" +
+	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\xde\a\n" +
 	"\x04User\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x06userId\x12\x1e\n" +
@@ -1257,25 +947,24 @@ const file_resources_users_user_proto_rawDesc = "" +
 	"\f_grade_labelB\r\n" +
 	"\v_updated_atBIZGgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users;usersb\x06proto3"
 
-var file_resources_users_user_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_resources_users_user_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_users_user_proto_goTypes = []any{
-	(*UserShort)(nil),           // 0: resources.users.UserShort
-	(*User)(nil),                // 1: resources.users.User
-	(*PhoneNumber)(nil),         // 2: resources.users.PhoneNumber
-	(*UserJob)(nil),             // 3: resources.users.UserJob
-	(*props.UserProps)(nil),     // 4: resources.users.props.UserProps
-	(*licenses.License)(nil),    // 5: resources.users.licenses.License
-	(*timestamp.Timestamp)(nil), // 6: resources.timestamp.Timestamp
+	(*User)(nil),                // 0: resources.users.User
+	(*PhoneNumber)(nil),         // 1: resources.users.PhoneNumber
+	(*UserJob)(nil),             // 2: resources.users.UserJob
+	(*props.UserProps)(nil),     // 3: resources.users.props.UserProps
+	(*licenses.License)(nil),    // 4: resources.users.licenses.License
+	(*timestamp.Timestamp)(nil), // 5: resources.timestamp.Timestamp
 }
 var file_resources_users_user_proto_depIdxs = []int32{
-	3, // 0: resources.users.User.jobs:type_name -> resources.users.UserJob
-	2, // 1: resources.users.User.phone_numbers:type_name -> resources.users.PhoneNumber
-	4, // 2: resources.users.User.props:type_name -> resources.users.props.UserProps
-	5, // 3: resources.users.User.licenses:type_name -> resources.users.licenses.License
-	6, // 4: resources.users.PhoneNumber.created_at:type_name -> resources.timestamp.Timestamp
-	6, // 5: resources.users.PhoneNumber.updated_at:type_name -> resources.timestamp.Timestamp
-	6, // 6: resources.users.UserJob.created_at:type_name -> resources.timestamp.Timestamp
-	6, // 7: resources.users.UserJob.updated_at:type_name -> resources.timestamp.Timestamp
+	2, // 0: resources.users.User.jobs:type_name -> resources.users.UserJob
+	1, // 1: resources.users.User.phone_numbers:type_name -> resources.users.PhoneNumber
+	3, // 2: resources.users.User.props:type_name -> resources.users.props.UserProps
+	4, // 3: resources.users.User.licenses:type_name -> resources.users.licenses.License
+	5, // 4: resources.users.PhoneNumber.created_at:type_name -> resources.timestamp.Timestamp
+	5, // 5: resources.users.PhoneNumber.updated_at:type_name -> resources.timestamp.Timestamp
+	5, // 6: resources.users.UserJob.created_at:type_name -> resources.timestamp.Timestamp
+	5, // 7: resources.users.UserJob.updated_at:type_name -> resources.timestamp.Timestamp
 	8, // [8:8] is the sub-list for method output_type
 	8, // [8:8] is the sub-list for method input_type
 	8, // [8:8] is the sub-list for extension type_name
@@ -1291,14 +980,13 @@ func file_resources_users_user_proto_init() {
 	file_resources_users_user_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_users_user_proto_msgTypes[1].OneofWrappers = []any{}
 	file_resources_users_user_proto_msgTypes[2].OneofWrappers = []any{}
-	file_resources_users_user_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_users_user_proto_rawDesc), len(file_resources_users_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

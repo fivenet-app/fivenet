@@ -84,6 +84,10 @@ func New(p ParamsConfig) (ResultConfig, error) {
 			LogLevel: cc.LogLevel,
 			Log:      cc.Log,
 
+			HTTP: config.HTTP{
+				AdminListen: cc.AdminListen,
+			},
+
 			// Ignore db requirements, dbsync doesn't need them
 			IgnoreRequirements: true,
 			UpdateCheck:        cc.UpdateCheck,
@@ -205,6 +209,8 @@ type DBSyncConfig struct {
 	WatchConfig bool `default:"true" yaml:"watchConfig"`
 
 	StateFile string `default:"dbsync.state.yaml" yaml:"stateFile"`
+
+	AdminListen string `default:"" yaml:"adminListen"`
 
 	Source      DBSyncSource      `yaml:"source"`
 	Destination DBSyncDestination `yaml:"destination"`
@@ -341,19 +347,18 @@ type JobsTable struct {
 }
 
 func (c *JobsTable) GetQuery(
-	offset int64,
 	limit int64,
 	where ...string,
 ) string {
 	if c.Query != nil {
-		return prepareStringQuery(*c.Query, c.DBSyncTable, nil, offset, limit)
+		return prepareStringQuery(*c.Query, c.DBSyncTable, nil, limit, "")
 	}
 
-	where = append(where, getWhereCondition(c.DBSyncTable, nil))
+	where = append(where, getWhereCondition(c.DBSyncTable, nil, ""))
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"job.name":  c.Columns.Name,
 		"job.label": c.Columns.Label,
-	}, where, offset, limit, []string{c.Columns.Name})
+	}, where, limit, []string{c.Columns.Name})
 }
 
 type JobsColumns struct {
@@ -369,24 +374,23 @@ type JobGradesTable struct {
 
 func (c *JobGradesTable) GetQuery(
 	state *TableSyncState,
-	offset int64,
 	limit int64,
 	where ...string,
 ) string {
 	if c.Query != nil {
-		q := prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+		q := prepareStringQuery(*c.Query, c.DBSyncTable, state, limit, "")
 		q = strings.ReplaceAll(q, "$jobName", "?")
 		return q
 	}
 
 	where = append(where, fmt.Sprintf("%#q = ?", c.Columns.JobName))
-	where = append(where, getWhereCondition(c.DBSyncTable, state))
+	where = append(where, getWhereCondition(c.DBSyncTable, state, ""))
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"job_grade.job_name": c.Columns.JobName,
 		"job_grade.grade":    c.Columns.Grade,
 		"job_grade.name":     c.Columns.Name,
 		"job_grade.label":    c.Columns.Label,
-	}, where, offset, limit, []string{c.Columns.JobName, c.Columns.Grade})
+	}, where, limit, []string{c.Columns.JobName, c.Columns.Grade})
 }
 
 type JobGradesColumns struct {
@@ -403,18 +407,17 @@ type LicensesTable struct {
 }
 
 func (c *LicensesTable) GetQuery(
-	offset int64,
 	limit int64,
 	where ...string,
 ) string {
 	if c.Query != nil {
-		return prepareStringQuery(*c.Query, c.DBSyncTable, nil, offset, limit)
+		return prepareStringQuery(*c.Query, c.DBSyncTable, nil, limit, "")
 	}
-	where = append(where, getWhereCondition(c.DBSyncTable, nil))
+	where = append(where, getWhereCondition(c.DBSyncTable, nil, ""))
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"license.type":  c.Columns.Type,
 		"license.label": c.Columns.Label,
-	}, where, offset, limit, []string{c.Columns.Type})
+	}, where, limit, []string{c.Columns.Type})
 }
 
 type LicensesColumns struct {
@@ -445,11 +448,15 @@ func (c *UsersTable) GetQuery(
 	where ...string,
 ) string {
 	if c.Query != nil {
-		return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+		return prepareStringQuery(*c.Query, c.DBSyncTable, state, limit, c.Columns.ID)
 	}
 
-	where = append(where, getWhereCondition(c.DBSyncTable, state))
-	return buildQueryFromColumns(c.TableName, map[string]string{
+	orderBy := []string{c.Columns.ID}
+	if c.UpdatedTimeColumn != nil && *c.UpdatedTimeColumn != "" {
+		orderBy = append([]string{*c.UpdatedTimeColumn}, orderBy...)
+	}
+
+	columns := map[string]string{
 		"user.id":           c.Columns.ID,
 		"user.identifier":   c.Columns.Identifier,
 		"user.firstname":    c.Columns.FirstName,
@@ -462,7 +469,13 @@ func (c *UsersTable) GetQuery(
 		"user.height":       c.Columns.Height,
 		"user.visum":        c.Columns.Visum,
 		"user.playtime":     c.Columns.Playtime,
-	}, where, offset, limit, []string{c.Columns.ID})
+	}
+	if c.UpdatedTimeColumn != nil && *c.UpdatedTimeColumn != "" {
+		columns["user.updated_at"] = *c.UpdatedTimeColumn
+	}
+
+	where = append(where, getWhereCondition(c.DBSyncTable, state, c.Columns.ID))
+	return buildQueryFromColumns(c.TableName, columns, where, limit, orderBy)
 }
 
 type UsersColumns struct {
@@ -531,15 +544,15 @@ func (c *UserLicensesTable) GetQuery(
 	where ...string,
 ) string {
 	if c.Query != nil {
-		return prepareStringQuery(*c.Query, c.DBSyncTable, nil, offset, limit)
+		return prepareStringQuery(*c.Query, c.DBSyncTable, nil, limit, "")
 	}
 
-	where = append(where, getWhereCondition(c.DBSyncTable, nil))
+	where = append(where, getWhereCondition(c.DBSyncTable, nil, ""))
 	where = append(where, "`"+c.Columns.OwnerIdentifier+"` = $identifier")
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"license.type":  c.Columns.Type,
 		"license.owner": c.Columns.OwnerIdentifier,
-	}, where, offset, limit, []string{c.Columns.Type, c.Columns.OwnerIdentifier})
+	}, where, limit, []string{c.Columns.Type, c.Columns.OwnerIdentifier})
 }
 
 type UserLicensesColumns struct {
@@ -556,7 +569,7 @@ func (c *UserJobsTable) GetQuery(
 	limit int64,
 	where ...string,
 ) string {
-	return prepareStringQuery(*c.Query, c.DBSyncTable, nil, offset, limit)
+	return prepareStringQuery(*c.Query, c.DBSyncTable, nil, limit, "")
 }
 
 type UserPhoneNumbersTable struct {
@@ -568,7 +581,7 @@ func (c *UserPhoneNumbersTable) GetQuery(
 	limit int64,
 	where ...string,
 ) string {
-	return prepareStringQuery(*c.Query, c.DBSyncTable, nil, offset, limit)
+	return prepareStringQuery(*c.Query, c.DBSyncTable, nil, limit, "")
 }
 
 type VehiclesTable struct {
@@ -586,16 +599,26 @@ func (c *VehiclesTable) GetQuery(
 	where ...string,
 ) string {
 	if c.Query != nil {
-		return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+		return prepareStringQuery(*c.Query, c.DBSyncTable, state, limit, c.Columns.Plate)
 	}
 
-	where = append(where, getWhereCondition(c.DBSyncTable, state))
-	return buildQueryFromColumns(c.TableName, map[string]string{
+	orderBy := []string{c.Columns.Plate}
+	if c.UpdatedTimeColumn != nil && *c.UpdatedTimeColumn != "" {
+		orderBy = append([]string{*c.UpdatedTimeColumn}, orderBy...)
+	}
+
+	columns := map[string]string{
 		"vehicle.ownerIdentifier": c.Columns.OwnerIdentifier,
 		"vehicle.plate":           c.Columns.Plate,
 		"vehicle.type":            c.Columns.Type,
 		"vehicle.model":           c.Columns.Model,
-	}, where, offset, limit, []string{c.Columns.Plate, c.Columns.OwnerIdentifier})
+	}
+	if c.UpdatedTimeColumn != nil && *c.UpdatedTimeColumn != "" {
+		columns["vehicle.updated_at"] = *c.UpdatedTimeColumn
+	}
+
+	where = append(where, getWhereCondition(c.DBSyncTable, state, c.Columns.Plate))
+	return buildQueryFromColumns(c.TableName, columns, where, limit, orderBy)
 }
 
 type VehiclesColumns struct {
@@ -616,7 +639,7 @@ func (c *AccountsTable) GetQuery(
 	limit int64,
 	where ...string,
 ) string {
-	return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+	return prepareStringQuery(*c.Query, c.DBSyncTable, state, limit, "")
 }
 
 type DBSyncTableSyncInterval interface {
@@ -660,6 +683,35 @@ func (c *DBSyncConfig) Init() error {
 	c.Tables.UserJobs.UpdatedTimeColumn = nil
 	c.Tables.UserLicenses.UpdatedTimeColumn = nil
 	c.Tables.UserPhoneNumbers.UpdatedTimeColumn = nil
+
+	// Remove OFFSET from queries if present, as pagination is handled differently since v2026.3.0.
+	if c.Tables.Jobs.Query != nil {
+		*c.Tables.Jobs.Query = strings.ReplaceAll(*c.Tables.Jobs.Query, "OFFSET $offset", "")
+	}
+	if c.Tables.Licenses.Query != nil {
+		*c.Tables.Licenses.Query = strings.ReplaceAll(
+			*c.Tables.Licenses.Query,
+			"OFFSET $offset",
+			"",
+		)
+	}
+	if c.Tables.Accounts.Query != nil {
+		*c.Tables.Accounts.Query = strings.ReplaceAll(
+			*c.Tables.Accounts.Query,
+			"OFFSET $offset",
+			"",
+		)
+	}
+	if c.Tables.Users.Query != nil {
+		*c.Tables.Users.Query = strings.ReplaceAll(*c.Tables.Users.Query, "OFFSET $offset", "")
+	}
+	if c.Tables.Vehicles.Query != nil {
+		*c.Tables.Vehicles.Query = strings.ReplaceAll(
+			*c.Tables.Vehicles.Query,
+			"OFFSET $offset",
+			"",
+		)
+	}
 
 	return nil
 }

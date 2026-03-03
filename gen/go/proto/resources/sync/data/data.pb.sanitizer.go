@@ -199,6 +199,15 @@ func (m *DataUser) Sanitize() error {
 		*m.Sex = htmlsanitizer.Sanitize(*m.Sex)
 	}
 
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 

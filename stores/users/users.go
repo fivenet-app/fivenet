@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 )
@@ -20,7 +20,7 @@ func New(db *sql.DB) *UserStore {
 	}
 }
 
-func (s *UserStore) GetShort(ctx context.Context, userId int32) (*users.UserShort, error) {
+func (s *UserStore) GetShort(ctx context.Context, userId int32) (*usershort.UserShort, error) {
 	tUsers := table.FivenetUser.AS("user_short")
 
 	stmt := tUsers.
@@ -36,7 +36,7 @@ func (s *UserStore) GetShort(ctx context.Context, userId int32) (*users.UserShor
 		WHERE(tUsers.ID.EQ(mysql.Int32(userId))).
 		LIMIT(1)
 
-	user := &users.UserShort{}
+	user := &usershort.UserShort{}
 	if err := stmt.QueryContext(ctx, s.db, user); err != nil {
 		return nil, err
 	}

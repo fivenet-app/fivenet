@@ -14,6 +14,9 @@ watchConfig: true
 
 stateFile: "dbsync.state.yaml"
 
+# Admin Server for metrics and health checks (if empty the admin server is disabled)
+adminListen: "" # Sane default for ":7073"
+
 # Your **gameservers' database** details
 # Changes to the source require a restart of the dbsync!
 source:
@@ -97,8 +100,7 @@ tables:
     #    `label` AS `job.label`
     #  FROM
     #    `jobs`
-    #  ORDER BY `name`
-    #  OFFSET $offset;
+    #  ORDER BY `name`;
     filters: []
       # Example filter to drop jobs starting with "off_", to enable uncomment this section
       # This is useful in combination with the `users:` jobs filters below if you
@@ -133,8 +135,7 @@ tables:
     #    `job_grades`
     #  WHERE
     #    `job_grades`.`job_name` = $jobName
-    #  ORDER BY `job_grade.job_name`, `job_grade.grade`
-    #  OFFSET $offset;
+    #  ORDER BY `job_grade.job_name`, `job_grade.grade`;
 
   # Licenses available on your server, e.g., driver's license, weapon license, etc.
   licenses:
@@ -156,8 +157,7 @@ tables:
     #  FROM
     #    `licenses`
     #  ORDER BY `type`
-    #  LIMIT $limit
-    #  OFFSET $offset;
+    #  LIMIT $limit;
 
   # Users/Characters of the game server - This is the main users table,
   # which is used to link to other data to (e.g., vehicles, users' licenses)
@@ -215,13 +215,13 @@ tables:
     #    `job_grade` AS `user.job_grade`,
     #    `phone_number` AS `user.phone_number`,
     #    `visum` AS `user.visum`,
-    #    `playtime` AS `user.playtime`
+    #    `playtime` AS `user.playtime`,
+    #    `last_seen` AS `user.updated_at`
     #  FROM
     #    `users`
     #  $whereCondition
     #  ORDER BY `id`
-    #  LIMIT $limit
-    #  OFFSET $offset;
+    #  LIMIT $limit;
     # If a lastname is not returned by the query, attempt to split the firstname into "two" parts
     splitName: true
     # Normalize date of birth value to the output format if possible
@@ -282,8 +282,7 @@ tables:
     #  WHERE
     #    `user_licenses`.`owner` = $identifier
     #  ORDER BY `type`
-    #  LIMIT $limit
-    #  OFFSET $offset;
+    #  LIMIT $limit;
 
   # Jobs of a user (if your users can have multiple jobs, e.g., a main job and a secondary job, it is recommended to enable and use this
   # and return the jobs in a separate query to prevent data duplication and potential performance issues,
@@ -306,8 +305,7 @@ tables:
     #  WHERE
     #    `user_jobs`.`owner` = $identifier
     #  ORDER BY `owner`
-    #  LIMIT $limit
-    #  OFFSET $offset;
+    #  LIMIT $limit;
 
   # User Phone Numbers (if your users can have multiple phone numbers,
   # it is recommended to enable and use this
@@ -347,6 +345,7 @@ tables:
     #
     # Must return result columns named: `vehicle.owner_id` (the user's DB ID) or `vehicle.owner_identifier`,
     # `vehicle.plate`, `vehicle.type`
+    # `vehicle.updated_at` (timestamp/datetime column that is updated on update, used for incremental syncs)
     # Optional columns: `vehicle.model`, `vehicle.job` (for job specific vehicles)
     #query: |
     #  SELECT
@@ -354,11 +353,11 @@ tables:
     #    `plate` AS `vehicle.plate`,
     #    `type` AS `vehicle.type`,
     #    `model` AS `vehicle.model`
+    #    `updated_at` AS `vehicle.updated_at`
     #  FROM
     #    `owned_vehicles`
     #  ORDER BY `vehicle.plate`
-    #  LIMIT $limit
-    #  OFFSET $offset;
+    #  LIMIT $limit;
     #
     # Interval in which a batch of vehicles data is "re-synced". A "step" is a single batch of vehicles that is re-synced,
     # to ensure eventual consistency of the data when an update has been missed for whatever reason.
@@ -387,8 +386,7 @@ tables:
     #    `admin_accounts`
     #  $whereCondition
     #  ORDER BY `license`
-    #  LIMIT $limit
-    #  OFFSET $offset;
+    #  LIMIT $limit;
 
 tableManager:
   # By default enabled, used to create missing `updated_at` columns (`updatedTimeColumn`) on tables that have it configured.

@@ -38,7 +38,7 @@ jwt:
 
 http:
   listen: ":8080"
-  # It is recommended to use localhost for the admin port (metrics and go debug access).
+  # It is recommended to use localhost for the admin port (metrics and go debug access). If empty, the admin server will be disabled.
   adminListen: ":7070"
   publicURL: "https://fivenet.example.com"
   origins:

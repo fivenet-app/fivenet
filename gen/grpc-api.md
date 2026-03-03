@@ -635,27 +635,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-
-### resources.users.UserShort
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `job_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `firstname` | [string](#string) |  |  |
-| `lastname` | [string](#string) |  |  |
-| `dateofbirth` | [string](#string) |  |  |
-| `phone_number` | [string](#string) | optional |  |
-| `profile_picture_file_id` | [int64](#int64) | optional |  |
-| `profile_picture` | [string](#string) | optional |  |
-
-
-
-
  <!-- end messages -->
 
  <!-- end enums -->
@@ -4474,6 +4453,7 @@ Policy snapshot applied to a specific version
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `plate` | [string](#string) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `model` | [string](#string) | optional |  |
 | `type` | [string](#string) |  |  |
 | `owner_id` | [int32](#int32) | optional |  |
@@ -6586,6 +6566,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | ----- | ---- | ----- | ----------- |
 | `user_id` | [int32](#int32) |  |  |
 | `identifier` | [string](#string) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `job_grade` | [int32](#int32) |  |  |

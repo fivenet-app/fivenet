@@ -96,8 +96,6 @@ func New(p Params) (*Sync, error) {
 		return nil, fmt.Errorf("failed to create sync API gRPC client. %w", err)
 	}
 
-	s.ctx, s.cancel = context.WithCancel(context.Background())
-
 	p.LC.Append(fx.StartHook(s.start))
 	p.LC.Append(fx.StopHook(s.stop))
 
@@ -283,10 +281,17 @@ func (s *Sync) run(ctx context.Context) error {
 	if cfg.Users.Enabled {
 		wg.Go(func() {
 			for {
-				if count, offset, lastId, err := s.users.Sync(ctx); err != nil {
+				if count, lastID, lastUpdatedAt, err := s.users.Sync(ctx); err != nil {
 					s.logger.Error("error during users sync", zap.Error(err))
 				} else {
-					s.logger.Info("users synced", zap.Int64("count", count), zap.Int64("offset", offset), zap.String("last_id", lastId))
+					fields := []zap.Field{
+						zap.Int64("count", count),
+						zap.String("last_id", lastID),
+					}
+					if lastUpdatedAt != nil {
+						fields = append(fields, zap.Time("last_updated_at", *lastUpdatedAt))
+					}
+					s.logger.Info("users synced", fields...)
 				}
 
 				select {
@@ -307,10 +312,14 @@ func (s *Sync) run(ctx context.Context) error {
 						return
 
 					case <-time.After(resyncInterval):
-						if count, offset, lastId, err := s.usersResync.Sync(ctx); err != nil {
+						if count, lastID, _, err := s.usersResync.Sync(ctx); err != nil {
 							s.logger.Error("error during users resync", zap.Error(err))
 						} else {
-							s.logger.Info("users resynced", zap.Int64("count", count), zap.Int64("offset", offset), zap.String("last_id", lastId))
+							fields := []zap.Field{
+								zap.Int64("count", count),
+								zap.String("last_id", lastID),
+							}
+							s.logger.Info("users resynced", fields...)
 						}
 					}
 				}
@@ -322,10 +331,17 @@ func (s *Sync) run(ctx context.Context) error {
 	if cfg.Vehicles.Enabled {
 		wg.Go(func() {
 			for {
-				if count, offset, plate, err := s.vehicles.Sync(ctx); err != nil {
+				if count, plate, lastUpdatedAt, err := s.vehicles.Sync(ctx); err != nil {
 					s.logger.Error("error during vehicles sync", zap.Error(err))
 				} else {
-					s.logger.Info("vehicles synced", zap.Int64("count", count), zap.Int64("offset", offset), zap.String("last_plate", plate))
+					fields := []zap.Field{
+						zap.Int64("count", count),
+						zap.String("last_plate", plate),
+					}
+					if lastUpdatedAt != nil {
+						fields = append(fields, zap.Time("last_updated_at", *lastUpdatedAt))
+					}
+					s.logger.Info("vehicles synced", fields...)
 				}
 
 				select {
@@ -346,10 +362,14 @@ func (s *Sync) run(ctx context.Context) error {
 						return
 
 					case <-time.After(resyncInterval):
-						if count, offset, lastId, err := s.vehiclesResync.Sync(ctx); err != nil {
+						if count, lastID, _, err := s.vehiclesResync.Sync(ctx); err != nil {
 							s.logger.Error("error during vehicles resync", zap.Error(err))
 						} else {
-							s.logger.Info("vehicles resynced", zap.Int64("count", count), zap.Int64("offset", offset), zap.String("last_id", lastId))
+							fields := []zap.Field{
+								zap.Int64("count", count),
+								zap.String("last_id", lastID),
+							}
+							s.logger.Info("vehicles resynced", fields...)
 						}
 					}
 				}

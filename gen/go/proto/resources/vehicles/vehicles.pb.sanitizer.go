@@ -58,5 +58,14 @@ func (m *Vehicle) Sanitize() error {
 	// Field: Type
 	m.Type = htmlsanitizer.Sanitize(m.Type)
 
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }

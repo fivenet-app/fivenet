@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.vehicles;
 
 import "buf/validate/validate.proto";
+import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";
 import "resources/vehicles/props/props.proto";
 
@@ -10,6 +11,7 @@ option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources
 
 message Vehicle {
   string plate = 1 [(buf.validate.field).string.max_len = 32];
+  optional resources.timestamp.Timestamp updated_at = 10;
   optional string model = 2 [(buf.validate.field).string.max_len = 64];
   string type = 3 [(buf.validate.field).string.max_len = 32];
   optional int32 owner_id = 4;

@@ -2,9 +2,10 @@ package users
 
 import (
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 )
 
-func (x *User) UserShort() *UserShort {
+func (x *User) UserShort() *usershort.UserShort {
 	var profilePicture *string
 	if x.ProfilePicture != nil {
 		p := *x.ProfilePicture
@@ -16,7 +17,7 @@ func (x *User) UserShort() *UserShort {
 		profilePictureFileId = &p
 	}
 
-	return &UserShort{
+	return &usershort.UserShort{
 		UserId:               x.GetUserId(),
 		Job:                  x.GetJob(),
 		JobGrade:             x.GetJobGrade(),

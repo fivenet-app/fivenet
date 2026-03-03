@@ -13,6 +13,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { VehicleProps } from "./props/props";
 import { UserShort } from "../users/short/user";
+import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.vehicles.Vehicle
  */
@@ -21,6 +22,10 @@ export interface Vehicle {
      * @generated from protobuf field: string plate = 1
      */
     plate: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 10
+     */
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: optional string model = 2
      */
@@ -59,6 +64,7 @@ class Vehicle$Type extends MessageType<Vehicle> {
     constructor() {
         super("resources.vehicles.Vehicle", [
             { no: 1, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
+            { no: 10, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 2, name: "model", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 3, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
             { no: 4, name: "owner_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
@@ -84,6 +90,9 @@ class Vehicle$Type extends MessageType<Vehicle> {
             switch (fieldNo) {
                 case /* string plate */ 1:
                     message.plate = reader.string();
+                    break;
+                case /* optional resources.timestamp.Timestamp updated_at */ 10:
+                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
                 case /* optional string model */ 2:
                     message.model = reader.string();
@@ -148,6 +157,9 @@ class Vehicle$Type extends MessageType<Vehicle> {
         /* optional resources.vehicles.props.VehicleProps props = 9; */
         if (message.props)
             VehicleProps.internalBinaryWrite(message.props, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp updated_at = 10; */
+        if (message.updatedAt)
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -10,34 +10,65 @@ import (
 func getWhereCondition(
 	table DBSyncTable,
 	state *TableSyncState,
+	cursorIDColumn string,
 ) string {
-	// Add "updatedAt" column condition if available
-	if state == nil ||
-		table.UpdatedTimeColumn == nil || *table.UpdatedTimeColumn == "" ||
-		state.LastCheck == nil || state.LastCheck.IsZero() {
+	if state == nil {
 		return ""
 	}
 
-	return fmt.Sprintf("%#q >= '%s'\n",
-		*table.UpdatedTimeColumn,
-		state.LastCheck.Format("2006-01-02 15:04:05"),
-	)
+	lastCheck := state.GetLastCheck()
+	lastID := state.GetLastID()
+
+	hasCursorID := cursorIDColumn != "" && lastID != nil && strings.TrimSpace(*lastID) != ""
+	hasUpdatedAt := table.UpdatedTimeColumn != nil &&
+		*table.UpdatedTimeColumn != "" &&
+		lastCheck != nil &&
+		!lastCheck.IsZero()
+
+	if hasUpdatedAt {
+		updatedAtCol := *table.UpdatedTimeColumn
+		updatedAtValue := lastCheck.Format("2006-01-02 15:04:05.000")
+		if hasCursorID {
+			return fmt.Sprintf(
+				"(%#q > '%s' OR (%#q = '%s' AND %#q > %s))\n",
+				updatedAtCol, updatedAtValue,
+				updatedAtCol, updatedAtValue,
+				cursorIDColumn, sqlLiteral(*lastID),
+			)
+		}
+		return fmt.Sprintf("%#q >= '%s'\n", updatedAtCol, updatedAtValue)
+	}
+
+	if hasCursorID {
+		return fmt.Sprintf("%#q > %s\n", cursorIDColumn, sqlLiteral(*lastID))
+	}
+
+	return ""
+}
+
+func sqlLiteral(value string) string {
+	if _, err := strconv.ParseInt(value, 10, 64); err == nil {
+		return value
+	}
+	if _, err := strconv.ParseUint(value, 10, 64); err == nil {
+		return value
+	}
+
+	return fmt.Sprintf("'%s'", strings.ReplaceAll(value, "'", "''"))
 }
 
 func prepareStringQuery(
 	q string,
 	table DBSyncTable,
 	state *TableSyncState,
-	offset int64,
 	limit int64,
+	cursorIDColumn string,
 ) string {
-	offsetStr := strconv.FormatInt(offset, 10)
 	limitStr := strconv.FormatInt(limit, 10)
 
-	q = strings.ReplaceAll(q, "$offset", offsetStr)
 	q = strings.ReplaceAll(q, "$limit", limitStr)
 
-	where := getWhereCondition(table, state)
+	where := getWhereCondition(table, state, cursorIDColumn)
 	if where != "" {
 		// Prepend "WHERE " if there is a condition
 		where = "WHERE " + where
@@ -51,7 +82,6 @@ func buildQueryFromColumns(
 	tableName string,
 	columns map[string]string,
 	whereCondition []string,
-	offset int64,
 	limit int64,
 	orderByColumns []string,
 ) string {
@@ -86,7 +116,7 @@ func buildQueryFromColumns(
 	}
 
 	if limit > 0 {
-		q += fmt.Sprintf("LIMIT %d OFFSET %d;", limit, offset)
+		q += fmt.Sprintf("LIMIT %d;", limit)
 	} else {
 		q += ";"
 	}

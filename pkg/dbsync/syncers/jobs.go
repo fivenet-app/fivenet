@@ -63,7 +63,7 @@ func (s *JobsSync) Sync(ctx context.Context) (int64, error) {
 
 func (s *JobsSync) fetchJobs(ctx context.Context) ([]*jobs.Job, error) {
 	limit := s.cfg.Limits.Jobs
-	q := s.cfg.Tables.Jobs.GetQuery(0, limit)
+	q := s.cfg.Tables.Jobs.GetQuery(limit)
 	s.logger.Debug("jobs sync query", zap.String("query", q))
 
 	jobsResults := []*jobs.Job{}
@@ -132,7 +132,7 @@ func (s *JobsSync) applyFiltersAndRetrieveGrades(
 }
 
 func (s *JobsSync) getGrades(ctx context.Context, job string) ([]*jobs.JobGrade, error) {
-	query := s.cfg.Tables.JobGrades.GetQuery(nil, 0, 200)
+	query := s.cfg.Tables.JobGrades.GetQuery(nil, 200)
 
 	grades := []*jobs.JobGrade{}
 	if _, err := qrm.Query(ctx, s.db, query, []any{

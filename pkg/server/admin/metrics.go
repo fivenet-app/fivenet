@@ -59,6 +59,11 @@ type Result struct {
 
 // NewServer creates and configures the metrics (admin) HTTP server with Prometheus metrics, readiness, and pprof endpoints.
 func NewServer(p Params) (Result, error) {
+	if p.Config.HTTP.AdminListen == "" {
+		p.Logger.Info("admin server disabled (adminListen is empty)")
+		return Result{}, nil
+	}
+
 	// Gin HTTP Server
 	gin.SetMode(gin.ReleaseMode)
 	e := gin.New()

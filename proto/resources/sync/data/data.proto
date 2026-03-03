@@ -6,6 +6,7 @@ import "buf/validate/validate.proto";
 import "resources/jobs/jobs.proto";
 import "resources/livemap/coords.proto";
 import "resources/sync/activity/activity.proto";
+import "resources/timestamp/timestamp.proto";
 import "resources/users/licenses/licenses.proto";
 import "resources/users/props/props.proto";
 import "resources/users/user.proto";
@@ -75,6 +76,9 @@ message DataUser {
   string identifier = 2 [
     (buf.validate.field).string.max_len = 64,
     (tagger.tags) = "alias:\"user.identifier\""
+  ];
+  optional resources.timestamp.Timestamp updated_at = 21 [
+    (tagger.tags) = "alias:\"user.updated_at\""
   ];
 
   string job = 3 [

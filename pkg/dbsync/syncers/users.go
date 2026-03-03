@@ -10,6 +10,7 @@ import (
 	"time"
 
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
+	rtimestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
@@ -27,98 +28,119 @@ const userHashCacheTTL = 6 * time.Hour
 type UsersSync struct {
 	*Syncer
 
+	logger        *zap.Logger
 	state         *dbsyncconfig.TableSyncState
-	saveLastCheck bool
+	saveUpdatedAt bool
 
 	hashes *cache.LRUCache[int32, uint64]
 }
 
-func NewUsersSync(s *Syncer, state *dbsyncconfig.TableSyncState, saveLastCheck bool) *UsersSync {
+func NewUsersSync(s *Syncer, state *dbsyncconfig.TableSyncState, saveUpdatedAt bool) *UsersSync {
+	var hashes *cache.LRUCache[int32, uint64]
+	if saveUpdatedAt {
+		// Cache up to 500 user hashes to avoid memory bloat, as this is only used to compare against
+		// the most recent hash for each user and not all historical hashes
+		hashes = cache.NewLRUCache[int32, uint64](500)
+	}
+
+	logger := s.logger.With(
+		zap.String("syncer", "users"),
+		zap.Bool("resync", !saveUpdatedAt),
+	)
+
 	return &UsersSync{
 		Syncer: s,
 
+		logger:        logger,
 		state:         state,
-		saveLastCheck: saveLastCheck,
+		saveUpdatedAt: saveUpdatedAt,
 
-		// Cache up to 500 user hashes to avoid memory bloat, as this is only used to compare against the most recent hash for each user and not all historical hashes
-		hashes: cache.NewLRUCache[int32, uint64](500),
+		hashes: hashes,
 	}
 }
 
-func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, error) {
-	// Ensure last check is nil when we don't want to save it..
-	if !s.saveLastCheck {
+func (s *UsersSync) Sync(ctx context.Context) (int64, string, *time.Time, error) {
+	// Full resync mode paginates only by user id.
+	if !s.saveUpdatedAt {
 		s.state.SetLastCheck(nil)
 	}
 
 	limit := s.cfg.Limits.Users
-	offset := s.state.GetOffset()
-	s.logger.Debug("usersSync", zap.Int64("offset", offset))
-
 	sQuery := s.cfg.Tables.Users
-	q := sQuery.GetQuery(s.state, offset, limit)
+	q := sQuery.GetQuery(s.state, 0, limit)
 
 	us, err := s.fetchUsers(ctx, q)
 	if err != nil {
-		return 0, offset, "0", err
+		return 0, "0", nil, err
 	}
 
-	count := int64(len(us))
-	s.logger.Debug("usersSync", zap.Int64("len", count))
+	fetchedCount := int64(len(us))
+	s.logger.Debug("usersSync", zap.Int64("len", fetchedCount))
 	if len(us) == 0 {
-		s.logger.Debug("no users found to sync, resetting state offset")
-		s.state.Set(0, nil)
-		return 0, offset, "0", nil
+		if !s.saveUpdatedAt {
+			s.logger.Debug("no users found during full resync, resetting cursor")
+			s.state.ResetCursor()
+		}
+		return 0, "0", nil, nil
 	}
 
-	if count < limit {
-		offset = 0
+	cursorTime, cursorLastID := s.cursorFromUsersResults(us)
+	if s.saveUpdatedAt && cursorTime == nil {
+		return 0, "0", nil, errors.New(
+			"users result is missing updated_at, cannot persist cursor timestamp",
+		)
+	}
+	cursorIDValue := "0"
+	if cursorLastID != nil {
+		cursorIDValue = *cursorLastID
 	}
 
 	us = s.applyFiltersAndTransformations(us, sQuery)
 
 	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
-		return 0, offset, "0", err
+		return 0, "0", nil, err
 	}
 	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
-		return 0, offset, "0", err
+		return 0, "0", nil, err
 	}
 	if err := s.retrieveAndAttachPhoneNumbers(ctx, us); err != nil {
-		return 0, offset, "0", err
+		return 0, "0", nil, err
 	}
 
-	for i, u := range slices.Backward(us) {
-		// Get hash of user data to compare with existing hash and skip sending if data is the same (treat as not updated)
-		_, hash, err := protoutils.JSONAndHash(u)
-		if err != nil {
-			s.logger.Warn(
-				"failed to compute user data hash, skipping hash check and treating as new/updated user",
-				zap.Int32("user_id", u.GetUserId()),
-				zap.String("identifier", u.GetIdentifier()),
-				zap.Error(err),
-			)
-		}
-
-		if existingHash, ok := s.hashes.Get(u.GetUserId()); ok {
-			if existingHash == hash {
-				s.logger.Debug(
-					"user data hash is the same as existing entry, skipping update for user",
+	if s.hashes != nil {
+		for i, u := range slices.Backward(us) {
+			// Get hash of user data to compare with existing hash and skip sending if data is the same (treat as not updated)
+			_, hash, err := protoutils.JSONAndHash(u)
+			if err != nil {
+				s.logger.Warn(
+					"failed to compute user data hash, skipping hash check and treating as new/updated user",
 					zap.Int32("user_id", u.GetUserId()),
 					zap.String("identifier", u.GetIdentifier()),
+					zap.Error(err),
 				)
-				// Remove "skipped" user
-				us = slices.Delete(us, i, i+1)
-				continue
 			}
-		} else {
-			s.hashes.Put(u.GetUserId(), hash, userHashCacheTTL)
+
+			if existingHash, ok := s.hashes.Get(u.GetUserId()); ok {
+				if existingHash == hash {
+					s.logger.Debug(
+						"user data hash is the same as existing entry, skipping update for user",
+						zap.Int32("user_id", u.GetUserId()),
+						zap.String("identifier", u.GetIdentifier()),
+					)
+					// Remove "skipped" user
+					us = slices.Delete(us, i, i+1)
+					continue
+				}
+			} else {
+				s.hashes.Put(u.GetUserId(), hash, userHashCacheTTL)
+			}
 		}
 	}
 
 	// No users left to sync after hash check, return early
 	if len(us) == 0 {
-		s.state.Set(0, nil)
-		return 0, offset, "", nil
+		s.persistCursor(fetchedCount, limit, cursorTime, cursorLastID)
+		return 0, cursorIDValue, cursorTime, nil
 	}
 
 	if err := s.sendData(ctx, &pbsync.SendDataRequest{
@@ -128,15 +150,58 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, error) {
 			},
 		},
 	}); err != nil {
-		return 0, offset, "0", err
+		return 0, "0", nil, err
 	}
 
-	count = int64(len(us))
-	lastId := int64(us[count-1].GetUserId())
-	lastUserId := strconv.FormatInt(lastId, 10)
-	s.state.Set(offset+limit, &lastUserId)
+	s.persistCursor(fetchedCount, limit, cursorTime, cursorLastID)
 
-	return count, offset, lastUserId, nil
+	return int64(len(us)), cursorIDValue, cursorTime, nil
+}
+
+func (s *UsersSync) cursorFromUsersResults(
+	us []*syncdata.DataUser,
+) (*time.Time, *string) {
+	if len(us) == 0 {
+		return nil, nil
+	}
+
+	last := us[len(us)-1]
+	lastID := strconv.FormatInt(int64(last.GetUserId()), 10)
+
+	getter, ok := any(last).(interface {
+		GetUpdatedAt() *rtimestamp.Timestamp
+	})
+	if !ok {
+		return nil, &lastID
+	}
+
+	ts := getter.GetUpdatedAt()
+	if ts == nil || ts.GetTimestamp() == nil {
+		return nil, &lastID
+	}
+
+	t := ts.GetTimestamp().AsTime()
+	return &t, &lastID
+}
+
+func (s *UsersSync) persistCursor(
+	fetchedCount int64,
+	limit int64,
+	cursorTime *time.Time,
+	lastID *string,
+) {
+	if s.saveUpdatedAt {
+		s.state.SetCursor(cursorTime, lastID)
+		return
+	}
+
+	// Full resync mode restarts from beginning after reaching table end.
+	if fetchedCount < limit {
+		s.state.ResetCursor()
+		return
+	}
+
+	s.state.SetCursor(nil, lastID)
 }
 
 func (s *UsersSync) fetchUsers(ctx context.Context, query string) ([]*syncdata.DataUser, error) {
