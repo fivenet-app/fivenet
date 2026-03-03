@@ -613,9 +613,6 @@ func (s *Server) handleUserLicenses(
 			INSERT(
 				tCitizensLicenses.UserID,
 				tCitizensLicenses.Type,
-			).
-			ON_DUPLICATE_KEY_UPDATE(
-				tCitizensLicenses.Type.SET(mysql.StringExp(mysql.Raw("VALUES(`type`)"))),
 			)
 
 		for _, t := range toAdd {
@@ -625,6 +622,11 @@ func (s *Server) handleUserLicenses(
 					t,
 				)
 		}
+
+		stmt = stmt.
+			ON_DUPLICATE_KEY_UPDATE(
+				tCitizensLicenses.Type.SET(mysql.StringExp(mysql.Raw("VALUES(`type`)"))),
+			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user licenses insert statement. %w", err)
@@ -718,11 +720,6 @@ func (s *Server) handleUserJobs(
 				tCitizensJobs.Job,
 				tCitizensJobs.Grade,
 				tCitizensJobs.IsPrimary,
-			).
-			ON_DUPLICATE_KEY_UPDATE(
-				tCitizensJobs.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
-				tCitizensJobs.Grade.SET(mysql.IntExp(mysql.Raw("VALUES(`grade`)"))),
-				tCitizensJobs.IsPrimary.SET(mysql.BoolExp(mysql.Raw("VALUES(`is_primary`)"))),
 			)
 
 		for _, t := range append(toAdd, toUpdate...) {
@@ -734,6 +731,13 @@ func (s *Server) handleUserJobs(
 					t.GetIsPrimary(),
 				)
 		}
+
+		stmt = stmt.
+			ON_DUPLICATE_KEY_UPDATE(
+				tCitizensJobs.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
+				tCitizensJobs.Grade.SET(mysql.IntExp(mysql.Raw("VALUES(`grade`)"))),
+				tCitizensJobs.IsPrimary.SET(mysql.BoolExp(mysql.Raw("VALUES(`is_primary`)"))),
+			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf(
@@ -867,22 +871,9 @@ func (s *Server) handleUserPhoneNumbers(
 				tCitizensPhoneNumbers.UserID,
 				tCitizensPhoneNumbers.PhoneNumber,
 				tCitizensPhoneNumbers.IsPrimary,
-			).
-			ON_DUPLICATE_KEY_UPDATE(
-				tCitizensPhoneNumbers.PhoneNumber.SET(mysql.StringExp(mysql.Raw("VALUES(`phone_number`)"))),
-				tCitizensPhoneNumbers.IsPrimary.SET(mysql.BoolExp(mysql.Raw("VALUES(`is_primary`)"))),
 			)
 
-		phoneNumbersToAdd := []*users.PhoneNumber{}
-		for _, phoneNumber := range phoneNumbers {
-			if slices.ContainsFunc(toAdd, func(t *users.PhoneNumber) bool {
-				return t.GetNumber() == phoneNumber.GetNumber()
-			}) {
-				phoneNumbersToAdd = append(phoneNumbersToAdd, phoneNumber)
-			}
-		}
-
-		for _, t := range phoneNumbersToAdd {
+		for _, t := range append(toAdd, toUpdate...) {
 			stmt = stmt.
 				VALUES(
 					userId,
@@ -890,6 +881,16 @@ func (s *Server) handleUserPhoneNumbers(
 					t.GetIsPrimary(),
 				)
 		}
+
+		stmt = stmt.
+			ON_DUPLICATE_KEY_UPDATE(
+				tCitizensPhoneNumbers.PhoneNumber.SET(
+					mysql.StringExp(mysql.Raw("VALUES(`phone_number`)")),
+				),
+				tCitizensPhoneNumbers.IsPrimary.SET(
+					mysql.BoolExp(mysql.Raw("VALUES(`is_primary`)")),
+				),
+			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return fmt.Errorf("failed to execute user phone numbers insert statement. %w", err)
