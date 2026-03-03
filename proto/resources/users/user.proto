@@ -73,7 +73,10 @@ message User {
 
 message PhoneNumber {
   int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
-  string number = 2 [(buf.validate.field).string.max_len = 20];
+  string number = 2 [
+    (buf.validate.field).string.max_len = 20,
+    (tagger.tags) = "alias:\"phone_number\""
+  ];
   bool is_primary = 3;
 
   resources.timestamp.Timestamp created_at = 4;

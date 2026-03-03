@@ -451,10 +451,11 @@ func (c *UsersTable) GetQuery(
 		return prepareStringQuery(*c.Query, c.DBSyncTable, state, limit, c.Columns.ID)
 	}
 
-	orderBy := []string{c.Columns.ID}
+	orderBy := []string{}
 	if c.UpdatedTimeColumn != nil && *c.UpdatedTimeColumn != "" {
 		orderBy = append([]string{*c.UpdatedTimeColumn}, orderBy...)
 	}
+	orderBy = append(orderBy, c.Columns.ID)
 
 	columns := map[string]string{
 		"user.id":           c.Columns.ID,

@@ -462,7 +462,7 @@ func (b0 User_builder) Build() *User {
 type PhoneNumber struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Number        string                 `protobuf:"bytes,2,opt,name=number,proto3" json:"number,omitempty"`
+	Number        string                 `protobuf:"bytes,2,opt,name=number,proto3" json:"number,omitempty" alias:"phone_number"`
 	IsPrimary     bool                   `protobuf:"varint,3,opt,name=is_primary,json=isPrimary,proto3" json:"is_primary,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
@@ -832,10 +832,10 @@ const file_resources_users_user_proto_rawDesc = "" +
 	"\x06_visumB\v\n" +
 	"\t_playtimeB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
-	"\x10_profile_picture\"\xef\x01\n" +
+	"\x10_profile_picture\"\x8a\x02\n" +
 	"\vPhoneNumber\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x16\n" +
-	"\x06number\x18\x02 \x01(\tR\x06number\x12\x1d\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x121\n" +
+	"\x06number\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14alias:\"phone_number\"R\x06number\x12\x1d\n" +
 	"\n" +
 	"is_primary\x18\x03 \x01(\bR\tisPrimary\x12=\n" +
 	"\n" +

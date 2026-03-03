@@ -355,7 +355,7 @@ class PhoneNumber$Type extends MessageType<PhoneNumber> {
     constructor() {
         super("resources.users.PhoneNumber", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 2, name: "number", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 2, name: "number", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } }, "tagger.tags": "alias:\"phone_number\"" } },
             { no: 3, name: "is_primary", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "updated_at", kind: "message", T: () => Timestamp }

@@ -37,7 +37,15 @@ func NewVehiclesSync(
 ) *VehiclesSync {
 	var hashes *cache.LRUCache[string, uint64]
 	if saveUpdatedAt {
+		// Cache up to 500 vehicle hashes to avoid memory bloat, as this is only used to compare against
+		// the most recent hash for each vehicle and not all historical hashes
 		hashes = cache.NewLRUCache[string, uint64](500)
+
+		// Ensure a sane last check value is set for the "update" sync to work immediately
+		if state.GetLastCheck() == nil {
+			initialLastCheck := time.Now().Add(-15 * time.Minute)
+			state.SetLastCheck(&initialLastCheck)
+		}
 	}
 
 	logger := s.logger.With(
@@ -57,10 +65,6 @@ func NewVehiclesSync(
 }
 
 func (s *VehiclesSync) Sync(ctx context.Context) (int64, string, *time.Time, error) {
-	if !s.saveUpdatedAt {
-		return s.Resync(ctx)
-	}
-
 	limit := s.cfg.Limits.Vehicles
 
 	var total int64

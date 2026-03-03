@@ -918,10 +918,10 @@ const file_resources_users_user_proto_rawDesc = "" +
 	"\x06_visumB\v\n" +
 	"\t_playtimeB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
-	"\x10_profile_picture\"\xef\x01\n" +
+	"\x10_profile_picture\"\x8a\x02\n" +
 	"\vPhoneNumber\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x16\n" +
-	"\x06number\x18\x02 \x01(\tR\x06number\x12\x1d\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x121\n" +
+	"\x06number\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14alias:\"phone_number\"R\x06number\x12\x1d\n" +
 	"\n" +
 	"is_primary\x18\x03 \x01(\bR\tisPrimary\x12=\n" +
 	"\n" +

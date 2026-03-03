@@ -255,6 +255,7 @@ func (s *Sync) run(ctx context.Context) error {
 
 	var wg sync.WaitGroup
 	if cfg.Jobs.Enabled || cfg.Licenses.Enabled {
+		s.logger.Info("starting base data sync")
 		// On startup sync base data (jobs, job grades and license types) before the "main" sync loop starts,
 		// then sync in 5 minute interval to keep the data fresh
 		if err := s.syncBaseData(ctx); err != nil {
@@ -280,6 +281,7 @@ func (s *Sync) run(ctx context.Context) error {
 	// User data sync loop
 	if cfg.Users.Enabled {
 		wg.Go(func() {
+			s.logger.Info("starting users sync")
 			for {
 				if count, lastID, lastUpdatedAt, err := s.users.Sync(ctx); err != nil {
 					s.logger.Error("error during users sync", zap.Error(err))
@@ -306,6 +308,7 @@ func (s *Sync) run(ctx context.Context) error {
 		if cfg.Users.ResyncInterval != nil && *cfg.Users.ResyncInterval > 0 {
 			resyncInterval := *cfg.Users.ResyncInterval
 			wg.Go(func() {
+				s.logger.Info("starting users resync")
 				for {
 					select {
 					case <-ctx.Done():
@@ -330,6 +333,7 @@ func (s *Sync) run(ctx context.Context) error {
 	// Vehicles data sync loop
 	if cfg.Vehicles.Enabled {
 		wg.Go(func() {
+			s.logger.Info("starting vehicles sync")
 			for {
 				if count, plate, lastUpdatedAt, err := s.vehicles.Sync(ctx); err != nil {
 					s.logger.Error("error during vehicles sync", zap.Error(err))
@@ -356,6 +360,7 @@ func (s *Sync) run(ctx context.Context) error {
 		if cfg.Vehicles.ResyncInterval != nil && *cfg.Vehicles.ResyncInterval > 0 {
 			resyncInterval := *cfg.Vehicles.ResyncInterval
 			wg.Go(func() {
+				s.logger.Info("starting vehicles resync")
 				for {
 					select {
 					case <-ctx.Done():
@@ -380,6 +385,7 @@ func (s *Sync) run(ctx context.Context) error {
 	// Accounts data sync loop
 	if cfg.Accounts.Enabled {
 		wg.Go(func() {
+			s.logger.Info("starting accounts sync")
 			for {
 				if count, err := s.accounts.Sync(ctx); err != nil {
 					s.logger.Error("error during accounts sync", zap.Error(err))

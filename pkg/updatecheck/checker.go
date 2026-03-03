@@ -96,6 +96,7 @@ func New(p Params) *Checker {
 func (c *Checker) Start(ctx context.Context) {
 	if version.Version == version.UnknownVersion {
 		c.logger.Warn("no version info found, unable to check for updates")
+		return
 	}
 
 	ticker := time.NewTicker(c.interval)

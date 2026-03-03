@@ -10,7 +10,6 @@ import (
 	"time"
 
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
-	rtimestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
@@ -41,6 +40,12 @@ func NewUsersSync(s *Syncer, state *dbsyncconfig.TableSyncState, saveUpdatedAt b
 		// Cache up to 500 user hashes to avoid memory bloat, as this is only used to compare against
 		// the most recent hash for each user and not all historical hashes
 		hashes = cache.NewLRUCache[int32, uint64](500)
+
+		// Ensure a sane last check value is set for the "update" sync to work immediately
+		if state.GetLastCheck() == nil {
+			initialLastCheck := time.Now().Add(-15 * time.Minute)
+			state.SetLastCheck(&initialLastCheck)
+		}
 	}
 
 	logger := s.logger.With(
@@ -60,10 +65,6 @@ func NewUsersSync(s *Syncer, state *dbsyncconfig.TableSyncState, saveUpdatedAt b
 }
 
 func (s *UsersSync) Sync(ctx context.Context) (int64, string, *time.Time, error) {
-	if !s.saveUpdatedAt {
-		return s.Resync(ctx)
-	}
-
 	limit := s.cfg.Limits.Users
 
 	var total int64
@@ -206,14 +207,7 @@ func (s *UsersSync) cursorFromUsersResults(
 	last := us[len(us)-1]
 	lastID := strconv.FormatInt(int64(last.GetUserId()), 10)
 
-	getter, ok := any(last).(interface {
-		GetUpdatedAt() *rtimestamp.Timestamp
-	})
-	if !ok {
-		return nil, &lastID
-	}
-
-	ts := getter.GetUpdatedAt()
+	ts := last.GetUpdatedAt()
 	if ts == nil || ts.GetTimestamp() == nil {
 		return nil, &lastID
 	}
@@ -294,14 +288,6 @@ func (s *UsersSync) applyFiltersAndTransformations(
 		s.parseDateOfBirth(user)
 		s.cleanupUserJob(user)
 		s.cleanupUserPhoneNumbers(user)
-
-		s.logger.Debug(
-			"user data",
-			zap.Int32("user_id", user.GetUserId()),
-			zap.String("job", user.GetJob()),
-			zap.Int32("job_grade", user.GetJobGrade()),
-			zap.Int("jobs_len", len(user.GetJobs())),
-		)
 	}
 
 	if foundNullUserId {
@@ -361,8 +347,8 @@ func (s *UsersSync) cleanupUserPhoneNumbers(user *syncdata.DataUser) {
 		return
 	}
 
-	if len(user.GetPhoneNumbers()) == 0 {
-		// If no phone numbers are set, add the user's phone number field as the primary phone number
+	// If no phone numbers are set, add the user's phone number field as the primary phone number (if not empty)
+	if len(user.GetPhoneNumbers()) == 0 && user.GetPhoneNumber() != "" {
 		user.PhoneNumbers = []*users.PhoneNumber{
 			{
 				Number:    user.GetPhoneNumber(),
@@ -676,7 +662,7 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 	}
 
 	s.logger.Debug(
-		"user data",
+		"sync single user data",
 		zap.Int32("user_id", user.GetUserId()),
 		zap.String("job", user.GetJob()),
 		zap.Int32("job_grade", user.GetJobGrade()),
