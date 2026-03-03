@@ -268,38 +268,39 @@ func (s *UsersSync) applyFiltersAndTransformations(
 	hasFilters := len(sQuery.Filters.Jobs) > 0
 
 	foundNullUserId := false
-	for i, u := range slices.Backward(us) {
-		if u.GetUserId() <= 0 {
+	for idx, user := range slices.Backward(us) {
+		if user.GetUserId() <= 0 {
 			foundNullUserId = true
 			s.logger.Debug(
 				"user with null/zero id found",
-				zap.String("identifier", u.GetIdentifier()),
+				zap.String("identifier", user.GetIdentifier()),
 			)
 			continue
 		}
 
 		if s.cfg.Tables.Users.ValueMapping != nil {
-			s.applyValueMapping(u)
+			s.applyValueMapping(user)
 		}
 
 		if hasFilters {
-			if s.applyFilters(u, sQuery) {
+			if s.applyFilters(user, sQuery) {
 				// Remove "skipped" user
-				us = slices.Delete(us, i, i+1)
+				us = slices.Delete(us, idx, idx+1)
 				continue
 			}
 		}
 
-		s.splitNamesIfRequired(u)
-		s.parseDateOfBirth(u)
-		s.cleanupUserJob(u)
+		s.splitNamesIfRequired(user)
+		s.parseDateOfBirth(user)
+		s.cleanupUserJob(user)
+		s.cleanupUserPhoneNumbers(user)
 
 		s.logger.Debug(
 			"user data",
-			zap.Int32("user_id", u.GetUserId()),
-			zap.String("job", u.GetJob()),
-			zap.Int32("job_grade", u.GetJobGrade()),
-			zap.Int("jobs_len", len(u.GetJobs())),
+			zap.Int32("user_id", user.GetUserId()),
+			zap.String("job", user.GetJob()),
+			zap.Int32("job_grade", user.GetJobGrade()),
+			zap.Int("jobs_len", len(user.GetJobs())),
 		)
 	}
 
@@ -322,34 +323,84 @@ func (s *UsersSync) cleanupUserJob(user *syncdata.DataUser) {
 				IsPrimary: true,
 			},
 		}
+
+		return
+	}
+
+	// Sort the user's jobs by is primary and then alphabetically to ensure consistent order
+	slices.SortFunc(user.GetJobs(), func(a *users.UserJob, b *users.UserJob) int {
+		if a.GetIsPrimary() && !b.GetIsPrimary() {
+			return -1
+		}
+		if !a.GetIsPrimary() && b.GetIsPrimary() {
+			return 1
+		}
+		return strings.Compare(a.GetJob(), b.GetJob())
+	})
+
+	foundPrimary := false
+	primaryJob := user.GetJob()
+	for _, job := range user.GetJobs() {
+		if job.GetJob() == primaryJob {
+			// Make sure the "primary" job (user's job field if set) is marked as primary
+			foundPrimary = true
+			job.IsPrimary = true
+		} else {
+			job.IsPrimary = false
+		}
+	}
+
+	// If not ensure user has at least one primary job set
+	if !foundPrimary {
+		user.Jobs[0].IsPrimary = true
+	}
+}
+
+func (s *UsersSync) cleanupUserPhoneNumbers(user *syncdata.DataUser) {
+	if len(user.GetPhoneNumbers()) == 0 && user.GetPhoneNumber() == "" {
+		return
+	}
+
+	if len(user.GetPhoneNumbers()) == 0 {
+		// If no phone numbers are set, add the user's phone number field as the primary phone number
+		user.PhoneNumbers = []*users.PhoneNumber{
+			{
+				Number:    user.GetPhoneNumber(),
+				IsPrimary: true,
+			},
+		}
+		return
 	} else {
-		// Sort the user's jobs by is primary and then alphabetically to ensure consistent order
-		slices.SortFunc(user.GetJobs(), func(a *users.UserJob, b *users.UserJob) int {
-			if a.GetIsPrimary() && !b.GetIsPrimary() {
-				return -1
-			}
-			if !a.GetIsPrimary() && b.GetIsPrimary() {
-				return 1
-			}
-			return strings.Compare(a.GetJob(), b.GetJob())
-		})
+		primaryNumber := user.GetPhoneNumbers()[0].GetNumber()
+		user.PhoneNumber = &primaryNumber
+	}
 
-		foundPrimary := false
-		primaryJob := user.GetJob()
-		for _, job := range user.GetJobs() {
-			if job.GetJob() == primaryJob {
-				// Make sure the "primary" job (user's job field if set) is marked as primary
-				foundPrimary = true
-				job.IsPrimary = true
-			} else {
-				job.IsPrimary = false
-			}
+	// Sort the user's phone numbers by is primary and then alphabetically to ensure consistent order
+	slices.SortFunc(user.GetPhoneNumbers(), func(a *users.PhoneNumber, b *users.PhoneNumber) int {
+		if a.GetIsPrimary() && !b.GetIsPrimary() {
+			return -1
 		}
+		if !a.GetIsPrimary() && b.GetIsPrimary() {
+			return 1
+		}
+		return strings.Compare(a.GetNumber(), b.GetNumber())
+	})
 
-		// If not ensure user has at least one primary job set
-		if !foundPrimary {
-			user.Jobs[0].IsPrimary = true
+	foundPrimary := false
+	primaryNumber := user.GetPhoneNumber()
+	for _, number := range user.GetPhoneNumbers() {
+		if number.GetNumber() == primaryNumber {
+			// Make sure the "primary" phone number (user's phone number field if set) is marked as primary
+			foundPrimary = true
+			number.IsPrimary = true
+		} else {
+			number.IsPrimary = false
 		}
+	}
+
+	// If not ensure user has at least one primary phone number set
+	if !foundPrimary {
+		user.PhoneNumbers[0].IsPrimary = true
 	}
 }
 
@@ -609,6 +660,7 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 	s.splitNamesIfRequired(user)
 	s.parseDateOfBirth(user)
 	s.cleanupUserJob(user)
+	s.cleanupUserPhoneNumbers(user)
 	us = s.applyFiltersAndTransformations(us, s.cfg.Tables.Users)
 
 	if len(us) > 0 && s.cli != nil {
