@@ -57,11 +57,6 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, error) {
 	}
 	s.logger.Debug("vehiclesSync", zap.Int64("offset", offset))
 
-	// Ensure to zero the last check time if the data hasn't fully synced yet
-	if !s.state.GetSyncedUp() {
-		s.state.SetLastCheck(nil)
-	}
-
 	q := s.cfg.Tables.Vehicles.GetQuery(s.state, offset, limit)
 	s.logger.Debug("vehicles sync query", zap.String("query", q))
 
@@ -129,7 +124,6 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, error) {
 	// and need to reset the offset to 0
 	if count < limit {
 		offset = 0
-		s.state.SetSyncedUp(true)
 	}
 
 	count = int64(len(vehicles))

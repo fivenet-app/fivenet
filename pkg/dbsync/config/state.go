@@ -158,7 +158,6 @@ type TableSyncState struct {
 	LastCheck *time.Time `yaml:"lastCheck"`
 	Offset    int64      `yaml:"offset"`
 	LastID    *string    `yaml:"lastId"`
-	SyncedUp  bool       `yaml:"syncedUp"`
 }
 
 func (s *TableSyncState) Set(offset int64, lastId *string) {
@@ -174,18 +173,6 @@ func (s *TableSyncState) Set(offset int64, lastId *string) {
 	if err := s.dss.save(); err != nil {
 		s.dss.logger.Error("failed to save state", zap.Error(err))
 	}
-}
-
-func (s *TableSyncState) GetSyncedUp() bool {
-	s.dss.mu.RLock()
-	defer s.dss.mu.RUnlock()
-	return s.SyncedUp
-}
-
-func (s *TableSyncState) SetSyncedUp(syncedUp bool) {
-	s.dss.mu.Lock()
-	defer s.dss.mu.Unlock()
-	s.SyncedUp = syncedUp
 }
 
 func (s *TableSyncState) SetLastCheck(t *time.Time) {

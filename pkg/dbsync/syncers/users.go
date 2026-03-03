@@ -46,7 +46,7 @@ func NewUsersSync(s *Syncer, state *dbsyncconfig.TableSyncState, saveLastCheck b
 }
 
 func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, error) {
-	// Ensure last check is nil when we don't want to save it
+	// Ensure last check is nil when we don't want to save it..
 	if !s.saveLastCheck {
 		s.state.SetLastCheck(nil)
 	}
@@ -54,8 +54,6 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, error) {
 	limit := s.cfg.Limits.Users
 	offset := s.state.GetOffset()
 	s.logger.Debug("usersSync", zap.Int64("offset", offset))
-
-	s.resetLastCheckIfNotSynced()
 
 	sQuery := s.cfg.Tables.Users
 	q := sQuery.GetQuery(s.state, offset, limit)
@@ -70,13 +68,11 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, error) {
 	if len(us) == 0 {
 		s.logger.Debug("no users found to sync, resetting state offset")
 		s.state.Set(0, nil)
-		s.resetLastCheckIfNotSynced()
 		return 0, offset, "0", nil
 	}
 
-	offset, err = s.updateSyncState(count, offset, limit)
-	if err != nil {
-		return 0, offset, "0", err
+	if count < limit {
+		offset = 0
 	}
 
 	us = s.applyFiltersAndTransformations(us, sQuery)
@@ -135,20 +131,12 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, error) {
 		return 0, offset, "0", err
 	}
 
-	s.logger.Debug("usersSync", zap.Bool("syncedUp", s.state.GetSyncedUp()))
-
 	count = int64(len(us))
 	lastId := int64(us[count-1].GetUserId())
 	lastUserId := strconv.FormatInt(lastId, 10)
 	s.state.Set(offset+limit, &lastUserId)
 
 	return count, offset, lastUserId, nil
-}
-
-func (s *UsersSync) resetLastCheckIfNotSynced() {
-	if !s.state.GetSyncedUp() {
-		s.state.SetLastCheck(nil)
-	}
 }
 
 func (s *UsersSync) fetchUsers(ctx context.Context, query string) ([]*syncdata.DataUser, error) {
@@ -162,14 +150,6 @@ func (s *UsersSync) fetchUsers(ctx context.Context, query string) ([]*syncdata.D
 	}
 
 	return us, nil
-}
-
-func (s *UsersSync) updateSyncState(usersCount int64, offset, limit int64) (int64, error) {
-	if usersCount < limit {
-		offset = 0
-		s.state.SetSyncedUp(true)
-	}
-	return offset, nil
 }
 
 func (s *UsersSync) applyFiltersAndTransformations(
