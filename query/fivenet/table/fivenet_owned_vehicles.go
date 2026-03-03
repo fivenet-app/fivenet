@@ -17,12 +17,13 @@ type fivenetOwnedVehiclesTable struct {
 	mysql.Table
 
 	// Columns
-	UserID mysql.ColumnInteger
-	Job    mysql.ColumnString
-	Plate  mysql.ColumnString
-	Model  mysql.ColumnString
-	Type   mysql.ColumnString
-	Data   mysql.ColumnString
+	UserID    mysql.ColumnInteger
+	Job       mysql.ColumnString
+	Plate     mysql.ColumnString
+	Model     mysql.ColumnString
+	Type      mysql.ColumnString
+	Data      mysql.ColumnString
+	UpdatedAt mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -64,27 +65,29 @@ func newFivenetOwnedVehiclesTable(schemaName, tableName, alias string) *FivenetO
 
 func newFivenetOwnedVehiclesTableImpl(schemaName, tableName, alias string) fivenetOwnedVehiclesTable {
 	var (
-		UserIDColumn   = mysql.IntegerColumn("user_id")
-		JobColumn      = mysql.StringColumn("job")
-		PlateColumn    = mysql.StringColumn("plate")
-		ModelColumn    = mysql.StringColumn("model")
-		TypeColumn     = mysql.StringColumn("type")
-		DataColumn     = mysql.StringColumn("data")
-		allColumns     = mysql.ColumnList{UserIDColumn, JobColumn, PlateColumn, ModelColumn, TypeColumn, DataColumn}
-		mutableColumns = mysql.ColumnList{UserIDColumn, JobColumn, ModelColumn, TypeColumn, DataColumn}
-		defaultColumns = mysql.ColumnList{}
+		UserIDColumn    = mysql.IntegerColumn("user_id")
+		JobColumn       = mysql.StringColumn("job")
+		PlateColumn     = mysql.StringColumn("plate")
+		ModelColumn     = mysql.StringColumn("model")
+		TypeColumn      = mysql.StringColumn("type")
+		DataColumn      = mysql.StringColumn("data")
+		UpdatedAtColumn = mysql.TimestampColumn("updated_at")
+		allColumns      = mysql.ColumnList{UserIDColumn, JobColumn, PlateColumn, ModelColumn, TypeColumn, DataColumn, UpdatedAtColumn}
+		mutableColumns  = mysql.ColumnList{UserIDColumn, JobColumn, ModelColumn, TypeColumn, DataColumn, UpdatedAtColumn}
+		defaultColumns  = mysql.ColumnList{UpdatedAtColumn}
 	)
 
 	return fivenetOwnedVehiclesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		UserID: UserIDColumn,
-		Job:    JobColumn,
-		Plate:  PlateColumn,
-		Model:  ModelColumn,
-		Type:   TypeColumn,
-		Data:   DataColumn,
+		UserID:    UserIDColumn,
+		Job:       JobColumn,
+		Plate:     PlateColumn,
+		Model:     ModelColumn,
+		Type:      TypeColumn,
+		Data:      DataColumn,
+		UpdatedAt: UpdatedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

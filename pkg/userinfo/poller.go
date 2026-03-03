@@ -214,7 +214,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 			tUser.Job.AS("job"),
 			tUser.JobGrade.AS("job_grade"),
 			tAccount.Groups.AS("groups"),
-			tUser.LastSeen.AS("last_seen"),
+			tUser.UpdatedAt.AS("updated_at"),
 		).
 		FROM(
 			tUser.
@@ -235,7 +235,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 		Job       string
 		JobGrade  int32
 		Groups    *accounts.AccountGroups
-		LastSeen  *timestamp.Timestamp
+		UpdatedAt *timestamp.Timestamp
 	}
 
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
@@ -244,7 +244,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 
 	var errs error
 	for _, row := range dest {
-		if err := p.checkDiffAndPublish(ctx, row.AccountId, row.UserId, row.Job, row.JobGrade, row.Groups, row.LastSeen); err != nil {
+		if err := p.checkDiffAndPublish(ctx, row.AccountId, row.UserId, row.Job, row.JobGrade, row.Groups, row.UpdatedAt); err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("failed to check diff. %w", err))
 			continue
 		}
