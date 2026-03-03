@@ -70,8 +70,10 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, string, *time.Time, err
 	var total int64
 	lastID := ""
 	var lastUpdatedAt *time.Time
+	prevID := ""
+	var prevUpdatedAt *time.Time
 
-	for {
+	for batches := 0; ; batches++ {
 		fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx)
 		if err != nil {
 			return total, lastID, lastUpdatedAt, err
@@ -87,6 +89,38 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, string, *time.Time, err
 
 		if fetched < limit {
 			break
+		}
+
+		if batches+1 >= maxDrainBatchesPerSync {
+			s.logger.Warn(
+				"reached max drain batches for vehicles sync, deferring remaining data to next interval",
+				zap.Int("max_batches", maxDrainBatchesPerSync),
+				zap.Int64("fetched", fetched),
+				zap.Int64("sent", sent),
+				zap.String("cursor_id", cursorID),
+			)
+			break
+		}
+
+		sameTime := (prevUpdatedAt == nil && cursorTime == nil) ||
+			(prevUpdatedAt != nil && cursorTime != nil && prevUpdatedAt.Equal(*cursorTime))
+		if cursorID != "" && cursorID == prevID && sameTime {
+			s.logger.Warn(
+				"vehicles sync cursor did not advance, stopping drain loop",
+				zap.String("cursor_id", cursorID),
+				zap.Timep("cursor_time", cursorTime),
+				zap.Int64("fetched", fetched),
+				zap.Int64("sent", sent),
+			)
+			break
+		}
+
+		prevID = cursorID
+		if cursorTime != nil {
+			t := *cursorTime
+			prevUpdatedAt = &t
+		} else {
+			prevUpdatedAt = nil
 		}
 	}
 

@@ -22,7 +22,10 @@ import (
 )
 
 // userHashCacheTTL Cache user hash for 6 hours, which should be sufficient to cover the next few sync cycles and avoid memory bloat from caching too many hashes for long periods.
-const userHashCacheTTL = 6 * time.Hour
+const (
+	userHashCacheTTL       = 6 * time.Hour
+	maxDrainBatchesPerSync = 25
+)
 
 type UsersSync struct {
 	*Syncer
@@ -70,8 +73,10 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, string, *time.Time, error)
 	var total int64
 	lastID := "0"
 	var lastUpdatedAt *time.Time
+	prevID := ""
+	var prevUpdatedAt *time.Time
 
-	for {
+	for batches := 0; ; batches++ {
 		fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx)
 		if err != nil {
 			return total, lastID, lastUpdatedAt, err
@@ -88,6 +93,40 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, string, *time.Time, error)
 		// Nothing left for this cycle.
 		if fetched < limit {
 			break
+		}
+
+		// Guard against starvation when data changes continuously under high write load.
+		if batches+1 >= maxDrainBatchesPerSync {
+			s.logger.Warn(
+				"reached max drain batches for users sync, deferring remaining data to next interval",
+				zap.Int("max_batches", maxDrainBatchesPerSync),
+				zap.Int64("fetched", fetched),
+				zap.Int64("sent", sent),
+				zap.String("cursor_id", cursorID),
+			)
+			break
+		}
+
+		// Guard against non-advancing cursor loops.
+		sameTime := (prevUpdatedAt == nil && cursorTime == nil) ||
+			(prevUpdatedAt != nil && cursorTime != nil && prevUpdatedAt.Equal(*cursorTime))
+		if cursorID != "" && cursorID == prevID && sameTime {
+			s.logger.Warn(
+				"users sync cursor did not advance, stopping drain loop",
+				zap.String("cursor_id", cursorID),
+				zap.Timep("cursor_time", cursorTime),
+				zap.Int64("fetched", fetched),
+				zap.Int64("sent", sent),
+			)
+			break
+		}
+
+		prevID = cursorID
+		if cursorTime != nil {
+			t := *cursorTime
+			prevUpdatedAt = &t
+		} else {
+			prevUpdatedAt = nil
 		}
 	}
 
