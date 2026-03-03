@@ -24,7 +24,7 @@ import (
 // userHashCacheTTL Cache user hash for 6 hours, which should be sufficient to cover the next few sync cycles and avoid memory bloat from caching too many hashes for long periods.
 const (
 	userHashCacheTTL       = 6 * time.Hour
-	maxDrainBatchesPerSync = 25
+	maxDrainBatchesPerSync = 10
 )
 
 type UsersSync struct {

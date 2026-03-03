@@ -286,14 +286,11 @@ func (s *Sync) run(ctx context.Context) error {
 				if count, lastID, lastUpdatedAt, err := s.users.Sync(ctx); err != nil {
 					s.logger.Error("error during users sync", zap.Error(err))
 				} else {
-					fields := []zap.Field{
+					s.logger.Info("users synced",
 						zap.Int64("count", count),
 						zap.String("last_id", lastID),
-					}
-					if lastUpdatedAt != nil {
-						fields = append(fields, zap.Time("last_updated_at", *lastUpdatedAt))
-					}
-					s.logger.Info("users synced", fields...)
+						zap.Timep("last_updated_at", lastUpdatedAt),
+					)
 				}
 
 				select {
@@ -338,14 +335,11 @@ func (s *Sync) run(ctx context.Context) error {
 				if count, plate, lastUpdatedAt, err := s.vehicles.Sync(ctx); err != nil {
 					s.logger.Error("error during vehicles sync", zap.Error(err))
 				} else {
-					fields := []zap.Field{
+					s.logger.Info("vehicles synced",
 						zap.Int64("count", count),
 						zap.String("last_plate", plate),
-					}
-					if lastUpdatedAt != nil {
-						fields = append(fields, zap.Time("last_updated_at", *lastUpdatedAt))
-					}
-					s.logger.Info("vehicles synced", fields...)
+						zap.Timep("last_updated_at", lastUpdatedAt),
+					)
 				}
 
 				select {
