@@ -60,18 +60,59 @@ func NewUsersSync(s *Syncer, state *dbsyncconfig.TableSyncState, saveUpdatedAt b
 }
 
 func (s *UsersSync) Sync(ctx context.Context) (int64, string, *time.Time, error) {
+	if !s.saveUpdatedAt {
+		return s.Resync(ctx)
+	}
+
+	limit := s.cfg.Limits.Users
+
+	var total int64
+	lastID := "0"
+	var lastUpdatedAt *time.Time
+
+	for {
+		fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx)
+		if err != nil {
+			return total, lastID, lastUpdatedAt, err
+		}
+
+		total += sent
+		if cursorID != "" {
+			lastID = cursorID
+		}
+		if cursorTime != nil {
+			lastUpdatedAt = cursorTime
+		}
+
+		// Nothing left for this cycle.
+		if fetched < limit {
+			break
+		}
+	}
+
+	return total, lastID, lastUpdatedAt, nil
+}
+
+func (s *UsersSync) Resync(ctx context.Context) (int64, string, *time.Time, error) {
 	// Full resync mode paginates only by user id.
 	if !s.saveUpdatedAt {
 		s.state.SetLastCheck(nil)
 	}
 
+	_, sent, cursorID, cursorTime, err := s.syncOnce(ctx)
+	return sent, cursorID, cursorTime, err
+}
+
+func (s *UsersSync) syncOnce(
+	ctx context.Context,
+) (fetched int64, sent int64, cursorID string, cursorTime *time.Time, err error) {
 	limit := s.cfg.Limits.Users
 	sQuery := s.cfg.Tables.Users
 	q := sQuery.GetQuery(s.state, 0, limit)
 
 	us, err := s.fetchUsers(ctx, q)
 	if err != nil {
-		return 0, "0", nil, err
+		return 0, 0, "0", nil, err
 	}
 
 	fetchedCount := int64(len(us))
@@ -81,16 +122,16 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, string, *time.Time, error)
 			s.logger.Debug("no users found during full resync, resetting cursor")
 			s.state.ResetCursor()
 		}
-		return 0, "0", nil, nil
+		return 0, 0, "0", nil, nil
 	}
 
 	cursorTime, cursorLastID := s.cursorFromUsersResults(us)
 	if s.saveUpdatedAt && cursorTime == nil {
-		return 0, "0", nil, errors.New(
+		return 0, 0, "0", nil, errors.New(
 			"users result is missing updated_at, cannot persist cursor timestamp",
 		)
 	}
-	cursorIDValue := "0"
+	cursorIDValue := ""
 	if cursorLastID != nil {
 		cursorIDValue = *cursorLastID
 	}
@@ -98,13 +139,13 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, string, *time.Time, error)
 	us = s.applyFiltersAndTransformations(us, sQuery)
 
 	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
-		return 0, "0", nil, err
+		return 0, 0, "", nil, err
 	}
 	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
-		return 0, "0", nil, err
+		return 0, 0, "", nil, err
 	}
 	if err := s.retrieveAndAttachPhoneNumbers(ctx, us); err != nil {
-		return 0, "0", nil, err
+		return 0, 0, "", nil, err
 	}
 
 	if s.hashes != nil {
@@ -137,25 +178,22 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, string, *time.Time, error)
 		}
 	}
 
-	// No users left to sync after hash check, return early
-	if len(us) == 0 {
-		s.persistCursor(fetchedCount, limit, cursorTime, cursorLastID)
-		return 0, cursorIDValue, cursorTime, nil
-	}
-
-	if err := s.sendData(ctx, &pbsync.SendDataRequest{
-		Data: &pbsync.SendDataRequest_Users{
-			Users: &syncdata.DataUsers{
-				Users: us,
+	// Sync users to FiveNet server (if there are any left after hash check)
+	if len(us) > 0 {
+		if err := s.sendData(ctx, &pbsync.SendDataRequest{
+			Data: &pbsync.SendDataRequest_Users{
+				Users: &syncdata.DataUsers{
+					Users: us,
+				},
 			},
-		},
-	}); err != nil {
-		return 0, "0", nil, err
+		}); err != nil {
+			return 0, 0, "", nil, err
+		}
 	}
 
 	s.persistCursor(fetchedCount, limit, cursorTime, cursorLastID)
 
-	return int64(len(us)), cursorIDValue, cursorTime, nil
+	return fetchedCount, int64(len(us)), cursorIDValue, cursorTime, nil
 }
 
 func (s *UsersSync) cursorFromUsersResults(

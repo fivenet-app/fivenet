@@ -312,7 +312,7 @@ func (s *Sync) run(ctx context.Context) error {
 						return
 
 					case <-time.After(resyncInterval):
-						if count, lastID, _, err := s.usersResync.Sync(ctx); err != nil {
+						if count, lastID, _, err := s.usersResync.Resync(ctx); err != nil {
 							s.logger.Error("error during users resync", zap.Error(err))
 						} else {
 							fields := []zap.Field{
@@ -362,7 +362,7 @@ func (s *Sync) run(ctx context.Context) error {
 						return
 
 					case <-time.After(resyncInterval):
-						if count, lastID, _, err := s.vehiclesResync.Sync(ctx); err != nil {
+						if count, lastID, _, err := s.vehiclesResync.Resync(ctx); err != nil {
 							s.logger.Error("error during vehicles resync", zap.Error(err))
 						} else {
 							fields := []zap.Field{

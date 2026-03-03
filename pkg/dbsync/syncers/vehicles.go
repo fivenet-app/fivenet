@@ -57,11 +57,51 @@ func NewVehiclesSync(
 }
 
 func (s *VehiclesSync) Sync(ctx context.Context) (int64, string, *time.Time, error) {
+	if !s.saveUpdatedAt {
+		return s.Resync(ctx)
+	}
+
+	limit := s.cfg.Limits.Vehicles
+
+	var total int64
+	lastID := ""
+	var lastUpdatedAt *time.Time
+
+	for {
+		fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx)
+		if err != nil {
+			return total, lastID, lastUpdatedAt, err
+		}
+
+		total += sent
+		if cursorID != "" {
+			lastID = cursorID
+		}
+		if cursorTime != nil {
+			lastUpdatedAt = cursorTime
+		}
+
+		if fetched < limit {
+			break
+		}
+	}
+
+	return total, lastID, lastUpdatedAt, nil
+}
+
+func (s *VehiclesSync) Resync(ctx context.Context) (int64, string, *time.Time, error) {
 	// Ensure last check is nil when we don't want to save it
 	if !s.saveUpdatedAt {
 		s.state.SetLastCheck(nil)
 	}
 
+	_, sent, cursorID, cursorTime, err := s.syncOnce(ctx)
+	return sent, cursorID, cursorTime, err
+}
+
+func (s *VehiclesSync) syncOnce(
+	ctx context.Context,
+) (fetched int64, sent int64, cursorID string, cursorTime *time.Time, err error) {
 	limit := s.cfg.Limits.Vehicles
 	sQuery := s.cfg.Tables.Vehicles
 	q := sQuery.GetQuery(s.state, 0, limit)
@@ -70,7 +110,7 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, string, *time.Time, err
 	vehicles := []*vehicles.Vehicle{}
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, &vehicles); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return 0, "", nil, err
+			return 0, 0, "", nil, err
 		}
 	}
 
@@ -80,12 +120,12 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, string, *time.Time, err
 		if !s.saveUpdatedAt {
 			s.state.ResetCursor()
 		}
-		return 0, "", nil, nil
+		return 0, 0, "", nil, nil
 	}
 
 	cursorTime, cursorLastPlate := s.cursorFromVehiclesResults(vehicles)
 	if s.saveUpdatedAt && cursorTime == nil {
-		return 0, "", nil, errors.New(
+		return 0, 0, "", nil, errors.New(
 			"vehicles result is missing updated_at, cannot persist cursor timestamp",
 		)
 	}
@@ -118,27 +158,20 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, string, *time.Time, err
 		}
 	}
 
-	// No vehicles left to sync after hash check, return early
-	if len(vehicles) == 0 {
-		s.persistCursor(fetchedCount, limit, cursorTime, cursorLastPlate)
-		if cursorLastPlate != nil {
-			return 0, *cursorLastPlate, cursorTime, nil
-		}
-		return 0, "", cursorTime, nil
-	}
-
-	// Sync vehicles to FiveNet server
-	if err := s.sendData(ctx, &pbsync.SendDataRequest{
-		Data: &pbsync.SendDataRequest_Vehicles{
-			Vehicles: &syncdata.DataVehicles{
-				Vehicles: vehicles,
+	// Sync vehicles to FiveNet server (if there are any left after hash check)
+	if len(vehicles) > 0 {
+		if err := s.sendData(ctx, &pbsync.SendDataRequest{
+			Data: &pbsync.SendDataRequest_Vehicles{
+				Vehicles: &syncdata.DataVehicles{
+					Vehicles: vehicles,
+				},
 			},
-		},
-	}); err != nil {
-		return 0, "", nil, fmt.Errorf(
-			"failed to send vehicles data to FiveNet server. %w",
-			err,
-		)
+		}); err != nil {
+			return 0, 0, "", nil, fmt.Errorf(
+				"failed to send vehicles data to FiveNet server. %w",
+				err,
+			)
+		}
 	}
 
 	s.persistCursor(fetchedCount, limit, cursorTime, cursorLastPlate)
@@ -148,7 +181,7 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, string, *time.Time, err
 		lastPlate = *cursorLastPlate
 	}
 
-	return int64(len(vehicles)), lastPlate, cursorTime, nil
+	return fetchedCount, int64(len(vehicles)), lastPlate, cursorTime, nil
 }
 
 func (s *VehiclesSync) cursorFromVehiclesResults(
@@ -168,10 +201,6 @@ func (s *VehiclesSync) cursorFromVehiclesResults(
 
 	t := ts.GetTimestamp().AsTime()
 	return &t, &lastPlate
-}
-
-func (s *VehiclesSync) Resync(ctx context.Context) error {
-	return nil
 }
 
 func (s *VehiclesSync) persistCursor(
