@@ -237,7 +237,7 @@ func (s *UsersSync) persistCursor(
 }
 
 func (s *UsersSync) fetchUsers(ctx context.Context, query string) ([]*syncdata.DataUser, error) {
-	s.logger.Debug("accounts sync query", zap.String("query", query))
+	s.logger.Debug("users sync query", zap.String("query", query))
 
 	us := []*syncdata.DataUser{}
 	if _, err := qrm.Query(ctx, s.db, query, []any{}, &us); err != nil {

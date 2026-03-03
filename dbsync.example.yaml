@@ -192,7 +192,7 @@ tables:
     # E.g., it is prefered to use a ESX like identifier layout for that case `charX:LICENSE`
     #
     # Must return result columns named: `user.user_id`, `user.identifier`, `user.group`, `user.firstname`,
-    # `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex` columns
+    # `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex` and `user.updated_at` columns
     # Optional columns: `user.phone_number`, `user.height`, `user.visum`, `user.playtime`
     #
     # For advanced users: If an user can has more than one job (e.g., a main job and a secondary job),
@@ -220,7 +220,7 @@ tables:
     #  FROM
     #    `users`
     #  $whereCondition
-    #  ORDER BY `id`
+    #  ORDER BY `user.updated_at`, `id`
     #  LIMIT $limit;
     # If a lastname is not returned by the query, attempt to split the firstname into "two" parts
     splitName: true

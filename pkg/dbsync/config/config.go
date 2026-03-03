@@ -603,10 +603,11 @@ func (c *VehiclesTable) GetQuery(
 		return prepareStringQuery(*c.Query, c.DBSyncTable, state, limit, c.Columns.Plate)
 	}
 
-	orderBy := []string{c.Columns.Plate}
+	orderBy := []string{}
 	if c.UpdatedTimeColumn != nil && *c.UpdatedTimeColumn != "" {
 		orderBy = append([]string{*c.UpdatedTimeColumn}, orderBy...)
 	}
+	orderBy = append(orderBy, c.Columns.Plate)
 
 	columns := map[string]string{
 		"vehicle.ownerIdentifier": c.Columns.OwnerIdentifier,
