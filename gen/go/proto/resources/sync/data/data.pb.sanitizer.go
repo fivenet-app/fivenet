@@ -185,15 +185,6 @@ func (m *DataUser) Sanitize() error {
 		*m.ProfilePicture = htmlsanitizer.Sanitize(*m.ProfilePicture)
 	}
 
-	// Field: Props
-	if m.Props != nil {
-		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	// Field: Sex
 	if m.Sex != nil {
 		*m.Sex = htmlsanitizer.Sanitize(*m.Sex)

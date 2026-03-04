@@ -97,9 +97,8 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, string, *time.Time, error)
 
 		// Guard against starvation when data changes continuously under high write load.
 		if batches+1 >= maxDrainBatchesPerSync {
-			s.logger.Warn(
-				"reached max drain batches for users sync, deferring remaining data to next interval",
-				zap.Int("max_batches", maxDrainBatchesPerSync),
+			s.logger.Info(
+				"users sync hit drain batch cap; remaining updates continue next interval",
 				zap.Int64("fetched", fetched),
 				zap.Int64("sent", sent),
 				zap.String("cursor_id", cursorID),
@@ -111,7 +110,7 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, string, *time.Time, error)
 		sameTime := (prevUpdatedAt == nil && cursorTime == nil) ||
 			(prevUpdatedAt != nil && cursorTime != nil && prevUpdatedAt.Equal(*cursorTime))
 		if cursorID != "" && cursorID == prevID && sameTime {
-			s.logger.Warn(
+			s.logger.Info(
 				"users sync cursor did not advance, stopping drain loop",
 				zap.String("cursor_id", cursorID),
 				zap.Timep("cursor_time", cursorTime),
@@ -189,31 +188,33 @@ func (s *UsersSync) syncOnce(
 	}
 
 	if s.hashes != nil {
-		for i, u := range slices.Backward(us) {
+		for i, user := range slices.Backward(us) {
+			user.UpdatedAt = nil
+
 			// Get hash of user data to compare with existing hash and skip sending if data is the same (treat as not updated)
-			_, hash, err := protoutils.JSONAndHash(u)
+			_, hash, err := protoutils.JSONAndHash(user)
 			if err != nil {
 				s.logger.Warn(
 					"failed to compute user data hash, skipping hash check and treating as new/updated user",
-					zap.Int32("user_id", u.GetUserId()),
-					zap.String("identifier", u.GetIdentifier()),
+					zap.Int32("user_id", user.GetUserId()),
+					zap.String("identifier", user.GetIdentifier()),
 					zap.Error(err),
 				)
 			}
 
-			if existingHash, ok := s.hashes.Get(u.GetUserId()); ok {
+			if existingHash, ok := s.hashes.Get(user.GetUserId()); ok {
 				if existingHash == hash {
 					s.logger.Debug(
 						"user data hash is the same as existing entry, skipping update for user",
-						zap.Int32("user_id", u.GetUserId()),
-						zap.String("identifier", u.GetIdentifier()),
+						zap.Int32("user_id", user.GetUserId()),
+						zap.String("identifier", user.GetIdentifier()),
 					)
 					// Remove "skipped" user
 					us = slices.Delete(us, i, i+1)
 					continue
 				}
 			} else {
-				s.hashes.Put(u.GetUserId(), hash, userHashCacheTTL)
+				s.hashes.Put(user.GetUserId(), hash, userHashCacheTTL)
 			}
 		}
 	}
@@ -373,6 +374,7 @@ func (s *UsersSync) cleanupUserJob(user *syncdata.DataUser) {
 		} else {
 			job.IsPrimary = false
 		}
+		job.UpdatedAt = nil
 	}
 
 	// If not ensure user has at least one primary job set
@@ -421,6 +423,7 @@ func (s *UsersSync) cleanupUserPhoneNumbers(user *syncdata.DataUser) {
 		} else {
 			number.IsPrimary = false
 		}
+		number.UpdatedAt = nil
 	}
 
 	// If not ensure user has at least one primary phone number set

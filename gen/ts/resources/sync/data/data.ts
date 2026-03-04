@@ -11,7 +11,6 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserProps } from "../../users/props/props";
 import { PhoneNumber } from "../../users/user";
 import { UserJob } from "../../users/user";
 import { Timestamp } from "../../timestamp/timestamp";
@@ -222,10 +221,6 @@ export interface DataUser {
      * @generated from protobuf field: optional int32 playtime = 14
      */
     playtime?: number;
-    /**
-     * @generated from protobuf field: optional resources.users.props.UserProps props = 15
-     */
-    props?: UserProps;
     /**
      * @generated from protobuf field: repeated resources.users.licenses.License licenses = 16
      */
@@ -837,7 +832,6 @@ class DataUser$Type extends MessageType<DataUser> {
             { no: 19, name: "phone_numbers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PhoneNumber, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", repeated: { maxItems: "5" } }, "tagger.tags": "alias:\"user.phone_numbers\"" } },
             { no: 13, name: "visum", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } }, "tagger.tags": "alias:\"user.visum\"" } },
             { no: 14, name: "playtime", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } }, "tagger.tags": "alias:\"user.playtime\"" } },
-            { no: 15, name: "props", kind: "message", T: () => UserProps, options: { "tagger.tags": "alias:\"user.props\"" } },
             { no: 16, name: "licenses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => License, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"user.licenses\"" } },
             { no: 17, name: "profile_picture_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gte: "0" } }, "tagger.tags": "alias:\"user.profile_picture_file_id\"" } },
             { no: 18, name: "profile_picture", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "tagger.tags": "alias:\"user.profile_picture\"" } }
@@ -914,9 +908,6 @@ class DataUser$Type extends MessageType<DataUser> {
                 case /* optional int32 playtime */ 14:
                     message.playtime = reader.int32();
                     break;
-                case /* optional resources.users.props.UserProps props */ 15:
-                    message.props = UserProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
-                    break;
                 case /* repeated resources.users.licenses.License licenses */ 16:
                     message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
                     break;
@@ -980,9 +971,6 @@ class DataUser$Type extends MessageType<DataUser> {
         /* optional int32 playtime = 14; */
         if (message.playtime !== undefined)
             writer.tag(14, WireType.Varint).int32(message.playtime);
-        /* optional resources.users.props.UserProps props = 15; */
-        if (message.props)
-            UserProps.internalBinaryWrite(message.props, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.users.licenses.License licenses = 16; */
         for (let i = 0; i < message.licenses.length; i++)
             License.internalBinaryWrite(message.licenses[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();

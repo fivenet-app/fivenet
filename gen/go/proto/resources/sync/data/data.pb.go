@@ -15,7 +15,6 @@ import (
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
-	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -821,7 +820,6 @@ type DataUser struct {
 	PhoneNumbers         []*users.PhoneNumber   `protobuf:"bytes,19,rep,name=phone_numbers,json=phoneNumbers,proto3" json:"phone_numbers,omitempty" alias:"user.phone_numbers"`
 	Visum                *int32                 `protobuf:"varint,13,opt,name=visum,proto3,oneof" json:"visum,omitempty" alias:"user.visum"`
 	Playtime             *int32                 `protobuf:"varint,14,opt,name=playtime,proto3,oneof" json:"playtime,omitempty" alias:"user.playtime"`
-	Props                *props.UserProps       `protobuf:"bytes,15,opt,name=props,proto3,oneof" json:"props,omitempty" alias:"user.props"`
 	Licenses             []*licenses.License    `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user.licenses"`
 	ProfilePictureFileId *int64                 `protobuf:"varint,17,opt,name=profile_picture_file_id,json=profilePictureFileId,proto3,oneof" json:"profile_picture_file_id,omitempty" alias:"user.profile_picture_file_id"`
 	ProfilePicture       *string                `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof" json:"profile_picture,omitempty" alias:"user.profile_picture"`
@@ -973,13 +971,6 @@ func (x *DataUser) GetPlaytime() int32 {
 	return 0
 }
 
-func (x *DataUser) GetProps() *props.UserProps {
-	if x != nil {
-		return x.Props
-	}
-	return nil
-}
-
 func (x *DataUser) GetLicenses() []*licenses.License {
 	if x != nil {
 		return x.Licenses
@@ -1069,10 +1060,6 @@ func (x *DataUser) SetPlaytime(v int32) {
 	x.Playtime = &v
 }
 
-func (x *DataUser) SetProps(v *props.UserProps) {
-	x.Props = v
-}
-
 func (x *DataUser) SetLicenses(v []*licenses.License) {
 	x.Licenses = v
 }
@@ -1148,13 +1135,6 @@ func (x *DataUser) HasPlaytime() bool {
 	return x.Playtime != nil
 }
 
-func (x *DataUser) HasProps() bool {
-	if x == nil {
-		return false
-	}
-	return x.Props != nil
-}
-
 func (x *DataUser) HasProfilePictureFileId() bool {
 	if x == nil {
 		return false
@@ -1205,10 +1185,6 @@ func (x *DataUser) ClearPlaytime() {
 	x.Playtime = nil
 }
 
-func (x *DataUser) ClearProps() {
-	x.Props = nil
-}
-
 func (x *DataUser) ClearProfilePictureFileId() {
 	x.ProfilePictureFileId = nil
 }
@@ -1237,7 +1213,6 @@ type DataUser_builder struct {
 	PhoneNumbers         []*users.PhoneNumber
 	Visum                *int32
 	Playtime             *int32
-	Props                *props.UserProps
 	Licenses             []*licenses.License
 	ProfilePictureFileId *int64
 	ProfilePicture       *string
@@ -1264,7 +1239,6 @@ func (b0 DataUser_builder) Build() *DataUser {
 	x.PhoneNumbers = b.PhoneNumbers
 	x.Visum = b.Visum
 	x.Playtime = b.Playtime
-	x.Props = b.Props
 	x.Licenses = b.Licenses
 	x.ProfilePictureFileId = b.ProfilePictureFileId
 	x.ProfilePicture = b.ProfilePicture
@@ -1275,7 +1249,7 @@ var File_resources_sync_data_data_proto protoreflect.FileDescriptor
 
 const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/sync/data/data.proto\x12\x13resources.sync.data\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a&resources/sync/activity/activity.proto\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\"\n" +
+	"\x1eresources/sync/data/data.proto\x12\x13resources.sync.data\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a&resources/sync/activity/activity.proto\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/licenses/licenses.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\"\n" +
 	"\n" +
 	"DataStatus\x12\x14\n" +
 	"\x05count\x18\x01 \x01(\x03R\x05count\"3\n" +
@@ -1314,7 +1288,7 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"lastCharId\x88\x01\x01B\x0f\n" +
 	"\r_last_char_id\"_\n" +
 	"\fDataAccounts\x12O\n" +
-	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"\xe8\f\n" +
+	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"\x8e\f\n" +
 	"\bDataUser\x12-\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x14\x9a\x84\x9e\x03\x0falias:\"user.id\"R\x06userId\x12<\n" +
 	"\n" +
@@ -1336,12 +1310,11 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\fphone_number\x18\f \x01(\tB\x1e\x9a\x84\x9e\x03\x19alias:\"user.phone_number\"H\x06R\vphoneNumber\x88\x01\x01\x12b\n" +
 	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberB\x1f\x9a\x84\x9e\x03\x1aalias:\"user.phone_numbers\"R\fphoneNumbers\x122\n" +
 	"\x05visum\x18\r \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"user.visum\"H\aR\x05visum\x88\x01\x01\x12;\n" +
-	"\bplaytime\x18\x0e \x01(\x05B\x1a\x9a\x84\x9e\x03\x15alias:\"user.playtime\"H\bR\bplaytime\x88\x01\x01\x12T\n" +
-	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsB\x17\x9a\x84\x9e\x03\x12alias:\"user.props\"H\tR\x05props\x88\x01\x01\x12Y\n" +
+	"\bplaytime\x18\x0e \x01(\x05B\x1a\x9a\x84\x9e\x03\x15alias:\"user.playtime\"H\bR\bplaytime\x88\x01\x01\x12Y\n" +
 	"\blicenses\x18\x10 \x03(\v2!.resources.users.licenses.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user.licenses\"R\blicenses\x12e\n" +
-	"\x17profile_picture_file_id\x18\x11 \x01(\x03B)\x9a\x84\x9e\x03$alias:\"user.profile_picture_file_id\"H\n" +
-	"R\x14profilePictureFileId\x88\x01\x01\x12O\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tB!\x9a\x84\x9e\x03\x1calias:\"user.profile_picture\"H\vR\x0eprofilePicture\x88\x01\x01B\r\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03B)\x9a\x84\x9e\x03$alias:\"user.profile_picture_file_id\"H\tR\x14profilePictureFileId\x88\x01\x01\x12O\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tB!\x9a\x84\x9e\x03\x1calias:\"user.profile_picture\"H\n" +
+	"R\x0eprofilePicture\x88\x01\x01B\r\n" +
 	"\v_updated_atB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
@@ -1351,10 +1324,9 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\a_heightB\x0f\n" +
 	"\r_phone_numberB\b\n" +
 	"\x06_visumB\v\n" +
-	"\t_playtimeB\b\n" +
-	"\x06_propsB\x1a\n" +
+	"\t_playtimeB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
-	"\x10_profile_pictureBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data;syncdatab\x06proto3"
+	"\x10_profile_pictureJ\x04\b\x0f\x10\x10BPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data;syncdatab\x06proto3"
 
 var file_resources_sync_data_data_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_resources_sync_data_data_proto_goTypes = []any{
@@ -1378,7 +1350,6 @@ var file_resources_sync_data_data_proto_goTypes = []any{
 	(*timestamp.Timestamp)(nil),    // 17: resources.timestamp.Timestamp
 	(*users.UserJob)(nil),          // 18: resources.users.UserJob
 	(*users.PhoneNumber)(nil),      // 19: resources.users.PhoneNumber
-	(*props.UserProps)(nil),        // 20: resources.users.props.UserProps
 }
 var file_resources_sync_data_data_proto_depIdxs = []int32{
 	12, // 0: resources.sync.data.DataJobs.jobs:type_name -> resources.jobs.Job
@@ -1391,13 +1362,12 @@ var file_resources_sync_data_data_proto_depIdxs = []int32{
 	17, // 7: resources.sync.data.DataUser.updated_at:type_name -> resources.timestamp.Timestamp
 	18, // 8: resources.sync.data.DataUser.jobs:type_name -> resources.users.UserJob
 	19, // 9: resources.sync.data.DataUser.phone_numbers:type_name -> resources.users.PhoneNumber
-	20, // 10: resources.sync.data.DataUser.props:type_name -> resources.users.props.UserProps
-	14, // 11: resources.sync.data.DataUser.licenses:type_name -> resources.users.licenses.License
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	14, // 10: resources.sync.data.DataUser.licenses:type_name -> resources.users.licenses.License
+	11, // [11:11] is the sub-list for method output_type
+	11, // [11:11] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_resources_sync_data_data_proto_init() }

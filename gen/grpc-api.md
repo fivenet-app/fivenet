@@ -6581,7 +6581,6 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `phone_numbers` | [resources.users.PhoneNumber](#resourcesusersPhoneNumber) | repeated |  |
 | `visum` | [int32](#int32) | optional |  |
 | `playtime` | [int32](#int32) | optional |  |
-| `props` | [resources.users.props.UserProps](#resourcesuserspropsUserProps) | optional |  |
 | `licenses` | [resources.users.licenses.License](#resourcesuserslicensesLicense) | repeated |  |
 | `profile_picture_file_id` | [int64](#int64) | optional |  |
 | `profile_picture` | [string](#string) | optional |  |

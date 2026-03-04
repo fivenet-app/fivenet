@@ -92,9 +92,8 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, string, *time.Time, err
 		}
 
 		if batches+1 >= maxDrainBatchesPerSync {
-			s.logger.Warn(
-				"reached max drain batches for vehicles sync, deferring remaining data to next interval",
-				zap.Int("max_batches", maxDrainBatchesPerSync),
+			s.logger.Info(
+				"vehicles sync hit drain batch cap; remaining updates continue next interval",
 				zap.Int64("fetched", fetched),
 				zap.Int64("sent", sent),
 				zap.String("cursor_id", cursorID),
@@ -169,29 +168,31 @@ func (s *VehiclesSync) syncOnce(
 	}
 
 	if s.hashes != nil {
-		for i, v := range slices.Backward(vehicles) {
+		for i, vehicle := range slices.Backward(vehicles) {
+			vehicle.UpdatedAt = nil
+
 			// Get hash of user data to compare with existing hash and skip sending if data is the same (treat as not updated)
-			_, hash, err := protoutils.JSONAndHash(v)
+			_, hash, err := protoutils.JSONAndHash(vehicle)
 			if err != nil {
 				s.logger.Warn(
 					"failed to compute vehicle data hash, skipping hash check and treating as new/updated vehicle",
-					zap.String("plate", v.GetPlate()),
+					zap.String("plate", vehicle.GetPlate()),
 					zap.Error(err),
 				)
 			}
 
-			if existingHash, ok := s.hashes.Get(v.GetPlate()); ok {
+			if existingHash, ok := s.hashes.Get(vehicle.GetPlate()); ok {
 				if existingHash == hash {
 					s.logger.Debug(
 						"vehicle data hash is the same as existing entry, skipping update for vehicle",
-						zap.String("plate", v.GetPlate()),
+						zap.String("plate", vehicle.GetPlate()),
 					)
 					// Remove "skipped" vehicle
 					vehicles = slices.Delete(vehicles, i, i+1)
 					continue
 				}
 			} else {
-				s.hashes.Put(v.GetPlate(), hash, vehicleHashCacheTTL)
+				s.hashes.Put(vehicle.GetPlate(), hash, vehicleHashCacheTTL)
 			}
 		}
 	}

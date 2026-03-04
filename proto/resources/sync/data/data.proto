@@ -77,9 +77,7 @@ message DataUser {
     (buf.validate.field).string.max_len = 64,
     (tagger.tags) = "alias:\"user.identifier\""
   ];
-  optional resources.timestamp.Timestamp updated_at = 21 [
-    (tagger.tags) = "alias:\"user.updated_at\""
-  ];
+  optional resources.timestamp.Timestamp updated_at = 21 [(tagger.tags) = "alias:\"user.updated_at\""];
 
   string job = 3 [
     (buf.validate.field).string.max_len = 20,
@@ -154,7 +152,8 @@ message DataUser {
     (tagger.tags) = "alias:\"user.playtime\""
   ];
 
-  optional resources.users.props.UserProps props = 15 [(tagger.tags) = "alias:\"user.props\""];
+  // Used for user props.
+  reserved 15;
   repeated resources.users.licenses.License licenses = 16 [
     (buf.validate.field).repeated.max_items = 20,
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,

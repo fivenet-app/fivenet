@@ -15,7 +15,6 @@ import (
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
-	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -854,7 +853,6 @@ type DataUser struct {
 	xxx_hidden_PhoneNumbers         *[]*users.PhoneNumber  `protobuf:"bytes,19,rep,name=phone_numbers,json=phoneNumbers,proto3"`
 	xxx_hidden_Visum                int32                  `protobuf:"varint,13,opt,name=visum,proto3,oneof"`
 	xxx_hidden_Playtime             int32                  `protobuf:"varint,14,opt,name=playtime,proto3,oneof"`
-	xxx_hidden_Props                *props.UserProps       `protobuf:"bytes,15,opt,name=props,proto3,oneof"`
 	xxx_hidden_Licenses             *[]*licenses.License   `protobuf:"bytes,16,rep,name=licenses,proto3"`
 	xxx_hidden_ProfilePictureFileId int64                  `protobuf:"varint,17,opt,name=profile_picture_file_id,json=profilePictureFileId,proto3,oneof"`
 	xxx_hidden_ProfilePicture       *string                `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof"`
@@ -1027,13 +1025,6 @@ func (x *DataUser) GetPlaytime() int32 {
 	return 0
 }
 
-func (x *DataUser) GetProps() *props.UserProps {
-	if x != nil {
-		return x.xxx_hidden_Props
-	}
-	return nil
-}
-
 func (x *DataUser) GetLicenses() []*licenses.License {
 	if x != nil {
 		if x.xxx_hidden_Licenses != nil {
@@ -1078,7 +1069,7 @@ func (x *DataUser) SetJob(v string) {
 
 func (x *DataUser) SetJobLabel(v string) {
 	x.xxx_hidden_JobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 21)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 20)
 }
 
 func (x *DataUser) SetJobGrade(v int32) {
@@ -1087,7 +1078,7 @@ func (x *DataUser) SetJobGrade(v int32) {
 
 func (x *DataUser) SetJobGradeLabel(v string) {
 	x.xxx_hidden_JobGradeLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 21)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 20)
 }
 
 func (x *DataUser) SetJobs(v []*users.UserJob) {
@@ -1100,7 +1091,7 @@ func (x *DataUser) SetFirstname(v string) {
 
 func (x *DataUser) SetLastname(v string) {
 	x.xxx_hidden_Lastname = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 21)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 20)
 }
 
 func (x *DataUser) SetDateofbirth(v string) {
@@ -1109,17 +1100,17 @@ func (x *DataUser) SetDateofbirth(v string) {
 
 func (x *DataUser) SetSex(v string) {
 	x.xxx_hidden_Sex = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 21)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 20)
 }
 
 func (x *DataUser) SetHeight(v float32) {
 	x.xxx_hidden_Height = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 21)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 20)
 }
 
 func (x *DataUser) SetPhoneNumber(v string) {
 	x.xxx_hidden_PhoneNumber = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 21)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 20)
 }
 
 func (x *DataUser) SetPhoneNumbers(v []*users.PhoneNumber) {
@@ -1128,16 +1119,12 @@ func (x *DataUser) SetPhoneNumbers(v []*users.PhoneNumber) {
 
 func (x *DataUser) SetVisum(v int32) {
 	x.xxx_hidden_Visum = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 15, 21)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 15, 20)
 }
 
 func (x *DataUser) SetPlaytime(v int32) {
 	x.xxx_hidden_Playtime = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 16, 21)
-}
-
-func (x *DataUser) SetProps(v *props.UserProps) {
-	x.xxx_hidden_Props = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 16, 20)
 }
 
 func (x *DataUser) SetLicenses(v []*licenses.License) {
@@ -1146,12 +1133,12 @@ func (x *DataUser) SetLicenses(v []*licenses.License) {
 
 func (x *DataUser) SetProfilePictureFileId(v int64) {
 	x.xxx_hidden_ProfilePictureFileId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 19, 21)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 18, 20)
 }
 
 func (x *DataUser) SetProfilePicture(v string) {
 	x.xxx_hidden_ProfilePicture = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 20, 21)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 19, 20)
 }
 
 func (x *DataUser) HasUpdatedAt() bool {
@@ -1217,25 +1204,18 @@ func (x *DataUser) HasPlaytime() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 16)
 }
 
-func (x *DataUser) HasProps() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Props != nil
-}
-
 func (x *DataUser) HasProfilePictureFileId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 19)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 18)
 }
 
 func (x *DataUser) HasProfilePicture() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 20)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 19)
 }
 
 func (x *DataUser) ClearUpdatedAt() {
@@ -1282,17 +1262,13 @@ func (x *DataUser) ClearPlaytime() {
 	x.xxx_hidden_Playtime = 0
 }
 
-func (x *DataUser) ClearProps() {
-	x.xxx_hidden_Props = nil
-}
-
 func (x *DataUser) ClearProfilePictureFileId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 19)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 18)
 	x.xxx_hidden_ProfilePictureFileId = 0
 }
 
 func (x *DataUser) ClearProfilePicture() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 20)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 19)
 	x.xxx_hidden_ProfilePicture = nil
 }
 
@@ -1316,7 +1292,6 @@ type DataUser_builder struct {
 	PhoneNumbers         []*users.PhoneNumber
 	Visum                *int32
 	Playtime             *int32
-	Props                *props.UserProps
 	Licenses             []*licenses.License
 	ProfilePictureFileId *int64
 	ProfilePicture       *string
@@ -1331,50 +1306,49 @@ func (b0 DataUser_builder) Build() *DataUser {
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	x.xxx_hidden_Job = b.Job
 	if b.JobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 21)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 20)
 		x.xxx_hidden_JobLabel = b.JobLabel
 	}
 	x.xxx_hidden_JobGrade = b.JobGrade
 	if b.JobGradeLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 21)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 20)
 		x.xxx_hidden_JobGradeLabel = b.JobGradeLabel
 	}
 	x.xxx_hidden_Jobs = &b.Jobs
 	x.xxx_hidden_Firstname = b.Firstname
 	if b.Lastname != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 21)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 20)
 		x.xxx_hidden_Lastname = b.Lastname
 	}
 	x.xxx_hidden_Dateofbirth = b.Dateofbirth
 	if b.Sex != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 21)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 20)
 		x.xxx_hidden_Sex = b.Sex
 	}
 	if b.Height != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 21)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 20)
 		x.xxx_hidden_Height = *b.Height
 	}
 	if b.PhoneNumber != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 21)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 20)
 		x.xxx_hidden_PhoneNumber = b.PhoneNumber
 	}
 	x.xxx_hidden_PhoneNumbers = &b.PhoneNumbers
 	if b.Visum != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 15, 21)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 15, 20)
 		x.xxx_hidden_Visum = *b.Visum
 	}
 	if b.Playtime != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 16, 21)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 16, 20)
 		x.xxx_hidden_Playtime = *b.Playtime
 	}
-	x.xxx_hidden_Props = b.Props
 	x.xxx_hidden_Licenses = &b.Licenses
 	if b.ProfilePictureFileId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 19, 21)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 18, 20)
 		x.xxx_hidden_ProfilePictureFileId = *b.ProfilePictureFileId
 	}
 	if b.ProfilePicture != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 20, 21)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 19, 20)
 		x.xxx_hidden_ProfilePicture = b.ProfilePicture
 	}
 	return m0
@@ -1384,7 +1358,7 @@ var File_resources_sync_data_data_proto protoreflect.FileDescriptor
 
 const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/sync/data/data.proto\x12\x13resources.sync.data\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a&resources/sync/activity/activity.proto\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\"\n" +
+	"\x1eresources/sync/data/data.proto\x12\x13resources.sync.data\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a&resources/sync/activity/activity.proto\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/licenses/licenses.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\"\n" +
 	"\n" +
 	"DataStatus\x12\x14\n" +
 	"\x05count\x18\x01 \x01(\x03R\x05count\"3\n" +
@@ -1423,7 +1397,7 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"lastCharId\x88\x01\x01B\x0f\n" +
 	"\r_last_char_id\"_\n" +
 	"\fDataAccounts\x12O\n" +
-	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"\xe8\f\n" +
+	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"\x8e\f\n" +
 	"\bDataUser\x12-\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x14\x9a\x84\x9e\x03\x0falias:\"user.id\"R\x06userId\x12<\n" +
 	"\n" +
@@ -1445,12 +1419,11 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\fphone_number\x18\f \x01(\tB\x1e\x9a\x84\x9e\x03\x19alias:\"user.phone_number\"H\x06R\vphoneNumber\x88\x01\x01\x12b\n" +
 	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberB\x1f\x9a\x84\x9e\x03\x1aalias:\"user.phone_numbers\"R\fphoneNumbers\x122\n" +
 	"\x05visum\x18\r \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"user.visum\"H\aR\x05visum\x88\x01\x01\x12;\n" +
-	"\bplaytime\x18\x0e \x01(\x05B\x1a\x9a\x84\x9e\x03\x15alias:\"user.playtime\"H\bR\bplaytime\x88\x01\x01\x12T\n" +
-	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsB\x17\x9a\x84\x9e\x03\x12alias:\"user.props\"H\tR\x05props\x88\x01\x01\x12Y\n" +
+	"\bplaytime\x18\x0e \x01(\x05B\x1a\x9a\x84\x9e\x03\x15alias:\"user.playtime\"H\bR\bplaytime\x88\x01\x01\x12Y\n" +
 	"\blicenses\x18\x10 \x03(\v2!.resources.users.licenses.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user.licenses\"R\blicenses\x12e\n" +
-	"\x17profile_picture_file_id\x18\x11 \x01(\x03B)\x9a\x84\x9e\x03$alias:\"user.profile_picture_file_id\"H\n" +
-	"R\x14profilePictureFileId\x88\x01\x01\x12O\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tB!\x9a\x84\x9e\x03\x1calias:\"user.profile_picture\"H\vR\x0eprofilePicture\x88\x01\x01B\r\n" +
+	"\x17profile_picture_file_id\x18\x11 \x01(\x03B)\x9a\x84\x9e\x03$alias:\"user.profile_picture_file_id\"H\tR\x14profilePictureFileId\x88\x01\x01\x12O\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tB!\x9a\x84\x9e\x03\x1calias:\"user.profile_picture\"H\n" +
+	"R\x0eprofilePicture\x88\x01\x01B\r\n" +
 	"\v_updated_atB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
@@ -1460,10 +1433,9 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\a_heightB\x0f\n" +
 	"\r_phone_numberB\b\n" +
 	"\x06_visumB\v\n" +
-	"\t_playtimeB\b\n" +
-	"\x06_propsB\x1a\n" +
+	"\t_playtimeB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
-	"\x10_profile_pictureBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data;syncdatab\x06proto3"
+	"\x10_profile_pictureJ\x04\b\x0f\x10\x10BPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data;syncdatab\x06proto3"
 
 var file_resources_sync_data_data_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_resources_sync_data_data_proto_goTypes = []any{
@@ -1487,7 +1459,6 @@ var file_resources_sync_data_data_proto_goTypes = []any{
 	(*timestamp.Timestamp)(nil),    // 17: resources.timestamp.Timestamp
 	(*users.UserJob)(nil),          // 18: resources.users.UserJob
 	(*users.PhoneNumber)(nil),      // 19: resources.users.PhoneNumber
-	(*props.UserProps)(nil),        // 20: resources.users.props.UserProps
 }
 var file_resources_sync_data_data_proto_depIdxs = []int32{
 	12, // 0: resources.sync.data.DataJobs.jobs:type_name -> resources.jobs.Job
@@ -1500,13 +1471,12 @@ var file_resources_sync_data_data_proto_depIdxs = []int32{
 	17, // 7: resources.sync.data.DataUser.updated_at:type_name -> resources.timestamp.Timestamp
 	18, // 8: resources.sync.data.DataUser.jobs:type_name -> resources.users.UserJob
 	19, // 9: resources.sync.data.DataUser.phone_numbers:type_name -> resources.users.PhoneNumber
-	20, // 10: resources.sync.data.DataUser.props:type_name -> resources.users.props.UserProps
-	14, // 11: resources.sync.data.DataUser.licenses:type_name -> resources.users.licenses.License
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	14, // 10: resources.sync.data.DataUser.licenses:type_name -> resources.users.licenses.License
+	11, // [11:11] is the sub-list for method output_type
+	11, // [11:11] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_resources_sync_data_data_proto_init() }

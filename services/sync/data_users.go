@@ -191,6 +191,35 @@ func (s *Server) handleUsersData(
 					err,
 				)
 			}
+
+			// Duplicate entry for identifier? Remove the duplicate entry and try updating again.
+			// E.g., char transfer can cause this.
+			if affected == -1 {
+				// Remove user by identifier
+				stmt := tUsers.
+					DELETE().
+					WHERE(tUsers.Identifier.EQ(mysql.String(user.GetIdentifier()))).
+					LIMIT(1)
+
+				if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+					return 0, fmt.Errorf(
+						"failed to delete duplicate user %d with identifier %s. %w",
+						user.GetUserId(),
+						user.GetIdentifier(),
+						err,
+					)
+				}
+
+				affected, err = s.updateUser(ctx, syncedAt, user)
+				if err != nil {
+					return 0, fmt.Errorf(
+						"failed to update user %d (%s) after duplicate removal. %w",
+						user.GetUserId(),
+						user.GetIdentifier(),
+						err,
+					)
+				}
+			}
 			rowsAffected += affected
 		}
 	}
@@ -319,6 +348,10 @@ func (s *Server) createUser(
 
 	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
+		if dbutils.IsDuplicateError(err) {
+			// Signal that an user with this **identifier** should be removed, as there is a duplicate entry for the identifier
+			return -1, nil
+		}
 		return 0, fmt.Errorf("failed to execute user insert statement. %w", err)
 	}
 	rows, err := res.RowsAffected()
