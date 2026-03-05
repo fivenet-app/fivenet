@@ -283,11 +283,15 @@ func (s *Sync) run(ctx context.Context) error {
 		wg.Go(func() {
 			s.logger.Info("starting users sync")
 			for {
-				if count, lastID, lastUpdatedAt, err := s.users.Sync(ctx); err != nil {
+				startedAt := time.Now()
+				fetched, sent, lastID, lastUpdatedAt, err := s.users.Sync(ctx)
+				recordSyncMetrics("users", startedAt, fetched, sent, err)
+				if err != nil {
 					s.logger.Error("error during users sync", zap.Error(err))
 				} else {
 					s.logger.Info("users synced",
-						zap.Int64("count", count),
+						zap.Int64("fetched", fetched),
+						zap.Int64("sent", sent),
 						zap.String("last_id", lastID),
 						zap.Timep("last_updated_at", lastUpdatedAt),
 					)
@@ -312,11 +316,15 @@ func (s *Sync) run(ctx context.Context) error {
 						return
 
 					case <-time.After(resyncInterval):
-						if count, lastID, _, err := s.usersResync.Resync(ctx); err != nil {
+						startedAt := time.Now()
+						fetched, sent, lastID, _, err := s.usersResync.Resync(ctx)
+						recordSyncMetrics("users_resync", startedAt, fetched, sent, err)
+						if err != nil {
 							s.logger.Error("error during users resync", zap.Error(err))
 						} else {
 							fields := []zap.Field{
-								zap.Int64("count", count),
+								zap.Int64("fetched", fetched),
+								zap.Int64("sent", sent),
 								zap.String("last_id", lastID),
 							}
 							s.logger.Info("users resynced", fields...)
@@ -332,11 +340,15 @@ func (s *Sync) run(ctx context.Context) error {
 		wg.Go(func() {
 			s.logger.Info("starting vehicles sync")
 			for {
-				if count, plate, lastUpdatedAt, err := s.vehicles.Sync(ctx); err != nil {
+				startedAt := time.Now()
+				fetched, sent, plate, lastUpdatedAt, err := s.vehicles.Sync(ctx)
+				recordSyncMetrics("vehicles", startedAt, fetched, sent, err)
+				if err != nil {
 					s.logger.Error("error during vehicles sync", zap.Error(err))
 				} else {
 					s.logger.Info("vehicles synced",
-						zap.Int64("count", count),
+						zap.Int64("fetched", fetched),
+						zap.Int64("sent", sent),
 						zap.String("last_plate", plate),
 						zap.Timep("last_updated_at", lastUpdatedAt),
 					)
@@ -361,11 +373,15 @@ func (s *Sync) run(ctx context.Context) error {
 						return
 
 					case <-time.After(resyncInterval):
-						if count, lastID, _, err := s.vehiclesResync.Resync(ctx); err != nil {
+						startedAt := time.Now()
+						fetched, sent, lastID, _, err := s.vehiclesResync.Resync(ctx)
+						recordSyncMetrics("vehicles_resync", startedAt, fetched, sent, err)
+						if err != nil {
 							s.logger.Error("error during vehicles resync", zap.Error(err))
 						} else {
 							fields := []zap.Field{
-								zap.Int64("count", count),
+								zap.Int64("fetched", fetched),
+								zap.Int64("sent", sent),
 								zap.String("last_id", lastID),
 							}
 							s.logger.Info("vehicles resynced", fields...)
@@ -381,7 +397,10 @@ func (s *Sync) run(ctx context.Context) error {
 		wg.Go(func() {
 			s.logger.Info("starting accounts sync")
 			for {
-				if count, err := s.accounts.Sync(ctx); err != nil {
+				startedAt := time.Now()
+				count, err := s.accounts.Sync(ctx)
+				recordSyncMetrics("accounts", startedAt, count, count, err)
+				if err != nil {
 					s.logger.Error("error during accounts sync", zap.Error(err))
 				} else {
 					s.logger.Info("accounts synced", zap.Int64("count", count))
@@ -406,7 +425,10 @@ func (s *Sync) syncBaseData(ctx context.Context) error {
 	errs := multierr.Combine()
 
 	if s.cfg.Load().Tables.Jobs.Enabled {
-		if count, err := s.jobs.Sync(ctx); err != nil {
+		startedAt := time.Now()
+		count, err := s.jobs.Sync(ctx)
+		recordSyncMetrics("jobs", startedAt, count, count, err)
+		if err != nil {
 			errs = multierr.Append(errs, err)
 			s.logger.Error("error during jobs sync", zap.Error(err))
 		} else {
@@ -415,7 +437,10 @@ func (s *Sync) syncBaseData(ctx context.Context) error {
 	}
 
 	if s.cfg.Load().Tables.Licenses.Enabled {
-		if count, err := s.licenses.Sync(ctx); err != nil {
+		startedAt := time.Now()
+		count, err := s.licenses.Sync(ctx)
+		recordSyncMetrics("licenses", startedAt, count, count, err)
+		if err != nil {
 			errs = multierr.Append(errs, err)
 			s.logger.Error("error during licenses sync", zap.Error(err))
 		} else {

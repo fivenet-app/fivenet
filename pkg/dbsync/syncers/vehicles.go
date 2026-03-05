@@ -64,10 +64,11 @@ func NewVehiclesSync(
 	}
 }
 
-func (s *VehiclesSync) Sync(ctx context.Context) (int64, string, *time.Time, error) {
+func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, *time.Time, error) {
 	limit := s.cfg.Limits.Vehicles
 
-	var total int64
+	var totalFetched int64
+	var totalSent int64
 	lastID := ""
 	var lastUpdatedAt *time.Time
 	prevID := ""
@@ -76,10 +77,11 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, string, *time.Time, err
 	for batches := 0; ; batches++ {
 		fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx)
 		if err != nil {
-			return total, lastID, lastUpdatedAt, err
+			return totalFetched, totalSent, lastID, lastUpdatedAt, err
 		}
 
-		total += sent
+		totalFetched += fetched
+		totalSent += sent
 		if cursorID != "" {
 			lastID = cursorID
 		}
@@ -123,17 +125,17 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, string, *time.Time, err
 		}
 	}
 
-	return total, lastID, lastUpdatedAt, nil
+	return totalFetched, totalSent, lastID, lastUpdatedAt, nil
 }
 
-func (s *VehiclesSync) Resync(ctx context.Context) (int64, string, *time.Time, error) {
+func (s *VehiclesSync) Resync(ctx context.Context) (int64, int64, string, *time.Time, error) {
 	// Ensure last check is nil when we don't want to save it
 	if !s.saveUpdatedAt {
 		s.state.SetLastCheck(nil)
 	}
 
-	_, sent, cursorID, cursorTime, err := s.syncOnce(ctx)
-	return sent, cursorID, cursorTime, err
+	fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx)
+	return fetched, sent, cursorID, cursorTime, err
 }
 
 func (s *VehiclesSync) syncOnce(

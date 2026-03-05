@@ -90,44 +90,21 @@ func (s *State) load() error {
 		return err
 	}
 
-	if s.Jobs == nil {
-		s.Jobs = &TableSyncState{dss: s}
-	} else {
-		s.Jobs.dss = s
-	}
-	if s.Licenses == nil {
-		s.Licenses = &TableSyncState{dss: s}
-	} else {
-		s.Licenses.dss = s
-	}
+	s.Jobs = s.Jobs.setup(s, "jobs")
+	s.Licenses = s.Licenses.setup(s, "licenses")
+	s.Accounts = s.Accounts.setup(s, "accounts")
+	s.Users = s.Users.setup(s, "users")
+	s.UsersResync = s.UsersResync.setup(s, "users_resync")
+	s.Vehicles = s.Vehicles.setup(s, "vehicles")
+	s.VehiclesResync = s.VehiclesResync.setup(s, "vehicles_resync")
 
-	if s.Accounts == nil {
-		s.Accounts = &TableSyncState{dss: s}
-	} else {
-		s.Accounts.dss = s
-	}
-
-	if s.Users == nil {
-		s.Users = &TableSyncState{dss: s}
-	} else {
-		s.Users.dss = s
-	}
-	if s.UsersResync == nil {
-		s.UsersResync = &TableSyncState{dss: s}
-	} else {
-		s.UsersResync.dss = s
-	}
-
-	if s.Vehicles == nil {
-		s.Vehicles = &TableSyncState{dss: s}
-	} else {
-		s.Vehicles.dss = s
-	}
-	if s.VehiclesResync == nil {
-		s.VehiclesResync = &TableSyncState{dss: s}
-	} else {
-		s.VehiclesResync.dss = s
-	}
+	s.Jobs.setMetrics()
+	s.Licenses.setMetrics()
+	s.Accounts.setMetrics()
+	s.Users.setMetrics()
+	s.UsersResync.setMetrics()
+	s.Vehicles.setMetrics()
+	s.VehiclesResync.setMetrics()
 
 	return nil
 }
@@ -154,9 +131,29 @@ func (s *State) save() error {
 
 type TableSyncState struct {
 	dss *State
+	key string
 
 	LastCheck *time.Time `yaml:"lastCheck"`
 	LastID    *string    `yaml:"lastId"`
+}
+
+func (s *TableSyncState) setup(dss *State, key string) *TableSyncState {
+	if s == nil {
+		s = &TableSyncState{}
+	}
+
+	s.dss = dss
+	s.key = key
+
+	return s
+}
+
+func (s *TableSyncState) setMetrics() {
+	if s == nil {
+		return
+	}
+
+	setCursorMetrics(s.key, s.LastCheck)
 }
 
 func (s *TableSyncState) SetCursor(lastCheck *time.Time, lastId *string) {
@@ -166,6 +163,7 @@ func (s *TableSyncState) SetCursor(lastCheck *time.Time, lastId *string) {
 	if s.dss == nil {
 		s.LastCheck = lastCheck
 		s.LastID = lastId
+		s.setMetrics()
 		return
 	}
 
@@ -174,6 +172,7 @@ func (s *TableSyncState) SetCursor(lastCheck *time.Time, lastId *string) {
 
 	s.LastCheck = lastCheck
 	s.LastID = lastId
+	s.setMetrics()
 
 	if err := s.dss.save(); err != nil {
 		s.dss.logger.Error("failed to save state", zap.Error(err))
@@ -190,12 +189,14 @@ func (s *TableSyncState) SetLastCheck(t *time.Time) {
 	}
 	if s.dss == nil {
 		s.LastCheck = t
+		s.setMetrics()
 		return
 	}
 
 	s.dss.mu.Lock()
 	defer s.dss.mu.Unlock()
 	s.LastCheck = t
+	s.setMetrics()
 
 	if err := s.dss.save(); err != nil {
 		s.dss.logger.Error("failed to save state", zap.Error(err))

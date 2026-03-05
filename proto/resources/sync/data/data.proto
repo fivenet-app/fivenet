@@ -8,7 +8,6 @@ import "resources/livemap/coords.proto";
 import "resources/sync/activity/activity.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/licenses/licenses.proto";
-import "resources/users/props/props.proto";
 import "resources/users/user.proto";
 import "resources/vehicles/vehicles.proto";
 import "tagger/tagger.proto";
