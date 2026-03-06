@@ -15,9 +15,15 @@ import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/resources/settings/perm
 import EffectivePermsSlideover from './EffectivePermsSlideover.vue';
 import { isEmptyAttributes } from './helpers';
 
-const props = defineProps<{
-    roleId: number;
-}>();
+const props = withDefaults(
+    defineProps<{
+        roleId: number;
+        roleCount?: number;
+    }>(),
+    {
+        roleCount: 0,
+    },
+);
 
 const emit = defineEmits<{
     (e: 'deleted'): void;
@@ -238,6 +244,29 @@ watch(props, async () => {
     }
 });
 
+function resetRole(): void {
+    permStates.value.forEach((_, key) => permStates.value.set(key, undefined));
+    console.log([...attrList.value.entries()]);
+    attrList.value.forEach((attr) => {
+        if (!attr.value) return;
+
+        switch (attr.value.validValues.oneofKind) {
+            case 'stringList':
+                attr.value.validValues.stringList.strings = [];
+                break;
+            case 'jobList':
+                attr.value.validValues.jobList.strings = [];
+                break;
+            case 'jobGradeList':
+                attr.value.validValues.jobGradeList.fineGrained = false;
+                attr.value.validValues.jobGradeList.jobs = {};
+                attr.value.validValues.jobGradeList.grades = {};
+                break;
+        }
+    });
+    changed.value = true;
+}
+
 type CopyRole = {
     roleId: number;
     attrList: RoleAttribute[];
@@ -388,13 +417,13 @@ const accordionCategories = computed(() =>
 const canUpdate = can('settings.SettingsService/UpdateRolePerms');
 
 const effectivePermsSlideover = overlay.create(EffectivePermsSlideover, { props: { roleId: props.roleId } });
-const confirmDeleteModal = overlay.create(ConfirmModal);
+const confirmModal = overlay.create(ConfirmModal);
 const confirmImpersonateModal = overlay.create(ConfirmModal, {
     props: {
         title: t('components.settings.role_view.impersonate_confirm.title'),
         description: t('components.settings.role_view.impersonate_confirm.description'),
         color: 'warning',
-        confirm: async () => role.value && deleteRole(role.value.id),
+        confirm: async () => role.value && impersonateRole(role.value.grade),
     },
 });
 
@@ -453,13 +482,32 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                         <RefreshButton :loading="isRequestPending(status)" icon-only @click="() => refresh()" />
 
+                        <UTooltip :text="$t('common.reset')">
+                            <UButton
+                                variant="link"
+                                icon="i-mdi-clear"
+                                color="error"
+                                @click="
+                                    confirmModal.open({
+                                        confirm: () => resetRole(),
+                                    })
+                                "
+                            />
+                        </UTooltip>
+
                         <UTooltip :text="$t('common.delete')">
+                            <!-- Only allow deletion if there is more than one role -->
                             <UButton
                                 v-if="can('settings.SettingsService/DeleteRole').value"
                                 variant="link"
                                 icon="i-mdi-delete"
                                 color="error"
-                                @click="confirmDeleteModal.open()"
+                                :disabled="roleCount <= 1"
+                                @click="
+                                    confirmModal.open({
+                                        confirm: async () => role && deleteRole(role.id),
+                                    })
+                                "
                             />
                         </UTooltip>
                     </UFieldGroup>

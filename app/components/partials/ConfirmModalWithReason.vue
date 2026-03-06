@@ -41,7 +41,7 @@ const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await props.confirm(event.data.reason).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-    emit('close', false);
+    emit('close', true);
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
@@ -68,8 +68,7 @@ const formRef = useTemplateRef('formRef');
                 color="neutral"
                 :label="$t('common.cancel')"
                 @click="
-                    if (cancel) cancel();
-
+                    cancel?.();
                     $emit('close', false);
                 "
             />

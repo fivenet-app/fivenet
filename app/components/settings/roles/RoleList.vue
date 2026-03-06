@@ -224,7 +224,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         icon="i-mdi-select"
                         :message="$t('common.none_selected', [$t('common.role')])"
                     />
-                    <NuxtPage v-else @deleted="refresh()" />
+                    <NuxtPage v-else :role-count="sortedRoles.length" @deleted="refresh()" />
                 </div>
             </div>
         </template>

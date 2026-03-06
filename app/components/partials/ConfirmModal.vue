@@ -45,9 +45,7 @@ defineEmits<{
                 color="neutral"
                 :label="$t('common.cancel')"
                 @click="
-                    if (cancel) {
-                        cancel();
-                    }
+                    cancel?.();
                     $emit('close', false);
                 "
             />

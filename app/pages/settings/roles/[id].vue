@@ -16,6 +16,15 @@ definePageMeta({
     },
 });
 
+withDefaults(
+    defineProps<{
+        roleCount?: number;
+    }>(),
+    {
+        roleCount: 0,
+    },
+);
+
 defineEmits<{
     (e: 'deleted'): void;
 }>();
@@ -29,6 +38,7 @@ const roleId = useRoute('settings-roles-id').params.id;
         <RoleView
             v-else
             :role-id="parseInt(roleId)"
+            :role-count="roleCount"
             @deleted="
                 navigateTo({ name: 'settings-roles' });
                 $emit('deleted');
