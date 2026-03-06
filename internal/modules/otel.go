@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
@@ -52,7 +53,9 @@ type TracingResults struct {
 // information about the application.
 func NewTracerProvider(p TracingParams) (TracingResults, error) {
 	if !p.Config.OTLP.Enabled {
-		tp := tracesdk.NewTracerProvider()
+		tp := tracesdk.NewTracerProvider(
+			tracesdk.WithSampler(tracesdk.NeverSample()),
+		)
 		otel.SetTracerProvider(tp)
 
 		return TracingResults{
@@ -69,8 +72,6 @@ func NewTracerProvider(p TracingParams) (TracingResults, error) {
 			err,
 		)
 	}
-
-	// Log Exporter - set in the logger module
 
 	// Metrics
 	metricExporter, err := newMetricsExporter(
@@ -152,6 +153,7 @@ func newAttributes(cfg config.OTLPConfig) (*resource.Resource, error) {
 	customAttrs := []attribute.KeyValue{
 		semconv.ServiceNamespace("fivenet"),
 		semconv.HostName(hostname),
+		semconv.ServiceVersion(version.Version),
 		attribute.String("environment", cfg.Environment),
 	}
 
