@@ -65,7 +65,6 @@ func (s *Server) ListColleagues(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	tUserJobs := table.FivenetUserJobs
 	tColleague := table.FivenetUser.AS("colleague")
 
 	condition := mysql.AND(
@@ -359,7 +358,10 @@ func (s *Server) getColleague(
 		FROM(
 			tColleague.
 				INNER_JOIN(tUserJobs,
-					tUserJobs.UserID.EQ(tColleague.ID),
+					mysql.AND(
+						tUserJobs.UserID.EQ(tColleague.ID),
+						tUserJobs.Job.EQ(mysql.String(job)),
+					),
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tColleague.ID),
