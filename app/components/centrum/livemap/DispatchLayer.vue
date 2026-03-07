@@ -18,33 +18,26 @@ const centrumStore = useCentrumStore();
 const { dispatches, acls, ownDispatches, settings } = storeToRefs(centrumStore);
 
 const settingsStore = useSettingsStore();
-const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory, removeLivemapLayer } = settingsStore;
+const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory } = settingsStore;
 const { livemap, livemapLayers } = storeToRefs(settingsStore);
 
 const dispatchQueryRaw = ref<string>('');
 const dispatchQuery = computed(() => dispatchQueryRaw.value.trim().toLowerCase());
 
-const activeJobLayers = computed(() =>
-    livemapLayers.value
-        .filter((l) => l.key.startsWith('dispatches_job_') && l.visible)
-        .map((l) => l.key.replace('dispatches_job_', '')),
-);
-
-const dispatchesFiltered = computedAsync(async () =>
-    [...(props.dispatchList ?? dispatches.value.values() ?? [])].filter(
-        (m) =>
-            !ownDispatches.value.includes(m.id) &&
-            m.jobs?.jobs.some((j) => activeJobLayers.value.includes(j.name)) &&
-            (m.id.toString().startsWith(dispatchQuery.value) ||
-                m.message.toLowerCase().includes(dispatchQuery.value) ||
-                (m.creator?.firstname + ' ' + m.creator?.lastname).toLowerCase().includes(dispatchQuery.value)),
-    ),
+const dispatchesFiltered = computedAsync(
+    async () =>
+        [...(props.dispatchList ?? dispatches.value.values() ?? [])].filter(
+            (m) =>
+                !ownDispatches.value.includes(m.id) &&
+                (m.id.toString().startsWith(dispatchQuery.value) ||
+                    m.message.toLowerCase().includes(dispatchQuery.value) ||
+                    (m.creator?.firstname + ' ' + m.creator?.lastname).toLowerCase().includes(dispatchQuery.value)),
+        ),
+    [],
 );
 
 watch(settings, () => {
     if (!settings.value?.enabled) return;
-
-    removeLivemapLayer('dispatches_all');
 
     addOrUpdateLivemapLayer({
         key: 'dispatches_own',
@@ -100,16 +93,16 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover);
         />
     </LLayerGroup>
 
-    <!-- TODO use dispatches_job_${job} layer -->
     <LLayerGroup
-        key="dispatches_all"
+        v-for="job in acls?.dispatches?.jobs"
+        :key="`dispatches_job_${job.job}`"
         :name="$t('common.dispatch', 2)"
         layer-type="overlay"
-        visible
-        :options="{ name: 'dispatches_all' }"
+        :visible="livemapLayers.find((l) => l.key === `dispatches_job_${job.job}`)?.visible === true"
+        :options="{ name: `dispatches_job_${job.job}` }"
     >
         <DispatchMarker
-            v-for="dispatch in dispatchesFiltered"
+            v-for="dispatch in [...dispatchesFiltered?.values()].filter((d) => d.jobs?.jobs.some((j) => j.name === job.job))"
             :key="dispatch.id"
             :dispatch="dispatch"
             :size="livemap.markerSize"
