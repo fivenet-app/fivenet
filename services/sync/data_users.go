@@ -330,20 +330,20 @@ func (s *Server) createUser(
 			user.Playtime,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tUsers.ID.SET(mysql.IntExp(mysql.Raw("VALUES(`id`)"))),
-			tUsers.AccountID.SET(mysql.IntExp(mysql.Raw("VALUES(`account_id`)"))),
-			tUsers.License.SET(mysql.StringExp(mysql.Raw("VALUES(`license`)"))),
-			tUsers.Identifier.SET(mysql.StringExp(mysql.Raw("VALUES(`identifier`)"))),
-			tUsers.Firstname.SET(mysql.StringExp(mysql.Raw("VALUES(`firstname`)"))),
-			tUsers.Lastname.SET(mysql.StringExp(mysql.Raw("VALUES(`lastname`)"))),
-			tUsers.Dateofbirth.SET(mysql.StringExp(mysql.Raw("VALUES(`dateofbirth`)"))),
-			tUsers.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
-			tUsers.JobGrade.SET(mysql.IntExp(mysql.Raw("VALUES(`job_grade`)"))),
-			tUsers.Sex.SET(mysql.StringExp(mysql.Raw("VALUES(`sex`)"))),
-			tUsers.PhoneNumber.SET(mysql.StringExp(mysql.Raw("VALUES(`phone_number`)"))),
-			tUsers.Height.SET(mysql.FloatExp(mysql.Raw("VALUES(`height`)"))),
-			tUsers.Visum.SET(mysql.IntExp(mysql.Raw("VALUES(`visum`)"))),
-			tUsers.Playtime.SET(mysql.IntExp(mysql.Raw("VALUES(`playtime`)"))),
+			tUsers.ID.SET(mysql.RawInt("VALUES(`id`)")),
+			tUsers.AccountID.SET(mysql.RawInt("VALUES(`account_id`)")),
+			tUsers.License.SET(mysql.RawString("VALUES(`license`)")),
+			tUsers.Identifier.SET(mysql.RawString("VALUES(`identifier`)")),
+			tUsers.Firstname.SET(mysql.RawString("VALUES(`firstname`)")),
+			tUsers.Lastname.SET(mysql.RawString("VALUES(`lastname`)")),
+			tUsers.Dateofbirth.SET(mysql.RawString("VALUES(`dateofbirth`)")),
+			tUsers.Job.SET(mysql.RawString("VALUES(`job`)")),
+			tUsers.JobGrade.SET(mysql.RawInt("VALUES(`job_grade`)")),
+			tUsers.Sex.SET(mysql.RawString("VALUES(`sex`)")),
+			tUsers.PhoneNumber.SET(mysql.RawString("VALUES(`phone_number`)")),
+			tUsers.Height.SET(mysql.RawFloat("VALUES(`height`)")),
+			tUsers.Visum.SET(mysql.RawInt("VALUES(`visum`)")),
+			tUsers.Playtime.SET(mysql.RawInt("VALUES(`playtime`)")),
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -442,11 +442,11 @@ func (s *Server) createOrUpdateSyncUserEntry(
 			hash,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tSyncUser.Identifier.SET(mysql.StringExp(mysql.Raw("VALUES(`identifier`)"))),
-			tSyncUser.SourceUpdatedAt.SET(mysql.DateTimeExp(mysql.Raw("VALUES(`source_updated_at`)"))),
-			tSyncUser.LastSyncedAt.SET(mysql.DateTimeExp(mysql.Raw("VALUES(`last_synced_at`)"))),
-			tSyncUser.DataJSON.SET(mysql.StringExp(mysql.Raw("VALUES(`data_json`)"))),
-			tSyncUser.DataHash.SET(mysql.IntExp(mysql.Raw("VALUES(`data_hash`)"))),
+			tSyncUser.Identifier.SET(mysql.RawString("VALUES(`identifier`)")),
+			tSyncUser.SourceUpdatedAt.SET(mysql.RawTimestamp("VALUES(`source_updated_at`)")),
+			tSyncUser.LastSyncedAt.SET(mysql.RawTimestamp("VALUES(`last_synced_at`)")),
+			tSyncUser.DataJSON.SET(mysql.RawString("VALUES(`data_json`)")),
+			tSyncUser.DataHash.SET(mysql.RawInt("VALUES(`data_hash`)")),
 		)
 
 	if _, err := syncStmt.ExecContext(ctx, tx); err != nil {
@@ -658,7 +658,7 @@ func (s *Server) handleUserLicenses(
 
 		stmt = stmt.
 			ON_DUPLICATE_KEY_UPDATE(
-				tCitizensLicenses.Type.SET(mysql.StringExp(mysql.Raw("VALUES(`type`)"))),
+				tCitizensLicenses.Type.SET(mysql.RawString("VALUES(`type`)")),
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -767,9 +767,9 @@ func (s *Server) handleUserJobs(
 
 		stmt = stmt.
 			ON_DUPLICATE_KEY_UPDATE(
-				tCitizensJobs.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
-				tCitizensJobs.Grade.SET(mysql.IntExp(mysql.Raw("VALUES(`grade`)"))),
-				tCitizensJobs.IsPrimary.SET(mysql.BoolExp(mysql.Raw("VALUES(`is_primary`)"))),
+				tCitizensJobs.Job.SET(mysql.RawString("VALUES(`job`)")),
+				tCitizensJobs.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
+				tCitizensJobs.IsPrimary.SET(mysql.RawBool("VALUES(`is_primary`)")),
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -918,10 +918,10 @@ func (s *Server) handleUserPhoneNumbers(
 		stmt = stmt.
 			ON_DUPLICATE_KEY_UPDATE(
 				tCitizensPhoneNumbers.PhoneNumber.SET(
-					mysql.StringExp(mysql.Raw("VALUES(`phone_number`)")),
+					mysql.RawString("VALUES(`phone_number`)"),
 				),
 				tCitizensPhoneNumbers.IsPrimary.SET(
-					mysql.BoolExp(mysql.Raw("VALUES(`is_primary`)")),
+					mysql.RawBool("VALUES(`is_primary`)"),
 				),
 			)
 

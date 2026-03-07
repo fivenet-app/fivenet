@@ -910,7 +910,17 @@ func (s *Server) createApprovalTasks(
 			)
 		}
 
-		// TODO how should we handle duplicates in the database? This mainly concerns completed tasks that would need to be updated in case the count is increased.
+		// Override any duplicates.. easiest way to handle this.
+		ins = ins.
+			ON_DUPLICATE_KEY_UPDATE(
+				tApprovalTasks.Job.SET(mysql.RawString("VALUES(`job`)")),
+				tApprovalTasks.MinimumGrade.SET(mysql.RawInt("VALUES(`minimum_grade`)")),
+				tApprovalTasks.Label.SET(mysql.RawString("VALUES(`label`)")),
+				tApprovalTasks.SignatureRequired.SET(mysql.RawBool("VALUES(`signature_required`)")),
+				tApprovalTasks.SlotNo.SET(mysql.RawInt("VALUES(`slot_no`)")),
+				tApprovalTasks.Comment.SET(mysql.RawString("VALUES(`comment`)")),
+				tApprovalTasks.DueAt.SET(mysql.RawTimestamp("VALUES(`due_at`)")),
+			)
 
 		if _, err := ins.ExecContext(ctx, tx); err != nil {
 			return 0, 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -1614,7 +1624,7 @@ func (s *Server) DecideApproval(
 				dbutils.Int64P(taskIDForArtifact),
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tApprovals.SnapshotDate.SET(mysql.DateTimeExp(mysql.RawDate("VALUES(`snapshot_date`)"))),
+				tApprovals.SnapshotDate.SET(mysql.RawTimestamp("VALUES(`snapshot_date`)")),
 				tApprovals.UserID.SET(mysql.Int32(userInfo.GetUserId())),
 				tApprovals.UserJob.SET(mysql.String(userInfo.GetJob())),
 				tApprovals.UserJobGrade.SET(mysql.Int32(userInfo.GetJobGrade())),

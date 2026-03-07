@@ -80,7 +80,7 @@ func (s *Server) handleLicensesData(
 			tLicenses.Label,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tLicenses.Label.SET(mysql.StringExp(mysql.Raw("VALUES(`label`)"))),
+			tLicenses.Label.SET(mysql.RawString("VALUES(`label`)")),
 		)
 
 	for _, license := range data.Licenses.GetLicenses() {

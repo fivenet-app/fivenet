@@ -159,9 +159,9 @@ func (s *Server) ManageLabels(
 				).
 				MODELS(toCreate).
 				ON_DUPLICATE_KEY_UPDATE(
-					tJobLabels.Name.SET(mysql.StringExp(mysql.Raw("VALUES(`name`)"))),
-					tJobLabels.Color.SET(mysql.StringExp(mysql.Raw("VALUES(`color`)"))),
-					tJobLabels.Order.SET(mysql.IntExp(mysql.Raw("VALUES(`order`)"))),
+					tJobLabels.Name.SET(mysql.RawString("VALUES(`name`)")),
+					tJobLabels.Color.SET(mysql.RawString("VALUES(`color`)")),
+					tJobLabels.Order.SET(mysql.RawInt("VALUES(`order`)")),
 					tJobLabels.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 				)
 

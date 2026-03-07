@@ -585,7 +585,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 
 			stmt = stmt.
 				ON_DUPLICATE_KEY_UPDATE(
-					tUnitUser.UnitID.SET(mysql.IntExp(mysql.Raw("VALUES(`unit_id`)"))),
+					tUnitUser.UnitID.SET(mysql.RawInt("VALUES(`unit_id`)")),
 				)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {

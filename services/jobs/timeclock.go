@@ -81,10 +81,9 @@ func (s *Server) ListTimeclock(
 			))
 		} else if req.GetMode() == jobstimeclock.TimeclockMode_TIMECLOCK_MODE_WEEKLY {
 			if req.GetDate().GetEnd() != nil {
-				condition = condition.AND(mysql.BoolExp(mysql.Raw("YEARWEEK(`timeclock_entry`.`date`, 1) = YEARWEEK($date, 1)",
+				condition = condition.AND(mysql.RawBool("YEARWEEK(`timeclock_entry`.`date`, 1) = YEARWEEK($date, 1)",
 					mysql.RawArgs{"$date": req.GetDate().GetEnd().AsTime()},
-				)),
-				)
+				))
 			}
 		} else {
 			if req.GetDate().GetStart() != nil {

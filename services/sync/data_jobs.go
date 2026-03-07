@@ -29,8 +29,8 @@ func (s *Server) handleJobsData(
 			tJobs.Label,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tJobs.Name.SET(mysql.StringExp(mysql.Raw("VALUES(`name`)"))),
-			tJobs.Label.SET(mysql.StringExp(mysql.Raw("VALUES(`label`)"))),
+			tJobs.Name.SET(mysql.RawString("VALUES(`name`)")),
+			tJobs.Label.SET(mysql.RawString("VALUES(`label`)")),
 		)
 
 	for _, job := range data.Jobs.GetJobs() {
@@ -149,9 +149,9 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 				tJobsGrades.Label,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tJobsGrades.JobName.SET(mysql.StringExp(mysql.Raw("VALUES(`job_name`)"))),
-				tJobsGrades.Grade.SET(mysql.IntExp(mysql.Raw("VALUES(`grade`)"))),
-				tJobsGrades.Label.SET(mysql.StringExp(mysql.Raw("VALUES(`label`)"))),
+				tJobsGrades.JobName.SET(mysql.RawString("VALUES(`job_name`)")),
+				tJobsGrades.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
+				tJobsGrades.Label.SET(mysql.RawString("VALUES(`label`)")),
 			)
 
 		for _, grade := range toCreate {

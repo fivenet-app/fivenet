@@ -65,11 +65,11 @@ func (s *Server) handleUserLocations(
 
 	stmt = stmt.
 		ON_DUPLICATE_KEY_UPDATE(
-			tLocations.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
-			tLocations.JobGrade.SET(mysql.IntExp(mysql.Raw("VALUES(`job_grade`)"))),
-			tLocations.X.SET(mysql.FloatExp(mysql.Raw("VALUES(`x`)"))),
-			tLocations.Y.SET(mysql.FloatExp(mysql.Raw("VALUES(`y`)"))),
-			tLocations.Hidden.SET(mysql.BoolExp(mysql.Raw("VALUES(`hidden`)"))),
+			tLocations.Job.SET(mysql.RawString("VALUES(`job`)")),
+			tLocations.JobGrade.SET(mysql.RawInt("VALUES(`job_grade`)")),
+			tLocations.X.SET(mysql.RawFloat("VALUES(`x`)")),
+			tLocations.Y.SET(mysql.RawFloat("VALUES(`y`)")),
+			tLocations.Hidden.SET(mysql.RawBool("VALUES(`hidden`)")),
 		)
 
 	rowsAffected := int64(0)

@@ -212,9 +212,9 @@ func (s *SettingsDB) updateDB(
 			tCentrumSettings.Public.SET(mysql.Bool(settings.GetPublic())),
 			tCentrumSettings.Mode.SET(mysql.Int32(int32(settings.GetMode()))),
 			tCentrumSettings.FallbackMode.SET(mysql.Int32(int32(settings.GetFallbackMode()))),
-			tCentrumSettings.PredefinedStatus.SET(mysql.StringExp(mysql.Raw("VALUES(`predefined_status`)"))),
-			tCentrumSettings.Timings.SET(mysql.StringExp(mysql.Raw("VALUES(`timings`)"))),
-			tCentrumSettings.Configuration.SET(mysql.StringExp(mysql.Raw("VALUES(`configuration`)"))),
+			tCentrumSettings.PredefinedStatus.SET(mysql.RawString("VALUES(`predefined_status`)")),
+			tCentrumSettings.Timings.SET(mysql.RawString("VALUES(`timings`)")),
+			tCentrumSettings.Configuration.SET(mysql.RawString("VALUES(`configuration`)")),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

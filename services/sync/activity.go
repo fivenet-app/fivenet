@@ -316,7 +316,7 @@ func (s *Server) handleTimeclockEntry(
 		stmt := tTimeClock.
 			UPDATE().
 			SET(
-				tTimeClock.SpentTime.SET(mysql.FloatExp(mysql.Raw("`spent_time` + CAST((TIMESTAMPDIFF(SECOND, `start_time`, `end_time`) / 3600) AS DECIMAL(10,2))"))),
+				tTimeClock.SpentTime.SET(mysql.RawFloat("`spent_time` + CAST((TIMESTAMPDIFF(SECOND, `start_time`, `end_time`) / 3600) AS DECIMAL(10,2))")),
 				tTimeClock.EndTime.SET(mysql.CURRENT_TIMESTAMP()),
 			).
 			WHERE(mysql.AND(

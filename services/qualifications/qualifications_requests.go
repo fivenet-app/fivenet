@@ -406,7 +406,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				tQualiRequests.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-				tQualiRequests.UserComment.SET(mysql.StringExp(mysql.Raw("VALUES(`user_comment`)"))),
+				tQualiRequests.UserComment.SET(mysql.RawString("VALUES(`user_comment`)")),
 				tQualiRequests.Status.SET(mysql.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_PENDING))),
 				tQualiRequests.ApprovedAt.SET(mysql.DateTimeExp(mysql.NULL)),
 				tQualiRequests.ApproverComment.SET(mysql.StringExp(mysql.NULL)),

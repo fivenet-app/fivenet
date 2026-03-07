@@ -85,8 +85,8 @@ func (s *Server) ManageLabels(
 				).
 				MODELS(toCreate).
 				ON_DUPLICATE_KEY_UPDATE(
-					tCitizensLabelsJob.Name.SET(mysql.StringExp(mysql.Raw("VALUES(`name`)"))),
-					tCitizensLabelsJob.Color.SET(mysql.StringExp(mysql.Raw("VALUES(`color`)"))),
+					tCitizensLabelsJob.Name.SET(mysql.RawString("VALUES(`name`)")),
+					tCitizensLabelsJob.Color.SET(mysql.RawString("VALUES(`color`)")),
 				)
 
 			if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {

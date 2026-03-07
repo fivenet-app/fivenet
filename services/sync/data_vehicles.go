@@ -53,12 +53,12 @@ func (s *Server) handleVehiclesData(
 
 	stmt = stmt.
 		ON_DUPLICATE_KEY_UPDATE(
-			tVehicles.UserID.SET(mysql.IntExp(mysql.Raw("VALUES(`user_id`)"))),
-			tVehicles.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
-			tVehicles.Plate.SET(mysql.StringExp(mysql.Raw("VALUES(`plate`)"))),
-			tVehicles.Model.SET(mysql.StringExp(mysql.Raw("VALUES(`model`)"))),
-			tVehicles.Type.SET(mysql.StringExp(mysql.Raw("VALUES(`type`)"))),
-			tVehicles.Data.SET(mysql.StringExp(mysql.Raw("VALUES(`data`)"))),
+			tVehicles.UserID.SET(mysql.RawInt("VALUES(`user_id`)")),
+			tVehicles.Job.SET(mysql.RawString("VALUES(`job`)")),
+			tVehicles.Plate.SET(mysql.RawString("VALUES(`plate`)")),
+			tVehicles.Model.SET(mysql.RawString("VALUES(`model`)")),
+			tVehicles.Type.SET(mysql.RawString("VALUES(`type`)")),
+			tVehicles.Data.SET(mysql.RawString("VALUES(`data`)")),
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)

@@ -88,11 +88,11 @@ func (s *Server) SetJobProps(
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tJobProps.LivemapMarkerColor.SET(mysql.String(req.GetJobProps().GetLivemapMarkerColor())),
-			tJobProps.RadioFrequency.SET(mysql.StringExp(mysql.Raw("VALUES(`radio_frequency`)"))),
-			tJobProps.QuickButtons.SET(mysql.StringExp(mysql.Raw("VALUES(`quick_buttons`)"))),
-			tJobProps.DiscordGuildID.SET(mysql.StringExp(mysql.Raw("VALUES(`discord_guild_id`)"))),
-			tJobProps.DiscordSyncSettings.SET(mysql.StringExp(mysql.Raw("VALUES(`discord_sync_settings`)"))),
-			tJobProps.Settings.SET(mysql.StringExp(mysql.Raw("VALUES(`settings`)"))),
+			tJobProps.RadioFrequency.SET(mysql.RawString("VALUES(`radio_frequency`)")),
+			tJobProps.QuickButtons.SET(mysql.RawString("VALUES(`quick_buttons`)")),
+			tJobProps.DiscordGuildID.SET(mysql.RawString("VALUES(`discord_guild_id`)")),
+			tJobProps.DiscordSyncSettings.SET(mysql.RawString("VALUES(`discord_sync_settings`)")),
+			tJobProps.Settings.SET(mysql.RawString("VALUES(`settings`)")),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
