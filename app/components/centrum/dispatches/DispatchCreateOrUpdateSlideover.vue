@@ -39,7 +39,7 @@ const schema = z.object({
     description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
     anon: z.coerce.boolean(),
     jobs: z.object({
-        jobs: z.coerce.string().min(1).max(32).array().min(1).max(5).default([]),
+        jobs: z.coerce.string().min(1).max(32).array().min(0).max(5).default([]),
     }),
 });
 

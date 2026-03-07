@@ -275,7 +275,7 @@ async function onMapReady(m: Map): Promise<void> {
         map.eachLayer((layer) => {
             const name = (layer.options as { name?: string })['name'];
             if (name === undefined) return;
-            const hidden = !livemapLayers.value.find((l) => l.key === name)?.visible;
+            const hidden = name !== 'dispatches_all' && !livemapLayers.value.find((l) => l.key === name)?.visible;
 
             eachMarkerIn(layer, (m) => {
                 const pos = map.latLngToContainerPoint(m.getLatLng());

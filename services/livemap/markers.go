@@ -343,6 +343,7 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 			),
 		)).
 		ORDER_BY(
+			tMarkers.Job.ASC(),
 			tMarkers.ID.ASC(),
 		)
 
