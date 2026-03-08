@@ -19,6 +19,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
+import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
@@ -56,6 +57,9 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(`document-${props.documentId}`, () => documentsDocuments.getDocument(props.documentId));
+
+const documentData = computed<DocumentData | undefined>(() => doc.value?.document?.data);
+provide('documents:editor:data', documentData);
 
 useHead({
     title: () =>

@@ -55,6 +55,18 @@ export default defineComponent({
                 });
             }
 
+            // 4.1 Penalty calculator embed marker (template preview fallback)
+            if (
+                value.tag === 'div' &&
+                (value.attrs?.['data-embed'] === 'penalty-calculator' ||
+                    value.attrs?.['data-type'] === 'penalty-calculator' ||
+                    value.attrs?.['data-type'] === 'penaltyCalculator')
+            ) {
+                return h('div', { class: 'my-2 rounded-md border border-dashed border-neutral-300 p-2 text-sm text-muted' }, [
+                    'Penalty Calculator',
+                ]);
+            }
+
             // 5. Tag remapping
             if (tagRemapping[value.tag]) {
                 return h(tagRemapping[value.tag]!, value.attrs);

@@ -15,15 +15,12 @@ import type { SortByColumn } from '~~/gen/ts/resources/common/database/database'
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/user';
 import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizens/citizens';
-import LabelModal from './LabelModal.vue';
 
 const { t } = useI18n();
 
 const { attr, can, isSuperuser } = useAuth();
 
 const { display } = useAppConfig();
-
-const overlay = useOverlay();
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
@@ -305,8 +302,6 @@ const columns = computed(() =>
 
 const formRef = useTemplateRef('formRef');
 
-const citizenLabelModal = overlay.create(LabelModal);
-
 const input = useTemplateRef('input');
 
 defineShortcuts({
@@ -327,7 +322,7 @@ defineShortcuts({
                         v-if="can('citizens.CitizensService/ManageLabels').value"
                         :label="$t('common.label', 2)"
                         icon="i-mdi-tag"
-                        @click="citizenLabelModal.open({})"
+                        to="/citizens/labels"
                     />
                 </template>
             </UDashboardNavbar>

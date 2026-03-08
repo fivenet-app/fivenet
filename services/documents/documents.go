@@ -624,7 +624,7 @@ func (s *Server) UpdateDocument(
 				int32(content.ContentType_CONTENT_TYPE_TIPTAP_JSON),
 				req.GetContent(),
 				extracted.Text,
-				mysql.NULL,
+				req.GetData(),
 				req.GetMeta().GetState(),
 				req.GetMeta().GetClosed(),
 				req.GetMeta().GetDraft(),

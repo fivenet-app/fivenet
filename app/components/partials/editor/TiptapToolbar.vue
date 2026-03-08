@@ -1,13 +1,16 @@
 <script lang="ts" setup>
-import type { JSONContent, Range } from '@tiptap/core';
+import type { JSONContent } from '@tiptap/core';
 import type { Editor } from '@tiptap/vue-3';
 import z from 'zod';
+import { toPenaltyCalculatorData, type SelectedPenalty } from '~/components/quickbuttons/penaltycalculator/helpers';
 import { fontColors, fonts, highlightColors } from '~/types/editor';
 import type { HistoryContent, Version } from '~/types/history';
+import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import FileListModal from './FileListModal.vue';
 import ImageSelectPopover from './ImageSelectPopover.vue';
+import SearchAndReplacePopover from './SearchAndReplacePopover.vue';
 import SourceCodeModal from './SourceCodeModal.vue';
 import TablePopover from './TablePopover.vue';
 import VersionHistoryModal from './VersionHistoryModal.vue';
@@ -16,6 +19,7 @@ const props = defineProps<{
     editor: Editor;
     disabled?: boolean;
     disableImages?: boolean;
+    showPenaltyCalculatorButton?: boolean;
     historyType?: string;
 
     fileLimit?: number;
@@ -27,6 +31,10 @@ const emits = defineEmits<{
 }>();
 
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
+const selectedPenalties = useState<SelectedPenalty[]>('quickButton:penaltyCalculator:selected', () => [] as SelectedPenalty[]);
+const reduction = useState<number>('quickButton:penaltyCalculator:reduction', () => 0);
+const localDocumentData = ref<DocumentData | undefined>();
+const documentData = inject<Ref<DocumentData | undefined>>('documents:editor:data', localDocumentData);
 
 const overlay = useOverlay();
 
@@ -106,81 +114,6 @@ watch(selectedHighlightColor, () =>
     ed.value?.chain().focus().toggleHighlight({ color: selectedHighlightColor.value.value }).run(),
 );
 
-const searchAndReplace = reactive<{
-    search: string;
-    replace: string;
-    caseSensitive: boolean;
-}>({
-    search: '',
-    replace: '',
-    caseSensitive: false,
-});
-
-const updateSearchReplace = (clearIndex: boolean = false) => {
-    if (!ed.value) return;
-
-    if (clearIndex) ed.value.commands.resetIndex();
-
-    ed.value?.commands.setSearchTerm(searchAndReplace.search);
-    ed.value?.commands.setReplaceTerm(searchAndReplace.replace ?? '');
-    ed.value?.commands.setCaseSensitive(searchAndReplace.caseSensitive);
-};
-
-const goToSelection = () => {
-    if (!ed.value) return;
-
-    const { results, resultIndex } = ed.value!.storage.searchAndReplace;
-    const position: Range | undefined = results[resultIndex];
-
-    if (!position) return;
-
-    ed.value?.commands.setTextSelection(position);
-
-    const { node } = ed.value!.view.domAtPos(ed.value!.state.selection.anchor);
-    node instanceof HTMLElement && node.scrollIntoView({ behavior: 'smooth', block: 'center' });
-};
-
-// Search And Replace Modal
-watch(
-    () => searchAndReplace.search.trim(),
-    (val, oldVal) => {
-        if (!val) clear();
-        if (val !== oldVal) updateSearchReplace(true);
-    },
-);
-
-watch(
-    () => searchAndReplace.replace.trim(),
-    (val, oldVal) => (val === oldVal ? null : updateSearchReplace()),
-);
-
-watch(
-    () => searchAndReplace.caseSensitive,
-    (val, oldVal) => (val === oldVal ? null : updateSearchReplace(true)),
-);
-
-const replace = () => {
-    ed.value?.commands.replace();
-    goToSelection();
-};
-
-const next = () => {
-    ed.value?.commands.nextSearchResult();
-    goToSelection();
-};
-
-const previous = () => {
-    ed.value?.commands.previousSearchResult();
-    goToSelection();
-};
-
-const clear = () => {
-    searchAndReplace.search = searchAndReplace.replace = '';
-    ed.value?.commands.resetIndex();
-};
-
-const replaceAll = () => ed.value?.commands.replaceAll();
-
 function applyVersion(version: Version<HistoryContent>): void {
     emits('update:content', version.content.content);
     files.value = version.content.files;
@@ -190,6 +123,12 @@ function applyVersion(version: Version<HistoryContent>): void {
         description: { key: 'notifications.action_successful.content', parameters: {} },
         type: NotificationType.SUCCESS,
     });
+}
+
+function insertOrFocusPenaltyCalculator(): void {
+    if (!documentData.value) documentData.value = {};
+    documentData.value.penaltyCalculator = toPenaltyCalculatorData(selectedPenalties.value, reduction.value);
+    ed.value?.chain().insertPenaltyCalculator().run();
 }
 
 const formRef = useTemplateRef('formRef');
@@ -711,15 +650,26 @@ const isLinkOpen = ref(false);
                     @click="ed?.chain().focus().setHorizontalRule().run()"
                 />
             </UTooltip>
+
+            <UTooltip v-if="showPenaltyCalculatorButton" :text="$t('components.partials.tiptap_editor.penalty_calculator')">
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-gavel"
+                    :disabled="disabled"
+                    @click="insertOrFocusPenaltyCalculator"
+                />
+            </UTooltip>
+
             <!--
-                    <UButton
-                        color="neutral"
-                        variant="ghost"
-                        icon="i-mdi-format-page-break"
-                        :disabled="disabled"
-                        @click="ed?.chain().focus().setHardBreak().run()"
-                    />
-                    -->
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-format-page-break"
+                    :disabled="disabled"
+                    @click="ed?.chain().focus().setHardBreak().run()"
+                />
+            -->
         </UFieldGroup>
 
         <div class="flex-1"></div>
@@ -739,87 +689,7 @@ const isLinkOpen = ref(false);
             />
         </UTooltip>
 
-        <UPopover>
-            <UTooltip :text="$t('components.partials.tiptap_editor.search_and_replace')">
-                <UButton color="neutral" variant="ghost" icon="i-mdi-text-search" :disabled="disabled" />
-            </UTooltip>
-
-            <template #content>
-                <div class="flex gap-0.5 p-4">
-                    <UForm :state="searchAndReplace" class="flex flex-col gap-2">
-                        <UFormField name="search" :label="$t('common.search')">
-                            <UInput v-model="searchAndReplace.search" class="w-full" :disabled="disabled" />
-                        </UFormField>
-
-                        <UFormField name="replace" :label="$t('components.partials.tiptap_editor.replace')">
-                            <UInput v-model="searchAndReplace.replace" class="w-full" :disabled="disabled" />
-                        </UFormField>
-
-                        <UFormField name="caseSensitive" :label="$t('common.case_sensitive')">
-                            <USwitch v-model="searchAndReplace.caseSensitive" class="w-full" :disabled="disabled" />
-                        </UFormField>
-
-                        <UFormField class="flex flex-col lg:flex-row">
-                            <UFieldGroup class="w-full">
-                                <UButton
-                                    color="error"
-                                    variant="outline"
-                                    :label="$t('components.partials.tiptap_editor.clear')"
-                                    :disabled="disabled"
-                                    @click="() => clear()"
-                                />
-                                <UButton
-                                    color="neutral"
-                                    variant="outline"
-                                    :label="$t('components.partials.tiptap_editor.previous')"
-                                    :disabled="disabled"
-                                    @click="() => previous()"
-                                />
-                                <UButton
-                                    color="neutral"
-                                    variant="outline"
-                                    :label="$t('components.partials.tiptap_editor.next')"
-                                    :disabled="disabled"
-                                    @click="() => next()"
-                                />
-                                <UButton
-                                    color="neutral"
-                                    variant="outline"
-                                    :label="$t('components.partials.tiptap_editor.replace')"
-                                    :disabled="disabled"
-                                    @click="() => replace()"
-                                />
-                                <UButton
-                                    color="neutral"
-                                    variant="outline"
-                                    :label="$t('components.partials.tiptap_editor.replace_all')"
-                                    :disabled="disabled"
-                                    @click="
-                                        () => {
-                                            replaceAll();
-                                        }
-                                    "
-                                />
-                            </UFieldGroup>
-
-                            <div class="mt-1 block text-sm">
-                                <span class="font-semibold">{{ $t('common.result', 2) }}</span
-                                >:
-                                {{
-                                    ed?.storage?.searchAndReplace?.resultIndex > 0
-                                        ? ed?.storage?.searchAndReplace?.resultIndex + 1
-                                        : 0
-                                }}
-                                /
-                                {{ ed?.storage?.searchAndReplace?.results.length }}
-                            </div>
-                        </UFormField>
-                    </UForm>
-                </div>
-            </template>
-        </UPopover>
-
-        <UButton label="Penalty Calc" @click="ed?.chain().insertPenaltyCalculator().run()" />
+        <SearchAndReplacePopover :editor="unref(editor)" :disabled="disabled" />
 
         <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.undo')">

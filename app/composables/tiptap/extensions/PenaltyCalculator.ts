@@ -1,4 +1,4 @@
-import { Node } from '@tiptap/core';
+import { mergeAttributes, Node } from '@tiptap/core';
 import { VueNodeViewRenderer } from '@tiptap/vue-3';
 import PenaltyCaculatorEditorView from '~/components/quickbuttons/penaltycalculator/PenaltyCaculatorEditorView.vue';
 
@@ -29,14 +29,51 @@ export const PenaltyCalculator = Node.create({
         return {};
     },
 
+    parseHTML() {
+        return [
+            {
+                tag: 'div[data-type="penalty-calculator"]',
+            },
+            {
+                tag: 'div[data-type="penaltyCalculator"]',
+            },
+            {
+                tag: 'span[data-type="penalty-calculator"]',
+            },
+        ];
+    },
+
+    renderHTML({ HTMLAttributes }) {
+        return [
+            'div',
+            mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
+                'data-type': 'penalty-calculator',
+                'data-embed': 'penalty-calculator',
+            }),
+        ];
+    },
+
     addCommands() {
         return {
             insertPenaltyCalculator:
                 () =>
-                ({ commands }) => {
+                ({ commands, state }) => {
+                    let existingPos: number | null = null;
+                    state.doc.descendants((node, pos) => {
+                        if (node.type.name === this.name) {
+                            existingPos = pos;
+                            return false;
+                        }
+                        return true;
+                    });
+
+                    if (existingPos !== null) {
+                        commands.focus();
+                        return commands.setNodeSelection(existingPos);
+                    }
+
                     return commands.insertContent({
                         type: this.name,
-                        attrs: { value: 'Penalty Calculator' },
                     });
                 },
         };

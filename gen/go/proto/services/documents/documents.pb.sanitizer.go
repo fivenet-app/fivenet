@@ -1213,7 +1213,11 @@ func (m *UpdateDocumentRequest) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		*m.Data = htmlsanitizer.Sanitize(*m.Data)
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: Files

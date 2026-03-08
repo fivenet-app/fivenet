@@ -15,6 +15,7 @@ import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { AccessLevel, type DocumentJobAccess, type DocumentUserAccess } from '~~/gen/ts/resources/documents/access/access';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
+import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import type { DocumentReference } from '~~/gen/ts/resources/documents/references/references';
 import type { DocumentRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import type { File } from '~~/gen/ts/resources/file/file';
@@ -89,6 +90,7 @@ function setFromProps(): void {
         state.access.users = document.value.access.users;
     }
     state.files = document.value.document.files;
+    state.data = document.value.document.data ?? {};
 }
 
 const onSync = (s: boolean) => {
@@ -143,9 +145,7 @@ const {
     { immediate: false },
 );
 
-watch(document, async () => {
-    await Promise.all([refreshReferences(), refreshRelations()]);
-});
+watch(document, async () => await Promise.all([refreshReferences(), refreshRelations()]));
 
 const route = useRoute();
 
@@ -169,6 +169,7 @@ const schema = z.object({
         })
         .default({ jobs: [], users: [] }),
     files: z.custom<File>().array().max(5).default([]),
+    data: z.custom<DocumentData>().optional().default({}),
     references: z.custom<DocumentReference>().array().max(15).default([]),
     relations: z.custom<DocumentRelation>().array().max(15).default([]),
 });
@@ -188,6 +189,7 @@ const state = reactive<Schema>({
         users: [],
     },
     files: [],
+    data: {},
     references: [],
     relations: [],
 });
@@ -266,6 +268,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
             tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
         },
         contentType: ContentType.HTML,
+        data: values.data ?? {},
         meta: {
             documentId: id,
             closed: values.closed,
@@ -464,6 +467,9 @@ useYArrayFiltered<File>(
     { provider: provider },
 );
 
+// Data
+useYObject<DocumentData>(ydoc.getMap('data'), toRef(state, 'data'), {}, { provider: provider });
+
 // References and Relations
 useYArrayFiltered<DocumentReference>(
     ydoc.getArray('doc_references'),
@@ -497,6 +503,7 @@ const confirmModal = overlay.create(ConfirmModal);
 
 const formRef = useTemplateRef('formRef');
 
+provide('documents:editor:data', toRef(state, 'data'));
 provide('yjsDoc', ydoc);
 provide('yjsProvider', provider);
 </script>
@@ -673,6 +680,7 @@ provide('yjsProvider', provider);
                                 name="content"
                                 class="m-2 mx-auto w-full max-w-(--breakpoint-xl) flex-1"
                                 :disabled="!canDo.edit"
+                                show-penalty-calculator-button
                                 history-type="document"
                                 :limit="maxContentLength"
                                 :saving="saving"

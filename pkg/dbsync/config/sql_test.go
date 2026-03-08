@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -96,7 +97,7 @@ func TestPrepareStringQuery(t *testing.T) {
 			name:  "State with zero LastCheck",
 			query: "SELECT * FROM `users` $whereCondition LIMIT $limit",
 			table: DBSyncTable{
-				UpdatedTimeColumn: ptr("updated_at"),
+				UpdatedTimeColumn: utils.StrPtr("updated_at"),
 			},
 			state: &TableSyncState{
 				LastCheck: nil,
@@ -108,7 +109,7 @@ func TestPrepareStringQuery(t *testing.T) {
 			name:  "State with valid LastCheck",
 			query: "SELECT * FROM `users` $whereCondition LIMIT $limit",
 			table: DBSyncTable{
-				UpdatedTimeColumn: ptr("updated_at"),
+				UpdatedTimeColumn: utils.StrPtr("updated_at"),
 			},
 			state: &TableSyncState{
 				LastCheck: parseTime("2023-01-01 00:00:00"),
@@ -120,11 +121,11 @@ func TestPrepareStringQuery(t *testing.T) {
 			name:  "State with cursor tuple",
 			query: "SELECT * FROM `users` $whereCondition LIMIT $limit",
 			table: DBSyncTable{
-				UpdatedTimeColumn: ptr("updated_at"),
+				UpdatedTimeColumn: utils.StrPtr("updated_at"),
 			},
 			state: &TableSyncState{
 				LastCheck: parseTime("2023-01-01 00:00:00"),
-				LastID:    ptr("42"),
+				LastID:    utils.StrPtr("42"),
 			},
 			limit:         10,
 			expectedQuery: "SELECT * FROM `users` WHERE (`updated_at` > '2023-01-01 00:00:00.000' OR (`updated_at` = '2023-01-01 00:00:00.000' AND `id` > 42))\n LIMIT 10",
@@ -150,15 +151,11 @@ func TestPrepareStringQuery(t *testing.T) {
 func TestGetWhereConditionIDOnly(t *testing.T) {
 	table := DBSyncTable{}
 	state := &TableSyncState{
-		LastID: ptr("XYZ-100"),
+		LastID: utils.StrPtr("XYZ-100"),
 	}
 
 	where := getWhereCondition(table, state, "plate")
 	assert.Equal(t, "`plate` > 'XYZ-100'\n", where)
-}
-
-func ptr(s string) *string {
-	return &s
 }
 
 func parseTime(value string) *time.Time {

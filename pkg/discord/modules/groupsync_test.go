@@ -25,7 +25,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 
 	type args struct {
 		user  *groupSyncUser
-		roles discordtypes.Roles
+		roles map[string]*discordtypes.Role
 	}
 
 	tests := []struct {
@@ -56,7 +56,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					ExternalID: "12345",
 					Groups:     &accounts.AccountGroups{Groups: []string{"unknown"}},
 				},
-				roles: discordtypes.Roles{{ID: 1, Name: "Supporter"}},
+				roles: map[string]*discordtypes.Role{"supporter": {ID: 1, Name: "Supporter"}},
 			},
 			wantUserNil: true,
 		},
@@ -76,7 +76,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					ExternalID: "12345",
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
 				},
-				roles: discordtypes.Roles{{ID: 2, Name: "OtherRole"}},
+				roles: map[string]*discordtypes.Role{"otherrole": {ID: 2, Name: "OtherRole"}},
 			},
 			wantUserNil:  true,
 			wantLogTitle: "Group Sync: Failed to find dc role for group Supporter",
@@ -97,7 +97,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					ExternalID: "not-a-number",
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
 				},
-				roles: discordtypes.Roles{{ID: 1, Name: "Supporter"}},
+				roles: map[string]*discordtypes.Role{"supporter": {ID: 1, Name: "Supporter"}},
 			},
 			wantUserNil: true,
 			wantErr:     true,
@@ -119,9 +119,9 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					ExternalID: "12345",
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter", "donator"}},
 				},
-				roles: discordtypes.Roles{
-					{ID: 1, Name: "Supporter"},
-					{ID: 2, Name: "Donator"},
+				roles: map[string]*discordtypes.Role{
+					"supporter": {ID: 1, Name: "Supporter"},
+					"donator":   {ID: 2, Name: "Donator"},
 				},
 			},
 			wantUserNil: false,
@@ -146,8 +146,8 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					ExternalID: "12345",
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
 				},
-				roles: discordtypes.Roles{
-					{ID: 1, Name: "Supporter"},
+				roles: map[string]*discordtypes.Role{
+					"supporter": {ID: 1, Name: "Supporter"},
 				},
 			},
 			wantUserNil: false,
@@ -187,7 +187,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					UserID:     42,
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
 				},
-				roles: discordtypes.Roles{{ID: 1, Name: "Supporter"}},
+				roles: map[string]*discordtypes.Role{"supporter": {ID: 1, Name: "Supporter"}},
 			},
 			wantUserNil: false,
 			wantRoles: []*discordtypes.Role{
@@ -226,7 +226,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					UserID:     42,
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
 				},
-				roles: discordtypes.Roles{{ID: 1, Name: "Supporter"}},
+				roles: map[string]*discordtypes.Role{"supporter": {ID: 1, Name: "Supporter"}},
 			},
 			wantUserNil: true,
 		},

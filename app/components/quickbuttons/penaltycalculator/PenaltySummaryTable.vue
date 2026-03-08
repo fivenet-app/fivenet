@@ -10,6 +10,7 @@ const props = defineProps<{
     lawBooks: LawBook[];
     selectedLaws: SelectedPenalty[];
     reduction: number;
+    disableLineClamp?: boolean;
 }>();
 
 const { t } = useI18n();
@@ -95,7 +96,9 @@ const columns = computed(
                     h(
                         'p',
                         {
-                            class: 'line-clamp-2 w-full max-w-sm break-all whitespace-normal hover:line-clamp-none',
+                            class: props.disableLineClamp
+                                ? 'break-all whitespace-normal'
+                                : 'line-clamp-2 w-full max-w-sm break-all whitespace-normal hover:line-clamp-none',
                         },
                         row.original.law.description,
                     ),
@@ -118,5 +121,11 @@ const columns = computed(
         variant="outline"
     />
 
-    <UTable v-else :columns="columns" :data="selectedLaws" :empty="$t('common.none_selected', [`${$t('common.crime')}`])" />
+    <UTable
+        v-else
+        :columns="columns"
+        :data="selectedLaws"
+        :empty="$t('common.none_selected', [`${$t('common.crime')}`])"
+        v-bind="$attrs"
+    />
 </template>

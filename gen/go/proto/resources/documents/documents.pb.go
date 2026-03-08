@@ -12,6 +12,7 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	category "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/category"
+	data "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/data"
 	pins "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/pins"
 	workflow "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/workflow"
 	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
@@ -46,7 +47,7 @@ type Document struct {
 	FirstHeading    *string                     `protobuf:"bytes,22,opt,name=first_heading,json=firstHeading,proto3,oneof" json:"first_heading,omitempty"`
 	ContentType     content.ContentType         `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	Content         *content.Content            `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty" alias:"content_json"`
-	Data            *string                     `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`
+	Data            *data.DocumentData          `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`
 	CreatorId       *int32                      `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	Creator         *short.UserShort            `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob      string                      `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
@@ -163,11 +164,11 @@ func (x *Document) GetContent() *content.Content {
 	return nil
 }
 
-func (x *Document) GetData() string {
-	if x != nil && x.Data != nil {
-		return *x.Data
+func (x *Document) GetData() *data.DocumentData {
+	if x != nil {
+		return x.Data
 	}
-	return ""
+	return nil
 }
 
 func (x *Document) GetCreatorId() int32 {
@@ -284,8 +285,8 @@ func (x *Document) SetContent(v *content.Content) {
 	x.Content = v
 }
 
-func (x *Document) SetData(v string) {
-	x.Data = &v
+func (x *Document) SetData(v *data.DocumentData) {
+	x.Data = v
 }
 
 func (x *Document) SetCreatorId(v int32) {
@@ -531,7 +532,7 @@ type Document_builder struct {
 	FirstHeading    *string
 	ContentType     content.ContentType
 	Content         *content.Content
-	Data            *string
+	Data            *data.DocumentData
 	CreatorId       *int32
 	Creator         *short.UserShort
 	CreatorJob      string
@@ -1438,7 +1439,7 @@ var File_resources_documents_documents_proto protoreflect.FileDescriptor
 
 const file_resources_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"#resources/documents/documents.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/pins/pins.proto\x1a+resources/documents/workflow/workflow.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xfd\v\n" +
+	"#resources/documents/documents.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a+resources/documents/category/category.proto\x1a#resources/documents/data/data.proto\x1a#resources/documents/pins/pins.proto\x1a+resources/documents/workflow/workflow.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\x9f\f\n" +
 	"\bDocument\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -1455,9 +1456,9 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"word_count\x18\x15 \x01(\rH\x04R\twordCount\x88\x01\x01\x12(\n" +
 	"\rfirst_heading\x18\x16 \x01(\tH\x05R\ffirstHeading\x88\x01\x01\x12H\n" +
 	"\fcontent_type\x18\b \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12V\n" +
-	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentB\x19\x9a\x84\x9e\x03\x14alias:\"content_json\"R\acontent\x120\n" +
+	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentB\x19\x9a\x84\x9e\x03\x14alias:\"content_json\"R\acontent\x12R\n" +
 	"\x04data\x18\n" +
-	" \x01(\tB\x17\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\falias:\"data\"H\x06R\x04data\x88\x01\x01\x12\"\n" +
+	" \x01(\v2&.resources.documents.data.DocumentDataB\x11\x9a\x84\x9e\x03\falias:\"data\"H\x06R\x04data\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"creator_id\x18\v \x01(\x05H\aR\tcreatorId\x88\x01\x01\x12U\n" +
 	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\bR\acreator\x88\x01\x01\x12\x1f\n" +
@@ -1566,11 +1567,12 @@ var file_resources_documents_documents_proto_goTypes = []any{
 	(*category.Category)(nil),          // 4: resources.documents.category.Category
 	(content.ContentType)(0),           // 5: resources.common.content.ContentType
 	(*content.Content)(nil),            // 6: resources.common.content.Content
-	(*short.UserShort)(nil),            // 7: resources.users.short.UserShort
-	(*pins.DocumentPin)(nil),           // 8: resources.documents.pins.DocumentPin
-	(*workflow.WorkflowState)(nil),     // 9: resources.documents.workflow.WorkflowState
-	(*workflow.WorkflowUserState)(nil), // 10: resources.documents.workflow.WorkflowUserState
-	(*file.File)(nil),                  // 11: resources.file.File
+	(*data.DocumentData)(nil),          // 7: resources.documents.data.DocumentData
+	(*short.UserShort)(nil),            // 8: resources.users.short.UserShort
+	(*pins.DocumentPin)(nil),           // 9: resources.documents.pins.DocumentPin
+	(*workflow.WorkflowState)(nil),     // 10: resources.documents.workflow.WorkflowState
+	(*workflow.WorkflowUserState)(nil), // 11: resources.documents.workflow.WorkflowUserState
+	(*file.File)(nil),                  // 12: resources.file.File
 }
 var file_resources_documents_documents_proto_depIdxs = []int32{
 	3,  // 0: resources.documents.Document.created_at:type_name -> resources.timestamp.Timestamp
@@ -1579,29 +1581,30 @@ var file_resources_documents_documents_proto_depIdxs = []int32{
 	4,  // 3: resources.documents.Document.category:type_name -> resources.documents.category.Category
 	5,  // 4: resources.documents.Document.content_type:type_name -> resources.common.content.ContentType
 	6,  // 5: resources.documents.Document.content:type_name -> resources.common.content.Content
-	7,  // 6: resources.documents.Document.creator:type_name -> resources.users.short.UserShort
-	2,  // 7: resources.documents.Document.meta:type_name -> resources.documents.DocumentMeta
-	8,  // 8: resources.documents.Document.pin:type_name -> resources.documents.pins.DocumentPin
-	9,  // 9: resources.documents.Document.workflow_state:type_name -> resources.documents.workflow.WorkflowState
-	10, // 10: resources.documents.Document.workflow_user:type_name -> resources.documents.workflow.WorkflowUserState
-	11, // 11: resources.documents.Document.files:type_name -> resources.file.File
-	3,  // 12: resources.documents.DocumentShort.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 13: resources.documents.DocumentShort.updated_at:type_name -> resources.timestamp.Timestamp
-	3,  // 14: resources.documents.DocumentShort.deleted_at:type_name -> resources.timestamp.Timestamp
-	4,  // 15: resources.documents.DocumentShort.category:type_name -> resources.documents.category.Category
-	5,  // 16: resources.documents.DocumentShort.content_type:type_name -> resources.common.content.ContentType
-	6,  // 17: resources.documents.DocumentShort.content:type_name -> resources.common.content.Content
-	7,  // 18: resources.documents.DocumentShort.creator:type_name -> resources.users.short.UserShort
-	2,  // 19: resources.documents.DocumentShort.meta:type_name -> resources.documents.DocumentMeta
-	8,  // 20: resources.documents.DocumentShort.pin:type_name -> resources.documents.pins.DocumentPin
-	9,  // 21: resources.documents.DocumentShort.workflow_state:type_name -> resources.documents.workflow.WorkflowState
-	10, // 22: resources.documents.DocumentShort.workflow_user:type_name -> resources.documents.workflow.WorkflowUserState
-	3,  // 23: resources.documents.DocumentMeta.recomputed_at:type_name -> resources.timestamp.Timestamp
-	24, // [24:24] is the sub-list for method output_type
-	24, // [24:24] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	7,  // 6: resources.documents.Document.data:type_name -> resources.documents.data.DocumentData
+	8,  // 7: resources.documents.Document.creator:type_name -> resources.users.short.UserShort
+	2,  // 8: resources.documents.Document.meta:type_name -> resources.documents.DocumentMeta
+	9,  // 9: resources.documents.Document.pin:type_name -> resources.documents.pins.DocumentPin
+	10, // 10: resources.documents.Document.workflow_state:type_name -> resources.documents.workflow.WorkflowState
+	11, // 11: resources.documents.Document.workflow_user:type_name -> resources.documents.workflow.WorkflowUserState
+	12, // 12: resources.documents.Document.files:type_name -> resources.file.File
+	3,  // 13: resources.documents.DocumentShort.created_at:type_name -> resources.timestamp.Timestamp
+	3,  // 14: resources.documents.DocumentShort.updated_at:type_name -> resources.timestamp.Timestamp
+	3,  // 15: resources.documents.DocumentShort.deleted_at:type_name -> resources.timestamp.Timestamp
+	4,  // 16: resources.documents.DocumentShort.category:type_name -> resources.documents.category.Category
+	5,  // 17: resources.documents.DocumentShort.content_type:type_name -> resources.common.content.ContentType
+	6,  // 18: resources.documents.DocumentShort.content:type_name -> resources.common.content.Content
+	8,  // 19: resources.documents.DocumentShort.creator:type_name -> resources.users.short.UserShort
+	2,  // 20: resources.documents.DocumentShort.meta:type_name -> resources.documents.DocumentMeta
+	9,  // 21: resources.documents.DocumentShort.pin:type_name -> resources.documents.pins.DocumentPin
+	10, // 22: resources.documents.DocumentShort.workflow_state:type_name -> resources.documents.workflow.WorkflowState
+	11, // 23: resources.documents.DocumentShort.workflow_user:type_name -> resources.documents.workflow.WorkflowUserState
+	3,  // 24: resources.documents.DocumentMeta.recomputed_at:type_name -> resources.timestamp.Timestamp
+	25, // [25:25] is the sub-list for method output_type
+	25, // [25:25] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_documents_proto_init() }

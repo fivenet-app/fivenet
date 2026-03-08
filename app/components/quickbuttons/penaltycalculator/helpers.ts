@@ -1,4 +1,5 @@
-import type { Law } from '~~/gen/ts/resources/laws/laws';
+import type { PenaltyCalculatorData } from '~~/gen/ts/resources/documents/data/data';
+import type { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 
 export type PenaltiesSummary = {
     fine: number;
@@ -25,4 +26,35 @@ export function calculatePenaltySummary(selectedPenalties: SelectedPenalty[]): P
         ),
         count: selectedPenalties.reduce((acc, curr) => acc + curr.count, 0),
     };
+}
+
+export function toPenaltyCalculatorData(selectedPenalties: SelectedPenalty[], reduction: number): PenaltyCalculatorData {
+    return {
+        reduction: reduction,
+        selected: selectedPenalties.map((item) => ({
+            lawId: item.law.id,
+            count: item.count,
+        })),
+    };
+}
+
+export function resolvePenaltyCalculatorSelection(
+    data: PenaltyCalculatorData | undefined,
+    lawBooks: LawBook[] | undefined,
+): SelectedPenalty[] {
+    if (!data?.selected || !lawBooks || lawBooks.length === 0) return [];
+
+    const laws = lawBooks.flatMap((book) => book.laws);
+
+    return data.selected
+        .map((item) => {
+            const law = laws.find((l) => l.id === item.lawId);
+            if (!law || item.count <= 0) return undefined;
+
+            return {
+                law,
+                count: item.count,
+            };
+        })
+        .filter((entry): entry is SelectedPenalty => entry !== undefined);
 }

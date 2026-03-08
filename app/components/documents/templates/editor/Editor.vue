@@ -704,6 +704,8 @@ const formRef = useTemplateRef('formRef');
                                         class="mx-auto min-h-120 w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                         :extensions="extensions"
                                         :limit="125_000"
+                                        show-penalty-calculator-button
+                                        disable-penalty-calculator-block-editing
                                         content-type="html"
                                     >
                                         <template #toolbar="{ editor }">

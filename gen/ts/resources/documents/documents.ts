@@ -16,6 +16,7 @@ import { WorkflowUserState } from "./workflow/workflow";
 import { WorkflowState } from "./workflow/workflow";
 import { DocumentPin } from "./pins/pins";
 import { UserShort } from "../users/short/user";
+import { DocumentData } from "./data/data";
 import { Content } from "../common/content/content";
 import { ContentType } from "../common/content/content";
 import { Category } from "./category/category";
@@ -73,9 +74,9 @@ export interface Document {
      */
     content?: Content;
     /**
-     * @generated from protobuf field: optional string data = 10
+     * @generated from protobuf field: optional resources.documents.data.DocumentData data = 10
      */
-    data?: string;
+    data?: DocumentData;
     /**
      * @generated from protobuf field: optional int32 creator_id = 11
      */
@@ -301,7 +302,7 @@ class Document$Type extends MessageType<Document> {
             { no: 22, name: "first_heading", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 9, name: "content", kind: "message", T: () => Content, options: { "tagger.tags": "alias:\"content_json\"" } },
-            { no: 10, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1000000" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"data\"" } },
+            { no: 10, name: "data", kind: "message", T: () => DocumentData, options: { "tagger.tags": "alias:\"data\"" } },
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
@@ -363,8 +364,8 @@ class Document$Type extends MessageType<Document> {
                 case /* resources.common.content.Content content */ 9:
                     message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
-                case /* optional string data */ 10:
-                    message.data = reader.string();
+                case /* optional resources.documents.data.DocumentData data */ 10:
+                    message.data = DocumentData.internalBinaryRead(reader, reader.uint32(), options, message.data);
                     break;
                 case /* optional int32 creator_id */ 11:
                     message.creatorId = reader.int32();
@@ -435,9 +436,9 @@ class Document$Type extends MessageType<Document> {
         /* resources.common.content.Content content = 9; */
         if (message.content)
             Content.internalBinaryWrite(message.content, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* optional string data = 10; */
-        if (message.data !== undefined)
-            writer.tag(10, WireType.LengthDelimited).string(message.data);
+        /* optional resources.documents.data.DocumentData data = 10; */
+        if (message.data)
+            DocumentData.internalBinaryWrite(message.data, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         /* optional int32 creator_id = 11; */
         if (message.creatorId !== undefined)
             writer.tag(11, WireType.Varint).int32(message.creatorId);

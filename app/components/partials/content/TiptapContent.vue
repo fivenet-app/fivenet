@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import type { Extensions, JSONContent } from '@tiptap/core';
+import { h } from 'vue';
+import PenaltyCalculatorContentView from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorContentView.vue';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
+import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import TiptapContentRenderer from './TiptapContentRenderer.vue';
 
 const props = withDefaults(
@@ -14,6 +17,15 @@ const props = withDefaults(
 );
 
 const builtInExtensions = useTiptapEditor();
+
+const localDocumentData = ref<DocumentData | undefined>(undefined);
+const documentData = inject<Ref<DocumentData | undefined>>('documents:editor:data', localDocumentData);
+
+const options = computed(() => ({
+    nodeMapping: {
+        penaltyCalculator: () => h(PenaltyCalculatorContentView, { data: documentData.value?.penaltyCalculator }),
+    },
+}));
 </script>
 
 <template>
@@ -51,6 +63,7 @@ const builtInExtensions = useTiptapEditor();
             'prose-hr:my-0.5',
         ]"
         :extensions="[...builtInExtensions, ...props.extensions]"
+        :options="options"
         :value="props.value ? (Struct.toJson(props.value) as JSONContent) : undefined"
         v-bind="$attrs"
     />

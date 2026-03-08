@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"slices"
 	"strconv"
 	"strings"
 
@@ -50,12 +49,6 @@ type qualificationUserMapping struct {
 	Jobs       []*users.UserJob `alias:"jobs"`
 }
 
-func (u *qualificationUserMapping) HasJob(job string) bool {
-	return slices.ContainsFunc(u.Jobs, func(j *users.UserJob) bool {
-		return j.GetJob() == job
-	})
-}
-
 func init() {
 	Modules["qualifications"] = NewQualifications
 }
@@ -97,17 +90,22 @@ func (g *QualificationsSync) Plan(
 		}
 	}
 
-	roles, logs, err := g.planRoles(qualifications)
+	rolesMap, logs, err := g.planRoles(qualifications)
 	if err != nil {
 		errs = multierr.Append(errs, err)
 		return nil, logs, errs
 	}
 
-	users, uLogs, err := g.planUsers(ctx, roles)
+	users, uLogs, err := g.planUsers(ctx, rolesMap)
 	logs = append(logs, uLogs...)
 	if err != nil {
 		errs = multierr.Append(errs, err)
 		return nil, logs, errs
+	}
+
+	roles := make(discordtypes.Roles, 0, len(rolesMap))
+	for _, role := range rolesMap {
+		roles = append(roles, role)
 	}
 
 	return &discordtypes.State{
@@ -118,9 +116,9 @@ func (g *QualificationsSync) Plan(
 
 func (g *QualificationsSync) planRoles(
 	qualifications []*qualificationsEntry,
-) ([]*discordtypes.Role, []discord.Embed, error) {
+) (map[int64]*discordtypes.Role, []discord.Embed, error) {
 	logs := []discord.Embed{}
-	roles := discordtypes.Roles{}
+	roles := map[int64]*discordtypes.Role{}
 
 	syncSettings := g.settings.Load()
 
@@ -155,11 +153,11 @@ func (g *QualificationsSync) planRoles(
 		entry.RoleName = strings.ReplaceAll(roleFormat, "%abbr%", entry.Abbreviation)
 		entry.RoleName = strings.ReplaceAll(entry.RoleName, "%name%", roleName)
 
-		roles = append(roles, &discordtypes.Role{
+		roles[entry.ID] = &discordtypes.Role{
 			Name:   entry.RoleName,
 			Module: fmt.Sprintf(qualificationsRoleModulePrefix+"%d", entry.ID),
 			Job:    g.job,
-		})
+		}
 	}
 
 	return roles, logs, errs
@@ -167,32 +165,14 @@ func (g *QualificationsSync) planRoles(
 
 func (g *QualificationsSync) planUsers(
 	ctx context.Context,
-	roles discordtypes.Roles,
+	roles map[int64]*discordtypes.Role,
 ) (discordtypes.Users, []discord.Embed, error) {
 	logs := []discord.Embed{}
-
-	qualificationRoles := map[int64]*discordtypes.Role{}
-	for _, role := range roles {
-		if strings.HasPrefix(role.Module, qualificationsRoleModulePrefix) {
-			sGroup, found := strings.CutPrefix(role.Module, qualificationsRoleModulePrefix)
-			if !found {
-				continue
-			}
-			index, err := strconv.ParseInt(sGroup, 10, 64)
-			if err != nil {
-				return nil, logs, fmt.Errorf(
-					"failed to parse qualification id from groups. %w",
-					err,
-				)
-			}
-			qualificationRoles[index] = role
-		}
-	}
 
 	errs := multierr.Combine()
 
 	users := discordtypes.Users{}
-	for qualificationId, role := range qualificationRoles {
+	for qualificationId, role := range roles {
 		if err := g.queryAndPlanUsersForQualification(ctx, qualificationId, role, &users); err != nil {
 			errs = multierr.Append(errs, err)
 			continue
