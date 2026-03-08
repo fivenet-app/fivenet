@@ -2,10 +2,8 @@
 import type { JSONContent } from '@tiptap/core';
 import type { Editor } from '@tiptap/vue-3';
 import z from 'zod';
-import { toPenaltyCalculatorData, type SelectedPenalty } from '~/components/quickbuttons/penaltycalculator/helpers';
 import { fontColors, fonts, highlightColors } from '~/types/editor';
 import type { HistoryContent, Version } from '~/types/history';
-import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import FileListModal from './FileListModal.vue';
@@ -31,10 +29,6 @@ const emits = defineEmits<{
 }>();
 
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
-const selectedPenalties = useState<SelectedPenalty[]>('quickButton:penaltyCalculator:selected', () => [] as SelectedPenalty[]);
-const reduction = useState<number>('quickButton:penaltyCalculator:reduction', () => 0);
-const localDocumentData = ref<DocumentData | undefined>();
-const documentData = inject<Ref<DocumentData | undefined>>('documents:editor:data', localDocumentData);
 
 const overlay = useOverlay();
 
@@ -123,12 +117,6 @@ function applyVersion(version: Version<HistoryContent>): void {
         description: { key: 'notifications.action_successful.content', parameters: {} },
         type: NotificationType.SUCCESS,
     });
-}
-
-function insertOrFocusPenaltyCalculator(): void {
-    if (!documentData.value) documentData.value = {};
-    documentData.value.penaltyCalculator = toPenaltyCalculatorData(selectedPenalties.value, reduction.value);
-    ed.value?.chain().insertPenaltyCalculator().run();
 }
 
 const formRef = useTemplateRef('formRef');
@@ -657,7 +645,7 @@ const isLinkOpen = ref(false);
                     variant="ghost"
                     icon="i-mdi-gavel"
                     :disabled="disabled"
-                    @click="insertOrFocusPenaltyCalculator"
+                    @click="ed?.chain().insertPenaltyCalculator().run()"
                 />
             </UTooltip>
 

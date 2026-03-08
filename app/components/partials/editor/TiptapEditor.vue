@@ -7,12 +7,15 @@ import CollaborationCaret from '@tiptap/extension-collaboration-caret';
 import { gitHubEmojis } from '@tiptap/extension-emoji';
 import { UndoRedo } from '@tiptap/extensions';
 import type { Schema } from '@tiptap/pm/model';
+import type { Editor } from '@tiptap/vue-3';
 import { initProseMirrorDoc, prosemirrorJSONToYDoc } from '@tiptap/y-tiptap';
 import * as Y from 'yjs';
+import { toPenaltyCalculatorData, type SelectedPenalty } from '~/components/quickbuttons/penaltycalculator/helpers';
 import { DeleteImageTracker } from '~/composables/tiptap/extensions/DeleteImageTracker';
 import { imageUploadPlugin } from '~/composables/tiptap/extensions/ImageUploadPlugin';
 import type { UploadNamespaces } from '~/composables/useFileUploader';
 import type GrpcProvider from '~/composables/yjs/yjs';
+import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import type { UploadFileRequest, UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -80,6 +83,11 @@ const modelValue = defineModel<JSONContent | string | undefined>({ required: tru
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
 
 provide('tiptap:disablePenaltyCalculatorBlockEditing', toRef(props, 'disablePenaltyCalculatorBlockEditing'));
+
+const selectedPenalties = useState<SelectedPenalty[]>('quickButton:penaltyCalculator:selected', () => [] as SelectedPenalty[]);
+const reduction = useState<number>('quickButton:penaltyCalculator:reduction', () => 0);
+const localDocumentData = ref<DocumentData | undefined>();
+const documentData = inject<Ref<DocumentData | undefined>>('documents:editor:data', localDocumentData);
 
 const logger = useLogger('📄 Editor' + (props.name ? ` ${props.name}` : ''));
 
@@ -229,6 +237,35 @@ function hasFileById(files: FileGrpc[] | undefined | null, id: number): boolean 
 
 const disabled = computed(() => props.disabled || loading.value);
 
+function hasPenaltyCalculatorNode(editor: Editor): boolean {
+    let found = false;
+    editor.state.doc.descendants((node) => {
+        if (node.type.name === 'penaltyCalculator') {
+            found = true;
+            return false;
+        }
+        return true;
+    });
+    return found;
+}
+
+function syncPenaltyCalculatorData(editor: Editor): void {
+    if (!documentData.value) return;
+
+    const hasPenaltyBlock = hasPenaltyCalculatorNode(editor);
+    if (!hasPenaltyBlock) {
+        if (documentData.value.penaltyCalculator) {
+            documentData.value.penaltyCalculator = undefined;
+        }
+        return;
+    }
+
+    if (!documentData.value.penaltyCalculator) {
+        if (props.enableCollab && ydoc && yjsProvider && !yjsProvider.isAuthoritative) return;
+        documentData.value.penaltyCalculator = toPenaltyCalculatorData(selectedPenalties.value, reduction.value);
+    }
+}
+
 let fileUploadHandler: undefined | ((files: File[]) => Promise<void>) = undefined;
 
 const editor = useEditor({
@@ -249,6 +286,8 @@ const editor = useEditor({
         logger.info('Editor created');
     },
     onUpdate: ({ editor }) => {
+        syncPenaltyCalculatorData(editor);
+
         if (props.contentType === 'html') {
             modelValue.value = editor.getHTML();
             return;
@@ -496,8 +535,10 @@ onMounted(() => {
     if (props.enableCollab) return;
 
     logger.info('Setting initial content for Tiptap editor (collab is disabled)');
-    if (modelValue.value)
+    if (modelValue.value) {
         unref(editor)?.commands.setContent(modelValue.value, { emitUpdate: false, contentType: props.contentType });
+        if (unref(editor)) syncPenaltyCalculatorData(unref(editor)!);
+    }
 });
 
 onBeforeUnmount(() => {
