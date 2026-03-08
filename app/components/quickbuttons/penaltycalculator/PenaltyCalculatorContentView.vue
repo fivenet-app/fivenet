@@ -27,6 +27,6 @@ const summary = computed(() => calculatePenaltySummary(selectedPenalties.value))
                 tr: 'border-neutral-700',
             }"
         />
-        <PenaltyStats :summary="summary" :reduction="reduction" compact />
+        <PenaltyStats :summary="summary" :reduction="reduction" compact hide-warning />
     </div>
 </template>

@@ -5,6 +5,7 @@ const props = defineProps<{
     summary: PenaltiesSummary;
     reduction: number;
     compact?: boolean;
+    hideWarning?: boolean;
 }>();
 
 const { quickButtons } = useAppConfig();
@@ -175,7 +176,7 @@ const numberFormatter = useIntlNumberFormat();
         </UPageGrid>
 
         <UAlert
-            v-if="!!highlight && quickButtons.penaltyCalculator?.warnSettings?.warnMessage"
+            v-if="!hideWarning && !!highlight && quickButtons.penaltyCalculator?.warnSettings?.warnMessage"
             class="mt-3 whitespace-pre-line"
             color="warning"
             icon="i-mdi-warning-circle"
