@@ -26,7 +26,7 @@ onBeforeMount(async () => {
 
 <template>
     <div class="max-w-full overflow-hidden">
-        <UContainer :ui="{ constrained: 'max-w-[100vw]' }">
+        <UContainer class="max-w-[100vw]">
             <UCard class="bg-white/75 backdrop-blur-sm dark:bg-white/5">
                 <CharacterSelector />
             </UCard>

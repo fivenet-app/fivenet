@@ -31,6 +31,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CheckboxStandalone } from '~/composables/tiptap/extensions/CheckboxStandalone';
 import SearchAndReplace from '~/composables/tiptap/extensions/SearchAndReplace';
 import { EnhancedImage } from './tiptap/extensions/EnhancedImage';
+import { PenaltyCalculator } from './tiptap/extensions/PenaltyCalculator';
 
 export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<string>): Extensions {
     const settingsStore = useSettingsStore();
@@ -156,6 +157,7 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
             inline: false,
             allowBase64: true,
         }),
+        PenaltyCalculator.configure({}),
     ];
 
     return extensions;

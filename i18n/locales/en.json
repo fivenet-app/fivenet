@@ -872,7 +872,8 @@
                 "add_row_before": "Add row before",
                 "add_row_after": "Add row after",
                 "delete_row": "Delete row",
-                "default": "Default"
+                "default": "Default",
+                "penalty_calculator": "Penalty Calculator"
             },
             "signature_pad": {
                 "pen_color": "Pen Color",

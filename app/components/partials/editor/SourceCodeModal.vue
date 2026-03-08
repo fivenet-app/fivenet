@@ -1,15 +1,13 @@
 <script lang="ts" setup>
-const props = defineProps<{
-    content: string;
+defineProps<{
     disabled?: boolean;
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
     (e: 'close', v: boolean): void;
-    (e: 'update:content', val: string): void;
 }>();
 
-const content = useVModel(props, 'content', emit);
+const content = defineModel<string>('content', { required: true });
 </script>
 
 <template>
@@ -27,9 +25,7 @@ const content = useVModel(props, 'content', emit);
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
             </UFieldGroup>
         </template>
     </UModal>

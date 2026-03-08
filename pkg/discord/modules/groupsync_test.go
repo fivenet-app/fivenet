@@ -25,7 +25,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 
 	type args struct {
 		user  *groupSyncUser
-		roles discordtypes.Roles
+		roles map[string]*discordtypes.Role
 	}
 
 	tests := []struct {
@@ -56,7 +56,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					ExternalID: "12345",
 					Groups:     &accounts.AccountGroups{Groups: []string{"unknown"}},
 				},
-				roles: discordtypes.Roles{{ID: 1, Name: "Supporter"}},
+				roles: map[string]*discordtypes.Role{"supporter": {ID: 1, Name: "Supporter"}},
 			},
 			wantUserNil: true,
 		},
@@ -76,7 +76,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					ExternalID: "12345",
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
 				},
-				roles: discordtypes.Roles{{ID: 2, Name: "OtherRole"}},
+				roles: map[string]*discordtypes.Role{"otherrole": {ID: 2, Name: "OtherRole"}},
 			},
 			wantUserNil:  true,
 			wantLogTitle: "Group Sync: Failed to find dc role for group Supporter",
@@ -97,7 +97,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					ExternalID: "not-a-number",
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
 				},
-				roles: discordtypes.Roles{{ID: 1, Name: "Supporter"}},
+				roles: map[string]*discordtypes.Role{"supporter": {ID: 1, Name: "Supporter"}},
 			},
 			wantUserNil: true,
 			wantErr:     true,
@@ -119,15 +119,40 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					ExternalID: "12345",
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter", "donator"}},
 				},
-				roles: discordtypes.Roles{
-					{ID: 1, Name: "Supporter"},
-					{ID: 2, Name: "Donator"},
+				roles: map[string]*discordtypes.Role{
+					"supporter": {ID: 1, Name: "Supporter"},
+					"donator":   {ID: 2, Name: "Donator"},
 				},
 			},
 			wantUserNil: false,
 			wantRoles: []*discordtypes.Role{
 				{ID: 1, Name: "Supporter"},
 				{ID: 2, Name: "Donator"},
+			},
+		},
+		{
+			name: "matches normalized mapping keys with mixed case and whitespace",
+			fields: fields{
+				cfg: &config.Discord{
+					GroupSync: config.DiscordGroupSync{
+						Mapping: map[string]config.DiscordGroupRole{
+							"  SuPPorter  ": {RoleName: "Supporter"},
+						},
+					},
+				},
+			},
+			args: args{
+				user: &groupSyncUser{
+					ExternalID: "12345",
+					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
+				},
+				roles: map[string]*discordtypes.Role{
+					"supporter": {ID: 1, Name: "Supporter"},
+				},
+			},
+			wantUserNil: false,
+			wantRoles: []*discordtypes.Role{
+				{ID: 1, Name: "Supporter"},
 			},
 		},
 		{
@@ -146,8 +171,8 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					ExternalID: "12345",
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
 				},
-				roles: discordtypes.Roles{
-					{ID: 1, Name: "Supporter"},
+				roles: map[string]*discordtypes.Role{
+					"supporter": {ID: 1, Name: "Supporter"},
 				},
 			},
 			wantUserNil: false,
@@ -187,7 +212,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					UserID:     42,
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
 				},
-				roles: discordtypes.Roles{{ID: 1, Name: "Supporter"}},
+				roles: map[string]*discordtypes.Role{"supporter": {ID: 1, Name: "Supporter"}},
 			},
 			wantUserNil: false,
 			wantRoles: []*discordtypes.Role{
@@ -226,7 +251,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					UserID:     42,
 					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
 				},
-				roles: discordtypes.Roles{{ID: 1, Name: "Supporter"}},
+				roles: map[string]*discordtypes.Role{"supporter": {ID: 1, Name: "Supporter"}},
 			},
 			wantUserNil: true,
 		},
@@ -253,8 +278,9 @@ func TestGroupSyncPlanUser(t *testing.T) {
 			}
 
 			g := &GroupSync{BaseModule: base}
+			groupMapping := g.normalizedGroupSyncMapping()
 
-			user, logs, err := g.planUser(context.Background(), tt.args.user, tt.args.roles)
+			user, logs, err := g.planUser(context.Background(), tt.args.user, groupMapping, tt.args.roles)
 			if tt.wantErr {
 				assert.Error(t, err)
 			} else {
@@ -280,4 +306,67 @@ func TestGroupSyncPlanUser(t *testing.T) {
 			assert.Equal(t, tt.wantSameJobSet, tt.args.user.SameJob)
 		})
 	}
+}
+
+func TestGroupSyncPlanRoles(t *testing.T) {
+	t.Parallel()
+
+	g := &GroupSync{
+		BaseModule: &BaseModule{
+			logger: zaptest.NewLogger(t),
+			cfg: &config.Discord{
+				GroupSync: config.DiscordGroupSync{
+					Mapping: map[string]config.DiscordGroupRole{
+						"Group.One": {RoleName: "Shared Role", Color: "#112233"},
+						"group.two": {RoleName: "Shared Role", Color: "#445566"},
+						"  group.three  ": {RoleName: "Unique Role"},
+					},
+				},
+			},
+		},
+	}
+
+	roles := g.planRoles(g.normalizedGroupSyncMapping())
+
+	require.Len(t, roles, 3)
+	require.Contains(t, roles, "group.one")
+	require.Contains(t, roles, "group.two")
+	require.Contains(t, roles, "group.three")
+
+	// Group keys with the same configured role name should point to the same planned role.
+	assert.Same(t, roles["group.one"], roles["group.two"])
+	assert.Equal(t, "Shared Role", roles["group.one"].Name)
+
+	assert.NotSame(t, roles["group.one"], roles["group.three"])
+	assert.Equal(t, "Unique Role", roles["group.three"].Name)
+}
+
+func TestGroupSyncPlanRolesSharedRolePermissions(t *testing.T) {
+	t.Parallel()
+
+	permissions := int64(discord.PermissionKickMembers)
+
+	g := &GroupSync{
+		BaseModule: &BaseModule{
+			logger: zaptest.NewLogger(t),
+			cfg: &config.Discord{
+				GroupSync: config.DiscordGroupSync{
+					Mapping: map[string]config.DiscordGroupRole{
+						"group.one": {RoleName: "Shared Role"},
+						"group.two": {RoleName: "Shared Role", Permissions: &permissions},
+					},
+				},
+			},
+		},
+	}
+
+	roles := g.planRoles(g.normalizedGroupSyncMapping())
+
+	require.Len(t, roles, 2)
+	require.Contains(t, roles, "group.one")
+	require.Contains(t, roles, "group.two")
+	assert.Same(t, roles["group.one"], roles["group.two"])
+
+	require.NotNil(t, roles["group.one"].Permissions)
+	assert.Equal(t, discord.Permissions(permissions), *roles["group.one"].Permissions)
 }

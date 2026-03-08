@@ -41,9 +41,9 @@ const numberFormatter = useIntlNumberFormat();
                 :highlight="!!highlight?.fine"
                 :highlight-color="highlight?.fine ? 'warning' : undefined"
                 :ui="{
+                    container: compact ? 'py-4 sm:py-4' : undefined,
                     body: 'flex-1',
                     leadingIcon: 'mb-1',
-                    container: compact ? 'p-4 sm:p-4' : undefined,
                 }"
             >
                 <template #leading>
@@ -75,6 +75,7 @@ const numberFormatter = useIntlNumberFormat();
                 :highlight="!!highlight?.detentionTime"
                 :highlight-color="highlight?.detentionTime ? 'warning' : undefined"
                 :ui="{
+                    container: compact ? 'py-4 sm:py-4' : undefined,
                     body: 'flex-1',
                     leadingIcon: 'mb-1',
                 }"
@@ -112,6 +113,7 @@ const numberFormatter = useIntlNumberFormat();
                 :highlight="!!highlight?.stvoPoints"
                 :highlight-color="highlight?.stvoPoints ? 'warning' : undefined"
                 :ui="{
+                    container: compact ? 'py-4 sm:py-4' : undefined,
                     body: 'flex-1',
                     leadingIcon: 'mb-1',
                 }"
@@ -147,6 +149,7 @@ const numberFormatter = useIntlNumberFormat();
 
             <UPageCard
                 :ui="{
+                    container: compact ? 'py-4 sm:py-4' : undefined,
                     body: 'flex-1',
                     leadingIcon: 'mb-1',
                 }"

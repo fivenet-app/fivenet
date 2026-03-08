@@ -6,8 +6,9 @@ import { useCompletorStore } from '~/stores/completor';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { ManageLabelsResponse } from '~~/gen/ts/services/citizens/citizens';
 
-const emit = defineEmits<{
+const emits = defineEmits<{
     (e: 'close', v: boolean): void;
+    (e: 'refresh'): void;
 }>();
 
 const { can } = useAuth();
@@ -44,7 +45,8 @@ async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
 
         state.labels = response.labels;
 
-        emit('close', false);
+        emits('refresh');
+        emits('close', false);
 
         return response;
     } catch (e) {

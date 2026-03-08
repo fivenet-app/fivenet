@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"math"
 	"math/big"
-	"slices"
 	"strconv"
 	"strings"
 
@@ -60,11 +59,24 @@ func (g *GroupSync) Plan(ctx context.Context) (*discordtypes.State, []discord.Em
 		return nil, nil, nil
 	}
 
-	roles := g.planRoles()
+	groupMapping := g.normalizedGroupSyncMapping()
 
-	users, logs, err := g.planUsers(ctx, roles)
+	rolesMap := g.planRoles(groupMapping)
+
+	users, logs, err := g.planUsers(ctx, groupMapping, rolesMap)
 	if err != nil {
 		return nil, logs, err
+	}
+
+	roles := make(discordtypes.Roles, 0, len(rolesMap))
+	seenRoleNames := map[string]struct{}{}
+	for _, role := range rolesMap {
+		roleNameKey := strings.ToLower(strings.TrimSpace(role.Name))
+		if _, ok := seenRoleNames[roleNameKey]; ok {
+			continue
+		}
+		seenRoleNames[roleNameKey] = struct{}{}
+		roles = append(roles, role)
 	}
 
 	return &discordtypes.State{
@@ -73,16 +85,38 @@ func (g *GroupSync) Plan(ctx context.Context) (*discordtypes.State, []discord.Em
 	}, logs, nil
 }
 
-func (g *GroupSync) planRoles() []*discordtypes.Role {
-	dcRoles := map[string]config.DiscordGroupRole{}
-	for _, dcRole := range g.cfg.GroupSync.Mapping {
-		if _, ok := dcRoles[dcRole.RoleName]; !ok {
-			dcRoles[dcRole.RoleName] = dcRole
+func (g *GroupSync) normalizedGroupSyncMapping() map[string]config.DiscordGroupRole {
+	mapping := map[string]config.DiscordGroupRole{}
+	for groupKey, groupRoleCfg := range g.cfg.GroupSync.Mapping {
+		normalizedGroupKey := strings.ToLower(strings.TrimSpace(groupKey))
+		if normalizedGroupKey == "" {
+			continue
 		}
+
+		mapping[normalizedGroupKey] = groupRoleCfg
 	}
 
-	roles := discordtypes.Roles{}
-	for _, dcRole := range dcRoles {
+	return mapping
+}
+
+func (g *GroupSync) planRoles(groupMapping map[string]config.DiscordGroupRole) map[string]*discordtypes.Role {
+	dcRolesByName := map[string]*discordtypes.Role{}
+	roles := map[string]*discordtypes.Role{}
+	for group, dcRole := range groupMapping {
+		roleNameKey := strings.ToLower(strings.TrimSpace(dcRole.RoleName))
+
+		if r, ok := dcRolesByName[roleNameKey]; ok {
+			if r.Permissions == nil && dcRole.Permissions != nil {
+				// If one of the mapped groups defines permissions for a shared role, retain them.
+				// This keeps behavior stable regardless of map iteration order.
+				//nolint:gosec // Permissions are expected to be a valid Discord permissions value.
+				ps := discord.Permissions(*dcRole.Permissions)
+				r.Permissions = &ps
+			}
+			roles[group] = r
+			continue
+		}
+
 		color := defaultGroupSyncRoleColor
 		if dcRole.Color != "" {
 			color = dcRole.Color
@@ -94,6 +128,7 @@ func (g *GroupSync) planRoles() []*discordtypes.Role {
 		if !n.IsInt64() || n.Int64() > math.MaxInt32 || n.Int64() < math.MinInt32 {
 			g.logger.Warn(
 				"role color value out of int32 range",
+				zap.String("group", group),
 				zap.String("role", dcRole.RoleName),
 				zap.String("color", color),
 			)
@@ -110,12 +145,13 @@ func (g *GroupSync) planRoles() []*discordtypes.Role {
 			Module: "GroupSync",
 		}
 		if dcRole.Permissions != nil {
-			//nolint:gosec // Permissions are expected to be a valid Discord permissions value, if not at latest the Discord API will complain.
+			//nolint:gosec // Permissions are expected to be a valid Discord permissions value, if not at least the Discord API will complain.
 			ps := discord.Permissions(*dcRole.Permissions)
 			r.Permissions = &ps
 		}
 
-		roles = append(roles, r)
+		dcRolesByName[roleNameKey] = r
+		roles[group] = r
 	}
 
 	return roles
@@ -123,7 +159,8 @@ func (g *GroupSync) planRoles() []*discordtypes.Role {
 
 func (g *GroupSync) planUsers(
 	ctx context.Context,
-	roles discordtypes.Roles,
+	groupMapping map[string]config.DiscordGroupRole,
+	roles map[string]*discordtypes.Role,
 ) (discordtypes.Users, []discord.Embed, error) {
 	users := discordtypes.Users{}
 	logs := []discord.Embed{}
@@ -132,7 +169,7 @@ func (g *GroupSync) planUsers(
 	tUsers := table.FivenetUser.AS("users")
 
 	groupsConditions := []mysql.BoolExpression{}
-	for sGroup := range g.cfg.GroupSync.Mapping {
+	for sGroup := range groupMapping {
 		groupsConditions = append(groupsConditions,
 			dbutils.JSON_CONTAINS(tAccount.Groups, mysql.String("\""+sGroup+"\"")),
 		)
@@ -173,7 +210,7 @@ func (g *GroupSync) planUsers(
 
 	errs := multierr.Combine()
 	for _, user := range dest {
-		u, l, err := g.planUser(ctx, user, roles)
+		u, l, err := g.planUser(ctx, user, groupMapping, roles)
 		if err != nil {
 			errs = multierr.Append(
 				errs,
@@ -193,13 +230,14 @@ func (g *GroupSync) planUsers(
 func (g *GroupSync) planUser(
 	ctx context.Context,
 	user *groupSyncUser,
-	roles discordtypes.Roles,
+	groupMapping map[string]config.DiscordGroupRole,
+	roles map[string]*discordtypes.Role,
 ) (*discordtypes.User, []discord.Embed, error) {
 	var u *discordtypes.User
 	for _, group := range user.Groups.GetGroups() {
 		// Get group config based on user's groups
 		group = strings.ToLower(strings.TrimSpace(group))
-		groupCfg, ok := g.cfg.GroupSync.Mapping[group]
+		groupCfg, ok := groupMapping[group]
 		if !ok {
 			continue
 		}
@@ -233,10 +271,8 @@ func (g *GroupSync) planUser(
 			}
 		}
 
-		idx := slices.IndexFunc(roles, func(role *discordtypes.Role) bool {
-			return role.Name == groupCfg.RoleName
-		})
-		if idx == -1 {
+		role, ok := roles[group]
+		if !ok {
 			return nil, []discord.Embed{{
 				Title: fmt.Sprintf(
 					"Group Sync: Failed to find dc role for group %s",
@@ -261,11 +297,11 @@ func (g *GroupSync) planUser(
 			u = &discordtypes.User{
 				ID: discord.UserID(externalId),
 				Roles: &discordtypes.UserRoles{
-					Sum: []*discordtypes.Role{roles[idx]},
+					Sum: []*discordtypes.Role{role},
 				},
 			}
 		} else {
-			u.AddRole(roles[idx])
+			u.AddRole(role)
 		}
 	}
 

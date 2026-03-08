@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package resources.documents.data;
+
+import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/data;documentsdata";
+
+message DocumentData {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  optional PenaltyCalculatorData penalty_calculator = 2;
+}
+
+message PenaltyCalculatorData {
+  int32 reduction = 1 [(buf.validate.field).int32 = {
+    gte: 0,
+    lt: 100
+  }];
+  repeated SelectedPenalty selected = 2 [(buf.validate.field).repeated.max_items = 30];
+}
+
+message SelectedPenalty {
+  int64 law_id = 1 [(buf.validate.field).int64.gt = 0];
+  int32 count = 2 [(buf.validate.field).int32 = {
+    gt: 0,
+    lt: 100
+  }];
+}

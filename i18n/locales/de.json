@@ -872,7 +872,8 @@
                 "add_row_before": "Zeile davor einfügen",
                 "add_row_after": "Zeile danach einfügen",
                 "delete_row": "Zeile löschen",
-                "default": "Standard"
+                "default": "Standard",
+                "penalty_calculator": "Strafenrechner"
             },
             "signature_pad": {
                 "pen_color": "Stiftfarbe",

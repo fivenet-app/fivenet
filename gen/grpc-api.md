@@ -3784,6 +3784,53 @@ States of Cronjbo
 
 
 
+## resources/documents/data/data.proto
+
+
+### resources.documents.data.DocumentData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `penalty_calculator` | [PenaltyCalculatorData](#resourcesdocumentsdataPenaltyCalculatorData) | optional |  |
+
+
+
+
+
+### resources.documents.data.PenaltyCalculatorData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `reduction` | [int32](#int32) |  |  |
+| `selected` | [SelectedPenalty](#resourcesdocumentsdataSelectedPenalty) | repeated |  |
+
+
+
+
+
+### resources.documents.data.SelectedPenalty
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `law_id` | [int64](#int64) |  |  |
+| `count` | [int32](#int32) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/documents/pins/pins.proto
 
 
@@ -3937,7 +3984,7 @@ States of Cronjbo
 | `first_heading` | [string](#string) | optional | Derived field (server authored) |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
-| `data` | [string](#string) | optional |  |
+| `data` | [data.DocumentData](#resourcesdocumentsdataDocumentData) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
@@ -9872,7 +9919,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `title` | [string](#string) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
-| `data` | [string](#string) | optional |  |
+| `data` | [resources.documents.data.DocumentData](#resourcesdocumentsdataDocumentData) | optional |  |
 | `meta` | [resources.documents.DocumentMeta](#resourcesdocumentsDocumentMeta) |  |  |
 | `access` | [resources.documents.access.DocumentAccess](#resourcesdocumentsaccessDocumentAccess) | optional |  |
 | `files` | [resources.file.File](#resourcesfileFile) | repeated |  |

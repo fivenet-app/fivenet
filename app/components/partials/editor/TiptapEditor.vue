@@ -30,6 +30,8 @@ const props = withDefaults(
         placeholder?: string;
         hideToolbar?: boolean;
         disableImages?: boolean;
+        showPenaltyCalculatorButton?: boolean;
+        disablePenaltyCalculatorBlockEditing?: boolean;
         historyType?: string;
         enableCollab?: boolean;
 
@@ -51,6 +53,8 @@ const props = withDefaults(
         placeholder: '',
         hideToolbar: false,
         disableImages: false,
+        showPenaltyCalculatorButton: false,
+        disablePenaltyCalculatorBlockEditing: false,
         historyType: undefined,
         enableCollab: false,
 
@@ -74,6 +78,8 @@ defineOptions({
 
 const modelValue = defineModel<JSONContent | string | undefined>({ required: true });
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
+
+provide('tiptap:disablePenaltyCalculatorBlockEditing', toRef(props, 'disablePenaltyCalculatorBlockEditing'));
 
 const logger = useLogger('📄 Editor' + (props.name ? ` ${props.name}` : ''));
 
@@ -525,6 +531,7 @@ defineExpose<{
                 :editor="markRaw(editor)"
                 :disabled="disabled"
                 :disable-images="disableImages"
+                :show-penalty-calculator-button="showPenaltyCalculatorButton"
                 :history-type="historyType"
                 :file-limit="fileLimit"
                 :file-upload-handler="fileUploadHandler"

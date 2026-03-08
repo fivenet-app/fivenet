@@ -23,6 +23,7 @@ import { DocActivity } from "../../resources/documents/activity/activity";
 import { DocActivityType } from "../../resources/documents/activity/activity";
 import { File } from "../../resources/file/file";
 import { DocumentMeta } from "../../resources/documents/documents";
+import { DocumentData } from "../../resources/documents/data/data";
 import { Content } from "../../resources/common/content/content";
 import { ContentType } from "../../resources/common/content/content";
 import { Comment } from "../../resources/documents/comment/comment";
@@ -519,9 +520,9 @@ export interface UpdateDocumentRequest {
      */
     contentType: ContentType;
     /**
-     * @generated from protobuf field: optional string data = 6
+     * @generated from protobuf field: optional resources.documents.data.DocumentData data = 6
      */
-    data?: string;
+    data?: DocumentData;
     /**
      * @generated from protobuf field: resources.documents.DocumentMeta meta = 7
      */
@@ -3018,7 +3019,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
             { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true }, "tagger.tags": "alias:\"title\"" } },
             { no: 4, name: "content", kind: "message", T: () => Content },
             { no: 5, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 6, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1000000" } } } },
+            { no: 6, name: "data", kind: "message", T: () => DocumentData },
             { no: 7, name: "meta", kind: "message", T: () => DocumentMeta, options: { "buf.validate.field": { required: true } } },
             { no: 11, name: "access", kind: "message", T: () => DocumentAccess },
             { no: 12, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "tagger.tags": "alias:\"files\"" } }
@@ -3054,8 +3055,8 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
                 case /* resources.common.content.ContentType content_type */ 5:
                     message.contentType = reader.int32();
                     break;
-                case /* optional string data */ 6:
-                    message.data = reader.string();
+                case /* optional resources.documents.data.DocumentData data */ 6:
+                    message.data = DocumentData.internalBinaryRead(reader, reader.uint32(), options, message.data);
                     break;
                 case /* resources.documents.DocumentMeta meta */ 7:
                     message.meta = DocumentMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
@@ -3093,9 +3094,9 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         /* resources.common.content.ContentType content_type = 5; */
         if (message.contentType !== 0)
             writer.tag(5, WireType.Varint).int32(message.contentType);
-        /* optional string data = 6; */
-        if (message.data !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.data);
+        /* optional resources.documents.data.DocumentData data = 6; */
+        if (message.data)
+            DocumentData.internalBinaryWrite(message.data, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* resources.documents.DocumentMeta meta = 7; */
         if (message.meta)
             DocumentMeta.internalBinaryWrite(message.meta, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
