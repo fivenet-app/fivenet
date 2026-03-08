@@ -12,6 +12,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
@@ -58,9 +59,11 @@ func (g *GroupSync) Plan(ctx context.Context) (*discordtypes.State, []discord.Em
 		return nil, nil, nil
 	}
 
-	rolesMap := g.planRoles()
+	groupMapping := g.normalizedGroupSyncMapping()
 
-	users, logs, err := g.planUsers(ctx, rolesMap)
+	rolesMap := g.planRoles(groupMapping)
+
+	users, logs, err := g.planUsers(ctx, groupMapping, rolesMap)
 	if err != nil {
 		return nil, logs, err
 	}
@@ -82,11 +85,24 @@ func (g *GroupSync) Plan(ctx context.Context) (*discordtypes.State, []discord.Em
 	}, logs, nil
 }
 
-func (g *GroupSync) planRoles() map[string]*discordtypes.Role {
+func (g *GroupSync) normalizedGroupSyncMapping() map[string]config.DiscordGroupRole {
+	mapping := map[string]config.DiscordGroupRole{}
+	for groupKey, groupRoleCfg := range g.cfg.GroupSync.Mapping {
+		normalizedGroupKey := strings.ToLower(strings.TrimSpace(groupKey))
+		if normalizedGroupKey == "" {
+			continue
+		}
+
+		mapping[normalizedGroupKey] = groupRoleCfg
+	}
+
+	return mapping
+}
+
+func (g *GroupSync) planRoles(groupMapping map[string]config.DiscordGroupRole) map[string]*discordtypes.Role {
 	dcRolesByName := map[string]*discordtypes.Role{}
 	roles := map[string]*discordtypes.Role{}
-	for group, dcRole := range g.cfg.GroupSync.Mapping {
-		group = strings.ToLower(strings.TrimSpace(group))
+	for group, dcRole := range groupMapping {
 		roleNameKey := strings.ToLower(strings.TrimSpace(dcRole.RoleName))
 
 		if r, ok := dcRolesByName[roleNameKey]; ok {
@@ -143,6 +159,7 @@ func (g *GroupSync) planRoles() map[string]*discordtypes.Role {
 
 func (g *GroupSync) planUsers(
 	ctx context.Context,
+	groupMapping map[string]config.DiscordGroupRole,
 	roles map[string]*discordtypes.Role,
 ) (discordtypes.Users, []discord.Embed, error) {
 	users := discordtypes.Users{}
@@ -152,7 +169,7 @@ func (g *GroupSync) planUsers(
 	tUsers := table.FivenetUser.AS("users")
 
 	groupsConditions := []mysql.BoolExpression{}
-	for sGroup := range g.cfg.GroupSync.Mapping {
+	for sGroup := range groupMapping {
 		groupsConditions = append(groupsConditions,
 			dbutils.JSON_CONTAINS(tAccount.Groups, mysql.String("\""+sGroup+"\"")),
 		)
@@ -193,7 +210,7 @@ func (g *GroupSync) planUsers(
 
 	errs := multierr.Combine()
 	for _, user := range dest {
-		u, l, err := g.planUser(ctx, user, roles)
+		u, l, err := g.planUser(ctx, user, groupMapping, roles)
 		if err != nil {
 			errs = multierr.Append(
 				errs,
@@ -213,13 +230,14 @@ func (g *GroupSync) planUsers(
 func (g *GroupSync) planUser(
 	ctx context.Context,
 	user *groupSyncUser,
+	groupMapping map[string]config.DiscordGroupRole,
 	roles map[string]*discordtypes.Role,
 ) (*discordtypes.User, []discord.Embed, error) {
 	var u *discordtypes.User
 	for _, group := range user.Groups.GetGroups() {
 		// Get group config based on user's groups
 		group = strings.ToLower(strings.TrimSpace(group))
-		groupCfg, ok := g.cfg.GroupSync.Mapping[group]
+		groupCfg, ok := groupMapping[group]
 		if !ok {
 			continue
 		}

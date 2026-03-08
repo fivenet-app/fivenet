@@ -1,6 +1,6 @@
 import { mergeAttributes, Node } from '@tiptap/core';
 import { VueNodeViewRenderer } from '@tiptap/vue-3';
-import PenaltyCaculatorEditorView from '~/components/quickbuttons/penaltycalculator/PenaltyCaculatorEditorView.vue';
+import PenaltyCalculatorEditorView from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorEditorView.vue';
 
 declare module '@tiptap/core' {
     /**
@@ -80,6 +80,6 @@ export const PenaltyCalculator = Node.create({
     },
 
     addNodeView() {
-        return VueNodeViewRenderer(PenaltyCaculatorEditorView);
+        return VueNodeViewRenderer(PenaltyCalculatorEditorView);
     },
 });

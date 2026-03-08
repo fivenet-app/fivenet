@@ -131,6 +131,31 @@ func TestGroupSyncPlanUser(t *testing.T) {
 			},
 		},
 		{
+			name: "matches normalized mapping keys with mixed case and whitespace",
+			fields: fields{
+				cfg: &config.Discord{
+					GroupSync: config.DiscordGroupSync{
+						Mapping: map[string]config.DiscordGroupRole{
+							"  SuPPorter  ": {RoleName: "Supporter"},
+						},
+					},
+				},
+			},
+			args: args{
+				user: &groupSyncUser{
+					ExternalID: "12345",
+					Groups:     &accounts.AccountGroups{Groups: []string{"supporter"}},
+				},
+				roles: map[string]*discordtypes.Role{
+					"supporter": {ID: 1, Name: "Supporter"},
+				},
+			},
+			wantUserNil: false,
+			wantRoles: []*discordtypes.Role{
+				{ID: 1, Name: "Supporter"},
+			},
+		},
+		{
 			name: "returns user with all mapped roles (single group mapping)",
 			fields: fields{
 				cfg: &config.Discord{
@@ -253,8 +278,9 @@ func TestGroupSyncPlanUser(t *testing.T) {
 			}
 
 			g := &GroupSync{BaseModule: base}
+			groupMapping := g.normalizedGroupSyncMapping()
 
-			user, logs, err := g.planUser(context.Background(), tt.args.user, tt.args.roles)
+			user, logs, err := g.planUser(context.Background(), tt.args.user, groupMapping, tt.args.roles)
 			if tt.wantErr {
 				assert.Error(t, err)
 			} else {
@@ -300,7 +326,7 @@ func TestGroupSyncPlanRoles(t *testing.T) {
 		},
 	}
 
-	roles := g.planRoles()
+	roles := g.planRoles(g.normalizedGroupSyncMapping())
 
 	require.Len(t, roles, 3)
 	require.Contains(t, roles, "group.one")
@@ -334,7 +360,7 @@ func TestGroupSyncPlanRolesSharedRolePermissions(t *testing.T) {
 		},
 	}
 
-	roles := g.planRoles()
+	roles := g.planRoles(g.normalizedGroupSyncMapping())
 
 	require.Len(t, roles, 2)
 	require.Contains(t, roles, "group.one")
