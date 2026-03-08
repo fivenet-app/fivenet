@@ -680,7 +680,6 @@ provide('yjsProvider', provider);
                                 name="content"
                                 class="m-2 mx-auto w-full max-w-(--breakpoint-xl) flex-1"
                                 :disabled="!canDo.edit"
-                                show-penalty-calculator-button
                                 history-type="document"
                                 :limit="maxContentLength"
                                 :saving="saving"
