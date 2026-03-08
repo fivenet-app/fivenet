@@ -150,12 +150,13 @@ const replaceAll = () => props.editor?.commands.replaceAll();
                             <span class="font-semibold">{{ $t('common.result', 2) }}</span
                             >:
                             {{
-                                editor?.storage?.searchAndReplace?.resultIndex > 0
+                                editor?.storage?.searchAndReplace?.results?.length > 0 &&
+                                (editor?.storage?.searchAndReplace?.resultIndex ?? -1) >= 0
                                     ? editor?.storage?.searchAndReplace?.resultIndex + 1
                                     : 0
                             }}
                             /
-                            {{ editor?.storage?.searchAndReplace?.results.length }}
+                            {{ editor?.storage?.searchAndReplace?.results?.length }}
                         </div>
                     </UFormField>
                 </UForm>
