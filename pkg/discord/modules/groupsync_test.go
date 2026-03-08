@@ -281,3 +281,66 @@ func TestGroupSyncPlanUser(t *testing.T) {
 		})
 	}
 }
+
+func TestGroupSyncPlanRoles(t *testing.T) {
+	t.Parallel()
+
+	g := &GroupSync{
+		BaseModule: &BaseModule{
+			logger: zaptest.NewLogger(t),
+			cfg: &config.Discord{
+				GroupSync: config.DiscordGroupSync{
+					Mapping: map[string]config.DiscordGroupRole{
+						"Group.One": {RoleName: "Shared Role", Color: "#112233"},
+						"group.two": {RoleName: "Shared Role", Color: "#445566"},
+						"  group.three  ": {RoleName: "Unique Role"},
+					},
+				},
+			},
+		},
+	}
+
+	roles := g.planRoles()
+
+	require.Len(t, roles, 3)
+	require.Contains(t, roles, "group.one")
+	require.Contains(t, roles, "group.two")
+	require.Contains(t, roles, "group.three")
+
+	// Group keys with the same configured role name should point to the same planned role.
+	assert.Same(t, roles["group.one"], roles["group.two"])
+	assert.Equal(t, "Shared Role", roles["group.one"].Name)
+
+	assert.NotSame(t, roles["group.one"], roles["group.three"])
+	assert.Equal(t, "Unique Role", roles["group.three"].Name)
+}
+
+func TestGroupSyncPlanRolesSharedRolePermissions(t *testing.T) {
+	t.Parallel()
+
+	permissions := int64(discord.PermissionKickMembers)
+
+	g := &GroupSync{
+		BaseModule: &BaseModule{
+			logger: zaptest.NewLogger(t),
+			cfg: &config.Discord{
+				GroupSync: config.DiscordGroupSync{
+					Mapping: map[string]config.DiscordGroupRole{
+						"group.one": {RoleName: "Shared Role"},
+						"group.two": {RoleName: "Shared Role", Permissions: &permissions},
+					},
+				},
+			},
+		},
+	}
+
+	roles := g.planRoles()
+
+	require.Len(t, roles, 2)
+	require.Contains(t, roles, "group.one")
+	require.Contains(t, roles, "group.two")
+	assert.Same(t, roles["group.one"], roles["group.two"])
+
+	require.NotNil(t, roles["group.one"].Permissions)
+	assert.Equal(t, discord.Permissions(permissions), *roles["group.one"].Permissions)
+}

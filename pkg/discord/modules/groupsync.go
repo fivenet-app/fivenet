@@ -12,7 +12,6 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
@@ -67,7 +66,13 @@ func (g *GroupSync) Plan(ctx context.Context) (*discordtypes.State, []discord.Em
 	}
 
 	roles := make(discordtypes.Roles, 0, len(rolesMap))
+	seenRoleNames := map[string]struct{}{}
 	for _, role := range rolesMap {
+		roleNameKey := strings.ToLower(strings.TrimSpace(role.Name))
+		if _, ok := seenRoleNames[roleNameKey]; ok {
+			continue
+		}
+		seenRoleNames[roleNameKey] = struct{}{}
 		roles = append(roles, role)
 	}
 
@@ -78,15 +83,24 @@ func (g *GroupSync) Plan(ctx context.Context) (*discordtypes.State, []discord.Em
 }
 
 func (g *GroupSync) planRoles() map[string]*discordtypes.Role {
-	dcRoles := map[string]config.DiscordGroupRole{}
-	for _, dcRole := range g.cfg.GroupSync.Mapping {
-		if _, ok := dcRoles[dcRole.RoleName]; !ok {
-			dcRoles[dcRole.RoleName] = dcRole
-		}
-	}
-
+	dcRolesByName := map[string]*discordtypes.Role{}
 	roles := map[string]*discordtypes.Role{}
-	for group, dcRole := range dcRoles {
+	for group, dcRole := range g.cfg.GroupSync.Mapping {
+		group = strings.ToLower(strings.TrimSpace(group))
+		roleNameKey := strings.ToLower(strings.TrimSpace(dcRole.RoleName))
+
+		if r, ok := dcRolesByName[roleNameKey]; ok {
+			if r.Permissions == nil && dcRole.Permissions != nil {
+				// If one of the mapped groups defines permissions for a shared role, retain them.
+				// This keeps behavior stable regardless of map iteration order.
+				//nolint:gosec // Permissions are expected to be a valid Discord permissions value.
+				ps := discord.Permissions(*dcRole.Permissions)
+				r.Permissions = &ps
+			}
+			roles[group] = r
+			continue
+		}
+
 		color := defaultGroupSyncRoleColor
 		if dcRole.Color != "" {
 			color = dcRole.Color
@@ -98,6 +112,7 @@ func (g *GroupSync) planRoles() map[string]*discordtypes.Role {
 		if !n.IsInt64() || n.Int64() > math.MaxInt32 || n.Int64() < math.MinInt32 {
 			g.logger.Warn(
 				"role color value out of int32 range",
+				zap.String("group", group),
 				zap.String("role", dcRole.RoleName),
 				zap.String("color", color),
 			)
@@ -114,12 +129,13 @@ func (g *GroupSync) planRoles() map[string]*discordtypes.Role {
 			Module: "GroupSync",
 		}
 		if dcRole.Permissions != nil {
-			//nolint:gosec // Permissions are expected to be a valid Discord permissions value, if not at last the Discord API will complain.
+			//nolint:gosec // Permissions are expected to be a valid Discord permissions value, if not at least the Discord API will complain.
 			ps := discord.Permissions(*dcRole.Permissions)
 			r.Permissions = &ps
 		}
 
-		roles[strings.ToLower(group)] = r
+		dcRolesByName[roleNameKey] = r
+		roles[group] = r
 	}
 
 	return roles

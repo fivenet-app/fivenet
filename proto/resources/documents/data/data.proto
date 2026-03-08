@@ -15,7 +15,7 @@ message DocumentData {
 
 message PenaltyCalculatorData {
   int32 reduction = 1 [(buf.validate.field).int32 = {
-    gt: 0,
+    gte: 0,
     lt: 100
   }];
   repeated SelectedPenalty selected = 2 [(buf.validate.field).repeated.max_items = 30];

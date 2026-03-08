@@ -96,7 +96,7 @@ export const DocumentData = new DocumentData$Type();
 class PenaltyCalculatorData$Type extends MessageType<PenaltyCalculatorData> {
     constructor() {
         super("resources.documents.data.PenaltyCalculatorData", [
-            { no: 1, name: "reduction", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lt: 100, gt: 0 } } } },
+            { no: 1, name: "reduction", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lt: 100, gte: 0 } } } },
             { no: 2, name: "selected", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SelectedPenalty, options: { "buf.validate.field": { repeated: { maxItems: "30" } } } }
         ]);
     }

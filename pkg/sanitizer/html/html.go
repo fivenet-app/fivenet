@@ -135,7 +135,7 @@ func setupSanitizer() {
 		OnElements("span")
 
 	// Penalty Calculator block
-	sanitizer.AllowAttrs("data-type").OnElements("div")
+	sanitizer.AllowAttrs("data-type", "data-embed").OnElements("div")
 }
 
 // New creates and returns a new bluemonday.Policy for HTML sanitization, optionally enabling image proxy rewriting if configured.

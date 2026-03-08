@@ -102,19 +102,31 @@ onBeforeUnmount(() => resetDeleteConfirm());
             "
             @click="isActionsOpen = true"
         >
-            <div
+            <UFieldGroup
                 v-if="editor.isEditable && !disablePenaltyCalculatorBlockEditing && (isActionsOpen || selected)"
-                class="absolute top-2 right-2 z-20 flex items-center gap-1 rounded-md border border-neutral-300 bg-white/90 p-1 shadow-sm dark:border-neutral-700 dark:bg-neutral-900/90"
+                class="absolute top-2 right-2 z-20 rounded-md border border-neutral-300 shadow-sm dark:border-neutral-700 dark:bg-neutral-900/90"
             >
-                <UButton size="xs" color="neutral" variant="soft" icon="i-mdi-pencil" @click="openEditDrawer" />
-                <UButton
-                    size="xs"
-                    :color="confirmDelete ? 'error' : 'neutral'"
-                    :variant="confirmDelete ? 'solid' : 'soft'"
-                    :icon="confirmDelete ? 'i-mdi-check' : 'i-mdi-delete'"
-                    @click="deleteNodeWithConfirm"
-                />
-            </div>
+                <UTooltip :text="$t('common.edit')">
+                    <UButton
+                        size="xs"
+                        color="neutral"
+                        variant="soft"
+                        icon="i-mdi-pencil"
+                        :label="$t('common.edit')"
+                        @click="openEditDrawer"
+                    />
+                </UTooltip>
+
+                <UTooltip :text="confirmDelete ? $t('common.confirm') : $t('common.delete')">
+                    <UButton
+                        size="xs"
+                        color="error"
+                        :variant="confirmDelete ? 'solid' : 'soft'"
+                        :icon="confirmDelete ? 'i-mdi-check' : 'i-mdi-delete'"
+                        @click="deleteNodeWithConfirm"
+                    />
+                </UTooltip>
+            </UFieldGroup>
 
             <PenaltySummaryTable
                 :law-books="lawBooks ?? []"
