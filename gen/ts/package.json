@@ -1,7 +1,7 @@
 {
     "name": "@fivenet-app/gen",
     "private": false,
-    "version": "2026.2.0",
+    "version": "2026.3.0",
     "license": "Apache-2.0",
     "type": "module",
     "homepage": "https://fivenet.app",

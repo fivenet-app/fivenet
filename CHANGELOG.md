@@ -2,6 +2,153 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.3.0] - 2026-03-08
+
+### 🏗️ Breaking changes
+
+- V2026.2.0 changelog and update breaking changes steps
+
+### 🚀 Features
+
+- Add max duration for citizens and vehicles to UI
+- Add max wanted duration for citizens and vehicles
+- Make citizen height searchable
+- Add browser topic to discord bot /help command
+- Add all and own documents tabs to doc list
+- Add id copy badge to account list
+- Add trigger user sync to settings system service
+- Add tiptap suggestion menu and re-gen proto ts files
+- Add sync user table for debugging
+- Add xxhash logic to dbsync users and vehicles syncers
+- Add custom useSounds to replace @vueuse/sound and add custom
+- Add search bar to document templates list
+- Replace qualifications tabs into separate pages
+- Add metrics to dbsync
+- Add penalty calculator integration for editor
+- Store penaltycalculator data in document
+
+### 🐛 Bug Fixes
+
+- Change impersonation to original job in auth tokens
+- Add original job to debug info
+- Pinned document list not appearing on wide screens (2xl)
+- Add button component to /fivenet command
+- Discord bot modules to use new fivenet_user_jobs table
+- Test data type
+- Add test case for userinfo discord bot module
+- Length based comparisons off by one
+- Default config default values for discord bot section
+- Dbsync accounts column names
+- Nil issue in dbsync state logic
+- Dbsync state file upgrades
+- Single account group not converted to groups for accounts table
+- Dbsync accounts groups issues
+- Data separation migration queries
+- Account update activity sync
+- Discord bot group sync group query
+- Document view empty when first child content is empty
+- User claims and user info "merge"
+- Conduct entry creation
+- Colleague info popover causing error notification
+- Discord groupsync issues
+- Show offset in dbsync log messages
+- Add license field to users for faster lookups
+- Improve dbsync log fields
+- Dbsync user updates not updating license
+- Increase tiptap doc limit for now due to base64 images
+- Conduct register editor issues
+- Adjust sync api user id/identifier "override" logic
+- Attempt to fix user sync issue
+- Override all columns even for "new" users in sync api
+- Issues with source code modal in template editor
+- Remove rounding of document list tabs
+- Move doc tabs to a toolbar
+- Start to streamline dbsync syncer logic
+- Db migration info missing when migrations are skipped
+- Add debug log for single user sync calls
+- Dbsync state init order issue
+- Dbsync stream message forwarding
+- Dbsync single user sync query
+- Sync api incorrectly updating users
+- Set user blood type on create in sync api
+- Improve user duplication handling logic
+- Remove debug output from sync logic
+- Vehicle owner identifier not selected correctly for auto query
+- Dbsync sync client causing issues on restart
+- Add tests to groupsync module for planUser logic
+- Rename dbsync tablemanager files
+- Improve discord qualifications module
+- Improve discord bot base module handling
+- Discord qualifications module query issue
+- Add tests for leaderelection
+- Cleanup foreign key to esx users references
+- Groupsync only using account id at the moment
+- Discord user's roles sum merging
+- Example for dbsync user sex mapping
+- Use partial json unmarshal as default
+- Only show documents pinned list for xl
+- Oauth2 login
+- Dbsync user jobs comparison
+- Dbsync user jobs and phone number comparison + add tests
+- Dbsync single user query issue
+- Colleague info page prefix/suffix not having any distance
+- Auth password forgot form not unlocking form
+- Discord oauth2 connect not working
+- Oauth2 connect test case
+- Improve yjs editor reconnection not resetting loading state
+- Use configured limits for syncers
+- Cleanup centrum color funcs
+- Remove sound config from nuxt.config.ts
+- Dbsync hashes length check issue
+- Remove z.coerce()...optional() calls
+- Dbsync vehicles hash check not re-checking length after delete
+- Livemap marker deletion causing all to disappear
+- Attempt to fix infinite document workflow reminders
+- Update code comments
+- Update code workspace settings to fix code vitest extension
+- Qualification view toolbar showing when empty
+- Cleanup qualification exam ui handling
+- Superuser mode toggle
+- Improve auth info box texts when in-game (NUI is enabled)
+- Discord qualifications role sync
+- Improve auth service error messages
+- Oauth2 user store not updating tokens correctly
+- Make discord guild/server select menu full width
+- Use user jobs table for timeclock colleague job
+- Remove debug output
+- Change field names of auth service Change* methods
+- Discord qualifications module user account id query
+- Discord qualifications role user plan logic
+- Correctly query accounts and user jobs table in discord
+- Fabricjs center/zoom issues
+- Contine refining fabric editor components
+- Is empty rich content doc check
+- Remove synced up state from dbsync state
+- Move to db cursor based paging for dbsync users and vehicles data
+- Add Resync() func for single syncs
+- User phone numbers insert on update query issue
+- Make gen-sql
+- Cleanup user phone numbers in user dbsync syncer
+- Dbsync user sync not running as expected
+- Simple dbsync query order by columns
+- Improve dbsync batch loop limitation
+- Cleanup dbsync log fields
+- Dbsync accounts setting last check
+- Handle duplicate user in dbsync user creation
+- Drop overlapping indexes
+- Duplicate indexes migration
+- Cleanup otel noop module
+- Role deletion not working and add reset role button
+- Dispatches not appearing in map cluster picker list
+- Get colleague using correct user jobs job condition
+- Replace mysql.*Exp(mysql.Raw*()) with mysql.Raw*() directly
+- Move to livemap dispatches_job_JOB layers instead of dispatches_all
+- Hide penalty calc button for documents editor
+- Missing tooltip in penalty calc view
+- Normalize groupsync map
+- Search and replace popover result view
+- Penalty calculator view showing alert box
+
 ## [2026.2.0] - 2026-02-16
 
 This version includes changes from v2026.1.3 that had been created to fix module versioning issues.
