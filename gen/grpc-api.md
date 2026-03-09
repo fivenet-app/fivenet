@@ -5518,6 +5518,18 @@ Dummy - DO NOT USE!
 ## resources/livemap/markers/user_marker.proto
 
 
+### resources.livemap.markers.NameOverride
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `firstname` | [string](#string) |  |  |
+| `lastname` | [string](#string) |  |  |
+
+
+
+
+
 ### resources.livemap.markers.UserMarker
 
 
@@ -5547,6 +5559,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `name_override` | [NameOverride](#resourceslivemapmarkersNameOverride) | optional |  |
 | `is_in_vehicle` | [bool](#bool) |  |  |
 | `vehicle_plate` | [string](#string) | optional |  |
 | `vehicle_updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |

@@ -80,17 +80,34 @@ export interface UserMarker {
  */
 export interface UserMarkerData {
     /**
-     * @generated from protobuf field: bool is_in_vehicle = 1
+     * @generated from protobuf field: optional resources.livemap.markers.NameOverride name_override = 1
+     */
+    nameOverride?: NameOverride;
+    /**
+     * @generated from protobuf field: bool is_in_vehicle = 2
      */
     isInVehicle: boolean;
     /**
-     * @generated from protobuf field: optional string vehicle_plate = 2
+     * @generated from protobuf field: optional string vehicle_plate = 3
      */
     vehiclePlate?: string;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp vehicle_updated_at = 3
+     * @generated from protobuf field: optional resources.timestamp.Timestamp vehicle_updated_at = 4
      */
     vehicleUpdatedAt?: Timestamp;
+}
+/**
+ * @generated from protobuf message resources.livemap.markers.NameOverride
+ */
+export interface NameOverride {
+    /**
+     * @generated from protobuf field: string firstname = 1
+     */
+    firstname: string;
+    /**
+     * @generated from protobuf field: string lastname = 2
+     */
+    lastname: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserMarker$Type extends MessageType<UserMarker> {
@@ -239,9 +256,10 @@ export const UserMarker = new UserMarker$Type();
 class UserMarkerData$Type extends MessageType<UserMarkerData> {
     constructor() {
         super("resources.livemap.markers.UserMarkerData", [
-            { no: 1, name: "is_in_vehicle", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "vehicle_plate", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
-            { no: 3, name: "vehicle_updated_at", kind: "message", T: () => Timestamp }
+            { no: 1, name: "name_override", kind: "message", T: () => NameOverride },
+            { no: 2, name: "is_in_vehicle", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "vehicle_plate", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
+            { no: 4, name: "vehicle_updated_at", kind: "message", T: () => Timestamp }
         ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<UserMarkerData>): UserMarkerData {
@@ -256,13 +274,16 @@ class UserMarkerData$Type extends MessageType<UserMarkerData> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* bool is_in_vehicle */ 1:
+                case /* optional resources.livemap.markers.NameOverride name_override */ 1:
+                    message.nameOverride = NameOverride.internalBinaryRead(reader, reader.uint32(), options, message.nameOverride);
+                    break;
+                case /* bool is_in_vehicle */ 2:
                     message.isInVehicle = reader.bool();
                     break;
-                case /* optional string vehicle_plate */ 2:
+                case /* optional string vehicle_plate */ 3:
                     message.vehiclePlate = reader.string();
                     break;
-                case /* optional resources.timestamp.Timestamp vehicle_updated_at */ 3:
+                case /* optional resources.timestamp.Timestamp vehicle_updated_at */ 4:
                     message.vehicleUpdatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.vehicleUpdatedAt);
                     break;
                 default:
@@ -277,15 +298,18 @@ class UserMarkerData$Type extends MessageType<UserMarkerData> {
         return message;
     }
     internalBinaryWrite(message: UserMarkerData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool is_in_vehicle = 1; */
+        /* optional resources.livemap.markers.NameOverride name_override = 1; */
+        if (message.nameOverride)
+            NameOverride.internalBinaryWrite(message.nameOverride, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* bool is_in_vehicle = 2; */
         if (message.isInVehicle !== false)
-            writer.tag(1, WireType.Varint).bool(message.isInVehicle);
-        /* optional string vehicle_plate = 2; */
+            writer.tag(2, WireType.Varint).bool(message.isInVehicle);
+        /* optional string vehicle_plate = 3; */
         if (message.vehiclePlate !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.vehiclePlate);
-        /* optional resources.timestamp.Timestamp vehicle_updated_at = 3; */
+            writer.tag(3, WireType.LengthDelimited).string(message.vehiclePlate);
+        /* optional resources.timestamp.Timestamp vehicle_updated_at = 4; */
         if (message.vehicleUpdatedAt)
-            Timestamp.internalBinaryWrite(message.vehicleUpdatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            Timestamp.internalBinaryWrite(message.vehicleUpdatedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -296,3 +320,58 @@ class UserMarkerData$Type extends MessageType<UserMarkerData> {
  * @generated MessageType for protobuf message resources.livemap.markers.UserMarkerData
  */
 export const UserMarkerData = new UserMarkerData$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class NameOverride$Type extends MessageType<NameOverride> {
+    constructor() {
+        super("resources.livemap.markers.NameOverride", [
+            { no: 1, name: "firstname", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "lastname", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<NameOverride>): NameOverride {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.firstname = "";
+        message.lastname = "";
+        if (value !== undefined)
+            reflectionMergePartial<NameOverride>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: NameOverride): NameOverride {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string firstname */ 1:
+                    message.firstname = reader.string();
+                    break;
+                case /* string lastname */ 2:
+                    message.lastname = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: NameOverride, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string firstname = 1; */
+        if (message.firstname !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.firstname);
+        /* string lastname = 2; */
+        if (message.lastname !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.lastname);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.livemap.markers.NameOverride
+ */
+export const NameOverride = new NameOverride$Type();

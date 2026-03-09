@@ -50,7 +50,14 @@ message UserMarker {
 message UserMarkerData {
   option (codegen.dbscanner.dbscanner) = {enabled: true};
 
-  bool is_in_vehicle = 1;
-  optional string vehicle_plate = 2 [(buf.validate.field).string.max_len = 32];
-  optional resources.timestamp.Timestamp vehicle_updated_at = 3;
+  optional NameOverride name_override = 1;
+
+  bool is_in_vehicle = 2;
+  optional string vehicle_plate = 3 [(buf.validate.field).string.max_len = 32];
+  optional resources.timestamp.Timestamp vehicle_updated_at = 4;
+}
+
+message NameOverride {
+  string firstname = 1;
+  string lastname = 2;
 }

@@ -349,6 +349,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 				tJobProps.LivemapMarkerColor,
 				tFallbackJobProps.LivemapMarkerColor,
 			).AS("user_marker.color"),
+			tLocs.Data.AS("user_marker.data"),
 		).
 		FROM(
 			tLocs.
@@ -411,6 +412,12 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 			dest[i].User.JobGrade = dest[i].GetJobGrade()
 		} else {
 			dest[i].JobGrade = &jg // Ensure JobGrade is set, even if it is 0
+		}
+
+		// Use name override if set
+		if dest[i].GetData() != nil && dest[i].GetData().GetNameOverride() != nil {
+			dest[i].User.Firstname = dest[i].GetData().GetNameOverride().GetFirstname()
+			dest[i].User.Lastname = dest[i].GetData().GetNameOverride().GetLastname()
 		}
 
 		if dest[i].Color == nil {

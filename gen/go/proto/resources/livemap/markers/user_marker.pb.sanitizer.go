@@ -9,6 +9,22 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *NameOverride) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Firstname
+	m.Firstname = htmlsanitizer.Sanitize(m.Firstname)
+
+	// Field: Lastname
+	m.Lastname = htmlsanitizer.Sanitize(m.Lastname)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserMarker) Sanitize() error {
 	if m == nil {
 		return nil
@@ -74,6 +90,15 @@ func (m *UserMarker) Sanitize() error {
 func (m *UserMarkerData) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: NameOverride
+	if m.NameOverride != nil {
+		if v, ok := any(m.GetNameOverride()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: VehiclePlate

@@ -357,9 +357,10 @@ func (b0 UserMarker_builder) Build() *UserMarker {
 
 type UserMarkerData struct {
 	state            protoimpl.MessageState `protogen:"hybrid.v1"`
-	IsInVehicle      bool                   `protobuf:"varint,1,opt,name=is_in_vehicle,json=isInVehicle,proto3" json:"is_in_vehicle,omitempty"`
-	VehiclePlate     *string                `protobuf:"bytes,2,opt,name=vehicle_plate,json=vehiclePlate,proto3,oneof" json:"vehicle_plate,omitempty"`
-	VehicleUpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=vehicle_updated_at,json=vehicleUpdatedAt,proto3,oneof" json:"vehicle_updated_at,omitempty"`
+	NameOverride     *NameOverride          `protobuf:"bytes,1,opt,name=name_override,json=nameOverride,proto3,oneof" json:"name_override,omitempty"`
+	IsInVehicle      bool                   `protobuf:"varint,2,opt,name=is_in_vehicle,json=isInVehicle,proto3" json:"is_in_vehicle,omitempty"`
+	VehiclePlate     *string                `protobuf:"bytes,3,opt,name=vehicle_plate,json=vehiclePlate,proto3,oneof" json:"vehicle_plate,omitempty"`
+	VehicleUpdatedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=vehicle_updated_at,json=vehicleUpdatedAt,proto3,oneof" json:"vehicle_updated_at,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -389,6 +390,13 @@ func (x *UserMarkerData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *UserMarkerData) GetNameOverride() *NameOverride {
+	if x != nil {
+		return x.NameOverride
+	}
+	return nil
+}
+
 func (x *UserMarkerData) GetIsInVehicle() bool {
 	if x != nil {
 		return x.IsInVehicle
@@ -410,6 +418,10 @@ func (x *UserMarkerData) GetVehicleUpdatedAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *UserMarkerData) SetNameOverride(v *NameOverride) {
+	x.NameOverride = v
+}
+
 func (x *UserMarkerData) SetIsInVehicle(v bool) {
 	x.IsInVehicle = v
 }
@@ -420,6 +432,13 @@ func (x *UserMarkerData) SetVehiclePlate(v string) {
 
 func (x *UserMarkerData) SetVehicleUpdatedAt(v *timestamp.Timestamp) {
 	x.VehicleUpdatedAt = v
+}
+
+func (x *UserMarkerData) HasNameOverride() bool {
+	if x == nil {
+		return false
+	}
+	return x.NameOverride != nil
 }
 
 func (x *UserMarkerData) HasVehiclePlate() bool {
@@ -436,6 +455,10 @@ func (x *UserMarkerData) HasVehicleUpdatedAt() bool {
 	return x.VehicleUpdatedAt != nil
 }
 
+func (x *UserMarkerData) ClearNameOverride() {
+	x.NameOverride = nil
+}
+
 func (x *UserMarkerData) ClearVehiclePlate() {
 	x.VehiclePlate = nil
 }
@@ -447,6 +470,7 @@ func (x *UserMarkerData) ClearVehicleUpdatedAt() {
 type UserMarkerData_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	NameOverride     *NameOverride
 	IsInVehicle      bool
 	VehiclePlate     *string
 	VehicleUpdatedAt *timestamp.Timestamp
@@ -456,9 +480,81 @@ func (b0 UserMarkerData_builder) Build() *UserMarkerData {
 	m0 := &UserMarkerData{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.NameOverride = b.NameOverride
 	x.IsInVehicle = b.IsInVehicle
 	x.VehiclePlate = b.VehiclePlate
 	x.VehicleUpdatedAt = b.VehicleUpdatedAt
+	return m0
+}
+
+type NameOverride struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Firstname     string                 `protobuf:"bytes,1,opt,name=firstname,proto3" json:"firstname,omitempty"`
+	Lastname      string                 `protobuf:"bytes,2,opt,name=lastname,proto3" json:"lastname,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *NameOverride) Reset() {
+	*x = NameOverride{}
+	mi := &file_resources_livemap_markers_user_marker_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NameOverride) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NameOverride) ProtoMessage() {}
+
+func (x *NameOverride) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_livemap_markers_user_marker_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *NameOverride) GetFirstname() string {
+	if x != nil {
+		return x.Firstname
+	}
+	return ""
+}
+
+func (x *NameOverride) GetLastname() string {
+	if x != nil {
+		return x.Lastname
+	}
+	return ""
+}
+
+func (x *NameOverride) SetFirstname(v string) {
+	x.Firstname = v
+}
+
+func (x *NameOverride) SetLastname(v string) {
+	x.Lastname = v
+}
+
+type NameOverride_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Firstname string
+	Lastname  string
+}
+
+func (b0 NameOverride_builder) Build() *NameOverride {
+	m0 := &NameOverride{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Firstname = b.Firstname
+	x.Lastname = b.Lastname
 	return m0
 }
 
@@ -493,33 +589,40 @@ const file_resources_livemap_markers_user_marker_proto_rawDesc = "" +
 	"\n" +
 	"\b_unit_idB\a\n" +
 	"\x05_unitB\a\n" +
-	"\x05_data\"\xe2\x01\n" +
-	"\x0eUserMarkerData\x12\"\n" +
-	"\ris_in_vehicle\x18\x01 \x01(\bR\visInVehicle\x12(\n" +
-	"\rvehicle_plate\x18\x02 \x01(\tH\x00R\fvehiclePlate\x88\x01\x01\x12Q\n" +
-	"\x12vehicle_updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x10vehicleUpdatedAt\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x10\n" +
+	"\x05_data\"\xc7\x02\n" +
+	"\x0eUserMarkerData\x12Q\n" +
+	"\rname_override\x18\x01 \x01(\v2'.resources.livemap.markers.NameOverrideH\x00R\fnameOverride\x88\x01\x01\x12\"\n" +
+	"\ris_in_vehicle\x18\x02 \x01(\bR\visInVehicle\x12(\n" +
+	"\rvehicle_plate\x18\x03 \x01(\tH\x01R\fvehiclePlate\x88\x01\x01\x12Q\n" +
+	"\x12vehicle_updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x10vehicleUpdatedAt\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x10\n" +
+	"\x0e_name_overrideB\x10\n" +
 	"\x0e_vehicle_plateB\x15\n" +
-	"\x13_vehicle_updated_atB\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers;livemapmarkersb\x06proto3"
+	"\x13_vehicle_updated_at\"H\n" +
+	"\fNameOverride\x12\x1c\n" +
+	"\tfirstname\x18\x01 \x01(\tR\tfirstname\x12\x1a\n" +
+	"\blastname\x18\x02 \x01(\tR\blastnameB\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers;livemapmarkersb\x06proto3"
 
-var file_resources_livemap_markers_user_marker_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_resources_livemap_markers_user_marker_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_livemap_markers_user_marker_proto_goTypes = []any{
 	(*UserMarker)(nil),           // 0: resources.livemap.markers.UserMarker
 	(*UserMarkerData)(nil),       // 1: resources.livemap.markers.UserMarkerData
-	(*timestamp.Timestamp)(nil),  // 2: resources.timestamp.Timestamp
-	(*colleagues.Colleague)(nil), // 3: resources.jobs.colleagues.Colleague
-	(*units.Unit)(nil),           // 4: resources.centrum.units.Unit
+	(*NameOverride)(nil),         // 2: resources.livemap.markers.NameOverride
+	(*timestamp.Timestamp)(nil),  // 3: resources.timestamp.Timestamp
+	(*colleagues.Colleague)(nil), // 4: resources.jobs.colleagues.Colleague
+	(*units.Unit)(nil),           // 5: resources.centrum.units.Unit
 }
 var file_resources_livemap_markers_user_marker_proto_depIdxs = []int32{
-	2, // 0: resources.livemap.markers.UserMarker.updated_at:type_name -> resources.timestamp.Timestamp
-	3, // 1: resources.livemap.markers.UserMarker.user:type_name -> resources.jobs.colleagues.Colleague
-	4, // 2: resources.livemap.markers.UserMarker.unit:type_name -> resources.centrum.units.Unit
+	3, // 0: resources.livemap.markers.UserMarker.updated_at:type_name -> resources.timestamp.Timestamp
+	4, // 1: resources.livemap.markers.UserMarker.user:type_name -> resources.jobs.colleagues.Colleague
+	5, // 2: resources.livemap.markers.UserMarker.unit:type_name -> resources.centrum.units.Unit
 	1, // 3: resources.livemap.markers.UserMarker.data:type_name -> resources.livemap.markers.UserMarkerData
-	2, // 4: resources.livemap.markers.UserMarkerData.vehicle_updated_at:type_name -> resources.timestamp.Timestamp
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	2, // 4: resources.livemap.markers.UserMarkerData.name_override:type_name -> resources.livemap.markers.NameOverride
+	3, // 5: resources.livemap.markers.UserMarkerData.vehicle_updated_at:type_name -> resources.timestamp.Timestamp
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_resources_livemap_markers_user_marker_proto_init() }
@@ -535,7 +638,7 @@ func file_resources_livemap_markers_user_marker_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_livemap_markers_user_marker_proto_rawDesc), len(file_resources_livemap_markers_user_marker_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
