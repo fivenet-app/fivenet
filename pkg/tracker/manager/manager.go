@@ -418,6 +418,9 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 		if dest[i].GetData() != nil && dest[i].GetData().GetNameOverride() != nil {
 			dest[i].User.Firstname = dest[i].GetData().GetNameOverride().GetFirstname()
 			dest[i].User.Lastname = dest[i].GetData().GetNameOverride().GetLastname()
+
+			// Clear props to avoid name prefix/suffix being applied on top of name override
+			dest[i].User.Props = nil
 		}
 
 		if dest[i].Color == nil {
