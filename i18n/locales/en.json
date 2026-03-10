@@ -2515,7 +2515,10 @@
             "ErrNotFoundOrNoPerms": "No document found or no permissions to access document!",
             "ErrTemplateNoPerms": "You don't have permission to view/ update/ delete this template!",
             "ErrPermissionDenied": "You don't have permission to do this!",
-            "ErrClosedDoc": "Document is closed and can't be edited!",
+            "ErrClosedDoc": {
+                "title": "Document is closed!",
+                "content": "This document is closed and can't be edited. Please re-open the document to make changes."
+            },
             "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
             "ErrDocAccessViewDenied": "You don't have permission to view this document's access!",
             "ErrTemplateFailed": "Failed to render document template! Please talk with your faction leader.",

@@ -28,8 +28,8 @@ var (
 	)
 	ErrClosedDoc = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.DocumentsService.ErrClosedDoc"},
-		nil,
+		&common.I18NItem{Key: "errors.DocumentsService.ErrClosedDoc.content"},
+		&common.I18NItem{Key: "errors.DocumentsService.ErrClosedDoc.title"},
 	)
 	ErrDocViewDenied = common.NewI18nErr(
 		codes.PermissionDenied,
