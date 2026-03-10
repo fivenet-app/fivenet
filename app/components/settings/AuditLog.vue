@@ -288,6 +288,14 @@ function resultsToLabel(results: EventResult[]): string {
     return results.map((c) => t(`enums.settings.AuditLog.EventResult.${EventResult[c ?? 0]}`)).join(', ');
 }
 
+watch(
+    () => query.services,
+    () => {
+        // If the selected methods are not part of the selected services, remove them
+        query.methods = query.methods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')));
+    },
+);
+
 const dataToggled = ref(false);
 
 const today = new Date();
@@ -400,7 +408,7 @@ const tomorrow = addDays(today, 1);
                                                 multiple
                                                 name="service"
                                                 :placeholder="$t('common.service')"
-                                                :items="grpcServices.map((s) => s.split('.').pop() ?? s)"
+                                                :items="grpcServices"
                                                 class="w-full"
                                             >
                                                 <template #empty>

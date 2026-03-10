@@ -3,6 +3,7 @@ package settings
 import (
 	"context"
 	"errors"
+	"strings"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
@@ -53,7 +54,12 @@ func (s *Server) ViewAuditLog(
 	if len(req.GetServices()) > 0 {
 		svcs := make([]mysql.Expression, len(req.GetServices()))
 		for i := range req.GetServices() {
-			svcs[i] = mysql.String(req.GetServices()[i])
+			// FIXME remove in about 90 days (default audit log retention period)
+			svc := req.GetServices()[i]
+			if !strings.Contains(svc, ".") {
+				svc = "%." + svc
+			}
+			svcs[i] = mysql.String(svc)
 		}
 		condition = condition.AND(tAuditLog.Service.IN(svcs...))
 	}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"strings"
 	"sync"
 
 	codegenaudit "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/audit"
@@ -178,11 +177,6 @@ func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 
 	ctx, span := a.tracer.Start(ctx, "audit-store")
 	defer span.End()
-
-	// Remove everything but the last part of the GRPC service name
-	// E.g., `service.centrum.CentrumService` becomes `CentrumService`
-	service := strings.Split(in.GetService(), ".")
-	in.Service = service[len(service)-1]
 
 	stmt := tAudit.
 		INSERT(
