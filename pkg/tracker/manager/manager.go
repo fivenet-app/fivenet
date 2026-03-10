@@ -415,12 +415,17 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 		}
 
 		// Use name override if set
-		if dest[i].GetData() != nil && dest[i].GetData().GetNameOverride() != nil {
-			dest[i].User.Firstname = dest[i].GetData().GetNameOverride().GetFirstname()
-			dest[i].User.Lastname = dest[i].GetData().GetNameOverride().GetLastname()
+		if dest[i].GetData() != nil {
+			if dest[i].GetData().GetNameOverride() != nil {
+				dest[i].User.Firstname = dest[i].GetData().GetNameOverride().GetFirstname()
+				dest[i].User.Lastname = dest[i].GetData().GetNameOverride().GetLastname()
 
-			// Clear props to avoid name prefix/suffix being applied on top of name override
-			dest[i].User.Props = nil
+				// Clear props to avoid name prefix/suffix being applied on top of name override
+				dest[i].User.Props = nil
+
+				// Clear name override data to not leak it to the client (we've already applied it to the name fields)
+				dest[i].Data.NameOverride = nil
+			}
 		}
 
 		if dest[i].Color == nil {
