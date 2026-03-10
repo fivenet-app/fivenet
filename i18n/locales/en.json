@@ -62,6 +62,9 @@
             "title": "Citizens",
             "id": {
                 "title": "Citizen File"
+            },
+            "labels": {
+                "title": "Citizen Labels"
             }
         },
         "jobs": {

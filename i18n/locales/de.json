@@ -62,6 +62,9 @@
             "title": "Bürger",
             "id": {
                 "title": "Bürger Akte"
+            },
+            "labels": {
+                "title": "Bürger-Labels"
             }
         },
         "jobs": {
