@@ -507,13 +507,6 @@ export const useCentrumStore = defineStore(
                                 });
                                 logger.info('Centrum is disabled for job.');
                             } else if (settings.value !== undefined) {
-                                // Settings were updated via event
-                                notifications.add({
-                                    title: { key: 'notifications.centrum.enabled.title', parameters: {} },
-                                    description: { key: 'notifications.centrum.enabled.content', parameters: {} },
-                                    type: NotificationType.INFO,
-                                    actions: getNotificationActions(),
-                                });
                                 logger.info('Centrum is enabled for job.');
                             }
 
@@ -562,6 +555,16 @@ export const useCentrumStore = defineStore(
                         });
                         logger.debug(`Removed ${removedDispatches} old dispatches`);
                     } else if (resp.change.oneofKind === 'settings') {
+                        // Send notification when centrum got enabled while it was previously disabled
+                        if (settings.value && !settings.value.enabled && resp.change.settings.enabled) {
+                            notifications.add({
+                                title: { key: 'notifications.centrum.enabled.title', parameters: {} },
+                                description: { key: 'notifications.centrum.enabled.content', parameters: {} },
+                                type: NotificationType.INFO,
+                                actions: getNotificationActions(),
+                            });
+                        }
+
                         setOrUpdateSettings(resp.change.settings);
                     } else if (resp.change.oneofKind === 'dispatchers') {
                         const idx = dispatchers.value.findIndex(
