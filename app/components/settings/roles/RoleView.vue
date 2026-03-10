@@ -9,7 +9,7 @@ import RefreshButton from '~/components/partials/RefreshButton.vue';
 import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
 import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
+import { AttributeValues, type RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
 import type { Permission, Role } from '~~/gen/ts/resources/permissions/permissions/permissions';
 import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/resources/settings/perms';
 import EffectivePermsSlideover from './EffectivePermsSlideover.vue';
@@ -31,7 +31,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const { activeChar, can } = useAuth();
+const { activeChar, can, isSuperuser } = useAuth();
 
 const overlay = useOverlay();
 
@@ -264,6 +264,19 @@ function resetRole(): void {
                 break;
         }
     });
+    changed.value = true;
+}
+
+function toggleAll(): void {
+    permList.value.forEach((perm) => permStates.value.set(perm.id, true));
+
+    attrList.value.forEach((_, idx) => {
+        if (!attrList.value[idx]?.validValues) return;
+
+        attrList.value[idx].value = AttributeValues.clone(attrList.value[idx].validValues);
+        console.log(attrList.value[idx].validValues);
+    });
+
     changed.value = true;
 }
 
@@ -615,6 +628,19 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             </div>
                         </template>
                     </UAccordion>
+
+                    <template v-if="isSuperuser && canUpdate">
+                        <USeparator class="my-2" />
+
+                        <UButton
+                            class="self-end"
+                            size="xs"
+                            color="neutral"
+                            icon="i-mdi-check-all"
+                            :label="$t('common.check_all')"
+                            @click="toggleAll()"
+                        />
+                    </template>
                 </div>
             </template>
         </div>

@@ -201,15 +201,16 @@ const { game } = useAppConfig();
     <div v-if="attribute">
         <UCollapsible>
             <UButton
-                :label="$t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`)"
+                block
                 class="group"
                 color="neutral"
                 variant="subtle"
                 trailing-icon="i-mdi-chevron-down"
+                :label="$t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`)"
+                :title="`${$t('common.id')}: ${attribute.attrId}`"
                 :ui="{
                     trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
                 }"
-                block
             />
 
             <template #content>
