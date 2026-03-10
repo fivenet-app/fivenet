@@ -62,5 +62,7 @@ func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
 
 	x.Hidden = in.GetHidden()
 
+	x.Data = proto.Clone(in.GetData()).(*UserMarkerData)
+
 	return x
 }
