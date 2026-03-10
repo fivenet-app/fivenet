@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"strings"
 	"sync"
 
 	codegenaudit "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/audit"
@@ -177,6 +178,8 @@ func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 
 	ctx, span := a.tracer.Start(ctx, "audit-store")
 	defer span.End()
+
+	in.Service, _ = strings.CutPrefix(in.GetService(), "services.")
 
 	stmt := tAudit.
 		INSERT(
