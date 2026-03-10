@@ -424,9 +424,7 @@ const tomorrow = addDays(today, 1);
                                             multiple
                                             name="method"
                                             :placeholder="$t('common.method')"
-                                            :items="
-                                                grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))
-                                            "
+                                            :items="grpcMethods.filter((m) => query.services.some((s) => m.includes(s + '/')))"
                                             class="w-full"
                                         >
                                             <template #item-label="{ item }">
