@@ -92,9 +92,10 @@ func (b0 DocumentData_builder) Build() *DocumentData {
 }
 
 type PenaltyCalculatorData struct {
-	state                protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Reduction int32                  `protobuf:"varint,1,opt,name=reduction,proto3"`
-	xxx_hidden_Selected  *[]*SelectedPenalty    `protobuf:"bytes,2,rep,name=selected,proto3"`
+	state                protoimpl.MessageState  `protogen:"opaque.v1"`
+	xxx_hidden_Reduction int32                   `protobuf:"varint,1,opt,name=reduction,proto3"`
+	xxx_hidden_Selected  *[]*SelectedPenalty     `protobuf:"bytes,2,rep,name=selected,proto3"`
+	xxx_hidden_Total     *PenaltyCalculatorTotal `protobuf:"bytes,3,opt,name=total,proto3"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -140,6 +141,13 @@ func (x *PenaltyCalculatorData) GetSelected() []*SelectedPenalty {
 	return nil
 }
 
+func (x *PenaltyCalculatorData) GetTotal() *PenaltyCalculatorTotal {
+	if x != nil {
+		return x.xxx_hidden_Total
+	}
+	return nil
+}
+
 func (x *PenaltyCalculatorData) SetReduction(v int32) {
 	x.xxx_hidden_Reduction = v
 }
@@ -148,11 +156,27 @@ func (x *PenaltyCalculatorData) SetSelected(v []*SelectedPenalty) {
 	x.xxx_hidden_Selected = &v
 }
 
+func (x *PenaltyCalculatorData) SetTotal(v *PenaltyCalculatorTotal) {
+	x.xxx_hidden_Total = v
+}
+
+func (x *PenaltyCalculatorData) HasTotal() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Total != nil
+}
+
+func (x *PenaltyCalculatorData) ClearTotal() {
+	x.xxx_hidden_Total = nil
+}
+
 type PenaltyCalculatorData_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Reduction int32
 	Selected  []*SelectedPenalty
+	Total     *PenaltyCalculatorTotal
 }
 
 func (b0 PenaltyCalculatorData_builder) Build() *PenaltyCalculatorData {
@@ -161,13 +185,14 @@ func (b0 PenaltyCalculatorData_builder) Build() *PenaltyCalculatorData {
 	_, _ = b, x
 	x.xxx_hidden_Reduction = b.Reduction
 	x.xxx_hidden_Selected = &b.Selected
+	x.xxx_hidden_Total = b.Total
 	return m0
 }
 
 type SelectedPenalty struct {
 	state            protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_LawId int64                  `protobuf:"varint,1,opt,name=law_id,json=lawId,proto3"`
-	xxx_hidden_Count int32                  `protobuf:"varint,2,opt,name=count,proto3"`
+	xxx_hidden_Count uint32                 `protobuf:"varint,2,opt,name=count,proto3"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -204,7 +229,7 @@ func (x *SelectedPenalty) GetLawId() int64 {
 	return 0
 }
 
-func (x *SelectedPenalty) GetCount() int32 {
+func (x *SelectedPenalty) GetCount() uint32 {
 	if x != nil {
 		return x.xxx_hidden_Count
 	}
@@ -215,7 +240,7 @@ func (x *SelectedPenalty) SetLawId(v int64) {
 	x.xxx_hidden_LawId = v
 }
 
-func (x *SelectedPenalty) SetCount(v int32) {
+func (x *SelectedPenalty) SetCount(v uint32) {
 	x.xxx_hidden_Count = v
 }
 
@@ -223,7 +248,7 @@ type SelectedPenalty_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	LawId int64
-	Count int32
+	Count uint32
 }
 
 func (b0 SelectedPenalty_builder) Build() *SelectedPenalty {
@@ -235,6 +260,171 @@ func (b0 SelectedPenalty_builder) Build() *SelectedPenalty {
 	return m0
 }
 
+type PenaltyCalculatorTotal struct {
+	state                    protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Count         uint32                 `protobuf:"varint,1,opt,name=count,proto3,oneof"`
+	xxx_hidden_Fine          uint32                 `protobuf:"varint,8,opt,name=fine,proto3,oneof"`
+	xxx_hidden_DetentionTime uint32                 `protobuf:"varint,9,opt,name=detention_time,json=detentionTime,proto3,oneof"`
+	xxx_hidden_StvoPoints    uint32                 `protobuf:"varint,10,opt,name=stvo_points,json=stvoPoints,proto3,oneof"`
+	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
+	XXX_presence             [1]uint32
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
+}
+
+func (x *PenaltyCalculatorTotal) Reset() {
+	*x = PenaltyCalculatorTotal{}
+	mi := &file_resources_documents_data_data_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PenaltyCalculatorTotal) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PenaltyCalculatorTotal) ProtoMessage() {}
+
+func (x *PenaltyCalculatorTotal) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_data_data_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PenaltyCalculatorTotal) GetCount() uint32 {
+	if x != nil {
+		return x.xxx_hidden_Count
+	}
+	return 0
+}
+
+func (x *PenaltyCalculatorTotal) GetFine() uint32 {
+	if x != nil {
+		return x.xxx_hidden_Fine
+	}
+	return 0
+}
+
+func (x *PenaltyCalculatorTotal) GetDetentionTime() uint32 {
+	if x != nil {
+		return x.xxx_hidden_DetentionTime
+	}
+	return 0
+}
+
+func (x *PenaltyCalculatorTotal) GetStvoPoints() uint32 {
+	if x != nil {
+		return x.xxx_hidden_StvoPoints
+	}
+	return 0
+}
+
+func (x *PenaltyCalculatorTotal) SetCount(v uint32) {
+	x.xxx_hidden_Count = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
+}
+
+func (x *PenaltyCalculatorTotal) SetFine(v uint32) {
+	x.xxx_hidden_Fine = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
+}
+
+func (x *PenaltyCalculatorTotal) SetDetentionTime(v uint32) {
+	x.xxx_hidden_DetentionTime = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
+}
+
+func (x *PenaltyCalculatorTotal) SetStvoPoints(v uint32) {
+	x.xxx_hidden_StvoPoints = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
+}
+
+func (x *PenaltyCalculatorTotal) HasCount() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *PenaltyCalculatorTotal) HasFine() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *PenaltyCalculatorTotal) HasDetentionTime() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *PenaltyCalculatorTotal) HasStvoPoints() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *PenaltyCalculatorTotal) ClearCount() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Count = 0
+}
+
+func (x *PenaltyCalculatorTotal) ClearFine() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Fine = 0
+}
+
+func (x *PenaltyCalculatorTotal) ClearDetentionTime() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_DetentionTime = 0
+}
+
+func (x *PenaltyCalculatorTotal) ClearStvoPoints() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_StvoPoints = 0
+}
+
+type PenaltyCalculatorTotal_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Count         *uint32
+	Fine          *uint32
+	DetentionTime *uint32
+	StvoPoints    *uint32
+}
+
+func (b0 PenaltyCalculatorTotal_builder) Build() *PenaltyCalculatorTotal {
+	m0 := &PenaltyCalculatorTotal{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Count != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
+		x.xxx_hidden_Count = *b.Count
+	}
+	if b.Fine != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
+		x.xxx_hidden_Fine = *b.Fine
+	}
+	if b.DetentionTime != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
+		x.xxx_hidden_DetentionTime = *b.DetentionTime
+	}
+	if b.StvoPoints != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
+		x.xxx_hidden_StvoPoints = *b.StvoPoints
+	}
+	return m0
+}
+
 var File_resources_documents_data_data_proto protoreflect.FileDescriptor
 
 const file_resources_documents_data_data_proto_rawDesc = "" +
@@ -242,28 +432,42 @@ const file_resources_documents_data_data_proto_rawDesc = "" +
 	"#resources/documents/data/data.proto\x12\x18resources.documents.data\x1a!codegen/dbscanner/dbscanner.proto\"\x92\x01\n" +
 	"\fDocumentData\x12c\n" +
 	"\x12penalty_calculator\x18\x02 \x01(\v2/.resources.documents.data.PenaltyCalculatorDataH\x00R\x11penaltyCalculator\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x15\n" +
-	"\x13_penalty_calculator\"|\n" +
+	"\x13_penalty_calculator\"\xc4\x01\n" +
 	"\x15PenaltyCalculatorData\x12\x1c\n" +
 	"\treduction\x18\x01 \x01(\x05R\treduction\x12E\n" +
-	"\bselected\x18\x02 \x03(\v2).resources.documents.data.SelectedPenaltyR\bselected\">\n" +
+	"\bselected\x18\x02 \x03(\v2).resources.documents.data.SelectedPenaltyR\bselected\x12F\n" +
+	"\x05total\x18\x03 \x01(\v20.resources.documents.data.PenaltyCalculatorTotalR\x05total\">\n" +
 	"\x0fSelectedPenalty\x12\x15\n" +
 	"\x06law_id\x18\x01 \x01(\x03R\x05lawId\x12\x14\n" +
-	"\x05count\x18\x02 \x01(\x05R\x05countBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/data;documentsdatab\x06proto3"
+	"\x05count\x18\x02 \x01(\rR\x05count\"\xd4\x01\n" +
+	"\x16PenaltyCalculatorTotal\x12\x19\n" +
+	"\x05count\x18\x01 \x01(\rH\x00R\x05count\x88\x01\x01\x12\x17\n" +
+	"\x04fine\x18\b \x01(\rH\x01R\x04fine\x88\x01\x01\x12*\n" +
+	"\x0edetention_time\x18\t \x01(\rH\x02R\rdetentionTime\x88\x01\x01\x12$\n" +
+	"\vstvo_points\x18\n" +
+	" \x01(\rH\x03R\n" +
+	"stvoPoints\x88\x01\x01B\b\n" +
+	"\x06_countB\a\n" +
+	"\x05_fineB\x11\n" +
+	"\x0f_detention_timeB\x0e\n" +
+	"\f_stvo_pointsBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/data;documentsdatab\x06proto3"
 
-var file_resources_documents_data_data_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_resources_documents_data_data_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_documents_data_data_proto_goTypes = []any{
-	(*DocumentData)(nil),          // 0: resources.documents.data.DocumentData
-	(*PenaltyCalculatorData)(nil), // 1: resources.documents.data.PenaltyCalculatorData
-	(*SelectedPenalty)(nil),       // 2: resources.documents.data.SelectedPenalty
+	(*DocumentData)(nil),           // 0: resources.documents.data.DocumentData
+	(*PenaltyCalculatorData)(nil),  // 1: resources.documents.data.PenaltyCalculatorData
+	(*SelectedPenalty)(nil),        // 2: resources.documents.data.SelectedPenalty
+	(*PenaltyCalculatorTotal)(nil), // 3: resources.documents.data.PenaltyCalculatorTotal
 }
 var file_resources_documents_data_data_proto_depIdxs = []int32{
 	1, // 0: resources.documents.data.DocumentData.penalty_calculator:type_name -> resources.documents.data.PenaltyCalculatorData
 	2, // 1: resources.documents.data.PenaltyCalculatorData.selected:type_name -> resources.documents.data.SelectedPenalty
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	3, // 2: resources.documents.data.PenaltyCalculatorData.total:type_name -> resources.documents.data.PenaltyCalculatorTotal
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_data_data_proto_init() }
@@ -272,13 +476,14 @@ func file_resources_documents_data_data_proto_init() {
 		return
 	}
 	file_resources_documents_data_data_proto_msgTypes[0].OneofWrappers = []any{}
+	file_resources_documents_data_data_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_documents_data_data_proto_rawDesc), len(file_resources_documents_data_data_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

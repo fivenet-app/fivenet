@@ -14,7 +14,7 @@ import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { AccessLevel, type DocumentJobAccess, type DocumentUserAccess } from '~~/gen/ts/resources/documents/access/access';
-import type { Category } from '~~/gen/ts/resources/documents/category/category';
+import { Category } from '~~/gen/ts/resources/documents/category/category';
 import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import type { DocumentReference } from '~~/gen/ts/resources/documents/references/references';
 import type { DocumentRelation } from '~~/gen/ts/resources/documents/relations/relations';
@@ -84,7 +84,9 @@ function setFromProps(): void {
     state.content = document.value.document.content?.tiptapJson
         ? (Struct.toJson(document.value.document.content.tiptapJson) as JSONContent)
         : (document.value.document.content?.rawHtml ?? '');
-    state.category = document.value.document.category ?? emptyCategory;
+    state.category = document.value.document.category
+        ? Category.clone(document.value.document.category)
+        : Category.clone(emptyCategory);
     if (document.value.access) {
         state.access.jobs = document.value.access.jobs;
         state.access.users = document.value.access.users;
@@ -149,10 +151,10 @@ watch(document, async () => await Promise.all([refreshReferences(), refreshRelat
 
 const route = useRoute();
 
-const emptyCategory: Category = {
+const emptyCategory = Category.create({
     id: 0,
     name: t('common.categories', 0),
-};
+});
 
 const schema = z.object({
     title: z.coerce.string().min(3).max(255),
@@ -161,7 +163,7 @@ const schema = z.object({
     draft: z.coerce.boolean().default(true),
     public: z.coerce.boolean().default(false),
     state: z.union([z.coerce.string().length(0), z.coerce.string().min(3).max(32)]).default(''),
-    category: z.custom<Category>().default({ ...emptyCategory }),
+    category: z.custom<Category>().optional(),
     access: z
         .object({
             jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
@@ -183,7 +185,7 @@ const state = reactive<Schema>({
     draft: true,
     public: false,
     state: '',
-    category: emptyCategory,
+    category: Category.clone(emptyCategory),
     access: {
         jobs: [],
         users: [],
@@ -192,6 +194,13 @@ const state = reactive<Schema>({
     data: {},
     references: [],
     relations: [],
+});
+
+const categoryModel = computed<Category | undefined>({
+    get: () => state.category,
+    set: (value) => {
+        state.category = value ? Category.clone(value) : Category.clone(emptyCategory);
+    },
 });
 
 const changed = ref(false);
@@ -429,9 +438,8 @@ const metaYdoc = ydoc.getMap('meta');
 useYBoolean(metaYdoc, 'closed', toRef(state, 'closed'), { provider: provider });
 useYBoolean(metaYdoc, 'draft', toRef(state, 'draft'), { provider: provider });
 useYBoolean(metaYdoc, 'public', toRef(state, 'public'), { provider: provider });
-const categoryYdoc = ydoc.getMap<Primitive>('category');
-useYObject<Category>(
-    categoryYdoc,
+useYStructure<Category>(
+    ydoc.getMap('category'),
     toRef(state, 'category'),
     {
         omit: ['createdAt', 'deletedAt'],
@@ -468,7 +476,7 @@ useYArrayFiltered<File>(
 );
 
 // Data
-useYObject<DocumentData>(ydoc.getMap('data'), toRef(state, 'data'), {}, { provider: provider });
+useYStructure<DocumentData>(ydoc.getMap('data'), toRef(state, 'data'), {}, { provider: provider });
 
 // References and Relations
 useYArrayFiltered<DocumentReference>(
@@ -611,7 +619,7 @@ provide('yjsProvider', provider);
                                     <div class="flex flex-row gap-2">
                                         <UFormField class="flex-1" name="category" :label="$t('common.category', 1)">
                                             <SelectMenu
-                                                v-model="state.category"
+                                                v-model="categoryModel"
                                                 :filter-fields="['name']"
                                                 block
                                                 nullable
@@ -620,13 +628,17 @@ provide('yjsProvider', provider);
                                                 :searchable="
                                                     async (q: string) => {
                                                         try {
-                                                            const categories =
-                                                                await completorStore.completeDocumentCategories(q);
-                                                            if (!categories.find((c) => c.id === state.category.id)) {
-                                                                categories.unshift(state.category);
-                                                            }
-                                                            if (!categories.find((c) => c.id === emptyCategory.id)) {
-                                                                categories.unshift(emptyCategory);
+                                                            const categories = (
+                                                                await completorStore.completeDocumentCategories(
+                                                                    q,
+                                                                    state.category?.id ? state.category.id : undefined,
+                                                                )
+                                                            ).map((c) => Category.clone(c));
+                                                            if (
+                                                                state.category?.id &&
+                                                                !categories.find((c) => c.id === state.category?.id)
+                                                            ) {
+                                                                categories.unshift(Category.clone(state.category));
                                                             }
                                                             return categories;
                                                         } catch (e) {
@@ -637,11 +649,10 @@ provide('yjsProvider', provider);
                                                 "
                                                 searchable-key="completor-document-categories"
                                                 :search-input="{ placeholder: $t('common.search_field') }"
+                                                :clear="state.category?.id !== emptyCategory.id"
+                                                :ui="{ base: state.category?.id !== emptyCategory.id ? 'py-1' : '' }"
                                             >
-                                                <template
-                                                    v-if="state.category && state.category.id !== emptyCategory.id"
-                                                    #default
-                                                >
+                                                <template v-if="state.category?.id" #default>
                                                     <CategoryBadge :category="state.category" />
                                                 </template>
 

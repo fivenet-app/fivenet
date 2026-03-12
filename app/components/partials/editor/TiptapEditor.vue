@@ -142,6 +142,8 @@ function seedDocument(schema: Schema, value: JSONContent | string): void {
 
     // Merge that doc's state into the live document
     Y.applyUpdate(ydoc!, Y.encodeStateAsUpdate(seedDoc));
+
+    if (unref(editor)) syncPenaltyCalculatorData(unref(editor)!);
 }
 
 let yjsSchema: Schema | undefined = undefined;
@@ -254,9 +256,7 @@ function syncPenaltyCalculatorData(editor: Editor): void {
 
     const hasPenaltyBlock = hasPenaltyCalculatorNode(editor);
     if (!hasPenaltyBlock) {
-        if (documentData.value.penaltyCalculator) {
-            documentData.value.penaltyCalculator = undefined;
-        }
+        if (documentData.value.penaltyCalculator) documentData.value.penaltyCalculator = undefined;
         return;
     }
 

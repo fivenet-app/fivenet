@@ -6,24 +6,29 @@
         A extends ArrayOrNested<InputMenuItem>,
         VK extends GetItemKeys<A> | undefined = undefined,
         M extends boolean = false,
+        Mod extends Omit<ModelModifiers, 'lazy'> = Omit<ModelModifiers, 'lazy'>,
+        C extends boolean | object = boolean | object,
         T extends NestedItem<A> = NestedItem<A>
     "
 >
 import type { InputMenuEmits, InputMenuItem, InputMenuProps, InputMenuSlots } from '@nuxt/ui';
+import type { ModelModifiers } from '@nuxt/ui/runtime/types/input.js';
 import type { ArrayOrNested, GetItemKeys, NestedItem } from '@nuxt/ui/runtime/types/utils.js';
 
 interface Props<
     T extends ArrayOrNested<InputMenuItem>,
     VK extends GetItemKeys<T> | undefined = undefined,
     M extends boolean = false,
-> extends /* @vue-ignore */ InputMenuProps<T, VK, M> {
+    Mod extends Omit<ModelModifiers, 'lazy'> = Omit<ModelModifiers, 'lazy'>,
+    C extends boolean | object = boolean | object,
+> extends /* @vue-ignore */ InputMenuProps<T, VK, M, Mod, C> {
     searchableKey?: string;
     searchable?: (q: string) => Promise<T>;
 }
 
-const props = defineProps<Props<A, VK, M>>();
-defineSlots</* @vue-ignore */ InputMenuSlots<A, VK, M, T>>();
-defineEmits</* @vue-ignore */ InputMenuEmits<A, VK, M>>();
+const props = defineProps<Props<A, VK, M, Mod, C>>();
+defineSlots</* @vue-ignore */ InputMenuSlots<A, VK, M, Mod, C, T>>();
+defineEmits</* @vue-ignore */ InputMenuEmits<A, VK, M, Mod, C>>();
 
 const loading = ref(false);
 

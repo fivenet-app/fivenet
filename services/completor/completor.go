@@ -56,7 +56,7 @@ func (s *Server) CompleteCitizens(
 			userIds = append(userIds, mysql.Int32(v))
 		}
 
-		if req.UserIdsOnly != nil && req.GetUserIdsOnly() {
+		if req.GetUserIdsOnly() {
 			condition = condition.OR(tUsers.ID.IN(userIds...))
 		}
 
@@ -167,6 +167,7 @@ func (s *Server) CompleteDocumentCategories(
 		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
 	}
 
+	orderBys := []mysql.OrderByClause{}
 	condition := tDCategory.Job.IN(jobsExp...)
 
 	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
@@ -174,6 +175,18 @@ func (s *Server) CompleteDocumentCategories(
 			tDCategory.Name.LIKE(mysql.String(search)),
 		)
 	}
+
+	if len(req.GetCategoryIds()) > 0 {
+		categoryIds := []mysql.Expression{}
+		for _, v := range req.GetCategoryIds() {
+			categoryIds = append(categoryIds, mysql.Int64(v))
+		}
+
+		// Make sure to sort by the category IDs if provided
+		orderBys = append(orderBys, tDCategory.ID.IN(categoryIds...).DESC())
+	}
+
+	orderBys = append(orderBys, tDCategory.SortKey.ASC())
 
 	stmt := tDCategory.
 		SELECT(
@@ -186,9 +199,7 @@ func (s *Server) CompleteDocumentCategories(
 		).
 		FROM(tDCategory).
 		WHERE(condition).
-		ORDER_BY(
-			tDCategory.SortKey.ASC(),
-		).
+		ORDER_BY(orderBys...).
 		LIMIT(15)
 
 	resp := &pbcompletor.CompleteDocumentCategoriesResponse{}

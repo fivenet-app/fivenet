@@ -15,16 +15,37 @@ message DocumentData {
 
 message PenaltyCalculatorData {
   int32 reduction = 1 [(buf.validate.field).int32 = {
-    gte: 0,
+    gte: 0
     lt: 100
   }];
   repeated SelectedPenalty selected = 2 [(buf.validate.field).repeated.max_items = 30];
+
+  optional PenaltyCalculatorTotal total = 3;
 }
 
 message SelectedPenalty {
   int64 law_id = 1 [(buf.validate.field).int64.gt = 0];
-  int32 count = 2 [(buf.validate.field).int32 = {
-    gt: 0,
+  uint32 count = 2 [(buf.validate.field).uint32 = {
+    gt: 0
     lt: 100
+  }];
+}
+
+message PenaltyCalculatorTotal {
+  optional uint32 count = 1 [(buf.validate.field).uint32 = {
+    gte: 0
+    lt: 1000
+  }];
+  optional uint32 fine = 8 [(buf.validate.field).uint32 = {
+    gte: 0
+    lt: 10000000
+  }];
+  optional uint32 detention_time = 9 [(buf.validate.field).uint32 = {
+    gte: 0
+    lt: 10000
+  }];
+  optional uint32 stvo_points = 10 [(buf.validate.field).uint32 = {
+    gte: 0
+    lt: 1000
   }];
 }

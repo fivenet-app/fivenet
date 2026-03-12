@@ -16,7 +16,7 @@ const users = computed(() => {
             :class="users.length === 0 && 'cursor-not-allowed'"
             color="neutral"
             variant="link"
-            trailing-icon="i-heroicons-chevron-down-20-solid"
+            trailing-icon="i-mdi-chevron-down"
         >
             {{ users.length }} {{ $t('common.user', users.length) }}
         </UButton>

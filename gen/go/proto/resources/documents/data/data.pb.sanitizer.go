@@ -41,6 +41,25 @@ func (m *PenaltyCalculatorData) Sanitize() error {
 
 	}
 
+	// Field: Total
+	if m.Total != nil {
+		if v, ok := any(m.GetTotal()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *PenaltyCalculatorTotal) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
 	return nil
 }
 

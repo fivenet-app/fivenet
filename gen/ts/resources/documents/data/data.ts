@@ -32,6 +32,10 @@ export interface PenaltyCalculatorData {
      * @generated from protobuf field: repeated resources.documents.data.SelectedPenalty selected = 2
      */
     selected: SelectedPenalty[];
+    /**
+     * @generated from protobuf field: resources.documents.data.PenaltyCalculatorTotal total = 3
+     */
+    total?: PenaltyCalculatorTotal;
 }
 /**
  * @generated from protobuf message resources.documents.data.SelectedPenalty
@@ -42,9 +46,30 @@ export interface SelectedPenalty {
      */
     lawId: number;
     /**
-     * @generated from protobuf field: int32 count = 2
+     * @generated from protobuf field: uint32 count = 2
      */
     count: number;
+}
+/**
+ * @generated from protobuf message resources.documents.data.PenaltyCalculatorTotal
+ */
+export interface PenaltyCalculatorTotal {
+    /**
+     * @generated from protobuf field: optional uint32 count = 1
+     */
+    count?: number;
+    /**
+     * @generated from protobuf field: optional uint32 fine = 8
+     */
+    fine?: number;
+    /**
+     * @generated from protobuf field: optional uint32 detention_time = 9
+     */
+    detentionTime?: number;
+    /**
+     * @generated from protobuf field: optional uint32 stvo_points = 10
+     */
+    stvoPoints?: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DocumentData$Type extends MessageType<DocumentData> {
@@ -97,7 +122,8 @@ class PenaltyCalculatorData$Type extends MessageType<PenaltyCalculatorData> {
     constructor() {
         super("resources.documents.data.PenaltyCalculatorData", [
             { no: 1, name: "reduction", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lt: 100, gte: 0 } } } },
-            { no: 2, name: "selected", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SelectedPenalty, options: { "buf.validate.field": { repeated: { maxItems: "30" } } } }
+            { no: 2, name: "selected", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SelectedPenalty, options: { "buf.validate.field": { repeated: { maxItems: "30" } } } },
+            { no: 3, name: "total", kind: "message", T: () => PenaltyCalculatorTotal }
         ]);
     }
     create(value?: PartialMessage<PenaltyCalculatorData>): PenaltyCalculatorData {
@@ -119,6 +145,9 @@ class PenaltyCalculatorData$Type extends MessageType<PenaltyCalculatorData> {
                 case /* repeated resources.documents.data.SelectedPenalty selected */ 2:
                     message.selected.push(SelectedPenalty.internalBinaryRead(reader, reader.uint32(), options));
                     break;
+                case /* resources.documents.data.PenaltyCalculatorTotal total */ 3:
+                    message.total = PenaltyCalculatorTotal.internalBinaryRead(reader, reader.uint32(), options, message.total);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -137,6 +166,9 @@ class PenaltyCalculatorData$Type extends MessageType<PenaltyCalculatorData> {
         /* repeated resources.documents.data.SelectedPenalty selected = 2; */
         for (let i = 0; i < message.selected.length; i++)
             SelectedPenalty.internalBinaryWrite(message.selected[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.data.PenaltyCalculatorTotal total = 3; */
+        if (message.total)
+            PenaltyCalculatorTotal.internalBinaryWrite(message.total, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -152,7 +184,7 @@ class SelectedPenalty$Type extends MessageType<SelectedPenalty> {
     constructor() {
         super("resources.documents.data.SelectedPenalty", [
             { no: 1, name: "law_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 2, name: "count", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lt: 100, gt: 0 } } } }
+            { no: 2, name: "count", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lt: 100, gt: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<SelectedPenalty>): SelectedPenalty {
@@ -171,8 +203,8 @@ class SelectedPenalty$Type extends MessageType<SelectedPenalty> {
                 case /* int64 law_id */ 1:
                     message.lawId = reader.int64().toNumber();
                     break;
-                case /* int32 count */ 2:
-                    message.count = reader.int32();
+                case /* uint32 count */ 2:
+                    message.count = reader.uint32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -189,9 +221,9 @@ class SelectedPenalty$Type extends MessageType<SelectedPenalty> {
         /* int64 law_id = 1; */
         if (message.lawId !== 0)
             writer.tag(1, WireType.Varint).int64(message.lawId);
-        /* int32 count = 2; */
+        /* uint32 count = 2; */
         if (message.count !== 0)
-            writer.tag(2, WireType.Varint).int32(message.count);
+            writer.tag(2, WireType.Varint).uint32(message.count);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -202,3 +234,70 @@ class SelectedPenalty$Type extends MessageType<SelectedPenalty> {
  * @generated MessageType for protobuf message resources.documents.data.SelectedPenalty
  */
 export const SelectedPenalty = new SelectedPenalty$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PenaltyCalculatorTotal$Type extends MessageType<PenaltyCalculatorTotal> {
+    constructor() {
+        super("resources.documents.data.PenaltyCalculatorTotal", [
+            { no: 1, name: "count", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lt: 1000, gte: 0 } } } },
+            { no: 8, name: "fine", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lt: 10000000, gte: 0 } } } },
+            { no: 9, name: "detention_time", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lt: 10000, gte: 0 } } } },
+            { no: 10, name: "stvo_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lt: 1000, gte: 0 } } } }
+        ]);
+    }
+    create(value?: PartialMessage<PenaltyCalculatorTotal>): PenaltyCalculatorTotal {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<PenaltyCalculatorTotal>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PenaltyCalculatorTotal): PenaltyCalculatorTotal {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional uint32 count */ 1:
+                    message.count = reader.uint32();
+                    break;
+                case /* optional uint32 fine */ 8:
+                    message.fine = reader.uint32();
+                    break;
+                case /* optional uint32 detention_time */ 9:
+                    message.detentionTime = reader.uint32();
+                    break;
+                case /* optional uint32 stvo_points */ 10:
+                    message.stvoPoints = reader.uint32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PenaltyCalculatorTotal, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional uint32 count = 1; */
+        if (message.count !== undefined)
+            writer.tag(1, WireType.Varint).uint32(message.count);
+        /* optional uint32 fine = 8; */
+        if (message.fine !== undefined)
+            writer.tag(8, WireType.Varint).uint32(message.fine);
+        /* optional uint32 detention_time = 9; */
+        if (message.detentionTime !== undefined)
+            writer.tag(9, WireType.Varint).uint32(message.detentionTime);
+        /* optional uint32 stvo_points = 10; */
+        if (message.stvoPoints !== undefined)
+            writer.tag(10, WireType.Varint).uint32(message.stvoPoints);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.data.PenaltyCalculatorTotal
+ */
+export const PenaltyCalculatorTotal = new PenaltyCalculatorTotal$Type();

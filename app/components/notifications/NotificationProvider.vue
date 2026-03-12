@@ -42,7 +42,7 @@ const { pause, resume } = useIntervalFn(
 
         resume();
     },
-    (60 + randomNumber(2, 15)) * 1000,
+    (120 + randomNumber(2, 15)) * 1000,
     { immediate: false },
 );
 

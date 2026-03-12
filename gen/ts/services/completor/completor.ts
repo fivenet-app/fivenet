@@ -85,6 +85,10 @@ export interface CompleteDocumentCategoriesRequest {
      * @generated from protobuf field: string search = 1
      */
     search: string;
+    /**
+     * @generated from protobuf field: repeated int64 category_ids = 2
+     */
+    categoryIds: number[];
 }
 /**
  * @generated from protobuf message services.completor.CompleteDocumentCategoriesResponse
@@ -369,12 +373,14 @@ export const CompleteJobsResponse = new CompleteJobsResponse$Type();
 class CompleteDocumentCategoriesRequest$Type extends MessageType<CompleteDocumentCategoriesRequest> {
     constructor() {
         super("services.completor.CompleteDocumentCategoriesRequest", [
-            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } }
+            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 2, name: "category_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { items: { int64: { gt: "0" } } } } } }
         ]);
     }
     create(value?: PartialMessage<CompleteDocumentCategoriesRequest>): CompleteDocumentCategoriesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.search = "";
+        message.categoryIds = [];
         if (value !== undefined)
             reflectionMergePartial<CompleteDocumentCategoriesRequest>(this, message, value);
         return message;
@@ -386,6 +392,13 @@ class CompleteDocumentCategoriesRequest$Type extends MessageType<CompleteDocumen
             switch (fieldNo) {
                 case /* string search */ 1:
                     message.search = reader.string();
+                    break;
+                case /* repeated int64 category_ids */ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.categoryIds.push(reader.int64().toNumber());
+                    else
+                        message.categoryIds.push(reader.int64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -402,6 +415,13 @@ class CompleteDocumentCategoriesRequest$Type extends MessageType<CompleteDocumen
         /* string search = 1; */
         if (message.search !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.search);
+        /* repeated int64 category_ids = 2; */
+        if (message.categoryIds.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.categoryIds.length; i++)
+                writer.int64(message.categoryIds[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

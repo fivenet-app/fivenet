@@ -449,10 +449,11 @@ func (b0 CompleteJobsResponse_builder) Build() *CompleteJobsResponse {
 }
 
 type CompleteDocumentCategoriesRequest struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Search string                 `protobuf:"bytes,1,opt,name=search,proto3"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Search      string                 `protobuf:"bytes,1,opt,name=search,proto3"`
+	xxx_hidden_CategoryIds []int64                `protobuf:"varint,2,rep,packed,name=category_ids,json=categoryIds,proto3"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *CompleteDocumentCategoriesRequest) Reset() {
@@ -487,14 +488,26 @@ func (x *CompleteDocumentCategoriesRequest) GetSearch() string {
 	return ""
 }
 
+func (x *CompleteDocumentCategoriesRequest) GetCategoryIds() []int64 {
+	if x != nil {
+		return x.xxx_hidden_CategoryIds
+	}
+	return nil
+}
+
 func (x *CompleteDocumentCategoriesRequest) SetSearch(v string) {
 	x.xxx_hidden_Search = v
+}
+
+func (x *CompleteDocumentCategoriesRequest) SetCategoryIds(v []int64) {
+	x.xxx_hidden_CategoryIds = v
 }
 
 type CompleteDocumentCategoriesRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Search string
+	Search      string
+	CategoryIds []int64
 }
 
 func (b0 CompleteDocumentCategoriesRequest_builder) Build() *CompleteDocumentCategoriesRequest {
@@ -502,6 +515,7 @@ func (b0 CompleteDocumentCategoriesRequest_builder) Build() *CompleteDocumentCat
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Search = b.Search
+	x.xxx_hidden_CategoryIds = b.CategoryIds
 	return m0
 }
 
@@ -810,9 +824,10 @@ const file_services_completor_completor_proto_rawDesc = "" +
 	"\f_exact_matchB\x0e\n" +
 	"\f_current_job\"?\n" +
 	"\x14CompleteJobsResponse\x12'\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x04jobs\";\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x04jobs\"^\n" +
 	"!CompleteDocumentCategoriesRequest\x12\x16\n" +
-	"\x06search\x18\x01 \x01(\tR\x06search\"l\n" +
+	"\x06search\x18\x01 \x01(\tR\x06search\x12!\n" +
+	"\fcategory_ids\x18\x02 \x03(\x03R\vcategoryIds\"l\n" +
 	"\"CompleteDocumentCategoriesResponse\x12F\n" +
 	"\n" +
 	"categories\x18\x01 \x03(\v2&.resources.documents.category.CategoryR\n" +

@@ -37,6 +37,7 @@ message CompleteJobsResponse {
 
 message CompleteDocumentCategoriesRequest {
   string search = 1 [(buf.validate.field).string.max_len = 64];
+  repeated int64 category_ids = 2 [(buf.validate.field).repeated.items.int64.gt = 0];
 }
 
 message CompleteDocumentCategoriesResponse {

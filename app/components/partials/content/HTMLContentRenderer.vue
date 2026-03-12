@@ -1,6 +1,7 @@
 <script lang="ts">
 import { UCheckbox, UIcon } from '#components';
 import { defineComponent, getCurrentInstance, h, Text, type Component, type VNode } from 'vue';
+import PenaltyCalculatorContentView from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorContentView.vue';
 import type { RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
 import GenericImg from '../elements/GenericImg.vue';
 
@@ -62,9 +63,9 @@ export default defineComponent({
                     value.attrs?.['data-type'] === 'penalty-calculator' ||
                     value.attrs?.['data-type'] === 'penaltyCalculator')
             ) {
-                return h('div', { class: 'my-2 rounded-md border border-dashed border-neutral-300 p-2 text-sm text-muted' }, [
-                    'Penalty Calculator',
-                ]);
+                return h(PenaltyCalculatorContentView, {
+                    class: 'my-2 rounded-md border border-dashed border-neutral-300 p-2 text-sm text-muted',
+                });
             }
 
             // 5. Tag remapping

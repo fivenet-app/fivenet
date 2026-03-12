@@ -35,6 +35,18 @@ export function toPenaltyCalculatorData(selectedPenalties: SelectedPenalty[], re
             lawId: item.law.id,
             count: item.count,
         })),
+        total: {
+            fine: selectedPenalties.reduce((acc, curr) => acc + (curr.law.fine ? curr.law.fine * curr.count : 0), 0),
+            detentionTime: selectedPenalties.reduce(
+                (acc, curr) => acc + (curr.law.detentionTime ? curr.law.detentionTime * curr.count : 0),
+                0,
+            ),
+            stvoPoints: selectedPenalties.reduce(
+                (acc, curr) => acc + (curr.law.stvoPoints ? curr.law.stvoPoints * curr.count : 0),
+                0,
+            ),
+            count: selectedPenalties.reduce((acc, curr) => acc + curr.count, 0),
+        },
     };
 }
 

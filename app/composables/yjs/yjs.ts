@@ -51,6 +51,10 @@ export default class GrpcProvider extends ObservableV2<Events> {
         return this.authoritative;
     }
 
+    public get isSynced() {
+        return this.synced;
+    }
+
     // Public helpers
     override destroy() {
         if (this.destroyed) return;

@@ -67,14 +67,14 @@ export function useYText(yText: Y.Text, textRef?: Ref<string>, opts: YjsSyncOpti
         const remote = yText.toString();
         remoteApplying = true;
 
-        if (provider && provider.isAuthoritative) {
+        if (remote.length > 0) {
+            text.value = remote; // remote wins
+        } else if (provider && provider.isAuthoritative) {
             // remote empty -> seed with local value
             yText.doc?.transact(() => {
                 yText.delete(0, yText.length);
                 yText.insert(0, text.value);
             }, LOCAL_ORIGIN);
-        } else {
-            text.value = remote; // remote wins
         }
 
         nextTick(() => {
@@ -113,13 +113,68 @@ export function useYText(yText: Y.Text, textRef?: Ref<string>, opts: YjsSyncOpti
         );
     };
 
-    if (provider) {
+    if (provider && !provider.isSynced) {
         provider.once('sync', onSync);
     } else {
         init();
     }
 
     return text;
+}
+
+/**
+ * Composable to bind a Vue `Ref<string>` to a Yjs `Y.Map` string entry.
+ */
+export function useYString(yMap: Y.Map<unknown>, key: string, strRef?: Ref<string>, opts: YjsSyncOptions = {}): Ref<string> {
+    const { provider } = opts;
+    const str = (strRef ?? ref('')) as Ref<string>;
+    let remoteApplying = false;
+
+    const handleUpdate = (evt: Y.YMapEvent<unknown>): void => {
+        if (evt.transaction.origin === LOCAL_ORIGIN) return;
+        remoteApplying = true;
+        const v = yMap.get(key);
+        str.value = typeof v === 'string' ? (v as string) : '';
+        nextTick(() => {
+            remoteApplying = false;
+        });
+    };
+
+    const onSync = (s: boolean) => s && init();
+
+    const init = (): void => {
+        const remote = yMap.get(key);
+        const hasRemote = typeof remote === 'string';
+        if (hasRemote) {
+            str.value = remote as string;
+        } else if (provider && provider.isAuthoritative) {
+            yMap.doc?.transact(() => yMap.set(key, str.value), LOCAL_ORIGIN);
+        }
+
+        yMap.observe(handleUpdate);
+        if (getCurrentInstance())
+            onUnmounted(() => {
+                provider?.off('sync', onSync);
+                yMap.unobserve(handleUpdate);
+            });
+
+        watch(
+            str,
+            (val, oldVal) => {
+                if (remoteApplying || val === oldVal) return;
+                yMap.doc?.transact(() => yMap.set(key, val), LOCAL_ORIGIN);
+            },
+            { flush: 'sync' },
+        );
+    };
+
+    if (provider && !provider.isSynced) {
+        provider.once('sync', onSync);
+    } else {
+        init();
+    }
+
+    return str;
 }
 
 // Helper for incremental text patches
@@ -206,7 +261,7 @@ export function useYBoolean(
         );
     };
 
-    if (provider) {
+    if (provider && !provider.isSynced) {
         provider.once('sync', onSync);
     } else {
         init();
@@ -271,7 +326,7 @@ export function useYNumber(yMap: Y.Map<unknown>, key: string, numRef?: Ref<numbe
         );
     };
 
-    if (provider) {
+    if (provider && !provider.isSynced) {
         provider.once('sync', onSync);
     } else {
         init();

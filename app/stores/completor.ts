@@ -173,13 +173,16 @@ export const useCompletorStore = defineStore(
          * @param {string} search - The search term for completing document categories.
          * @returns {Promise<Category[]>} - The completed document categories.
          */
-        const completeDocumentCategories = async (search: string): Promise<Category[]> => {
+        const completeDocumentCategories = async (search: string, ...ids: (number | undefined)[]): Promise<Category[]> => {
             const { can } = useAuth();
             if (!can('completor.CompletorService/CompleteDocumentCategories').value) return [];
 
             const completorCompletorClient = await getCompletorCompletorClient();
             try {
-                const call = completorCompletorClient.completeDocumentCategories({ search: search });
+                const call = completorCompletorClient.completeDocumentCategories({
+                    search: search,
+                    categoryIds: ids.filter((id): id is number => id !== undefined),
+                });
                 const { response } = await call;
                 return response.categories;
             } catch (e) {

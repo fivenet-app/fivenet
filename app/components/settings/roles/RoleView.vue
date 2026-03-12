@@ -246,7 +246,6 @@ watch(props, async () => {
 
 function resetRole(): void {
     permStates.value.forEach((_, key) => permStates.value.set(key, undefined));
-    console.log([...attrList.value.entries()]);
     attrList.value.forEach((attr) => {
         if (!attr.value) return;
 
@@ -274,7 +273,6 @@ function toggleAll(): void {
         if (!attrList.value[idx]?.validValues) return;
 
         attrList.value[idx].value = AttributeValues.clone(attrList.value[idx].validValues);
-        console.log(attrList.value[idx].validValues);
     });
 
     changed.value = true;

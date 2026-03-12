@@ -3805,6 +3805,21 @@ States of Cronjbo
 | ----- | ---- | ----- | ----------- |
 | `reduction` | [int32](#int32) |  |  |
 | `selected` | [SelectedPenalty](#resourcesdocumentsdataSelectedPenalty) | repeated |  |
+| `total` | [PenaltyCalculatorTotal](#resourcesdocumentsdataPenaltyCalculatorTotal) |  |  |
+
+
+
+
+
+### resources.documents.data.PenaltyCalculatorTotal
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `count` | [uint32](#uint32) | optional |  |
+| `fine` | [uint32](#uint32) | optional |  |
+| `detention_time` | [uint32](#uint32) | optional |  |
+| `stvo_points` | [uint32](#uint32) | optional |  |
 
 
 
@@ -3816,7 +3831,7 @@ States of Cronjbo
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `law_id` | [int64](#int64) |  |  |
-| `count` | [int32](#int32) |  |  |
+| `count` | [uint32](#uint32) |  |  |
 
 
 
@@ -8772,6 +8787,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `search` | [string](#string) |  |  |
+| `category_ids` | [int64](#int64) | repeated |  |
 
 
 

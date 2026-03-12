@@ -4,41 +4,56 @@
     generic="
         T extends ArrayOrNested<SelectMenuItem>,
         VK extends GetItemKeys<T> | undefined = undefined,
-        M extends boolean = false
+        M extends boolean = false,
+        Mod extends Omit<ModelModifiers, 'lazy'> = Omit<ModelModifiers, 'lazy'>,
+        C extends boolean | object = boolean | object
     "
 >
 import type { SelectMenuEmits, SelectMenuItem, SelectMenuProps, SelectMenuSlots } from '@nuxt/ui';
-import type { ArrayOrNested, GetItemKeys, GetModelValue, NestedItem } from '@nuxt/ui/runtime/types/utils.js';
+import type { ModelModifiers } from '@nuxt/ui/runtime/types/input.js';
+import type { ArrayOrNested, GetItemKeys, NestedItem } from '@nuxt/ui/runtime/types/utils.js';
 
 interface Props<
     T extends ArrayOrNested<SelectMenuItem>,
     VK extends GetItemKeys<T> | undefined = undefined,
     M extends boolean = false,
-> extends /* @vue-ignore */ SelectMenuProps<T, VK, M> {
+    Mod extends Omit<ModelModifiers, 'lazy'> = Omit<ModelModifiers, 'lazy'>,
+    C extends boolean | object = boolean | object,
+> extends /* @vue-ignore */ SelectMenuProps<T, VK, M, Mod, C> {
     searchableKey?: string;
     searchable?: (q: string) => Promise<T>;
 }
+
+type SelectMenuDefaultSlotProps<
+    A extends ArrayOrNested<SelectMenuItem>,
+    VK extends GetItemKeys<A> | undefined,
+    M extends boolean,
+    Mod extends Omit<ModelModifiers, 'lazy'>,
+    C extends boolean | object,
+> = Parameters<NonNullable<SelectMenuSlots<A, VK, M, Mod, C>['default']>>[0];
 
 interface Slots<
     A extends ArrayOrNested<SelectMenuItem> = ArrayOrNested<SelectMenuItem>,
     VK extends GetItemKeys<A> | undefined = undefined,
     M extends boolean = false,
+    Mod extends Omit<ModelModifiers, 'lazy'> = Omit<ModelModifiers, 'lazy'>,
+    C extends boolean | object = boolean | object,
     T extends NestedItem<A> = NestedItem<A>,
-> extends /* @vue-ignore */ SelectMenuSlots<A, VK, M> {
+> extends /* @vue-ignore */ SelectMenuSlots<A, VK, M, Mod, C> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    'default'(props: { modelValue?: GetModelValue<A, VK, M>; open: boolean; items?: T[] }): any;
+    'default'(props: SelectMenuDefaultSlotProps<A, VK, M, Mod, C> & { items?: T[] }): any;
 }
 
-const props = defineProps<Props<T, VK, M>>();
-defineSlots</* @vue-ignore */ Slots<T, VK, M>>();
-defineEmits</* @vue-ignore */ SelectMenuEmits<T, VK, M>>();
+const props = defineProps<Props<T, VK, M, Mod, C>>();
+defineSlots</* @vue-ignore */ Slots<T, VK, M, Mod, C>>();
+defineEmits</* @vue-ignore */ SelectMenuEmits<T, VK, M, Mod, C>>();
 
 const loading = ref(false);
 
 const searchTerm = ref('');
 const searchTermDebounced = debouncedRef(searchTerm, 175);
 
-const { data: items } = await useAsyncData(
+const { data: items } = useLazyAsyncData(
     () => `${props.searchableKey}-${searchTermDebounced.value}`,
     async () => {
         if (props.searchable === undefined) return [];
