@@ -400,7 +400,7 @@ SELECT
   COALESCE(c.color, '') AS ` + "`color`" + `,
   SUM(r.value) AS ` + "`value`" + `
 FROM fivenet_documents_stats_daily_rollup r
-LEFT JOIN fivenet_documents_categories c ON c.id = CAST(r.dimension1 AS UNSIGNED) AND c.job = r.job AND c.deleted_at IS NULL
+LEFT JOIN fivenet_documents_categories c ON c.id = CAST(r.dimension1 AS UNSIGNED) AND c.deleted_at IS NULL
 WHERE r.day >= ?
   AND r.day <= ?
   AND r.job = ?
