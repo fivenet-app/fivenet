@@ -9,7 +9,8 @@ function _useIntlNumberFormat(opts?: Intl.NumberFormatOptions): Intl.NumberForma
     });
 }
 
-export const useIntlNumberFormat = _useIntlNumberFormat;
+export const useIntlNumberFormat = createSharedComposable(() => _useIntlNumberFormat());
+export const useIntlNumberFormatWithOptions = _useIntlNumberFormat;
 
 function _useDateFormatter(
     dateStyle?: Intl.DateTimeFormatOptions['dateStyle'],

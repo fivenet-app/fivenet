@@ -44,7 +44,6 @@ func (s *Server) GetStats(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	_ = categories
 
 	resp := &pbdocuments.GetStatsResponse{
 		TopLaws:             []*pbdocuments.KeyValue{},

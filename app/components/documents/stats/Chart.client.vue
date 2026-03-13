@@ -190,7 +190,7 @@ const pointsSeries = computed(() =>
     })),
 );
 
-const { format: formatNumber } = useIntlNumberFormat({
+const { format: formatNumber } = useIntlNumberFormatWithOptions({
     style: 'decimal',
     currency: undefined,
 });

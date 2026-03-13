@@ -14,7 +14,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const { format: formatNumber } = useIntlNumberFormat({
+const { format: formatNumber } = useIntlNumberFormatWithOptions({
     style: 'decimal',
     currency: undefined,
 });
