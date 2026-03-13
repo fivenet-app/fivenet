@@ -62,7 +62,7 @@ func StringPP(s *string) mysql.StringExpression {
 	return mysql.String(*s)
 }
 
-// StringPEmpty helper for nullable strings. Nil pointers and empty strings are treated as `”`, non-empty strings are returned as-is.
+// StringPEmpty helper for string pointers. Nil pointers and empty strings are normalized to empty string (never SQL NULL).
 func StringPEmpty(s *string) mysql.StringExpression {
 	if s == nil || *s == "" {
 		return mysql.String("")
