@@ -98,7 +98,11 @@ const highlight = computed(() => {
                                 {{ summary.detentionTime }}
                             </span>
                             <span class="text-sm text-muted">
-                                {{ formatDetention(summary.detentionTime) }}
+                                {{
+                                    summary.detentionTime > 1 || summary.detentionTime === 0
+                                        ? (quickButtons.penaltyCalculator?.detentionTimeUnit?.plural ?? $t('common.month', 2))
+                                        : (quickButtons.penaltyCalculator?.detentionTimeUnit?.singular ?? $t('common.month', 1))
+                                }}
                             </span>
                         </div>
 

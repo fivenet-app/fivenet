@@ -34,7 +34,7 @@ export const useDetentionTimeFormatter = createSharedComposable(() => {
     const { t } = useI18n();
 
     return (months: number) => {
-        if (months > 1) {
+        if (months > 1 || months === 0) {
             return `${months} ${quickButtons.penaltyCalculator?.detentionTimeUnit?.plural ?? t('common.month', 2)}`;
         }
         return `${months} ${quickButtons.penaltyCalculator?.detentionTimeUnit?.singular ?? t('common.month', 1)}`;
