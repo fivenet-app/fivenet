@@ -23,6 +23,8 @@ definePageMeta({
 
 const { t } = useI18n();
 
+const { attrStringList, isSuperuser } = useAuth();
+
 const schema = z.object({
     range: z
         .object({
@@ -82,11 +84,33 @@ watch(
     },
 );
 
-const categories = computed(() => [
-    { label: t('enums.documents.stats.StatsCategory.DOCUMENTS_BY_CATEGORY'), value: StatsCategory.DOCUMENTS_BY_CATEGORY },
-    { label: t('enums.documents.stats.StatsCategory.TOP_LAWS'), value: StatsCategory.TOP_LAWS },
-    { label: t('enums.documents.stats.StatsCategory.PENALTIES_OVER_TIME'), value: StatsCategory.PENALTIES_OVER_TIME },
-]);
+const canSeePenalties = computed(
+    () =>
+        isSuperuser.value ||
+        attrStringList('documents.StatsService/GetStats', 'Categories').value.includes('PenaltyCalculator'),
+);
+
+const categories = computed(() =>
+    [
+        {
+            label: t('enums.documents.stats.StatsCategory.DOCUMENTS_BY_CATEGORY'),
+            value: StatsCategory.DOCUMENTS_BY_CATEGORY,
+            icon: 'i-mdi-shape',
+        },
+        {
+            label: t('enums.documents.stats.StatsCategory.TOP_LAWS'),
+            value: StatsCategory.TOP_LAWS,
+            icon: 'i-mdi-gavel',
+            hidden: !canSeePenalties.value,
+        },
+        {
+            label: t('enums.documents.stats.StatsCategory.PENALTIES_OVER_TIME'),
+            value: StatsCategory.PENALTIES_OVER_TIME,
+            icon: 'i-mdi-gavel',
+            hidden: !canSeePenalties.value,
+        },
+    ].flatMap((item) => (item.hidden ? [] : [item])),
+);
 </script>
 
 <template>
