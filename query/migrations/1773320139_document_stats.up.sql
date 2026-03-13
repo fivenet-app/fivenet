@@ -33,7 +33,7 @@ CREATE TABLE `fivenet_documents_stats_metric` (
   KEY `ix_job_source_time` (`job`, `source_key`, `occurred_at`),
   KEY `ix_metric_time` (`source_key`, `metric_key`, `occurred_at`),
   KEY `ix_dim1` (`dimension1`),
-  CONSTRAINT `fk_fivenet_documents_stats_daily_rollup_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_documents_stats_metric_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE `fivenet_documents_stats_daily_rollup` (
