@@ -81,7 +81,7 @@ const maxDate = new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getD
 
 <template>
     <UPopover :content="{ align: 'start' }" :modal="true">
-        <UButton color="neutral" variant="ghost" icon="i-lucide-calendar" class="group data-[state=open]:bg-elevated">
+        <UButton color="neutral" variant="ghost" icon="i-mdi-calendar" class="group data-[state=open]:bg-elevated">
             <span class="truncate">
                 <template v-if="selected.start">
                     <template v-if="selected.end"> {{ formatDate(selected.start) }} - {{ formatDate(selected.end) }} </template>
@@ -94,7 +94,7 @@ const maxDate = new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getD
 
             <template #trailing>
                 <UIcon
-                    name="i-lucide-chevron-down"
+                    name="i-mdi-chevron-down"
                     class="size-5 shrink-0 text-dimmed transition-transform duration-200 group-data-[state=open]:rotate-180"
                 />
             </template>
