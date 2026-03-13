@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
+import { subYears } from 'date-fns';
 import type { Range } from './helpers';
 
 const { t } = useI18n();
@@ -71,6 +72,11 @@ const selectRange = (range: { days?: number; months?: number; years?: number }) 
         end: endDate.toDate(getLocalTimeZone()),
     };
 };
+
+const now = new Date();
+const lastYear = subYears(now, 1);
+const minDate = new CalendarDate(lastYear.getFullYear(), lastYear.getMonth() + 1, lastYear.getDate());
+const maxDate = new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getDate());
 </script>
 
 <template>
@@ -110,7 +116,15 @@ const selectRange = (range: { days?: number; months?: number; years?: number }) 
                     />
                 </div>
 
-                <UCalendar v-model="calendarRange" class="p-2" :number-of-months="2" range />
+                <UCalendar
+                    v-model="calendarRange"
+                    class="p-2"
+                    :number-of-months="2"
+                    range
+                    :maximum-days="365"
+                    :min-value="minDate"
+                    :max-value="maxDate"
+                />
             </div>
         </template>
     </UPopover>
