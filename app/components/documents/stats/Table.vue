@@ -121,7 +121,7 @@ const topLawData = computed<TopLawRow[]>(() =>
                         color="neutral"
                         class="mr-1"
                         size="xs"
-                        :icon="row.getIsExpanded() ? 'i-lucide-minus' : 'i-lucide-plus'"
+                        :icon="row.getIsExpanded() ? 'i-mdi-minus' : 'i-mdi-plus'"
                         @click="row.toggleExpanded()"
                     />
 

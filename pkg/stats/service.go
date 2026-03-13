@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
@@ -23,6 +24,8 @@ const (
 )
 
 type Service struct {
+	mu sync.Mutex
+
 	db         *sql.DB
 	extractors []DocumentMetricExtractor
 }
@@ -373,16 +376,8 @@ ORDER BY %s ASC, metric_key ASC
 		if err := rows.Scan(&item.Day, &item.Key, &item.Value); err != nil {
 			return nil, err
 		}
-		switch item.Key {
-		case "fine_total":
-			item.Label = "fine_total"
-		case "detention_time_total":
-			item.Label = "detention_time_total"
-		case "stvo_points_total":
-			item.Label = "stvo_points_total"
-		default:
-			item.Label = item.Key
-		}
+
+		item.Label = item.Key
 		items = append(items, item)
 	}
 	if err := rows.Err(); err != nil {
@@ -593,6 +588,9 @@ func (s *Service) rebuildRollupsWithRange(
 	if endDay.Before(startDay) {
 		return fmt.Errorf("end day before start day")
 	}
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {

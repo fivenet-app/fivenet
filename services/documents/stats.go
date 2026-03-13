@@ -33,6 +33,11 @@ func (s *Server) GetStats(
 	if end.Before(start) {
 		return nil, status.Error(codes.InvalidArgument, "end must not be before start")
 	}
+
+	if end.Sub(start) > 365*24*time.Hour {
+		return nil, status.Error(codes.InvalidArgument, "range must not exceed 365 days")
+	}
+
 	period := max(req.GetPeriod(), pbdocuments.StatsPeriod_STATS_PERIOD_DAILY)
 
 	categories, err := s.ps.AttrStringList(
