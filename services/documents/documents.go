@@ -497,21 +497,6 @@ func (s *Server) CreateDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	// Keep extracted metrics deterministic for all lifecycle writes.
-	if err := s.stats.RebuildDocumentMetrics(ctx, &documents.Document{
-		Id:         lastId,
-		CreatorJob: userInfo.GetJob(),
-		Meta: &documents.DocumentMeta{
-			Draft: true,
-		},
-	}); err != nil {
-		s.logger.Warn(
-			"failed to rebuild document metrics after create",
-			zap.Int64("document_id", lastId),
-			zap.Error(err),
-		)
-	}
-
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return &pbdocuments.CreateDocumentResponse{

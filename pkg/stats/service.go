@@ -10,6 +10,8 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentspb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/timeutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -151,9 +153,9 @@ func (s *Service) RebuildDocumentMetricsTx(
 				job,
 				sourceKey,
 				metric.MetricKey,
-				nullableString(metric.Dimension1),
-				nullableString(metric.Dimension2),
-				nullableString(metric.Dimension3),
+				dbutils.StringPP(metric.Dimension1),
+				dbutils.StringPP(metric.Dimension2),
+				dbutils.StringPP(metric.Dimension3),
 				metric.Value,
 				occurredAt,
 				now,
@@ -276,8 +278,8 @@ ORDER BY x.value DESC
 	rows, err := s.db.QueryContext(
 		ctx,
 		query,
-		dayStart(startDay).Format(time.DateOnly),
-		dayStart(endDay).Format(time.DateOnly),
+		timeutils.StartOfDay(startDay).Format(time.DateOnly),
+		timeutils.StartOfDay(endDay).Format(time.DateOnly),
 		job,
 		SourceKindDocumentMetric,
 		PenaltyCalculatorSourceKey,
@@ -346,8 +348,8 @@ ORDER BY %s ASC, metric_key ASC
 	rows, err := s.db.QueryContext(
 		ctx,
 		query,
-		dayStart(startDay).Format(time.DateOnly),
-		dayStart(endDay).Format(time.DateOnly),
+		timeutils.StartOfDay(startDay).Format(time.DateOnly),
+		timeutils.StartOfDay(endDay).Format(time.DateOnly),
 		job,
 		SourceKindDocumentMetric,
 		PenaltyCalculatorSourceKey,
@@ -410,8 +412,8 @@ ORDER BY SUM(r.value) DESC
 	rows, err := s.db.QueryContext(
 		ctx,
 		query,
-		dayStart(startDay).Format(time.DateOnly),
-		dayStart(endDay).Format(time.DateOnly),
+		timeutils.StartOfDay(startDay).Format(time.DateOnly),
+		timeutils.StartOfDay(endDay).Format(time.DateOnly),
 		job,
 		SourceKindDocumentColumn,
 	)
@@ -458,8 +460,8 @@ func (s *Service) QueryPenaltyReductionAverage(
 		).
 		FROM(tRollup).
 		WHERE(mysql.AND(
-			tRollup.Day.GT_EQ(mysql.DateT(dayStart(startDay))),
-			tRollup.Day.LT_EQ(mysql.DateT(dayStart(endDay))),
+			tRollup.Day.GT_EQ(mysql.DateT(timeutils.StartOfDay(startDay))),
+			tRollup.Day.LT_EQ(mysql.DateT(timeutils.StartOfDay(endDay))),
 			tRollup.Job.EQ(mysql.String(job)),
 			tRollup.SourceKind.EQ(mysql.String(SourceKindDocumentMetric)),
 			tRollup.SourceKey.EQ(mysql.String(PenaltyCalculatorSourceKey)),
@@ -499,8 +501,8 @@ WHERE day >= ?
 	if err := s.db.QueryRowContext(
 		ctx,
 		query,
-		dayStart(startDay).Format(time.DateOnly),
-		dayStart(endDay).Format(time.DateOnly),
+		timeutils.StartOfDay(startDay).Format(time.DateOnly),
+		timeutils.StartOfDay(endDay).Format(time.DateOnly),
 		job,
 		sourceKind,
 		sourceKey,
@@ -544,8 +546,8 @@ ORDER BY %s ASC
 	rows, err := s.db.QueryContext(
 		ctx,
 		query,
-		dayStart(startDay).Format(time.DateOnly),
-		dayStart(endDay).Format(time.DateOnly),
+		timeutils.StartOfDay(startDay).Format(time.DateOnly),
+		timeutils.StartOfDay(endDay).Format(time.DateOnly),
 		job,
 		sourceKind,
 		sourceKey,
@@ -577,8 +579,8 @@ func (s *Service) rebuildRollupsWithRange(
 	sourceKind string,
 	insertSQL string,
 ) error {
-	startDay = dayStart(startDay)
-	endDay = dayStart(endDay)
+	startDay = timeutils.StartOfDay(startDay)
+	endDay = timeutils.StartOfDay(endDay)
 	if endDay.Before(startDay) {
 		return fmt.Errorf("end day before start day")
 	}
@@ -641,28 +643,14 @@ func isPublishedDocument(doc *documents.Document) bool {
 	return !doc.GetMeta().GetDraft()
 }
 
-func nullableString(s *string) mysql.StringExpression {
-	if s == nil {
-		return mysql.StringExp(mysql.NULL)
-	}
-
-	return mysql.String(*s)
-}
-
-func dayStart(t time.Time) time.Time {
-	if t.IsZero() {
-		t = time.Now().UTC()
-	}
-
-	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
-}
-
 func periodStartExpr(period documentspb.StatsPeriod) string {
 	switch period {
 	case documentspb.StatsPeriod_STATS_PERIOD_MONTHLY:
 		return "DATE_SUB(day, INTERVAL DAYOFMONTH(day) - 1 DAY)"
+
 	case documentspb.StatsPeriod_STATS_PERIOD_WEEKLY:
 		return "DATE_SUB(day, INTERVAL WEEKDAY(day) DAY)"
+
 	case documentspb.StatsPeriod_STATS_PERIOD_DAILY:
 		fallthrough
 	default:

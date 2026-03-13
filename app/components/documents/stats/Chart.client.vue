@@ -235,7 +235,7 @@ const template = (d?: DataRecord) => {
         </VisXYContainer>
     </UCard>
 
-    <div v-else class="grid grid-cols-1 gap-4 xl:grid-cols-3">
+    <UPageGrid v-else class="gap-4 sm:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2">
         <PenaltySeriesCardClient
             :title="$t('common.fine', 2)"
             :total="penaltyTotals.fine"
@@ -258,7 +258,7 @@ const template = (d?: DataRecord) => {
             :color="pointsColor"
             :data="pointsSeries"
         />
-    </div>
+    </UPageGrid>
 </template>
 
 <style scoped>

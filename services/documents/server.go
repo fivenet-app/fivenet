@@ -411,7 +411,7 @@ func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "documents.stats.rollup.columns.recent",
-		Schedule: "* * * * *",
+		Schedule: "*/5 * * * *",
 	}); err != nil {
 		return err
 	}
@@ -423,7 +423,7 @@ func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry
 	}
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "documents.stats.rollup.metrics.recent",
-		Schedule: "* * * * *",
+		Schedule: "*/5 * * * *",
 	}); err != nil {
 		return err
 	}

@@ -104,6 +104,7 @@ func (s *Server) GetStats(
 		resp.TotalValue = totalValue
 
 	case pbdocuments.StatsCategory_STATS_CATEGORY_TOP_LAWS:
+		// Ensure the user has permission to view penalty calculator stats before querying for top laws, as they are related to the penalty calculator.
 		if !categories.Contains("PenaltyCalculator") {
 			return nil, status.Error(
 				codes.PermissionDenied,
@@ -157,6 +158,7 @@ func (s *Server) GetStats(
 		resp.TotalValue = totalValue
 
 	case pbdocuments.StatsCategory_STATS_CATEGORY_PENALTIES_OVER_TIME:
+		// Ensure the user has permission to view penalty calculator stats before querying for top laws, as they are related to the penalty calculator.
 		if !categories.Contains("PenaltyCalculator") {
 			return nil, status.Error(
 				codes.PermissionDenied,
@@ -206,19 +208,6 @@ func (s *Server) GetStats(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		resp.TotalValue = totalValue
-
-	// case pbdocuments.StatsCategory_STATS_CATEGORY_PENALTY_REDUCTION_SUMS:
-	// 	reductionPercentSum, caseCountSum, err := s.stats.QueryPenaltyReductionSums(
-	// 		ctx,
-	// 		start,
-	// 		end,
-	// 		userInfo.GetJob(),
-	// 	)
-	// 	if err != nil {
-	// 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	// 	}
-	// 	resp.ReductionPercentSum = reductionPercentSum
-	// 	resp.CaseCountSum = caseCountSum
 
 	case pbdocuments.StatsCategory_STATS_CATEGORY_UNSPECIFIED:
 		fallthrough
