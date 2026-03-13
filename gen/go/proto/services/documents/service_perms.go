@@ -4,6 +4,7 @@
 // source: services/documents/documents.proto
 // source: services/documents/forms.proto
 // source: services/documents/stamps.proto
+// source: services/documents/stats.proto
 
 package documents
 
@@ -258,6 +259,21 @@ func init() {
 			Attrs:    []perms.Attr{},
 			Order:    5700,
 			Icon:     "i-mdi-stamper",
+		},
+
+		// Service: documents.StatsService
+		{
+			Category: permkeys.StatsServicePerm,
+			Name:     permkeys.StatsServiceGetStatsPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.StatsServiceGetStatsCategoriesPermField,
+					Type:        permissionsattributes.StringListAttributeType,
+					ValidValues: []string{"PenaltyCalculator"},
+				},
+			},
+			Order: 5800,
+			Icon:  "i-mdi-graph-box-multiple-outline",
 		},
 	})
 }

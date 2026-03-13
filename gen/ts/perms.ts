@@ -9,6 +9,7 @@
 // source: services/documents/documents.proto
 // source: services/documents/forms.proto
 // source: services/documents/stamps.proto
+// source: services/documents/stats.proto
 // source: services/filestore/filestore.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
@@ -82,6 +83,7 @@ export type GRPCServicePerms =
 	| 'documents.StampsService/DeleteStamp'
 	| 'documents.StampsService/ListUsableStamps'
 	| 'documents.StampsService/UpsertStamp'
+	| 'documents.StatsService/GetStats'
 	| 'jobs.ConductService/CreateConductEntry'
 	| 'jobs.ConductService/DeleteConductEntry'
 	| 'jobs.ConductService/ListConductEntries'
@@ -131,6 +133,7 @@ export const GRPCServices = [
 	'documents.ApprovalService',
 	'documents.DocumentsService',
 	'documents.StampsService',
+	'documents.StatsService',
 	'jobs.ConductService',
 	'jobs.JobsService',
 	'jobs.TimeclockService',
@@ -191,6 +194,7 @@ export const GRPCServiceMethods = [
 	'documents.StampsService/DeleteStamp',
 	'documents.StampsService/ListUsableStamps',
 	'documents.StampsService/UpsertStamp',
+	'documents.StatsService/GetStats',
 	'jobs.ConductService/CreateConductEntry',
 	'jobs.ConductService/DeleteConductEntry',
 	'jobs.ConductService/ListConductEntries',

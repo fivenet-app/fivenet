@@ -62,6 +62,12 @@ export async function getDocumentsStampsClient() {
     return new StampsServiceClient(useGRPCTransport());
 }
 
+// Factory for documents.stats client.
+export async function getDocumentsStatsClient() {
+    const { StatsServiceClient } = await import('~~/gen/ts/services/documents/stats.client');
+    return new StatsServiceClient(useGRPCTransport());
+}
+
 // Factory for filestore.filestore client.
 export async function getFilestoreFilestoreClient() {
     const { FilestoreServiceClient } = await import('~~/gen/ts/services/filestore/filestore.client');

@@ -12,6 +12,10 @@ const { quickButtons } = useAppConfig();
 
 const leeway = computed(() => props.reduction / 100);
 
+const { format: formatNumber } = useIntlNumberFormat();
+
+const formatDetention = useDetentionTimeFormatter();
+
 const highlight = computed(() => {
     if (!quickButtons.penaltyCalculator?.warnSettings?.enabled) return;
 
@@ -31,8 +35,6 @@ const highlight = computed(() => {
 
     return result;
 });
-
-const numberFormatter = useIntlNumberFormat();
 </script>
 
 <template>
@@ -61,13 +63,11 @@ const numberFormatter = useIntlNumberFormat();
                     <div class="flex flex-col gap-1">
                         <div class="flex gap-1">
                             <span class="font-semibold tracking-tight" :class="compact ? 'text-2xl' : 'text-4xl'">
-                                {{ numberFormatter.format(summary.fine ?? 0) }}
+                                {{ formatNumber(summary.fine ?? 0) }}
                             </span>
                         </div>
 
-                        <span v-if="leeway > 0 && summary.fine > 0">
-                            ({{ numberFormatter.format(-(summary.fine * leeway)) }})
-                        </span>
+                        <span v-if="leeway > 0 && summary.fine > 0"> ({{ formatNumber(-(summary.fine * leeway)) }}) </span>
                     </div>
                 </template>
             </UPageCard>
@@ -98,13 +98,16 @@ const numberFormatter = useIntlNumberFormat();
                                 {{ summary.detentionTime }}
                             </span>
                             <span class="text-sm text-muted">
-                                {{ $t('common.month', summary.detentionTime) }}
+                                {{
+                                    summary.detentionTime > 1 || summary.detentionTime === 0
+                                        ? (quickButtons.penaltyCalculator?.detentionTimeUnit?.plural ?? $t('common.month', 2))
+                                        : (quickButtons.penaltyCalculator?.detentionTimeUnit?.singular ?? $t('common.month', 1))
+                                }}
                             </span>
                         </div>
 
                         <span v-if="leeway > 0 && summary.detentionTime > 0">
-                            (-{{ (summary.detentionTime * leeway).toFixed(0) }}
-                            {{ $t('common.month', summary.detentionTime * leeway) }})
+                            (-{{ formatDetention(summary.detentionTime * leeway) }})
                         </span>
                     </div>
                 </template>

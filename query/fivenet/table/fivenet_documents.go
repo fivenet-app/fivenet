@@ -100,7 +100,7 @@ func newFivenetDocumentsTableImpl(schemaName, tableName, alias string) fivenetDo
 		TemplateIDColumn   = mysql.IntegerColumn("template_id")
 		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, WordCountColumn, FirstHeadingColumn, ContentTypeColumn, ContentJSONColumn, ContentTextColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, DraftColumn, PublicColumn, TemplateIDColumn}
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, WordCountColumn, FirstHeadingColumn, ContentTypeColumn, ContentJSONColumn, ContentTextColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, DraftColumn, PublicColumn, TemplateIDColumn}
-		defaultColumns     = mysql.ColumnList{CreatedAtColumn, WordCountColumn, FirstHeadingColumn, ClosedColumn, DraftColumn, PublicColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn, WordCountColumn, ClosedColumn, DraftColumn, PublicColumn}
 	)
 
 	return fivenetDocumentsTable{

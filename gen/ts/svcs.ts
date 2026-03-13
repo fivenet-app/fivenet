@@ -9,26 +9,37 @@
 // source: services/documents/documents.proto
 // source: services/documents/forms.proto
 // source: services/documents/stamps.proto
+// source: services/documents/stats.proto
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
 // source: services/documents/forms.proto
 // source: services/documents/stamps.proto
+// source: services/documents/stats.proto
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
 // source: services/documents/forms.proto
 // source: services/documents/stamps.proto
+// source: services/documents/stats.proto
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
 // source: services/documents/forms.proto
 // source: services/documents/stamps.proto
+// source: services/documents/stats.proto
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
 // source: services/documents/forms.proto
 // source: services/documents/stamps.proto
+// source: services/documents/stats.proto
+// source: services/documents/approval.proto
+// source: services/documents/collab.proto
+// source: services/documents/documents.proto
+// source: services/documents/forms.proto
+// source: services/documents/stamps.proto
+// source: services/documents/stats.proto
 // source: services/filestore/filestore.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
@@ -99,6 +110,7 @@ export const grpcServices = [
     'documents.DocumentsService',
     'documents.FormsService',
     'documents.StampsService',
+    'documents.StatsService',
     'filestore.FilestoreService',
     'jobs.ConductService',
     'jobs.JobsService',
@@ -241,6 +253,7 @@ export const grpcMethods = [
 	'documents.StampsService/GetStamp',
 	'documents.StampsService/UpsertStamp',
 	'documents.StampsService/DeleteStamp',
+	'documents.StatsService/GetStats',
 	'filestore.FilestoreService/Upload',
 	'filestore.FilestoreService/ListFiles',
 	'filestore.FilestoreService/DeleteFile',

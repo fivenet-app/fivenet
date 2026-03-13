@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
@@ -22,6 +23,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	docstats "github.com/fivenet-app/fivenet/v2026/pkg/stats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -113,6 +115,7 @@ type Server struct {
 	pbdocuments.CollabServiceServer
 	pbdocuments.ApprovalServiceServer
 	pbdocuments.StampsServiceServer
+	pbdocuments.StatsServiceServer
 
 	logger *zap.Logger
 	tracer trace.Tracer
@@ -133,6 +136,7 @@ type Server struct {
 
 	collabServer *collab.CollabServer
 	fHandler     *filestore.Handler[int64]
+	stats        *docstats.Service
 }
 
 type Params struct {
@@ -302,6 +306,7 @@ func NewServer(p Params) Result {
 
 		collabServer: collabServer,
 		fHandler:     fHandler,
+		stats:        docstats.NewService(p.DB, docstats.NewPenaltyCalculatorExtractor()),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -389,6 +394,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbdocuments.RegisterCollabServiceServer(srv, s)
 	pbdocuments.RegisterApprovalServiceServer(srv, s)
 	pbdocuments.RegisterStampsServiceServer(srv, s)
+	pbdocuments.RegisterStatsServiceServer(srv, s)
 }
 
 func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
@@ -400,6 +406,31 @@ func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry
 	}
 
 	if err := registry.UnregisterCronjob(ctx, "documents.signature.tasks.expire"); err != nil {
+		return err
+	}
+
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "documents.stats.rollup.columns.recent",
+		Schedule: "*/5 * * * *",
+	}); err != nil {
+		return err
+	}
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "documents.stats.rollup.columns.backfill",
+		Schedule: "17 3 * * *",
+	}); err != nil {
+		return err
+	}
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "documents.stats.rollup.metrics.recent",
+		Schedule: "*/5 * * * *",
+	}); err != nil {
+		return err
+	}
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "documents.stats.rollup.metrics.backfill",
+		Schedule: "22 3 * * *",
+	}); err != nil {
 		return err
 	}
 
@@ -424,6 +455,106 @@ func (s *Server) RegisterCronjobHandlers(h *croner.Handlers) error {
 			// Marshal the updated cron data
 			if err := data.MarshalFrom(dest); err != nil {
 				return fmt.Errorf("failed to marshal updated document workflow cron data. %w", err)
+			}
+
+			return nil
+		},
+	)
+
+	h.Add(
+		"documents.stats.rollup.columns.recent",
+		func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := s.tracer.Start(ctx, "documents.stats.rollup.columns.recent")
+			defer span.End()
+
+			startDay := time.Now().UTC().Truncate(24 * time.Hour)
+			if err := s.stats.RebuildDocumentColumnRollups(ctx, startDay, startDay); err != nil {
+				return err
+			}
+
+			dest := &cron.GenericCronData{}
+			dest.SetAttribute("start_day", startDay.Format(time.DateOnly))
+			dest.SetAttribute("kind", "recent")
+			dest.SetAttribute("type", "document_column")
+
+			if err := data.MarshalFrom(dest); err != nil {
+				return fmt.Errorf("failed to marshal updated document stats cron data. %w", err)
+			}
+
+			return nil
+		},
+	)
+
+	h.Add(
+		"documents.stats.rollup.columns.backfill",
+		func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := s.tracer.Start(ctx, "documents.stats.rollup.columns.backfill")
+			defer span.End()
+
+			endDay := time.Now().UTC().Truncate(24 * time.Hour)
+			startDay := endDay.AddDate(0, 0, -30)
+			if err := s.stats.RebuildDocumentColumnRollups(ctx, startDay, endDay); err != nil {
+				return err
+			}
+
+			dest := &cron.GenericCronData{}
+			dest.SetAttribute("start_day", startDay.Format(time.DateOnly))
+			dest.SetAttribute("end_day", endDay.Format(time.DateOnly))
+			dest.SetAttribute("kind", "backfill")
+			dest.SetAttribute("type", "document_column")
+
+			if err := data.MarshalFrom(dest); err != nil {
+				return fmt.Errorf("failed to marshal updated document stats cron data. %w", err)
+			}
+
+			return nil
+		},
+	)
+
+	h.Add(
+		"documents.stats.rollup.metrics.recent",
+		func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := s.tracer.Start(ctx, "documents.stats.rollup.metrics.recent")
+			defer span.End()
+
+			startDay := time.Now().UTC().Truncate(24 * time.Hour)
+			if err := s.stats.RebuildDocumentMetricRollups(ctx, startDay, startDay); err != nil {
+				return err
+			}
+
+			dest := &cron.GenericCronData{}
+			dest.SetAttribute("start_day", startDay.Format(time.DateOnly))
+			dest.SetAttribute("kind", "recent")
+			dest.SetAttribute("type", "document_metric")
+
+			if err := data.MarshalFrom(dest); err != nil {
+				return fmt.Errorf("failed to marshal updated document stats cron data. %w", err)
+			}
+
+			return nil
+		},
+	)
+
+	h.Add(
+		"documents.stats.rollup.metrics.backfill",
+		func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := s.tracer.Start(ctx, "documents.stats.rollup.metrics.backfill")
+			defer span.End()
+
+			endDay := time.Now().UTC().Truncate(24 * time.Hour)
+			startDay := endDay.AddDate(0, 0, -30)
+			if err := s.stats.RebuildDocumentMetricRollups(ctx, startDay, endDay); err != nil {
+				return err
+			}
+
+			dest := &cron.GenericCronData{}
+			dest.SetAttribute("start_day", startDay.Format(time.DateOnly))
+			dest.SetAttribute("end_day", endDay.Format(time.DateOnly))
+			dest.SetAttribute("kind", "backfill")
+			dest.SetAttribute("type", "document_metric")
+
+			if err := data.MarshalFrom(dest); err != nil {
+				return fmt.Errorf("failed to marshal updated document stats cron data. %w", err)
 			}
 
 			return nil

@@ -53,3 +53,19 @@ func Int32P(v int32) mysql.IntegerExpression {
 	}
 	return mysql.Int32(v)
 }
+
+// StringPP helper for nullable string pointers. Nil pointers are treated as NULL, non-nil pointers are dereferenced.
+func StringPP(s *string) mysql.StringExpression {
+	if s == nil {
+		return mysql.StringExp(mysql.NULL)
+	}
+	return mysql.String(*s)
+}
+
+// StringPEmpty helper for string pointers. Nil pointers and empty strings are normalized to empty string (never SQL NULL).
+func StringPEmpty(s *string) mysql.StringExpression {
+	if s == nil || *s == "" {
+		return mysql.String("")
+	}
+	return mysql.String(*s)
+}

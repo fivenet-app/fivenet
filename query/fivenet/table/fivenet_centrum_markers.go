@@ -92,7 +92,7 @@ func newFivenetCentrumMarkersTableImpl(schemaName, tableName, alias string) five
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
 		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, ExpiresAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, PostalColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
 		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, ExpiresAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, PostalColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
-		defaultColumns    = mysql.ColumnList{CreatedAtColumn, ColorColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetCentrumMarkersTable{

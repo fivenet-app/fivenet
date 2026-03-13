@@ -4,6 +4,7 @@
 // source: services/documents/documents.proto
 // source: services/documents/forms.proto
 // source: services/documents/stamps.proto
+// source: services/documents/stats.proto
 
 package permsdocuments
 
@@ -17,6 +18,7 @@ const (
 	DocumentsServicePerm perms.Category = "documents.DocumentsService"
 	FormsServicePerm     perms.Category = "documents.FormsService"
 	StampsServicePerm    perms.Category = "documents.StampsService"
+	StatsServicePerm     perms.Category = "documents.StatsService"
 
 	ApprovalServiceDeleteApprovalTasksPerm             perms.Name = "DeleteApprovalTasks"
 	ApprovalServiceRevokeApprovalPerm                  perms.Name = "RevokeApproval"
@@ -53,4 +55,6 @@ const (
 	StampsServiceDeleteStampPerm                       perms.Name = "DeleteStamp"
 	StampsServiceListUsableStampsPerm                  perms.Name = "ListUsableStamps"
 	StampsServiceUpsertStampPerm                       perms.Name = "UpsertStamp"
+	StatsServiceGetStatsPerm                           perms.Name = "GetStats"
+	StatsServiceGetStatsCategoriesPermField            perms.Key  = "Categories"
 )

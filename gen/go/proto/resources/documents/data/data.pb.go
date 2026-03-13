@@ -95,7 +95,7 @@ type PenaltyCalculatorData struct {
 	state         protoimpl.MessageState  `protogen:"hybrid.v1"`
 	Reduction     int32                   `protobuf:"varint,1,opt,name=reduction,proto3" json:"reduction,omitempty"`
 	Selected      []*SelectedPenalty      `protobuf:"bytes,2,rep,name=selected,proto3" json:"selected,omitempty"`
-	Total         *PenaltyCalculatorTotal `protobuf:"bytes,3,opt,name=total,proto3" json:"total,omitempty"`
+	Total         *PenaltyCalculatorTotal `protobuf:"bytes,3,opt,name=total,proto3,oneof" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -408,11 +408,12 @@ const file_resources_documents_data_data_proto_rawDesc = "" +
 	"#resources/documents/data/data.proto\x12\x18resources.documents.data\x1a!codegen/dbscanner/dbscanner.proto\"\x92\x01\n" +
 	"\fDocumentData\x12c\n" +
 	"\x12penalty_calculator\x18\x02 \x01(\v2/.resources.documents.data.PenaltyCalculatorDataH\x00R\x11penaltyCalculator\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x15\n" +
-	"\x13_penalty_calculator\"\xc4\x01\n" +
+	"\x13_penalty_calculator\"\xd3\x01\n" +
 	"\x15PenaltyCalculatorData\x12\x1c\n" +
 	"\treduction\x18\x01 \x01(\x05R\treduction\x12E\n" +
-	"\bselected\x18\x02 \x03(\v2).resources.documents.data.SelectedPenaltyR\bselected\x12F\n" +
-	"\x05total\x18\x03 \x01(\v20.resources.documents.data.PenaltyCalculatorTotalR\x05total\">\n" +
+	"\bselected\x18\x02 \x03(\v2).resources.documents.data.SelectedPenaltyR\bselected\x12K\n" +
+	"\x05total\x18\x03 \x01(\v20.resources.documents.data.PenaltyCalculatorTotalH\x00R\x05total\x88\x01\x01B\b\n" +
+	"\x06_total\">\n" +
 	"\x0fSelectedPenalty\x12\x15\n" +
 	"\x06law_id\x18\x01 \x01(\x03R\x05lawId\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\rR\x05count\"\xd4\x01\n" +
@@ -452,6 +453,7 @@ func file_resources_documents_data_data_proto_init() {
 		return
 	}
 	file_resources_documents_data_data_proto_msgTypes[0].OneofWrappers = []any{}
+	file_resources_documents_data_data_proto_msgTypes[1].OneofWrappers = []any{}
 	file_resources_documents_data_data_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

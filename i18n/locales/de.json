@@ -50,6 +50,9 @@
                 "title": "Stempel",
                 "create": "Stempel erstellen",
                 "update": "Stempel aktualisieren"
+            },
+            "stats": {
+                "title": "Dokumentenstatistik"
             }
         },
         "notfound": {
@@ -760,7 +763,16 @@
         "request_sync": "Synchronisierung anfordern",
         "own_documents": "Eigene Dokumente",
         "default": "Standard",
-        "time_remaining": "Verbleibende Zeit"
+        "time_remaining": "Verbleibende Zeit",
+        "total": "Gesamt",
+        "date_range": {
+            "last_7_days": "Letzte 7 Tage",
+            "last_14_days": "Letzte 14 Tage",
+            "last_30_days": "Letzte 30 Tage",
+            "last_90_days": "Letzte 90 Tage",
+            "last_180_days": "Letzte 180 Tage",
+            "last_365_days": "Letzte 365 Tage"
+        }
     },
     "components": {
         "partials": {
@@ -2890,6 +2902,15 @@
                 "BLOCKED": "Blockiert",
                 "USE": "Verwenden",
                 "MANAGE": "Verwalten"
+            },
+            "stats": {
+                "StatsCategory": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "CUSTOM": "Benutzerdefiniert",
+                    "DOCUMENTS_BY_CATEGORY": "Dokumente nach Kategorie",
+                    "TOP_LAWS": "Top Gesetze",
+                    "PENALTIES_OVER_TIME": "Strafen im Zeitverlauf"
+                }
             }
         },
         "settings": {
@@ -3353,6 +3374,19 @@
                 "DeleteStamp": {
                     "key": "Stempel löschen",
                     "description": "Löschen eines Stempels."
+                }
+            },
+            "StatsService": {
+                "category": "Dokumenten-System: Statistiken",
+                "GetStats": {
+                    "key": "Statistiken abrufen",
+                    "description": "Verschiedene Statistiken im Zusammenhang mit Dokumenten abrufen.",
+                    "attrs_types": {
+                        "Categories": "Verfügbare Statistik-Kategorien"
+                    },
+                    "attrs": {
+                        "PenaltyCalculator": "Straf- und gesetzesbasierte Statistiken"
+                    }
                 }
             }
         },
