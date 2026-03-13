@@ -3375,6 +3375,19 @@
                     "key": "Stempel löschen",
                     "description": "Löschen eines Stempels."
                 }
+            },
+            "StatsService": {
+                "category": "Dokumenten-System: Statistiken",
+                "GetStats": {
+                    "key": "Statistiken abrufen",
+                    "description": "Verschiedene Statistiken im Zusammenhang mit Dokumenten abrufen.",
+                    "attrs_types": {
+                        "Categories": "Verfügbare Statistik-Kategorien"
+                    },
+                    "attrs": {
+                        "PenaltyCalculator": "Straf- und gesetzesbasierte Statistiken"
+                    }
+                }
             }
         },
         "livemap": {

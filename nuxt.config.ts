@@ -218,6 +218,12 @@ export default defineNuxtConfig({
                 'vue-json-pretty',
                 'zod',
                 'vue-timeline-chart',
+                '@unovis/ts',
+                '@unovis/vue',
+                '@tanstack/vue-table',
+                'vue-draggable-plus',
+                'maska/vue',
+                '@selemondev/vue3-signature-pad',
             ],
         },
         server: {
