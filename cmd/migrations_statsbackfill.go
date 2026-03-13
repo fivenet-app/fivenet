@@ -148,6 +148,7 @@ func (c *MigrationsStatsBackfillCmd) rebuildDocumentMetrics(
 FROM fivenet_documents
 WHERE created_at >= ?
   AND id > ?
+  AND data IS NOT NULL
 ORDER BY id ASC
 LIMIT ?`,
 			start.UTC(),

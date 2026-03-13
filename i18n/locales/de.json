@@ -764,7 +764,15 @@
         "own_documents": "Eigene Dokumente",
         "default": "Standard",
         "time_remaining": "Verbleibende Zeit",
-        "total": "Gesamt"
+        "total": "Gesamt",
+        "date_range": {
+            "last_7_days": "Letzte 7 Tage",
+            "last_14_days": "Letzte 14 Tage",
+            "last_30_days": "Letzte 30 Tage",
+            "last_90_days": "Letzte 90 Tage",
+            "last_180_days": "Letzte 180 Tage",
+            "last_365_days": "Letzte 365 Tage"
+        }
     },
     "components": {
         "partials": {

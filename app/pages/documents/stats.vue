@@ -132,7 +132,13 @@ const categories = computed(() => [
             <template v-else>
                 <ChartClient :stats="response" :category="query.category" :period="selectedPeriod" :range="query.range" />
 
-                <Table :category="query.category" :stats="response" :period="selectedPeriod" :range="query.range" />
+                <Table
+                    v-if="query.category !== StatsCategory.PENALTIES_OVER_TIME"
+                    :category="query.category"
+                    :stats="response"
+                    :period="selectedPeriod"
+                    :range="query.range"
+                />
             </template>
         </template>
     </UDashboardPanel>

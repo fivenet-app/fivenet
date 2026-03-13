@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { CalendarDate, DateFormatter, getLocalTimeZone, today } from '@internationalized/date';
+import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 import type { Range } from './helpers';
 
-const df = new DateFormatter('en-US', {
-    dateStyle: 'medium',
-});
+const { t } = useI18n();
+
+const { format: formatDate } = useDateFormatter();
 
 const selected = defineModel<Range>({ required: true });
 
 const ranges = [
-    { label: 'Last 7 days', days: 7 },
-    { label: 'Last 14 days', days: 14 },
-    { label: 'Last 30 days', days: 30 },
-    { label: 'Last 3 months', months: 3 },
-    { label: 'Last 6 months', months: 6 },
-    { label: 'Last year', years: 1 },
+    { label: t('common.date_range.last_7_days'), days: 7 },
+    { label: t('common.date_range.last_14_days'), days: 14 },
+    { label: t('common.date_range.last_30_days'), days: 30 },
+    { label: t('common.date_range.last_90_days'), months: 3 },
+    { label: t('common.date_range.last_180_days'), months: 6 },
+    { label: t('common.date_range.last_365_days'), years: 1 },
 ];
 
 const toCalendarDate = (date: Date) => {
@@ -78,12 +78,12 @@ const selectRange = (range: { days?: number; months?: number; years?: number }) 
         <UButton color="neutral" variant="ghost" icon="i-lucide-calendar" class="group data-[state=open]:bg-elevated">
             <span class="truncate">
                 <template v-if="selected.start">
-                    <template v-if="selected.end"> {{ df.format(selected.start) }} - {{ df.format(selected.end) }} </template>
+                    <template v-if="selected.end"> {{ formatDate(selected.start) }} - {{ formatDate(selected.end) }} </template>
                     <template v-else>
-                        {{ df.format(selected.start) }}
+                        {{ formatDate(selected.start) }}
                     </template>
                 </template>
-                <template v-else> Pick a date </template>
+                <template v-else> {{ $t('common.pick_date') }} </template>
             </span>
 
             <template #trailing>

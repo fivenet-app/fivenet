@@ -9,9 +9,9 @@ CREATE TABLE `fivenet_documents_stats_metric` (
   `source_key` varchar(64) NOT NULL, -- e.g. penalty_calculator
   `metric_key` varchar(64) NOT NULL, -- e.g. case_count, fine_total, law_count
 
-  `dimension1` varchar(128) NULL, -- e.g. law_id
-  `dimension2` varchar(128) NULL,
-  `dimension3` varchar(128) NULL,
+  `dimension1` varchar(128) NOT NULL DEFAULT '', -- e.g. law_id
+  `dimension2` varchar(128) NOT NULL DEFAULT '',
+  `dimension3` varchar(128) NOT NULL DEFAULT '',
 
   `value` bigint(20) unsigned NOT NULL,
 
