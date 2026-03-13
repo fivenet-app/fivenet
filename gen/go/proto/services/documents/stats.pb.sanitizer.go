@@ -15,7 +15,14 @@ func (m *CategoryValue) Sanitize() error {
 	}
 
 	// Field: Color
-	m.Color = htmlsanitizer.Sanitize(m.Color)
+	if m.Color != nil {
+		*m.Color = htmlsanitizer.Sanitize(*m.Color)
+	}
+
+	// Field: Icon
+	if m.Icon != nil {
+		*m.Icon = htmlsanitizer.Sanitize(*m.Icon)
+	}
 
 	// Field: Name
 	m.Name = htmlsanitizer.Sanitize(m.Name)

@@ -541,13 +541,16 @@ func (b0 PeriodSeriesValue_builder) Build() *PeriodSeriesValue {
 }
 
 type CategoryValue struct {
-	state            protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id    int64                  `protobuf:"varint,1,opt,name=id,proto3"`
-	xxx_hidden_Name  string                 `protobuf:"bytes,2,opt,name=name,proto3"`
-	xxx_hidden_Color string                 `protobuf:"bytes,3,opt,name=color,proto3"`
-	xxx_hidden_Value int64                  `protobuf:"varint,4,opt,name=value,proto3"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          int64                  `protobuf:"varint,1,opt,name=id,proto3"`
+	xxx_hidden_Name        string                 `protobuf:"bytes,2,opt,name=name,proto3"`
+	xxx_hidden_Color       *string                `protobuf:"bytes,3,opt,name=color,proto3,oneof"`
+	xxx_hidden_Icon        *string                `protobuf:"bytes,4,opt,name=icon,proto3,oneof"`
+	xxx_hidden_Value       int64                  `protobuf:"varint,5,opt,name=value,proto3"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *CategoryValue) Reset() {
@@ -591,7 +594,20 @@ func (x *CategoryValue) GetName() string {
 
 func (x *CategoryValue) GetColor() string {
 	if x != nil {
-		return x.xxx_hidden_Color
+		if x.xxx_hidden_Color != nil {
+			return *x.xxx_hidden_Color
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *CategoryValue) GetIcon() string {
+	if x != nil {
+		if x.xxx_hidden_Icon != nil {
+			return *x.xxx_hidden_Icon
+		}
+		return ""
 	}
 	return ""
 }
@@ -612,11 +628,41 @@ func (x *CategoryValue) SetName(v string) {
 }
 
 func (x *CategoryValue) SetColor(v string) {
-	x.xxx_hidden_Color = v
+	x.xxx_hidden_Color = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
+}
+
+func (x *CategoryValue) SetIcon(v string) {
+	x.xxx_hidden_Icon = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
 }
 
 func (x *CategoryValue) SetValue(v int64) {
 	x.xxx_hidden_Value = v
+}
+
+func (x *CategoryValue) HasColor() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *CategoryValue) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *CategoryValue) ClearColor() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Color = nil
+}
+
+func (x *CategoryValue) ClearIcon() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Icon = nil
 }
 
 type CategoryValue_builder struct {
@@ -624,7 +670,8 @@ type CategoryValue_builder struct {
 
 	Id    int64
 	Name  string
-	Color string
+	Color *string
+	Icon  *string
 	Value int64
 }
 
@@ -634,7 +681,14 @@ func (b0 CategoryValue_builder) Build() *CategoryValue {
 	_, _ = b, x
 	x.xxx_hidden_Id = b.Id
 	x.xxx_hidden_Name = b.Name
-	x.xxx_hidden_Color = b.Color
+	if b.Color != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
+		x.xxx_hidden_Color = b.Color
+	}
+	if b.Icon != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
+		x.xxx_hidden_Icon = b.Icon
+	}
 	x.xxx_hidden_Value = b.Value
 	return m0
 }
@@ -827,12 +881,15 @@ const file_services_documents_stats_proto_rawDesc = "" +
 	"\x03day\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x03day\x12\x10\n" +
 	"\x03key\x18\x02 \x01(\tR\x03key\x12\x14\n" +
 	"\x05label\x18\x03 \x01(\tR\x05label\x12\x14\n" +
-	"\x05value\x18\x04 \x01(\x03R\x05value\"_\n" +
+	"\x05value\x18\x04 \x01(\x03R\x05value\"\x90\x01\n" +
 	"\rCategoryValue\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
-	"\x05color\x18\x03 \x01(\tR\x05color\x12\x14\n" +
-	"\x05value\x18\x04 \x01(\x03R\x05value\"\x83\x04\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x19\n" +
+	"\x05color\x18\x03 \x01(\tH\x00R\x05color\x88\x01\x01\x12\x17\n" +
+	"\x04icon\x18\x04 \x01(\tH\x01R\x04icon\x88\x01\x01\x12\x14\n" +
+	"\x05value\x18\x05 \x01(\x03R\x05valueB\b\n" +
+	"\x06_colorB\a\n" +
+	"\x05_icon\"\x83\x04\n" +
 	"\x10GetStatsResponse\x127\n" +
 	"\btop_laws\x18\x01 \x03(\v2\x1c.services.documents.KeyValueR\atopLaws\x12F\n" +
 	"\x0ffines_over_time\x18\x02 \x03(\v2\x1e.services.documents.DailyValueR\rfinesOverTime\x12U\n" +
@@ -899,6 +956,7 @@ func file_services_documents_stats_proto_init() {
 		return
 	}
 	file_services_documents_stats_proto_msgTypes[0].OneofWrappers = []any{}
+	file_services_documents_stats_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

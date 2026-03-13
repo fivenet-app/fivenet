@@ -10218,7 +10218,8 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
 | `name` | [string](#string) |  |  |
-| `color` | [string](#string) |  |  |
+| `color` | [string](#string) | optional |  |
+| `icon` | [string](#string) | optional |  |
 | `value` | [int64](#int64) |  |  |
 
 

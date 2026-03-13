@@ -51,8 +51,9 @@ message PeriodSeriesValue {
 message CategoryValue {
   int64 id = 1;
   string name = 2;
-  string color = 3;
-  int64 value = 4;
+  optional string color = 3;
+  optional string icon = 4;
+  int64 value = 5;
 }
 
 message GetStatsResponse {

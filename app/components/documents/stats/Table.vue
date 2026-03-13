@@ -2,6 +2,7 @@
 import { UBadge, UButton, ULink } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { getGroupedRowModel } from '@tanstack/vue-table';
+import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import { type CategoryValue, type GetStatsResponse, StatsCategory, type StatsPeriod } from '~~/gen/ts/services/documents/stats';
 import type { Range } from './helpers';
 
@@ -24,7 +25,16 @@ const categoryColumns = computed<TableColumn<CategoryValue>[]>(() => [
         header: t('common.name'),
         cell: ({ row }) =>
             row.original.id
-                ? h(ULink, { to: `/documents?categories=[${row.original.id}]` }, [row.original.name])
+                ? h(ULink, { to: `/documents?categories=[${row.original.id}]` }, [
+                      h(CategoryBadge, {
+                          category: {
+                              id: row.original.id,
+                              name: row.original.name,
+                              color: row.original.color,
+                              icon: row.original.icon,
+                          },
+                      }),
+                  ])
                 : row.original.name,
     },
     {

@@ -26,9 +26,8 @@ defineOptions({
             :size="size"
             :color="color"
             :icon="category.icon ? convertComponentIconNameToDynamic(category.icon) : 'i-mdi-shape'"
+            :label="category.name"
             v-bind="$attrs"
-        >
-            {{ category.name }}
-        </UBadge>
+        />
     </UTooltip>
 </template>

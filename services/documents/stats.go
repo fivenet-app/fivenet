@@ -70,6 +70,7 @@ func (s *Server) GetStats(
 				Id:    item.ID,
 				Name:  item.Name,
 				Color: item.Color,
+				Icon:  item.Icon,
 				Value: item.Value,
 			})
 		}

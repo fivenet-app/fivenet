@@ -98,11 +98,15 @@ export interface CategoryValue {
      */
     name: string;
     /**
-     * @generated from protobuf field: string color = 3
+     * @generated from protobuf field: optional string color = 3
      */
-    color: string;
+    color?: string;
     /**
-     * @generated from protobuf field: int64 value = 4
+     * @generated from protobuf field: optional string icon = 4
+     */
+    icon?: string;
+    /**
+     * @generated from protobuf field: int64 value = 5
      */
     value: number;
 }
@@ -450,15 +454,15 @@ class CategoryValue$Type extends MessageType<CategoryValue> {
         super("services.documents.CategoryValue", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "value", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 3, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "value", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<CategoryValue>): CategoryValue {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.name = "";
-        message.color = "";
         message.value = 0;
         if (value !== undefined)
             reflectionMergePartial<CategoryValue>(this, message, value);
@@ -475,10 +479,13 @@ class CategoryValue$Type extends MessageType<CategoryValue> {
                 case /* string name */ 2:
                     message.name = reader.string();
                     break;
-                case /* string color */ 3:
+                case /* optional string color */ 3:
                     message.color = reader.string();
                     break;
-                case /* int64 value */ 4:
+                case /* optional string icon */ 4:
+                    message.icon = reader.string();
+                    break;
+                case /* int64 value */ 5:
                     message.value = reader.int64().toNumber();
                     break;
                 default:
@@ -499,12 +506,15 @@ class CategoryValue$Type extends MessageType<CategoryValue> {
         /* string name = 2; */
         if (message.name !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.name);
-        /* string color = 3; */
-        if (message.color !== "")
+        /* optional string color = 3; */
+        if (message.color !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.color);
-        /* int64 value = 4; */
+        /* optional string icon = 4; */
+        if (message.icon !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.icon);
+        /* int64 value = 5; */
         if (message.value !== 0)
-            writer.tag(4, WireType.Varint).int64(message.value);
+            writer.tag(5, WireType.Varint).int64(message.value);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

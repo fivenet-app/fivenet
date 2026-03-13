@@ -397,7 +397,8 @@ func (s *Service) QueryDocumentsByCategory(
 SELECT
   CAST(r.dimension1 AS UNSIGNED) AS ` + "`id`" + `,
   COALESCE(c.name, CONCAT('#', r.dimension1)) AS ` + "`name`" + `,
-  COALESCE(c.color, '') AS ` + "`color`" + `,
+  c.color AS ` + "`color`" + `,
+  c.icon AS ` + "`icon`" + `,
   SUM(r.value) AS ` + "`value`" + `
 FROM fivenet_documents_stats_daily_rollup r
 LEFT JOIN fivenet_documents_categories c ON c.id = CAST(r.dimension1 AS UNSIGNED) AND c.deleted_at IS NULL
@@ -408,7 +409,7 @@ WHERE r.day >= ?
   AND r.source_key = 'documents'
   AND r.metric_key = 'category_count'
   AND r.dimension1 <> ''
-GROUP BY CAST(r.dimension1 AS UNSIGNED), COALESCE(c.name, CONCAT('#', r.dimension1)), COALESCE(c.color, '')
+GROUP BY CAST(r.dimension1 AS UNSIGNED), COALESCE(c.name, CONCAT('#', r.dimension1)), c.color, c.icon
 ORDER BY SUM(r.value) DESC
 `
 
@@ -427,7 +428,7 @@ ORDER BY SUM(r.value) DESC
 
 	for rows.Next() {
 		item := &CategoryValue{}
-		if err := rows.Scan(&item.ID, &item.Name, &item.Color, &item.Value); err != nil {
+		if err := rows.Scan(&item.ID, &item.Name, &item.Color, &item.Icon, &item.Value); err != nil {
 			return nil, err
 		}
 		items = append(items, item)

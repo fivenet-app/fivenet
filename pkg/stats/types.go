@@ -24,10 +24,11 @@ type KeyValue struct {
 }
 
 type CategoryValue struct {
-	ID    int64  `alias:"id"`
-	Name  string `alias:"name"`
-	Color string `alias:"color"`
-	Value int64  `alias:"value"`
+	ID    int64   `alias:"id"`
+	Name  string  `alias:"name"`
+	Color *string `alias:"color"`
+	Icon  *string `alias:"icon"`
+	Value int64   `alias:"value"`
 }
 
 type DailyValue struct {
