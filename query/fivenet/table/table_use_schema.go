@@ -48,6 +48,8 @@ func UseSchema(schema string) {
 	FivenetDocumentsRequests = FivenetDocumentsRequests.FromSchema(schema)
 	FivenetDocumentsStamps = FivenetDocumentsStamps.FromSchema(schema)
 	FivenetDocumentsStampsAccess = FivenetDocumentsStampsAccess.FromSchema(schema)
+	FivenetDocumentsStatsDailyRollup = FivenetDocumentsStatsDailyRollup.FromSchema(schema)
+	FivenetDocumentsStatsMetric = FivenetDocumentsStatsMetric.FromSchema(schema)
 	FivenetDocumentsTemplates = FivenetDocumentsTemplates.FromSchema(schema)
 	FivenetDocumentsTemplatesAccess = FivenetDocumentsTemplatesAccess.FromSchema(schema)
 	FivenetDocumentsWorkflowState = FivenetDocumentsWorkflowState.FromSchema(schema)

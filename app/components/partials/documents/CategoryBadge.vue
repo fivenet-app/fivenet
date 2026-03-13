@@ -20,16 +20,15 @@ defineOptions({
 </script>
 
 <template>
-    <UBadge
-        v-if="category"
-        class="inline-flex flex-initial gap-1"
-        :size="size"
-        :color="color"
-        :icon="category.icon ? convertComponentIconNameToDynamic(category.icon) : 'i-mdi-shape'"
-        v-bind="$attrs"
-    >
-        <UTooltip :text="category.description">
+    <UTooltip v-if="category" :text="category.description">
+        <UBadge
+            class="inline-flex flex-initial gap-1"
+            :size="size"
+            :color="color"
+            :icon="category.icon ? convertComponentIconNameToDynamic(category.icon) : 'i-mdi-shape'"
+            v-bind="$attrs"
+        >
             {{ category.name }}
-        </UTooltip>
-    </UBadge>
+        </UBadge>
+    </UTooltip>
 </template>

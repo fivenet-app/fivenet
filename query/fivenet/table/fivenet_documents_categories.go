@@ -78,7 +78,7 @@ func newFivenetDocumentsCategoriesTableImpl(schemaName, tableName, alias string)
 		IconColumn        = mysql.StringColumn("icon")
 		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, NameColumn, SortKeyColumn, DescriptionColumn, JobColumn, ColorColumn, IconColumn}
 		mutableColumns    = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, NameColumn, SortKeyColumn, DescriptionColumn, JobColumn, ColorColumn, IconColumn}
-		defaultColumns    = mysql.ColumnList{CreatedAtColumn, ColorColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetDocumentsCategoriesTable{

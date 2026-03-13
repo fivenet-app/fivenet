@@ -9,6 +9,7 @@
 // source: services/documents/documents.proto
 // source: services/documents/forms.proto
 // source: services/documents/stamps.proto
+// source: services/documents/stats.proto
 // source: services/filestore/filestore.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto

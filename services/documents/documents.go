@@ -31,6 +31,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -421,6 +422,7 @@ func (s *Server) CreateDocument(
 			tDocument.ContentJSON,
 			tDocument.ContentText,
 			tDocument.ContentType,
+			tDocument.FirstHeading,
 			tDocument.State,
 			tDocument.Data,
 			tDocument.Closed,
@@ -437,6 +439,7 @@ func (s *Server) CreateDocument(
 			docContent,
 			"",
 			int32(docContent.GetContentType()),
+			"",
 			docState,
 			mysql.NULL,
 			false,
@@ -492,6 +495,21 @@ func (s *Server) CreateDocument(
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	// Keep extracted metrics deterministic for all lifecycle writes.
+	if err := s.stats.RebuildDocumentMetrics(ctx, &documents.Document{
+		Id:         lastId,
+		CreatorJob: userInfo.GetJob(),
+		Meta: &documents.DocumentMeta{
+			Draft: true,
+		},
+	}); err != nil {
+		s.logger.Warn(
+			"failed to rebuild document metrics after create",
+			zap.Int64("document_id", lastId),
+			zap.Error(err),
+		)
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
@@ -728,6 +746,14 @@ func (s *Server) UpdateDocument(
 		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if err := s.stats.RebuildDocumentMetrics(ctx, doc); err != nil {
+		s.logger.Warn(
+			"failed to rebuild document metrics after update",
+			zap.Int64("document_id", req.GetDocumentId()),
+			zap.Error(err),
+		)
 	}
 
 	s.collabServer.SendTargetSaved(ctx, doc.GetId())

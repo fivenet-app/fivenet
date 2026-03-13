@@ -1,14 +1,15 @@
-function _useIntlNumberFormat(): Intl.NumberFormat {
+function _useIntlNumberFormat(opts?: Intl.NumberFormatOptions): Intl.NumberFormat {
     const { display } = useAppConfig();
 
     return new Intl.NumberFormat(display.intlLocale, {
         style: 'currency',
         currency: display.currencyName,
         trailingZeroDisplay: 'stripIfInteger',
+        ...opts,
     });
 }
 
-export const useIntlNumberFormat = createSharedComposable(_useIntlNumberFormat);
+export const useIntlNumberFormat = _useIntlNumberFormat;
 
 function _useDateFormatter(
     dateStyle?: Intl.DateTimeFormatOptions['dateStyle'],
@@ -26,3 +27,14 @@ function _useDateFormatter(
 }
 
 export const useDateFormatter = createSharedComposable(_useDateFormatter);
+
+export const useDetentionTimeFormatter = createSharedComposable(() => {
+    const { quickButtons } = useAppConfig();
+
+    return (months: number) => {
+        if (months > 1) {
+            return `${months} ${quickButtons.penaltyCalculator?.detentionTimeUnit?.plural ?? $t('common.month', 2)}`;
+        }
+        return `${months} ${quickButtons.penaltyCalculator?.detentionTimeUnit?.singular ?? $t('common.month', 1)}`;
+    };
+});

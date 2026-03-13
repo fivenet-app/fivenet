@@ -33,7 +33,7 @@ export interface PenaltyCalculatorData {
      */
     selected: SelectedPenalty[];
     /**
-     * @generated from protobuf field: resources.documents.data.PenaltyCalculatorTotal total = 3
+     * @generated from protobuf field: optional resources.documents.data.PenaltyCalculatorTotal total = 3
      */
     total?: PenaltyCalculatorTotal;
 }
@@ -145,7 +145,7 @@ class PenaltyCalculatorData$Type extends MessageType<PenaltyCalculatorData> {
                 case /* repeated resources.documents.data.SelectedPenalty selected */ 2:
                     message.selected.push(SelectedPenalty.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* resources.documents.data.PenaltyCalculatorTotal total */ 3:
+                case /* optional resources.documents.data.PenaltyCalculatorTotal total */ 3:
                     message.total = PenaltyCalculatorTotal.internalBinaryRead(reader, reader.uint32(), options, message.total);
                     break;
                 default:
@@ -166,7 +166,7 @@ class PenaltyCalculatorData$Type extends MessageType<PenaltyCalculatorData> {
         /* repeated resources.documents.data.SelectedPenalty selected = 2; */
         for (let i = 0; i < message.selected.length; i++)
             SelectedPenalty.internalBinaryWrite(message.selected[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.data.PenaltyCalculatorTotal total = 3; */
+        /* optional resources.documents.data.PenaltyCalculatorTotal total = 3; */
         if (message.total)
             PenaltyCalculatorTotal.internalBinaryWrite(message.total, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

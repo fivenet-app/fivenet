@@ -22,6 +22,8 @@ const { data: lawBooks, status, refresh, error } = useLazyAsyncData(`lawbooks`, 
 
 const numberFormatter = useIntlNumberFormat();
 
+const formatDetention = useDetentionTimeFormatter();
+
 const querySearchRaw = ref('');
 const querySearch = computed(() => querySearchRaw.value.trim().toLowerCase());
 
@@ -79,9 +81,9 @@ ${t('common.fine')}: ${n(summary.value.fine, 'currency')}${
                 ? ` ${numberFormatter.format(-Math.abs(summary.value.fine * leeway.value))}`
                 : ''
         }
-${t('common.detention_time')}: ${summary.value.detentionTime} ${t('common.month', summary.value.detentionTime)}${
+${t('common.detention_time')}: ${formatDetention(summary.value.detentionTime)}${
             leeway.value > 0 && summary.value.detentionTime > 0
-                ? ` (-${summary.value.detentionTime * leeway.value} ${t('common.month', summary.value.detentionTime * leeway.value)})`
+                ? ` (-${formatDetention(summary.value.detentionTime * leeway.value)})`
                 : ''
         }
 ${t('common.traffic_infraction_points', 2)}: ${summary.value.stvoPoints}${

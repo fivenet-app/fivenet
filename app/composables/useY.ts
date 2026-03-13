@@ -584,12 +584,22 @@ function useYArrayOfObjects(yarr: Y.Array<Y.Map<unknown>>, list: Ref<YStateMap[]
         }, LOCAL_ORIGIN);
     };
 
+    const handleYArr = (_evt: Y.YArrayEvent<Y.Map<unknown>>, tr: Y.Transaction) => {
+        if (tr.origin === LOCAL_ORIGIN) return;
+        syncFromY();
+    };
+
     const onSync = (s: boolean) => s && init();
 
     const init = () => {
         remoteApplying = true;
 
-        syncFromY();
+        if (yarr.length > 0) {
+            syncFromY();
+        } else if (provider && provider.isAuthoritative) {
+            writeLocal();
+        }
+
         watch(
             list,
             () => {
@@ -603,11 +613,11 @@ function useYArrayOfObjects(yarr: Y.Array<Y.Map<unknown>>, list: Ref<YStateMap[]
             remoteApplying = false;
         });
 
-        yarr.observe(syncFromY);
+        yarr.observe(handleYArr);
         if (getCurrentInstance())
             onUnmounted(() => {
                 provider?.off('sync', onSync);
-                yarr.unobserve(syncFromY);
+                yarr.unobserve(handleYArr);
             });
     };
 

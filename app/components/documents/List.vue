@@ -322,7 +322,10 @@ defineShortcuts({
                                         :searchable="
                                             async (search: string) => {
                                                 try {
-                                                    return await completorStore.completeDocumentCategories(search);
+                                                    return await completorStore.completeDocumentCategories(
+                                                        search,
+                                                        ...query.categories,
+                                                    );
                                                 } catch (e) {
                                                     handleGRPCError(e as RpcError);
                                                     throw e;
@@ -332,6 +335,8 @@ defineShortcuts({
                                         searchable-key="completor-document-categories"
                                         :search-input="{ placeholder: $t('common.category', 1) }"
                                         value-key="id"
+                                        clear
+                                        :ui="{ base: query.categories.length ? 'py-1' : '' }"
                                     >
                                         <template v-if="query.categories" #default="{ items }">
                                             <CategoryBadge
@@ -343,6 +348,11 @@ defineShortcuts({
 
                                         <template #item-label="{ item }">
                                             <CategoryBadge :category="item" />
+                                        </template>
+
+                                        <template #item-description="{ item }">
+                                            <!-- eslint-disable-next-line vue/no-v-html -->
+                                            <span v-html="item.description" />
                                         </template>
 
                                         <template #empty>

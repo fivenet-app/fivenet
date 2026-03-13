@@ -50,6 +50,9 @@
                 "title": "Stamps",
                 "create": "Create Stamp",
                 "update": "Update Stamp"
+            },
+            "stats": {
+                "title": "Document Statistics"
             }
         },
         "notfound": {
@@ -760,7 +763,8 @@
         "request_sync": "Request Sync",
         "own_documents": "Own Documents",
         "default": "Default",
-        "time_remaining": "Time Remaining"
+        "time_remaining": "Time Remaining",
+        "total": "Total"
     },
     "components": {
         "partials": {
@@ -2890,6 +2894,15 @@
                 "BLOCKED": "Blocked",
                 "USE": "Use",
                 "MANAGE": "Manage"
+            },
+            "stats": {
+                "StatsCategory": {
+                    "UNSPECIFIED": "Unspecified",
+                    "CUSTOM": "Custom",
+                    "DOCUMENTS_BY_CATEGORY": "Documents by category",
+                    "TOP_LAWS": "Top Laws",
+                    "PENALTIES_OVER_TIME": "Penalties over time"
+                }
             }
         },
         "settings": {
@@ -3353,6 +3366,19 @@
                 "DeleteStamp": {
                     "key": "Delete Stamp",
                     "description": "Delete a stamp."
+                }
+            },
+            "StatsService": {
+                "category": "Documents: Stats",
+                "GetStats": {
+                    "key": "Get Statistics",
+                    "description": "Retrieve various statistics related to documents.",
+                    "attrs_types": {
+                        "Categories": "Available Statistics Categories"
+                    },
+                    "attrs": {
+                        "PenaltyCalculator": "Penalty-and Law-based Stats"
+                    }
                 }
             }
         },

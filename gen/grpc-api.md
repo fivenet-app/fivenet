@@ -3805,7 +3805,7 @@ States of Cronjbo
 | ----- | ---- | ----- | ----------- |
 | `reduction` | [int32](#int32) |  |  |
 | `selected` | [SelectedPenalty](#resourcesdocumentsdataSelectedPenalty) | repeated |  |
-| `total` | [PenaltyCalculatorTotal](#resourcesdocumentsdataPenaltyCalculatorTotal) |  |  |
+| `total` | [PenaltyCalculatorTotal](#resourcesdocumentsdataPenaltyCalculatorTotal) | optional |  |
 
 
 
@@ -10203,6 +10203,133 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `GetStamp` | [GetStampRequest](#servicesdocumentsGetStampRequest) | [GetStampResponse](#servicesdocumentsGetStampResponse) | |
 | `UpsertStamp` | [UpsertStampRequest](#servicesdocumentsUpsertStampRequest) | [UpsertStampResponse](#servicesdocumentsUpsertStampResponse) | |
 | `DeleteStamp` | [DeleteStampRequest](#servicesdocumentsDeleteStampRequest) | [DeleteStampResponse](#servicesdocumentsDeleteStampResponse) | |
+
+ <!-- end services -->
+
+
+
+## services/documents/stats.proto
+
+
+### services.documents.CategoryValue
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `name` | [string](#string) |  |  |
+| `color` | [string](#string) |  |  |
+| `value` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.DailyValue
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `day` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `value` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.GetStatsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `start` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `end` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `period` | [StatsPeriod](#servicesdocumentsStatsPeriod) |  |  |
+| `category` | [StatsCategory](#servicesdocumentsStatsCategory) |  |  |
+| `custom_category` | [string](#string) | optional |  |
+
+
+
+
+
+### services.documents.GetStatsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `top_laws` | [KeyValue](#servicesdocumentsKeyValue) | repeated |  |
+| `fines_over_time` | [DailyValue](#servicesdocumentsDailyValue) | repeated |  |
+| `documents_by_category` | [CategoryValue](#servicesdocumentsCategoryValue) | repeated |  |
+| `reduction_percent_sum` | [int64](#int64) |  |  |
+| `case_count_sum` | [int64](#int64) |  |  |
+| `period_values` | [DailyValue](#servicesdocumentsDailyValue) | repeated |  |
+| `total_value` | [int64](#int64) |  |  |
+| `period_series_values` | [PeriodSeriesValue](#servicesdocumentsPeriodSeriesValue) | repeated |  |
+
+
+
+
+
+### services.documents.KeyValue
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `value` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.PeriodSeriesValue
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `day` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `key` | [string](#string) |  |  |
+| `label` | [string](#string) |  |  |
+| `value` | [int64](#int64) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### services.documents.StatsCategory
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `STATS_CATEGORY_UNSPECIFIED` | 0 |  |
+| `STATS_CATEGORY_CUSTOM` | 1 |  |
+| `STATS_CATEGORY_DOCUMENTS_BY_CATEGORY` | 2 |  |
+| `STATS_CATEGORY_TOP_LAWS` | 3 |  |
+| `STATS_CATEGORY_PENALTIES_OVER_TIME` | 4 |  |
+
+
+
+### services.documents.StatsPeriod
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `STATS_PERIOD_UNSPECIFIED` | 0 |  |
+| `STATS_PERIOD_DAILY` | 1 |  |
+| `STATS_PERIOD_WEEKLY` | 2 |  |
+| `STATS_PERIOD_MONTHLY` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.documents.StatsService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `GetStats` | [GetStatsRequest](#servicesdocumentsGetStatsRequest) | [GetStatsResponse](#servicesdocumentsGetStatsResponse) | |
 
  <!-- end services -->
 

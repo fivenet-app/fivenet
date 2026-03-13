@@ -143,6 +143,7 @@ const columns = computed(
                 :title="$t('common.unable_to_load', [$t('common.cronjob', 2)])"
                 :error="error"
                 :retry="refresh"
+                class="m-2"
             />
 
             <UTable

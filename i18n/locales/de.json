@@ -50,6 +50,9 @@
                 "title": "Stempel",
                 "create": "Stempel erstellen",
                 "update": "Stempel aktualisieren"
+            },
+            "stats": {
+                "title": "Dokumentenstatistik"
             }
         },
         "notfound": {
@@ -760,7 +763,8 @@
         "request_sync": "Synchronisierung anfordern",
         "own_documents": "Eigene Dokumente",
         "default": "Standard",
-        "time_remaining": "Verbleibende Zeit"
+        "time_remaining": "Verbleibende Zeit",
+        "total": "Gesamt"
     },
     "components": {
         "partials": {
@@ -2890,6 +2894,15 @@
                 "BLOCKED": "Blockiert",
                 "USE": "Verwenden",
                 "MANAGE": "Verwalten"
+            },
+            "stats": {
+                "StatsCategory": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "CUSTOM": "Benutzerdefiniert",
+                    "DOCUMENTS_BY_CATEGORY": "Dokumente nach Kategorie",
+                    "TOP_LAWS": "Top Gesetze",
+                    "PENALTIES_OVER_TIME": "Strafen im Zeitverlauf"
+                }
             }
         },
         "settings": {

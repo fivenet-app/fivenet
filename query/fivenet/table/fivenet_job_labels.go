@@ -74,7 +74,7 @@ func newFivenetJobLabelsTableImpl(schemaName, tableName, alias string) fivenetJo
 		OrderColumn     = mysql.IntegerColumn("order")
 		allColumns      = mysql.ColumnList{IDColumn, JobColumn, DeletedAtColumn, NameColumn, SortKeyColumn, ColorColumn, OrderColumn}
 		mutableColumns  = mysql.ColumnList{JobColumn, DeletedAtColumn, NameColumn, SortKeyColumn, ColorColumn, OrderColumn}
-		defaultColumns  = mysql.ColumnList{ColorColumn, OrderColumn}
+		defaultColumns  = mysql.ColumnList{OrderColumn}
 	)
 
 	return fivenetJobLabelsTable{
