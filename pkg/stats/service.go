@@ -175,6 +175,9 @@ func (s *Service) RebuildDocumentColumnRollups(
 	ctx context.Context,
 	startDay, endDay time.Time,
 ) error {
+	startDay = timeutils.StartOfDay(startDay)
+	endDay = timeutils.StartOfDay(endDay)
+
 	return s.rebuildRollupsWithRange(
 		ctx,
 		startDay,
@@ -214,6 +217,7 @@ WHERE d.deleted_at IS NULL
   AND DATE(d.created_at) >= ?
   AND DATE(d.created_at) <= ?
 GROUP BY DATE(d.created_at), d.creator_job`,
+		dateRangeArgs(startDay, endDay, 4),
 	)
 }
 
@@ -221,6 +225,9 @@ func (s *Service) RebuildDocumentMetricRollups(
 	ctx context.Context,
 	startDay, endDay time.Time,
 ) error {
+	startDay = timeutils.StartOfDay(startDay)
+	endDay = timeutils.StartOfDay(endDay)
+
 	return s.rebuildRollupsWithRange(
 		ctx,
 		startDay,
@@ -237,6 +244,7 @@ WHERE d.deleted_at IS NULL
   AND DATE(m.occurred_at) <= ?
 GROUP BY DATE(m.occurred_at), m.job, m.source_key, m.metric_key,
          COALESCE(m.dimension1, ''), COALESCE(m.dimension2, ''), COALESCE(m.dimension3, '')`,
+		dateRangeArgs(startDay, endDay, 1),
 	)
 }
 
@@ -578,6 +586,7 @@ func (s *Service) rebuildRollupsWithRange(
 	startDay, endDay time.Time,
 	sourceKind string,
 	insertSQL string,
+	insertArgs []any,
 ) error {
 	startDay = timeutils.StartOfDay(startDay)
 	endDay = timeutils.StartOfDay(endDay)
@@ -600,17 +609,7 @@ func (s *Service) rebuildRollupsWithRange(
 		return err
 	}
 
-	args := []any{
-		startDay.Format(time.DateOnly), endDay.Format(time.DateOnly),
-		startDay.Format(time.DateOnly), endDay.Format(time.DateOnly),
-		startDay.Format(time.DateOnly), endDay.Format(time.DateOnly),
-		startDay.Format(time.DateOnly), endDay.Format(time.DateOnly),
-	}
-	if sourceKind == SourceKindDocumentMetric {
-		args = args[:2]
-	}
-
-	if _, err := tx.ExecContext(ctx, insertSQL, args...); err != nil {
+	if _, err := tx.ExecContext(ctx, insertSQL, insertArgs...); err != nil {
 		return err
 	}
 
@@ -656,4 +655,16 @@ func periodStartExpr(period documentspb.StatsPeriod) string {
 	default:
 		return "day"
 	}
+}
+
+func dateRangeArgs(startDay, endDay time.Time, repeats int) []any {
+	args := make([]any, 0, repeats*2)
+	start := startDay.Format(time.DateOnly)
+	end := endDay.Format(time.DateOnly)
+
+	for range repeats {
+		args = append(args, start, end)
+	}
+
+	return args
 }

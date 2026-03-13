@@ -103,8 +103,7 @@ const highlight = computed(() => {
                         </div>
 
                         <span v-if="leeway > 0 && summary.detentionTime > 0">
-                            (-{{ formatDetention(summary.detentionTime * leeway) }}
-                            {{ formatDetention(summary.detentionTime * leeway) }})
+                            (-{{ formatDetention(summary.detentionTime * leeway) }})
                         </span>
                     </div>
                 </template>
