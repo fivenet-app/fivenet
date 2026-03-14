@@ -25,22 +25,34 @@ func getWhereCondition(
 		lastCheck != nil &&
 		!lastCheck.IsZero()
 
+	// Only quote the cursor ID column if it doesn't already contain backticks, to avoid double quoting.
+	if !strings.Contains(cursorIDColumn, "`") {
+		cursorIDColumn = fmt.Sprintf("%#q", cursorIDColumn)
+	}
+
 	if hasUpdatedAt {
 		updatedAtCol := *table.UpdatedTimeColumn
 		updatedAtValue := lastCheck.Format("2006-01-02 15:04:05.000")
+
+		// Only quote the updated time column if it doesn't already contain backticks, to avoid double quoting.
+		if !strings.Contains(updatedAtCol, "`") {
+			updatedAtCol = fmt.Sprintf("%#q", updatedAtCol)
+		}
+
 		if hasCursorID {
 			return fmt.Sprintf(
-				"(%#q > '%s' OR (%#q = '%s' AND %#q > %s))\n",
+				"(%s > '%s' OR (%s = '%s' AND %s > %s))\n",
 				updatedAtCol, updatedAtValue,
 				updatedAtCol, updatedAtValue,
 				cursorIDColumn, sqlLiteral(*lastID),
 			)
 		}
-		return fmt.Sprintf("%#q >= '%s'\n", updatedAtCol, updatedAtValue)
+
+		return fmt.Sprintf("%s >= '%s'\n", updatedAtCol, updatedAtValue)
 	}
 
 	if hasCursorID {
-		return fmt.Sprintf("%#q > %s\n", cursorIDColumn, sqlLiteral(*lastID))
+		return fmt.Sprintf("%s > %s\n", cursorIDColumn, sqlLiteral(*lastID))
 	}
 
 	return ""

@@ -158,6 +158,47 @@ func TestGetWhereConditionIDOnly(t *testing.T) {
 	assert.Equal(t, "`plate` > 'XYZ-100'\n", where)
 }
 
+func TestGetWhereConditionBacktickedColumns(t *testing.T) {
+	t.Run("cursor column already backticked", func(t *testing.T) {
+		table := DBSyncTable{}
+		state := &TableSyncState{
+			LastID: utils.StrPtr("XYZ-100"),
+		}
+
+		where := getWhereCondition(table, state, "`plate`")
+		assert.Equal(t, "`plate` > 'XYZ-100'\n", where)
+	})
+
+	t.Run("updated time column already backticked", func(t *testing.T) {
+		table := DBSyncTable{
+			UpdatedTimeColumn: utils.StrPtr("`updated_at`"),
+		}
+		state := &TableSyncState{
+			LastCheck: parseTime("2023-01-01 00:00:00"),
+		}
+
+		where := getWhereCondition(table, state, "id")
+		assert.Equal(t, "`updated_at` >= '2023-01-01 00:00:00.000'\n", where)
+	})
+
+	t.Run("cursor and updated time columns already backticked", func(t *testing.T) {
+		table := DBSyncTable{
+			UpdatedTimeColumn: utils.StrPtr("`updated_at`"),
+		}
+		state := &TableSyncState{
+			LastCheck: parseTime("2023-01-01 00:00:00"),
+			LastID:    utils.StrPtr("42"),
+		}
+
+		where := getWhereCondition(table, state, "`id`")
+		assert.Equal(
+			t,
+			"(`updated_at` > '2023-01-01 00:00:00.000' OR (`updated_at` = '2023-01-01 00:00:00.000' AND `id` > 42))\n",
+			where,
+		)
+	})
+}
+
 func parseTime(value string) *time.Time {
 	t, _ := time.Parse("2006-01-02 15:04:05", value)
 	return &t
