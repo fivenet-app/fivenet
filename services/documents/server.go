@@ -155,6 +155,7 @@ type Params struct {
 	Ui            userinfo.UserInfoRetriever
 	Notif         notifi.INotifi
 	JS            *events.JSWrapper
+	Stats         *docstats.Service
 }
 
 type Result struct {
@@ -306,7 +307,7 @@ func NewServer(p Params) Result {
 
 		collabServer: collabServer,
 		fHandler:     fHandler,
-		stats:        docstats.NewService(p.DB, docstats.NewPenaltyCalculatorExtractor()),
+		stats:        p.Stats,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

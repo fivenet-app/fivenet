@@ -2,6 +2,7 @@ package stats
 
 import (
 	"context"
+	"errors"
 	"regexp"
 	"testing"
 	"time"
@@ -34,29 +35,32 @@ func TestService_RebuildDocumentMetrics_ReplacesBySource(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	svc := NewService(db, &testExtractor{
-		sourceKey: "penalty_calculator",
-		supports:  true,
-		metrics: []*DocumentMetric{
-			{
-				DocumentID: 42,
-				Job:        "police",
-				SourceKey:  "penalty_calculator",
-				MetricKey:  "case_count",
-				Value:      1,
-				OccurredAt: time.Now().UTC(),
-			},
-			{
-				DocumentID: 42,
-				Job:        "police",
-				SourceKey:  "penalty_calculator",
-				MetricKey:  "law_count",
-				Dimension1: ptrString("10"),
-				Value:      2,
-				OccurredAt: time.Now().UTC(),
+	svc := NewService(db)
+	svc.extractors = []DocumentMetricExtractor{
+		&testExtractor{
+			sourceKey: "penalty_calculator",
+			supports:  true,
+			metrics: []*DocumentMetric{
+				{
+					DocumentID: 42,
+					Job:        "police",
+					SourceKey:  "penalty_calculator",
+					MetricKey:  "case_count",
+					Value:      1,
+					OccurredAt: time.Now().UTC(),
+				},
+				{
+					DocumentID: 42,
+					Job:        "police",
+					SourceKey:  "penalty_calculator",
+					MetricKey:  "law_count",
+					Dimension1: ptrString("10"),
+					Value:      2,
+					OccurredAt: time.Now().UTC(),
+				},
 			},
 		},
-	})
+	}
 
 	doc := &documents.Document{
 		Id:         42,
@@ -82,8 +86,8 @@ func TestService_RebuildDocumentMetrics_MultiExtractorDeletesBothSources(t *test
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	svc := NewService(
-		db,
+	svc := NewService(db)
+	svc.extractors = []DocumentMetricExtractor{
 		&testExtractor{
 			sourceKey: "alpha",
 			supports:  false,
@@ -100,7 +104,7 @@ func TestService_RebuildDocumentMetrics_MultiExtractorDeletesBothSources(t *test
 				OccurredAt: time.Now().UTC(),
 			}},
 		},
-	)
+	}
 
 	doc := &documents.Document{
 		Id:         43,
@@ -147,4 +151,40 @@ func TestService_RebuildDocumentMetrics_UnpublishedClearsAll(t *testing.T) {
 
 func ptrString(v string) *string {
 	return &v
+}
+
+func TestService_BuildEmployeeCountMetrics(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	svc := NewService(db)
+
+	mock.ExpectBegin()
+	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM fivenet_documents_stats_daily_rollup")).
+		WillReturnResult(sqlmock.NewResult(0, 3))
+	mock.ExpectExec(regexp.QuoteMeta("INSERT INTO fivenet_documents_stats_daily_rollup")).
+		WillReturnResult(sqlmock.NewResult(3, 3))
+	mock.ExpectCommit()
+
+	err = svc.BuildEmployeeCountMetrics(t.Context())
+	require.NoError(t, err)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestService_BuildEmployeeCountMetrics_DeleteError(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	svc := NewService(db)
+
+	mock.ExpectBegin()
+	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM fivenet_documents_stats_daily_rollup")).
+		WillReturnError(errors.New("delete failed"))
+	mock.ExpectRollback()
+
+	err = svc.BuildEmployeeCountMetrics(t.Context())
+	require.Error(t, err)
+	require.NoError(t, mock.ExpectationsWereMet())
 }

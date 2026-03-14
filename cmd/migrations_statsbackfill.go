@@ -45,10 +45,7 @@ func (c *MigrationsStatsBackfillCmd) Run() error {
 						go func() {
 							exitCode := 0
 							c.db = db
-							c.stats = docstats.NewService(
-								db,
-								docstats.NewPenaltyCalculatorExtractor(),
-							)
+							c.stats = docstats.NewService(db)
 							if err := c.run(ctx); err != nil {
 								exitCode = 1
 								fmt.Println("Error running stats backfill command:", err)

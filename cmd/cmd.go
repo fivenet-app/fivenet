@@ -36,6 +36,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/images"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/oauth2"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/wk"
+	"github.com/fivenet-app/fivenet/v2026/pkg/stats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker/manager"
@@ -141,6 +142,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		crypt.Module,
 		demo.Module,
 		updatecheck.Module,
+		fx.Provide(stats.NewService),
 
 		// DBSync
 		dbsync.Module,

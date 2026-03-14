@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentspb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/timeutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -21,7 +22,25 @@ import (
 const (
 	SourceKindDocumentColumn = "document_column"
 	SourceKindDocumentMetric = "document_metric"
+	SourceKindEmployeeCount  = "employee_count"
 )
+
+func init() {
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetDocumentsStatsMetric,
+		IDColumn:        table.FivenetDocumentsStatsMetric.ID,
+		TimestampColumn: table.FivenetDocumentsStatsMetric.CreatedAt,
+
+		MinDays: 366,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:      table.FivenetDocumentsStatsDailyRollup,
+		DateColumn: table.FivenetDocumentsStatsDailyRollup.Day,
+
+		MinDays: 366,
+	})
+}
 
 type Service struct {
 	mu sync.Mutex
@@ -30,10 +49,12 @@ type Service struct {
 	extractors []DocumentMetricExtractor
 }
 
-func NewService(db *sql.DB, extractors ...DocumentMetricExtractor) *Service {
+func NewService(db *sql.DB) *Service {
 	return &Service{
-		db:         db,
-		extractors: extractors,
+		db: db,
+		extractors: []DocumentMetricExtractor{
+			NewPenaltyCalculatorExtractor(),
+		},
 	}
 }
 
@@ -666,4 +687,72 @@ func dateRangeArgs(startDay, endDay time.Time, repeats int) []any {
 	}
 
 	return args
+}
+
+func (s *Service) BuildEmployeeCountMetrics(ctx context.Context) error {
+	const sourceKey = "fivenet_user_jobs"
+	const metricKey = "employee_count"
+
+	day := timeutils.StartOfDay(time.Now().UTC())
+	tRollup := table.FivenetDocumentsStatsDailyRollup
+	tUserJobs := table.FivenetUserJobs
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if _, err := tRollup.
+		DELETE().
+		WHERE(mysql.AND(
+			tRollup.Day.EQ(mysql.DateT(day)),
+			tRollup.SourceKind.EQ(mysql.String(SourceKindEmployeeCount)),
+			tRollup.SourceKey.EQ(mysql.String(sourceKey)),
+			tRollup.MetricKey.EQ(mysql.String(metricKey)),
+		)).
+		ExecContext(ctx, tx); err != nil {
+		return err
+	}
+
+	if _, err := tRollup.
+		INSERT(
+			tRollup.Day,
+			tRollup.Job,
+			tRollup.SourceKind,
+			tRollup.SourceKey,
+			tRollup.MetricKey,
+			tRollup.Dimension1,
+			tRollup.Dimension2,
+			tRollup.Dimension3,
+			tRollup.Value,
+		).
+		QUERY(
+			tUserJobs.
+				SELECT(
+					mysql.DateT(day),
+					tUserJobs.Job,
+					mysql.String(SourceKindEmployeeCount),
+					mysql.String(sourceKey),
+					mysql.String(metricKey),
+					mysql.String(""),
+					mysql.String(""),
+					mysql.String(""),
+					mysql.COUNT(mysql.STAR),
+				).
+				FROM(tUserJobs).
+				GROUP_BY(tUserJobs.Job),
+		).
+		ExecContext(ctx, tx); err != nil {
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
 }

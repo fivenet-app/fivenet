@@ -6,6 +6,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
+	docstats "github.com/fivenet-app/fivenet/v2026/pkg/stats"
 	"github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -24,7 +25,8 @@ type Housekeeper struct {
 	logger *zap.Logger
 	tracer trace.Tracer
 
-	db *sql.DB
+	db    *sql.DB
+	stats *docstats.Service
 }
 
 type HousekeeperParams struct {
@@ -47,6 +49,7 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 		logger: p.Logger.Named("jobs.housekeeper"),
 		tracer: p.TP.Tracer("jobs.housekeeper"),
 		db:     p.DB,
+		stats:  docstats.NewService(p.DB),
 	}
 
 	return HousekeeperResult{
@@ -59,6 +62,12 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "jobs.timeclock_cleanup",
 		Schedule: "@hourly",
+	}); err != nil {
+		return err
+	}
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "jobs.stats.employee_count.recent",
+		Schedule: "5 */1 * * *",
 	}); err != nil {
 		return err
 	}
@@ -85,6 +94,20 @@ func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
 
 		return nil
 	})
+	h.Add(
+		"jobs.stats.employee_count.recent",
+		func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := s.tracer.Start(ctx, "jobs.stats.employee_count.recent")
+			defer span.End()
+
+			if err := s.stats.BuildEmployeeCountMetrics(ctx); err != nil {
+				s.logger.Error("error during employee count metrics build", zap.Error(err))
+				return err
+			}
+
+			return nil
+		},
+	)
 
 	return nil
 }
