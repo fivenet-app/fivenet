@@ -35,6 +35,8 @@ type HousekeeperParams struct {
 	Logger *zap.Logger
 	DB     *sql.DB
 	TP     *tracesdk.TracerProvider
+
+	Stats *docstats.Service
 }
 
 type HousekeeperResult struct {
@@ -49,7 +51,7 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 		logger: p.Logger.Named("jobs.housekeeper"),
 		tracer: p.TP.Tracer("jobs.housekeeper"),
 		db:     p.DB,
-		stats:  docstats.NewService(p.DB),
+		stats:  p.Stats,
 	}
 
 	return HousekeeperResult{

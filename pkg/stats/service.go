@@ -718,7 +718,7 @@ func (s *Service) BuildEmployeeCountMetrics(ctx context.Context) error {
 		return err
 	}
 
-	if _, err := tRollup.
+	stmt := tRollup.
 		INSERT(
 			tRollup.Day,
 			tRollup.Job,
@@ -745,8 +745,9 @@ func (s *Service) BuildEmployeeCountMetrics(ctx context.Context) error {
 				).
 				FROM(tUserJobs).
 				GROUP_BY(tUserJobs.Job),
-		).
-		ExecContext(ctx, tx); err != nil {
+		)
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 
