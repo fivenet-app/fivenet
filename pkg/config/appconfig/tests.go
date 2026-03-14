@@ -27,7 +27,7 @@ type TestParams struct {
 	LC fx.Lifecycle
 }
 
-func NewTest(p TestParams) (IConfig, error) {
+func NewTest(p TestParams) IConfig {
 	cfg := &TestConfig{
 		cfg:    atomic.Pointer[settings.AppConfig]{},
 		broker: broker.New[*Cfg](),
@@ -51,7 +51,7 @@ func NewTest(p TestParams) (IConfig, error) {
 		return nil
 	}))
 
-	return cfg, nil
+	return cfg
 }
 
 func (c *TestConfig) Get() *Cfg {

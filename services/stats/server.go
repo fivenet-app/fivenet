@@ -95,17 +95,3 @@ func (s *Server) PermissionUnaryFuncOverride(
 	// Skip permission check for the stats services
 	return ctx, nil
 }
-
-func (s *Server) GetStats(
-	ctx context.Context,
-	req *pbstats.GetStatsRequest,
-) (*pbstats.GetStatsResponse, error) {
-	stats := s.worker.GetStats()
-	if stats == nil {
-		return &pbstats.GetStatsResponse{}, nil
-	}
-
-	return &pbstats.GetStatsResponse{
-		Stats: *stats,
-	}, nil
-}

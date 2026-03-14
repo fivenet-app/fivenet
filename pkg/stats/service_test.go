@@ -10,7 +10,9 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/fx/fxtest"
 )
 
 type testExtractor struct {
@@ -35,7 +37,9 @@ func TestService_RebuildDocumentMetrics_ReplacesBySource(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	svc := NewService(db)
+	svc := NewService(db, appconfig.NewTest(appconfig.TestParams{
+		LC: fxtest.NewLifecycle(t),
+	}))
 	svc.extractors = []DocumentMetricExtractor{
 		&testExtractor{
 			sourceKey: "penalty_calculator",
@@ -86,7 +90,9 @@ func TestService_RebuildDocumentMetrics_MultiExtractorDeletesBothSources(t *test
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	svc := NewService(db)
+	svc := NewService(db, appconfig.NewTest(appconfig.TestParams{
+		LC: fxtest.NewLifecycle(t),
+	}))
 	svc.extractors = []DocumentMetricExtractor{
 		&testExtractor{
 			sourceKey: "alpha",
@@ -132,7 +138,9 @@ func TestService_RebuildDocumentMetrics_UnpublishedClearsAll(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	svc := NewService(db)
+	svc := NewService(db, appconfig.NewTest(appconfig.TestParams{
+		LC: fxtest.NewLifecycle(t),
+	}))
 	doc := &documents.Document{
 		Id:         44,
 		CreatorJob: "police",
@@ -158,12 +166,16 @@ func TestService_BuildEmployeeCountMetrics(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	svc := NewService(db)
+	svc := NewService(db, appconfig.NewTest(appconfig.TestParams{
+		LC: fxtest.NewLifecycle(t),
+	}))
 
 	mock.ExpectBegin()
-	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM fivenet_documents_stats_daily_rollup")).
+	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM fivenet_stats_daily_rollup")).
 		WillReturnResult(sqlmock.NewResult(0, 3))
-	mock.ExpectExec(regexp.QuoteMeta("INSERT INTO fivenet_documents_stats_daily_rollup")).
+	mock.ExpectExec(regexp.QuoteMeta("INSERT INTO fivenet_stats_daily_rollup")).
+		WillReturnResult(sqlmock.NewResult(3, 3))
+	mock.ExpectExec(regexp.QuoteMeta("INSERT INTO fivenet_stats_daily_rollup")).
 		WillReturnResult(sqlmock.NewResult(3, 3))
 	mock.ExpectCommit()
 
@@ -177,10 +189,12 @@ func TestService_BuildEmployeeCountMetrics_DeleteError(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	svc := NewService(db)
+	svc := NewService(db, appconfig.NewTest(appconfig.TestParams{
+		LC: fxtest.NewLifecycle(t),
+	}))
 
 	mock.ExpectBegin()
-	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM fivenet_documents_stats_daily_rollup")).
+	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM fivenet_stats_daily_rollup")).
 		WillReturnError(errors.New("delete failed"))
 	mock.ExpectRollback()
 

@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type FivenetDocumentsStatsDailyRollup struct {
+type FivenetStatsDailyRollup struct {
 	Day        time.Time `sql:"primary_key" json:"day"`
 	Job        string    `sql:"primary_key" json:"job"`
 	SourceKind string    `sql:"primary_key" json:"source_kind"`

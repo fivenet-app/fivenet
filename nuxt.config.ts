@@ -249,6 +249,7 @@ export default defineNuxtConfig({
                 '@tiptap/pm/state',
                 '@tiptap/pm/view',
                 '@samemichaeltadele/tiptap-compare',
+                'vue-countup-v3',
             ],
         },
         server: {

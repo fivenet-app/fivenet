@@ -13,6 +13,7 @@
 // source: services/filestore/filestore.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
+// source: services/jobs/stats.proto
 // source: services/jobs/timeclock.proto
 // source: services/livemap/livemap.proto
 // source: services/mailer/mailer.proto

@@ -6455,6 +6455,59 @@ User related events
 ## resources/stats/stats.proto
 
 
+### resources.stats.CategoryValue
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `name` | [string](#string) |  |  |
+| `color` | [string](#string) | optional |  |
+| `icon` | [string](#string) | optional |  |
+| `value` | [int64](#int64) |  |  |
+
+
+
+
+
+### resources.stats.DailyValue
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `day` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `value` | [int64](#int64) |  |  |
+
+
+
+
+
+### resources.stats.KeyValue
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `value` | [int64](#int64) |  |  |
+
+
+
+
+
+### resources.stats.PeriodSeriesValue
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `day` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `key` | [string](#string) |  |  |
+| `label` | [string](#string) |  |  |
+| `value` | [int64](#int64) |  |  |
+
+
+
+
+
 ### resources.stats.Stat
 
 
@@ -6466,6 +6519,30 @@ User related events
 
 
  <!-- end messages -->
+
+
+### resources.stats.StatsCategory
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `STATS_CATEGORY_UNSPECIFIED` | 0 |  |
+| `STATS_CATEGORY_CUSTOM` | 1 |  |
+| `STATS_CATEGORY_DOCUMENTS_BY_CATEGORY` | 2 |  |
+| `STATS_CATEGORY_TOP_LAWS` | 3 |  |
+| `STATS_CATEGORY_PENALTIES_OVER_TIME` | 4 |  |
+| `STATS_CATEGORY_EMPLOYEE_COUNT_OVER_TIME` | 5 |  |
+
+
+
+### resources.stats.StatsPeriod
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `STATS_PERIOD_UNSPECIFIED` | 0 |  |
+| `STATS_PERIOD_DAILY` | 1 |  |
+| `STATS_PERIOD_WEEKLY` | 2 |  |
+| `STATS_PERIOD_MONTHLY` | 3 |  |
+
 
  <!-- end enums -->
 
@@ -10211,33 +10288,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 ## services/documents/stats.proto
 
 
-### services.documents.CategoryValue
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `name` | [string](#string) |  |  |
-| `color` | [string](#string) | optional |  |
-| `icon` | [string](#string) | optional |  |
-| `value` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.DailyValue
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `day` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `value` | [int64](#int64) |  |  |
-
-
-
-
-
 ### services.documents.GetStatsRequest
 
 
@@ -10245,9 +10295,8 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | ----- | ---- | ----- | ----------- |
 | `start` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `end` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `period` | [StatsPeriod](#servicesdocumentsStatsPeriod) |  |  |
-| `category` | [StatsCategory](#servicesdocumentsStatsCategory) |  |  |
-| `custom_category` | [string](#string) | optional |  |
+| `period` | [resources.stats.StatsPeriod](#resourcesstatsStatsPeriod) |  |  |
+| `category` | [resources.stats.StatsCategory](#resourcesstatsStatsCategory) |  |  |
 
 
 
@@ -10258,68 +10307,18 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `top_laws` | [KeyValue](#servicesdocumentsKeyValue) | repeated |  |
-| `fines_over_time` | [DailyValue](#servicesdocumentsDailyValue) | repeated |  |
-| `documents_by_category` | [CategoryValue](#servicesdocumentsCategoryValue) | repeated |  |
-| `reduction_percent_sum` | [int64](#int64) |  |  |
-| `case_count_sum` | [int64](#int64) |  |  |
-| `period_values` | [DailyValue](#servicesdocumentsDailyValue) | repeated |  |
+| `top_laws` | [resources.stats.KeyValue](#resourcesstatsKeyValue) | repeated |  |
+| `fines_over_time` | [resources.stats.DailyValue](#resourcesstatsDailyValue) | repeated |  |
+| `documents_by_category` | [resources.stats.CategoryValue](#resourcesstatsCategoryValue) | repeated |  |
+| `period_values` | [resources.stats.DailyValue](#resourcesstatsDailyValue) | repeated |  |
+| `period_series_values` | [resources.stats.PeriodSeriesValue](#resourcesstatsPeriodSeriesValue) | repeated |  |
 | `total_value` | [int64](#int64) |  |  |
-| `period_series_values` | [PeriodSeriesValue](#servicesdocumentsPeriodSeriesValue) | repeated |  |
-
-
-
-
-
-### services.documents.KeyValue
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `key` | [string](#string) |  |  |
-| `value` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.PeriodSeriesValue
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `day` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `key` | [string](#string) |  |  |
-| `label` | [string](#string) |  |  |
-| `value` | [int64](#int64) |  |  |
+| `average_value` | [double](#double) |  |  |
 
 
 
 
  <!-- end messages -->
-
-
-### services.documents.StatsCategory
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `STATS_CATEGORY_UNSPECIFIED` | 0 |  |
-| `STATS_CATEGORY_CUSTOM` | 1 |  |
-| `STATS_CATEGORY_DOCUMENTS_BY_CATEGORY` | 2 |  |
-| `STATS_CATEGORY_TOP_LAWS` | 3 |  |
-| `STATS_CATEGORY_PENALTIES_OVER_TIME` | 4 |  |
-
-
-
-### services.documents.StatsPeriod
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `STATS_PERIOD_UNSPECIFIED` | 0 |  |
-| `STATS_PERIOD_DAILY` | 1 |  |
-| `STATS_PERIOD_WEEKLY` | 2 |  |
-| `STATS_PERIOD_MONTHLY` | 3 |  |
-
 
  <!-- end enums -->
 
@@ -10783,6 +10782,53 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `GetColleagueLabelsStats` | [GetColleagueLabelsStatsRequest](#servicesjobsGetColleagueLabelsStatsRequest) | [GetColleagueLabelsStatsResponse](#servicesjobsGetColleagueLabelsStatsResponse) | |
 | `GetMOTD` | [GetMOTDRequest](#servicesjobsGetMOTDRequest) | [GetMOTDResponse](#servicesjobsGetMOTDResponse) | |
 | `SetMOTD` | [SetMOTDRequest](#servicesjobsSetMOTDRequest) | [SetMOTDResponse](#servicesjobsSetMOTDResponse) | |
+
+ <!-- end services -->
+
+
+
+## services/jobs/stats.proto
+
+
+### services.jobs.GetStatsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `start` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `end` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `period` | [resources.stats.StatsPeriod](#resourcesstatsStatsPeriod) |  |  |
+| `category` | [resources.stats.StatsCategory](#resourcesstatsStatsCategory) |  |  |
+
+
+
+
+
+### services.jobs.GetStatsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `period_values` | [resources.stats.DailyValue](#resourcesstatsDailyValue) | repeated |  |
+| `period_series_values` | [resources.stats.PeriodSeriesValue](#resourcesstatsPeriodSeriesValue) | repeated |  |
+| `total_value` | [int64](#int64) |  |  |
+| `average_value` | [double](#double) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.jobs.StatsService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `GetStats` | [GetStatsRequest](#servicesjobsGetStatsRequest) | [GetStatsResponse](#servicesjobsGetStatsResponse) | |
 
  <!-- end services -->
 
@@ -12882,24 +12928,24 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 ## services/stats/stats.proto
 
 
-### services.stats.GetStatsRequest
+### services.stats.GetPublicStatsRequest
 
 
 
 
 
-### services.stats.GetStatsResponse
+### services.stats.GetPublicStatsResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `stats` | [GetStatsResponse.StatsEntry](#servicesstatsGetStatsResponseStatsEntry) | repeated |  |
+| `stats` | [GetPublicStatsResponse.StatsEntry](#servicesstatsGetPublicStatsResponseStatsEntry) | repeated |  |
 
 
 
 
 
-### services.stats.GetStatsResponse.StatsEntry
+### services.stats.GetPublicStatsResponse.StatsEntry
 
 
 | Field | Type | Label | Description |
@@ -12921,7 +12967,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `GetStats` | [GetStatsRequest](#servicesstatsGetStatsRequest) | [GetStatsResponse](#servicesstatsGetStatsResponse) | |
+| `GetPublicStats` | [GetPublicStatsRequest](#servicesstatsGetPublicStatsRequest) | [GetPublicStatsResponse](#servicesstatsGetPublicStatsResponse) | |
 
  <!-- end services -->
 

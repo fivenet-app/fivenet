@@ -30,7 +30,7 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const dateFormatter = useDateFormatter('medium');
+const dateFormatter = useDateFormatterWithOptions('medium');
 
 // State derived from modelValue
 const state = computed({

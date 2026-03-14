@@ -43,12 +43,19 @@
 // source: services/filestore/filestore.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
+// source: services/jobs/stats.proto
 // source: services/jobs/timeclock.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
+// source: services/jobs/stats.proto
 // source: services/jobs/timeclock.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
+// source: services/jobs/stats.proto
+// source: services/jobs/timeclock.proto
+// source: services/jobs/conduct.proto
+// source: services/jobs/jobs.proto
+// source: services/jobs/stats.proto
 // source: services/jobs/timeclock.proto
 // source: services/livemap/livemap.proto
 // source: services/mailer/mailer.proto
@@ -114,6 +121,7 @@ export const grpcServices = [
     'filestore.FilestoreService',
     'jobs.ConductService',
     'jobs.JobsService',
+    'jobs.StatsService',
     'jobs.TimeclockService',
     'livemap.LivemapService',
     'mailer.MailerService',
@@ -274,6 +282,7 @@ export const grpcMethods = [
 	'jobs.JobsService/GetColleagueLabelsStats',
 	'jobs.JobsService/GetMOTD',
 	'jobs.JobsService/SetMOTD',
+	'jobs.StatsService/GetStats',
 	'jobs.TimeclockService/ListTimeclock',
 	'jobs.TimeclockService/GetTimeclockStats',
 	'jobs.TimeclockService/ListInactiveEmployees',
@@ -352,7 +361,7 @@ export const grpcMethods = [
 	'settings.SystemService/UpdateJobLimits',
 	'settings.SystemService/DeleteFaction',
 	'settings.SystemService/TriggerUserSync',
-	'stats.StatsService/GetStats',
+	'stats.StatsService/GetPublicStats',
 	'sync.SyncService/GetStatus',
 	'sync.SyncService/AddActivity',
 	'sync.SyncService/RegisterAccount',

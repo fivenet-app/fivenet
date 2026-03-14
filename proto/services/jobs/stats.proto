@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package services.jobs;
+
+import "buf/validate/validate.proto";
+import "codegen/perms/perms.proto";
+import "resources/stats/stats.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobs";
+
+message GetStatsRequest {
+  resources.timestamp.Timestamp start = 1;
+  resources.timestamp.Timestamp end = 2;
+
+  resources.stats.StatsPeriod period = 3 [(buf.validate.field).enum.defined_only = true];
+  resources.stats.StatsCategory category = 4 [(buf.validate.field).enum.defined_only = true];
+}
+
+message GetStatsResponse {
+  repeated resources.stats.DailyValue period_values = 1;
+  repeated resources.stats.PeriodSeriesValue period_series_values = 2;
+
+  int64 total_value = 3;
+  double average_value = 4;
+}
+
+service StatsService {
+  option (codegen.perms.perms_svc) = {
+    order: 68
+    icon: "i-mdi-graph-box-multiple-outline"
+  };
+
+  rpc GetStats(GetStatsRequest) returns (GetStatsResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+}

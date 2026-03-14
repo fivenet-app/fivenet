@@ -10,7 +10,8 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
-	documentspb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	pbstats "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/stats"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/timeutils"
@@ -35,8 +36,8 @@ func init() {
 	})
 
 	housekeeper.AddTable(&housekeeper.Table{
-		Table:      table.FivenetDocumentsStatsDailyRollup,
-		DateColumn: table.FivenetDocumentsStatsDailyRollup.Day,
+		Table:      table.FivenetStatsDailyRollup,
+		DateColumn: table.FivenetStatsDailyRollup.Day,
 
 		MinDays: 366,
 	})
@@ -45,13 +46,17 @@ func init() {
 type Service struct {
 	mu sync.Mutex
 
-	db         *sql.DB
+	db     *sql.DB
+	appCfg appconfig.IConfig
+
 	extractors []DocumentMetricExtractor
 }
 
-func NewService(db *sql.DB) *Service {
+func NewService(db *sql.DB, appCfg appconfig.IConfig) *Service {
 	return &Service{
-		db: db,
+		db:     db,
+		appCfg: appCfg,
+
 		extractors: []DocumentMetricExtractor{
 			NewPenaltyCalculatorExtractor(),
 		},
@@ -207,7 +212,7 @@ func (s *Service) RebuildDocumentColumnRollups(
 		startDay,
 		endDay,
 		SourceKindDocumentColumn,
-		`INSERT INTO fivenet_documents_stats_daily_rollup (day, job, source_kind, source_key, metric_key, dimension1, dimension2, dimension3, value)
+		`INSERT INTO fivenet_stats_daily_rollup (day, job, source_kind, source_key, metric_key, dimension1, dimension2, dimension3, value)
 SELECT DATE(d.created_at), d.creator_job, 'document_column', 'documents', 'document_count', '', '', '', COUNT(*)
 FROM fivenet_documents d
 WHERE d.deleted_at IS NULL
@@ -257,7 +262,7 @@ func (s *Service) RebuildDocumentMetricRollups(
 		startDay,
 		endDay,
 		SourceKindDocumentMetric,
-		`INSERT INTO fivenet_documents_stats_daily_rollup (day, job, source_kind, source_key, metric_key, dimension1, dimension2, dimension3, value)
+		`INSERT INTO fivenet_stats_daily_rollup (day, job, source_kind, source_key, metric_key, dimension1, dimension2, dimension3, value)
 SELECT DATE(m.occurred_at), m.job, 'document_metric', m.source_key, m.metric_key,
        COALESCE(m.dimension1, ''), COALESCE(m.dimension2, ''), COALESCE(m.dimension3, ''), SUM(m.value)
 FROM fivenet_documents_stats_metric m
@@ -291,7 +296,7 @@ FROM (
   SELECT
     r.dimension1,
     SUM(r.value) AS value
-  FROM fivenet_documents_stats_daily_rollup r
+  FROM fivenet_stats_daily_rollup r
   WHERE r.day >= ?
     AND r.day <= ?
     AND r.job = ?
@@ -340,7 +345,7 @@ func (s *Service) QueryFinesOverTime(
 	ctx context.Context,
 	startDay, endDay time.Time,
 	job string,
-	period documentspb.StatsPeriod,
+	period pbstats.StatsPeriod,
 ) ([]*DailyValue, error) {
 	return s.QueryPeriodValues(
 		ctx,
@@ -358,7 +363,7 @@ func (s *Service) QueryPenaltySeriesOverTime(
 	ctx context.Context,
 	startDay, endDay time.Time,
 	job string,
-	period documentspb.StatsPeriod,
+	period pbstats.StatsPeriod,
 ) ([]*PeriodSeriesValue, error) {
 	periodExpr := periodStartExpr(period)
 	query := fmt.Sprintf(`
@@ -366,7 +371,7 @@ SELECT
   %s AS day,
   metric_key AS `+"`key`"+`,
   SUM(value) AS value
-FROM fivenet_documents_stats_daily_rollup
+FROM fivenet_stats_daily_rollup
 WHERE day >= ?
   AND day <= ?
   AND job = ?
@@ -421,7 +426,7 @@ SELECT
   c.color AS ` + "`color`" + `,
   c.icon AS ` + "`icon`" + `,
   SUM(r.value) AS ` + "`value`" + `
-FROM fivenet_documents_stats_daily_rollup r
+FROM fivenet_stats_daily_rollup r
 LEFT JOIN fivenet_documents_categories c ON c.id = CAST(r.dimension1 AS UNSIGNED) AND c.deleted_at IS NULL
 WHERE r.day >= ?
   AND r.day <= ?
@@ -466,7 +471,7 @@ func (s *Service) QueryPenaltyReductionAverage(
 	startDay, endDay time.Time,
 	job string,
 ) (int64, int64, error) {
-	tRollup := table.FivenetDocumentsStatsDailyRollup
+	tRollup := table.FivenetStatsDailyRollup
 	var sums struct {
 		ReductionSum int64 `alias:"reduction_sum"`
 		CaseCountSum int64 `alias:"case_count_sum"`
@@ -514,7 +519,7 @@ func (s *Service) QueryTotalValue(
 	var total sql.NullInt64
 	query := `
 SELECT SUM(value)
-FROM fivenet_documents_stats_daily_rollup
+FROM fivenet_stats_daily_rollup
 WHERE day >= ?
   AND day <= ?
   AND job = ?
@@ -543,6 +548,46 @@ WHERE day >= ?
 	return total.Int64, nil
 }
 
+func (s *Service) QueryAverageValue(
+	ctx context.Context,
+	startDay, endDay time.Time,
+	job string,
+	sourceKind string,
+	sourceKey string,
+	metricKey string,
+) (float64, error) {
+	var average sql.NullFloat64
+	query := `
+SELECT AVG(value)
+FROM fivenet_stats_daily_rollup
+WHERE day >= ?
+  AND day <= ?
+  AND job = ?
+  AND source_kind = ?
+  AND source_key = ?
+  AND metric_key = ?
+`
+
+	if err := s.db.QueryRowContext(
+		ctx,
+		query,
+		timeutils.StartOfDay(startDay).Format(time.DateOnly),
+		timeutils.StartOfDay(endDay).Format(time.DateOnly),
+		job,
+		sourceKind,
+		sourceKey,
+		metricKey,
+	).Scan(&average); err != nil {
+		return 0, err
+	}
+
+	if !average.Valid {
+		return 0, nil
+	}
+
+	return average.Float64, nil
+}
+
 func (s *Service) QueryPeriodValues(
 	ctx context.Context,
 	startDay, endDay time.Time,
@@ -550,14 +595,14 @@ func (s *Service) QueryPeriodValues(
 	sourceKind string,
 	sourceKey string,
 	metricKey string,
-	period documentspb.StatsPeriod,
+	period pbstats.StatsPeriod,
 ) ([]*DailyValue, error) {
 	periodExpr := periodStartExpr(period)
 	query := fmt.Sprintf(`
 SELECT
   %s AS day,
   SUM(value) AS value
-FROM fivenet_documents_stats_daily_rollup
+FROM fivenet_stats_daily_rollup
 WHERE day >= ?
   AND day <= ?
   AND job = ?
@@ -621,7 +666,7 @@ func (s *Service) rebuildRollupsWithRange(
 	defer tx.Rollback()
 
 	if _, err := tx.ExecContext(ctx,
-		`DELETE FROM fivenet_documents_stats_daily_rollup WHERE day >= ? AND day <= ? AND source_kind = ?`,
+		`DELETE FROM fivenet_stats_daily_rollup WHERE day >= ? AND day <= ? AND source_kind = ?`,
 		startDay.Format(time.DateOnly),
 		endDay.Format(time.DateOnly),
 		sourceKind,
@@ -643,117 +688,4 @@ func (s *Service) clearDocumentMetrics(ctx context.Context, tx qrm.DB, documentI
 		WHERE(tMetric.DocumentID.EQ(mysql.Int64(documentID))).
 		ExecContext(ctx, tx)
 	return err
-}
-
-func isPublishedDocument(doc *documents.Document) bool {
-	if doc == nil {
-		return false
-	}
-	if doc.GetDeletedAt() != nil {
-		return false
-	}
-	if strings.TrimSpace(doc.GetCreatorJob()) == "" {
-		return false
-	}
-	if doc.GetMeta() == nil {
-		return false
-	}
-
-	return !doc.GetMeta().GetDraft()
-}
-
-func periodStartExpr(period documentspb.StatsPeriod) string {
-	switch period {
-	case documentspb.StatsPeriod_STATS_PERIOD_MONTHLY:
-		return "DATE_SUB(day, INTERVAL DAYOFMONTH(day) - 1 DAY)"
-
-	case documentspb.StatsPeriod_STATS_PERIOD_WEEKLY:
-		return "DATE_SUB(day, INTERVAL WEEKDAY(day) DAY)"
-
-	case documentspb.StatsPeriod_STATS_PERIOD_DAILY:
-		fallthrough
-	default:
-		return "day"
-	}
-}
-
-func dateRangeArgs(startDay, endDay time.Time, repeats int) []any {
-	args := make([]any, 0, repeats*2)
-	start := startDay.Format(time.DateOnly)
-	end := endDay.Format(time.DateOnly)
-
-	for range repeats {
-		args = append(args, start, end)
-	}
-
-	return args
-}
-
-func (s *Service) BuildEmployeeCountMetrics(ctx context.Context) error {
-	const sourceKey = "fivenet_user_jobs"
-	const metricKey = "employee_count"
-
-	day := timeutils.StartOfDay(time.Now().UTC())
-	tRollup := table.FivenetDocumentsStatsDailyRollup
-	tUserJobs := table.FivenetUserJobs
-
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-
-	if _, err := tRollup.
-		DELETE().
-		WHERE(mysql.AND(
-			tRollup.Day.EQ(mysql.DateT(day)),
-			tRollup.SourceKind.EQ(mysql.String(SourceKindEmployeeCount)),
-			tRollup.SourceKey.EQ(mysql.String(sourceKey)),
-			tRollup.MetricKey.EQ(mysql.String(metricKey)),
-		)).
-		ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	stmt := tRollup.
-		INSERT(
-			tRollup.Day,
-			tRollup.Job,
-			tRollup.SourceKind,
-			tRollup.SourceKey,
-			tRollup.MetricKey,
-			tRollup.Dimension1,
-			tRollup.Dimension2,
-			tRollup.Dimension3,
-			tRollup.Value,
-		).
-		QUERY(
-			tUserJobs.
-				SELECT(
-					mysql.DateT(day),
-					tUserJobs.Job,
-					mysql.String(SourceKindEmployeeCount),
-					mysql.String(sourceKey),
-					mysql.String(metricKey),
-					mysql.String(""),
-					mysql.String(""),
-					mysql.String(""),
-					mysql.COUNT(mysql.STAR),
-				).
-				FROM(tUserJobs).
-				GROUP_BY(tUserJobs.Job),
-		)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
-	return nil
 }

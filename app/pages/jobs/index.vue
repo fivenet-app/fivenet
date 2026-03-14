@@ -15,6 +15,7 @@ definePageMeta({
         'jobs.JobsService/GetColleague',
         'jobs.JobsService/ListColleagueActivity',
         'jobs.JobsService/ListColleagues',
+        'jobs.StatsService/GetStats',
         'jobs.JobsService/ManageLabels',
         'jobs.JobsService/SetColleagueProps',
         'jobs.JobsService/SetMOTD',

@@ -4,12 +4,13 @@ import (
 	"context"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/stats"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
-	docstats "github.com/fivenet-app/fivenet/v2026/pkg/stats"
+	pkgstats "github.com/fivenet-app/fivenet/v2026/pkg/stats"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -38,7 +39,7 @@ func (s *Server) GetStats(
 		return nil, status.Error(codes.InvalidArgument, "range must not exceed 365 days")
 	}
 
-	period := max(req.GetPeriod(), pbdocuments.StatsPeriod_STATS_PERIOD_DAILY)
+	period := max(req.GetPeriod(), stats.StatsPeriod_STATS_PERIOD_DAILY)
 
 	categories, err := s.ps.AttrStringList(
 		userInfo,
@@ -51,22 +52,22 @@ func (s *Server) GetStats(
 	}
 
 	resp := &pbdocuments.GetStatsResponse{
-		TopLaws:             []*pbdocuments.KeyValue{},
-		FinesOverTime:       []*pbdocuments.DailyValue{},
-		DocumentsByCategory: []*pbdocuments.CategoryValue{},
-		PeriodValues:        []*pbdocuments.DailyValue{},
-		PeriodSeriesValues:  []*pbdocuments.PeriodSeriesValue{},
+		TopLaws:             []*stats.KeyValue{},
+		FinesOverTime:       []*stats.DailyValue{},
+		DocumentsByCategory: []*stats.CategoryValue{},
+		PeriodValues:        []*stats.DailyValue{},
+		PeriodSeriesValues:  []*stats.PeriodSeriesValue{},
 	}
 
 	switch req.GetCategory() {
-	case pbdocuments.StatsCategory_STATS_CATEGORY_DOCUMENTS_BY_CATEGORY:
+	case stats.StatsCategory_STATS_CATEGORY_DOCUMENTS_BY_CATEGORY:
 		byCategory, err := s.stats.QueryDocumentsByCategory(ctx, start, end, userInfo.GetJob())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-		resp.DocumentsByCategory = make([]*pbdocuments.CategoryValue, 0, len(byCategory))
+		resp.DocumentsByCategory = make([]*stats.CategoryValue, 0, len(byCategory))
 		for _, item := range byCategory {
-			resp.DocumentsByCategory = append(resp.DocumentsByCategory, &pbdocuments.CategoryValue{
+			resp.DocumentsByCategory = append(resp.DocumentsByCategory, &stats.CategoryValue{
 				Id:    item.ID,
 				Name:  item.Name,
 				Color: item.Color,
@@ -79,7 +80,7 @@ func (s *Server) GetStats(
 			start,
 			end,
 			userInfo.GetJob(),
-			docstats.SourceKindDocumentColumn,
+			pkgstats.SourceKindDocumentColumn,
 			"documents",
 			"document_count",
 			period,
@@ -87,9 +88,9 @@ func (s *Server) GetStats(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-		resp.PeriodValues = make([]*pbdocuments.DailyValue, 0, len(periodValues))
+		resp.PeriodValues = make([]*stats.DailyValue, 0, len(periodValues))
 		for _, item := range periodValues {
-			resp.PeriodValues = append(resp.PeriodValues, &pbdocuments.DailyValue{
+			resp.PeriodValues = append(resp.PeriodValues, &stats.DailyValue{
 				Day:   timestamp.New(item.Day),
 				Value: item.Value,
 			})
@@ -99,7 +100,7 @@ func (s *Server) GetStats(
 			start,
 			end,
 			userInfo.GetJob(),
-			docstats.SourceKindDocumentColumn,
+			pkgstats.SourceKindDocumentColumn,
 			"documents",
 			"document_count",
 		)
@@ -108,7 +109,7 @@ func (s *Server) GetStats(
 		}
 		resp.TotalValue = totalValue
 
-	case pbdocuments.StatsCategory_STATS_CATEGORY_TOP_LAWS:
+	case stats.StatsCategory_STATS_CATEGORY_TOP_LAWS:
 		// Ensure the user has permission to view penalty calculator stats before querying for top laws, as they are related to the penalty calculator.
 		if !categories.Contains("PenaltyCalculator") {
 			return nil, status.Error(
@@ -121,9 +122,9 @@ func (s *Server) GetStats(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-		resp.TopLaws = make([]*pbdocuments.KeyValue, 0, len(topLaws))
+		resp.TopLaws = make([]*stats.KeyValue, 0, len(topLaws))
 		for _, item := range topLaws {
-			resp.TopLaws = append(resp.TopLaws, &pbdocuments.KeyValue{
+			resp.TopLaws = append(resp.TopLaws, &stats.KeyValue{
 				Key:   item.Key,
 				Value: item.Value,
 			})
@@ -133,17 +134,17 @@ func (s *Server) GetStats(
 			start,
 			end,
 			userInfo.GetJob(),
-			docstats.SourceKindDocumentMetric,
-			docstats.PenaltyCalculatorSourceKey,
+			pkgstats.SourceKindDocumentMetric,
+			pkgstats.PenaltyCalculatorSourceKey,
 			"law_count",
 			period,
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-		resp.PeriodValues = make([]*pbdocuments.DailyValue, 0, len(periodValues))
+		resp.PeriodValues = make([]*stats.DailyValue, 0, len(periodValues))
 		for _, item := range periodValues {
-			resp.PeriodValues = append(resp.PeriodValues, &pbdocuments.DailyValue{
+			resp.PeriodValues = append(resp.PeriodValues, &stats.DailyValue{
 				Day:   timestamp.New(item.Day),
 				Value: item.Value,
 			})
@@ -153,8 +154,8 @@ func (s *Server) GetStats(
 			start,
 			end,
 			userInfo.GetJob(),
-			docstats.SourceKindDocumentMetric,
-			docstats.PenaltyCalculatorSourceKey,
+			pkgstats.SourceKindDocumentMetric,
+			pkgstats.PenaltyCalculatorSourceKey,
 			"law_count",
 		)
 		if err != nil {
@@ -162,7 +163,7 @@ func (s *Server) GetStats(
 		}
 		resp.TotalValue = totalValue
 
-	case pbdocuments.StatsCategory_STATS_CATEGORY_PENALTIES_OVER_TIME:
+	case stats.StatsCategory_STATS_CATEGORY_PENALTIES_OVER_TIME:
 		// Ensure the user has permission to view penalty calculator stats before querying for top laws, as they are related to the penalty calculator.
 		if !categories.Contains("PenaltyCalculator") {
 			return nil, status.Error(
@@ -181,12 +182,12 @@ func (s *Server) GetStats(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-		resp.PeriodSeriesValues = make([]*pbdocuments.PeriodSeriesValue, 0, len(seriesValues))
-		resp.FinesOverTime = []*pbdocuments.DailyValue{}
+		resp.PeriodSeriesValues = make([]*stats.PeriodSeriesValue, 0, len(seriesValues))
+		resp.FinesOverTime = []*stats.DailyValue{}
 		for _, item := range seriesValues {
 			resp.PeriodSeriesValues = append(
 				resp.PeriodSeriesValues,
-				&pbdocuments.PeriodSeriesValue{
+				&stats.PeriodSeriesValue{
 					Day:   timestamp.New(item.Day),
 					Key:   item.Key,
 					Label: item.Label,
@@ -194,7 +195,7 @@ func (s *Server) GetStats(
 				},
 			)
 			if item.Key == "fine_total" {
-				resp.FinesOverTime = append(resp.FinesOverTime, &pbdocuments.DailyValue{
+				resp.FinesOverTime = append(resp.FinesOverTime, &stats.DailyValue{
 					Day:   timestamp.New(item.Day),
 					Value: item.Value,
 				})
@@ -205,8 +206,8 @@ func (s *Server) GetStats(
 			start,
 			end,
 			userInfo.GetJob(),
-			docstats.SourceKindDocumentMetric,
-			docstats.PenaltyCalculatorSourceKey,
+			pkgstats.SourceKindDocumentMetric,
+			pkgstats.PenaltyCalculatorSourceKey,
 			"fine_total",
 		)
 		if err != nil {
@@ -214,7 +215,7 @@ func (s *Server) GetStats(
 		}
 		resp.TotalValue = totalValue
 
-	case pbdocuments.StatsCategory_STATS_CATEGORY_UNSPECIFIED:
+	case stats.StatsCategory_STATS_CATEGORY_UNSPECIFIED:
 		fallthrough
 	default:
 		return nil, status.Error(codes.InvalidArgument, "stats category is required")

@@ -86,6 +86,12 @@ export async function getJobsJobsClient() {
     return new JobsServiceClient(useGRPCTransport());
 }
 
+// Factory for jobs.stats client.
+export async function getJobsStatsClient() {
+    const { StatsServiceClient } = await import('~~/gen/ts/services/jobs/stats.client');
+    return new StatsServiceClient(useGRPCTransport());
+}
+
 // Factory for jobs.timeclock client.
 export async function getJobsTimeclockClient() {
     const { TimeclockServiceClient } = await import('~~/gen/ts/services/jobs/timeclock.client');

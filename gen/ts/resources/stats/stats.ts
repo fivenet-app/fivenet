@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.stats.Stat
  */
@@ -19,6 +20,128 @@ export interface Stat {
      * @generated from protobuf field: optional int32 value = 1
      */
     value?: number;
+}
+/**
+ * @generated from protobuf message resources.stats.KeyValue
+ */
+export interface KeyValue {
+    /**
+     * @generated from protobuf field: string key = 1
+     */
+    key: string;
+    /**
+     * @generated from protobuf field: int64 value = 2
+     */
+    value: number;
+}
+/**
+ * @generated from protobuf message resources.stats.DailyValue
+ */
+export interface DailyValue {
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp day = 1
+     */
+    day?: Timestamp;
+    /**
+     * @generated from protobuf field: int64 value = 2
+     */
+    value: number;
+}
+/**
+ * @generated from protobuf message resources.stats.PeriodSeriesValue
+ */
+export interface PeriodSeriesValue {
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp day = 1
+     */
+    day?: Timestamp;
+    /**
+     * @generated from protobuf field: string key = 2
+     */
+    key: string;
+    /**
+     * @generated from protobuf field: string label = 3
+     */
+    label: string;
+    /**
+     * @generated from protobuf field: int64 value = 4
+     */
+    value: number;
+}
+/**
+ * @generated from protobuf message resources.stats.CategoryValue
+ */
+export interface CategoryValue {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: string name = 2
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: optional string color = 3
+     */
+    color?: string;
+    /**
+     * @generated from protobuf field: optional string icon = 4
+     */
+    icon?: string;
+    /**
+     * @generated from protobuf field: int64 value = 5
+     */
+    value: number;
+}
+/**
+ * @generated from protobuf enum resources.stats.StatsCategory
+ */
+export enum StatsCategory {
+    /**
+     * @generated from protobuf enum value: STATS_CATEGORY_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: STATS_CATEGORY_CUSTOM = 1;
+     */
+    CUSTOM = 1,
+    /**
+     * @generated from protobuf enum value: STATS_CATEGORY_DOCUMENTS_BY_CATEGORY = 2;
+     */
+    DOCUMENTS_BY_CATEGORY = 2,
+    /**
+     * @generated from protobuf enum value: STATS_CATEGORY_TOP_LAWS = 3;
+     */
+    TOP_LAWS = 3,
+    /**
+     * @generated from protobuf enum value: STATS_CATEGORY_PENALTIES_OVER_TIME = 4;
+     */
+    PENALTIES_OVER_TIME = 4,
+    /**
+     * @generated from protobuf enum value: STATS_CATEGORY_EMPLOYEE_COUNT_OVER_TIME = 5;
+     */
+    EMPLOYEE_COUNT_OVER_TIME = 5
+}
+/**
+ * @generated from protobuf enum resources.stats.StatsPeriod
+ */
+export enum StatsPeriod {
+    /**
+     * @generated from protobuf enum value: STATS_PERIOD_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: STATS_PERIOD_DAILY = 1;
+     */
+    DAILY = 1,
+    /**
+     * @generated from protobuf enum value: STATS_PERIOD_WEEKLY = 2;
+     */
+    WEEKLY = 2,
+    /**
+     * @generated from protobuf enum value: STATS_PERIOD_MONTHLY = 3;
+     */
+    MONTHLY = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Stat$Type extends MessageType<Stat> {
@@ -66,3 +189,259 @@ class Stat$Type extends MessageType<Stat> {
  * @generated MessageType for protobuf message resources.stats.Stat
  */
 export const Stat = new Stat$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class KeyValue$Type extends MessageType<KeyValue> {
+    constructor() {
+        super("resources.stats.KeyValue", [
+            { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "value", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<KeyValue>): KeyValue {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.key = "";
+        message.value = 0;
+        if (value !== undefined)
+            reflectionMergePartial<KeyValue>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: KeyValue): KeyValue {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string key */ 1:
+                    message.key = reader.string();
+                    break;
+                case /* int64 value */ 2:
+                    message.value = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: KeyValue, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string key = 1; */
+        if (message.key !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.key);
+        /* int64 value = 2; */
+        if (message.value !== 0)
+            writer.tag(2, WireType.Varint).int64(message.value);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.stats.KeyValue
+ */
+export const KeyValue = new KeyValue$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DailyValue$Type extends MessageType<DailyValue> {
+    constructor() {
+        super("resources.stats.DailyValue", [
+            { no: 1, name: "day", kind: "message", T: () => Timestamp },
+            { no: 2, name: "value", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DailyValue>): DailyValue {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.value = 0;
+        if (value !== undefined)
+            reflectionMergePartial<DailyValue>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DailyValue): DailyValue {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.timestamp.Timestamp day */ 1:
+                    message.day = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.day);
+                    break;
+                case /* int64 value */ 2:
+                    message.value = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DailyValue, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.timestamp.Timestamp day = 1; */
+        if (message.day)
+            Timestamp.internalBinaryWrite(message.day, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* int64 value = 2; */
+        if (message.value !== 0)
+            writer.tag(2, WireType.Varint).int64(message.value);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.stats.DailyValue
+ */
+export const DailyValue = new DailyValue$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PeriodSeriesValue$Type extends MessageType<PeriodSeriesValue> {
+    constructor() {
+        super("resources.stats.PeriodSeriesValue", [
+            { no: 1, name: "day", kind: "message", T: () => Timestamp },
+            { no: 2, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "value", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PeriodSeriesValue>): PeriodSeriesValue {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.key = "";
+        message.label = "";
+        message.value = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PeriodSeriesValue>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PeriodSeriesValue): PeriodSeriesValue {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.timestamp.Timestamp day */ 1:
+                    message.day = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.day);
+                    break;
+                case /* string key */ 2:
+                    message.key = reader.string();
+                    break;
+                case /* string label */ 3:
+                    message.label = reader.string();
+                    break;
+                case /* int64 value */ 4:
+                    message.value = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PeriodSeriesValue, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.timestamp.Timestamp day = 1; */
+        if (message.day)
+            Timestamp.internalBinaryWrite(message.day, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string key = 2; */
+        if (message.key !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.key);
+        /* string label = 3; */
+        if (message.label !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.label);
+        /* int64 value = 4; */
+        if (message.value !== 0)
+            writer.tag(4, WireType.Varint).int64(message.value);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.stats.PeriodSeriesValue
+ */
+export const PeriodSeriesValue = new PeriodSeriesValue$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CategoryValue$Type extends MessageType<CategoryValue> {
+    constructor() {
+        super("resources.stats.CategoryValue", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "value", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<CategoryValue>): CategoryValue {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        message.name = "";
+        message.value = 0;
+        if (value !== undefined)
+            reflectionMergePartial<CategoryValue>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CategoryValue): CategoryValue {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                case /* string name */ 2:
+                    message.name = reader.string();
+                    break;
+                case /* optional string color */ 3:
+                    message.color = reader.string();
+                    break;
+                case /* optional string icon */ 4:
+                    message.icon = reader.string();
+                    break;
+                case /* int64 value */ 5:
+                    message.value = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CategoryValue, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* string name = 2; */
+        if (message.name !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.name);
+        /* optional string color = 3; */
+        if (message.color !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.color);
+        /* optional string icon = 4; */
+        if (message.icon !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.icon);
+        /* int64 value = 5; */
+        if (message.value !== 0)
+            writer.tag(5, WireType.Varint).int64(message.value);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.stats.CategoryValue
+ */
+export const CategoryValue = new CategoryValue$Type();

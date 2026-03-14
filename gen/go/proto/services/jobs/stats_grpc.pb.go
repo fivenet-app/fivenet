@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             (unknown)
-// source: services/stats/stats.proto
+// source: services/jobs/stats.proto
 
-package stats
+package jobs
 
 import (
 	context "context"
@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	StatsService_GetPublicStats_FullMethodName = "/services.stats.StatsService/GetPublicStats"
+	StatsService_GetStats_FullMethodName = "/services.jobs.StatsService/GetStats"
 )
 
 // StatsServiceClient is the client API for StatsService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StatsServiceClient interface {
-	GetPublicStats(ctx context.Context, in *GetPublicStatsRequest, opts ...grpc.CallOption) (*GetPublicStatsResponse, error)
+	GetStats(ctx context.Context, in *GetStatsRequest, opts ...grpc.CallOption) (*GetStatsResponse, error)
 }
 
 type statsServiceClient struct {
@@ -37,10 +37,10 @@ func NewStatsServiceClient(cc grpc.ClientConnInterface) StatsServiceClient {
 	return &statsServiceClient{cc}
 }
 
-func (c *statsServiceClient) GetPublicStats(ctx context.Context, in *GetPublicStatsRequest, opts ...grpc.CallOption) (*GetPublicStatsResponse, error) {
+func (c *statsServiceClient) GetStats(ctx context.Context, in *GetStatsRequest, opts ...grpc.CallOption) (*GetStatsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetPublicStatsResponse)
-	err := c.cc.Invoke(ctx, StatsService_GetPublicStats_FullMethodName, in, out, cOpts...)
+	out := new(GetStatsResponse)
+	err := c.cc.Invoke(ctx, StatsService_GetStats_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (c *statsServiceClient) GetPublicStats(ctx context.Context, in *GetPublicSt
 // All implementations must embed UnimplementedStatsServiceServer
 // for forward compatibility.
 type StatsServiceServer interface {
-	GetPublicStats(context.Context, *GetPublicStatsRequest) (*GetPublicStatsResponse, error)
+	GetStats(context.Context, *GetStatsRequest) (*GetStatsResponse, error)
 	mustEmbedUnimplementedStatsServiceServer()
 }
 
@@ -62,8 +62,8 @@ type StatsServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedStatsServiceServer struct{}
 
-func (UnimplementedStatsServiceServer) GetPublicStats(context.Context, *GetPublicStatsRequest) (*GetPublicStatsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPublicStats not implemented")
+func (UnimplementedStatsServiceServer) GetStats(context.Context, *GetStatsRequest) (*GetStatsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStats not implemented")
 }
 func (UnimplementedStatsServiceServer) mustEmbedUnimplementedStatsServiceServer() {}
 func (UnimplementedStatsServiceServer) testEmbeddedByValue()                      {}
@@ -86,20 +86,20 @@ func RegisterStatsServiceServer(s grpc.ServiceRegistrar, srv StatsServiceServer)
 	s.RegisterService(&StatsService_ServiceDesc, srv)
 }
 
-func _StatsService_GetPublicStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPublicStatsRequest)
+func _StatsService_GetStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStatsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StatsServiceServer).GetPublicStats(ctx, in)
+		return srv.(StatsServiceServer).GetStats(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StatsService_GetPublicStats_FullMethodName,
+		FullMethod: StatsService_GetStats_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StatsServiceServer).GetPublicStats(ctx, req.(*GetPublicStatsRequest))
+		return srv.(StatsServiceServer).GetStats(ctx, req.(*GetStatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -108,14 +108,14 @@ func _StatsService_GetPublicStats_Handler(srv interface{}, ctx context.Context, 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var StatsService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "services.stats.StatsService",
+	ServiceName: "services.jobs.StatsService",
 	HandlerType: (*StatsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetPublicStats",
-			Handler:    _StatsService_GetPublicStats_Handler,
+			MethodName: "GetStats",
+			Handler:    _StatsService_GetStats_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "services/stats/stats.proto",
+	Metadata: "services/jobs/stats.proto",
 }

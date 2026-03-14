@@ -21,6 +21,16 @@ export function toTimestamp(date?: Date): resourcesTimestampTimestamp | undefine
     };
 }
 
+export function toUtcDateTimestamp(date?: Date): resourcesTimestampTimestamp | undefined {
+    if (date === undefined) return;
+
+    const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+
+    return {
+        timestamp: googleProtobufTimestamp.Timestamp.fromDate(utcDate),
+    };
+}
+
 export function toDatetimeLocal(date: Date): string {
     return new Date(date.getTime() + date.getTimezoneOffset() * -60 * 1000).toISOString().slice(0, 16);
 }

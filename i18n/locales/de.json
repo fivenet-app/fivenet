@@ -80,6 +80,9 @@
                     "conduct": "Kollegen-Info: Führungsregister",
                     "qualifications": "Kollegen-Info: Qualifizierungen",
                     "timeclock": "Kollegen-Info: Stempeluhr"
+                },
+                "stats": {
+                    "title": "Kollegen-Statistik"
                 }
             },
             "conduct": {
@@ -2902,15 +2905,6 @@
                 "BLOCKED": "Blockiert",
                 "USE": "Verwenden",
                 "MANAGE": "Verwalten"
-            },
-            "stats": {
-                "StatsCategory": {
-                    "UNSPECIFIED": "Unbestimmt",
-                    "CUSTOM": "Benutzerdefiniert",
-                    "DOCUMENTS_BY_CATEGORY": "Dokumente nach Kategorie",
-                    "TOP_LAWS": "Top Gesetze",
-                    "PENALTIES_OVER_TIME": "Strafen im Zeitverlauf"
-                }
             }
         },
         "settings": {
@@ -2948,6 +2942,15 @@
                     "FAILED": "Fehlgeschlagen",
                     "ERRORED": "Fehlerhaft"
                 }
+            }
+        },
+        "stats": {
+            "StatsCategory": {
+                "UNSPECIFIED": "Unbestimmt",
+                "CUSTOM": "Benutzerdefiniert",
+                "DOCUMENTS_BY_CATEGORY": "Dokumente nach Kategorie",
+                "TOP_LAWS": "Top Gesetze",
+                "PENALTIES_OVER_TIME": "Strafen im Zeitverlauf"
             }
         }
     },
@@ -3590,6 +3593,13 @@
                 "ListInactiveEmployees": {
                     "key": "Zeige inaktive Kollegen an",
                     "description": "Zeige inaktive Kollegen nach Tagen an."
+                }
+            },
+            "StatsService": {
+                "category": "Beruf Statistiken",
+                "GetStats": {
+                    "key": "Berufsspezifische Statistiken abrufen",
+                    "description": "Verschiedene Statistiken im Zusammenhang mit dem Beruf abrufen."
                 }
             }
         },

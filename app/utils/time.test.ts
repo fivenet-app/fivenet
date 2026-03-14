@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { dateToDateString, getWeekNumber, stringToDate, toDate, toDatetimeLocal, toTimestamp } from './time';
+import {
+    dateToDateString,
+    getWeekNumber,
+    stringToDate,
+    toDate,
+    toDatetimeLocal,
+    toTimestamp,
+    toUtcDateTimestamp,
+} from './time';
 
 describe('toDate', () => {
     it('should return the current date if input is undefined', () => {
@@ -34,6 +42,16 @@ describe('toTimestamp', () => {
         const date = new Date('2025-11-25T12:00:00Z');
         const result = toTimestamp(date);
         expect(result).toEqual({ timestamp: { seconds: Math.floor(date.getTime() / 1000), nanos: 0 } });
+    });
+});
+
+describe('toUtcDateTimestamp', () => {
+    it('should convert a local date to a UTC timestamp at midnight of the same calendar day', () => {
+        const date = new Date(2025, 10, 25, 12, 30, 45, 321);
+        const result = toUtcDateTimestamp(date);
+        const expected = new Date(Date.UTC(2025, 10, 25, 0, 0, 0, 0));
+
+        expect(result).toEqual({ timestamp: { seconds: Math.floor(expected.getTime() / 1000), nanos: 0 } });
     });
 });
 

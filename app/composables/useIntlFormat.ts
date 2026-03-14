@@ -28,6 +28,7 @@ function _useDateFormatter(
 }
 
 export const useDateFormatter = createSharedComposable(_useDateFormatter);
+export const useDateFormatterWithOptions = _useDateFormatter;
 
 export const useDetentionTimeFormatter = createSharedComposable(() => {
     const { quickButtons } = useAppConfig();

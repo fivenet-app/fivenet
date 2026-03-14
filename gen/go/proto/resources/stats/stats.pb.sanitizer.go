@@ -3,6 +3,90 @@
 
 package stats
 
+import (
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *CategoryValue) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Color
+	if m.Color != nil {
+		*m.Color = htmlsanitizer.Sanitize(*m.Color)
+	}
+
+	// Field: Icon
+	if m.Icon != nil {
+		*m.Icon = htmlsanitizer.Sanitize(*m.Icon)
+	}
+
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *DailyValue) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Day
+	if m.Day != nil {
+		if v, ok := any(m.GetDay()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *KeyValue) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Key
+	m.Key = htmlsanitizer.Sanitize(m.Key)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *PeriodSeriesValue) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Day
+	if m.Day != nil {
+		if v, ok := any(m.GetDay()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Key
+	m.Key = htmlsanitizer.Sanitize(m.Key)
+
+	// Field: Label
+	m.Label = htmlsanitizer.Sanitize(m.Label)
+
+	return nil
+}
+
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
 func (m *Stat) Sanitize() error {

@@ -3,13 +3,14 @@ import { differenceInDays, sub } from 'date-fns';
 import { z } from 'zod';
 import ChartClient from '~/components/documents/stats/Chart.client.vue';
 import DateRangePicker from '~/components/documents/stats/DateRangePicker.vue';
+import PenaltySeriesChartClient from '~/components/documents/stats/PenaltySeriesChart.client.vue';
 import Table from '~/components/documents/stats/Table.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
 import { getDocumentsStatsClient } from '~~/gen/ts/clients';
-import { StatsCategory, StatsPeriod } from '~~/gen/ts/services/documents/stats';
+import { StatsCategory, StatsPeriod } from '~~/gen/ts/resources/stats/stats';
 
 useHead({
     title: 'pages.documents.stats.title',
@@ -58,8 +59,8 @@ const {
     refresh,
 } = useLazyAsyncData('documents-stats-chart-documents-by-category', async () => {
     const call = documentsStatsClient.getStats({
-        start: toTimestamp(query.range.start),
-        end: toTimestamp(query.range.end),
+        start: toUtcDateTimestamp(query.range.start),
+        end: toUtcDateTimestamp(query.range.end),
         period: selectedPeriod.value,
         category: query.category,
     });
@@ -93,24 +94,26 @@ const canSeePenalties = computed(
 const categories = computed(() =>
     [
         {
-            label: t('enums.documents.stats.StatsCategory.DOCUMENTS_BY_CATEGORY'),
+            label: t('enums.stats.StatsCategory.DOCUMENTS_BY_CATEGORY'),
             value: StatsCategory.DOCUMENTS_BY_CATEGORY,
             icon: 'i-mdi-shape',
         },
         {
-            label: t('enums.documents.stats.StatsCategory.TOP_LAWS'),
+            label: t('enums.stats.StatsCategory.TOP_LAWS'),
             value: StatsCategory.TOP_LAWS,
             icon: 'i-mdi-gavel',
             hidden: !canSeePenalties.value,
         },
         {
-            label: t('enums.documents.stats.StatsCategory.PENALTIES_OVER_TIME'),
+            label: t('enums.stats.StatsCategory.PENALTIES_OVER_TIME'),
             value: StatsCategory.PENALTIES_OVER_TIME,
             icon: 'i-mdi-gavel',
             hidden: !canSeePenalties.value,
         },
     ].flatMap((item) => (item.hidden ? [] : [item])),
 );
+
+const isPenalties = computed(() => query.category === StatsCategory.PENALTIES_OVER_TIME);
 </script>
 
 <template>
@@ -154,10 +157,17 @@ const categories = computed(() =>
             />
 
             <template v-else>
-                <ChartClient :stats="response" :category="query.category" :period="selectedPeriod" :range="query.range" />
+                <ChartClient
+                    v-if="!isPenalties"
+                    :stats="response"
+                    :is-penalties="isPenalties"
+                    :period="selectedPeriod"
+                    :range="query.range"
+                />
+                <PenaltySeriesChartClient v-else :stats="response" :period="selectedPeriod" :range="query.range" />
 
                 <Table
-                    v-if="query.category !== StatsCategory.PENALTIES_OVER_TIME"
+                    v-if="!isPenalties"
                     :category="query.category"
                     :stats="response"
                     :period="selectedPeriod"

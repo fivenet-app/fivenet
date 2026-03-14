@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/stats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -69,6 +70,7 @@ type Server struct {
 	pbjobs.ConductServiceServer
 	pbjobs.JobsServiceServer
 	pbjobs.TimeclockServiceServer
+	pbjobs.StatsServiceServer
 
 	logger *zap.Logger
 	wg     sync.WaitGroup
@@ -77,6 +79,7 @@ type Server struct {
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	notifi   notifi.INotifi
+	stats    *stats.Service
 
 	customDB config.CustomDB
 
@@ -95,6 +98,7 @@ type Params struct {
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
 	Notifi            notifi.INotifi
 	Storage           storage.IStorage
+	Stats             *stats.Service
 }
 
 func NewServer(p Params) *Server {
@@ -120,6 +124,7 @@ func NewServer(p Params) *Server {
 		ps:       p.Perms,
 		enricher: p.UserAwareEnricher,
 		notifi:   p.Notifi,
+		stats:    p.Stats,
 
 		customDB: p.Config.Database.Custom,
 
@@ -133,4 +138,5 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbjobs.RegisterConductServiceServer(srv, s)
 	pbjobs.RegisterJobsServiceServer(srv, s)
 	pbjobs.RegisterTimeclockServiceServer(srv, s)
+	pbjobs.RegisterStatsServiceServer(srv, s)
 }

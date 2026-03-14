@@ -13,6 +13,7 @@
 // source: services/filestore/filestore.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
+// source: services/jobs/stats.proto
 // source: services/jobs/timeclock.proto
 // source: services/livemap/livemap.proto
 // source: services/mailer/mailer.proto
@@ -95,6 +96,7 @@ export type GRPCServicePerms =
 	| 'jobs.JobsService/ManageLabels'
 	| 'jobs.JobsService/SetColleagueProps'
 	| 'jobs.JobsService/SetMOTD'
+	| 'jobs.StatsService/GetStats'
 	| 'jobs.TimeclockService/ListInactiveEmployees'
 	| 'jobs.TimeclockService/ListTimeclock'
 	| 'livemap.LivemapService/CreateOrUpdateMarker'
@@ -136,6 +138,7 @@ export const GRPCServices = [
 	'documents.StatsService',
 	'jobs.ConductService',
 	'jobs.JobsService',
+	'jobs.StatsService',
 	'jobs.TimeclockService',
 	'livemap.LivemapService',
 	'mailer.MailerService',
@@ -206,6 +209,7 @@ export const GRPCServiceMethods = [
 	'jobs.JobsService/ManageLabels',
 	'jobs.JobsService/SetColleagueProps',
 	'jobs.JobsService/SetMOTD',
+	'jobs.StatsService/GetStats',
 	'jobs.TimeclockService/ListInactiveEmployees',
 	'jobs.TimeclockService/ListTimeclock',
 	'livemap.LivemapService/CreateOrUpdateMarker',

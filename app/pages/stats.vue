@@ -50,9 +50,10 @@ const defaultStats: Stats = {
 };
 
 type StatsState = { stats: Stats; fetchedAt?: number };
+
 const state = useState<StatsState>('stats', () => ({ stats: defaultStats, fetchedAt: undefined }));
 
-const { data: stats, status } = useLazyAsyncData('stats', () => getStats(), {
+const { data: stats, status } = useLazyAsyncData('stats', () => getPublicStats(), {
     transform: (input): StatsState => ({
         stats: input,
         fetchedAt: new Date().getTime(),
@@ -68,9 +69,9 @@ const { data: stats, status } = useLazyAsyncData('stats', () => getStats(), {
     },
 });
 
-async function getStats(): Promise<Stats> {
+async function getPublicStats(): Promise<Stats> {
     try {
-        const call = statsStatsClient.getStats({});
+        const call = statsStatsClient.getPublicStats({});
         const { response } = await call;
 
         const stats = { ...defaultStats };

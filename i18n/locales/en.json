@@ -80,6 +80,9 @@
                     "conduct": "Colleague Info: Conduct Register",
                     "qualifications": "Colleague Info: Qualifications",
                     "timeclock": "Colleague Info: Timeclock"
+                },
+                "stats": {
+                    "title": "Colleague Statistics"
                 }
             },
             "conduct": {
@@ -2902,15 +2905,6 @@
                 "BLOCKED": "Blocked",
                 "USE": "Use",
                 "MANAGE": "Manage"
-            },
-            "stats": {
-                "StatsCategory": {
-                    "UNSPECIFIED": "Unspecified",
-                    "CUSTOM": "Custom",
-                    "DOCUMENTS_BY_CATEGORY": "Documents by category",
-                    "TOP_LAWS": "Top Laws",
-                    "PENALTIES_OVER_TIME": "Penalties over time"
-                }
             }
         },
         "settings": {
@@ -2948,6 +2942,15 @@
                     "FAILED": "Failed",
                     "ERRORED": "Errored"
                 }
+            }
+        },
+        "stats": {
+            "StatsCategory": {
+                "UNSPECIFIED": "Unspecified",
+                "CUSTOM": "Custom",
+                "DOCUMENTS_BY_CATEGORY": "Documents by category",
+                "TOP_LAWS": "Top Laws",
+                "PENALTIES_OVER_TIME": "Penalties over time"
             }
         }
     },
@@ -3590,6 +3593,13 @@
                 "ListInactiveEmployees": {
                     "key": "List inactive colleagues",
                     "description": "List inactive colleagues."
+                }
+            },
+            "StatsService": {
+                "category": "Job Stats",
+                "GetStats": {
+                    "key": "Get Statistics",
+                    "description": "Retrieve statistics related to colleagues."
                 }
             }
         },

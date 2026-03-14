@@ -2,16 +2,18 @@ syntax = "proto3";
 
 package services.stats;
 
+import "buf/validate/validate.proto";
 import "resources/stats/stats.proto";
+import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/stats;stats";
 
-message GetStatsRequest {}
+message GetPublicStatsRequest {}
 
-message GetStatsResponse {
+message GetPublicStatsResponse {
   map<string, resources.stats.Stat> stats = 1;
 }
 
 service StatsService {
-  rpc GetStats(GetStatsRequest) returns (GetStatsResponse);
+  rpc GetPublicStats(GetPublicStatsRequest) returns (GetPublicStatsResponse);
 }

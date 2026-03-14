@@ -10,6 +10,7 @@ package documents
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	stats "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/stats"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -24,112 +25,14 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type StatsCategory int32
-
-const (
-	StatsCategory_STATS_CATEGORY_UNSPECIFIED           StatsCategory = 0
-	StatsCategory_STATS_CATEGORY_CUSTOM                StatsCategory = 1
-	StatsCategory_STATS_CATEGORY_DOCUMENTS_BY_CATEGORY StatsCategory = 2
-	StatsCategory_STATS_CATEGORY_TOP_LAWS              StatsCategory = 3
-	StatsCategory_STATS_CATEGORY_PENALTIES_OVER_TIME   StatsCategory = 4
-)
-
-// Enum value maps for StatsCategory.
-var (
-	StatsCategory_name = map[int32]string{
-		0: "STATS_CATEGORY_UNSPECIFIED",
-		1: "STATS_CATEGORY_CUSTOM",
-		2: "STATS_CATEGORY_DOCUMENTS_BY_CATEGORY",
-		3: "STATS_CATEGORY_TOP_LAWS",
-		4: "STATS_CATEGORY_PENALTIES_OVER_TIME",
-	}
-	StatsCategory_value = map[string]int32{
-		"STATS_CATEGORY_UNSPECIFIED":           0,
-		"STATS_CATEGORY_CUSTOM":                1,
-		"STATS_CATEGORY_DOCUMENTS_BY_CATEGORY": 2,
-		"STATS_CATEGORY_TOP_LAWS":              3,
-		"STATS_CATEGORY_PENALTIES_OVER_TIME":   4,
-	}
-)
-
-func (x StatsCategory) Enum() *StatsCategory {
-	p := new(StatsCategory)
-	*p = x
-	return p
-}
-
-func (x StatsCategory) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (StatsCategory) Descriptor() protoreflect.EnumDescriptor {
-	return file_services_documents_stats_proto_enumTypes[0].Descriptor()
-}
-
-func (StatsCategory) Type() protoreflect.EnumType {
-	return &file_services_documents_stats_proto_enumTypes[0]
-}
-
-func (x StatsCategory) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-type StatsPeriod int32
-
-const (
-	StatsPeriod_STATS_PERIOD_UNSPECIFIED StatsPeriod = 0
-	StatsPeriod_STATS_PERIOD_DAILY       StatsPeriod = 1
-	StatsPeriod_STATS_PERIOD_WEEKLY      StatsPeriod = 2
-	StatsPeriod_STATS_PERIOD_MONTHLY     StatsPeriod = 3
-)
-
-// Enum value maps for StatsPeriod.
-var (
-	StatsPeriod_name = map[int32]string{
-		0: "STATS_PERIOD_UNSPECIFIED",
-		1: "STATS_PERIOD_DAILY",
-		2: "STATS_PERIOD_WEEKLY",
-		3: "STATS_PERIOD_MONTHLY",
-	}
-	StatsPeriod_value = map[string]int32{
-		"STATS_PERIOD_UNSPECIFIED": 0,
-		"STATS_PERIOD_DAILY":       1,
-		"STATS_PERIOD_WEEKLY":      2,
-		"STATS_PERIOD_MONTHLY":     3,
-	}
-)
-
-func (x StatsPeriod) Enum() *StatsPeriod {
-	p := new(StatsPeriod)
-	*p = x
-	return p
-}
-
-func (x StatsPeriod) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (StatsPeriod) Descriptor() protoreflect.EnumDescriptor {
-	return file_services_documents_stats_proto_enumTypes[1].Descriptor()
-}
-
-func (StatsPeriod) Type() protoreflect.EnumType {
-	return &file_services_documents_stats_proto_enumTypes[1]
-}
-
-func (x StatsPeriod) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
 type GetStatsRequest struct {
-	state          protoimpl.MessageState `protogen:"hybrid.v1"`
-	Start          *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=start,proto3" json:"start,omitempty"`
-	End            *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=end,proto3" json:"end,omitempty"`
-	Period         StatsPeriod            `protobuf:"varint,3,opt,name=period,proto3,enum=services.documents.StatsPeriod" json:"period,omitempty"`
-	Category       StatsCategory          `protobuf:"varint,4,opt,name=category,proto3,enum=services.documents.StatsCategory" json:"category,omitempty"`
-	CustomCategory *string                `protobuf:"bytes,5,opt,name=custom_category,json=customCategory,proto3,oneof" json:"custom_category,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Start         *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=start,proto3" json:"start,omitempty"`
+	End           *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=end,proto3" json:"end,omitempty"`
+	Period        stats.StatsPeriod      `protobuf:"varint,3,opt,name=period,proto3,enum=resources.stats.StatsPeriod" json:"period,omitempty"`
+	Category      stats.StatsCategory    `protobuf:"varint,4,opt,name=category,proto3,enum=resources.stats.StatsCategory" json:"category,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetStatsRequest) Reset() {
@@ -171,25 +74,18 @@ func (x *GetStatsRequest) GetEnd() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *GetStatsRequest) GetPeriod() StatsPeriod {
+func (x *GetStatsRequest) GetPeriod() stats.StatsPeriod {
 	if x != nil {
 		return x.Period
 	}
-	return StatsPeriod_STATS_PERIOD_UNSPECIFIED
+	return stats.StatsPeriod(0)
 }
 
-func (x *GetStatsRequest) GetCategory() StatsCategory {
+func (x *GetStatsRequest) GetCategory() stats.StatsCategory {
 	if x != nil {
 		return x.Category
 	}
-	return StatsCategory_STATS_CATEGORY_UNSPECIFIED
-}
-
-func (x *GetStatsRequest) GetCustomCategory() string {
-	if x != nil && x.CustomCategory != nil {
-		return *x.CustomCategory
-	}
-	return ""
+	return stats.StatsCategory(0)
 }
 
 func (x *GetStatsRequest) SetStart(v *timestamp.Timestamp) {
@@ -200,16 +96,12 @@ func (x *GetStatsRequest) SetEnd(v *timestamp.Timestamp) {
 	x.End = v
 }
 
-func (x *GetStatsRequest) SetPeriod(v StatsPeriod) {
+func (x *GetStatsRequest) SetPeriod(v stats.StatsPeriod) {
 	x.Period = v
 }
 
-func (x *GetStatsRequest) SetCategory(v StatsCategory) {
+func (x *GetStatsRequest) SetCategory(v stats.StatsCategory) {
 	x.Category = v
-}
-
-func (x *GetStatsRequest) SetCustomCategory(v string) {
-	x.CustomCategory = &v
 }
 
 func (x *GetStatsRequest) HasStart() bool {
@@ -226,13 +118,6 @@ func (x *GetStatsRequest) HasEnd() bool {
 	return x.End != nil
 }
 
-func (x *GetStatsRequest) HasCustomCategory() bool {
-	if x == nil {
-		return false
-	}
-	return x.CustomCategory != nil
-}
-
 func (x *GetStatsRequest) ClearStart() {
 	x.Start = nil
 }
@@ -241,18 +126,13 @@ func (x *GetStatsRequest) ClearEnd() {
 	x.End = nil
 }
 
-func (x *GetStatsRequest) ClearCustomCategory() {
-	x.CustomCategory = nil
-}
-
 type GetStatsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Start          *timestamp.Timestamp
-	End            *timestamp.Timestamp
-	Period         StatsPeriod
-	Category       StatsCategory
-	CustomCategory *string
+	Start    *timestamp.Timestamp
+	End      *timestamp.Timestamp
+	Period   stats.StatsPeriod
+	Category stats.StatsCategory
 }
 
 func (b0 GetStatsRequest_builder) Build() *GetStatsRequest {
@@ -263,425 +143,25 @@ func (b0 GetStatsRequest_builder) Build() *GetStatsRequest {
 	x.End = b.End
 	x.Period = b.Period
 	x.Category = b.Category
-	x.CustomCategory = b.CustomCategory
-	return m0
-}
-
-type KeyValue struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	Value         int64                  `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *KeyValue) Reset() {
-	*x = KeyValue{}
-	mi := &file_services_documents_stats_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *KeyValue) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*KeyValue) ProtoMessage() {}
-
-func (x *KeyValue) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_stats_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *KeyValue) GetKey() string {
-	if x != nil {
-		return x.Key
-	}
-	return ""
-}
-
-func (x *KeyValue) GetValue() int64 {
-	if x != nil {
-		return x.Value
-	}
-	return 0
-}
-
-func (x *KeyValue) SetKey(v string) {
-	x.Key = v
-}
-
-func (x *KeyValue) SetValue(v int64) {
-	x.Value = v
-}
-
-type KeyValue_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Key   string
-	Value int64
-}
-
-func (b0 KeyValue_builder) Build() *KeyValue {
-	m0 := &KeyValue{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.Key = b.Key
-	x.Value = b.Value
-	return m0
-}
-
-type DailyValue struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Day           *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=day,proto3" json:"day,omitempty"`
-	Value         int64                  `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DailyValue) Reset() {
-	*x = DailyValue{}
-	mi := &file_services_documents_stats_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DailyValue) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DailyValue) ProtoMessage() {}
-
-func (x *DailyValue) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_stats_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *DailyValue) GetDay() *timestamp.Timestamp {
-	if x != nil {
-		return x.Day
-	}
-	return nil
-}
-
-func (x *DailyValue) GetValue() int64 {
-	if x != nil {
-		return x.Value
-	}
-	return 0
-}
-
-func (x *DailyValue) SetDay(v *timestamp.Timestamp) {
-	x.Day = v
-}
-
-func (x *DailyValue) SetValue(v int64) {
-	x.Value = v
-}
-
-func (x *DailyValue) HasDay() bool {
-	if x == nil {
-		return false
-	}
-	return x.Day != nil
-}
-
-func (x *DailyValue) ClearDay() {
-	x.Day = nil
-}
-
-type DailyValue_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Day   *timestamp.Timestamp
-	Value int64
-}
-
-func (b0 DailyValue_builder) Build() *DailyValue {
-	m0 := &DailyValue{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.Day = b.Day
-	x.Value = b.Value
-	return m0
-}
-
-type PeriodSeriesValue struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Day           *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=day,proto3" json:"day,omitempty"`
-	Key           string                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	Label         string                 `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
-	Value         int64                  `protobuf:"varint,4,opt,name=value,proto3" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PeriodSeriesValue) Reset() {
-	*x = PeriodSeriesValue{}
-	mi := &file_services_documents_stats_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PeriodSeriesValue) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PeriodSeriesValue) ProtoMessage() {}
-
-func (x *PeriodSeriesValue) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_stats_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *PeriodSeriesValue) GetDay() *timestamp.Timestamp {
-	if x != nil {
-		return x.Day
-	}
-	return nil
-}
-
-func (x *PeriodSeriesValue) GetKey() string {
-	if x != nil {
-		return x.Key
-	}
-	return ""
-}
-
-func (x *PeriodSeriesValue) GetLabel() string {
-	if x != nil {
-		return x.Label
-	}
-	return ""
-}
-
-func (x *PeriodSeriesValue) GetValue() int64 {
-	if x != nil {
-		return x.Value
-	}
-	return 0
-}
-
-func (x *PeriodSeriesValue) SetDay(v *timestamp.Timestamp) {
-	x.Day = v
-}
-
-func (x *PeriodSeriesValue) SetKey(v string) {
-	x.Key = v
-}
-
-func (x *PeriodSeriesValue) SetLabel(v string) {
-	x.Label = v
-}
-
-func (x *PeriodSeriesValue) SetValue(v int64) {
-	x.Value = v
-}
-
-func (x *PeriodSeriesValue) HasDay() bool {
-	if x == nil {
-		return false
-	}
-	return x.Day != nil
-}
-
-func (x *PeriodSeriesValue) ClearDay() {
-	x.Day = nil
-}
-
-type PeriodSeriesValue_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Day   *timestamp.Timestamp
-	Key   string
-	Label string
-	Value int64
-}
-
-func (b0 PeriodSeriesValue_builder) Build() *PeriodSeriesValue {
-	m0 := &PeriodSeriesValue{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.Day = b.Day
-	x.Key = b.Key
-	x.Label = b.Label
-	x.Value = b.Value
-	return m0
-}
-
-type CategoryValue struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Color         *string                `protobuf:"bytes,3,opt,name=color,proto3,oneof" json:"color,omitempty"`
-	Icon          *string                `protobuf:"bytes,4,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
-	Value         int64                  `protobuf:"varint,5,opt,name=value,proto3" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CategoryValue) Reset() {
-	*x = CategoryValue{}
-	mi := &file_services_documents_stats_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CategoryValue) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CategoryValue) ProtoMessage() {}
-
-func (x *CategoryValue) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_stats_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *CategoryValue) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *CategoryValue) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *CategoryValue) GetColor() string {
-	if x != nil && x.Color != nil {
-		return *x.Color
-	}
-	return ""
-}
-
-func (x *CategoryValue) GetIcon() string {
-	if x != nil && x.Icon != nil {
-		return *x.Icon
-	}
-	return ""
-}
-
-func (x *CategoryValue) GetValue() int64 {
-	if x != nil {
-		return x.Value
-	}
-	return 0
-}
-
-func (x *CategoryValue) SetId(v int64) {
-	x.Id = v
-}
-
-func (x *CategoryValue) SetName(v string) {
-	x.Name = v
-}
-
-func (x *CategoryValue) SetColor(v string) {
-	x.Color = &v
-}
-
-func (x *CategoryValue) SetIcon(v string) {
-	x.Icon = &v
-}
-
-func (x *CategoryValue) SetValue(v int64) {
-	x.Value = v
-}
-
-func (x *CategoryValue) HasColor() bool {
-	if x == nil {
-		return false
-	}
-	return x.Color != nil
-}
-
-func (x *CategoryValue) HasIcon() bool {
-	if x == nil {
-		return false
-	}
-	return x.Icon != nil
-}
-
-func (x *CategoryValue) ClearColor() {
-	x.Color = nil
-}
-
-func (x *CategoryValue) ClearIcon() {
-	x.Icon = nil
-}
-
-type CategoryValue_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Id    int64
-	Name  string
-	Color *string
-	Icon  *string
-	Value int64
-}
-
-func (b0 CategoryValue_builder) Build() *CategoryValue {
-	m0 := &CategoryValue{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.Id = b.Id
-	x.Name = b.Name
-	x.Color = b.Color
-	x.Icon = b.Icon
-	x.Value = b.Value
 	return m0
 }
 
 type GetStatsResponse struct {
-	state               protoimpl.MessageState `protogen:"hybrid.v1"`
-	TopLaws             []*KeyValue            `protobuf:"bytes,1,rep,name=top_laws,json=topLaws,proto3" json:"top_laws,omitempty"`
-	FinesOverTime       []*DailyValue          `protobuf:"bytes,2,rep,name=fines_over_time,json=finesOverTime,proto3" json:"fines_over_time,omitempty"`
-	DocumentsByCategory []*CategoryValue       `protobuf:"bytes,3,rep,name=documents_by_category,json=documentsByCategory,proto3" json:"documents_by_category,omitempty"`
-	ReductionPercentSum int64                  `protobuf:"varint,4,opt,name=reduction_percent_sum,json=reductionPercentSum,proto3" json:"reduction_percent_sum,omitempty"`
-	CaseCountSum        int64                  `protobuf:"varint,5,opt,name=case_count_sum,json=caseCountSum,proto3" json:"case_count_sum,omitempty"`
-	PeriodValues        []*DailyValue          `protobuf:"bytes,6,rep,name=period_values,json=periodValues,proto3" json:"period_values,omitempty"`
-	TotalValue          int64                  `protobuf:"varint,7,opt,name=total_value,json=totalValue,proto3" json:"total_value,omitempty"`
-	PeriodSeriesValues  []*PeriodSeriesValue   `protobuf:"bytes,8,rep,name=period_series_values,json=periodSeriesValues,proto3" json:"period_series_values,omitempty"`
+	state               protoimpl.MessageState     `protogen:"hybrid.v1"`
+	TopLaws             []*stats.KeyValue          `protobuf:"bytes,1,rep,name=top_laws,json=topLaws,proto3" json:"top_laws,omitempty"`
+	FinesOverTime       []*stats.DailyValue        `protobuf:"bytes,2,rep,name=fines_over_time,json=finesOverTime,proto3" json:"fines_over_time,omitempty"`
+	DocumentsByCategory []*stats.CategoryValue     `protobuf:"bytes,3,rep,name=documents_by_category,json=documentsByCategory,proto3" json:"documents_by_category,omitempty"`
+	PeriodValues        []*stats.DailyValue        `protobuf:"bytes,4,rep,name=period_values,json=periodValues,proto3" json:"period_values,omitempty"`
+	PeriodSeriesValues  []*stats.PeriodSeriesValue `protobuf:"bytes,5,rep,name=period_series_values,json=periodSeriesValues,proto3" json:"period_series_values,omitempty"`
+	TotalValue          int64                      `protobuf:"varint,6,opt,name=total_value,json=totalValue,proto3" json:"total_value,omitempty"`
+	AverageValue        float64                    `protobuf:"fixed64,7,opt,name=average_value,json=averageValue,proto3" json:"average_value,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
 
 func (x *GetStatsResponse) Reset() {
 	*x = GetStatsResponse{}
-	mi := &file_services_documents_stats_proto_msgTypes[5]
+	mi := &file_services_documents_stats_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -693,7 +173,7 @@ func (x *GetStatsResponse) String() string {
 func (*GetStatsResponse) ProtoMessage() {}
 
 func (x *GetStatsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_stats_proto_msgTypes[5]
+	mi := &file_services_documents_stats_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -704,44 +184,37 @@ func (x *GetStatsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *GetStatsResponse) GetTopLaws() []*KeyValue {
+func (x *GetStatsResponse) GetTopLaws() []*stats.KeyValue {
 	if x != nil {
 		return x.TopLaws
 	}
 	return nil
 }
 
-func (x *GetStatsResponse) GetFinesOverTime() []*DailyValue {
+func (x *GetStatsResponse) GetFinesOverTime() []*stats.DailyValue {
 	if x != nil {
 		return x.FinesOverTime
 	}
 	return nil
 }
 
-func (x *GetStatsResponse) GetDocumentsByCategory() []*CategoryValue {
+func (x *GetStatsResponse) GetDocumentsByCategory() []*stats.CategoryValue {
 	if x != nil {
 		return x.DocumentsByCategory
 	}
 	return nil
 }
 
-func (x *GetStatsResponse) GetReductionPercentSum() int64 {
-	if x != nil {
-		return x.ReductionPercentSum
-	}
-	return 0
-}
-
-func (x *GetStatsResponse) GetCaseCountSum() int64 {
-	if x != nil {
-		return x.CaseCountSum
-	}
-	return 0
-}
-
-func (x *GetStatsResponse) GetPeriodValues() []*DailyValue {
+func (x *GetStatsResponse) GetPeriodValues() []*stats.DailyValue {
 	if x != nil {
 		return x.PeriodValues
+	}
+	return nil
+}
+
+func (x *GetStatsResponse) GetPeriodSeriesValues() []*stats.PeriodSeriesValue {
+	if x != nil {
+		return x.PeriodSeriesValues
 	}
 	return nil
 }
@@ -753,56 +226,51 @@ func (x *GetStatsResponse) GetTotalValue() int64 {
 	return 0
 }
 
-func (x *GetStatsResponse) GetPeriodSeriesValues() []*PeriodSeriesValue {
+func (x *GetStatsResponse) GetAverageValue() float64 {
 	if x != nil {
-		return x.PeriodSeriesValues
+		return x.AverageValue
 	}
-	return nil
+	return 0
 }
 
-func (x *GetStatsResponse) SetTopLaws(v []*KeyValue) {
+func (x *GetStatsResponse) SetTopLaws(v []*stats.KeyValue) {
 	x.TopLaws = v
 }
 
-func (x *GetStatsResponse) SetFinesOverTime(v []*DailyValue) {
+func (x *GetStatsResponse) SetFinesOverTime(v []*stats.DailyValue) {
 	x.FinesOverTime = v
 }
 
-func (x *GetStatsResponse) SetDocumentsByCategory(v []*CategoryValue) {
+func (x *GetStatsResponse) SetDocumentsByCategory(v []*stats.CategoryValue) {
 	x.DocumentsByCategory = v
 }
 
-func (x *GetStatsResponse) SetReductionPercentSum(v int64) {
-	x.ReductionPercentSum = v
-}
-
-func (x *GetStatsResponse) SetCaseCountSum(v int64) {
-	x.CaseCountSum = v
-}
-
-func (x *GetStatsResponse) SetPeriodValues(v []*DailyValue) {
+func (x *GetStatsResponse) SetPeriodValues(v []*stats.DailyValue) {
 	x.PeriodValues = v
+}
+
+func (x *GetStatsResponse) SetPeriodSeriesValues(v []*stats.PeriodSeriesValue) {
+	x.PeriodSeriesValues = v
 }
 
 func (x *GetStatsResponse) SetTotalValue(v int64) {
 	x.TotalValue = v
 }
 
-func (x *GetStatsResponse) SetPeriodSeriesValues(v []*PeriodSeriesValue) {
-	x.PeriodSeriesValues = v
+func (x *GetStatsResponse) SetAverageValue(v float64) {
+	x.AverageValue = v
 }
 
 type GetStatsResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	TopLaws             []*KeyValue
-	FinesOverTime       []*DailyValue
-	DocumentsByCategory []*CategoryValue
-	ReductionPercentSum int64
-	CaseCountSum        int64
-	PeriodValues        []*DailyValue
+	TopLaws             []*stats.KeyValue
+	FinesOverTime       []*stats.DailyValue
+	DocumentsByCategory []*stats.CategoryValue
+	PeriodValues        []*stats.DailyValue
+	PeriodSeriesValues  []*stats.PeriodSeriesValue
 	TotalValue          int64
-	PeriodSeriesValues  []*PeriodSeriesValue
+	AverageValue        float64
 }
 
 func (b0 GetStatsResponse_builder) Build() *GetStatsResponse {
@@ -812,11 +280,10 @@ func (b0 GetStatsResponse_builder) Build() *GetStatsResponse {
 	x.TopLaws = b.TopLaws
 	x.FinesOverTime = b.FinesOverTime
 	x.DocumentsByCategory = b.DocumentsByCategory
-	x.ReductionPercentSum = b.ReductionPercentSum
-	x.CaseCountSum = b.CaseCountSum
 	x.PeriodValues = b.PeriodValues
-	x.TotalValue = b.TotalValue
 	x.PeriodSeriesValues = b.PeriodSeriesValues
+	x.TotalValue = b.TotalValue
+	x.AverageValue = b.AverageValue
 	return m0
 }
 
@@ -824,92 +291,55 @@ var File_services_documents_stats_proto protoreflect.FileDescriptor
 
 const file_services_documents_stats_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/documents/stats.proto\x12\x12services.documents\x1a\x19codegen/perms/perms.proto\x1a#resources/timestamp/timestamp.proto\"\xb3\x02\n" +
+	"\x1eservices/documents/stats.proto\x12\x12services.documents\x1a\x19codegen/perms/perms.proto\x1a\x1bresources/stats/stats.proto\x1a#resources/timestamp/timestamp.proto\"\xeb\x01\n" +
 	"\x0fGetStatsRequest\x124\n" +
 	"\x05start\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x05start\x120\n" +
-	"\x03end\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\x03end\x127\n" +
-	"\x06period\x18\x03 \x01(\x0e2\x1f.services.documents.StatsPeriodR\x06period\x12=\n" +
-	"\bcategory\x18\x04 \x01(\x0e2!.services.documents.StatsCategoryR\bcategory\x12,\n" +
-	"\x0fcustom_category\x18\x05 \x01(\tH\x00R\x0ecustomCategory\x88\x01\x01B\x12\n" +
-	"\x10_custom_category\"2\n" +
-	"\bKeyValue\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x03R\x05value\"T\n" +
-	"\n" +
-	"DailyValue\x120\n" +
-	"\x03day\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x03day\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x03R\x05value\"\x83\x01\n" +
-	"\x11PeriodSeriesValue\x120\n" +
-	"\x03day\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x03day\x12\x10\n" +
-	"\x03key\x18\x02 \x01(\tR\x03key\x12\x14\n" +
-	"\x05label\x18\x03 \x01(\tR\x05label\x12\x14\n" +
-	"\x05value\x18\x04 \x01(\x03R\x05value\"\x90\x01\n" +
-	"\rCategoryValue\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12\x19\n" +
-	"\x05color\x18\x03 \x01(\tH\x00R\x05color\x88\x01\x01\x12\x17\n" +
-	"\x04icon\x18\x04 \x01(\tH\x01R\x04icon\x88\x01\x01\x12\x14\n" +
-	"\x05value\x18\x05 \x01(\x03R\x05valueB\b\n" +
-	"\x06_colorB\a\n" +
-	"\x05_icon\"\x83\x04\n" +
-	"\x10GetStatsResponse\x127\n" +
-	"\btop_laws\x18\x01 \x03(\v2\x1c.services.documents.KeyValueR\atopLaws\x12F\n" +
-	"\x0ffines_over_time\x18\x02 \x03(\v2\x1e.services.documents.DailyValueR\rfinesOverTime\x12U\n" +
-	"\x15documents_by_category\x18\x03 \x03(\v2!.services.documents.CategoryValueR\x13documentsByCategory\x122\n" +
-	"\x15reduction_percent_sum\x18\x04 \x01(\x03R\x13reductionPercentSum\x12$\n" +
-	"\x0ecase_count_sum\x18\x05 \x01(\x03R\fcaseCountSum\x12C\n" +
-	"\rperiod_values\x18\x06 \x03(\v2\x1e.services.documents.DailyValueR\fperiodValues\x12\x1f\n" +
-	"\vtotal_value\x18\a \x01(\x03R\n" +
-	"totalValue\x12W\n" +
-	"\x14period_series_values\x18\b \x03(\v2%.services.documents.PeriodSeriesValueR\x12periodSeriesValues*\xb9\x01\n" +
-	"\rStatsCategory\x12\x1e\n" +
-	"\x1aSTATS_CATEGORY_UNSPECIFIED\x10\x00\x12\x19\n" +
-	"\x15STATS_CATEGORY_CUSTOM\x10\x01\x12(\n" +
-	"$STATS_CATEGORY_DOCUMENTS_BY_CATEGORY\x10\x02\x12\x1b\n" +
-	"\x17STATS_CATEGORY_TOP_LAWS\x10\x03\x12&\n" +
-	"\"STATS_CATEGORY_PENALTIES_OVER_TIME\x10\x04*v\n" +
-	"\vStatsPeriod\x12\x1c\n" +
-	"\x18STATS_PERIOD_UNSPECIFIED\x10\x00\x12\x16\n" +
-	"\x12STATS_PERIOD_DAILY\x10\x01\x12\x17\n" +
-	"\x13STATS_PERIOD_WEEKLY\x10\x02\x12\x18\n" +
-	"\x14STATS_PERIOD_MONTHLY\x10\x032\xbb\x01\n" +
+	"\x03end\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\x03end\x124\n" +
+	"\x06period\x18\x03 \x01(\x0e2\x1c.resources.stats.StatsPeriodR\x06period\x12:\n" +
+	"\bcategory\x18\x04 \x01(\x0e2\x1e.resources.stats.StatsCategoryR\bcategory\"\xbf\x03\n" +
+	"\x10GetStatsResponse\x124\n" +
+	"\btop_laws\x18\x01 \x03(\v2\x19.resources.stats.KeyValueR\atopLaws\x12C\n" +
+	"\x0ffines_over_time\x18\x02 \x03(\v2\x1b.resources.stats.DailyValueR\rfinesOverTime\x12R\n" +
+	"\x15documents_by_category\x18\x03 \x03(\v2\x1e.resources.stats.CategoryValueR\x13documentsByCategory\x12@\n" +
+	"\rperiod_values\x18\x04 \x03(\v2\x1b.resources.stats.DailyValueR\fperiodValues\x12T\n" +
+	"\x14period_series_values\x18\x05 \x03(\v2\".resources.stats.PeriodSeriesValueR\x12periodSeriesValues\x12\x1f\n" +
+	"\vtotal_value\x18\x06 \x01(\x03R\n" +
+	"totalValue\x12#\n" +
+	"\raverage_value\x18\a \x01(\x01R\faverageValue2\xbb\x01\n" +
 	"\fStatsService\x12\x80\x01\n" +
 	"\bGetStats\x12#.services.documents.GetStatsRequest\x1a$.services.documents.GetStatsResponse\")\xd2\xf3\x18%\b\x01*!\n" +
 	"\n" +
 	"Categories\x18\x01\"\x11PenaltyCalculator\x1a(\xea\xf3\x18$\b:\x12 i-mdi-graph-box-multiple-outlineBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
-var file_services_documents_stats_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_services_documents_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_services_documents_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_services_documents_stats_proto_goTypes = []any{
-	(StatsCategory)(0),          // 0: services.documents.StatsCategory
-	(StatsPeriod)(0),            // 1: services.documents.StatsPeriod
-	(*GetStatsRequest)(nil),     // 2: services.documents.GetStatsRequest
-	(*KeyValue)(nil),            // 3: services.documents.KeyValue
-	(*DailyValue)(nil),          // 4: services.documents.DailyValue
-	(*PeriodSeriesValue)(nil),   // 5: services.documents.PeriodSeriesValue
-	(*CategoryValue)(nil),       // 6: services.documents.CategoryValue
-	(*GetStatsResponse)(nil),    // 7: services.documents.GetStatsResponse
-	(*timestamp.Timestamp)(nil), // 8: resources.timestamp.Timestamp
+	(*GetStatsRequest)(nil),         // 0: services.documents.GetStatsRequest
+	(*GetStatsResponse)(nil),        // 1: services.documents.GetStatsResponse
+	(*timestamp.Timestamp)(nil),     // 2: resources.timestamp.Timestamp
+	(stats.StatsPeriod)(0),          // 3: resources.stats.StatsPeriod
+	(stats.StatsCategory)(0),        // 4: resources.stats.StatsCategory
+	(*stats.KeyValue)(nil),          // 5: resources.stats.KeyValue
+	(*stats.DailyValue)(nil),        // 6: resources.stats.DailyValue
+	(*stats.CategoryValue)(nil),     // 7: resources.stats.CategoryValue
+	(*stats.PeriodSeriesValue)(nil), // 8: resources.stats.PeriodSeriesValue
 }
 var file_services_documents_stats_proto_depIdxs = []int32{
-	8,  // 0: services.documents.GetStatsRequest.start:type_name -> resources.timestamp.Timestamp
-	8,  // 1: services.documents.GetStatsRequest.end:type_name -> resources.timestamp.Timestamp
-	1,  // 2: services.documents.GetStatsRequest.period:type_name -> services.documents.StatsPeriod
-	0,  // 3: services.documents.GetStatsRequest.category:type_name -> services.documents.StatsCategory
-	8,  // 4: services.documents.DailyValue.day:type_name -> resources.timestamp.Timestamp
-	8,  // 5: services.documents.PeriodSeriesValue.day:type_name -> resources.timestamp.Timestamp
-	3,  // 6: services.documents.GetStatsResponse.top_laws:type_name -> services.documents.KeyValue
-	4,  // 7: services.documents.GetStatsResponse.fines_over_time:type_name -> services.documents.DailyValue
-	6,  // 8: services.documents.GetStatsResponse.documents_by_category:type_name -> services.documents.CategoryValue
-	4,  // 9: services.documents.GetStatsResponse.period_values:type_name -> services.documents.DailyValue
-	5,  // 10: services.documents.GetStatsResponse.period_series_values:type_name -> services.documents.PeriodSeriesValue
-	2,  // 11: services.documents.StatsService.GetStats:input_type -> services.documents.GetStatsRequest
-	7,  // 12: services.documents.StatsService.GetStats:output_type -> services.documents.GetStatsResponse
-	12, // [12:13] is the sub-list for method output_type
-	11, // [11:12] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	2,  // 0: services.documents.GetStatsRequest.start:type_name -> resources.timestamp.Timestamp
+	2,  // 1: services.documents.GetStatsRequest.end:type_name -> resources.timestamp.Timestamp
+	3,  // 2: services.documents.GetStatsRequest.period:type_name -> resources.stats.StatsPeriod
+	4,  // 3: services.documents.GetStatsRequest.category:type_name -> resources.stats.StatsCategory
+	5,  // 4: services.documents.GetStatsResponse.top_laws:type_name -> resources.stats.KeyValue
+	6,  // 5: services.documents.GetStatsResponse.fines_over_time:type_name -> resources.stats.DailyValue
+	7,  // 6: services.documents.GetStatsResponse.documents_by_category:type_name -> resources.stats.CategoryValue
+	6,  // 7: services.documents.GetStatsResponse.period_values:type_name -> resources.stats.DailyValue
+	8,  // 8: services.documents.GetStatsResponse.period_series_values:type_name -> resources.stats.PeriodSeriesValue
+	0,  // 9: services.documents.StatsService.GetStats:input_type -> services.documents.GetStatsRequest
+	1,  // 10: services.documents.StatsService.GetStats:output_type -> services.documents.GetStatsResponse
+	10, // [10:11] is the sub-list for method output_type
+	9,  // [9:10] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_services_documents_stats_proto_init() }
@@ -917,21 +347,18 @@ func file_services_documents_stats_proto_init() {
 	if File_services_documents_stats_proto != nil {
 		return
 	}
-	file_services_documents_stats_proto_msgTypes[0].OneofWrappers = []any{}
-	file_services_documents_stats_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_documents_stats_proto_rawDesc), len(file_services_documents_stats_proto_rawDesc)),
-			NumEnums:      2,
-			NumMessages:   6,
+			NumEnums:      0,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_services_documents_stats_proto_goTypes,
 		DependencyIndexes: file_services_documents_stats_proto_depIdxs,
-		EnumInfos:         file_services_documents_stats_proto_enumTypes,
 		MessageInfos:      file_services_documents_stats_proto_msgTypes,
 	}.Build()
 	File_services_documents_stats_proto = out.File

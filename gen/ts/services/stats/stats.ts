@@ -14,14 +14,14 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Stat } from "../../resources/stats/stats";
 /**
- * @generated from protobuf message services.stats.GetStatsRequest
+ * @generated from protobuf message services.stats.GetPublicStatsRequest
  */
-export interface GetStatsRequest {
+export interface GetPublicStatsRequest {
 }
 /**
- * @generated from protobuf message services.stats.GetStatsResponse
+ * @generated from protobuf message services.stats.GetPublicStatsResponse
  */
-export interface GetStatsResponse {
+export interface GetPublicStatsResponse {
     /**
      * @generated from protobuf field: map<string, resources.stats.Stat> stats = 1
      */
@@ -30,17 +30,17 @@ export interface GetStatsResponse {
     };
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class GetStatsRequest$Type extends MessageType<GetStatsRequest> {
+class GetPublicStatsRequest$Type extends MessageType<GetPublicStatsRequest> {
     constructor() {
-        super("services.stats.GetStatsRequest", []);
+        super("services.stats.GetPublicStatsRequest", []);
     }
-    create(value?: PartialMessage<GetStatsRequest>): GetStatsRequest {
+    create(value?: PartialMessage<GetPublicStatsRequest>): GetPublicStatsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<GetStatsRequest>(this, message, value);
+            reflectionMergePartial<GetPublicStatsRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetStatsRequest): GetStatsRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetPublicStatsRequest): GetPublicStatsRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -56,7 +56,7 @@ class GetStatsRequest$Type extends MessageType<GetStatsRequest> {
         }
         return message;
     }
-    internalBinaryWrite(message: GetStatsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: GetPublicStatsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -64,24 +64,24 @@ class GetStatsRequest$Type extends MessageType<GetStatsRequest> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.stats.GetStatsRequest
+ * @generated MessageType for protobuf message services.stats.GetPublicStatsRequest
  */
-export const GetStatsRequest = new GetStatsRequest$Type();
+export const GetPublicStatsRequest = new GetPublicStatsRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetStatsResponse$Type extends MessageType<GetStatsResponse> {
+class GetPublicStatsResponse$Type extends MessageType<GetPublicStatsResponse> {
     constructor() {
-        super("services.stats.GetStatsResponse", [
+        super("services.stats.GetPublicStatsResponse", [
             { no: 1, name: "stats", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Stat } }
         ]);
     }
-    create(value?: PartialMessage<GetStatsResponse>): GetStatsResponse {
+    create(value?: PartialMessage<GetPublicStatsResponse>): GetPublicStatsResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.stats = {};
         if (value !== undefined)
-            reflectionMergePartial<GetStatsResponse>(this, message, value);
+            reflectionMergePartial<GetPublicStatsResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetStatsResponse): GetStatsResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetPublicStatsResponse): GetPublicStatsResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -100,8 +100,8 @@ class GetStatsResponse$Type extends MessageType<GetStatsResponse> {
         }
         return message;
     }
-    private binaryReadMap1(map: GetStatsResponse["stats"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof GetStatsResponse["stats"] | undefined, val: GetStatsResponse["stats"][any] | undefined;
+    private binaryReadMap1(map: GetPublicStatsResponse["stats"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof GetPublicStatsResponse["stats"] | undefined, val: GetPublicStatsResponse["stats"][any] | undefined;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -111,12 +111,12 @@ class GetStatsResponse$Type extends MessageType<GetStatsResponse> {
                 case 2:
                     val = Stat.internalBinaryRead(reader, reader.uint32(), options);
                     break;
-                default: throw new globalThis.Error("unknown map entry field for services.stats.GetStatsResponse.stats");
+                default: throw new globalThis.Error("unknown map entry field for services.stats.GetPublicStatsResponse.stats");
             }
         }
         map[key ?? ""] = val ?? Stat.create();
     }
-    internalBinaryWrite(message: GetStatsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: GetPublicStatsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* map<string, resources.stats.Stat> stats = 1; */
         for (let k of globalThis.Object.keys(message.stats)) {
             writer.tag(1, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
@@ -131,12 +131,12 @@ class GetStatsResponse$Type extends MessageType<GetStatsResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.stats.GetStatsResponse
+ * @generated MessageType for protobuf message services.stats.GetPublicStatsResponse
  */
-export const GetStatsResponse = new GetStatsResponse$Type();
+export const GetPublicStatsResponse = new GetPublicStatsResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.stats.StatsService
  */
 export const StatsService = new ServiceType("services.stats.StatsService", [
-    { name: "GetStats", options: {}, I: GetStatsRequest, O: GetStatsResponse }
+    { name: "GetPublicStats", options: {}, I: GetPublicStatsRequest, O: GetPublicStatsResponse }
 ]);

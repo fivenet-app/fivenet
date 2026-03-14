@@ -3,7 +3,8 @@ import { UBadge, UButton, ULink } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { getGroupedRowModel } from '@tanstack/vue-table';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
-import { type CategoryValue, type GetStatsResponse, StatsCategory, type StatsPeriod } from '~~/gen/ts/services/documents/stats';
+import { type CategoryValue, StatsCategory, type StatsPeriod } from '~~/gen/ts/resources/stats/stats';
+import type { GetStatsResponse } from '~~/gen/ts/services/documents/stats';
 import type { Range } from './helpers';
 
 const props = defineProps<{

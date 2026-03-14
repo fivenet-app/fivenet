@@ -23,26 +23,26 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type GetStatsRequest struct {
+type GetPublicStatsRequest struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetStatsRequest) Reset() {
-	*x = GetStatsRequest{}
+func (x *GetPublicStatsRequest) Reset() {
+	*x = GetPublicStatsRequest{}
 	mi := &file_services_stats_stats_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetStatsRequest) String() string {
+func (x *GetPublicStatsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetStatsRequest) ProtoMessage() {}
+func (*GetPublicStatsRequest) ProtoMessage() {}
 
-func (x *GetStatsRequest) ProtoReflect() protoreflect.Message {
+func (x *GetPublicStatsRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_services_stats_stats_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -54,39 +54,39 @@ func (x *GetStatsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-type GetStatsRequest_builder struct {
+type GetPublicStatsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 }
 
-func (b0 GetStatsRequest_builder) Build() *GetStatsRequest {
-	m0 := &GetStatsRequest{}
+func (b0 GetPublicStatsRequest_builder) Build() *GetPublicStatsRequest {
+	m0 := &GetPublicStatsRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
 	return m0
 }
 
-type GetStatsResponse struct {
+type GetPublicStatsResponse struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Stats         map[string]*stats.Stat `protobuf:"bytes,1,rep,name=stats,proto3" json:"stats,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetStatsResponse) Reset() {
-	*x = GetStatsResponse{}
+func (x *GetPublicStatsResponse) Reset() {
+	*x = GetPublicStatsResponse{}
 	mi := &file_services_stats_stats_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetStatsResponse) String() string {
+func (x *GetPublicStatsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetStatsResponse) ProtoMessage() {}
+func (*GetPublicStatsResponse) ProtoMessage() {}
 
-func (x *GetStatsResponse) ProtoReflect() protoreflect.Message {
+func (x *GetPublicStatsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_services_stats_stats_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -98,25 +98,25 @@ func (x *GetStatsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *GetStatsResponse) GetStats() map[string]*stats.Stat {
+func (x *GetPublicStatsResponse) GetStats() map[string]*stats.Stat {
 	if x != nil {
 		return x.Stats
 	}
 	return nil
 }
 
-func (x *GetStatsResponse) SetStats(v map[string]*stats.Stat) {
+func (x *GetPublicStatsResponse) SetStats(v map[string]*stats.Stat) {
 	x.Stats = v
 }
 
-type GetStatsResponse_builder struct {
+type GetPublicStatsResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Stats map[string]*stats.Stat
 }
 
-func (b0 GetStatsResponse_builder) Build() *GetStatsResponse {
-	m0 := &GetStatsResponse{}
+func (b0 GetPublicStatsResponse_builder) Build() *GetPublicStatsResponse {
+	m0 := &GetPublicStatsResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
 	x.Stats = b.Stats
@@ -127,29 +127,29 @@ var File_services_stats_stats_proto protoreflect.FileDescriptor
 
 const file_services_stats_stats_proto_rawDesc = "" +
 	"\n" +
-	"\x1aservices/stats/stats.proto\x12\x0eservices.stats\x1a\x1bresources/stats/stats.proto\"\x11\n" +
-	"\x0fGetStatsRequest\"\xa6\x01\n" +
-	"\x10GetStatsResponse\x12A\n" +
-	"\x05stats\x18\x01 \x03(\v2+.services.stats.GetStatsResponse.StatsEntryR\x05stats\x1aO\n" +
+	"\x1aservices/stats/stats.proto\x12\x0eservices.stats\x1a\x1bresources/stats/stats.proto\"\x17\n" +
+	"\x15GetPublicStatsRequest\"\xb2\x01\n" +
+	"\x16GetPublicStatsResponse\x12G\n" +
+	"\x05stats\x18\x01 \x03(\v21.services.stats.GetPublicStatsResponse.StatsEntryR\x05stats\x1aO\n" +
 	"\n" +
 	"StatsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12+\n" +
-	"\x05value\x18\x02 \x01(\v2\x15.resources.stats.StatR\x05value:\x028\x012]\n" +
-	"\fStatsService\x12M\n" +
-	"\bGetStats\x12\x1f.services.stats.GetStatsRequest\x1a .services.stats.GetStatsResponseBHZFgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/stats;statsb\x06proto3"
+	"\x05value\x18\x02 \x01(\v2\x15.resources.stats.StatR\x05value:\x028\x012o\n" +
+	"\fStatsService\x12_\n" +
+	"\x0eGetPublicStats\x12%.services.stats.GetPublicStatsRequest\x1a&.services.stats.GetPublicStatsResponseBHZFgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/stats;statsb\x06proto3"
 
 var file_services_stats_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_services_stats_stats_proto_goTypes = []any{
-	(*GetStatsRequest)(nil),  // 0: services.stats.GetStatsRequest
-	(*GetStatsResponse)(nil), // 1: services.stats.GetStatsResponse
-	nil,                      // 2: services.stats.GetStatsResponse.StatsEntry
-	(*stats.Stat)(nil),       // 3: resources.stats.Stat
+	(*GetPublicStatsRequest)(nil),  // 0: services.stats.GetPublicStatsRequest
+	(*GetPublicStatsResponse)(nil), // 1: services.stats.GetPublicStatsResponse
+	nil,                            // 2: services.stats.GetPublicStatsResponse.StatsEntry
+	(*stats.Stat)(nil),             // 3: resources.stats.Stat
 }
 var file_services_stats_stats_proto_depIdxs = []int32{
-	2, // 0: services.stats.GetStatsResponse.stats:type_name -> services.stats.GetStatsResponse.StatsEntry
-	3, // 1: services.stats.GetStatsResponse.StatsEntry.value:type_name -> resources.stats.Stat
-	0, // 2: services.stats.StatsService.GetStats:input_type -> services.stats.GetStatsRequest
-	1, // 3: services.stats.StatsService.GetStats:output_type -> services.stats.GetStatsResponse
+	2, // 0: services.stats.GetPublicStatsResponse.stats:type_name -> services.stats.GetPublicStatsResponse.StatsEntry
+	3, // 1: services.stats.GetPublicStatsResponse.StatsEntry.value:type_name -> resources.stats.Stat
+	0, // 2: services.stats.StatsService.GetPublicStats:input_type -> services.stats.GetPublicStatsRequest
+	1, // 3: services.stats.StatsService.GetPublicStats:output_type -> services.stats.GetPublicStatsResponse
 	3, // [3:4] is the sub-list for method output_type
 	2, // [2:3] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

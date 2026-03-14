@@ -125,6 +125,15 @@ const links = computed<NavigationMenuItem[]>(() =>
                     icon: 'i-mdi-account-group',
                     to: '/jobs/colleagues',
                     permission: 'jobs.JobsService/ListColleagues' as Perms,
+                    active: route.name?.startsWith('jobs-colleagues'),
+                    children: [
+                        {
+                            label: t('pages.jobs.colleagues.stats.title'),
+                            icon: 'i-mdi-chart-timeline-variant-shimmer',
+                            to: '/jobs/colleagues/stats',
+                            permission: 'jobs.StatsService/GetStats' as Perms,
+                        },
+                    ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
                 },
                 {
                     label: t('common.activity'),
@@ -137,6 +146,15 @@ const links = computed<NavigationMenuItem[]>(() =>
                     icon: 'i-mdi-timeline-clock',
                     to: '/jobs/timeclock',
                     permission: 'jobs.TimeclockService/ListTimeclock' as Perms,
+                    active: route.name?.startsWith('jobs-timeclock'),
+                    children: [
+                        {
+                            label: t('common.inactive_colleagues'),
+                            icon: 'i-mdi-account-remove',
+                            to: '/jobs/timeclock/inactive',
+                            permission: 'jobs.TimeclockService/ListInactiveEmployees' as Perms,
+                        },
+                    ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
                 },
                 {
                     label: t('common.conduct_register', 2),

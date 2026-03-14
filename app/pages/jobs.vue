@@ -33,6 +33,13 @@ const items = computed<NavigationMenuItem[]>(
                 to: { name: 'jobs-colleagues' },
                 permission: 'jobs.JobsService/ListColleagues' as Perms,
                 active: route.name?.startsWith('jobs-colleagues'),
+                children: [
+                    {
+                        label: t('pages.jobs.colleagues.stats.title'),
+                        icon: 'i-mdi-chart-timeline-variant-shimmer',
+                        to: '/jobs/colleagues/stats',
+                    },
+                ],
             },
             {
                 label: t('common.activity'),
@@ -46,6 +53,14 @@ const items = computed<NavigationMenuItem[]>(
                 to: { name: 'jobs-timeclock' },
                 permission: 'jobs.TimeclockService/ListTimeclock' as Perms,
                 active: route.name?.startsWith('jobs-timeclock'),
+                children: [
+                    {
+                        label: t('common.inactive_colleagues'),
+                        icon: 'i-mdi-account-remove',
+                        to: '/jobs/timeclock/inactive',
+                        permission: 'jobs.TimeclockService/ListInactiveEmployees' as Perms,
+                    },
+                ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
             },
             {
                 label: t('pages.jobs.conduct.title'),

@@ -9,6 +9,7 @@
 package stats
 
 import (
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -21,6 +22,106 @@ const (
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
+
+type StatsCategory int32
+
+const (
+	StatsCategory_STATS_CATEGORY_UNSPECIFIED              StatsCategory = 0
+	StatsCategory_STATS_CATEGORY_CUSTOM                   StatsCategory = 1
+	StatsCategory_STATS_CATEGORY_DOCUMENTS_BY_CATEGORY    StatsCategory = 2
+	StatsCategory_STATS_CATEGORY_TOP_LAWS                 StatsCategory = 3
+	StatsCategory_STATS_CATEGORY_PENALTIES_OVER_TIME      StatsCategory = 4
+	StatsCategory_STATS_CATEGORY_EMPLOYEE_COUNT_OVER_TIME StatsCategory = 5
+)
+
+// Enum value maps for StatsCategory.
+var (
+	StatsCategory_name = map[int32]string{
+		0: "STATS_CATEGORY_UNSPECIFIED",
+		1: "STATS_CATEGORY_CUSTOM",
+		2: "STATS_CATEGORY_DOCUMENTS_BY_CATEGORY",
+		3: "STATS_CATEGORY_TOP_LAWS",
+		4: "STATS_CATEGORY_PENALTIES_OVER_TIME",
+		5: "STATS_CATEGORY_EMPLOYEE_COUNT_OVER_TIME",
+	}
+	StatsCategory_value = map[string]int32{
+		"STATS_CATEGORY_UNSPECIFIED":              0,
+		"STATS_CATEGORY_CUSTOM":                   1,
+		"STATS_CATEGORY_DOCUMENTS_BY_CATEGORY":    2,
+		"STATS_CATEGORY_TOP_LAWS":                 3,
+		"STATS_CATEGORY_PENALTIES_OVER_TIME":      4,
+		"STATS_CATEGORY_EMPLOYEE_COUNT_OVER_TIME": 5,
+	}
+)
+
+func (x StatsCategory) Enum() *StatsCategory {
+	p := new(StatsCategory)
+	*p = x
+	return p
+}
+
+func (x StatsCategory) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (StatsCategory) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_stats_stats_proto_enumTypes[0].Descriptor()
+}
+
+func (StatsCategory) Type() protoreflect.EnumType {
+	return &file_resources_stats_stats_proto_enumTypes[0]
+}
+
+func (x StatsCategory) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+type StatsPeriod int32
+
+const (
+	StatsPeriod_STATS_PERIOD_UNSPECIFIED StatsPeriod = 0
+	StatsPeriod_STATS_PERIOD_DAILY       StatsPeriod = 1
+	StatsPeriod_STATS_PERIOD_WEEKLY      StatsPeriod = 2
+	StatsPeriod_STATS_PERIOD_MONTHLY     StatsPeriod = 3
+)
+
+// Enum value maps for StatsPeriod.
+var (
+	StatsPeriod_name = map[int32]string{
+		0: "STATS_PERIOD_UNSPECIFIED",
+		1: "STATS_PERIOD_DAILY",
+		2: "STATS_PERIOD_WEEKLY",
+		3: "STATS_PERIOD_MONTHLY",
+	}
+	StatsPeriod_value = map[string]int32{
+		"STATS_PERIOD_UNSPECIFIED": 0,
+		"STATS_PERIOD_DAILY":       1,
+		"STATS_PERIOD_WEEKLY":      2,
+		"STATS_PERIOD_MONTHLY":     3,
+	}
+)
+
+func (x StatsPeriod) Enum() *StatsPeriod {
+	p := new(StatsPeriod)
+	*p = x
+	return p
+}
+
+func (x StatsPeriod) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (StatsPeriod) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_stats_stats_proto_enumTypes[1].Descriptor()
+}
+
+func (StatsPeriod) Type() protoreflect.EnumType {
+	return &file_resources_stats_stats_proto_enumTypes[1]
+}
+
+func (x StatsPeriod) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
 
 type Stat struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
@@ -90,25 +191,465 @@ func (b0 Stat_builder) Build() *Stat {
 	return m0
 }
 
+type KeyValue struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Value         int64                  `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *KeyValue) Reset() {
+	*x = KeyValue{}
+	mi := &file_resources_stats_stats_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *KeyValue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*KeyValue) ProtoMessage() {}
+
+func (x *KeyValue) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_stats_stats_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *KeyValue) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *KeyValue) GetValue() int64 {
+	if x != nil {
+		return x.Value
+	}
+	return 0
+}
+
+func (x *KeyValue) SetKey(v string) {
+	x.Key = v
+}
+
+func (x *KeyValue) SetValue(v int64) {
+	x.Value = v
+}
+
+type KeyValue_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Key   string
+	Value int64
+}
+
+func (b0 KeyValue_builder) Build() *KeyValue {
+	m0 := &KeyValue{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Key = b.Key
+	x.Value = b.Value
+	return m0
+}
+
+type DailyValue struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Day           *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=day,proto3" json:"day,omitempty"`
+	Value         int64                  `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DailyValue) Reset() {
+	*x = DailyValue{}
+	mi := &file_resources_stats_stats_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DailyValue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DailyValue) ProtoMessage() {}
+
+func (x *DailyValue) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_stats_stats_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *DailyValue) GetDay() *timestamp.Timestamp {
+	if x != nil {
+		return x.Day
+	}
+	return nil
+}
+
+func (x *DailyValue) GetValue() int64 {
+	if x != nil {
+		return x.Value
+	}
+	return 0
+}
+
+func (x *DailyValue) SetDay(v *timestamp.Timestamp) {
+	x.Day = v
+}
+
+func (x *DailyValue) SetValue(v int64) {
+	x.Value = v
+}
+
+func (x *DailyValue) HasDay() bool {
+	if x == nil {
+		return false
+	}
+	return x.Day != nil
+}
+
+func (x *DailyValue) ClearDay() {
+	x.Day = nil
+}
+
+type DailyValue_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Day   *timestamp.Timestamp
+	Value int64
+}
+
+func (b0 DailyValue_builder) Build() *DailyValue {
+	m0 := &DailyValue{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Day = b.Day
+	x.Value = b.Value
+	return m0
+}
+
+type PeriodSeriesValue struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Day           *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=day,proto3" json:"day,omitempty"`
+	Key           string                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	Label         string                 `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
+	Value         int64                  `protobuf:"varint,4,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PeriodSeriesValue) Reset() {
+	*x = PeriodSeriesValue{}
+	mi := &file_resources_stats_stats_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PeriodSeriesValue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PeriodSeriesValue) ProtoMessage() {}
+
+func (x *PeriodSeriesValue) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_stats_stats_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PeriodSeriesValue) GetDay() *timestamp.Timestamp {
+	if x != nil {
+		return x.Day
+	}
+	return nil
+}
+
+func (x *PeriodSeriesValue) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *PeriodSeriesValue) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+func (x *PeriodSeriesValue) GetValue() int64 {
+	if x != nil {
+		return x.Value
+	}
+	return 0
+}
+
+func (x *PeriodSeriesValue) SetDay(v *timestamp.Timestamp) {
+	x.Day = v
+}
+
+func (x *PeriodSeriesValue) SetKey(v string) {
+	x.Key = v
+}
+
+func (x *PeriodSeriesValue) SetLabel(v string) {
+	x.Label = v
+}
+
+func (x *PeriodSeriesValue) SetValue(v int64) {
+	x.Value = v
+}
+
+func (x *PeriodSeriesValue) HasDay() bool {
+	if x == nil {
+		return false
+	}
+	return x.Day != nil
+}
+
+func (x *PeriodSeriesValue) ClearDay() {
+	x.Day = nil
+}
+
+type PeriodSeriesValue_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Day   *timestamp.Timestamp
+	Key   string
+	Label string
+	Value int64
+}
+
+func (b0 PeriodSeriesValue_builder) Build() *PeriodSeriesValue {
+	m0 := &PeriodSeriesValue{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Day = b.Day
+	x.Key = b.Key
+	x.Label = b.Label
+	x.Value = b.Value
+	return m0
+}
+
+type CategoryValue struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Color         *string                `protobuf:"bytes,3,opt,name=color,proto3,oneof" json:"color,omitempty"`
+	Icon          *string                `protobuf:"bytes,4,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	Value         int64                  `protobuf:"varint,5,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CategoryValue) Reset() {
+	*x = CategoryValue{}
+	mi := &file_resources_stats_stats_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CategoryValue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CategoryValue) ProtoMessage() {}
+
+func (x *CategoryValue) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_stats_stats_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *CategoryValue) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *CategoryValue) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CategoryValue) GetColor() string {
+	if x != nil && x.Color != nil {
+		return *x.Color
+	}
+	return ""
+}
+
+func (x *CategoryValue) GetIcon() string {
+	if x != nil && x.Icon != nil {
+		return *x.Icon
+	}
+	return ""
+}
+
+func (x *CategoryValue) GetValue() int64 {
+	if x != nil {
+		return x.Value
+	}
+	return 0
+}
+
+func (x *CategoryValue) SetId(v int64) {
+	x.Id = v
+}
+
+func (x *CategoryValue) SetName(v string) {
+	x.Name = v
+}
+
+func (x *CategoryValue) SetColor(v string) {
+	x.Color = &v
+}
+
+func (x *CategoryValue) SetIcon(v string) {
+	x.Icon = &v
+}
+
+func (x *CategoryValue) SetValue(v int64) {
+	x.Value = v
+}
+
+func (x *CategoryValue) HasColor() bool {
+	if x == nil {
+		return false
+	}
+	return x.Color != nil
+}
+
+func (x *CategoryValue) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return x.Icon != nil
+}
+
+func (x *CategoryValue) ClearColor() {
+	x.Color = nil
+}
+
+func (x *CategoryValue) ClearIcon() {
+	x.Icon = nil
+}
+
+type CategoryValue_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id    int64
+	Name  string
+	Color *string
+	Icon  *string
+	Value int64
+}
+
+func (b0 CategoryValue_builder) Build() *CategoryValue {
+	m0 := &CategoryValue{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Id = b.Id
+	x.Name = b.Name
+	x.Color = b.Color
+	x.Icon = b.Icon
+	x.Value = b.Value
+	return m0
+}
+
 var File_resources_stats_stats_proto protoreflect.FileDescriptor
 
 const file_resources_stats_stats_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/stats/stats.proto\x12\x0fresources.stats\"+\n" +
+	"\x1bresources/stats/stats.proto\x12\x0fresources.stats\x1a#resources/timestamp/timestamp.proto\"+\n" +
 	"\x04Stat\x12\x19\n" +
 	"\x05value\x18\x01 \x01(\x05H\x00R\x05value\x88\x01\x01B\b\n" +
-	"\x06_valueBIZGgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/stats;statsb\x06proto3"
+	"\x06_value\"2\n" +
+	"\bKeyValue\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\x03R\x05value\"T\n" +
+	"\n" +
+	"DailyValue\x120\n" +
+	"\x03day\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x03day\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\x03R\x05value\"\x83\x01\n" +
+	"\x11PeriodSeriesValue\x120\n" +
+	"\x03day\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x03day\x12\x10\n" +
+	"\x03key\x18\x02 \x01(\tR\x03key\x12\x14\n" +
+	"\x05label\x18\x03 \x01(\tR\x05label\x12\x14\n" +
+	"\x05value\x18\x04 \x01(\x03R\x05value\"\x90\x01\n" +
+	"\rCategoryValue\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x19\n" +
+	"\x05color\x18\x03 \x01(\tH\x00R\x05color\x88\x01\x01\x12\x17\n" +
+	"\x04icon\x18\x04 \x01(\tH\x01R\x04icon\x88\x01\x01\x12\x14\n" +
+	"\x05value\x18\x05 \x01(\x03R\x05valueB\b\n" +
+	"\x06_colorB\a\n" +
+	"\x05_icon*\xe6\x01\n" +
+	"\rStatsCategory\x12\x1e\n" +
+	"\x1aSTATS_CATEGORY_UNSPECIFIED\x10\x00\x12\x19\n" +
+	"\x15STATS_CATEGORY_CUSTOM\x10\x01\x12(\n" +
+	"$STATS_CATEGORY_DOCUMENTS_BY_CATEGORY\x10\x02\x12\x1b\n" +
+	"\x17STATS_CATEGORY_TOP_LAWS\x10\x03\x12&\n" +
+	"\"STATS_CATEGORY_PENALTIES_OVER_TIME\x10\x04\x12+\n" +
+	"'STATS_CATEGORY_EMPLOYEE_COUNT_OVER_TIME\x10\x05*v\n" +
+	"\vStatsPeriod\x12\x1c\n" +
+	"\x18STATS_PERIOD_UNSPECIFIED\x10\x00\x12\x16\n" +
+	"\x12STATS_PERIOD_DAILY\x10\x01\x12\x17\n" +
+	"\x13STATS_PERIOD_WEEKLY\x10\x02\x12\x18\n" +
+	"\x14STATS_PERIOD_MONTHLY\x10\x03BIZGgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/stats;statsb\x06proto3"
 
-var file_resources_stats_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_resources_stats_stats_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_resources_stats_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_resources_stats_stats_proto_goTypes = []any{
-	(*Stat)(nil), // 0: resources.stats.Stat
+	(StatsCategory)(0),          // 0: resources.stats.StatsCategory
+	(StatsPeriod)(0),            // 1: resources.stats.StatsPeriod
+	(*Stat)(nil),                // 2: resources.stats.Stat
+	(*KeyValue)(nil),            // 3: resources.stats.KeyValue
+	(*DailyValue)(nil),          // 4: resources.stats.DailyValue
+	(*PeriodSeriesValue)(nil),   // 5: resources.stats.PeriodSeriesValue
+	(*CategoryValue)(nil),       // 6: resources.stats.CategoryValue
+	(*timestamp.Timestamp)(nil), // 7: resources.timestamp.Timestamp
 }
 var file_resources_stats_stats_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	7, // 0: resources.stats.DailyValue.day:type_name -> resources.timestamp.Timestamp
+	7, // 1: resources.stats.PeriodSeriesValue.day:type_name -> resources.timestamp.Timestamp
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_resources_stats_stats_proto_init() }
@@ -117,18 +658,20 @@ func file_resources_stats_stats_proto_init() {
 		return
 	}
 	file_resources_stats_stats_proto_msgTypes[0].OneofWrappers = []any{}
+	file_resources_stats_stats_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_stats_stats_proto_rawDesc), len(file_resources_stats_stats_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   1,
+			NumEnums:      2,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_resources_stats_stats_proto_goTypes,
 		DependencyIndexes: file_resources_stats_stats_proto_depIdxs,
+		EnumInfos:         file_resources_stats_stats_proto_enumTypes,
 		MessageInfos:      file_resources_stats_stats_proto_msgTypes,
 	}.Build()
 	File_resources_stats_stats_proto = out.File

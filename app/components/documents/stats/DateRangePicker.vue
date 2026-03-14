@@ -57,6 +57,7 @@ const isRangeSelected = (range: { days?: number; months?: number; years?: number
 
 const selectRange = (range: { days?: number; months?: number; years?: number }) => {
     const endDate = today(getLocalTimeZone());
+    // Add one day to include the end date in the range
     let startDate = endDate.copy();
 
     if (range.days) {
@@ -81,7 +82,7 @@ const maxDate = new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getD
 
 <template>
     <UPopover :content="{ align: 'start' }" :modal="true">
-        <UButton color="neutral" variant="ghost" icon="i-mdi-calendar" class="group data-[state=open]:bg-elevated">
+        <UButton color="neutral" variant="subtle" icon="i-mdi-calendar" class="group data-[state=open]:bg-elevated">
             <span class="truncate">
                 <template v-if="selected.start">
                     <template v-if="selected.end"> {{ formatDate(selected.start) }} - {{ formatDate(selected.end) }} </template>

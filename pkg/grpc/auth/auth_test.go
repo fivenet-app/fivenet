@@ -28,10 +28,9 @@ func TestGRPCAuthFunc(t *testing.T) {
 			AccountId: testUserCombinedClaim.AccID,
 		},
 	})
-	appCfg, err := appconfig.NewTest(appconfig.TestParams{
+	appCfg := appconfig.NewTest(appconfig.TestParams{
 		LC: fxtest.NewLifecycle(t),
 	})
-	require.NoError(t, err)
 
 	grpcAuth := NewGRPCAuth(ui, tm, appCfg)
 
