@@ -484,7 +484,6 @@ defineShortcuts({
                 :title="$t('common.unable_to_load', [$t('common.citizen', 2)])"
                 :error="error"
                 :retry="refresh"
-                class="p-2"
             />
 
             <UTable

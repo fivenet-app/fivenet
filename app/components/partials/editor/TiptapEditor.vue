@@ -338,26 +338,28 @@ if (props.filestoreService && props.filestoreNamespace && props.targetId) {
 // as it will be handled by the Yjs provider.
 const stopWatch = watch(modelValue, (value) => {
     const editorJSON = unref(editor)?.getJSON();
-    if (!editorJSON || !value) return;
+    if (!editorJSON) return;
 
+    if (!value) {
+        value = '<p></p>';
+    }
     if (typeof value === 'string') {
         value = generateJSON(value, extensions) as JSONContent;
     }
+
     const isSame = isSameDoc(editorJSON, value, extensions);
     if (isSame) return;
 
-    // If not authoritative, don't set the content
-    if (props.enableCollab && ydoc && yjsProvider && !yjsProvider.isAuthoritative) return;
+    if (props.enableCollab && ydoc && yjsProvider) {
+        // If not authoritative, don't set the content
+        if (!yjsProvider.isAuthoritative) return;
 
-    if (value) {
-        if (props.enableCollab && ydoc && yjsProvider) {
-            seedDocument(yjsSchema!, value);
-        } else {
-            unref(editor)?.commands.setContent(value, { emitUpdate: true });
-        }
+        seedDocument(yjsSchema!, value);
+
+        stopWatch();
+    } else {
+        unref(editor)?.commands.setContent(value, { emitUpdate: true });
     }
-
-    if (props.enableCollab && ydoc && yjsProvider && yjsProvider.isAuthoritative) stopWatch();
 });
 
 const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter((emoji) => !emoji.name.startsWith('regional_indicator_'));

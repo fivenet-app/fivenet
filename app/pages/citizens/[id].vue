@@ -233,7 +233,11 @@ const isOpen = ref(false);
                 :error="error"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="!user" />
+            <DataNoDataBlock
+                v-else-if="!user"
+                icon="i-mdi-account"
+                :message="$t('common.not_found', [$t('common.citizen', 1)])"
+            />
 
             <NuxtPage v-else v-model:user="user" @refresh="() => refresh()" />
         </template>

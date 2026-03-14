@@ -9,7 +9,6 @@ const props = withDefaults(
         retry?: () => Promise<unknown>;
         retryMessage?: string;
         close?: () => void;
-        padded?: boolean;
     }>(),
     {
         title: undefined,
@@ -18,22 +17,17 @@ const props = withDefaults(
         retry: undefined,
         retryMessage: undefined,
         close: undefined,
-        padded: false,
     },
 );
 
-const err = ref<CommonError | undefined>();
-
-function setFromProps(): void {
-    if (props.error) {
-        err.value = parseError(props.error);
-    } else {
-        err.value = undefined;
-    }
-}
-
-setFromProps();
-watch(props, setFromProps);
+const err = computed<CommonError | undefined>({
+    get() {
+        return props.error ? parseError(props.error) : undefined;
+    },
+    set() {
+        // noop
+    },
+});
 
 const disabled = ref(true);
 
@@ -41,7 +35,7 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
 </script>
 
 <template>
-    <div :class="padded ? 'm-2' : ''">
+    <div class="m-2">
         <UAlert
             class="relative w-full min-w-50"
             color="error"
@@ -81,7 +75,7 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
                       }
                     : undefined
             "
-            @close="close && close()"
+            @close="close?.()"
         />
     </div>
 </template>

@@ -83,7 +83,6 @@ const confirmModal = overlay.create(ConfirmModalWithReason);
             :title="$t('common.unable_to_load', [$t('common.approvals', 2)])"
             :error="error"
             :retry="refresh"
-            class="p-2"
         />
         <DataNoDataBlock v-else-if="data?.approvals.length === 0" icon="i-mdi-approval" :type="$t('common.approvals', 2)" />
 
