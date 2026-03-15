@@ -113,6 +113,18 @@ const categories = computed(() =>
     ].flatMap((item) => (item.hidden ? [] : [item])),
 );
 
+const breadcrumbs = computed(() => [
+    {
+        label: t('pages.documents.title'),
+        icon: 'i-mdi-file-document',
+        to: '/documents',
+    },
+    {
+        label: t('pages.documents.stats.title'),
+        icon: 'i-mdi-graph-box-outline',
+    },
+]);
+
 const isPenalties = computed(() => query.category === StatsCategory.PENALTIES_OVER_TIME);
 </script>
 
@@ -128,6 +140,12 @@ const isPenalties = computed(() => query.category === StatsCategory.PENALTIES_OV
                     <PartialsBackButton fallback-to="/documents" />
                 </template>
             </UDashboardNavbar>
+
+            <UDashboardToolbar>
+                <template #left>
+                    <UBreadcrumb :items="breadcrumbs" />
+                </template>
+            </UDashboardToolbar>
 
             <UDashboardToolbar>
                 <template #left>

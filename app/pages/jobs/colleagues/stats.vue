@@ -20,6 +20,8 @@ definePageMeta({
     permission: 'jobs.StatsService/GetStats',
 });
 
+const { t } = useI18n();
+
 const schema = z.object({
     range: z
         .object({
@@ -68,11 +70,29 @@ watch(
     () => [query.range.start.getTime(), query.range.end.getTime()],
     async () => await refresh(),
 );
+
+const breadcrumbs = computed(() => [
+    {
+        label: t('pages.jobs.colleagues.title'),
+        icon: 'i-mdi-account-group',
+        to: '/jobs/colleagues',
+    },
+    {
+        label: t('pages.jobs.colleagues.stats.title'),
+        icon: 'i-mdi-chart-timeline-variant-shimmer',
+    },
+]);
 </script>
 
 <template>
     <UDashboardPanel :ui="{ root: 'min-h-0' }">
         <template #header>
+            <UDashboardToolbar>
+                <template #left>
+                    <UBreadcrumb :items="breadcrumbs" />
+                </template>
+            </UDashboardToolbar>
+
             <UDashboardToolbar>
                 <template #left>
                     <DateRangePicker v-model="query.range" />

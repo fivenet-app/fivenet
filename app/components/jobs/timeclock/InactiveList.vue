@@ -195,12 +195,30 @@ const columns = computed(() =>
     ).filter((c) => c !== undefined),
 );
 
+const breadcrumbs = computed(() => [
+    {
+        label: t('pages.jobs.timeclock.title'),
+        icon: 'i-mdi-timeline-clock',
+        to: '/jobs/timeclock',
+    },
+    {
+        label: t('common.inactive_colleagues'),
+        icon: 'i-mdi-account-remove',
+    },
+]);
+
 const { game } = useAppConfig();
 </script>
 
 <template>
     <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
+            <UDashboardToolbar>
+                <template #left>
+                    <UBreadcrumb :items="breadcrumbs" />
+                </template>
+            </UDashboardToolbar>
+
             <UDashboardToolbar>
                 <template #default>
                     <UForm
