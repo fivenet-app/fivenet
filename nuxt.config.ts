@@ -250,6 +250,7 @@ export default defineNuxtConfig({
                 '@tiptap/pm/view',
                 '@samemichaeltadele/tiptap-compare',
                 'vue-countup-v3',
+                'mdi-vue3',
             ],
         },
         server: {

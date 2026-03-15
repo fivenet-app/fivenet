@@ -132,12 +132,12 @@ func (s *Server) CompleteJobs(
 	resp := &pbcompletor.CompleteJobsResponse{}
 	if search != "" {
 		var err error
-		resp.Jobs, err = s.jobsS.Search(ctx, search, exactMatch)
+		resp.Jobs, err = s.jobsSearch.Search(ctx, search, exactMatch)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 		}
 	} else {
-		resp.Jobs = s.jobsS.List()
+		resp.Jobs = s.jobsSearch.List()
 	}
 
 	return resp, nil
@@ -262,7 +262,7 @@ func (s *Server) CompleteCitizenLabels(
 		ORDER_BY(
 			tCitizensLabelsJob.SortKey.ASC(),
 		).
-		LIMIT(10)
+		LIMIT(15)
 
 	resp := &pbcompletor.CompleteCitizenLabelsResponse{
 		Labels: []*userslabels.Label{},

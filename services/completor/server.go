@@ -15,12 +15,12 @@ import (
 type Server struct {
 	pbcompletor.CompletorServiceServer
 
-	db       *sql.DB
-	p        perms.Permissions
-	jobsS    *mstlystcdata.JobsSearch
-	laws     *mstlystcdata.Laws
-	tracker  tracker.ITracker
-	enricher *mstlystcdata.UserAwareEnricher
+	db         *sql.DB
+	p          perms.Permissions
+	jobsSearch *mstlystcdata.JobsSearch
+	laws       *mstlystcdata.Laws
+	tracker    tracker.ITracker
+	enricher   *mstlystcdata.UserAwareEnricher
 
 	customDB config.CustomDB
 }
@@ -39,12 +39,12 @@ type Params struct {
 
 func NewServer(p Params) *Server {
 	s := &Server{
-		db:       p.DB,
-		p:        p.Perms,
-		jobsS:    p.JobsSearch,
-		laws:     p.Laws,
-		tracker:  p.Tracker,
-		enricher: p.Enricher,
+		db:         p.DB,
+		p:          p.Perms,
+		jobsSearch: p.JobsSearch,
+		laws:       p.Laws,
+		tracker:    p.Tracker,
+		enricher:   p.Enricher,
 
 		customDB: p.Config.Database.Custom,
 	}

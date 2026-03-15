@@ -153,19 +153,36 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 		}
 	}
 
+	// No categories found in database, remove all from cache
+	if len(dest) == 0 {
+		if err := c.Clear(ctx); err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	// Update cached categories
 	errs := multierr.Combine()
-	categoriesPerJob := map[string][]*documentscategory.Category{}
+	categoriesPerJob := map[string]interface{}{}
 	for _, d := range dest {
 		key := strconv.FormatInt(d.GetId(), 10)
 		if err := c.Put(ctx, key, d); err != nil {
 			errs = multierr.Append(errs, err)
 		}
 
-		if _, ok := categoriesPerJob[d.GetJob()]; !ok {
-			categoriesPerJob[d.GetJob()] = []*documentscategory.Category{}
-		}
-		categoriesPerJob[d.GetJob()] = append(categoriesPerJob[d.GetJob()], d)
+		categoriesPerJob[key] = struct{}{}
 	}
+
+	// Delete non-existing categories, based on which are in the database
+	c.Range(func(key string, value *documentscategory.Category) bool {
+		if _, ok := categoriesPerJob[key]; !ok {
+			if err := c.Delete(ctx, key); err != nil {
+				errs = multierr.Append(errs, err)
+			}
+		}
+		return true
+	})
 
 	return errs
 }
