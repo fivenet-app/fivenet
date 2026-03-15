@@ -63,7 +63,28 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run Lint
-        run: pnpm lint
+        run: pnpm run lint
+
+  node-vitest-tests:
+    name: Node Vitest Test
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Lint
+        run: pnpm run test
 
   node-build-tests:
     name: Node Build Test
@@ -85,7 +106,7 @@ jobs:
       - name: Run pnpm build
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
-        run: pnpm build
+        run: pnpm run build
 
   binary-build:
     name: Binaries Build Test
@@ -115,6 +136,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' && !inputs.skipImageBuild }}
     needs:
       - node-lint-tests
+      - node-vitest-tests
       - node-build-tests
       - golang-tests
     uses: ./.github/workflows/build_image.yml
