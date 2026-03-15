@@ -54,9 +54,7 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
         calendarIds: [],
     });
 
-    if (activeCalendarIds.value.length === 0) {
-        activeCalendarIds.value = response.calendars.map((c) => c.id);
-    }
+    if (activeCalendarIds.value.length === 0) activeCalendarIds.value = response.calendars.map((c) => c.id);
 
     refresh();
 

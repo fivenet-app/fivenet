@@ -251,6 +251,7 @@ export default defineNuxtConfig({
                 '@samemichaeltadele/tiptap-compare',
                 'vue-countup-v3',
                 'mdi-vue3',
+                'v-calendar',
             ],
         },
         server: {

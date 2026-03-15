@@ -594,7 +594,7 @@ provide('yjsProvider', provider);
                     :items="items"
                     variant="link"
                     :unmount-on-hide="false"
-                    :ui="{ list: 'mx-auto', content: 'flex flex-col flex-1 min-h-0 max-h-full overflow-y-hidden' }"
+                    :ui="{ list: 'mx-auto', content: 'flex flex-col flex-1 min-h-0 max-h-full overflow-y-auto' }"
                 >
                     <template #content>
                         <UDashboardToolbar>
