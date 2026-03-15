@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { VisAxis, VisCrosshair, VisGroupedBar, VisTooltip, VisXYContainer } from '@unovis/vue';
+import { VisAxis, VisCrosshair, VisGroupedBar, VisLine, VisTooltip, VisXYContainer } from '@unovis/vue';
 import type { StatsPeriod } from '~~/gen/ts/resources/stats/stats';
-import { buildChartData, type ChartStats, type DataRecord, type Range } from './helpers';
+import { buildChartData, type ChartStats, type DataRecord, type Range } from '../../../documents/stats/helpers';
 
 const props = defineProps<{
     stats: ChartStats;
@@ -43,10 +43,20 @@ const total = computed(() => {
 
     return props.stats?.totalValue ?? calculated;
 });
+const averageVacation = computed(() => {
+    const points = data.value ?? [];
+    if (points.length === 0) {
+        return 0;
+    }
+
+    const totalVacation = points.reduce((acc: number, point) => acc + point.vacation, 0);
+    return totalVacation / points.length;
+});
 
 const { format: formatNumber } = useIntlNumberFormatWithOptions({
     style: 'decimal',
     currency: undefined,
+    maximumFractionDigits: 0,
 });
 const { format: formatDate } = useDateFormatterWithOptions('short');
 
@@ -63,7 +73,7 @@ const template = (d?: DataRecord) => {
         return '';
     }
 
-    return `${formatDate(d.date)}: ${formatNumber(d.amount)}`;
+    return `${formatDate(d.date)}: ${formatNumber(d.amount)} (${formatNumber(d.vacation)})`;
 };
 </script>
 
@@ -72,16 +82,20 @@ const template = (d?: DataRecord) => {
         <template #header>
             <div>
                 <p class="mb-1.5 text-xs text-muted uppercase">
-                    {{ stats.averageValue ? $t('common.avg') : $t('common.count') }}
+                    {{ stats.averageValue ? $t('common.avg') : $t('common.count') }}: {{ $t('common.colleague', 2) }}
+
+                    ({{ $t('common.absent') }})
                 </p>
                 <p class="text-3xl font-semibold text-highlighted">
                     {{ formatNumber(stats.averageValue ? stats.averageValue : total) }}
+                    ({{ formatNumber(averageVacation) }})
                 </p>
             </div>
         </template>
 
         <VisXYContainer :data="data ?? []" :padding="{ top: 40 }" class="h-96" :width="width">
             <VisGroupedBar :x="x" :y="y" :color="barColors" />
+            <VisLine :x="x" :y="(d: DataRecord) => d.vacation" color="var(--ui-warning)" />
 
             <VisAxis type="x" :x="x" :tick-format="xTicks" />
 

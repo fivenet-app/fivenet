@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { differenceInDays, sub } from 'date-fns';
 import { z } from 'zod';
-import ChartClient from '~/components/documents/stats/Chart.client.vue';
 import DateRangePicker from '~/components/documents/stats/DateRangePicker.vue';
-import { fillEmployeeSeriesData } from '~/components/documents/stats/helpers';
+import ChartClient from '~/components/jobs/colleagues/stats/Chart.client.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -65,18 +64,6 @@ const {
     return response;
 });
 
-const chartStats = computed(() => {
-    if (!response.value) {
-        return undefined;
-    }
-
-    return fillEmployeeSeriesData({
-        stats: response.value,
-        period: selectedPeriod.value,
-        range: query.range,
-    });
-});
-
 watch(
     () => [query.range.start.getTime(), query.range.end.getTime()],
     async () => await refresh(),
@@ -93,6 +80,12 @@ watch(
 
                 <template #right>
                     <RefreshButton @click="() => refresh()" />
+                    <UButton
+                        to="/jobs/colleagues"
+                        icon="i-mdi-arrow-left"
+                        variant="subtle"
+                        :label="$t('pages.jobs.colleagues.title')"
+                    />
                 </template>
             </UDashboardToolbar>
         </template>
@@ -112,12 +105,7 @@ watch(
             />
 
             <template v-else>
-                <ChartClient
-                    :stats="chartStats ?? response"
-                    :is-penalties="false"
-                    :period="selectedPeriod"
-                    :range="query.range"
-                />
+                <ChartClient :stats="response" :is-penalties="false" :period="selectedPeriod" :range="query.range" />
             </template>
         </template>
     </UDashboardPanel>
