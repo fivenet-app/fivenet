@@ -117,9 +117,7 @@ func (m *AppConfig) Sanitize() error {
 	}
 
 	// Field: Version
-	if m.Version != nil {
-		*m.Version = htmlsanitizer.Sanitize(*m.Version)
-	}
+	m.Version = htmlsanitizer.Sanitize(m.Version)
 
 	// Field: Website
 	if m.Website != nil {

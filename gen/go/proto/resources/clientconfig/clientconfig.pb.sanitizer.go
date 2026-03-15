@@ -138,22 +138,6 @@ func (m *Discord) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *Display) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: CurrencyName
-	m.CurrencyName = htmlsanitizer.Sanitize(m.CurrencyName)
-
-	// Field: IntlLocale
-	m.IntlLocale = htmlsanitizer.Sanitize(m.IntlLocale)
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *FeatureGates) Sanitize() error {
 	if m == nil {
 		return nil
@@ -198,36 +182,6 @@ func (m *Game) Sanitize() error {
 
 	// Field: UnemployedJobName
 	m.UnemployedJobName = htmlsanitizer.Sanitize(m.UnemployedJobName)
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *Links) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Imprint
-	if m.Imprint != nil {
-		*m.Imprint = htmlsanitizer.Sanitize(*m.Imprint)
-	}
-
-	// Field: PrivacyPolicy
-	if m.PrivacyPolicy != nil {
-		*m.PrivacyPolicy = htmlsanitizer.Sanitize(*m.PrivacyPolicy)
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *Livemap) Sanitize() error {
-	if m == nil {
-		return nil
-	}
 
 	return nil
 }
@@ -296,25 +250,6 @@ func (m *System) Sanitize() error {
 	// Field: Otlp
 	if m.Otlp != nil {
 		if v, ok := any(m.GetOtlp()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *Website) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Links
-	if m.Links != nil {
-		if v, ok := any(m.GetLinks()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

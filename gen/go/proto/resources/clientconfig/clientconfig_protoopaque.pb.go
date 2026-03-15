@@ -31,11 +31,11 @@ type ClientConfig struct {
 	xxx_hidden_DefaultLocale string                 `protobuf:"bytes,2,opt,name=default_locale,json=defaultLocale,proto3"`
 	xxx_hidden_Auth          *Auth                  `protobuf:"bytes,3,opt,name=auth,proto3"`
 	xxx_hidden_Discord       *Discord               `protobuf:"bytes,4,opt,name=discord,proto3"`
-	xxx_hidden_Website       *Website               `protobuf:"bytes,5,opt,name=website,proto3"`
+	xxx_hidden_Website       *settings.Website      `protobuf:"bytes,5,opt,name=website,proto3"`
 	xxx_hidden_FeatureGates  *FeatureGates          `protobuf:"bytes,6,opt,name=feature_gates,json=featureGates,proto3"`
 	xxx_hidden_Game          *Game                  `protobuf:"bytes,7,opt,name=game,proto3"`
 	xxx_hidden_System        *System                `protobuf:"bytes,8,opt,name=system,proto3"`
-	xxx_hidden_Display       *Display               `protobuf:"bytes,9,opt,name=display,proto3"`
+	xxx_hidden_Display       *settings.Display      `protobuf:"bytes,9,opt,name=display,proto3"`
 	xxx_hidden_QuickButtons  *settings.QuickButtons `protobuf:"bytes,11,opt,name=quick_buttons,json=quickButtons,proto3"`
 	xxx_hidden_Data          *settings.Data         `protobuf:"bytes,12,opt,name=data,proto3"`
 	unknownFields            protoimpl.UnknownFields
@@ -95,7 +95,7 @@ func (x *ClientConfig) GetDiscord() *Discord {
 	return nil
 }
 
-func (x *ClientConfig) GetWebsite() *Website {
+func (x *ClientConfig) GetWebsite() *settings.Website {
 	if x != nil {
 		return x.xxx_hidden_Website
 	}
@@ -123,7 +123,7 @@ func (x *ClientConfig) GetSystem() *System {
 	return nil
 }
 
-func (x *ClientConfig) GetDisplay() *Display {
+func (x *ClientConfig) GetDisplay() *settings.Display {
 	if x != nil {
 		return x.xxx_hidden_Display
 	}
@@ -160,7 +160,7 @@ func (x *ClientConfig) SetDiscord(v *Discord) {
 	x.xxx_hidden_Discord = v
 }
 
-func (x *ClientConfig) SetWebsite(v *Website) {
+func (x *ClientConfig) SetWebsite(v *settings.Website) {
 	x.xxx_hidden_Website = v
 }
 
@@ -176,7 +176,7 @@ func (x *ClientConfig) SetSystem(v *System) {
 	x.xxx_hidden_System = v
 }
 
-func (x *ClientConfig) SetDisplay(v *Display) {
+func (x *ClientConfig) SetDisplay(v *settings.Display) {
 	x.xxx_hidden_Display = v
 }
 
@@ -294,11 +294,11 @@ type ClientConfig_builder struct {
 	DefaultLocale string
 	Auth          *Auth
 	Discord       *Discord
-	Website       *Website
+	Website       *settings.Website
 	FeatureGates  *FeatureGates
 	Game          *Game
 	System        *System
-	Display       *Display
+	Display       *settings.Display
 	QuickButtons  *settings.QuickButtons
 	Data          *settings.Data
 }
@@ -585,199 +585,6 @@ func (b0 Discord_builder) Build() *Discord {
 	return m0
 }
 
-type Website struct {
-	state                protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Links     *Links                 `protobuf:"bytes,1,opt,name=links,proto3"`
-	xxx_hidden_StatsPage bool                   `protobuf:"varint,2,opt,name=stats_page,json=statsPage,proto3"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
-}
-
-func (x *Website) Reset() {
-	*x = Website{}
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Website) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Website) ProtoMessage() {}
-
-func (x *Website) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *Website) GetLinks() *Links {
-	if x != nil {
-		return x.xxx_hidden_Links
-	}
-	return nil
-}
-
-func (x *Website) GetStatsPage() bool {
-	if x != nil {
-		return x.xxx_hidden_StatsPage
-	}
-	return false
-}
-
-func (x *Website) SetLinks(v *Links) {
-	x.xxx_hidden_Links = v
-}
-
-func (x *Website) SetStatsPage(v bool) {
-	x.xxx_hidden_StatsPage = v
-}
-
-func (x *Website) HasLinks() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Links != nil
-}
-
-func (x *Website) ClearLinks() {
-	x.xxx_hidden_Links = nil
-}
-
-type Website_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Links     *Links
-	StatsPage bool
-}
-
-func (b0 Website_builder) Build() *Website {
-	m0 := &Website{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Links = b.Links
-	x.xxx_hidden_StatsPage = b.StatsPage
-	return m0
-}
-
-type Links struct {
-	state                    protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Imprint       *string                `protobuf:"bytes,1,opt,name=imprint,proto3,oneof"`
-	xxx_hidden_PrivacyPolicy *string                `protobuf:"bytes,2,opt,name=privacy_policy,json=privacyPolicy,proto3,oneof"`
-	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
-	XXX_presence             [1]uint32
-	unknownFields            protoimpl.UnknownFields
-	sizeCache                protoimpl.SizeCache
-}
-
-func (x *Links) Reset() {
-	*x = Links{}
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Links) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Links) ProtoMessage() {}
-
-func (x *Links) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *Links) GetImprint() string {
-	if x != nil {
-		if x.xxx_hidden_Imprint != nil {
-			return *x.xxx_hidden_Imprint
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *Links) GetPrivacyPolicy() string {
-	if x != nil {
-		if x.xxx_hidden_PrivacyPolicy != nil {
-			return *x.xxx_hidden_PrivacyPolicy
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *Links) SetImprint(v string) {
-	x.xxx_hidden_Imprint = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
-}
-
-func (x *Links) SetPrivacyPolicy(v string) {
-	x.xxx_hidden_PrivacyPolicy = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
-}
-
-func (x *Links) HasImprint() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *Links) HasPrivacyPolicy() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
-func (x *Links) ClearImprint() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Imprint = nil
-}
-
-func (x *Links) ClearPrivacyPolicy() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_PrivacyPolicy = nil
-}
-
-type Links_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Imprint       *string
-	PrivacyPolicy *string
-}
-
-func (b0 Links_builder) Build() *Links {
-	m0 := &Links{}
-	b, x := &b0, m0
-	_, _ = b, x
-	if b.Imprint != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_Imprint = b.Imprint
-	}
-	if b.PrivacyPolicy != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_PrivacyPolicy = b.PrivacyPolicy
-	}
-	return m0
-}
-
 type FeatureGates struct {
 	state         protoimpl.MessageState `protogen:"opaque.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -786,7 +593,7 @@ type FeatureGates struct {
 
 func (x *FeatureGates) Reset() {
 	*x = FeatureGates{}
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[6]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -798,7 +605,7 @@ func (x *FeatureGates) String() string {
 func (*FeatureGates) ProtoMessage() {}
 
 func (x *FeatureGates) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[6]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -825,7 +632,7 @@ type Game struct {
 	state                                      protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_UnemployedJobName               string                 `protobuf:"bytes,1,opt,name=unemployed_job_name,json=unemployedJobName,proto3"`
 	xxx_hidden_StartJobGrade                   int32                  `protobuf:"varint,2,opt,name=start_job_grade,json=startJobGrade,proto3"`
-	xxx_hidden_Livemap                         *Livemap               `protobuf:"bytes,3,opt,name=livemap,proto3"`
+	xxx_hidden_Livemap                         *settings.Livemap      `protobuf:"bytes,3,opt,name=livemap,proto3"`
 	xxx_hidden_MaxWantedDurationUserEnabled    bool                   `protobuf:"varint,4,opt,name=max_wanted_duration_user_enabled,json=maxWantedDurationUserEnabled,proto3"`
 	xxx_hidden_MaxWantedDurationUser           *durationpb.Duration   `protobuf:"bytes,5,opt,name=max_wanted_duration_user,json=maxWantedDurationUser,proto3,oneof"`
 	xxx_hidden_MaxWantedDurationVehicleEnabled bool                   `protobuf:"varint,6,opt,name=max_wanted_duration_vehicle_enabled,json=maxWantedDurationVehicleEnabled,proto3"`
@@ -836,7 +643,7 @@ type Game struct {
 
 func (x *Game) Reset() {
 	*x = Game{}
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[7]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -848,7 +655,7 @@ func (x *Game) String() string {
 func (*Game) ProtoMessage() {}
 
 func (x *Game) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[7]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -873,7 +680,7 @@ func (x *Game) GetStartJobGrade() int32 {
 	return 0
 }
 
-func (x *Game) GetLivemap() *Livemap {
+func (x *Game) GetLivemap() *settings.Livemap {
 	if x != nil {
 		return x.xxx_hidden_Livemap
 	}
@@ -916,7 +723,7 @@ func (x *Game) SetStartJobGrade(v int32) {
 	x.xxx_hidden_StartJobGrade = v
 }
 
-func (x *Game) SetLivemap(v *Livemap) {
+func (x *Game) SetLivemap(v *settings.Livemap) {
 	x.xxx_hidden_Livemap = v
 }
 
@@ -974,7 +781,7 @@ type Game_builder struct {
 
 	UnemployedJobName               string
 	StartJobGrade                   int32
-	Livemap                         *Livemap
+	Livemap                         *settings.Livemap
 	MaxWantedDurationUserEnabled    bool
 	MaxWantedDurationUser           *durationpb.Duration
 	MaxWantedDurationVehicleEnabled bool
@@ -995,63 +802,6 @@ func (b0 Game_builder) Build() *Game {
 	return m0
 }
 
-type Livemap struct {
-	state                       protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_EnableCayoPerico bool                   `protobuf:"varint,1,opt,name=enable_cayo_perico,json=enableCayoPerico,proto3"`
-	unknownFields               protoimpl.UnknownFields
-	sizeCache                   protoimpl.SizeCache
-}
-
-func (x *Livemap) Reset() {
-	*x = Livemap{}
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[8]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Livemap) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Livemap) ProtoMessage() {}
-
-func (x *Livemap) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[8]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *Livemap) GetEnableCayoPerico() bool {
-	if x != nil {
-		return x.xxx_hidden_EnableCayoPerico
-	}
-	return false
-}
-
-func (x *Livemap) SetEnableCayoPerico(v bool) {
-	x.xxx_hidden_EnableCayoPerico = v
-}
-
-type Livemap_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	EnableCayoPerico bool
-}
-
-func (b0 Livemap_builder) Build() *Livemap {
-	m0 := &Livemap{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_EnableCayoPerico = b.EnableCayoPerico
-	return m0
-}
-
 type System struct {
 	state                           protoimpl.MessageState  `protogen:"opaque.v1"`
 	xxx_hidden_BannerMessageEnabled bool                    `protobuf:"varint,1,opt,name=banner_message_enabled,json=bannerMessageEnabled,proto3"`
@@ -1063,7 +813,7 @@ type System struct {
 
 func (x *System) Reset() {
 	*x = System{}
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[9]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1075,7 +825,7 @@ func (x *System) String() string {
 func (*System) ProtoMessage() {}
 
 func (x *System) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[9]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1170,7 +920,7 @@ type OTLPFrontend struct {
 
 func (x *OTLPFrontend) Reset() {
 	*x = OTLPFrontend{}
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[10]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1182,7 +932,7 @@ func (x *OTLPFrontend) String() string {
 func (*OTLPFrontend) ProtoMessage() {}
 
 func (x *OTLPFrontend) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[10]
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1244,192 +994,102 @@ func (b0 OTLPFrontend_builder) Build() *OTLPFrontend {
 	return m0
 }
 
-type Display struct {
-	state                   protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_IntlLocale   string                 `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3"`
-	xxx_hidden_CurrencyName string                 `protobuf:"bytes,2,opt,name=currency_name,json=currencyName,proto3"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
-}
-
-func (x *Display) Reset() {
-	*x = Display{}
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Display) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Display) ProtoMessage() {}
-
-func (x *Display) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *Display) GetIntlLocale() string {
-	if x != nil {
-		return x.xxx_hidden_IntlLocale
-	}
-	return ""
-}
-
-func (x *Display) GetCurrencyName() string {
-	if x != nil {
-		return x.xxx_hidden_CurrencyName
-	}
-	return ""
-}
-
-func (x *Display) SetIntlLocale(v string) {
-	x.xxx_hidden_IntlLocale = v
-}
-
-func (x *Display) SetCurrencyName(v string) {
-	x.xxx_hidden_CurrencyName = v
-}
-
-type Display_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
-	IntlLocale string
-	// ISO 4217 currency code (e.g. "USD", "EUR")
-	CurrencyName string
-}
-
-func (b0 Display_builder) Build() *Display {
-	m0 := &Display{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_IntlLocale = b.IntlLocale
-	x.xxx_hidden_CurrencyName = b.CurrencyName
-	return m0
-}
-
 var File_resources_clientconfig_clientconfig_proto protoreflect.FileDescriptor
 
 const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\n" +
-	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1fresources/settings/config.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\xd2\x05\n" +
-	"\fClientConfig\x12\x18\n" +
-	"\aversion\x18\x01 \x01(\tR\aversion\x12@\n" +
-	"\x0edefault_locale\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14json:\"defaultLocale\"R\rdefaultLocale\x120\n" +
-	"\x04auth\x18\x03 \x01(\v2\x1c.resources.clientconfig.AuthR\x04auth\x129\n" +
-	"\adiscord\x18\x04 \x01(\v2\x1f.resources.clientconfig.DiscordR\adiscord\x129\n" +
-	"\awebsite\x18\x05 \x01(\v2\x1f.resources.clientconfig.WebsiteR\awebsite\x12c\n" +
-	"\rfeature_gates\x18\x06 \x01(\v2$.resources.clientconfig.FeatureGatesB\x18\x9a\x84\x9e\x03\x13json:\"featureGates\"R\ffeatureGates\x120\n" +
-	"\x04game\x18\a \x01(\v2\x1c.resources.clientconfig.GameR\x04game\x126\n" +
-	"\x06system\x18\b \x01(\v2\x1e.resources.clientconfig.SystemR\x06system\x12N\n" +
-	"\adisplay\x18\t \x01(\v2\x1f.resources.clientconfig.DisplayB\x13\x9a\x84\x9e\x03\x0ejson:\"display\"R\adisplay\x12_\n" +
+	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1fresources/settings/config.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\xc1\x06\n" +
+	"\fClientConfig\x12-\n" +
+	"\aversion\x18\x01 \x01(\tB\x13\x9a\x84\x9e\x03\x0ejson:\"version\"R\aversion\x12@\n" +
+	"\x0edefault_locale\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14json:\"defaultLocale\"R\rdefaultLocale\x12B\n" +
+	"\x04auth\x18\x03 \x01(\v2\x1c.resources.clientconfig.AuthB\x10\x9a\x84\x9e\x03\vjson:\"auth\"R\x04auth\x12N\n" +
+	"\adiscord\x18\x04 \x01(\v2\x1f.resources.clientconfig.DiscordB\x13\x9a\x84\x9e\x03\x0ejson:\"discord\"R\adiscord\x12J\n" +
+	"\awebsite\x18\x05 \x01(\v2\x1b.resources.settings.WebsiteB\x13\x9a\x84\x9e\x03\x0ejson:\"website\"R\awebsite\x12c\n" +
+	"\rfeature_gates\x18\x06 \x01(\v2$.resources.clientconfig.FeatureGatesB\x18\x9a\x84\x9e\x03\x13json:\"featureGates\"R\ffeatureGates\x12B\n" +
+	"\x04game\x18\a \x01(\v2\x1c.resources.clientconfig.GameB\x10\x9a\x84\x9e\x03\vjson:\"game\"R\x04game\x12J\n" +
+	"\x06system\x18\b \x01(\v2\x1e.resources.clientconfig.SystemB\x12\x9a\x84\x9e\x03\rjson:\"system\"R\x06system\x12J\n" +
+	"\adisplay\x18\t \x01(\v2\x1b.resources.settings.DisplayB\x13\x9a\x84\x9e\x03\x0ejson:\"display\"R\adisplay\x12_\n" +
 	"\rquick_buttons\x18\v \x01(\v2 .resources.settings.QuickButtonsB\x18\x9a\x84\x9e\x03\x13json:\"quickButtons\"R\fquickButtons\x12>\n" +
 	"\x04data\x18\f \x01(\v2\x18.resources.settings.DataB\x10\x9a\x84\x9e\x03\vjson:\"data\"R\x04data\"\xe5\x01\n" +
 	"\x04Auth\x12@\n" +
 	"\x0esignup_enabled\x18\x01 \x01(\bB\x19\x9a\x84\x9e\x03\x14json:\"signupEnabled\"R\rsignupEnabled\x12>\n" +
 	"\x0elast_char_lock\x18\x02 \x01(\bB\x18\x9a\x84\x9e\x03\x13json:\"lastCharLock\"R\flastCharLock\x12[\n" +
-	"\tproviders\x18\x03 \x03(\v2&.resources.clientconfig.ProviderConfigB\x15\x9a\x84\x9e\x03\x10json:\"providers\"R\tproviders\"x\n" +
-	"\x0eProviderConfig\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
-	"\x05label\x18\x02 \x01(\tR\x05label\x12\x17\n" +
-	"\x04icon\x18\x03 \x01(\tH\x00R\x04icon\x88\x01\x01\x12\x1a\n" +
-	"\bhomepage\x18\x04 \x01(\tR\bhomepageB\a\n" +
+	"\tproviders\x18\x03 \x03(\v2&.resources.clientconfig.ProviderConfigB\x15\x9a\x84\x9e\x03\x10json:\"providers\"R\tproviders\"\xcf\x01\n" +
+	"\x0eProviderConfig\x12$\n" +
+	"\x04name\x18\x01 \x01(\tB\x10\x9a\x84\x9e\x03\vjson:\"name\"R\x04name\x12'\n" +
+	"\x05label\x18\x02 \x01(\tB\x11\x9a\x84\x9e\x03\fjson:\"label\"R\x05label\x123\n" +
+	"\x04icon\x18\x03 \x01(\tB\x1a\x9a\x84\x9e\x03\x15json:\"icon,omitempty\"H\x00R\x04icon\x88\x01\x01\x120\n" +
+	"\bhomepage\x18\x04 \x01(\tB\x14\x9a\x84\x9e\x03\x0fjson:\"homepage\"R\bhomepageB\a\n" +
 	"\x05_icon\"B\n" +
 	"\aDiscord\x127\n" +
 	"\vbot_enabled\x18\x01 \x01(\bB\x16\x9a\x84\x9e\x03\x11json:\"botEnabled\"R\n" +
-	"botEnabled\"t\n" +
-	"\aWebsite\x123\n" +
-	"\x05links\x18\x01 \x01(\v2\x1d.resources.clientconfig.LinksR\x05links\x124\n" +
-	"\n" +
-	"stats_page\x18\x02 \x01(\bB\x15\x9a\x84\x9e\x03\x10json:\"statsPage\"R\tstatsPage\"\x8c\x01\n" +
-	"\x05Links\x12\x1d\n" +
-	"\aimprint\x18\x01 \x01(\tH\x00R\aimprint\x88\x01\x01\x12E\n" +
-	"\x0eprivacy_policy\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14json:\"privacyPolicy\"H\x01R\rprivacyPolicy\x88\x01\x01B\n" +
-	"\n" +
-	"\b_imprintB\x11\n" +
-	"\x0f_privacy_policy\"\x0e\n" +
-	"\fFeatureGates\"\xde\x04\n" +
+	"botEnabled\"\x0e\n" +
+	"\fFeatureGates\"\xa5\x06\n" +
 	"\x04Game\x12M\n" +
 	"\x13unemployed_job_name\x18\x01 \x01(\tB\x1d\x9a\x84\x9e\x03\x18json:\"unemployedJobName\"R\x11unemployedJobName\x12A\n" +
-	"\x0fstart_job_grade\x18\x02 \x01(\x05B\x19\x9a\x84\x9e\x03\x14json:\"startJobGrade\"R\rstartJobGrade\x129\n" +
-	"\alivemap\x18\x03 \x01(\v2\x1f.resources.clientconfig.LivemapR\alivemap\x12F\n" +
-	" max_wanted_duration_user_enabled\x18\x04 \x01(\bR\x1cmaxWantedDurationUserEnabled\x12W\n" +
-	"\x18max_wanted_duration_user\x18\x05 \x01(\v2\x19.google.protobuf.DurationH\x00R\x15maxWantedDurationUser\x88\x01\x01\x12L\n" +
-	"#max_wanted_duration_vehicle_enabled\x18\x06 \x01(\bR\x1fmaxWantedDurationVehicleEnabled\x12]\n" +
-	"\x1bmax_wanted_duration_vehicle\x18\a \x01(\v2\x19.google.protobuf.DurationH\x01R\x18maxWantedDurationVehicle\x88\x01\x01B\x1b\n" +
+	"\x0fstart_job_grade\x18\x02 \x01(\x05B\x19\x9a\x84\x9e\x03\x14json:\"startJobGrade\"R\rstartJobGrade\x12J\n" +
+	"\alivemap\x18\x03 \x01(\v2\x1b.resources.settings.LivemapB\x13\x9a\x84\x9e\x03\x0ejson:\"livemap\"R\alivemap\x12p\n" +
+	" max_wanted_duration_user_enabled\x18\x04 \x01(\bB(\x9a\x84\x9e\x03#json:\"maxWantedDurationUserEnabled\"R\x1cmaxWantedDurationUserEnabled\x12\x84\x01\n" +
+	"\x18max_wanted_duration_user\x18\x05 \x01(\v2\x19.google.protobuf.DurationB+\x9a\x84\x9e\x03&json:\"maxWantedDurationUser,omitempty\"H\x00R\x15maxWantedDurationUser\x88\x01\x01\x12y\n" +
+	"#max_wanted_duration_vehicle_enabled\x18\x06 \x01(\bB+\x9a\x84\x9e\x03&json:\"maxWantedDurationVehicleEnabled\"R\x1fmaxWantedDurationVehicleEnabled\x12\x8d\x01\n" +
+	"\x1bmax_wanted_duration_vehicle\x18\a \x01(\v2\x19.google.protobuf.DurationB.\x9a\x84\x9e\x03)json:\"maxWantedDurationVehicle,omitempty\"H\x01R\x18maxWantedDurationVehicle\x88\x01\x01B\x1b\n" +
 	"\x19_max_wanted_duration_userB\x1e\n" +
-	"\x1c_max_wanted_duration_vehicle\"7\n" +
-	"\aLivemap\x12,\n" +
-	"\x12enable_cayo_perico\x18\x01 \x01(\bR\x10enableCayoPerico\"\x98\x02\n" +
+	"\x1c_max_wanted_duration_vehicle\"\xb3\x02\n" +
 	"\x06System\x12V\n" +
-	"\x16banner_message_enabled\x18\x01 \x01(\bB \x9a\x84\x9e\x03\x1bjson:\"bannerMessageEnabled\"R\x14bannerMessageEnabled\x12i\n" +
-	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageB\x1a\x9a\x84\x9e\x03\x15json:\"bannerMessages\"H\x00R\rbannerMessage\x88\x01\x01\x128\n" +
-	"\x04otlp\x18\x03 \x01(\v2$.resources.clientconfig.OTLPFrontendR\x04otlpB\x11\n" +
-	"\x0f_banner_message\"\xc3\x01\n" +
-	"\fOTLPFrontend\x12\x18\n" +
-	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x10\n" +
-	"\x03url\x18\x02 \x01(\tR\x03url\x12K\n" +
-	"\aheaders\x18\x03 \x03(\v21.resources.clientconfig.OTLPFrontend.HeadersEntryR\aheaders\x1a:\n" +
+	"\x16banner_message_enabled\x18\x01 \x01(\bB \x9a\x84\x9e\x03\x1bjson:\"bannerMessageEnabled\"R\x14bannerMessageEnabled\x12r\n" +
+	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageB#\x9a\x84\x9e\x03\x1ejson:\"bannerMessage,omitempty\"H\x00R\rbannerMessage\x88\x01\x01\x12J\n" +
+	"\x04otlp\x18\x03 \x01(\v2$.resources.clientconfig.OTLPFrontendB\x10\x9a\x84\x9e\x03\vjson:\"otlp\"R\x04otlpB\x11\n" +
+	"\x0f_banner_message\"\xfe\x01\n" +
+	"\fOTLPFrontend\x12-\n" +
+	"\aenabled\x18\x01 \x01(\bB\x13\x9a\x84\x9e\x03\x0ejson:\"enabled\"R\aenabled\x12!\n" +
+	"\x03url\x18\x02 \x01(\tB\x0f\x9a\x84\x9e\x03\n" +
+	"json:\"url\"R\x03url\x12`\n" +
+	"\aheaders\x18\x03 \x03(\v21.resources.clientconfig.OTLPFrontend.HeadersEntryB\x13\x9a\x84\x9e\x03\x0ejson:\"headers\"R\aheaders\x1a:\n" +
 	"\fHeadersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x81\x01\n" +
-	"\aDisplay\x127\n" +
-	"\vintl_locale\x18\x01 \x01(\tB\x16\x9a\x84\x9e\x03\x11json:\"intlLocale\"R\n" +
-	"intlLocale\x12=\n" +
-	"\rcurrency_name\x18\x02 \x01(\tB\x18\x9a\x84\x9e\x03\x13json:\"currencyName\"R\fcurrencyNameBWZUgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig;clientconfigb\x06proto3"
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01BWZUgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig;clientconfigb\x06proto3"
 
-var file_resources_clientconfig_clientconfig_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_resources_clientconfig_clientconfig_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_resources_clientconfig_clientconfig_proto_goTypes = []any{
 	(*ClientConfig)(nil),           // 0: resources.clientconfig.ClientConfig
 	(*Auth)(nil),                   // 1: resources.clientconfig.Auth
 	(*ProviderConfig)(nil),         // 2: resources.clientconfig.ProviderConfig
 	(*Discord)(nil),                // 3: resources.clientconfig.Discord
-	(*Website)(nil),                // 4: resources.clientconfig.Website
-	(*Links)(nil),                  // 5: resources.clientconfig.Links
-	(*FeatureGates)(nil),           // 6: resources.clientconfig.FeatureGates
-	(*Game)(nil),                   // 7: resources.clientconfig.Game
-	(*Livemap)(nil),                // 8: resources.clientconfig.Livemap
-	(*System)(nil),                 // 9: resources.clientconfig.System
-	(*OTLPFrontend)(nil),           // 10: resources.clientconfig.OTLPFrontend
-	(*Display)(nil),                // 11: resources.clientconfig.Display
-	nil,                            // 12: resources.clientconfig.OTLPFrontend.HeadersEntry
-	(*settings.QuickButtons)(nil),  // 13: resources.settings.QuickButtons
-	(*settings.Data)(nil),          // 14: resources.settings.Data
-	(*durationpb.Duration)(nil),    // 15: google.protobuf.Duration
-	(*settings.BannerMessage)(nil), // 16: resources.settings.BannerMessage
+	(*FeatureGates)(nil),           // 4: resources.clientconfig.FeatureGates
+	(*Game)(nil),                   // 5: resources.clientconfig.Game
+	(*System)(nil),                 // 6: resources.clientconfig.System
+	(*OTLPFrontend)(nil),           // 7: resources.clientconfig.OTLPFrontend
+	nil,                            // 8: resources.clientconfig.OTLPFrontend.HeadersEntry
+	(*settings.Website)(nil),       // 9: resources.settings.Website
+	(*settings.Display)(nil),       // 10: resources.settings.Display
+	(*settings.QuickButtons)(nil),  // 11: resources.settings.QuickButtons
+	(*settings.Data)(nil),          // 12: resources.settings.Data
+	(*settings.Livemap)(nil),       // 13: resources.settings.Livemap
+	(*durationpb.Duration)(nil),    // 14: google.protobuf.Duration
+	(*settings.BannerMessage)(nil), // 15: resources.settings.BannerMessage
 }
 var file_resources_clientconfig_clientconfig_proto_depIdxs = []int32{
 	1,  // 0: resources.clientconfig.ClientConfig.auth:type_name -> resources.clientconfig.Auth
 	3,  // 1: resources.clientconfig.ClientConfig.discord:type_name -> resources.clientconfig.Discord
-	4,  // 2: resources.clientconfig.ClientConfig.website:type_name -> resources.clientconfig.Website
-	6,  // 3: resources.clientconfig.ClientConfig.feature_gates:type_name -> resources.clientconfig.FeatureGates
-	7,  // 4: resources.clientconfig.ClientConfig.game:type_name -> resources.clientconfig.Game
-	9,  // 5: resources.clientconfig.ClientConfig.system:type_name -> resources.clientconfig.System
-	11, // 6: resources.clientconfig.ClientConfig.display:type_name -> resources.clientconfig.Display
-	13, // 7: resources.clientconfig.ClientConfig.quick_buttons:type_name -> resources.settings.QuickButtons
-	14, // 8: resources.clientconfig.ClientConfig.data:type_name -> resources.settings.Data
+	9,  // 2: resources.clientconfig.ClientConfig.website:type_name -> resources.settings.Website
+	4,  // 3: resources.clientconfig.ClientConfig.feature_gates:type_name -> resources.clientconfig.FeatureGates
+	5,  // 4: resources.clientconfig.ClientConfig.game:type_name -> resources.clientconfig.Game
+	6,  // 5: resources.clientconfig.ClientConfig.system:type_name -> resources.clientconfig.System
+	10, // 6: resources.clientconfig.ClientConfig.display:type_name -> resources.settings.Display
+	11, // 7: resources.clientconfig.ClientConfig.quick_buttons:type_name -> resources.settings.QuickButtons
+	12, // 8: resources.clientconfig.ClientConfig.data:type_name -> resources.settings.Data
 	2,  // 9: resources.clientconfig.Auth.providers:type_name -> resources.clientconfig.ProviderConfig
-	5,  // 10: resources.clientconfig.Website.links:type_name -> resources.clientconfig.Links
-	8,  // 11: resources.clientconfig.Game.livemap:type_name -> resources.clientconfig.Livemap
-	15, // 12: resources.clientconfig.Game.max_wanted_duration_user:type_name -> google.protobuf.Duration
-	15, // 13: resources.clientconfig.Game.max_wanted_duration_vehicle:type_name -> google.protobuf.Duration
-	16, // 14: resources.clientconfig.System.banner_message:type_name -> resources.settings.BannerMessage
-	10, // 15: resources.clientconfig.System.otlp:type_name -> resources.clientconfig.OTLPFrontend
-	12, // 16: resources.clientconfig.OTLPFrontend.headers:type_name -> resources.clientconfig.OTLPFrontend.HeadersEntry
-	17, // [17:17] is the sub-list for method output_type
-	17, // [17:17] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	13, // 10: resources.clientconfig.Game.livemap:type_name -> resources.settings.Livemap
+	14, // 11: resources.clientconfig.Game.max_wanted_duration_user:type_name -> google.protobuf.Duration
+	14, // 12: resources.clientconfig.Game.max_wanted_duration_vehicle:type_name -> google.protobuf.Duration
+	15, // 13: resources.clientconfig.System.banner_message:type_name -> resources.settings.BannerMessage
+	7,  // 14: resources.clientconfig.System.otlp:type_name -> resources.clientconfig.OTLPFrontend
+	8,  // 15: resources.clientconfig.OTLPFrontend.headers:type_name -> resources.clientconfig.OTLPFrontend.HeadersEntry
+	16, // [16:16] is the sub-list for method output_type
+	16, // [16:16] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_resources_clientconfig_clientconfig_proto_init() }
@@ -1439,15 +1099,14 @@ func file_resources_clientconfig_clientconfig_proto_init() {
 	}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[5].OneofWrappers = []any{}
-	file_resources_clientconfig_clientconfig_proto_msgTypes[7].OneofWrappers = []any{}
-	file_resources_clientconfig_clientconfig_proto_msgTypes[9].OneofWrappers = []any{}
+	file_resources_clientconfig_clientconfig_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_clientconfig_clientconfig_proto_rawDesc), len(file_resources_clientconfig_clientconfig_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -78,7 +78,7 @@ func (x DiscordBotPresenceType) Number() protoreflect.EnumNumber {
 
 type AppConfig struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Version       *string                `protobuf:"bytes,1,opt,name=version,proto3,oneof" json:"version,omitempty"`
+	Version       string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	DefaultLocale string                 `protobuf:"bytes,8,opt,name=default_locale,json=defaultLocale,proto3" json:"default_locale,omitempty"`
 	Auth          *Auth                  `protobuf:"bytes,2,opt,name=auth,proto3" json:"auth,omitempty"`
 	Perms         *Perms                 `protobuf:"bytes,3,opt,name=perms,proto3" json:"perms,omitempty"`
@@ -122,8 +122,8 @@ func (x *AppConfig) ProtoReflect() protoreflect.Message {
 }
 
 func (x *AppConfig) GetVersion() string {
-	if x != nil && x.Version != nil {
-		return *x.Version
+	if x != nil {
+		return x.Version
 	}
 	return ""
 }
@@ -220,7 +220,7 @@ func (x *AppConfig) GetGame() *Game {
 }
 
 func (x *AppConfig) SetVersion(v string) {
-	x.Version = &v
+	x.Version = v
 }
 
 func (x *AppConfig) SetDefaultLocale(v string) {
@@ -273,13 +273,6 @@ func (x *AppConfig) SetLivemap(v *Livemap) {
 
 func (x *AppConfig) SetGame(v *Game) {
 	x.Game = v
-}
-
-func (x *AppConfig) HasVersion() bool {
-	if x == nil {
-		return false
-	}
-	return x.Version != nil
 }
 
 func (x *AppConfig) HasAuth() bool {
@@ -366,10 +359,6 @@ func (x *AppConfig) HasGame() bool {
 	return x.Game != nil
 }
 
-func (x *AppConfig) ClearVersion() {
-	x.Version = nil
-}
-
 func (x *AppConfig) ClearAuth() {
 	x.Auth = nil
 }
@@ -421,7 +410,7 @@ func (x *AppConfig) ClearGame() {
 type AppConfig_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Version       *string
+	Version       string
 	DefaultLocale string
 	Auth          *Auth
 	Perms         *Perms
@@ -2184,9 +2173,9 @@ var File_resources_settings_config_proto protoreflect.FileDescriptor
 
 const file_resources_settings_config_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\xf5\x05\n" +
-	"\tAppConfig\x12\x1d\n" +
-	"\aversion\x18\x01 \x01(\tH\x00R\aversion\x88\x01\x01\x12%\n" +
+	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\xe4\x05\n" +
+	"\tAppConfig\x12\x18\n" +
+	"\aversion\x18\x01 \x01(\tR\aversion\x12%\n" +
 	"\x0edefault_locale\x18\b \x01(\tR\rdefaultLocale\x12,\n" +
 	"\x04auth\x18\x02 \x01(\v2\x18.resources.settings.AuthR\x04auth\x12/\n" +
 	"\x05perms\x18\x03 \x01(\v2\x19.resources.settings.PermsR\x05perms\x125\n" +
@@ -2200,9 +2189,7 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\rquick_buttons\x18\v \x01(\v2 .resources.settings.QuickButtonsR\fquickButtons\x12,\n" +
 	"\x04data\x18\f \x01(\v2\x18.resources.settings.DataR\x04data\x125\n" +
 	"\alivemap\x18\r \x01(\v2\x1b.resources.settings.LivemapR\alivemap\x12,\n" +
-	"\x04game\x18\x0e \x01(\v2\x18.resources.settings.GameR\x04game:\b\xe2\xf3\x18\x04\b\x01\x18\x01B\n" +
-	"\n" +
-	"\b_version\"S\n" +
+	"\x04game\x18\x0e \x01(\v2\x18.resources.settings.GameR\x04game:\b\xe2\xf3\x18\x04\b\x01\x18\x01\"S\n" +
 	"\x04Auth\x12%\n" +
 	"\x0esignup_enabled\x18\x01 \x01(\bR\rsignupEnabled\x12$\n" +
 	"\x0elast_char_lock\x18\x02 \x01(\bR\flastCharLock\";\n" +
@@ -2371,7 +2358,6 @@ func file_resources_settings_config_proto_init() {
 	}
 	file_resources_settings_banner_proto_init()
 	file_resources_settings_data_proto_init()
-	file_resources_settings_config_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[5].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[9].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[10].OneofWrappers = []any{}

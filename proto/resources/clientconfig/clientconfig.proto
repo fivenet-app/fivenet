@@ -11,17 +11,17 @@ import "tagger/tagger.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig;clientconfig";
 
 message ClientConfig {
-  string version = 1;
+  string version = 1 [(tagger.tags) = "json:\"version\""];
 
   string default_locale = 2 [(tagger.tags) = "json:\"defaultLocale\""];
 
-  Auth auth = 3;
-  Discord discord = 4;
-  Website website = 5;
+  Auth auth = 3 [(tagger.tags) = "json:\"auth\""];
+  Discord discord = 4 [(tagger.tags) = "json:\"discord\""];
+  resources.settings.Website website = 5 [(tagger.tags) = "json:\"website\""];
   FeatureGates feature_gates = 6 [(tagger.tags) = "json:\"featureGates\""];
-  Game game = 7;
-  System system = 8;
-  Display display = 9 [(tagger.tags) = "json:\"display\""];
+  Game game = 7 [(tagger.tags) = "json:\"game\""];
+  System system = 8 [(tagger.tags) = "json:\"system\""];
+  resources.settings.Display display = 9 [(tagger.tags) = "json:\"display\""];
   resources.settings.QuickButtons quick_buttons = 11 [(tagger.tags) = "json:\"quickButtons\""];
   resources.settings.Data data = 12 [(tagger.tags) = "json:\"data\""];
 }
@@ -33,24 +33,14 @@ message Auth {
 }
 
 message ProviderConfig {
-  string name = 1;
-  string label = 2;
-  optional string icon = 3;
-  string homepage = 4;
+  string name = 1 [(tagger.tags) = "json:\"name\""];
+  string label = 2 [(tagger.tags) = "json:\"label\""];
+  optional string icon = 3 [(tagger.tags) = "json:\"icon,omitempty\""];
+  string homepage = 4 [(tagger.tags) = "json:\"homepage\""];
 }
 
 message Discord {
   bool bot_enabled = 1 [(tagger.tags) = "json:\"botEnabled\""];
-}
-
-message Website {
-  Links links = 1;
-  bool stats_page = 2 [(tagger.tags) = "json:\"statsPage\""];
-}
-
-message Links {
-  optional string imprint = 1;
-  optional string privacy_policy = 2 [(tagger.tags) = "json:\"privacyPolicy\""];
 }
 
 message FeatureGates {}
@@ -59,33 +49,22 @@ message Game {
   string unemployed_job_name = 1 [(tagger.tags) = "json:\"unemployedJobName\""];
   int32 start_job_grade = 2 [(tagger.tags) = "json:\"startJobGrade\""];
 
-  Livemap livemap = 3;
+  resources.settings.Livemap livemap = 3 [(tagger.tags) = "json:\"livemap\""];
 
-  bool max_wanted_duration_user_enabled = 4;
-  optional google.protobuf.Duration max_wanted_duration_user = 5;
-  bool max_wanted_duration_vehicle_enabled = 6;
-  optional google.protobuf.Duration max_wanted_duration_vehicle = 7;
-}
-
-message Livemap {
-  bool enable_cayo_perico = 1;
+  bool max_wanted_duration_user_enabled = 4 [(tagger.tags) = "json:\"maxWantedDurationUserEnabled\""];
+  optional google.protobuf.Duration max_wanted_duration_user = 5 [(tagger.tags) = "json:\"maxWantedDurationUser,omitempty\""];
+  bool max_wanted_duration_vehicle_enabled = 6 [(tagger.tags) = "json:\"maxWantedDurationVehicleEnabled\""];
+  optional google.protobuf.Duration max_wanted_duration_vehicle = 7 [(tagger.tags) = "json:\"maxWantedDurationVehicle,omitempty\""];
 }
 
 message System {
   bool banner_message_enabled = 1 [(tagger.tags) = "json:\"bannerMessageEnabled\""];
-  optional resources.settings.BannerMessage banner_message = 2 [(tagger.tags) = "json:\"bannerMessages\""];
-  OTLPFrontend otlp = 3;
+  optional resources.settings.BannerMessage banner_message = 2 [(tagger.tags) = "json:\"bannerMessage,omitempty\""];
+  OTLPFrontend otlp = 3 [(tagger.tags) = "json:\"otlp\""];
 }
 
 message OTLPFrontend {
-  bool enabled = 1;
-  string url = 2;
-  map<string, string> headers = 3;
-}
-
-message Display {
-  // IETF BCP 47 language tag (e.g. "en-US", "de-DE")
-  string intl_locale = 1 [(tagger.tags) = "json:\"intlLocale\""];
-  // ISO 4217 currency code (e.g. "USD", "EUR")
-  string currency_name = 2 [(tagger.tags) = "json:\"currencyName\""];
+  bool enabled = 1 [(tagger.tags) = "json:\"enabled\""];
+  string url = 2 [(tagger.tags) = "json:\"url\""];
+  map<string, string> headers = 3 [(tagger.tags) = "json:\"headers\""];
 }

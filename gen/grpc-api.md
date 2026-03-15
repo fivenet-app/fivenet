@@ -2494,7 +2494,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `version` | [string](#string) | optional |  |
+| `version` | [string](#string) |  |  |
 | `default_locale` | [string](#string) |  |  |
 | `auth` | [Auth](#resourcessettingsAuth) |  |  |
 | `perms` | [Perms](#resourcessettingsPerms) |  |  |
@@ -2786,11 +2786,11 @@ Dummy - DO NOT USE!
 | `default_locale` | [string](#string) |  |  |
 | `auth` | [Auth](#resourcesclientconfigAuth) |  |  |
 | `discord` | [Discord](#resourcesclientconfigDiscord) |  |  |
-| `website` | [Website](#resourcesclientconfigWebsite) |  |  |
+| `website` | [resources.settings.Website](#resourcessettingsWebsite) |  |  |
 | `feature_gates` | [FeatureGates](#resourcesclientconfigFeatureGates) |  |  |
 | `game` | [Game](#resourcesclientconfigGame) |  |  |
 | `system` | [System](#resourcesclientconfigSystem) |  |  |
-| `display` | [Display](#resourcesclientconfigDisplay) |  |  |
+| `display` | [resources.settings.Display](#resourcessettingsDisplay) |  |  |
 | `quick_buttons` | [resources.settings.QuickButtons](#resourcessettingsQuickButtons) |  |  |
 | `data` | [resources.settings.Data](#resourcessettingsData) |  |  |
 
@@ -2809,18 +2809,6 @@ Dummy - DO NOT USE!
 
 
 
-### resources.clientconfig.Display
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `intl_locale` | [string](#string) |  | IETF BCP 47 language tag (e.g. "en-US", "de-DE") |
-| `currency_name` | [string](#string) |  | ISO 4217 currency code (e.g. "USD", "EUR") |
-
-
-
-
-
 ### resources.clientconfig.FeatureGates
 
 
@@ -2834,34 +2822,11 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `unemployed_job_name` | [string](#string) |  |  |
 | `start_job_grade` | [int32](#int32) |  |  |
-| `livemap` | [Livemap](#resourcesclientconfigLivemap) |  |  |
+| `livemap` | [resources.settings.Livemap](#resourcessettingsLivemap) |  |  |
 | `max_wanted_duration_user_enabled` | [bool](#bool) |  |  |
 | `max_wanted_duration_user` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
 | `max_wanted_duration_vehicle_enabled` | [bool](#bool) |  |  |
 | `max_wanted_duration_vehicle` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
-
-
-
-
-
-### resources.clientconfig.Links
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `imprint` | [string](#string) | optional |  |
-| `privacy_policy` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.clientconfig.Livemap
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `enable_cayo_perico` | [bool](#bool) |  |  |
 
 
 
@@ -2914,18 +2879,6 @@ Dummy - DO NOT USE!
 | `banner_message_enabled` | [bool](#bool) |  |  |
 | `banner_message` | [resources.settings.BannerMessage](#resourcessettingsBannerMessage) | optional |  |
 | `otlp` | [OTLPFrontend](#resourcesclientconfigOTLPFrontend) |  |  |
-
-
-
-
-
-### resources.clientconfig.Website
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `links` | [Links](#resourcesclientconfigLinks) |  |  |
-| `stats_page` | [bool](#bool) |  |  |
 
 
 

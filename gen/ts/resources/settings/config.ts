@@ -19,9 +19,9 @@ import { Data } from "./data";
  */
 export interface AppConfig {
     /**
-     * @generated from protobuf field: optional string version = 1
+     * @generated from protobuf field: string version = 1
      */
-    version?: string;
+    version: string;
     /**
      * @generated from protobuf field: string default_locale = 8
      */
@@ -386,7 +386,7 @@ export enum DiscordBotPresenceType {
 class AppConfig$Type extends MessageType<AppConfig> {
     constructor() {
         super("resources.settings.AppConfig", [
-            { no: 1, name: "version", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 8, name: "default_locale", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 2, name: "auth", kind: "message", T: () => Auth },
             { no: 3, name: "perms", kind: "message", T: () => Perms },
@@ -404,6 +404,7 @@ class AppConfig$Type extends MessageType<AppConfig> {
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.version = "";
         message.defaultLocale = "";
         if (value !== undefined)
             reflectionMergePartial<AppConfig>(this, message, value);
@@ -414,7 +415,7 @@ class AppConfig$Type extends MessageType<AppConfig> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional string version */ 1:
+                case /* string version */ 1:
                     message.version = reader.string();
                     break;
                 case /* string default_locale */ 8:
@@ -468,8 +469,8 @@ class AppConfig$Type extends MessageType<AppConfig> {
         return message;
     }
     internalBinaryWrite(message: AppConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional string version = 1; */
-        if (message.version !== undefined)
+        /* string version = 1; */
+        if (message.version !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.version);
         /* resources.settings.Auth auth = 2; */
         if (message.auth)

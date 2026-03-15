@@ -32,8 +32,8 @@ func BuildClientConfig(
 		Discord: &Discord{
 			BotEnabled: appCfg.GetDiscord().GetBotId() != "",
 		},
-		Website: &Website{
-			Links: &Links{
+		Website: &settings.Website{
+			Links: &settings.Links{
 				Imprint:       appCfg.GetWebsite().GetLinks().Imprint,
 				PrivacyPolicy: appCfg.GetWebsite().GetLinks().PrivacyPolicy,
 			},
@@ -44,7 +44,7 @@ func BuildClientConfig(
 			UnemployedJobName: appCfg.GetJobInfo().GetUnemployedJob().GetName(),
 			StartJobGrade:     cfg.Game.StartJobGrade,
 
-			Livemap: &Livemap{
+			Livemap: &settings.Livemap{
 				EnableCayoPerico: appCfg.GetLivemap().GetEnableCayoPerico(),
 			},
 
@@ -61,7 +61,7 @@ func BuildClientConfig(
 				Headers: cfg.OTLP.Frontend.Headers,
 			},
 		},
-		Display: &Display{
+		Display: &settings.Display{
 			IntlLocale:   appCfg.GetDisplay().GetIntlLocale(),
 			CurrencyName: appCfg.GetDisplay().GetCurrencyName(),
 		},

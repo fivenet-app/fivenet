@@ -13,8 +13,11 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { BannerMessage } from "../settings/banner";
 import { Duration } from "../../google/protobuf/duration";
+import { Livemap } from "../settings/config";
 import { Data } from "../settings/data";
 import { QuickButtons } from "../settings/config";
+import { Display } from "../settings/config";
+import { Website } from "../settings/config";
 /**
  * @generated from protobuf message resources.clientconfig.ClientConfig
  */
@@ -36,7 +39,7 @@ export interface ClientConfig {
      */
     discord?: Discord;
     /**
-     * @generated from protobuf field: resources.clientconfig.Website website = 5
+     * @generated from protobuf field: resources.settings.Website website = 5
      */
     website?: Website;
     /**
@@ -52,7 +55,7 @@ export interface ClientConfig {
      */
     system?: System;
     /**
-     * @generated from protobuf field: resources.clientconfig.Display display = 9
+     * @generated from protobuf field: resources.settings.Display display = 9
      */
     display?: Display;
     /**
@@ -112,32 +115,6 @@ export interface Discord {
     botEnabled: boolean;
 }
 /**
- * @generated from protobuf message resources.clientconfig.Website
- */
-export interface Website {
-    /**
-     * @generated from protobuf field: resources.clientconfig.Links links = 1
-     */
-    links?: Links;
-    /**
-     * @generated from protobuf field: bool stats_page = 2
-     */
-    statsPage: boolean;
-}
-/**
- * @generated from protobuf message resources.clientconfig.Links
- */
-export interface Links {
-    /**
-     * @generated from protobuf field: optional string imprint = 1
-     */
-    imprint?: string;
-    /**
-     * @generated from protobuf field: optional string privacy_policy = 2
-     */
-    privacyPolicy?: string;
-}
-/**
  * @generated from protobuf message resources.clientconfig.FeatureGates
  */
 export interface FeatureGates {
@@ -155,7 +132,7 @@ export interface Game {
      */
     startJobGrade: number;
     /**
-     * @generated from protobuf field: resources.clientconfig.Livemap livemap = 3
+     * @generated from protobuf field: resources.settings.Livemap livemap = 3
      */
     livemap?: Livemap;
     /**
@@ -174,15 +151,6 @@ export interface Game {
      * @generated from protobuf field: optional google.protobuf.Duration max_wanted_duration_vehicle = 7
      */
     maxWantedDurationVehicle?: Duration;
-}
-/**
- * @generated from protobuf message resources.clientconfig.Livemap
- */
-export interface Livemap {
-    /**
-     * @generated from protobuf field: bool enable_cayo_perico = 1
-     */
-    enableCayoPerico: boolean;
 }
 /**
  * @generated from protobuf message resources.clientconfig.System
@@ -220,35 +188,18 @@ export interface OTLPFrontend {
         [key: string]: string;
     };
 }
-/**
- * @generated from protobuf message resources.clientconfig.Display
- */
-export interface Display {
-    /**
-     * IETF BCP 47 language tag (e.g. "en-US", "de-DE")
-     *
-     * @generated from protobuf field: string intl_locale = 1
-     */
-    intlLocale: string;
-    /**
-     * ISO 4217 currency code (e.g. "USD", "EUR")
-     *
-     * @generated from protobuf field: string currency_name = 2
-     */
-    currencyName: string;
-}
 // @generated message type with reflection information, may provide speed optimized methods
 class ClientConfig$Type extends MessageType<ClientConfig> {
     constructor() {
         super("resources.clientconfig.ClientConfig", [
-            { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"version\"" } },
             { no: 2, name: "default_locale", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"defaultLocale\"" } },
-            { no: 3, name: "auth", kind: "message", T: () => Auth },
-            { no: 4, name: "discord", kind: "message", T: () => Discord },
-            { no: 5, name: "website", kind: "message", T: () => Website },
+            { no: 3, name: "auth", kind: "message", T: () => Auth, options: { "tagger.tags": "json:\"auth\"" } },
+            { no: 4, name: "discord", kind: "message", T: () => Discord, options: { "tagger.tags": "json:\"discord\"" } },
+            { no: 5, name: "website", kind: "message", T: () => Website, options: { "tagger.tags": "json:\"website\"" } },
             { no: 6, name: "feature_gates", kind: "message", T: () => FeatureGates, options: { "tagger.tags": "json:\"featureGates\"" } },
-            { no: 7, name: "game", kind: "message", T: () => Game },
-            { no: 8, name: "system", kind: "message", T: () => System },
+            { no: 7, name: "game", kind: "message", T: () => Game, options: { "tagger.tags": "json:\"game\"" } },
+            { no: 8, name: "system", kind: "message", T: () => System, options: { "tagger.tags": "json:\"system\"" } },
             { no: 9, name: "display", kind: "message", T: () => Display, options: { "tagger.tags": "json:\"display\"" } },
             { no: 11, name: "quick_buttons", kind: "message", T: () => QuickButtons, options: { "tagger.tags": "json:\"quickButtons\"" } },
             { no: 12, name: "data", kind: "message", T: () => Data, options: { "tagger.tags": "json:\"data\"" } }
@@ -279,7 +230,7 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
                 case /* resources.clientconfig.Discord discord */ 4:
                     message.discord = Discord.internalBinaryRead(reader, reader.uint32(), options, message.discord);
                     break;
-                case /* resources.clientconfig.Website website */ 5:
+                case /* resources.settings.Website website */ 5:
                     message.website = Website.internalBinaryRead(reader, reader.uint32(), options, message.website);
                     break;
                 case /* resources.clientconfig.FeatureGates feature_gates */ 6:
@@ -291,7 +242,7 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
                 case /* resources.clientconfig.System system */ 8:
                     message.system = System.internalBinaryRead(reader, reader.uint32(), options, message.system);
                     break;
-                case /* resources.clientconfig.Display display */ 9:
+                case /* resources.settings.Display display */ 9:
                     message.display = Display.internalBinaryRead(reader, reader.uint32(), options, message.display);
                     break;
                 case /* resources.settings.QuickButtons quick_buttons */ 11:
@@ -324,7 +275,7 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
         /* resources.clientconfig.Discord discord = 4; */
         if (message.discord)
             Discord.internalBinaryWrite(message.discord, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.clientconfig.Website website = 5; */
+        /* resources.settings.Website website = 5; */
         if (message.website)
             Website.internalBinaryWrite(message.website, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* resources.clientconfig.FeatureGates feature_gates = 6; */
@@ -336,7 +287,7 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
         /* resources.clientconfig.System system = 8; */
         if (message.system)
             System.internalBinaryWrite(message.system, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* resources.clientconfig.Display display = 9; */
+        /* resources.settings.Display display = 9; */
         if (message.display)
             Display.internalBinaryWrite(message.display, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         /* resources.settings.QuickButtons quick_buttons = 11; */
@@ -422,10 +373,10 @@ export const Auth = new Auth$Type();
 class ProviderConfig$Type extends MessageType<ProviderConfig> {
     constructor() {
         super("resources.clientconfig.ProviderConfig", [
-            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "homepage", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"name\"" } },
+            { no: 2, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"label\"" } },
+            { no: 3, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"icon,omitempty\"" } },
+            { no: 4, name: "homepage", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"homepage\"" } }
         ]);
     }
     create(value?: PartialMessage<ProviderConfig>): ProviderConfig {
@@ -536,113 +487,6 @@ class Discord$Type extends MessageType<Discord> {
  */
 export const Discord = new Discord$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class Website$Type extends MessageType<Website> {
-    constructor() {
-        super("resources.clientconfig.Website", [
-            { no: 1, name: "links", kind: "message", T: () => Links },
-            { no: 2, name: "stats_page", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"statsPage\"" } }
-        ]);
-    }
-    create(value?: PartialMessage<Website>): Website {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.statsPage = false;
-        if (value !== undefined)
-            reflectionMergePartial<Website>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Website): Website {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.clientconfig.Links links */ 1:
-                    message.links = Links.internalBinaryRead(reader, reader.uint32(), options, message.links);
-                    break;
-                case /* bool stats_page */ 2:
-                    message.statsPage = reader.bool();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: Website, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.clientconfig.Links links = 1; */
-        if (message.links)
-            Links.internalBinaryWrite(message.links, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* bool stats_page = 2; */
-        if (message.statsPage !== false)
-            writer.tag(2, WireType.Varint).bool(message.statsPage);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.clientconfig.Website
- */
-export const Website = new Website$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class Links$Type extends MessageType<Links> {
-    constructor() {
-        super("resources.clientconfig.Links", [
-            { no: 1, name: "imprint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "privacy_policy", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"privacyPolicy\"" } }
-        ]);
-    }
-    create(value?: PartialMessage<Links>): Links {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<Links>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Links): Links {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* optional string imprint */ 1:
-                    message.imprint = reader.string();
-                    break;
-                case /* optional string privacy_policy */ 2:
-                    message.privacyPolicy = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: Links, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional string imprint = 1; */
-        if (message.imprint !== undefined)
-            writer.tag(1, WireType.LengthDelimited).string(message.imprint);
-        /* optional string privacy_policy = 2; */
-        if (message.privacyPolicy !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.privacyPolicy);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.clientconfig.Links
- */
-export const Links = new Links$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class FeatureGates$Type extends MessageType<FeatureGates> {
     constructor() {
         super("resources.clientconfig.FeatureGates", []);
@@ -686,11 +530,11 @@ class Game$Type extends MessageType<Game> {
         super("resources.clientconfig.Game", [
             { no: 1, name: "unemployed_job_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"unemployedJobName\"" } },
             { no: 2, name: "start_job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "tagger.tags": "json:\"startJobGrade\"" } },
-            { no: 3, name: "livemap", kind: "message", T: () => Livemap },
-            { no: 4, name: "max_wanted_duration_user_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "max_wanted_duration_user", kind: "message", T: () => Duration },
-            { no: 6, name: "max_wanted_duration_vehicle_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "max_wanted_duration_vehicle", kind: "message", T: () => Duration }
+            { no: 3, name: "livemap", kind: "message", T: () => Livemap, options: { "tagger.tags": "json:\"livemap\"" } },
+            { no: 4, name: "max_wanted_duration_user_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"maxWantedDurationUserEnabled\"" } },
+            { no: 5, name: "max_wanted_duration_user", kind: "message", T: () => Duration, options: { "tagger.tags": "json:\"maxWantedDurationUser,omitempty\"" } },
+            { no: 6, name: "max_wanted_duration_vehicle_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"maxWantedDurationVehicleEnabled\"" } },
+            { no: 7, name: "max_wanted_duration_vehicle", kind: "message", T: () => Duration, options: { "tagger.tags": "json:\"maxWantedDurationVehicle,omitempty\"" } }
         ]);
     }
     create(value?: PartialMessage<Game>): Game {
@@ -714,7 +558,7 @@ class Game$Type extends MessageType<Game> {
                 case /* int32 start_job_grade */ 2:
                     message.startJobGrade = reader.int32();
                     break;
-                case /* resources.clientconfig.Livemap livemap */ 3:
+                case /* resources.settings.Livemap livemap */ 3:
                     message.livemap = Livemap.internalBinaryRead(reader, reader.uint32(), options, message.livemap);
                     break;
                 case /* bool max_wanted_duration_user_enabled */ 4:
@@ -747,7 +591,7 @@ class Game$Type extends MessageType<Game> {
         /* int32 start_job_grade = 2; */
         if (message.startJobGrade !== 0)
             writer.tag(2, WireType.Varint).int32(message.startJobGrade);
-        /* resources.clientconfig.Livemap livemap = 3; */
+        /* resources.settings.Livemap livemap = 3; */
         if (message.livemap)
             Livemap.internalBinaryWrite(message.livemap, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* bool max_wanted_duration_user_enabled = 4; */
@@ -773,59 +617,12 @@ class Game$Type extends MessageType<Game> {
  */
 export const Game = new Game$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class Livemap$Type extends MessageType<Livemap> {
-    constructor() {
-        super("resources.clientconfig.Livemap", [
-            { no: 1, name: "enable_cayo_perico", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
-        ]);
-    }
-    create(value?: PartialMessage<Livemap>): Livemap {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.enableCayoPerico = false;
-        if (value !== undefined)
-            reflectionMergePartial<Livemap>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Livemap): Livemap {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* bool enable_cayo_perico */ 1:
-                    message.enableCayoPerico = reader.bool();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: Livemap, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool enable_cayo_perico = 1; */
-        if (message.enableCayoPerico !== false)
-            writer.tag(1, WireType.Varint).bool(message.enableCayoPerico);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.clientconfig.Livemap
- */
-export const Livemap = new Livemap$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class System$Type extends MessageType<System> {
     constructor() {
         super("resources.clientconfig.System", [
             { no: 1, name: "banner_message_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"bannerMessageEnabled\"" } },
-            { no: 2, name: "banner_message", kind: "message", T: () => BannerMessage, options: { "tagger.tags": "json:\"bannerMessages\"" } },
-            { no: 3, name: "otlp", kind: "message", T: () => OTLPFrontend }
+            { no: 2, name: "banner_message", kind: "message", T: () => BannerMessage, options: { "tagger.tags": "json:\"bannerMessage,omitempty\"" } },
+            { no: 3, name: "otlp", kind: "message", T: () => OTLPFrontend, options: { "tagger.tags": "json:\"otlp\"" } }
         ]);
     }
     create(value?: PartialMessage<System>): System {
@@ -884,9 +681,9 @@ export const System = new System$Type();
 class OTLPFrontend$Type extends MessageType<OTLPFrontend> {
     constructor() {
         super("resources.clientconfig.OTLPFrontend", [
-            { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "headers", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } }
+            { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"enabled\"" } },
+            { no: 2, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"url\"" } },
+            { no: 3, name: "headers", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "tagger.tags": "json:\"headers\"" } }
         ]);
     }
     create(value?: PartialMessage<OTLPFrontend>): OTLPFrontend {
@@ -959,58 +756,3 @@ class OTLPFrontend$Type extends MessageType<OTLPFrontend> {
  * @generated MessageType for protobuf message resources.clientconfig.OTLPFrontend
  */
 export const OTLPFrontend = new OTLPFrontend$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class Display$Type extends MessageType<Display> {
-    constructor() {
-        super("resources.clientconfig.Display", [
-            { no: 1, name: "intl_locale", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"intlLocale\"" } },
-            { no: 2, name: "currency_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"currencyName\"" } }
-        ]);
-    }
-    create(value?: PartialMessage<Display>): Display {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.intlLocale = "";
-        message.currencyName = "";
-        if (value !== undefined)
-            reflectionMergePartial<Display>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Display): Display {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string intl_locale */ 1:
-                    message.intlLocale = reader.string();
-                    break;
-                case /* string currency_name */ 2:
-                    message.currencyName = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: Display, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string intl_locale = 1; */
-        if (message.intlLocale !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.intlLocale);
-        /* string currency_name = 2; */
-        if (message.currencyName !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.currencyName);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.clientconfig.Display
- */
-export const Display = new Display$Type();

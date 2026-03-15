@@ -1,13 +1,5 @@
-import type {
-    Auth,
-    Discord,
-    Display,
-    FeatureGates,
-    Game,
-    System,
-    Website,
-} from '~~/gen/ts/resources/clientconfig/clientconfig';
-import type { QuickButtons } from '~~/gen/ts/resources/settings/config';
+import type { Auth, Discord, FeatureGates, Game, System } from '~~/gen/ts/resources/clientconfig/clientconfig';
+import type { Display, QuickButtons, Website } from '~~/gen/ts/resources/settings/config';
 import { DataMode, type Data } from '~~/gen/ts/resources/settings/data';
 
 export default defineAppConfig({
