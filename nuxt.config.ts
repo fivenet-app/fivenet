@@ -307,11 +307,16 @@ export default defineNuxtConfig({
         strategy: 'no_prefix',
         defaultLocale: 'en',
         detectBrowserLanguage: false,
+        parallelPlugin: true,
+        compilation: {
+            strictMessage: false,
+        },
+
         locales: [
             {
+                name: 'English',
                 code: 'en',
                 language: 'en',
-                name: 'English',
                 isCatchallLocale: true,
                 file: 'en.json',
                 icon: 'i-flagpack-gb-ukm',
@@ -324,11 +329,6 @@ export default defineNuxtConfig({
                 icon: 'i-flagpack-de',
             },
         ],
-        baseUrl: '',
-        parallelPlugin: true,
-        compilation: {
-            strictMessage: false,
-        },
     },
 
     piniaPluginPersistedstate: {

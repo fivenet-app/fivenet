@@ -5,6 +5,7 @@ export default defineI18nConfig(() => ({
     locale: 'de',
     fallbackLocale: 'en',
     inheritLocale: 'en',
+
     numberFormats: {
         en: {
             currency: {
@@ -39,6 +40,7 @@ export default defineI18nConfig(() => ({
             },
         },
     },
+
     datetimeFormats: {
         en: {
             date: {

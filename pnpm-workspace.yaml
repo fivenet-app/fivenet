@@ -1,6 +1,22 @@
-ignoredBuiltDependencies:
+packages:
+  - .
+  - gen/ts
+
+catalog:
+  '@protobuf-ts/plugin': 2.11.1
+  google-protobuf: 4.0.2
+
+onlyBuiltDependencies:
   - '@parcel/watcher'
   - '@tailwindcss/oxide'
+  - better-sqlite3
+  - canvas
+  - core-js-pure
   - esbuild
+  - sharp
   - unrs-resolver
+  - v-code-diff
   - vue-demi
+
+ignoredBuiltDependencies:
+  - maplibre-gl
