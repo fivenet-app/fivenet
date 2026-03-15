@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { VisAxis, VisCrosshair, VisGroupedBar, VisLine, VisTooltip, VisXYContainer } from '@unovis/vue';
+import { VisArea, VisAxis, VisCrosshair, VisGroupedBar, VisLine, VisTooltip, VisXYContainer } from '@unovis/vue';
 import type { StatsPeriod } from '~~/gen/ts/resources/stats/stats';
 import { buildChartData, type ChartStats, type DataRecord, type Range } from '../../../documents/stats/helpers';
 
 const props = defineProps<{
     stats: ChartStats;
-    isPenalties: boolean;
     period: StatsPeriod;
     range: Range;
 }>();
@@ -14,33 +13,20 @@ const cardRef = useTemplateRef<HTMLElement | null>('cardRef');
 
 const { width } = useElementSize(cardRef);
 
-const isPenalties = toRef(props, 'isPenalties');
-
 const data = computed(() => {
     return buildChartData({
         stats: props.stats,
-        isPenalties: props.isPenalties,
         period: props.period,
         range: props.range,
+        isPenalties: false,
     });
 });
 
 const x = (_: DataRecord, i: number) => i;
-const y = computed(() =>
-    props.isPenalties
-        ? [(d: DataRecord) => d.fine, (d: DataRecord) => d.detention, (d: DataRecord) => d.points]
-        : [(d: DataRecord) => d.amount],
-);
-const barColors = computed(() =>
-    props.isPenalties ? ['var(--ui-primary)', 'var(--ui-warning)', 'var(--ui-success)'] : ['var(--ui-primary)'],
-);
+const y = computed(() => [(d: DataRecord) => d.amount]);
 
 const total = computed(() => {
     const calculated = data.value?.reduce((acc: number, { amount }) => acc + amount, 0) ?? 0;
-    if (props.isPenalties) {
-        return calculated;
-    }
-
     return props.stats?.totalValue ?? calculated;
 });
 const averageVacation = computed(() => {
@@ -78,7 +64,7 @@ const template = (d?: DataRecord) => {
 </script>
 
 <template>
-    <UCard v-if="!isPenalties" ref="cardRef" :ui="{ root: 'overflow-visible', body: '!px-0 !pt-0 !pb-3' }">
+    <UCard ref="cardRef" :ui="{ root: 'overflow-visible', body: '!px-0 !pt-0 !pb-3' }">
         <template #header>
             <div>
                 <p class="mb-1.5 text-xs text-muted uppercase">
@@ -94,8 +80,10 @@ const template = (d?: DataRecord) => {
         </template>
 
         <VisXYContainer :data="data ?? []" :padding="{ top: 40 }" class="h-96" :width="width">
-            <VisGroupedBar :x="x" :y="y" :color="barColors" />
+            <VisGroupedBar :x="x" :y="y" color="var(--ui-primary)" />
+
             <VisLine :x="x" :y="(d: DataRecord) => d.vacation" color="var(--ui-warning)" />
+            <VisArea :x="x" :y="(d: DataRecord) => d.vacation" color="var(--ui-warning)" :opacity="0.1" />
 
             <VisAxis type="x" :x="x" :tick-format="xTicks" />
 
