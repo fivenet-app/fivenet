@@ -38,8 +38,9 @@ const items = computed<NavigationMenuItem[]>(
                         label: t('pages.jobs.colleagues.stats.title'),
                         icon: 'i-mdi-chart-timeline-variant-shimmer',
                         to: '/jobs/colleagues/stats',
+                        permission: 'jobs.JobsService/GetColleaguesStats' as Perms,
                     },
-                ],
+                ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
             },
             {
                 label: t('common.activity'),
