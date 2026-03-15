@@ -38,7 +38,7 @@ const numberFormatter = useIntlNumberFormat();
                         <dd
                             class="text-base-800 dark:text-base-300 mt-1 inline-flex items-center gap-2 text-sm sm:col-span-2 sm:mt-0 sm:ml-6"
                         >
-                            <span>{{ user?.sex!.toUpperCase() }} </span>
+                            <span>{{ $t(`common.sex_mapping.${user?.sex?.toLowerCase() ?? 'n'}`) }} </span>
                             <CharSexBadge :sex="user?.sex ? user?.sex : ''" />
                         </dd>
                     </div>

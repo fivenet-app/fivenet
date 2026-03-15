@@ -776,7 +776,14 @@
             "last_180_days": "Letzte 180 Tage",
             "last_365_days": "Letzte 365 Tage"
         },
-        "currency": "Währung | Währungen"
+        "currency": "Währung | Währungen",
+        "sex_mapping": {
+            "m": "Männlich",
+            "f": "Weiblich",
+            "d": "Divers",
+            "o": "Andere",
+            "n": "Nicht angegeben"
+        }
     },
     "components": {
         "partials": {
