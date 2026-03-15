@@ -129,9 +129,7 @@ func (x *AppConfig) Default() {
 		x.Display = &Display{}
 	}
 	if x.GetDisplay().GetIntlLocale() == "" {
-		defaultIntlLocale := DefaultDisplayIntlLocale
-
-		x.Display.IntlLocale = &defaultIntlLocale
+		x.Display.IntlLocale = DefaultDisplayIntlLocale
 	}
 	if x.GetDisplay().GetCurrencyName() == "" {
 		x.Display.CurrencyName = "USD"

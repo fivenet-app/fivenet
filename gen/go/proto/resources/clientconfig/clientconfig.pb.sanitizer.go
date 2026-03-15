@@ -147,9 +147,7 @@ func (m *Display) Sanitize() error {
 	m.CurrencyName = htmlsanitizer.Sanitize(m.CurrencyName)
 
 	// Field: IntlLocale
-	if m.IntlLocale != nil {
-		*m.IntlLocale = htmlsanitizer.Sanitize(*m.IntlLocale)
-	}
+	m.IntlLocale = htmlsanitizer.Sanitize(m.IntlLocale)
 
 	return nil
 }

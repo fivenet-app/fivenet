@@ -775,7 +775,8 @@
             "last_90_days": "Letzte 90 Tage",
             "last_180_days": "Letzte 180 Tage",
             "last_365_days": "Letzte 365 Tage"
-        }
+        },
+        "currency": "Währung | Währungen"
     },
     "components": {
         "partials": {
@@ -1692,6 +1693,11 @@
                         "title": "Banner Nachricht",
                         "subtitle": "Global angezeigte Bannermeldung (sollte kurz und prägnant sein)."
                     }
+                },
+                "display": {
+                    "title": "Anzeige",
+                    "description": "Anzeigeeinstellungen, wie Sprache und Waehrung.",
+                    "intl_locale": "Internationale Lokalisierung"
                 },
                 "game": {
                     "tab": "Spiel",

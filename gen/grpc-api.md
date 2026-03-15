@@ -2560,7 +2560,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `intl_locale` | [string](#string) | optional | IETF BCP 47 language tag (e.g. "en-US", "de-DE") |
+| `intl_locale` | [string](#string) |  | IETF BCP 47 language tag (e.g. "en-US", "de-DE") |
 | `currency_name` | [string](#string) |  | ISO 4217 currency code (e.g. "USD", "EUR") |
 
 
@@ -2814,7 +2814,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `intl_locale` | [string](#string) | optional | IETF BCP 47 language tag (e.g. "en-US", "de-DE") |
+| `intl_locale` | [string](#string) |  | IETF BCP 47 language tag (e.g. "en-US", "de-DE") |
 | `currency_name` | [string](#string) |  | ISO 4217 currency code (e.g. "USD", "EUR") |
 
 

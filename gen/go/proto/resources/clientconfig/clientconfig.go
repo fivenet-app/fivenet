@@ -19,11 +19,6 @@ func BuildClientConfig(
 		quickButtons = proto.Clone(appCfg.GetQuickButtons()).(*settings.QuickButtons)
 	}
 
-	var displayIntlLocale *string
-	if appCfg.GetDisplay().GetIntlLocale() != "" {
-		displayIntlLocale = proto.String(appCfg.GetDisplay().GetIntlLocale())
-	}
-
 	clientCfg := &ClientConfig{
 		Version: version.Version,
 
@@ -67,7 +62,7 @@ func BuildClientConfig(
 			},
 		},
 		Display: &Display{
-			IntlLocale:   displayIntlLocale,
+			IntlLocale:   appCfg.GetDisplay().GetIntlLocale(),
 			CurrencyName: appCfg.GetDisplay().GetCurrencyName(),
 		},
 		QuickButtons: quickButtons,

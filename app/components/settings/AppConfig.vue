@@ -15,6 +15,7 @@ import { DiscordBotPresenceType } from '~~/gen/ts/resources/settings/config';
 import type { GetAppConfigResponse } from '~~/gen/ts/services/settings/config';
 import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 import InputDatePicker from '../partials/InputDatePicker.vue';
+import { currencies, intlLocales } from './helpers';
 
 const { t, locales } = useI18n();
 
@@ -121,6 +122,10 @@ const schema = z.object({
             }),
         }),
     ]),
+    display: z.object({
+        intlLocale: z.string().default('en-US'),
+        currencyName: z.string().default('USD'),
+    }),
     quickButtons: z.object({
         penaltyCalculator: z
             .object({
@@ -205,6 +210,10 @@ const state = reactive<Schema>({
             title: '',
         },
     },
+    display: {
+        intlLocale: 'en-US',
+        currencyName: 'USD',
+    },
     quickButtons: {
         penaltyCalculator: {
             detentionTimeUnit: {
@@ -254,6 +263,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
             expiresAt: values.system.bannerMessage.expiresAt ? toTimestamp(values.system.bannerMessage.expiresAt) : undefined,
         },
     };
+    config.value.config.display = values.display;
     config.value.config.quickButtons = values.quickButtons;
     config.value.config.livemap = values.livemap;
     config.value.config.game = {
@@ -342,6 +352,12 @@ function setSettingsValues(): void {
             expiresAt: config.value.config.system.bannerMessage?.expiresAt
                 ? toDate(config.value.config.system.bannerMessage?.expiresAt)
                 : undefined,
+        };
+    }
+    if (config.value.config.display) {
+        state.display = {
+            intlLocale: config.value.config.display.intlLocale ?? 'en-US',
+            currencyName: config.value.config.display.currencyName ?? 'USD',
         };
     }
     if (config.value.config.quickButtons) {
@@ -1166,8 +1182,8 @@ const formRef = useTemplateRef('formRef');
 
                     <template #website>
                         <UPageCard
-                            :title="$t('components.settings.app_config.website.title')"
-                            :description="$t('components.settings.app_config.website.description')"
+                            :title="$t('components.settings.app_config.display.title')"
+                            :description="$t('components.settings.app_config.display.description')"
                         >
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
@@ -1184,6 +1200,51 @@ const formRef = useTemplateRef('formRef');
                                 />
                             </UFormField>
 
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="display.intlLocale"
+                                :label="$t('components.settings.app_config.display.intl_locale')"
+                            >
+                                <USelectMenu
+                                    v-model="state.display.intlLocale"
+                                    :placeholder="$t('components.settings.app_config.display.intl_locale')"
+                                    :items="intlLocales"
+                                    label-key="name"
+                                    value-key="code"
+                                    :icon="
+                                        state.display.intlLocale
+                                            ? intlLocales?.find((l) => l.code === state.display.intlLocale)?.icon
+                                            : undefined
+                                    "
+                                    class="w-full"
+                                />
+                            </UFormField>
+
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="display.currencyName"
+                                :label="$t('common.currency')"
+                            >
+                                <USelectMenu
+                                    v-model="state.display.currencyName"
+                                    :placeholder="$t('common.currency')"
+                                    :items="currencies"
+                                    label-key="name"
+                                    value-key="code"
+                                    :icon="
+                                        state.display.currencyName
+                                            ? currencies?.find((c) => c.code === state.display.currencyName)?.flag
+                                            : undefined
+                                    "
+                                    class="w-full"
+                                />
+                            </UFormField>
+                        </UPageCard>
+
+                        <UPageCard
+                            :title="$t('components.settings.app_config.website.title')"
+                            :description="$t('components.settings.app_config.website.description')"
+                        >
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="website.links.privacyPolicy"

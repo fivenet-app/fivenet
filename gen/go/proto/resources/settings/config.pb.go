@@ -1469,7 +1469,7 @@ func (b0 System_builder) Build() *System {
 type Display struct {
 	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
-	IntlLocale *string `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3,oneof" json:"intlLocale"`
+	IntlLocale string `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3" json:"intlLocale"`
 	// ISO 4217 currency code (e.g. "USD", "EUR")
 	CurrencyName  string `protobuf:"bytes,2,opt,name=currency_name,json=currencyName,proto3" json:"currencyName"`
 	unknownFields protoimpl.UnknownFields
@@ -1502,8 +1502,8 @@ func (x *Display) ProtoReflect() protoreflect.Message {
 }
 
 func (x *Display) GetIntlLocale() string {
-	if x != nil && x.IntlLocale != nil {
-		return *x.IntlLocale
+	if x != nil {
+		return x.IntlLocale
 	}
 	return ""
 }
@@ -1516,29 +1516,18 @@ func (x *Display) GetCurrencyName() string {
 }
 
 func (x *Display) SetIntlLocale(v string) {
-	x.IntlLocale = &v
+	x.IntlLocale = v
 }
 
 func (x *Display) SetCurrencyName(v string) {
 	x.CurrencyName = v
 }
 
-func (x *Display) HasIntlLocale() bool {
-	if x == nil {
-		return false
-	}
-	return x.IntlLocale != nil
-}
-
-func (x *Display) ClearIntlLocale() {
-	x.IntlLocale = nil
-}
-
 type Display_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
-	IntlLocale *string
+	IntlLocale string
 	// ISO 4217 currency code (e.g. "USD", "EUR")
 	CurrencyName string
 }
@@ -2264,12 +2253,11 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\x04_url\"\x88\x01\n" +
 	"\x06System\x124\n" +
 	"\x16banner_message_enabled\x18\x01 \x01(\bR\x14bannerMessageEnabled\x12H\n" +
-	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageR\rbannerMessage\"\xa6\x01\n" +
-	"\aDisplay\x12D\n" +
-	"\vintl_locale\x18\x01 \x01(\tB\x1e\xda\xf3\x18\x04\b\x01\x18\x01\x9a\x84\x9e\x03\x11json:\"intlLocale\"H\x00R\n" +
-	"intlLocale\x88\x01\x01\x12E\n" +
-	"\rcurrency_name\x18\x02 \x01(\tB \xda\xf3\x18\x04\b\x01\x18\x01\x9a\x84\x9e\x03\x13json:\"currencyName\"R\fcurrencyNameB\x0e\n" +
-	"\f_intl_locale\"\x83\x01\n" +
+	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageR\rbannerMessage\"\x91\x01\n" +
+	"\aDisplay\x12?\n" +
+	"\vintl_locale\x18\x01 \x01(\tB\x1e\xda\xf3\x18\x04\b\x01\x18\x01\x9a\x84\x9e\x03\x11json:\"intlLocale\"R\n" +
+	"intlLocale\x12E\n" +
+	"\rcurrency_name\x18\x02 \x01(\tB \xda\xf3\x18\x04\b\x01\x18\x01\x9a\x84\x9e\x03\x13json:\"currencyName\"R\fcurrencyName\"\x83\x01\n" +
 	"\fQuickButtons\x12s\n" +
 	"\x12penalty_calculator\x18\x01 \x01(\v2%.resources.settings.PenaltyCalculatorB\x1d\x9a\x84\x9e\x03\x18json:\"penaltyCalculator\"R\x11penaltyCalculator\"\xc9\x03\n" +
 	"\x11PenaltyCalculator\x126\n" +
@@ -2387,7 +2375,6 @@ func file_resources_settings_config_proto_init() {
 	file_resources_settings_config_proto_msgTypes[5].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[9].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[10].OneofWrappers = []any{}
-	file_resources_settings_config_proto_msgTypes[12].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[14].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[15].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[16].OneofWrappers = []any{}

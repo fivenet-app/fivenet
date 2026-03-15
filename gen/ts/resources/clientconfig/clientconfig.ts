@@ -227,9 +227,9 @@ export interface Display {
     /**
      * IETF BCP 47 language tag (e.g. "en-US", "de-DE")
      *
-     * @generated from protobuf field: optional string intl_locale = 1
+     * @generated from protobuf field: string intl_locale = 1
      */
-    intlLocale?: string;
+    intlLocale: string;
     /**
      * ISO 4217 currency code (e.g. "USD", "EUR")
      *
@@ -963,12 +963,13 @@ export const OTLPFrontend = new OTLPFrontend$Type();
 class Display$Type extends MessageType<Display> {
     constructor() {
         super("resources.clientconfig.Display", [
-            { no: 1, name: "intl_locale", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"intlLocale\"" } },
+            { no: 1, name: "intl_locale", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"intlLocale\"" } },
             { no: 2, name: "currency_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"currencyName\"" } }
         ]);
     }
     create(value?: PartialMessage<Display>): Display {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.intlLocale = "";
         message.currencyName = "";
         if (value !== undefined)
             reflectionMergePartial<Display>(this, message, value);
@@ -979,7 +980,7 @@ class Display$Type extends MessageType<Display> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional string intl_locale */ 1:
+                case /* string intl_locale */ 1:
                     message.intlLocale = reader.string();
                     break;
                 case /* string currency_name */ 2:
@@ -997,8 +998,8 @@ class Display$Type extends MessageType<Display> {
         return message;
     }
     internalBinaryWrite(message: Display, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional string intl_locale = 1; */
-        if (message.intlLocale !== undefined)
+        /* string intl_locale = 1; */
+        if (message.intlLocale !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.intlLocale);
         /* string currency_name = 2; */
         if (message.currencyName !== "")

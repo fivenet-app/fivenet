@@ -18,7 +18,7 @@ message AppConfig {
     partial: true
   };
 
-  optional string version = 1;
+  string version = 1;
 
   string default_locale = 8 [(buf.validate.field).string.max_len = 20];
 
@@ -185,7 +185,7 @@ message System {
 
 message Display {
   // IETF BCP 47 language tag (e.g. "en-US", "de-DE")
-  optional string intl_locale = 1 [
+  string intl_locale = 1 [
     (buf.validate.field).string.max_len = 32,
     (codegen.sanitizer.sanitizer) = {
       enabled: true

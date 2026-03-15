@@ -775,7 +775,8 @@
             "last_90_days": "Last 90 days",
             "last_180_days": "Last 180 days",
             "last_365_days": "Last 365 days"
-        }
+        },
+        "currency": "Currency | Currencies"
     },
     "components": {
         "partials": {
@@ -1692,6 +1693,11 @@
                         "title": "Banner Message",
                         "subtitle": "Globally displayed banner message (the message should be kept short)."
                     }
+                },
+                "display": {
+                    "title": "Display",
+                    "description": "Display settings, such as language and currency.",
+                    "intl_locale": "International locale"
                 },
                 "game": {
                     "tab": "Game",

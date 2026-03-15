@@ -1217,7 +1217,7 @@ func (b0 OTLPFrontend_builder) Build() *OTLPFrontend {
 type Display struct {
 	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
-	IntlLocale *string `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3,oneof" json:"intlLocale"`
+	IntlLocale string `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3" json:"intlLocale"`
 	// ISO 4217 currency code (e.g. "USD", "EUR")
 	CurrencyName  string `protobuf:"bytes,2,opt,name=currency_name,json=currencyName,proto3" json:"currencyName"`
 	unknownFields protoimpl.UnknownFields
@@ -1250,8 +1250,8 @@ func (x *Display) ProtoReflect() protoreflect.Message {
 }
 
 func (x *Display) GetIntlLocale() string {
-	if x != nil && x.IntlLocale != nil {
-		return *x.IntlLocale
+	if x != nil {
+		return x.IntlLocale
 	}
 	return ""
 }
@@ -1264,29 +1264,18 @@ func (x *Display) GetCurrencyName() string {
 }
 
 func (x *Display) SetIntlLocale(v string) {
-	x.IntlLocale = &v
+	x.IntlLocale = v
 }
 
 func (x *Display) SetCurrencyName(v string) {
 	x.CurrencyName = v
 }
 
-func (x *Display) HasIntlLocale() bool {
-	if x == nil {
-		return false
-	}
-	return x.IntlLocale != nil
-}
-
-func (x *Display) ClearIntlLocale() {
-	x.IntlLocale = nil
-}
-
 type Display_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
-	IntlLocale *string
+	IntlLocale string
 	// ISO 4217 currency code (e.g. "USD", "EUR")
 	CurrencyName string
 }
@@ -1364,12 +1353,11 @@ const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\aheaders\x18\x03 \x03(\v21.resources.clientconfig.OTLPFrontend.HeadersEntryR\aheaders\x1a:\n" +
 	"\fHeadersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x96\x01\n" +
-	"\aDisplay\x12<\n" +
-	"\vintl_locale\x18\x01 \x01(\tB\x16\x9a\x84\x9e\x03\x11json:\"intlLocale\"H\x00R\n" +
-	"intlLocale\x88\x01\x01\x12=\n" +
-	"\rcurrency_name\x18\x02 \x01(\tB\x18\x9a\x84\x9e\x03\x13json:\"currencyName\"R\fcurrencyNameB\x0e\n" +
-	"\f_intl_localeBWZUgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig;clientconfigb\x06proto3"
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x81\x01\n" +
+	"\aDisplay\x127\n" +
+	"\vintl_locale\x18\x01 \x01(\tB\x16\x9a\x84\x9e\x03\x11json:\"intlLocale\"R\n" +
+	"intlLocale\x12=\n" +
+	"\rcurrency_name\x18\x02 \x01(\tB\x18\x9a\x84\x9e\x03\x13json:\"currencyName\"R\fcurrencyNameBWZUgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig;clientconfigb\x06proto3"
 
 var file_resources_clientconfig_clientconfig_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_resources_clientconfig_clientconfig_proto_goTypes = []any{
@@ -1425,7 +1413,6 @@ func file_resources_clientconfig_clientconfig_proto_init() {
 	file_resources_clientconfig_clientconfig_proto_msgTypes[5].OneofWrappers = []any{}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[7].OneofWrappers = []any{}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[9].OneofWrappers = []any{}
-	file_resources_clientconfig_clientconfig_proto_msgTypes[11].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
