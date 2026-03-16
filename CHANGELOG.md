@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.3.1] - 2026-03-16
+
+### 🚀 Features
+
+- Add name override for user marker
+- Add stats for documents
+- Add per job employee count metric generation
+- Add sex value mapping for citizen profile
+
+### 🐛 Bug Fixes
+
+- Ensure penalty calculator data set/unset according to block's
+- Clear user props when name override set on user location
+- Improve audit log services/methods selection
+- Audit log methods clear for unselected services
+- User marker not "merging" user marker data
+- Clear user marker name override data
+- Centrum enabled notification popping up when it shouldn't
+- Audit log methods select menu items
+- Audit service name (strip `services.` prefix)
+- Missing translation for citizens labels page
+- Add title to ErrClosedDoc error
+- Add toggle all to role view for superusers
+- Add total data to penaltycalculator document data
+- Adjust doc stats charts display on client
+- Adjust documents metrics table default
+- Address feedback for composable changes
+- Penaltystats detention unit
+- Stats feedback and stats rebuild mutex lock
+- Add min/max date to stats date range picker
+- Update dbuitls StringPEmpty comment
+- Stats date range picker icons
+- Stats doc categories restricting categories by job
+- Add missing stats categories perms check
+- Use category badge for documents by category stats
+- Penalty stats detention time unit display
+- Update optimizeDeps list
+- Missing stats perms service translations
+- Stats metrics table foreign key name consistency
+- Update nuxt.config.ts optimizeDeps list
+- Use DI docstats for jobs metrics cron
+- Add employee count metrics
+- Dbsync "double" quote for columns with backticks
+- Data*block padding/margin and comments field not reset on send
+- Colleagues stats chart
+- Stats service perms still showing
+- Update nats container image to 2.12.5-alpine3.22
+- Add breadcrumbs to stats pages
+- Mstlystcdata docscategories not loading categories as expected
+- Template editor scroll/overflow issue
+- Jobs nav menu not checking perms properly
+- Jobs colleagues stats perm
+- Add visarea to visline for absent employees chart
+- Add missing display intlLocale and currency settings to app config
+- Cleanup clientconfig proto messages
+
 ## [2026.3.0] - 2026-03-08
 
 ### 🏗️ Breaking changes
