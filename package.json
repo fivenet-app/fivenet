@@ -156,7 +156,7 @@
         "westures": "1.1.1"
     },
     "resolutions": {
-        "@nuxt/kit": "4.3.0",
+        "@nuxt/kit": "4.4.2",
         "@tiptap/core": "3.20.2",
         "@tiptap/pm": "3.20.2",
         "@tiptap/vue-3": "3.20.2"
