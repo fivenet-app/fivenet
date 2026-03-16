@@ -13,8 +13,10 @@
     },
     "packageRules": [
         {
-            "matchDepTypes": ["resolutions"],
-            "enabled": false
+            "description": "Temporarily ignore vitest 4.1.0 (Rollup/i18n JSON issue)",
+            "matchManagers": ["npm"],
+            "matchPackageNames": ["vitest"],
+            "allowedVersions": "!/^4\\.1\\.0$/"
         },
         {
             "matchManagers": ["gomod"],
