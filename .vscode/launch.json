@@ -12,7 +12,7 @@
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
             "args": ["server", "--module-cron-agent"],
-            "buildFlags": "-race -a -installsuffix cgo",
+            "buildFlags": "-a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "1",
                 "FIVENET_CONFIG_FILE": "./config.yaml"
@@ -27,7 +27,7 @@
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
             "args": ["worker"],
-            "buildFlags": "-race -a -installsuffix cgo",
+            "buildFlags": "-a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "1",
                 "FIVENET_CONFIG_FILE": "./config.worker.yaml"
@@ -42,7 +42,7 @@
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
             "args": ["discord"],
-            "buildFlags": "-race -a -installsuffix cgo",
+            "buildFlags": "-a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "1",
                 "FIVENET_CONFIG_FILE": "./config.worker.yaml"
@@ -57,7 +57,7 @@
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
             "args": ["dbsync"],
-            "buildFlags": "-race -a -installsuffix cgo",
+            "buildFlags": "-a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "1",
                 "FIVENET_CONFIG_FILE": "./config.worker.yaml",

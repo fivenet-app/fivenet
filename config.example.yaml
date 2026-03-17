@@ -34,6 +34,7 @@ secret: "your_generated_db_secret_32_char"
 ignoreRequirements: false
 
 jwt:
+  # JWT secret used for signing tokens. Must be at least 32 characters long for security reasons.
   secret: "your_generated_jwt_secret"
 
 http:

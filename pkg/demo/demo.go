@@ -1,7 +1,7 @@
-// Package demo provides functionality for generating random dispatches and user locations
-// in demo mode, allowing for testing and demonstration of the centrum service.
+// Package demo provides functionality for generating random dispatches, user locations,
+// and optional fake user data in demo mode.
 //
-//nolint:gosec // G404: rand.IntN is not cryptographically secure, but we don't need it to be here.
+//nolint:gosec // G404: randomness is non-cryptographic and intended for demo data only.
 package demo
 
 import (
@@ -10,12 +10,11 @@ import (
 	"errors"
 	"fmt"
 	"math/rand/v2"
+	"sync"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum"
-	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	"github.com/brianvoe/gofakeit/v7"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	"github.com/go-jet/jet/v2/mysql"
@@ -25,8 +24,27 @@ import (
 )
 
 var (
-	tLocs      = table.FivenetCentrumUserLocations
-	tTimeClock = table.FivenetJobTimeclock
+	tAccounts         = table.FivenetAccounts
+	tJobs             = table.FivenetJobs
+	tJobsGrades       = table.FivenetJobsGrades
+	tJobProps         = table.FivenetJobProps
+	tLicenses         = table.FivenetLicenses
+	tLawbooks         = table.FivenetLawbooks
+	tLawbooksLaws     = table.FivenetLawbooksLaws
+	tRbacPermissions  = table.FivenetRbacPermissions
+	tRbacRoles        = table.FivenetRbacRoles
+	tRbacRolePerms    = table.FivenetRbacRolesPermissions
+	tRbacJobPerms     = table.FivenetRbacJobPermissions
+	tRbacAttrs        = table.FivenetRbacAttrs
+	tRbacRoleAttrs    = table.FivenetRbacRolesAttrs
+	tRbacJobAttrs     = table.FivenetRbacJobAttrs
+	tLocs             = table.FivenetCentrumUserLocations
+	tTimeClock        = table.FivenetJobTimeclock
+	tUsers            = table.FivenetUser
+	tUserJobs         = table.FivenetUserJobs
+	tUserLicenses     = table.FivenetUserLicenses
+	tUserPhoneNumbers = table.FivenetUserPhoneNumbers
+	tUserProps        = table.FivenetUserProps
 )
 
 var Module = fx.Module(
@@ -36,32 +54,14 @@ var Module = fx.Module(
 	),
 )
 
+const (
+	defaultUserLookupLimit = 500
+	minRuntimePoliceUsers  = 8
+)
+
 var (
-	// Define clamp bounds outside the loop for configurability.
 	xBounds = []float64{-2750, 2500}
 	yBounds = []float64{-3000, 6000}
-
-	dispatchDescriptions = []string{
-		"A person was seen acting suspiciously in the area.",
-		"A vehicle was reported speeding.",
-		"Loud noises were heard coming from a building.",
-		"Possible altercation in progress.",
-		"Unattended package found.",
-	}
-	dispatchMessages = []string{
-		"Suspicious activity reported",
-		"Speeding vehicle reported",
-		"Noise complaint received",
-		"Possible fight reported",
-		"Suspicious package reported",
-	}
-
-	dispatchStatusProgression = []centrumdispatches.StatusDispatch{
-		centrumdispatches.StatusDispatch_STATUS_DISPATCH_NEW,
-		centrumdispatches.StatusDispatch_STATUS_DISPATCH_EN_ROUTE,
-		centrumdispatches.StatusDispatch_STATUS_DISPATCH_ON_SCENE,
-		centrumdispatches.StatusDispatch_STATUS_DISPATCH_COMPLETED,
-	}
 )
 
 type user struct {
@@ -69,18 +69,41 @@ type user struct {
 	Identifier string `alias:"user.identifier"`
 }
 
-// Demo provides demo mode functionality for generating random dispatches and user locations.
-type Demo struct {
-	// logger for demo operations
-	logger *zap.Logger
-	// database connection
-	db *sql.DB
-	// centrum manager for dispatch operations
-	dispatches *dispatches.DispatchDB
-	// application configuration
-	cfg *config.Config
+type startupGenerator interface {
+	Name() string
+	Enabled(*Demo) bool
+	Run(context.Context, *Demo) error
+}
 
-	// users is a list of user identifiers for demo operations
+type demoCatalogGenerator struct{}
+
+func (g demoCatalogGenerator) Name() string {
+	return "catalog_seed"
+}
+
+func (g demoCatalogGenerator) Enabled(_ *Demo) bool {
+	return true
+}
+
+func (g demoCatalogGenerator) Run(ctx context.Context, d *Demo) error {
+	return d.seedDemoCatalog(ctx)
+}
+
+// Demo provides demo mode functionality for generating random dispatches, user locations,
+// timeclock rows and optional fake users.
+type Demo struct {
+	logger     *zap.Logger
+	db         *sql.DB
+	dispatches *dispatches.DispatchDB
+	cfg        *config.Config
+
+	randMu sync.Mutex
+	rng    *rand.Rand
+	fake   *gofakeit.Faker
+
+	demoJobNames  []string
+	demoJobGrades map[string][]int32
+
 	users []*user
 }
 
@@ -88,7 +111,6 @@ type Demo struct {
 type Params struct {
 	fx.In
 
-	// LC is the Fx lifecycle for registering hooks
 	LC fx.Lifecycle
 
 	Logger     *zap.Logger
@@ -98,7 +120,6 @@ type Params struct {
 }
 
 // New creates a new Demo instance if demo mode is enabled in the config.
-// Registers lifecycle hooks for starting and stopping demo mode.
 func New(p Params) *Demo {
 	if !p.Cfg.Demo.Enabled {
 		return nil
@@ -112,29 +133,57 @@ func New(p Params) *Demo {
 		dispatches: p.Dispatches,
 		cfg:        p.Cfg,
 	}
+	d.initRandomizers()
 
-	d.logger.Warn(
-		"Demo mode is enabled. This will generate random dispatches and user locations!",
-	)
+	d.logger.Warn("Demo mode is enabled. This will generate demo data and user locations.")
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		go d.Start(ctxCancel)
-
 		return nil
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
-
 		return nil
 	}))
 
 	return d
 }
 
-func (d *Demo) lookupUsers(ctx context.Context, identifiers []string) ([]*user, error) {
-	tUsers := table.FivenetUser
+func (d *Demo) initRandomizers() {
+	seed := d.cfg.Demo.Seed
+	d.rng = rand.New(rand.NewPCG(seed, seed))
+	d.fake = gofakeit.New(seed)
+	d.initDemoJobCatalog()
+}
 
+func (d *Demo) startupGenerators() []startupGenerator {
+	return []startupGenerator{
+		demoCatalogGenerator{},
+		fakeUsersGenerator{},
+	}
+}
+
+func (d *Demo) runStartupGenerators(ctx context.Context) error {
+	for _, generator := range d.startupGenerators() {
+		if !generator.Enabled(d) {
+			continue
+		}
+
+		d.logger.Info("running demo startup generator", zap.String("generator", generator.Name()))
+		if err := generator.Run(ctx, d); err != nil {
+			return fmt.Errorf("failed to run startup generator %s. %w", generator.Name(), err)
+		}
+	}
+
+	return nil
+}
+
+func (d *Demo) lookupUsers(
+	ctx context.Context,
+	identifiers []string,
+	limit int64,
+) ([]*user, error) {
 	condition := tUsers.Job.EQ(mysql.String(d.cfg.Demo.TargetJob))
 	if len(identifiers) > 0 {
 		idds := make([]mysql.Expression, len(identifiers))
@@ -142,6 +191,10 @@ func (d *Demo) lookupUsers(ctx context.Context, identifiers []string) ([]*user, 
 			idds[i] = mysql.String(id)
 		}
 		condition = condition.AND(tUsers.Identifier.IN(idds...))
+	}
+
+	if limit <= 0 {
+		limit = defaultUserLookupLimit
 	}
 
 	stmt := tUsers.
@@ -152,7 +205,7 @@ func (d *Demo) lookupUsers(ctx context.Context, identifiers []string) ([]*user, 
 		FROM(tUsers).
 		WHERE(condition).
 		ORDER_BY(tUsers.ID.ASC()).
-		LIMIT(20)
+		LIMIT(limit)
 
 	users := []*user{}
 	if err := stmt.QueryContext(ctx, d.db, &users); err != nil {
@@ -164,139 +217,133 @@ func (d *Demo) lookupUsers(ctx context.Context, identifiers []string) ([]*user, 
 	return users, nil
 }
 
-// Start runs the main demo loop, periodically generating and updating dispatches and moving user markers.
+// Start runs the demo runtime loops based on enabled feature toggles.
 func (d *Demo) Start(ctx context.Context) error {
-	users, err := d.lookupUsers(ctx, nil)
-	if err != nil {
-		d.logger.Error("failed to lookup users", zap.Error(err))
+	if err := d.runStartupGenerators(ctx); err != nil {
+		d.logger.Error("failed to run startup demo generators", zap.Error(err))
 		return err
 	}
 
-	demoUsers, err := d.lookupUsers(ctx, d.cfg.Demo.Users)
-	if err != nil {
-		d.logger.Error("failed to lookup demo users", zap.Error(err))
-		return err
+	if d.cfg.Demo.Features.Locations || d.cfg.Demo.Features.Timeclock {
+		users, err := d.buildRuntimeUsers(ctx)
+		if err != nil {
+			d.logger.Error("failed to build runtime user list", zap.Error(err))
+			return err
+		}
+		d.users = users
 	}
-	users = append(users, demoUsers...)
 
-	utils.RemoveSliceDuplicatesFn(users, func(u *user) string {
-		return u.Identifier
-	})
-	d.users = users
+	if d.cfg.Demo.Features.Timeclock {
+		d.createTimeclockEntries(ctx)
+	}
 
-	d.createTimeclockEntries(ctx)
+	if d.cfg.Demo.Features.Locations {
+		go d.moveUserMarkers(ctx)
+	}
 
-	go d.moveUserMarkers(ctx)
+	if !d.cfg.Demo.Features.Dispatches {
+		<-ctx.Done()
+		return nil
+	}
 
 	for {
-		d.logger.Info("Running demo dispatch generation cycle...")
+		d.logger.Info("running demo dispatch generation cycle")
 		if err := d.updateDispatches(ctx); err != nil {
 			d.logger.Error("failed to update dispatches", zap.Error(err))
 		}
 
 		d.generateDispatches(ctx)
 
-		randWait := rand.IntN(300) + 30 // Random wait between 30 and 270 seconds
+		randWait := d.randIntN(300) + 30 // 30-329 seconds
 
 		select {
 		case <-ctx.Done():
 			return nil
-
 		case <-time.After(time.Duration(randWait) * time.Second):
 		}
 	}
 }
 
-// generateDispatches creates up to 2 random dispatches per run with random positions and messages.
-func (d *Demo) generateDispatches(ctx context.Context) {
-	numDispatches := rand.IntN(2) // Up to 2 dispatches per run
+func (d *Demo) buildRuntimeUsers(ctx context.Context) ([]*user, error) {
+	limit := int64(max(defaultUserLookupLimit, d.cfg.Demo.FakeUsers.Count*2))
+	if err := d.ensureRuntimePoliceUsers(ctx, minRuntimePoliceUsers); err != nil {
+		return nil, err
+	}
 
-	for range numDispatches {
-		x := rand.Float64()*(xBounds[1]-xBounds[0]) + xBounds[0]
-		y := rand.Float64()*(yBounds[1]-yBounds[0]) + yBounds[0]
-		desc := dispatchDescriptions[rand.IntN(len(dispatchDescriptions))]
-		msg := dispatchMessages[rand.IntN(len(dispatchMessages))]
-		if _, err := d.dispatches.Create(ctx, &centrumdispatches.Dispatch{
-			Jobs: &centrum.JobList{
-				Jobs: []*centrum.JobListEntry{
-					{
-						Name: d.cfg.Demo.TargetJob,
-					},
-				},
-			},
-			Message:     msg,
-			Description: &desc,
-			X:           x,
-			Y:           y,
-			Anon:        true,
-		}); err != nil {
-			d.logger.Error("failed to create dispatch", zap.Error(err))
+	users, err := d.lookupUsers(ctx, nil, int64(max(int(limit), minRuntimePoliceUsers)))
+	if err != nil {
+		return nil, err
+	}
+
+	mainIdentifier := d.getMainCharacterIdentifier()
+	foundMain := false
+	for _, u := range users {
+		if u.Identifier == mainIdentifier {
+			foundMain = true
+			break
 		}
 	}
+	if !foundMain {
+		mainUser, err := d.lookupUsers(ctx, []string{mainIdentifier}, 1)
+		if err != nil {
+			return nil, err
+		}
+		users = append(mainUser, users...)
+	}
+
+	seen := map[string]struct{}{}
+	out := make([]*user, 0, len(users))
+	for _, u := range users {
+		if _, ok := seen[u.Identifier]; ok {
+			continue
+		}
+		seen[u.Identifier] = struct{}{}
+		out = append(out, u)
+	}
+
+	return out, nil
 }
 
-// updateDispatches randomly updates the status and position of up to 2 existing dispatches.
-func (d *Demo) updateDispatches(ctx context.Context) error {
-	dsps := d.dispatches.List(ctx, []string{d.cfg.Demo.TargetJob})
-	if len(dsps) == 0 {
-		return nil
-	}
-
-	// Shuffle indices to pick random dispatches
-	perm := rand.Perm(len(dsps))
-	numToUpdate := min(len(dsps), 2)
-
-	for i := range numToUpdate {
-		dsp := dsps[perm[i]]
-
-		// Randomize position slightly
-		x := dsp.GetX() + rand.Float64()*700 - 350
-		y := dsp.GetY() + rand.Float64()*700 - 350
-
-		// Pick a new status based on the status progression
-		currStatus := dsp.GetStatus().GetStatus()
-		newStatusValue := currStatus
-		for i, s := range dispatchStatusProgression {
-			if s == currStatus && i+1 < len(dispatchStatusProgression) {
-				newStatusValue = dispatchStatusProgression[i+1]
-				break
-			}
-		}
-		newStatus := &centrumdispatches.DispatchStatus{
-			DispatchId: dsp.GetId(),
-			Status:     newStatusValue,
-
-			X: &x,
-			Y: &y,
-
-			CreatorJob: &d.cfg.Demo.TargetJob,
-		}
-		if _, err := d.dispatches.UpdateStatus(ctx, dsp.GetId(), newStatus); err != nil {
-			d.logger.Error("failed to update dispatch status", zap.Error(err))
-		}
-	}
-
-	return nil
+func (d *Demo) randIntN(n int) int {
+	d.randMu.Lock()
+	defer d.randMu.Unlock()
+	return d.rng.IntN(n)
 }
 
-// moveUserMarkers periodically updates user locations, randomizing or moving them within bounds.
+func (d *Demo) randFloat64() float64 {
+	d.randMu.Lock()
+	defer d.randMu.Unlock()
+	return d.rng.Float64()
+}
+
+func (d *Demo) randPerm(n int) []int {
+	d.randMu.Lock()
+	defer d.randMu.Unlock()
+	return d.rng.Perm(n)
+}
+
+// moveUserMarkers periodically updates user locations.
 func (d *Demo) moveUserMarkers(ctx context.Context) {
+	if len(d.users) == 0 {
+		d.logger.Info("demo location generator has no users to move")
+		return
+	}
+
 	firstRun := true
 
 	for {
 		select {
 		case <-ctx.Done():
 			return
-
 		case <-time.After(2 * time.Second):
 		}
 
 		for _, user := range d.users {
-			// Fetch the current location for the user
 			var curr struct {
 				X float64
 				Y float64
 			}
+
 			stmt := tLocs.
 				SELECT(
 					tLocs.X.AS("x"),
@@ -317,24 +364,16 @@ func (d *Demo) moveUserMarkers(ctx context.Context) {
 			}
 
 			var newX, newY float64
-
-			if firstRun {
-				// Always randomize initial position on first run
-				newX = rand.Float64()*(xBounds[1]-xBounds[0]) + xBounds[0]
-				newY = rand.Float64()*(yBounds[1]-yBounds[0]) + yBounds[0]
-			} else if errors.Is(err, qrm.ErrNoRows) {
-				// No previous location, randomize
-				newX = rand.Float64()*(xBounds[1]-xBounds[0]) + xBounds[0]
-				newY = rand.Float64()*(yBounds[1]-yBounds[0]) + yBounds[0]
+			if firstRun || errors.Is(err, qrm.ErrNoRows) {
+				newX = d.randFloat64()*(xBounds[1]-xBounds[0]) + xBounds[0]
+				newY = d.randFloat64()*(yBounds[1]-yBounds[0]) + yBounds[0]
 			} else {
-				// Move a small random step from the current position
-				maxStep := 35.0 // max movement per tick
-				deltaX := (rand.Float64()*2 - 1) * maxStep
-				deltaY := (rand.Float64()*2 - 1) * maxStep
+				maxStep := 35.0
+				deltaX := (d.randFloat64()*2 - 1) * maxStep
+				deltaY := (d.randFloat64()*2 - 1) * maxStep
 				newX = curr.X + deltaX
 				newY = curr.Y + deltaY
 
-				// Clamp to bounds using the slices
 				if newX < xBounds[0] {
 					newX = xBounds[0]
 				} else if newX > xBounds[1] {
@@ -354,12 +393,7 @@ func (d *Demo) moveUserMarkers(ctx context.Context) {
 					tLocs.Y,
 					tLocs.Hidden,
 				).
-				VALUES(
-					user.UserID,
-					newX,
-					newY,
-					false,
-				).
+				VALUES(user.UserID, newX, newY, false).
 				ON_DUPLICATE_KEY_UPDATE(
 					tLocs.X.SET(mysql.Float(newX)),
 					tLocs.Y.SET(mysql.Float(newY)),
@@ -382,22 +416,20 @@ func (d *Demo) moveUserMarkers(ctx context.Context) {
 	}
 }
 
-// createTimeclockEntries creates or updates timeclock table entries for the users in d.users.
-// It creates multiple past entries of random lengths and sometimes an active entry.
+// createTimeclockEntries creates or updates timeclock entries for demo users.
 func (d *Demo) createTimeclockEntries(ctx context.Context) {
+	if len(d.users) == 0 {
+		d.logger.Info("demo timeclock generator has no users to seed")
+		return
+	}
+
 	for _, user := range d.users {
-		// Create multiple past entries
-		// Randomly create 1 to 10 past entries
-		numPastEntries := rand.IntN(10) + 1
+		numPastEntries := d.randIntN(10) + 1
 		for range numPastEntries {
-			daysAgo := rand.IntN(14) + 1 // Randomly pick a day within the last 14 days
+			daysAgo := d.randIntN(14) + 1
 			entryDate := time.Now().AddDate(0, 0, -daysAgo)
-			startTime := entryDate.Add(
-				time.Duration(rand.IntN(8)) * time.Hour,
-			) // Random start time within the day
-			endTime := startTime.Add(
-				time.Duration(rand.IntN(8)+1) * time.Hour,
-			) // Random end time after start time
+			startTime := entryDate.Add(time.Duration(d.randIntN(8)) * time.Hour)
+			endTime := startTime.Add(time.Duration(d.randIntN(8)+1) * time.Hour)
 			spentTime := endTime.Sub(startTime).Hours()
 
 			insertStmt := tTimeClock.
@@ -428,11 +460,8 @@ func (d *Demo) createTimeclockEntries(ctx context.Context) {
 			}
 		}
 
-		// Sometimes create an active entry
-		if rand.IntN(2) == 0 { // 50% chance to create an active entry
-			activeStartTime := time.Now().
-				Add(-time.Duration(rand.IntN(8)+1) * time.Hour)
-				// Random start time within the last 8 hours
+		if d.randIntN(2) == 0 {
+			activeStartTime := time.Now().Add(-time.Duration(d.randIntN(8)+1) * time.Hour)
 
 			insertStmt := tTimeClock.
 				INSERT(
@@ -448,8 +477,8 @@ func (d *Demo) createTimeclockEntries(ctx context.Context) {
 					user.UserID,
 					time.Now(),
 					activeStartTime,
-					nil, // Active entry has no end time
-					nil, // Spent time is nil for active entries
+					nil,
+					nil,
 				).
 				ON_DUPLICATE_KEY_UPDATE(
 					tTimeClock.StartTime.SET(mysql.TimestampT(activeStartTime)),

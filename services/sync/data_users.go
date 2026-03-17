@@ -24,7 +24,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var bloodTypes = []string{
+var BloodTypes = []string{
 	"A+", "A-",
 	"B+", "B-",
 	"AB+", "AB-",
@@ -165,12 +165,21 @@ func (s *Server) handleUsersData(
 				existingUser := existing[idx]
 				_, hash, err := protoutils.JSONAndHash(user)
 				if err != nil {
-					return 0, fmt.Errorf("failed to get JSON and hash for user %d (%s). %w", user.GetUserId(), user.GetIdentifier(), err)
+					return 0, fmt.Errorf(
+						"failed to get JSON and hash for user %d (%s). %w",
+						user.GetUserId(),
+						user.GetIdentifier(),
+						err,
+					)
 				}
 
 				// Skip update if data hash is the same, meaning data is identical and no update is needed
 				if existingUser.DataHash == hash {
-					s.logger.Info("user data hash is the same as existing entry, skipping update for user", zap.Int32("user_id", user.GetUserId()), zap.String("identifier", user.GetIdentifier()))
+					s.logger.Info(
+						"user data hash is the same as existing entry, skipping update for user",
+						zap.Int32("user_id", user.GetUserId()),
+						zap.String("identifier", user.GetIdentifier()),
+					)
 					continue
 				}
 
@@ -381,7 +390,12 @@ func (s *Server) createUser(
 		)
 	}
 
-	if err := s.handleUserPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
+	if err := s.handleUserPhoneNumbers(
+		ctx,
+		tx,
+		user.GetUserId(),
+		user.GetPhoneNumbers(),
+	); err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user phone numbers for user %d (%s). %w",
 			user.GetUserId(),
@@ -461,8 +475,8 @@ func (s *Server) setUserBloodType(
 	tx *sql.Tx,
 	userId int32,
 ) error {
-	idx := rand.IntN(len(bloodTypes))
-	bloodType := bloodTypes[idx]
+	idx := rand.IntN(len(BloodTypes))
+	bloodType := BloodTypes[idx]
 
 	stmt := tUserProps.
 		INSERT(
@@ -578,7 +592,12 @@ func (s *Server) updateUser(
 		)
 	}
 
-	if err := s.handleUserPhoneNumbers(ctx, tx, user.GetUserId(), user.GetPhoneNumbers()); err != nil {
+	if err := s.handleUserPhoneNumbers(
+		ctx,
+		tx,
+		user.GetUserId(),
+		user.GetPhoneNumbers(),
+	); err != nil {
 		return 0, fmt.Errorf(
 			"failed to handle user phone numbers for user %d (%s). %w",
 			user.GetUserId(),
