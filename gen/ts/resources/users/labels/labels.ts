@@ -11,6 +11,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Duration } from "../../../google/protobuf/duration";
+import { Timestamp } from "../../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.users.labels.Labels
  */
@@ -29,17 +31,42 @@ export interface Label {
      */
     id: number;
     /**
-     * @generated from protobuf field: optional string job = 2
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3
+     */
+    updatedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional string job = 4
      */
     job?: string;
     /**
-     * @generated from protobuf field: string name = 3
+     * @generated from protobuf field: string name = 5
      */
     name: string;
     /**
-     * @generated from protobuf field: string color = 4
+     * @generated from protobuf field: string color = 6
      */
     color: string;
+    /**
+     * @generated from protobuf field: optional resources.users.labels.LabelExpiration expiration = 7
+     */
+    expiration?: LabelExpiration; // TODO add options for expiration window
+}
+/**
+ * @generated from protobuf message resources.users.labels.LabelExpiration
+ */
+export interface LabelExpiration {
+    /**
+     * @generated from protobuf field: optional google.protobuf.Duration min_duration = 1
+     */
+    minDuration?: Duration;
+    /**
+     * @generated from protobuf field: optional google.protobuf.Duration max_duration = 2
+     */
+    maxDuration?: Duration;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Labels$Type extends MessageType<Labels> {
@@ -93,9 +120,12 @@ class Label$Type extends MessageType<Label> {
     constructor() {
         super("resources.users.labels.Label", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
-            { no: 2, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 3, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 4, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 6, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 7, name: "expiration", kind: "message", T: () => LabelExpiration }
         ]);
     }
     create(value?: PartialMessage<Label>): Label {
@@ -115,14 +145,23 @@ class Label$Type extends MessageType<Label> {
                 case /* int64 id */ 1:
                     message.id = reader.int64().toNumber();
                     break;
-                case /* optional string job */ 2:
+                case /* resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp updated_at */ 3:
+                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
+                    break;
+                case /* optional string job */ 4:
                     message.job = reader.string();
                     break;
-                case /* string name */ 3:
+                case /* string name */ 5:
                     message.name = reader.string();
                     break;
-                case /* string color */ 4:
+                case /* string color */ 6:
                     message.color = reader.string();
+                    break;
+                case /* optional resources.users.labels.LabelExpiration expiration */ 7:
+                    message.expiration = LabelExpiration.internalBinaryRead(reader, reader.uint32(), options, message.expiration);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -139,15 +178,24 @@ class Label$Type extends MessageType<Label> {
         /* int64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int64(message.id);
-        /* optional string job = 2; */
+        /* resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp updated_at = 3; */
+        if (message.updatedAt)
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional string job = 4; */
         if (message.job !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.job);
-        /* string name = 3; */
+            writer.tag(4, WireType.LengthDelimited).string(message.job);
+        /* string name = 5; */
         if (message.name !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.name);
-        /* string color = 4; */
+            writer.tag(5, WireType.LengthDelimited).string(message.name);
+        /* string color = 6; */
         if (message.color !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.color);
+            writer.tag(6, WireType.LengthDelimited).string(message.color);
+        /* optional resources.users.labels.LabelExpiration expiration = 7; */
+        if (message.expiration)
+            LabelExpiration.internalBinaryWrite(message.expiration, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -158,3 +206,56 @@ class Label$Type extends MessageType<Label> {
  * @generated MessageType for protobuf message resources.users.labels.Label
  */
 export const Label = new Label$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class LabelExpiration$Type extends MessageType<LabelExpiration> {
+    constructor() {
+        super("resources.users.labels.LabelExpiration", [
+            { no: 1, name: "min_duration", kind: "message", T: () => Duration, options: { "buf.validate.field": { duration: { lte: { seconds: "315360000" }, gte: { seconds: "900" } } } } },
+            { no: 2, name: "max_duration", kind: "message", T: () => Duration, options: { "buf.validate.field": { duration: { lte: { seconds: "315360000" }, gte: { seconds: "900" } } } } }
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
+    }
+    create(value?: PartialMessage<LabelExpiration>): LabelExpiration {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<LabelExpiration>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LabelExpiration): LabelExpiration {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional google.protobuf.Duration min_duration */ 1:
+                    message.minDuration = Duration.internalBinaryRead(reader, reader.uint32(), options, message.minDuration);
+                    break;
+                case /* optional google.protobuf.Duration max_duration */ 2:
+                    message.maxDuration = Duration.internalBinaryRead(reader, reader.uint32(), options, message.maxDuration);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: LabelExpiration, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional google.protobuf.Duration min_duration = 1; */
+        if (message.minDuration)
+            Duration.internalBinaryWrite(message.minDuration, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional google.protobuf.Duration max_duration = 2; */
+        if (message.maxDuration)
+            Duration.internalBinaryWrite(message.maxDuration, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.labels.LabelExpiration
+ */
+export const LabelExpiration = new LabelExpiration$Type();

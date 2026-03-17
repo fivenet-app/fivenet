@@ -17,6 +17,24 @@ func (m *Label) Sanitize() error {
 	// Field: Color
 	m.Color = htmlsanitizer.StripHTMLTags(m.Color)
 
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Expiration
+	if m.Expiration != nil {
+		if v, ok := any(m.GetExpiration()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Job
 	if m.Job != nil {
 		*m.Job = htmlsanitizer.Sanitize(*m.Job)
@@ -24,6 +42,43 @@ func (m *Label) Sanitize() error {
 
 	// Field: Name
 	m.Name = htmlsanitizer.StripHTMLTags(m.Name)
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *LabelExpiration) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: MaxDuration
+	if m.MaxDuration != nil {
+		if v, ok := any(m.GetMaxDuration()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: MinDuration
+	if m.MinDuration != nil {
+		if v, ok := any(m.GetMinDuration()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }

@@ -9,6 +9,38 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 )
 
+// Scan implements driver.Valuer for protobuf LabelExpiration.
+func (x *LabelExpiration) Scan(value any) error {
+	switch t := value.(type) {
+	case string:
+		if t == "" {
+			return nil
+		}
+		return protoutils.UnmarshalPartialJSON([]byte(t), x)
+	case *string:
+		if t == nil {
+			return nil
+		}
+		return protoutils.UnmarshalPartialJSON([]byte(*t), x)
+	case []byte:
+		if len(t) == 0 {
+			return nil
+		}
+		return protoutils.UnmarshalPartialJSON(t, x)
+	}
+	return nil
+}
+
+// Value marshals the LabelExpiration value into driver.Valuer.
+func (x *LabelExpiration) Value() (driver.Value, error) {
+	if x == nil {
+		return nil, nil
+	}
+
+	out, err := protoutils.MarshalToJSON(x)
+	return string(out), err
+}
+
 // Scan implements driver.Valuer for protobuf Labels.
 func (x *Labels) Scan(value any) error {
 	switch t := value.(type) {

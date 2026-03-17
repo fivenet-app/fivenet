@@ -503,9 +503,24 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) | optional |  |
 | `name` | [string](#string) |  |  |
 | `color` | [string](#string) |  |  |
+| `expiration` | [LabelExpiration](#resourcesuserslabelsLabelExpiration) | optional | TODO add options for expiration window |
+
+
+
+
+
+### resources.users.labels.LabelExpiration
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `min_duration` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
+| `max_duration` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
 
 
 

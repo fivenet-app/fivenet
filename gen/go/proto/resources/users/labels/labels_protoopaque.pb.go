@@ -11,9 +11,11 @@ package userslabels
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	reflect "reflect"
 	unsafe "unsafe"
 )
@@ -87,9 +89,12 @@ func (b0 Labels_builder) Build() *Labels {
 type Label struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Id          int64                  `protobuf:"varint,1,opt,name=id,proto3"`
-	xxx_hidden_Job         *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof"`
-	xxx_hidden_Name        string                 `protobuf:"bytes,3,opt,name=name,proto3"`
-	xxx_hidden_Color       string                 `protobuf:"bytes,4,opt,name=color,proto3"`
+	xxx_hidden_CreatedAt   *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3"`
+	xxx_hidden_UpdatedAt   *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
+	xxx_hidden_Job         *string                `protobuf:"bytes,4,opt,name=job,proto3,oneof"`
+	xxx_hidden_Name        string                 `protobuf:"bytes,5,opt,name=name,proto3"`
+	xxx_hidden_Color       string                 `protobuf:"bytes,6,opt,name=color,proto3"`
+	xxx_hidden_Expiration  *LabelExpiration       `protobuf:"bytes,7,opt,name=expiration,proto3,oneof"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -128,6 +133,20 @@ func (x *Label) GetId() int64 {
 	return 0
 }
 
+func (x *Label) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_CreatedAt
+	}
+	return nil
+}
+
+func (x *Label) GetUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_UpdatedAt
+	}
+	return nil
+}
+
 func (x *Label) GetJob() string {
 	if x != nil {
 		if x.xxx_hidden_Job != nil {
@@ -152,13 +171,28 @@ func (x *Label) GetColor() string {
 	return ""
 }
 
+func (x *Label) GetExpiration() *LabelExpiration {
+	if x != nil {
+		return x.xxx_hidden_Expiration
+	}
+	return nil
+}
+
 func (x *Label) SetId(v int64) {
 	x.xxx_hidden_Id = v
 }
 
+func (x *Label) SetCreatedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_CreatedAt = v
+}
+
+func (x *Label) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_UpdatedAt = v
+}
+
 func (x *Label) SetJob(v string) {
 	x.xxx_hidden_Job = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 7)
 }
 
 func (x *Label) SetName(v string) {
@@ -169,25 +203,65 @@ func (x *Label) SetColor(v string) {
 	x.xxx_hidden_Color = v
 }
 
+func (x *Label) SetExpiration(v *LabelExpiration) {
+	x.xxx_hidden_Expiration = v
+}
+
+func (x *Label) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_CreatedAt != nil
+}
+
+func (x *Label) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_UpdatedAt != nil
+}
+
 func (x *Label) HasJob() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *Label) HasExpiration() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Expiration != nil
+}
+
+func (x *Label) ClearCreatedAt() {
+	x.xxx_hidden_CreatedAt = nil
+}
+
+func (x *Label) ClearUpdatedAt() {
+	x.xxx_hidden_UpdatedAt = nil
 }
 
 func (x *Label) ClearJob() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
 	x.xxx_hidden_Job = nil
+}
+
+func (x *Label) ClearExpiration() {
+	x.xxx_hidden_Expiration = nil
 }
 
 type Label_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Id    int64
-	Job   *string
-	Name  string
-	Color string
+	Id         int64
+	CreatedAt  *timestamp.Timestamp
+	UpdatedAt  *timestamp.Timestamp
+	Job        *string
+	Name       string
+	Color      string
+	Expiration *LabelExpiration
 }
 
 func (b0 Label_builder) Build() *Label {
@@ -195,12 +269,108 @@ func (b0 Label_builder) Build() *Label {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Id = b.Id
+	x.xxx_hidden_CreatedAt = b.CreatedAt
+	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	if b.Job != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 7)
 		x.xxx_hidden_Job = b.Job
 	}
 	x.xxx_hidden_Name = b.Name
 	x.xxx_hidden_Color = b.Color
+	x.xxx_hidden_Expiration = b.Expiration
+	return m0
+}
+
+type LabelExpiration struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_MinDuration *durationpb.Duration   `protobuf:"bytes,1,opt,name=min_duration,json=minDuration,proto3,oneof"`
+	xxx_hidden_MaxDuration *durationpb.Duration   `protobuf:"bytes,2,opt,name=max_duration,json=maxDuration,proto3,oneof"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *LabelExpiration) Reset() {
+	*x = LabelExpiration{}
+	mi := &file_resources_users_labels_labels_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LabelExpiration) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LabelExpiration) ProtoMessage() {}
+
+func (x *LabelExpiration) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_users_labels_labels_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *LabelExpiration) GetMinDuration() *durationpb.Duration {
+	if x != nil {
+		return x.xxx_hidden_MinDuration
+	}
+	return nil
+}
+
+func (x *LabelExpiration) GetMaxDuration() *durationpb.Duration {
+	if x != nil {
+		return x.xxx_hidden_MaxDuration
+	}
+	return nil
+}
+
+func (x *LabelExpiration) SetMinDuration(v *durationpb.Duration) {
+	x.xxx_hidden_MinDuration = v
+}
+
+func (x *LabelExpiration) SetMaxDuration(v *durationpb.Duration) {
+	x.xxx_hidden_MaxDuration = v
+}
+
+func (x *LabelExpiration) HasMinDuration() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_MinDuration != nil
+}
+
+func (x *LabelExpiration) HasMaxDuration() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_MaxDuration != nil
+}
+
+func (x *LabelExpiration) ClearMinDuration() {
+	x.xxx_hidden_MinDuration = nil
+}
+
+func (x *LabelExpiration) ClearMaxDuration() {
+	x.xxx_hidden_MaxDuration = nil
+}
+
+type LabelExpiration_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	MinDuration *durationpb.Duration
+	MaxDuration *durationpb.Duration
+}
+
+func (b0 LabelExpiration_builder) Build() *LabelExpiration {
+	m0 := &LabelExpiration{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_MinDuration = b.MinDuration
+	x.xxx_hidden_MaxDuration = b.MaxDuration
 	return m0
 }
 
@@ -208,28 +378,50 @@ var File_resources_users_labels_labels_proto protoreflect.FileDescriptor
 
 const file_resources_users_labels_labels_proto_rawDesc = "" +
 	"\n" +
-	"#resources/users/labels/labels.proto\x12\x16resources.users.labels\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x13tagger/tagger.proto\"C\n" +
+	"#resources/users/labels/labels.proto\x12\x16resources.users.labels\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"C\n" +
 	"\x06Labels\x121\n" +
-	"\x04list\x18\x01 \x03(\v2\x1d.resources.users.labels.LabelR\x04list:\x06\xe2\xf3\x18\x02\b\x01\"\x97\x01\n" +
+	"\x04list\x18\x01 \x03(\v2\x1d.resources.users.labels.LabelR\x04list:\x06\xe2\xf3\x18\x02\b\x01\"\x86\x03\n" +
 	"\x05Label\x121\n" +
-	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x15\n" +
-	"\x03job\x18\x02 \x01(\tH\x00R\x03job\x88\x01\x01\x12\x1c\n" +
-	"\x04name\x18\x03 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12\x1e\n" +
-	"\x05color\x18\x04 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05colorB\x06\n" +
-	"\x04_jobBVZTgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels;userslabelsb\x06proto3"
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12=\n" +
+	"\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
+	"\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12\x15\n" +
+	"\x03job\x18\x04 \x01(\tH\x01R\x03job\x88\x01\x01\x12\x1c\n" +
+	"\x04name\x18\x05 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12\x1e\n" +
+	"\x05color\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12L\n" +
+	"\n" +
+	"expiration\x18\a \x01(\v2'.resources.users.labels.LabelExpirationH\x02R\n" +
+	"expiration\x88\x01\x01B\r\n" +
+	"\v_updated_atB\x06\n" +
+	"\x04_jobB\r\n" +
+	"\v_expiration\"\xc1\x01\n" +
+	"\x0fLabelExpiration\x12A\n" +
+	"\fmin_duration\x18\x01 \x01(\v2\x19.google.protobuf.DurationH\x00R\vminDuration\x88\x01\x01\x12A\n" +
+	"\fmax_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationH\x01R\vmaxDuration\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x0f\n" +
+	"\r_min_durationB\x0f\n" +
+	"\r_max_durationBVZTgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels;userslabelsb\x06proto3"
 
-var file_resources_users_labels_labels_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_resources_users_labels_labels_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_users_labels_labels_proto_goTypes = []any{
-	(*Labels)(nil), // 0: resources.users.labels.Labels
-	(*Label)(nil),  // 1: resources.users.labels.Label
+	(*Labels)(nil),              // 0: resources.users.labels.Labels
+	(*Label)(nil),               // 1: resources.users.labels.Label
+	(*LabelExpiration)(nil),     // 2: resources.users.labels.LabelExpiration
+	(*timestamp.Timestamp)(nil), // 3: resources.timestamp.Timestamp
+	(*durationpb.Duration)(nil), // 4: google.protobuf.Duration
 }
 var file_resources_users_labels_labels_proto_depIdxs = []int32{
 	1, // 0: resources.users.labels.Labels.list:type_name -> resources.users.labels.Label
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	3, // 1: resources.users.labels.Label.created_at:type_name -> resources.timestamp.Timestamp
+	3, // 2: resources.users.labels.Label.updated_at:type_name -> resources.timestamp.Timestamp
+	2, // 3: resources.users.labels.Label.expiration:type_name -> resources.users.labels.LabelExpiration
+	4, // 4: resources.users.labels.LabelExpiration.min_duration:type_name -> google.protobuf.Duration
+	4, // 5: resources.users.labels.LabelExpiration.max_duration:type_name -> google.protobuf.Duration
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_labels_labels_proto_init() }
@@ -238,13 +430,14 @@ func file_resources_users_labels_labels_proto_init() {
 		return
 	}
 	file_resources_users_labels_labels_proto_msgTypes[1].OneofWrappers = []any{}
+	file_resources_users_labels_labels_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_users_labels_labels_proto_rawDesc), len(file_resources_users_labels_labels_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
