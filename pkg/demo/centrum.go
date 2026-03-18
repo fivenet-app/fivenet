@@ -34,7 +34,7 @@ var (
 
 // generateDispatches creates up to 2 random dispatches per run.
 func (d *Demo) generateDispatches(ctx context.Context) {
-	numDispatches := d.randIntN(2) // 0-1 dispatches
+	numDispatches := d.randIntN(3) // 0-2 dispatches
 
 	for range numDispatches {
 		x := d.randFloat64()*(xBounds[1]-xBounds[0]) + xBounds[0]
@@ -76,9 +76,9 @@ func (d *Demo) updateDispatches(ctx context.Context) error {
 
 		currStatus := dsp.GetStatus().GetStatus()
 		newStatusValue := currStatus
-		for i, s := range dispatchStatusProgression {
-			if s == currStatus && i+1 < len(dispatchStatusProgression) {
-				newStatusValue = dispatchStatusProgression[i+1]
+		for idx, s := range dispatchStatusProgression {
+			if s == currStatus && idx+1 < len(dispatchStatusProgression) {
+				newStatusValue = dispatchStatusProgression[idx+1]
 				break
 			}
 		}

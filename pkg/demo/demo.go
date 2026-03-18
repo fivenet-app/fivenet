@@ -55,8 +55,8 @@ var Module = fx.Module(
 )
 
 const (
-	defaultUserLookupLimit = 500
-	minRuntimePoliceUsers  = 8
+	defaultUserLookupLimit   = 500
+	minRuntimeTargetJobUsers = 8
 )
 
 var (
@@ -266,11 +266,11 @@ func (d *Demo) Start(ctx context.Context) error {
 
 func (d *Demo) buildRuntimeUsers(ctx context.Context) ([]*user, error) {
 	limit := int64(max(defaultUserLookupLimit, d.cfg.Demo.FakeUsers.Count*2))
-	if err := d.ensureRuntimePoliceUsers(ctx, minRuntimePoliceUsers); err != nil {
+	if err := d.ensureRuntimeTargetJobUsers(ctx, minRuntimeTargetJobUsers); err != nil {
 		return nil, err
 	}
 
-	users, err := d.lookupUsers(ctx, nil, int64(max(int(limit), minRuntimePoliceUsers)))
+	users, err := d.lookupUsers(ctx, nil, int64(max(int(limit), minRuntimeTargetJobUsers)))
 	if err != nil {
 		return nil, err
 	}

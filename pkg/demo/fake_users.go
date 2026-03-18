@@ -2,11 +2,12 @@ package demo
 
 import (
 	"context"
-	"crypto/sha1"
+	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"os"
 	"slices"
 	"strings"
 	"time"
@@ -20,9 +21,20 @@ import (
 
 const (
 	demoAccountUsername = "demo"
-	demoAccountPassword = "fivenet-demo"
-	targetSeedPrefix    = "demotarget"
+
+	targetSeedPrefix = "demotarget"
 )
+
+//nolint:gosec // This password is only used when the demo mode is enabled. It is inherently non-sensitive.
+var demoAccountPassword = getDemoAccountPassword()
+
+func getDemoAccountPassword() string {
+	if v := os.Getenv("FIVENET_DEMO_PASSWORD"); v != "" {
+		return v
+	}
+
+	return "fivenet-demo"
+}
 
 type fakeUserJob struct {
 	Job       string
@@ -105,29 +117,31 @@ func uniqueInt32Sorted(in []int32) []int32 {
 }
 
 func (d *Demo) seedFakeUsers(ctx context.Context) error {
-	count := max(0, d.cfg.Demo.FakeUsers.Count)
-	if count == 0 {
-		d.logger.Info("demo fake user seeding skipped, count is 0")
-	}
-
 	demoCharsCreated, err := d.seedDemoAccountWithChars(ctx)
 	if err != nil {
 		return err
 	}
 
-	availableLicenses, err := d.lookupAvailableLicenseTypes(ctx)
-	if err != nil {
-		return err
-	}
+	count := max(0, d.cfg.Demo.FakeUsers.Count)
+	if count == 0 {
+		d.logger.Info(
+			"no additional demo fake users to seed (count is 0); creating demo account and runtime target-job users only",
+		)
+	} else {
+		availableLicenses, err := d.lookupAvailableLicenseTypes(ctx)
+		if err != nil {
+			return err
+		}
 
-	for i := range count {
-		profile := d.buildFakeUserProfile(i+1, "char", availableLicenses)
-		if err := d.upsertFakeUser(ctx, profile); err != nil {
-			return fmt.Errorf("failed to upsert fake user %s. %w", profile.Identifier, err)
+		for i := range count {
+			profile := d.buildFakeUserProfile(i+1, "char", availableLicenses)
+			if err := d.upsertFakeUser(ctx, profile); err != nil {
+				return fmt.Errorf("failed to upsert fake user %s. %w", profile.Identifier, err)
+			}
 		}
 	}
 
-	if err := d.ensureRuntimePoliceUsers(ctx, minRuntimePoliceUsers); err != nil {
+	if err := d.ensureRuntimeTargetJobUsers(ctx, minRuntimeTargetJobUsers); err != nil {
 		return err
 	}
 
@@ -144,16 +158,16 @@ func (d *Demo) getMainCharacterIdentifier() string {
 	return d.charIdentifier(1, stableLicenseToken("demo-account", 1))
 }
 
-func (d *Demo) ensureRuntimePoliceUsers(ctx context.Context, minimum int) error {
+func (d *Demo) ensureRuntimeTargetJobUsers(ctx context.Context, minimum int) error {
 	if minimum <= 0 {
 		return nil
 	}
 
-	policeUsers, err := d.lookupUsers(ctx, nil, int64(max(defaultUserLookupLimit, minimum*2)))
+	targetJobUsers, err := d.lookupUsers(ctx, nil, int64(max(defaultUserLookupLimit, minimum*2)))
 	if err != nil {
 		return err
 	}
-	if len(policeUsers) >= minimum {
+	if len(targetJobUsers) >= minimum {
 		return nil
 	}
 
@@ -161,7 +175,7 @@ func (d *Demo) ensureRuntimePoliceUsers(ctx context.Context, minimum int) error 
 		d.logger.Warn(
 			"not enough target-job users available for demo runtime list",
 			zap.Int("required", minimum),
-			zap.Int("found", len(policeUsers)),
+			zap.Int("found", len(targetJobUsers)),
 			zap.String("job", d.cfg.Demo.TargetJob),
 		)
 		return nil
@@ -172,7 +186,7 @@ func (d *Demo) ensureRuntimePoliceUsers(ctx context.Context, minimum int) error 
 		return err
 	}
 
-	missing := minimum - len(policeUsers)
+	missing := minimum - len(targetJobUsers)
 	for i := range missing {
 		profile := d.buildTargetJobUserProfile(i+1, availableLicenses)
 		if err := d.upsertFakeUser(ctx, profile); err != nil {
@@ -184,15 +198,15 @@ func (d *Demo) ensureRuntimePoliceUsers(ctx context.Context, minimum int) error 
 		}
 	}
 
-	policeUsers, err = d.lookupUsers(ctx, nil, int64(max(defaultUserLookupLimit, minimum*2)))
+	targetJobUsers, err = d.lookupUsers(ctx, nil, int64(max(defaultUserLookupLimit, minimum*2)))
 	if err != nil {
 		return err
 	}
-	if len(policeUsers) < minimum {
+	if len(targetJobUsers) < minimum {
 		d.logger.Warn(
 			"insufficient target-job users after forced demo seeding",
 			zap.Int("required", minimum),
-			zap.Int("found", len(policeUsers)),
+			zap.Int("found", len(targetJobUsers)),
 			zap.String("job", d.cfg.Demo.TargetJob),
 		)
 	}
@@ -573,12 +587,17 @@ func (d *Demo) charIdentifier(charNumber int, license string) string {
 	if charNumber < 1 {
 		charNumber = 1
 	}
-	return fmt.Sprintf("char%d:%s", charNumber, license)
+
+	identifier := fmt.Sprintf("char%d:%s", charNumber, license)
+	if len(identifier) > 64 {
+		identifier = identifier[:64]
+	}
+	return identifier
 }
 
 func stableLicenseToken(prefix string, index int) string {
 	raw := fmt.Sprintf("%s-%d", prefix, index)
-	sum := sha1.Sum([]byte(raw))
+	sum := sha256.Sum256([]byte(raw))
 	return hex.EncodeToString(sum[:])
 }
 

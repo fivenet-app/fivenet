@@ -305,9 +305,9 @@ func (d *Demo) lookupAllPermissionIDs(ctx context.Context) ([]int64, error) {
 }
 
 type rbacAttrDef struct {
-	AttrID      int64   `alias:"attr_id"`
-	AttrType    string  `alias:"attr_type"`
-	ValidValues *string `alias:"valid_values"`
+	AttrID      int64
+	AttrType    string
+	ValidValues *string
 }
 
 func (d *Demo) lookupRbacAttrs(ctx context.Context) ([]rbacAttrDef, error) {

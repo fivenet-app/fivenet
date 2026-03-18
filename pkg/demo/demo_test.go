@@ -23,7 +23,7 @@ func TestDemoIdentifierDeterministic(t *testing.T) {
 
 	license := stableLicenseToken("demochar", 7)
 	got := d.charIdentifier(1, license)
-	want := "char1:c0c9c6cac4c35df2a9277c5f7e8c7b0e492f8e9c"
+	want := "char1:860d10f4cb5bb61a609ca73e14b0255dc366f2c2e9494bcfb7a34b9da9"
 
 	if got != want {
 		t.Fatalf("expected identifier %q, got %q", want, got)
