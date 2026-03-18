@@ -46,6 +46,8 @@ var (
 	tUserLicenses         = table.FivenetUserLicenses
 	tUserPhoneNumbers     = table.FivenetUserPhoneNumbers
 	tUserProps            = table.FivenetUserProps
+	tOwnedVehicles        = table.FivenetOwnedVehicles
+	tVehicleProps         = table.FivenetVehiclesProps
 	tCentrumSettings      = table.FivenetCentrumSettings
 	tCentrumUnits         = table.FivenetCentrumUnits
 )

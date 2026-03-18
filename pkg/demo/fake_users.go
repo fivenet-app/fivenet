@@ -150,7 +150,10 @@ func (d *Demo) seedFakeUsers(ctx context.Context) error {
 	if err := d.ensureRuntimeTargetJobUsers(ctx, minRuntimeTargetJobUsers); err != nil {
 		return err
 	}
-	if err := d.seedDemoColleagueActivity(ctx); err != nil {
+	if err := d.seedColleagueActivity(ctx); err != nil {
+		return err
+	}
+	if err := d.seedFakeVehicles(ctx); err != nil {
 		return err
 	}
 
@@ -168,7 +171,7 @@ type targetJobUser struct {
 	Grade  int32 `alias:"grade"`
 }
 
-func (d *Demo) seedDemoColleagueActivity(ctx context.Context) error {
+func (d *Demo) seedColleagueActivity(ctx context.Context) error {
 	users, err := d.lookupTargetJobUsersForActivity(ctx, 200)
 	if err != nil {
 		return err
@@ -177,7 +180,7 @@ func (d *Demo) seedDemoColleagueActivity(ctx context.Context) error {
 		return nil
 	}
 
-	activities := d.buildDemoColleagueActivities(users)
+	activities := d.buildColleagueActivities(users)
 	if len(activities) == 0 {
 		return nil
 	}
@@ -192,7 +195,7 @@ func (d *Demo) seedDemoColleagueActivity(ctx context.Context) error {
 		return err
 	}
 
-	if err := d.insertDemoColleagueActivity(ctx, tx, activities); err != nil {
+	if err := d.insertColleagueActivity(ctx, tx, activities); err != nil {
 		return err
 	}
 
@@ -255,7 +258,7 @@ func (d *Demo) clearDemoColleagueActivity(ctx context.Context, tx *sql.Tx, job s
 	return nil
 }
 
-func (d *Demo) buildDemoColleagueActivities(
+func (d *Demo) buildColleagueActivities(
 	users []targetJobUser,
 ) []*colleaguesactivity.ColleagueActivity {
 	if len(users) < 2 {
@@ -371,7 +374,7 @@ func (d *Demo) shuffledTargetJobUsers(in []targetJobUser) []targetJobUser {
 	return out
 }
 
-func (d *Demo) insertDemoColleagueActivity(
+func (d *Demo) insertColleagueActivity(
 	ctx context.Context,
 	tx *sql.Tx,
 	activities []*colleaguesactivity.ColleagueActivity,

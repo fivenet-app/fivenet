@@ -107,6 +107,7 @@ type DemoFeatures struct {
 	Locations  bool `default:"true"  yaml:"locations"`
 	Timeclock  bool `default:"true"  yaml:"timeclock"`
 	Users      bool `default:"false" yaml:"users"`
+	Vehicles   bool `default:"false" yaml:"vehicles"`
 }
 
 type DemoFakeUser struct {
