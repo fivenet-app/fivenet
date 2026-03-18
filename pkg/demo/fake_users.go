@@ -26,6 +26,9 @@ const (
 	targetSeedPrefix = "demotarget"
 
 	demoColleagueActivityReasonPrefix = "[DEMO]"
+
+	// `char1:` is 6 chars and identifier max length is 64, so keep license token <= 58.
+	licenseTokenLength = 58
 )
 
 //nolint:gosec // This password is only used when the demo mode is enabled. It is inherently non-sensitive.
@@ -891,7 +894,13 @@ func (d *Demo) charIdentifier(charNumber int, license string) string {
 func stableLicenseToken(prefix string, index int) string {
 	raw := fmt.Sprintf("%s-%d", prefix, index)
 	sum := sha256.Sum256([]byte(raw))
-	return hex.EncodeToString(sum[:])
+	token := hex.EncodeToString(sum[:])
+
+	if len(token) > licenseTokenLength {
+		token = token[:licenseTokenLength]
+	}
+
+	return token
 }
 
 func (d *Demo) fakePhoneNumber(index int) string {
