@@ -24,27 +24,30 @@ import (
 )
 
 var (
-	tAccounts         = table.FivenetAccounts
-	tJobs             = table.FivenetJobs
-	tJobsGrades       = table.FivenetJobsGrades
-	tJobProps         = table.FivenetJobProps
-	tLicenses         = table.FivenetLicenses
-	tLawbooks         = table.FivenetLawbooks
-	tLawbooksLaws     = table.FivenetLawbooksLaws
-	tRbacPermissions  = table.FivenetRbacPermissions
-	tRbacRoles        = table.FivenetRbacRoles
-	tRbacRolePerms    = table.FivenetRbacRolesPermissions
-	tRbacJobPerms     = table.FivenetRbacJobPermissions
-	tRbacAttrs        = table.FivenetRbacAttrs
-	tRbacRoleAttrs    = table.FivenetRbacRolesAttrs
-	tRbacJobAttrs     = table.FivenetRbacJobAttrs
-	tLocs             = table.FivenetCentrumUserLocations
-	tTimeClock        = table.FivenetJobTimeclock
-	tUsers            = table.FivenetUser
-	tUserJobs         = table.FivenetUserJobs
-	tUserLicenses     = table.FivenetUserLicenses
-	tUserPhoneNumbers = table.FivenetUserPhoneNumbers
-	tUserProps        = table.FivenetUserProps
+	tAccounts             = table.FivenetAccounts
+	tJobs                 = table.FivenetJobs
+	tJobsGrades           = table.FivenetJobsGrades
+	tJobProps             = table.FivenetJobProps
+	tLicenses             = table.FivenetLicenses
+	tLawbooks             = table.FivenetLawbooks
+	tLawbooksLaws         = table.FivenetLawbooksLaws
+	tRbacPermissions      = table.FivenetRbacPermissions
+	tRbacRoles            = table.FivenetRbacRoles
+	tRbacRolePerms        = table.FivenetRbacRolesPermissions
+	tRbacJobPerms         = table.FivenetRbacJobPermissions
+	tRbacAttrs            = table.FivenetRbacAttrs
+	tRbacRoleAttrs        = table.FivenetRbacRolesAttrs
+	tRbacJobAttrs         = table.FivenetRbacJobAttrs
+	tJobColleagueActivity = table.FivenetJobColleagueActivity
+	tLocs                 = table.FivenetCentrumUserLocations
+	tTimeClock            = table.FivenetJobTimeclock
+	tUsers                = table.FivenetUser
+	tUserJobs             = table.FivenetUserJobs
+	tUserLicenses         = table.FivenetUserLicenses
+	tUserPhoneNumbers     = table.FivenetUserPhoneNumbers
+	tUserProps            = table.FivenetUserProps
+	tCentrumSettings      = table.FivenetCentrumSettings
+	tCentrumUnits         = table.FivenetCentrumUnits
 )
 
 var Module = fx.Module(
@@ -56,7 +59,7 @@ var Module = fx.Module(
 
 const (
 	defaultUserLookupLimit   = 500
-	minRuntimeTargetJobUsers = 8
+	minRuntimeTargetJobUsers = 10
 )
 
 var (

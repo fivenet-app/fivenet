@@ -16,6 +16,16 @@ type demoSeedLicense struct {
 	Label string
 }
 
+type demoSeedCentrumUnit struct {
+	Name        string
+	Initials    string
+	Color       string
+	Icon        string
+	Description string
+	Attributes  *string
+	HomePostal  *string
+}
+
 type demoSeedLawbook struct {
 	ID          int32
 	Name        string
@@ -156,6 +166,37 @@ var (
 		{JobName: "yardies", Grade: 10, Label: "Hood Watcher"},
 		{JobName: "yardies", Grade: 11, Label: "Vice Hood Master"},
 		{JobName: "yardies", Grade: 12, Label: "O.G."},
+	}
+
+	demoSeedCentrumUnits = []demoSeedCentrumUnit{
+		{
+			Name:        "Adam 1-11",
+			Initials:    "1-11",
+			Color:       "#0008f0",
+			Icon:        "MapMarkerIcon",
+			Description: "Streife",
+		},
+		{
+			Name:        "Adam 1-12",
+			Initials:    "1-12",
+			Color:       "#0008f0",
+			Icon:        "MapMarkerIcon",
+			Description: "Streife",
+		},
+		{
+			Name:        "Adam 1-13",
+			Initials:    "1-13",
+			Color:       "#0008f0",
+			Icon:        "MapMarkerIcon",
+			Description: "Streife",
+		},
+		{
+			Name:        "Supervisor",
+			Initials:    "SUP",
+			Color:       "#800000",
+			Icon:        "MapMarkerAccountIcon",
+			Description: "Supervisor Unit",
+		},
 	}
 
 	demoSeedLicenses = []demoSeedLicense{

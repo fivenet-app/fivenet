@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	"github.com/fivenet-app/fivenet/v2026/services/sync"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -23,6 +24,8 @@ const (
 	demoAccountUsername = "demo"
 
 	targetSeedPrefix = "demotarget"
+
+	demoColleagueActivityReasonPrefix = "[DEMO]"
 )
 
 //nolint:gosec // This password is only used when the demo mode is enabled. It is inherently non-sensitive.
@@ -144,6 +147,9 @@ func (d *Demo) seedFakeUsers(ctx context.Context) error {
 	if err := d.ensureRuntimeTargetJobUsers(ctx, minRuntimeTargetJobUsers); err != nil {
 		return err
 	}
+	if err := d.seedDemoColleagueActivity(ctx); err != nil {
+		return err
+	}
 
 	d.logger.Info(
 		"completed demo fake user seeding",
@@ -152,6 +158,293 @@ func (d *Demo) seedFakeUsers(ctx context.Context) error {
 	)
 
 	return nil
+}
+
+type targetJobUser struct {
+	UserID int32 `alias:"user_id"`
+	Grade  int32 `alias:"grade"`
+}
+
+func (d *Demo) seedDemoColleagueActivity(ctx context.Context) error {
+	users, err := d.lookupTargetJobUsersForActivity(ctx, 200)
+	if err != nil {
+		return err
+	}
+	if len(users) < 2 {
+		return nil
+	}
+
+	activities := d.buildDemoColleagueActivities(users)
+	if len(activities) == 0 {
+		return nil
+	}
+
+	tx, err := d.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if err := d.clearDemoColleagueActivity(ctx, tx, d.targetJobName()); err != nil {
+		return err
+	}
+
+	if err := d.insertDemoColleagueActivity(ctx, tx, activities); err != nil {
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	d.logger.Info(
+		"completed demo colleague activity seeding",
+		zap.String("job", d.targetJobName()),
+		zap.Int("count", len(activities)),
+	)
+
+	return nil
+}
+
+func (d *Demo) lookupTargetJobUsersForActivity(
+	ctx context.Context,
+	limit int64,
+) ([]targetJobUser, error) {
+	if limit <= 0 {
+		limit = 200
+	}
+
+	stmt := tUserJobs.
+		SELECT(
+			tUserJobs.UserID.AS("targetJobUser.user_id"),
+			tUserJobs.Grade.AS("targetJobUser.grade"),
+		).
+		FROM(tUserJobs).
+		WHERE(tUserJobs.Job.EQ(mysql.String(d.targetJobName()))).
+		ORDER_BY(tUserJobs.Grade.DESC(), tUserJobs.UserID.ASC()).
+		LIMIT(limit)
+
+	users := []targetJobUser{}
+	if err := stmt.QueryContext(ctx, d.db, &users); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf(
+				"failed to lookup target-job users for activity seeding. %w",
+				err,
+			)
+		}
+	}
+
+	return users, nil
+}
+
+func (d *Demo) clearDemoColleagueActivity(ctx context.Context, tx *sql.Tx, job string) error {
+	stmt := tJobColleagueActivity.
+		DELETE().
+		WHERE(mysql.AND(
+			tJobColleagueActivity.Job.EQ(mysql.String(job)),
+			tJobColleagueActivity.Reason.LIKE(mysql.String(demoColleagueActivityReasonPrefix+"%")),
+		))
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return fmt.Errorf("failed to clear demo colleague activity rows for job %s. %w", job, err)
+	}
+
+	return nil
+}
+
+func (d *Demo) buildDemoColleagueActivities(
+	users []targetJobUser,
+) []*colleaguesactivity.ColleagueActivity {
+	if len(users) < 2 {
+		return nil
+	}
+
+	job := d.targetJobName()
+	source := users[0].UserID
+	targets := users[1:]
+	activities := make([]*colleaguesactivity.ColleagueActivity, 0, len(targets)*2)
+	shuffledTargets := d.shuffledTargetJobUsers(targets)
+
+	hiredN := min(4, len(shuffledTargets))
+	for i := range hiredN {
+		activities = append(activities, d.newColleagueActivity(
+			job,
+			source,
+			shuffledTargets[i].UserID,
+			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_HIRED,
+			demoColleagueActivityReasonPrefix+" Initial hiring batch",
+			nil,
+		))
+	}
+
+	maxGrade := d.highestJobGrade(job)
+	promotable := make([]targetJobUser, 0, len(targets))
+	for _, target := range shuffledTargets {
+		if target.Grade < maxGrade {
+			promotable = append(promotable, target)
+		}
+	}
+	promotable = d.shuffledTargetJobUsers(promotable)
+
+	promoteN := min(3, len(promotable))
+	for i := range promoteN {
+		currentGrade := promotable[i].Grade
+		newGrade := min(d.highestJobGrade(job), currentGrade+1)
+		activities = append(activities, d.newColleagueActivity(
+			job,
+			source,
+			promotable[i].UserID,
+			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_PROMOTED,
+			demoColleagueActivityReasonPrefix+" Performance review promotion",
+			&colleaguesactivity.ColleagueActivityData{
+				Data: &colleaguesactivity.ColleagueActivityData_GradeChange{
+					GradeChange: &colleaguesactivity.GradeChange{
+						Grade:      newGrade,
+						GradeLabel: d.jobGradeLabel(job, newGrade),
+					},
+				},
+			},
+		))
+	}
+
+	demotable := make([]targetJobUser, 0, len(targets))
+	for _, target := range shuffledTargets {
+		if target.Grade > 1 {
+			demotable = append(demotable, target)
+		}
+	}
+	demotable = d.shuffledTargetJobUsers(demotable)
+
+	demoteN := min(2, len(demotable))
+	for i := range demoteN {
+		currentGrade := demotable[i].Grade
+		newGrade := max(int32(1), currentGrade-1)
+		activities = append(activities, d.newColleagueActivity(
+			job,
+			source,
+			demotable[i].UserID,
+			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_DEMOTED,
+			demoColleagueActivityReasonPrefix+" Training and conduct demotion",
+			&colleaguesactivity.ColleagueActivityData{
+				Data: &colleaguesactivity.ColleagueActivityData_GradeChange{
+					GradeChange: &colleaguesactivity.GradeChange{
+						Grade:      newGrade,
+						GradeLabel: d.jobGradeLabel(job, newGrade),
+					},
+				},
+			},
+		))
+	}
+
+	firedN := min(1, len(shuffledTargets))
+	for i := range firedN {
+		idx := len(shuffledTargets) - 1 - i
+		activities = append(activities, d.newColleagueActivity(
+			job,
+			source,
+			shuffledTargets[idx].UserID,
+			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_FIRED,
+			demoColleagueActivityReasonPrefix+" Contract terminated",
+			nil,
+		))
+	}
+
+	return activities
+}
+
+func (d *Demo) shuffledTargetJobUsers(in []targetJobUser) []targetJobUser {
+	if len(in) <= 1 {
+		out := make([]targetJobUser, len(in))
+		copy(out, in)
+		return out
+	}
+
+	perm := d.randPerm(len(in))
+	out := make([]targetJobUser, 0, len(in))
+	for _, idx := range perm {
+		out = append(out, in[idx])
+	}
+
+	return out
+}
+
+func (d *Demo) insertDemoColleagueActivity(
+	ctx context.Context,
+	tx *sql.Tx,
+	activities []*colleaguesactivity.ColleagueActivity,
+) error {
+	if len(activities) == 0 {
+		return nil
+	}
+
+	shuffled := make([]*colleaguesactivity.ColleagueActivity, len(activities))
+	for i, idx := range d.randPerm(len(activities)) {
+		shuffled[i] = activities[idx]
+	}
+
+	now := time.Now().UTC()
+	stmt := tJobColleagueActivity.
+		INSERT(
+			tJobColleagueActivity.CreatedAt,
+			tJobColleagueActivity.Job,
+			tJobColleagueActivity.SourceUserID,
+			tJobColleagueActivity.TargetUserID,
+			tJobColleagueActivity.ActivityType,
+			tJobColleagueActivity.Reason,
+			tJobColleagueActivity.Data,
+		)
+
+	for _, activity := range shuffled {
+		daysAgo := d.randIntN(21)
+		secondsAgo := d.randIntN(72 * 60 * 60)
+		createdAt := now.Add(
+			-(time.Duration(daysAgo)*24*time.Hour + time.Duration(secondsAgo)*time.Second),
+		)
+
+		stmt = stmt.VALUES(
+			createdAt,
+			activity.GetJob(),
+			activity.SourceUserId,
+			activity.GetTargetUserId(),
+			activity.GetActivityType(),
+			activity.GetReason(),
+			activity.GetData(),
+		)
+	}
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return fmt.Errorf("failed to insert demo colleague activity rows. %w", err)
+	}
+
+	return nil
+}
+
+func (d *Demo) newColleagueActivity(
+	job string,
+	sourceUserID int32,
+	targetUserID int32,
+	aType colleaguesactivity.ColleagueActivityType,
+	reason string,
+	data *colleaguesactivity.ColleagueActivityData,
+) *colleaguesactivity.ColleagueActivity {
+	return &colleaguesactivity.ColleagueActivity{
+		Job:          job,
+		SourceUserId: &sourceUserID,
+		TargetUserId: targetUserID,
+		ActivityType: aType,
+		Reason:       reason,
+		Data:         data,
+	}
+}
+
+func (d *Demo) jobGradeLabel(job string, grade int32) string {
+	for _, g := range demoSeedJobGrades {
+		if g.JobName == job && g.Grade == grade {
+			return g.Label
+		}
+	}
+
+	return fmt.Sprintf("Grade %d", grade)
 }
 
 func (d *Demo) getMainCharacterIdentifier() string {

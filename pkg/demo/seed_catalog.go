@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
@@ -11,21 +12,32 @@ func (d *Demo) seedDemoCatalog(ctx context.Context) error {
 	if err := d.upsertDemoJobs(ctx); err != nil {
 		return err
 	}
-	if err := d.upsertDemoJobProps(ctx); err != nil {
-		return err
-	}
 	if err := d.upsertDemoJobGrades(ctx); err != nil {
 		return err
 	}
+
 	if err := d.upsertDemoLicenses(ctx); err != nil {
 		return err
 	}
+
+	if err := d.upsertDemoJobProps(ctx); err != nil {
+		return err
+	}
+
+	if err := d.upsertDemoCentrumSettings(ctx); err != nil {
+		return err
+	}
+	if err := d.upsertDemoCentrumUnits(ctx); err != nil {
+		return err
+	}
+
 	if err := d.upsertDemoLawbooks(ctx); err != nil {
 		return err
 	}
 	if err := d.upsertDemoLaws(ctx); err != nil {
 		return err
 	}
+
 	if err := d.upsertDemoTargetJobHighestGradeRolePerms(ctx); err != nil {
 		return err
 	}
@@ -34,37 +46,100 @@ func (d *Demo) seedDemoCatalog(ctx context.Context) error {
 }
 
 func (d *Demo) upsertDemoJobProps(ctx context.Context) error {
-	if len(demoSeedJobs) == 0 {
-		return nil
-	}
-
 	stmt := tJobProps.
 		INSERT(
 			tJobProps.Job,
 			tJobProps.QuickButtons,
 			tJobProps.RadioFrequency,
 			tJobProps.Motd,
-		)
-
-	const quickButtons = `{"penaltyCalculator":true}`
-	for _, job := range demoSeedJobs {
-		stmt = stmt.VALUES(
-			job.Name,
-			quickButtons,
+		).
+		VALUES(
+			d.targetJobName(),
+			`{"penaltyCalculator":true}`,
 			d.randomDemoRadioFrequency(),
 			d.randomDemoMotd(),
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tJobProps.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
+			tJobProps.QuickButtons.SET(mysql.RawString("VALUES(`quick_buttons`)")),
+			tJobProps.RadioFrequency.SET(mysql.RawString("VALUES(`radio_frequency`)")),
+			tJobProps.Motd.SET(mysql.RawString("VALUES(`motd`)")),
+		)
+
+	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
+		return fmt.Errorf("failed to upsert demo job props. %w", err)
+	}
+
+	return nil
+}
+
+func (d *Demo) upsertDemoCentrumSettings(ctx context.Context) error {
+	stmt := tCentrumSettings.
+		INSERT(
+			tCentrumSettings.Job,
+			tCentrumSettings.Enabled,
+			tCentrumSettings.Type,
+			tCentrumSettings.Public,
+			tCentrumSettings.Mode,
+			tCentrumSettings.FallbackMode,
+		).
+		VALUES(
+			d.targetJobName(),
+			true,
+			centrumsettings.CentrumType_CENTRUM_TYPE_DISPATCH,
+			true,
+			centrumsettings.CentrumMode_CENTRUM_MODE_MANUAL,
+			centrumsettings.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tCentrumSettings.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
+			tCentrumSettings.Enabled.SET(mysql.RawBool("VALUES(`enabled`)")),
+			tCentrumSettings.Type.SET(mysql.RawInt("VALUES(`type`)")),
+			tCentrumSettings.Public.SET(mysql.RawBool("VALUES(`public`)")),
+			tCentrumSettings.Mode.SET(mysql.RawInt("VALUES(`mode`)")),
+			tCentrumSettings.FallbackMode.SET(mysql.RawInt("VALUES(`fallback_mode`)")),
+		)
+
+	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
+		return fmt.Errorf("failed to upsert demo centrum settings. %w", err)
+	}
+
+	return nil
+}
+
+func (d *Demo) upsertDemoCentrumUnits(ctx context.Context) error {
+	stmt := tCentrumUnits.
+		INSERT(
+			tCentrumUnits.Job,
+			tCentrumUnits.Name,
+			tCentrumUnits.Initials,
+			tCentrumUnits.Color,
+			tCentrumUnits.Icon,
+			tCentrumUnits.Description,
+		)
+
+	for _, unit := range demoSeedCentrumUnits {
+		stmt = stmt.VALUES(
+			d.targetJobName(),
+			unit.Name,
+			unit.Initials,
+			unit.Color,
+			unit.Icon,
+			unit.Description,
 		)
 	}
 
 	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tJobProps.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-		tJobProps.QuickButtons.SET(mysql.RawString("VALUES(`quick_buttons`)")),
-		tJobProps.RadioFrequency.SET(mysql.RawString("VALUES(`radio_frequency`)")),
-		tJobProps.Motd.SET(mysql.RawString("VALUES(`motd`)")),
+		tCentrumUnits.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
+		tCentrumUnits.Name.SET(mysql.RawString("VALUES(`name`)")),
+		tCentrumUnits.Initials.SET(mysql.RawString("VALUES(`initials`)")),
+		tCentrumUnits.Color.SET(mysql.RawString("VALUES(`color`)")),
+		tCentrumUnits.Icon.SET(mysql.RawString("VALUES(`icon`)")),
+		tCentrumUnits.Description.SET(mysql.RawString("VALUES(`description`)")),
 	)
 
 	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
-		return fmt.Errorf("failed to upsert demo job props. %w", err)
+		return fmt.Errorf("failed to upsert demo centrum units. %w", err)
 	}
 
 	return nil

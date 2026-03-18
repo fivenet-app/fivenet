@@ -58,6 +58,7 @@ const grouped = computedAsync(async () => {
                 </UTooltip>
             </h2>
         </div>
+
         <div class="@container/unitlist flex-1">
             <div
                 v-if="abort === undefined && stopping"
