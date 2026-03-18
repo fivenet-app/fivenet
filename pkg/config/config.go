@@ -51,7 +51,7 @@ type Log struct {
 	// LogToFile indicates whether to log to a file instead of stdout.
 	LogToFile bool `default:"false" yaml:"logToFile"`
 	// File contains the configuration for file logging (if LogToFile is true, make sure to configure this).
-	File LogFile `                yaml:"file"`
+	File LogFile `yaml:"file"`
 
 	// Any empty log level will be set to the `.LogLevel`
 	LevelOverrides LogLevelOverrides `yaml:"logLevelOverrides"`
@@ -59,18 +59,18 @@ type Log struct {
 
 type LogFile struct {
 	// Path to the log file.
-	Path string `yaml:"path"     default:"./fivenet.log"`
+	Path string `yaml:"path" default:"./fivenet.log"`
 	// Rotation contains the configuration for log rotation.
 	Rotation LogRotation `yaml:"rotation"`
 }
 
 type LogRotation struct {
 	// MaxSize is the maximum size in megabytes of the log file before it gets rotated.
-	MaxSize int `default:"10"   yaml:"maxSize"`
+	MaxSize int `default:"10" yaml:"maxSize"`
 	// MaxBackups is the maximum number of old log files to retain.
-	MaxBackups int `default:"7"    yaml:"maxBackups"`
+	MaxBackups int `default:"7" yaml:"maxBackups"`
 	// MaxAge is the maximum number of days to retain old log files based on the timestamp
-	MaxAge int `default:"14"   yaml:"maxAge"`
+	MaxAge int `default:"14" yaml:"maxAge"`
 	// Compress determines if the rotated log files should be compressed using gzip.
 	Compress bool `default:"true" yaml:"compress"`
 }
@@ -95,9 +95,22 @@ func (l LogLevelOverrides) Get(component LoggingComponent, defaultLevel string) 
 }
 
 type Demo struct {
-	Enabled   bool     `default:"false"  yaml:"enabled"`
-	TargetJob string   `default:"police" yaml:"targetJob"`
-	Users     []string `                 yaml:"users"`
+	Enabled   bool         `default:"false"  yaml:"enabled"`
+	Seed      uint64       `default:"42"     yaml:"seed"`
+	TargetJob string       `default:"police" yaml:"targetJob"`
+	Features  DemoFeatures `                 yaml:"features"`
+	FakeUsers DemoFakeUser `                 yaml:"fakeUsers"`
+}
+
+type DemoFeatures struct {
+	Dispatches bool `default:"true"  yaml:"dispatches"`
+	Locations  bool `default:"true"  yaml:"locations"`
+	Timeclock  bool `default:"true"  yaml:"timeclock"`
+	Users      bool `default:"false" yaml:"users"`
+}
+
+type DemoFakeUser struct {
+	Count int `default:"50" yaml:"count"`
 }
 
 type HTTP struct {
@@ -156,13 +169,13 @@ type DatabaseConnection struct {
 	Collation string `default:"utf8mb4_unicode_ci" yaml:"collation"`
 
 	// MaxOpenConns defines the maximum number of open connections to the database.
-	MaxOpenConns int `default:"32"    yaml:"maxOpenConns"`
+	MaxOpenConns int `default:"32" yaml:"maxOpenConns"`
 	// MaxIdleConns defines the maximum number of idle connections to the database.
-	MaxIdleConns int `default:"5"     yaml:"maxIdleConns"`
+	MaxIdleConns int `default:"5" yaml:"maxIdleConns"`
 	// ConnMaxIdleTime specifies the maximum amount of time a connection can remain idle.
-	ConnMaxIdleTime time.Duration `default:"15m"   yaml:"connMaxIdleTime"`
+	ConnMaxIdleTime time.Duration `default:"15m" yaml:"connMaxIdleTime"`
 	// ConnMaxLifetime specifies the maximum amount of time a connection can remain open.
-	ConnMaxLifetime time.Duration `default:"60m"   yaml:"connMaxLifetime"`
+	ConnMaxLifetime time.Duration `default:"60m" yaml:"connMaxLifetime"`
 	// DisableLocking disables the use of table locking in the database (mainly for migrations).
 	DisableLocking bool `default:"false" yaml:"disableLocking"`
 
@@ -183,7 +196,7 @@ type NATS struct {
 	NKey     *string `                                yaml:"nKey"`
 	Creds    *string `                                yaml:"creds"`
 	// PublishAsyncMaxPending NATS Jetstream publish async max pending limit. NATS' default is `4000`.
-	PublishAsyncMaxPending int `default:"2000"                  yaml:"publishAsyncMaxPending"`
+	PublishAsyncMaxPending int `default:"2000" yaml:"publishAsyncMaxPending"`
 }
 
 type JWT struct {
@@ -272,11 +285,11 @@ type ImageProxyOptions struct {
 
 type Icons struct {
 	// If true, the backend server will act as a proxy for the Iconify API (URL specified via `APIURL` setting).
-	Proxy bool `default:"false"                      yaml:"proxy"`
+	Proxy bool `default:"false" yaml:"proxy"`
 	// If you are using the proxy mode, make sure to support the Iconify project: https://iconify.design/sponsors/
 	APIURL string `default:"https://api.iconify.design" yaml:"apiUrl"`
 	// Path to the directory containing icon sets (used when proxy is disabled; this path works with the official FiveNet container images).
-	Path string `default:"./icons"                    yaml:"path"`
+	Path string `default:"./icons" yaml:"path"`
 }
 
 type Cache struct {
@@ -447,10 +460,10 @@ type OTLPConfig struct {
 	Ratio       float64       `default:"0.1"    yaml:"ratio"`
 	Attributes  []string      `                 yaml:"attributes"`
 	// Headers to send with OTLP HTTP requests
-	Headers map[string]string `                 yaml:"headers,omitempty"`
+	Headers map[string]string `yaml:"headers,omitempty"`
 	// Compression type for OTLP HTTP requests
-	Compression string             `default:"none"   yaml:"compression"`
-	Frontend    OTLPFrontendConfig `                 yaml:"frontend"`
+	Compression string             `default:"none" yaml:"compression"`
+	Frontend    OTLPFrontendConfig `               yaml:"frontend"`
 }
 
 type OTLPFrontendConfig struct {

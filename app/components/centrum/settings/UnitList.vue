@@ -7,6 +7,7 @@ import UnitCreateOrUpdateSlideover from '~/components/centrum/settings/UnitCreat
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import Pagination from '~/components/partials/Pagination.vue';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
@@ -227,6 +228,7 @@ const confirmModal = overlay.create(ConfirmModal);
                 :error="error"
                 :retry="refresh"
             />
+            <DataPendingBlock v-else-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.unit', 2)])" />
 
             <UTable
                 v-else

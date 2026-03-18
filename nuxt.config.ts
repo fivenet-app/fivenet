@@ -252,6 +252,11 @@ export default defineNuxtConfig({
                 'vue-countup-v3',
                 'mdi-vue3',
                 'v-calendar',
+                '@vue-leaflet/vue-leaflet',
+                'leaflet', // CJS
+                'leaflet-contextmenu', // CJS
+                'leaflet.heat', // CJS
+                'splitpanes',
             ],
         },
         server: {
