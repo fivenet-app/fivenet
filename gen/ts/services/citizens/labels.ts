@@ -14,6 +14,24 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Label } from "../../resources/citizens/labels/labels";
 /**
+ * @generated from protobuf message services.citizens.ListLabelsRequest
+ */
+export interface ListLabelsRequest {
+    /**
+     * @generated from protobuf field: optional string search = 1
+     */
+    search?: string;
+}
+/**
+ * @generated from protobuf message services.citizens.ListLabelsResponse
+ */
+export interface ListLabelsResponse {
+    /**
+     * @generated from protobuf field: repeated resources.citizens.labels.Label labels = 1
+     */
+    labels: Label[];
+}
+/**
  * @generated from protobuf message services.citizens.GetLabelRequest
  */
 export interface GetLabelRequest {
@@ -63,6 +81,99 @@ export interface DeleteLabelRequest {
  */
 export interface DeleteLabelResponse {
 }
+// @generated message type with reflection information, may provide speed optimized methods
+class ListLabelsRequest$Type extends MessageType<ListLabelsRequest> {
+    constructor() {
+        super("services.citizens.ListLabelsRequest", [
+            { no: 1, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ListLabelsRequest>): ListLabelsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ListLabelsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListLabelsRequest): ListLabelsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional string search */ 1:
+                    message.search = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional string search = 1; */
+        if (message.search !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.search);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.citizens.ListLabelsRequest
+ */
+export const ListLabelsRequest = new ListLabelsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListLabelsResponse$Type extends MessageType<ListLabelsResponse> {
+    constructor() {
+        super("services.citizens.ListLabelsResponse", [
+            { no: 1, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label }
+        ]);
+    }
+    create(value?: PartialMessage<ListLabelsResponse>): ListLabelsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.labels = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListLabelsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListLabelsResponse): ListLabelsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.citizens.labels.Label labels */ 1:
+                    message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.citizens.labels.Label labels = 1; */
+        for (let i = 0; i < message.labels.length; i++)
+            Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.citizens.ListLabelsResponse
+ */
+export const ListLabelsResponse = new ListLabelsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetLabelRequest$Type extends MessageType<GetLabelRequest> {
     constructor() {
@@ -337,6 +448,7 @@ export const DeleteLabelResponse = new DeleteLabelResponse$Type();
  * @generated ServiceType for protobuf service services.citizens.LabelsService
  */
 export const LabelsService = new ServiceType("services.citizens.LabelsService", [
+    { name: "ListLabels", options: { "codegen.perms.perms": { enabled: true, service: "completor.CompletorService", name: "CompleteCitizenLabels" } }, I: ListLabelsRequest, O: ListLabelsResponse },
     { name: "GetLabel", options: { "codegen.perms.perms": { enabled: true, service: "completor.CompletorService", name: "CompleteCitizenLabels" } }, I: GetLabelRequest, O: GetLabelResponse },
     { name: "CreateOrUpdateLabel", options: { "codegen.perms.perms": { enabled: true } }, I: CreateOrUpdateLabelRequest, O: CreateOrUpdateLabelResponse },
     { name: "DeleteLabel", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteLabelRequest, O: DeleteLabelResponse }

@@ -8877,6 +8877,28 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+
+### services.citizens.ListLabelsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `search` | [string](#string) | optional |  |
+
+
+
+
+
+### services.citizens.ListLabelsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `labels` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -8888,6 +8910,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
+| `ListLabels` | [ListLabelsRequest](#servicescitizensListLabelsRequest) | [ListLabelsResponse](#servicescitizensListLabelsResponse) | |
 | `GetLabel` | [GetLabelRequest](#servicescitizensGetLabelRequest) | [GetLabelResponse](#servicescitizensGetLabelResponse) | |
 | `CreateOrUpdateLabel` | [CreateOrUpdateLabelRequest](#servicescitizensCreateOrUpdateLabelRequest) | [CreateOrUpdateLabelResponse](#servicescitizensCreateOrUpdateLabelResponse) | |
 | `DeleteLabel` | [DeleteLabelRequest](#servicescitizensDeleteLabelRequest) | [DeleteLabelResponse](#servicescitizensDeleteLabelResponse) | |

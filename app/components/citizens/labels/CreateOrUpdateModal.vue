@@ -6,7 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { getCitizensLabelsClient } from '~~/gen/ts/clients';
-import type { Settings } from '~~/gen/ts/resources/citizens/labels/labels';
+import type { Label, Settings } from '~~/gen/ts/resources/citizens/labels/labels';
 import type { CreateOrUpdateLabelResponse, GetLabelResponse } from '~~/gen/ts/services/citizens/labels';
 
 const props = defineProps<{
@@ -40,15 +40,14 @@ const state = reactive<Schema>({
     },
 });
 
-const {
-    data: label,
-    status,
-    error,
-    refresh,
-} = useLazyAsyncData(`citizens-label-${props.labelId}`, () => getCitizenLabel(props.labelId!), {
-    immediate: !!props.labelId,
-    watch: [() => props.labelId],
-});
+const { data, status, error, refresh } = useLazyAsyncData(
+    `citizens-label-${props.labelId}`,
+    () => getCitizenLabel(props.labelId!),
+    {
+        immediate: !!props.labelId,
+        watch: [() => props.labelId],
+    },
+);
 
 async function getCitizenLabel(labelId: number): Promise<GetLabelResponse> {
     try {
@@ -56,22 +55,25 @@ async function getCitizenLabel(labelId: number): Promise<GetLabelResponse> {
 
         if (!response?.label) return response;
 
-        const label = response.label;
-
-        state.id = label.id;
-        state.name = label.name;
-        state.color = label.color;
-        state.icon = label.icon;
-        state.settings = {
-            requiresExpiration: label.settings?.requiresExpiration ?? false,
-        };
-
         return response;
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
     }
 }
+
+function setFromData(label: Label | undefined): void {
+    if (!label) return;
+
+    state.id = label.id;
+    state.name = label.name;
+    state.color = label.color;
+    state.icon = label.icon;
+    state.settings.requiresExpiration = label.settings?.requiresExpiration ?? false;
+}
+
+watch(data, () => setFromData(data.value?.label));
+setFromData(data.value?.label);
 
 async function createOrUpdateLabel(values: Schema): Promise<CreateOrUpdateLabelResponse> {
     try {
@@ -142,6 +144,7 @@ const formRef = useTemplateRef('formRef');
                     <IconSelectMenu v-model="state.icon" name="label.icon" :hex-color="state.color" class="w-full" />
                 </UFormField>
 
+                <!--
                 <UFormField name="label.settings" :label="$t('common.settings')">
                     <UFormField
                         name="label.settings.requiresExpiration"
@@ -155,6 +158,7 @@ const formRef = useTemplateRef('formRef');
                 <UFormField name="access" :label="$t('common.access')">
                     <div>TODO</div>
                 </UFormField>
+                -->
             </UForm>
         </template>
 

@@ -9,15 +9,21 @@ import type { DeleteLabelResponse } from "./labels";
 import type { DeleteLabelRequest } from "./labels";
 import type { CreateOrUpdateLabelResponse } from "./labels";
 import type { CreateOrUpdateLabelRequest } from "./labels";
-import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { GetLabelResponse } from "./labels";
 import type { GetLabelRequest } from "./labels";
+import { stackIntercept } from "@protobuf-ts/runtime-rpc";
+import type { ListLabelsResponse } from "./labels";
+import type { ListLabelsRequest } from "./labels";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
  * @generated from protobuf service services.citizens.LabelsService
  */
 export interface ILabelsServiceClient {
+    /**
+     * @generated from protobuf rpc: ListLabels
+     */
+    listLabels(input: ListLabelsRequest, options?: RpcOptions): UnaryCall<ListLabelsRequest, ListLabelsResponse>;
     /**
      * @generated from protobuf rpc: GetLabel
      */
@@ -41,24 +47,31 @@ export class LabelsServiceClient implements ILabelsServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * @generated from protobuf rpc: ListLabels
+     */
+    listLabels(input: ListLabelsRequest, options?: RpcOptions): UnaryCall<ListLabelsRequest, ListLabelsResponse> {
+        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListLabelsRequest, ListLabelsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: GetLabel
      */
     getLabel(input: GetLabelRequest, options?: RpcOptions): UnaryCall<GetLabelRequest, GetLabelResponse> {
-        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetLabelRequest, GetLabelResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: CreateOrUpdateLabel
      */
     createOrUpdateLabel(input: CreateOrUpdateLabelRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLabelRequest, CreateOrUpdateLabelResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateOrUpdateLabelRequest, CreateOrUpdateLabelResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteLabel
      */
     deleteLabel(input: DeleteLabelRequest, options?: RpcOptions): UnaryCall<DeleteLabelRequest, DeleteLabelResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteLabelRequest, DeleteLabelResponse>("unary", this._transport, method, opt, input);
     }
 }

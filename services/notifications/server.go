@@ -34,7 +34,7 @@ type Server struct {
 	logger   *zap.Logger
 	ctx      context.Context
 	db       *sql.DB
-	p        perms.Permissions
+	ps       perms.Permissions
 	tm       *auth.TokenMgr
 	ui       userinfo.UserInfoRetriever
 	js       *events.JSWrapper
@@ -64,7 +64,7 @@ func NewServer(p Params) *Server {
 		logger:   p.Logger,
 		ctx:      ctxCancel,
 		db:       p.DB,
-		p:        p.Perms,
+		ps:       p.Perms,
 		tm:       p.TM,
 		ui:       p.UI,
 		js:       p.JS,

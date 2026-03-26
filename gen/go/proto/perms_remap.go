@@ -144,6 +144,9 @@ var PermsRemap = map[string][]string{
 	"citizens.LabelsService/GetLabel": []string{
 		"completor.CompletorService/CompleteCitizenLabels",
 	},
+	"citizens.LabelsService/ListLabels": []string{
+		"completor.CompletorService/CompleteCitizenLabels",
+	},
 
 	// Service: completor.CompletorService
 	"completor.CompletorService/CompleteCitizens": []string{

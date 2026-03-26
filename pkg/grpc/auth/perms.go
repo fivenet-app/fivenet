@@ -18,12 +18,12 @@ var PermsModule = fx.Module("grpc.perms",
 )
 
 type GRPCPerm struct {
-	p pkgperms.Permissions
+	ps pkgperms.Permissions
 }
 
 func NewGRPCPerms(p pkgperms.Permissions) *GRPCPerm {
 	return &GRPCPerm{
-		p: p,
+		ps: p,
 	}
 }
 
@@ -83,7 +83,7 @@ func (g *GRPCPerm) checkPermission(
 			category := pkgperms.Category(permSplit[0])
 			name := pkgperms.Name(permSplit[1])
 
-			if g.p.Can(userInfo, category, name) {
+			if g.ps.Can(userInfo, category, name) {
 				return ctx, nil
 			}
 		}

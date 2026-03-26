@@ -204,6 +204,7 @@ export const grpcMethods = [
 	'citizens.CitizensService/DeleteAvatar',
 	'citizens.CitizensService/UploadMugshot',
 	'citizens.CitizensService/DeleteMugshot',
+	'citizens.LabelsService/ListLabels',
 	'citizens.LabelsService/GetLabel',
 	'citizens.LabelsService/CreateOrUpdateLabel',
 	'citizens.LabelsService/DeleteLabel',

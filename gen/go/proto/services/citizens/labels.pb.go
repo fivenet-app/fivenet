@@ -24,6 +24,131 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type ListLabelsRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Search        *string                `protobuf:"bytes,1,opt,name=search,proto3,oneof" json:"search,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListLabelsRequest) Reset() {
+	*x = ListLabelsRequest{}
+	mi := &file_services_citizens_labels_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListLabelsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListLabelsRequest) ProtoMessage() {}
+
+func (x *ListLabelsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_citizens_labels_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListLabelsRequest) GetSearch() string {
+	if x != nil && x.Search != nil {
+		return *x.Search
+	}
+	return ""
+}
+
+func (x *ListLabelsRequest) SetSearch(v string) {
+	x.Search = &v
+}
+
+func (x *ListLabelsRequest) HasSearch() bool {
+	if x == nil {
+		return false
+	}
+	return x.Search != nil
+}
+
+func (x *ListLabelsRequest) ClearSearch() {
+	x.Search = nil
+}
+
+type ListLabelsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Search *string
+}
+
+func (b0 ListLabelsRequest_builder) Build() *ListLabelsRequest {
+	m0 := &ListLabelsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Search = b.Search
+	return m0
+}
+
+type ListLabelsResponse struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListLabelsResponse) Reset() {
+	*x = ListLabelsResponse{}
+	mi := &file_services_citizens_labels_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListLabelsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListLabelsResponse) ProtoMessage() {}
+
+func (x *ListLabelsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_citizens_labels_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListLabelsResponse) GetLabels() []*labels.Label {
+	if x != nil {
+		return x.Labels
+	}
+	return nil
+}
+
+func (x *ListLabelsResponse) SetLabels(v []*labels.Label) {
+	x.Labels = v
+}
+
+type ListLabelsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Labels []*labels.Label
+}
+
+func (b0 ListLabelsResponse_builder) Build() *ListLabelsResponse {
+	m0 := &ListLabelsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Labels = b.Labels
+	return m0
+}
+
 type GetLabelRequest struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -33,7 +158,7 @@ type GetLabelRequest struct {
 
 func (x *GetLabelRequest) Reset() {
 	*x = GetLabelRequest{}
-	mi := &file_services_citizens_labels_proto_msgTypes[0]
+	mi := &file_services_citizens_labels_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -45,7 +170,7 @@ func (x *GetLabelRequest) String() string {
 func (*GetLabelRequest) ProtoMessage() {}
 
 func (x *GetLabelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_citizens_labels_proto_msgTypes[0]
+	mi := &file_services_citizens_labels_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -90,7 +215,7 @@ type GetLabelResponse struct {
 
 func (x *GetLabelResponse) Reset() {
 	*x = GetLabelResponse{}
-	mi := &file_services_citizens_labels_proto_msgTypes[1]
+	mi := &file_services_citizens_labels_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -102,7 +227,7 @@ func (x *GetLabelResponse) String() string {
 func (*GetLabelResponse) ProtoMessage() {}
 
 func (x *GetLabelResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_citizens_labels_proto_msgTypes[1]
+	mi := &file_services_citizens_labels_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -158,7 +283,7 @@ type CreateOrUpdateLabelRequest struct {
 
 func (x *CreateOrUpdateLabelRequest) Reset() {
 	*x = CreateOrUpdateLabelRequest{}
-	mi := &file_services_citizens_labels_proto_msgTypes[2]
+	mi := &file_services_citizens_labels_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -170,7 +295,7 @@ func (x *CreateOrUpdateLabelRequest) String() string {
 func (*CreateOrUpdateLabelRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateLabelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_citizens_labels_proto_msgTypes[2]
+	mi := &file_services_citizens_labels_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -226,7 +351,7 @@ type CreateOrUpdateLabelResponse struct {
 
 func (x *CreateOrUpdateLabelResponse) Reset() {
 	*x = CreateOrUpdateLabelResponse{}
-	mi := &file_services_citizens_labels_proto_msgTypes[3]
+	mi := &file_services_citizens_labels_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -238,7 +363,7 @@ func (x *CreateOrUpdateLabelResponse) String() string {
 func (*CreateOrUpdateLabelResponse) ProtoMessage() {}
 
 func (x *CreateOrUpdateLabelResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_citizens_labels_proto_msgTypes[3]
+	mi := &file_services_citizens_labels_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -294,7 +419,7 @@ type DeleteLabelRequest struct {
 
 func (x *DeleteLabelRequest) Reset() {
 	*x = DeleteLabelRequest{}
-	mi := &file_services_citizens_labels_proto_msgTypes[4]
+	mi := &file_services_citizens_labels_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -306,7 +431,7 @@ func (x *DeleteLabelRequest) String() string {
 func (*DeleteLabelRequest) ProtoMessage() {}
 
 func (x *DeleteLabelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_citizens_labels_proto_msgTypes[4]
+	mi := &file_services_citizens_labels_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -350,7 +475,7 @@ type DeleteLabelResponse struct {
 
 func (x *DeleteLabelResponse) Reset() {
 	*x = DeleteLabelResponse{}
-	mi := &file_services_citizens_labels_proto_msgTypes[5]
+	mi := &file_services_citizens_labels_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -362,7 +487,7 @@ func (x *DeleteLabelResponse) String() string {
 func (*DeleteLabelResponse) ProtoMessage() {}
 
 func (x *DeleteLabelResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_citizens_labels_proto_msgTypes[5]
+	mi := &file_services_citizens_labels_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -389,7 +514,12 @@ var File_services_citizens_labels_proto protoreflect.FileDescriptor
 
 const file_services_citizens_labels_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/citizens/labels.proto\x12\x11services.citizens\x1a\x19codegen/perms/perms.proto\x1a&resources/citizens/labels/labels.proto\"!\n" +
+	"\x1eservices/citizens/labels.proto\x12\x11services.citizens\x1a\x19codegen/perms/perms.proto\x1a&resources/citizens/labels/labels.proto\";\n" +
+	"\x11ListLabelsRequest\x12\x1b\n" +
+	"\x06search\x18\x01 \x01(\tH\x00R\x06search\x88\x01\x01B\t\n" +
+	"\a_search\"N\n" +
+	"\x12ListLabelsResponse\x128\n" +
+	"\x06labels\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x06labels\"!\n" +
 	"\x0fGetLabelRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"J\n" +
 	"\x10GetLabelResponse\x126\n" +
@@ -400,37 +530,44 @@ const file_services_citizens_labels_proto_rawDesc = "" +
 	"\x05label\x18\x01 \x01(\v2 .resources.citizens.labels.LabelR\x05label\"$\n" +
 	"\x12DeleteLabelRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x15\n" +
-	"\x13DeleteLabelResponse2\xa2\x03\n" +
-	"\rLabelsService\x12\x8e\x01\n" +
+	"\x13DeleteLabelResponse2\xb9\x04\n" +
+	"\rLabelsService\x12\x94\x01\n" +
+	"\n" +
+	"ListLabels\x12$.services.citizens.ListLabelsRequest\x1a%.services.citizens.ListLabelsResponse\"9\xd2\xf3\x185\b\x01\x12\x1acompletor.CompletorService\x1a\x15CompleteCitizenLabels\x12\x8e\x01\n" +
 	"\bGetLabel\x12\".services.citizens.GetLabelRequest\x1a#.services.citizens.GetLabelResponse\"9\xd2\xf3\x185\b\x01\x12\x1acompletor.CompletorService\x1a\x15CompleteCitizenLabels\x12|\n" +
 	"\x13CreateOrUpdateLabel\x12-.services.citizens.CreateOrUpdateLabelRequest\x1a..services.citizens.CreateOrUpdateLabelResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12d\n" +
 	"\vDeleteLabel\x12%.services.citizens.DeleteLabelRequest\x1a&.services.citizens.DeleteLabelResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x1c\xea\xf3\x18\x18\b \x12\x14i-mdi-label-multipleBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
 
-var file_services_citizens_labels_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_services_citizens_labels_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_services_citizens_labels_proto_goTypes = []any{
-	(*GetLabelRequest)(nil),             // 0: services.citizens.GetLabelRequest
-	(*GetLabelResponse)(nil),            // 1: services.citizens.GetLabelResponse
-	(*CreateOrUpdateLabelRequest)(nil),  // 2: services.citizens.CreateOrUpdateLabelRequest
-	(*CreateOrUpdateLabelResponse)(nil), // 3: services.citizens.CreateOrUpdateLabelResponse
-	(*DeleteLabelRequest)(nil),          // 4: services.citizens.DeleteLabelRequest
-	(*DeleteLabelResponse)(nil),         // 5: services.citizens.DeleteLabelResponse
-	(*labels.Label)(nil),                // 6: resources.citizens.labels.Label
+	(*ListLabelsRequest)(nil),           // 0: services.citizens.ListLabelsRequest
+	(*ListLabelsResponse)(nil),          // 1: services.citizens.ListLabelsResponse
+	(*GetLabelRequest)(nil),             // 2: services.citizens.GetLabelRequest
+	(*GetLabelResponse)(nil),            // 3: services.citizens.GetLabelResponse
+	(*CreateOrUpdateLabelRequest)(nil),  // 4: services.citizens.CreateOrUpdateLabelRequest
+	(*CreateOrUpdateLabelResponse)(nil), // 5: services.citizens.CreateOrUpdateLabelResponse
+	(*DeleteLabelRequest)(nil),          // 6: services.citizens.DeleteLabelRequest
+	(*DeleteLabelResponse)(nil),         // 7: services.citizens.DeleteLabelResponse
+	(*labels.Label)(nil),                // 8: resources.citizens.labels.Label
 }
 var file_services_citizens_labels_proto_depIdxs = []int32{
-	6, // 0: services.citizens.GetLabelResponse.label:type_name -> resources.citizens.labels.Label
-	6, // 1: services.citizens.CreateOrUpdateLabelRequest.label:type_name -> resources.citizens.labels.Label
-	6, // 2: services.citizens.CreateOrUpdateLabelResponse.label:type_name -> resources.citizens.labels.Label
-	0, // 3: services.citizens.LabelsService.GetLabel:input_type -> services.citizens.GetLabelRequest
-	2, // 4: services.citizens.LabelsService.CreateOrUpdateLabel:input_type -> services.citizens.CreateOrUpdateLabelRequest
-	4, // 5: services.citizens.LabelsService.DeleteLabel:input_type -> services.citizens.DeleteLabelRequest
-	1, // 6: services.citizens.LabelsService.GetLabel:output_type -> services.citizens.GetLabelResponse
-	3, // 7: services.citizens.LabelsService.CreateOrUpdateLabel:output_type -> services.citizens.CreateOrUpdateLabelResponse
-	5, // 8: services.citizens.LabelsService.DeleteLabel:output_type -> services.citizens.DeleteLabelResponse
-	6, // [6:9] is the sub-list for method output_type
-	3, // [3:6] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	8, // 0: services.citizens.ListLabelsResponse.labels:type_name -> resources.citizens.labels.Label
+	8, // 1: services.citizens.GetLabelResponse.label:type_name -> resources.citizens.labels.Label
+	8, // 2: services.citizens.CreateOrUpdateLabelRequest.label:type_name -> resources.citizens.labels.Label
+	8, // 3: services.citizens.CreateOrUpdateLabelResponse.label:type_name -> resources.citizens.labels.Label
+	0, // 4: services.citizens.LabelsService.ListLabels:input_type -> services.citizens.ListLabelsRequest
+	2, // 5: services.citizens.LabelsService.GetLabel:input_type -> services.citizens.GetLabelRequest
+	4, // 6: services.citizens.LabelsService.CreateOrUpdateLabel:input_type -> services.citizens.CreateOrUpdateLabelRequest
+	6, // 7: services.citizens.LabelsService.DeleteLabel:input_type -> services.citizens.DeleteLabelRequest
+	1, // 8: services.citizens.LabelsService.ListLabels:output_type -> services.citizens.ListLabelsResponse
+	3, // 9: services.citizens.LabelsService.GetLabel:output_type -> services.citizens.GetLabelResponse
+	5, // 10: services.citizens.LabelsService.CreateOrUpdateLabel:output_type -> services.citizens.CreateOrUpdateLabelResponse
+	7, // 11: services.citizens.LabelsService.DeleteLabel:output_type -> services.citizens.DeleteLabelResponse
+	8, // [8:12] is the sub-list for method output_type
+	4, // [4:8] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_services_citizens_labels_proto_init() }
@@ -438,13 +575,14 @@ func file_services_citizens_labels_proto_init() {
 	if File_services_citizens_labels_proto != nil {
 		return
 	}
+	file_services_citizens_labels_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_citizens_labels_proto_rawDesc), len(file_services_citizens_labels_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

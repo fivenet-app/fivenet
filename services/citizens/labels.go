@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscompletor "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -79,6 +80,76 @@ func (s *Server) validateLabels(
 	return len(labels) == int(count.Total), nil
 }
 
+func (s *Server) ListLabels(
+	ctx context.Context,
+	req *pbcitizens.ListLabelsRequest,
+) (*pbcitizens.ListLabelsResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	jobs, err := s.ps.AttrJobList(
+		userInfo,
+		permscompletor.CompletorServicePerm,
+		permscompletor.CompletorServiceCompleteCitizenLabelsPerm,
+		permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField,
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+	if jobs.Len() == 0 {
+		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
+	}
+
+	jobsExp := make([]mysql.Expression, jobs.Len())
+	for i := range jobs.GetStrings() {
+		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
+	}
+
+	condition := mysql.AND(
+		tCitizensLabelsJob.Job.IN(jobsExp...),
+	)
+	if !userInfo.GetSuperuser() {
+		condition = condition.AND(tCitizensLabelsJob.DeletedAt.IS_NULL())
+	}
+
+	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
+		condition = condition.AND(tCitizensLabelsJob.Name.LIKE(mysql.String(search)))
+	}
+
+	columns := mysql.ProjectionList{
+		tCitizensLabelsJob.ID,
+		tCitizensLabelsJob.CreatedAt,
+		tCitizensLabelsJob.Name,
+		tCitizensLabelsJob.Color,
+		tCitizensLabelsJob.Icon,
+	}
+	if userInfo.GetSuperuser() {
+		columns = append(columns, tCitizensLabelsJob.DeletedAt)
+	}
+
+	stmt := tCitizensLabelsJob.
+		SELECT(
+			columns[0],
+			columns[1:],
+		).
+		FROM(tCitizensLabelsJob).
+		WHERE(condition).
+		ORDER_BY(
+			tCitizensLabelsJob.SortKey.ASC(),
+		).
+		LIMIT(15)
+
+	resp := &pbcitizens.ListLabelsResponse{
+		Labels: []*citizenslabels.Label{},
+	}
+	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+		}
+	}
+
+	return resp, nil
+}
+
 func (s *Server) GetLabel(
 	ctx context.Context,
 	req *pbcitizens.GetLabelRequest,
@@ -95,6 +166,10 @@ func (s *Server) GetLabel(
 	}
 
 	if !userInfo.GetSuperuser() {
+		if label.GetDeletedAt() != nil {
+			return nil, errorscitizens.ErrLabelNotFound
+		}
+
 		label.DeletedAt = nil
 	}
 
@@ -164,7 +239,10 @@ func (s *Server) CreateOrUpdateLabel(
 				label.Icon,
 				label.Settings,
 			).
-			WHERE(tCitizensLabelsJob.ID.EQ(mysql.Int64(label.GetId()))).
+			WHERE(mysql.AND(
+				tCitizensLabelsJob.ID.EQ(mysql.Int64(label.GetId())),
+				tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
+			)).
 			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {

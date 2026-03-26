@@ -149,7 +149,7 @@ func (s *Server) CompleteDocumentCategories(
 ) (*pbcompletor.CompleteDocumentCategoriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	jobs, err := s.p.AttrJobList(
+	jobs, err := s.ps.AttrJobList(
 		userInfo,
 		permscompletor.CompletorServicePerm,
 		permscompletor.CompletorServiceCompleteDocumentCategoriesPerm,
@@ -227,7 +227,7 @@ func (s *Server) CompleteCitizenLabels(
 ) (*pbcompletor.CompleteCitizenLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	jobs, err := s.p.AttrJobList(
+	jobs, err := s.ps.AttrJobList(
 		userInfo,
 		permscompletor.CompletorServicePerm,
 		permscompletor.CompletorServiceCompleteCitizenLabelsPerm,
@@ -245,7 +245,10 @@ func (s *Server) CompleteCitizenLabels(
 		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
 	}
 
-	condition := tCitizensLabelsJob.Job.IN(jobsExp...)
+	condition := mysql.AND(
+		tCitizensLabelsJob.Job.IN(jobsExp...),
+		tCitizensLabelsJob.DeletedAt.IS_NULL(),
+	)
 
 	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
 		condition = condition.AND(tCitizensLabelsJob.Name.LIKE(mysql.String(search)))

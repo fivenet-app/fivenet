@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	LabelsService_ListLabels_FullMethodName          = "/services.citizens.LabelsService/ListLabels"
 	LabelsService_GetLabel_FullMethodName            = "/services.citizens.LabelsService/GetLabel"
 	LabelsService_CreateOrUpdateLabel_FullMethodName = "/services.citizens.LabelsService/CreateOrUpdateLabel"
 	LabelsService_DeleteLabel_FullMethodName         = "/services.citizens.LabelsService/DeleteLabel"
@@ -28,6 +29,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LabelsServiceClient interface {
+	ListLabels(ctx context.Context, in *ListLabelsRequest, opts ...grpc.CallOption) (*ListLabelsResponse, error)
 	GetLabel(ctx context.Context, in *GetLabelRequest, opts ...grpc.CallOption) (*GetLabelResponse, error)
 	CreateOrUpdateLabel(ctx context.Context, in *CreateOrUpdateLabelRequest, opts ...grpc.CallOption) (*CreateOrUpdateLabelResponse, error)
 	DeleteLabel(ctx context.Context, in *DeleteLabelRequest, opts ...grpc.CallOption) (*DeleteLabelResponse, error)
@@ -39,6 +41,16 @@ type labelsServiceClient struct {
 
 func NewLabelsServiceClient(cc grpc.ClientConnInterface) LabelsServiceClient {
 	return &labelsServiceClient{cc}
+}
+
+func (c *labelsServiceClient) ListLabels(ctx context.Context, in *ListLabelsRequest, opts ...grpc.CallOption) (*ListLabelsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListLabelsResponse)
+	err := c.cc.Invoke(ctx, LabelsService_ListLabels_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *labelsServiceClient) GetLabel(ctx context.Context, in *GetLabelRequest, opts ...grpc.CallOption) (*GetLabelResponse, error) {
@@ -75,6 +87,7 @@ func (c *labelsServiceClient) DeleteLabel(ctx context.Context, in *DeleteLabelRe
 // All implementations must embed UnimplementedLabelsServiceServer
 // for forward compatibility.
 type LabelsServiceServer interface {
+	ListLabels(context.Context, *ListLabelsRequest) (*ListLabelsResponse, error)
 	GetLabel(context.Context, *GetLabelRequest) (*GetLabelResponse, error)
 	CreateOrUpdateLabel(context.Context, *CreateOrUpdateLabelRequest) (*CreateOrUpdateLabelResponse, error)
 	DeleteLabel(context.Context, *DeleteLabelRequest) (*DeleteLabelResponse, error)
@@ -88,6 +101,9 @@ type LabelsServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedLabelsServiceServer struct{}
 
+func (UnimplementedLabelsServiceServer) ListLabels(context.Context, *ListLabelsRequest) (*ListLabelsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListLabels not implemented")
+}
 func (UnimplementedLabelsServiceServer) GetLabel(context.Context, *GetLabelRequest) (*GetLabelResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLabel not implemented")
 }
@@ -116,6 +132,24 @@ func RegisterLabelsServiceServer(s grpc.ServiceRegistrar, srv LabelsServiceServe
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&LabelsService_ServiceDesc, srv)
+}
+
+func _LabelsService_ListLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListLabelsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LabelsServiceServer).ListLabels(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LabelsService_ListLabels_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LabelsServiceServer).ListLabels(ctx, req.(*ListLabelsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _LabelsService_GetLabel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -179,6 +213,10 @@ var LabelsService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.citizens.LabelsService",
 	HandlerType: (*LabelsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListLabels",
+			Handler:    _LabelsService_ListLabels_Handler,
+		},
 		{
 			MethodName: "GetLabel",
 			Handler:    _LabelsService_GetLabel_Handler,
