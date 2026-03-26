@@ -2,6 +2,7 @@ import { defineAsyncComponent, type DefineComponent } from 'vue';
 
 export type IconEntry = {
     name: string;
+    label: string;
     component: ReturnType<typeof defineAsyncComponent>;
 };
 
@@ -12,6 +13,7 @@ export const availableIcons: IconEntry[] = Object.entries(modules).map(([path, l
 
     return {
         name: name,
+        label: name.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/Icon$/, ''),
         component: defineAsyncComponent<DefineComponent>({
             loader: async () => {
                 const mod = (await loader()) as Record<string, DefineComponent>;

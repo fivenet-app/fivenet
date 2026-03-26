@@ -28,7 +28,8 @@ const icon = defineModel<string | undefined>('modelValue');
             v-model="icon"
             :items="availableIcons"
             :search-input="{ placeholder: $t('common.search_field') }"
-            :filter-fields="['name']"
+            :filter-fields="['name', 'label']"
+            label-key="label"
             value-key="name"
             virtualize
             v-bind="$attrs"
