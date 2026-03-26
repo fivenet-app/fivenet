@@ -23,12 +23,12 @@ var tNotifications = table.FivenetNotifications
 var (
 	ErrFailedRequest = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.NotificationsService.ErrFailedRequest"},
+		&common.I18NItem{Key: "errors.notifications.NotificationsService.ErrFailedRequest"},
 		nil,
 	)
 	ErrFailedStream = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.NotificationsService.ErrFailedStream"},
+		&common.I18NItem{Key: "errors.notifications.NotificationsService.ErrFailedStream"},
 		nil,
 	)
 )

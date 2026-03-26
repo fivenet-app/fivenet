@@ -71,7 +71,11 @@ func (s *Server) DeleteAvatar(
 		return &pbcitizens.DeleteAvatarResponse{}, nil
 	}
 
-	if err := s.profilePictureHandler.Delete(ctx, userInfo.GetUserId(), *props.AvatarFileId); err != nil {
+	if err := s.profilePictureHandler.Delete(
+		ctx,
+		userInfo.GetUserId(),
+		*props.AvatarFileId,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 

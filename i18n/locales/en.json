@@ -1459,7 +1459,10 @@
                 }
             },
             "citizen_labels": {
-                "title": "Citizen Labels"
+                "title": "Citizen Labels",
+                "settings": {
+                    "requires_expiration": "Requires Expiration"
+                }
             },
             "List": {
                 "no_citizens": "Use the search field above to search or update your query.",
@@ -2354,80 +2357,86 @@
             "ErrNoUserInfo": "Something went wrong, please logout and login again!",
             "ErrPermissionDenied": "You don't have permission to do that!"
         },
-        "AuthService": {
-            "ErrGenericAccount": {
-                "title": "Account error",
-                "content": "Failed to get/ update your account, please try again."
-            },
-            "ErrAccountCreateFailed": {
-                "title": "Account creation failed",
-                "content": "Please check the token you have typed in! ({code})"
-            },
-            "ErrInvalidLogin": {
-                "content": "Please check your username and password and try again.",
-                "title": "Wrong username or password!"
-            },
-            "ErrNoAccount": "You need to use your registration token to create an account first.",
-            "ErrNoCharFound": "No character(s) found for your account.",
-            "ErrGenericLogin": "Failed to login you in, please try again.",
-            "ErrUnableToChooseChar": "You don't have permission to select this character!",
-            "ErrUpdateAccount": "Failed to update your account!",
-            "ErrChangePassword": {
-                "title": "Failed to change your password!",
-                "content": "Please check your current password and try again. ({code})"
-            },
-            "ErrForgotPassword": {
-                "title": "Failed to reset password!",
-                "content": "Please check your email and try again."
-            },
-            "ErrAccountExistsFailed": {
-                "title": "Account already exists!",
-                "content": "Please use the forgot password function!"
-            },
-            "ErrSignupDisabled": {
-                "title": "Account signup is disabled!",
-                "content": "Please contact your FiveNet administrator for help on this."
-            },
-            "ErrAccountDuplicate": {
-                "title": "Username already taken!",
-                "content": "The username is already taken, please use a different username."
-            },
-            "ErrChangeUsername": "Failed to change your username!",
-            "ErrBadUsername": "Please verify the correctness of your username! Please try again.",
-            "ErrCharLock": {
-                "title": "Char lock is active!",
-                "content": "Please select an available character and try again."
-            },
-            "ErrNotSuperuser": "You are not a superuser! Please contact your FiveNet administrators to report this issue.",
-            "ErrImpersonateJobInvalid": "You can't impersonate this job grade!",
-            "ErrReauthRequired": "Re-authentication required!"
+        "auth": {
+            "AuthService": {
+                "ErrGenericAccount": {
+                    "title": "Account error",
+                    "content": "Failed to get/ update your account, please try again."
+                },
+                "ErrAccountCreateFailed": {
+                    "title": "Account creation failed",
+                    "content": "Please check the token you have typed in! ({code})"
+                },
+                "ErrInvalidLogin": {
+                    "content": "Please check your username and password and try again.",
+                    "title": "Wrong username or password!"
+                },
+                "ErrNoAccount": "You need to use your registration token to create an account first.",
+                "ErrNoCharFound": "No character(s) found for your account.",
+                "ErrGenericLogin": "Failed to login you in, please try again.",
+                "ErrUnableToChooseChar": "You don't have permission to select this character!",
+                "ErrUpdateAccount": "Failed to update your account!",
+                "ErrChangePassword": {
+                    "title": "Failed to change your password!",
+                    "content": "Please check your current password and try again. ({code})"
+                },
+                "ErrForgotPassword": {
+                    "title": "Failed to reset password!",
+                    "content": "Please check your email and try again."
+                },
+                "ErrAccountExistsFailed": {
+                    "title": "Account already exists!",
+                    "content": "Please use the forgot password function!"
+                },
+                "ErrSignupDisabled": {
+                    "title": "Account signup is disabled!",
+                    "content": "Please contact your FiveNet administrator for help on this."
+                },
+                "ErrAccountDuplicate": {
+                    "title": "Username already taken!",
+                    "content": "The username is already taken, please use a different username."
+                },
+                "ErrChangeUsername": "Failed to change your username!",
+                "ErrBadUsername": "Please verify the correctness of your username! Please try again.",
+                "ErrCharLock": {
+                    "title": "Char lock is active!",
+                    "content": "Please select an available character and try again."
+                },
+                "ErrNotSuperuser": "You are not a superuser! Please contact your FiveNet administrators to report this issue.",
+                "ErrImpersonateJobInvalid": "You can't impersonate this job grade!",
+                "ErrReauthRequired": "Re-authentication required!"
+            }
         },
-        "CompletorService": {
-            "ErrFailedSearch": "Failed to search the data!"
+        "completor": {
+            "CompletorService": {
+                "ErrFailedSearch": "Failed to search the data!"
+            }
         },
-        "CentrumService": {
-            "ErrFailedQuery": "Failed to get/update dispatch center data!",
-            "ErrNotPartOfDispatch": "You are not part of this dispatch!",
-            "ErrNotOnDuty": {
-                "title": "You are not on duty!",
-                "content": "Make sure you are on duty and fullfil any other requirements to be visible on the livemap."
-            },
-            "ErrModeForbidsAction": {
-                "title": "Dispatch center forbids this!",
-                "content": "Please contact the dispatch center."
-            },
-            "ErrDispatchAlreadyCompleted": {
-                "title": "Dispatch already in completed state!",
-                "content": "You can't accept/decline completed dispatches."
-            },
-            "ErrNotPartOfUnit": "You are not part of this unit!",
-            "ErrStaticUnit": "Can't update a static unit's status to be available!",
-            "ErrUnitPermDenied": "You can't access this unit!",
-            "ErrDisabled": {
-                "title": "Dispatch Center is disabled!",
-                "content": "Please contact your leader to enable the dispatch center."
-            },
-            "ErrDispatchNoJobs": "You can't create a dispatch without any jobs!"
+        "centrum": {
+            "CentrumService": {
+                "ErrFailedQuery": "Failed to get/update dispatch center data!",
+                "ErrNotPartOfDispatch": "You are not part of this dispatch!",
+                "ErrNotOnDuty": {
+                    "title": "You are not on duty!",
+                    "content": "Make sure you are on duty and fullfil any other requirements to be visible on the livemap."
+                },
+                "ErrModeForbidsAction": {
+                    "title": "Dispatch center forbids this!",
+                    "content": "Please contact the dispatch center."
+                },
+                "ErrDispatchAlreadyCompleted": {
+                    "title": "Dispatch already in completed state!",
+                    "content": "You can't accept/decline completed dispatches."
+                },
+                "ErrNotPartOfUnit": "You are not part of this unit!",
+                "ErrStaticUnit": "Can't update a static unit's status to be available!",
+                "ErrUnitPermDenied": "You can't access this unit!",
+                "ErrDisabled": {
+                    "title": "Dispatch Center is disabled!",
+                    "content": "Please contact your leader to enable the dispatch center."
+                },
+                "ErrDispatchNoJobs": "You can't create a dispatch without any jobs!"
+            }
         },
         "general": {
             "internal_error": {
@@ -2435,197 +2444,224 @@
                 "content": "An internal server error has occured. Please try again."
             }
         },
-        "JobsService": {
-            "ErrFailedQuery": "Failed to get job data!",
-            "ErrReasonRequired": "A reason must be provided!",
-            "ErrPropsNoteDenied": "You are not allowed to set your colleague's note!",
-            "ErrPropsAbsenceDenied": "You are not allowed to set your colleague's absence!",
-            "ErrNotFoundOrNoPerms": "Colleague not found!",
-            "ErrPropsLabelsDenied": "You are not allowed to set your colleague's labels!",
-            "ErrPropsNameDenied": "You are not allowed to set your colleague's name!",
-            "ErrTimeclockOutOfRange": "Only the last 6 months are available to view in the timeclock!",
-            "ErrAbsenceBeginOutOfRange": "Absence begin date is outside the allowed range.",
-            "ErrAbsenceEndOutOfRange": "Absence end date is outside the allowed range.",
-            "ErrLabelsNoPerms": "You don't have permissions to list the colleagues labels!"
-        },
-        "QualificationsService": {
-            "ErrFailedQuery": "Failed to get qualifcation data!",
-            "ErrRequirementsMissing": {
-                "title": "Missing required Qualifications",
-                "content": "You are missing required qualifications."
-            },
-            "ErrQualificationClosed": "Can't request or take a closed qualification!",
-            "ErrExamDisabled": "The qualification's exam is disabled!",
-            "ErrRequirementSelfRef": "Please remove any qualification requirements that reference the qualification you are editing!",
-            "ErrQualiAccessDenied": "You can't access this qualifcation!",
-            "ErrQualiUpdateDenied": "You don't have permission to edit this qualification!",
-            "ErrQualiViewDenied": "You don't have permission to view this qualification!"
-        },
-        "CalendarService": {
-            "ErrFailedQuery": "Failed to load calendar data!",
-            "ErrNoPerms": "You don't have permissions to access this calendar data!",
-            "ErrOnePrivateCal": "You can only have one private calendar!",
-            "ErrCalendarClosed": {
-                "title": "Calendar is closed",
-                "content": "The calendar is closed and can't be used anymore."
-            },
-            "ErrEntryClosed": {
-                "title": "Calendar Entry is closed",
-                "content": "The calendar entry is closed and can't be RSVPed to anymore."
+        "jobs": {
+            "JobsService": {
+                "ErrFailedQuery": "Failed to get job data!",
+                "ErrReasonRequired": "A reason must be provided!",
+                "ErrPropsNoteDenied": "You are not allowed to set your colleague's note!",
+                "ErrPropsAbsenceDenied": "You are not allowed to set your colleague's absence!",
+                "ErrNotFoundOrNoPerms": "Colleague not found!",
+                "ErrPropsLabelsDenied": "You are not allowed to set your colleague's labels!",
+                "ErrPropsNameDenied": "You are not allowed to set your colleague's name!",
+                "ErrTimeclockOutOfRange": "Only the last 6 months are available to view in the timeclock!",
+                "ErrAbsenceBeginOutOfRange": "Absence begin date is outside the allowed range.",
+                "ErrAbsenceEndOutOfRange": "Absence end date is outside the allowed range.",
+                "ErrLabelsNoPerms": "You don't have permissions to list the colleagues labels!"
             }
         },
-        "WikiService": {
-            "ErrFailedQuery": "Failed to load wiki data!",
-            "ErrPageDenied": "You don't have access to this page!",
-            "ErrPageHasChildren": {
-                "title": "Page has children",
-                "content": "You can't delete this page because it has child pages. Make sure to move or delete the child pages first."
-            },
-            "ErrMaxFilesReached": {
-                "title": "Maximum files reached",
-                "content": "You have reached the maximum number of files allowed in this wiki page. Please delete some files before uploading new ones."
-            },
-            "ErrPageNotFound": {
-                "title": "Page not found",
-                "content": "The page you are trying to access does not exist or has been deleted."
+        "qualifications": {
+            "QualificationsService": {
+                "ErrFailedQuery": "Failed to get qualifcation data!",
+                "ErrRequirementsMissing": {
+                    "title": "Missing required Qualifications",
+                    "content": "You are missing required qualifications."
+                },
+                "ErrQualificationClosed": "Can't request or take a closed qualification!",
+                "ErrExamDisabled": "The qualification's exam is disabled!",
+                "ErrRequirementSelfRef": "Please remove any qualification requirements that reference the qualification you are editing!",
+                "ErrQualiAccessDenied": "You can't access this qualifcation!",
+                "ErrQualiUpdateDenied": "You don't have permission to edit this qualification!",
+                "ErrQualiViewDenied": "You don't have permission to view this qualification!"
             }
         },
-        "MailerService": {
-            "ErrFailedQuery": "Failed to load mail data!",
-            "ErrAddresseAlreadyTaken": {
-                "title": "E-Mail address already taken!",
-                "content": "Please try again with another e-mail address."
-            },
-            "ErrTemplateLimitReached": "You can't have more templates (limit: 5)!",
-            "ErrEmailAccessDenied": "You must have access to the e-mail address!",
-            "ErrRecipientMinium": "Your e-mail must have at least one receiving e-mail address!",
-            "ErrInvalidRecipients": "One or more e-mail addresses are wrong.",
-            "ErrSameAddress": "Can't send an e-mail to the same e-mail address being sent from!",
-            "ErrCantDeleteOwnEmail": "You can't delete your own email!",
-            "ErrEmailAccessRequired": "A job's email requires at least one access",
-            "ErrAddresseInvalid": "Invalid e-mail address, please choose another one.",
-            "ErrThreadAccessDenied": {
-                "title": "You don't have access to this thread!",
-                "content": "You might have been removed from the thread."
-            },
-            "ErrEmailChangeTooEarly": {
-                "title": "The e-mail has already been changed!",
-                "content": "E-mail addresses can only be changed every two weeks."
-            },
-            "ErrEmailDisabled": {
-                "title": "This e-mail address has been disabled!",
-                "content": "Please contact the FiveNet administration for help on this."
-            },
-            "ErrSignatureTooLong": "Your e-mail signature is too long!"
-        },
-        "CitizensService": {
-            "ErrFailedQuery": "Failed to list/ get citizens data!",
-            "ErrJobGradeNoPermission": "No permission to access this citizen (based on the citizen's job)",
-            "ErrReasonRequired": "A reason must be provided!",
-            "ErrPropsWantedDenied": "You are not allowed to set a citizen's wanted status!",
-            "ErrPropsJobDenied": "You are not allowed to set a citizen's job!",
-            "ErrPropsJobPublic": "You can't set a state job!",
-            "ErrPropsJobInvalid": "Invalid job or job rank set!",
-            "ErrPropsTrafficPointsDenied": "You are not allowed to set a citizen's traffic infraction points!",
-            "ErrPropsLabelsDenied": "You are not allowed to set a citizen's labels!",
-            "ErrPropsMugshotDenied": "You are not allowed to set a citizen's mug shot!",
-            "ErrCitizenNotFound": {
-                "title": "Citizen not found",
-                "content": "The citizen you are looking for was not found."
+        "calendar": {
+            "CalendarService": {
+                "ErrFailedQuery": "Failed to load calendar data!",
+                "ErrNoPerms": "You don't have permissions to access this calendar data!",
+                "ErrOnePrivateCal": "You can only have one private calendar!",
+                "ErrCalendarClosed": {
+                    "title": "Calendar is closed",
+                    "content": "The calendar is closed and can't be used anymore."
+                },
+                "ErrEntryClosed": {
+                    "title": "Calendar Entry is closed",
+                    "content": "The calendar entry is closed and can't be RSVPed to anymore."
+                }
             }
         },
-        "VehiclesService": {
-            "ErrFailedQuery": "Failed to search vehicles data!",
-            "ErrPropsWantedDenied": "You are not allowed to set a vehicle's wanted status!"
-        },
-        "DocumentsService": {
-            "ErrFailedQuery": "Failed to get/ create/ update documents!",
-            "ErrNotFoundOrNoPerms": "No document found or no permissions to access document!",
-            "ErrTemplateNoPerms": "You don't have permission to view/ update/ delete this template!",
-            "ErrPermissionDenied": "You don't have permission to do this!",
-            "ErrClosedDoc": {
-                "title": "Document is closed!",
-                "content": "This document is closed and can't be edited. Please re-open the document to make changes."
-            },
-            "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
-            "ErrDocAccessViewDenied": "You don't have permission to view this document's access!",
-            "ErrTemplateFailed": "Failed to render document template! Please talk with your faction leader.",
-            "ErrDocViewDenied": "You don't have permission to view this document!",
-            "ErrDocUpdateDenied": "You don't have permission to edit this document!",
-            "ErrDocDeleteDenied": "You don't have permission to delete this document!",
-            "ErrDocToggleDenied": "You don't have permission to close/open this document!",
-            "ErrCommentViewDenied": "You don't have permission to view document comments!",
-            "ErrCommentPostDenied": "You don't have permission to post a comment on this document!",
-            "ErrCommentEditDenied": "You don't have permission to edit this comment!",
-            "ErrCommentDeleteDenied": "You can't delete this comment!",
-            "ErrFeedRefsViewDenied": "You don't have permission to view this document's references!",
-            "ErrFeedRelsViewDenied": "You don't have permission to view this document's relations!",
-            "ErrFeedRefSelf": "You can't reference a document with itself!",
-            "ErrFeedRefAddDenied": "You don't have permission to add references from/to this document!",
-            "ErrFeedRefRemoveDenied": "You don't have permission to remove references from this document!",
-            "ErrFeedRelAddDenied": "You don't have permission to add relation from/to this document!",
-            "ErrFeedRelRemoveDenied": "You don't have permission to remove references from this document!",
-            "ErrDocReqAlreadyCreated": {
-                "title": "Document Request already exists!",
-                "content": "A document request of the same type already exists or one has been created in the last 24 hours."
-            },
-            "ErrDocSameOwner": "You are already the creator of this document!",
-            "ErrDocOwnerWrongJob": "New document owner must be part of your job!",
-            "ErrDocReqOwnDoc": "You can't create requests against your own document!",
-            "ErrDocReqAlreadyCompleted": {
-                "title": "Document Request has already been accepted/declined!",
-                "content": "The document request you are trying to accept/decline has already been processed."
-            },
-            "ErrDocRequiredAccessTemplate": {
-                "title": "Required document access missing!",
-                "content": "Make sure you have not edited or removed any required document access."
-            },
-            "ErrDocOwnerFailed": "You need to have edit access to the document!",
-            "ErrDocAccessDuplicate": "Document access: A job rank/citizen can only have one access and not multiple!",
-            "ErrTemplateAccessDuplicate": "Template access: A job rank can only have one access and not multiple!",
-            "ErrApprovalTaskAlreadyHandled": {
-                "title": "Approval task already handled!",
-                "content": "This approval task has already been approved/declined."
-            },
-            "ErrApprovalSignatureRequired": {
-                "title": "Approval signature required!",
-                "content": "You must provide a signature to approve this document."
-            },
-            "ErrDocAccessInvalid": "Document access: Invalid job rank/ citizen set!",
-            "ErrApprovalDocIsDraft": {
-                "title": "Document is still a draft!",
-                "content": "You can't create approval tasks for draft documents."
+        "wiki": {
+            "WikiService": {
+                "ErrFailedQuery": "Failed to load wiki data!",
+                "ErrPageDenied": "You don't have access to this page!",
+                "ErrPageHasChildren": {
+                    "title": "Page has children",
+                    "content": "You can't delete this page because it has child pages. Make sure to move or delete the child pages first."
+                },
+                "ErrMaxFilesReached": {
+                    "title": "Maximum files reached",
+                    "content": "You have reached the maximum number of files allowed in this wiki page. Please delete some files before uploading new ones."
+                },
+                "ErrPageNotFound": {
+                    "title": "Page not found",
+                    "content": "The page you are trying to access does not exist or has been deleted."
+                }
             }
         },
-        "LivemapService": {
-            "ErrStreamFailed": "Failed to stream Map data!",
-            "ErrMarkerFailed": "Failed to create/ update/ delete marker!"
+        "mailer": {
+            "MailerService": {
+                "ErrFailedQuery": "Failed to load mail data!",
+                "ErrAddresseAlreadyTaken": {
+                    "title": "E-Mail address already taken!",
+                    "content": "Please try again with another e-mail address."
+                },
+                "ErrTemplateLimitReached": "You can't have more templates (limit: 5)!",
+                "ErrEmailAccessDenied": "You must have access to the e-mail address!",
+                "ErrRecipientMinium": "Your e-mail must have at least one receiving e-mail address!",
+                "ErrInvalidRecipients": "One or more e-mail addresses are wrong.",
+                "ErrSameAddress": "Can't send an e-mail to the same e-mail address being sent from!",
+                "ErrCantDeleteOwnEmail": "You can't delete your own email!",
+                "ErrEmailAccessRequired": "A job's email requires at least one access",
+                "ErrAddresseInvalid": "Invalid e-mail address, please choose another one.",
+                "ErrThreadAccessDenied": {
+                    "title": "You don't have access to this thread!",
+                    "content": "You might have been removed from the thread."
+                },
+                "ErrEmailChangeTooEarly": {
+                    "title": "The e-mail has already been changed!",
+                    "content": "E-mail addresses can only be changed every two weeks."
+                },
+                "ErrEmailDisabled": {
+                    "title": "This e-mail address has been disabled!",
+                    "content": "Please contact the FiveNet administration for help on this."
+                },
+                "ErrSignatureTooLong": "Your e-mail signature is too long!"
+            }
         },
-        "SettingsService": {
-            "ErrFailedQuery": "Failed to get/ update control panel data!",
-            "ErrInvalidRequest": "Invalid role action requested!",
-            "ErrNoPermission": "No permission to create/ change/ delete role!",
-            "ErrRoleAlreadyExists": "Role already exists!",
-            "ErrOwnRoleDeletion": "Can't delete your own role!",
-            "ErrInvalidPerms": "Failed to update role permissions!",
-            "ErrInvalidAttrs": "Failed to update role attributes!",
-            "ErrDiscordNotEnabled": "Discord bot integration is not enabled!",
-            "ErrDiscordConnectRequired": {
-                "title": "You must have your Discord account connected!",
-                "content": "Please make sure to connect your Discord account with FiveNet."
+        "citizens": {
+            "CitizensService": {
+                "ErrFailedQuery": "Failed to list/ get citizens data!",
+                "ErrJobGradeNoPermission": "No permission to access this citizen (based on the citizen's job)",
+                "ErrReasonRequired": "A reason must be provided!",
+                "ErrPropsWantedDenied": "You are not allowed to set a citizen's wanted status!",
+                "ErrPropsJobDenied": "You are not allowed to set a citizen's job!",
+                "ErrPropsJobPublic": "You can't set a state job!",
+                "ErrPropsJobInvalid": "Invalid job or job rank set!",
+                "ErrPropsTrafficPointsDenied": "You are not allowed to set a citizen's traffic infraction points!",
+                "ErrPropsLabelsDenied": "You are not allowed to set a citizen's labels!",
+                "ErrPropsMugshotDenied": "You are not allowed to set a citizen's mug shot!",
+                "ErrCitizenNotFound": {
+                    "title": "Citizen not found",
+                    "content": "The citizen you are looking for was not found."
+                }
             },
-            "ErrCannotDeleteOwnAccount": {
-                "title": "You can't delete your own account!",
-                "content": "Please ask another administrator to delete your account or change your password if you want to prevent access to your account."
+            "LabelsService": {
+                "ErrLabelNotFound": "Requested label not found!"
+            }
+        },
+        "vehicles": {
+            "VehiclesService": {
+                "ErrFailedQuery": "Failed to search vehicles data!",
+                "ErrPropsWantedDenied": "You are not allowed to set a vehicle's wanted status!"
+            }
+        },
+        "documents": {
+            "DocumentsService": {
+                "ErrFailedQuery": "Failed to get/ create/ update documents!",
+                "ErrNotFoundOrNoPerms": "No document found or no permissions to access document!",
+                "ErrTemplateNoPerms": "You don't have permission to view/ update/ delete this template!",
+                "ErrPermissionDenied": "You don't have permission to do this!",
+                "ErrClosedDoc": {
+                    "title": "Document is closed!",
+                    "content": "This document is closed and can't be edited. Please re-open the document to make changes."
+                },
+                "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
+                "ErrDocAccessViewDenied": "You don't have permission to view this document's access!",
+                "ErrTemplateFailed": "Failed to render document template! Please talk with your faction leader.",
+                "ErrDocViewDenied": "You don't have permission to view this document!",
+                "ErrDocUpdateDenied": "You don't have permission to edit this document!",
+                "ErrDocDeleteDenied": "You don't have permission to delete this document!",
+                "ErrDocToggleDenied": "You don't have permission to close/open this document!",
+                "ErrCommentViewDenied": "You don't have permission to view document comments!",
+                "ErrCommentPostDenied": "You don't have permission to post a comment on this document!",
+                "ErrCommentEditDenied": "You don't have permission to edit this comment!",
+                "ErrCommentDeleteDenied": "You can't delete this comment!",
+                "ErrFeedRefsViewDenied": "You don't have permission to view this document's references!",
+                "ErrFeedRelsViewDenied": "You don't have permission to view this document's relations!",
+                "ErrFeedRefSelf": "You can't reference a document with itself!",
+                "ErrFeedRefAddDenied": "You don't have permission to add references from/to this document!",
+                "ErrFeedRefRemoveDenied": "You don't have permission to remove references from this document!",
+                "ErrFeedRelAddDenied": "You don't have permission to add relation from/to this document!",
+                "ErrFeedRelRemoveDenied": "You don't have permission to remove references from this document!",
+                "ErrDocReqAlreadyCreated": {
+                    "title": "Document Request already exists!",
+                    "content": "A document request of the same type already exists or one has been created in the last 24 hours."
+                },
+                "ErrDocSameOwner": "You are already the creator of this document!",
+                "ErrDocOwnerWrongJob": "New document owner must be part of your job!",
+                "ErrDocReqOwnDoc": "You can't create requests against your own document!",
+                "ErrDocReqAlreadyCompleted": {
+                    "title": "Document Request has already been accepted/declined!",
+                    "content": "The document request you are trying to accept/decline has already been processed."
+                },
+                "ErrDocRequiredAccessTemplate": {
+                    "title": "Required document access missing!",
+                    "content": "Make sure you have not edited or removed any required document access."
+                },
+                "ErrDocOwnerFailed": "You need to have edit access to the document!",
+                "ErrDocAccessDuplicate": "Document access: A job rank/citizen can only have one access and not multiple!",
+                "ErrTemplateAccessDuplicate": "Template access: A job rank can only have one access and not multiple!",
+                "ErrDocAccessInvalid": "Document access: Invalid job rank/ citizen set!"
+            },
+            "ApprovalService": {
+                "ErrApprovalTaskAlreadyHandled": {
+                    "title": "Approval task already handled!",
+                    "content": "This approval task has already been approved/declined."
+                },
+                "ErrApprovalSignatureRequired": {
+                    "title": "Approval signature required!",
+                    "content": "You must provide a signature to approve this document."
+                },
+                "ErrApprovalDocIsDraft": {
+                    "title": "Document is still a draft!",
+                    "content": "You can't create approval tasks for draft documents."
+                }
+            }
+        },
+        "livemap": {
+            "LivemapService": {
+                "ErrStreamFailed": "Failed to stream Map data!",
+                "ErrMarkerFailed": "Failed to create/ update/ delete marker!"
+            }
+        },
+        "settings": {
+            "SettingsService": {
+                "ErrFailedQuery": "Failed to get/ update control panel data!",
+                "ErrInvalidRequest": "Invalid role action requested!",
+                "ErrNoPermission": "No permission to create/ change/ delete role!",
+                "ErrRoleAlreadyExists": "Role already exists!",
+                "ErrOwnRoleDeletion": "Can't delete your own role!",
+                "ErrInvalidPerms": "Failed to update role permissions!",
+                "ErrInvalidAttrs": "Failed to update role attributes!",
+                "ErrDiscordNotEnabled": "Discord bot integration is not enabled!",
+                "ErrDiscordConnectRequired": {
+                    "title": "You must have your Discord account connected!",
+                    "content": "Please make sure to connect your Discord account with FiveNet."
+                },
+                "ErrCannotDeleteOwnAccount": {
+                    "title": "You can't delete your own account!",
+                    "content": "Please ask another administrator to delete your account or change your password if you want to prevent access to your account."
+                }
             }
         },
         "Filestore": {
             "ErrInvalidUploadMeta": "Invalid upload meta data!",
             "ErrUploadFileTooLarge": "File is too large to upload! Maximum file size is {maxSize} MB."
         },
-        "NotificationsService": {
-            "ErrFailedRequest": "Failed to load notifications data!",
-            "ErrFailedStream": "Failed to stream notifications!"
+        "notifications": {
+            "NotificationsService": {
+                "ErrFailedRequest": "Failed to load notifications data!",
+                "ErrFailedStream": "Failed to stream notifications!"
+            }
         }
     },
     "system": {
@@ -3154,7 +3190,10 @@
                     "attrs_types": {
                         "Jobs": "Factions"
                     }
-                },
+                }
+            },
+            "LabelsService": {
+                "category": "Citizens: Labels",
                 "ManageLabels": {
                     "key": "Manage Citizen Labels",
                     "description": "Create, update and delete citizens labels."
