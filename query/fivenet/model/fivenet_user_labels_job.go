@@ -20,6 +20,6 @@ type FivenetUserLabelsJob struct {
 	Name      string     `json:"name"`
 	SortKey   *string    `json:"sort_key"`
 	Color     *string    `json:"color"`
-    Icon      *string    `json:"icon"`
-    Settings  *string   `json:"settings"`
+	Icon      *string    `json:"icon"`
+	Settings  *string    `json:"settings"`
 }

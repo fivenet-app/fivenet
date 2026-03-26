@@ -18,6 +18,6 @@ type FivenetJobLabels struct {
 	Name      string     `json:"name"`
 	SortKey   *string    `json:"sort_key"`
 	Color     *string    `json:"color"`
-    Icon      *string    `json:"icon"`
+	Icon      *string    `json:"icon"`
 	Order     *int32     `json:"order"`
 }

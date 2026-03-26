@@ -25,8 +25,8 @@ type fivenetUserLabelsJobTable struct {
 	Name      mysql.ColumnString
 	SortKey   mysql.ColumnString
 	Color     mysql.ColumnString
-    Icon      mysql.ColumnString
-    Settings  mysql.ColumnString
+	Icon      mysql.ColumnString
+	Settings  mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -76,8 +76,8 @@ func newFivenetUserLabelsJobTableImpl(schemaName, tableName, alias string) fiven
 		NameColumn      = mysql.StringColumn("name")
 		SortKeyColumn   = mysql.StringColumn("sort_key")
 		ColorColumn     = mysql.StringColumn("color")
-        IconColumn      = mysql.StringColumn("icon")
-        SettingsColumn  = mysql.StringColumn("settings")
+		IconColumn      = mysql.StringColumn("icon")
+		SettingsColumn  = mysql.StringColumn("settings")
 		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, SettingsColumn}
 		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, SettingsColumn}
 		defaultColumns  = mysql.ColumnList{CreatedAtColumn, ColorColumn, IconColumn, SettingsColumn}
@@ -95,8 +95,8 @@ func newFivenetUserLabelsJobTableImpl(schemaName, tableName, alias string) fiven
 		Name:      NameColumn,
 		SortKey:   SortKeyColumn,
 		Color:     ColorColumn,
-        Icon:      IconColumn,
-        Settings:  SettingsColumn,
+		Icon:      IconColumn,
+		Settings:  SettingsColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
