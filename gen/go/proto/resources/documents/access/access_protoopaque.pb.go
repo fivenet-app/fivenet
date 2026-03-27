@@ -10,7 +10,6 @@ package documentsaccess
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
-	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -160,7 +159,6 @@ func (b0 DocumentAccess_builder) Build() *DocumentAccess {
 type DocumentJobAccess struct {
 	state                    protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Id            int64                  `protobuf:"varint,1,opt,name=id,proto3"`
-	xxx_hidden_CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
 	xxx_hidden_TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3"`
 	xxx_hidden_Job           string                 `protobuf:"bytes,4,opt,name=job,proto3"`
 	xxx_hidden_JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof"`
@@ -204,13 +202,6 @@ func (x *DocumentJobAccess) GetId() int64 {
 		return x.xxx_hidden_Id
 	}
 	return 0
-}
-
-func (x *DocumentJobAccess) GetCreatedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.xxx_hidden_CreatedAt
-	}
-	return nil
 }
 
 func (x *DocumentJobAccess) GetTargetId() int64 {
@@ -272,10 +263,6 @@ func (x *DocumentJobAccess) SetId(v int64) {
 	x.xxx_hidden_Id = v
 }
 
-func (x *DocumentJobAccess) SetCreatedAt(v *timestamp.Timestamp) {
-	x.xxx_hidden_CreatedAt = v
-}
-
 func (x *DocumentJobAccess) SetTargetId(v int64) {
 	x.xxx_hidden_TargetId = v
 }
@@ -286,7 +273,7 @@ func (x *DocumentJobAccess) SetJob(v string) {
 
 func (x *DocumentJobAccess) SetJobLabel(v string) {
 	x.xxx_hidden_JobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 9)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 8)
 }
 
 func (x *DocumentJobAccess) SetMinimumGrade(v int32) {
@@ -295,7 +282,7 @@ func (x *DocumentJobAccess) SetMinimumGrade(v int32) {
 
 func (x *DocumentJobAccess) SetJobGradeLabel(v string) {
 	x.xxx_hidden_JobGradeLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 9)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 8)
 }
 
 func (x *DocumentJobAccess) SetAccess(v AccessLevel) {
@@ -304,53 +291,42 @@ func (x *DocumentJobAccess) SetAccess(v AccessLevel) {
 
 func (x *DocumentJobAccess) SetRequired(v bool) {
 	x.xxx_hidden_Required = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 9)
-}
-
-func (x *DocumentJobAccess) HasCreatedAt() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_CreatedAt != nil
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 8)
 }
 
 func (x *DocumentJobAccess) HasJobLabel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *DocumentJobAccess) HasJobGradeLabel() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
 }
 
 func (x *DocumentJobAccess) HasRequired() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
-}
-
-func (x *DocumentJobAccess) ClearCreatedAt() {
-	x.xxx_hidden_CreatedAt = nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
 }
 
 func (x *DocumentJobAccess) ClearJobLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
 	x.xxx_hidden_JobLabel = nil
 }
 
 func (x *DocumentJobAccess) ClearJobGradeLabel() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
 	x.xxx_hidden_JobGradeLabel = nil
 }
 
 func (x *DocumentJobAccess) ClearRequired() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
 	x.xxx_hidden_Required = false
 }
 
@@ -358,7 +334,6 @@ type DocumentJobAccess_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Id            int64
-	CreatedAt     *timestamp.Timestamp
 	TargetId      int64
 	Job           string
 	JobLabel      *string
@@ -373,21 +348,20 @@ func (b0 DocumentJobAccess_builder) Build() *DocumentJobAccess {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Id = b.Id
-	x.xxx_hidden_CreatedAt = b.CreatedAt
 	x.xxx_hidden_TargetId = b.TargetId
 	x.xxx_hidden_Job = b.Job
 	if b.JobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 9)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 8)
 		x.xxx_hidden_JobLabel = b.JobLabel
 	}
 	x.xxx_hidden_MinimumGrade = b.MinimumGrade
 	if b.JobGradeLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 9)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 8)
 		x.xxx_hidden_JobGradeLabel = b.JobGradeLabel
 	}
 	x.xxx_hidden_Access = b.Access
 	if b.Required != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 9)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 8)
 		x.xxx_hidden_Required = *b.Required
 	}
 	return m0
@@ -396,7 +370,6 @@ func (b0 DocumentJobAccess_builder) Build() *DocumentJobAccess {
 type DocumentUserAccess struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Id          int64                  `protobuf:"varint,1,opt,name=id,proto3"`
-	xxx_hidden_CreatedAt   *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
 	xxx_hidden_TargetId    int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3"`
 	xxx_hidden_UserId      int32                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3"`
 	xxx_hidden_User        *short.UserShort       `protobuf:"bytes,5,opt,name=user,proto3,oneof"`
@@ -440,13 +413,6 @@ func (x *DocumentUserAccess) GetId() int64 {
 	return 0
 }
 
-func (x *DocumentUserAccess) GetCreatedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.xxx_hidden_CreatedAt
-	}
-	return nil
-}
-
 func (x *DocumentUserAccess) GetTargetId() int64 {
 	if x != nil {
 		return x.xxx_hidden_TargetId
@@ -486,10 +452,6 @@ func (x *DocumentUserAccess) SetId(v int64) {
 	x.xxx_hidden_Id = v
 }
 
-func (x *DocumentUserAccess) SetCreatedAt(v *timestamp.Timestamp) {
-	x.xxx_hidden_CreatedAt = v
-}
-
 func (x *DocumentUserAccess) SetTargetId(v int64) {
 	x.xxx_hidden_TargetId = v
 }
@@ -508,14 +470,7 @@ func (x *DocumentUserAccess) SetAccess(v AccessLevel) {
 
 func (x *DocumentUserAccess) SetRequired(v bool) {
 	x.xxx_hidden_Required = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 7)
-}
-
-func (x *DocumentUserAccess) HasCreatedAt() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_CreatedAt != nil
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 6)
 }
 
 func (x *DocumentUserAccess) HasUser() bool {
@@ -529,11 +484,7 @@ func (x *DocumentUserAccess) HasRequired() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
-}
-
-func (x *DocumentUserAccess) ClearCreatedAt() {
-	x.xxx_hidden_CreatedAt = nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
 }
 
 func (x *DocumentUserAccess) ClearUser() {
@@ -541,20 +492,19 @@ func (x *DocumentUserAccess) ClearUser() {
 }
 
 func (x *DocumentUserAccess) ClearRequired() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
 	x.xxx_hidden_Required = false
 }
 
 type DocumentUserAccess_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Id        int64
-	CreatedAt *timestamp.Timestamp
-	TargetId  int64
-	UserId    int32
-	User      *short.UserShort
-	Access    AccessLevel
-	Required  *bool
+	Id       int64
+	TargetId int64
+	UserId   int32
+	User     *short.UserShort
+	Access   AccessLevel
+	Required *bool
 }
 
 func (b0 DocumentUserAccess_builder) Build() *DocumentUserAccess {
@@ -562,13 +512,12 @@ func (b0 DocumentUserAccess_builder) Build() *DocumentUserAccess {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Id = b.Id
-	x.xxx_hidden_CreatedAt = b.CreatedAt
 	x.xxx_hidden_TargetId = b.TargetId
 	x.xxx_hidden_UserId = b.UserId
 	x.xxx_hidden_User = b.User
 	x.xxx_hidden_Access = b.Access
 	if b.Required != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 7)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 6)
 		x.xxx_hidden_Required = *b.Required
 	}
 	return m0
@@ -578,38 +527,32 @@ var File_resources_documents_access_access_proto protoreflect.FileDescriptor
 
 const file_resources_documents_access_access_proto_rawDesc = "" +
 	"\n" +
-	"'resources/documents/access/access.proto\x12\x1aresources.documents.access\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xd4\x01\n" +
+	"'resources/documents/access/access.proto\x12\x1aresources.documents.access\x1a!codegen/dbscanner/dbscanner.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xd4\x01\n" +
 	"\x0eDocumentAccess\x12Z\n" +
 	"\x04jobs\x18\x01 \x03(\v2-.resources.documents.access.DocumentJobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\x12^\n" +
-	"\x05users\x18\x02 \x03(\v2..resources.documents.access.DocumentUserAccessB\x18\x9a\x84\x9e\x03\x13alias:\"user_access\"R\x05users:\x06\xe2\xf3\x18\x02\b\x01\"\xaa\x03\n" +
+	"\x05users\x18\x02 \x03(\v2..resources.documents.access.DocumentUserAccessB\x18\x9a\x84\x9e\x03\x13alias:\"user_access\"R\x05users:\x06\xe2\xf3\x18\x02\b\x01\"\xdd\x02\n" +
 	"\x11DocumentJobAccess\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
-	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x10\n" +
 	"\x03job\x18\x04 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x05 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12#\n" +
+	"\tjob_label\x18\x05 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12#\n" +
 	"\rminimum_grade\x18\x06 \x01(\x05R\fminimumGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\a \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12?\n" +
+	"\x0fjob_grade_label\x18\a \x01(\tH\x01R\rjobGradeLabel\x88\x01\x01\x12?\n" +
 	"\x06access\x18\b \x01(\x0e2'.resources.documents.access.AccessLevelR\x06access\x12\x1f\n" +
-	"\brequired\x18\t \x01(\bH\x03R\brequired\x88\x01\x01B\r\n" +
-	"\v_created_atB\f\n" +
+	"\brequired\x18\t \x01(\bH\x02R\brequired\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\v\n" +
-	"\t_required\"\xe0\x02\n" +
+	"\t_requiredJ\x04\b\x02\x10\x03\"\x93\x02\n" +
 	"\x12DocumentUserAccess\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
-	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x17\n" +
 	"\auser_id\x18\x04 \x01(\x05R\x06userId\x129\n" +
-	"\x04user\x18\x05 \x01(\v2 .resources.users.short.UserShortH\x01R\x04user\x88\x01\x01\x12?\n" +
+	"\x04user\x18\x05 \x01(\v2 .resources.users.short.UserShortH\x00R\x04user\x88\x01\x01\x12?\n" +
 	"\x06access\x18\x06 \x01(\x0e2'.resources.documents.access.AccessLevelR\x06access\x12\x1f\n" +
-	"\brequired\x18\a \x01(\bH\x02R\brequired\x88\x01\x01B\r\n" +
-	"\v_created_atB\a\n" +
+	"\brequired\x18\a \x01(\bH\x01R\brequired\x88\x01\x01B\a\n" +
 	"\x05_userB\v\n" +
-	"\t_required*\xbf\x01\n" +
+	"\t_requiredJ\x04\b\x02\x10\x03*\xbf\x01\n" +
 	"\vAccessLevel\x12\x1c\n" +
 	"\x18ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14ACCESS_LEVEL_BLOCKED\x10\x01\x12\x15\n" +
@@ -622,26 +565,23 @@ const file_resources_documents_access_access_proto_rawDesc = "" +
 var file_resources_documents_access_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_documents_access_access_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_documents_access_access_proto_goTypes = []any{
-	(AccessLevel)(0),            // 0: resources.documents.access.AccessLevel
-	(*DocumentAccess)(nil),      // 1: resources.documents.access.DocumentAccess
-	(*DocumentJobAccess)(nil),   // 2: resources.documents.access.DocumentJobAccess
-	(*DocumentUserAccess)(nil),  // 3: resources.documents.access.DocumentUserAccess
-	(*timestamp.Timestamp)(nil), // 4: resources.timestamp.Timestamp
-	(*short.UserShort)(nil),     // 5: resources.users.short.UserShort
+	(AccessLevel)(0),           // 0: resources.documents.access.AccessLevel
+	(*DocumentAccess)(nil),     // 1: resources.documents.access.DocumentAccess
+	(*DocumentJobAccess)(nil),  // 2: resources.documents.access.DocumentJobAccess
+	(*DocumentUserAccess)(nil), // 3: resources.documents.access.DocumentUserAccess
+	(*short.UserShort)(nil),    // 4: resources.users.short.UserShort
 }
 var file_resources_documents_access_access_proto_depIdxs = []int32{
 	2, // 0: resources.documents.access.DocumentAccess.jobs:type_name -> resources.documents.access.DocumentJobAccess
 	3, // 1: resources.documents.access.DocumentAccess.users:type_name -> resources.documents.access.DocumentUserAccess
-	4, // 2: resources.documents.access.DocumentJobAccess.created_at:type_name -> resources.timestamp.Timestamp
-	0, // 3: resources.documents.access.DocumentJobAccess.access:type_name -> resources.documents.access.AccessLevel
-	4, // 4: resources.documents.access.DocumentUserAccess.created_at:type_name -> resources.timestamp.Timestamp
-	5, // 5: resources.documents.access.DocumentUserAccess.user:type_name -> resources.users.short.UserShort
-	0, // 6: resources.documents.access.DocumentUserAccess.access:type_name -> resources.documents.access.AccessLevel
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	0, // 2: resources.documents.access.DocumentJobAccess.access:type_name -> resources.documents.access.AccessLevel
+	4, // 3: resources.documents.access.DocumentUserAccess.user:type_name -> resources.users.short.UserShort
+	0, // 4: resources.documents.access.DocumentUserAccess.access:type_name -> resources.documents.access.AccessLevel
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_access_access_proto_init() }

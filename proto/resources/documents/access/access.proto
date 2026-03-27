@@ -4,7 +4,6 @@ package resources.documents.access;
 
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
-import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";
 import "tagger/tagger.proto";
 
@@ -35,7 +34,8 @@ message DocumentAccess {
 
 message DocumentJobAccess {
   int64 id = 1;
-  optional resources.timestamp.Timestamp created_at = 2;
+  // Was previously used for timestamp created_at field.
+  reserved 2;
   int64 target_id = 3;
   string job = 4 [(buf.validate.field).string.max_len = 20];
   optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
@@ -47,7 +47,8 @@ message DocumentJobAccess {
 
 message DocumentUserAccess {
   int64 id = 1;
-  optional resources.timestamp.Timestamp created_at = 2;
+  // Was previously used for timestamp created_at field.
+  reserved 2;
   int64 target_id = 3;
   int32 user_id = 4 [(buf.validate.field).int32.gt = 0];
   optional resources.users.short.UserShort user = 5;

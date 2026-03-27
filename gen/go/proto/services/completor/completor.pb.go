@@ -10,10 +10,10 @@ package completor
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	category "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/category"
 	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	laws "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/laws"
-	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -753,7 +753,7 @@ var File_services_completor_completor_proto protoreflect.FileDescriptor
 
 const file_services_completor_completor_proto_rawDesc = "" +
 	"\n" +
-	"\"services/completor/completor.proto\x12\x12services.completor\x1a\x19codegen/perms/perms.proto\x1a+resources/documents/category/category.proto\x1a\x19resources/jobs/jobs.proto\x1a\x19resources/laws/laws.proto\x1a#resources/users/labels/labels.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xe7\x01\n" +
+	"\"services/completor/completor.proto\x12\x12services.completor\x1a\x19codegen/perms/perms.proto\x1a&resources/citizens/labels/labels.proto\x1a+resources/documents/category/category.proto\x1a\x19resources/jobs/jobs.proto\x1a\x19resources/laws/laws.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xe7\x01\n" +
 	"\x17CompleteCitizensRequest\x12\x16\n" +
 	"\x06search\x18\x01 \x01(\tR\x06search\x12$\n" +
 	"\vcurrent_job\x18\x02 \x01(\bH\x00R\n" +
@@ -789,9 +789,9 @@ const file_services_completor_completor_proto_rawDesc = "" +
 	"\x14ListLawBooksResponse\x12-\n" +
 	"\x05books\x18\x01 \x03(\v2\x17.resources.laws.LawBookR\x05books\"6\n" +
 	"\x1cCompleteCitizenLabelsRequest\x12\x16\n" +
-	"\x06search\x18\x01 \x01(\tR\x06search\"V\n" +
-	"\x1dCompleteCitizenLabelsResponse\x125\n" +
-	"\x06labels\x18\x01 \x03(\v2\x1d.resources.users.labels.LabelR\x06labels2\xbb\x05\n" +
+	"\x06search\x18\x01 \x01(\tR\x06search\"Y\n" +
+	"\x1dCompleteCitizenLabelsResponse\x128\n" +
+	"\x06labels\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x06labels2\xbb\x05\n" +
 	"\x10CompletorService\x12z\n" +
 	"\x10CompleteCitizens\x12+.services.completor.CompleteCitizensRequest\x1a,.services.completor.CompleteCitizensResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12n\n" +
 	"\fCompleteJobs\x12'.services.completor.CompleteJobsRequest\x1a(.services.completor.CompleteJobsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x9d\x01\n" +
@@ -818,14 +818,14 @@ var file_services_completor_completor_proto_goTypes = []any{
 	(*jobs.Job)(nil),                           // 11: resources.jobs.Job
 	(*category.Category)(nil),                  // 12: resources.documents.category.Category
 	(*laws.LawBook)(nil),                       // 13: resources.laws.LawBook
-	(*labels.Label)(nil),                       // 14: resources.users.labels.Label
+	(*labels.Label)(nil),                       // 14: resources.citizens.labels.Label
 }
 var file_services_completor_completor_proto_depIdxs = []int32{
 	10, // 0: services.completor.CompleteCitizensResponse.users:type_name -> resources.users.short.UserShort
 	11, // 1: services.completor.CompleteJobsResponse.jobs:type_name -> resources.jobs.Job
 	12, // 2: services.completor.CompleteDocumentCategoriesResponse.categories:type_name -> resources.documents.category.Category
 	13, // 3: services.completor.ListLawBooksResponse.books:type_name -> resources.laws.LawBook
-	14, // 4: services.completor.CompleteCitizenLabelsResponse.labels:type_name -> resources.users.labels.Label
+	14, // 4: services.completor.CompleteCitizenLabelsResponse.labels:type_name -> resources.citizens.labels.Label
 	0,  // 5: services.completor.CompletorService.CompleteCitizens:input_type -> services.completor.CompleteCitizensRequest
 	2,  // 6: services.completor.CompletorService.CompleteJobs:input_type -> services.completor.CompleteJobsRequest
 	4,  // 7: services.completor.CompletorService.CompleteDocumentCategories:input_type -> services.completor.CompleteDocumentCategoriesRequest

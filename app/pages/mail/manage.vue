@@ -99,8 +99,8 @@ const confirmModal = overlay.create(ConfirmModal);
 
             <DataErrorBlock
                 v-else-if="getPrivateEmail?.deactivated === true"
-                :title="$t('errors.MailerService.ErrEmailDisabled.title')"
-                :message="$t('errors.MailerService.ErrEmailDisabled.content')"
+                :title="$t('errors.mailer.MailerService.ErrEmailDisabled.title')"
+                :message="$t('errors.mailer.MailerService.ErrEmailDisabled.content')"
             />
 
             <div v-else class="flex flex-1 flex-col items-center">

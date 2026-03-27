@@ -435,7 +435,7 @@ export const CircleMarker = new CircleMarker$Type();
 class IconMarker$Type extends MessageType<IconMarker> {
     constructor() {
         super("resources.livemap.markers.IconMarker", [
-            { no: 1, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
+            { no: 1, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<IconMarker>): IconMarker {

@@ -23,6 +23,7 @@ type fivenetJobLabelsTable struct {
 	Name      mysql.ColumnString
 	SortKey   mysql.ColumnString
 	Color     mysql.ColumnString
+    Icon      mysql.ColumnString
 	Order     mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
@@ -71,10 +72,11 @@ func newFivenetJobLabelsTableImpl(schemaName, tableName, alias string) fivenetJo
 		NameColumn      = mysql.StringColumn("name")
 		SortKeyColumn   = mysql.StringColumn("sort_key")
 		ColorColumn     = mysql.StringColumn("color")
+        IconColumn      = mysql.StringColumn("icon")
 		OrderColumn     = mysql.IntegerColumn("order")
-		allColumns      = mysql.ColumnList{IDColumn, JobColumn, DeletedAtColumn, NameColumn, SortKeyColumn, ColorColumn, OrderColumn}
-		mutableColumns  = mysql.ColumnList{JobColumn, DeletedAtColumn, NameColumn, SortKeyColumn, ColorColumn, OrderColumn}
-		defaultColumns  = mysql.ColumnList{OrderColumn}
+		allColumns      = mysql.ColumnList{IDColumn, JobColumn, DeletedAtColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, OrderColumn}
+		mutableColumns  = mysql.ColumnList{JobColumn, DeletedAtColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, OrderColumn}
+		defaultColumns  = mysql.ColumnList{IconColumn, OrderColumn}
 	)
 
 	return fivenetJobLabelsTable{
@@ -87,6 +89,7 @@ func newFivenetJobLabelsTableImpl(schemaName, tableName, alias string) fivenetJo
 		Name:      NameColumn,
 		SortKey:   SortKeyColumn,
 		Color:     ColorColumn,
+        Icon:      IconColumn,
 		Order:     OrderColumn,
 
 		AllColumns:     allColumns,

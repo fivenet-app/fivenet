@@ -14,7 +14,6 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Label } from "../../resources/users/labels/labels";
 import { UserProps } from "../../resources/users/props/props";
 import { UserActivity } from "../../resources/users/activity/activity";
 import { UserActivityType } from "../../resources/users/activity/activity";
@@ -191,24 +190,6 @@ export interface DeleteMugshotRequest {
  * @generated from protobuf message services.citizens.DeleteMugshotResponse
  */
 export interface DeleteMugshotResponse {
-}
-/**
- * @generated from protobuf message services.citizens.ManageLabelsRequest
- */
-export interface ManageLabelsRequest {
-    /**
-     * @generated from protobuf field: repeated resources.users.labels.Label labels = 1
-     */
-    labels: Label[];
-}
-/**
- * @generated from protobuf message services.citizens.ManageLabelsResponse
- */
-export interface ManageLabelsResponse {
-    /**
-     * @generated from protobuf field: repeated resources.users.labels.Label labels = 1
-     */
-    labels: Label[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
@@ -874,100 +855,6 @@ class DeleteMugshotResponse$Type extends MessageType<DeleteMugshotResponse> {
  * @generated MessageType for protobuf message services.citizens.DeleteMugshotResponse
  */
 export const DeleteMugshotResponse = new DeleteMugshotResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class ManageLabelsRequest$Type extends MessageType<ManageLabelsRequest> {
-    constructor() {
-        super("services.citizens.ManageLabelsRequest", [
-            { no: 1, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label, options: { "buf.validate.field": { repeated: { maxItems: "50" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<ManageLabelsRequest>): ManageLabelsRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.labels = [];
-        if (value !== undefined)
-            reflectionMergePartial<ManageLabelsRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ManageLabelsRequest): ManageLabelsRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.users.labels.Label labels */ 1:
-                    message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: ManageLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.labels.Label labels = 1; */
-        for (let i = 0; i < message.labels.length; i++)
-            Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.citizens.ManageLabelsRequest
- */
-export const ManageLabelsRequest = new ManageLabelsRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class ManageLabelsResponse$Type extends MessageType<ManageLabelsResponse> {
-    constructor() {
-        super("services.citizens.ManageLabelsResponse", [
-            { no: 1, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label }
-        ]);
-    }
-    create(value?: PartialMessage<ManageLabelsResponse>): ManageLabelsResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.labels = [];
-        if (value !== undefined)
-            reflectionMergePartial<ManageLabelsResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ManageLabelsResponse): ManageLabelsResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.users.labels.Label labels */ 1:
-                    message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: ManageLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.labels.Label labels = 1; */
-        for (let i = 0; i < message.labels.length; i++)
-            Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.citizens.ManageLabelsResponse
- */
-export const ManageLabelsResponse = new ManageLabelsResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.citizens.CitizensService
  */
@@ -979,6 +866,5 @@ export const CitizensService = new ServiceType("services.citizens.CitizensServic
     { name: "UploadAvatar", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: UploadFileRequest, O: UploadFileResponse },
     { name: "DeleteAvatar", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: DeleteAvatarRequest, O: DeleteAvatarResponse },
     { name: "UploadMugshot", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: UploadFileRequest, O: UploadFileResponse },
-    { name: "DeleteMugshot", options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: DeleteMugshotRequest, O: DeleteMugshotResponse },
-    { name: "ManageLabels", options: { "codegen.perms.perms": { enabled: true } }, I: ManageLabelsRequest, O: ManageLabelsResponse }
+    { name: "DeleteMugshot", options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: DeleteMugshotRequest, O: DeleteMugshotResponse }
 ], { "codegen.perms.perms_svc": { order: 30, icon: "i-mdi-account-multiple-outline" } });

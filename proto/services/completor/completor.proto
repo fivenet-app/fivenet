@@ -4,10 +4,10 @@ package services.completor;
 
 import "buf/validate/validate.proto";
 import "codegen/perms/perms.proto";
+import "resources/citizens/labels/labels.proto";
 import "resources/documents/category/category.proto";
 import "resources/jobs/jobs.proto";
 import "resources/laws/laws.proto";
-import "resources/users/labels/labels.proto";
 import "resources/users/short/user.proto";
 import "tagger/tagger.proto";
 
@@ -55,7 +55,7 @@ message CompleteCitizenLabelsRequest {
 }
 
 message CompleteCitizenLabelsResponse {
-  repeated resources.users.labels.Label labels = 1;
+  repeated resources.citizens.labels.Label labels = 1;
 }
 
 service CompletorService {

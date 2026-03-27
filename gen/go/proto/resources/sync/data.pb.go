@@ -7,16 +7,17 @@
 package sync
 
 import (
-	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
-	livemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap"
-	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
-	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
-	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
+	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	livemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -630,7 +631,7 @@ var File_resources_sync_data_proto protoreflect.FileDescriptor
 
 const file_resources_sync_data_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/sync/data.proto\x12\x0eresources.sync\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a'resources/users/licenses/licenses.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\"\"\n" +
+	"\x19resources/sync/data.proto\x12\x0eresources.sync\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a'resources/citizens/licenses/licenses.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\"\"\n" +
 	"\n" +
 	"DataStatus\x12\x14\n" +
 	"\x05count\x18\x01 \x01(\x03R\x05count\"3\n" +
@@ -641,7 +642,7 @@ const file_resources_sync_data_proto_rawDesc = "" +
 	"\fDataVehicles\x127\n" +
 	"\bvehicles\x18\x01 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles\"M\n" +
 	"\fDataLicenses\x12=\n" +
-	"\blicenses\x18\x01 \x03(\v2!.resources.users.licenses.LicenseR\blicenses\"{\n" +
+	"\blicenses\x18\x01 \x03(\v2!.resources.citizens.licenses.LicenseR\blicenses\"{\n" +
 	"\x11DataUserLocations\x126\n" +
 	"\x05users\x18\x01 \x03(\v2 .resources.sync.CitizenLocationsR\x05users\x12 \n" +
 	"\tclear_all\x18\x02 \x01(\bH\x00R\bclearAll\x88\x01\x01B\f\n" +
@@ -707,14 +708,14 @@ var file_resources_sync_data_proto_goTypes = []any{
 	(*jobs.Job)(nil),          // 12: resources.jobs.Job
 	(*users.User)(nil),        // 13: resources.users.User
 	(*vehicles.Vehicle)(nil),  // 14: resources.vehicles.Vehicle
-	(*licenses.License)(nil),  // 15: resources.users.licenses.License
+	(*licenses.License)(nil),  // 15: resources.citizens.licenses.License
 	(*livemap.Coords)(nil),    // 16: resources.livemap.Coords
 }
 var file_resources_sync_data_proto_depIdxs = []int32{
 	12, // 0: resources.sync.DataJobs.jobs:type_name -> resources.jobs.Job
 	13, // 1: resources.sync.DataUsers.users:type_name -> resources.users.User
 	14, // 2: resources.sync.DataVehicles.vehicles:type_name -> resources.vehicles.Vehicle
-	15, // 3: resources.sync.DataLicenses.licenses:type_name -> resources.users.licenses.License
+	15, // 3: resources.sync.DataLicenses.licenses:type_name -> resources.citizens.licenses.License
 	6,  // 4: resources.sync.DataUserLocations.users:type_name -> resources.sync.CitizenLocations
 	16, // 5: resources.sync.CitizenLocations.coords:type_name -> resources.livemap.Coords
 	11, // 6: resources.sync.DataAccounts.account_updates:type_name -> resources.sync.AccountUpdate

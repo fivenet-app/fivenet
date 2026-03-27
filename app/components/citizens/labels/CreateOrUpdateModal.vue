@@ -2,48 +2,101 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
-import { useCompletorStore } from '~/stores/completor';
-import { getCitizensCitizensClient } from '~~/gen/ts/clients';
-import type { ManageLabelsResponse } from '~~/gen/ts/services/citizens/citizens';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
+import { getCitizensLabelsClient } from '~~/gen/ts/clients';
+import type { Settings } from '~~/gen/ts/resources/citizens/labels/labels';
+import type { CreateOrUpdateLabelResponse, GetLabelResponse } from '~~/gen/ts/services/citizens/labels';
+
+const props = defineProps<{
+    labelId?: number;
+}>();
 
 const emits = defineEmits<{
     (e: 'close', v: boolean): void;
     (e: 'refresh'): void;
 }>();
 
-const { can } = useAuth();
-
-const completorStore = useCompletorStore();
-
-const citizensCitizensClient = await getCitizensCitizensClient();
+const citizensLabelsClient = await getCitizensLabelsClient();
 
 const schema = z.object({
-    labels: z
-        .object({
-            id: z.coerce.number(),
-            name: z.coerce.string().min(1).max(64),
-            color: z.coerce.string().length(7),
-        })
-        .array()
-        .max(50)
-        .default([]),
+    id: z.coerce.number(),
+    name: z.coerce.string().min(1).max(64),
+    color: z.coerce.string().length(7),
+    icon: z.coerce.string().max(255).optional(),
+    settings: z.custom<Settings>(),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    labels: [],
+    id: 0,
+    name: '',
+    color: '#ffffff',
+    icon: undefined,
+    settings: {
+        requiresExpiration: false,
+    },
 });
 
-const { data: labels } = useLazyAsyncData('citizens-labels', () => completorStore.completeCitizenLabels(''));
+const {
+    data: label,
+    status,
+    error,
+    refresh,
+} = useLazyAsyncData(`citizens-label-${props.labelId}`, () => getCitizenLabel(props.labelId!), {
+    immediate: !!props.labelId,
+    watch: [() => props.labelId],
+});
 
-async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
+async function getCitizenLabel(labelId: number): Promise<GetLabelResponse> {
     try {
-        const { response } = await citizensCitizensClient.manageLabels({
-            labels: values.labels ?? [],
+        const { response } = await citizensLabelsClient.getLabel({ id: labelId });
+
+        if (!response?.label) return response;
+
+        const label = response.label;
+
+        state.id = label.id;
+        state.name = label.name;
+        state.color = label.color;
+        state.icon = label.icon;
+        state.settings = {
+            requiresExpiration: label.settings?.requiresExpiration ?? false,
+        };
+
+        return response;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
+async function createOrUpdateLabel(values: Schema): Promise<CreateOrUpdateLabelResponse> {
+    try {
+        const { response } = await citizensLabelsClient.createOrUpdateLabel({
+            label: {
+                id: values.id ?? 0,
+                name: values.name ?? '',
+                color: values.color ?? '#ffffff',
+                icon: values.icon,
+                settings: {
+                    requiresExpiration: values.settings.requiresExpiration,
+                },
+                access: {
+                    jobs: [],
+                },
+            },
         });
 
-        state.labels = response.labels;
+        if (!response?.label) return response;
+
+        const label = response.label;
+
+        state.id = label.id;
+        state.name = label.name;
+        state.color = label.color;
 
         emits('refresh');
         emits('close', false);
@@ -58,10 +111,8 @@ async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await manageLabels(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await createOrUpdateLabel(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
-
-watch(labels, () => (state.labels = labels.value ?? []));
 
 const formRef = useTemplateRef('formRef');
 </script>
@@ -69,42 +120,40 @@ const formRef = useTemplateRef('formRef');
 <template>
     <UModal :title="$t('components.citizens.citizen_labels.title')">
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                <UFormField
-                    v-if="state && can('citizens.CitizensService/ManageLabels').value"
-                    class="grid items-center gap-2"
-                    name="labels"
-                >
-                    <div class="flex flex-col gap-1">
-                        <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1">
-                            <UFormField class="flex-1" :name="`labels.${idx}.name`">
-                                <UInput
-                                    v-model="state.labels[idx]!.name"
-                                    class="w-full flex-1"
-                                    :name="`labels.${idx}.name`"
-                                    type="text"
-                                    :placeholder="$t('common.label', 1)"
-                                />
-                            </UFormField>
+            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
+            <DataErrorBlock v-else-if="error" :error="error" :retry="refresh" />
 
-                            <UFormField :name="`labels.${idx}.color`">
-                                <ColorPicker
-                                    v-model="state.labels[idx]!.color"
-                                    class="min-w-16"
-                                    :name="`labels.${idx}.color`"
-                                />
-                            </UFormField>
-
-                            <UButton :disabled="!canSubmit" icon="i-mdi-close" @click="state.labels.splice(idx, 1)" />
-                        </div>
-                    </div>
-
-                    <UButton
-                        :class="state.labels.length ? 'mt-2' : ''"
-                        :disabled="!canSubmit"
-                        icon="i-mdi-plus"
-                        @click="state.labels.push({ id: 0, name: '', color: '#ffffff' })"
+            <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormField class="flex-1" name="label.name" :label="$t('common.name')">
+                    <UInput
+                        v-model="state.name"
+                        class="w-full"
+                        name="label.name"
+                        type="text"
+                        :placeholder="$t('common.name')"
                     />
+                </UFormField>
+
+                <UFormField name="label.color" :label="$t('common.color')">
+                    <ColorPicker v-model="state.color" class="w-full" name="label.color" />
+                </UFormField>
+
+                <UFormField name="label.icon" :label="$t('common.icon')">
+                    <IconSelectMenu v-model="state.icon" name="label.icon" :hex-color="state.color" class="w-full" />
+                </UFormField>
+
+                <UFormField name="label.settings" :label="$t('common.settings')">
+                    <UFormField
+                        name="label.settings.requiresExpiration"
+                        :label="$t('components.citizens.citizen_labels.settings.requires_expiration')"
+                    >
+                        <USwitch v-model="state.settings.requiresExpiration" name="label.settings.requiresExpiration" />
+                    </UFormField>
+                    <div>TODO</div>
+                </UFormField>
+
+                <UFormField name="access" :label="$t('common.access')">
+                    <div>TODO</div>
                 </UFormField>
             </UForm>
         </template>

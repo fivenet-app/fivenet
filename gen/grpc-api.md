@@ -355,28 +355,28 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-## resources/users/licenses/licenses.proto
+## resources/citizens/licenses/licenses.proto
 
 
-### resources.users.licenses.CitizensLicenses
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `licenses` | [License](#resourcesuserslicensesLicense) | repeated |  |
-
-
-
-
-
-### resources.users.licenses.License
+### resources.citizens.licenses.License
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `type` | [string](#string) |  |  |
 | `label` | [string](#string) |  |  |
+
+
+
+
+
+### resources.citizens.licenses.Licenses
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `licenses` | [License](#resourcescitizenslicensesLicense) | repeated |  |
 
 
 
@@ -494,10 +494,38 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-## resources/users/labels/labels.proto
+## resources/citizens/labels/labels.proto
 
 
-### resources.users.labels.Label
+### resources.citizens.labels.Access
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [JobAccess](#resourcescitizenslabelsJobAccess) | repeated |  |
+
+
+
+
+
+### resources.citizens.labels.JobAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `target_id` | [int64](#int64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [AccessLevel](#resourcescitizenslabelsAccessLevel) |  |  |
+
+
+
+
+
+### resources.citizens.labels.Label
 
 
 | Field | Type | Label | Description |
@@ -505,38 +533,56 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) | optional |  |
 | `name` | [string](#string) |  |  |
 | `color` | [string](#string) |  |  |
-| `expiration` | [LabelExpiration](#resourcesuserslabelsLabelExpiration) | optional | TODO add options for expiration window |
+| `icon` | [string](#string) | optional |  |
+| `settings` | [Settings](#resourcescitizenslabelsSettings) | optional |  |
+| `access` | [Access](#resourcescitizenslabelsAccess) | optional |  |
+| `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Citizen label assignment data |
+| `reason` | [string](#string) | optional |  |
 
 
 
 
 
-### resources.users.labels.LabelExpiration
+### resources.citizens.labels.Labels
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `list` | [Label](#resourcescitizenslabelsLabel) | repeated |  |
+
+
+
+
+
+### resources.citizens.labels.Settings
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `requires_expiration` | [bool](#bool) |  |  |
 | `min_duration` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
 | `max_duration` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
 
 
 
 
-
-### resources.users.labels.Labels
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `list` | [Label](#resourcesuserslabelsLabel) | repeated |  |
-
-
-
-
  <!-- end messages -->
+
+
+### resources.citizens.labels.AccessLevel
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_VIEW` | 1 |  |
+| `ACCESS_LEVEL_ADD` | 2 |  |
+| `ACCESS_LEVEL_REMOVE` | 3 |  |
+| `ACCESS_LEVEL_EDIT` | 4 |  |
+
 
  <!-- end enums -->
 
@@ -569,7 +615,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `blood_type` | [string](#string) | optional |  |
 | `mugshot_file_id` | [int64](#int64) | optional |  |
 | `mugshot` | [resources.file.File](#resourcesfileFile) | optional |  |
-| `labels` | [resources.users.labels.Labels](#resourcesuserslabelsLabels) | optional |  |
+| `labels` | [resources.citizens.labels.Labels](#resourcescitizenslabelsLabels) | optional |  |
 | `email` | [string](#string) | optional |  |
 
 
@@ -625,7 +671,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `visum` | [int32](#int32) | optional |  |
 | `playtime` | [int32](#int32) | optional |  |
 | `props` | [props.UserProps](#resourcesuserspropsUserProps) |  |  |
-| `licenses` | [licenses.License](#resourcesuserslicensesLicense) | repeated |  |
+| `licenses` | [resources.citizens.licenses.License](#resourcescitizenslicensesLicense) | repeated |  |
 | `profile_picture_file_id` | [int64](#int64) | optional |  |
 | `profile_picture` | [string](#string) | optional |  |
 
@@ -1228,6 +1274,7 @@ Dummy - DO NOT USE!
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `name` | [string](#string) |  |  |
 | `color` | [string](#string) |  |  |
+| `icon` | [string](#string) | optional |  |
 | `order` | [int32](#int32) |  |  |
 
 
@@ -3487,7 +3534,6 @@ States of Cronjbo
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `target_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
@@ -3506,7 +3552,6 @@ States of Cronjbo
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `target_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
@@ -6660,7 +6705,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `licenses` | [resources.users.licenses.License](#resourcesuserslicensesLicense) | repeated |  |
+| `licenses` | [resources.citizens.licenses.License](#resourcescitizenslicensesLicense) | repeated |  |
 
 
 
@@ -6701,7 +6746,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `phone_numbers` | [resources.users.PhoneNumber](#resourcesusersPhoneNumber) | repeated |  |
 | `visum` | [int32](#int32) | optional |  |
 | `playtime` | [int32](#int32) | optional |  |
-| `licenses` | [resources.users.licenses.License](#resourcesuserslicensesLicense) | repeated |  |
+| `licenses` | [resources.citizens.licenses.License](#resourcescitizenslicensesLicense) | repeated |  |
 | `profile_picture_file_id` | [int64](#int64) | optional |  |
 | `profile_picture` | [string](#string) | optional |  |
 
@@ -6807,7 +6852,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user_id` | [int32](#int32) |  |  |
-| `licenses` | [resources.users.licenses.License](#resourcesuserslicensesLicense) | repeated |  |
+| `licenses` | [resources.citizens.licenses.License](#resourcescitizenslicensesLicense) | repeated |  |
 
 
 
@@ -6915,13 +6960,29 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 
 
-### resources.users.activity.LabelsChange
+### resources.users.activity.LabelChange
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `added` | [resources.users.labels.Label](#resourcesuserslabelsLabel) | repeated |  |
-| `removed` | [resources.users.labels.Label](#resourcesuserslabelsLabel) | repeated |  |
+| `label` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) |  |  |
+| `added` | [bool](#bool) |  |  |
+| `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `expired` | [bool](#bool) |  |  |
+
+
+
+
+
+### resources.users.activity.LabelsChange
+@deprecated
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `added` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
+| `removed` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
 
 
 
@@ -6933,7 +6994,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `added` | [bool](#bool) |  | `true` if licenses were added, `false` if removed |
-| `licenses` | [resources.users.licenses.License](#resourcesuserslicensesLicense) | repeated |  |
+| `licenses` | [resources.citizens.licenses.License](#resourcescitizenslicensesLicense) | repeated |  |
 
 
 
@@ -7007,6 +7068,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `traffic_infraction_points_change` | [TrafficInfractionPointsChange](#resourcesusersactivityTrafficInfractionPointsChange) |  |  |
 | `mugshot_change` | [MugshotChange](#resourcesusersactivityMugshotChange) |  |  |
 | `labels_change` | [LabelsChange](#resourcesusersactivityLabelsChange) |  |  |
+| `label_change` | [LabelChange](#resourcesusersactivityLabelChange) |  |  |
 | `job_change` | [JobChange](#resourcesusersactivityJobChange) |  |  |
 | `document_relation` | [CitizenDocumentRelation](#resourcesusersactivityCitizenDocumentRelation) |  | Docstore related |
 | `jail_change` | [JailChange](#resourcesusersactivityJailChange) |  | "Plugin" activities |
@@ -8706,28 +8768,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.citizens.ManageLabelsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `labels` | [resources.users.labels.Label](#resourcesuserslabelsLabel) | repeated |  |
-
-
-
-
-
-### services.citizens.ManageLabelsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `labels` | [resources.users.labels.Label](#resourcesuserslabelsLabel) | repeated |  |
-
-
-
-
-
 ### services.citizens.SetUserPropsRequest
 
 
@@ -8769,7 +8809,88 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `DeleteAvatar` | [DeleteAvatarRequest](#servicescitizensDeleteAvatarRequest) | [DeleteAvatarResponse](#servicescitizensDeleteAvatarResponse) | |
 | `UploadMugshot` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
 | `DeleteMugshot` | [DeleteMugshotRequest](#servicescitizensDeleteMugshotRequest) | [DeleteMugshotResponse](#servicescitizensDeleteMugshotResponse) | |
-| `ManageLabels` | [ManageLabelsRequest](#servicescitizensManageLabelsRequest) | [ManageLabelsResponse](#servicescitizensManageLabelsResponse) | |
+
+ <!-- end services -->
+
+
+
+## services/citizens/labels.proto
+
+
+### services.citizens.CreateOrUpdateLabelRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `label` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) |  |  |
+
+
+
+
+
+### services.citizens.CreateOrUpdateLabelResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `label` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) |  |  |
+
+
+
+
+
+### services.citizens.DeleteLabelRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.citizens.DeleteLabelResponse
+
+
+
+
+
+### services.citizens.GetLabelRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.citizens.GetLabelResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `label` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.citizens.LabelsService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `GetLabel` | [GetLabelRequest](#servicescitizensGetLabelRequest) | [GetLabelResponse](#servicescitizensGetLabelResponse) | |
+| `CreateOrUpdateLabel` | [CreateOrUpdateLabelRequest](#servicescitizensCreateOrUpdateLabelRequest) | [CreateOrUpdateLabelResponse](#servicescitizensCreateOrUpdateLabelResponse) | |
+| `DeleteLabel` | [DeleteLabelRequest](#servicescitizensDeleteLabelRequest) | [DeleteLabelResponse](#servicescitizensDeleteLabelResponse) | |
 
  <!-- end services -->
 
@@ -8794,7 +8915,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `labels` | [resources.users.labels.Label](#resourcesuserslabelsLabel) | repeated |  |
+| `labels` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
 
 
 
@@ -13374,7 +13495,7 @@ Individual SendData request messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `licenses` | [resources.users.licenses.License](#resourcesuserslicensesLicense) | repeated |  |
+| `licenses` | [resources.citizens.licenses.License](#resourcescitizenslicensesLicense) | repeated |  |
 
 
 

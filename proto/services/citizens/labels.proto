@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package services.citizens;
+
+import "buf/validate/validate.proto";
+import "codegen/perms/perms.proto";
+import "resources/citizens/labels/labels.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizens";
+
+message GetLabelRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message GetLabelResponse {
+  resources.citizens.labels.Label label = 1;
+}
+
+message CreateOrUpdateLabelRequest {
+  resources.citizens.labels.Label label = 1 [(buf.validate.field).required = true];
+}
+
+message CreateOrUpdateLabelResponse {
+  resources.citizens.labels.Label label = 1;
+}
+
+message DeleteLabelRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message DeleteLabelResponse {}
+
+service LabelsService {
+  option (codegen.perms.perms_svc) = {
+    order: 32
+    icon: "i-mdi-label-multiple"
+  };
+
+  rpc GetLabel(GetLabelRequest) returns (GetLabelResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "completor.CompletorService"
+      name: "CompleteCitizenLabels"
+    };
+  }
+
+  rpc CreateOrUpdateLabel(CreateOrUpdateLabelRequest) returns (CreateOrUpdateLabelResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+
+  rpc DeleteLabel(DeleteLabelRequest) returns (DeleteLabelResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+}

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"slices"
 
-	userslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels"
+	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbcompletor "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor"
 	permscompletor "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor/perms"
@@ -254,8 +254,10 @@ func (s *Server) CompleteCitizenLabels(
 	stmt := tCitizensLabelsJob.
 		SELECT(
 			tCitizensLabelsJob.ID,
+			tCitizensLabelsJob.CreatedAt,
 			tCitizensLabelsJob.Name,
 			tCitizensLabelsJob.Color,
+			tCitizensLabelsJob.Icon,
 		).
 		FROM(tCitizensLabelsJob).
 		WHERE(condition).
@@ -265,7 +267,7 @@ func (s *Server) CompleteCitizenLabels(
 		LIMIT(15)
 
 	resp := &pbcompletor.CompleteCitizenLabelsResponse{
-		Labels: []*userslabels.Label{},
+		Labels: []*citizenslabels.Label{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

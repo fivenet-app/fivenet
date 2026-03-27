@@ -12,7 +12,6 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../../users/short/user";
-import { Timestamp } from "../../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.documents.access.DocumentAccess
  */
@@ -34,10 +33,6 @@ export interface DocumentJobAccess {
      * @generated from protobuf field: int64 id = 1
      */
     id: number;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
-     */
-    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: int64 target_id = 3
      */
@@ -75,10 +70,6 @@ export interface DocumentUserAccess {
      * @generated from protobuf field: int64 id = 1
      */
     id: number;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
-     */
-    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: int64 target_id = 3
      */
@@ -193,7 +184,6 @@ class DocumentJobAccess$Type extends MessageType<DocumentJobAccess> {
     constructor() {
         super("resources.documents.access.DocumentJobAccess", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
@@ -221,9 +211,6 @@ class DocumentJobAccess$Type extends MessageType<DocumentJobAccess> {
             switch (fieldNo) {
                 case /* int64 id */ 1:
                     message.id = reader.int64().toNumber();
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 2:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
                 case /* int64 target_id */ 3:
                     message.targetId = reader.int64().toNumber();
@@ -261,9 +248,6 @@ class DocumentJobAccess$Type extends MessageType<DocumentJobAccess> {
         /* int64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int64(message.id);
-        /* optional resources.timestamp.Timestamp created_at = 2; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* int64 target_id = 3; */
         if (message.targetId !== 0)
             writer.tag(3, WireType.Varint).int64(message.targetId);
@@ -300,7 +284,6 @@ class DocumentUserAccess$Type extends MessageType<DocumentUserAccess> {
     constructor() {
         super("resources.documents.access.DocumentUserAccess", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 5, name: "user", kind: "message", T: () => UserShort },
@@ -325,9 +308,6 @@ class DocumentUserAccess$Type extends MessageType<DocumentUserAccess> {
             switch (fieldNo) {
                 case /* int64 id */ 1:
                     message.id = reader.int64().toNumber();
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 2:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
                 case /* int64 target_id */ 3:
                     message.targetId = reader.int64().toNumber();
@@ -359,9 +339,6 @@ class DocumentUserAccess$Type extends MessageType<DocumentUserAccess> {
         /* int64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int64(message.id);
-        /* optional resources.timestamp.Timestamp created_at = 2; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* int64 target_id = 3; */
         if (message.targetId !== 0)
             writer.tag(3, WireType.Varint).int64(message.targetId);

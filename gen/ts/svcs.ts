@@ -3,6 +3,9 @@
 // source: services/calendar/calendar.proto
 // source: services/centrum/centrum.proto
 // source: services/citizens/citizens.proto
+// source: services/citizens/labels.proto
+// source: services/citizens/citizens.proto
+// source: services/citizens/labels.proto
 // source: services/completor/completor.proto
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
@@ -111,6 +114,7 @@ export const grpcServices = [
     'calendar.CalendarService',
     'centrum.CentrumService',
     'citizens.CitizensService',
+    'citizens.LabelsService',
     'completor.CompletorService',
     'documents.ApprovalService',
     'documents.CollabService',
@@ -200,7 +204,9 @@ export const grpcMethods = [
 	'citizens.CitizensService/DeleteAvatar',
 	'citizens.CitizensService/UploadMugshot',
 	'citizens.CitizensService/DeleteMugshot',
-	'citizens.CitizensService/ManageLabels',
+	'citizens.LabelsService/GetLabel',
+	'citizens.LabelsService/CreateOrUpdateLabel',
+	'citizens.LabelsService/DeleteLabel',
 	'completor.CompletorService/CompleteCitizens',
 	'completor.CompletorService/CompleteJobs',
 	'completor.CompletorService/CompleteDocumentCategories',

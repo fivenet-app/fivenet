@@ -5,8 +5,6 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CitizensService } from "./citizens";
-import type { ManageLabelsResponse } from "./citizens";
-import type { ManageLabelsRequest } from "./citizens";
 import type { DeleteMugshotResponse } from "./citizens";
 import type { DeleteMugshotRequest } from "./citizens";
 import type { DeleteAvatarResponse } from "./citizens";
@@ -69,10 +67,6 @@ export interface ICitizensServiceClient {
      * @generated from protobuf rpc: DeleteMugshot
      */
     deleteMugshot(input: DeleteMugshotRequest, options?: RpcOptions): UnaryCall<DeleteMugshotRequest, DeleteMugshotResponse>;
-    /**
-     * @generated from protobuf rpc: ManageLabels
-     */
-    manageLabels(input: ManageLabelsRequest, options?: RpcOptions): UnaryCall<ManageLabelsRequest, ManageLabelsResponse>;
 }
 /**
  * @generated from protobuf service services.citizens.CitizensService
@@ -146,12 +140,5 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
     deleteMugshot(input: DeleteMugshotRequest, options?: RpcOptions): UnaryCall<DeleteMugshotRequest, DeleteMugshotResponse> {
         const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteMugshotRequest, DeleteMugshotResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: ManageLabels
-     */
-    manageLabels(input: ManageLabelsRequest, options?: RpcOptions): UnaryCall<ManageLabelsRequest, ManageLabelsResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ManageLabelsRequest, ManageLabelsResponse>("unary", this._transport, method, opt, input);
     }
 }

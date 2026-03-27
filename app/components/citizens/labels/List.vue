@@ -2,9 +2,10 @@
 import { UButton } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
+import { availableIcons } from '~/components/partials/icons';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
-import type { Label } from '~~/gen/ts/resources/users/labels/labels';
+import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import DataErrorBlock from '../../partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '../../partials/data/DataPendingBlock.vue';
 import CreateOrUpdateModal from './CreateOrUpdateModal.vue';
@@ -63,6 +64,34 @@ const columns = computed<TableColumn<Label>[]>(() => [
                 hideLabel: true,
             }),
     },
+    {
+        accessorKey: 'icon',
+        header: t('common.icon'),
+        cell: ({ row }) =>
+            h(availableIcons.find((item) => item.name === row.original.icon)?.component ?? 'span', {
+                class: 'size-5',
+                fill: row.original.color ?? 'currentColor',
+            }),
+    },
+    {
+        id: 'actions',
+        header: '',
+        cell: ({ row }) =>
+            can('citizens.LabelsService/CreateOrUpdateLabel').value
+                ? h(UButton, {
+                      color: 'neutral',
+                      variant: 'outline',
+                      size: 'sm',
+                      trailingIcon: 'i-mdi-pencil',
+                      onClick: () => {
+                          createOrUpdateModal.open({
+                              labelId: row.original.id,
+                              onRefresh: () => refresh(),
+                          });
+                      },
+                  })
+                : undefined,
+    },
 ]);
 </script>
 
@@ -77,7 +106,7 @@ const columns = computed<TableColumn<Label>[]>(() => [
                 <template #right>
                     <PartialsBackButton to="/citizens" />
 
-                    <UTooltip v-if="can('citizens.CitizensService/ManageLabels').value" :text="$t('common.edit')">
+                    <UTooltip v-if="can('citizens.LabelsService/CreateOrUpdateLabel').value" :text="$t('common.edit')">
                         <UButton
                             color="neutral"
                             variant="outline"

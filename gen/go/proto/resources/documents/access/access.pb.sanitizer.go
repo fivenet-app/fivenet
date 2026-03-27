@@ -48,15 +48,6 @@ func (m *DocumentJobAccess) Sanitize() error {
 		return nil
 	}
 
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	// Field: Job
 	m.Job = htmlsanitizer.Sanitize(m.Job)
 
@@ -78,15 +69,6 @@ func (m *DocumentJobAccess) Sanitize() error {
 func (m *DocumentUserAccess) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	// Field: User

@@ -11,7 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Labels } from "../labels/labels";
+import { Labels } from "../../citizens/labels/labels";
 import { File } from "../../file/file";
 import { JobGrade } from "../../jobs/jobs";
 import { Job } from "../../jobs/jobs";
@@ -81,7 +81,7 @@ export interface UserProps {
      */
     mugshot?: File;
     /**
-     * @generated from protobuf field: optional resources.users.labels.Labels labels = 16
+     * @generated from protobuf field: optional resources.citizens.labels.Labels labels = 16
      */
     labels?: Labels;
     /**
@@ -169,7 +169,7 @@ class UserProps$Type extends MessageType<UserProps> {
                 case /* optional resources.file.File mugshot */ 15:
                     message.mugshot = File.internalBinaryRead(reader, reader.uint32(), options, message.mugshot);
                     break;
-                case /* optional resources.users.labels.Labels labels */ 16:
+                case /* optional resources.citizens.labels.Labels labels */ 16:
                     message.labels = Labels.internalBinaryRead(reader, reader.uint32(), options, message.labels);
                     break;
                 case /* optional string email */ 17:
@@ -232,7 +232,7 @@ class UserProps$Type extends MessageType<UserProps> {
         /* optional resources.file.File mugshot = 15; */
         if (message.mugshot)
             File.internalBinaryWrite(message.mugshot, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.users.labels.Labels labels = 16; */
+        /* optional resources.citizens.labels.Labels labels = 16; */
         if (message.labels)
             Labels.internalBinaryWrite(message.labels, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
         /* optional string email = 17; */

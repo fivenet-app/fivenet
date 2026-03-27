@@ -12,7 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp";
-import { License } from "./licenses/licenses";
+import { License } from "../citizens/licenses/licenses";
 import { UserProps } from "./props/props";
 /**
  * @generated from protobuf message resources.users.User
@@ -87,7 +87,7 @@ export interface User {
      */
     props?: UserProps;
     /**
-     * @generated from protobuf field: repeated resources.users.licenses.License licenses = 16
+     * @generated from protobuf field: repeated resources.citizens.licenses.License licenses = 16
      */
     licenses: License[];
     /**
@@ -259,7 +259,7 @@ class User$Type extends MessageType<User> {
                 case /* resources.users.props.UserProps props */ 15:
                     message.props = UserProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
-                case /* repeated resources.users.licenses.License licenses */ 16:
+                case /* repeated resources.citizens.licenses.License licenses */ 16:
                     message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* optional int64 profile_picture_file_id */ 17:
@@ -325,7 +325,7 @@ class User$Type extends MessageType<User> {
         /* resources.users.props.UserProps props = 15; */
         if (message.props)
             UserProps.internalBinaryWrite(message.props, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.users.licenses.License licenses = 16; */
+        /* repeated resources.citizens.licenses.License licenses = 16; */
         for (let i = 0; i < message.licenses.length; i++)
             License.internalBinaryWrite(message.licenses[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();
         /* optional int64 profile_picture_file_id = 17; */

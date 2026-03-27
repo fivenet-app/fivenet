@@ -268,6 +268,7 @@ func (s *Server) ListColleagues(
 				tJobLabels.Job,
 				tJobLabels.Name,
 				tJobLabels.Color,
+				tJobLabels.Icon,
 			).
 			FROM(
 				tColleagueLabels.
@@ -847,11 +848,16 @@ func (s *Server) ListColleagueActivity(
 			return nil, errorsjobs.ErrNotFoundOrNoPerms
 		}
 
-		if !access.CheckIfHasOwnJobAccess(colleagueAccess, userInfo, targetUser.GetJob(), &usershort.UserShort{
-			UserId:   targetUser.GetUserId(),
-			Job:      targetUser.GetJob(),
-			JobGrade: targetUser.GetJobGrade(),
-		}) {
+		if !access.CheckIfHasOwnJobAccess(
+			colleagueAccess,
+			userInfo,
+			targetUser.GetJob(),
+			&usershort.UserShort{
+				UserId:   targetUser.GetUserId(),
+				Job:      targetUser.GetJob(),
+				JobGrade: targetUser.GetJobGrade(),
+			},
+		) {
 			return nil, errorsjobs.ErrFailedQuery
 		}
 
@@ -872,7 +878,17 @@ func (s *Server) ListColleagueActivity(
 		if !userInfo.GetSuperuser() {
 			return resp, nil
 		} else {
-			types.Strings = append(types.Strings, "HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME")
+			types.Strings = append(
+				types.Strings,
+				"HIRED",
+				"FIRED",
+				"PROMOTED",
+				"DEMOTED",
+				"ABSENCE_DATE",
+				"NOTE",
+				"LABELS",
+				"NAME",
+			)
 		}
 	}
 

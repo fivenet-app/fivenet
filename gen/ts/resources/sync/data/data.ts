@@ -16,7 +16,7 @@ import { UserJob } from "../../users/user";
 import { Timestamp } from "../../timestamp/timestamp";
 import { AccountUpdate } from "../activity/activity";
 import { Coords } from "../../livemap/coords";
-import { License } from "../../users/licenses/licenses";
+import { License } from "../../citizens/licenses/licenses";
 import { Vehicle } from "../../vehicles/vehicles";
 import { Job } from "../../jobs/jobs";
 /**
@@ -60,7 +60,7 @@ export interface DataVehicles {
  */
 export interface DataLicenses {
     /**
-     * @generated from protobuf field: repeated resources.users.licenses.License licenses = 1
+     * @generated from protobuf field: repeated resources.citizens.licenses.License licenses = 1
      */
     licenses: License[];
 }
@@ -222,7 +222,7 @@ export interface DataUser {
      */
     playtime?: number;
     /**
-     * @generated from protobuf field: repeated resources.users.licenses.License licenses = 16
+     * @generated from protobuf field: repeated resources.citizens.licenses.License licenses = 16
      */
     licenses: License[];
     /**
@@ -441,7 +441,7 @@ class DataLicenses$Type extends MessageType<DataLicenses> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.licenses.License licenses */ 1:
+                case /* repeated resources.citizens.licenses.License licenses */ 1:
                     message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -456,7 +456,7 @@ class DataLicenses$Type extends MessageType<DataLicenses> {
         return message;
     }
     internalBinaryWrite(message: DataLicenses, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.licenses.License licenses = 1; */
+        /* repeated resources.citizens.licenses.License licenses = 1; */
         for (let i = 0; i < message.licenses.length; i++)
             License.internalBinaryWrite(message.licenses[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -908,7 +908,7 @@ class DataUser$Type extends MessageType<DataUser> {
                 case /* optional int32 playtime */ 14:
                     message.playtime = reader.int32();
                     break;
-                case /* repeated resources.users.licenses.License licenses */ 16:
+                case /* repeated resources.citizens.licenses.License licenses */ 16:
                     message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* optional int64 profile_picture_file_id */ 17:
@@ -971,7 +971,7 @@ class DataUser$Type extends MessageType<DataUser> {
         /* optional int32 playtime = 14; */
         if (message.playtime !== undefined)
             writer.tag(14, WireType.Varint).int32(message.playtime);
-        /* repeated resources.users.licenses.License licenses = 16; */
+        /* repeated resources.citizens.licenses.License licenses = 16; */
         for (let i = 0; i < message.licenses.length; i++)
             License.internalBinaryWrite(message.licenses[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();
         /* optional int64 profile_picture_file_id = 17; */

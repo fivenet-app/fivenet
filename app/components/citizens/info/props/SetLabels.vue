@@ -4,8 +4,8 @@ import { z } from 'zod';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
+import type { Labels } from '~~/gen/ts/resources/citizens/labels/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { Labels } from '~~/gen/ts/resources/users/labels/labels';
 import type { UserProps } from '~~/gen/ts/resources/users/props/props';
 
 const props = defineProps<{

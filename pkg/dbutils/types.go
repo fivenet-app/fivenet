@@ -69,3 +69,11 @@ func StringPEmpty(s *string) mysql.StringExpression {
 	}
 	return mysql.String(*s)
 }
+
+// StringEmpty helper for strings. Empty strings are treated as NULL.
+func StringEmpty(s string) mysql.StringExpression {
+	if s == "" {
+		return mysql.StringExp(mysql.NULL)
+	}
+	return mysql.String(s)
+}

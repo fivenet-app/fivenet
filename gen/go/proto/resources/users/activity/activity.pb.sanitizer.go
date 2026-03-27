@@ -69,6 +69,34 @@ func (m *JobChange) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *LabelChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: ExpiresAt
+	if m.ExpiresAt != nil {
+		if v, ok := any(m.GetExpiresAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Label
+	if m.Label != nil {
+		if v, ok := any(m.GetLabel()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *LabelsChange) Sanitize() error {
 	if m == nil {
 		return nil
@@ -257,6 +285,14 @@ func (m *UserActivityData) Sanitize() error {
 
 		// Field: JobChange
 	case *UserActivityData_JobChange:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: LabelChange
+	case *UserActivityData_LabelChange:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err

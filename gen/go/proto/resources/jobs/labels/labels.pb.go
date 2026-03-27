@@ -89,7 +89,8 @@ type Label struct {
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
 	Color         string                 `protobuf:"bytes,5,opt,name=color,proto3" json:"color,omitempty"`
-	Order         int32                  `protobuf:"varint,6,opt,name=order,proto3" json:"order,omitempty"`
+	Icon          *string                `protobuf:"bytes,6,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	Order         int32                  `protobuf:"varint,7,opt,name=order,proto3" json:"order,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -154,6 +155,13 @@ func (x *Label) GetColor() string {
 	return ""
 }
 
+func (x *Label) GetIcon() string {
+	if x != nil && x.Icon != nil {
+		return *x.Icon
+	}
+	return ""
+}
+
 func (x *Label) GetOrder() int32 {
 	if x != nil {
 		return x.Order
@@ -181,6 +189,10 @@ func (x *Label) SetColor(v string) {
 	x.Color = v
 }
 
+func (x *Label) SetIcon(v string) {
+	x.Icon = &v
+}
+
 func (x *Label) SetOrder(v int32) {
 	x.Order = v
 }
@@ -199,12 +211,23 @@ func (x *Label) HasDeletedAt() bool {
 	return x.DeletedAt != nil
 }
 
+func (x *Label) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return x.Icon != nil
+}
+
 func (x *Label) ClearJob() {
 	x.Job = nil
 }
 
 func (x *Label) ClearDeletedAt() {
 	x.DeletedAt = nil
+}
+
+func (x *Label) ClearIcon() {
+	x.Icon = nil
 }
 
 type Label_builder struct {
@@ -215,6 +238,7 @@ type Label_builder struct {
 	DeletedAt *timestamp.Timestamp
 	Name      string
 	Color     string
+	Icon      *string
 	Order     int32
 }
 
@@ -227,6 +251,7 @@ func (b0 Label_builder) Build() *Label {
 	x.DeletedAt = b.DeletedAt
 	x.Name = b.Name
 	x.Color = b.Color
+	x.Icon = b.Icon
 	x.Order = b.Order
 	return m0
 }
@@ -319,17 +344,19 @@ const file_resources_jobs_labels_labels_proto_rawDesc = "" +
 	"\n" +
 	"\"resources/jobs/labels/labels.proto\x12\x15resources.jobs.labels\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\":\n" +
 	"\x06Labels\x120\n" +
-	"\x04list\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x04list\"\xf6\x01\n" +
+	"\x04list\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x04list\"\xa2\x02\n" +
 	"\x05Label\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x15\n" +
 	"\x03job\x18\x02 \x01(\tH\x00R\x03job\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12\x1e\n" +
-	"\x05color\x18\x05 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12\x14\n" +
-	"\x05order\x18\x06 \x01(\x05R\x05orderB\x06\n" +
+	"\x05color\x18\x05 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12!\n" +
+	"\x04icon\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x02R\x04icon\x88\x01\x01\x12\x14\n" +
+	"\x05order\x18\a \x01(\x05R\x05orderB\x06\n" +
 	"\x04_jobB\r\n" +
-	"\v_deleted_at\"V\n" +
+	"\v_deleted_atB\a\n" +
+	"\x05_icon\"V\n" +
 	"\n" +
 	"LabelCount\x122\n" +
 	"\x05label\x18\x01 \x01(\v2\x1c.resources.jobs.labels.LabelR\x05label\x12\x14\n" +

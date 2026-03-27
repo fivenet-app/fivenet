@@ -5,10 +5,10 @@ package resources.users.activity;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/citizens/labels/labels.proto";
+import "resources/citizens/licenses/licenses.proto";
 import "resources/documents/relations/relations.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/labels/labels.proto";
-import "resources/users/licenses/licenses.proto";
 import "resources/users/short/user.proto";
 import "tagger/tagger.proto";
 
@@ -84,6 +84,7 @@ message UserActivityData {
     TrafficInfractionPointsChange traffic_infraction_points_change = 4;
     MugshotChange mugshot_change = 5;
     LabelsChange labels_change = 6;
+    LabelChange label_change = 11;
     JobChange job_change = 7;
 
     // Docstore related
@@ -103,7 +104,7 @@ message NameChange {
 message LicenseChange {
   // `true` if licenses were added, `false` if removed
   bool added = 1;
-  repeated resources.users.licenses.License licenses = 2;
+  repeated resources.citizens.licenses.License licenses = 2;
 }
 
 message WantedChange {
@@ -120,9 +121,17 @@ message MugshotChange {
   optional string new = 1;
 }
 
+// @deprecated
 message LabelsChange {
-  repeated resources.users.labels.Label added = 1;
-  repeated resources.users.labels.Label removed = 2;
+  repeated resources.citizens.labels.Label added = 1;
+  repeated resources.citizens.labels.Label removed = 2;
+}
+
+message LabelChange {
+  resources.citizens.labels.Label label = 1;
+  bool added = 2;
+  optional resources.timestamp.Timestamp expires_at = 3;
+  bool expired = 4;
 }
 
 message JobChange {

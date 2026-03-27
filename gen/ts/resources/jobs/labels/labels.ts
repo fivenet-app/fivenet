@@ -46,7 +46,11 @@ export interface Label {
      */
     color: string;
     /**
-     * @generated from protobuf field: int32 order = 6
+     * @generated from protobuf field: optional string icon = 6
+     */
+    icon?: string;
+    /**
+     * @generated from protobuf field: int32 order = 7
      */
     order: number;
 }
@@ -119,7 +123,8 @@ class Label$Type extends MessageType<Label> {
             { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } } } },
             { no: 5, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 6, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 6, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 7, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<Label>): Label {
@@ -152,7 +157,10 @@ class Label$Type extends MessageType<Label> {
                 case /* string color */ 5:
                     message.color = reader.string();
                     break;
-                case /* int32 order */ 6:
+                case /* optional string icon */ 6:
+                    message.icon = reader.string();
+                    break;
+                case /* int32 order */ 7:
                     message.order = reader.int32();
                     break;
                 default:
@@ -182,9 +190,12 @@ class Label$Type extends MessageType<Label> {
         /* string color = 5; */
         if (message.color !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.color);
-        /* int32 order = 6; */
+        /* optional string icon = 6; */
+        if (message.icon !== undefined)
+            writer.tag(6, WireType.LengthDelimited).string(message.icon);
+        /* int32 order = 7; */
         if (message.order !== 0)
-            writer.tag(6, WireType.Varint).int32(message.order);
+            writer.tag(7, WireType.Varint).int32(message.order);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

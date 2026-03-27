@@ -9,7 +9,6 @@ import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
 import "resources/users/activity/activity.proto";
-import "resources/users/labels/labels.proto";
 import "resources/users/props/props.proto";
 import "resources/users/user.proto";
 
@@ -91,14 +90,6 @@ message DeleteMugshotRequest {
 }
 
 message DeleteMugshotResponse {}
-
-message ManageLabelsRequest {
-  repeated resources.users.labels.Label labels = 1 [(buf.validate.field).repeated.max_items = 50];
-}
-
-message ManageLabelsResponse {
-  repeated resources.users.labels.Label labels = 1;
-}
 
 service CitizensService {
   option (codegen.perms.perms_svc) = {
@@ -206,9 +197,5 @@ service CitizensService {
       enabled: true
       name: "SetUserProps"
     };
-  }
-
-  rpc ManageLabels(ManageLabelsRequest) returns (ManageLabelsResponse) {
-    option (codegen.perms.perms) = {enabled: true};
   }
 }

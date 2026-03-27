@@ -38,7 +38,12 @@ func (s *Server) UploadAvatar(
 	}
 
 	meta.Namespace = "user_profile_pictures"
-	if _, err := s.profilePictureHandler.UploadFromMeta(ctx, meta, userInfo.GetUserId(), srv); err != nil {
+	if _, err := s.profilePictureHandler.UploadFromMeta(
+		ctx,
+		meta,
+		userInfo.GetUserId(),
+		srv,
+	); err != nil {
 		return err
 	}
 
