@@ -57,7 +57,7 @@ services:
     command:
       - server
     #ports:
-    #  - "7070:7070" # User for metrics only
+    #  - "7070:7070" # Used for metrics/debugging only
     #  - "8080:8080" # Only needed when exposing FiveNet directly
     networks:
       - fivenet
@@ -74,7 +74,7 @@ services:
     command:
       - worker
     #ports:
-    #  - "7072:7070" # User for metrics only
+    #  - "7072:7070" # Used for metrics/debugging only
     networks:
       - fivenet
     restart: on-failure
@@ -89,7 +89,7 @@ services:
     command:
       - discord
     #ports:
-    #  - "7073:7070" # User for metrics only
+    #  - "7073:7070" # Used for metrics/debugging only
     networks:
       - fivenet
     restart: on-failure
@@ -97,27 +97,26 @@ services:
       - fivenet:/data
       - ./config.yaml:/config/config.yaml
 
-  # FiveNet DBSync
-  #fivenet_dbsync:
-  #  container_name: fivenet-dbsync
-  #  image: ghcr.io/fivenet-app/fivenet:main
-  #  command:
-  #    - dbsync
-  #    - run
-  #  #ports:
-  #  #  - "7074:7070" # User for metrics only
-  #  networks:
-  #    - fivenet
-  #  restart: on-failure
-  #  environment:
-  #    FIVENET_STATEFILE: "/dbsync/dbsync_state.yaml"
-  #  volumes:
-  #    - fivenet:/data
-  #    - fivenet_dbsync:/dbsync
-  #    #
-  #    # ! You must create the `dbsync.yaml` file in the same folder of your `docker-compose.yaml`
-  #    # ! before starting the container for the first time!
-  #    - ./dbsync.yaml:/config/dbsync.yaml
+  # FiveNet DBSync - Only run if you are not running the DBSync separately via the binary.
+  fivenet_dbsync:
+    container_name: fivenet-dbsync
+    image: ghcr.io/fivenet-app/fivenet:main
+    command:
+      - dbsync
+      - run
+    #ports:
+    #  - "7074:7070" # Used for metrics/debugging only
+    networks:
+      - fivenet
+    restart: on-failure
+    environment:
+      FIVENET_STATEFILE: "/dbsync/dbsync_state.yaml"
+    volumes:
+      - fivenet:/data
+      - ./dbsync:/dbsync
+      # ! You must create the `dbsync.yaml` file in the same folder of your `docker-compose.yaml`
+      # ! before starting the container for the first time! Otherwise you might end up with a folder called `dbsync.yaml/`
+      - ./dbsync.yaml:/config/dbsync.yaml
 
 networks:
   fivenet:
