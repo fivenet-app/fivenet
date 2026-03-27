@@ -81,9 +81,11 @@ func (s *Server) ListTimeclock(
 			))
 		} else if req.GetMode() == jobstimeclock.TimeclockMode_TIMECLOCK_MODE_WEEKLY {
 			if req.GetDate().GetEnd() != nil {
-				condition = condition.AND(mysql.RawBool("YEARWEEK(`timeclock_entry`.`date`, 1) = YEARWEEK($date, 1)",
-					mysql.RawArgs{"$date": req.GetDate().GetEnd().AsTime()},
-				))
+				condition = condition.AND(
+					mysql.RawBool("YEARWEEK(`timeclock_entry`.`date`, 1) = YEARWEEK($date, 1)",
+						mysql.RawArgs{"$date": req.GetDate().GetEnd().AsTime()},
+					),
+				)
 			}
 		} else {
 			if req.GetDate().GetStart() != nil {
@@ -111,17 +113,20 @@ func (s *Server) ListTimeclock(
 	}
 
 	groupBys := []mysql.GroupByClause{}
+	countExpr := mysql.COUNT(mysql.DISTINCT(tTimeClock.UserID))
+	dateSelectExpr := mysql.Expression(tTimeClock.Date)
 	if req.GetPerDay() {
 		groupBys = append(groupBys, tTimeClock.Date, tTimeClock.UserID)
+		countExpr = mysql.COUNT(mysql.RawString("DISTINCT `timeclock_entry`.`date`, `timeclock_entry`.`user_id`"))
 	} else {
 		groupBys = append(groupBys, tTimeClock.UserID)
+		dateSelectExpr = mysql.MAX(tTimeClock.Date)
 	}
 
 	// User mode doesn't change the count query
 	countStmt := tTimeClock.
 		SELECT(
-			mysql.COUNT(mysql.RawString("DISTINCT `timeclock_entry`.`date`, `timeclock_entry`.`user_id`")).
-				AS("data_count.total"),
+			countExpr.AS("data_count.total"),
 		).
 		FROM(
 			tTimeClock.
@@ -204,7 +209,7 @@ func (s *Server) ListTimeclock(
 	agg := tTimeClock.
 		SELECT(
 			tTimeClock.UserID.AS("agg.user_id"),
-			tTimeClock.Date.AS("agg.date"),
+			dateSelectExpr.AS("agg.date"),
 			mysql.MIN(tTimeClock.StartTime).AS("agg.start_time"),
 			mysql.MAX(tTimeClock.EndTime).AS("agg.end_time"),
 			mysql.SUM(tTimeClock.SpentTime).AS("agg.spent_time"),
@@ -290,11 +295,7 @@ func (s *Server) ListTimeclock(
 		data.Date = req.GetDate().GetEnd()
 		for i := range data.GetEntries() {
 			if data.GetEntries()[i].GetUser() != nil {
-				if data.GetEntries()[i].GetUser().GetJob() != userInfo.GetJob() {
-					s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
-				} else {
-					s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
-				}
+				s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
 			}
 			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
@@ -315,11 +316,7 @@ func (s *Server) ListTimeclock(
 
 		for i := range data.GetEntries() {
 			if data.GetEntries()[i].GetUser() != nil {
-				if data.GetEntries()[i].GetUser().GetJob() != userInfo.GetJob() {
-					s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
-				} else {
-					s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
-				}
+				s.enricher.EnrichJobInfo(data.GetEntries()[i].GetUser())
 			}
 			data.Sum += int64(math.Round(float64(data.GetEntries()[i].GetSpentTime() * 60 * 60)))
 		}
@@ -611,7 +608,7 @@ func (s *Server) ListInactiveEmployees(
 		).
 		WHERE(condition).
 		ORDER_BY(orderBys...).
-		GROUP_BY(tTimeClock.UserID).
+		GROUP_BY(tTimeClock.UserID, tColleague.ID, tColleague.Job, tColleague.JobGrade).
 		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 

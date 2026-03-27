@@ -501,8 +501,8 @@ const { game } = useAppConfig();
                 <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.entry', 2)])" :error="error" :retry="refresh" />
             </div>
 
-            <UCard v-else-if="query.viewMode === TimeclockViewMode.SELF && !query.perDay">
-                <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-highlighted">
+            <UCard v-else-if="query.viewMode === TimeclockViewMode.SELF && !query.perDay" class="m-4">
+                <div class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-highlighted">
                     {{
                         totalTimeSum === 0
                             ? $t('common.not_found', [$t('common.entry', 2)])
@@ -510,7 +510,7 @@ const { game } = useAppConfig();
                                   seconds: false,
                               })
                     }}
-                </p>
+                </div>
             </UCard>
 
             <UTable
