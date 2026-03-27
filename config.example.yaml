@@ -119,7 +119,6 @@ storage:
     checkOnStartup: false
 
 imageProxy:
-  cachePrefix: "images/"
   options:
     allowHosts: []
     denyHosts: []

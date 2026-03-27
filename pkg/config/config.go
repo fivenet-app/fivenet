@@ -274,8 +274,7 @@ type S3Storage struct {
 }
 
 type ImageProxy struct {
-	CachePrefix string            `default:"images/" yaml:"cachePrefix"`
-	Options     ImageProxyOptions `                  yaml:"options"`
+	Options ImageProxyOptions `yaml:"options"`
 }
 
 type ImageProxyOptions struct {

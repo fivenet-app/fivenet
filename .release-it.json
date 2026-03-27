@@ -22,9 +22,8 @@
   },
   "plugins": {
     "@csmith/release-it-calver-plugin": {
-      "format": "yyyy.mm.minor",
-      "increment": "calendar",
-      "fallbackIncrement": "minor"
+      "cycle": "month",
+      "separator": "."
     },
     "@release-it/bumper": {
       "out": [
