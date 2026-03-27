@@ -5,6 +5,7 @@ import { z } from 'zod';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetColleagueLabelsResponse, ManageLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
@@ -23,6 +24,7 @@ const schema = z.object({
             id: z.coerce.number(),
             name: z.coerce.string().min(1).max(64),
             color: z.coerce.string().length(7),
+            icon: z.coerce.string().max(128).optional(),
             order: z.coerce.number().nonnegative().default(0),
         })
         .array()
@@ -86,7 +88,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="$t('common.label', 2)">
+    <UModal :title="$t('common.label', 2)" fullscreen>
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
@@ -112,21 +114,44 @@ const formRef = useTemplateRef('formRef');
                                     </UFieldGroup>
                                 </div>
 
-                                <UFormField class="flex-1" :name="`labels.${idx}.name`">
-                                    <UInput
-                                        v-model="state.labels[idx]!.name"
-                                        class="w-full flex-1"
-                                        :name="`labels.${idx}.name`"
-                                        type="text"
-                                        :placeholder="$t('common.label', 1)"
-                                    />
-                                </UFormField>
+                                <div class="flex flex-1 flex-col gap-1">
+                                    <UFormField class="flex-1" :name="`labels.${idx}.name`">
+                                        <UInput
+                                            v-model="state.labels[idx]!.name"
+                                            class="w-full flex-1"
+                                            :name="`labels.${idx}.name`"
+                                            type="text"
+                                            :placeholder="$t('common.label', 1)"
+                                        />
+                                    </UFormField>
 
-                                <UFormField :name="`${idx}.color`">
-                                    <ColorPicker v-model="state.labels[idx]!.color" class="min-w-16" :name="`${idx}.color`" />
-                                </UFormField>
+                                    <div class="flex flex-1 flex-row gap-2">
+                                        <UFormField :name="`${idx}.color`" :label="$t('common.color')" class="flex-1">
+                                            <ColorPicker
+                                                v-model="state.labels[idx]!.color"
+                                                class="w-full"
+                                                :name="`${idx}.color`"
+                                            />
+                                        </UFormField>
 
-                                <UButton :disabled="!canSubmit" icon="i-mdi-close" @click="state.labels.splice(idx, 1)" />
+                                        <UFormField :name="`${idx}.icon`" :label="$t('common.icon')" class="flex-1">
+                                            <IconSelectMenu
+                                                v-model="state.labels[idx]!.icon"
+                                                class="w-full"
+                                                :name="`${idx}.icon`"
+                                                :hex-color="state.labels[idx]!.color"
+                                                clear
+                                            />
+                                        </UFormField>
+                                    </div>
+                                </div>
+
+                                <UButton
+                                    color="red"
+                                    :disabled="!canSubmit"
+                                    icon="i-mdi-remove"
+                                    @click="state.labels.splice(idx, 1)"
+                                />
                             </div>
                         </VueDraggable>
                     </div>
@@ -135,7 +160,7 @@ const formRef = useTemplateRef('formRef');
                         :class="state.labels.length ? 'mt-2' : ''"
                         :disabled="!canSubmit"
                         icon="i-mdi-plus"
-                        @click="state.labels.push({ id: 0, name: '', color: '#ffffff', order: 0 })"
+                        @click="state.labels.push({ id: 0, name: '', color: '#5c7aff', order: 0 })"
                     />
                 </UFormField>
             </UForm>

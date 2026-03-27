@@ -10,12 +10,12 @@ package sync
 
 import (
 	dispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	activity2 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
 	data "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	activity1 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
-	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -2095,7 +2095,7 @@ var File_services_sync_v2_sync_proto protoreflect.FileDescriptor
 
 const file_services_sync_v2_sync_proto_rawDesc = "" +
 	"\n" +
-	"\x1bservices/sync/v2/sync.proto\x12\x10services.sync.v2\x1a-resources/centrum/dispatches/dispatches.proto\x1a1resources/jobs/colleagues/activity/activity.proto\x1a\x19resources/jobs/jobs.proto\x1a&resources/sync/activity/activity.proto\x1a\x1eresources/sync/data/data.proto\x1a'resources/users/activity/activity.proto\x1a'resources/users/licenses/licenses.proto\x1a!resources/vehicles/vehicles.proto\"\x12\n" +
+	"\x1bservices/sync/v2/sync.proto\x12\x10services.sync.v2\x1a-resources/centrum/dispatches/dispatches.proto\x1a1resources/jobs/colleagues/activity/activity.proto\x1a\x19resources/jobs/jobs.proto\x1a&resources/sync/activity/activity.proto\x1a\x1eresources/sync/data/data.proto\x1a'resources/users/activity/activity.proto\x1a*resources/citizens/licenses/licenses.proto\x1a!resources/vehicles/vehicles.proto\"\x12\n" +
 	"\x10GetStatusRequest\"\xb6\x02\n" +
 	"\x11GetStatusResponse\x123\n" +
 	"\x04jobs\x18\x01 \x01(\v2\x1f.resources.sync.data.DataStatusR\x04jobs\x12;\n" +
@@ -2150,9 +2150,9 @@ const file_services_sync_v2_sync_proto_rawDesc = "" +
 	"userUpdate\"\x15\n" +
 	"\x13AddActivityResponse\">\n" +
 	"\x13SendJobsDataRequest\x12'\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x04jobs\"X\n" +
-	"\x17SendLicensesDataRequest\x12=\n" +
-	"\blicenses\x18\x01 \x03(\v2!.resources.users.licenses.LicenseR\blicenses\"j\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x04jobs\"[\n" +
+	"\x17SendLicensesDataRequest\x12@\n" +
+	"\blicenses\x18\x01 \x03(\v2$.resources.citizens.licenses.LicenseR\blicenses\"j\n" +
 	"\x17SendAccountsDataRequest\x12O\n" +
 	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"K\n" +
 	"\x14SendUsersDataRequest\x123\n" +
@@ -2248,7 +2248,7 @@ var file_services_sync_v2_sync_proto_goTypes = []any{
 	(*activity.AccountUpdate)(nil),       // 37: resources.sync.activity.AccountUpdate
 	(*activity.UserUpdate)(nil),          // 38: resources.sync.activity.UserUpdate
 	(*jobs.Job)(nil),                     // 39: resources.jobs.Job
-	(*licenses.License)(nil),             // 40: resources.users.licenses.License
+	(*licenses.License)(nil),             // 40: resources.citizens.licenses.License
 	(*data.DataUser)(nil),                // 41: resources.sync.data.DataUser
 	(*vehicles.Vehicle)(nil),             // 42: resources.vehicles.Vehicle
 	(*data.CitizenLocations)(nil),        // 43: resources.sync.data.CitizenLocations
@@ -2270,7 +2270,7 @@ var file_services_sync_v2_sync_proto_depIdxs = []int32{
 	37, // 12: services.sync.v2.AddAccountUpdateRequest.account_update:type_name -> resources.sync.activity.AccountUpdate
 	38, // 13: services.sync.v2.AddUserUpdateRequest.user_update:type_name -> resources.sync.activity.UserUpdate
 	39, // 14: services.sync.v2.SendJobsDataRequest.jobs:type_name -> resources.jobs.Job
-	40, // 15: services.sync.v2.SendLicensesDataRequest.licenses:type_name -> resources.users.licenses.License
+	40, // 15: services.sync.v2.SendLicensesDataRequest.licenses:type_name -> resources.citizens.licenses.License
 	37, // 16: services.sync.v2.SendAccountsDataRequest.account_updates:type_name -> resources.sync.activity.AccountUpdate
 	41, // 17: services.sync.v2.SendUsersDataRequest.users:type_name -> resources.sync.data.DataUser
 	42, // 18: services.sync.v2.SendVehiclesDataRequest.vehicles:type_name -> resources.vehicles.Vehicle

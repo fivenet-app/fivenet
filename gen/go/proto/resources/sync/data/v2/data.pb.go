@@ -9,8 +9,8 @@
 package syncdatav2
 
 import (
+	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
-	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -241,16 +241,16 @@ var File_resources_sync_data_v2_data_proto protoreflect.FileDescriptor
 
 const file_resources_sync_data_v2_data_proto_rawDesc = "" +
 	"\n" +
-	"!resources/sync/data/v2/data.proto\x12\x16resources.sync.data.v2\x1a'resources/users/licenses/licenses.proto\x1a\x1aresources/users/user.proto\"U\n" +
+	"!resources/sync/data/v2/data.proto\x12\x16resources.sync.data.v2\x1a*resources/citizens/licenses/licenses.proto\x1a\x1aresources/users/user.proto\"U\n" +
 	"\fDataUserJobs\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12,\n" +
 	"\x04jobs\x18\x02 \x03(\v2\x18.resources.users.UserJobR\x04jobs\"r\n" +
 	"\x14DataUserPhoneNumbers\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12A\n" +
-	"\rphone_numbers\x18\x02 \x03(\v2\x1c.resources.users.PhoneNumberR\fphoneNumbers\"j\n" +
+	"\rphone_numbers\x18\x02 \x03(\v2\x1c.resources.users.PhoneNumberR\fphoneNumbers\"m\n" +
 	"\x10DataUserLicenses\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12=\n" +
-	"\blicenses\x18\x02 \x03(\v2!.resources.users.licenses.LicenseR\blicensesBUZSgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data/v2;syncdatav2b\x06proto3"
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12@\n" +
+	"\blicenses\x18\x02 \x03(\v2$.resources.citizens.licenses.LicenseR\blicensesBUZSgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data/v2;syncdatav2b\x06proto3"
 
 var file_resources_sync_data_v2_data_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_sync_data_v2_data_proto_goTypes = []any{
@@ -259,12 +259,12 @@ var file_resources_sync_data_v2_data_proto_goTypes = []any{
 	(*DataUserLicenses)(nil),     // 2: resources.sync.data.v2.DataUserLicenses
 	(*users.UserJob)(nil),        // 3: resources.users.UserJob
 	(*users.PhoneNumber)(nil),    // 4: resources.users.PhoneNumber
-	(*licenses.License)(nil),     // 5: resources.users.licenses.License
+	(*licenses.License)(nil),     // 5: resources.citizens.licenses.License
 }
 var file_resources_sync_data_v2_data_proto_depIdxs = []int32{
 	3, // 0: resources.sync.data.v2.DataUserJobs.jobs:type_name -> resources.users.UserJob
 	4, // 1: resources.sync.data.v2.DataUserPhoneNumbers.phone_numbers:type_name -> resources.users.PhoneNumber
-	5, // 2: resources.sync.data.v2.DataUserLicenses.licenses:type_name -> resources.users.licenses.License
+	5, // 2: resources.sync.data.v2.DataUserLicenses.licenses:type_name -> resources.citizens.licenses.License
 	3, // [3:3] is the sub-list for method output_type
 	3, // [3:3] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name

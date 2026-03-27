@@ -97,7 +97,9 @@ func New(p Params) (*Sync, error) {
 	}
 
 	p.LC.Append(fx.StartHook(s.start))
-	p.LC.Append(fx.StopHook(s.stop))
+	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
+		return s.stop(true)
+	}))
 
 	return s, nil
 }
@@ -139,7 +141,7 @@ func (s *Sync) createGRPCClient() error {
 func (s *Sync) getSyncStatus(ctx context.Context) error {
 	timeout := s.cfg.Load().Destination.API.Timeout
 
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
 	resp, err := s.syncCli.GetStatus(ctx, &pbsync.GetStatusRequest{})
@@ -189,7 +191,7 @@ func (s *Sync) start() error {
 	return nil
 }
 
-func (s *Sync) stop() error {
+func (s *Sync) stop(closeCli bool) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -199,7 +201,7 @@ func (s *Sync) stop() error {
 
 	s.wg.Wait()
 
-	if s.cli != nil {
+	if s.cli != nil && closeCli {
 		if err := s.cli.Close(); err != nil {
 			st := status.Convert(err)
 			if st.Code() == codes.Unavailable || st.Code() == codes.Canceled {
@@ -215,7 +217,7 @@ func (s *Sync) stop() error {
 
 func (s *Sync) restart() error {
 	s.logger.Info("stopping sync process")
-	if err := s.stop(); err != nil {
+	if err := s.stop(false); err != nil {
 		return err
 	}
 	s.logger.Info("stopped sync process")

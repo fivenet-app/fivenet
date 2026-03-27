@@ -17,11 +17,16 @@ type fivenetUserLabelsJobTable struct {
 	mysql.Table
 
 	// Columns
-	ID      mysql.ColumnInteger
-	Job     mysql.ColumnString
-	Name    mysql.ColumnString
-	SortKey mysql.ColumnString
-	Color   mysql.ColumnString
+	ID        mysql.ColumnInteger
+	CreatedAt mysql.ColumnTimestamp
+	UpdatedAt mysql.ColumnTimestamp
+	DeletedAt mysql.ColumnTimestamp
+	Job       mysql.ColumnString
+	Name      mysql.ColumnString
+	SortKey   mysql.ColumnString
+	Color     mysql.ColumnString
+	Icon      mysql.ColumnString
+	Settings  mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -63,25 +68,35 @@ func newFivenetUserLabelsJobTable(schemaName, tableName, alias string) *FivenetU
 
 func newFivenetUserLabelsJobTableImpl(schemaName, tableName, alias string) fivenetUserLabelsJobTable {
 	var (
-		IDColumn       = mysql.IntegerColumn("id")
-		JobColumn      = mysql.StringColumn("job")
-		NameColumn     = mysql.StringColumn("name")
-		SortKeyColumn  = mysql.StringColumn("sort_key")
-		ColorColumn    = mysql.StringColumn("color")
-		allColumns     = mysql.ColumnList{IDColumn, JobColumn, NameColumn, SortKeyColumn, ColorColumn}
-		mutableColumns = mysql.ColumnList{JobColumn, NameColumn, SortKeyColumn, ColorColumn}
-		defaultColumns = mysql.ColumnList{}
+		IDColumn        = mysql.IntegerColumn("id")
+		CreatedAtColumn = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn = mysql.TimestampColumn("deleted_at")
+		JobColumn       = mysql.StringColumn("job")
+		NameColumn      = mysql.StringColumn("name")
+		SortKeyColumn   = mysql.StringColumn("sort_key")
+		ColorColumn     = mysql.StringColumn("color")
+		IconColumn      = mysql.StringColumn("icon")
+		SettingsColumn  = mysql.StringColumn("settings")
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, SettingsColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, SettingsColumn}
+		defaultColumns  = mysql.ColumnList{CreatedAtColumn, ColorColumn, IconColumn, SettingsColumn}
 	)
 
 	return fivenetUserLabelsJobTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:      IDColumn,
-		Job:     JobColumn,
-		Name:    NameColumn,
-		SortKey: SortKeyColumn,
-		Color:   ColorColumn,
+		ID:        IDColumn,
+		CreatedAt: CreatedAtColumn,
+		UpdatedAt: UpdatedAtColumn,
+		DeletedAt: DeletedAtColumn,
+		Job:       JobColumn,
+		Name:      NameColumn,
+		SortKey:   SortKeyColumn,
+		Color:     ColorColumn,
+		Icon:      IconColumn,
+		Settings:  SettingsColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

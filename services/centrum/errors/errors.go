@@ -8,53 +8,53 @@ import (
 var (
 	ErrFailedQuery = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.CentrumService.ErrFailedQuery"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrFailedQuery"},
 		nil,
 	)
 	ErrNotPartOfDispatch = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.CentrumService.ErrNotPartOfDispatch"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrNotPartOfDispatch"},
 		nil,
 	)
 	ErrNotPartOfUnit = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.CentrumService.ErrNotPartOfUnit"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrNotPartOfUnit"},
 		nil,
 	)
 	ErrUnitPermDenied = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.CentrumService.ErrUnitPermDenied"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrUnitPermDenied"},
 		nil,
 	)
 	ErrNotOnDuty = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.CentrumService.ErrNotOnDuty.content"},
-		&common.I18NItem{Key: "errors.CentrumService.ErrNotOnDuty.title"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrNotOnDuty.content"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrNotOnDuty.title"},
 	)
 	ErrStaticUnit = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.CentrumService.ErrStaticUnit"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrStaticUnit"},
 		nil,
 	)
 	ErrDisabled = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.CentrumService.ErrDisabled.content"},
-		&common.I18NItem{Key: "errors.CentrumService.ErrDisabled.title"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrDisabled.content"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrDisabled.title"},
 	)
 
 	ErrModeForbidsAction = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.CentrumService.ErrModeForbidsAction.content"},
-		&common.I18NItem{Key: "errors.CentrumService.ErrModeForbidsAction.title"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrModeForbidsAction.content"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrModeForbidsAction.title"},
 	)
 	ErrDispatchAlreadyCompleted = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.CentrumService.ErrDispatchAlreadyCompleted.content"},
-		&common.I18NItem{Key: "errors.CentrumService.ErrDispatchAlreadyCompleted.title"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrDispatchAlreadyCompleted.content"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrDispatchAlreadyCompleted.title"},
 	)
 	ErrDispatchNoJobs = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.CentrumService.ErrDispatchNoJobs"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrDispatchNoJobs"},
 		nil,
 	)
 )

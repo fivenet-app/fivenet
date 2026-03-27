@@ -7,7 +7,7 @@ import "codegen/sanitizer/sanitizer.proto";
 import "resources/file/file.proto";
 import "resources/jobs/jobs.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/labels/labels.proto";
+import "resources/citizens/labels/labels.proto";
 import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props;usersprops";
@@ -29,7 +29,7 @@ message UserProps {
   optional string blood_type = 13;
   optional int64 mugshot_file_id = 14;
   optional resources.file.File mugshot = 15 [(tagger.tags) = "alias:\"mugshot\""];
-  optional resources.users.labels.Labels labels = 16;
+  optional resources.citizens.labels.Labels labels = 16;
   optional string email = 17 [
     (buf.validate.field).string = {
       min_len: 6

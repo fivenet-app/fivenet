@@ -28,7 +28,6 @@ const (
 	CitizensService_DeleteAvatar_FullMethodName     = "/services.citizens.CitizensService/DeleteAvatar"
 	CitizensService_UploadMugshot_FullMethodName    = "/services.citizens.CitizensService/UploadMugshot"
 	CitizensService_DeleteMugshot_FullMethodName    = "/services.citizens.CitizensService/DeleteMugshot"
-	CitizensService_ManageLabels_FullMethodName     = "/services.citizens.CitizensService/ManageLabels"
 )
 
 // CitizensServiceClient is the client API for CitizensService service.
@@ -49,7 +48,6 @@ type CitizensServiceClient interface {
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadMugshot(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 	DeleteMugshot(ctx context.Context, in *DeleteMugshotRequest, opts ...grpc.CallOption) (*DeleteMugshotResponse, error)
-	ManageLabels(ctx context.Context, in *ManageLabelsRequest, opts ...grpc.CallOption) (*ManageLabelsResponse, error)
 }
 
 type citizensServiceClient struct {
@@ -146,16 +144,6 @@ func (c *citizensServiceClient) DeleteMugshot(ctx context.Context, in *DeleteMug
 	return out, nil
 }
 
-func (c *citizensServiceClient) ManageLabels(ctx context.Context, in *ManageLabelsRequest, opts ...grpc.CallOption) (*ManageLabelsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ManageLabelsResponse)
-	err := c.cc.Invoke(ctx, CitizensService_ManageLabels_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // CitizensServiceServer is the server API for CitizensService service.
 // All implementations must embed UnimplementedCitizensServiceServer
 // for forward compatibility.
@@ -174,7 +162,6 @@ type CitizensServiceServer interface {
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadMugshot(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	DeleteMugshot(context.Context, *DeleteMugshotRequest) (*DeleteMugshotResponse, error)
-	ManageLabels(context.Context, *ManageLabelsRequest) (*ManageLabelsResponse, error)
 	mustEmbedUnimplementedCitizensServiceServer()
 }
 
@@ -208,9 +195,6 @@ func (UnimplementedCitizensServiceServer) UploadMugshot(grpc.ClientStreamingServ
 }
 func (UnimplementedCitizensServiceServer) DeleteMugshot(context.Context, *DeleteMugshotRequest) (*DeleteMugshotResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMugshot not implemented")
-}
-func (UnimplementedCitizensServiceServer) ManageLabels(context.Context, *ManageLabelsRequest) (*ManageLabelsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ManageLabels not implemented")
 }
 func (UnimplementedCitizensServiceServer) mustEmbedUnimplementedCitizensServiceServer() {}
 func (UnimplementedCitizensServiceServer) testEmbeddedByValue()                         {}
@@ -355,24 +339,6 @@ func _CitizensService_DeleteMugshot_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CitizensService_ManageLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ManageLabelsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CitizensServiceServer).ManageLabels(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CitizensService_ManageLabels_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CitizensServiceServer).ManageLabels(ctx, req.(*ManageLabelsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // CitizensService_ServiceDesc is the grpc.ServiceDesc for CitizensService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -403,10 +369,6 @@ var CitizensService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteMugshot",
 			Handler:    _CitizensService_DeleteMugshot_Handler,
-		},
-		{
-			MethodName: "ManageLabels",
-			Handler:    _CitizensService_ManageLabels_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

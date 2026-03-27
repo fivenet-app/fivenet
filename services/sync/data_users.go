@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
+	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
-	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
@@ -36,7 +36,7 @@ var (
 	tUsers                = table.FivenetUser
 	tUserProps            = table.FivenetUserProps
 	tCitizensPhoneNumbers = table.FivenetUserPhoneNumbers
-	tCitizensLicenses     = table.FivenetUserLicenses
+	tLicenses             = table.FivenetUserLicenses
 	tCitizensJobs         = table.FivenetUserJobs
 
 	tSyncUser = table.FivenetSyncUser
@@ -622,9 +622,9 @@ func (s *Server) handleUserLicenses(
 ) error {
 	if len(licenses) == 0 {
 		// User has no licenses? Delete all user licenses from the database.
-		stmt := tCitizensLicenses.
+		stmt := tLicenses.
 			DELETE().
-			WHERE(tCitizensLicenses.UserID.EQ(mysql.Int32(userId))).
+			WHERE(tLicenses.UserID.EQ(mysql.Int32(userId))).
 			LIMIT(25)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -634,13 +634,13 @@ func (s *Server) handleUserLicenses(
 		return nil
 	}
 
-	selectStmt := tCitizensLicenses.
+	selectStmt := tLicenses.
 		SELECT(
-			tCitizensLicenses.Type,
+			tLicenses.Type,
 		).
-		FROM(tCitizensLicenses).
-		WHERE(tCitizensLicenses.UserID.EQ(mysql.Int32(userId))).
-		ORDER_BY(tCitizensLicenses.Type)
+		FROM(tLicenses).
+		WHERE(tLicenses.UserID.EQ(mysql.Int32(userId))).
+		ORDER_BY(tLicenses.Type)
 
 	currentLicenses := []string{}
 	if err := selectStmt.QueryContext(ctx, tx, &currentLicenses); err != nil {
@@ -661,10 +661,10 @@ func (s *Server) handleUserLicenses(
 	toAdd, toRemove := utils.SlicesDifference(currentLicenses, licensesList)
 
 	if len(toAdd) > 0 {
-		stmt := tCitizensLicenses.
+		stmt := tLicenses.
 			INSERT(
-				tCitizensLicenses.UserID,
-				tCitizensLicenses.Type,
+				tLicenses.UserID,
+				tLicenses.Type,
 			)
 
 		for _, t := range toAdd {
@@ -677,7 +677,7 @@ func (s *Server) handleUserLicenses(
 
 		stmt = stmt.
 			ON_DUPLICATE_KEY_UPDATE(
-				tCitizensLicenses.Type.SET(mysql.RawString("VALUES(`type`)")),
+				tLicenses.Type.SET(mysql.RawString("VALUES(`type`)")),
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -691,11 +691,11 @@ func (s *Server) handleUserLicenses(
 			types = append(types, mysql.String(t))
 		}
 
-		stmt := tCitizensLicenses.
+		stmt := tLicenses.
 			DELETE().
 			WHERE(mysql.AND(
-				tCitizensLicenses.UserID.EQ(mysql.Int32(userId)),
-				tCitizensLicenses.Type.IN(types...),
+				tLicenses.UserID.EQ(mysql.Int32(userId)),
+				tLicenses.Type.IN(types...),
 			)).
 			LIMIT(25)
 

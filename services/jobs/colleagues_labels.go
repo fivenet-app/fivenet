@@ -79,6 +79,7 @@ func (s *Server) GetColleagueLabels(
 			tJobLabels.DeletedAt,
 			tJobLabels.Name,
 			tJobLabels.Color,
+			tJobLabels.Icon,
 			tJobLabels.Order,
 		).
 		FROM(tJobLabels).
@@ -110,6 +111,7 @@ func (s *Server) ManageLabels(
 			tJobLabels.Job,
 			tJobLabels.Name,
 			tJobLabels.Color,
+			tJobLabels.Icon,
 			tJobLabels.Order,
 		).
 		FROM(tJobLabels).
@@ -155,12 +157,14 @@ func (s *Server) ManageLabels(
 					tJobLabels.Job,
 					tJobLabels.Name,
 					tJobLabels.Color,
+					tJobLabels.Icon,
 					tJobLabels.Order,
 				).
 				MODELS(toCreate).
 				ON_DUPLICATE_KEY_UPDATE(
 					tJobLabels.Name.SET(mysql.RawString("VALUES(`name`)")),
 					tJobLabels.Color.SET(mysql.RawString("VALUES(`color`)")),
+					tJobLabels.Icon.SET(mysql.RawString("VALUES(`icon`)")),
 					tJobLabels.Order.SET(mysql.RawInt("VALUES(`order`)")),
 					tJobLabels.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 				)
@@ -176,11 +180,13 @@ func (s *Server) ManageLabels(
 					UPDATE(
 						tJobLabels.Name,
 						tJobLabels.Color,
+						tJobLabels.Icon,
 						tJobLabels.Order,
 					).
 					SET(
 						tJobLabels.Name.SET(mysql.String(label.GetName())),
 						tJobLabels.Color.SET(mysql.String(label.GetColor())),
+						tJobLabels.Icon.SET(dbutils.StringEmpty(label.GetIcon())),
 						tJobLabels.Order.SET(mysql.Int32(label.GetOrder())),
 						tJobLabels.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 					).
@@ -283,6 +289,7 @@ func (s *Server) getUserLabels(
 			tJobLabels.Job,
 			tJobLabels.Name,
 			tJobLabels.Color,
+			tJobLabels.Icon,
 		).
 		FROM(
 			tColleagueLabels.
@@ -342,6 +349,7 @@ func (s *Server) GetColleagueLabelsStats(
 			tJobLabels.Job,
 			tJobLabels.Name,
 			tJobLabels.Color,
+			tJobLabels.Icon,
 		).
 		FROM(
 			tColleagueLabels.

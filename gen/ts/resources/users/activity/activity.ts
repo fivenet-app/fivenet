@@ -12,8 +12,8 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { DocRelation } from "../../documents/relations/relations";
-import { Label } from "../labels/labels";
-import { License } from "../licenses/licenses";
+import { Label } from "../../citizens/labels/labels";
+import { License } from "../../citizens/licenses/licenses";
 import { UserShort } from "../short/user";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
@@ -115,6 +115,12 @@ export interface UserActivityData {
          */
         labelsChange: LabelsChange;
     } | {
+        oneofKind: "labelChange";
+        /**
+         * @generated from protobuf field: resources.users.activity.LabelChange label_change = 11
+         */
+        labelChange: LabelChange;
+    } | {
         oneofKind: "jobChange";
         /**
          * @generated from protobuf field: resources.users.activity.JobChange job_change = 7
@@ -170,7 +176,7 @@ export interface LicenseChange {
      */
     added: boolean;
     /**
-     * @generated from protobuf field: repeated resources.users.licenses.License licenses = 2
+     * @generated from protobuf field: repeated resources.citizens.licenses.License licenses = 2
      */
     licenses: License[];
 }
@@ -210,17 +216,40 @@ export interface MugshotChange {
     new?: string;
 }
 /**
+ * @deprecated
+ *
  * @generated from protobuf message resources.users.activity.LabelsChange
  */
 export interface LabelsChange {
     /**
-     * @generated from protobuf field: repeated resources.users.labels.Label added = 1
+     * @generated from protobuf field: repeated resources.citizens.labels.Label added = 1
      */
     added: Label[];
     /**
-     * @generated from protobuf field: repeated resources.users.labels.Label removed = 2
+     * @generated from protobuf field: repeated resources.citizens.labels.Label removed = 2
      */
     removed: Label[];
+}
+/**
+ * @generated from protobuf message resources.users.activity.LabelChange
+ */
+export interface LabelChange {
+    /**
+     * @generated from protobuf field: resources.citizens.labels.Label label = 1
+     */
+    label?: Label;
+    /**
+     * @generated from protobuf field: bool added = 2
+     */
+    added: boolean;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 3
+     */
+    expiresAt?: Timestamp;
+    /**
+     * @generated from protobuf field: bool expired = 4
+     */
+    expired: boolean;
 }
 /**
  * @generated from protobuf message resources.users.activity.JobChange
@@ -485,6 +514,7 @@ class UserActivityData$Type extends MessageType<UserActivityData> {
             { no: 4, name: "traffic_infraction_points_change", kind: "message", oneof: "data", T: () => TrafficInfractionPointsChange },
             { no: 5, name: "mugshot_change", kind: "message", oneof: "data", T: () => MugshotChange },
             { no: 6, name: "labels_change", kind: "message", oneof: "data", T: () => LabelsChange },
+            { no: 11, name: "label_change", kind: "message", oneof: "data", T: () => LabelChange },
             { no: 7, name: "job_change", kind: "message", oneof: "data", T: () => JobChange },
             { no: 8, name: "document_relation", kind: "message", oneof: "data", T: () => CitizenDocumentRelation },
             { no: 9, name: "jail_change", kind: "message", oneof: "data", T: () => JailChange },
@@ -537,6 +567,12 @@ class UserActivityData$Type extends MessageType<UserActivityData> {
                     message.data = {
                         oneofKind: "labelsChange",
                         labelsChange: LabelsChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).labelsChange)
+                    };
+                    break;
+                case /* resources.users.activity.LabelChange label_change */ 11:
+                    message.data = {
+                        oneofKind: "labelChange",
+                        labelChange: LabelChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).labelChange)
                     };
                     break;
                 case /* resources.users.activity.JobChange job_change */ 7:
@@ -605,6 +641,9 @@ class UserActivityData$Type extends MessageType<UserActivityData> {
         /* resources.users.activity.FineChange fine_change = 10; */
         if (message.data.oneofKind === "fineChange")
             FineChange.internalBinaryWrite(message.data.fineChange, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.activity.LabelChange label_change = 11; */
+        if (message.data.oneofKind === "labelChange")
+            LabelChange.internalBinaryWrite(message.data.labelChange, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -694,7 +733,7 @@ class LicenseChange$Type extends MessageType<LicenseChange> {
                 case /* bool added */ 1:
                     message.added = reader.bool();
                     break;
-                case /* repeated resources.users.licenses.License licenses */ 2:
+                case /* repeated resources.citizens.licenses.License licenses */ 2:
                     message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -712,7 +751,7 @@ class LicenseChange$Type extends MessageType<LicenseChange> {
         /* bool added = 1; */
         if (message.added !== false)
             writer.tag(1, WireType.Varint).bool(message.added);
-        /* repeated resources.users.licenses.License licenses = 2; */
+        /* repeated resources.citizens.licenses.License licenses = 2; */
         for (let i = 0; i < message.licenses.length; i++)
             License.internalBinaryWrite(message.licenses[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -902,10 +941,10 @@ class LabelsChange$Type extends MessageType<LabelsChange> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.labels.Label added */ 1:
+                case /* repeated resources.citizens.labels.Label added */ 1:
                     message.added.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.users.labels.Label removed */ 2:
+                case /* repeated resources.citizens.labels.Label removed */ 2:
                     message.removed.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -920,10 +959,10 @@ class LabelsChange$Type extends MessageType<LabelsChange> {
         return message;
     }
     internalBinaryWrite(message: LabelsChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.labels.Label added = 1; */
+        /* repeated resources.citizens.labels.Label added = 1; */
         for (let i = 0; i < message.added.length; i++)
             Label.internalBinaryWrite(message.added[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.users.labels.Label removed = 2; */
+        /* repeated resources.citizens.labels.Label removed = 2; */
         for (let i = 0; i < message.removed.length; i++)
             Label.internalBinaryWrite(message.removed[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -936,6 +975,75 @@ class LabelsChange$Type extends MessageType<LabelsChange> {
  * @generated MessageType for protobuf message resources.users.activity.LabelsChange
  */
 export const LabelsChange = new LabelsChange$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class LabelChange$Type extends MessageType<LabelChange> {
+    constructor() {
+        super("resources.users.activity.LabelChange", [
+            { no: 1, name: "label", kind: "message", T: () => Label },
+            { no: 2, name: "added", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "expires_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "expired", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<LabelChange>): LabelChange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.added = false;
+        message.expired = false;
+        if (value !== undefined)
+            reflectionMergePartial<LabelChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LabelChange): LabelChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.citizens.labels.Label label */ 1:
+                    message.label = Label.internalBinaryRead(reader, reader.uint32(), options, message.label);
+                    break;
+                case /* bool added */ 2:
+                    message.added = reader.bool();
+                    break;
+                case /* optional resources.timestamp.Timestamp expires_at */ 3:
+                    message.expiresAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expiresAt);
+                    break;
+                case /* bool expired */ 4:
+                    message.expired = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: LabelChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.citizens.labels.Label label = 1; */
+        if (message.label)
+            Label.internalBinaryWrite(message.label, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* bool added = 2; */
+        if (message.added !== false)
+            writer.tag(2, WireType.Varint).bool(message.added);
+        /* optional resources.timestamp.Timestamp expires_at = 3; */
+        if (message.expiresAt)
+            Timestamp.internalBinaryWrite(message.expiresAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* bool expired = 4; */
+        if (message.expired !== false)
+            writer.tag(4, WireType.Varint).bool(message.expired);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.activity.LabelChange
+ */
+export const LabelChange = new LabelChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class JobChange$Type extends MessageType<JobChange> {
     constructor() {

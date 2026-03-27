@@ -7,6 +7,6 @@ import (
 
 var ErrFailedSearch = common.NewI18nErr(
 	codes.Internal,
-	&common.I18NItem{Key: "errors.CompletorService.ErrFailedSearch"},
+	&common.I18NItem{Key: "errors.completor.CompletorService.ErrFailedSearch"},
 	nil,
 )

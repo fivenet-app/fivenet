@@ -2,11 +2,11 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        (unknown)
-// source: resources/users/licenses/licenses.proto
+// source: resources/citizens/licenses/licenses.proto
 
 //go:build !protoopaque
 
-package userslicenses
+package citizenslicenses
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -32,7 +32,7 @@ type License struct {
 
 func (x *License) Reset() {
 	*x = License{}
-	mi := &file_resources_users_licenses_licenses_proto_msgTypes[0]
+	mi := &file_resources_citizens_licenses_licenses_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +44,7 @@ func (x *License) String() string {
 func (*License) ProtoMessage() {}
 
 func (x *License) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_users_licenses_licenses_proto_msgTypes[0]
+	mi := &file_resources_citizens_licenses_licenses_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -93,7 +93,7 @@ func (b0 License_builder) Build() *License {
 	return m0
 }
 
-type CitizensLicenses struct {
+type Licenses struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Licenses      []*License             `protobuf:"bytes,2,rep,name=licenses,proto3" json:"licenses,omitempty"`
@@ -101,21 +101,21 @@ type CitizensLicenses struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CitizensLicenses) Reset() {
-	*x = CitizensLicenses{}
-	mi := &file_resources_users_licenses_licenses_proto_msgTypes[1]
+func (x *Licenses) Reset() {
+	*x = Licenses{}
+	mi := &file_resources_citizens_licenses_licenses_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CitizensLicenses) String() string {
+func (x *Licenses) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CitizensLicenses) ProtoMessage() {}
+func (*Licenses) ProtoMessage() {}
 
-func (x *CitizensLicenses) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_users_licenses_licenses_proto_msgTypes[1]
+func (x *Licenses) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_citizens_licenses_licenses_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -126,37 +126,37 @@ func (x *CitizensLicenses) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *CitizensLicenses) GetUserId() int32 {
+func (x *Licenses) GetUserId() int32 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *CitizensLicenses) GetLicenses() []*License {
+func (x *Licenses) GetLicenses() []*License {
 	if x != nil {
 		return x.Licenses
 	}
 	return nil
 }
 
-func (x *CitizensLicenses) SetUserId(v int32) {
+func (x *Licenses) SetUserId(v int32) {
 	x.UserId = v
 }
 
-func (x *CitizensLicenses) SetLicenses(v []*License) {
+func (x *Licenses) SetLicenses(v []*License) {
 	x.Licenses = v
 }
 
-type CitizensLicenses_builder struct {
+type Licenses_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	UserId   int32
 	Licenses []*License
 }
 
-func (b0 CitizensLicenses_builder) Build() *CitizensLicenses {
-	m0 := &CitizensLicenses{}
+func (b0 Licenses_builder) Build() *Licenses {
+	m0 := &Licenses{}
 	b, x := &b0, m0
 	_, _ = b, x
 	x.UserId = b.UserId
@@ -164,25 +164,25 @@ func (b0 CitizensLicenses_builder) Build() *CitizensLicenses {
 	return m0
 }
 
-var File_resources_users_licenses_licenses_proto protoreflect.FileDescriptor
+var File_resources_citizens_licenses_licenses_proto protoreflect.FileDescriptor
 
-const file_resources_users_licenses_licenses_proto_rawDesc = "" +
+const file_resources_citizens_licenses_licenses_proto_rawDesc = "" +
 	"\n" +
-	"'resources/users/licenses/licenses.proto\x12\x18resources.users.licenses\"3\n" +
+	"*resources/citizens/licenses/licenses.proto\x12\x1bresources.citizens.licenses\"3\n" +
 	"\aLicense\x12\x12\n" +
 	"\x04type\x18\x01 \x01(\tR\x04type\x12\x14\n" +
-	"\x05label\x18\x02 \x01(\tR\x05label\"j\n" +
-	"\x10CitizensLicenses\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12=\n" +
-	"\blicenses\x18\x02 \x03(\v2!.resources.users.licenses.LicenseR\blicensesBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses;userslicensesb\x06proto3"
+	"\x05label\x18\x02 \x01(\tR\x05label\"e\n" +
+	"\bLicenses\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12@\n" +
+	"\blicenses\x18\x02 \x03(\v2$.resources.citizens.licenses.LicenseR\blicensesB`Z^github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses;citizenslicensesb\x06proto3"
 
-var file_resources_users_licenses_licenses_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_resources_users_licenses_licenses_proto_goTypes = []any{
-	(*License)(nil),          // 0: resources.users.licenses.License
-	(*CitizensLicenses)(nil), // 1: resources.users.licenses.CitizensLicenses
+var file_resources_citizens_licenses_licenses_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_resources_citizens_licenses_licenses_proto_goTypes = []any{
+	(*License)(nil),  // 0: resources.citizens.licenses.License
+	(*Licenses)(nil), // 1: resources.citizens.licenses.Licenses
 }
-var file_resources_users_licenses_licenses_proto_depIdxs = []int32{
-	0, // 0: resources.users.licenses.CitizensLicenses.licenses:type_name -> resources.users.licenses.License
+var file_resources_citizens_licenses_licenses_proto_depIdxs = []int32{
+	0, // 0: resources.citizens.licenses.Licenses.licenses:type_name -> resources.citizens.licenses.License
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -190,26 +190,26 @@ var file_resources_users_licenses_licenses_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_resources_users_licenses_licenses_proto_init() }
-func file_resources_users_licenses_licenses_proto_init() {
-	if File_resources_users_licenses_licenses_proto != nil {
+func init() { file_resources_citizens_licenses_licenses_proto_init() }
+func file_resources_citizens_licenses_licenses_proto_init() {
+	if File_resources_citizens_licenses_licenses_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_users_licenses_licenses_proto_rawDesc), len(file_resources_users_licenses_licenses_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_citizens_licenses_licenses_proto_rawDesc), len(file_resources_citizens_licenses_licenses_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_resources_users_licenses_licenses_proto_goTypes,
-		DependencyIndexes: file_resources_users_licenses_licenses_proto_depIdxs,
-		MessageInfos:      file_resources_users_licenses_licenses_proto_msgTypes,
+		GoTypes:           file_resources_citizens_licenses_licenses_proto_goTypes,
+		DependencyIndexes: file_resources_citizens_licenses_licenses_proto_depIdxs,
+		MessageInfos:      file_resources_citizens_licenses_licenses_proto_msgTypes,
 	}.Build()
-	File_resources_users_licenses_licenses_proto = out.File
-	file_resources_users_licenses_licenses_proto_goTypes = nil
-	file_resources_users_licenses_licenses_proto_depIdxs = nil
+	File_resources_citizens_licenses_licenses_proto = out.File
+	file_resources_citizens_licenses_licenses_proto_goTypes = nil
+	file_resources_citizens_licenses_licenses_proto_depIdxs = nil
 }

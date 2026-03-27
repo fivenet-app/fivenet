@@ -4,7 +4,7 @@ package resources.users;
 
 import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/licenses/licenses.proto";
+import "resources/citizens/licenses/licenses.proto";
 import "resources/users/props/props.proto";
 import "tagger/tagger.proto";
 
@@ -65,7 +65,7 @@ message User {
   optional int32 playtime = 14 [(buf.validate.field).int32.gte = 0];
 
   resources.users.props.UserProps props = 15 [(tagger.tags) = "alias:\"fivenet_user_props\""];
-  repeated resources.users.licenses.License licenses = 16 [(tagger.tags) = "alias:\"user_licenses\""];
+  repeated resources.citizens.licenses.License licenses = 16 [(tagger.tags) = "alias:\"user_licenses\""];
 
   optional int64 profile_picture_file_id = 17;
   optional string profile_picture = 18;

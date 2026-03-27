@@ -9,8 +9,8 @@
 package users
 
 import (
+	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
-	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -883,7 +883,7 @@ var File_resources_users_user_proto protoreflect.FileDescriptor
 
 const file_resources_users_user_proto_rawDesc = "" +
 	"\n" +
-	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\xde\a\n" +
+	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a#resources/timestamp/timestamp.proto\x1a*resources/citizens/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\xe1\a\n" +
 	"\x04User\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x06userId\x12\x1e\n" +
@@ -905,8 +905,8 @@ const file_resources_users_user_proto_rawDesc = "" +
 	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberR\fphoneNumbers\x12\x19\n" +
 	"\x05visum\x18\r \x01(\x05H\x05R\x05visum\x88\x01\x01\x12\x1f\n" +
 	"\bplaytime\x18\x0e \x01(\x05H\x06R\bplaytime\x88\x01\x01\x12W\n" +
-	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsB\x1f\x9a\x84\x9e\x03\x1aalias:\"fivenet_user_props\"R\x05props\x12Y\n" +
-	"\blicenses\x18\x10 \x03(\v2!.resources.users.licenses.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user_licenses\"R\blicenses\x12:\n" +
+	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsB\x1f\x9a\x84\x9e\x03\x1aalias:\"fivenet_user_props\"R\x05props\x12\\\n" +
+	"\blicenses\x18\x10 \x03(\v2$.resources.citizens.licenses.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user_licenses\"R\blicenses\x12:\n" +
 	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\aR\x14profilePictureFileId\x88\x01\x01\x12,\n" +
 	"\x0fprofile_picture\x18\x12 \x01(\tH\bR\x0eprofilePicture\x88\x01\x01B\f\n" +
 	"\n" +
@@ -953,14 +953,14 @@ var file_resources_users_user_proto_goTypes = []any{
 	(*PhoneNumber)(nil),         // 1: resources.users.PhoneNumber
 	(*UserJob)(nil),             // 2: resources.users.UserJob
 	(*props.UserProps)(nil),     // 3: resources.users.props.UserProps
-	(*licenses.License)(nil),    // 4: resources.users.licenses.License
+	(*licenses.License)(nil),    // 4: resources.citizens.licenses.License
 	(*timestamp.Timestamp)(nil), // 5: resources.timestamp.Timestamp
 }
 var file_resources_users_user_proto_depIdxs = []int32{
 	2, // 0: resources.users.User.jobs:type_name -> resources.users.UserJob
 	1, // 1: resources.users.User.phone_numbers:type_name -> resources.users.PhoneNumber
 	3, // 2: resources.users.User.props:type_name -> resources.users.props.UserProps
-	4, // 3: resources.users.User.licenses:type_name -> resources.users.licenses.License
+	4, // 3: resources.users.User.licenses:type_name -> resources.citizens.licenses.License
 	5, // 4: resources.users.PhoneNumber.created_at:type_name -> resources.timestamp.Timestamp
 	5, // 5: resources.users.PhoneNumber.updated_at:type_name -> resources.timestamp.Timestamp
 	5, // 6: resources.users.UserJob.created_at:type_name -> resources.timestamp.Timestamp

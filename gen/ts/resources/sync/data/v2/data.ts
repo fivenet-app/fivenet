@@ -11,7 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { License } from "../../../users/licenses/licenses";
+import { License } from "../../../citizens/licenses/licenses";
 import { PhoneNumber } from "../../../users/user";
 import { UserJob } from "../../../users/user";
 /**
@@ -49,7 +49,7 @@ export interface DataUserLicenses {
      */
     userId: number;
     /**
-     * @generated from protobuf field: repeated resources.users.licenses.License licenses = 2
+     * @generated from protobuf field: repeated resources.citizens.licenses.License licenses = 2
      */
     licenses: License[];
 }
@@ -187,7 +187,7 @@ class DataUserLicenses$Type extends MessageType<DataUserLicenses> {
                 case /* int32 user_id */ 1:
                     message.userId = reader.int32();
                     break;
-                case /* repeated resources.users.licenses.License licenses */ 2:
+                case /* repeated resources.citizens.licenses.License licenses */ 2:
                     message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -205,7 +205,7 @@ class DataUserLicenses$Type extends MessageType<DataUserLicenses> {
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
-        /* repeated resources.users.licenses.License licenses = 2; */
+        /* repeated resources.citizens.licenses.License licenses = 2; */
         for (let i = 0; i < message.licenses.length; i++)
             License.internalBinaryWrite(message.licenses[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

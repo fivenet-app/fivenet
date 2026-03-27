@@ -46,6 +46,7 @@ const schema = z.object({
             id: z.coerce.number(),
             name: z.coerce.string().min(1),
             color: z.coerce.string().length(7),
+            icon: z.coerce.string().max(128).optional(),
             order: z.coerce.number().nonnegative().default(0),
         })
         .array()
@@ -142,22 +143,23 @@ const editing = ref(false);
             </p>
 
             <template v-else>
-                <UFieldGroup v-for="(attribute, idx) in state.labels" :key="attribute.name">
+                <UFieldGroup v-for="(label, idx) in state.labels" :key="label.name">
                     <UBadge
                         class="justify-between gap-2"
-                        :class="isColorBright(hexToRgb(attribute.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
-                        :style="{ backgroundColor: attribute.color }"
+                        :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                         size="md"
+                        :icon="label.icon && label.icon !== '' ? convertComponentIconNameToDynamic(label.icon) : undefined"
+                        :style="{ backgroundColor: label.color }"
                     >
                         <span class="truncate">
-                            {{ attribute.name }}
+                            {{ label.name }}
                         </span>
                     </UBadge>
 
                     <UTooltip v-if="editing" :text="$t('common.remove')">
                         <UButton
                             :class="
-                                isColorBright(hexToRgb(attribute.color, rgbBlack)!)
+                                isColorBright(hexToRgb(label.color, rgbBlack)!)
                                     ? 'bg-white/20! text-black!'
                                     : 'bg-black/20! text-white!'
                             "
@@ -188,6 +190,7 @@ const editing = ref(false);
                     <UBadge
                         class="truncate"
                         :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
+                        :icon="item.icon && item.icon !== '' ? convertComponentIconNameToDynamic(item.icon) : undefined"
                         :style="{ backgroundColor: item.color }"
                     >
                         {{ item.name }}

@@ -8,27 +8,27 @@ import (
 var (
 	ErrFailedQuery = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.CalendarService.ErrFailedQuery"},
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrFailedQuery"},
 		nil,
 	)
 	ErrNoPerms = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.CalendarService.ErrNoPerms"},
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrNoPerms"},
 		nil,
 	)
 	ErrOnePrivateCal = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.CalendarService.ErrOnePrivateCal"},
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrOnePrivateCal"},
 		nil,
 	)
 	ErrCalendarClosed = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.CalendarService.ErrCalendarClosed.content"},
-		&common.I18NItem{Key: "errors.CalendarService.ErrCalendarClosed.title"},
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrCalendarClosed.content"},
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrCalendarClosed.title"},
 	)
 	ErrEntryClosed = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.CalendarService.ErrEntryClosed.content"},
-		&common.I18NItem{Key: "errors.CalendarService.ErrEntryClosed.title"},
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrEntryClosed.content"},
+		&common.I18NItem{Key: "errors.calendar.CalendarService.ErrEntryClosed.title"},
 	)
 )

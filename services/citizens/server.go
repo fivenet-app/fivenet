@@ -26,6 +26,7 @@ import (
 
 type Server struct {
 	pbcitizens.CitizensServiceServer
+	pbcitizens.LabelsServiceServer
 
 	db       *sql.DB
 	ps       perms.Permissions
@@ -148,4 +149,5 @@ func NewServer(p Params) *Server {
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbcitizens.RegisterCitizensServiceServer(srv, s)
+	pbcitizens.RegisterLabelsServiceServer(srv, s)
 }

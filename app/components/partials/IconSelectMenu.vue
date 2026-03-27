@@ -7,11 +7,13 @@ withDefaults(
         color?: string;
         hexColor?: string;
         fallbackIcon?: DefineComponent | IconEntry;
+        clear?: boolean;
     }>(),
     {
         color: undefined,
         hexColor: undefined,
         fallbackIcon: () => defaultIcon,
+        clear: false,
     },
 );
 
@@ -28,9 +30,11 @@ const icon = defineModel<string | undefined>('modelValue');
             v-model="icon"
             :items="availableIcons"
             :search-input="{ placeholder: $t('common.search_field') }"
-            :filter-fields="['name']"
+            :filter-fields="['name', 'label']"
+            label-key="label"
             value-key="name"
             virtualize
+            :clear="clear"
             v-bind="$attrs"
         >
             <template v-if="icon" #default>

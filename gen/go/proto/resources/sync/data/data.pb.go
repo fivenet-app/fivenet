@@ -9,12 +9,12 @@
 package syncdata
 
 import (
+	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	livemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
-	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -1249,7 +1249,7 @@ var File_resources_sync_data_data_proto protoreflect.FileDescriptor
 
 const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/sync/data/data.proto\x12\x13resources.sync.data\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a&resources/sync/activity/activity.proto\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/licenses/licenses.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\"\n" +
+	"\x1eresources/sync/data/data.proto\x12\x13resources.sync.data\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a&resources/sync/activity/activity.proto\x1a#resources/timestamp/timestamp.proto\x1a*resources/citizens/licenses/licenses.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\"\n" +
 	"\n" +
 	"DataStatus\x12\x14\n" +
 	"\x05count\x18\x01 \x01(\x03R\x05count\"3\n" +
@@ -1258,9 +1258,9 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\tDataUsers\x123\n" +
 	"\x05users\x18\x01 \x03(\v2\x1d.resources.sync.data.DataUserR\x05users\"G\n" +
 	"\fDataVehicles\x127\n" +
-	"\bvehicles\x18\x01 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles\"M\n" +
-	"\fDataLicenses\x12=\n" +
-	"\blicenses\x18\x01 \x03(\v2!.resources.users.licenses.LicenseR\blicenses\"\x80\x01\n" +
+	"\bvehicles\x18\x01 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles\"P\n" +
+	"\fDataLicenses\x12@\n" +
+	"\blicenses\x18\x01 \x03(\v2$.resources.citizens.licenses.LicenseR\blicenses\"\x80\x01\n" +
 	"\x11DataUserLocations\x12;\n" +
 	"\x05users\x18\x01 \x03(\v2%.resources.sync.data.CitizenLocationsR\x05users\x12 \n" +
 	"\tclear_all\x18\x02 \x01(\bH\x00R\bclearAll\x88\x01\x01B\f\n" +
@@ -1288,7 +1288,7 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"lastCharId\x88\x01\x01B\x0f\n" +
 	"\r_last_char_id\"_\n" +
 	"\fDataAccounts\x12O\n" +
-	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"\x8e\f\n" +
+	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\"\x91\f\n" +
 	"\bDataUser\x12-\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x14\x9a\x84\x9e\x03\x0falias:\"user.id\"R\x06userId\x12<\n" +
 	"\n" +
@@ -1310,8 +1310,8 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\fphone_number\x18\f \x01(\tB\x1e\x9a\x84\x9e\x03\x19alias:\"user.phone_number\"H\x06R\vphoneNumber\x88\x01\x01\x12b\n" +
 	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberB\x1f\x9a\x84\x9e\x03\x1aalias:\"user.phone_numbers\"R\fphoneNumbers\x122\n" +
 	"\x05visum\x18\r \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"user.visum\"H\aR\x05visum\x88\x01\x01\x12;\n" +
-	"\bplaytime\x18\x0e \x01(\x05B\x1a\x9a\x84\x9e\x03\x15alias:\"user.playtime\"H\bR\bplaytime\x88\x01\x01\x12Y\n" +
-	"\blicenses\x18\x10 \x03(\v2!.resources.users.licenses.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user.licenses\"R\blicenses\x12e\n" +
+	"\bplaytime\x18\x0e \x01(\x05B\x1a\x9a\x84\x9e\x03\x15alias:\"user.playtime\"H\bR\bplaytime\x88\x01\x01\x12\\\n" +
+	"\blicenses\x18\x10 \x03(\v2$.resources.citizens.licenses.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user.licenses\"R\blicenses\x12e\n" +
 	"\x17profile_picture_file_id\x18\x11 \x01(\x03B)\x9a\x84\x9e\x03$alias:\"user.profile_picture_file_id\"H\tR\x14profilePictureFileId\x88\x01\x01\x12O\n" +
 	"\x0fprofile_picture\x18\x12 \x01(\tB!\x9a\x84\x9e\x03\x1calias:\"user.profile_picture\"H\n" +
 	"R\x0eprofilePicture\x88\x01\x01B\r\n" +
@@ -1344,7 +1344,7 @@ var file_resources_sync_data_data_proto_goTypes = []any{
 	(*DataUser)(nil),               // 11: resources.sync.data.DataUser
 	(*jobs.Job)(nil),               // 12: resources.jobs.Job
 	(*vehicles.Vehicle)(nil),       // 13: resources.vehicles.Vehicle
-	(*licenses.License)(nil),       // 14: resources.users.licenses.License
+	(*licenses.License)(nil),       // 14: resources.citizens.licenses.License
 	(*livemap.Coords)(nil),         // 15: resources.livemap.Coords
 	(*activity.AccountUpdate)(nil), // 16: resources.sync.activity.AccountUpdate
 	(*timestamp.Timestamp)(nil),    // 17: resources.timestamp.Timestamp
@@ -1355,14 +1355,14 @@ var file_resources_sync_data_data_proto_depIdxs = []int32{
 	12, // 0: resources.sync.data.DataJobs.jobs:type_name -> resources.jobs.Job
 	11, // 1: resources.sync.data.DataUsers.users:type_name -> resources.sync.data.DataUser
 	13, // 2: resources.sync.data.DataVehicles.vehicles:type_name -> resources.vehicles.Vehicle
-	14, // 3: resources.sync.data.DataLicenses.licenses:type_name -> resources.users.licenses.License
+	14, // 3: resources.sync.data.DataLicenses.licenses:type_name -> resources.citizens.licenses.License
 	6,  // 4: resources.sync.data.DataUserLocations.users:type_name -> resources.sync.data.CitizenLocations
 	15, // 5: resources.sync.data.CitizenLocations.coords:type_name -> resources.livemap.Coords
 	16, // 6: resources.sync.data.DataAccounts.account_updates:type_name -> resources.sync.activity.AccountUpdate
 	17, // 7: resources.sync.data.DataUser.updated_at:type_name -> resources.timestamp.Timestamp
 	18, // 8: resources.sync.data.DataUser.jobs:type_name -> resources.users.UserJob
 	19, // 9: resources.sync.data.DataUser.phone_numbers:type_name -> resources.users.PhoneNumber
-	14, // 10: resources.sync.data.DataUser.licenses:type_name -> resources.users.licenses.License
+	14, // 10: resources.sync.data.DataUser.licenses:type_name -> resources.citizens.licenses.License
 	11, // [11:11] is the sub-list for method output_type
 	11, // [11:11] is the sub-list for method input_type
 	11, // [11:11] is the sub-list for extension type_name

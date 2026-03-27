@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
+	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
-	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/cache"
@@ -177,17 +177,17 @@ func (s *UsersSync) syncOnce(
 		cursorIDValue = *cursorLastID
 	}
 
-	us = s.applyFiltersAndTransformations(us, sQuery)
-
-	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
+	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
 		return 0, 0, "", nil, err
 	}
-	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
+	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
 		return 0, 0, "", nil, err
 	}
 	if err := s.retrieveAndAttachPhoneNumbers(ctx, us); err != nil {
 		return 0, 0, "", nil, err
 	}
+
+	us = s.applyFiltersAndTransformations(us, sQuery)
 
 	if s.hashes != nil {
 		for i, user := range slices.Backward(us) {
@@ -352,6 +352,12 @@ func (s *UsersSync) cleanupUserJob(user *syncdata.DataUser) {
 			},
 		}
 
+		return
+	} else if len(user.Jobs) == 1 && user.GetJob() != "" {
+		// If only one job is set but the user's job field is not empty, ensure the job field info is copied to the job entry for consistency
+		user.Jobs[0].Job = user.GetJob()
+		user.Jobs[0].Grade = user.GetJobGrade()
+		user.Jobs[0].IsPrimary = true
 		return
 	}
 
@@ -671,8 +677,8 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, user); err != nil {
 		return fmt.Errorf("failed to query single user %d. %w", userId, err)
 	}
-	us := []*syncdata.DataUser{user}
 
+	us := []*syncdata.DataUser{user}
 	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
 		return fmt.Errorf("failed to retrieve and attach jobs for user %d. %w", userId, err)
 	}
@@ -687,10 +693,6 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 		)
 	}
 
-	s.splitNamesIfRequired(user)
-	s.parseDateOfBirth(user)
-	s.cleanupUserJob(user)
-	s.cleanupUserPhoneNumbers(user)
 	us = s.applyFiltersAndTransformations(us, s.cfg.Tables.Users)
 
 	if len(us) > 0 && s.cli != nil {

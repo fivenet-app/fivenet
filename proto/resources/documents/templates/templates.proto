@@ -43,10 +43,7 @@ message Template {
     }
   ];
   optional string icon = 9 [
-    (buf.validate.field).string = {
-      max_len: 128
-      suffix: "Icon"
-    },
+    (buf.validate.field).string = {max_len: 128},
     (codegen.sanitizer.sanitizer) = {
       enabled: true
       strip_html_tags: true
@@ -112,10 +109,7 @@ message TemplateShort {
     }
   ];
   optional string icon = 9 [
-    (buf.validate.field).string = {
-      max_len: 128
-      suffix: "Icon"
-    },
+    (buf.validate.field).string = {max_len: 128},
     (codegen.sanitizer.sanitizer) = {
       enabled: true
       strip_html_tags: true

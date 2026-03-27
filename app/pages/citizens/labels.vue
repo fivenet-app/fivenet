@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.citizens.labels.title',
     requiresAuth: true,
-    permission: ['completor.CompletorService/CompleteCitizenLabels', 'citizens.CitizensService/ManageLabels'],
+    permission: ['completor.CompletorService/CompleteCitizenLabels', 'citizens.LabelsService/CreateOrUpdateLabel'],
 });
 </script>
 

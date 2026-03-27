@@ -16,7 +16,7 @@ type Server struct {
 	pbcompletor.CompletorServiceServer
 
 	db         *sql.DB
-	p          perms.Permissions
+	ps         perms.Permissions
 	jobsSearch *mstlystcdata.JobsSearch
 	laws       *mstlystcdata.Laws
 	tracker    tracker.ITracker
@@ -40,7 +40,7 @@ type Params struct {
 func NewServer(p Params) *Server {
 	s := &Server{
 		db:         p.DB,
-		p:          p.Perms,
+		ps:         p.Perms,
 		jobsSearch: p.JobsSearch,
 		laws:       p.Laws,
 		tracker:    p.Tracker,

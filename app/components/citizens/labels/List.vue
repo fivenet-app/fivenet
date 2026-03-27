@@ -1,10 +1,13 @@
 <script lang="ts" setup>
-import { UButton } from '#components';
+import { UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import { availableIcons } from '~/components/partials/icons';
 import Pagination from '~/components/partials/Pagination.vue';
-import { useCompletorStore } from '~/stores/completor';
-import type { Label } from '~~/gen/ts/resources/users/labels/labels';
+import { getCitizensLabelsClient } from '~~/gen/ts/clients';
+import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import DataErrorBlock from '../../partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '../../partials/data/DataPendingBlock.vue';
 import CreateOrUpdateModal from './CreateOrUpdateModal.vue';
@@ -15,18 +18,46 @@ const { t } = useI18n();
 
 const overlay = useOverlay();
 
-const completorStore = useCompletorStore();
-
-const {
-    data: labels,
-    status,
-    error,
-    refresh,
-} = useLazyAsyncData('citizens-labels', () => completorStore.completeCitizenLabels(''));
-
-const createOrUpdateModal = overlay.create(CreateOrUpdateModal);
+const notifications = useNotificationsStore();
 
 const appConfig = useAppConfig();
+
+const citizensLabelsClient = await getCitizensLabelsClient();
+
+const { data: labels, status, error, refresh } = useLazyAsyncData('citizens-labels', () => listLabels());
+
+async function listLabels(): Promise<Label[]> {
+    try {
+        const { response } = await citizensLabelsClient.listLabels({});
+
+        return response?.labels ?? [];
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+
+        return [];
+    }
+}
+
+const createOrUpdateModal = overlay.create(CreateOrUpdateModal);
+const deleteConfirmModal = overlay.create(ConfirmModal);
+
+async function deleteLabel(labelId: number): Promise<void> {
+    try {
+        await citizensLabelsClient.deleteLabel({
+            id: labelId,
+        });
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
+
+        refresh();
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+    }
+}
 
 const columns = computed<TableColumn<Label>[]>(() => [
     {
@@ -63,6 +94,55 @@ const columns = computed<TableColumn<Label>[]>(() => [
                 hideLabel: true,
             }),
     },
+    {
+        accessorKey: 'icon',
+        header: t('common.icon'),
+        cell: ({ row }) =>
+            h(availableIcons.find((item) => item.name === row.original.icon)?.component ?? 'span', {
+                class: 'size-5',
+                fill: row.original.color ?? 'currentColor',
+            }),
+    },
+    {
+        id: 'actions',
+        header: '',
+        cell: ({ row }) =>
+            h('div', [
+                can('citizens.LabelsService/CreateOrUpdateLabel').value
+                    ? h(
+                          UTooltip,
+                          { text: t('common.edit') },
+                          h(UButton, {
+                              color: 'primary',
+                              variant: 'link',
+                              icon: 'i-mdi-pencil',
+                              onClick: () => {
+                                  createOrUpdateModal.open({
+                                      labelId: row.original.id,
+                                      onRefresh: () => refresh(),
+                                  });
+                              },
+                          }),
+                      )
+                    : undefined,
+                can('citizens.LabelsService/DeleteLabel').value
+                    ? h(
+                          UTooltip,
+                          { text: row.original.deletedAt ? t('common.restore') : t('common.delete') },
+                          h(UButton, {
+                              color: !row.original.deletedAt ? 'error' : 'success',
+                              variant: 'link',
+                              icon: !row.original.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
+                              onClick: () => {
+                                  deleteConfirmModal.open({
+                                      confirm: () => row.original.id && deleteLabel(row.original.id),
+                                  });
+                              },
+                          }),
+                      )
+                    : undefined,
+            ]),
+    },
 ]);
 </script>
 
@@ -77,7 +157,7 @@ const columns = computed<TableColumn<Label>[]>(() => [
                 <template #right>
                     <PartialsBackButton to="/citizens" />
 
-                    <UTooltip v-if="can('citizens.CitizensService/ManageLabels').value" :text="$t('common.edit')">
+                    <UTooltip v-if="can('citizens.LabelsService/CreateOrUpdateLabel').value" :text="$t('common.edit')">
                         <UButton
                             color="neutral"
                             variant="outline"

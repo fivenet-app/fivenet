@@ -319,7 +319,7 @@ defineShortcuts({
 
                 <template #right>
                     <UButton
-                        v-if="can('citizens.CitizensService/ManageLabels').value"
+                        v-if="can('citizens.LabelsService/CreateOrUpdateLabel').value"
                         :label="$t('common.label', 2)"
                         icon="i-mdi-tag"
                         to="/citizens/labels"

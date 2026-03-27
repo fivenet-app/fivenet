@@ -38,7 +38,12 @@ func (s *Server) UploadAvatar(
 	}
 
 	meta.Namespace = "user_profile_pictures"
-	if _, err := s.profilePictureHandler.UploadFromMeta(ctx, meta, userInfo.GetUserId(), srv); err != nil {
+	if _, err := s.profilePictureHandler.UploadFromMeta(
+		ctx,
+		meta,
+		userInfo.GetUserId(),
+		srv,
+	); err != nil {
 		return err
 	}
 
@@ -71,7 +76,11 @@ func (s *Server) DeleteAvatar(
 		return &pbcitizens.DeleteAvatarResponse{}, nil
 	}
 
-	if err := s.profilePictureHandler.Delete(ctx, userInfo.GetUserId(), *props.AvatarFileId); err != nil {
+	if err := s.profilePictureHandler.Delete(
+		ctx,
+		userInfo.GetUserId(),
+		*props.AvatarFileId,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 

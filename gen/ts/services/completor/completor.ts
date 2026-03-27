@@ -12,7 +12,7 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Label } from "../../resources/users/labels/labels";
+import { Label } from "../../resources/citizens/labels/labels";
 import { LawBook } from "../../resources/laws/laws";
 import { Category } from "../../resources/documents/category/category";
 import { Job } from "../../resources/jobs/jobs";
@@ -127,7 +127,7 @@ export interface CompleteCitizenLabelsRequest {
  */
 export interface CompleteCitizenLabelsResponse {
     /**
-     * @generated from protobuf field: repeated resources.users.labels.Label labels = 1
+     * @generated from protobuf field: repeated resources.citizens.labels.Label labels = 1
      */
     labels: Label[];
 }
@@ -630,7 +630,7 @@ class CompleteCitizenLabelsResponse$Type extends MessageType<CompleteCitizenLabe
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.labels.Label labels */ 1:
+                case /* repeated resources.citizens.labels.Label labels */ 1:
                     message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -645,7 +645,7 @@ class CompleteCitizenLabelsResponse$Type extends MessageType<CompleteCitizenLabe
         return message;
     }
     internalBinaryWrite(message: CompleteCitizenLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.labels.Label labels = 1; */
+        /* repeated resources.citizens.labels.Label labels = 1; */
         for (let i = 0; i < message.labels.length; i++)
             Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

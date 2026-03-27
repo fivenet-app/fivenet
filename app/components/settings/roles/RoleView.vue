@@ -399,7 +399,7 @@ async function impersonateRole(grade: number): Promise<void> {
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
             description: { key: 'notifications.action_successful.content', parameters: {} },
-            type: NotificationType.ERROR,
+            type: NotificationType.SUCCESS,
         });
     } catch (e) {
         handleGRPCError(e as Error);

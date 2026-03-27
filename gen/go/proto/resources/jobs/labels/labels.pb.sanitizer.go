@@ -26,6 +26,11 @@ func (m *Label) Sanitize() error {
 		}
 	}
 
+	// Field: Icon
+	if m.Icon != nil {
+		*m.Icon = htmlsanitizer.StripHTMLTags(*m.Icon)
+	}
+
 	// Field: Job
 	if m.Job != nil {
 		*m.Job = htmlsanitizer.Sanitize(*m.Job)

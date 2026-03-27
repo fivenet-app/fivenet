@@ -79,7 +79,7 @@ watch(
                                     :label="$t('common.compare')"
                                     @click="emitApply(version as Version<HistoryContent>)"
                                 />
-                                <UButton icon="i-mdi-trash" color="error" @click="historyStore.deleteVersion(version.date)" />
+                                <UButton icon="i-mdi-delete" color="error" @click="historyStore.deleteVersion(version.date)" />
                             </UFieldGroup>
                         </div>
                     </li>

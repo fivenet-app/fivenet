@@ -81,14 +81,14 @@ const schema = z.object({
         .min(3)
         .max(50)
         .refine((email) => (props.personalEmail ? proposals.value?.emails.includes(email) : true), {
-            message: t('errors.MailerService.ErrAddresseInvalid'),
+            message: t('errors.mailer.MailerService.ErrAddresseInvalid'),
         }),
     domain: z
         .string()
         .min(6)
         .max(50)
         .refine((domain) => proposals.value?.domains.includes(domain), {
-            message: t('errors.MailerService.ErrAddresseInvalid'),
+            message: t('errors.mailer.MailerService.ErrAddresseInvalid'),
         }),
     label: z.string().max(128).optional(),
     deactivated: z.coerce.boolean(),
@@ -272,8 +272,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UFormField>
             <DataErrorBlock
                 v-if="modelValue?.deactivated"
-                :title="$t('errors.MailerService.ErrEmailDisabled.title')"
-                :message="$t('errors.MailerService.ErrEmailDisabled.content')"
+                :title="$t('errors.mailer.MailerService.ErrEmailDisabled.title')"
+                :message="$t('errors.mailer.MailerService.ErrEmailDisabled.content')"
             />
 
             <UButton

@@ -16,7 +16,7 @@ import { LastCharID } from "../../../resources/sync/data/data";
 import { CitizenLocations } from "../../../resources/sync/data/data";
 import { Vehicle } from "../../../resources/vehicles/vehicles";
 import { DataUser } from "../../../resources/sync/data/data";
-import { License } from "../../../resources/users/licenses/licenses";
+import { License } from "../../../resources/citizens/licenses/licenses";
 import { Job } from "../../../resources/jobs/jobs";
 import { UserUpdate } from "../../../resources/sync/activity/activity";
 import { AccountUpdate } from "../../../resources/sync/activity/activity";
@@ -214,7 +214,7 @@ export interface SendJobsDataRequest {
  */
 export interface SendLicensesDataRequest {
     /**
-     * @generated from protobuf field: repeated resources.users.licenses.License licenses = 1
+     * @generated from protobuf field: repeated resources.citizens.licenses.License licenses = 1
      */
     licenses: License[];
 }
@@ -1176,7 +1176,7 @@ class SendLicensesDataRequest$Type extends MessageType<SendLicensesDataRequest> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.licenses.License licenses */ 1:
+                case /* repeated resources.citizens.licenses.License licenses */ 1:
                     message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1191,7 +1191,7 @@ class SendLicensesDataRequest$Type extends MessageType<SendLicensesDataRequest> 
         return message;
     }
     internalBinaryWrite(message: SendLicensesDataRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.licenses.License licenses = 1; */
+        /* repeated resources.citizens.licenses.License licenses = 1; */
         for (let i = 0; i < message.licenses.length; i++)
             License.internalBinaryWrite(message.licenses[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
 import { getCompletorCompletorClient, getJobsJobsClient } from '~~/gen/ts/clients';
+import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { LawBook } from '~~/gen/ts/resources/laws/laws';
-import type { Label } from '~~/gen/ts/resources/users/labels/labels';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
 import type { ListColleaguesRequest } from '~~/gen/ts/services/jobs/jobs';

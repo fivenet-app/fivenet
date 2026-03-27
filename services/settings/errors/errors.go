@@ -8,53 +8,53 @@ import (
 var (
 	ErrFailedQuery = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.SettingsService.ErrFailedQuery"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrFailedQuery"},
 		nil,
 	)
 	ErrInvalidRequest = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.SettingsService.ErrInvalidRequest"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidRequest"},
 		nil,
 	)
 	ErrNoPermission = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.SettingsService.ErrNoPermission"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrNoPermission"},
 		nil,
 	)
 	ErrRoleAlreadyExists = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.SettingsService.ErrRoleAlreadyExists"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrRoleAlreadyExists"},
 		nil,
 	)
 	ErrOwnRoleDeletion = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.SettingsService.ErrOwnRoleDeletion"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrOwnRoleDeletion"},
 		nil,
 	)
 	ErrInvalidAttrs = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.SettingsService.ErrInvalidAttrs"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidAttrs"},
 		nil,
 	)
 	ErrInvalidPerms = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.SettingsService.ErrInvalidPerms"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidPerms"},
 		nil,
 	)
 
 	ErrDiscordNotEnabled = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.SettingsService.ErrDiscordNotEnabled"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrDiscordNotEnabled"},
 		nil,
 	)
 	ErrDiscordConnectRequired = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.SettingsService.ErrDiscordConnectRequired.content"},
-		&common.I18NItem{Key: "errors.SettingsService.ErrDiscordConnectRequired.title"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrDiscordConnectRequired.content"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrDiscordConnectRequired.title"},
 	)
 	ErrCannotDeleteOwnAccount = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.SettingsService.ErrCannotDeleteOwnAccount.content"},
-		&common.I18NItem{Key: "errors.SettingsService.ErrCannotDeleteOwnAccount.title"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrCannotDeleteOwnAccount.content"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrCannotDeleteOwnAccount.title"},
 	)
 )

@@ -3,6 +3,7 @@
 // source: services/calendar/calendar.proto
 // source: services/centrum/centrum.proto
 // source: services/citizens/citizens.proto
+// source: services/citizens/labels.proto
 // source: services/completor/completor.proto
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
@@ -52,8 +53,9 @@ export type GRPCServicePerms =
 	| 'citizens.CitizensService/GetUser'
 	| 'citizens.CitizensService/ListCitizens'
 	| 'citizens.CitizensService/ListUserActivity'
-	| 'citizens.CitizensService/ManageLabels'
 	| 'citizens.CitizensService/SetUserProps'
+	| 'citizens.LabelsService/CreateOrUpdateLabel'
+	| 'citizens.LabelsService/DeleteLabel'
 	| 'completor.CompletorService/CompleteCitizenLabels'
 	| 'completor.CompletorService/CompleteDocumentCategories'
 	| 'documents.ApprovalService/DeleteApprovalTasks'
@@ -131,6 +133,7 @@ export const GRPCServices = [
 	'calendar.CalendarService',
 	'centrum.CentrumService',
 	'citizens.CitizensService',
+	'citizens.LabelsService',
 	'completor.CompletorService',
 	'documents.ApprovalService',
 	'documents.DocumentsService',
@@ -165,8 +168,9 @@ export const GRPCServiceMethods = [
 	'citizens.CitizensService/GetUser',
 	'citizens.CitizensService/ListCitizens',
 	'citizens.CitizensService/ListUserActivity',
-	'citizens.CitizensService/ManageLabels',
 	'citizens.CitizensService/SetUserProps',
+	'citizens.LabelsService/CreateOrUpdateLabel',
+	'citizens.LabelsService/DeleteLabel',
 	'completor.CompletorService/CompleteCitizenLabels',
 	'completor.CompletorService/CompleteDocumentCategories',
 	'documents.ApprovalService/DeleteApprovalTasks',

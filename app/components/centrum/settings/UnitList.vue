@@ -61,7 +61,7 @@ async function deleteUnit(id: number): Promise<void> {
 
 const appConfig = useAppConfig();
 
-const columns = [
+const columns = computed<TableColumn<Unit>[]>(() => [
     {
         id: 'actions',
         cell: ({ row }) =>
@@ -180,7 +180,7 @@ const columns = [
         header: t('common.department_postal'),
         cell: ({ row }) => h('span', {}, row.original.homePostal ?? t('common.na')),
     },
-] as TableColumn<Unit>[];
+]);
 
 const unitCreateOrUpdateSlideover = overlay.create(UnitCreateOrUpdateSlideover);
 const confirmModal = overlay.create(ConfirmModal);

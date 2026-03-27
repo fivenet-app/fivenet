@@ -25,6 +25,7 @@ func GetUserLabels(
 			tJobLabels.Job,
 			tJobLabels.Name,
 			tJobLabels.Color,
+			tJobLabels.Icon,
 		).
 		FROM(
 			tUserLabels.

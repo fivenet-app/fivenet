@@ -291,8 +291,8 @@ const isMobile = breakpoints.smaller('lg');
         <template v-if="selectedEmail" #body>
             <DataErrorBlock
                 v-if="selectedEmail.deactivated"
-                :title="$t('errors.MailerService.ErrEmailDisabled.title')"
-                :message="$t('errors.MailerService.ErrEmailDisabled.content')"
+                :title="$t('errors.mailer.MailerService.ErrEmailDisabled.title')"
+                :message="$t('errors.mailer.MailerService.ErrEmailDisabled.content')"
             />
 
             <template v-else>

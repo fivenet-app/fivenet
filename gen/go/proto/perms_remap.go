@@ -3,6 +3,7 @@
 // source: services/calendar/calendar.proto
 // source: services/centrum/centrum.proto
 // source: services/citizens/citizens.proto
+// source: services/citizens/labels.proto
 // source: services/completor/completor.proto
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
@@ -137,6 +138,14 @@ var PermsRemap = map[string][]string{
 	},
 	"citizens.CitizensService/UploadMugshot": []string{
 		"citizens.CitizensService/SetUserProps",
+	},
+
+	// Service: citizens.LabelsService
+	"citizens.LabelsService/GetLabel": []string{
+		"completor.CompletorService/CompleteCitizenLabels",
+	},
+	"citizens.LabelsService/ListLabels": []string{
+		"completor.CompletorService/CompleteCitizenLabels",
 	},
 
 	// Service: completor.CompletorService

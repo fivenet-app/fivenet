@@ -7,10 +7,19 @@
 
 package model
 
+import (
+	"time"
+)
+
 type FivenetUserLabelsJob struct {
-	ID      int64   `sql:"primary_key" json:"id"`
-	Job     string  `json:"job"`
-	Name    string  `json:"name"`
-	SortKey *string `json:"sort_key"`
-	Color   *string `json:"color"`
+	ID        int64      `sql:"primary_key" json:"id"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
+	Job       string     `json:"job"`
+	Name      string     `json:"name"`
+	SortKey   *string    `json:"sort_key"`
+	Color     *string    `json:"color"`
+	Icon      *string    `json:"icon"`
+	Settings  *string    `json:"settings"`
 }

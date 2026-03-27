@@ -8,27 +8,27 @@ import (
 var (
 	ErrFailedQuery = common.NewI18nErr(
 		codes.Internal,
-		&common.I18NItem{Key: "errors.QualificationsService.ErrFailedQuery"},
+		&common.I18NItem{Key: "errors.qualifications.QualificationsService.ErrFailedQuery"},
 		nil,
 	)
 	ErrRequirementsMissing = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.QualificationsService.ErrRequirementsMissing.content"},
-		&common.I18NItem{Key: "errors.QualificationsService.ErrRequirementsMissing.title"},
+		&common.I18NItem{Key: "errors.qualifications.QualificationsService.ErrRequirementsMissing.content"},
+		&common.I18NItem{Key: "errors.qualifications.QualificationsService.ErrRequirementsMissing.title"},
 	)
 	ErrQualificationClosed = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.QualificationsService.ErrQualificationClosed"},
+		&common.I18NItem{Key: "errors.qualifications.QualificationsService.ErrQualificationClosed"},
 		nil,
 	)
 	ErrExamDisabled = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.QualificationsService.ErrExamDisabled"},
+		&common.I18NItem{Key: "errors.qualifications.QualificationsService.ErrExamDisabled"},
 		nil,
 	)
 	ErrRequirementSelfRef = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.QualificationsService.ErrRequirementSelfRef"},
+		&common.I18NItem{Key: "errors.qualifications.QualificationsService.ErrRequirementSelfRef"},
 		nil,
 	)
 	ErrQualiAccessDenied = common.NewI18nErr(
@@ -38,12 +38,12 @@ var (
 	)
 	ErrQualiUpdateDenied = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.QualificationsService.ErrQualiUpdateDenied"},
+		&common.I18NItem{Key: "errors.qualifications.QualificationsService.ErrQualiUpdateDenied"},
 		nil,
 	)
 	ErrQualiViewDenied = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.QualificationsService.ErrQualiViewDenied"},
+		&common.I18NItem{Key: "errors.qualifications.QualificationsService.ErrQualiViewDenied"},
 		nil,
 	)
 )

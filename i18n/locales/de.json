@@ -1459,7 +1459,10 @@
                 }
             },
             "citizen_labels": {
-                "title": "Bürger-Labels"
+                "title": "Bürger-Labels",
+                "settings": {
+                    "requires_expiration": "Benötigt Ablaufdatum"
+                }
             },
             "List": {
                 "no_citizens": "Benutze das obige Suchfeld, um erneut zu suchen oder die Anfrage zu aktualisieren.",
@@ -2354,80 +2357,86 @@
             "ErrNoUserInfo": "Ein Fehler ist aufgetrete, bitte ausloggen und erneut einloggen!",
             "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!"
         },
-        "AuthService": {
-            "ErrGenericAccount": {
-                "title": "Fehler beim Anzeigen/ Aktualisieren ihres Accounts.",
-                "content": "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut."
-            },
-            "ErrAccountCreateFailed": {
-                "title": "Fehler bei der Kontoerstellung",
-                "content": "Bitte überprüfen sie ihren Registrierungstoken! ({code})"
-            },
-            "ErrInvalidLogin": {
-                "content": "Bitte überprüfen sie ihren Username und Passwort, und versuchen sie es erneut.",
-                "title": "Falscher Username oder Passwort!"
-            },
-            "ErrNoAccount": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen.",
-            "ErrNoCharFound": "Keine(n) Charakter für deinen Account gefunden.",
-            "ErrGenericLogin": "Fehler bei der Anmeldung, bitte versuche es erneut.",
-            "ErrUnableToChooseChar": "Sie haben nicht genug Berechtigungen um den Charakter auszuwählen!",
-            "ErrUpdateAccount": "Fehler beim Aktualisieren Ihres Benutzers!",
-            "ErrChangePassword": {
-                "title": "Fehler beim Ändern des Passworts!",
-                "content": "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut. ({code})"
-            },
-            "ErrForgotPassword": {
-                "title": "Fehler beim Zurücksetzen des Passworts!",
-                "content": "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut."
-            },
-            "ErrAccountExistsFailed": {
-                "title": "Konto existiert bereits!",
-                "content": "Bitte nutzen Sie die Passwort vergessen Funktion!"
-            },
-            "ErrSignupDisabled": {
-                "title": "Konto-Erstellung ist deaktiviert!",
-                "content": "Die Konto-Erstellung ist deaktiviert. Bitte kontaktieren Sie Ihre FiveNet-Administratoren für weitere Informationen."
-            },
-            "ErrAccountDuplicate": {
-                "title": "Benutzername bereits verwendet!",
-                "content": "Benutzername bereits verwendet, bitte nutzen Sie einen anderen Benutzernamen."
-            },
-            "ErrChangeUsername": "Fehler beim Ändern des Benutzernamen!",
-            "ErrBadUsername": "Bitte stellen Sie sicher, dass der jetzige Benutzername korrekt ist! Versuchen es erneut.",
-            "ErrCharLock": {
-                "title": "Charakter-Sperre ist aktiv!",
-                "content": "Bitte wählen Sie einen verfügbaren Charakter aus und versuchen Sie es erneut."
-            },
-            "ErrNotSuperuser": "Sie sind kein Superuser! Bitte wenden Sie sich an Ihre FiveNet-Administratoren, um dieses Problem zu melden.",
-            "ErrImpersonateJobInvalid": "Ungültiger Job-Grad zum Ausgeben.",
-            "ErrReauthRequired": "Erneute Authentifizierung erforderlich!"
+        "auth": {
+            "AuthService": {
+                "ErrGenericAccount": {
+                    "title": "Fehler beim Anzeigen/ Aktualisieren ihres Accounts.",
+                    "content": "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut."
+                },
+                "ErrAccountCreateFailed": {
+                    "title": "Fehler bei der Kontoerstellung",
+                    "content": "Bitte überprüfen sie ihren Registrierungstoken! ({code})"
+                },
+                "ErrInvalidLogin": {
+                    "content": "Bitte überprüfen sie ihren Username und Passwort, und versuchen sie es erneut.",
+                    "title": "Falscher Username oder Passwort!"
+                },
+                "ErrNoAccount": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen.",
+                "ErrNoCharFound": "Keine(n) Charakter für deinen Account gefunden.",
+                "ErrGenericLogin": "Fehler bei der Anmeldung, bitte versuche es erneut.",
+                "ErrUnableToChooseChar": "Sie haben nicht genug Berechtigungen um den Charakter auszuwählen!",
+                "ErrUpdateAccount": "Fehler beim Aktualisieren Ihres Benutzers!",
+                "ErrChangePassword": {
+                    "title": "Fehler beim Ändern des Passworts!",
+                    "content": "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut. ({code})"
+                },
+                "ErrForgotPassword": {
+                    "title": "Fehler beim Zurücksetzen des Passworts!",
+                    "content": "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut."
+                },
+                "ErrAccountExistsFailed": {
+                    "title": "Konto existiert bereits!",
+                    "content": "Bitte nutzen Sie die Passwort vergessen Funktion!"
+                },
+                "ErrSignupDisabled": {
+                    "title": "Konto-Erstellung ist deaktiviert!",
+                    "content": "Die Konto-Erstellung ist deaktiviert. Bitte kontaktieren Sie Ihre FiveNet-Administratoren für weitere Informationen."
+                },
+                "ErrAccountDuplicate": {
+                    "title": "Benutzername bereits verwendet!",
+                    "content": "Benutzername bereits verwendet, bitte nutzen Sie einen anderen Benutzernamen."
+                },
+                "ErrChangeUsername": "Fehler beim Ändern des Benutzernamen!",
+                "ErrBadUsername": "Bitte stellen Sie sicher, dass der jetzige Benutzername korrekt ist! Versuchen es erneut.",
+                "ErrCharLock": {
+                    "title": "Charakter-Sperre ist aktiv!",
+                    "content": "Bitte wählen Sie einen verfügbaren Charakter aus und versuchen Sie es erneut."
+                },
+                "ErrNotSuperuser": "Sie sind kein Superuser! Bitte wenden Sie sich an Ihre FiveNet-Administratoren, um dieses Problem zu melden.",
+                "ErrImpersonateJobInvalid": "Ungültiger Job-Grad zum Ausgeben.",
+                "ErrReauthRequired": "Erneute Authentifizierung erforderlich!"
+            }
         },
-        "CompletorService": {
-            "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"
+        "completor": {
+            "CompletorService": {
+                "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"
+            }
         },
-        "CentrumService": {
-            "ErrFailedQuery": "Fehler beim Anzeigen/ Aktualisieren von Leitstellen Daten!",
-            "ErrNotPartOfDispatch": "Sie sind nicht Teil dieses Einsatzes!",
-            "ErrNotOnDuty": {
-                "title": "Sie sind nicht im Dienst!",
-                "content": "Stellen Sie sicher, dass Sie im Dienst sind und die anderen Vorraussetzungen erfüllen auf der Livemap sichtbar zu sein."
-            },
-            "ErrModeForbidsAction": {
-                "title": "Leitstelle verbietet diese Aktion!",
-                "content": "Kontaktiere die Leitstelle."
-            },
-            "ErrDispatchAlreadyCompleted": {
-                "title": "Einsatz ist bereits abgeschlossen!",
-                "content": "Abgeschlossene Einsätze können nicht akzeptiert/abgelehnt werden!"
-            },
-            "ErrNotPartOfUnit": "Sie sind nicht Teil der Einheit!",
-            "ErrStaticUnit": "Eine statische Einheit kann nicht verfügbar gesetzt werden!",
-            "ErrUnitPermDenied": "Kein Zugriff auf diese Einheit!",
-            "ErrDisabled": {
-                "title": "Leitstelle ist deaktiviert!",
-                "content": "Bitte kontaktieren Sie ihre Leitung, um die Leitstelle zu aktivieren."
-            },
-            "ErrDispatchNoJobs": "Sie können keinen Einsatz erstellen ohne einen Beruf auszuwählen!"
+        "centrum": {
+            "CentrumService": {
+                "ErrFailedQuery": "Fehler beim Anzeigen/ Aktualisieren von Leitstellen Daten!",
+                "ErrNotPartOfDispatch": "Sie sind nicht Teil dieses Einsatzes!",
+                "ErrNotOnDuty": {
+                    "title": "Sie sind nicht im Dienst!",
+                    "content": "Stellen Sie sicher, dass Sie im Dienst sind und die anderen Vorraussetzungen erfüllen auf der Livemap sichtbar zu sein."
+                },
+                "ErrModeForbidsAction": {
+                    "title": "Leitstelle verbietet diese Aktion!",
+                    "content": "Kontaktiere die Leitstelle."
+                },
+                "ErrDispatchAlreadyCompleted": {
+                    "title": "Einsatz ist bereits abgeschlossen!",
+                    "content": "Abgeschlossene Einsätze können nicht akzeptiert/abgelehnt werden!"
+                },
+                "ErrNotPartOfUnit": "Sie sind nicht Teil der Einheit!",
+                "ErrStaticUnit": "Eine statische Einheit kann nicht verfügbar gesetzt werden!",
+                "ErrUnitPermDenied": "Kein Zugriff auf diese Einheit!",
+                "ErrDisabled": {
+                    "title": "Leitstelle ist deaktiviert!",
+                    "content": "Bitte kontaktieren Sie ihre Leitung, um die Leitstelle zu aktivieren."
+                },
+                "ErrDispatchNoJobs": "Sie können keinen Einsatz erstellen ohne einen Beruf auszuwählen!"
+            }
         },
         "general": {
             "internal_error": {
@@ -2435,197 +2444,224 @@
                 "content": "Ein interner Serverfehler ist aufgetreten. Bitte versuchen Sie es erneut."
             }
         },
-        "JobsService": {
-            "ErrFailedQuery": "Fehler beim laden der Berufsdaten!",
-            "ErrReasonRequired": "Ein Grund muss gegeben sein!",
-            "ErrPropsNoteDenied": "Sie haben keine Berechtigung die Notiz des Kollegen zusetzen!",
-            "ErrPropsAbsenceDenied": "Sie haben keine Berechtigung die Abwesenheit des Kollegen einzutragen!",
-            "ErrNotFoundOrNoPerms": "Kollege nicht gefunden!",
-            "ErrPropsLabelsDenied": "Sie haben keine Berechtigung die Labels des Kollegen zusetzen!",
-            "ErrPropsNameDenied": "Sie haben keine Berechtigung den Namen des Kollegen zusetzen!",
-            "ErrTimeclockOutOfRange": "In der Stempeluhr sind nur die letzten 6 Monate abrufbar!",
-            "ErrAbsenceBeginOutOfRange": "Begin der Abwesenheit ist außerhalb der erlaubten Datumsspanne.",
-            "ErrAbsenceEndOutOfRange": "Ende der Abwesenheit ist außerhalb der erlaubten Datumsspanne.",
-            "ErrLabelsNoPerms": "Sie haben keine Berechtigung die Kollegen-Labels zusehen!"
-        },
-        "QualificationsService": {
-            "ErrFailedQuery": "Fehler beim Laden der Qualifizierungsdaten!",
-            "ErrRequirementsMissing": {
-                "title": "Qualifizierungsanforderungen nicht erfüllt",
-                "content": "Ihnen fehlen Qualifizierungen die für diese Qualifizierung benötigt sind."
-            },
-            "ErrQualificationClosed": "Sie können keine Anfrage an eine geschlossene Qualifizierung stellen!",
-            "ErrExamDisabled": "Das Examen der Qualifizierung ist deaktiviert!",
-            "ErrRequirementSelfRef": "Bitte entfernen Sie alle Qualifizierungsanforderungen, die sich auf die Qualifizierung beziehen, die Sie bearbeiten!",
-            "ErrQualiAccessDenied": "Sie haben keinen Zugriff auf diese Qualifizierung!",
-            "ErrQualiUpdateDenied": "Sie haben keine Berechtigung, diese Qualifizierung zu bearbeiten!",
-            "ErrQualiViewDenied": "Sie haben keine Berechtigung, diese Qualifizierung anzusehen!"
-        },
-        "CalendarService": {
-            "ErrFailedQuery": "Fehler beim Laden der Kalender Daten!",
-            "ErrNoPerms": "Sie haben keinen Zugriff auf diese Kalender Daten!",
-            "ErrOnePrivateCal": "Sie können nur einen privaten Kalender haben!",
-            "ErrCalendarClosed": {
-                "title": "Kalender ist geschlossen",
-                "content": "Der Kalender ist geschlossen und kann nicht mehr genutzt werden."
-            },
-            "ErrEntryClosed": {
-                "title": "Kalendar Eintrag ist geschlossen",
-                "content": "Der Kalendar Eintrag ist geschlossen. Auf diesen Eintrag kann man nicht mehr antworten."
+        "jobs": {
+            "JobsService": {
+                "ErrFailedQuery": "Fehler beim laden der Berufsdaten!",
+                "ErrReasonRequired": "Ein Grund muss gegeben sein!",
+                "ErrPropsNoteDenied": "Sie haben keine Berechtigung die Notiz des Kollegen zusetzen!",
+                "ErrPropsAbsenceDenied": "Sie haben keine Berechtigung die Abwesenheit des Kollegen einzutragen!",
+                "ErrNotFoundOrNoPerms": "Kollege nicht gefunden!",
+                "ErrPropsLabelsDenied": "Sie haben keine Berechtigung die Labels des Kollegen zusetzen!",
+                "ErrPropsNameDenied": "Sie haben keine Berechtigung den Namen des Kollegen zusetzen!",
+                "ErrTimeclockOutOfRange": "In der Stempeluhr sind nur die letzten 6 Monate abrufbar!",
+                "ErrAbsenceBeginOutOfRange": "Begin der Abwesenheit ist außerhalb der erlaubten Datumsspanne.",
+                "ErrAbsenceEndOutOfRange": "Ende der Abwesenheit ist außerhalb der erlaubten Datumsspanne.",
+                "ErrLabelsNoPerms": "Sie haben keine Berechtigung die Kollegen-Labels zusehen!"
             }
         },
-        "WikiService": {
-            "ErrFailedQuery": "Fehler beim Laden der Lexikon Daten!",
-            "ErrPageDenied": "Sie haben keinen Zugriff auf diese Seite!",
-            "ErrPageHasChildren": {
-                "title": "Die Seite hat Unterseiten!",
-                "content": "Sie können diese Seite nicht löschen, da sie Unterseiten hat. Stellen Sie sicher, dass Sie die Unterseiten zuerst verschieben oder löschen."
-            },
-            "ErrMaxFilesReached": {
-                "title": "Maximale Anzahl an Dateien erreicht",
-                "content": "Sie haben die maximale Anzahl an Dateien für diese Wiki-Seite erreicht. Bitte löschen Sie einige Dateien, bevor Sie neue hochladen."
-            },
-            "ErrPageNotFound": {
-                "title": "Seite nicht gefunden",
-                "content": "Die angeforderte Wiki-Seite konnte nicht gefunden werden. Bitte überprüfen Sie die URL oder suchen Sie nach der Seite."
+        "qualifications": {
+            "QualificationsService": {
+                "ErrFailedQuery": "Fehler beim Laden der Qualifizierungsdaten!",
+                "ErrRequirementsMissing": {
+                    "title": "Qualifizierungsanforderungen nicht erfüllt",
+                    "content": "Ihnen fehlen Qualifizierungen die für diese Qualifizierung benötigt sind."
+                },
+                "ErrQualificationClosed": "Sie können keine Anfrage an eine geschlossene Qualifizierung stellen!",
+                "ErrExamDisabled": "Das Examen der Qualifizierung ist deaktiviert!",
+                "ErrRequirementSelfRef": "Bitte entfernen Sie alle Qualifizierungsanforderungen, die sich auf die Qualifizierung beziehen, die Sie bearbeiten!",
+                "ErrQualiAccessDenied": "Sie haben keinen Zugriff auf diese Qualifizierung!",
+                "ErrQualiUpdateDenied": "Sie haben keine Berechtigung, diese Qualifizierung zu bearbeiten!",
+                "ErrQualiViewDenied": "Sie haben keine Berechtigung, diese Qualifizierung anzusehen!"
             }
         },
-        "MailerService": {
-            "ErrFailedQuery": "Fehler beim Laden der E-Mail Daten!",
-            "ErrAddresseAlreadyTaken": {
-                "title": "E-Mail Adresse bereits vergeben!",
-                "content": "Bitte versuchen es mit einer anderen E-Mail Adresse erneut."
-            },
-            "ErrTemplateLimitReached": "Du kannst keine weiteren Vorlagen erstellen (Limit: 5)!",
-            "ErrEmailAccessDenied": "Sie müssen entsprechenden Lese-/Schreib-Zugriff auf die E-Mail Adresse haben!",
-            "ErrRecipientMinium": "Ihre E-Mail muss mindestens einen Empfänger haben!",
-            "ErrInvalidRecipients": "Eine oder mehrere E-Mail Adressen sind fehlerhaft",
-            "ErrSameAddress": "Die E-Mail kann nicht an dieselbe E-Mail-Adresse senden, von der sie gesendet wurde!",
-            "ErrCantDeleteOwnEmail": "Sie können ihre eigene E-Mail Adresse nicht löschen!",
-            "ErrEmailAccessRequired": "Mindestens ein Zugang ist für eine Job-E-Mail erforderlich",
-            "ErrAddresseInvalid": "Die E-Mail-Adresse ist ungültig, bitte verwende eine andere.",
-            "ErrThreadAccessDenied": {
-                "title": "Du hast keinen Zugriff auf diesen Therad!",
-                "content": "Du wurdest vom Therad entfernt."
-            },
-            "ErrEmailChangeTooEarly": {
-                "title": "Die E-Mail wurde bereits geändert!",
-                "content": "E-Mail Adressen können nur alle zwei Wochen geändert werden."
-            },
-            "ErrEmailDisabled": {
-                "title": "Die E-Mail Adresse wurde deaktiviert!",
-                "content": "Bitte kontaktieren Sie die FiveNet Administration für weitere Informationen."
-            },
-            "ErrSignatureTooLong": "Ihre E-Mail Signatur ist zu lang!"
-        },
-        "CitizensService": {
-            "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",
-            "ErrJobGradeNoPermission": "Keine Berechtigung um auf diesen Bürger zuzugreifen (basierend auf dem Job des Bürgers)",
-            "ErrReasonRequired": "Ein Grund muss gegeben sein!",
-            "ErrPropsWantedDenied": "Sie haben keine Berechtigung den Bürger zur Fahndung auszuschreiben!",
-            "ErrPropsJobDenied": "Sie haben keine Berechtigung den Beruf des Bürgers zusetzen!",
-            "ErrPropsJobPublic": "Sie können keinen Staatsberuf für den Bürger-Beruf setzen!",
-            "ErrPropsJobInvalid": "Ungültiger Beruf oder Rang angegeben!",
-            "ErrPropsTrafficPointsDenied": "Sie haben keine Berechtigung die StVo Punkte des Bürger zu setzen!",
-            "ErrPropsLabelsDenied": "Sie dürfen nicht die Labels der Person ändern!",
-            "ErrPropsMugshotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!",
-            "ErrCitizenNotFound": {
-                "title": "Bürger nicht gefunden!",
-                "content": "Der angeforderte Bürger wurde nicht gefunden."
+        "calendar": {
+            "CalendarService": {
+                "ErrFailedQuery": "Fehler beim Laden der Kalender Daten!",
+                "ErrNoPerms": "Sie haben keinen Zugriff auf diese Kalender Daten!",
+                "ErrOnePrivateCal": "Sie können nur einen privaten Kalender haben!",
+                "ErrCalendarClosed": {
+                    "title": "Kalender ist geschlossen",
+                    "content": "Der Kalender ist geschlossen und kann nicht mehr genutzt werden."
+                },
+                "ErrEntryClosed": {
+                    "title": "Kalendar Eintrag ist geschlossen",
+                    "content": "Der Kalendar Eintrag ist geschlossen. Auf diesen Eintrag kann man nicht mehr antworten."
+                }
             }
         },
-        "VehiclesService": {
-            "ErrFailedQuery": "Fehler beim Laden von Fahrzeug Daten!",
-            "ErrPropsWantedDenied": "Sie haben keine Berechtigung das Fahrzeug zur Fahndung auszuschreiben!"
-        },
-        "DocumentsService": {
-            "ErrFailedQuery": "Fehlen beim Anzeigen/ Erstellen/ Aktualisieren von Dokumenten!",
-            "ErrNotFoundOrNoPerms": "Kein Dokument gefunden oder keine Berechtigungen um auf das Dokument zuzugreifen!",
-            "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/ aktualisieren/ zu löschen!",
-            "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!",
-            "ErrClosedDoc": {
-                "title": "Dokument ist geschlossen!",
-                "content": "Das Dokument ist geschlossen und kann nicht mehr bearbeitet werden. Bitte öffnen Sie das Dokument, um es zu bearbeiten."
-            },
-            "ErrDocAccessEditDenied": "Sie haben keine Rechte den Dokumenten Zugriff zu verwalten!",
-            "ErrDocAccessViewDenied": "Sie haben keine Rechte die Zugangsinfo des Dokumentes zu sehen!",
-            "ErrTemplateFailed": "Fehler beim Laden der Dokumenten Vorlage! Bitte spreche deine Fraktionsführung darauf an.",
-            "ErrDocViewDenied": "Sie haben keinen Zugriff auf das Dokument!",
-            "ErrDocUpdateDenied": "Sie dürfen das Dokument nicht bearbeiten!",
-            "ErrDocDeleteDenied": "Sie dürfen das Dokument nicht löschen!",
-            "ErrDocToggleDenied": "Sie dürfen das Dokument nicht schließen/öffnen!",
-            "ErrCommentViewDenied": "Sie haben keine Berechtigung Dokumenten Kommentare zu sehen!",
-            "ErrCommentPostDenied": "Sie haben keine Berechtigung Kommentare zu schreiben!",
-            "ErrCommentEditDenied": "Sie haben keine Berechtigung diesen Kommentar zu bearbeiten!",
-            "ErrCommentDeleteDenied": "Sie können den Kommentar nicht löschen!",
-            "ErrFeedRefsViewDenied": "Sie haben keine Berechtigung die Dokumenten-Referenzen zusehen!",
-            "ErrFeedRelsViewDenied": "Sie haben keine Berechtigung die Bürger-Dokumenten-Beziehungen zusehen!",
-            "ErrFeedRefSelf": "Sie können das Dokument nicht mit sich selbst referenzieren!",
-            "ErrFeedRefAddDenied": "Sie haben keine Berechtigung Dokumenten-Referenzen zum Dokument hinzuzufügen!",
-            "ErrFeedRefRemoveDenied": "Sie haben keine Berechtigung Dokumenten-Referenzen vom Dokument zu entfernen!",
-            "ErrFeedRelAddDenied": "Sie haben keine Berechtigung Bürger-Dokumenten-Beziehungen zu erstellen!",
-            "ErrFeedRelRemoveDenied": "You don't have permission to remove references from this document!",
-            "ErrDocReqAlreadyCreated": {
-                "title": "Dokumenten Anfrage existiert bereits!",
-                "content": "Eine Dokumenten Anfrage für diese Art von Anfrage existiert bereits oder wurde in den letzten 24 Stunden schon gestellt."
-            },
-            "ErrDocSameOwner": "Sie sind bereits Ersteller des Dokumentes!",
-            "ErrDocOwnerWrongJob": "Der neue Ersteller muss Teil ihres Jobs sein!",
-            "ErrDocReqOwnDoc": "Sie können keine Anfragen für Ihr eigenes Dokument erstellen!",
-            "ErrDocReqAlreadyCompleted": {
-                "title": "Dokumenten Anfrage bereits angenommen/abgelehnt!",
-                "content": "Die zu aktualisierende Dokumenten Anfrage wurde bereits angenommen/abgelehnt."
-            },
-            "ErrDocRequiredAccessTemplate": {
-                "title": "Erforderlicher Dokumenten-Zugriff verändert/entfernt!",
-                "content": "Stellen Sie sicher, dass Sie keine erforderlichen Dokumenten-Zugriffe verändert oder entfernt haben."
-            },
-            "ErrDocOwnerFailed": "Sie müssen Editier-Rechte auf das Dokument haben!",
-            "ErrDocAccessDuplicate": "Dokumenten-Zugriff: Ein Beruf Rang/ Bürger kann nur einen Zugriff haben, und nicht mehrere!",
-            "ErrTemplateAccessDuplicate": "Vorlagen-Zugriff: Ein Beruf Rang kann nur einen Zugriff haben, und nicht mehrere!",
-            "ErrApprovalTaskAlreadyHandled": {
-                "title": "Genehmigungsaufgabe bereits bearbeitet!",
-                "content": "Diese Genehmigungsaufgabe wurde bereits genehmigt/abgelehnt."
-            },
-            "ErrApprovalSignatureRequired": {
-                "title": "Genehmigungsunterschrift erforderlich!",
-                "content": "Sie müssen eine Unterschrift leisten, um dieses Dokument zu genehmigen."
-            },
-            "ErrDocAccessInvalid": "Dokumenten-Zugriff: Ungültiger Beruf oder Rang angegeben!",
-            "ErrApprovalDocIsDraft": {
-                "title": "Dokument ist ein Entwurf!",
-                "content": "Nur veröffentlichte Dokumente können genehmigt werden."
+        "wiki": {
+            "WikiService": {
+                "ErrFailedQuery": "Fehler beim Laden der Lexikon Daten!",
+                "ErrPageDenied": "Sie haben keinen Zugriff auf diese Seite!",
+                "ErrPageHasChildren": {
+                    "title": "Die Seite hat Unterseiten!",
+                    "content": "Sie können diese Seite nicht löschen, da sie Unterseiten hat. Stellen Sie sicher, dass Sie die Unterseiten zuerst verschieben oder löschen."
+                },
+                "ErrMaxFilesReached": {
+                    "title": "Maximale Anzahl an Dateien erreicht",
+                    "content": "Sie haben die maximale Anzahl an Dateien für diese Wiki-Seite erreicht. Bitte löschen Sie einige Dateien, bevor Sie neue hochladen."
+                },
+                "ErrPageNotFound": {
+                    "title": "Seite nicht gefunden",
+                    "content": "Die angeforderte Wiki-Seite konnte nicht gefunden werden. Bitte überprüfen Sie die URL oder suchen Sie nach der Seite."
+                }
             }
         },
-        "LivemapService": {
-            "ErrStreamFailed": "Karten-Datenstrom fehlgeschlagen!",
-            "ErrMarkerFailed": "Fehler beim Erstellen/ Aktualisieren/ Löschen der Markierung!"
+        "mailer": {
+            "MailerService": {
+                "ErrFailedQuery": "Fehler beim Laden der E-Mail Daten!",
+                "ErrAddresseAlreadyTaken": {
+                    "title": "E-Mail Adresse bereits vergeben!",
+                    "content": "Bitte versuchen es mit einer anderen E-Mail Adresse erneut."
+                },
+                "ErrTemplateLimitReached": "Du kannst keine weiteren Vorlagen erstellen (Limit: 5)!",
+                "ErrEmailAccessDenied": "Sie müssen entsprechenden Lese-/Schreib-Zugriff auf die E-Mail Adresse haben!",
+                "ErrRecipientMinium": "Ihre E-Mail muss mindestens einen Empfänger haben!",
+                "ErrInvalidRecipients": "Eine oder mehrere E-Mail Adressen sind fehlerhaft",
+                "ErrSameAddress": "Die E-Mail kann nicht an dieselbe E-Mail-Adresse senden, von der sie gesendet wurde!",
+                "ErrCantDeleteOwnEmail": "Sie können ihre eigene E-Mail Adresse nicht löschen!",
+                "ErrEmailAccessRequired": "Mindestens ein Zugang ist für eine Job-E-Mail erforderlich",
+                "ErrAddresseInvalid": "Die E-Mail-Adresse ist ungültig, bitte verwende eine andere.",
+                "ErrThreadAccessDenied": {
+                    "title": "Du hast keinen Zugriff auf diesen Therad!",
+                    "content": "Du wurdest vom Therad entfernt."
+                },
+                "ErrEmailChangeTooEarly": {
+                    "title": "Die E-Mail wurde bereits geändert!",
+                    "content": "E-Mail Adressen können nur alle zwei Wochen geändert werden."
+                },
+                "ErrEmailDisabled": {
+                    "title": "Die E-Mail Adresse wurde deaktiviert!",
+                    "content": "Bitte kontaktieren Sie die FiveNet Administration für weitere Informationen."
+                },
+                "ErrSignatureTooLong": "Ihre E-Mail Signatur ist zu lang!"
+            }
         },
-        "SettingsService": {
-            "ErrFailedQuery": "Fehler beim Zugriff auf die Einstellungen!",
-            "ErrInvalidRequest": "Ungültige Rollen Anfrage!",
-            "ErrNoPermission": "Keine Berechtigung um Rollen zu erstellen/ ändern/ löschen!",
-            "ErrRoleAlreadyExists": "Rolle existiert bereits!",
-            "ErrOwnRoleDeletion": "Eigene Rolle kann nicht gelöscht werden!",
-            "ErrInvalidPerms": "Fehler beim Aktualisieren der Rollen Berechtigungen!",
-            "ErrInvalidAttrs": "Fehler beim Aktualisieren der Rollen Attributen!",
-            "ErrDiscordNotEnabled": "Discord ist nicht aktiviert!",
-            "ErrDiscordConnectRequired": {
-                "title": "Sie müssen Ihr Discord-Konto verbunden haben!",
-                "content": "Bitte stellen Sie sicher, dass Ihr Discord-Konto mit FiveNet verbunden ist."
+        "citizens": {
+            "CitizensService": {
+                "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",
+                "ErrJobGradeNoPermission": "Keine Berechtigung um auf diesen Bürger zuzugreifen (basierend auf dem Job des Bürgers)",
+                "ErrReasonRequired": "Ein Grund muss gegeben sein!",
+                "ErrPropsWantedDenied": "Sie haben keine Berechtigung den Bürger zur Fahndung auszuschreiben!",
+                "ErrPropsJobDenied": "Sie haben keine Berechtigung den Beruf des Bürgers zusetzen!",
+                "ErrPropsJobPublic": "Sie können keinen Staatsberuf für den Bürger-Beruf setzen!",
+                "ErrPropsJobInvalid": "Ungültiger Beruf oder Rang angegeben!",
+                "ErrPropsTrafficPointsDenied": "Sie haben keine Berechtigung die StVo Punkte des Bürger zu setzen!",
+                "ErrPropsLabelsDenied": "Sie dürfen nicht die Labels der Person ändern!",
+                "ErrPropsMugshotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!",
+                "ErrCitizenNotFound": {
+                    "title": "Bürger nicht gefunden!",
+                    "content": "Der angeforderte Bürger wurde nicht gefunden."
+                }
             },
-            "ErrCannotDeleteOwnAccount": {
-                "title": "Du kannst deinen eigenen Account nicht löschen!",
-                "content": "Bitte logge dich mit einem anderen Account ein, um diesen Account zu löschen."
+            "LabelsService": {
+                "ErrLabelNotFound": "Das angeforderte Label wurde nicht gefunden."
+            }
+        },
+        "vehicles": {
+            "VehiclesService": {
+                "ErrFailedQuery": "Fehler beim Laden von Fahrzeug Daten!",
+                "ErrPropsWantedDenied": "Sie haben keine Berechtigung das Fahrzeug zur Fahndung auszuschreiben!"
+            }
+        },
+        "documents": {
+            "DocumentsService": {
+                "ErrFailedQuery": "Fehlen beim Anzeigen/ Erstellen/ Aktualisieren von Dokumenten!",
+                "ErrNotFoundOrNoPerms": "Kein Dokument gefunden oder keine Berechtigungen um auf das Dokument zuzugreifen!",
+                "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/ aktualisieren/ zu löschen!",
+                "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!",
+                "ErrClosedDoc": {
+                    "title": "Dokument ist geschlossen!",
+                    "content": "Das Dokument ist geschlossen und kann nicht mehr bearbeitet werden. Bitte öffnen Sie das Dokument, um es zu bearbeiten."
+                },
+                "ErrDocAccessEditDenied": "Sie haben keine Rechte den Dokumenten Zugriff zu verwalten!",
+                "ErrDocAccessViewDenied": "Sie haben keine Rechte die Zugangsinfo des Dokumentes zu sehen!",
+                "ErrTemplateFailed": "Fehler beim Laden der Dokumenten Vorlage! Bitte spreche deine Fraktionsführung darauf an.",
+                "ErrDocViewDenied": "Sie haben keinen Zugriff auf das Dokument!",
+                "ErrDocUpdateDenied": "Sie dürfen das Dokument nicht bearbeiten!",
+                "ErrDocDeleteDenied": "Sie dürfen das Dokument nicht löschen!",
+                "ErrDocToggleDenied": "Sie dürfen das Dokument nicht schließen/öffnen!",
+                "ErrCommentViewDenied": "Sie haben keine Berechtigung Dokumenten Kommentare zu sehen!",
+                "ErrCommentPostDenied": "Sie haben keine Berechtigung Kommentare zu schreiben!",
+                "ErrCommentEditDenied": "Sie haben keine Berechtigung diesen Kommentar zu bearbeiten!",
+                "ErrCommentDeleteDenied": "Sie können den Kommentar nicht löschen!",
+                "ErrFeedRefsViewDenied": "Sie haben keine Berechtigung die Dokumenten-Referenzen zusehen!",
+                "ErrFeedRelsViewDenied": "Sie haben keine Berechtigung die Bürger-Dokumenten-Beziehungen zusehen!",
+                "ErrFeedRefSelf": "Sie können das Dokument nicht mit sich selbst referenzieren!",
+                "ErrFeedRefAddDenied": "Sie haben keine Berechtigung Dokumenten-Referenzen zum Dokument hinzuzufügen!",
+                "ErrFeedRefRemoveDenied": "Sie haben keine Berechtigung Dokumenten-Referenzen vom Dokument zu entfernen!",
+                "ErrFeedRelAddDenied": "Sie haben keine Berechtigung Bürger-Dokumenten-Beziehungen zu erstellen!",
+                "ErrFeedRelRemoveDenied": "You don't have permission to remove references from this document!",
+                "ErrDocReqAlreadyCreated": {
+                    "title": "Dokumenten Anfrage existiert bereits!",
+                    "content": "Eine Dokumenten Anfrage für diese Art von Anfrage existiert bereits oder wurde in den letzten 24 Stunden schon gestellt."
+                },
+                "ErrDocSameOwner": "Sie sind bereits Ersteller des Dokumentes!",
+                "ErrDocOwnerWrongJob": "Der neue Ersteller muss Teil ihres Jobs sein!",
+                "ErrDocReqOwnDoc": "Sie können keine Anfragen für Ihr eigenes Dokument erstellen!",
+                "ErrDocReqAlreadyCompleted": {
+                    "title": "Dokumenten Anfrage bereits angenommen/abgelehnt!",
+                    "content": "Die zu aktualisierende Dokumenten Anfrage wurde bereits angenommen/abgelehnt."
+                },
+                "ErrDocRequiredAccessTemplate": {
+                    "title": "Erforderlicher Dokumenten-Zugriff verändert/entfernt!",
+                    "content": "Stellen Sie sicher, dass Sie keine erforderlichen Dokumenten-Zugriffe verändert oder entfernt haben."
+                },
+                "ErrDocOwnerFailed": "Sie müssen Editier-Rechte auf das Dokument haben!",
+                "ErrDocAccessDuplicate": "Dokumenten-Zugriff: Ein Beruf Rang/ Bürger kann nur einen Zugriff haben, und nicht mehrere!",
+                "ErrTemplateAccessDuplicate": "Vorlagen-Zugriff: Ein Beruf Rang kann nur einen Zugriff haben, und nicht mehrere!",
+                "ErrDocAccessInvalid": "Dokumenten-Zugriff: Ungültiger Beruf oder Rang angegeben!"
+            },
+            "ApprovalService": {
+                "ErrApprovalTaskAlreadyHandled": {
+                    "title": "Genehmigungsaufgabe bereits bearbeitet!",
+                    "content": "Diese Genehmigungsaufgabe wurde bereits genehmigt/abgelehnt."
+                },
+                "ErrApprovalSignatureRequired": {
+                    "title": "Genehmigungsunterschrift erforderlich!",
+                    "content": "Sie müssen eine Unterschrift leisten, um dieses Dokument zu genehmigen."
+                },
+                "ErrApprovalDocIsDraft": {
+                    "title": "Dokument ist ein Entwurf!",
+                    "content": "Nur veröffentlichte Dokumente können genehmigt werden."
+                }
+            }
+        },
+        "livemap": {
+            "LivemapService": {
+                "ErrStreamFailed": "Karten-Datenstrom fehlgeschlagen!",
+                "ErrMarkerFailed": "Fehler beim Erstellen/ Aktualisieren/ Löschen der Markierung!"
+            }
+        },
+        "settings": {
+            "SettingsService": {
+                "ErrFailedQuery": "Fehler beim Zugriff auf die Einstellungen!",
+                "ErrInvalidRequest": "Ungültige Rollen Anfrage!",
+                "ErrNoPermission": "Keine Berechtigung um Rollen zu erstellen/ ändern/ löschen!",
+                "ErrRoleAlreadyExists": "Rolle existiert bereits!",
+                "ErrOwnRoleDeletion": "Eigene Rolle kann nicht gelöscht werden!",
+                "ErrInvalidPerms": "Fehler beim Aktualisieren der Rollen Berechtigungen!",
+                "ErrInvalidAttrs": "Fehler beim Aktualisieren der Rollen Attributen!",
+                "ErrDiscordNotEnabled": "Discord ist nicht aktiviert!",
+                "ErrDiscordConnectRequired": {
+                    "title": "Sie müssen Ihr Discord-Konto verbunden haben!",
+                    "content": "Bitte stellen Sie sicher, dass Ihr Discord-Konto mit FiveNet verbunden ist."
+                },
+                "ErrCannotDeleteOwnAccount": {
+                    "title": "Du kannst deinen eigenen Account nicht löschen!",
+                    "content": "Bitte logge dich mit einem anderen Account ein, um diesen Account zu löschen."
+                }
             }
         },
         "Filestore": {
             "ErrInvalidUploadMeta": "Ungültige Upload-Metadaten!",
             "ErrUploadFileTooLarge": "Datei ist zu groß zum Hochladen! Die maximale Dateigröße beträgt {maxSize} MB."
         },
-        "NotificationsService": {
-            "ErrFailedRequest": "Laden von Benachrichtigungs-Daten fehlgeschlagen!",
-            "ErrFailedStream": "Fehler beim Benachrichtigungs-Datenstrom!"
+        "notifications": {
+            "NotificationsService": {
+                "ErrFailedRequest": "Laden von Benachrichtigungs-Daten fehlgeschlagen!",
+                "ErrFailedStream": "Fehler beim Benachrichtigungs-Datenstrom!"
+            }
         }
     },
     "system": {
@@ -3154,7 +3190,10 @@
                     "attrs_types": {
                         "Jobs": "Fraktionen"
                     }
-                },
+                }
+            },
+            "LabelsService": {
+                "category": "Bürger-Labels",
                 "ManageLabels": {
                     "key": "Verwalten von Bürger-Labels",
                     "description": "Erstellen, aktualisieren und löschen von Bürger-Labels."

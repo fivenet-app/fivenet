@@ -61,4 +61,9 @@ var (
 		&common.I18NItem{Key: "errors.CitizensService.ErrCitizenNotFound"},
 		nil,
 	)
+	ErrLabelNotFound = common.NewI18nErr(
+		codes.NotFound,
+		&common.I18NItem{Key: "errors.citizens.LabelsService.ErrLabelNotFound"},
+		nil,
+	)
 )

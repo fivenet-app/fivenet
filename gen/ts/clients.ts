@@ -26,6 +26,12 @@ export async function getCitizensCitizensClient() {
     return new CitizensServiceClient(useGRPCTransport());
 }
 
+// Factory for citizens.labels client.
+export async function getCitizensLabelsClient() {
+    const { LabelsServiceClient } = await import('~~/gen/ts/services/citizens/labels.client');
+    return new LabelsServiceClient(useGRPCTransport());
+}
+
 // Factory for completor.completor client.
 export async function getCompletorCompletorClient() {
     const { CompletorServiceClient } = await import('~~/gen/ts/services/completor/completor.client');

@@ -38,7 +38,7 @@ var (
 	)
 	ErrCharLock = common.NewI18nErr(
 		codes.PermissionDenied,
-		&common.I18NItem{Key: "errors.AuthService.ErrCharLock.content"},
-		&common.I18NItem{Key: "errors.AuthService.ErrCharLock.title"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrCharLock.content"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrCharLock.title"},
 	)
 )

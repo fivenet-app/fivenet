@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package resources.citizens.labels;
+
+import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "google/protobuf/duration.proto";
+import "resources/timestamp/timestamp.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels;citizenslabels";
+
+message Labels {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  repeated Label list = 1 [(buf.validate.field).repeated.max_items = 10];
+}
+
+message Label {
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+
+  optional string job = 5 [(buf.validate.field).string.max_len = 20];
+  string name = 6 [
+    (buf.validate.field).string.max_len = 48,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  string color = 7 [
+    (buf.validate.field).string = {
+      len: 7
+      pattern: "^#[A-Fa-f0-9]{6}$"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  optional string icon = 8 [
+    (buf.validate.field).string = {max_len: 128},
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+
+  optional Settings settings = 9;
+  optional Access access = 10 [(buf.validate.field).required = true];
+
+  // Citizen label assignment data
+  optional resources.timestamp.Timestamp expires_at = 11;
+  optional string reason = 12 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+}
+
+message Settings {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  bool requires_expiration = 1;
+  optional google.protobuf.Duration min_duration = 2 [(buf.validate.field).duration = {
+    gte: {seconds: 900} /* 15 minutes */
+    lte: {seconds: 157680000} /* 5 years */
+  }];
+  optional google.protobuf.Duration max_duration = 3 [(buf.validate.field).duration = {
+    gte: {seconds: 900} /* 15 minutes */
+    lte: {seconds: 157680000} /* 5 years */
+  }];
+}
+
+enum AccessLevel {
+  ACCESS_LEVEL_UNSPECIFIED = 0;
+  ACCESS_LEVEL_VIEW = 1;
+  ACCESS_LEVEL_ADD = 2;
+  ACCESS_LEVEL_REMOVE = 3;
+  ACCESS_LEVEL_EDIT = 4;
+}
+
+message Access {
+  repeated JobAccess jobs = 1 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"job_access\""
+  ];
+}
+
+message JobAccess {
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\""];
+  int64 target_id = 2;
+  string job = 3 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 4 [(buf.validate.field).string.max_len = 50];
+  int32 minimum_grade = 5 [(buf.validate.field).int32.gte = 0];
+  optional string job_grade_label = 6 [(buf.validate.field).string.max_len = 50];
+  AccessLevel access = 7 [(buf.validate.field).enum.defined_only = true];
+}

@@ -11,10 +11,10 @@ package usersactivity
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
+	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	relations "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
-	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels"
-	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -377,6 +377,7 @@ type UserActivityData struct {
 	//	*UserActivityData_TrafficInfractionPointsChange
 	//	*UserActivityData_MugshotChange
 	//	*UserActivityData_LabelsChange
+	//	*UserActivityData_LabelChange
 	//	*UserActivityData_JobChange
 	//	*UserActivityData_DocumentRelation
 	//	*UserActivityData_JailChange
@@ -472,6 +473,15 @@ func (x *UserActivityData) GetLabelsChange() *LabelsChange {
 	return nil
 }
 
+func (x *UserActivityData) GetLabelChange() *LabelChange {
+	if x != nil {
+		if x, ok := x.Data.(*UserActivityData_LabelChange); ok {
+			return x.LabelChange
+		}
+	}
+	return nil
+}
+
 func (x *UserActivityData) GetJobChange() *JobChange {
 	if x != nil {
 		if x, ok := x.Data.(*UserActivityData_JobChange); ok {
@@ -554,6 +564,14 @@ func (x *UserActivityData) SetLabelsChange(v *LabelsChange) {
 		return
 	}
 	x.Data = &UserActivityData_LabelsChange{v}
+}
+
+func (x *UserActivityData) SetLabelChange(v *LabelChange) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &UserActivityData_LabelChange{v}
 }
 
 func (x *UserActivityData) SetJobChange(v *JobChange) {
@@ -643,6 +661,14 @@ func (x *UserActivityData) HasLabelsChange() bool {
 	return ok
 }
 
+func (x *UserActivityData) HasLabelChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserActivityData_LabelChange)
+	return ok
+}
+
 func (x *UserActivityData) HasJobChange() bool {
 	if x == nil {
 		return false
@@ -715,6 +741,12 @@ func (x *UserActivityData) ClearLabelsChange() {
 	}
 }
 
+func (x *UserActivityData) ClearLabelChange() {
+	if _, ok := x.Data.(*UserActivityData_LabelChange); ok {
+		x.Data = nil
+	}
+}
+
 func (x *UserActivityData) ClearJobChange() {
 	if _, ok := x.Data.(*UserActivityData_JobChange); ok {
 		x.Data = nil
@@ -746,6 +778,7 @@ const UserActivityData_WantedChange_case case_UserActivityData_Data = 3
 const UserActivityData_TrafficInfractionPointsChange_case case_UserActivityData_Data = 4
 const UserActivityData_MugshotChange_case case_UserActivityData_Data = 5
 const UserActivityData_LabelsChange_case case_UserActivityData_Data = 6
+const UserActivityData_LabelChange_case case_UserActivityData_Data = 11
 const UserActivityData_JobChange_case case_UserActivityData_Data = 7
 const UserActivityData_DocumentRelation_case case_UserActivityData_Data = 8
 const UserActivityData_JailChange_case case_UserActivityData_Data = 9
@@ -768,6 +801,8 @@ func (x *UserActivityData) WhichData() case_UserActivityData_Data {
 		return UserActivityData_MugshotChange_case
 	case *UserActivityData_LabelsChange:
 		return UserActivityData_LabelsChange_case
+	case *UserActivityData_LabelChange:
+		return UserActivityData_LabelChange_case
 	case *UserActivityData_JobChange:
 		return UserActivityData_JobChange_case
 	case *UserActivityData_DocumentRelation:
@@ -792,6 +827,7 @@ type UserActivityData_builder struct {
 	TrafficInfractionPointsChange *TrafficInfractionPointsChange
 	MugshotChange                 *MugshotChange
 	LabelsChange                  *LabelsChange
+	LabelChange                   *LabelChange
 	JobChange                     *JobChange
 	// Docstore related
 	DocumentRelation *CitizenDocumentRelation
@@ -822,6 +858,9 @@ func (b0 UserActivityData_builder) Build() *UserActivityData {
 	}
 	if b.LabelsChange != nil {
 		x.Data = &UserActivityData_LabelsChange{b.LabelsChange}
+	}
+	if b.LabelChange != nil {
+		x.Data = &UserActivityData_LabelChange{b.LabelChange}
 	}
 	if b.JobChange != nil {
 		x.Data = &UserActivityData_JobChange{b.JobChange}
@@ -877,6 +916,10 @@ type UserActivityData_LabelsChange struct {
 	LabelsChange *LabelsChange `protobuf:"bytes,6,opt,name=labels_change,json=labelsChange,proto3,oneof"`
 }
 
+type UserActivityData_LabelChange struct {
+	LabelChange *LabelChange `protobuf:"bytes,11,opt,name=label_change,json=labelChange,proto3,oneof"`
+}
+
 type UserActivityData_JobChange struct {
 	JobChange *JobChange `protobuf:"bytes,7,opt,name=job_change,json=jobChange,proto3,oneof"`
 }
@@ -906,6 +949,8 @@ func (*UserActivityData_TrafficInfractionPointsChange) isUserActivityData_Data()
 func (*UserActivityData_MugshotChange) isUserActivityData_Data() {}
 
 func (*UserActivityData_LabelsChange) isUserActivityData_Data() {}
+
+func (*UserActivityData_LabelChange) isUserActivityData_Data() {}
 
 func (*UserActivityData_JobChange) isUserActivityData_Data() {}
 
@@ -1269,6 +1314,7 @@ func (b0 MugshotChange_builder) Build() *MugshotChange {
 	return m0
 }
 
+// @deprecated
 type LabelsChange struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Added         []*labels.Label        `protobuf:"bytes,1,rep,name=added,proto3" json:"added,omitempty"`
@@ -1340,6 +1386,127 @@ func (b0 LabelsChange_builder) Build() *LabelsChange {
 	return m0
 }
 
+type LabelChange struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Label         *labels.Label          `protobuf:"bytes,1,opt,name=label,proto3" json:"label,omitempty"`
+	Added         bool                   `protobuf:"varint,2,opt,name=added,proto3" json:"added,omitempty"`
+	ExpiresAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
+	Expired       bool                   `protobuf:"varint,4,opt,name=expired,proto3" json:"expired,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LabelChange) Reset() {
+	*x = LabelChange{}
+	mi := &file_resources_users_activity_activity_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LabelChange) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LabelChange) ProtoMessage() {}
+
+func (x *LabelChange) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_users_activity_activity_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *LabelChange) GetLabel() *labels.Label {
+	if x != nil {
+		return x.Label
+	}
+	return nil
+}
+
+func (x *LabelChange) GetAdded() bool {
+	if x != nil {
+		return x.Added
+	}
+	return false
+}
+
+func (x *LabelChange) GetExpiresAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
+}
+
+func (x *LabelChange) GetExpired() bool {
+	if x != nil {
+		return x.Expired
+	}
+	return false
+}
+
+func (x *LabelChange) SetLabel(v *labels.Label) {
+	x.Label = v
+}
+
+func (x *LabelChange) SetAdded(v bool) {
+	x.Added = v
+}
+
+func (x *LabelChange) SetExpiresAt(v *timestamp.Timestamp) {
+	x.ExpiresAt = v
+}
+
+func (x *LabelChange) SetExpired(v bool) {
+	x.Expired = v
+}
+
+func (x *LabelChange) HasLabel() bool {
+	if x == nil {
+		return false
+	}
+	return x.Label != nil
+}
+
+func (x *LabelChange) HasExpiresAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.ExpiresAt != nil
+}
+
+func (x *LabelChange) ClearLabel() {
+	x.Label = nil
+}
+
+func (x *LabelChange) ClearExpiresAt() {
+	x.ExpiresAt = nil
+}
+
+type LabelChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Label     *labels.Label
+	Added     bool
+	ExpiresAt *timestamp.Timestamp
+	Expired   bool
+}
+
+func (b0 LabelChange_builder) Build() *LabelChange {
+	m0 := &LabelChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Label = b.Label
+	x.Added = b.Added
+	x.ExpiresAt = b.ExpiresAt
+	x.Expired = b.Expired
+	return m0
+}
+
 type JobChange struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Job           *string                `protobuf:"bytes,1,opt,name=job,proto3,oneof" json:"job,omitempty"`
@@ -1352,7 +1519,7 @@ type JobChange struct {
 
 func (x *JobChange) Reset() {
 	*x = JobChange{}
-	mi := &file_resources_users_activity_activity_proto_msgTypes[8]
+	mi := &file_resources_users_activity_activity_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1364,7 +1531,7 @@ func (x *JobChange) String() string {
 func (*JobChange) ProtoMessage() {}
 
 func (x *JobChange) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_users_activity_activity_proto_msgTypes[8]
+	mi := &file_resources_users_activity_activity_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1494,7 +1661,7 @@ type CitizenDocumentRelation struct {
 
 func (x *CitizenDocumentRelation) Reset() {
 	*x = CitizenDocumentRelation{}
-	mi := &file_resources_users_activity_activity_proto_msgTypes[9]
+	mi := &file_resources_users_activity_activity_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1506,7 +1673,7 @@ func (x *CitizenDocumentRelation) String() string {
 func (*CitizenDocumentRelation) ProtoMessage() {}
 
 func (x *CitizenDocumentRelation) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_users_activity_activity_proto_msgTypes[9]
+	mi := &file_resources_users_activity_activity_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1579,7 +1746,7 @@ type JailChange struct {
 
 func (x *JailChange) Reset() {
 	*x = JailChange{}
-	mi := &file_resources_users_activity_activity_proto_msgTypes[10]
+	mi := &file_resources_users_activity_activity_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1591,7 +1758,7 @@ func (x *JailChange) String() string {
 func (*JailChange) ProtoMessage() {}
 
 func (x *JailChange) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_users_activity_activity_proto_msgTypes[10]
+	mi := &file_resources_users_activity_activity_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1674,7 +1841,7 @@ type FineChange struct {
 
 func (x *FineChange) Reset() {
 	*x = FineChange{}
-	mi := &file_resources_users_activity_activity_proto_msgTypes[11]
+	mi := &file_resources_users_activity_activity_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1686,7 +1853,7 @@ func (x *FineChange) String() string {
 func (*FineChange) ProtoMessage() {}
 
 func (x *FineChange) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_users_activity_activity_proto_msgTypes[11]
+	mi := &file_resources_users_activity_activity_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1739,7 +1906,7 @@ var File_resources_users_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"'resources/users/activity/activity.proto\x12\x18resources.users.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a-resources/documents/relations/relations.proto\x1a#resources/timestamp/timestamp.proto\x1a#resources/users/labels/labels.proto\x1a'resources/users/licenses/licenses.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xdf\a\n" +
+	"'resources/users/activity/activity.proto\x12\x18resources.users.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/citizens/labels/labels.proto\x1a*resources/citizens/licenses/licenses.proto\x1a-resources/documents/relations/relations.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xdf\a\n" +
 	"\fUserActivity\x12-\n" +
 	"\x02id\x18\x01 \x01(\x03B\x1d\x9a\x84\x9e\x03\x18alias:\"user_activity.id\"R\x02id\x12_\n" +
 	"\x04type\x18\x02 \x01(\x0e2*.resources.users.activity.UserActivityTypeB\x1f\x9a\x84\x9e\x03\x1aalias:\"user_activity.type\"R\x04type\x12d\n" +
@@ -1759,7 +1926,7 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\tnew_value\x18\f \x01(\tB$\x9a\x84\x9e\x03\x1falias:\"user_activity.new_value\"R\bnewValueB\x11\n" +
 	"\x0f_source_user_idB\x0e\n" +
 	"\f_source_userB\a\n" +
-	"\x05_data\"\xee\x06\n" +
+	"\x05_data\"\xba\a\n" +
 	"\x10UserActivityData\x12G\n" +
 	"\vname_change\x18\x01 \x01(\v2$.resources.users.activity.NameChangeH\x00R\n" +
 	"nameChange\x12R\n" +
@@ -1767,7 +1934,8 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\rwanted_change\x18\x03 \x01(\v2&.resources.users.activity.WantedChangeH\x00R\fwantedChange\x12\x82\x01\n" +
 	" traffic_infraction_points_change\x18\x04 \x01(\v27.resources.users.activity.TrafficInfractionPointsChangeH\x00R\x1dtrafficInfractionPointsChange\x12P\n" +
 	"\x0emugshot_change\x18\x05 \x01(\v2'.resources.users.activity.MugshotChangeH\x00R\rmugshotChange\x12M\n" +
-	"\rlabels_change\x18\x06 \x01(\v2&.resources.users.activity.LabelsChangeH\x00R\flabelsChange\x12D\n" +
+	"\rlabels_change\x18\x06 \x01(\v2&.resources.users.activity.LabelsChangeH\x00R\flabelsChange\x12J\n" +
+	"\flabel_change\x18\v \x01(\v2%.resources.users.activity.LabelChangeH\x00R\vlabelChange\x12D\n" +
 	"\n" +
 	"job_change\x18\a \x01(\v2#.resources.users.activity.JobChangeH\x00R\tjobChange\x12`\n" +
 	"\x11document_relation\x18\b \x01(\v21.resources.users.activity.CitizenDocumentRelationH\x00R\x10documentRelation\x12G\n" +
@@ -1780,10 +1948,10 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\n" +
 	"NameChange\x12\x10\n" +
 	"\x03old\x18\x01 \x01(\tR\x03old\x12\x10\n" +
-	"\x03new\x18\x02 \x01(\tR\x03new\"d\n" +
+	"\x03new\x18\x02 \x01(\tR\x03new\"g\n" +
 	"\rLicenseChange\x12\x14\n" +
-	"\x05added\x18\x01 \x01(\bR\x05added\x12=\n" +
-	"\blicenses\x18\x02 \x03(\v2!.resources.users.licenses.LicenseR\blicenses\":\n" +
+	"\x05added\x18\x01 \x01(\bR\x05added\x12@\n" +
+	"\blicenses\x18\x02 \x03(\v2$.resources.citizens.licenses.LicenseR\blicenses\":\n" +
 	"\fWantedChange\x12\x16\n" +
 	"\x06wanted\x18\x01 \x01(\bR\x06wanted\x12\x12\n" +
 	"\x04auto\x18\x02 \x01(\bR\x04auto\"C\n" +
@@ -1792,10 +1960,17 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\x03new\x18\x02 \x01(\rR\x03new\".\n" +
 	"\rMugshotChange\x12\x15\n" +
 	"\x03new\x18\x01 \x01(\tH\x00R\x03new\x88\x01\x01B\x06\n" +
-	"\x04_new\"|\n" +
-	"\fLabelsChange\x123\n" +
-	"\x05added\x18\x01 \x03(\v2\x1d.resources.users.labels.LabelR\x05added\x127\n" +
-	"\aremoved\x18\x02 \x03(\v2\x1d.resources.users.labels.LabelR\aremoved\"\xb5\x01\n" +
+	"\x04_new\"\x82\x01\n" +
+	"\fLabelsChange\x126\n" +
+	"\x05added\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x05added\x12:\n" +
+	"\aremoved\x18\x02 \x03(\v2 .resources.citizens.labels.LabelR\aremoved\"\xc8\x01\n" +
+	"\vLabelChange\x126\n" +
+	"\x05label\x18\x01 \x01(\v2 .resources.citizens.labels.LabelR\x05label\x12\x14\n" +
+	"\x05added\x18\x02 \x01(\bR\x05added\x12B\n" +
+	"\n" +
+	"expires_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\texpiresAt\x88\x01\x01\x12\x18\n" +
+	"\aexpired\x18\x04 \x01(\bR\aexpiredB\r\n" +
+	"\v_expires_at\"\xb5\x01\n" +
 	"\tJobChange\x12\x15\n" +
 	"\x03job\x18\x01 \x01(\tH\x00R\x03job\x88\x01\x01\x12 \n" +
 	"\tjob_label\x18\x02 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12\x19\n" +
@@ -1837,7 +2012,7 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\x17USER_ACTIVITY_TYPE_FINE\x10\r\"\x04\b\x01\x10\x03BZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity;usersactivityb\x06proto3"
 
 var file_resources_users_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_users_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_resources_users_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_resources_users_activity_activity_proto_goTypes = []any{
 	(UserActivityType)(0),                 // 0: resources.users.activity.UserActivityType
 	(*UserActivity)(nil),                  // 1: resources.users.activity.UserActivity
@@ -1848,21 +2023,22 @@ var file_resources_users_activity_activity_proto_goTypes = []any{
 	(*TrafficInfractionPointsChange)(nil), // 6: resources.users.activity.TrafficInfractionPointsChange
 	(*MugshotChange)(nil),                 // 7: resources.users.activity.MugshotChange
 	(*LabelsChange)(nil),                  // 8: resources.users.activity.LabelsChange
-	(*JobChange)(nil),                     // 9: resources.users.activity.JobChange
-	(*CitizenDocumentRelation)(nil),       // 10: resources.users.activity.CitizenDocumentRelation
-	(*JailChange)(nil),                    // 11: resources.users.activity.JailChange
-	(*FineChange)(nil),                    // 12: resources.users.activity.FineChange
-	(*timestamp.Timestamp)(nil),           // 13: resources.timestamp.Timestamp
-	(*short.UserShort)(nil),               // 14: resources.users.short.UserShort
-	(*licenses.License)(nil),              // 15: resources.users.licenses.License
-	(*labels.Label)(nil),                  // 16: resources.users.labels.Label
-	(relations.DocRelation)(0),            // 17: resources.documents.relations.DocRelation
+	(*LabelChange)(nil),                   // 9: resources.users.activity.LabelChange
+	(*JobChange)(nil),                     // 10: resources.users.activity.JobChange
+	(*CitizenDocumentRelation)(nil),       // 11: resources.users.activity.CitizenDocumentRelation
+	(*JailChange)(nil),                    // 12: resources.users.activity.JailChange
+	(*FineChange)(nil),                    // 13: resources.users.activity.FineChange
+	(*timestamp.Timestamp)(nil),           // 14: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),               // 15: resources.users.short.UserShort
+	(*licenses.License)(nil),              // 16: resources.citizens.licenses.License
+	(*labels.Label)(nil),                  // 17: resources.citizens.labels.Label
+	(relations.DocRelation)(0),            // 18: resources.documents.relations.DocRelation
 }
 var file_resources_users_activity_activity_proto_depIdxs = []int32{
 	0,  // 0: resources.users.activity.UserActivity.type:type_name -> resources.users.activity.UserActivityType
-	13, // 1: resources.users.activity.UserActivity.created_at:type_name -> resources.timestamp.Timestamp
-	14, // 2: resources.users.activity.UserActivity.source_user:type_name -> resources.users.short.UserShort
-	14, // 3: resources.users.activity.UserActivity.target_user:type_name -> resources.users.short.UserShort
+	14, // 1: resources.users.activity.UserActivity.created_at:type_name -> resources.timestamp.Timestamp
+	15, // 2: resources.users.activity.UserActivity.source_user:type_name -> resources.users.short.UserShort
+	15, // 3: resources.users.activity.UserActivity.target_user:type_name -> resources.users.short.UserShort
 	2,  // 4: resources.users.activity.UserActivity.data:type_name -> resources.users.activity.UserActivityData
 	3,  // 5: resources.users.activity.UserActivityData.name_change:type_name -> resources.users.activity.NameChange
 	4,  // 6: resources.users.activity.UserActivityData.licenses_change:type_name -> resources.users.activity.LicenseChange
@@ -1870,19 +2046,22 @@ var file_resources_users_activity_activity_proto_depIdxs = []int32{
 	6,  // 8: resources.users.activity.UserActivityData.traffic_infraction_points_change:type_name -> resources.users.activity.TrafficInfractionPointsChange
 	7,  // 9: resources.users.activity.UserActivityData.mugshot_change:type_name -> resources.users.activity.MugshotChange
 	8,  // 10: resources.users.activity.UserActivityData.labels_change:type_name -> resources.users.activity.LabelsChange
-	9,  // 11: resources.users.activity.UserActivityData.job_change:type_name -> resources.users.activity.JobChange
-	10, // 12: resources.users.activity.UserActivityData.document_relation:type_name -> resources.users.activity.CitizenDocumentRelation
-	11, // 13: resources.users.activity.UserActivityData.jail_change:type_name -> resources.users.activity.JailChange
-	12, // 14: resources.users.activity.UserActivityData.fine_change:type_name -> resources.users.activity.FineChange
-	15, // 15: resources.users.activity.LicenseChange.licenses:type_name -> resources.users.licenses.License
-	16, // 16: resources.users.activity.LabelsChange.added:type_name -> resources.users.labels.Label
-	16, // 17: resources.users.activity.LabelsChange.removed:type_name -> resources.users.labels.Label
-	17, // 18: resources.users.activity.CitizenDocumentRelation.relation:type_name -> resources.documents.relations.DocRelation
-	19, // [19:19] is the sub-list for method output_type
-	19, // [19:19] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	9,  // 11: resources.users.activity.UserActivityData.label_change:type_name -> resources.users.activity.LabelChange
+	10, // 12: resources.users.activity.UserActivityData.job_change:type_name -> resources.users.activity.JobChange
+	11, // 13: resources.users.activity.UserActivityData.document_relation:type_name -> resources.users.activity.CitizenDocumentRelation
+	12, // 14: resources.users.activity.UserActivityData.jail_change:type_name -> resources.users.activity.JailChange
+	13, // 15: resources.users.activity.UserActivityData.fine_change:type_name -> resources.users.activity.FineChange
+	16, // 16: resources.users.activity.LicenseChange.licenses:type_name -> resources.citizens.licenses.License
+	17, // 17: resources.users.activity.LabelsChange.added:type_name -> resources.citizens.labels.Label
+	17, // 18: resources.users.activity.LabelsChange.removed:type_name -> resources.citizens.labels.Label
+	17, // 19: resources.users.activity.LabelChange.label:type_name -> resources.citizens.labels.Label
+	14, // 20: resources.users.activity.LabelChange.expires_at:type_name -> resources.timestamp.Timestamp
+	18, // 21: resources.users.activity.CitizenDocumentRelation.relation:type_name -> resources.documents.relations.DocRelation
+	22, // [22:22] is the sub-list for method output_type
+	22, // [22:22] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_activity_activity_proto_init() }
@@ -1898,6 +2077,7 @@ func file_resources_users_activity_activity_proto_init() {
 		(*UserActivityData_TrafficInfractionPointsChange)(nil),
 		(*UserActivityData_MugshotChange)(nil),
 		(*UserActivityData_LabelsChange)(nil),
+		(*UserActivityData_LabelChange)(nil),
 		(*UserActivityData_JobChange)(nil),
 		(*UserActivityData_DocumentRelation)(nil),
 		(*UserActivityData_JailChange)(nil),
@@ -1905,14 +2085,15 @@ func file_resources_users_activity_activity_proto_init() {
 	}
 	file_resources_users_activity_activity_proto_msgTypes[6].OneofWrappers = []any{}
 	file_resources_users_activity_activity_proto_msgTypes[8].OneofWrappers = []any{}
-	file_resources_users_activity_activity_proto_msgTypes[10].OneofWrappers = []any{}
+	file_resources_users_activity_activity_proto_msgTypes[9].OneofWrappers = []any{}
+	file_resources_users_activity_activity_proto_msgTypes[11].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_users_activity_activity_proto_rawDesc), len(file_resources_users_activity_activity_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   12,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

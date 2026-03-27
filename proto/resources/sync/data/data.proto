@@ -7,7 +7,7 @@ import "resources/jobs/jobs.proto";
 import "resources/livemap/coords.proto";
 import "resources/sync/activity/activity.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/licenses/licenses.proto";
+import "resources/citizens/licenses/licenses.proto";
 import "resources/users/user.proto";
 import "resources/vehicles/vehicles.proto";
 import "tagger/tagger.proto";
@@ -31,7 +31,7 @@ message DataVehicles {
 }
 
 message DataLicenses {
-  repeated resources.users.licenses.License licenses = 1 [(buf.validate.field).repeated.max_items = 200];
+  repeated resources.citizens.licenses.License licenses = 1 [(buf.validate.field).repeated.max_items = 200];
 }
 
 message DataUserLocations {
@@ -153,7 +153,7 @@ message DataUser {
 
   // Used for user props.
   reserved 15;
-  repeated resources.users.licenses.License licenses = 16 [
+  repeated resources.citizens.licenses.License licenses = 16 [
     (buf.validate.field).repeated.max_items = 20,
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
     (tagger.tags) = "alias:\"user.licenses\""

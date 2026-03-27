@@ -6,9 +6,9 @@ import (
 	"slices"
 	"strings"
 
+	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
-	userslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
@@ -77,9 +77,9 @@ func GetUserLabels(
 	tx qrm.DB,
 	userId int32,
 	jobs []string,
-) (*userslabels.Labels, error) {
-	list := &userslabels.Labels{
-		List: []*userslabels.Label{},
+) (*citizenslabels.Labels, error) {
+	list := &citizenslabels.Labels{
+		List: []*citizenslabels.Label{},
 	}
 
 	if len(jobs) == 0 {
@@ -141,7 +141,7 @@ func (x *UserProps) Default() {
 	}
 
 	if x.GetLabels() == nil {
-		x.Labels = &userslabels.Labels{}
+		x.Labels = &citizenslabels.Labels{}
 	}
 }
 
@@ -228,10 +228,10 @@ func (x *UserProps) HandleChanges(
 
 	if in.GetLabels() != nil {
 		if in.Labels.List == nil {
-			in.Labels.List = []*userslabels.Label{}
+			in.Labels.List = []*citizenslabels.Label{}
 		}
 
-		slices.SortFunc(in.GetLabels().GetList(), func(a, b *userslabels.Label) int {
+		slices.SortFunc(in.GetLabels().GetList(), func(a, b *citizenslabels.Label) int {
 			return strings.Compare(a.GetName(), b.GetName())
 		})
 	} else {
@@ -367,13 +367,13 @@ func (x *UserProps) HandleChanges(
 	}
 	if x.GetLabels() != in.GetLabels() && !proto.Equal(in.GetLabels(), x.GetLabels()) {
 		if in.GetLabels() == nil {
-			in.Labels = &userslabels.Labels{}
+			in.Labels = &citizenslabels.Labels{}
 		}
 
 		added, removed := utils.SlicesDifferenceFunc(
 			x.GetLabels().GetList(),
 			in.GetLabels().GetList(),
-			func(in *userslabels.Label) int64 {
+			func(in *citizenslabels.Label) int64 {
 				return in.GetId()
 			},
 		)
@@ -405,8 +405,8 @@ func (s *UserProps) updateLabels(
 	ctx context.Context,
 	tx qrm.DB,
 	userId int32,
-	added []*userslabels.Label,
-	removed []*userslabels.Label,
+	added []*citizenslabels.Label,
+	removed []*citizenslabels.Label,
 ) error {
 	tUserLabels := table.FivenetUserLabels
 

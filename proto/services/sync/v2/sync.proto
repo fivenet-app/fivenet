@@ -9,7 +9,7 @@ import "resources/jobs/jobs.proto";
 import "resources/sync/activity/activity.proto";
 import "resources/sync/data/data.proto";
 import "resources/users/activity/activity.proto";
-import "resources/users/licenses/licenses.proto";
+import "resources/citizens/licenses/licenses.proto";
 import "resources/vehicles/vehicles.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync;sync";
@@ -92,7 +92,7 @@ message SendJobsDataRequest {
 }
 
 message SendLicensesDataRequest {
-  repeated resources.users.licenses.License licenses = 1 [(buf.validate.field).repeated.max_items = 200];
+  repeated resources.citizens.licenses.License licenses = 1 [(buf.validate.field).repeated.max_items = 200];
 }
 
 message SendAccountsDataRequest {

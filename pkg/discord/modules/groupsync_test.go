@@ -317,8 +317,8 @@ func TestGroupSyncPlanRoles(t *testing.T) {
 			cfg: &config.Discord{
 				GroupSync: config.DiscordGroupSync{
 					Mapping: map[string]config.DiscordGroupRole{
-						"Group.One": {RoleName: "Shared Role", Color: "#112233"},
-						"group.two": {RoleName: "Shared Role", Color: "#445566"},
+						"Group.One":       {RoleName: "Shared Role", Color: "#112233"},
+						"group.two":       {RoleName: "Shared Role", Color: "#445566"},
 						"  group.three  ": {RoleName: "Unique Role"},
 					},
 				},

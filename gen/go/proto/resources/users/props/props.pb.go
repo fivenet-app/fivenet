@@ -10,10 +10,10 @@ package usersprops
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
-	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -489,7 +489,7 @@ var File_resources_users_props_props_proto protoreflect.FileDescriptor
 
 const file_resources_users_props_props_proto_rawDesc = "" +
 	"\n" +
-	"!resources/users/props/props.proto\x12\x15resources.users.props\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19resources/file/file.proto\x1a\x19resources/jobs/jobs.proto\x1a#resources/timestamp/timestamp.proto\x1a#resources/users/labels/labels.proto\x1a\x13tagger/tagger.proto\"\xd0\t\n" +
+	"!resources/users/props/props.proto\x12\x15resources.users.props\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19resources/file/file.proto\x1a\x19resources/jobs/jobs.proto\x1a#resources/timestamp/timestamp.proto\x1a&resources/citizens/labels/labels.proto\x1a\x13tagger/tagger.proto\"\xd3\t\n" +
 	"\tUserProps\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12B\n" +
 	"\n" +
@@ -511,8 +511,8 @@ const file_resources_users_props_props_proto_rawDesc = "" +
 	"\n" +
 	"blood_type\x18\r \x01(\tH\vR\tbloodType\x88\x01\x01\x12+\n" +
 	"\x0fmugshot_file_id\x18\x0e \x01(\x03H\fR\rmugshotFileId\x88\x01\x01\x12I\n" +
-	"\amugshot\x18\x0f \x01(\v2\x14.resources.file.FileB\x14\x9a\x84\x9e\x03\x0falias:\"mugshot\"H\rR\amugshot\x88\x01\x01\x12;\n" +
-	"\x06labels\x18\x10 \x01(\v2\x1e.resources.users.labels.LabelsH\x0eR\x06labels\x88\x01\x01\x12#\n" +
+	"\amugshot\x18\x0f \x01(\v2\x14.resources.file.FileB\x14\x9a\x84\x9e\x03\x0falias:\"mugshot\"H\rR\amugshot\x88\x01\x01\x12>\n" +
+	"\x06labels\x18\x10 \x01(\v2!.resources.citizens.labels.LabelsH\x0eR\x06labels\x88\x01\x01\x12#\n" +
 	"\x05email\x18\x11 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x0fR\x05email\x88\x01\x01B\r\n" +
 	"\v_updated_atB\t\n" +
 	"\a_wantedB\f\n" +
@@ -541,7 +541,7 @@ var file_resources_users_props_props_proto_goTypes = []any{
 	(*jobs.Job)(nil),            // 2: resources.jobs.Job
 	(*jobs.JobGrade)(nil),       // 3: resources.jobs.JobGrade
 	(*file.File)(nil),           // 4: resources.file.File
-	(*labels.Labels)(nil),       // 5: resources.users.labels.Labels
+	(*labels.Labels)(nil),       // 5: resources.citizens.labels.Labels
 }
 var file_resources_users_props_props_proto_depIdxs = []int32{
 	1, // 0: resources.users.props.UserProps.updated_at:type_name -> resources.timestamp.Timestamp
@@ -551,7 +551,7 @@ var file_resources_users_props_props_proto_depIdxs = []int32{
 	3, // 4: resources.users.props.UserProps.job_grade:type_name -> resources.jobs.JobGrade
 	1, // 5: resources.users.props.UserProps.traffic_infraction_points_updated_at:type_name -> resources.timestamp.Timestamp
 	4, // 6: resources.users.props.UserProps.mugshot:type_name -> resources.file.File
-	5, // 7: resources.users.props.UserProps.labels:type_name -> resources.users.labels.Labels
+	5, // 7: resources.users.props.UserProps.labels:type_name -> resources.citizens.labels.Labels
 	8, // [8:8] is the sub-list for method output_type
 	8, // [8:8] is the sub-list for method input_type
 	8, // [8:8] is the sub-list for extension type_name

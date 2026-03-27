@@ -7,12 +7,12 @@ import (
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
-	userslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
@@ -405,23 +405,20 @@ func (s *Server) GetUser(
 
 	// Check if user can see licenses and fetch them
 	if !infoOnly && fields.Contains("Licenses") {
+		tCitizenLicenses := table.FivenetUserLicenses
 		tLicenses := table.FivenetLicenses
-		tCitizensLicenses := table.FivenetUserLicenses
 
-		stmt := tUser.
+		stmt := tCitizenLicenses.
 			SELECT(
-				tCitizensLicenses.Type.AS("license.type"),
+				tLicenses.Type.AS("license.type"),
 				tLicenses.Label.AS("license.label"),
 			).
 			FROM(
-				tCitizensLicenses.
-					INNER_JOIN(tUser,
-						tCitizensLicenses.UserID.EQ(tUser.ID),
-					).
+				tCitizenLicenses.
 					LEFT_JOIN(tLicenses,
-						tLicenses.Type.EQ(tCitizensLicenses.Type)),
+						tCitizenLicenses.Type.EQ(tLicenses.Type)),
 			).
-			WHERE(tUser.ID.EQ(mysql.Int32(req.GetUserId()))).
+			WHERE(tCitizenLicenses.UserID.EQ(mysql.Int32(req.GetUserId()))).
 			LIMIT(15)
 
 		if err := stmt.QueryContext(ctx, s.db, &resp.User.Licenses); err != nil {
@@ -482,8 +479,8 @@ func (s *Server) SetUserProps(
 		props.TrafficInfractionPoints = &ZeroTrafficInfractionPoints
 	}
 	if props.GetLabels() == nil {
-		props.Labels = &userslabels.Labels{
-			List: []*userslabels.Label{},
+		props.Labels = &citizenslabels.Labels{
+			List: []*citizenslabels.Label{},
 		}
 	}
 
@@ -598,17 +595,17 @@ func (s *Server) SetUserProps(
 		}
 
 		if req.Props.Labels.List == nil {
-			req.Props.Labels.List = []*userslabels.Label{}
+			req.Props.Labels.List = []*citizenslabels.Label{}
 		}
 
-		slices.SortFunc(req.GetProps().GetLabels().GetList(), func(a, b *userslabels.Label) int {
+		slices.SortFunc(req.GetProps().GetLabels().GetList(), func(a, b *citizenslabels.Label) int {
 			return strings.Compare(a.GetName(), b.GetName())
 		})
 
 		added, _ := utils.SlicesDifferenceFunc(
 			props.GetLabels().GetList(),
 			req.GetProps().GetLabels().GetList(),
-			func(in *userslabels.Label) int64 {
+			func(in *citizenslabels.Label) int64 {
 				return in.GetId()
 			},
 		)

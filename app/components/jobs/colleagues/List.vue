@@ -391,6 +391,11 @@ defineShortcuts({
                                                     :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
                                                     :style="{ backgroundColor: item.color }"
                                                     :label="item.name"
+                                                    :icon="
+                                                        item.icon && item.icon !== ''
+                                                            ? convertComponentIconNameToDynamic(item.icon)
+                                                            : undefined
+                                                    "
                                                 />
                                             </div>
                                         </template>
@@ -401,6 +406,11 @@ defineShortcuts({
                                                 :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
                                                 :style="{ backgroundColor: item.color }"
                                                 :label="item.name"
+                                                :icon="
+                                                    item.icon && item.icon !== ''
+                                                        ? convertComponentIconNameToDynamic(item.icon)
+                                                        : undefined
+                                                "
                                             />
                                         </template>
 
@@ -575,9 +585,14 @@ defineShortcuts({
                                                         ? 'text-black!'
                                                         : 'text-white!'
                                                 "
-                                                :style="{ backgroundColor: label.color }"
                                                 size="xs"
                                                 :label="label.name"
+                                                :icon="
+                                                    label.icon && label.icon !== ''
+                                                        ? convertComponentIconNameToDynamic(label.icon)
+                                                        : undefined
+                                                "
+                                                :style="{ backgroundColor: label.color }"
                                                 @click="toggleLabelInSearch(label)"
                                             />
                                         </div>
