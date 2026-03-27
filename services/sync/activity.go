@@ -53,7 +53,11 @@ func (s *Server) AddActivity(
 		}
 
 	case *pbsync.AddActivityRequest_ColleagueActivity:
-		if err := colleaguesactivity.CreateColleagueActivity(ctx, s.db, d.ColleagueActivity); err != nil {
+		if err := colleaguesactivity.CreateColleagueActivity(
+			ctx,
+			s.db,
+			d.ColleagueActivity,
+		); err != nil {
 			return nil, fmt.Errorf("failed to create jobs user activities. %w", err)
 		}
 
