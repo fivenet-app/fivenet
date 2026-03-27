@@ -122,8 +122,10 @@ const formRef = useTemplateRef('formRef');
 <template>
     <UModal :title="$t('components.citizens.citizen_labels.title')">
         <template #body>
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
-            <DataErrorBlock v-else-if="error" :error="error" :retry="refresh" />
+            <template v-if="labelId">
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
+                <DataErrorBlock v-else-if="error" :error="error" :retry="refresh" />
+            </template>
 
             <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="label.name" :label="$t('common.name')">
@@ -141,7 +143,7 @@ const formRef = useTemplateRef('formRef');
                 </UFormField>
 
                 <UFormField name="label.icon" :label="$t('common.icon')">
-                    <IconSelectMenu v-model="state.icon" name="label.icon" :hex-color="state.color" class="w-full" />
+                    <IconSelectMenu v-model="state.icon" name="label.icon" :hex-color="state.color" class="w-full" clear />
                 </UFormField>
 
                 <!--

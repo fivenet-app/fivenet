@@ -7,11 +7,13 @@ withDefaults(
         color?: string;
         hexColor?: string;
         fallbackIcon?: DefineComponent | IconEntry;
+        clear?: boolean;
     }>(),
     {
         color: undefined,
         hexColor: undefined,
         fallbackIcon: () => defaultIcon,
+        clear: false,
     },
 );
 
@@ -32,6 +34,7 @@ const icon = defineModel<string | undefined>('modelValue');
             label-key="label"
             value-key="name"
             virtualize
+            :clear="clear"
             v-bind="$attrs"
         >
             <template v-if="icon" #default>

@@ -86,26 +86,8 @@ func (s *Server) ListLabels(
 ) (*pbcitizens.ListLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	jobs, err := s.ps.AttrJobList(
-		userInfo,
-		permscompletor.CompletorServicePerm,
-		permscompletor.CompletorServiceCompleteCitizenLabelsPerm,
-		permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField,
-	)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
-	if jobs.Len() == 0 {
-		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
-	}
-
-	jobsExp := make([]mysql.Expression, jobs.Len())
-	for i := range jobs.GetStrings() {
-		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
-	}
-
 	condition := mysql.AND(
-		tCitizensLabelsJob.Job.IN(jobsExp...),
+		tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
 	)
 	if !userInfo.GetSuperuser() {
 		condition = condition.AND(tCitizensLabelsJob.DeletedAt.IS_NULL())
@@ -224,6 +206,8 @@ func (s *Server) CreateOrUpdateLabel(
 
 	label := req.GetLabel()
 	label.Job = &userInfo.Job
+
+	tCitizensLabelsJob := table.FivenetUserLabelsJob
 
 	if req.GetLabel().GetId() > 0 {
 		stmt := tCitizensLabelsJob.
