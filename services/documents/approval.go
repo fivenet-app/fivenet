@@ -533,7 +533,12 @@ func (s *Server) UpsertApprovalPolicy(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if err := s.recomputeApprovalPolicyTx(ctx, tx, policy.GetDocumentId(), policy.GetSnapshotDate()); err != nil {
+	if err := s.recomputeApprovalPolicyTx(
+		ctx,
+		tx,
+		policy.GetDocumentId(),
+		policy.GetSnapshotDate(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -794,7 +799,13 @@ func (s *Server) createApprovalTasks(
 				WHERE(mysql.AND(
 					tApprovalTasks.DocumentID.EQ(mysql.Int64(documentId)),
 					tApprovalTasks.SnapshotDate.EQ(dbutils.TimestampToMySQLDateTimeSec(snapDate)),
-					tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER))),
+					tApprovalTasks.AssigneeKind.EQ(
+						mysql.Int32(
+							int32(
+								documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER,
+							),
+						),
+					),
 					tApprovalTasks.UserID.EQ(mysql.Int32(seed.GetUserId())),
 				)).
 				LIMIT(1).
@@ -856,10 +867,20 @@ func (s *Server) createApprovalTasks(
 			WHERE(mysql.AND(
 				tApprovalTasks.DocumentID.EQ(mysql.Int64(documentId)),
 				tApprovalTasks.SnapshotDate.EQ(dbutils.TimestampToMySQLDateTimeSec(snapDate)),
-				tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE))),
+				tApprovalTasks.AssigneeKind.EQ(
+					mysql.Int32(
+						int32(
+							documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE,
+						),
+					),
+				),
 				tApprovalTasks.Job.EQ(mysql.String(seed.GetJob())),
 				tApprovalTasks.MinimumGrade.EQ(mysql.Int32(seed.GetMinimumGrade())),
-				tApprovalTasks.Status.EQ(mysql.Int32(int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING))),
+				tApprovalTasks.Status.EQ(
+					mysql.Int32(
+						int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING),
+					),
+				),
 			)).
 			LIMIT(1).
 			QueryContext(ctx, tx, &have); err != nil {
@@ -1026,7 +1047,12 @@ func (s *Server) DeleteApprovalTasks(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if err := s.recomputeApprovalPolicyTx(ctx, tx, pol.DocumentId, pol.GetSnapshotDate()); err != nil {
+	if err := s.recomputeApprovalPolicyTx(
+		ctx,
+		tx,
+		pol.DocumentId,
+		pol.GetSnapshotDate(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -1321,7 +1347,12 @@ func (s *Server) RevokeApproval(
 	}
 
 	// Recompute approvals for this policy+snapshot
-	if err := s.recomputeApprovalPolicyTx(ctx, tx, pol.GetDocumentId(), pol.GetSnapshotDate()); err != nil {
+	if err := s.recomputeApprovalPolicyTx(
+		ctx,
+		tx,
+		pol.GetDocumentId(),
+		pol.GetSnapshotDate(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -1401,7 +1432,9 @@ func (s *Server) DecideApproval(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if pol.GetSignatureRequired() && req.GetStampId() == 0 && req.GetPayloadSvg() == "" {
+	// If signature is required, must have either stamp_id or payload_svg. Declining doesn't require signature, so allow empty if declining.
+	if pol.GetSignatureRequired() && req.GetStampId() == 0 && req.GetPayloadSvg() == "" &&
+		req.GetNewStatus() != documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_DECLINED {
 		return nil, errorsdocuments.ErrApprovalSignatureRequired
 	}
 
@@ -1483,21 +1516,46 @@ func (s *Server) DecideApproval(
 		var candidate documentsapproval.ApprovalTask
 		stmt := tApprovalTasks.
 			SELECT(
-				tApprovalTasks.ID, tApprovalTasks.DocumentID, tApprovalTasks.SnapshotDate, tApprovalTasks.AssigneeKind,
-				tApprovalTasks.UserID, tApprovalTasks.Job, tApprovalTasks.MinimumGrade, tApprovalTasks.Label, tApprovalTasks.SignatureRequired, tApprovalTasks.SlotNo,
-				tApprovalTasks.Status, tApprovalTasks.Comment, tApprovalTasks.CreatedAt, tApprovalTasks.CompletedAt, tApprovalTasks.DueAt,
-				tApprovalTasks.DecisionCount, tApprovalTasks.CreatorID, tApprovalTasks.CreatorJob, tApprovalTasks.ApprovalID,
+				tApprovalTasks.ID,
+				tApprovalTasks.DocumentID,
+				tApprovalTasks.SnapshotDate,
+				tApprovalTasks.AssigneeKind,
+				tApprovalTasks.UserID,
+				tApprovalTasks.Job,
+				tApprovalTasks.MinimumGrade,
+				tApprovalTasks.Label,
+				tApprovalTasks.SignatureRequired,
+				tApprovalTasks.SlotNo,
+				tApprovalTasks.Status,
+				tApprovalTasks.Comment,
+				tApprovalTasks.CreatedAt,
+				tApprovalTasks.CompletedAt,
+				tApprovalTasks.DueAt,
+				tApprovalTasks.DecisionCount,
+				tApprovalTasks.CreatorID,
+				tApprovalTasks.CreatorJob,
+				tApprovalTasks.ApprovalID,
 			).
 			FROM(tApprovalTasks).
 			WHERE(mysql.AND(
 				tApprovalTasks.DocumentID.EQ(mysql.Int64(pol.GetDocumentId())),
 				tApprovalTasks.SnapshotDate.EQ(dbutils.TimestampToMySQLDateTimeSec(snapDate)),
-				tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER))),
+				tApprovalTasks.AssigneeKind.EQ(
+					mysql.Int32(
+						int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER),
+					),
+				),
 				tApprovalTasks.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 				tApprovalTasks.Status.IN(
-					mysql.Int32(int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING)),
-					mysql.Int32(int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_DECLINED)),
-					mysql.Int32(int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_CANCELLED)),
+					mysql.Int32(
+						int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING),
+					),
+					mysql.Int32(
+						int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_DECLINED),
+					),
+					mysql.Int32(
+						int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_CANCELLED),
+					),
 				),
 			)).
 			ORDER_BY(tApprovalTasks.SlotNo.ASC(), tApprovalTasks.CreatedAt.ASC()).
@@ -1514,22 +1572,55 @@ func (s *Server) DecideApproval(
 		if !useCandidate {
 			stmt := tApprovalTasks.
 				SELECT(
-					tApprovalTasks.ID, tApprovalTasks.DocumentID, tApprovalTasks.SnapshotDate, tApprovalTasks.AssigneeKind,
-					tApprovalTasks.UserID, tApprovalTasks.Job, tApprovalTasks.MinimumGrade, tApprovalTasks.Label, tApprovalTasks.SignatureRequired, tApprovalTasks.SlotNo,
-					tApprovalTasks.Status, tApprovalTasks.Comment, tApprovalTasks.CreatedAt, tApprovalTasks.CompletedAt, tApprovalTasks.DueAt,
-					tApprovalTasks.DecisionCount, tApprovalTasks.CreatorID, tApprovalTasks.CreatorJob, tApprovalTasks.ApprovalID,
+					tApprovalTasks.ID,
+					tApprovalTasks.DocumentID,
+					tApprovalTasks.SnapshotDate,
+					tApprovalTasks.AssigneeKind,
+					tApprovalTasks.UserID,
+					tApprovalTasks.Job,
+					tApprovalTasks.MinimumGrade,
+					tApprovalTasks.Label,
+					tApprovalTasks.SignatureRequired,
+					tApprovalTasks.SlotNo,
+					tApprovalTasks.Status,
+					tApprovalTasks.Comment,
+					tApprovalTasks.CreatedAt,
+					tApprovalTasks.CompletedAt,
+					tApprovalTasks.DueAt,
+					tApprovalTasks.DecisionCount,
+					tApprovalTasks.CreatorID,
+					tApprovalTasks.CreatorJob,
+					tApprovalTasks.ApprovalID,
 				).
 				FROM(tApprovalTasks).
 				WHERE(mysql.AND(
 					tApprovalTasks.DocumentID.EQ(mysql.Int64(pol.GetDocumentId())),
 					tApprovalTasks.SnapshotDate.EQ(dbutils.TimestampToMySQLDateTimeSec(snapDate)),
-					tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE))),
+					tApprovalTasks.AssigneeKind.EQ(
+						mysql.Int32(
+							int32(
+								documentsapproval.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE,
+							),
+						),
+					),
 					tApprovalTasks.Job.EQ(mysql.String(userInfo.GetJob())),
 					tApprovalTasks.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 					tApprovalTasks.Status.IN(
-						mysql.Int32(int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING)),
-						mysql.Int32(int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_DECLINED)),
-						mysql.Int32(int32(documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_CANCELLED)),
+						mysql.Int32(
+							int32(
+								documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING,
+							),
+						),
+						mysql.Int32(
+							int32(
+								documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_DECLINED,
+							),
+						),
+						mysql.Int32(
+							int32(
+								documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_CANCELLED,
+							),
+						),
 					),
 				)).
 				ORDER_BY(tApprovalTasks.SlotNo.ASC(), tApprovalTasks.CreatedAt.ASC()).
@@ -1566,7 +1657,9 @@ func (s *Server) DecideApproval(
 		}
 	}
 
-	if decidedTask.GetSignatureRequired() && req.GetStampId() == 0 && req.GetPayloadSvg() == "" {
+	// If signature is required for the task, must have either stamp_id or payload_svg. Declining doesn't require signature, so allow empty if declining.
+	if decidedTask.GetSignatureRequired() && req.GetStampId() == 0 && req.GetPayloadSvg() == "" &&
+		req.GetNewStatus() != documentsapproval.ApprovalTaskStatus_APPROVAL_TASK_STATUS_DECLINED {
 		return nil, errorsdocuments.ErrApprovalSignatureRequired
 	}
 
@@ -1879,7 +1972,12 @@ func (s *Server) RecomputeApprovalPolicyCounters(
 		return nil, err
 	}
 
-	if err := s.recomputeApprovalPolicyTx(ctx, s.db, req.GetDocumentId(), pol.GetSnapshotDate()); err != nil {
+	if err := s.recomputeApprovalPolicyTx(
+		ctx,
+		s.db,
+		req.GetDocumentId(),
+		pol.GetSnapshotDate(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
