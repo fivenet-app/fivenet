@@ -80,6 +80,7 @@ func NewMigrate(db *sql.DB, disableLocking bool) (*migrate.Migrate, error) {
 // MigrateDB runs database migrations using golang-migrate, logging progress and errors.
 // It prepares the DSN, connects to the DB, runs migrations, and logs the result.
 func MigrateDB(
+	ctx context.Context,
 	logger *zap.Logger,
 	dbDSN string,
 	ignoreReqs bool,
@@ -100,7 +101,7 @@ func MigrateDB(
 
 	logger.Info("verifying database requirements")
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	req := reqs.NewDBReqs(db)

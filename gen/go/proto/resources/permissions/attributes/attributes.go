@@ -288,44 +288,37 @@ func ValidateJobGradeList(
 				continue
 			}
 
-			for _, grade := range grades.GetGrades() {
-				if vg, ok := maxVals[job]; ok {
-					currentLen := len(in.GetGrades()[job].GetGrades())
-					// Remove all grades that are greater than the max grade
-					in.Grades[job].Grades = slices.DeleteFunc(
-						in.GetGrades()[job].GetGrades(),
-						func(ig int32) bool {
-							return grade > vg
-						},
-					)
+			if vg, ok := maxVals[job]; ok {
+				currentLen := len(grades.GetGrades())
+				// Remove all grades that are greater than the max grade.
+				grades.Grades = slices.DeleteFunc(grades.GetGrades(), func(ig int32) bool {
+					return ig > vg
+				})
 
-					if currentLen != len(in.GetGrades()[job].GetGrades()) {
+				if currentLen != len(grades.GetGrades()) {
+					changed = true
+				}
+			} else {
+				delete(in.GetGrades(), job)
+				changed = true
+				continue
+			}
+
+			// If valid vals are empty/ nil, don't check them.
+			if len(validVals) > 0 {
+				if vg, ok := validVals[job]; ok {
+					currentLen := len(grades.GetGrades())
+					// Remove all grades that are greater than the max grade.
+					grades.Grades = slices.DeleteFunc(grades.GetGrades(), func(ig int32) bool {
+						return ig > vg
+					})
+
+					if currentLen != len(grades.GetGrades()) {
 						changed = true
 					}
 				} else {
 					delete(in.GetGrades(), job)
 					changed = true
-				}
-
-				// If valid vals are empty/ nil, don't check them
-				if len(validVals) > 0 {
-					if vg, ok := validVals[job]; ok {
-						currentLen := len(in.GetGrades()[job].GetGrades())
-						// Remove all grades that are greater than the max grade
-						in.Grades[job].Grades = slices.DeleteFunc(
-							in.GetGrades()[job].GetGrades(),
-							func(ig int32) bool {
-								return grade > vg
-							},
-						)
-
-						if currentLen != len(in.GetGrades()[job].GetGrades()) {
-							changed = true
-						}
-					} else {
-						delete(in.GetGrades(), job)
-						changed = true
-					}
 				}
 			}
 		}

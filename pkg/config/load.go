@@ -134,7 +134,11 @@ func Load() (Result, error) {
 		// Build detailed validation error message
 		var msg strings.Builder
 		msg.WriteString("Invalid FiveNet config detected:\n")
-		for _, validationErr := range err.(validator.ValidationErrors) {
+		for _, validationErr := range func() validator.ValidationErrors {
+			var target validator.ValidationErrors
+			_ = errors.As(err, &target)
+			return target
+		}() {
 			fmt.Fprintf(&msg, "- Field %q violated %s validation.\n",
 				validationErr.StructNamespace(),
 				validationErr.Tag())

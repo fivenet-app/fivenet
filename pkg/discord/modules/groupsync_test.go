@@ -1,7 +1,6 @@
 package modules
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 	"testing"
@@ -17,6 +16,7 @@ import (
 )
 
 func TestGroupSyncPlanUser(t *testing.T) {
+	t.Parallel()
 	type fields struct {
 		job     string
 		cfg     *config.Discord
@@ -192,6 +192,8 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					},
 				},
 				dbSetup: func(t *testing.T) (*sql.DB, func()) {
+					t.Helper()
+
 					db, mock, err := sqlmock.New()
 					require.NoError(t, err)
 					mock.ExpectQuery("SELECT .*fivenet_user_jobs.*").
@@ -231,6 +233,8 @@ func TestGroupSyncPlanUser(t *testing.T) {
 					},
 				},
 				dbSetup: func(t *testing.T) (*sql.DB, func()) {
+					t.Helper()
+
 					db, mock, err := sqlmock.New()
 					require.NoError(t, err)
 					mock.ExpectQuery("SELECT .*fivenet_user_jobs.*").
@@ -263,6 +267,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			base := &BaseModule{
 				logger: logger,
 				cfg:    tt.fields.cfg,
@@ -283,7 +288,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 			groupMapping := g.normalizedGroupSyncMapping()
 
 			user, logs, err := g.planUser(
-				context.Background(),
+				t.Context(),
 				tt.args.user,
 				groupMapping,
 				tt.args.roles,

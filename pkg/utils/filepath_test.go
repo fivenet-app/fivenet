@@ -9,6 +9,7 @@ import (
 )
 
 func TestCleanStoragePath(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name      string
 		input     string
@@ -41,6 +42,7 @@ func TestCleanStoragePath(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			result, err := CleanStoragePath(tt.input, tt.emptyOk)
 			if tt.expectErr {
 				require.Error(t, err)
@@ -53,6 +55,7 @@ func TestCleanStoragePath(t *testing.T) {
 }
 
 func TestCleanStorageKey(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name      string
 		input     string
@@ -168,6 +171,7 @@ func TestCleanStorageKey(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			result, err := CleanStorageKey(tt.input)
 			if tt.expectErr {
 				require.Error(t, err)
@@ -180,6 +184,7 @@ func TestCleanStorageKey(t *testing.T) {
 }
 
 func TestFSRootPath(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name      string
 		prefix    string
@@ -216,6 +221,7 @@ func TestFSRootPath(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			result, err := FSRootPath(tt.prefix, tt.key, tt.emptyOk)
 			if tt.expectErr {
 				require.Error(t, err)
@@ -228,6 +234,7 @@ func TestFSRootPath(t *testing.T) {
 }
 
 func TestFSRootFile(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name      string
 		prefix    string
@@ -286,6 +293,7 @@ func TestFSRootFile(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got, err := FSRootFile(tt.prefix, tt.key)
 			if tt.expectErr {
 				require.Error(t, err)

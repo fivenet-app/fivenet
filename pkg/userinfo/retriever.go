@@ -51,7 +51,7 @@ type Retriever struct {
 	logger *zap.Logger
 	jsCons jetstream.ConsumeContext
 
-	ctx      context.Context
+	ctx      context.Context //nolint:containedctx // Retriever uses lifecycle context for async notification fanout.
 	db       *sql.DB
 	js       *events.JSWrapper
 	enricher *mstlystcdata.Enricher

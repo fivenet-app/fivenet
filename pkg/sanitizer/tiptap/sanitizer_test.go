@@ -6,6 +6,7 @@ import (
 )
 
 func TestBuildAllowedContainsAllNodePolicies(t *testing.T) {
+	t.Parallel()
 	s := buildAllowed()
 
 	nodeTypes := []string{
@@ -41,6 +42,7 @@ func TestBuildAllowedContainsAllNodePolicies(t *testing.T) {
 }
 
 func TestBuildAllowedContainsAllMarkPolicies(t *testing.T) {
+	t.Parallel()
 	s := buildAllowed()
 
 	markTypes := []string{
@@ -64,6 +66,7 @@ func TestBuildAllowedContainsAllMarkPolicies(t *testing.T) {
 }
 
 func TestNodePoliciesBasicValidation(t *testing.T) {
+	t.Parallel()
 	s := buildAllowed()
 
 	tests := []struct {
@@ -172,6 +175,7 @@ func TestNodePoliciesBasicValidation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			policy := s.Nodes[tt.typ]
 			ok, _ := policy.Validate(tt.attrs)
 			if ok != tt.ok {
@@ -182,6 +186,7 @@ func TestNodePoliciesBasicValidation(t *testing.T) {
 }
 
 func TestMarkPoliciesBasicValidation(t *testing.T) {
+	t.Parallel()
 	s := buildAllowed()
 
 	tests := []struct {
@@ -232,6 +237,7 @@ func TestMarkPoliciesBasicValidation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			policy := s.Marks[tt.typ]
 			ok, _ := policy.Validate(tt.attrs)
 			if ok != tt.ok {
@@ -242,6 +248,7 @@ func TestMarkPoliciesBasicValidation(t *testing.T) {
 }
 
 func TestSanitizeTextNodeWithMarks(t *testing.T) {
+	t.Parallel()
 	s := buildAllowed()
 	stats := &Stats{}
 	in := map[string]any{
@@ -281,6 +288,7 @@ func TestSanitizeTextNodeWithMarks(t *testing.T) {
 }
 
 func TestSanitizeMentionNode(t *testing.T) {
+	t.Parallel()
 	s := buildAllowed()
 	stats := &Stats{}
 	in := map[string]any{
@@ -306,6 +314,7 @@ func TestSanitizeMentionNode(t *testing.T) {
 }
 
 func TestSanitizeNestedContentAndHeadingExtraction(t *testing.T) {
+	t.Parallel()
 	New()
 
 	doc := map[string]any{
@@ -371,6 +380,7 @@ func TestSanitizeNestedContentAndHeadingExtraction(t *testing.T) {
 }
 
 func TestSanitizeMaxBytesLimit(t *testing.T) {
+	t.Parallel()
 	New()
 
 	doc := map[string]any{
@@ -400,6 +410,7 @@ func TestSanitizeMaxBytesLimit(t *testing.T) {
 }
 
 func TestSanitizeMaxDepthPrunesTooDeepNodes(t *testing.T) {
+	t.Parallel()
 	New()
 
 	doc := map[string]any{

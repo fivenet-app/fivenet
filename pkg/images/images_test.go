@@ -15,6 +15,7 @@ import (
 )
 
 func TestResizeImage(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name        string
 		ext         string
@@ -80,7 +81,10 @@ func TestResizeImage(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel(
 			// Encode the test image to a buffer
+			)
+
 			var buf bytes.Buffer
 			switch {
 			case tt.inputImage == nil:

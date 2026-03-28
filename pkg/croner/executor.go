@@ -44,7 +44,7 @@ type Executor struct {
 
 	nodeName string
 
-	ctx context.Context
+	ctx context.Context //nolint:containedctx // Executor lifecycle context is used for async job execution and publishing.
 	js  *events.JSWrapper
 
 	jsCons jetstream.ConsumeContext

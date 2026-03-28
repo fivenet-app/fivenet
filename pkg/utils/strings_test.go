@@ -59,6 +59,7 @@ var prefixesTests = map[string]string{
 }
 
 func TestRemoveTitlePrefixes(t *testing.T) {
+	t.Parallel()
 	for actual, expected := range prefixesTests {
 		assert.Equal(t, expected, RemoveTitlePrefixes(actual))
 	}

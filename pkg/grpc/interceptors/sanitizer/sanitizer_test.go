@@ -69,6 +69,7 @@ var tests = []struct {
 }
 
 func TestUnaryServerInterceptor(t *testing.T) {
+	t.Parallel()
 	ctx := t.Context()
 	interceptor := UnaryServerInterceptor()
 

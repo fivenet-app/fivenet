@@ -17,6 +17,7 @@ func mustStruct(t *testing.T, m map[string]any) *structpb.Struct {
 }
 
 func TestExtractFromTiptapNil(t *testing.T) {
+	t.Parallel()
 	got := ExtractFromTiptap(nil)
 	require.NotNil(t, got)
 	assert.Empty(t, got.Text)
@@ -25,6 +26,7 @@ func TestExtractFromTiptapNil(t *testing.T) {
 }
 
 func TestExtractFromTiptapComplexGolden(t *testing.T) {
+	t.Parallel()
 	doc := mustStruct(t, map[string]any{
 		"type": "doc",
 		"content": []any{
@@ -180,6 +182,7 @@ func TestExtractFromTiptapComplexGolden(t *testing.T) {
 }
 
 func TestExtractFromTiptapInlineNodesInParagraph(t *testing.T) {
+	t.Parallel()
 	doc := mustStruct(t, map[string]any{
 		"type": "doc",
 		"content": []any{
@@ -217,6 +220,7 @@ func TestExtractFromTiptapInlineNodesInParagraph(t *testing.T) {
 }
 
 func TestExtractFromTiptapUnknownAndMalformedNodes(t *testing.T) {
+	t.Parallel()
 	doc := mustStruct(t, map[string]any{
 		"type": "doc",
 		"content": []any{
@@ -243,6 +247,7 @@ func TestExtractFromTiptapUnknownAndMalformedNodes(t *testing.T) {
 }
 
 func TestExtractFromTiptapWhitespaceNormalization(t *testing.T) {
+	t.Parallel()
 	doc := mustStruct(t, map[string]any{
 		"type": "doc",
 		"content": []any{

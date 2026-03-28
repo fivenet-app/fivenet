@@ -163,11 +163,16 @@ func (c *MigrationsStatsBackfillCmd) rebuildDocumentMetrics(
 	return totalProcessed, nil
 }
 
+// rebuildDocumentMetricsBatch processes a batch of documents for metrics rebuilding, starting from the given lastID.
+//
+//nolint:nonamedreturns // Using named returns for clarity in deferred error handling.
 func (c *MigrationsStatsBackfillCmd) rebuildDocumentMetricsBatch(
 	ctx context.Context,
 	start time.Time,
 	lastID int64,
-) (int64, int, error) {
+) (nextLastID int64, batchCount int, err error) {
+	nextLastID = lastID
+
 	rows, err := c.db.QueryContext(
 		ctx,
 		`SELECT id, creator_job, created_at, deleted_at, draft, data
@@ -182,7 +187,7 @@ LIMIT ?`,
 		c.BatchSize,
 	)
 	if err != nil {
-		return lastID, 0, fmt.Errorf("failed querying documents for stats backfill. %w", err)
+		return nextLastID, 0, fmt.Errorf("failed querying documents for stats backfill. %w", err)
 	}
 	defer func() {
 		if closeErr := rows.Close(); closeErr != nil {
@@ -195,7 +200,6 @@ LIMIT ?`,
 		}
 	}()
 
-	var batchCount int
 	for rows.Next() {
 		var (
 			id         int64
@@ -213,7 +217,7 @@ LIMIT ?`,
 			&draft,
 			&dataRaw,
 		); err != nil {
-			return lastID, batchCount, fmt.Errorf(
+			return nextLastID, batchCount, fmt.Errorf(
 				"failed scanning document row for stats backfill. %w",
 				err,
 			)
@@ -223,7 +227,7 @@ LIMIT ?`,
 		if dataRaw.Valid && strings.TrimSpace(dataRaw.String) != "" {
 			data = &documentsdata.DocumentData{}
 			if err := protojson.Unmarshal([]byte(dataRaw.String), data); err != nil {
-				return lastID, batchCount, fmt.Errorf(
+				return nextLastID, batchCount, fmt.Errorf(
 					"failed to decode document.data for document %d. %w",
 					id,
 					err,
@@ -245,22 +249,25 @@ LIMIT ?`,
 		}
 
 		if err := c.stats.RebuildDocumentMetrics(ctx, doc); err != nil {
-			return lastID, batchCount, fmt.Errorf(
+			return nextLastID, batchCount, fmt.Errorf(
 				"failed to rebuild metrics for document %d. %w",
 				id,
 				err,
 			)
 		}
 
-		lastID = id
+		nextLastID = id
 		batchCount++
 	}
 
 	if err := rows.Err(); err != nil {
-		return lastID, batchCount, fmt.Errorf("row iteration error during stats backfill. %w", err)
+		return nextLastID, batchCount, fmt.Errorf(
+			"row iteration error during stats backfill. %w",
+			err,
+		)
 	}
 
-	return lastID, batchCount, nil
+	return nextLastID, batchCount, nil
 }
 
 func parseBackfillStart(input string) (time.Time, error) {

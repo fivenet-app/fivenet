@@ -9,6 +9,7 @@ import (
 )
 
 func TestDiscordSyncChanges(t *testing.T) {
+	t.Parallel()
 	c := &DiscordSyncChanges{}
 
 	ts := timestamp.Now()

@@ -19,6 +19,7 @@ func newTestDemo(seed uint64) *Demo {
 }
 
 func TestDemoIdentifierDeterministic(t *testing.T) {
+	t.Parallel()
 	d := newTestDemo(42)
 
 	license := stableLicenseToken("demochar", 7)
@@ -31,6 +32,7 @@ func TestDemoIdentifierDeterministic(t *testing.T) {
 }
 
 func TestBuildFakeUserProfileDeterministic(t *testing.T) {
+	t.Parallel()
 	licenses := []string{"dmv", "drive", "weapon"}
 
 	d1 := newTestDemo(42)
@@ -75,6 +77,7 @@ func TestBuildFakeUserProfileDeterministic(t *testing.T) {
 }
 
 func TestPickUserJobsFromConfiguredPool(t *testing.T) {
+	t.Parallel()
 	d := newTestDemo(1337)
 
 	pool := map[string]map[int32]struct{}{}
@@ -109,6 +112,7 @@ func TestPickUserJobsFromConfiguredPool(t *testing.T) {
 }
 
 func TestBuildTargetJobUserProfileUsesTargetJob(t *testing.T) {
+	t.Parallel()
 	d := newTestDemo(99)
 	d.cfg.Demo.TargetJob = "ambulance"
 

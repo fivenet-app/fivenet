@@ -8,7 +8,10 @@ import (
 )
 
 func TestRemoveSliceDuplicates(t *testing.T) {
+	t.Parallel(
 	// Test with strings
+	)
+
 	input := []string{"a", "b", "a", "c", "b"}
 	expected := []string{"a", "b", "c"}
 	result := RemoveSliceDuplicates(input)
@@ -74,6 +77,7 @@ func generateRandomSlice(size int) []int {
 }
 
 func TestSlicesDifference(t *testing.T) {
+	t.Parallel()
 	a := []string{"hello", "example", "abc"}
 	b := []string{"hello", "world", "test1", "abc"}
 
@@ -97,6 +101,7 @@ func TestSlicesDifference(t *testing.T) {
 }
 
 func TestSlicesDifferenceFunc(t *testing.T) {
+	t.Parallel()
 	a := []string{"hello", "example", "abc"}
 	b := []string{"hello", "world", "test1", "abc"}
 

@@ -10,7 +10,10 @@ import (
 )
 
 func TestNew(t *testing.T) {
+	t.Parallel(
 	// Create a temporary file to simulate the postals file
+	)
+
 	tmpFile, err := os.CreateTemp(t.TempDir(), "postals_test_*.json")
 	require.NoError(t, err)
 	defer os.Remove(tmpFile.Name())
@@ -44,6 +47,7 @@ func TestNew(t *testing.T) {
 }
 
 func TestByCode(t *testing.T) {
+	t.Parallel()
 	code := "67890"
 	// Prepare the postalCodesMap for testing
 	postalCodesMap["67890"] = &Postal{

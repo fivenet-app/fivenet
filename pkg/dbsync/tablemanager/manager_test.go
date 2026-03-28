@@ -11,6 +11,7 @@ import (
 )
 
 func TestTableManager_CheckTables(t *testing.T) {
+	t.Parallel()
 	logger := zap.NewNop()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
@@ -63,6 +64,7 @@ func TestTableManager_CheckTables(t *testing.T) {
 }
 
 func TestTableManager_checkIfTableExists(t *testing.T) {
+	t.Parallel()
 	logger := zap.NewNop()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
@@ -88,6 +90,7 @@ func TestTableManager_checkIfTableExists(t *testing.T) {
 }
 
 func TestTableManager_checkIfTableHasUpdatedAtColumn(t *testing.T) {
+	t.Parallel()
 	logger := zap.NewNop()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
@@ -115,6 +118,7 @@ func TestTableManager_checkIfTableHasUpdatedAtColumn(t *testing.T) {
 }
 
 func TestTableManager_addUpdatedAtColumnToTable(t *testing.T) {
+	t.Parallel()
 	logger := zap.NewNop()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)

@@ -39,7 +39,7 @@ const (
 // CollabServer manages collaborative editing rooms and client connections.
 type CollabServer struct {
 	// ctx is the base context for the server and rooms.
-	ctx context.Context
+	ctx context.Context //nolint:containedctx // Server lifecycle context is retained for room orchestration.
 	// logger is the zap logger for this server instance.
 	logger *zap.Logger
 	// js is the JetStream wrapper for event streaming.

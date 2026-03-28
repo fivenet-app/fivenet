@@ -7,6 +7,7 @@ import (
 )
 
 func TestDemoDefaults(t *testing.T) {
+	t.Parallel()
 	cfg := &Config{}
 	if err := defaults.Set(cfg); err != nil {
 		t.Fatalf("failed to set defaults: %v", err)

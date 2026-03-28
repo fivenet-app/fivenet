@@ -75,6 +75,8 @@ func SetupDB(p Params) (Result, error) {
 	if !p.Config.Database.SkipMigrations {
 		var err error
 		if req, err = MigrateDB(
+			// Migrations should not be canceled by the caller's context, as they are critical for application startup.
+			context.Background(),
 			p.Logger,
 			p.Config.Database.DSN,
 			p.Config.IgnoreRequirements,

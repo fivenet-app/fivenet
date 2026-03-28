@@ -23,7 +23,7 @@ type GrpcStream struct {
 	responseHeaders   http.Header
 	inputFrames       chan *grpcws.GrpcFrame
 	channel           *WebsocketChannel
-	ctx               context.Context
+	ctx               context.Context //nolint:containedctx // Stream wrapper keeps derived context to satisfy http/grpc stream semantics.
 	cancel            context.CancelFunc
 	remainingBuffer   []byte
 	remainingError    error

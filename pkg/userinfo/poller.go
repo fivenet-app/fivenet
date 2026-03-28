@@ -41,7 +41,7 @@ type userSnapshot struct {
 // It is used to detect changes in user information and publish events accordingly.
 // The events are mainly used by any streams.
 type Poller struct {
-	ctx context.Context
+	ctx context.Context //nolint:containedctx // Used as the service-lifecycle context for async KV operations.
 
 	logger *zap.Logger
 	jsCons jetstream.ConsumeContext
@@ -78,7 +78,7 @@ func NewPoller(p PollerParams) *Poller {
 	poller := &Poller{
 		logger: p.Logger.Named("userinfo.poller"),
 
-		ctx:      context.Background(),
+		ctx:      ctxCancel,
 		db:       p.DB,
 		enricher: p.Enricher,
 		notifi:   p.Notifi,

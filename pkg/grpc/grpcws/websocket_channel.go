@@ -19,7 +19,7 @@ import (
 
 type WebsocketChannel struct {
 	mu                sync.Mutex
-	ctx               context.Context
+	ctx               context.Context //nolint:containedctx // Channel wrapper retains connection context for read/write/ping loops.
 	wsConn            *websocket.Conn
 	grpcHandler       func(resp http.ResponseWriter, req *http.Request)
 	maxStreamCount    int

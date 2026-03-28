@@ -8,6 +8,7 @@ import (
 )
 
 func TestCompareJobs(t *testing.T) {
+	t.Parallel()
 	job := func(name string, grade int32, primary bool) *users.UserJob {
 		return &users.UserJob{Job: name, Grade: grade, IsPrimary: primary}
 	}
@@ -80,6 +81,7 @@ func TestCompareJobs(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			toAdd, toUpdate, toRemove := compareJobs(tt.current, tt.incoming)
 
 			assert.ElementsMatch(t, tt.add, jobNames(toAdd))
@@ -105,6 +107,7 @@ func TestCompareJobs(t *testing.T) {
 }
 
 func TestComparePhoneNumbers(t *testing.T) {
+	t.Parallel()
 	phone := func(number string, primary bool) *users.PhoneNumber {
 		return &users.PhoneNumber{Number: number, IsPrimary: primary}
 	}
@@ -169,6 +172,7 @@ func TestComparePhoneNumbers(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			toAdd, toUpdate, toRemove := comparePhoneNumbers(tt.current, tt.incoming)
 
 			assert.ElementsMatch(t, tt.add, numbers(toAdd))
@@ -193,6 +197,7 @@ func TestComparePhoneNumbers(t *testing.T) {
 	}
 
 	t.Run("switches primary and demotes old one", func(t *testing.T) {
+		t.Parallel()
 		currentPrimary := phone("666", true)
 		currentOther := phone("777", false)
 		current := []*users.PhoneNumber{currentPrimary, currentOther}

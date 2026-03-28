@@ -17,7 +17,8 @@ import (
 )
 
 func TestCachePutGetAndDelete(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
+	t.Parallel()
+	ctx, cancel := context.WithCancel(t.Context())
 	t.Cleanup(cancel)
 
 	kv := newFakeKV("test")
@@ -57,7 +58,8 @@ func TestCachePutGetAndDelete(t *testing.T) {
 }
 
 func TestCacheTTLExpiry(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
+	t.Parallel()
+	ctx, cancel := context.WithCancel(t.Context())
 	t.Cleanup(cancel)
 
 	kv := newFakeKV("ttl")
@@ -84,7 +86,8 @@ func TestCacheTTLExpiry(t *testing.T) {
 }
 
 func TestCacheKeysListAndRange(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
+	t.Parallel()
+	ctx, cancel := context.WithCancel(t.Context())
 	t.Cleanup(cancel)
 
 	kv := newFakeKV("keys")
@@ -135,7 +138,8 @@ func TestCacheKeysListAndRange(t *testing.T) {
 }
 
 func TestCacheIgnoredKeysAreSkipped(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
+	t.Parallel()
+	ctx, cancel := context.WithCancel(t.Context())
 	t.Cleanup(cancel)
 
 	kv := newFakeKV("ignored")
@@ -163,7 +167,8 @@ func TestCacheIgnoredKeysAreSkipped(t *testing.T) {
 }
 
 func TestCachePropagatesKVErrors(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
+	t.Parallel()
+	ctx, cancel := context.WithCancel(t.Context())
 	t.Cleanup(cancel)
 
 	putErr := errors.New("kv put failed")

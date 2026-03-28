@@ -40,7 +40,7 @@ type SchedulerParams struct {
 
 type Scheduler struct {
 	logger    *zap.Logger
-	ctxCancel context.Context
+	ctxCancel context.Context //nolint:containedctx // Scheduler keeps a root cancelable context for store operations and subscriptions.
 	js        *events.JSWrapper
 	registry  *Registry
 	gron      *gronx.Gronx

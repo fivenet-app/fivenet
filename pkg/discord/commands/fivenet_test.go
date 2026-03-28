@@ -12,6 +12,7 @@ import (
 )
 
 func TestNewHandleFivenetCommand(t *testing.T) {
+	t.Parallel()
 	l, err := lang.New()
 	require.NoError(t, err)
 

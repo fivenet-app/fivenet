@@ -32,7 +32,7 @@ type Server struct {
 	pbnotifications.NotificationsServiceServer
 
 	logger   *zap.Logger
-	ctx      context.Context
+	ctx      context.Context //nolint:containedctx // Server keeps lifecycle context for stream consumer cleanup.
 	db       *sql.DB
 	ps       perms.Permissions
 	tm       *auth.TokenMgr

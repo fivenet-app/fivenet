@@ -14,6 +14,7 @@ import (
 )
 
 func TestListGRPCResources(t *testing.T) {
+	t.Parallel()
 	server := grpc.NewServer()
 	testproto.RegisterTestServiceServer(server, &testServiceImpl{})
 	expected := []string{

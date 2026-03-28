@@ -56,7 +56,6 @@ type RegistryParams struct {
 type Registry struct {
 	logger *zap.Logger
 
-	ctx   context.Context
 	js    *events.JSWrapper
 	store *store.Store[cron.Cronjob, *cron.Cronjob]
 	kv    jetstream.KeyValue
@@ -76,7 +75,6 @@ func NewRegistry(p RegistryParams) (RegistryResult, error) {
 		Named("cron.registry")
 	r := &Registry{
 		logger: p.Logger,
-		ctx:    ctxCancel,
 		js:     p.JS,
 	}
 

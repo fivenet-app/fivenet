@@ -4,7 +4,6 @@
 package grpc_auth
 
 import (
-	"context"
 	"testing"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
@@ -16,6 +15,7 @@ import (
 )
 
 func TestAuthFromMD(t *testing.T) {
+	t.Parallel()
 	for _, run := range []struct {
 		md      grpcMetadata.MD
 		value   string
@@ -62,7 +62,7 @@ func TestAuthFromMD(t *testing.T) {
 			msg:     "bearer token must not be empty",
 		},
 	} {
-		ctx := metadata.MD(run.md).ToIncoming(context.Background())
+		ctx := metadata.MD(run.md).ToIncoming(t.Context())
 		out, err := AuthFromMD(ctx, "Bearer")
 		if run.errCode != codes.OK {
 			assert.Equal(t, run.errCode, status.Code(err), run.msg)

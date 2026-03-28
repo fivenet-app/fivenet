@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"context"
 	"testing"
 
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -18,7 +17,10 @@ import (
 
 // Inspired by https://github.com/grpc-ecosystem/go-grpc-middleware/blob/da1b13ec28bbdd492bdc876045791b69c4be5b81/auth/metadata_test.go
 func TestGRPCAuthFunc(t *testing.T) {
+	t.Parallel(
 	// Valid JWT token
+	)
+
 	tm := NewTokenMgr(jwtTokenTestSecret)
 	assert.NotNil(t, tm)
 	token, err := tm.FromCombinedClaims(testUserCombinedClaim)
@@ -59,7 +61,7 @@ func TestGRPCAuthFunc(t *testing.T) {
 			msg:       "valid token",
 		},
 	} {
-		ctx := grpc_metadata.MD(run.md).ToIncoming(context.Background())
+		ctx := grpc_metadata.MD(run.md).ToIncoming(t.Context())
 		out, err := grpcAuth.GRPCAuthFunc(ctx, "/services.Example/GetExample")
 		if run.errCode != codes.OK {
 			assert.Equal(t, run.errCode, status.Code(err), run.msg)

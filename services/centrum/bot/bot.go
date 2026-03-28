@@ -26,7 +26,7 @@ const (
 )
 
 type Bot struct {
-	ctx    context.Context
+	ctx    context.Context //nolint:containedctx // Bot loop retains lifecycle context for periodic assignment work.
 	cancel context.CancelFunc
 
 	logger  *zap.Logger

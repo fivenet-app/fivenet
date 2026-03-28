@@ -8,6 +8,7 @@ import (
 )
 
 func TestStartOfDay(t *testing.T) {
+	t.Parallel()
 	timestamp := time.Date(2023, 10, 1, 15, 30, 45, 123, time.UTC)
 	expected := time.Date(2023, 10, 1, 0, 0, 0, 0, time.UTC)
 
@@ -16,6 +17,7 @@ func TestStartOfDay(t *testing.T) {
 }
 
 func TestEndOfDay(t *testing.T) {
+	t.Parallel()
 	timestamp := time.Date(2023, 10, 1, 15, 30, 45, 123, time.UTC)
 	expected := time.Date(2023, 10, 1, 23, 59, 59, 999, time.UTC)
 
@@ -24,6 +26,7 @@ func TestEndOfDay(t *testing.T) {
 }
 
 func TestInTimeSpan(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name     string
 		start    time.Time
@@ -98,6 +101,7 @@ func TestInTimeSpan(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			result := InTimeSpan(tt.start, tt.end, tt.check)
 			assert.Equal(t, tt.expected, result)
 		})

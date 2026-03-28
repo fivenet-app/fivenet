@@ -10,6 +10,7 @@ import (
 )
 
 func TestLRUCacheBasicOperations(t *testing.T) {
+	t.Parallel()
 	cache := NewLRUCache[string, int](2)
 
 	// Test Put and Get
@@ -38,6 +39,7 @@ func TestLRUCacheBasicOperations(t *testing.T) {
 }
 
 func TestLRUCacheDelete(t *testing.T) {
+	t.Parallel()
 	cache := NewLRUCache[string, int](2)
 	cache.Put("a", 1, 0)
 	cache.Delete("a")
@@ -46,6 +48,7 @@ func TestLRUCacheDelete(t *testing.T) {
 }
 
 func TestLRUCacheTTL(t *testing.T) {
+	t.Parallel()
 	cache := NewLRUCache[string, int](2)
 	cache.Put("a", 1, 10*time.Millisecond)
 	time.Sleep(20 * time.Millisecond)
@@ -54,6 +57,7 @@ func TestLRUCacheTTL(t *testing.T) {
 }
 
 func TestLRUCacheJanitor(t *testing.T) {
+	t.Parallel()
 	cache := NewLRUCache[string, int](2)
 	cache.Put("a", 1, 10*time.Millisecond)
 	ctx, cancel := context.WithCancel(t.Context())
@@ -65,6 +69,7 @@ func TestLRUCacheJanitor(t *testing.T) {
 }
 
 func TestLRUCacheLen(t *testing.T) {
+	t.Parallel()
 	cache := NewLRUCache[string, int](2)
 	cache.Put("a", 1, 0)
 	cache.Put("b", 2, 0)
@@ -76,6 +81,7 @@ func TestLRUCacheLen(t *testing.T) {
 }
 
 func TestLRUCacheEvictionRandomness(t *testing.T) {
+	t.Parallel()
 	cache := NewLRUCache[int, int](1)
 	cache.Put(1, 100, 0)
 	cache.Put(2, 200, 0)
@@ -92,6 +98,7 @@ func TestLRUCacheEvictionRandomness(t *testing.T) {
 }
 
 func TestLRUCacheNoTTL(t *testing.T) {
+	t.Parallel()
 	cache := NewLRUCache[string, int](2)
 	cache.Put("a", 1, 0)
 	cache.Put("b", 2, 0)
@@ -104,6 +111,7 @@ func TestLRUCacheNoTTL(t *testing.T) {
 }
 
 func TestLRUCacheOverwrite(t *testing.T) {
+	t.Parallel()
 	cache := NewLRUCache[string, int](2)
 	cache.Put("a", 1, 0)
 	cache.Put("a", 2, 0)
@@ -113,6 +121,7 @@ func TestLRUCacheOverwrite(t *testing.T) {
 }
 
 func TestLRUCacheConcurrentAccess(t *testing.T) {
+	t.Parallel()
 	cache := NewLRUCache[int, int](100)
 	wg := sync.WaitGroup{}
 	for i := range 100 {
@@ -130,6 +139,7 @@ func TestLRUCacheConcurrentAccess(t *testing.T) {
 }
 
 func TestLRUCacheDeleteNonexistent(t *testing.T) {
+	t.Parallel()
 	cache := NewLRUCache[string, int](2)
 	cache.Delete("notfound")
 	// Should not panic or error

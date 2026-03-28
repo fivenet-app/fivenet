@@ -318,7 +318,7 @@ func validate(o *Options) {
 type auditStream struct {
 	grpc.ServerStream
 
-	ctx         context.Context
+	ctx         context.Context //nolint:containedctx // Stream wrapper must override Context() for interceptor-enriched context.
 	opts        Options
 	recvCount   int64
 	sendCount   int64

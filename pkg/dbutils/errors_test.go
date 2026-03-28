@@ -9,6 +9,7 @@ import (
 )
 
 func TestIsDuplicateError(t *testing.T) {
+	t.Parallel()
 	for _, run := range []struct {
 		input  error
 		output bool

@@ -17,6 +17,7 @@ import (
 )
 
 func TestConstructUserNickname(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name      string
 		firstname string
@@ -93,6 +94,7 @@ func TestConstructUserNickname(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			g := &UserInfo{}
 			result := g.constructUserNickname(
 				test.firstname,
@@ -119,6 +121,7 @@ var jobGrades = map[string]map[int32]*discordtypes.Role{
 }
 
 func TestPlanUser(t *testing.T) {
+	t.Parallel()
 	type fields struct {
 		job            string
 		employeeRole   *discordtypes.Role
@@ -160,6 +163,7 @@ func TestPlanUser(t *testing.T) {
 				settings: &jobssettings.DiscordSyncSettings{},
 			},
 			mockDiscord: func(t *testing.T) IState {
+				t.Helper()
 				return &mockDiscord{
 					memberFunc: func(guildID discord.GuildID, userID discord.UserID) (*discord.Member, error) {
 						return nil, &httputil.HTTPError{Status: http.StatusNotFound}
@@ -187,6 +191,7 @@ func TestPlanUser(t *testing.T) {
 				settings: &jobssettings.DiscordSyncSettings{},
 			},
 			mockDiscord: func(t *testing.T) IState {
+				t.Helper()
 				return &mockDiscord{
 					memberFunc: func(guildID discord.GuildID, userID discord.UserID) (*discord.Member, error) {
 						return nil, errors.New("api error")
@@ -219,6 +224,7 @@ func TestPlanUser(t *testing.T) {
 				}(),
 			},
 			mockDiscord: func(t *testing.T) IState {
+				t.Helper()
 				return &mockDiscord{
 					memberFunc: func(guildID discord.GuildID, userID discord.UserID) (*discord.Member, error) {
 						return &discord.Member{
@@ -257,6 +263,7 @@ func TestPlanUser(t *testing.T) {
 				}(),
 			},
 			mockDiscord: func(t *testing.T) IState {
+				t.Helper()
 				return &mockDiscord{
 					memberFunc: func(guildID discord.GuildID, userID discord.UserID) (*discord.Member, error) {
 						return &discord.Member{
@@ -315,6 +322,7 @@ func TestPlanUser(t *testing.T) {
 				}(),
 			},
 			mockDiscord: func(t *testing.T) IState {
+				t.Helper()
 				return &mockDiscord{
 					memberFunc: func(guildID discord.GuildID, userID discord.UserID) (*discord.Member, error) {
 						return &discord.Member{
@@ -355,6 +363,7 @@ func TestPlanUser(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			mockDiscord := tt.mockDiscord(t)
 			g := &UserInfo{
 				BaseModule: &BaseModule{
