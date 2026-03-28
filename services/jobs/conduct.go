@@ -17,7 +17,6 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
-	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -373,7 +372,7 @@ func (s *Server) GetConductEntry(
 
 	files, err := s.fHandler.ListFilesForParentID(ctx, req.GetId())
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	resp.GetEntry().Files = files
 
@@ -477,7 +476,7 @@ func (s *Server) UpdateConductEntry(
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -514,12 +513,12 @@ func (s *Server) UpdateConductEntry(
 		req.GetEntry().GetId(),
 		req.GetEntry().GetFiles(),
 	); err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	entry, err = s.getConductEntry(ctx, entry.GetId(), false)

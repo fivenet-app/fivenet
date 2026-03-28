@@ -37,7 +37,9 @@ type Options struct {
 // NewUnary returns a unary server interceptor with the given options.
 func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 	validate(&opts)
-	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+
+	//nolint:nonamedreturns // Using named returns for error return in defer func.
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
 		// Only log authenticated requests
 		userInfo, ok := auth.GetUserInfoFromContext(ctx)
 		if !ok {
@@ -62,7 +64,6 @@ func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 
 		// Panic safety and finalize logging.
 		defer func() {
-			var err error
 			if r := recover(); r != nil {
 				if e, ok := r.(error); ok {
 					err = fmt.Errorf("panic: %w", e)
@@ -109,7 +110,8 @@ func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 // NewStream returns a stream server interceptor with the given options.
 func NewStream(opts Options) grpc.StreamServerInterceptor {
 	validate(&opts)
-	return func(srv any, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+
+	return func(srv any, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) (err error) {
 		ctx := ss.Context()
 		userInfo, ok := auth.GetUserInfoFromContext(ctx)
 		if !ok {
@@ -143,7 +145,6 @@ func NewStream(opts Options) grpc.StreamServerInterceptor {
 		}
 
 		defer func() {
-			var err error
 			if r := recover(); r != nil {
 				if e, ok := r.(error); ok {
 					err = fmt.Errorf("panic: %w", e)
