@@ -2,9 +2,8 @@
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import type { ExamResponse } from '~~/gen/ts/resources/qualifications/exam/exam';
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
-        modelValue: ExamResponse | undefined;
         disabled?: boolean;
     }>(),
     {
@@ -12,11 +11,8 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
-    (e: 'update:modelValue', value: ExamResponse | undefined): void;
-}>();
-
-const response = useVModel(props, 'modelValue', emit);
+const modelValue = defineModel<ExamResponse | undefined>();
+const response = modelValue;
 </script>
 
 <template>

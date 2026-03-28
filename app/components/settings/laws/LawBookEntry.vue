@@ -10,15 +10,11 @@ import type { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
-    modelValue: LawBook | undefined;
-    laws: Law[];
     startInEdit?: boolean;
 }>();
 
 const emit = defineEmits<{
     (e: 'deleted', id: number): void;
-    (e: 'update:modelValue', book?: LawBook): void;
-    (e: 'update:laws', laws: Law[]): void;
     (e: 'update:law', update: { id: number; law: Law }): void;
 }>();
 
@@ -28,9 +24,8 @@ const { can } = useAuth();
 
 const notifications = useNotificationsStore();
 
-const lawBook = useVModel(props, 'modelValue', emit);
-
-const laws = useVModel(props, 'laws', emit);
+const lawBook = defineModel<LawBook | undefined>();
+const laws = defineModel<Law[]>('laws', { required: true });
 
 const overlay = useOverlay();
 
@@ -149,7 +144,7 @@ function resetForm(): void {
 }
 
 onBeforeMount(() => resetForm());
-watch(props, () => resetForm());
+watch(lawBook, () => resetForm());
 
 async function deleteLaw(id: number): Promise<void> {
     if (id < 0) {

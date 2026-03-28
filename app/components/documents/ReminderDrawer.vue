@@ -11,15 +11,13 @@ import InputDatePicker from '../partials/InputDatePicker.vue';
 
 const props = defineProps<{
     documentId: number;
-    reminderTime?: Timestamp;
 }>();
 
 const emit = defineEmits<{
     (e: 'close', v: boolean): void;
-    (e: 'update:reminderTime', reminderTime?: Timestamp): void;
 }>();
 
-const reminderTime = useVModel(props, 'reminderTime', emit);
+const reminderTime = defineModel<Timestamp | undefined>('reminderTime');
 
 const notifications = useNotificationsStore();
 

@@ -40,7 +40,7 @@ function updateAttachmentDocument(idx: number, document: DocumentShort | null) {
     if (!document) {
         if (!attachments.value[idx]) return;
 
-        attachments.value = attachments.value.splice(idx, 1);
+        attachments.value.splice(idx, 1);
         return;
     }
 

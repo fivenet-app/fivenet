@@ -6,7 +6,6 @@ import RefreshButton from './RefreshButton.vue';
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: number;
         pagination?: PaginationResponse | undefined | null;
         disableBorder?: boolean;
         refresh?: () => Promise<void>;
@@ -16,7 +15,6 @@ const props = withDefaults(
         compact?: boolean;
     }>(),
     {
-        modelValue: 0,
         pagination: undefined,
         disableBorder: false,
         refresh: undefined,
@@ -27,11 +25,7 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
-    (e: 'update:modelValue', page: number): void;
-}>();
-
-const currentPage = useVModel(props, 'modelValue', emit);
+const currentPage = defineModel<number>({ default: 0 });
 
 const total = computed(() => props.pagination?.totalCount ?? 0);
 const pageSize = computed(() => props.pagination?.pageSize ?? 10);
