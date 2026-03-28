@@ -153,10 +153,7 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
             updateDocument: true,
         }),
         // Custom
-        EnhancedImage.configure({
-            inline: false,
-            allowBase64: true,
-        }),
+        EnhancedImage.configure({}),
         PenaltyCalculator.configure({}),
     ];
 

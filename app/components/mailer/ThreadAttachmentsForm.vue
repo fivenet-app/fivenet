@@ -5,18 +5,13 @@ import type { MessageAttachment } from '~~/gen/ts/resources/mailer/messages/mess
 import type { ListDocumentsRequest } from '~~/gen/ts/services/documents/documents';
 import SelectMenu from '../partials/SelectMenu.vue';
 
-const props = defineProps<{
-    modelValue: MessageAttachment[];
+defineProps<{
     canSubmit: boolean;
 }>();
 
-const emit = defineEmits<{
-    (e: 'update:modelValue', attachments: MessageAttachment[]): void;
-}>();
+const attachments = defineModel<MessageAttachment[]>({ required: true });
 
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
-
-const attachments = useVModel(props, 'modelValue', emit);
 
 async function listDocuments(search: string): Promise<DocumentShort[]> {
     const req: ListDocumentsRequest = {
@@ -40,6 +35,25 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
         throw e;
     }
 }
+
+function updateAttachmentDocument(idx: number, document: DocumentShort | null) {
+    if (!document) {
+        if (!attachments.value[idx]) return;
+
+        attachments.value = attachments.value.splice(idx, 1);
+        return;
+    }
+
+    attachments.value[idx] = {
+        data: {
+            oneofKind: 'document',
+            document: {
+                id: document.id,
+                title: document.title,
+            },
+        },
+    };
+}
 </script>
 
 <template>
@@ -49,20 +63,25 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
                 <template v-if="attachments[idx]?.data.oneofKind === 'document'">
                     <UFormField class="flex-1" :name="`attachments.${idx}.data.documentId`">
                         <SelectMenu
-                            class="w-full flex-1"
-                            :disabled="!canSubmit"
-                            :searchable="listDocuments"
-                            :searchable-key="`mailer-thread-attachment-documents-search`"
-                            :placeholder="$t('common.document')"
                             :model-value="
                                 attachments[idx].data.document.id > 0
                                     ? (attachments[idx].data.document as DocumentShort)
                                     : undefined
                             "
-                            @update:model-value="attachments[idx] = { data: { oneofKind: 'document', document: $event } }"
+                            class="w-full flex-1"
+                            :disabled="!canSubmit"
+                            :searchable="listDocuments"
+                            :searchable-key="`mailer-thread-attachment-documents-search`"
+                            :placeholder="$t('common.document')"
+                            nullable
+                            @update:model-value="($event) => updateAttachmentDocument(idx, $event)"
                         >
                             <template #item-label="{ item }">
                                 {{ `DOC-${item.id}: ${item.title}` }}
+                            </template>
+
+                            <template #default="{ modelValue }">
+                                <span v-if="modelValue">{{ `DOC-${modelValue.id}: ${modelValue.title}` }}</span>
                             </template>
 
                             <template #empty> {{ $t('common.not_found', [$t('common.document', 2)]) }} </template>

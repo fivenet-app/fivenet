@@ -4,7 +4,7 @@ import { getCitizensCitizensClient, getDocumentsDocumentsClient } from '~~/gen/t
 import FiveNetLogo from './logos/FiveNetLogo.vue';
 
 const props = defineProps<{
-    links: NavigationMenuItem[];
+    children: NavigationMenuItem[];
 }>();
 
 const { t } = useI18n();
@@ -164,7 +164,7 @@ const groups = computed<CommandPaletteGroup<CommandPaletteItem>[]>(() => [
     {
         id: 'links',
         label: t('common.goto'),
-        items: props.links.map((link) => ({
+        children: props.children.map((link) => ({
             ...link,
             to: link.children?.length ? undefined : link.to,
             kbds: typeof link.tooltip === 'object' ? link.tooltip?.kbds : undefined,

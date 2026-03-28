@@ -1,6 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { mergeAttributes, Node } from '@tiptap/core';
 import { VueNodeViewRenderer } from '@tiptap/vue-3';
 import PenaltyCalculatorEditorView from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorEditorView.vue';
+
+export interface PenaltyCalculatorOptions {
+    /**
+     * HTML attributes to add to the penalty calculator block.
+     * @default {}
+     * @example { class: 'foo' }
+     */
+    HTMLAttributes: Record<string, any>;
+}
 
 declare module '@tiptap/core' {
     /**
@@ -15,14 +25,16 @@ declare module '@tiptap/core' {
     }
 }
 
-export const PenaltyCalculator = Node.create({
+export const PenaltyCalculator = Node.create<PenaltyCalculatorOptions>({
     name: 'penaltyCalculator',
     inline: false,
     group: 'block',
     atom: true,
 
     addOptions() {
-        return {};
+        return {
+            HTMLAttributes: {},
+        };
     },
 
     addAttributes() {
