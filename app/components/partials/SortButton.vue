@@ -1,21 +1,11 @@
 <script lang="ts" setup>
 import type { Sort } from '~~/gen/ts/resources/common/database/database';
 
-const props = withDefaults(
-    defineProps<{
-        modelValue: Sort;
-        fields: { label: string; value: string }[];
-    }>(),
-    {},
-);
-
-const emit = defineEmits<{
-    (e: 'update:modelValue', v: Sort): void;
+const props = defineProps<{
+    fields: { label: string; value: string }[];
 }>();
 
-const sorting = useVModel(props, 'modelValue', emit, {
-    deep: true,
-});
+const sorting = defineModel<Sort>({ required: true });
 
 const { custom } = useAppConfig();
 

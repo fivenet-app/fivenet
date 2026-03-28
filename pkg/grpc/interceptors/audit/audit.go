@@ -37,6 +37,8 @@ type Options struct {
 // NewUnary returns a unary server interceptor with the given options.
 func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 	validate(&opts)
+
+	//nolint:nonamedreturns // Using named returns for error return in defer func.
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
 		// Only log authenticated requests
 		userInfo, ok := auth.GetUserInfoFromContext(ctx)
@@ -63,7 +65,11 @@ func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 		// Panic safety and finalize logging.
 		defer func() {
 			if r := recover(); r != nil {
-				err = fmt.Errorf("panic: %v", r)
+				if e, ok := r.(error); ok {
+					err = fmt.Errorf("panic: %w", e)
+				} else {
+					err = fmt.Errorf("panic: %v", r)
+				}
 				handle.set(func(a *audit.AuditEntry) {
 					a.Result = audit.EventResult_EVENT_RESULT_ERRORED
 				})
@@ -94,7 +100,7 @@ func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 				return
 			}
 
-			opts.Logger.Log(handle.entry, any(req))
+			opts.Logger.Log(handle.entry, req)
 		}()
 
 		return handler(ctx, req)
@@ -104,6 +110,7 @@ func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 // NewStream returns a stream server interceptor with the given options.
 func NewStream(opts Options) grpc.StreamServerInterceptor {
 	validate(&opts)
+
 	return func(srv any, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) (err error) {
 		ctx := ss.Context()
 		userInfo, ok := auth.GetUserInfoFromContext(ctx)
@@ -139,6 +146,11 @@ func NewStream(opts Options) grpc.StreamServerInterceptor {
 
 		defer func() {
 			if r := recover(); r != nil {
+				if e, ok := r.(error); ok {
+					err = fmt.Errorf("panic: %w", e)
+				} else {
+					err = fmt.Errorf("panic: %v", r)
+				}
 				handle.set(func(a *audit.AuditEntry) {
 					a.Result = audit.EventResult_EVENT_RESULT_ERRORED
 				})
@@ -286,7 +298,7 @@ func AddMeta(ctx context.Context, key, val string) {
 	}
 }
 
-func splitFullMethod(full string) (service, method string) {
+func splitFullMethod(full string) (string, string) {
 	i := strings.LastIndex(full, "/")
 	if i < 0 || i+1 >= len(full) {
 		return "", strings.TrimPrefix(full, "/")
@@ -307,7 +319,7 @@ func validate(o *Options) {
 type auditStream struct {
 	grpc.ServerStream
 
-	ctx         context.Context
+	ctx         context.Context //nolint:containedctx // Stream wrapper must override Context() for interceptor-enriched context.
 	opts        Options
 	recvCount   int64
 	sendCount   int64

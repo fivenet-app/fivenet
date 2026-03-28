@@ -50,6 +50,7 @@ var prepareDSNTests = []struct {
 }
 
 func TestPrepareDSN(t *testing.T) {
+	t.Parallel()
 	for _, test := range prepareDSNTests {
 		out, err := PrepareDSN(test.Input, test.DisableLocking, test.Opts...)
 		if test.Error {

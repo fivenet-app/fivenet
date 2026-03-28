@@ -3,6 +3,7 @@ package demo
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
 	"github.com/go-jet/jet/v2/mysql"
@@ -147,7 +148,7 @@ func (d *Demo) upsertDemoCentrumUnits(ctx context.Context) error {
 
 func (d *Demo) randomDemoRadioFrequency() string {
 	// 2-3 digit frequency range for simple demo radios.
-	return fmt.Sprintf("%d", d.randIntN(980)+20)
+	return strconv.Itoa(d.randIntN(980) + 20)
 }
 
 func (d *Demo) randomDemoMotd() string {

@@ -5,6 +5,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
@@ -35,10 +36,10 @@ func DiffText(oldText string, newText string) *content.ContentDiff {
 			kind = content.Kind_KIND_EQUAL
 		case diffmatchpatch.DiffInsert:
 			kind = content.Kind_KIND_INSERT
-			ins += uint32(utf8.RuneCountInString(d.Text))
+			ins = utils.SaturatingAddUint32(ins, utf8.RuneCountInString(d.Text))
 		case diffmatchpatch.DiffDelete:
 			kind = content.Kind_KIND_DELETE
-			del += uint32(utf8.RuneCountInString(d.Text))
+			del = utils.SaturatingAddUint32(del, utf8.RuneCountInString(d.Text))
 		}
 
 		ops = append(ops, &content.ContentDiffOp{
@@ -51,7 +52,7 @@ func DiffText(oldText string, newText string) *content.ContentDiff {
 		Stats: &content.ContentDiffStats{
 			InsertedRunes: ins,
 			DeletedRunes:  del,
-			OpCount:       uint32(len(ops)),
+			OpCount:       utils.ToUint32Saturated(len(ops)),
 		},
 		Ops: ops,
 	}

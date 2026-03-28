@@ -5,7 +5,6 @@ import type { AttributeValues, RoleAttribute } from '~~/gen/ts/resources/permiss
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 
 const props = defineProps<{
-    modelValue: RoleAttribute;
     disabled?: boolean;
     permission: Permission;
     defaultOpen?: boolean;
@@ -13,7 +12,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: AttributeValues): void;
     (e: 'changed'): void;
 }>();
 
@@ -21,7 +19,7 @@ const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
 
-const attribute = useVModel(props, 'modelValue', emit);
+const attribute = defineModel<RoleAttribute>({ required: true });
 
 if (attribute.value?.validValues === undefined) {
     switch (lowercaseFirstLetter(attribute.value.type)) {

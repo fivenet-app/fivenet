@@ -370,7 +370,14 @@ func (s *Server) CreateCalendar(
 		req.Calendar.Id = lastId
 	}
 
-	if _, err := s.access.HandleAccessChanges(ctx, tx, req.GetCalendar().GetId(), req.GetCalendar().GetAccess().GetJobs(), req.GetCalendar().GetAccess().GetUsers(), nil); err != nil {
+	if _, err := s.access.HandleAccessChanges(
+		ctx,
+		tx,
+		req.GetCalendar().GetId(),
+		req.GetCalendar().GetAccess().GetJobs(),
+		req.GetCalendar().GetAccess().GetUsers(),
+		nil,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
@@ -490,7 +497,14 @@ func (s *Server) UpdateCalendar(
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
-	if _, err := s.access.HandleAccessChanges(ctx, tx, req.GetCalendar().GetId(), req.GetCalendar().GetAccess().GetJobs(), req.GetCalendar().GetAccess().GetUsers(), nil); err != nil {
+	if _, err := s.access.HandleAccessChanges(
+		ctx,
+		tx,
+		req.GetCalendar().GetId(),
+		req.GetCalendar().GetAccess().GetJobs(),
+		req.GetCalendar().GetAccess().GetUsers(),
+		nil,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 

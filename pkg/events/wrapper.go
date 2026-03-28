@@ -93,7 +93,11 @@ func (j *JSWrapper) ConsumeErrHandlerWithRestart(
 		if err != nil {
 			logger.Error("error during jetstream consume, trying to restart...", zap.Error(err))
 
-			if restartErr := j.consumeErrHandlerWithRestart(ctxCancel, logger, restartFn); restartErr != nil {
+			if restartErr := j.consumeErrHandlerWithRestart(
+				ctxCancel,
+				logger,
+				restartFn,
+			); restartErr != nil {
 				logger.Error(
 					fmt.Sprintf(
 						"failed to restart jetstream consumer after %d tries, attempting app shutdown",
@@ -138,7 +142,13 @@ func (j *JSWrapper) consumeErrHandlerWithRestart(
 					sleep *= 2
 				}
 			} else {
-				logger.Info(fmt.Sprintf("successfully restarted jetstream consume (try %d of %d)", try+1, MaxRestartRetries))
+				logger.Info(
+					fmt.Sprintf(
+						"successfully restarted jetstream consume (try %d of %d)",
+						try+1,
+						MaxRestartRetries,
+					),
+				)
 				return true
 			}
 

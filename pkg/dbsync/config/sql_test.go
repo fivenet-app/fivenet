@@ -9,6 +9,7 @@ import (
 )
 
 func TestBuildQueryFromColumns(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		tableName     string
 		columns       map[string]string
@@ -77,6 +78,7 @@ func TestBuildQueryFromColumns(t *testing.T) {
 }
 
 func TestPrepareStringQuery(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name          string
 		query         string
@@ -134,6 +136,7 @@ func TestPrepareStringQuery(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			result := prepareStringQuery(
 				test.query,
 				test.table,
@@ -149,6 +152,7 @@ func TestPrepareStringQuery(t *testing.T) {
 }
 
 func TestGetWhereConditionIDOnly(t *testing.T) {
+	t.Parallel()
 	table := DBSyncTable{}
 	state := &TableSyncState{
 		LastID: utils.StrPtr("XYZ-100"),
@@ -159,7 +163,9 @@ func TestGetWhereConditionIDOnly(t *testing.T) {
 }
 
 func TestGetWhereConditionBacktickedColumns(t *testing.T) {
+	t.Parallel()
 	t.Run("cursor column already backticked", func(t *testing.T) {
+		t.Parallel()
 		table := DBSyncTable{}
 		state := &TableSyncState{
 			LastID: utils.StrPtr("XYZ-100"),
@@ -170,6 +176,7 @@ func TestGetWhereConditionBacktickedColumns(t *testing.T) {
 	})
 
 	t.Run("updated time column already backticked", func(t *testing.T) {
+		t.Parallel()
 		table := DBSyncTable{
 			UpdatedTimeColumn: utils.StrPtr("`updated_at`"),
 		}
@@ -182,6 +189,7 @@ func TestGetWhereConditionBacktickedColumns(t *testing.T) {
 	})
 
 	t.Run("cursor and updated time columns already backticked", func(t *testing.T) {
+		t.Parallel()
 		table := DBSyncTable{
 			UpdatedTimeColumn: utils.StrPtr("`updated_at`"),
 		}

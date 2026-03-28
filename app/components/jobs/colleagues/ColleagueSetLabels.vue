@@ -9,16 +9,14 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { GetColleagueLabelsResponse, SetColleaguePropsResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const props = defineProps<{
-    modelValue?: Labels;
     userId: number;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', labels: Labels | undefined): void;
     (e: 'refresh'): void;
 }>();
 
-const labels = useVModel(props, 'modelValue', emit);
+const labels = defineModel<Labels | undefined>();
 
 const notifications = useNotificationsStore();
 
@@ -103,7 +101,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await setUserJobProp(props.userId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-watch(props, () => (state.labels = labels.value?.list !== undefined ? labels.value?.list.slice() : []));
+watch(labels, () => (state.labels = labels.value?.list !== undefined ? labels.value?.list.slice() : []));
 
 watch(state, () => {
     if (

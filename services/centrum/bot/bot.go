@@ -26,7 +26,7 @@ const (
 )
 
 type Bot struct {
-	ctx    context.Context
+	ctx    context.Context //nolint:containedctx // Bot loop retains lifecycle context for periodic assignment work.
 	cancel context.CancelFunc
 
 	logger  *zap.Logger
@@ -126,8 +126,14 @@ func (b *Bot) Run() {
 				break
 			}
 
-			if err := b.dispatches.UpdateAssignments(b.ctx, nil, dsp.GetId(), []int64{unit.GetId()}, nil,
-				b.settings.DispatchAssignmentExpirationTime()); err != nil {
+			if err := b.dispatches.UpdateAssignments(
+				b.ctx,
+				nil,
+				dsp.GetId(),
+				[]int64{unit.GetId()},
+				nil,
+				b.settings.DispatchAssignmentExpirationTime(),
+			); err != nil {
 				b.logger.Error(
 					"failed to assgin unit to dispatch",
 					zap.Int64("dispatch_id", dsp.GetId()),

@@ -80,6 +80,7 @@ func NewMigrate(db *sql.DB, disableLocking bool) (*migrate.Migrate, error) {
 // MigrateDB runs database migrations using golang-migrate, logging progress and errors.
 // It prepares the DSN, connects to the DB, runs migrations, and logs the result.
 func MigrateDB(
+	ctx context.Context,
 	logger *zap.Logger,
 	dbDSN string,
 	ignoreReqs bool,
@@ -100,7 +101,7 @@ func MigrateDB(
 
 	logger.Info("verifying database requirements")
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	req := reqs.NewDBReqs(db)
@@ -146,13 +147,13 @@ func MigrateDB(
 	return req, db.Close()
 }
 
-func GetMigrationState(ctx context.Context, db *sql.DB) (version uint, dirty bool, err error) {
+func GetMigrationState(ctx context.Context, db *sql.DB) (uint, bool, error) {
 	m, err := NewMigrate(db, false)
 	if err != nil {
 		return 0, false, fmt.Errorf("failed to create migration instance. %w", err)
 	}
 
-	version, dirty, err = m.Version()
+	version, dirty, err := m.Version()
 	if err != nil {
 		return 0, false, fmt.Errorf("failed to get migration version. %w", err)
 	}

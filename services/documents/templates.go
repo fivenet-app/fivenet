@@ -130,9 +130,16 @@ func (s *Server) GetTemplate(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	} else if req.Render != nil && req.GetRender() && req.GetData() != nil {
-		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(resp.GetTemplate(), req.GetData())
+		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(
+			resp.GetTemplate(),
+			req.GetData(),
+		)
 		if err != nil {
-			if s.ps.Can(userInfo, permsdocuments.DocumentsServicePerm, permsdocuments.DocumentsServiceCreateTemplatePerm) {
+			if s.ps.Can(
+				userInfo,
+				permsdocuments.DocumentsServicePerm,
+				permsdocuments.DocumentsServiceCreateTemplatePerm,
+			) {
 				return nil, err
 			} else {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateFailed)
@@ -331,7 +338,14 @@ func (s *Server) CreateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := s.templateAccess.HandleAccessChanges(ctx, tx, lastId, req.GetTemplate().GetJobAccess(), nil, nil); err != nil {
+	if _, err := s.templateAccess.HandleAccessChanges(
+		ctx,
+		tx,
+		lastId,
+		req.GetTemplate().GetJobAccess(),
+		nil,
+		nil,
+	); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateAccessDuplicate)
 		}
@@ -438,7 +452,14 @@ func (s *Server) UpdateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := s.templateAccess.HandleAccessChanges(ctx, tx, req.GetTemplate().GetId(), req.GetTemplate().GetJobAccess(), nil, nil); err != nil {
+	if _, err := s.templateAccess.HandleAccessChanges(
+		ctx,
+		tx,
+		req.GetTemplate().GetId(),
+		req.GetTemplate().GetJobAccess(),
+		nil,
+		nil,
+	); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateAccessDuplicate)
 		}

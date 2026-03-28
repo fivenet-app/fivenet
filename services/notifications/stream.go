@@ -171,10 +171,16 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				cfg := info.Config
 
 				// If client view is not "unspecified", add specific subject for it
-				if clientView.Id != nil && clientView.GetType() > notificationsclientview.ObjectType_OBJECT_TYPE_UNSPECIFIED {
+				if clientView.Id != nil &&
+					clientView.GetType() > notificationsclientview.ObjectType_OBJECT_TYPE_UNSPECIFIED {
 					gAccess := access.GetAccess(clientView.GetType().ToAccessKey())
 					if gAccess != nil {
-						check, err := gAccess.CanUserAccessTarget(gctx, clientView.GetId(), userInfo, 2)
+						check, err := gAccess.CanUserAccessTarget(
+							gctx,
+							clientView.GetId(),
+							userInfo,
+							2,
+						)
 						if err != nil {
 							if !errors.Is(err, qrm.ErrNoRows) {
 								return errswrap.NewError(err, ErrFailedStream)
@@ -193,7 +199,13 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 					// Generate subject for the client view
 					clientViewSubjects = []string{
-						fmt.Sprintf("%s.%s.%s.%d", notifi.BaseSubject, notifi.ObjectTopic, clientView.GetType().ToNatsKey(), clientView.GetId()),
+						fmt.Sprintf(
+							"%s.%s.%s.%d",
+							notifi.BaseSubject,
+							notifi.ObjectTopic,
+							clientView.GetType().ToNatsKey(),
+							clientView.GetId(),
+						),
 					}
 				}
 
@@ -287,7 +299,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						currentUserInfo.Job = d.UserInfoChanged.GetNewJob()
 						currentUserInfo.JobGrade = d.UserInfoChanged.GetNewJobGrade()
 
-						baseSubjects, additionalSubjects, err = s.buildSubjects(gctx, currentUserInfo)
+						baseSubjects, additionalSubjects, err = s.buildSubjects(
+							gctx,
+							currentUserInfo,
+						)
 						if err != nil {
 							return errswrap.NewError(err, ErrFailedStream)
 						}

@@ -79,9 +79,15 @@ func (s *Server) ListQualificationRequests(
 					tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 
 					mysql.OR(
-						tQAccess.Access.GT_EQ(mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE))),
+						tQAccess.Access.GT_EQ(
+							mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE)),
+						),
 						mysql.AND(
-							tQAccess.Access.GT_EQ(mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW))),
+							tQAccess.Access.GT_EQ(
+								mysql.Int32(
+									int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+								),
+							),
 							tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						),
 					),
@@ -105,7 +111,8 @@ func (s *Server) ListQualificationRequests(
 		))
 	} else {
 		if req.QualificationId == nil {
-			condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).AND(tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
+			condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).
+				AND(tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
 			countColumn = mysql.DISTINCT(tQualiRequests.QualificationID)
 		} else {
 			countColumn = mysql.DISTINCT(tQualiRequests.UserID)
@@ -120,7 +127,11 @@ func (s *Server) ListQualificationRequests(
 
 		condition = condition.AND(tQualiRequests.Status.IN(statuses...))
 	} else {
-		condition = condition.AND(tQualiRequests.Status.NOT_EQ(mysql.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED))))
+		condition = condition.AND(
+			tQualiRequests.Status.NOT_EQ(
+				mysql.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)),
+			),
+		)
 	}
 
 	countStmt := tQualiRequests.
@@ -163,23 +174,25 @@ func (s *Server) ListQualificationRequests(
 
 	// Convert proto sort to db sorting
 	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil {
-		var column mysql.Column
-		switch req.GetSort().GetColumn() {
-		case "status":
-			column = tQualiRequests.Status
-		case "approvedAt":
-			column = tQualiRequests.ApprovedAt
-		case "createdAt":
-			fallthrough
-		default:
-			column = tQualiRequests.CreatedAt
-		}
+	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
+		for _, sc := range req.GetSort().GetColumns() {
+			var column mysql.Column
+			switch sc.GetId() {
+			case "status":
+				column = tQualiRequests.Status
+			case "approvedAt":
+				column = tQualiRequests.ApprovedAt
+			case "createdAt":
+				fallthrough
+			default:
+				column = tQualiRequests.CreatedAt
+			}
 
-		if req.GetSort().GetDirection() == database.AscSortDirection {
-			orderBys = append(orderBys, column.ASC())
-		} else {
-			orderBys = append(orderBys, column.DESC())
+			if sc.GetDesc() {
+				orderBys = append(orderBys, column.DESC())
+			} else {
+				orderBys = append(orderBys, column.ASC())
+			}
 		}
 	} else {
 		orderBys = append(orderBys, tQualiRequests.CreatedAt.DESC())
@@ -345,8 +358,11 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 					Key: "notifications.qualifications.request_updated.title",
 				},
 				Content: &common.I18NItem{
-					Key:        "notifications.qualifications.request_updated.content",
-					Parameters: map[string]string{"abbreviation": quali.GetAbbreviation(), "title": quali.GetTitle()},
+					Key: "notifications.qualifications.request_updated.content",
+					Parameters: map[string]string{
+						"abbreviation": quali.GetAbbreviation(),
+						"title":        quali.GetTitle(),
+					},
 				},
 				Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL,
 				Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
@@ -362,7 +378,12 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	} else {
-		canRequest, err := s.access.CanUserAccessTarget(ctx, req.GetRequest().GetQualificationId(), userInfo, qualificationsaccess.AccessLevel_ACCESS_LEVEL_REQUEST)
+		canRequest, err := s.access.CanUserAccessTarget(
+			ctx,
+			req.GetRequest().GetQualificationId(),
+			userInfo,
+			qualificationsaccess.AccessLevel_ACCESS_LEVEL_REQUEST,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -371,7 +392,11 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		}
 
 		// Make sure the requirements of the qualification are fullfiled by the user, ErrRequirementsMissing
-		reqsFullfilled, err := s.checkRequirementsMetForQualification(ctx, req.GetRequest().GetQualificationId(), userInfo.GetUserId())
+		reqsFullfilled, err := s.checkRequirementsMetForQualification(
+			ctx,
+			req.GetRequest().GetQualificationId(),
+			userInfo.GetUserId(),
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -379,7 +404,12 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			return nil, errorsqualifications.ErrRequirementsMissing
 		}
 
-		request, err := s.getQualificationRequest(ctx, req.GetRequest().GetQualificationId(), userInfo.GetUserId(), userInfo)
+		request, err := s.getQualificationRequest(
+			ctx,
+			req.GetRequest().GetQualificationId(),
+			userInfo.GetUserId(),
+			userInfo,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -553,7 +583,12 @@ func (s *Server) DeleteQualificationReq(
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	if err := s.deleteQualificationRequest(ctx, s.db, re.GetQualificationId(), re.GetUserId()); err != nil {
+	if err := s.deleteQualificationRequest(
+		ctx,
+		s.db,
+		re.GetQualificationId(),
+		re.GetUserId(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 

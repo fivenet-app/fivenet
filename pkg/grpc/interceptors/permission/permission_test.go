@@ -90,6 +90,7 @@ func (s *assertingPingService) PingList(
 }
 
 func TestPermsTestSuite(t *testing.T) {
+	t.Parallel()
 	s := &PermissionTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
 			TestService: &assertingPingService{&testpb.TestPingService{}, t},
@@ -183,6 +184,7 @@ func (s *permsOverrideTestService) AuthFuncOverride(
 }
 
 func TestPermsOverrideTestSuite(t *testing.T) {
+	t.Parallel()
 	s := &PermsOverrideTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
 			TestService: &permsOverrideTestService{
@@ -228,6 +230,7 @@ type permsRemapTestService struct {
 }
 
 func TestPermsRemapTestSuite(t *testing.T) {
+	t.Parallel()
 	s := &PermsRemapTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
 			TestService: &permsRemapTestService{

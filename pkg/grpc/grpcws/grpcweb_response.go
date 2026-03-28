@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"io"
+	"math"
 	"net/http"
 	"strings"
 
@@ -98,6 +99,8 @@ func (w *grpcWebResponse) copyTrailersToPayload() {
 	trailers := extractTrailingHeaders(w.headers, w.wrapped.Header())
 	trailerBuffer := new(bytes.Buffer)
 	trailers.Write(trailerBuffer)
+	trailerBytes := trailerBuffer.Bytes()
+	originalTrailerLen := len(trailerBytes)
 	trailerGrpcDataHeader := []byte{
 		1 << 7,
 		0,
@@ -105,11 +108,34 @@ func (w *grpcWebResponse) copyTrailersToPayload() {
 		0,
 		0,
 	} // MSB=1 indicates this is a trailer data frame.
-	//nolint:gosec // G115: GRPC server's limits should protect us from int/uint overflow issues.
-	binary.BigEndian.PutUint32(trailerGrpcDataHeader[1:5], uint32(trailerBuffer.Len()))
+
+	// Probably want to find a way to cancel the whole stream when this happens..,
+	// but for now just truncate the trailers to fit in the frame size limit.
+	var truncated bool
+	trailerBytes, truncated = truncateBytesToMaxLen(trailerBytes, math.MaxUint32)
+	if truncated {
+		grpclog.Errorf(
+			"trailer size %d exceeds maximum of %d, truncating",
+			originalTrailerLen,
+			math.MaxUint32,
+		)
+	}
+
+	binary.BigEndian.PutUint32(
+		trailerGrpcDataHeader[1:5],
+		uint32(len(trailerBytes)),
+	)
 	w.wrapped.Write(trailerGrpcDataHeader)
-	w.wrapped.Write(trailerBuffer.Bytes())
+	w.wrapped.Write(trailerBytes)
 	flushWriter(w.wrapped)
+}
+
+func truncateBytesToMaxLen(b []byte, maxLen uint64) ([]byte, bool) {
+	if uint64(len(b)) <= maxLen {
+		return b, false
+	}
+
+	return b[:int(maxLen)], true
 }
 
 func extractTrailingHeaders(src http.Header, flushed http.Header) http.Header {

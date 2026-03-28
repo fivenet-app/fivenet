@@ -131,7 +131,12 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id int64) error {
 
 func (s *Housekeeper) resetUnitPing(ctx context.Context, id int64) error {
 	// Reset unit ping timer
-	if err := s.units.UpsertWithTTL(ctx, s.units.KVPing, fmt.Sprintf("ping.%d", id), units.PingTTL); err != nil {
+	if err := s.units.UpsertWithTTL(
+		ctx,
+		s.units.KVPing,
+		fmt.Sprintf("ping.%d", id),
+		units.PingTTL,
+	); err != nil {
 		return fmt.Errorf("failed to upsert ping unit timer. %w", err)
 	}
 	return nil

@@ -41,7 +41,7 @@ type userSnapshot struct {
 // It is used to detect changes in user information and publish events accordingly.
 // The events are mainly used by any streams.
 type Poller struct {
-	ctx context.Context
+	ctx context.Context //nolint:containedctx // Used as the service-lifecycle context for async KV operations.
 
 	logger *zap.Logger
 	jsCons jetstream.ConsumeContext
@@ -78,7 +78,7 @@ func NewPoller(p PollerParams) *Poller {
 	poller := &Poller{
 		logger: p.Logger.Named("userinfo.poller"),
 
-		ctx:      context.Background(),
+		ctx:      ctxCancel,
 		db:       p.DB,
 		enricher: p.Enricher,
 		notifi:   p.Notifi,
@@ -244,7 +244,15 @@ func (p *Poller) doBatch(ctx context.Context) error {
 
 	var errs error
 	for _, row := range dest {
-		if err := p.checkDiffAndPublish(ctx, row.AccountId, row.UserId, row.Job, row.JobGrade, row.Groups, row.UpdatedAt); err != nil {
+		if err := p.checkDiffAndPublish(
+			ctx,
+			row.AccountId,
+			row.UserId,
+			row.Job,
+			row.JobGrade,
+			row.Groups,
+			row.UpdatedAt,
+		); err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("failed to check diff. %w", err))
 			continue
 		}
@@ -291,7 +299,11 @@ func (p *Poller) checkDiffAndPublish(
 		}
 		p.enricher.EnrichJobInfo(evt)
 
-		if _, err := p.js.PublishAsyncProto(ctx, fmt.Sprintf("userinfo.%d.changes", acct), evt); err != nil {
+		if _, err := p.js.PublishAsyncProto(
+			ctx,
+			fmt.Sprintf("userinfo.%d.changes", acct),
+			evt,
+		); err != nil {
 			p.logger.Error("failed to publish user info change event",
 				zap.Int64("accountId", acct),
 				zap.Int32("userId", uid),

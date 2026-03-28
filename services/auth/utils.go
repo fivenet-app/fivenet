@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-// Cost parameter for bcrypt hashing.
+// BCryptCost parameter for bcrypt hashing.
 const BCryptCost = 14
 
 func (s *Server) getCookieBase(name string, value string) http.Cookie {

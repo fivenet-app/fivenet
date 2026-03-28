@@ -178,9 +178,13 @@ func New(p Params) *DispatchDB {
 					}
 
 					for _, job := range dispatch.GetJobs().GetJobStrings() {
-						if err := jobSt.Put(ctx, centrumutils.JobIdKey(job, dispatch.GetId()), &common.IDMapping{
-							Id: dispatch.GetId(),
-						}); err != nil {
+						if err := jobSt.Put(
+							ctx,
+							centrumutils.JobIdKey(job, dispatch.GetId()),
+							&common.IDMapping{
+								Id: dispatch.GetId(),
+							},
+						); err != nil {
 							errs = multierr.Append(
 								errs,
 								fmt.Errorf(
@@ -213,7 +217,10 @@ func New(p Params) *DispatchDB {
 
 					var errs error
 					for _, job := range dispatch.GetJobs().GetJobStrings() {
-						if err := jobSt.Delete(ctx, centrumutils.JobIdKey(job, dispatch.GetId())); err != nil {
+						if err := jobSt.Delete(
+							ctx,
+							centrumutils.JobIdKey(job, dispatch.GetId()),
+						); err != nil {
 							errs = multierr.Append(
 								errs,
 								fmt.Errorf(
@@ -227,7 +234,10 @@ func New(p Params) *DispatchDB {
 						}
 					}
 
-					if err := d.idleKV.Delete(ctx, "idle."+centrumutils.IdKey(dispatch.GetId())); err != nil {
+					if err := d.idleKV.Delete(
+						ctx,
+						"idle."+centrumutils.IdKey(dispatch.GetId()),
+					); err != nil {
 						errs = multierr.Append(
 							errs,
 							fmt.Errorf(
@@ -267,11 +277,17 @@ func New(p Params) *DispatchDB {
 								)
 							}
 						} else {
-							if err := locs.Replace(dispatch, centrumdispatches.DispatchPointMatchFn(dispatch.GetId()),
+							if err := locs.Replace(
+								dispatch,
+								centrumdispatches.DispatchPointMatchFn(dispatch.GetId()),
 								func(p1, p2 orb.Pointer) bool {
 									return p1.Point().Equal(p2.Point())
-								}); err != nil {
-								d.logger.Error("failed to add non-existent dispatch to locations", zap.Int64("dispatch_id", dispatch.GetId()))
+								},
+							); err != nil {
+								d.logger.Error(
+									"failed to add non-existent dispatch to locations",
+									zap.Int64("dispatch_id", dispatch.GetId()),
+								)
 							}
 						}
 					}
@@ -508,12 +524,19 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 			if !locs.Has(dsps[i], centrumdispatches.DispatchPointMatchFn(dsps[i].GetId())) {
 				locs.Add(dsps[i])
 			} else {
-				err := locs.Replace(dsps[i], centrumdispatches.DispatchPointMatchFn(dsps[i].GetId()),
+				err := locs.Replace(
+					dsps[i],
+					centrumdispatches.DispatchPointMatchFn(dsps[i].GetId()),
 					func(p1, p2 orb.Pointer) bool {
 						return p1.Point().Equal(p2.Point())
-					})
+					},
+				)
 				if err != nil {
-					s.logger.Error("failed to replace dispatch in locations", zap.Int64("dispatch_id", dsps[i].GetId()), zap.Error(err))
+					s.logger.Error(
+						"failed to replace dispatch in locations",
+						zap.Int64("dispatch_id", dsps[i].GetId()),
+						zap.Error(err),
+					)
 				}
 			}
 		}
@@ -725,7 +748,15 @@ func (s *DispatchDB) UpdateStatus(
 	}
 
 	for _, job := range dsp.GetJobs().GetJobStrings() {
-		if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job), data); err != nil {
+		if _, err := s.js.Publish(
+			ctx,
+			eventscentrum.BuildSubject(
+				eventscentrum.TopicDispatch,
+				eventscentrum.TypeDispatchStatus,
+				job,
+			),
+			data,
+		); err != nil {
 			return nil, fmt.Errorf(
 				"failed to publish dispatch status event (size: %d, message: '%+v'). %w",
 				len(data),
@@ -871,100 +902,114 @@ func (s *DispatchDB) UpdateAssignments(
 	}
 
 	key := centrumutils.IdKey(dspId)
-	if err := s.store.ComputeUpdate(ctx, key, func(key string, dsp *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
-		if dsp == nil {
-			s.logger.Error("nil dispatch in computing dispatch assignment logic", zap.String("key", key), zap.Any("dsp", dsp))
-			return dsp, false, nil
-		}
+	if err := s.store.ComputeUpdate(
+		ctx,
+		key,
+		func(key string, dsp *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
+			if dsp == nil {
+				s.logger.Error(
+					"nil dispatch in computing dispatch assignment logic",
+					zap.String("key", key),
+					zap.Any("dsp", dsp),
+				)
+				return dsp, false, nil
+			}
 
-		if len(toRemove) > 0 {
-			toAnnounce := []int64{}
-			dsp.Units = slices.DeleteFunc(dsp.GetUnits(), func(in *centrumdispatches.DispatchAssignment) bool {
-				for k := range toRemove {
-					if in.GetUnitId() != toRemove[k] {
+			if len(toRemove) > 0 {
+				toAnnounce := []int64{}
+				dsp.Units = slices.DeleteFunc(
+					dsp.GetUnits(),
+					func(in *centrumdispatches.DispatchAssignment) bool {
+						for k := range toRemove {
+							if in.GetUnitId() != toRemove[k] {
+								continue
+							}
+
+							toAnnounce = append(toAnnounce, toRemove[k])
+							return true
+						}
+
+						return false
+					},
+				)
+
+				// Send updates
+				for _, unitId := range toAnnounce {
+					if _, err := s.AddDispatchStatus(ctx, s.db, &centrumdispatches.DispatchStatus{
+						CreatedAt:  timestamp.Now(),
+						DispatchId: dsp.GetId(),
+						UnitId:     &unitId,
+						Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
+						UserId:     userId,
+						X:          x,
+						Y:          y,
+						Postal:     postal,
+					}, true, dsp.GetJobs().GetJobStrings()); err != nil {
+						return nil, false, err
+					}
+				}
+			}
+
+			if len(toAdd) > 0 {
+				units := []int64{}
+				for i := range toAdd {
+					// Skip already added units
+					if slices.ContainsFunc(
+						dsp.GetUnits(),
+						func(in *centrumdispatches.DispatchAssignment) bool {
+							return in.GetUnitId() == toAdd[i]
+						},
+					) {
 						continue
 					}
 
-					toAnnounce = append(toAnnounce, toRemove[k])
-					return true
+					unit, err := s.units.Get(ctx, toAdd[i])
+					if err != nil {
+						continue
+					}
+
+					// Skip empty units
+					if len(unit.GetUsers()) == 0 {
+						continue
+					}
+
+					// Only add unit to dispatch if not already assigned/in list
+					units = append(units, toAdd[i])
 				}
 
-				return false
-			})
+				for _, unitId := range units {
+					unit, err := s.units.Get(ctx, unitId)
+					if err != nil {
+						continue
+					}
 
-			// Send updates
-			for _, unitId := range toAnnounce {
-				if _, err := s.AddDispatchStatus(ctx, s.db, &centrumdispatches.DispatchStatus{
-					CreatedAt:  timestamp.Now(),
-					DispatchId: dsp.GetId(),
-					UnitId:     &unitId,
-					Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
-					UserId:     userId,
-					X:          x,
-					Y:          y,
-					Postal:     postal,
-				}, true, dsp.GetJobs().GetJobStrings()); err != nil {
-					return nil, false, err
-				}
-			}
-		}
-
-		if len(toAdd) > 0 {
-			units := []int64{}
-			for i := range toAdd {
-				// Skip already added units
-				if slices.ContainsFunc(dsp.GetUnits(), func(in *centrumdispatches.DispatchAssignment) bool {
-					return in.GetUnitId() == toAdd[i]
-				}) {
-					continue
+					dsp.Units = append(dsp.Units, &centrumdispatches.DispatchAssignment{
+						DispatchId: dsp.GetId(),
+						UnitId:     unit.GetId(),
+						Unit:       unit,
+						ExpiresAt:  expiresAtTS,
+					})
 				}
 
-				unit, err := s.units.Get(ctx, toAdd[i])
-				if err != nil {
-					continue
-				}
-
-				// Skip empty units
-				if len(unit.GetUsers()) == 0 {
-					continue
-				}
-
-				// Only add unit to dispatch if not already assigned/in list
-				units = append(units, toAdd[i])
-			}
-
-			for _, unitId := range units {
-				unit, err := s.units.Get(ctx, unitId)
-				if err != nil {
-					continue
-				}
-
-				dsp.Units = append(dsp.Units, &centrumdispatches.DispatchAssignment{
-					DispatchId: dsp.GetId(),
-					UnitId:     unit.GetId(),
-					Unit:       unit,
-					ExpiresAt:  expiresAtTS,
-				})
-			}
-
-			for _, unitId := range units {
-				if _, err := s.AddDispatchStatus(ctx, s.db, &centrumdispatches.DispatchStatus{
-					CreatedAt:  timestamp.Now(),
-					DispatchId: dsp.GetId(),
-					UnitId:     &unitId,
-					UserId:     userId,
-					Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
-					X:          x,
-					Y:          y,
-					Postal:     postal,
-				}, true, dsp.GetJobs().GetJobStrings()); err != nil {
-					return nil, false, err
+				for _, unitId := range units {
+					if _, err := s.AddDispatchStatus(ctx, s.db, &centrumdispatches.DispatchStatus{
+						CreatedAt:  timestamp.Now(),
+						DispatchId: dsp.GetId(),
+						UnitId:     &unitId,
+						UserId:     userId,
+						Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
+						X:          x,
+						Y:          y,
+						Postal:     postal,
+					}, true, dsp.GetJobs().GetJobStrings()); err != nil {
+						return nil, false, err
+					}
 				}
 			}
-		}
 
-		return dsp, len(toRemove) > 0 || len(toAdd) > 0, nil
-	}); err != nil {
+			return dsp, len(toRemove) > 0 || len(toAdd) > 0, nil
+		},
+	); err != nil {
 		return err
 	}
 
@@ -1246,7 +1291,15 @@ func (s *DispatchDB) AddDispatchStatus(
 		}
 
 		for _, job := range jobs {
-			if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job), data); err != nil {
+			if _, err := s.js.Publish(
+				ctx,
+				eventscentrum.BuildSubject(
+					eventscentrum.TopicDispatch,
+					eventscentrum.TypeDispatchStatus,
+					job,
+				),
+				data,
+			); err != nil {
 				return nil, err
 			}
 		}
@@ -1391,86 +1444,107 @@ func (s *DispatchDB) TakeDispatch(
 		}
 
 		key := centrumutils.IdKey(dspId)
-		if err := s.store.ComputeUpdate(ctx, key, func(key string, dsp *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
-			// If dispatch is nil or completed, disallow to accept the dispatch
-			if dsp == nil || (dsp.GetStatus() != nil && centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus())) {
-				return nil, false, errorscentrum.ErrDispatchAlreadyCompleted
-			}
+		if err := s.store.ComputeUpdate(
+			ctx,
+			key,
+			func(key string, dsp *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
+				// If dispatch is nil or completed, disallow to accept the dispatch
+				if dsp == nil ||
+					(dsp.GetStatus() != nil && centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus())) {
+					return nil, false, errorscentrum.ErrDispatchAlreadyCompleted
+				}
 
-			var status centrumdispatches.StatusDispatch
+				var status centrumdispatches.StatusDispatch
 
-			// Dispatch accepted
-			if resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
-				status = centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED
+				// Dispatch accepted
+				if resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
+					status = centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED
 
-				found := false
-				accepted := true
-				// Set unit expires at to nil
-				for _, ua := range dsp.GetUnits() {
-					if ua.GetUnitId() == unit.GetId() {
-						found = true
-						// If there's no expiration time the unit has been directly assigned
-						if ua.GetExpiresAt() == nil {
-							accepted = false
+					found := false
+					accepted := true
+					// Set unit expires at to nil
+					for _, ua := range dsp.GetUnits() {
+						if ua.GetUnitId() == unit.GetId() {
+							found = true
+							// If there's no expiration time the unit has been directly assigned
+							if ua.GetExpiresAt() == nil {
+								accepted = false
+							}
+							ua.ExpiresAt = nil
+							break
 						}
-						ua.ExpiresAt = nil
-						break
 					}
-				}
 
-				if !found {
-					dsp.Units = append(dsp.Units, &centrumdispatches.DispatchAssignment{
-						DispatchId: dsp.GetId(),
-						UnitId:     unit.GetId(),
-						Unit:       unit,
-						CreatedAt:  timestamp.Now(),
-					})
-				}
-
-				if accepted {
-					// Set unit to busy when unit accepts a dispatch
-					if unit.GetStatus() == nil || unit.GetStatus().GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_BUSY {
-						if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
-							CreatedAt:  timestamp.Now(),
+					if !found {
+						dsp.Units = append(dsp.Units, &centrumdispatches.DispatchAssignment{
+							DispatchId: dsp.GetId(),
 							UnitId:     unit.GetId(),
-							Status:     centrumunits.StatusUnit_STATUS_UNIT_BUSY,
-							UserId:     &userId,
-							CreatorId:  &userId,
-							X:          x,
-							Y:          y,
-							Postal:     postal,
-							CreatorJob: &userJob,
-						}); err != nil {
-							return nil, false, err
+							Unit:       unit,
+							CreatedAt:  timestamp.Now(),
+						})
+					}
+
+					if accepted {
+						// Set unit to busy when unit accepts a dispatch
+						if unit.GetStatus() == nil ||
+							unit.GetStatus().
+								GetStatus() !=
+								centrumunits.StatusUnit_STATUS_UNIT_BUSY {
+							if _, err := s.units.UpdateStatus(
+								ctx,
+								unit.GetId(),
+								&centrumunits.UnitStatus{
+									CreatedAt:  timestamp.Now(),
+									UnitId:     unit.GetId(),
+									Status:     centrumunits.StatusUnit_STATUS_UNIT_BUSY,
+									UserId:     &userId,
+									CreatorId:  &userId,
+									X:          x,
+									Y:          y,
+									Postal:     postal,
+									CreatorJob: &userJob,
+								},
+							); err != nil {
+								return nil, false, err
+							}
 						}
 					}
+				} else {
+					// Dispatch declined
+					status = centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED
+
+					// Remove the unit's assignment
+					dsp.Units = slices.DeleteFunc(
+						dsp.GetUnits(),
+						func(in *centrumdispatches.DispatchAssignment) bool {
+							return in.GetUnitId() == unit.GetId()
+						},
+					)
 				}
-			} else {
-				// Dispatch declined
-				status = centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED
 
-				// Remove the unit's assignment
-				dsp.Units = slices.DeleteFunc(dsp.GetUnits(), func(in *centrumdispatches.DispatchAssignment) bool {
-					return in.GetUnitId() == unit.GetId()
-				})
-			}
+				if dsp.Status, err = s.AddDispatchStatus(
+					ctx,
+					s.db,
+					&centrumdispatches.DispatchStatus{
+						CreatedAt:  timestamp.Now(),
+						DispatchId: dspId,
+						Status:     status,
+						UnitId:     &unitId,
+						UserId:     &userId,
+						X:          x,
+						Y:          y,
+						Postal:     postal,
+						CreatorJob: &userJob,
+					},
+					true,
+					dsp.GetJobs().GetJobStrings(),
+				); err != nil {
+					return nil, false, err
+				}
 
-			if dsp.Status, err = s.AddDispatchStatus(ctx, s.db, &centrumdispatches.DispatchStatus{
-				CreatedAt:  timestamp.Now(),
-				DispatchId: dspId,
-				Status:     status,
-				UnitId:     &unitId,
-				UserId:     &userId,
-				X:          x,
-				Y:          y,
-				Postal:     postal,
-				CreatorJob: &userJob,
-			}, true, dsp.GetJobs().GetJobStrings()); err != nil {
-				return nil, false, err
-			}
-
-			return dsp, true, nil
-		}); err != nil {
+				return dsp, true, nil
+			},
+		); err != nil {
 			// Ignore errors that are "okay" to encounter
 			if !errors.Is(err, errorscentrum.ErrDispatchAlreadyCompleted) {
 				return errswrap.NewError(err, errorscentrum.ErrFailedQuery)

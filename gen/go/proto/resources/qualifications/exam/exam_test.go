@@ -8,6 +8,7 @@ import (
 )
 
 func TestGrade(t *testing.T) {
+	t.Parallel()
 	questions := &ExamQuestions{
 		Questions: []*ExamQuestion{
 			{

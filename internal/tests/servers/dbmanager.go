@@ -155,7 +155,7 @@ func (m *dbServer) getDSN() string {
 
 func (m *dbServer) prepareDBForFirstUse(ctx context.Context) error {
 	// Use DB migrations to handle the rest (esx compat mode is true)
-	if _, err := query.MigrateDB(zap.NewNop(), m.getDSN(), false, false); err != nil {
+	if _, err := query.MigrateDB(ctx, zap.NewNop(), m.getDSN(), false, false); err != nil {
 		m.t.Fatalf("failed to migrate test database: %v", err)
 	}
 

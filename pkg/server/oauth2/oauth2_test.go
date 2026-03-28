@@ -83,6 +83,7 @@ func (m *MockUserInfoStore) getAccountInfo(
 }
 
 func TestCallback_InvalidState(t *testing.T) {
+	t.Parallel()
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	c, router := gin.CreateTestContext(w)
@@ -115,6 +116,7 @@ func TestCallback_InvalidState(t *testing.T) {
 }
 
 func TestCallback_InvalidProvider(t *testing.T) {
+	t.Parallel()
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	c, router := gin.CreateTestContext(w)
@@ -147,6 +149,7 @@ func TestCallback_InvalidProvider(t *testing.T) {
 }
 
 func TestCallback_ProviderError(t *testing.T) {
+	t.Parallel()
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	c, router := gin.CreateTestContext(w)
@@ -187,6 +190,7 @@ func TestCallback_ProviderError(t *testing.T) {
 }
 
 func TestCallback_LoginProviderError(t *testing.T) {
+	t.Parallel()
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	c, router := gin.CreateTestContext(w)
@@ -219,6 +223,7 @@ func TestCallback_LoginProviderError(t *testing.T) {
 }
 
 func TestCallback_LoginSuccess(t *testing.T) {
+	t.Parallel()
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	c, router := gin.CreateTestContext(w)
@@ -279,6 +284,7 @@ func TestCallback_LoginSuccess(t *testing.T) {
 }
 
 func TestCallback_ConnectError(t *testing.T) {
+	t.Parallel()
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	c, router := gin.CreateTestContext(w)
@@ -336,6 +342,7 @@ func TestCallback_ConnectError(t *testing.T) {
 }
 
 func TestCallback_ConnectErrorAlreadyInUse(t *testing.T) {
+	t.Parallel()
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	c, router := gin.CreateTestContext(w)
@@ -394,6 +401,7 @@ func TestCallback_ConnectErrorAlreadyInUse(t *testing.T) {
 }
 
 func TestCallback_ConnectFlow(t *testing.T) {
+	t.Parallel()
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	c, router := gin.CreateTestContext(w)

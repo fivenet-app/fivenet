@@ -140,7 +140,7 @@ func (s *VehiclesSync) Resync(ctx context.Context) (int64, int64, string, *time.
 
 func (s *VehiclesSync) syncOnce(
 	ctx context.Context,
-) (fetched int64, sent int64, cursorID string, cursorTime *time.Time, err error) {
+) (int64, int64, string, *time.Time, error) {
 	limit := s.cfg.Limits.Vehicles
 	sQuery := s.cfg.Tables.Vehicles
 	q := sQuery.GetQuery(s.state, 0, limit)

@@ -6,6 +6,8 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	pbstats "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/stats"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	"github.com/go-jet/jet/v2/mysql"
 )
 
 func isPublishedDocument(doc *documents.Document) bool {
@@ -25,18 +27,32 @@ func isPublishedDocument(doc *documents.Document) bool {
 	return !doc.GetMeta().GetDraft()
 }
 
-func periodStartExpr(period pbstats.StatsPeriod) string {
+func periodStartDateExpr(period pbstats.StatsPeriod) mysql.DateExpression {
+	tRollup := table.FivenetStatsDailyRollup
+
 	switch period {
 	case pbstats.StatsPeriod_STATS_PERIOD_MONTHLY:
-		return "DATE_SUB(day, INTERVAL DAYOFMONTH(day) - 1 DAY)"
+		return mysql.DateExp(
+			tRollup.Day.SUB(
+				mysql.INTERVAL(
+					mysql.Raw("DAYOFMONTH(`fivenet_stats_daily_rollup`.`day`) - 1"),
+					mysql.DAY,
+				),
+			),
+		)
 
 	case pbstats.StatsPeriod_STATS_PERIOD_WEEKLY:
-		return "DATE_SUB(day, INTERVAL WEEKDAY(day) DAY)"
+		return mysql.DateExp(
+			tRollup.Day.SUB(
+				mysql.INTERVAL(mysql.Raw("WEEKDAY(`fivenet_stats_daily_rollup`.`day`)"), mysql.DAY),
+			),
+		)
 
 	case pbstats.StatsPeriod_STATS_PERIOD_DAILY:
 		fallthrough
+
 	default:
-		return "day"
+		return tRollup.Day
 	}
 }
 

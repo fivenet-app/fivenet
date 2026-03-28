@@ -44,14 +44,14 @@ type UserInfoRetriever interface {
 	RefreshUserInfo(ctx context.Context, userId int32) error
 }
 
-// UIRetriever implements UserInfoRetriever and provides user info retrieval with caching.
+// Retriever implements UserInfoRetriever and provides user info retrieval with caching.
 type Retriever struct {
 	UserInfoRetriever
 
 	logger *zap.Logger
 	jsCons jetstream.ConsumeContext
 
-	ctx      context.Context
+	ctx      context.Context //nolint:containedctx // Retriever uses lifecycle context for async notification fanout.
 	db       *sql.DB
 	js       *events.JSWrapper
 	enricher *mstlystcdata.Enricher

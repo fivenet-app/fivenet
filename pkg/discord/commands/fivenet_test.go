@@ -12,6 +12,7 @@ import (
 )
 
 func TestNewHandleFivenetCommand(t *testing.T) {
+	t.Parallel()
 	l, err := lang.New()
 	require.NoError(t, err)
 
@@ -49,7 +50,7 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 		(*resp.Data.Embeds)[0].Description,
 	)
 	// Check components
-	require.True(t, (*resp.Data.Components)[0].Type() == discord.ActionRowComponentType)
+	require.Equal(t, discord.ActionRowComponentType, (*resp.Data.Components)[0].Type())
 	actionRow, ok := (*resp.Data.Components)[0].(*discord.ActionRowComponent)
 	require.True(t, ok)
 
@@ -69,7 +70,7 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 		(*resp.Data.Embeds)[0].Description,
 	)
 	// Check components
-	require.True(t, (*resp.Data.Components)[0].Type() == discord.ActionRowComponentType)
+	require.Equal(t, discord.ActionRowComponentType, (*resp.Data.Components)[0].Type())
 	actionRow, ok = (*resp.Data.Components)[0].(*discord.ActionRowComponent)
 	require.True(t, ok)
 

@@ -272,7 +272,12 @@ func (s *Server) CreateDocumentReq(
 
 	// If the document has no creator anymore, nothing we can do here
 	if doc.CreatorId != nil {
-		if err := s.notifyUserAboutRequest(ctx, doc, userInfo.GetUserId(), doc.GetCreatorId()); err != nil {
+		if err := s.notifyUserAboutRequest(
+			ctx,
+			doc,
+			userInfo.GetUserId(),
+			doc.GetCreatorId(),
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
@@ -383,7 +388,13 @@ func (s *Server) UpdateDocumentReq(
 		case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE:
 			activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED
 
-			if err := s.updateDocumentOwner(ctx, tx, request.GetDocumentId(), userInfo, request.GetCreator()); err != nil {
+			if err := s.updateDocumentOwner(
+				ctx,
+				tx,
+				request.GetDocumentId(),
+				userInfo,
+				request.GetCreator(),
+			); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 
@@ -405,11 +416,16 @@ func (s *Server) UpdateDocumentReq(
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 
-			if err := s.access.Users.CreateEntry(ctx, tx, request.GetDocumentId(), &documentsaccess.DocumentUserAccess{
-				UserId:   request.GetCreatorId(),
-				TargetId: request.GetDocumentId(),
-				Access:   request.GetData().GetAccessRequested().GetLevel(),
-			}); err != nil {
+			if err := s.access.Users.CreateEntry(
+				ctx,
+				tx,
+				request.GetDocumentId(),
+				&documentsaccess.DocumentUserAccess{
+					UserId:   request.GetCreatorId(),
+					TargetId: request.GetDocumentId(),
+					Access:   request.GetData().GetAccessRequested().GetLevel(),
+				},
+			); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 		}

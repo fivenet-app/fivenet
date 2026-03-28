@@ -57,7 +57,7 @@ func GetModule(name string, base *BaseModule, events *broker.Broker[any]) (Modul
 }
 
 type BaseModule struct {
-	ctx      context.Context
+	ctx      context.Context //nolint:containedctx // Shared module base keeps guild lifecycle context for all module operations.
 	logger   *zap.Logger
 	db       *sql.DB
 	discord  IState

@@ -79,7 +79,10 @@ func (s *Server) ListThreads(
 			))
 	} else {
 		// Skip archived emails by default
-		wheres = append(wheres, tThreadsState.Archived.IS_NULL().OR(tThreadsState.Archived.EQ(mysql.Bool(false))))
+		wheres = append(
+			wheres,
+			tThreadsState.Archived.IS_NULL().OR(tThreadsState.Archived.EQ(mysql.Bool(false))),
+		)
 	}
 
 	// EXISTS filter: thread has at least one of the user’s email IDs as recipient
@@ -273,7 +276,13 @@ func (s *Server) GetThread(
 ) (*pbmailer.GetThreadResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetThreadId(), req.GetEmailId(), maileraccess.AccessLevel_ACCESS_LEVEL_READ); err != nil {
+	if err := s.checkIfEmailPartOfThread(
+		ctx,
+		userInfo,
+		req.GetThreadId(),
+		req.GetEmailId(),
+		maileraccess.AccessLevel_ACCESS_LEVEL_READ,
+	); err != nil {
 		return nil, err
 	}
 
@@ -379,7 +388,13 @@ func (s *Server) CreateThread(
 	for _, recipient := range emails {
 		emailIds = append(emailIds, recipient.GetEmailId())
 	}
-	if err := s.setUnreadState(ctx, tx, req.GetThread().GetId(), senderEmail.GetId(), emailIds); err != nil {
+	if err := s.setUnreadState(
+		ctx,
+		tx,
+		req.GetThread().GetId(),
+		senderEmail.GetId(),
+		emailIds,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 

@@ -6,6 +6,7 @@ import (
 )
 
 func TestValidateIconRequest(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name  string
 		path  string
@@ -52,6 +53,7 @@ func TestValidateIconRequest(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			got := validateIconRequest(tc.path, tc.query)
 			if got != tc.valid {
 				t.Errorf(

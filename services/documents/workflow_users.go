@@ -118,11 +118,23 @@ func (w *Workflow) handleWorkflowUserState(
 	if state.GetManualReminderTime() != nil &&
 		time.Since(state.GetManualReminderTime().AsTime()) > 0 {
 		// Send reminder and null reminder time
-		if err := w.sendDocumentReminder(ctx, state.GetDocumentId(), state.GetUserId(), doc, state.GetManualReminderMessage(), true); err != nil {
+		if err := w.sendDocumentReminder(
+			ctx,
+			state.GetDocumentId(),
+			state.GetUserId(),
+			doc,
+			state.GetManualReminderMessage(),
+			true,
+		); err != nil {
 			return err
 		}
 
-		if err := deleteWorkflowUserState(ctx, w.db, state.GetDocumentId(), state.GetUserId()); err != nil {
+		if err := deleteWorkflowUserState(
+			ctx,
+			w.db,
+			state.GetDocumentId(),
+			state.GetUserId(),
+		); err != nil {
 			return err
 		}
 	}

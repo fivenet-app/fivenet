@@ -13,6 +13,7 @@ import (
 )
 
 func TestTranslateWithFallback(t *testing.T) {
+	t.Parallel()
 	i18n := &I18n{}
 	err := loadTestTranslations(i18n)
 	require.NoError(t, err)
@@ -88,6 +89,7 @@ func TestTranslateWithFallback(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			result, err := i18n.translateWithFallback(tt.lang, tt.key, tt.vars)
 			if tt.err != "" {
 				assert.EqualError(t, err, tt.err)
@@ -128,6 +130,7 @@ func loadTestTranslations(i18n *I18n) error {
 }
 
 func TestTranslateViaTranslatorFunc(t *testing.T) {
+	t.Parallel()
 	i18n := &I18n{}
 	err := loadTestTranslations(i18n)
 	require.NoError(t, err)
@@ -151,6 +154,7 @@ func TestTranslateViaTranslatorFunc(t *testing.T) {
 
 // Unit test for missing variables.
 func TestReplaceVars_MissingVariables(t *testing.T) {
+	t.Parallel()
 	s := "Hello, {name}!"
 	vars := map[string]any{}
 	result := replaceVars(s, vars)

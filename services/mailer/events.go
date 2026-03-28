@@ -17,7 +17,11 @@ func (s *Server) sendUpdate(
 	emailIds = utils.RemoveSliceDuplicates(emailIds)
 
 	for _, emailId := range emailIds {
-		if _, err := s.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.MailerTopic, emailId), event); err != nil {
+		if _, err := s.js.PublishAsyncProto(
+			ctx,
+			fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.MailerTopic, emailId),
+			event,
+		); err != nil {
 			return err
 		}
 	}

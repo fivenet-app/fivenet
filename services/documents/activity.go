@@ -185,7 +185,10 @@ func (s *Server) generateDocumentDiff(
 	}
 
 	if !strings.EqualFold(old.GetMeta().GetState(), new.GetMeta().GetState()) {
-		if stateDiff := textdiff.DiffText(old.GetMeta().GetState(), new.GetMeta().GetState()); stateDiff.HasChanges() {
+		if stateDiff := textdiff.DiffText(
+			old.GetMeta().GetState(),
+			new.GetMeta().GetState(),
+		); stateDiff.HasChanges() {
 			diff.StateCdiff = stateDiff
 		}
 	}

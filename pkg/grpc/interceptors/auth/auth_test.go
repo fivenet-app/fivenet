@@ -82,6 +82,7 @@ func ctxWithToken(ctx context.Context, scheme string, token string) context.Cont
 }
 
 func TestAuthTestSuite(t *testing.T) {
+	t.Parallel()
 	authFunc := buildDummyAuthFunction("Bearer", commonAuthToken)
 	s := &AuthTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
@@ -190,6 +191,7 @@ func (s *authOverrideTestService) AuthFuncOverride(
 }
 
 func TestAuthOverrideTestSuite(t *testing.T) {
+	t.Parallel()
 	authFunc := buildDummyAuthFunction("Bearer", commonAuthToken)
 	s := &AuthOverrideTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{

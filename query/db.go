@@ -74,10 +74,17 @@ func SetupDB(p Params) (Result, error) {
 	// Run DB migrations unless explicitly skipped via environment variable.
 	if !p.Config.Database.SkipMigrations {
 		var err error
-		if req, err = MigrateDB(p.Logger, p.Config.Database.DSN, p.Config.IgnoreRequirements, p.Config.Database.DisableLocking); err != nil {
+		if req, err = MigrateDB(
+			// Migrations should not be canceled by the caller's context, as they are critical for application startup.
+			context.Background(),
+			p.Logger,
+			p.Config.Database.DSN,
+			p.Config.IgnoreRequirements,
+			p.Config.Database.DisableLocking,
+		); err != nil {
 			// In Debug mode only warn about "no migration found for version" errors, as they are common during development.
-			if !(p.Config.Mode == "debug" &&
-				strings.Contains(err.Error(), "no migration found for version")) {
+			if p.Config.Mode != "debug" ||
+				!strings.Contains(err.Error(), "no migration found for version") {
 				return res, err
 			}
 		}

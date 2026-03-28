@@ -176,7 +176,16 @@ func (h *Handler[P]) UploadFile(
 
 	if h.joinTable != nil {
 		parentIdBoolExp := h.parentColBoolExp(parentID)
-		if err := h.joinRowInserter(ctx, tx, h.joinTable, h.parentCol, h.fileCol, parentID, parentIdBoolExp, fileID); err != nil {
+		if err := h.joinRowInserter(
+			ctx,
+			tx,
+			h.joinTable,
+			h.parentCol,
+			h.fileCol,
+			parentID,
+			parentIdBoolExp,
+			fileID,
+		); err != nil {
 			return nil, err
 		}
 	}

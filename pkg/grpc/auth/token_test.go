@@ -23,6 +23,7 @@ var testUserCombinedClaim = &authclaims.CombinedClaims{
 // Even though is kinda a duplicate of go JWT lib, I want to make sure we don't have
 // issues parsing our custom claims structure.
 func TestToken(t *testing.T) {
+	t.Parallel()
 	tm := NewTokenMgr(jwtTokenTestSecret)
 	assert.NotNil(t, tm)
 	claims := testUserCombinedClaim

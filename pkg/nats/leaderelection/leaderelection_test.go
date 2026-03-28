@@ -23,6 +23,7 @@ func waitForCtx(t *testing.T, ch <-chan context.Context, timeout time.Duration) 
 }
 
 func TestLeaderElector_StopsHeartbeatAfterStepDown(t *testing.T) {
+	t.Parallel()
 	ctx := t.Context()
 	conn, js, cleanup, err := nats.NewInProcessNATSServer()
 	require.NoError(t, err)
@@ -87,6 +88,7 @@ func TestLeaderElector_StopsHeartbeatAfterStepDown(t *testing.T) {
 }
 
 func TestLeaderElector_ReacquiresAfterCompetitorLeaves(t *testing.T) {
+	t.Parallel()
 	ctx := t.Context()
 	conn, js, cleanup, err := nats.NewInProcessNATSServer()
 	require.NoError(t, err)

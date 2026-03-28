@@ -8,16 +8,12 @@ import type { File as FilestoreFile } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/user';
 
-const props = defineProps<{
-    user: User;
-}>();
-
 const emit = defineEmits<{
     (e: 'close', v: boolean): void;
     (e: 'update:mugshot', value?: FilestoreFile): void;
 }>();
 
-const modelValue = useVModel(props, 'user', emit);
+const user = defineModel<User>('user', { required: true });
 
 const notifications = useNotificationsStore();
 
@@ -57,7 +53,7 @@ const state = reactive<Schema>({
     reset: false,
 });
 
-const { resizeAndUpload } = useFileUploader((_) => citizensCitizensClient.uploadMugshot(_), 'documents', props.user.userId);
+const { resizeAndUpload } = useFileUploader((_) => citizensCitizensClient.uploadMugshot(_), 'documents', user.value.userId);
 
 async function uploadMugshot(f: File, reason: string): Promise<void> {
     if (!f.type.startsWith('image/')) return;
@@ -71,10 +67,10 @@ async function uploadMugshot(f: File, reason: string): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        if (modelValue.value.props) {
-            modelValue.value.props.mugshot = resp.file;
+        if (user.value.props) {
+            user.value.props.mugshot = resp.file;
         } else {
-            modelValue.value.props = { userId: props.user.userId, mugshot: resp.file };
+            user.value.props = { userId: user.value.userId, mugshot: resp.file };
         }
 
         emit('close', false);
@@ -89,7 +85,7 @@ async function deleteMugshot(fileId: number | undefined, reason: string): Promis
 
     try {
         await citizensCitizensClient.deleteMugshot({
-            userId: props.user.userId,
+            userId: user.value.userId,
             reason: reason,
         });
 
@@ -98,10 +94,10 @@ async function deleteMugshot(fileId: number | undefined, reason: string): Promis
             description: { key: 'notifications.action_successful.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
-        if (modelValue.value.props) {
-            modelValue.value.props.mugshot = undefined;
+        if (user.value.props) {
+            user.value.props.mugshot = undefined;
         } else {
-            modelValue.value.props = { userId: props.user.userId, mugshot: undefined };
+            user.value.props = { userId: user.value.userId, mugshot: undefined };
         }
 
         emit('close', false);
@@ -113,7 +109,7 @@ async function deleteMugshot(fileId: number | undefined, reason: string): Promis
 
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (event.data.reset) {
-        await deleteMugshot(props.user.props?.mugshotFileId, event.data.reason);
+        await deleteMugshot(user.value.props?.mugshotFileId, event.data.reason);
         return;
     }
 

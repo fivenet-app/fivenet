@@ -232,9 +232,7 @@ func (s *Server) ListPages(
 	}
 
 	if req.Search == nil && (req.RootOnly == nil || !req.GetRootOnly()) {
-		for _, page := range mapPagesToNavItems(pages) {
-			resp.Pages = append(resp.Pages, page)
-		}
+		resp.Pages = append(resp.Pages, mapPagesToNavItems(pages)...)
 	} else {
 		resp.Pages = pages
 	}
@@ -536,7 +534,14 @@ func (s *Server) CreatePage(
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	if err := s.handlePageAccessChange(ctx, tx, resp.GetId(), userInfo, pageAccess, false); err != nil {
+	if err := s.handlePageAccessChange(
+		ctx,
+		tx,
+		resp.GetId(),
+		userInfo,
+		pageAccess,
+		false,
+	); err != nil {
 		return nil, err
 	}
 
@@ -734,7 +739,14 @@ func (s *Server) UpdatePage(
 		}
 	}
 
-	if err := s.handlePageAccessChange(ctx, tx, req.GetPage().GetId(), userInfo, req.GetPage().GetAccess(), true); err != nil {
+	if err := s.handlePageAccessChange(
+		ctx,
+		tx,
+		req.GetPage().GetId(),
+		userInfo,
+		req.GetPage().GetAccess(),
+		true,
+	); err != nil {
 		return nil, err
 	}
 

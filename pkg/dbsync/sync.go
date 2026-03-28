@@ -36,7 +36,7 @@ type Sync struct {
 	logger *zap.Logger
 	db     *sql.DB
 
-	ctx    context.Context
+	ctx    context.Context //nolint:containedctx // Sync process retains service lifecycle context for long-running loops.
 	cancel context.CancelFunc
 
 	cfg     *dbsyncconfig.Config
@@ -249,7 +249,7 @@ func (s *Sync) runLoop(ctx context.Context) {
 }
 
 func (s *Sync) run(ctx context.Context) error {
-	if err := s.getSyncStatus(s.ctx); err != nil {
+	if err := s.getSyncStatus(ctx); err != nil {
 		s.logger.Error("failed to get sync status", zap.Error(err))
 	}
 

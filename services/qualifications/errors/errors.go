@@ -13,8 +13,12 @@ var (
 	)
 	ErrRequirementsMissing = common.NewI18nErr(
 		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.qualifications.QualificationsService.ErrRequirementsMissing.content"},
-		&common.I18NItem{Key: "errors.qualifications.QualificationsService.ErrRequirementsMissing.title"},
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrRequirementsMissing.content",
+		},
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrRequirementsMissing.title",
+		},
 	)
 	ErrQualificationClosed = common.NewI18nErr(
 		codes.InvalidArgument,

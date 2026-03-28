@@ -55,7 +55,7 @@ type CollabRoom struct {
 	stateKV jetstream.KeyValue
 
 	// ctx is the context for the room's lifecycle.
-	ctx context.Context
+	ctx context.Context //nolint:containedctx // Room lifecycle context controls consume loop shutdown.
 	// cancel is the cancel function for the room's context.
 	cancel context.CancelFunc
 }

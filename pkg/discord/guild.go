@@ -39,7 +39,7 @@ type Guild struct {
 	running   atomic.Bool
 
 	mu     sync.Mutex
-	ctx    context.Context
+	ctx    context.Context //nolint:containedctx // Guild run context is retained across async module planning and apply phases.
 	cancel context.CancelFunc
 
 	job      string

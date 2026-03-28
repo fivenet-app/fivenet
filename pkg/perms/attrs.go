@@ -169,7 +169,13 @@ func (p *Perms) CreateAttribute(
 			)
 		}
 
-		if err := p.addOrUpdateAttributeInMap(permId, attr.ID, key, aType, validValues); err != nil {
+		if err := p.addOrUpdateAttributeInMap(
+			permId,
+			attr.ID,
+			key,
+			aType,
+			validValues,
+		); err != nil {
 			return 0, fmt.Errorf(
 				"failed to add or update attribute in map after duplicate error. %w",
 				err,

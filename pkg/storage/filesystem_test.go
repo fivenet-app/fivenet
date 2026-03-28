@@ -13,6 +13,7 @@ import (
 )
 
 func TestFilesystem_Get(t *testing.T) {
+	t.Parallel()
 	lc := fxtest.NewLifecycle(t)
 
 	basePath := t.TempDir()
@@ -45,6 +46,7 @@ func TestFilesystem_Get(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("valid file", func(t *testing.T) {
+		t.Parallel()
 		ctx := t.Context()
 		obj, info, err := fs.Get(ctx, "testfile.txt")
 		require.NoError(t, err)
@@ -64,18 +66,21 @@ func TestFilesystem_Get(t *testing.T) {
 	})
 
 	t.Run("file not found", func(t *testing.T) {
+		t.Parallel()
 		ctx := t.Context()
 		_, _, err := fs.Get(ctx, "nonexistent.txt")
 		require.ErrorIs(t, err, ErrNotFound)
 	})
 
 	t.Run("invalid path", func(t *testing.T) {
+		t.Parallel()
 		ctx := t.Context()
 		_, _, err := fs.Get(ctx, "../invalidpath.txt")
 		require.ErrorIs(t, err, ErrInvalidPath)
 	})
 
 	t.Run("put and get file", func(t *testing.T) {
+		t.Parallel()
 		ctx := t.Context()
 		contentToPut := []byte("content to put")
 		key := "putfile.txt"

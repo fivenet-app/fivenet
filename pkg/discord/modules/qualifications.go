@@ -173,7 +173,12 @@ func (g *QualificationsSync) planUsers(
 
 	users := discordtypes.Users{}
 	for qualificationId, role := range roles {
-		if err := g.queryAndPlanUsersForQualification(ctx, qualificationId, role, &users); err != nil {
+		if err := g.queryAndPlanUsersForQualification(
+			ctx,
+			qualificationId,
+			role,
+			&users,
+		); err != nil {
 			errs = multierr.Append(errs, err)
 			continue
 		}

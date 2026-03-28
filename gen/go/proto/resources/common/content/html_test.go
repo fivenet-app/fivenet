@@ -22,6 +22,7 @@ var testsRichTextHtmlNodeFromHTMLNode = []struct {
 }
 
 func TestRichTextHtmlNodeFromHTMLNode(t *testing.T) {
+	t.Parallel()
 	for _, v := range testsRichTextHtmlNodeFromHTMLNode {
 		// Parse test input
 		h, err := ParseHTML(v.HTMLIn)

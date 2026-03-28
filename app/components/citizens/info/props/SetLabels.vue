@@ -9,17 +9,12 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { UserProps } from '~~/gen/ts/resources/users/props/props';
 
 const props = defineProps<{
-    modelValue?: Labels;
     userId: number;
-}>();
-
-const emit = defineEmits<{
-    (e: 'update:modelValue', labels: Labels | undefined): void;
 }>();
 
 const { attr, can } = useAuth();
 
-const labels = useVModel(props, 'modelValue', emit);
+const labels = defineModel<Labels | undefined>();
 
 const notifications = useNotificationsStore();
 
@@ -91,7 +86,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     changed.value = false;
 }, 1000);
 
-watch(props, () => (state.labels = labels.value?.list !== undefined ? labels.value?.list.slice() : []));
+watch(labels, () => (state.labels = labels.value?.list !== undefined ? labels.value?.list.slice() : []));
 
 watch(state, () => {
     if (

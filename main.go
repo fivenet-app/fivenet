@@ -32,12 +32,18 @@ func main() {
 		}
 	}
 	if cmd.Cli.SkipMigrations != nil {
-		if err := os.Setenv(envs.SkipDBMigrationsEnv, strconv.FormatBool(*cmd.Cli.SkipMigrations)); err != nil {
+		if err := os.Setenv(
+			envs.SkipDBMigrationsEnv,
+			strconv.FormatBool(*cmd.Cli.SkipMigrations),
+		); err != nil {
 			panic(err)
 		}
 	}
 	if cmd.Cli.IgnoreRequirements != nil {
-		if err := os.Setenv(envs.IgnoreRequirementsEnv, strconv.FormatBool(*cmd.Cli.IgnoreRequirements)); err != nil {
+		if err := os.Setenv(
+			envs.IgnoreRequirementsEnv,
+			strconv.FormatBool(*cmd.Cli.IgnoreRequirements),
+		); err != nil {
 			panic(err)
 		}
 	}

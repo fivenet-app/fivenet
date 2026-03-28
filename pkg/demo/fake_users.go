@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"math"
 	"os"
 	"slices"
 	"strings"
@@ -31,7 +32,6 @@ const (
 	licenseTokenLength = 58
 )
 
-//nolint:gosec // This password is only used when the demo mode is enabled. It is inherently non-sensitive.
 var demoAccountPassword = getDemoAccountPassword()
 
 func getDemoAccountPassword() string {
@@ -753,8 +753,8 @@ func (d *Demo) newAccountCharProfile(
 		Sex:             sex,
 		Height:          float64(d.randIntN(46) + 160),
 		PhoneNumber:     d.fakePhoneNumber(charIndex),
-		Visum:           int32(d.randIntN(350) + 1),
-		Playtime:        int32(d.randIntN(7_500_000) + 1_000),
+		Visum:           d.randInt32N(350) + 1,
+		Playtime:        d.randInt32N(7_500_000) + 1_000,
 		PrimaryJob:      primary.Job,
 		PrimaryJobGrade: primary.Grade,
 		Jobs:            jobs,
@@ -844,8 +844,8 @@ func (d *Demo) buildFakeUserProfile(
 		Sex:             sex,
 		Height:          float64(d.randIntN(46) + 160),
 		PhoneNumber:     d.fakePhoneNumber(index),
-		Visum:           int32(d.randIntN(350) + 1),
-		Playtime:        int32(d.randIntN(7_500_000) + 1_000),
+		Visum:           d.randInt32N(350) + 1,
+		Playtime:        d.randInt32N(7_500_000) + 1_000,
 		PrimaryJob:      primaryJob.Job,
 		PrimaryJobGrade: primaryJob.Grade,
 		Jobs:            jobs,
@@ -960,7 +960,7 @@ func (d *Demo) pickUserLicenses(available []string) []string {
 	perm := d.randPerm(len(available))
 
 	out := make([]string, 0, count)
-	for i := 0; i < count; i++ {
+	for i := range count {
 		out = append(out, available[perm[i]])
 	}
 
@@ -1078,6 +1078,11 @@ func (d *Demo) upsertFakeUserCore(
 			return 0, fmt.Errorf("failed to retrieve fake user id. %w", err)
 		}
 
+		if id > math.MaxInt32 {
+			return 0, fmt.Errorf("fake user id exceeds int32 limit: %d", id)
+		}
+
+		//nolint:gosec // G115: ID is guaranteed to be within int32 range by the check above and the database itself.
 		return int32(id), nil
 	}
 

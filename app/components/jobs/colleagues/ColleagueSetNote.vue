@@ -6,17 +6,14 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { SetColleaguePropsResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const props = defineProps<{
-    modelValue: string | undefined;
     userId: number;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:namePrefix', value?: string): void;
-    (e: 'update:nameSuffix', value?: string): void;
     (e: 'refresh'): void;
 }>();
 
-const { modelValue } = useVModels(props, emit);
+const modelValue = defineModel<string | undefined>();
 
 const notifications = useNotificationsStore();
 
@@ -31,11 +28,11 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     reason: '',
-    note: props.modelValue ?? '',
+    note: modelValue.value ?? '',
 });
 
-watch(props, () => {
-    state.note = props.modelValue ?? '';
+watch(modelValue, () => {
+    state.note = modelValue.value ?? '';
 });
 
 const changed = ref(false);
@@ -79,7 +76,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 watch(state, () => {
-    if (state.note === props.modelValue) {
+    if (state.note === modelValue.value) {
         changed.value = false;
     } else {
         changed.value = true;

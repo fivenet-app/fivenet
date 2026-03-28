@@ -122,7 +122,11 @@ func newMiddlewareLogger(logger *zap.Logger) cmdroute.Middleware {
 			func(ctx context.Context, ev *discord.InteractionEvent) *api.InteractionResponse {
 				switch data := ev.Data.(type) {
 				case *discord.CommandInteraction:
-					logger.Info("received interaction event", zap.Uint64("sender_id", uint64(ev.SenderID())), zap.String("command", data.Name))
+					logger.Info(
+						"received interaction event",
+						zap.Uint64("sender_id", uint64(ev.SenderID())),
+						zap.String("command", data.Name),
+					)
 				}
 
 				resp := next.HandleInteraction(ctx, ev)

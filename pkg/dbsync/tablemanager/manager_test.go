@@ -6,13 +6,15 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
 
 func TestTableManager_CheckTables(t *testing.T) {
+	t.Parallel()
 	logger := zap.NewNop()
 	db, mock, err := sqlmock.New()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer db.Close()
 
 	tableManager := &TableManager{
@@ -55,16 +57,17 @@ func TestTableManager_CheckTables(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	err = tableManager.CheckTables(ctx, db, tables)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Ensure all expectations were met
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestTableManager_checkIfTableExists(t *testing.T) {
+	t.Parallel()
 	logger := zap.NewNop()
 	db, mock, err := sqlmock.New()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer db.Close()
 
 	tableManager := &TableManager{
@@ -80,16 +83,17 @@ func TestTableManager_checkIfTableExists(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"TABLE_NAME"}).AddRow(tableName))
 
 	err = tableManager.checkIfTableExists(ctx, db, tableName)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Ensure all expectations were met
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestTableManager_checkIfTableHasUpdatedAtColumn(t *testing.T) {
+	t.Parallel()
 	logger := zap.NewNop()
 	db, mock, err := sqlmock.New()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer db.Close()
 
 	tableManager := &TableManager{
@@ -106,17 +110,18 @@ func TestTableManager_checkIfTableHasUpdatedAtColumn(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"COLUMN_NAME"}).AddRow("updated_at"))
 
 	hasUpdatedAt, err := tableManager.checkIfTableHasUpdatedAtColumn(ctx, db, tableName)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.True(t, hasUpdatedAt)
 
 	// Ensure all expectations were met
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestTableManager_addUpdatedAtColumnToTable(t *testing.T) {
+	t.Parallel()
 	logger := zap.NewNop()
 	db, mock, err := sqlmock.New()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer db.Close()
 
 	tableManager := &TableManager{
@@ -135,8 +140,8 @@ func TestTableManager_addUpdatedAtColumnToTable(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	err = tableManager.addUpdatedAtColumnToTable(ctx, db, tableName, columnName)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Ensure all expectations were met
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.NoError(t, mock.ExpectationsWereMet())
 }
