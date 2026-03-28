@@ -187,13 +187,6 @@ func (d *Demo) demoVehiclePlate(owner demoVehicleOwner, slot int) string {
 	return fmt.Sprintf("%s%s-%s", demoVehiclePlatePrefix, nr, token)
 }
 
-func (d *Demo) demoVehicleJob(owner demoVehicleOwner) string {
-	if owner.Job == "" || owner.Job == demoUnemployedJobName {
-		return ""
-	}
-	return owner.Job
-}
-
 func (d *Demo) demoVehicleModel(owner demoVehicleOwner, slot int) string {
 	return strings.ToLower(strings.ReplaceAll(d.fake.CarModel(), " ", "_"))
 }

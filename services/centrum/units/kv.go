@@ -11,18 +11,22 @@ import (
 )
 
 func (s *UnitDB) updateInKV(ctx context.Context, id int64, unit *centrumunits.Unit) error {
-	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrumunits.Unit) (*centrumunits.Unit, bool, error) {
-		if existing == nil {
-			return unit, unit != nil, nil
-		}
+	if err := s.store.ComputeUpdate(
+		ctx,
+		centrumutils.IdKey(id),
+		func(key string, existing *centrumunits.Unit) (*centrumunits.Unit, bool, error) {
+			if existing == nil {
+				return unit, unit != nil, nil
+			}
 
-		if !proto.Equal(existing, unit) {
-			existing.Merge(unit)
-			return existing, true, nil
-		}
+			if !proto.Equal(existing, unit) {
+				existing.Merge(unit)
+				return existing, true, nil
+			}
 
-		return existing, false, nil
-	}); err != nil {
+			return existing, false, nil
+		},
+	); err != nil {
 		return err
 	}
 
@@ -112,15 +116,19 @@ func (s *UnitDB) updateStatusInKV(
 	id int64,
 	status *centrumunits.UnitStatus,
 ) error {
-	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrumunits.Unit) (*centrumunits.Unit, bool, error) {
-		if existing == nil {
-			return existing, false, nil
-		}
+	if err := s.store.ComputeUpdate(
+		ctx,
+		centrumutils.IdKey(id),
+		func(key string, existing *centrumunits.Unit) (*centrumunits.Unit, bool, error) {
+			if existing == nil {
+				return existing, false, nil
+			}
 
-		existing.Status = status
+			existing.Status = status
 
-		return existing, true, nil
-	}); err != nil {
+			return existing, true, nil
+		},
+	); err != nil {
 		return err
 	}
 

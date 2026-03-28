@@ -3,7 +3,7 @@ package stats
 import (
 	"context"
 	"database/sql"
-	"fmt"
+	"errors"
 	"sort"
 	"strings"
 	"sync"
@@ -365,49 +365,40 @@ func (s *Service) QueryPenaltySeriesOverTime(
 	job string,
 	period pbstats.StatsPeriod,
 ) ([]*PeriodSeriesValue, error) {
-	periodExpr := periodStartExpr(period)
-	query := fmt.Sprintf(`
-SELECT
-  %s AS day,
-  metric_key AS `+"`key`"+`,
-  SUM(value) AS value
-FROM fivenet_stats_daily_rollup
-WHERE day >= ?
-  AND day <= ?
-  AND job = ?
-  AND source_kind = ?
-  AND source_key = ?
-  AND metric_key IN ('fine_total', 'detention_time_total', 'stvo_points_total')
-GROUP BY %s, metric_key
-ORDER BY %s ASC, metric_key ASC
-`, periodExpr, periodExpr, periodExpr)
+	tRollup := table.FivenetStatsDailyRollup
+	periodExpr := periodStartDateExpr(period)
 
-	rows, err := s.db.QueryContext(
-		ctx,
-		query,
-		timeutils.StartOfDay(startDay).Format(time.DateOnly),
-		timeutils.StartOfDay(endDay).Format(time.DateOnly),
-		job,
-		SourceKindDocumentMetric,
-		PenaltyCalculatorSourceKey,
-	)
-	if err != nil {
+	stmt := tRollup.
+		SELECT(
+			periodExpr.AS("day"),
+			tRollup.MetricKey.AS("key"),
+			mysql.SUM(tRollup.Value).AS("value"),
+		).
+		FROM(tRollup).
+		WHERE(mysql.AND(
+			tRollup.Day.GT_EQ(mysql.DateT(timeutils.StartOfDay(startDay))),
+			tRollup.Day.LT_EQ(mysql.DateT(timeutils.StartOfDay(endDay))),
+			tRollup.Job.EQ(mysql.String(job)),
+			tRollup.SourceKind.EQ(mysql.String(SourceKindDocumentMetric)),
+			tRollup.SourceKey.EQ(mysql.String(PenaltyCalculatorSourceKey)),
+			tRollup.MetricKey.IN(
+				mysql.String("fine_total"),
+				mysql.String("detention_time_total"),
+				mysql.String("stvo_points_total"),
+			),
+		)).
+		GROUP_BY(periodExpr, tRollup.MetricKey).
+		ORDER_BY(periodExpr.ASC(), tRollup.MetricKey.ASC())
+
+	rowsDest := []*PeriodSeriesValue{}
+	if err := stmt.QueryContext(ctx, s.db, &rowsDest); err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
-	items := []*PeriodSeriesValue{}
-	for rows.Next() {
-		item := &PeriodSeriesValue{}
-		if err := rows.Scan(&item.Day, &item.Key, &item.Value); err != nil {
-			return nil, err
-		}
-
-		item.Label = item.Key
-		items = append(items, item)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
+	items := make([]*PeriodSeriesValue, 0, len(rowsDest))
+	for i := range rowsDest {
+		rowsDest[i].Label = rowsDest[i].Key
+		items = append(items, rowsDest[i])
 	}
 
 	return items, nil
@@ -454,7 +445,13 @@ ORDER BY SUM(r.value) DESC
 
 	for rows.Next() {
 		item := &CategoryValue{}
-		if err := rows.Scan(&item.ID, &item.Name, &item.Color, &item.Icon, &item.Value); err != nil {
+		if err := rows.Scan(
+			&item.ID,
+			&item.Name,
+			&item.Color,
+			&item.Icon,
+			&item.Value,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, item)
@@ -597,46 +594,28 @@ func (s *Service) QueryPeriodValues(
 	metricKey string,
 	period pbstats.StatsPeriod,
 ) ([]*DailyValue, error) {
-	periodExpr := periodStartExpr(period)
-	query := fmt.Sprintf(`
-SELECT
-  %s AS day,
-  SUM(value) AS value
-FROM fivenet_stats_daily_rollup
-WHERE day >= ?
-  AND day <= ?
-  AND job = ?
-  AND source_kind = ?
-  AND source_key = ?
-  AND metric_key = ?
-GROUP BY %s
-ORDER BY %s ASC
-`, periodExpr, periodExpr, periodExpr)
+	tRollup := table.FivenetStatsDailyRollup
+	periodExpr := periodStartDateExpr(period)
 
-	rows, err := s.db.QueryContext(
-		ctx,
-		query,
-		timeutils.StartOfDay(startDay).Format(time.DateOnly),
-		timeutils.StartOfDay(endDay).Format(time.DateOnly),
-		job,
-		sourceKind,
-		sourceKey,
-		metricKey,
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
+	stmt := tRollup.
+		SELECT(
+			periodExpr.AS("day"),
+			mysql.SUM(tRollup.Value).AS("value"),
+		).
+		FROM(tRollup).
+		WHERE(mysql.AND(
+			tRollup.Day.GT_EQ(mysql.DateT(timeutils.StartOfDay(startDay))),
+			tRollup.Day.LT_EQ(mysql.DateT(timeutils.StartOfDay(endDay))),
+			tRollup.Job.EQ(mysql.String(job)),
+			tRollup.SourceKind.EQ(mysql.String(sourceKind)),
+			tRollup.SourceKey.EQ(mysql.String(sourceKey)),
+			tRollup.MetricKey.EQ(mysql.String(metricKey)),
+		)).
+		GROUP_BY(periodExpr).
+		ORDER_BY(periodExpr.ASC())
 
 	items := []*DailyValue{}
-	for rows.Next() {
-		item := &DailyValue{}
-		if err := rows.Scan(&item.Day, &item.Value); err != nil {
-			return nil, err
-		}
-		items = append(items, item)
-	}
-	if err := rows.Err(); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &items); err != nil {
 		return nil, err
 	}
 
@@ -653,7 +632,7 @@ func (s *Service) rebuildRollupsWithRange(
 	startDay = timeutils.StartOfDay(startDay)
 	endDay = timeutils.StartOfDay(endDay)
 	if endDay.Before(startDay) {
-		return fmt.Errorf("end day before start day")
+		return errors.New("end day before start day")
 	}
 
 	s.mu.Lock()

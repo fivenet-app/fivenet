@@ -170,7 +170,6 @@ linters:
       exclude-functions:
         - (sql.Tx).Rollback
         - Tx.Rollback
-        - proto.Clone
 
     exhaustive:
       # Program elements to check for exhaustiveness.

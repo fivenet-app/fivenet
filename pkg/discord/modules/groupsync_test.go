@@ -200,7 +200,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 						WillReturnRows(sqlmock.NewRows([]string{"job", "grade"}))
 
 					cleanup := func() {
-						assert.NoError(t, mock.ExpectationsWereMet())
+						require.NoError(t, mock.ExpectationsWereMet())
 						_ = db.Close()
 					}
 					return db, cleanup
@@ -239,7 +239,7 @@ func TestGroupSyncPlanUser(t *testing.T) {
 						WillReturnError(errors.New("db error"))
 
 					cleanup := func() {
-						assert.NoError(t, mock.ExpectationsWereMet())
+						require.NoError(t, mock.ExpectationsWereMet())
 						_ = db.Close()
 					}
 					return db, cleanup
@@ -258,6 +258,8 @@ func TestGroupSyncPlanUser(t *testing.T) {
 	}
 
 	logger := zaptest.NewLogger(t)
+	assert := assert.New(t)
+	require := require.New(t)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -280,30 +282,35 @@ func TestGroupSyncPlanUser(t *testing.T) {
 			g := &GroupSync{BaseModule: base}
 			groupMapping := g.normalizedGroupSyncMapping()
 
-			user, logs, err := g.planUser(context.Background(), tt.args.user, groupMapping, tt.args.roles)
+			user, logs, err := g.planUser(
+				context.Background(),
+				tt.args.user,
+				groupMapping,
+				tt.args.roles,
+			)
 			if tt.wantErr {
-				assert.Error(t, err)
+				require.Error(err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(err)
 			}
 
 			if tt.wantUserNil {
-				assert.Nil(t, user)
+				assert.Nil(user)
 			} else {
-				require.NotNil(t, user)
-				assert.Equal(t, discord.UserID(12345), user.ID)
-				require.NotNil(t, user.Roles)
-				assert.ElementsMatch(t, tt.wantRoles, user.Roles.Sum)
+				require.NotNil(user)
+				assert.Equal(discord.UserID(12345), user.ID)
+				require.NotNil(user.Roles)
+				assert.ElementsMatch(tt.wantRoles, user.Roles.Sum)
 			}
 
 			if tt.wantLogTitle != "" {
-				require.NotEmpty(t, logs)
-				assert.Equal(t, tt.wantLogTitle, logs[0].Title)
+				require.NotEmpty(logs)
+				assert.Equal(tt.wantLogTitle, logs[0].Title)
 			} else {
-				assert.Empty(t, logs)
+				assert.Empty(logs)
 			}
 
-			assert.Equal(t, tt.wantSameJobSet, tt.args.user.SameJob)
+			assert.Equal(tt.wantSameJobSet, tt.args.user.SameJob)
 		})
 	}
 }

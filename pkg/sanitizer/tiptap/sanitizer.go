@@ -9,7 +9,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/google/uuid"
 	"go.uber.org/fx"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -113,17 +112,16 @@ func normalizeColor(v any) (string, bool) {
 	return "", false
 }
 
-func New(cfg *config.Config) *Sanitizer {
+func New() *Sanitizer {
 	sanitizerOnce.Do(func() {
-		sanitizer = buildAllowed(cfg)
+		sanitizer = buildAllowed()
 	})
 
-	return buildAllowed(cfg)
+	return buildAllowed()
 }
 
-// Build allowlist tailored to your manifest
-
-func buildAllowed(cfg *config.Config) *Sanitizer {
+// buildAllowed build allowlist tailored to our Tiptap editor extensions.
+func buildAllowed() *Sanitizer {
 	textAlignOK := func(v any) (string, bool) {
 		s, _ := v.(string)
 		switch s {
@@ -136,13 +134,13 @@ func buildAllowed(cfg *config.Config) *Sanitizer {
 	}
 
 	node := map[string]AttrPolicy{
-		"doc": {
+		NodeTypeDoc: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"text": {
+		NodeTypeText: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"paragraph": {Validate: func(a map[string]any) (bool, map[string]any) {
+		NodeTypeParagraph: {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 			if v, ok := a["textAlign"]; ok {
 				if vv, ok := textAlignOK(v); ok && vv != "" {
@@ -151,25 +149,25 @@ func buildAllowed(cfg *config.Config) *Sanitizer {
 			}
 			return true, out
 		}},
-		"blockquote": {
+		NodeTypeBlockquote: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"bulletList": {
+		NodeTypeBulletList: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"orderedList": {
+		NodeTypeOrderedList: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"listItem": {
+		NodeTypeListItem: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"hardBreak": {
+		NodeTypeHardBreak: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"horizontalRule": {
+		NodeTypeHorizontalRule: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"heading": {Validate: func(a map[string]any) (bool, map[string]any) {
+		NodeTypeHeading: {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 			lv, ok := a["level"].(float64)
 			if ok && lv >= 1 && lv <= 6 {
@@ -195,23 +193,23 @@ func buildAllowed(cfg *config.Config) *Sanitizer {
 
 			return true, out
 		}},
-		"codeBlock": {Validate: func(a map[string]any) (bool, map[string]any) {
+		NodeTypeCodeBlock: {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 			if lang, ok := a["language"].(string); ok && lang != "" {
 				out["language"] = lang
 			}
 			return true, out
 		}},
-		"table": {
+		NodeTypeTable: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"tableRow": {
+		NodeTypeTableRow: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"tableHeader": {
+		NodeTypeTableHeader: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"tableCell": {Validate: func(a map[string]any) (bool, map[string]any) {
+		NodeTypeTableCell: {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 			if cs, ok := a["colspan"].(float64); ok && cs >= 1 && cs <= 12 {
 				out["colspan"] = int(cs)
@@ -221,10 +219,10 @@ func buildAllowed(cfg *config.Config) *Sanitizer {
 			}
 			return true, out
 		}},
-		"taskList": {
+		NodeTypeTaskList: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"taskItem": {Validate: func(a map[string]any) (bool, map[string]any) {
+		NodeTypeTaskItem: {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 			if ck, ok := a["checked"].(bool); ok {
 				out["checked"] = ck
@@ -232,7 +230,7 @@ func buildAllowed(cfg *config.Config) *Sanitizer {
 			return true, out
 		}},
 		// Custom
-		"checkboxStandalone": {Validate: func(a map[string]any) (bool, map[string]any) {
+		NodeTypeCheckboxStandalone: {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 			if ck, ok := a["checked"].(bool); ok {
 				out["checked"] = ck
@@ -242,7 +240,7 @@ func buildAllowed(cfg *config.Config) *Sanitizer {
 			}
 			return true, out
 		}},
-		"image": {Validate: func(a map[string]any) (bool, map[string]any) {
+		NodeTypeImage: {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 			if src, ok := a["src"].(string); ok && src != "" {
 				out["src"] = src
@@ -285,7 +283,31 @@ func buildAllowed(cfg *config.Config) *Sanitizer {
 			}
 			return true, out
 		}},
-		"templateVar": {Validate: func(a map[string]any) (bool, map[string]any) {
+		NodeTypeMention: {Validate: func(a map[string]any) (bool, map[string]any) {
+			out := map[string]any{}
+
+			if id, ok := a["id"].(string); ok {
+				id = strings.TrimSpace(id)
+				if id != "" && len(id) <= 128 {
+					out["id"] = id
+				}
+			}
+			if label, ok := a["label"].(string); ok {
+				label = strings.TrimSpace(label)
+				if label != "" && len(label) <= 256 {
+					out["label"] = label
+				}
+			}
+
+			if _, ok := out["id"]; ok {
+				return true, out
+			}
+			if _, ok := out["label"]; ok {
+				return true, out
+			}
+			return false, nil
+		}},
+		NodeTypeTemplateVar: {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 
 			val, _ := a["data-template-var"].(string)
@@ -303,7 +325,7 @@ func buildAllowed(cfg *config.Config) *Sanitizer {
 			}
 			return true, out
 		}},
-		"templateBlock": {Validate: func(a map[string]any) (bool, map[string]any) {
+		NodeTypeTemplateBlock: {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 
 			val, _ := a["data-template-block"].(string)
@@ -325,35 +347,35 @@ func buildAllowed(cfg *config.Config) *Sanitizer {
 	}
 
 	mark := map[string]AttrPolicy{
-		"bold": {
+		MarkTypeBold: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"italic": {
+		MarkTypeItalic: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"underline": {
+		MarkTypeUnderline: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"strike": {
+		MarkTypeStrike: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"code": {
+		MarkTypeCode: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"subscript": {
+		MarkTypeSubscript: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"superscript": {
+		MarkTypeSuperscript: {
 			Validate: func(a map[string]any) (bool, map[string]any) { return true, map[string]any{} },
 		},
-		"highlight": {Validate: func(a map[string]any) (bool, map[string]any) {
+		MarkTypeHighlight: {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 			if c, ok := normalizeColor(a["color"]); ok && c != "" {
 				out["color"] = c
 			}
 			return true, out
 		}},
-		"textStyle": {Validate: func(a map[string]any) (bool, map[string]any) {
+		MarkTypeTextStyle: {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 			if c, ok := normalizeColor(a["color"]); ok && c != "" {
 				out["color"] = c
@@ -364,7 +386,7 @@ func buildAllowed(cfg *config.Config) *Sanitizer {
 			// fontFamily/fontSize/lineHeight: optionally whitelist before keeping
 			return true, out
 		}},
-		"link": {Validate: func(a map[string]any) (bool, map[string]any) {
+		MarkTypeLink: {Validate: func(a map[string]any) (bool, map[string]any) {
 			href, _ := a["href"].(string)
 			if href == "" {
 				return false, nil
@@ -457,19 +479,19 @@ func sanitizeNode(
 	marks, _ := n["marks"].([]any)
 
 	// text node passthrough
-	if typ == "text" {
+	if typ == NodeTypeText {
 		marksOut := sanitizeMarks(marks, allow)
 		if text != "" {
 			stats.Words += countWords(text)
 		}
 		return map[string]any{
-			"type":  "text",
+			"type":  NodeTypeText,
 			"text":  text,
 			"marks": marksOut,
 		}, true
 	}
 
-	// node allowlist
+	// Node allowlist
 	policy, ok := allow.Nodes[typ]
 	if !ok {
 		return nil, false
@@ -480,7 +502,7 @@ func sanitizeNode(
 		return nil, false
 	}
 
-	// children
+	// Children
 	var children []any
 	for _, c := range content {
 		cm, _ := c.(map[string]any)
@@ -492,8 +514,8 @@ func sanitizeNode(
 		}
 	}
 
-	// derive first heading
-	if stats.FirstHeading == "" && typ == "heading" && len(children) > 0 {
+	// Derive first heading
+	if stats.FirstHeading == "" && typ == NodeTypeHeading && len(children) > 0 {
 		if s := plainText(children); s != "" {
 			stats.FirstHeading = s
 		}

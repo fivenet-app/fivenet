@@ -24,7 +24,6 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-// ListApprovalTasksInbox.
 func (s *Server) ListApprovalTasksInbox(
 	ctx context.Context,
 	req *pbdocuments.ListApprovalTasksInboxRequest,
@@ -297,7 +296,6 @@ func (s *Server) ListApprovalTasksInbox(
 	return resp, nil
 }
 
-// ListApprovalPolicies.
 func (s *Server) ListApprovalPolicies(
 	ctx context.Context,
 	req *pbdocuments.ListApprovalPoliciesRequest,
@@ -462,7 +460,6 @@ func (s *Server) createApprovalPolicy(
 	return nil
 }
 
-// UpsertApprovalPolicy.
 func (s *Server) UpsertApprovalPolicy(
 	ctx context.Context,
 	req *pbdocuments.UpsertApprovalPolicyRequest,
@@ -562,7 +559,6 @@ func (s *Server) UpsertApprovalPolicy(
 	}, nil
 }
 
-// ListApprovalTasks.
 func (s *Server) ListApprovalTasks(
 	ctx context.Context,
 	req *pbdocuments.ListApprovalTasksRequest,
@@ -703,7 +699,6 @@ func (s *Server) getApprovalTask(
 	return &task, nil
 }
 
-// UpsertApprovalTasks.
 func (s *Server) UpsertApprovalTasks(
 	ctx context.Context,
 	req *pbdocuments.UpsertApprovalTasksRequest,
@@ -886,7 +881,7 @@ func (s *Server) createApprovalTasks(
 			QueryContext(ctx, tx, &have); err != nil {
 			return 0, 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-		if have.C >= int32(slots) {
+		if have.C >= slots {
 			ensured++
 			continue
 		}
@@ -946,7 +941,7 @@ func (s *Server) createApprovalTasks(
 		if _, err := ins.ExecContext(ctx, tx); err != nil {
 			return 0, 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-		created += int32(slots) - have.C
+		created += slots - have.C
 	}
 
 	if err := s.recomputeApprovalPolicyTx(ctx, tx, documentId, snapDate); err != nil {
@@ -969,7 +964,6 @@ func (s *Server) createApprovalTasks(
 	return created, ensured, nil
 }
 
-// DeleteApprovalTasks.
 func (s *Server) DeleteApprovalTasks(
 	ctx context.Context,
 	req *pbdocuments.DeleteApprovalTasksRequest,
@@ -1212,7 +1206,6 @@ func (s *Server) ListApprovals(
 	return resp, nil
 }
 
-// RevokeApproval.
 func (s *Server) RevokeApproval(
 	ctx context.Context,
 	req *pbdocuments.RevokeApprovalRequest,
@@ -1854,7 +1847,6 @@ func (s *Server) DecideApproval(
 	}, nil
 }
 
-// ReopenApprovalTask.
 func (s *Server) ReopenApprovalTask(
 	ctx context.Context,
 	req *pbdocuments.ReopenApprovalTaskRequest,

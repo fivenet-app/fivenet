@@ -40,7 +40,14 @@ func (s *Server) SubscribeToCalendar(
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
-	if err := s.createOrDeleteSubscription(ctx, req.GetSub().GetCalendarId(), userInfo.GetUserId(), !req.GetDelete(), true, req.GetSub().GetMuted()); err != nil {
+	if err := s.createOrDeleteSubscription(
+		ctx,
+		req.GetSub().GetCalendarId(),
+		userInfo.GetUserId(),
+		!req.GetDelete(),
+		true,
+		req.GetSub().GetMuted(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 

@@ -121,22 +121,24 @@ func (s *Server) ListConductEntries(
 
 	// Convert proto sort to db sorting
 	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil {
-		var columns []mysql.Column
-		switch req.GetSort().GetColumn() {
-		case "type":
-			columns = append(columns, tConduct.Type, tConduct.ID)
-		case "id":
-			fallthrough
-		default:
-			columns = append(columns, tConduct.ID)
-		}
+	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
+		for _, sc := range req.GetSort().GetColumns() {
+			var columns []mysql.Column
+			switch sc.GetId() {
+			case "type":
+				columns = append(columns, tConduct.Type, tConduct.ID)
+			case "id":
+				fallthrough
+			default:
+				columns = append(columns, tConduct.ID)
+			}
 
-		for _, column := range columns {
-			if req.GetSort().GetDirection() == database.AscSortDirection {
-				orderBys = append(orderBys, column.ASC())
-			} else {
-				orderBys = append(orderBys, column.DESC())
+			for _, column := range columns {
+				if sc.GetDesc() {
+					orderBys = append(orderBys, column.DESC())
+				} else {
+					orderBys = append(orderBys, column.ASC())
+				}
 			}
 		}
 	} else {
@@ -250,6 +252,7 @@ func (s *Server) ListConductEntries(
 			}
 
 			// HTML is needed to display message preview on client-side for "legacy" (non-Tiptap JSON) entries
+			//nolint:staticcheck,nolintlint // SA1019: RawHtml is intentionally populated for legacy content previews
 			resp.GetEntries()[i].GetMessage().RawHtml = &rawHtml
 		}
 	}
@@ -457,7 +460,7 @@ func (s *Server) UpdateConductEntry(
 	}
 
 	// Prevent changing published to draft
-	if req.GetEntry().GetDraft() == true && entry.GetDraft() == false {
+	if req.GetEntry().GetDraft() && !entry.GetDraft() {
 		if !userInfo.GetSuperuser() {
 			req.GetEntry().Draft = entry.GetDraft()
 		}
@@ -505,7 +508,12 @@ func (s *Server) UpdateConductEntry(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if _, _, err := s.fHandler.HandleFileChangesForParent(ctx, tx, req.GetEntry().GetId(), req.GetEntry().GetFiles()); err != nil {
+	if _, _, err := s.fHandler.HandleFileChangesForParent(
+		ctx,
+		tx,
+		req.GetEntry().GetId(),
+		req.GetEntry().GetFiles(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 

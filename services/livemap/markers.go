@@ -88,7 +88,12 @@ func (s *Server) CreateOrUpdateMarker(
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {
-		fields, err := s.ps.AttrStringList(userInfo, permslivemap.LivemapServicePerm, permslivemap.LivemapServiceCreateOrUpdateMarkerPerm, permslivemap.LivemapServiceCreateOrUpdateMarkerAccessPermField)
+		fields, err := s.ps.AttrStringList(
+			userInfo,
+			permslivemap.LivemapServicePerm,
+			permslivemap.LivemapServiceCreateOrUpdateMarkerPerm,
+			permslivemap.LivemapServiceCreateOrUpdateMarkerAccessPermField,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
@@ -98,7 +103,12 @@ func (s *Server) CreateOrUpdateMarker(
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
 
-		if !access.CheckIfHasOwnJobAccess(fields, userInfo, marker.GetCreator().GetJob(), marker.GetCreator()) {
+		if !access.CheckIfHasOwnJobAccess(
+			fields,
+			userInfo,
+			marker.GetCreator().GetJob(),
+			marker.GetCreator(),
+		) {
 			return nil, errorslivemap.ErrMarkerDenied
 		}
 
@@ -142,7 +152,13 @@ func (s *Server) CreateOrUpdateMarker(
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
 
-	if err := s.sendUpdateEvent(ctx, MarkerTopic, MarkerUpdate, marker.GetJob(), marker); err != nil {
+	if err := s.sendUpdateEvent(
+		ctx,
+		MarkerTopic,
+		MarkerUpdate,
+		marker.GetJob(),
+		marker,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
 
@@ -203,7 +219,13 @@ func (s *Server) DeleteMarker(
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
 
-	if err := s.sendUpdateEvent(ctx, MarkerTopic, MarkerDelete, marker.GetJob(), marker); err != nil {
+	if err := s.sendUpdateEvent(
+		ctx,
+		MarkerTopic,
+		MarkerDelete,
+		marker.GetJob(),
+		marker,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 	}
 

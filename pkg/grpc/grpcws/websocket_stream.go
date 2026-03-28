@@ -5,11 +5,11 @@ import (
 	"encoding/binary"
 	"errors"
 	"io"
-	"math"
 	"net/http"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/grpcws"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 )
 
 var (
@@ -141,10 +141,11 @@ func (stream *GrpcStream) Write(data []byte) (int, error) {
 		return len(data), nil
 	} else {
 		dataLen := len(data)
-		if dataLen < 0 || dataLen > math.MaxUint32 {
+		dataLenUint32, ok := utils.ToUint32Checked(dataLen)
+		if !ok {
 			return 0, ErrDataLength
 		}
-		stream.bytesToWrite -= uint32(dataLen)
+		stream.bytesToWrite -= dataLenUint32
 		stream.writeBuffer = append(stream.writeBuffer, data...)
 
 		if stream.bytesToWrite != 0 {
@@ -184,7 +185,7 @@ func (stream *GrpcStream) WriteHeader(statusCode int) {
 					Header: &grpcws.Header{
 						Operation: "",
 						Headers:   headerResponse,
-						//nolint:gosec // The statusCode is checked to be a valid HTTP status code so it can be safely to cast to int32
+
 						Status: int32(statusCode),
 					},
 				},

@@ -71,7 +71,11 @@ func (s *Server) sendUpdateEvent(
 	job string,
 	msg proto.Message,
 ) error {
-	if _, err := s.js.PublishProto(ctx, fmt.Sprintf("%s.%s.%s.%s", BaseSubject, topic, tType, job), msg); err != nil {
+	if _, err := s.js.PublishProto(
+		ctx,
+		fmt.Sprintf("%s.%s.%s.%s", BaseSubject, topic, tType, job),
+		msg,
+	); err != nil {
 		return err
 	}
 

@@ -37,7 +37,7 @@ type Options struct {
 // NewUnary returns a unary server interceptor with the given options.
 func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 	validate(&opts)
-	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		// Only log authenticated requests
 		userInfo, ok := auth.GetUserInfoFromContext(ctx)
 		if !ok {
@@ -62,8 +62,13 @@ func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 
 		// Panic safety and finalize logging.
 		defer func() {
+			var err error
 			if r := recover(); r != nil {
-				err = fmt.Errorf("panic: %v", r)
+				if e, ok := r.(error); ok {
+					err = fmt.Errorf("panic: %w", e)
+				} else {
+					err = fmt.Errorf("panic: %v", r)
+				}
 				handle.set(func(a *audit.AuditEntry) {
 					a.Result = audit.EventResult_EVENT_RESULT_ERRORED
 				})
@@ -94,7 +99,7 @@ func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 				return
 			}
 
-			opts.Logger.Log(handle.entry, any(req))
+			opts.Logger.Log(handle.entry, req)
 		}()
 
 		return handler(ctx, req)
@@ -104,7 +109,7 @@ func NewUnary(opts Options) grpc.UnaryServerInterceptor {
 // NewStream returns a stream server interceptor with the given options.
 func NewStream(opts Options) grpc.StreamServerInterceptor {
 	validate(&opts)
-	return func(srv any, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) (err error) {
+	return func(srv any, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		ctx := ss.Context()
 		userInfo, ok := auth.GetUserInfoFromContext(ctx)
 		if !ok {
@@ -138,7 +143,13 @@ func NewStream(opts Options) grpc.StreamServerInterceptor {
 		}
 
 		defer func() {
+			var err error
 			if r := recover(); r != nil {
+				if e, ok := r.(error); ok {
+					err = fmt.Errorf("panic: %w", e)
+				} else {
+					err = fmt.Errorf("panic: %v", r)
+				}
 				handle.set(func(a *audit.AuditEntry) {
 					a.Result = audit.EventResult_EVENT_RESULT_ERRORED
 				})
@@ -286,7 +297,7 @@ func AddMeta(ctx context.Context, key, val string) {
 	}
 }
 
-func splitFullMethod(full string) (service, method string) {
+func splitFullMethod(full string) (string, string) {
 	i := strings.LastIndex(full, "/")
 	if i < 0 || i+1 >= len(full) {
 		return "", strings.TrimPrefix(full, "/")

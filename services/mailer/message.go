@@ -35,7 +35,13 @@ func (s *Server) ListThreadMessages(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetThreadId(), req.GetEmailId(), maileraccess.AccessLevel_ACCESS_LEVEL_READ); err != nil {
+	if err := s.checkIfEmailPartOfThread(
+		ctx,
+		userInfo,
+		req.GetThreadId(),
+		req.GetEmailId(),
+		maileraccess.AccessLevel_ACCESS_LEVEL_READ,
+	); err != nil {
 		return nil, err
 	}
 
@@ -153,7 +159,13 @@ func (s *Server) PostMessage(
 ) (*pbmailer.PostMessageResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetMessage().GetThreadId(), req.GetMessage().GetSenderId(), maileraccess.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
+	if err := s.checkIfEmailPartOfThread(
+		ctx,
+		userInfo,
+		req.GetMessage().GetThreadId(),
+		req.GetMessage().GetSenderId(),
+		maileraccess.AccessLevel_ACCESS_LEVEL_WRITE,
+	); err != nil {
 		return nil, err
 	}
 
@@ -201,7 +213,12 @@ func (s *Server) PostMessage(
 	req.Message.Id = lastId
 
 	if len(emails) > 0 {
-		if err := s.handleRecipientsChanges(ctx, tx, req.GetMessage().GetThreadId(), emails); err != nil {
+		if err := s.handleRecipientsChanges(
+			ctx,
+			tx,
+			req.GetMessage().GetThreadId(),
+			emails,
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 	}
@@ -225,7 +242,13 @@ func (s *Server) PostMessage(
 		emailIds = append(emailIds, ua.GetEmailId())
 	}
 
-	if err := s.setUnreadState(ctx, tx, req.GetMessage().GetThreadId(), senderEmail.GetId(), emailIds); err != nil {
+	if err := s.setUnreadState(
+		ctx,
+		tx,
+		req.GetMessage().GetThreadId(),
+		senderEmail.GetId(),
+		emailIds,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 

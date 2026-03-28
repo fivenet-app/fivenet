@@ -136,19 +136,34 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) HandleAccessC
 	var err error
 
 	if g.Jobs != nil {
-		if changes.Jobs.ToCreate, changes.Jobs.ToUpdate, changes.Jobs.ToDelete, err = g.Jobs.HandleAccessChanges(ctx, tx, targetId, jobsIn); err != nil {
+		if changes.Jobs.ToCreate, changes.Jobs.ToUpdate, changes.Jobs.ToDelete, err = g.Jobs.HandleAccessChanges(
+			ctx,
+			tx,
+			targetId,
+			jobsIn,
+		); err != nil {
 			return nil, err
 		}
 	}
 
 	if g.Users != nil {
-		if changes.Users.ToCreate, changes.Users.ToUpdate, changes.Users.ToDelete, err = g.Users.HandleAccessChanges(ctx, tx, targetId, usersIn); err != nil {
+		if changes.Users.ToCreate, changes.Users.ToUpdate, changes.Users.ToDelete, err = g.Users.HandleAccessChanges(
+			ctx,
+			tx,
+			targetId,
+			usersIn,
+		); err != nil {
 			return nil, err
 		}
 	}
 
 	if g.Qualifications != nil {
-		if changes.Qualifications.ToCreate, changes.Qualifications.ToUpdate, changes.Qualifications.ToDelete, err = g.Qualifications.HandleAccessChanges(ctx, tx, targetId, qualisIn); err != nil {
+		if changes.Qualifications.ToCreate, changes.Qualifications.ToUpdate, changes.Qualifications.ToDelete, err = g.Qualifications.HandleAccessChanges(
+			ctx,
+			tx,
+			targetId,
+			qualisIn,
+		); err != nil {
 			return nil, err
 		}
 	}

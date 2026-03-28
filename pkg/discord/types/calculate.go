@@ -94,7 +94,12 @@ func (s *State) calculateRoles(dc *state.State) (*PlanRoles, []discord.Embed, er
 				role.Permissions = &roles[idx].Permissions
 
 				logs = append(logs, discord.Embed{
-					Title:       fmt.Sprintf("Roles: Role %s (%s; perms: %d) can't be updated", dcRole.Name, dcRole.ID, dcRole.Permissions),
+					Title: fmt.Sprintf(
+						"Roles: Role %s (%s; perms: %d) can't be updated",
+						dcRole.Name,
+						dcRole.ID,
+						dcRole.Permissions,
+					),
 					Description: "FiveNet bot role is not high enough to update the role.",
 					Author:      embeds.EmbedAuthor,
 					Color:       embeds.ColorWarn,

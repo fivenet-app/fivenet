@@ -2,7 +2,6 @@ package modules
 
 import (
 	"context"
-	"strings"
 	"sync/atomic"
 	"testing"
 
@@ -73,7 +72,7 @@ func TestQualificationsPlanUsersMergesRolesForSameUser(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	defer func() {
-		assert.NoError(t, mock.ExpectationsWereMet())
+		require.NoError(t, mock.ExpectationsWereMet())
 		_ = db.Close()
 	}()
 
@@ -111,7 +110,7 @@ func TestQualificationsQueryAndPlanUsersForQualificationSkipsInvalidExternalID(t
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	defer func() {
-		assert.NoError(t, mock.ExpectationsWereMet())
+		require.NoError(t, mock.ExpectationsWereMet())
 		_ = db.Close()
 	}()
 
@@ -131,7 +130,7 @@ func TestQualificationsQueryAndPlanUsersForQualificationSkipsInvalidExternalID(t
 
 	err = g.queryAndPlanUsersForQualification(context.Background(), 1, role, &users)
 	require.Error(t, err)
-	assert.True(t, strings.Contains(err.Error(), "failed to parse user oauth2 external id"))
+	assert.Contains(t, err.Error(), "failed to parse user oauth2 external id")
 
 	require.Len(t, users, 1)
 	user := users[12345]

@@ -146,7 +146,7 @@ func (s *UsersSync) Resync(ctx context.Context) (int64, int64, string, *time.Tim
 
 func (s *UsersSync) syncOnce(
 	ctx context.Context,
-) (fetched int64, sent int64, cursorID string, cursorTime *time.Time, err error) {
+) (int64, int64, string, *time.Time, error) {
 	limit := s.cfg.Limits.Users
 	sQuery := s.cfg.Tables.Users
 	q := sQuery.GetQuery(s.state, 0, limit)
@@ -664,7 +664,7 @@ func (s *UsersSync) retrievePhoneNumbers(
 	return phoneNumbers, nil
 }
 
-// Sync an individual user's info.
+// SyncUser sync an individual user's info by user id.
 func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 	wheres := []string{}
 	if userId != 0 {

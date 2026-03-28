@@ -168,19 +168,25 @@ func (o *oauth2UserInfo) updateUserInfo(
 		expiresIn = *userInfo.ExpiresIn
 	}
 
-	if err := accountsoauth2.UpdateOAuth2Account(ctx, o.db, o.crypt, accountId, &model.FivenetAccountsOauth2{
-		AccountID:    accountId,
-		ExternalID:   userInfo.ID,
-		Provider:     provider,
-		Username:     userInfo.Username,
-		Avatar:       userInfo.Avatar,
-		AccessToken:  userInfo.AccessToken,
-		RefreshToken: userInfo.RefreshToken,
-		TokenType:    userInfo.TokenType,
-		Scope:        userInfo.Scope,
-		ExpiresIn:    &expiresIn,
-		ObtainedAt:   userInfo.ObtainedAt,
-	}); err != nil {
+	if err := accountsoauth2.UpdateOAuth2Account(
+		ctx,
+		o.db,
+		o.crypt,
+		accountId,
+		&model.FivenetAccountsOauth2{
+			AccountID:    accountId,
+			ExternalID:   userInfo.ID,
+			Provider:     provider,
+			Username:     userInfo.Username,
+			Avatar:       userInfo.Avatar,
+			AccessToken:  userInfo.AccessToken,
+			RefreshToken: userInfo.RefreshToken,
+			TokenType:    userInfo.TokenType,
+			Scope:        userInfo.Scope,
+			ExpiresIn:    &expiresIn,
+			ObtainedAt:   userInfo.ObtainedAt,
+		},
+	); err != nil {
 		return err
 	}
 

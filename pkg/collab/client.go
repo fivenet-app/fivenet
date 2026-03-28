@@ -71,7 +71,12 @@ func (c *Client) StartPresence(ctx context.Context) error {
 	}
 
 	// Try to become FIRST (atomic Create)
-	if _, err := stateKV.Create(ctx, c.firstKey, []byte(cid), jetstream.KeyTTL(keyTTL)); err == nil {
+	if _, err := stateKV.Create(
+		ctx,
+		c.firstKey,
+		[]byte(cid),
+		jetstream.KeyTTL(keyTTL),
+	); err == nil {
 		c.room.notifyFirst(c.Id) // tell browser it must seed the doc
 	}
 
@@ -196,10 +201,21 @@ func firstWatch(ctx context.Context, room *CollabRoom, fKey, cid string, myID ui
 
 			if upd.Operation() == jetstream.KeyValueDelete {
 				// Try to re-CAS this key
-				if _, err := room.stateKV.Create(ctx, fKey, []byte(cid), jetstream.KeyTTL(keyTTL)); err == nil {
+				if _, err := room.stateKV.Create(
+					ctx,
+					fKey,
+					[]byte(cid),
+					jetstream.KeyTTL(keyTTL),
+				); err == nil {
 					room.notifyFirst(myID)
-				} else if errors.Is(err, jetstream.ErrKeyExists) {
-					room.logger.Debug("firstWatcher: CAS failed, another owner exists", zap.Error(err))
+				} else if errors.Is(
+					err,
+					jetstream.ErrKeyExists,
+				) {
+					room.logger.Debug(
+						"firstWatcher: CAS failed, another owner exists",
+						zap.Error(err),
+					)
 				} else {
 					room.logger.Error("firstWatcher: failed to re-CAS first key", zap.Error(err))
 				}

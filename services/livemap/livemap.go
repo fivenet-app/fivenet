@@ -295,7 +295,14 @@ func (s *Server) Stream(
 			}
 
 			for m := range batch.Messages() {
-				if err := s.processMessage(srv, m, userInfo, &userOnDuty, usersJobs, outCh); err != nil {
+				if err := s.processMessage(
+					srv,
+					m,
+					userInfo,
+					&userOnDuty,
+					usersJobs,
+					outCh,
+				); err != nil {
 					return err
 				}
 			}
@@ -351,6 +358,7 @@ func (s *Server) processMessage(
 
 	um := &livemapmarkers.UserMarker{}
 	if err := proto.Unmarshal(m.Data(), um); err != nil {
+		s.logger.Warn("failed to unmarshal user marker message", zap.Error(err))
 		return nil // Ignore invalid messages
 	}
 

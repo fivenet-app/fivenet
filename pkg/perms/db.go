@@ -137,7 +137,13 @@ func (p *Perms) loadAttributes(ctx context.Context) error {
 	}
 
 	for _, attr := range dest {
-		if err := p.addOrUpdateAttributeInMap(attr.GetPermissionId(), attr.GetAttrId(), Key(attr.GetKey()), permissionsattributes.AttributeTypes(attr.GetType()), attr.GetValidValues()); err != nil {
+		if err := p.addOrUpdateAttributeInMap(
+			attr.GetPermissionId(),
+			attr.GetAttrId(),
+			Key(attr.GetKey()),
+			permissionsattributes.AttributeTypes(attr.GetType()),
+			attr.GetValidValues(),
+		); err != nil {
 			return fmt.Errorf("failed to add/update attribute in map. %w", err)
 		}
 	}

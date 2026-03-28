@@ -173,15 +173,19 @@ func (r *Registry) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error
 		job.NextScheduleTime = timestamp.New(nextTime)
 	}
 
-	if err := r.store.ComputeUpdate(ctx, strings.ToLower(job.GetName()), func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
-		if existing == nil {
-			return job, true, nil
-		}
+	if err := r.store.ComputeUpdate(
+		ctx,
+		strings.ToLower(job.GetName()),
+		func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+			if existing == nil {
+				return job, true, nil
+			}
 
-		existing.Merge(job)
+			existing.Merge(job)
 
-		return existing, true, nil
-	}); err != nil {
+			return existing, true, nil
+		},
+	); err != nil {
 		return fmt.Errorf("failed to register cron job %s in store. %w", job.GetName(), err)
 	}
 

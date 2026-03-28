@@ -4,6 +4,7 @@ package cmd
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -142,89 +143,15 @@ func (c *MigrationsStatsBackfillCmd) rebuildDocumentMetrics(
 	totalProcessed := 0
 
 	for {
-		rows, err := c.db.QueryContext(
-			ctx,
-			`SELECT id, creator_job, created_at, deleted_at, draft, data
-FROM fivenet_documents
-WHERE created_at >= ?
-  AND id > ?
-  AND data IS NOT NULL
-ORDER BY id ASC
-LIMIT ?`,
-			start.UTC(),
-			lastID,
-			c.BatchSize,
-		)
+		nextLastID, batchCount, err := c.rebuildDocumentMetricsBatch(ctx, start, lastID)
 		if err != nil {
 			return totalProcessed, fmt.Errorf(
-				"failed querying documents for stats backfill. %w",
+				"failed rebuilding document metrics batch. %w",
 				err,
 			)
 		}
-
-		batchCount := 0
-		for rows.Next() {
-			var (
-				id         int64
-				creatorJob string
-				createdAt  time.Time
-				deletedAt  sql.NullTime
-				draft      bool
-				dataRaw    sql.NullString
-			)
-			if err := rows.Scan(&id, &creatorJob, &createdAt, &deletedAt, &draft, &dataRaw); err != nil {
-				rows.Close()
-				return totalProcessed, fmt.Errorf(
-					"failed scanning document row for stats backfill. %w",
-					err,
-				)
-			}
-
-			var data *documentsdata.DocumentData
-			if dataRaw.Valid && strings.TrimSpace(dataRaw.String) != "" {
-				data = &documentsdata.DocumentData{}
-				if err := protojson.Unmarshal([]byte(dataRaw.String), data); err != nil {
-					rows.Close()
-					return totalProcessed, fmt.Errorf(
-						"failed to decode document.data for document %d. %w",
-						id,
-						err,
-					)
-				}
-			}
-
-			doc := &documents.Document{
-				Id:         id,
-				CreatorJob: creatorJob,
-				CreatedAt:  timestamp.New(createdAt),
-				Meta: &documents.DocumentMeta{
-					Draft: draft,
-				},
-				Data: data,
-			}
-			if deletedAt.Valid {
-				doc.DeletedAt = timestamp.New(deletedAt.Time)
-			}
-
-			if err := c.stats.RebuildDocumentMetrics(ctx, doc); err != nil {
-				rows.Close()
-				return totalProcessed, fmt.Errorf(
-					"failed to rebuild metrics for document %d. %w",
-					id,
-					err,
-				)
-			}
-
-			lastID = id
-			batchCount++
-			totalProcessed++
-		}
-
-		if err := rows.Err(); err != nil {
-			rows.Close()
-			return totalProcessed, fmt.Errorf("row iteration error during stats backfill. %w", err)
-		}
-		rows.Close()
+		lastID = nextLastID
+		totalProcessed += batchCount
 
 		if batchCount == 0 {
 			break
@@ -236,10 +163,110 @@ LIMIT ?`,
 	return totalProcessed, nil
 }
 
+func (c *MigrationsStatsBackfillCmd) rebuildDocumentMetricsBatch(
+	ctx context.Context,
+	start time.Time,
+	lastID int64,
+) (int64, int, error) {
+	rows, err := c.db.QueryContext(
+		ctx,
+		`SELECT id, creator_job, created_at, deleted_at, draft, data
+FROM fivenet_documents
+WHERE created_at >= ?
+  AND id > ?
+  AND data IS NOT NULL
+ORDER BY id ASC
+LIMIT ?`,
+		start.UTC(),
+		lastID,
+		c.BatchSize,
+	)
+	if err != nil {
+		return lastID, 0, fmt.Errorf("failed querying documents for stats backfill. %w", err)
+	}
+	defer func() {
+		if closeErr := rows.Close(); closeErr != nil {
+			closeErr = fmt.Errorf("failed to close rows during stats backfill. %w", closeErr)
+			if err != nil {
+				err = errors.Join(err, closeErr)
+				return
+			}
+			err = closeErr
+		}
+	}()
+
+	var batchCount int
+	for rows.Next() {
+		var (
+			id         int64
+			creatorJob string
+			createdAt  time.Time
+			deletedAt  sql.NullTime
+			draft      bool
+			dataRaw    sql.NullString
+		)
+		if err := rows.Scan(
+			&id,
+			&creatorJob,
+			&createdAt,
+			&deletedAt,
+			&draft,
+			&dataRaw,
+		); err != nil {
+			return lastID, batchCount, fmt.Errorf(
+				"failed scanning document row for stats backfill. %w",
+				err,
+			)
+		}
+
+		var data *documentsdata.DocumentData
+		if dataRaw.Valid && strings.TrimSpace(dataRaw.String) != "" {
+			data = &documentsdata.DocumentData{}
+			if err := protojson.Unmarshal([]byte(dataRaw.String), data); err != nil {
+				return lastID, batchCount, fmt.Errorf(
+					"failed to decode document.data for document %d. %w",
+					id,
+					err,
+				)
+			}
+		}
+
+		doc := &documents.Document{
+			Id:         id,
+			CreatorJob: creatorJob,
+			CreatedAt:  timestamp.New(createdAt),
+			Meta: &documents.DocumentMeta{
+				Draft: draft,
+			},
+			Data: data,
+		}
+		if deletedAt.Valid {
+			doc.DeletedAt = timestamp.New(deletedAt.Time)
+		}
+
+		if err := c.stats.RebuildDocumentMetrics(ctx, doc); err != nil {
+			return lastID, batchCount, fmt.Errorf(
+				"failed to rebuild metrics for document %d. %w",
+				id,
+				err,
+			)
+		}
+
+		lastID = id
+		batchCount++
+	}
+
+	if err := rows.Err(); err != nil {
+		return lastID, batchCount, fmt.Errorf("row iteration error during stats backfill. %w", err)
+	}
+
+	return lastID, batchCount, nil
+}
+
 func parseBackfillStart(input string) (time.Time, error) {
 	input = strings.TrimSpace(input)
 	if input == "" {
-		return time.Time{}, fmt.Errorf("start is required")
+		return time.Time{}, errors.New("start is required")
 	}
 
 	layouts := []string{

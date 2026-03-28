@@ -86,7 +86,14 @@ func (s *Server) SetQualificationAccess(
 	defer tx.Rollback()
 
 	if req.GetAccess() != nil {
-		if _, err := s.access.HandleAccessChanges(ctx, tx, req.GetQualificationId(), req.GetAccess().GetJobs(), nil, nil); err != nil {
+		if _, err := s.access.HandleAccessChanges(
+			ctx,
+			tx,
+			req.GetQualificationId(),
+			req.GetAccess().GetJobs(),
+			nil,
+			nil,
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}

@@ -1,6 +1,7 @@
 package dbsyncconfig
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"reflect"
@@ -102,7 +103,7 @@ func New(p ParamsConfig) (ResultConfig, error) {
 
 	if cc.Tables.Accounts.Enabled {
 		if cc.Tables.Accounts.Query == nil {
-			return r, fmt.Errorf(
+			return r, errors.New(
 				"accounts table is enabled but no query is set. please set a query for the accounts table or disable the feature",
 			)
 		}
@@ -162,7 +163,11 @@ func (s *Config) LoadConfig() error {
 		// Build detailed validation error message
 		var msg strings.Builder
 		msg.WriteString("Invalid FiveNet DBSync config detected:\n")
-		for _, validationErr := range err.(validator.ValidationErrors) {
+		for _, validationErr := range func() validator.ValidationErrors {
+			var target validator.ValidationErrors
+			_ = errors.As(err, &target)
+			return target
+		}() {
 			fmt.Fprintf(&msg, "- Field %q violated %s validation.\n",
 				validationErr.StructNamespace(),
 				validationErr.Tag())

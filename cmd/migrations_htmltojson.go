@@ -1,3 +1,4 @@
+//nolint:forbidigo // Migration command prints progress to stdout.
 package cmd
 
 import (

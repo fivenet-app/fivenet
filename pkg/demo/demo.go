@@ -315,6 +315,12 @@ func (d *Demo) randIntN(n int) int {
 	return d.rng.IntN(n)
 }
 
+func (d *Demo) randInt32N(n int32) int32 {
+	d.randMu.Lock()
+	defer d.randMu.Unlock()
+	return d.rng.Int32N(n)
+}
+
 func (d *Demo) randFloat64() float64 {
 	d.randMu.Lock()
 	defer d.randMu.Unlock()

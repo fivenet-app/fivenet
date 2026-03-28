@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 )
 
@@ -350,6 +351,7 @@ func TestPlanUser(t *testing.T) {
 
 	logger := zaptest.NewLogger(t)
 	assert := assert.New(t)
+	require := require.New(t)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -370,9 +372,9 @@ func TestPlanUser(t *testing.T) {
 
 			user, logs, err := g.planUser(tt.args.u, tt.args.settings)
 			if tt.wantErr {
-				assert.Error(err, tt.name+": expected an error but got none")
+				require.Error(err, tt.name+": expected an error but got none")
 			} else {
-				assert.NoError(err, tt.name+": unexpected error: %v", err)
+				require.NoError(err, tt.name+": unexpected error: %v", err)
 			}
 
 			if tt.wantUserNil {
@@ -382,16 +384,36 @@ func TestPlanUser(t *testing.T) {
 
 				if tt.expectedUser != nil {
 					assert.Equal(tt.expectedUser.ID, user.ID, tt.name+": expected user id to match")
-					assert.Equal(tt.expectedUser.Nickname, user.Nickname, tt.name+": expected nickname to match")
+					assert.Equal(
+						tt.expectedUser.Nickname,
+						user.Nickname,
+						tt.name+": expected nickname to match",
+					)
 					if tt.expectedUser.Roles != nil {
 						assert.NotNil(user.Roles, tt.name+": expected user roles to not be nil")
-						assert.ElementsMatch(tt.expectedUser.Roles.Sum, user.Roles.Sum, tt.name+": expected roles sum to match")
-						assert.ElementsMatch(tt.expectedUser.Roles.ToAdd, user.Roles.ToAdd, tt.name+": expected roles to add to match")
-						assert.ElementsMatch(tt.expectedUser.Roles.ToRemove, user.Roles.ToRemove, tt.name+": expected roles to remove to match")
+						assert.ElementsMatch(
+							tt.expectedUser.Roles.Sum,
+							user.Roles.Sum,
+							tt.name+": expected roles sum to match",
+						)
+						assert.ElementsMatch(
+							tt.expectedUser.Roles.ToAdd,
+							user.Roles.ToAdd,
+							tt.name+": expected roles to add to match",
+						)
+						assert.ElementsMatch(
+							tt.expectedUser.Roles.ToRemove,
+							user.Roles.ToRemove,
+							tt.name+": expected roles to remove to match",
+						)
 					} else {
 						assert.Nil(user.Roles, tt.name+": expected user roles to be nil")
 					}
-					assert.Equal(tt.expectedUser.Jobs, user.Jobs, tt.name+": expected jobs to match")
+					assert.Equal(
+						tt.expectedUser.Jobs,
+						user.Jobs,
+						tt.name+": expected jobs to match",
+					)
 				}
 			}
 

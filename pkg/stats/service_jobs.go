@@ -160,49 +160,39 @@ func (s *Service) QueryEmployeeSeriesOverTime(
 	job string,
 	period pbstats.StatsPeriod,
 ) ([]*PeriodSeriesValue, error) {
-	periodExpr := periodStartExpr(period)
-	query := `
-SELECT
-  ` + periodExpr + ` AS day,
-  metric_key AS ` + "`key`" + `,
-  SUM(value) AS value
-FROM fivenet_stats_daily_rollup
-WHERE day >= ?
-  AND day <= ?
-  AND job = ?
-  AND source_kind = ?
-  AND source_key = ?
-  AND metric_key IN ('employee_count', 'on_vacation_count')
-GROUP BY ` + periodExpr + `, metric_key
-ORDER BY ` + periodExpr + ` ASC, metric_key ASC
-`
+	tRollup := table.FivenetStatsDailyRollup
+	periodExpr := periodStartDateExpr(period)
 
-	rows, err := s.db.QueryContext(
-		ctx,
-		query,
-		timeutils.StartOfDay(startDay).Format(time.DateOnly),
-		timeutils.StartOfDay(endDay).Format(time.DateOnly),
-		job,
-		SourceKindEmployeeCount,
-		"fivenet_user_jobs",
-	)
-	if err != nil {
+	stmt := tRollup.
+		SELECT(
+			periodExpr.AS("day"),
+			tRollup.MetricKey.AS("key"),
+			mysql.SUM(tRollup.Value).AS("value"),
+		).
+		FROM(tRollup).
+		WHERE(mysql.AND(
+			tRollup.Day.GT_EQ(mysql.DateT(timeutils.StartOfDay(startDay))),
+			tRollup.Day.LT_EQ(mysql.DateT(timeutils.StartOfDay(endDay))),
+			tRollup.Job.EQ(mysql.String(job)),
+			tRollup.SourceKind.EQ(mysql.String(SourceKindEmployeeCount)),
+			tRollup.SourceKey.EQ(mysql.String("fivenet_user_jobs")),
+			tRollup.MetricKey.IN(
+				mysql.String("employee_count"),
+				mysql.String("on_vacation_count"),
+			),
+		)).
+		GROUP_BY(periodExpr, tRollup.MetricKey).
+		ORDER_BY(periodExpr.ASC(), tRollup.MetricKey.ASC())
+
+	rowsDest := []*PeriodSeriesValue{}
+	if err := stmt.QueryContext(ctx, s.db, &rowsDest); err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
-	items := []*PeriodSeriesValue{}
-	for rows.Next() {
-		item := &PeriodSeriesValue{}
-		if err := rows.Scan(&item.Day, &item.Key, &item.Value); err != nil {
-			return nil, err
-		}
-
-		item.Label = item.Key
-		items = append(items, item)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
+	items := make([]*PeriodSeriesValue, 0, len(rowsDest))
+	for i := range rowsDest {
+		rowsDest[i].Label = rowsDest[i].Key
+		items = append(items, rowsDest[i])
 	}
 
 	return items, nil

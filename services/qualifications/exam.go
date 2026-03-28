@@ -93,12 +93,18 @@ func (s *Server) checkIfUserCanTakeExam(
 	if quali.GetExamMode() <= qualificationsexam.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED {
 		return false, errorsqualifications.ErrExamDisabled
 	} else if quali.GetExamMode() == qualificationsexam.QualificationExamMode_QUALIFICATION_EXAM_MODE_REQUEST_NEEDED {
-		request, err := s.getQualificationRequest(ctx, quali.GetId(), userInfo.GetUserId(), userInfo)
+		request, err := s.getQualificationRequest(
+			ctx,
+			quali.GetId(),
+			userInfo.GetUserId(),
+			userInfo,
+		)
 		if err != nil {
 			return false, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		if request == nil || request.Status == nil || (request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED && request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_EXAM_STARTED) {
+		if request == nil || request.Status == nil ||
+			(request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED && request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_EXAM_STARTED) {
 			return false, nil
 		}
 	}
@@ -185,11 +191,8 @@ func (s *Server) TakeExam(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	timesUp := false
-	if examUser != nil && examUser.GetEndsAt() != nil &&
-		time.Since(examUser.GetEndsAt().AsTime()) > 10*time.Second {
-		timesUp = true
-	}
+	timesUp := examUser != nil && examUser.GetEndsAt() != nil &&
+		time.Since(examUser.GetEndsAt().AsTime()) > 10*time.Second
 
 	var exam *qualificationsexam.ExamQuestions
 	if examUser == nil || !timesUp {
@@ -207,7 +210,13 @@ func (s *Server) TakeExam(
 		}
 	}
 
-	if err := s.updateRequestStatus(ctx, s.db, req.GetQualificationId(), userInfo.GetUserId(), qualifications.RequestStatus_REQUEST_STATUS_EXAM_STARTED); err != nil {
+	if err := s.updateRequestStatus(
+		ctx,
+		s.db,
+		req.GetQualificationId(),
+		userInfo.GetUserId(),
+		qualifications.RequestStatus_REQUEST_STATUS_EXAM_STARTED,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
@@ -348,7 +357,14 @@ func (s *Server) SubmitExam(
 			return nil, errorsqualifications.ErrFailedQuery
 		}
 
-		if err := s.gradeExam(ctx, tx, req.GetQualificationId(), userInfo.GetUserId(), quali, req.GetResponses()); err != nil {
+		if err := s.gradeExam(
+			ctx,
+			tx,
+			req.GetQualificationId(),
+			userInfo.GetUserId(),
+			quali,
+			req.GetResponses(),
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
@@ -391,20 +407,43 @@ func (s *Server) gradeExam(
 				status = qualifications.ResultStatus_RESULT_STATUS_FAILED
 			}
 
-			if _, err := s.createOrUpdateQualificationResult(ctx, tx, qualificationId, 0, &userinfo.UserInfo{
-				Superuser: true,
-				Job:       quali.GetCreatorJob(),
-				UserId:    0,
-			}, userId, status, &score, "", grading); err != nil {
+			if _, err := s.createOrUpdateQualificationResult(
+				ctx,
+				tx,
+				qualificationId,
+				0,
+				&userinfo.UserInfo{
+					Superuser: true,
+					Job:       quali.GetCreatorJob(),
+					UserId:    0,
+				},
+				userId,
+				status,
+				&score,
+				"",
+				grading,
+			); err != nil {
 				return err
 			}
 		}
 
-		if err := s.updateRequestStatus(ctx, tx, qualificationId, userId, qualifications.RequestStatus_REQUEST_STATUS_COMPLETED); err != nil {
+		if err := s.updateRequestStatus(
+			ctx,
+			tx,
+			qualificationId,
+			userId,
+			qualifications.RequestStatus_REQUEST_STATUS_COMPLETED,
+		); err != nil {
 			return err
 		}
 	} else {
-		if err := s.updateRequestStatus(ctx, tx, qualificationId, userId, qualifications.RequestStatus_REQUEST_STATUS_EXAM_GRADING); err != nil {
+		if err := s.updateRequestStatus(
+			ctx,
+			tx,
+			qualificationId,
+			userId,
+			qualifications.RequestStatus_REQUEST_STATUS_EXAM_GRADING,
+		); err != nil {
 			return err
 		}
 	}

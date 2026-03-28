@@ -92,7 +92,13 @@ func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
 		p.permsGuardToIDMap.Store(BuildGuard(perm.Category, perm.Name), permId)
 
 		for _, attr := range perm.Attrs {
-			if _, err := p.registerOrUpdateAttribute(ctx, permId, attr.Key, attr.Type, attr.ValidValues); err != nil {
+			if _, err := p.registerOrUpdateAttribute(
+				ctx,
+				permId,
+				attr.Key,
+				attr.Type,
+				attr.ValidValues,
+			); err != nil {
 				return fmt.Errorf(
 					"failed to register/update attribute (perm id: %d, attr: %s). %w",
 					permId,
@@ -195,7 +201,14 @@ func (p *Perms) createOrUpdatePermission(
 	if perm != nil {
 		if Category(perm.GetCategory()) != category || Name(perm.GetName()) != name ||
 			(perm.GetOrder() != order) || (icon == nil || perm.GetIcon() != *icon) {
-			if err := p.UpdatePermission(ctx, perm.GetId(), category, name, order, icon); err != nil {
+			if err := p.UpdatePermission(
+				ctx,
+				perm.GetId(),
+				category,
+				name,
+				order,
+				icon,
+			); err != nil {
 				return perm.GetId(), fmt.Errorf("failed to update permission. %w", err)
 			}
 		}
@@ -556,7 +569,8 @@ func (p *Perms) applyJobPermissionsToAttrs(
 			if slices.ContainsFunc(jps, func(in *permissionspermissions.Permission) bool {
 				return in.GetId() == attr.GetPermissionId()
 			}) {
-				if _, changed := attr.GetValue().Check(permissionsattributes.AttributeTypes(attr.GetType()), attr.GetValidValues(), maxValues); changed {
+				if _, changed := attr.GetValue().
+					Check(permissionsattributes.AttributeTypes(attr.GetType()), attr.GetValidValues(), maxValues); changed {
 					p.logger.Debug(
 						"attribute changed on role due to job perms change",
 						zap.String("job", role.GetJob()),
@@ -567,7 +581,14 @@ func (p *Perms) applyJobPermissionsToAttrs(
 					)
 					toUpdate = append(toUpdate, attr)
 				} else {
-					p.logger.Debug("attribute not changed on role due to job perms change", zap.String("job", role.GetJob()), zap.Int64("attr_id", attr.GetAttrId()), zap.Any("attr_value", attr.GetValue()), zap.Any("attr_valid_value", attr.GetValidValues()), zap.Any("attr_max_values", maxValues))
+					p.logger.Debug(
+						"attribute not changed on role due to job perms change",
+						zap.String("job", role.GetJob()),
+						zap.Int64("attr_id", attr.GetAttrId()),
+						zap.Any("attr_value", attr.GetValue()),
+						zap.Any("attr_valid_value", attr.GetValidValues()),
+						zap.Any("attr_max_values", maxValues),
+					)
 				}
 			} else {
 				toRemove = append(toRemove, attr)
@@ -591,7 +612,11 @@ func (p *Perms) applyJobPermissionsToAttrs(
 				zap.String("job", role.GetJob()),
 				zap.Int("perms_length", len(toUpdate)),
 			)
-			if err := p.UpdateRoleAttributes(ctx, role.GetJob(), role.GetId(), toUpdate...); err != nil {
+			if err := p.UpdateRoleAttributes(
+				ctx,
+				role.GetJob(),
+				role.GetId(),
+				toUpdate...); err != nil {
 				return fmt.Errorf("failed to update attributes for role %d. %w", role.GetId(), err)
 			}
 		}

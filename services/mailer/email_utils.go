@@ -74,8 +74,13 @@ func (s *Server) generateEmailProposals(
 			} else {
 				for idx, split := range labelSplit {
 					if idx > 0 && len(labelSplit)-1 >= idx+1 {
-						domains = append(domains,
-							fmt.Sprintf("%s.%s", utils.Slug(split+"."+labelSplit[idx+1]), defaultDomain),
+						domains = append(
+							domains,
+							fmt.Sprintf(
+								"%s.%s",
+								utils.Slug(split+"."+labelSplit[idx+1]),
+								defaultDomain,
+							),
 						)
 					}
 				}

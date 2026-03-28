@@ -22,7 +22,13 @@ func (s *Server) GetThreadState(
 ) (*pbmailer.GetThreadStateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetThreadId(), req.GetEmailId(), maileraccess.AccessLevel_ACCESS_LEVEL_READ); err != nil {
+	if err := s.checkIfEmailPartOfThread(
+		ctx,
+		userInfo,
+		req.GetThreadId(),
+		req.GetEmailId(),
+		maileraccess.AccessLevel_ACCESS_LEVEL_READ,
+	); err != nil {
 		return nil, err
 	}
 
@@ -42,7 +48,13 @@ func (s *Server) SetThreadState(
 ) (*pbmailer.SetThreadStateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetState().GetThreadId(), req.GetState().GetEmailId(), maileraccess.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
+	if err := s.checkIfEmailPartOfThread(
+		ctx,
+		userInfo,
+		req.GetState().GetThreadId(),
+		req.GetState().GetEmailId(),
+		maileraccess.AccessLevel_ACCESS_LEVEL_WRITE,
+	); err != nil {
 		return nil, err
 	}
 

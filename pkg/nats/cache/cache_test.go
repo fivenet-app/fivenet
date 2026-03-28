@@ -21,7 +21,11 @@ func TestCachePutGetAndDelete(t *testing.T) {
 	t.Cleanup(cancel)
 
 	kv := newFakeKV("test")
-	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](ctx, zap.NewNop(), nil, kv.bucket,
+	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](
+		ctx,
+		zap.NewNop(),
+		nil,
+		kv.bucket,
 		withKeyValue[wrapperspb.StringValue, *wrapperspb.StringValue](kv),
 	)
 	require.NoError(t, err)
@@ -44,7 +48,12 @@ func TestCachePutGetAndDelete(t *testing.T) {
 	require.Equal(t, "hello", latest.Value, "mutating returned value must not mutate cache")
 
 	require.NoError(t, c.Delete(ctx, "foo/bar"))
-	require.Eventually(t, func() bool { return !c.Has("foo/bar") }, time.Second, 10*time.Millisecond)
+	require.Eventually(
+		t,
+		func() bool { return !c.Has("foo/bar") },
+		time.Second,
+		10*time.Millisecond,
+	)
 }
 
 func TestCacheTTLExpiry(t *testing.T) {
@@ -53,7 +62,11 @@ func TestCacheTTLExpiry(t *testing.T) {
 
 	kv := newFakeKV("ttl")
 	ttl := 30 * time.Millisecond
-	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](ctx, zap.NewNop(), nil, kv.bucket,
+	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](
+		ctx,
+		zap.NewNop(),
+		nil,
+		kv.bucket,
 		withKeyValue[wrapperspb.StringValue, *wrapperspb.StringValue](kv),
 		withTTL[wrapperspb.StringValue, *wrapperspb.StringValue](ttl),
 	)
@@ -75,7 +88,11 @@ func TestCacheKeysListAndRange(t *testing.T) {
 	t.Cleanup(cancel)
 
 	kv := newFakeKV("keys")
-	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](ctx, zap.NewNop(), nil, kv.bucket,
+	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](
+		ctx,
+		zap.NewNop(),
+		nil,
+		kv.bucket,
 		withKeyValue[wrapperspb.StringValue, *wrapperspb.StringValue](kv),
 		withPrefix[wrapperspb.StringValue, *wrapperspb.StringValue]("pref"),
 		withIgnoredKeys[wrapperspb.StringValue, *wrapperspb.StringValue]("ignored"),
@@ -88,7 +105,12 @@ func TestCacheKeysListAndRange(t *testing.T) {
 	require.NoError(t, c.Put(ctx, "ignored", &wrapperspb.StringValue{Value: "skip"}))
 	require.NoError(t, c.Put(ctx, "second", &wrapperspb.StringValue{Value: "two"}))
 
-	require.Eventually(t, func() bool { return c.Has("first") && c.Has("second") }, time.Second, 10*time.Millisecond)
+	require.Eventually(
+		t,
+		func() bool { return c.Has("first") && c.Has("second") },
+		time.Second,
+		10*time.Millisecond,
+	)
 
 	keys := c.Keys("")
 	require.ElementsMatch(t, []string{"first", "second"}, keys)
@@ -104,7 +126,12 @@ func TestCacheKeysListAndRange(t *testing.T) {
 	require.Equal(t, 1, count, "range should stop when callback returns false")
 
 	require.NoError(t, c.Clear(ctx))
-	require.Eventually(t, func() bool { return !c.Has("first") && !c.Has("second") }, time.Second, 10*time.Millisecond)
+	require.Eventually(
+		t,
+		func() bool { return !c.Has("first") && !c.Has("second") },
+		time.Second,
+		10*time.Millisecond,
+	)
 }
 
 func TestCacheIgnoredKeysAreSkipped(t *testing.T) {
@@ -112,7 +139,11 @@ func TestCacheIgnoredKeysAreSkipped(t *testing.T) {
 	t.Cleanup(cancel)
 
 	kv := newFakeKV("ignored")
-	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](ctx, zap.NewNop(), nil, kv.bucket,
+	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](
+		ctx,
+		zap.NewNop(),
+		nil,
+		kv.bucket,
 		withKeyValue[wrapperspb.StringValue, *wrapperspb.StringValue](kv),
 		withIgnoredKeys[wrapperspb.StringValue, *wrapperspb.StringValue]("skip"),
 	)
@@ -139,7 +170,11 @@ func TestCachePropagatesKVErrors(t *testing.T) {
 	delErr := errors.New("kv delete failed")
 	kv := newFailingKV("failures", putErr, delErr)
 
-	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](ctx, zap.NewNop(), nil, kv.bucket,
+	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](
+		ctx,
+		zap.NewNop(),
+		nil,
+		kv.bucket,
 		withKeyValue[wrapperspb.StringValue, *wrapperspb.StringValue](kv),
 	)
 	require.NoError(t, err)
@@ -223,7 +258,11 @@ func (kv *fakeKV) Get(ctx context.Context, key string) (jetstream.KeyValueEntry,
 	}, nil
 }
 
-func (kv *fakeKV) GetRevision(ctx context.Context, key string, revision uint64) (jetstream.KeyValueEntry, error) {
+func (kv *fakeKV) GetRevision(
+	ctx context.Context,
+	key string,
+	revision uint64,
+) (jetstream.KeyValueEntry, error) {
 	return nil, errors.New("not implemented")
 }
 
@@ -259,7 +298,12 @@ func (kv *fakeKV) PutString(ctx context.Context, key string, value string) (uint
 	return kv.Put(ctx, key, []byte(value))
 }
 
-func (kv *fakeKV) Create(ctx context.Context, key string, value []byte, opts ...jetstream.KVCreateOpt) (uint64, error) {
+func (kv *fakeKV) Create(
+	ctx context.Context,
+	key string,
+	value []byte,
+	opts ...jetstream.KVCreateOpt,
+) (uint64, error) {
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
 	if _, exists := kv.data[key]; exists {
@@ -268,7 +312,12 @@ func (kv *fakeKV) Create(ctx context.Context, key string, value []byte, opts ...
 	return kv.Put(ctx, key, value)
 }
 
-func (kv *fakeKV) Update(ctx context.Context, key string, value []byte, revision uint64) (uint64, error) {
+func (kv *fakeKV) Update(
+	ctx context.Context,
+	key string,
+	value []byte,
+	revision uint64,
+) (uint64, error) {
 	return kv.Put(ctx, key, value)
 }
 
@@ -303,7 +352,11 @@ func (kv *fakeKV) Purge(ctx context.Context, key string, opts ...jetstream.KVDel
 	return kv.Delete(ctx, key, opts...)
 }
 
-func (kv *fakeKV) Watch(ctx context.Context, keys string, opts ...jetstream.WatchOpt) (jetstream.KeyWatcher, error) {
+func (kv *fakeKV) Watch(
+	ctx context.Context,
+	keys string,
+	opts ...jetstream.WatchOpt,
+) (jetstream.KeyWatcher, error) {
 	w := newFakeWatcher()
 
 	kv.mu.Lock()
@@ -320,11 +373,18 @@ func (kv *fakeKV) Watch(ctx context.Context, keys string, opts ...jetstream.Watc
 	return w, nil
 }
 
-func (kv *fakeKV) WatchAll(ctx context.Context, opts ...jetstream.WatchOpt) (jetstream.KeyWatcher, error) {
+func (kv *fakeKV) WatchAll(
+	ctx context.Context,
+	opts ...jetstream.WatchOpt,
+) (jetstream.KeyWatcher, error) {
 	return kv.Watch(ctx, ">", opts...)
 }
 
-func (kv *fakeKV) WatchFiltered(ctx context.Context, keys []string, opts ...jetstream.WatchOpt) (jetstream.KeyWatcher, error) {
+func (kv *fakeKV) WatchFiltered(
+	ctx context.Context,
+	keys []string,
+	opts ...jetstream.WatchOpt,
+) (jetstream.KeyWatcher, error) {
 	return kv.Watch(ctx, strings.Join(keys, ","), opts...)
 }
 
@@ -339,15 +399,25 @@ func (kv *fakeKV) Keys(ctx context.Context, opts ...jetstream.WatchOpt) ([]strin
 	return keys, nil
 }
 
-func (kv *fakeKV) ListKeys(ctx context.Context, opts ...jetstream.WatchOpt) (jetstream.KeyLister, error) {
+func (kv *fakeKV) ListKeys(
+	ctx context.Context,
+	opts ...jetstream.WatchOpt,
+) (jetstream.KeyLister, error) {
 	return nil, errors.New("not implemented")
 }
 
-func (kv *fakeKV) ListKeysFiltered(ctx context.Context, filters ...string) (jetstream.KeyLister, error) {
+func (kv *fakeKV) ListKeysFiltered(
+	ctx context.Context,
+	filters ...string,
+) (jetstream.KeyLister, error) {
 	return nil, errors.New("not implemented")
 }
 
-func (kv *fakeKV) History(ctx context.Context, key string, opts ...jetstream.WatchOpt) ([]jetstream.KeyValueEntry, error) {
+func (kv *fakeKV) History(
+	ctx context.Context,
+	key string,
+	opts ...jetstream.WatchOpt,
+) ([]jetstream.KeyValueEntry, error) {
 	return nil, errors.New("not implemented")
 }
 

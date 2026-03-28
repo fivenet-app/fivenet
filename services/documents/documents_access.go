@@ -89,7 +89,14 @@ func (s *Server) SetDocumentAccess(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	if err := s.handleDocumentAccessChange(ctx, tx, req.GetDocumentId(), userInfo, req.GetAccess(), true); err != nil {
+	if err := s.handleDocumentAccessChange(
+		ctx,
+		tx,
+		req.GetDocumentId(),
+		userInfo,
+		req.GetAccess(),
+		true,
+	); err != nil {
 		return nil, err
 	}
 

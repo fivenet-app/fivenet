@@ -8,9 +8,11 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"io"
+	"math"
 	"net/http"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"golang.org/x/net/http2"
 	"google.golang.org/grpc/grpclog"
 )
@@ -105,8 +107,23 @@ func (w *grpcWebResponse) copyTrailersToPayload() {
 		0,
 		0,
 	} // MSB=1 indicates this is a trailer data frame.
-	//nolint:gosec // G115: GRPC server's limits should protect us from int/uint overflow issues.
-	binary.BigEndian.PutUint32(trailerGrpcDataHeader[1:5], uint32(trailerBuffer.Len()))
+
+	trailerLen := trailerBuffer.Len()
+	// Probably want to find a way to cancel the whole stream when this happens..,
+	// but for now just truncate the trailers to fit in the frame size limit.
+	if trailerLen > math.MaxUint32 {
+		grpclog.Errorf(
+			"trailer size %d exceeds maximum of %d, truncating",
+			trailerLen,
+			math.MaxUint32,
+		)
+		trailerLen = math.MaxUint32
+	}
+
+	binary.BigEndian.PutUint32(
+		trailerGrpcDataHeader[1:5],
+		utils.ToUint32Saturated(trailerLen),
+	)
 	w.wrapped.Write(trailerGrpcDataHeader)
 	w.wrapped.Write(trailerBuffer.Bytes())
 	flushWriter(w.wrapped)

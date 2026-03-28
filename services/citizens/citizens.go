@@ -188,36 +188,38 @@ func (s *Server) ListCitizens(
 	}
 
 	// Convert proto sort to db sorting
-	if req.GetSort() != nil {
-		var column mysql.Column
-		switch req.GetSort().GetColumn() {
-		case "trafficInfractionPoints":
-			if fields.Contains("UserProps.TrafficInfractionPoints") {
-				column = tUserProps.TrafficInfractionPoints
+	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
+		for _, sc := range req.GetSort().GetColumns() {
+			var column mysql.Column
+			switch sc.GetId() {
+			case "trafficInfractionPoints":
+				if fields.Contains("UserProps.TrafficInfractionPoints") {
+					column = tUserProps.TrafficInfractionPoints
+				}
+			case "openFines":
+				if fields.Contains("UserProps.OpenFines") {
+					column = tUserProps.OpenFines
+				}
+			case "name":
+				fallthrough
+			default:
+				column = tUser.Firstname
 			}
-		case "openFines":
-			if fields.Contains("UserProps.OpenFines") {
-				column = tUserProps.OpenFines
+			if column == nil {
+				column = tUser.Firstname
 			}
-		case "name":
-			fallthrough
-		default:
-			column = tUser.Firstname
-		}
-		if column == nil {
-			column = tUser.Firstname
-		}
 
-		if req.GetSort().GetDirection() == database.AscSortDirection {
-			orderBys = append(orderBys,
-				column.ASC(),
-				tUser.Lastname.ASC(),
-			)
-		} else {
-			orderBys = append(orderBys,
-				column.DESC(),
-				tUser.Lastname.DESC(),
-			)
+			if sc.GetDesc() {
+				orderBys = append(orderBys,
+					column.DESC(),
+					tUser.Lastname.DESC(),
+				)
+			} else {
+				orderBys = append(orderBys,
+					column.ASC(),
+					tUser.Lastname.ASC(),
+				)
+			}
 		}
 	} else {
 		orderBys = append(orderBys,

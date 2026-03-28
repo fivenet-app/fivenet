@@ -227,7 +227,12 @@ func (s *Server) PostComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if err := s.notifyUsersNewComment(ctx, tx, req.GetComment().GetDocumentId(), userInfo.GetUserId()); err != nil {
+	if err := s.notifyUsersNewComment(
+		ctx,
+		tx,
+		req.GetComment().GetDocumentId(),
+		userInfo.GetUserId(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 

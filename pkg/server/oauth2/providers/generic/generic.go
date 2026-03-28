@@ -35,7 +35,6 @@ func (p *Generic) GetUserInfo(ctx context.Context, code string) (*types.UserInfo
 		return nil, fmt.Errorf("code exchange failed. %w", err)
 	}
 
-	//nolint:noctx // The context is already passed in to the oauth2 http client during creation.
 	res, err := oauthCfg.Client(ctx, token).Get(p.UserInfoURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user info. %+w", err)

@@ -422,7 +422,14 @@ func (s *Server) TakeDispatch(
 		return nil, errorscentrum.ErrNotOnDuty
 	}
 
-	if err := s.dispatches.TakeDispatch(ctx, userInfo.GetJob(), userInfo.GetUserId(), unitMapping.GetUnitId(), req.GetResp(), req.GetDispatchIds()); err != nil {
+	if err := s.dispatches.TakeDispatch(
+		ctx,
+		userInfo.GetJob(),
+		userInfo.GetUserId(),
+		unitMapping.GetUnitId(),
+		req.GetResp(),
+		req.GetDispatchIds(),
+	); err != nil {
 		return nil, err
 	}
 
@@ -522,7 +529,14 @@ func (s *Server) AssignDispatch(
 		expiresAt = s.settings.DispatchAssignmentExpirationTime()
 	}
 
-	if err := s.dispatches.UpdateAssignments(ctx, &userInfo.UserId, dsp.GetId(), req.GetToAdd(), req.GetToRemove(), expiresAt); err != nil {
+	if err := s.dispatches.UpdateAssignments(
+		ctx,
+		&userInfo.UserId,
+		dsp.GetId(),
+		req.GetToAdd(),
+		req.GetToRemove(),
+		expiresAt,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 

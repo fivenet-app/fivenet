@@ -475,6 +475,7 @@ func (s *Server) setUserBloodType(
 	tx *sql.Tx,
 	userId int32,
 ) error {
+	//nolint:gosec // Blood type is randomly assigned and has no security implications.
 	idx := rand.IntN(len(BloodTypes))
 	bloodType := BloodTypes[idx]
 
@@ -822,7 +823,11 @@ func (s *Server) handleUserJobs(
 }
 
 // compareJobs compares currentJobs and jobs, returning toAdd, toUpdate, and toRemove.
-func compareJobs(currentJobs, jobs []*users.UserJob) (toAdd, toUpdate, toRemove []*users.UserJob) {
+func compareJobs(
+	currentJobs, jobs []*users.UserJob,
+) ([]*users.UserJob, []*users.UserJob, []*users.UserJob) {
+	toAdd, toUpdate, toRemove := []*users.UserJob{}, []*users.UserJob{}, []*users.UserJob{}
+
 	// Create a map for current jobs by job name
 	currentJobsMap := make(map[string]*users.UserJob)
 	for _, job := range currentJobs {
@@ -974,7 +979,8 @@ func (s *Server) handleUserPhoneNumbers(
 // comparePhoneNumbers compares currentPhoneNumbers and phoneNumbers, ensuring only one primary number, and returns toAdd, toUpdate, and toRemove.
 func comparePhoneNumbers(
 	currentPhoneNumbers, phoneNumbers []*users.PhoneNumber,
-) (toAdd, toUpdate, toRemove []*users.PhoneNumber) {
+) ([]*users.PhoneNumber, []*users.PhoneNumber, []*users.PhoneNumber) {
+	toAdd, toUpdate, toRemove := []*users.PhoneNumber{}, []*users.PhoneNumber{}, []*users.PhoneNumber{}
 	// Create a map for current phone numbers by number
 	currentPhoneNumbersMap := make(map[string]*users.PhoneNumber)
 	for _, phoneNumber := range currentPhoneNumbers {

@@ -269,7 +269,8 @@ func redactMessage(m protoreflect.Message) {
 		case fd.IsList():
 			l := m.Get(fd).List()
 			if fd.Kind() == protoreflect.MessageKind {
-				for i := 0; i < l.Len(); i++ {
+				length := l.Len()
+				for i := range length {
 					redactMessage(l.Get(i).Message())
 				}
 			}

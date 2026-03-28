@@ -292,9 +292,12 @@ func ValidateJobGradeList(
 				if vg, ok := maxVals[job]; ok {
 					currentLen := len(in.GetGrades()[job].GetGrades())
 					// Remove all grades that are greater than the max grade
-					in.Grades[job].Grades = slices.DeleteFunc(in.GetGrades()[job].GetGrades(), func(ig int32) bool {
-						return grade > vg
-					})
+					in.Grades[job].Grades = slices.DeleteFunc(
+						in.GetGrades()[job].GetGrades(),
+						func(ig int32) bool {
+							return grade > vg
+						},
+					)
 
 					if currentLen != len(in.GetGrades()[job].GetGrades()) {
 						changed = true
@@ -309,9 +312,12 @@ func ValidateJobGradeList(
 					if vg, ok := validVals[job]; ok {
 						currentLen := len(in.GetGrades()[job].GetGrades())
 						// Remove all grades that are greater than the max grade
-						in.Grades[job].Grades = slices.DeleteFunc(in.GetGrades()[job].GetGrades(), func(ig int32) bool {
-							return grade > vg
-						})
+						in.Grades[job].Grades = slices.DeleteFunc(
+							in.GetGrades()[job].GetGrades(),
+							func(ig int32) bool {
+								return grade > vg
+							},
+						)
 
 						if currentLen != len(in.GetGrades()[job].GetGrades()) {
 							changed = true

@@ -155,19 +155,23 @@ func (s *Scheduler) start(ctx context.Context) {
 
 					s.logger.Debug("scheduling cron job", zap.String("name", job.GetName()))
 					wg.Go(func() {
-						if err := s.registry.store.ComputeUpdate(ctx, key, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
-							if existing == nil {
-								return existing, false, nil
-							}
+						if err := s.registry.store.ComputeUpdate(
+							ctx,
+							key,
+							func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+								if existing == nil {
+									return existing, false, nil
+								}
 
-							existing.StartedTime = timestamp.Now()
-							existing.State = cron.CronjobState_CRONJOB_STATE_RUNNING
+								existing.StartedTime = timestamp.Now()
+								existing.State = cron.CronjobState_CRONJOB_STATE_RUNNING
 
-							job.StartedTime = existing.GetStartedTime()
-							job.State = existing.GetState()
+								job.StartedTime = existing.GetStartedTime()
+								job.State = existing.GetState()
 
-							return existing, true, nil
-						}); err != nil {
+								return existing, true, nil
+							},
+						); err != nil {
 							s.logger.Error(
 								"failed to update status of cron job",
 								zap.String("job_name", job.GetName()),
@@ -192,9 +196,13 @@ func (s *Scheduler) start(ctx context.Context) {
 }
 
 func (s *Scheduler) runCronjob(ctx context.Context, job *cron.Cronjob) error {
-	if _, err := s.js.PublishProto(ctx, fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic), &cron.CronjobSchedulerEvent{
-		Cronjob: job,
-	}); err != nil {
+	if _, err := s.js.PublishProto(
+		ctx,
+		fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic),
+		&cron.CronjobSchedulerEvent{
+			Cronjob: job,
+		},
+	); err != nil {
 		return err
 	}
 
@@ -264,27 +272,31 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 		)
 	}
 
-	if err := s.registry.store.ComputeUpdate(s.ctxCancel, event.GetName(), func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
-		// No need to update the job, probably doesn't exist anymore
-		if existing == nil {
-			return existing, false, nil
-		}
+	if err := s.registry.store.ComputeUpdate(
+		s.ctxCancel,
+		event.GetName(),
+		func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+			// No need to update the job, probably doesn't exist anymore
+			if existing == nil {
+				return existing, false, nil
+			}
 
-		existing.State = cron.CronjobState_CRONJOB_STATE_WAITING
+			existing.State = cron.CronjobState_CRONJOB_STATE_WAITING
 
-		nextTime, err := gronx.NextTick(existing.GetSchedule(), false)
-		if err != nil {
-			return existing, false, err
-		}
-		existing.NextScheduleTime = timestamp.New(nextTime)
-		existing.LastAttemptTime = timestamp.New(time.Now())
+			nextTime, err := gronx.NextTick(existing.GetSchedule(), false)
+			if err != nil {
+				return existing, false, err
+			}
+			existing.NextScheduleTime = timestamp.New(nextTime)
+			existing.LastAttemptTime = timestamp.New(time.Now())
 
-		existing.Data = event.GetData()
+			existing.Data = event.GetData()
 
-		existing.LastCompletedEvent = event
+			existing.LastCompletedEvent = event
 
-		return existing, true, nil
-	}); err != nil {
+			return existing, true, nil
+		},
+	); err != nil {
 		s.logger.Error(
 			"failed to update cronjob state after completion msg",
 			zap.String("subject", msg.Subject()),

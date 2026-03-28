@@ -141,7 +141,14 @@ func New(p Params) (*Manager, error) {
 
 					// Remove user from unit if it has a unit_id
 					if um.UnitId != nil && um.GetUnitId() > 0 {
-						if err := m.units.UpdateUnitAssignments(ctx, "", &um.UserId, um.GetUnitId(), nil, []int32{um.GetUserId()}); err != nil {
+						if err := m.units.UpdateUnitAssignments(
+							ctx,
+							"",
+							&um.UserId,
+							um.GetUnitId(),
+							nil,
+							[]int32{um.GetUserId()},
+						); err != nil {
 							m.logger.Error("failed to remove user from unit", zap.Error(err))
 						}
 					}
@@ -187,18 +194,30 @@ func New(p Params) (*Manager, error) {
 
 					if !m.userMappingsStore.Has(tracker.UserIdKey(newValue.GetUserId())) {
 						// Upsert mapping (unit_id may be nil/0 = no unit)
-						if err := m.userMappingsStore.Put(ctx, tracker.UserIdKey(newValue.GetUserId()), &pbtracker.UserMapping{
-							UserId:    newValue.GetUserId(),
-							UnitId:    newValue.UnitId,
-							Hidden:    newValue.GetHidden(),
-							CreatedAt: timestamp.Now(),
-						}); err != nil {
+						if err := m.userMappingsStore.Put(
+							ctx,
+							tracker.UserIdKey(newValue.GetUserId()),
+							&pbtracker.UserMapping{
+								UserId:    newValue.GetUserId(),
+								UnitId:    newValue.UnitId,
+								Hidden:    newValue.GetHidden(),
+								CreatedAt: timestamp.Now(),
+							},
+						); err != nil {
 							return nil, fmt.Errorf("failed to upsert user unit mapping. %w", err)
 						}
 					}
 
 					if newValue.JobGrade != nil {
-						if err := m.userLocStore.Put(ctx, userMarkerKey(newValue.GetUserId(), newValue.GetJob(), newValue.GetJobGrade()), newValue); err != nil {
+						if err := m.userLocStore.Put(
+							ctx,
+							userMarkerKey(
+								newValue.GetUserId(),
+								newValue.GetJob(),
+								newValue.GetJobGrade(),
+							),
+							newValue,
+						); err != nil {
 							return nil, fmt.Errorf("failed to upsert user marker in store. %w", err)
 						}
 					}
@@ -215,7 +234,10 @@ func New(p Params) (*Manager, error) {
 
 				// Remove user marker if we have the info we need
 				if um.JobGrade != nil {
-					if err := m.userLocStore.Delete(ctx, userMarkerKey(um.GetUserId(), um.GetJob(), um.GetJobGrade())); err != nil {
+					if err := m.userLocStore.Delete(
+						ctx,
+						userMarkerKey(um.GetUserId(), um.GetJob(), um.GetJobGrade()),
+					); err != nil {
 						m.logger.Error(
 							"failed to remove user marker from store",
 							zap.Error(err),
@@ -237,7 +259,12 @@ func New(p Params) (*Manager, error) {
 
 				// Sign-off user from dispatchers
 				if m.helpers.CheckIfUserIsDispatcher(ctx, um.GetJob(), um.GetUserId()) {
-					if err := m.dispatchers.SetUserState(ctx, um.GetJob(), um.GetUserId(), false); err != nil {
+					if err := m.dispatchers.SetUserState(
+						ctx,
+						um.GetJob(),
+						um.GetUserId(),
+						false,
+					); err != nil {
 						m.logger.Error(
 							"failed to remove user from dispatchers",
 							zap.Error(err),
@@ -456,7 +483,11 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 		// No user marker in key value store nor locally
 		if um == nil || err != nil {
 			added++
-			if err := m.userByIDStore.Put(ctx, tracker.UserIdKey(dest[i].GetUserId()), dest[i]); err != nil {
+			if err := m.userByIDStore.Put(
+				ctx,
+				tracker.UserIdKey(dest[i].GetUserId()),
+				dest[i],
+			); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
 			}
@@ -485,7 +516,11 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 
 			um.Merge(dest[i])
 
-			if err := m.userByIDStore.Put(ctx, tracker.UserIdKey(dest[i].GetUserId()), um); err != nil {
+			if err := m.userByIDStore.Put(
+				ctx,
+				tracker.UserIdKey(dest[i].GetUserId()),
+				um,
+			); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
 			}
@@ -524,7 +559,10 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIds map[int32]any
 
 		// If the user ID is not in the foundUserIds map, we can remove it
 		if _, ok := foundUserIds[userIdKey]; !ok {
-			if err := m.userByIDStore.Delete(ctx, strconv.FormatInt(int64(userIdKey), 10)); err != nil {
+			if err := m.userByIDStore.Delete(
+				ctx,
+				strconv.FormatInt(int64(userIdKey), 10),
+			); err != nil {
 				errs = multierr.Append(errs, err)
 			}
 			continue

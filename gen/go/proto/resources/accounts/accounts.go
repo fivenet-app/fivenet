@@ -103,9 +103,7 @@ func (x *AccountGroups) Scan(value any) error {
 		if err := json.Unmarshal([]byte(t), &dest); err != nil {
 			return err
 		}
-		for _, group := range dest {
-			x.Groups = append(x.Groups, group)
-		}
+		x.Groups = append(x.Groups, dest...)
 		return nil
 	case *string:
 		if t == nil {
@@ -115,18 +113,14 @@ func (x *AccountGroups) Scan(value any) error {
 		if err := json.Unmarshal([]byte(*t), &dest); err != nil {
 			return err
 		}
-		for _, group := range dest {
-			x.Groups = append(x.Groups, group)
-		}
+		x.Groups = append(x.Groups, dest...)
 		return nil
 	case []byte:
 		var dest []string
 		if err := json.Unmarshal(t, &dest); err != nil {
 			return err
 		}
-		for _, group := range dest {
-			x.Groups = append(x.Groups, group)
-		}
+		x.Groups = append(x.Groups, dest...)
 		return nil
 	}
 	return nil

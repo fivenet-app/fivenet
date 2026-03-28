@@ -87,7 +87,7 @@ func TestPickUserJobsFromConfiguredPool(t *testing.T) {
 		}
 	}
 
-	for i := 0; i < 250; i++ {
+	for range 250 {
 		jobs := d.pickUserJobs()
 		if len(jobs) == 0 {
 			t.Fatal("expected at least one job")

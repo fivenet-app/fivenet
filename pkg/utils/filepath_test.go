@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCleanStoragePath(t *testing.T) {
@@ -42,9 +43,9 @@ func TestCleanStoragePath(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result, err := CleanStoragePath(tt.input, tt.emptyOk)
 			if tt.expectErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 			assert.Equal(t, tt.expected, result)
 		})
@@ -169,9 +170,9 @@ func TestCleanStorageKey(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result, err := CleanStorageKey(tt.input)
 			if tt.expectErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 			assert.Equal(t, tt.expected, result)
 		})
@@ -217,9 +218,9 @@ func TestFSRootPath(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result, err := FSRootPath(tt.prefix, tt.key, tt.emptyOk)
 			if tt.expectErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 			assert.Equal(t, tt.expected, result)
 		})
@@ -287,11 +288,11 @@ func TestFSRootFile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := FSRootFile(tt.prefix, tt.key)
 			if tt.expectErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 				assert.Empty(t, got)
 				return
 			}
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, tt.expected, got)
 			assert.False(t, filepath.IsAbs(got))
 			assert.Empty(t, filepath.VolumeName(got))

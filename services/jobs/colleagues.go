@@ -180,22 +180,24 @@ func (s *Server) ListColleagues(
 		orderBys = append(orderBys, tColleague.ID.IN(userIds...).DESC())
 	}
 
-	if req.GetSort() != nil {
-		var columns []mysql.Column
-		switch req.GetSort().GetColumn() {
-		case nameColumn:
-			columns = append(columns, tColleague.Firstname, tColleague.Lastname)
-		case rankColumn:
-			fallthrough
-		default:
-			columns = append(columns, tUserJobs.Grade)
-		}
+	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
+		for _, sc := range req.GetSort().GetColumns() {
+			var columns []mysql.Column
+			switch sc.GetId() {
+			case nameColumn:
+				columns = append(columns, tColleague.Firstname, tColleague.Lastname)
+			case rankColumn:
+				fallthrough
+			default:
+				columns = append(columns, tUserJobs.Grade)
+			}
 
-		for _, column := range columns {
-			if req.GetSort().GetDirection() == database.AscSortDirection {
-				orderBys = append(orderBys, column.ASC())
-			} else {
-				orderBys = append(orderBys, column.DESC())
+			for _, column := range columns {
+				if sc.GetDesc() {
+					orderBys = append(orderBys, column.DESC())
+				} else {
+					orderBys = append(orderBys, column.ASC())
+				}
 			}
 		}
 	} else {
@@ -943,19 +945,21 @@ func (s *Server) ListColleagueActivity(
 
 	// Convert proto sort to db sorting
 	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil {
-		var column mysql.Column
-		switch req.GetSort().GetColumn() {
-		case "createdAt":
-			fallthrough
-		default:
-			column = tColleagueActivity.CreatedAt
-		}
+	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
+		for _, sc := range req.GetSort().GetColumns() {
+			var column mysql.Column
+			switch sc.GetId() {
+			case "createdAt":
+				fallthrough
+			default:
+				column = tColleagueActivity.CreatedAt
+			}
 
-		if req.GetSort().GetDirection() == database.AscSortDirection {
-			orderBys = append(orderBys, column.ASC())
-		} else {
-			orderBys = append(orderBys, column.DESC())
+			if sc.GetDesc() {
+				orderBys = append(orderBys, column.DESC())
+			} else {
+				orderBys = append(orderBys, column.ASC())
+			}
 		}
 	} else {
 		orderBys = append(orderBys, tColleagueActivity.CreatedAt.DESC())

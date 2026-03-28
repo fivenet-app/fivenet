@@ -277,7 +277,11 @@ func (w *Workflow) handleWorkflowState(
 			state.GetWorkflow().GetAutoClose() &&
 			state.GetWorkflow().GetAutoCloseSettings().GetMessage() != "" {
 			// Auto close document and null "next reminder time"
-			if err := w.autoCloseDocument(ctx, st, state.GetWorkflow().GetAutoCloseSettings().GetMessage()); err != nil {
+			if err := w.autoCloseDocument(
+				ctx,
+				st,
+				state.GetWorkflow().GetAutoCloseSettings().GetMessage(),
+			); err != nil {
 				return fmt.Errorf("failed to auto close document. %w", err)
 			}
 		}
@@ -287,12 +291,22 @@ func (w *Workflow) handleWorkflowState(
 	} else if state.GetNextReminderTime() != nil && time.Since(state.GetNextReminderTime().AsTime()) > 0 {
 		if doc != nil && doc.GetCreatorId() > 0 {
 			var reminderMessage string
-			if reminder := w.getAutoReminder(state); reminder != nil && reminder.GetMessage() != "" {
+			if reminder := w.getAutoReminder(
+				state,
+			); reminder != nil &&
+				reminder.GetMessage() != "" {
 				reminderMessage = reminder.GetMessage()
 			}
 
 			// Send notification when the document has a creator that is still part of the document's job
-			if err := w.sendDocumentReminder(ctx, state.GetDocumentId(), doc.GetCreatorId(), doc, reminderMessage, false); err != nil {
+			if err := w.sendDocumentReminder(
+				ctx,
+				state.GetDocumentId(),
+				doc.GetCreatorId(),
+				doc,
+				reminderMessage,
+				false,
+			); err != nil {
 				return fmt.Errorf("failed to send document reminder. %w", err)
 			}
 

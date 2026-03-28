@@ -93,7 +93,12 @@ func (s *Server) SetDocumentReminder(
 	}
 
 	if req.GetReminderTime() == nil {
-		if err := deleteWorkflowUserState(ctx, s.db, req.GetDocumentId(), userInfo.GetUserId()); err != nil {
+		if err := deleteWorkflowUserState(
+			ctx,
+			s.db,
+			req.GetDocumentId(),
+			userInfo.GetUserId(),
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	} else {

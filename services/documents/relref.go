@@ -481,8 +481,14 @@ func (s *Server) addDocumentRelation(
 		}
 
 		// Only mention users when the relation has been created and not been "duplicated"
-		if err := s.addUserActivity(ctx, tx,
-			userInfo.GetUserId(), rel.GetTargetUserId(), usersactivity.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT, "", &usersactivity.UserActivityData{
+		if err := s.addUserActivity(
+			ctx,
+			tx,
+			userInfo.GetUserId(),
+			rel.GetTargetUserId(),
+			usersactivity.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT,
+			"",
+			&usersactivity.UserActivityData{
 				Data: &usersactivity.UserActivityData_DocumentRelation{
 					DocumentRelation: &usersactivity.CitizenDocumentRelation{
 						Added:      true,
@@ -490,12 +496,18 @@ func (s *Server) addDocumentRelation(
 						Relation:   rel.GetRelation(),
 					},
 				},
-			}); err != nil {
+			},
+		); err != nil {
 			return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
 		if rel.GetRelation() == documentsrelations.DocRelation_DOC_RELATION_MENTIONED {
-			if err := s.notifyMentionedUser(ctx, rel.GetDocumentId(), userInfo.GetUserId(), rel.GetTargetUserId()); err != nil {
+			if err := s.notifyMentionedUser(
+				ctx,
+				rel.GetDocumentId(),
+				userInfo.GetUserId(),
+				rel.GetTargetUserId(),
+			); err != nil {
 				return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 		}
@@ -570,8 +582,14 @@ func (s *Server) RemoveDocumentRelation(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if err := s.addUserActivity(ctx, tx,
-		userInfo.GetUserId(), rel.GetTargetUserId(), usersactivity.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT, "", &usersactivity.UserActivityData{
+	if err := s.addUserActivity(
+		ctx,
+		tx,
+		userInfo.GetUserId(),
+		rel.GetTargetUserId(),
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT,
+		"",
+		&usersactivity.UserActivityData{
 			Data: &usersactivity.UserActivityData_DocumentRelation{
 				DocumentRelation: &usersactivity.CitizenDocumentRelation{
 					Added:      false,
@@ -579,7 +597,8 @@ func (s *Server) RemoveDocumentRelation(
 					// Relation:   rel.Relation,
 				},
 			},
-		}); err != nil {
+		},
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 

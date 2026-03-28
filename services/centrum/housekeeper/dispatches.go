@@ -112,7 +112,14 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 			zap.Int("expired_assignments", len(dsps)),
 		)
 		for dispatchId, units := range dsps {
-			if err := s.dispatches.UpdateAssignments(ctx, nil, dispatchId, nil, units, time.Time{}); err != nil {
+			if err := s.dispatches.UpdateAssignments(
+				ctx,
+				nil,
+				dispatchId,
+				nil,
+				units,
+				time.Time{},
+			); err != nil {
 				return fmt.Errorf("failed to update dispatch %d assignments. %w", dispatchId, err)
 			}
 		}
@@ -189,7 +196,11 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 
 		// Add "too old" attribute when we are able to retrieve the dispatch
 		if dsp, err := s.dispatches.Get(ctx, ds.DispatchID); err == nil && dsp != nil {
-			if err := s.dispatches.AddAttributeToDispatch(ctx, dsp, centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD); err != nil {
+			if err := s.dispatches.AddAttributeToDispatch(
+				ctx,
+				dsp,
+				centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD,
+			); err != nil {
 				s.logger.Error(
 					"failed to add too old attribute to cancelled dispatch",
 					zap.Int64("dispatch_id", ds.DispatchID),
@@ -198,11 +209,15 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 			}
 		}
 
-		if _, err := s.dispatches.UpdateStatus(ctx, ds.DispatchID, &centrumdispatches.DispatchStatus{
-			CreatedAt:  timestamp.Now(),
-			DispatchId: ds.DispatchID,
-			Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-		}); err != nil {
+		if _, err := s.dispatches.UpdateStatus(
+			ctx,
+			ds.DispatchID,
+			&centrumdispatches.DispatchStatus{
+				CreatedAt:  timestamp.Now(),
+				DispatchId: ds.DispatchID,
+				Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+			},
+		); err != nil {
 			s.logger.Error(
 				"failed to cancel dispatch",
 				zap.Int64("dispatch_id", ds.DispatchID),

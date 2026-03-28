@@ -166,10 +166,17 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrumdispatches
 	}
 
 	// Mark the current dispatch as "multiple" and add the references
-	if err := s.dispatches.AddAttributeToDispatch(ctx, mainDsp, centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE); err != nil {
+	if err := s.dispatches.AddAttributeToDispatch(
+		ctx,
+		mainDsp,
+		centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE,
+	); err != nil {
 		return err
 	}
-	if err := s.dispatches.AddReferencesToDispatch(ctx, mainDsp, refs.GetReferences()...); err != nil {
+	if err := s.dispatches.AddReferencesToDispatch(
+		ctx,
+		mainDsp,
+		refs.GetReferences()...); err != nil {
 		return err
 	}
 
@@ -184,7 +191,11 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrumdispatches
 			continue // Skip the main dispatch itself
 		}
 
-		if err := s.dispatches.AddAttributeToDispatch(ctx, dup, centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE); err != nil {
+		if err := s.dispatches.AddAttributeToDispatch(
+			ctx,
+			dup,
+			centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE,
+		); err != nil {
 			return err
 		}
 		if err := s.dispatches.AddReferencesToDispatch(ctx, dup, sourceRef); err != nil {
@@ -203,7 +214,14 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrumdispatches
 		for _, ua := range dup.GetUnits() {
 			toRemove = append(toRemove, ua.GetUnitId())
 		}
-		if err := s.dispatches.UpdateAssignments(ctx, nil, dup.GetId(), nil, toRemove, time.Time{}); err != nil {
+		if err := s.dispatches.UpdateAssignments(
+			ctx,
+			nil,
+			dup.GetId(),
+			nil,
+			toRemove,
+			time.Time{},
+		); err != nil {
 			return fmt.Errorf("failed to remove assigned units from duplicate dispatch. %w", err)
 		}
 	}

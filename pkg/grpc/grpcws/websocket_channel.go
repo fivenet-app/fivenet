@@ -159,7 +159,10 @@ func (ws *WebsocketChannel) poll() error {
 			defer ws.mu.Unlock()
 
 			if ws.maxStreamCount > 0 && len(ws.activeStreams) > ws.maxStreamCount {
-				return nil, ws.writeError(frame.GetStreamId(), "rejecting max number of streams reached for this channel")
+				return nil, ws.writeError(
+					frame.GetStreamId(),
+					"rejecting max number of streams reached for this channel",
+				)
 			}
 
 			st := newGrpcStream(frame.GetStreamId(), ws, ws.maxStreamCount)
