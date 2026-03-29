@@ -39,7 +39,6 @@ func getNatsClient(
 }
 
 func TestNats_LockUnlock(t *testing.T) {
-	t.Parallel()
 	natsServer := servers.NewNATSServer(t, true)
 	js := natsServer.GetJS()
 
@@ -61,7 +60,6 @@ func TestNats_LockUnlock(t *testing.T) {
 }
 
 func TestNats_MultipleLocks(t *testing.T) {
-	t.Parallel()
 	natsServer := servers.NewNATSServer(t, true)
 	js := natsServer.GetJS()
 

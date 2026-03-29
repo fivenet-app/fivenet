@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.3.2] - 2026-03-29
+
+### 🚀 Features
+
+- Add demo content like jobs, licenses and laws
+- Add centrum and jobs activity demo data
+- Add demo data generation for vehicles
+- Add settings to citizen/user labels
+- Add icon to labels and change citizen label api
+
+### 🐛 Bug Fixes
+
+- Implement demo mode feedback
+- Demo account identifier/license mixup
+- Prefix error translation keys by service/dir
+- Dbsync user jobs cleanup/filtering
+- Add deleted label handling for superuser
+- Icon select search being overly strict
+- Label icon not clearable and insert/update query issue
+- Sql mode ONLY_FULL_GROUP_BY timeclock for total time queries
+- Superuser job select menu label issue
+- Update nats image to 2.12.6 in docker-compose.ymls
+- Update overview screenshot
+- Typo in docker-compose.yml
+- Doc approval decline not working due to "empty" payload svg
+- Cleanup linter issues
+- Frontend linter issues
+- Replace vueuse `useVModel()` with vue `defineModel()`
+- Enable additional linters and fix context linter issues
+- Truncate grpc web response trailer bytes to max if truncated
+- Audit log grpc interceptor arg change causing error to be lost
+- Address gosec linter failures
+- Make all CommandPaletteGroup arrays computed and fix type of
+- Pnpm install issue caused by mdc/shikijs dependency
+- Dbsync for single user with custom query
+
 ## [2026.3.1] - 2026-03-16
 
 ### 🚀 Features
