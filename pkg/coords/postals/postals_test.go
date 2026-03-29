@@ -5,65 +5,73 @@ import (
 	"testing"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/paulmach/orb"
+	"github.com/paulmach/orb/quadtree"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestNew(t *testing.T) {
-	t.Parallel(
-	// Create a temporary file to simulate the postals file
-	)
+func TestNewLoadsAndQueriesPostalCodes(t *testing.T) {
+	t.Parallel()
 
+	// Arrange a temporary postals file with a couple of known entries.
 	tmpFile, err := os.CreateTemp(t.TempDir(), "postals_test_*.json")
 	require.NoError(t, err)
-	defer os.Remove(tmpFile.Name())
 
-	// Write sample postal data to the temporary file
-	sampleData := `[{"Code":"12345","Latitude":40.7128,"Longitude":-74.0060},{"Code":"67890","Latitude":34.0522,"Longitude":-118.2437}]`
+	sampleData := `[
+		{"code":"12345","x":40.7128,"y":-74.0060},
+		{"code":"67890","x":34.0522,"y":-118.2437}
+	]`
 	_, err = tmpFile.WriteString(sampleData)
 	require.NoError(t, err)
-	tmpFile.Close()
+	require.NoError(t, tmpFile.Close())
 
-	// Create a mock config pointing to the temporary file
 	cfg := &config.Config{
 		PostalsFile: tmpFile.Name(),
 	}
 
-	// Call the New function
+	// Load the postals store from disk through the public constructor.
 	postals, err := New(cfg)
 	require.NoError(t, err)
-	assert.NotNil(t, postals)
+	require.NotNil(t, postals)
 
-	// Verify the postalCodesMap is populated correctly
-	postal, ok := postalCodesMap["12345"]
-	assert.True(t, ok)
-	assert.NotNil(t, postal)
-	assert.Equal(t, "12345", *postal.Code)
-
-	// Make sure non-existing code doesn't exist
-	postal, ok = postalCodesMap["789123"]
-	assert.False(t, ok)
-	assert.Nil(t, postal)
-}
-
-func TestByCode(t *testing.T) {
-	t.Parallel()
-	code := "67890"
-	// Prepare the postalCodesMap for testing
-	postalCodesMap["67890"] = &Postal{
-		Code: &code,
-		X:    34.0522,
-		Y:    -118.2437,
+	byCode := func(code string) quadtree.FilterFunc {
+		return func(point orb.Pointer) bool {
+			postal, ok := point.(*Postal)
+			return ok && postal.Code != nil && *postal.Code == code
+		}
 	}
 
-	// Test existing code
-	postal, ok := ByCode("67890")
-	assert.True(t, ok)
-	assert.NotNil(t, postal)
-	assert.Equal(t, "67890", *postal.Code)
+	target := orb.Point{40.7128, -74.0060}
 
-	// Test non-existing code
-	postal, ok = ByCode("99999")
+	// Query the loaded store through the embedded coords API.
+	require.True(t, postals.Has(target, byCode("12345")))
+
+	postal := postals.Get(target, byCode("12345"))
+	require.NotNil(t, postal)
+	require.NotNil(t, postal.Code)
+	assert.Equal(t, "12345", *postal.Code)
+	assert.Equal(t, target, postal.Point())
+
+	postal, ok := postals.ByCode("12345")
+	require.True(t, ok)
+	require.NotNil(t, postal)
+	require.NotNil(t, postal.Code)
+	assert.Equal(t, "12345", *postal.Code)
+
+	// Verify missing postal codes are not reported as present.
+	missing := orb.Point{999, 999}
+	assert.False(t, postals.Has(missing, byCode("99999")))
+
+	postal, ok = postals.ByCode("99999")
 	assert.False(t, ok)
 	assert.Nil(t, postal)
+
+	// Confirm spatial nearest-neighbor lookup still works on the same store.
+	closest, ok := postals.Closest(34.0522, -118.2437)
+	require.True(t, ok)
+	require.NotNil(t, closest)
+	require.NotNil(t, closest.Code)
+	assert.Equal(t, "67890", *closest.Code)
+	assert.Equal(t, orb.Point{34.0522, -118.2437}, closest.Point())
 }

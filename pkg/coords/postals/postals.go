@@ -10,11 +10,24 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/coords"
 )
 
-// Postals is a type alias for a read-only coordinate store of Postal pointers.
-type Postals = *coords.CoordsRO[*Postal]
+type postalStore struct {
+	*coords.CoordsRO[*Postal]
 
-// postalCodesMap maps postal codes to their corresponding Postal struct.
-var postalCodesMap = map[string]*Postal{}
+	byCode map[string]*Postal
+}
+
+// Postals is a read-only postal coordinate store with additional postal code lookups.
+type Postals = *postalStore
+
+// ByCode returns the postal entry for the given code, if present.
+func (p *postalStore) ByCode(code string) (*Postal, bool) {
+	if p == nil {
+		return nil, false
+	}
+
+	postal, ok := p.byCode[code]
+	return postal, ok
+}
 
 // New loads postal codes from the configured file and returns a read-only coordinate store.
 // Returns an error if the file cannot be read or parsed, or if the points cannot be added.
@@ -40,18 +53,17 @@ func New(cfg *config.Config) (Postals, error) {
 		return nil, fmt.Errorf("failed to add postals to postals coords map. %w", err)
 	}
 
-	// Populate the postalCodesMap for fast lookup by code
-	for k := range codes {
-		if codes[k].Code != nil {
-			postalCodesMap[*codes[k].Code] = codes[k]
+	byCode := make(map[string]*Postal, len(codes))
+	for i := range codes {
+		if codes[i] == nil || codes[i].Code == nil {
+			continue
 		}
+
+		byCode[*codes[i].Code] = codes[i]
 	}
 
-	return cs, nil
-}
-
-// ByCode returns the Postal struct for a given code, if it exists.
-func ByCode(code string) (*Postal, bool) {
-	postalCode, ok := postalCodesMap[code]
-	return postalCode, ok
+	return &postalStore{
+		CoordsRO: cs,
+		byCode:   byCode,
+	}, nil
 }

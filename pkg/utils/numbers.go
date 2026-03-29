@@ -7,7 +7,7 @@ func ToUint32Saturated(v int) uint32 {
 	if v <= 0 {
 		return 0
 	}
-	if v > int(math.MaxUint32) {
+	if uint64(v) > math.MaxUint32 {
 		return math.MaxUint32
 	}
 	return uint32(v)
@@ -15,7 +15,10 @@ func ToUint32Saturated(v int) uint32 {
 
 // ToUint32Checked converts int to uint32 and reports whether the value was in range.
 func ToUint32Checked(v int) (uint32, bool) {
-	if v < 0 || v > int(math.MaxUint32) {
+	if v < 0 {
+		return 0, false
+	}
+	if uint64(v) > math.MaxUint32 {
 		return 0, false
 	}
 	return uint32(v), true

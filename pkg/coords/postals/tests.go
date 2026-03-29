@@ -5,5 +5,13 @@ import (
 )
 
 func NewForTests() (Postals, error) {
-	return coords.NewReadOnly([]*Postal{})
+	cs, err := coords.NewReadOnly([]*Postal{})
+	if err != nil {
+		return nil, err
+	}
+
+	return &postalStore{
+		CoordsRO: cs,
+		byCode:   map[string]*Postal{},
+	}, nil
 }

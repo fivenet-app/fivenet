@@ -76,6 +76,7 @@ func SetupDB(p Params) (Result, error) {
 		var err error
 		if req, err = MigrateDB(
 			// Migrations should not be canceled by the caller's context, as they are critical for application startup.
+			// FIXME move migration and db connection to fx.StartHook
 			context.Background(),
 			p.Logger,
 			p.Config.Database.DSN,

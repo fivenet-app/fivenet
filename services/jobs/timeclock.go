@@ -168,41 +168,49 @@ func (s *Server) ListTimeclock(
 	// Convert proto sort to db sorting
 	orderBys := []mysql.OrderByClause{}
 	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
+		staticOrderBys := []mysql.OrderByClause{}
+		hasStaticDateOrder := false
+
 		for _, sc := range req.GetSort().GetColumns() {
-			var staticColumns []mysql.OrderByClause
-			var columns []mysql.Column
 			switch sc.GetId() {
 			case "date":
-				columns = append(columns, tTimeClock.Date)
+				if sc.GetDesc() {
+					orderBys = append(orderBys, tTimeClock.Date.DESC())
+				} else {
+					orderBys = append(orderBys, tTimeClock.Date.ASC())
+				}
 			case rankColumn:
-				staticColumns = append(staticColumns, tTimeClock.Date.DESC())
-				columns = append(columns, tColleague.JobGrade)
+				if !hasStaticDateOrder {
+					staticOrderBys = append(staticOrderBys, tTimeClock.Date.DESC())
+					hasStaticDateOrder = true
+				}
+				if sc.GetDesc() {
+					orderBys = append(orderBys, tColleague.JobGrade.DESC(), spentTimeColumn.DESC())
+				} else {
+					orderBys = append(orderBys, tColleague.JobGrade.ASC(), spentTimeColumn.DESC())
+				}
 			case nameColumn:
-				staticColumns = append(staticColumns, tTimeClock.Date.DESC())
-				columns = append(columns, tColleague.Firstname)
+				if !hasStaticDateOrder {
+					staticOrderBys = append(staticOrderBys, tTimeClock.Date.DESC())
+					hasStaticDateOrder = true
+				}
+				if sc.GetDesc() {
+					orderBys = append(orderBys, tColleague.Firstname.DESC(), spentTimeColumn.DESC())
+				} else {
+					orderBys = append(orderBys, tColleague.Firstname.ASC(), spentTimeColumn.DESC())
+				}
 			case "time":
 				fallthrough
 			default:
-				columns = append(columns, spentTimeColumn)
-			}
-
-			for _, column := range columns {
 				if sc.GetDesc() {
-					if column == spentTimeColumn {
-						orderBys = append(orderBys, column.DESC())
-					} else {
-						orderBys = append(orderBys, column.DESC(), spentTimeColumn.DESC())
-					}
+					orderBys = append(orderBys, spentTimeColumn.DESC())
 				} else {
-					if column == spentTimeColumn {
-						orderBys = append(orderBys, column.ASC())
-					} else {
-						orderBys = append(orderBys, column.ASC(), spentTimeColumn.DESC())
-					}
+					orderBys = append(orderBys, spentTimeColumn.ASC())
 				}
 			}
-			orderBys = append(staticColumns, orderBys...)
 		}
+
+		orderBys = append(staticOrderBys, orderBys...)
 	} else {
 		orderBys = append(orderBys,
 			tTimeClock.Date.DESC(),

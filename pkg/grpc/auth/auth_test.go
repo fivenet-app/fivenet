@@ -17,10 +17,9 @@ import (
 
 // Inspired by https://github.com/grpc-ecosystem/go-grpc-middleware/blob/da1b13ec28bbdd492bdc876045791b69c4be5b81/auth/metadata_test.go
 func TestGRPCAuthFunc(t *testing.T) {
-	t.Parallel(
-	// Valid JWT token
-	)
+	t.Parallel()
 
+	// Valid JWT token with claims matching testUserCombinedClaim
 	tm := NewTokenMgr(jwtTokenTestSecret)
 	assert.NotNil(t, tm)
 	token, err := tm.FromCombinedClaims(testUserCombinedClaim)

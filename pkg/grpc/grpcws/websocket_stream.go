@@ -185,8 +185,7 @@ func (stream *GrpcStream) WriteHeader(statusCode int) {
 					Header: &grpcws.Header{
 						Operation: "",
 						Headers:   headerResponse,
-
-						Status: int32(statusCode),
+						Status:    int32(statusCode),
 					},
 				},
 			})
