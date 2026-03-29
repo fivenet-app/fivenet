@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"regexp"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -453,6 +454,13 @@ func (c *UsersTable) GetQuery(
 	where ...string,
 ) string {
 	if c.Query != nil {
+		where = slices.DeleteFunc(where, func(cond string) bool {
+			return strings.TrimSpace(cond) == ""
+		})
+		if len(where) > 0 {
+			return prepareStringQueryWithWhereCondition(*c.Query, limit, where)
+		}
+
 		return prepareStringQuery(*c.Query, c.DBSyncTable, state, limit, c.Columns.ID)
 	}
 
@@ -711,6 +719,17 @@ func (c *DBSyncConfig) Init() error {
 	}
 	if c.Tables.Users.Query != nil {
 		*c.Tables.Users.Query = strings.ReplaceAll(*c.Tables.Users.Query, "OFFSET $offset", "")
+
+		if strings.TrimSpace(*c.Tables.Users.Query) != "" &&
+			!strings.Contains(*c.Tables.Users.Query, "$whereCondition") {
+			zap.L().Error(
+				"users custom query missing required $whereCondition placeholder",
+			)
+
+			return errors.New(
+				"users table custom query must contain $whereCondition placeholder",
+			)
+		}
 	}
 	if c.Tables.Vehicles.Query != nil {
 		*c.Tables.Vehicles.Query = strings.ReplaceAll(

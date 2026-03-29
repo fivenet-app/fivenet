@@ -90,6 +90,29 @@ func prepareStringQuery(
 	return q
 }
 
+func prepareStringQueryWithWhereCondition(
+	q string,
+	limit int64,
+	whereCondition []string,
+) string {
+	limitStr := strconv.FormatInt(limit, 10)
+
+	q = strings.ReplaceAll(q, "$limit", limitStr)
+
+	whereCondition = slices.DeleteFunc(whereCondition, func(c string) bool {
+		return strings.TrimSpace(c) == ""
+	})
+
+	where := ""
+	if len(whereCondition) > 0 {
+		where = "WHERE " + strings.Join(whereCondition, " AND ") + "\n"
+	}
+
+	q = strings.ReplaceAll(q, "$whereCondition", where)
+
+	return q
+}
+
 func buildQueryFromColumns(
 	tableName string,
 	columns map[string]string,

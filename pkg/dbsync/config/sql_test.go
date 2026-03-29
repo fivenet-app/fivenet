@@ -207,6 +207,29 @@ func TestGetWhereConditionBacktickedColumns(t *testing.T) {
 	})
 }
 
+func TestUsersTableGetQueryWithCustomQueryReplacesWhereCondition(t *testing.T) {
+	t.Parallel()
+
+	customQuery := "SELECT * FROM `users` $whereCondition LIMIT $limit"
+	usersTable := UsersTable{
+		DBSyncTable: DBSyncTable{
+			Query:             &customQuery,
+			UpdatedTimeColumn: utils.StrPtr("updated_at"),
+		},
+		Columns: UsersColumns{
+			ID: "id",
+		},
+	}
+	state := &TableSyncState{
+		LastCheck: parseTime("2023-01-01 00:00:00"),
+		LastID:    utils.StrPtr("42"),
+	}
+
+	query := usersTable.GetQuery(state, 0, 1, "`id` = ?")
+
+	assert.Equal(t, "SELECT * FROM `users` WHERE `id` = ?\n LIMIT 1", query)
+}
+
 func parseTime(value string) *time.Time {
 	t, _ := time.Parse("2006-01-02 15:04:05", value)
 	return &t
