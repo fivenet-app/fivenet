@@ -1,7 +1,3 @@
-packages:
-  - .
-  - gen/ts
-
 catalog:
   '@protobuf-ts/plugin': 2.11.1
   google-protobuf: 4.0.2
@@ -20,3 +16,8 @@ onlyBuiltDependencies:
 
 ignoredBuiltDependencies:
   - maplibre-gl
+
+packageExtensions:
+  '@nuxtjs/mdc@0.20.1':
+    dependencies:
+      '@shikijs/engine-javascript': ^3.22.0

@@ -19,6 +19,8 @@ overrides:
   '@tiptap/pm': 3.21.0
   '@tiptap/vue-3': 3.21.0
 
+packageExtensionsChecksum: sha256-7+0BRckKAdS1Y1fGbYDn/DTQer+VqQHXj8450tVLHaY=
+
 importers:
 
   .:
@@ -408,15 +410,6 @@ importers:
       westures:
         specifier: 1.1.1
         version: 1.1.1
-
-  gen/ts:
-    devDependencies:
-      '@protobuf-ts/plugin':
-        specifier: 'catalog:'
-        version: 2.11.1
-      google-protobuf:
-        specifier: 'catalog:'
-        version: 4.0.2
 
 packages:
 
@@ -11819,6 +11812,7 @@ snapshots:
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       '@shikijs/core': 3.22.0
+      '@shikijs/engine-javascript': 3.22.0
       '@shikijs/langs': 3.23.0
       '@shikijs/themes': 3.22.0
       '@shikijs/transformers': 3.22.0
