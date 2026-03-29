@@ -55,17 +55,14 @@ async function searchThreads(q: string): Promise<CommandPaletteItem[]> {
     }
 }
 
-const groups = computed(
-    () =>
-        [
-            {
-                id: 'messages',
-                label: searchTerm.value ? `${t('common.search')}: ${searchTerm.value}...` : t('common.search'),
-                items: threads.value || [],
-                ignoreFilter: true,
-            },
-        ] as CommandPaletteGroup<CommandPaletteItem>[],
-);
+const groups = computed<CommandPaletteGroup<CommandPaletteItem>[]>(() => [
+    {
+        id: 'messages',
+        label: searchTerm.value ? `${t('common.search')}: ${searchTerm.value}...` : t('common.search'),
+        items: threads.value || [],
+        ignoreFilter: true,
+    },
+]);
 </script>
 
 <template>
