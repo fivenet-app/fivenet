@@ -43,6 +43,7 @@ func (m *mockAppConfig) Subscribe() chan *appconfig.Cfg {
 func (m *mockAppConfig) Unsubscribe(_ chan *appconfig.Cfg) {}
 
 func TestHousekeeperMaxWantedDurationHandling_Disabled(t *testing.T) {
+	t.Parallel()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -69,6 +70,7 @@ func TestHousekeeperMaxWantedDurationHandling_Disabled(t *testing.T) {
 }
 
 func TestHousekeeperMaxWantedDurationHandling_NoDuration(t *testing.T) {
+	t.Parallel()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -95,6 +97,7 @@ func TestHousekeeperMaxWantedDurationHandling_NoDuration(t *testing.T) {
 }
 
 func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
+	t.Parallel()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -145,6 +148,7 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 }
 
 func TestHousekeeperMaxWantedDurationHandling_ResetMultipleVehicles(t *testing.T) {
+	t.Parallel()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {

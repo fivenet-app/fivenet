@@ -126,14 +126,27 @@ func (p *Plan) applyUsers(dc *state.State) ([]discord.Embed, error) {
 						Footer: embeds.EmbedFooterVersion,
 					})
 				} else {
-					errs = multierr.Append(errs, fmt.Errorf("failed to set user %s nickname (%q). %w", user.ID, *user.Nickname, err))
+					errs = multierr.Append(
+						errs,
+						fmt.Errorf(
+							"failed to set user %s nickname (%q). %w",
+							user.ID,
+							*user.Nickname,
+							err,
+						),
+					)
 					continue
 				}
 			}
 		}
 
 		for _, role := range user.Roles.ToRemove {
-			if err := dc.RemoveRole(p.GuildID, user.ID, role.ID, api.AuditLogReason(role.Module)); err != nil {
+			if err := dc.RemoveRole(
+				p.GuildID,
+				user.ID,
+				role.ID,
+				api.AuditLogReason(role.Module),
+			); err != nil {
 				errs = multierr.Append(
 					errs,
 					fmt.Errorf(

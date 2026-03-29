@@ -74,21 +74,23 @@ func (s *Server) ListQualifications(
 
 	// Convert proto sort to db sorting
 	orderBys := []mysql.OrderByClause{tQuali.Draft.ASC()}
-	if req.GetSort() != nil {
-		var column mysql.Column
-		switch req.GetSort().GetColumn() {
-		case "abbreviation":
-			column = tQuali.Abbreviation
-		case "id":
-			fallthrough
-		default:
-			column = tQualiResults.ID
-		}
+	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
+		for _, sc := range req.GetSort().GetColumns() {
+			var column mysql.Column
+			switch sc.GetId() {
+			case "abbreviation":
+				column = tQuali.Abbreviation
+			case "id":
+				fallthrough
+			default:
+				column = tQualiResults.ID
+			}
 
-		if req.GetSort().GetDirection() == database.AscSortDirection {
-			orderBys = append(orderBys, column.ASC())
-		} else {
-			orderBys = append(orderBys, column.DESC())
+			if sc.GetDesc() {
+				orderBys = append(orderBys, column.DESC())
+			} else {
+				orderBys = append(orderBys, column.ASC())
+			}
 		}
 	} else {
 		orderBys = append(orderBys, tQualiResults.ID.DESC())
@@ -471,12 +473,24 @@ func (s *Server) UpdateQualification(
 	}
 
 	if req.GetQualification().GetAccess() != nil {
-		if _, err := s.access.HandleAccessChanges(ctx, tx, req.GetQualification().GetId(), req.GetQualification().GetAccess().GetJobs(), nil, nil); err != nil {
+		if _, err := s.access.HandleAccessChanges(
+			ctx,
+			tx,
+			req.GetQualification().GetId(),
+			req.GetQualification().GetAccess().GetJobs(),
+			nil,
+			nil,
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
 
-	if err := s.handleQualificationRequirementsChanges(ctx, tx, req.GetQualification().GetId(), req.GetQualification().GetRequirements()); err != nil {
+	if err := s.handleQualificationRequirementsChanges(
+		ctx,
+		tx,
+		req.GetQualification().GetId(),
+		req.GetQualification().GetRequirements(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
@@ -498,7 +512,12 @@ func (s *Server) UpdateQualification(
 		files = append(files, questFiles...)
 	}
 
-	if _, _, err := s.fHandler.HandleFileChangesForParent(ctx, tx, req.GetQualification().GetId(), files); err != nil {
+	if _, _, err := s.fHandler.HandleFileChangesForParent(
+		ctx,
+		tx,
+		req.GetQualification().GetId(),
+		files,
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 

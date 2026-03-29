@@ -9,6 +9,7 @@ import (
 )
 
 func TestSoftDeleteJobData(t *testing.T) {
+	t.Parallel()
 	ctx := t.Context()
 
 	// Mock dependencies
@@ -85,6 +86,7 @@ func TestSoftDeleteJobData(t *testing.T) {
 }
 
 func TestHardDelete(t *testing.T) {
+	t.Parallel()
 	ctx := t.Context()
 
 	// Mock dependencies

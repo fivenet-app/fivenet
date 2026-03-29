@@ -1,8 +1,6 @@
 package modules
 
 import (
-	"context"
-	"strings"
 	"sync/atomic"
 	"testing"
 
@@ -17,6 +15,7 @@ import (
 )
 
 func TestQualificationsPlanRoles(t *testing.T) {
+	t.Parallel()
 	var settings atomic.Pointer[jobssettings.DiscordSyncSettings]
 	settings.Store(&jobssettings.DiscordSyncSettings{QualificationsRoleFormat: "%abbr% - %name%"})
 
@@ -70,10 +69,11 @@ func TestQualificationsPlanRoles(t *testing.T) {
 }
 
 func TestQualificationsPlanUsersMergesRolesForSameUser(t *testing.T) {
+	t.Parallel()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	defer func() {
-		assert.NoError(t, mock.ExpectationsWereMet())
+		require.NoError(t, mock.ExpectationsWereMet())
 		_ = db.Close()
 	}()
 
@@ -92,7 +92,7 @@ func TestQualificationsPlanUsersMergesRolesForSameUser(t *testing.T) {
 
 	roleA := &discordtypes.Role{Name: "Role A", Module: "Qualifications-1", Job: "police"}
 	roleB := &discordtypes.Role{Name: "Role B", Module: "Qualifications-2", Job: "police"}
-	users, logs, err := g.planUsers(context.Background(), map[int64]*discordtypes.Role{
+	users, logs, err := g.planUsers(t.Context(), map[int64]*discordtypes.Role{
 		1: roleA,
 		2: roleB,
 	})
@@ -108,10 +108,11 @@ func TestQualificationsPlanUsersMergesRolesForSameUser(t *testing.T) {
 }
 
 func TestQualificationsQueryAndPlanUsersForQualificationSkipsInvalidExternalID(t *testing.T) {
+	t.Parallel()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	defer func() {
-		assert.NoError(t, mock.ExpectationsWereMet())
+		require.NoError(t, mock.ExpectationsWereMet())
 		_ = db.Close()
 	}()
 
@@ -129,9 +130,9 @@ func TestQualificationsQueryAndPlanUsersForQualificationSkipsInvalidExternalID(t
 	users := discordtypes.Users{}
 	role := &discordtypes.Role{Name: "Role", Module: "Qualifications-1", Job: "police"}
 
-	err = g.queryAndPlanUsersForQualification(context.Background(), 1, role, &users)
+	err = g.queryAndPlanUsersForQualification(t.Context(), 1, role, &users)
 	require.Error(t, err)
-	assert.True(t, strings.Contains(err.Error(), "failed to parse user oauth2 external id"))
+	assert.Contains(t, err.Error(), "failed to parse user oauth2 external id")
 
 	require.Len(t, users, 1)
 	user := users[12345]

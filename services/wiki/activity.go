@@ -167,7 +167,10 @@ func (s *Server) generatePageDiff(
 	diff := &wikiactivity.PageUpdated{}
 
 	if !strings.EqualFold(old.GetMeta().GetTitle(), new.GetMeta().GetTitle()) {
-		if titleDiff := textdiff.DiffText(old.GetMeta().GetTitle(), new.GetMeta().GetTitle()); titleDiff.HasChanges() {
+		if titleDiff := textdiff.DiffText(
+			old.GetMeta().GetTitle(),
+			new.GetMeta().GetTitle(),
+		); titleDiff.HasChanges() {
 			diff.TitleCdiff = titleDiff
 		}
 	}

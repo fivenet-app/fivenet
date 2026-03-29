@@ -19,7 +19,7 @@ import (
 
 type WebsocketChannel struct {
 	mu                sync.Mutex
-	ctx               context.Context
+	ctx               context.Context //nolint:containedctx // Channel wrapper retains connection context for read/write/ping loops.
 	wsConn            *websocket.Conn
 	grpcHandler       func(resp http.ResponseWriter, req *http.Request)
 	maxStreamCount    int
@@ -159,7 +159,10 @@ func (ws *WebsocketChannel) poll() error {
 			defer ws.mu.Unlock()
 
 			if ws.maxStreamCount > 0 && len(ws.activeStreams) > ws.maxStreamCount {
-				return nil, ws.writeError(frame.GetStreamId(), "rejecting max number of streams reached for this channel")
+				return nil, ws.writeError(
+					frame.GetStreamId(),
+					"rejecting max number of streams reached for this channel",
+				)
 			}
 
 			st := newGrpcStream(frame.GetStreamId(), ws, ws.maxStreamCount)

@@ -3,11 +3,11 @@ package syncers
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"fmt"
 
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"go.uber.org/zap"
 )
 
@@ -37,10 +37,11 @@ func New(
 func (s *Syncer) sendData(ctx context.Context, data *pbsync.SendDataRequest) error {
 	if s.cfg.Destination.DryRun {
 		s.logger.Info("dry run enabled, not sending data to server")
-		out, err := json.MarshalIndent(data, "", "  ")
+		out, err := protoutils.MarshalToPrettyJSON(data)
 		if err != nil {
 			s.logger.Error("failed to marshal data for dry run output", zap.Error(err))
 		} else {
+			//nolint:forbidigo // This is a debug log, so it's fine to print to stdout.
 			fmt.Println("Data that would have been sent to the server:", string(out))
 		}
 		return nil

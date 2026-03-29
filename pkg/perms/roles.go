@@ -242,7 +242,12 @@ func (p *Perms) CreateRole(
 	} else {
 		role, err = p.GetRoleByJobAndGrade(ctx, job, grade)
 		if err != nil {
-			return nil, fmt.Errorf("failed to retrieve existing role for job %s and grade %d. %w", job, grade, err)
+			return nil, fmt.Errorf(
+				"failed to retrieve existing role for job %s and grade %d. %w",
+				job,
+				grade,
+				err,
+			)
 		}
 	}
 
@@ -348,7 +353,12 @@ func (p *Perms) GetRoleByJobAndGrade(
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil
 		} else {
-			return nil, fmt.Errorf("failed to get role for job %s and grade %d. %w", job, grade, err)
+			return nil, fmt.Errorf(
+				"failed to get role for job %s and grade %d. %w",
+				job,
+				grade,
+				err,
+			)
 		}
 	}
 

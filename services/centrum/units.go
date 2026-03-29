@@ -223,7 +223,14 @@ func (s *Server) AssignUnit(
 		}
 	}
 
-	if err := s.units.UpdateUnitAssignments(ctx, userInfo.GetJob(), &userInfo.UserId, unit.GetId(), req.GetToAdd(), req.GetToRemove()); err != nil {
+	if err := s.units.UpdateUnitAssignments(
+		ctx,
+		userInfo.GetJob(),
+		&userInfo.UserId,
+		unit.GetId(),
+		req.GetToAdd(),
+		req.GetToRemove(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
@@ -286,7 +293,14 @@ func (s *Server) JoinUnit(
 
 		// Remove user from his current unit
 		if currentUnit != nil {
-			if err := s.units.UpdateUnitAssignments(ctx, userInfo.GetJob(), &userInfo.UserId, currentUnit.GetId(), nil, []int32{userInfo.GetUserId()}); err != nil {
+			if err := s.units.UpdateUnitAssignments(
+				ctx,
+				userInfo.GetJob(),
+				&userInfo.UserId,
+				currentUnit.GetId(),
+				nil,
+				[]int32{userInfo.GetUserId()},
+			); err != nil {
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
 		}
@@ -315,16 +329,34 @@ func (s *Server) JoinUnit(
 			}
 		}
 
-		if err := s.units.UpdateUnitAssignments(ctx, userInfo.GetJob(), &userInfo.UserId, newUnit.GetId(), []int32{userInfo.GetUserId()}, nil); err != nil {
+		if err := s.units.UpdateUnitAssignments(
+			ctx,
+			userInfo.GetJob(),
+			&userInfo.UserId,
+			newUnit.GetId(),
+			[]int32{userInfo.GetUserId()},
+			nil,
+		); err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
 		resp.Unit = newUnit
 	} else {
-		s.logger.Debug("user leaving unit", zap.Int64("current_unit_id", currentUnitMapping.GetUnitId()), zap.Int64("unit_id", req.GetUnitId()))
+		s.logger.Debug(
+			"user leaving unit",
+			zap.Int64("current_unit_id", currentUnitMapping.GetUnitId()),
+			zap.Int64("unit_id", req.GetUnitId()),
+		)
 		// User leaves his current unit (if he is in an unit)
 		if currentUnit != nil {
-			if err := s.units.UpdateUnitAssignments(ctx, userInfo.GetJob(), &userInfo.UserId, currentUnit.GetId(), nil, []int32{userInfo.GetUserId()}); err != nil {
+			if err := s.units.UpdateUnitAssignments(
+				ctx,
+				userInfo.GetJob(),
+				&userInfo.UserId,
+				currentUnit.GetId(),
+				nil,
+				[]int32{userInfo.GetUserId()},
+			); err != nil {
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
 		}

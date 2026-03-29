@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { EditorContentType, EditorEmojiMenuItem, EditorSuggestionMenuItem, FormError } from '@nuxt/ui';
+import { formErrorsInjectionKey } from '@nuxt/ui/runtime/composables/useFormField.js';
 import type { ClientStreamingCall, RpcOptions } from '@protobuf-ts/runtime-rpc';
 import { generateJSON, getSchema, type Extensions, type JSONContent } from '@tiptap/core';
 import Collaboration from '@tiptap/extension-collaboration';

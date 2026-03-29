@@ -11,6 +11,7 @@ import (
 )
 
 func TestBasicStoreCreateAndUse(t *testing.T) {
+	t.Parallel()
 	_, js, shutdown, err := nats.NewInProcessNATSServer()
 	if err != nil {
 		t.Fatal(err)

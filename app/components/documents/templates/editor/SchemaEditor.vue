@@ -1,16 +1,11 @@
 <script lang="ts" setup>
 import type { TemplateRequirements } from '~~/gen/ts/resources/documents/templates/templates';
 
-const props = defineProps<{
-    modelValue: TemplateRequirements;
+defineProps<{
     disabled?: boolean;
 }>();
 
-const emit = defineEmits<{
-    (e: 'update:modelValue', payload: TemplateRequirements): void;
-}>();
-
-const templateSchema = useVModel(props, 'modelValue', emit);
+const templateSchema = defineModel<TemplateRequirements>({ required: true });
 
 onBeforeMount(() => {
     if (!templateSchema.value.users) {

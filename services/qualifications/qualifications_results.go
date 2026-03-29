@@ -82,9 +82,15 @@ func (s *Server) ListQualificationsResults(
 					tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 
 					mysql.OR(
-						tQAccess.Access.GT_EQ(mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE))),
+						tQAccess.Access.GT_EQ(
+							mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE)),
+						),
 						mysql.AND(
-							tQAccess.Access.GT_EQ(mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW))),
+							tQAccess.Access.GT_EQ(
+								mysql.Int32(
+									int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+								),
+							),
 							tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						),
 					),
@@ -111,7 +117,8 @@ func (s *Server) ListQualificationsResults(
 		))
 	} else {
 		if req.QualificationId == nil {
-			condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).AND(tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
+			condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).
+				AND(tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
 			countColumn = mysql.DISTINCT(tQualiResults.QualificationID)
 		} else {
 			countColumn = mysql.DISTINCT(tQualiResults.UserID)
@@ -167,21 +174,23 @@ func (s *Server) ListQualificationsResults(
 
 	// Convert proto sort to db sorting
 	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil {
-		var column mysql.Column
-		switch req.GetSort().GetColumn() {
-		case "status":
-			column = tQualiResults.Status
-		case "createdAt":
-			fallthrough
-		default:
-			column = tQualiResults.CreatedAt
-		}
+	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
+		for _, sc := range req.GetSort().GetColumns() {
+			var column mysql.Column
+			switch sc.GetId() {
+			case "status":
+				column = tQualiResults.Status
+			case "createdAt":
+				fallthrough
+			default:
+				column = tQualiResults.CreatedAt
+			}
 
-		if req.GetSort().GetDirection() == database.AscSortDirection {
-			orderBys = append(orderBys, column.ASC())
-		} else {
-			orderBys = append(orderBys, column.DESC())
+			if sc.GetDesc() {
+				orderBys = append(orderBys, column.DESC())
+			} else {
+				orderBys = append(orderBys, column.ASC())
+			}
 		}
 	} else {
 		orderBys = append(orderBys, tQualiResults.CreatedAt.DESC())
@@ -454,14 +463,27 @@ func (s *Server) createOrUpdateQualificationResult(
 
 	if quali.GetLabelSyncEnabled() {
 		// Add/Remove label based on result status
-		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, userId, status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL); err != nil {
+		if err := s.handleColleagueLabelSync(
+			ctx,
+			tx,
+			userInfo,
+			quali,
+			userId,
+			status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
+		); err != nil {
 			return 0, err
 		}
 	}
 
 	// If the result is successful, complete the request status
 	if status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
-		if err := s.updateRequestStatus(ctx, tx, qualificationId, userId, qualifications.RequestStatus_REQUEST_STATUS_COMPLETED); err != nil {
+		if err := s.updateRequestStatus(
+			ctx,
+			tx,
+			qualificationId,
+			userId,
+			qualifications.RequestStatus_REQUEST_STATUS_COMPLETED,
+		); err != nil {
 			return 0, err
 		}
 	} else {
@@ -484,8 +506,11 @@ func (s *Server) createOrUpdateQualificationResult(
 				Key: "notifications.qualifications.result_updated.title",
 			},
 			Content: &common.I18NItem{
-				Key:        "notifications.qualifications.result_updated.content",
-				Parameters: map[string]string{"abbreviation": quali.GetAbbreviation(), "title": quali.GetTitle()},
+				Key: "notifications.qualifications.result_updated.content",
+				Parameters: map[string]string{
+					"abbreviation": quali.GetAbbreviation(),
+					"title":        quali.GetTitle(),
+				},
 			},
 			Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL,
 			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
@@ -661,13 +686,25 @@ func (s *Server) DeleteQualificationResult(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if err := s.deleteExamUser(ctx, tx, result.GetQualificationId(), result.GetUserId()); err != nil {
+	if err := s.deleteExamUser(
+		ctx,
+		tx,
+		result.GetQualificationId(),
+		result.GetUserId(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	if quali.GetLabelSyncEnabled() {
 		// Remove label as we are deleting the result
-		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, result.GetUserId(), false); err != nil {
+		if err := s.handleColleagueLabelSync(
+			ctx,
+			tx,
+			userInfo,
+			quali,
+			result.GetUserId(),
+			false,
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}

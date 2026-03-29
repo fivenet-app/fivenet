@@ -269,8 +269,12 @@ func (c *AbsentCommand) HandleCommand(
 		)
 		(*resp.Embeds)[0].Color = embeds.ColorSuccess
 	} else {
-		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.already_absent.title", nil)
-		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.already_absent.desc",
+		(*resp.Embeds)[0].Title = localizer(
+			"discord.commands.absent.results.already_absent.title",
+			nil,
+		)
+		(*resp.Embeds)[0].Description = localizer(
+			"discord.commands.absent.results.already_absent.desc",
 			map[string]any{
 				"absenceBegin": startDate.Format(defaultDateFormat),
 				"absenceEnd":   endDate.Format(defaultDateFormat),

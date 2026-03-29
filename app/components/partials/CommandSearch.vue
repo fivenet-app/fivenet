@@ -4,7 +4,7 @@ import { getCitizensCitizensClient, getDocumentsDocumentsClient } from '~~/gen/t
 import FiveNetLogo from './logos/FiveNetLogo.vue';
 
 const props = defineProps<{
-    links: NavigationMenuItem[];
+    children: NavigationMenuItem[];
 }>();
 
 const { t } = useI18n();
@@ -144,6 +144,30 @@ const searchLinks = computed<CommandPaletteItem[]>(
         ].filter((i) => i !== undefined) as CommandPaletteItem[],
 );
 
+function mapNavigationItemToCommandPaletteItem(link: NavigationMenuItem): CommandPaletteItem {
+    const childItems = link.children?.map(mapNavigationItemToCommandPaletteItem) ?? [];
+    const hasChildren = childItems.length > 0;
+    const mainItem =
+        hasChildren && link.to
+            ? [
+                  {
+                      ...link,
+                      chip: typeof link.chip === 'object' ? link.chip : undefined,
+                      kbds: typeof link.tooltip === 'object' ? link.tooltip.kbds : undefined,
+                      children: undefined,
+                  } satisfies CommandPaletteItem,
+              ]
+            : [];
+
+    return {
+        ...link,
+        chip: typeof link.chip === 'object' ? link.chip : undefined,
+        to: hasChildren ? undefined : link.to,
+        kbds: typeof link.tooltip === 'object' ? link.tooltip.kbds : undefined,
+        children: hasChildren ? [...mainItem, ...childItems] : undefined,
+    };
+}
+
 const groups = computed<CommandPaletteGroup<CommandPaletteItem>[]>(() => [
     {
         id: 'ids',
@@ -164,11 +188,7 @@ const groups = computed<CommandPaletteGroup<CommandPaletteItem>[]>(() => [
     {
         id: 'links',
         label: t('common.goto'),
-        items: props.links.map((link) => ({
-            ...link,
-            to: link.children?.length ? undefined : link.to,
-            kbds: typeof link.tooltip === 'object' ? link.tooltip?.kbds : undefined,
-        })),
+        items: props.children.map(mapNavigationItemToCommandPaletteItem),
     },
 ]);
 </script>

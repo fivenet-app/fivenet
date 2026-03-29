@@ -22,6 +22,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestBasicCentrumFlow(t *testing.T) {
+	t.Parallel()
 	dbServer := servers.NewDBServer(t, true)
 	natsServer := servers.NewNATSServer(t, true)
 

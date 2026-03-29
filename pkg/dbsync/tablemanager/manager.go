@@ -86,7 +86,12 @@ func (t *TableManager) CheckTables(
 			}
 
 			columnName := *table.UpdatedTimeColumn
-			if err := t.addUpdatedAtColumnToTable(ctx, db, table.TableName, columnName); err != nil {
+			if err := t.addUpdatedAtColumnToTable(
+				ctx,
+				db,
+				table.TableName,
+				columnName,
+			); err != nil {
 				return fmt.Errorf(
 					"adding updated_at column to table %q failed. %w",
 					table.TableName,
@@ -122,6 +127,13 @@ func (t *TableManager) checkIfTableExists(
 	if !rows.Next() {
 		return fmt.Errorf("table %q does not exist in source database", tableName)
 	}
+	if rows.Err() != nil {
+		return fmt.Errorf(
+			"error occurred while checking if table %q exists. %w",
+			tableName,
+			rows.Err(),
+		)
+	}
 
 	return nil
 }
@@ -147,6 +159,14 @@ func (t *TableManager) checkIfTableHasUpdatedAtColumn(
 
 	if !rows.Next() {
 		return false, nil
+	}
+
+	if rows.Err() != nil {
+		return false, fmt.Errorf(
+			"error occurred while checking if table %q has an on update timestamp column. %w",
+			tableName,
+			rows.Err(),
+		)
 	}
 
 	return true, nil

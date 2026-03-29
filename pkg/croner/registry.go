@@ -56,7 +56,6 @@ type RegistryParams struct {
 type Registry struct {
 	logger *zap.Logger
 
-	ctx   context.Context
 	js    *events.JSWrapper
 	store *store.Store[cron.Cronjob, *cron.Cronjob]
 	kv    jetstream.KeyValue
@@ -76,7 +75,6 @@ func NewRegistry(p RegistryParams) (RegistryResult, error) {
 		Named("cron.registry")
 	r := &Registry{
 		logger: p.Logger,
-		ctx:    ctxCancel,
 		js:     p.JS,
 	}
 
@@ -173,15 +171,19 @@ func (r *Registry) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error
 		job.NextScheduleTime = timestamp.New(nextTime)
 	}
 
-	if err := r.store.ComputeUpdate(ctx, strings.ToLower(job.GetName()), func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
-		if existing == nil {
-			return job, true, nil
-		}
+	if err := r.store.ComputeUpdate(
+		ctx,
+		strings.ToLower(job.GetName()),
+		func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+			if existing == nil {
+				return job, true, nil
+			}
 
-		existing.Merge(job)
+			existing.Merge(job)
 
-		return existing, true, nil
-	}); err != nil {
+			return existing, true, nil
+		},
+	); err != nil {
 		return fmt.Errorf("failed to register cron job %s in store. %w", job.GetName(), err)
 	}
 

@@ -1,6 +1,7 @@
 package icons
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -149,7 +150,7 @@ func buildTargetURL(apiURL string, path string, query url.Values) (string, error
 
 	q := query.Get("icons")
 	if q == "" {
-		return "", fmt.Errorf("missing icons query parameter")
+		return "", errors.New("missing icons query parameter")
 	}
 
 	targetURL += "?icons=" + q

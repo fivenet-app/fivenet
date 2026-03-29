@@ -2,16 +2,11 @@
 import { VueDraggable } from 'vue-draggable-plus';
 import type { zWorkflowSchema } from '../types';
 
-const props = defineProps<{
-    modelValue: zWorkflowSchema;
+defineProps<{
     disabled?: boolean;
 }>();
 
-const emit = defineEmits<{
-    (e: 'update:modelValue', payload: zWorkflowSchema): void;
-}>();
-
-const workflow = useVModel(props, 'modelValue', emit);
+const workflow = defineModel<zWorkflowSchema>({ required: true });
 
 const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders.reminderSettings.reminders));
 </script>

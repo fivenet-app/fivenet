@@ -230,7 +230,12 @@ func (s *SettingsDB) updateDB(
 		return fmt.Errorf("failed to handle access changes for job %s. %w", job, err)
 	}
 
-	if err := s.handleAccessChanges(ctx, job, current.OfferedAccess, settings.OfferedAccess); err != nil {
+	if err := s.handleAccessChanges(
+		ctx,
+		job,
+		current.OfferedAccess,
+		settings.OfferedAccess,
+	); err != nil {
 		return fmt.Errorf("failed to handle offered access changes for job %s. %w", job, err)
 	}
 

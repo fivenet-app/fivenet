@@ -12,7 +12,6 @@ import EntryShareForm from './EntryShareForm.vue';
 
 const props = withDefaults(
     defineProps<{
-        modelValue: CalendarEntryRSVP | undefined;
         entryId: number;
         rsvpOpen?: boolean;
         disabled?: boolean;
@@ -25,10 +24,6 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
-    (e: 'update:modelValue', entry: CalendarEntryRSVP | undefined): void;
-}>();
-
 const overlay = useOverlay();
 
 const authStore = useAuthStore();
@@ -36,7 +31,7 @@ const { activeChar } = storeToRefs(authStore);
 
 const calendarStore = useCalendarStore();
 
-const ownEntry = useVModel(props, 'modelValue', emit);
+const ownEntry = defineModel<CalendarEntryRSVP | undefined>();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 

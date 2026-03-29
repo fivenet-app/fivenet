@@ -368,7 +368,13 @@ func (g *UserInfo) planUser(
 	}
 
 	if settings.GetUserInfoSyncSettings().GetSyncNicknames() {
-		if name := g.getUserNickname(member, strings.TrimSpace(u.Firstname), strings.TrimSpace(u.Lastname), u.NamePrefix, u.NameSuffix); name != nil {
+		if name := g.getUserNickname(
+			member,
+			strings.TrimSpace(u.Firstname),
+			strings.TrimSpace(u.Lastname),
+			u.NamePrefix,
+			u.NameSuffix,
+		); name != nil {
 			user.Nickname = name
 		}
 	}
@@ -470,13 +476,15 @@ func (g *UserInfo) constructUserNickname(
 	// Truncate the firstname progressively
 	firstParts := strings.Split(firstname, " ")
 	truncatedFirst := ""
+	var truncatedFirstSb473 strings.Builder
 	for i := range firstParts {
 		if i == len(firstParts)-1 {
-			truncatedFirst += string(firstParts[i][0]) + "."
+			truncatedFirstSb473.WriteString(string(firstParts[i][0]) + ".")
 		} else {
-			truncatedFirst += firstParts[i] + " "
+			truncatedFirstSb473.WriteString(firstParts[i] + " ")
 		}
 	}
+	truncatedFirst += truncatedFirstSb473.String()
 	truncatedFirst = strings.TrimSpace(truncatedFirst)
 
 	fullName = fmt.Sprintf("%s%s %s%s", prefix, truncatedFirst, lastname, suffix)
@@ -533,9 +541,14 @@ func (g *UserInfo) watchEvents(e any) {
 				return
 			}
 
-			if err := g.discord.AddRole(g.guild.ID, ev.User.ID, g.unemployedRole.ID, api.AddRoleData{
-				AuditLogReason: api.AuditLogReason("On Join (Unemployed Role)"),
-			}); err != nil {
+			if err := g.discord.AddRole(
+				g.guild.ID,
+				ev.User.ID,
+				g.unemployedRole.ID,
+				api.AddRoleData{
+					AuditLogReason: api.AuditLogReason("On Join (Unemployed Role)"),
+				},
+			); err != nil {
 				g.logger.Error("failed to add unemployed role to user on join", zap.Error(err))
 				return
 			}

@@ -85,7 +85,11 @@ func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification
 		return fmt.Errorf("failed to proto marshal notification. %w", err)
 	}
 
-	if _, err := n.js.PublishAsync(ctx, fmt.Sprintf("%s.%s.%d", BaseSubject, UserTopic, not.GetUserId()), data); err != nil {
+	if _, err := n.js.PublishAsync(
+		ctx,
+		fmt.Sprintf("%s.%s.%d", BaseSubject, UserTopic, not.GetUserId()),
+		data,
+	); err != nil {
 		return fmt.Errorf("failed to publish notification message. %w", err)
 	}
 
@@ -138,7 +142,17 @@ func (n *Notifi) SendObjectEvent(
 		return errors.New("object event ID is required")
 	}
 
-	if _, err := n.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s.%s.%d", BaseSubject, ObjectTopic, event.GetType().ToNatsKey(), event.GetId()), event); err != nil {
+	if _, err := n.js.PublishAsyncProto(
+		ctx,
+		fmt.Sprintf(
+			"%s.%s.%s.%d",
+			BaseSubject,
+			ObjectTopic,
+			event.GetType().ToNatsKey(),
+			event.GetId(),
+		),
+		event,
+	); err != nil {
 		return fmt.Errorf(
 			"failed to publish object %s event message. %w",
 			event.GetType().String(),
@@ -158,7 +172,11 @@ func (n *Notifi) SendUserEvent(
 		return errors.New("user event data is required")
 	}
 
-	if _, err := n.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s.%d", BaseSubject, UserTopic, userId), event); err != nil {
+	if _, err := n.js.PublishAsyncProto(
+		ctx,
+		fmt.Sprintf("%s.%s.%d", BaseSubject, UserTopic, userId),
+		event,
+	); err != nil {
 		return fmt.Errorf("failed to publish user %d event message. %w", userId, err)
 	}
 
@@ -173,7 +191,11 @@ func (n *Notifi) SendSystemEvent(
 		return errors.New("system event data is required")
 	}
 
-	if _, err := n.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s", BaseSubject, SystemTopic), event); err != nil {
+	if _, err := n.js.PublishAsyncProto(
+		ctx,
+		fmt.Sprintf("%s.%s", BaseSubject, SystemTopic),
+		event,
+	); err != nil {
 		return fmt.Errorf("failed to publish system event message. %w", err)
 	}
 

@@ -55,10 +55,10 @@ type LeaderElector struct {
 	ttl       time.Duration
 	heartbeat time.Duration
 
-	ctx    context.Context // parent-lifetime
+	ctx    context.Context //nolint:containedctx // Parent lifecycle context is intentionally retained for background loops.
 	cancel context.CancelFunc
 
-	leadershipCtx    context.Context // cancelled on step-down
+	leadershipCtx    context.Context //nolint:containedctx // Leadership context must be retained and canceled on step-down.
 	leadershipCancel context.CancelFunc
 
 	isLeader bool
@@ -238,7 +238,7 @@ func (le *LeaderElector) heartbeatLoop(ctx context.Context) {
 			return
 
 		case <-t.C:
-			if _, err := le.kv.Put(le.ctx, le.key, nil); err != nil {
+			if _, err := le.kv.Put(ctx, le.key, nil); err != nil {
 				le.logger.Warn("failed to refresh key", zap.Error(err))
 				le.demote("refresh failed")
 				return

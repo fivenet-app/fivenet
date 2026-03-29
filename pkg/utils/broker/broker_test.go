@@ -11,6 +11,7 @@ import (
 )
 
 func TestBrokerStart(t *testing.T) {
+	t.Parallel()
 	assert, require := assert.New(t), require.New(t)
 
 	type testMessage struct {

@@ -136,7 +136,11 @@ func (s *Server) UploadJobLogo(
 	}
 
 	if props.LogoFileId != nil && props.GetLogoFileId() > 0 {
-		if err := s.jobPropsFileHandler.Delete(ctx, userInfo.GetJob(), props.GetLogoFileId()); err != nil {
+		if err := s.jobPropsFileHandler.Delete(
+			ctx,
+			userInfo.GetJob(),
+			props.GetLogoFileId(),
+		); err != nil {
 			return errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
 	}
@@ -199,7 +203,11 @@ func (s *Server) DeleteJobLogo(
 		return &pbsettings.DeleteJobLogoResponse{}, nil
 	}
 
-	if err := s.jobPropsFileHandler.Delete(ctx, userInfo.GetJob(), props.GetLogoFileId()); err != nil {
+	if err := s.jobPropsFileHandler.Delete(
+		ctx,
+		userInfo.GetJob(),
+		props.GetLogoFileId(),
+	); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 

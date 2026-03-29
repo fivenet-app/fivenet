@@ -44,7 +44,7 @@ type Executor struct {
 
 	nodeName string
 
-	ctx context.Context
+	ctx context.Context //nolint:containedctx // Executor lifecycle context is used for async job execution and publishing.
 	js  *events.JSWrapper
 
 	jsCons jetstream.ConsumeContext
@@ -221,18 +221,22 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 		errMsg = &msg
 	}
 
-	if _, err := ag.js.PublishProto(ag.ctx, fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic), &cron.CronjobCompletedEvent{
-		Name:      job.GetCronjob().GetName(),
-		Success:   err == nil,
-		Cancelled: err != nil && errors.Is(err, context.Canceled),
-		Elapsed:   durationpb.New(elapsed),
-		EndDate:   now,
+	if _, err := ag.js.PublishProto(
+		ag.ctx,
+		fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic),
+		&cron.CronjobCompletedEvent{
+			Name:      job.GetCronjob().GetName(),
+			Success:   err == nil,
+			Cancelled: err != nil && errors.Is(err, context.Canceled),
+			Elapsed:   durationpb.New(elapsed),
+			EndDate:   now,
 
-		NodeName: ag.nodeName,
-		Data:     job.GetCronjob().GetData(),
+			NodeName: ag.nodeName,
+			Data:     job.GetCronjob().GetData(),
 
-		ErrorMessage: errMsg,
-	}); err != nil {
+			ErrorMessage: errMsg,
+		},
+	); err != nil {
 		ag.logger.Error(
 			"failed to publish cron schedule completion msg",
 			zap.String("subject", msg.Subject()),

@@ -70,7 +70,11 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 					zap.Error(err),
 				)
 			}
-			if err := s.dispatches.AddAttributeToDispatch(ctx, dsp, centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD); err != nil {
+			if err := s.dispatches.AddAttributeToDispatch(
+				ctx,
+				dsp,
+				centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD,
+			); err != nil {
 				s.logger.Error(
 					"failed to add too old attribute to cancelled dispatch",
 					zap.Int64("dispatch_id", id),

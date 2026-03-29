@@ -123,7 +123,9 @@ func New(p BotParams) Result {
 	cancelCtx, cancel := context.WithCancel(context.Background())
 
 	oauth2ProviderName := "discord"
-	if provider := p.Config.OAuth2.GetProviderByType(config.OAuth2ProviderDiscord); provider != nil {
+	if provider := p.Config.OAuth2.GetProviderByType(
+		config.OAuth2ProviderDiscord,
+	); provider != nil {
 		oauth2ProviderName = provider.Name
 	}
 
@@ -203,7 +205,8 @@ func New(p BotParams) Result {
 								metricLastSync.WithLabelValues(guild.job, "failed").
 									SetToCurrentTime()
 							} else {
-								metricLastSync.WithLabelValues(guild.job, "success").SetToCurrentTime()
+								metricLastSync.WithLabelValues(guild.job, "success").
+									SetToCurrentTime()
 							}
 						}()
 

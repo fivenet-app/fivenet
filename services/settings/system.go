@@ -131,15 +131,24 @@ func (s *Server) UpdateJobLimits(
 		return nil, errorssettings.ErrInvalidRequest
 	}
 
-	if err := s.ps.UpdateJobPermissions(ctx, job.GetName(), req.GetPerms().GetToUpdate()...); err != nil {
+	if err := s.ps.UpdateJobPermissions(
+		ctx,
+		job.GetName(),
+		req.GetPerms().GetToUpdate()...); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	if err := s.ps.UpdateJobAttributes(ctx, job.GetName(), req.GetAttrs().GetToUpdate()...); err != nil {
+	if err := s.ps.UpdateJobAttributes(
+		ctx,
+		job.GetName(),
+		req.GetAttrs().GetToUpdate()...); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	if err := s.ps.UpdateJobPermissions(ctx, job.GetName(), req.GetPerms().GetToRemove()...); err != nil {
+	if err := s.ps.UpdateJobPermissions(
+		ctx,
+		job.GetName(),
+		req.GetPerms().GetToRemove()...); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 

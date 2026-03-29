@@ -117,7 +117,9 @@ func (s *Server) ListTimeclock(
 	dateSelectExpr := mysql.Expression(tTimeClock.Date)
 	if req.GetPerDay() {
 		groupBys = append(groupBys, tTimeClock.Date, tTimeClock.UserID)
-		countExpr = mysql.COUNT(mysql.RawString("DISTINCT `timeclock_entry`.`date`, `timeclock_entry`.`user_id`"))
+		countExpr = mysql.COUNT(
+			mysql.RawString("DISTINCT `timeclock_entry`.`date`, `timeclock_entry`.`user_id`"),
+		)
 	} else {
 		groupBys = append(groupBys, tTimeClock.UserID)
 		dateSelectExpr = mysql.MAX(tTimeClock.Date)
@@ -165,40 +167,50 @@ func (s *Server) ListTimeclock(
 	spentTimeColumn := mysql.StringColumn("timeclock_entry.spent_time")
 	// Convert proto sort to db sorting
 	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil {
-		var staticColumns []mysql.OrderByClause
-		var columns []mysql.Column
-		switch req.GetSort().GetColumn() {
-		case "date":
-			columns = append(columns, tTimeClock.Date)
-		case rankColumn:
-			staticColumns = append(staticColumns, tTimeClock.Date.DESC())
-			columns = append(columns, tColleague.JobGrade)
-		case nameColumn:
-			staticColumns = append(staticColumns, tTimeClock.Date.DESC())
-			columns = append(columns, tColleague.Firstname)
-		case "time":
-			fallthrough
-		default:
-			columns = append(columns, spentTimeColumn)
-		}
+	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
+		staticOrderBys := []mysql.OrderByClause{}
+		hasStaticDateOrder := false
 
-		for _, column := range columns {
-			if req.GetSort().GetDirection() == database.AscSortDirection {
-				if column == spentTimeColumn {
-					orderBys = append(orderBys, column.ASC())
+		for _, sc := range req.GetSort().GetColumns() {
+			switch sc.GetId() {
+			case "date":
+				if sc.GetDesc() {
+					orderBys = append(orderBys, tTimeClock.Date.DESC())
 				} else {
-					orderBys = append(orderBys, column.ASC(), spentTimeColumn.DESC())
+					orderBys = append(orderBys, tTimeClock.Date.ASC())
 				}
-			} else {
-				if column == spentTimeColumn {
-					orderBys = append(orderBys, column.DESC())
+			case rankColumn:
+				if !hasStaticDateOrder {
+					staticOrderBys = append(staticOrderBys, tTimeClock.Date.DESC())
+					hasStaticDateOrder = true
+				}
+				if sc.GetDesc() {
+					orderBys = append(orderBys, tColleague.JobGrade.DESC(), spentTimeColumn.DESC())
 				} else {
-					orderBys = append(orderBys, column.DESC(), spentTimeColumn.DESC())
+					orderBys = append(orderBys, tColleague.JobGrade.ASC(), spentTimeColumn.DESC())
+				}
+			case nameColumn:
+				if !hasStaticDateOrder {
+					staticOrderBys = append(staticOrderBys, tTimeClock.Date.DESC())
+					hasStaticDateOrder = true
+				}
+				if sc.GetDesc() {
+					orderBys = append(orderBys, tColleague.Firstname.DESC(), spentTimeColumn.DESC())
+				} else {
+					orderBys = append(orderBys, tColleague.Firstname.ASC(), spentTimeColumn.DESC())
+				}
+			case "time":
+				fallthrough
+			default:
+				if sc.GetDesc() {
+					orderBys = append(orderBys, spentTimeColumn.DESC())
+				} else {
+					orderBys = append(orderBys, spentTimeColumn.ASC())
 				}
 			}
 		}
-		orderBys = append(staticColumns, orderBys...)
+
+		orderBys = append(staticOrderBys, orderBys...)
 	} else {
 		orderBys = append(orderBys,
 			tTimeClock.Date.DESC(),
@@ -547,22 +559,24 @@ func (s *Server) ListInactiveEmployees(
 
 	// Convert proto sort to db sorting
 	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil {
-		var columns []mysql.Column
-		switch req.GetSort().GetColumn() {
-		case nameColumn:
-			columns = append(columns, tColleague.Firstname, tColleague.Lastname)
-		case rankColumn:
-			fallthrough
-		default:
-			columns = append(columns, tColleague.JobGrade)
-		}
+	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
+		for _, sc := range req.GetSort().GetColumns() {
+			var columns []mysql.Column
+			switch sc.GetId() {
+			case nameColumn:
+				columns = append(columns, tColleague.Firstname, tColleague.Lastname)
+			case rankColumn:
+				fallthrough
+			default:
+				columns = append(columns, tColleague.JobGrade)
+			}
 
-		for _, column := range columns {
-			if req.GetSort().GetDirection() == database.AscSortDirection {
-				orderBys = append(orderBys, column.ASC())
-			} else {
-				orderBys = append(orderBys, column.DESC())
+			for _, column := range columns {
+				if sc.GetDesc() {
+					orderBys = append(orderBys, column.DESC())
+				} else {
+					orderBys = append(orderBys, column.ASC())
+				}
 			}
 		}
 	} else {

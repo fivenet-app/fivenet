@@ -27,18 +27,22 @@ func (s *DispatchDB) updateInKV(
 	id int64,
 	dsp *centrumdispatches.Dispatch,
 ) error {
-	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
-		if existing == nil {
-			return dsp, dsp != nil, nil
-		}
+	if err := s.store.ComputeUpdate(
+		ctx,
+		centrumutils.IdKey(id),
+		func(key string, existing *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
+			if existing == nil {
+				return dsp, dsp != nil, nil
+			}
 
-		if !proto.Equal(existing, dsp) {
-			existing.Merge(dsp)
-			return existing, true, nil
-		}
+			if !proto.Equal(existing, dsp) {
+				existing.Merge(dsp)
+				return existing, true, nil
+			}
 
-		return existing, false, nil
-	}); err != nil {
+			return existing, false, nil
+		},
+	); err != nil {
 		return err
 	}
 
@@ -135,15 +139,19 @@ func (s *DispatchDB) updateStatusInKV(
 	id int64,
 	status *centrumdispatches.DispatchStatus,
 ) error {
-	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
-		if existing == nil {
-			return existing, false, nil
-		}
+	if err := s.store.ComputeUpdate(
+		ctx,
+		centrumutils.IdKey(id),
+		func(key string, existing *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
+			if existing == nil {
+				return existing, false, nil
+			}
 
-		existing.Status = status
+			existing.Status = status
 
-		return existing, true, nil
-	}); err != nil {
+			return existing, true, nil
+		},
+	); err != nil {
 		return err
 	}
 

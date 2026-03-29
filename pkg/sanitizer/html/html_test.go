@@ -7,6 +7,7 @@ import (
 )
 
 func TestSanitize(t *testing.T) {
+	t.Parallel()
 	for _, run := range []struct {
 		input  string
 		result string
@@ -53,6 +54,7 @@ func TestSanitize(t *testing.T) {
 }
 
 func TestStripHTMLTags(t *testing.T) {
+	t.Parallel()
 	for _, run := range []struct {
 		input  string
 		result string

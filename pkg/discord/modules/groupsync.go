@@ -99,7 +99,9 @@ func (g *GroupSync) normalizedGroupSyncMapping() map[string]config.DiscordGroupR
 	return mapping
 }
 
-func (g *GroupSync) planRoles(groupMapping map[string]config.DiscordGroupRole) map[string]*discordtypes.Role {
+func (g *GroupSync) planRoles(
+	groupMapping map[string]config.DiscordGroupRole,
+) map[string]*discordtypes.Role {
 	dcRolesByName := map[string]*discordtypes.Role{}
 	roles := map[string]*discordtypes.Role{}
 	for group, dcRole := range groupMapping {

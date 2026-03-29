@@ -118,7 +118,12 @@ func (s *Server) listQualificationsQuery(
 		}
 
 		// Field Permission Check
-		fields, _ := s.perms.AttrStringList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceListCitizensPerm, permscitizens.CitizensServiceListCitizensFieldsPermField)
+		fields, _ := s.perms.AttrStringList(
+			userInfo,
+			permscitizens.CitizensServicePerm,
+			permscitizens.CitizensServiceListCitizensPerm,
+			permscitizens.CitizensServiceListCitizensFieldsPermField,
+		)
 
 		if fields.Contains("PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)
@@ -260,7 +265,12 @@ func (s *Server) getQualificationQuery(
 		}
 
 		// Field Permission Check
-		fields, _ := s.perms.AttrStringList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceListCitizensPerm, permscitizens.CitizensServiceListCitizensFieldsPermField)
+		fields, _ := s.perms.AttrStringList(
+			userInfo,
+			permscitizens.CitizensServicePerm,
+			permscitizens.CitizensServiceListCitizensPerm,
+			permscitizens.CitizensServiceListCitizensFieldsPermField,
+		)
 
 		if fields.Contains("PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)

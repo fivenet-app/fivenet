@@ -419,7 +419,7 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
         <slot />
 
         <ClientOnly>
-            <LazyPartialsCommandSearch v-if="activeChar" :links="links" />
+            <LazyPartialsCommandSearch v-if="activeChar" :children="links" />
 
             <LazyPartialsWebSocketStatusOverlay />
 

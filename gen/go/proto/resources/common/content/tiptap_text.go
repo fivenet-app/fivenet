@@ -5,6 +5,8 @@ import (
 	"strings"
 	"unicode"
 
+	tiptapsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/tiptap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	structpb "google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -24,7 +26,7 @@ func ExtractFromTiptap(doc *structpb.Struct) *ExtractedContent {
 	text := normalizeWhitespace(b.String())
 	return &ExtractedContent{
 		Text:         text,
-		WordCount:    uint32(len(strings.Fields(text))),
+		WordCount:    utils.ToUint32Saturated(len(strings.Fields(text))),
 		FirstHeading: normalizeWhitespace(firstHeading),
 	}
 }
@@ -50,7 +52,7 @@ func walkNodeWithIndent(
 	typ, _ := m["type"].(string)
 
 	// Text nodes are only meaningful in inline contexts
-	if typ == "text" {
+	if typ == tiptapsanitizer.NodeTypeText {
 		if s, _ := m["text"].(string); s != "" {
 			b.WriteString(s)
 		}
@@ -70,11 +72,15 @@ func walkNodeWithIndent(
 	}
 
 	switch typ {
-	case "table":
+	case tiptapsanitizer.NodeTypeTable:
 		writeTable(m, b, indent)
 		return
 
-	case "image":
+	case tiptapsanitizer.NodeTypeMention:
+		collectInlineText(m, b)
+		return
+
+	case tiptapsanitizer.NodeTypeImage:
 		// Block-level image
 		var ib strings.Builder
 		collectInlineText(m, &ib)
@@ -82,23 +88,23 @@ func walkNodeWithIndent(
 		b.WriteString("\n")
 		return
 
-	case "bulletList":
+	case tiptapsanitizer.NodeTypeBulletList:
 		writeBulletList(m, b, indent, firstHeading)
 		return
 
-	case "orderedList":
+	case tiptapsanitizer.NodeTypeOrderedList:
 		writeOrderedList(m, b, indent, firstHeading)
 		return
 
-	case "listItem":
+	case tiptapsanitizer.NodeTypeListItem:
 		writeListItem(m, b, firstHeading, indent, lk, num)
 		return
 
-	case "taskList":
+	case tiptapsanitizer.NodeTypeTaskList:
 		writeTaskList(m, b, indent, firstHeading)
 		return
 
-	case "taskItem":
+	case tiptapsanitizer.NodeTypeTaskItem:
 		writeTaskItem(m, b, firstHeading, indent)
 		return
 	}
@@ -124,17 +130,17 @@ func collectInlineText(node any, b *strings.Builder) {
 	typ, _ := m["type"].(string)
 
 	switch typ {
-	case "text":
+	case tiptapsanitizer.NodeTypeText:
 		if s, _ := m["text"].(string); s != "" {
 			b.WriteString(s)
 		}
 		return
 
-	case "hardBreak":
+	case tiptapsanitizer.NodeTypeHardBreak:
 		b.WriteString("\n")
 		return
 
-	case "mention":
+	case tiptapsanitizer.NodeTypeMention:
 		attrs, _ := m["attrs"].(map[string]any)
 		if label, _ := attrs["label"].(string); label != "" {
 			b.WriteString(label)
@@ -146,7 +152,7 @@ func collectInlineText(node any, b *strings.Builder) {
 		}
 		return
 
-	case "image":
+	case tiptapsanitizer.NodeTypeImage:
 		// Inline image token (stable & readable)
 		attrs, _ := m["attrs"].(map[string]any)
 		alt, _ := attrs["alt"].(string)
@@ -192,7 +198,7 @@ func writeTable(node map[string]any, b *strings.Builder, indent int) {
 		if !ok {
 			continue
 		}
-		if t, _ := rm["type"].(string); t != "tableRow" {
+		if t, _ := rm["type"].(string); t != tiptapsanitizer.NodeTypeTableRow {
 			continue
 		}
 
@@ -205,9 +211,9 @@ func writeTable(node map[string]any, b *strings.Builder, indent int) {
 				continue
 			}
 
-			// detect header if first row contains any tableHeader
+			// Detect header if first row contains any tableHeader
 			if rowIdx == 0 {
-				if ct, _ := cm["type"].(string); ct == "tableHeader" {
+				if ct, _ := cm["type"].(string); ct == tiptapsanitizer.NodeTypeTableHeader {
 					isHeader = true
 				}
 			}
@@ -233,7 +239,7 @@ func writeTable(node map[string]any, b *strings.Builder, indent int) {
 		return
 	}
 
-	// pad to max cols for stable output
+	// Pad to max cols for stable output
 	for i := range rows {
 		for len(rows[i]) < maxCols {
 			rows[i] = append(rows[i], "")
@@ -261,7 +267,7 @@ func writeTable(node map[string]any, b *strings.Builder, indent int) {
 	if isHeader {
 		b.WriteString(pad)
 		b.WriteString("|")
-		for i := 0; i < maxCols; i++ {
+		for range maxCols {
 			b.WriteString(" ---- |")
 		}
 		b.WriteString("\n")
@@ -325,8 +331,10 @@ func writeListItem(
 
 			// Nested lists handled later; for line text, collect inline from other children
 			switch ct {
-			case "bulletList", "orderedList", "taskList":
-				// skip in line text
+			case tiptapsanitizer.NodeTypeBulletList,
+				tiptapsanitizer.NodeTypeOrderedList,
+				tiptapsanitizer.NodeTypeTaskList:
+				// Skip in line text
 			default:
 				collectInlineText(c, &line)
 			}
@@ -354,11 +362,11 @@ func writeListItem(
 			}
 			ct, _ := cm["type"].(string)
 			switch ct {
-			case "bulletList":
+			case tiptapsanitizer.NodeTypeBulletList:
 				writeBulletList(cm, b, indent+1, firstHeading)
-			case "orderedList":
+			case tiptapsanitizer.NodeTypeOrderedList:
 				writeOrderedList(cm, b, indent+1, firstHeading)
-			case "taskList":
+			case tiptapsanitizer.NodeTypeTaskList:
 				writeTaskList(cm, b, indent+1, firstHeading)
 			}
 		}
@@ -392,7 +400,9 @@ func writeTaskItem(node map[string]any, b *strings.Builder, firstHeading *string
 			}
 			ct, _ := cm["type"].(string)
 			switch ct {
-			case "bulletList", "orderedList", "taskList":
+			case tiptapsanitizer.NodeTypeBulletList,
+				tiptapsanitizer.NodeTypeOrderedList,
+				tiptapsanitizer.NodeTypeTaskList:
 				// nested lists handled later
 			default:
 				collectInlineText(c, &line)
@@ -419,11 +429,11 @@ func writeTaskItem(node map[string]any, b *strings.Builder, firstHeading *string
 			}
 			ct, _ := cm["type"].(string)
 			switch ct {
-			case "bulletList":
+			case tiptapsanitizer.NodeTypeBulletList:
 				writeBulletList(cm, b, indent+1, firstHeading)
-			case "orderedList":
+			case tiptapsanitizer.NodeTypeOrderedList:
 				writeOrderedList(cm, b, indent+1, firstHeading)
-			case "taskList":
+			case tiptapsanitizer.NodeTypeTaskList:
 				writeTaskList(cm, b, indent+1, firstHeading)
 			}
 		}
@@ -441,19 +451,32 @@ const (
 
 func beforeBlock(typ string, b *strings.Builder) {
 	switch typ {
-	case "paragraph", "heading", "blockquote", "listItem", "taskItem",
-		"tableRow", "tableCell", "tableHeader", "codeBlock":
+	case tiptapsanitizer.NodeTypeParagraph,
+		tiptapsanitizer.NodeTypeHeading,
+		tiptapsanitizer.NodeTypeBlockquote,
+		tiptapsanitizer.NodeTypeListItem,
+		tiptapsanitizer.NodeTypeTaskItem,
+		tiptapsanitizer.NodeTypeTableRow,
+		tiptapsanitizer.NodeTypeTableCell,
+		tiptapsanitizer.NodeTypeTableHeader,
+		tiptapsanitizer.NodeTypeCodeBlock:
 		ensureNewline(b)
 	}
 }
 
 func afterBlock(typ string, b *strings.Builder) {
 	switch typ {
-	case "hardBreak":
+	case tiptapsanitizer.NodeTypeHardBreak:
 		b.WriteString("\n")
 
-	case "paragraph", "heading", "blockquote", "listItem", "taskItem",
-		"horizontalRule", "tableRow", "codeBlock":
+	case tiptapsanitizer.NodeTypeParagraph,
+		tiptapsanitizer.NodeTypeHeading,
+		tiptapsanitizer.NodeTypeBlockquote,
+		tiptapsanitizer.NodeTypeListItem,
+		tiptapsanitizer.NodeTypeTaskItem,
+		tiptapsanitizer.NodeTypeHorizontalRule,
+		tiptapsanitizer.NodeTypeTableRow,
+		tiptapsanitizer.NodeTypeCodeBlock:
 		ensureNewline(b)
 	}
 }

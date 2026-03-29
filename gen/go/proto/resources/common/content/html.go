@@ -110,7 +110,9 @@ func (n *RichTextHtmlNode) populateFrom(htmlNode *html.Node) error {
 				id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.GetTag(), n.GetText()))
 				n.Id = &id
 			} else if len(n.GetContent()) > 0 {
-				id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.GetTag(), walkContentForText(n.GetContent())))
+				id := utils.SlugNoDots(
+					fmt.Sprintf("%s-%s", n.GetTag(), walkContentForText(n.GetContent())),
+				)
 				n.Id = &id
 			}
 		}
@@ -121,15 +123,17 @@ func (n *RichTextHtmlNode) populateFrom(htmlNode *html.Node) error {
 
 func walkContentForText(ns []*RichTextHtmlNode) string {
 	text := ""
+	var textSb124 strings.Builder
 	for i := range ns {
 		element := ns[i]
 		if element.Text == nil || element.GetText() == "" {
-			text += walkContentForText(element.GetContent())
+			textSb124.WriteString(walkContentForText(element.GetContent()))
 		} else {
-			text += element.GetText()
+			textSb124.WriteString(element.GetText())
 			break
 		}
 	}
+	text += textSb124.String()
 
 	return text
 }
@@ -151,7 +155,9 @@ func (n *RichTextHtmlNode) populateTo(htmlNode *html.Node) {
 					id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.GetTag(), n.GetText()))
 					n.Id = &id
 				} else if len(n.GetContent()) > 0 {
-					id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.GetTag(), walkContentForText(n.GetContent())))
+					id := utils.SlugNoDots(
+						fmt.Sprintf("%s-%s", n.GetTag(), walkContentForText(n.GetContent())),
+					)
 					n.Id = &id
 				}
 			}
@@ -309,7 +315,7 @@ func ExtractFromHTML(doc *RichTextHtmlNode) *ExtractedContent {
 			text := strings.TrimSpace(node.Data)
 			if text != "" {
 				textBuff.WriteString(text + " ")
-				wordCount += uint32(len(strings.Fields(text)))
+				wordCount = utils.SaturatingAddUint32(wordCount, len(strings.Fields(text)))
 			}
 		}
 

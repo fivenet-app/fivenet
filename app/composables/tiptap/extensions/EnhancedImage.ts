@@ -1,6 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Node, mergeAttributes } from '@tiptap/core';
 import { VueNodeViewRenderer } from '@tiptap/vue-3';
 import EnhancedImageView from '~/components/partials/editor/EnhancedImageView.vue';
+
+export interface EnhancedImageOptions {
+    /**
+     * HTML attributes to add to the task item element.
+     * @default {}
+     * @example { class: 'foo' }
+     */
+    HTMLAttributes: Record<string, any>;
+}
 
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
@@ -13,7 +23,7 @@ declare module '@tiptap/core' {
     }
 }
 
-export const EnhancedImage = Node.create({
+export const EnhancedImage = Node.create<EnhancedImageOptions>({
     name: 'image',
     inline: true,
     group: 'inline',

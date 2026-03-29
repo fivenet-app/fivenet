@@ -122,28 +122,30 @@ func (s *Server) ListDocuments(
 
 	// Convert proto sort to db sorting
 	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil {
-		var column mysql.Column
-		switch req.GetSort().GetColumn() {
-		case "title":
-			column = tDocumentShort.Title
+	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
+		for _, sc := range req.GetSort().GetColumns() {
+			var column mysql.Column
+			switch sc.GetId() {
+			case "title":
+				column = tDocumentShort.Title
 
-		case "createdAt":
-			fallthrough
-		default:
-			column = tDocumentShort.CreatedAt
-		}
+			case "createdAt":
+				fallthrough
+			default:
+				column = tDocumentShort.CreatedAt
+			}
 
-		if req.GetSort().GetDirection() == database.AscSortDirection {
-			orderBys = append(orderBys,
-				column.ASC(),
-				tDocumentShort.UpdatedAt.DESC(),
-			)
-		} else {
-			orderBys = append(orderBys,
-				column.DESC(),
-				tDocumentShort.UpdatedAt.DESC(),
-			)
+			if sc.GetDesc() {
+				orderBys = append(orderBys,
+					column.DESC(),
+					tDocumentShort.UpdatedAt.DESC(),
+				)
+			} else {
+				orderBys = append(orderBys,
+					column.ASC(),
+					tDocumentShort.UpdatedAt.DESC(),
+				)
+			}
 		}
 	} else {
 		orderBys = append(orderBys, tDocumentShort.UpdatedAt.DESC())
@@ -469,7 +471,14 @@ func (s *Server) CreateDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if err := s.handleDocumentAccessChange(ctx, tx, lastId, userInfo, docAccess, false); err != nil {
+	if err := s.handleDocumentAccessChange(
+		ctx,
+		tx,
+		lastId,
+		userInfo,
+		docAccess,
+		false,
+	); err != nil {
 		return nil, err
 	}
 
@@ -686,13 +695,25 @@ func (s *Server) UpdateDocument(
 		}
 
 		if tmpl != nil && tmpl.GetWorkflow() != nil {
-			if err := s.createOrUpdateWorkflowState(ctx, tx, oldDoc.GetId(), tmpl.GetWorkflow()); err != nil {
+			if err := s.createOrUpdateWorkflowState(
+				ctx,
+				tx,
+				oldDoc.GetId(),
+				tmpl.GetWorkflow(),
+			); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 		}
 	}
 
-	if err := s.handleDocumentAccessChange(ctx, tx, oldDoc.GetId(), userInfo, req.GetAccess(), true); err != nil {
+	if err := s.handleDocumentAccessChange(
+		ctx,
+		tx,
+		oldDoc.GetId(),
+		userInfo,
+		req.GetAccess(),
+		true,
+	); err != nil {
 		return nil, err
 	}
 
@@ -802,7 +823,9 @@ func (s *Server) handleDocumentPublish(
 			requiredCount = 0
 		case documentsapproval.ApprovalRuleKind_APPROVAL_RULE_KIND_QUORUM_ANY:
 			if requiredCount <= 0 {
+				//nolint:gosec // G115: there can't be more than math.MaxInt32 tasks due to API validation, so this cast is safe
 				requiredCount = int32(len(apr.GetTasks()))
+				// If required count isn't set, default to 1 approver required
 				if requiredCount == 0 {
 					requiredCount = 1
 				}
@@ -1039,7 +1062,12 @@ func (s *Server) ToggleDocument(
 	}
 
 	if tmpl != nil {
-		if err := s.createOrUpdateWorkflowState(ctx, tx, doc.GetId(), tmpl.GetWorkflow()); err != nil {
+		if err := s.createOrUpdateWorkflowState(
+			ctx,
+			tx,
+			doc.GetId(),
+			tmpl.GetWorkflow(),
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}

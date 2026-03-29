@@ -33,6 +33,7 @@ func (e *testExtractor) Extract(
 }
 
 func TestService_RebuildDocumentMetrics_ReplacesBySource(t *testing.T) {
+	t.Parallel()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
@@ -86,6 +87,7 @@ func TestService_RebuildDocumentMetrics_ReplacesBySource(t *testing.T) {
 }
 
 func TestService_RebuildDocumentMetrics_MultiExtractorDeletesBothSources(t *testing.T) {
+	t.Parallel()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
@@ -134,6 +136,7 @@ func TestService_RebuildDocumentMetrics_MultiExtractorDeletesBothSources(t *test
 }
 
 func TestService_RebuildDocumentMetrics_UnpublishedClearsAll(t *testing.T) {
+	t.Parallel()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
@@ -162,6 +165,7 @@ func ptrString(v string) *string {
 }
 
 func TestService_BuildEmployeeCountMetrics(t *testing.T) {
+	t.Parallel()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
@@ -185,6 +189,7 @@ func TestService_BuildEmployeeCountMetrics(t *testing.T) {
 }
 
 func TestService_BuildEmployeeCountMetrics_DeleteError(t *testing.T) {
+	t.Parallel()
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })

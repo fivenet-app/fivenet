@@ -17,7 +17,6 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
-	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -121,22 +120,24 @@ func (s *Server) ListConductEntries(
 
 	// Convert proto sort to db sorting
 	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil {
-		var columns []mysql.Column
-		switch req.GetSort().GetColumn() {
-		case "type":
-			columns = append(columns, tConduct.Type, tConduct.ID)
-		case "id":
-			fallthrough
-		default:
-			columns = append(columns, tConduct.ID)
-		}
+	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
+		for _, sc := range req.GetSort().GetColumns() {
+			var columns []mysql.Column
+			switch sc.GetId() {
+			case "type":
+				columns = append(columns, tConduct.Type, tConduct.ID)
+			case "id":
+				fallthrough
+			default:
+				columns = append(columns, tConduct.ID)
+			}
 
-		for _, column := range columns {
-			if req.GetSort().GetDirection() == database.AscSortDirection {
-				orderBys = append(orderBys, column.ASC())
-			} else {
-				orderBys = append(orderBys, column.DESC())
+			for _, column := range columns {
+				if sc.GetDesc() {
+					orderBys = append(orderBys, column.DESC())
+				} else {
+					orderBys = append(orderBys, column.ASC())
+				}
 			}
 		}
 	} else {
@@ -250,6 +251,7 @@ func (s *Server) ListConductEntries(
 			}
 
 			// HTML is needed to display message preview on client-side for "legacy" (non-Tiptap JSON) entries
+			//nolint:staticcheck,nolintlint // SA1019: RawHtml is intentionally populated for legacy content previews
 			resp.GetEntries()[i].GetMessage().RawHtml = &rawHtml
 		}
 	}
@@ -370,7 +372,7 @@ func (s *Server) GetConductEntry(
 
 	files, err := s.fHandler.ListFilesForParentID(ctx, req.GetId())
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	resp.GetEntry().Files = files
 
@@ -457,7 +459,7 @@ func (s *Server) UpdateConductEntry(
 	}
 
 	// Prevent changing published to draft
-	if req.GetEntry().GetDraft() == true && entry.GetDraft() == false {
+	if req.GetEntry().GetDraft() && !entry.GetDraft() {
 		if !userInfo.GetSuperuser() {
 			req.GetEntry().Draft = entry.GetDraft()
 		}
@@ -474,7 +476,7 @@ func (s *Server) UpdateConductEntry(
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -505,13 +507,18 @@ func (s *Server) UpdateConductEntry(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if _, _, err := s.fHandler.HandleFileChangesForParent(ctx, tx, req.GetEntry().GetId(), req.GetEntry().GetFiles()); err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	if _, _, err := s.fHandler.HandleFileChangesForParent(
+		ctx,
+		tx,
+		req.GetEntry().GetId(),
+		req.GetEntry().GetFiles(),
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	entry, err = s.getConductEntry(ctx, entry.GetId(), false)

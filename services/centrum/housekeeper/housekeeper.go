@@ -39,7 +39,7 @@ var Module = fx.Module("centrum_housekeeper",
 	))
 
 type Housekeeper struct {
-	ctx    context.Context
+	ctx    context.Context //nolint:containedctx // Housekeeper retains lifecycle context for watcher loops across files.
 	logger *zap.Logger
 	wg     sync.WaitGroup
 

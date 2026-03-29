@@ -39,7 +39,7 @@ const (
 // CollabServer manages collaborative editing rooms and client connections.
 type CollabServer struct {
 	// ctx is the base context for the server and rooms.
-	ctx context.Context
+	ctx context.Context //nolint:containedctx // Server lifecycle context is retained for room orchestration.
 	// logger is the zap logger for this server instance.
 	logger *zap.Logger
 	// js is the JetStream wrapper for event streaming.
@@ -237,19 +237,32 @@ func (s *CollabServer) HandleClient(
 			switch m.SyncStep.GetStep() {
 			case 1:
 				if m.SyncStep.ReceiverId != nil {
-					return status.Error(codes.InvalidArgument, "sync step 1 must not have a receiver ID")
+					return status.Error(
+						codes.InvalidArgument,
+						"sync step 1 must not have a receiver ID",
+					)
 				}
 				room.BroadcastSyncStep1(clientId, m.SyncStep.GetData())
 
 			case 2:
 				if m.SyncStep.ReceiverId == nil {
-					return status.Error(codes.InvalidArgument, "sync step 2 must have a receiver ID")
+					return status.Error(
+						codes.InvalidArgument,
+						"sync step 2 must have a receiver ID",
+					)
 				}
 
-				room.ForwardSyncStep2ToClient(clientId, m.SyncStep.GetReceiverId(), m.SyncStep.GetData())
+				room.ForwardSyncStep2ToClient(
+					clientId,
+					m.SyncStep.GetReceiverId(),
+					m.SyncStep.GetData(),
+				)
 
 			default:
-				return status.Error(codes.InvalidArgument, fmt.Sprintf("invalid sync step: %d", m.SyncStep.GetStep()))
+				return status.Error(
+					codes.InvalidArgument,
+					fmt.Sprintf("invalid sync step: %d", m.SyncStep.GetStep()),
+				)
 			}
 
 		case *collab.ClientPacket_YjsUpdate:

@@ -17,6 +17,7 @@ func (t *TestPointer) Point() orb.Point {
 }
 
 func TestBasicFunctionality(t *testing.T) {
+	t.Parallel()
 	cs := New[*TestPointer]()
 	require.NotNil(t, cs)
 

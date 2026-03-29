@@ -18,7 +18,12 @@ func (s *Server) TakeControl(
 ) (*pbcentrum.TakeControlResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.dispatchers.SetUserState(ctx, userInfo.GetJob(), userInfo.GetUserId(), req.GetSignon()); err != nil {
+	if err := s.dispatchers.SetUserState(
+		ctx,
+		userInfo.GetJob(),
+		userInfo.GetUserId(),
+		req.GetSignon(),
+	); err != nil {
 		return nil, err
 	}
 

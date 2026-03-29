@@ -7,6 +7,7 @@ package grpcws_test
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"crypto/tls"
 	"encoding/base64"
 	"encoding/binary"
@@ -32,7 +33,6 @@ import (
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapgrpc"
-	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -70,14 +70,24 @@ type GrpcWebWrapperTestSuite struct {
 	wrappedServer    *grpcws.WrappedGrpcServer
 }
 
+// TestHttp2GrpcWebWrapperTestSuite tests the grpc-web wrapper over HTTP2, which is the most common use case for gRPC-Web.
+//
+//nolint:paralleltest // testify suite does not support parallel tests, see https://github.com/stretchr/testify/issues/934.
 func TestHttp2GrpcWebWrapperTestSuite(t *testing.T) {
 	suite.Run(t, &GrpcWebWrapperTestSuite{httpMajorVersion: 2})
 }
 
+// TestHttp1GrpcWebWrapperTestSuite tests the grpc-web wrapper over HTTP1, which is a less common use case for gRPC-Web but is still supported by the wrapper.
+//
+//nolint:paralleltest // testify suite does not support parallel tests, see https://github.com/stretchr/testify/issues/934.
 func TestHttp1GrpcWebWrapperTestSuite(t *testing.T) {
 	suite.Run(t, &GrpcWebWrapperTestSuite{httpMajorVersion: 1})
 }
 
+// TestNonRootResource tests that the grpc-web wrapper can be configured to allow non-root resources,
+// which is a common configuration for gRPC-Web servers that are not dedicated to serving gRPC-Web traffic.
+//
+//nolint:paralleltest // This test modifies the wrapper configuration, so it cannot be run in parallel with other tests.
 func TestNonRootResource(t *testing.T) {
 	grpcServer := grpc.NewServer()
 	testproto.RegisterTestServiceServer(grpcServer, &testServiceImpl{})
@@ -144,12 +154,6 @@ func (s *GrpcWebWrapperTestSuite) SetupTest() {
 	time.Sleep(10 * time.Millisecond)
 }
 
-func (s *GrpcWebWrapperTestSuite) timeoutCtxForTest(t *testing.T) context.Context {
-	s.T().Helper()
-	ctx, _ := context.WithTimeout(t.Context(), 1*time.Second)
-	return ctx
-}
-
 func (s *GrpcWebWrapperTestSuite) makeRequest(
 	verb string, method string, headers http.Header, body io.Reader, isText bool,
 ) (*http.Response, error) {
@@ -172,12 +176,12 @@ func (s *GrpcWebWrapperTestSuite) makeRequest(
 
 	url := fmt.Sprintf("https://%s%s", s.listener.Addr().String(), method)
 	req, err := http.NewRequest(verb, url, body)
-	req = req.WithContext(s.timeoutCtxForTest(s.T()))
 	s.Require().NoError(err, "failed creating a request")
 	req.Header = headers
 
 	req.Header.Set("content-type", contentType)
 	client := &http.Client{
+		Timeout:   1 * time.Second,
 		Transport: &http2.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
 	}
 	if s.httpMajorVersion < 2 {
@@ -384,8 +388,10 @@ func (s *GrpcWebWrapperTestSuite) TestPingList_NormalGrpcWorks() {
 	}
 	conn := s.getStandardGrpcClient()
 	client := testproto.NewTestServiceClient(conn)
+	ctx, cancel := context.WithTimeout(s.T().Context(), 1*time.Second)
+	defer cancel()
 	pingListClient, err := client.PingList(
-		s.timeoutCtxForTest(s.T()),
+		ctx,
 		&testproto.PingRequest{Value: "foo", ResponseCount: 10},
 	)
 	s.Require().NoError(err, "no error during execution")
@@ -415,7 +421,9 @@ func (s *GrpcWebWrapperTestSuite) TestPingStream_NormalGrpcWorks() {
 	}
 	conn := s.getStandardGrpcClient()
 	client := testproto.NewTestServiceClient(conn)
-	bidiClient, err := client.PingStream(s.timeoutCtxForTest(s.T()))
+	ctx, cancel := context.WithTimeout(s.T().Context(), 1*time.Second)
+	defer cancel()
+	bidiClient, err := client.PingStream(ctx)
 	s.Require().NoError(err, "no error during execution")
 	bidiClient.Send(&testproto.PingRequest{Value: "one"})
 	bidiClient.Send(&testproto.PingRequest{Value: "two"})

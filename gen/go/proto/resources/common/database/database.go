@@ -10,9 +10,11 @@ const (
 
 const (
 	// AscSortDirection ascending sort direction.
+	//
 	// Deprecated: the Sort message has been updated to use a boolean to indicate the sort direction.
 	AscSortDirection = "asc"
 	// DescSortDirection descending sort direction.
+	//
 	// Deprecated: the Sort message has been updated to use a boolean to indicate the sort direction.
 	DescSortDirection = "desc"
 )
@@ -23,6 +25,7 @@ type DataCount struct {
 }
 
 // GetColumn returns the first column in the sort.
+//
 // Deprecated: used to help migrating to the new sorter system.
 func (x *Sort) GetColumn() string {
 	if x == nil || len(x.GetColumns()) == 0 {
@@ -33,6 +36,7 @@ func (x *Sort) GetColumn() string {
 }
 
 // GetDirection returns the first column's direction in the sort.
+//
 // Deprecated: used to help migrating to the new sorter system.
 func (x *Sort) GetDirection() string {
 	if x == nil || len(x.GetColumns()) == 0 {

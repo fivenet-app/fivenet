@@ -401,7 +401,12 @@ func (s *Server) CreateOrUpdateEmail(
 		req.Email.Job = &userInfo.Job
 
 		// Field Permission Check
-		fields, err := s.ps.AttrStringList(userInfo, permsmailer.MailerServicePerm, permsmailer.MailerServiceCreateOrUpdateEmailPerm, permsmailer.MailerServiceCreateOrUpdateEmailFieldsPermField)
+		fields, err := s.ps.AttrStringList(
+			userInfo,
+			permsmailer.MailerServicePerm,
+			permsmailer.MailerServiceCreateOrUpdateEmailPerm,
+			permsmailer.MailerServiceCreateOrUpdateEmailFieldsPermField,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -411,7 +416,12 @@ func (s *Server) CreateOrUpdateEmail(
 		}
 	}
 
-	if err := s.validateEmail(ctx, userInfo, req.GetEmail().GetEmail(), req.Email.Job != nil); err != nil {
+	if err := s.validateEmail(
+		ctx,
+		userInfo,
+		req.GetEmail().GetEmail(),
+		req.Email.Job != nil,
+	); err != nil {
 		return nil, err
 	}
 
@@ -451,7 +461,12 @@ func (s *Server) CreateOrUpdateEmail(
 
 		req.Email.Id = lastId
 	} else {
-		check, err := s.access.CanUserAccessTarget(ctx, req.GetEmail().GetId(), userInfo, maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE)
+		check, err := s.access.CanUserAccessTarget(
+			ctx,
+			req.GetEmail().GetId(),
+			userInfo,
+			maileraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -551,7 +566,14 @@ func (s *Server) CreateOrUpdateEmail(
 			return nil, errorsmailer.ErrEmailAccessRequired
 		}
 
-		if _, err := s.access.HandleAccessChanges(ctx, tx, req.GetEmail().GetId(), req.GetEmail().GetAccess().GetJobs(), req.GetEmail().GetAccess().GetUsers(), req.GetEmail().GetAccess().GetQualifications()); err != nil {
+		if _, err := s.access.HandleAccessChanges(
+			ctx,
+			tx,
+			req.GetEmail().GetId(),
+			req.GetEmail().GetAccess().GetJobs(),
+			req.GetEmail().GetAccess().GetUsers(),
+			req.GetEmail().GetAccess().GetQualifications(),
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 	}

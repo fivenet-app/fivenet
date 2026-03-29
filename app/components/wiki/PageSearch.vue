@@ -48,13 +48,13 @@ async function listPages(q: string): Promise<CommandPaletteItem[]> {
     }
 }
 
-const groups: CommandPaletteGroup[] = [
+const groups = computed<CommandPaletteGroup[]>(() => [
     {
         id: 'pages',
         label: t('common.search'),
         items: pages.value || [],
     },
-];
+]);
 </script>
 
 <template>

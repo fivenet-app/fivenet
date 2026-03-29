@@ -6,18 +6,15 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { SetColleaguePropsResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const props = defineProps<{
-    namePrefix: string | undefined;
-    nameSuffix: string | undefined;
     userId: number;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:namePrefix', value?: string): void;
-    (e: 'update:nameSuffix', value?: string): void;
     (e: 'refresh'): void;
 }>();
 
-const { namePrefix, nameSuffix } = useVModels(props, emit);
+const namePrefix = defineModel<string | undefined>('namePrefix');
+const nameSuffix = defineModel<string | undefined>('nameSuffix');
 
 const notifications = useNotificationsStore();
 
@@ -33,13 +30,13 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     reason: '',
-    prefix: props.namePrefix ?? '',
-    suffix: props.nameSuffix ?? '',
+    prefix: namePrefix.value ?? '',
+    suffix: nameSuffix.value ?? '',
 });
 
-watch(props, () => {
-    state.prefix = props.namePrefix ?? '';
-    state.suffix = props.nameSuffix ?? '';
+watch([namePrefix, nameSuffix], () => {
+    state.prefix = namePrefix.value ?? '';
+    state.suffix = nameSuffix.value ?? '';
 });
 
 const changed = ref(false);

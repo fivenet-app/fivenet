@@ -12,6 +12,8 @@ import (
 )
 
 func TestGetGRPCEndpoint(t *testing.T) {
+	t.Parallel()
+
 	cases := []struct {
 		input  string
 		output string

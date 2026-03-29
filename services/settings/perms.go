@@ -334,13 +334,21 @@ func (s *Server) UpdateRolePerms(
 	}
 
 	// Send event to job grade employees
-	if _, err := s.js.PublishAsyncProto(ctx,
-		fmt.Sprintf("%s.%s.%s.%d", notifi.BaseSubject, notifi.JobGradeTopic, role.GetJob(), role.GetGrade()),
+	if _, err := s.js.PublishAsyncProto(
+		ctx,
+		fmt.Sprintf(
+			"%s.%s.%s.%d",
+			notifi.BaseSubject,
+			notifi.JobGradeTopic,
+			role.GetJob(),
+			role.GetGrade(),
+		),
 		&notificationsevents.JobGradeEvent{
 			Data: &notificationsevents.JobGradeEvent_RefreshToken{
 				RefreshToken: true,
 			},
-		}); err != nil {
+		},
+	); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
@@ -404,7 +412,11 @@ func (s *Server) handlPermissionsUpdate(
 
 	if len(permsToRemove) > 0 {
 		for _, perm := range permsToRemove {
-			if err := s.ps.RemoveAttributesFromRoleByPermission(ctx, role.GetId(), perm); err != nil {
+			if err := s.ps.RemoveAttributesFromRoleByPermission(
+				ctx,
+				role.GetId(),
+				perm,
+			); err != nil {
 				return err
 			}
 		}
@@ -420,13 +432,20 @@ func (s *Server) handleAttributeUpdate(
 	attrUpdates *settings.AttrsUpdate,
 ) error {
 	if len(attrUpdates.GetToUpdate()) > 0 {
-		if err := s.ps.UpdateRoleAttributes(ctx, userInfo.GetJob(), role.GetId(), attrUpdates.GetToUpdate()...); err != nil {
+		if err := s.ps.UpdateRoleAttributes(
+			ctx,
+			userInfo.GetJob(),
+			role.GetId(),
+			attrUpdates.GetToUpdate()...); err != nil {
 			return err
 		}
 	}
 
 	if len(attrUpdates.GetToRemove()) > 0 {
-		if err := s.ps.RemoveAttributesFromRole(ctx, role.GetId(), attrUpdates.GetToRemove()...); err != nil {
+		if err := s.ps.RemoveAttributesFromRole(
+			ctx,
+			role.GetId(),
+			attrUpdates.GetToRemove()...); err != nil {
 			return err
 		}
 	}

@@ -8,16 +8,11 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { UpdateAccountResponse } from '~~/gen/ts/services/settings/accounts';
 import AccountSocialLogin from './AccountSocialLogin.vue';
 
-const props = defineProps<{
-    account: Account;
-}>();
-
 const emit = defineEmits<{
     (e: 'close', v: boolean): void;
-    (e: 'update:account', account: Account | undefined): void;
 }>();
 
-const account = useVModel(props, 'account', emit);
+const account = defineModel<Account>('account', { required: true });
 
 const notifications = useNotificationsStore();
 
@@ -71,7 +66,7 @@ function setFromProps(): void {
 }
 
 setFromProps();
-watch(props, () => setFromProps());
+watch(account, () => setFromProps());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {

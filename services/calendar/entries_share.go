@@ -189,7 +189,11 @@ func (s *Server) sendShareNotifications(
 				Key: "notifications.calendar.entry_shared_with_you.title",
 				Parameters: map[string]string{
 					"title": entry.GetTitle(),
-					"name":  fmt.Sprintf("%s %s", sourceUser.GetFirstname(), sourceUser.GetLastname()),
+					"name": fmt.Sprintf(
+						"%s %s",
+						sourceUser.GetFirstname(),
+						sourceUser.GetLastname(),
+					),
 				},
 			},
 			Content: &common.I18NItem{

@@ -89,7 +89,6 @@ type Server struct {
 	logger *zap.Logger
 	tracer trace.Tracer
 	wg     sync.WaitGroup
-	ctx    context.Context
 	jsCons jetstream.ConsumeContext
 
 	db       *sql.DB
@@ -147,7 +146,6 @@ func NewServer(p Params) Result {
 		logger: p.Logger.Named("centrum"),
 		tracer: p.TP.Tracer("mstlystcdata-cache"),
 		wg:     sync.WaitGroup{},
-		ctx:    ctxCancel,
 
 		db:       p.DB,
 		ps:       p.Perms,

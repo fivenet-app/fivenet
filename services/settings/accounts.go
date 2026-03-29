@@ -83,23 +83,25 @@ func (s *Server) ListAccounts(
 
 	// Convert proto sort to db sorting
 	orderBys := []mysql.OrderByClause{}
-	if req.GetSort() != nil {
-		var column mysql.Column
-		switch req.GetSort().GetColumn() {
-		case "license":
-			column = tAccounts.License
-		case "username":
-			fallthrough
-		case "id":
-			fallthrough
-		default:
-			column = tAccounts.ID
-		}
+	if req.GetSort() != nil && len(req.GetSort().GetColumns()) > 0 {
+		for _, sc := range req.GetSort().GetColumns() {
+			var column mysql.Column
+			switch sc.GetId() {
+			case "license":
+				column = tAccounts.License
+			case "username":
+				fallthrough
+			case "id":
+				fallthrough
+			default:
+				column = tAccounts.ID
+			}
 
-		if req.GetSort().GetDirection() == database.AscSortDirection {
-			orderBys = append(orderBys, column.ASC())
-		} else {
-			orderBys = append(orderBys, column.DESC())
+			if sc.GetDesc() {
+				orderBys = append(orderBys, column.DESC())
+			} else {
+				orderBys = append(orderBys, column.ASC())
+			}
 		}
 	} else {
 		orderBys = append(orderBys, tAccounts.CreatedAt.DESC())

@@ -55,12 +55,16 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 					zap.String("job", job),
 					zap.Int64("dispatch_id", dsp.GetId()),
 				)
-				if _, err := s.dispatches.UpdateStatus(ctx, dsp.GetId(), &centrumdispatches.DispatchStatus{
-					CreatedAt:  timestamp.Now(),
-					DispatchId: dsp.GetId(),
-					Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
-					CreatorJob: &job,
-				}); err != nil {
+				if _, err := s.dispatches.UpdateStatus(
+					ctx,
+					dsp.GetId(),
+					&centrumdispatches.DispatchStatus{
+						CreatedAt:  timestamp.Now(),
+						DispatchId: dsp.GetId(),
+						Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
+						CreatorJob: &job,
+					},
+				); err != nil {
 					return err
 				}
 
@@ -97,7 +101,14 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 					zap.Int64("dispatch_id", dsp.GetId()),
 				)
 
-				if err := s.dispatches.UpdateAssignments(ctx, nil, dsp.GetId(), nil, []int64{unitId}, time.Time{}); err != nil {
+				if err := s.dispatches.UpdateAssignments(
+					ctx,
+					nil,
+					dsp.GetId(),
+					nil,
+					[]int64{unitId},
+					time.Time{},
+				); err != nil {
 					s.logger.Error(
 						"failed to remove empty unit from dispatch",
 						zap.String(
@@ -288,7 +299,14 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 		zap.Int32s("to_remove", toRemove),
 	)
 
-	if err := s.units.UpdateUnitAssignments(ctx, unit.GetJob(), nil, unit.GetId(), nil, toRemove); err != nil {
+	if err := s.units.UpdateUnitAssignments(
+		ctx,
+		unit.GetJob(),
+		nil,
+		unit.GetId(),
+		nil,
+		toRemove,
+	); err != nil {
 		s.logger.Error(
 			"failed to remove off-duty users from unit",
 			zap.String(

@@ -30,6 +30,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestFullAuthFlow(t *testing.T) {
+	t.Parallel()
 	dbServer := servers.NewDBServer(t, true)
 	natsServer := servers.NewNATSServer(t, true)
 

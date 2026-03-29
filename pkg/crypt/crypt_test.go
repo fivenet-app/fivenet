@@ -7,6 +7,7 @@ import (
 )
 
 func TestEncrypt(t *testing.T) {
+	t.Parallel()
 	cfg := &config.Config{Secret: "test-secret"}
 	crypt := New(cfg)
 
@@ -27,6 +28,7 @@ func TestEncrypt(t *testing.T) {
 }
 
 func TestEncryptDecrypt(t *testing.T) {
+	t.Parallel()
 	cfg := &config.Config{Secret: "test-secret"}
 	crypt := New(cfg)
 

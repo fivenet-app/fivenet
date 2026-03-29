@@ -10,6 +10,7 @@ import (
 )
 
 func TestCheckIfHasAccess(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name       string
 		levels     []string
@@ -195,6 +196,7 @@ func TestCheckIfHasAccess(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			result := CheckIfHasOwnJobAccess(&permissionsattributes.StringList{
 				Strings: tt.levels,
 			}, tt.userInfo, tt.creatorJob, tt.creator)

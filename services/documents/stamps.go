@@ -261,7 +261,14 @@ func (s *Server) UpsertStamp(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		if _, err := s.signingStampAccess.HandleAccessChanges(ctx, s.db, st.GetId(), st.Access.Jobs, nil, nil); err != nil {
+		if _, err := s.signingStampAccess.HandleAccessChanges(
+			ctx,
+			s.db,
+			st.GetId(),
+			st.Access.Jobs,
+			nil,
+			nil,
+		); err != nil {
 			return nil, err
 		}
 	} else {
@@ -282,7 +289,14 @@ func (s *Server) UpsertStamp(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		if _, err := s.signingStampAccess.HandleAccessChanges(ctx, s.db, st.GetId(), st.Access.Jobs, nil, nil); err != nil {
+		if _, err := s.signingStampAccess.HandleAccessChanges(
+			ctx,
+			s.db,
+			st.GetId(),
+			st.Access.Jobs,
+			nil,
+			nil,
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}

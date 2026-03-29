@@ -68,7 +68,11 @@ func (s *Housekeeper) watchUserChanges(ctx context.Context) error {
 					return
 				}
 
-				if err := s.tracker.SetUserMappingForUser(ctx, userMarker.GetUserId(), &unitId); err != nil {
+				if err := s.tracker.SetUserMappingForUser(
+					ctx,
+					userMarker.GetUserId(),
+					&unitId,
+				); err != nil {
 					s.logger.Error("failed to update user unit id mapping in kv", zap.Error(err))
 					return
 				}

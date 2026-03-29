@@ -7,6 +7,7 @@ import (
 )
 
 func TestIsHeaderTag(t *testing.T) {
+	t.Parallel()
 	for actual, expected := range map[string]bool{
 		"div":   false,
 		"s pan": false,

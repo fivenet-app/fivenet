@@ -11,6 +11,7 @@ import (
 )
 
 func TestPenaltyCalculatorExtractor_WithTotals(t *testing.T) {
+	t.Parallel()
 	extractor := NewPenaltyCalculatorExtractor()
 	createdAt := time.Date(2026, 3, 12, 10, 0, 0, 0, time.UTC)
 
@@ -58,6 +59,7 @@ func TestPenaltyCalculatorExtractor_WithTotals(t *testing.T) {
 }
 
 func TestPenaltyCalculatorExtractor_FallbackTotalCount(t *testing.T) {
+	t.Parallel()
 	extractor := NewPenaltyCalculatorExtractor()
 	doc := &documents.Document{
 		Id:         11,
@@ -85,6 +87,7 @@ func TestPenaltyCalculatorExtractor_FallbackTotalCount(t *testing.T) {
 }
 
 func TestPenaltyCalculatorExtractor_Supports(t *testing.T) {
+	t.Parallel()
 	extractor := NewPenaltyCalculatorExtractor()
 	require.False(t, extractor.Supports(&documents.Document{}))
 	require.True(

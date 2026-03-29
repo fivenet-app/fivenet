@@ -355,11 +355,21 @@ func (o *OAuth2) handleConnectOnlyCallback(
 		return
 	}
 
-	if err := o.userInfoStore.storeUserInfo(c.Request.Context(), claims.AccID, provider.GetName(), userInfo); err != nil {
+	if err := o.userInfoStore.storeUserInfo(
+		c.Request.Context(),
+		claims.AccID,
+		provider.GetName(),
+		userInfo,
+	); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			o.handleRedirect(c, true, false, "already_in_use")
 		} else {
-			o.logger.Error("failed to store user info", zap.Int64("acc_id", claims.AccID), zap.String("provider", provider.GetName()), zap.Error(err))
+			o.logger.Error(
+				"failed to store user info",
+				zap.Int64("acc_id", claims.AccID),
+				zap.String("provider", provider.GetName()),
+				zap.Error(err),
+			)
 			o.handleRedirect(c, true, false, ReasonInternalError)
 		}
 		return
@@ -408,12 +418,21 @@ func (o *OAuth2) handleLoginCallback(
 		)
 		return
 	} else if account.Id == 0 {
-		o.logger.Error("invalid account id from userinfo", zap.String("provider", provider.GetName()), zap.Error(err))
+		o.logger.Error(
+			"invalid account id from userinfo",
+			zap.String("provider", provider.GetName()),
+			zap.Error(err),
+		)
 		o.handleRedirect(c, connectOnly, false, ReasonInternalError)
 		return
 	}
 
-	if err := o.userInfoStore.updateUserInfo(c.Request.Context(), account.Id, provider.GetName(), uInfo); err != nil {
+	if err := o.userInfoStore.updateUserInfo(
+		c.Request.Context(),
+		account.Id,
+		provider.GetName(),
+		uInfo,
+	); err != nil {
 		o.logger.Error(
 			"failed to update oauth2 user info for account id",
 			zap.Int64("account_id", account.Id),
