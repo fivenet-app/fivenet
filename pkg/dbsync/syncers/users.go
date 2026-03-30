@@ -193,30 +193,9 @@ func (s *UsersSync) syncOnce(
 		for i, user := range slices.Backward(us) {
 			user.UpdatedAt = nil
 
-			// Get hash of user data to compare with existing hash and skip sending if data is the same (treat as not updated)
-			_, hash, err := protoutils.JSONAndHash(user)
-			if err != nil {
-				s.logger.Warn(
-					"failed to compute user data hash, skipping hash check and treating as new/updated user",
-					zap.Int32("user_id", user.GetUserId()),
-					zap.String("identifier", user.GetIdentifier()),
-					zap.Error(err),
-				)
-			}
-
-			if existingHash, ok := s.hashes.Get(user.GetUserId()); ok {
-				if existingHash == hash {
-					s.logger.Debug(
-						"user data hash is the same as existing entry, skipping update for user",
-						zap.Int32("user_id", user.GetUserId()),
-						zap.String("identifier", user.GetIdentifier()),
-					)
-					// Remove "skipped" user
-					us = slices.Delete(us, i, i+1)
-					continue
-				}
-			} else {
-				s.hashes.Put(user.GetUserId(), hash, userHashCacheTTL)
+			// Remove "skipped" user
+			if s.setOrUpdateUserHash(user) {
+				us = slices.Delete(us, i, i+1)
 			}
 		}
 	}
@@ -237,6 +216,41 @@ func (s *UsersSync) syncOnce(
 	s.persistCursor(fetchedCount, limit, cursorTime, cursorLastID)
 
 	return fetchedCount, int64(len(us)), cursorIDValue, cursorTime, nil
+}
+
+// setOrUpdateUserHash computes the hash of the given user and compares it with the existing hash in the cache (if any).
+// Returns true to indicate that the user data has not changed and can be skipped.
+func (s *UsersSync) setOrUpdateUserHash(user *syncdata.DataUser) bool {
+	if s.hashes == nil {
+		return false
+	}
+
+	// Get hash of user data to compare with existing hash and skip sending if data is the same (treat as not updated)
+	_, hash, err := protoutils.JSONAndHash(user)
+	if err != nil {
+		s.logger.Warn(
+			"failed to compute user data hash, skipping hash check and treating as new/updated user",
+			zap.Int32("user_id", user.GetUserId()),
+			zap.String("identifier", user.GetIdentifier()),
+			zap.Error(err),
+		)
+	}
+
+	if existingHash, ok := s.hashes.Get(user.GetUserId()); ok {
+		if existingHash == hash {
+			s.logger.Debug(
+				"user data hash is the same as existing entry, skipping update for user",
+				zap.Int32("user_id", user.GetUserId()),
+				zap.String("identifier", user.GetIdentifier()),
+			)
+
+			return true
+		}
+	} else {
+		s.hashes.Put(user.GetUserId(), hash, userHashCacheTTL)
+	}
+
+	return false
 }
 
 func (s *UsersSync) cursorFromUsersResults(
