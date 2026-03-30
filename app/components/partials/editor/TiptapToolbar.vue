@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { JSONContent } from '@tiptap/core';
 import type { Editor } from '@tiptap/vue-3';
-import z from 'zod';
+import { z } from 'zod';
 import { fontColors, fonts, highlightColors } from '~/types/editor';
 import type { HistoryContent, Version } from '~/types/history';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';

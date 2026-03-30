@@ -4,12 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBuildQueryFromColumns(t *testing.T) {
 	t.Parallel()
+
 	tests := []struct {
 		tableName     string
 		columns       map[string]string
@@ -79,6 +79,7 @@ func TestBuildQueryFromColumns(t *testing.T) {
 
 func TestPrepareStringQuery(t *testing.T) {
 	t.Parallel()
+
 	tests := []struct {
 		name          string
 		query         string
@@ -99,7 +100,7 @@ func TestPrepareStringQuery(t *testing.T) {
 			name:  "State with zero LastCheck",
 			query: "SELECT * FROM `users` $whereCondition LIMIT $limit",
 			table: DBSyncTable{
-				UpdatedTimeColumn: utils.StrPtr("updated_at"),
+				UpdatedTimeColumn: new("updated_at"),
 			},
 			state: &TableSyncState{
 				LastCheck: nil,
@@ -111,7 +112,7 @@ func TestPrepareStringQuery(t *testing.T) {
 			name:  "State with valid LastCheck",
 			query: "SELECT * FROM `users` $whereCondition LIMIT $limit",
 			table: DBSyncTable{
-				UpdatedTimeColumn: utils.StrPtr("updated_at"),
+				UpdatedTimeColumn: new("updated_at"),
 			},
 			state: &TableSyncState{
 				LastCheck: parseTime("2023-01-01 00:00:00"),
@@ -123,11 +124,11 @@ func TestPrepareStringQuery(t *testing.T) {
 			name:  "State with cursor tuple",
 			query: "SELECT * FROM `users` $whereCondition LIMIT $limit",
 			table: DBSyncTable{
-				UpdatedTimeColumn: utils.StrPtr("updated_at"),
+				UpdatedTimeColumn: new("updated_at"),
 			},
 			state: &TableSyncState{
 				LastCheck: parseTime("2023-01-01 00:00:00"),
-				LastID:    utils.StrPtr("42"),
+				LastID:    new("42"),
 			},
 			limit:         10,
 			expectedQuery: "SELECT * FROM `users` WHERE (`updated_at` > '2023-01-01 00:00:00.000' OR (`updated_at` = '2023-01-01 00:00:00.000' AND `id` > 42))\n LIMIT 10",
@@ -155,7 +156,7 @@ func TestGetWhereConditionIDOnly(t *testing.T) {
 	t.Parallel()
 	table := DBSyncTable{}
 	state := &TableSyncState{
-		LastID: utils.StrPtr("XYZ-100"),
+		LastID: new("XYZ-100"),
 	}
 
 	where := getWhereCondition(table, state, "plate")
@@ -168,7 +169,7 @@ func TestGetWhereConditionBacktickedColumns(t *testing.T) {
 		t.Parallel()
 		table := DBSyncTable{}
 		state := &TableSyncState{
-			LastID: utils.StrPtr("XYZ-100"),
+			LastID: new("XYZ-100"),
 		}
 
 		where := getWhereCondition(table, state, "`plate`")
@@ -178,7 +179,7 @@ func TestGetWhereConditionBacktickedColumns(t *testing.T) {
 	t.Run("updated time column already backticked", func(t *testing.T) {
 		t.Parallel()
 		table := DBSyncTable{
-			UpdatedTimeColumn: utils.StrPtr("`updated_at`"),
+			UpdatedTimeColumn: new("`updated_at`"),
 		}
 		state := &TableSyncState{
 			LastCheck: parseTime("2023-01-01 00:00:00"),
@@ -191,11 +192,11 @@ func TestGetWhereConditionBacktickedColumns(t *testing.T) {
 	t.Run("cursor and updated time columns already backticked", func(t *testing.T) {
 		t.Parallel()
 		table := DBSyncTable{
-			UpdatedTimeColumn: utils.StrPtr("`updated_at`"),
+			UpdatedTimeColumn: new("`updated_at`"),
 		}
 		state := &TableSyncState{
 			LastCheck: parseTime("2023-01-01 00:00:00"),
-			LastID:    utils.StrPtr("42"),
+			LastID:    new("42"),
 		}
 
 		where := getWhereCondition(table, state, "`id`")
@@ -214,7 +215,7 @@ func TestUsersTableGetQueryWithCustomQueryReplacesWhereCondition(t *testing.T) {
 	usersTable := UsersTable{
 		DBSyncTable: DBSyncTable{
 			Query:             &customQuery,
-			UpdatedTimeColumn: utils.StrPtr("updated_at"),
+			UpdatedTimeColumn: new("updated_at"),
 		},
 		Columns: UsersColumns{
 			ID: "id",
@@ -222,7 +223,7 @@ func TestUsersTableGetQueryWithCustomQueryReplacesWhereCondition(t *testing.T) {
 	}
 	state := &TableSyncState{
 		LastCheck: parseTime("2023-01-01 00:00:00"),
-		LastID:    utils.StrPtr("42"),
+		LastID:    new("42"),
 	}
 
 	query := usersTable.GetQuery(state, 0, 1, "`id` = ?")

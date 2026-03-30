@@ -8,7 +8,6 @@ import (
 	jobssettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/settings"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
@@ -38,7 +37,7 @@ func TestQualificationsPlanRoles(t *testing.T) {
 			Abbreviation:       "EMT",
 			QualificationTitle: "Advanced",
 			DiscordSettings: &qualifications.QualificationDiscordSettings{
-				RoleName: utils.StrPtr("Advanced"),
+				RoleName: new("Advanced"),
 			},
 		},
 		{
@@ -46,7 +45,7 @@ func TestQualificationsPlanRoles(t *testing.T) {
 			Abbreviation:       "K9",
 			QualificationTitle: "Handler",
 			DiscordSettings: &qualifications.QualificationDiscordSettings{
-				RoleName:   utils.StrPtr("Handler"),
+				RoleName:   new("Handler"),
 				RoleFormat: &customFormat,
 			},
 		},

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
-import z from 'zod';
+import { z } from 'zod';
 import EditorToolbar from '~/components/fabriceditor/EditorToolbar.vue';
 import EditorWrapper from '~/components/fabriceditor/EditorWrapper.vue';
 import { getDocumentsStampsClient } from '~~/gen/ts/clients';

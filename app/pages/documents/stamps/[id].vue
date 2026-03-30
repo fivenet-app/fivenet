@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { TypedRouteFromName } from '@typed-router';
-import z from 'zod';
+import { z } from 'zod';
 import EditorToolbar from '~/components/fabriceditor/EditorToolbar.vue';
 import EditorWrapper from '~/components/fabriceditor/EditorWrapper.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
