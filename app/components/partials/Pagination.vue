@@ -153,9 +153,7 @@ function onClickNext() {
                     v-model:page="currentPage"
                     :items-per-page="pagination?.pageSize ?? 0"
                     :total="pagination?.totalCount ?? 0"
-                    :show-edges="false"
                     active-variant="subtle"
-                    :ui="{ first: 'hidden', last: 'hidden' }"
                 />
                 <UFieldGroup v-else>
                     <UButton
