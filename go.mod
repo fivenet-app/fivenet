@@ -48,7 +48,7 @@ require (
 	github.com/nats-io/nats-server/v2 v2.12.6
 	github.com/nats-io/nats.go v1.50.0
 	github.com/ory/dockertest/v3 v3.12.0
-	github.com/paulmach/orb v0.12.0
+	github.com/paulmach/orb v0.13.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.23.2
 	github.com/puzpuzpuz/xsync/v4 v4.4.0
@@ -244,6 +244,6 @@ require (
 	willnorris.com/go/gifresize v1.0.0 // indirect
 )
 
-replace github.com/paulmach/orb => github.com/galexrt/orb v0.0.0-20250919105122-906492304271
+replace github.com/paulmach/orb => github.com/galexrt/orb v0.0.0-20260401093544-6bd5b3eed9dc
 
 replace github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.3 => github.com/galexrt/go-grpc-middleware/v2 v2.0.0-20251109123841-5606fc97b0e0
