@@ -8,7 +8,7 @@ require (
 	github.com/DeRuina/timberjack v1.4.0
 	github.com/HugoSmits86/nativewebp v1.2.1
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/XSAM/otelsql v0.41.0
+	github.com/XSAM/otelsql v0.42.0
 	github.com/adhocore/gronx v1.19.6
 	github.com/alecthomas/kong v1.14.0
 	github.com/blevesearch/bleve/v2 v2.5.7
@@ -27,7 +27,7 @@ require (
 	github.com/gin-contrib/zap v1.1.7
 	github.com/gin-gonic/gin v1.12.0
 	github.com/go-jet/jet/v2 v2.14.1
-	github.com/go-playground/validator/v10 v10.30.1
+	github.com/go-playground/validator/v10 v10.30.2
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/goccy/go-yaml v1.19.2
 	github.com/golang-jwt/jwt/v5 v5.3.1
@@ -82,7 +82,7 @@ require (
 	golang.org/x/net v0.52.0
 	golang.org/x/oauth2 v0.36.0
 	golang.org/x/sync v0.20.0
-	google.golang.org/grpc v1.79.3
+	google.golang.org/grpc v1.80.0
 	google.golang.org/protobuf v1.36.11
 	gopkg.in/yaml.v3 v3.0.1
 	gotest.tools/v3 v3.5.2
