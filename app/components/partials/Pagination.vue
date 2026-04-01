@@ -36,17 +36,13 @@ const loadingState = ref(false);
 watch(
     () => props.status,
     () => {
-        if (isRequestPending(props.status)) {
-            loadingState.value = true;
-        }
+        if (isRequestPending(props.status)) loadingState.value = true;
     },
 );
 watchDebounced(
     () => props.status,
     () => {
-        if (!isRequestPending(props.status)) {
-            loadingState.value = false;
-        }
+        if (!isRequestPending(props.status)) loadingState.value = false;
     },
     {
         debounce: 750,
