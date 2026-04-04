@@ -45,7 +45,6 @@ var (
 type existingUser struct {
 	UserID     int32  `alias:"user_id"`
 	Identifier string `alias:"identifier"`
-	DataJSON   string `alias:"data_json"`
 	DataHash   uint64 `alias:"data_hash"`
 }
 
@@ -134,7 +133,6 @@ func (s *Server) handleUsersData(
 		SELECT(
 			tSyncUser.UserID.AS("user_id"),
 			tSyncUser.Identifier.AS("identifier"),
-			tSyncUser.DataJSON.AS("data_json"),
 			tSyncUser.DataHash.AS("data_hash"),
 		).
 		FROM(tSyncUser).

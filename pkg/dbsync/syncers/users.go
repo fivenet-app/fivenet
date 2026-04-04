@@ -356,18 +356,19 @@ func (s *UsersSync) applyFiltersAndTransformations(
 
 func (s *UsersSync) cleanupUserJob(user *syncdata.DataUser) {
 	if len(user.Jobs) == 0 {
-		// If no jobs are set, create one from the user job field
+		// If no jobs are set, create one from the user job field (hopefully it's set)..
 		user.Jobs = []*users.UserJob{
 			{
+				UserId:    user.GetUserId(),
 				Job:       user.GetJob(),
 				Grade:     user.GetJobGrade(),
 				IsPrimary: true,
 			},
 		}
-
 		return
 	} else if len(user.Jobs) == 1 && user.GetJob() != "" {
 		// If only one job is set but the user's job field is not empty, ensure the job field info is copied to the job entry for consistency
+		user.Jobs[0].UserId = user.GetUserId()
 		user.Jobs[0].Job = user.GetJob()
 		user.Jobs[0].Grade = user.GetJobGrade()
 		user.Jobs[0].IsPrimary = true
