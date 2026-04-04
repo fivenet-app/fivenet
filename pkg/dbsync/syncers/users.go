@@ -71,6 +71,20 @@ func NewUsersSync(s *Syncer, state *dbsyncconfig.TableSyncState, saveUpdatedAt b
 func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, *time.Time, error) {
 	limit := s.cfg.Limits.Users
 	windowEnd := time.Now()
+	batchCap, lag := calculateDrainBatchCap(
+		s.state.GetLastCheck(),
+		windowEnd,
+		maxDrainBatchesPerSync,
+	)
+	if lag >= lagWarnThreshold {
+		s.logger.Warn(
+			"users cursor lag is high",
+			zap.Duration("lag", lag),
+			zap.Time("window_end", windowEnd),
+			zap.Timep("cursor_time", s.state.GetLastCheck()),
+			zap.Int("drain_batch_cap", batchCap),
+		)
+	}
 
 	var totalFetched int64
 	var totalSent int64
@@ -100,12 +114,13 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, *time.Time,
 		}
 
 		// Guard against starvation when data changes continuously under high write load.
-		if batches+1 >= maxDrainBatchesPerSync {
+		if batches+1 >= batchCap {
 			s.logger.Info(
 				"users sync hit drain batch cap; remaining updates continue next interval",
 				zap.Int64("fetched", fetched),
 				zap.Int64("sent", sent),
 				zap.String("cursor_id", cursorID),
+				zap.Int("drain_batch_cap", batchCap),
 			)
 			break
 		}
@@ -197,13 +212,22 @@ func (s *UsersSync) syncOnce(
 	us = s.applyFiltersAndTransformations(us, sQuery)
 
 	if s.hashes != nil {
+		skippedUserIDs := make([]int32, 0, len(us))
 		for i, user := range slices.Backward(us) {
 			user.UpdatedAt = nil
 
 			// Remove "skipped" user
 			if s.setOrUpdateUserHash(user) {
+				skippedUserIDs = append(skippedUserIDs, user.GetUserId())
 				us = slices.Delete(us, i, i+1)
 			}
+		}
+		if len(skippedUserIDs) > 0 {
+			s.logger.Debug(
+				"users skipped unchanged entries by hash",
+				zap.Int("count", len(skippedUserIDs)),
+				zap.Int32s("user_ids", skippedUserIDs),
+			)
 		}
 	}
 
@@ -245,12 +269,6 @@ func (s *UsersSync) setOrUpdateUserHash(user *syncdata.DataUser) bool {
 
 	if existingHash, ok := s.hashes.Get(user.GetUserId()); ok {
 		if existingHash == hash {
-			s.logger.Debug(
-				"user data hash is the same as existing entry, skipping update for user",
-				zap.Int32("user_id", user.GetUserId()),
-				zap.String("identifier", user.GetIdentifier()),
-			)
-
 			return true
 		}
 	}
@@ -274,7 +292,8 @@ func (s *UsersSync) cursorFromUsersResults(
 		return nil, &lastID
 	}
 
-	t := ts.GetTimestamp().AsTime()
+	t := ts.GetTimestamp().AsTime().In(time.Local)
+	t = t.Truncate(time.Millisecond)
 	return &t, &lastID
 }
 

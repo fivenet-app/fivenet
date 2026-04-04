@@ -38,6 +38,7 @@ func getNatsClient(
 	return n, nil
 }
 
+//nolint:paralleltest // This test is not safe to run in parallel due to shared state in the NATS server and lock keys.
 func TestNats_LockUnlock(t *testing.T) {
 	natsServer := servers.NewNATSServer(t, true)
 	js := natsServer.GetJS()
@@ -59,6 +60,7 @@ func TestNats_LockUnlock(t *testing.T) {
 	}
 }
 
+//nolint:paralleltest // This test is not safe to run in parallel due to shared state in the NATS server and lock keys.
 func TestNats_MultipleLocks(t *testing.T) {
 	natsServer := servers.NewNATSServer(t, true)
 	js := natsServer.GetJS()

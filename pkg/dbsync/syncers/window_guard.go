@@ -22,6 +22,6 @@ func updatedAtUpperBoundCondition(
 	return fmt.Sprintf(
 		"%s <= '%s'",
 		updatedAtCol,
-		windowEnd.Format("2006-01-02 15:04:05.000"),
+		windowEnd.Truncate(time.Millisecond).Format("2006-01-02 15:04:05.000"),
 	)
 }

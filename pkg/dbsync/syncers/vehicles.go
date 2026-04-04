@@ -67,6 +67,20 @@ func NewVehiclesSync(
 func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, *time.Time, error) {
 	limit := s.cfg.Limits.Vehicles
 	windowEnd := time.Now()
+	batchCap, lag := calculateDrainBatchCap(
+		s.state.GetLastCheck(),
+		windowEnd,
+		maxDrainBatchesPerSync,
+	)
+	if lag >= lagWarnThreshold {
+		s.logger.Warn(
+			"vehicles cursor lag is high",
+			zap.Duration("lag", lag),
+			zap.Time("window_end", windowEnd),
+			zap.Timep("cursor_time", s.state.GetLastCheck()),
+			zap.Int("drain_batch_cap", batchCap),
+		)
+	}
 
 	var totalFetched int64
 	var totalSent int64
@@ -95,12 +109,13 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, *time.Ti
 			break
 		}
 
-		if batches+1 >= maxDrainBatchesPerSync {
+		if batches+1 >= batchCap {
 			s.logger.Info(
 				"vehicles sync hit drain batch cap; remaining updates continue next interval",
 				zap.Int64("fetched", fetched),
 				zap.Int64("sent", sent),
 				zap.String("cursor_id", cursorID),
+				zap.Int("drain_batch_cap", batchCap),
 			)
 			break
 		}
@@ -195,6 +210,7 @@ func (s *VehiclesSync) syncOnce(
 	}
 
 	if s.hashes != nil {
+		skippedPlates := make([]string, 0, len(vehicles))
 		for i, vehicle := range slices.Backward(vehicles) {
 			vehicle.UpdatedAt = nil
 
@@ -210,16 +226,20 @@ func (s *VehiclesSync) syncOnce(
 
 			if existingHash, ok := s.hashes.Get(vehicle.GetPlate()); ok {
 				if existingHash == hash {
-					s.logger.Debug(
-						"vehicle data hash is the same as existing entry, skipping update for vehicle",
-						zap.String("plate", vehicle.GetPlate()),
-					)
+					skippedPlates = append(skippedPlates, vehicle.GetPlate())
 					// Remove "skipped" vehicle
 					vehicles = slices.Delete(vehicles, i, i+1)
 					continue
 				}
 			}
 			s.hashes.Put(vehicle.GetPlate(), hash, vehicleHashCacheTTL)
+		}
+		if len(skippedPlates) > 0 {
+			s.logger.Debug(
+				"vehicles skipped unchanged entries by hash",
+				zap.Int("count", len(skippedPlates)),
+				zap.Strings("plates", skippedPlates),
+			)
 		}
 	}
 
@@ -264,7 +284,8 @@ func (s *VehiclesSync) cursorFromVehiclesResults(
 		return nil, &lastPlate
 	}
 
-	t := ts.GetTimestamp().AsTime()
+	t := ts.GetTimestamp().AsTime().In(time.Local)
+	t = t.Truncate(time.Millisecond)
 	return &t, &lastPlate
 }
 

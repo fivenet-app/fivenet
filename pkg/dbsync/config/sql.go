@@ -5,7 +5,10 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 )
+
+const mysqlDateTime3Layout = "2006-01-02 15:04:05.000"
 
 func getWhereCondition(
 	table DBSyncTable,
@@ -32,7 +35,7 @@ func getWhereCondition(
 
 	if hasUpdatedAt {
 		updatedAtCol := *table.UpdatedTimeColumn
-		updatedAtValue := lastCheck.Format("2006-01-02 15:04:05.000")
+		updatedAtValue := lastCheck.Truncate(time.Millisecond).Format(mysqlDateTime3Layout)
 
 		// Only quote the updated time column if it doesn't already contain backticks, to avoid double quoting.
 		if !strings.Contains(updatedAtCol, "`") {
@@ -99,7 +102,9 @@ func prepareStringQueryWithStateAndWhere(
 	q = strings.ReplaceAll(q, "$limit", limitStr)
 
 	conditions := []string{}
-	if cursorWhere := strings.TrimSpace(getWhereCondition(table, state, cursorIDColumn)); cursorWhere != "" {
+	if cursorWhere := strings.TrimSpace(
+		getWhereCondition(table, state, cursorIDColumn),
+	); cursorWhere != "" {
 		conditions = append(conditions, cursorWhere)
 	}
 	whereCondition = slices.DeleteFunc(whereCondition, func(c string) bool {

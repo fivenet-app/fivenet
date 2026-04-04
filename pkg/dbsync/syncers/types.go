@@ -42,7 +42,8 @@ func (s *Syncer) sendData(ctx context.Context, data *pbsync.SendDataRequest) err
 			s.logger.Error("failed to marshal data for dry run output", zap.Error(err))
 		} else {
 			//nolint:forbidigo // This is a debug log, so it's fine to print to stdout.
-			fmt.Println("Data that would have been sent to the server:", string(out))
+			//fmt.Println("Data that would have been sent to the server:", string(out))
+			_ = out
 		}
 		return nil
 	}
