@@ -66,7 +66,7 @@ func NewVehiclesSync(
 
 func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, *time.Time, error) {
 	limit := s.cfg.Limits.Vehicles
-	windowEnd := time.Now().UTC()
+	windowEnd := time.Now()
 
 	var totalFetched int64
 	var totalSent int64
