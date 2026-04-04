@@ -273,11 +273,12 @@ func (b0 Attr_builder) Build() *Attr {
 }
 
 type ServiceOptions struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Order         int32                  `protobuf:"varint,1,opt,name=order,proto3" json:"order,omitempty"`
-	Icon          *string                `protobuf:"bytes,2,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState   `protogen:"hybrid.v1"`
+	Order           int32                    `protobuf:"varint,1,opt,name=order,proto3" json:"order,omitempty"`
+	Icon            *string                  `protobuf:"bytes,2,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	AdditionalPerms []*AdditionalServicePerm `protobuf:"bytes,3,rep,name=additional_perms,json=additionalPerms,proto3" json:"additional_perms,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ServiceOptions) Reset() {
@@ -319,12 +320,23 @@ func (x *ServiceOptions) GetIcon() string {
 	return ""
 }
 
+func (x *ServiceOptions) GetAdditionalPerms() []*AdditionalServicePerm {
+	if x != nil {
+		return x.AdditionalPerms
+	}
+	return nil
+}
+
 func (x *ServiceOptions) SetOrder(v int32) {
 	x.Order = v
 }
 
 func (x *ServiceOptions) SetIcon(v string) {
 	x.Icon = &v
+}
+
+func (x *ServiceOptions) SetAdditionalPerms(v []*AdditionalServicePerm) {
+	x.AdditionalPerms = v
 }
 
 func (x *ServiceOptions) HasIcon() bool {
@@ -341,8 +353,9 @@ func (x *ServiceOptions) ClearIcon() {
 type ServiceOptions_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Order int32
-	Icon  *string
+	Order           int32
+	Icon            *string
+	AdditionalPerms []*AdditionalServicePerm
 }
 
 func (b0 ServiceOptions_builder) Build() *ServiceOptions {
@@ -351,6 +364,92 @@ func (b0 ServiceOptions_builder) Build() *ServiceOptions {
 	_, _ = b, x
 	x.Order = b.Order
 	x.Icon = b.Icon
+	x.AdditionalPerms = b.AdditionalPerms
+	return m0
+}
+
+type AdditionalServicePerm struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Order         int32                  `protobuf:"varint,4,opt,name=order,proto3" json:"order,omitempty"`
+	Attrs         []*Attr                `protobuf:"bytes,5,rep,name=attrs,proto3" json:"attrs,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdditionalServicePerm) Reset() {
+	*x = AdditionalServicePerm{}
+	mi := &file_codegen_perms_perms_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdditionalServicePerm) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdditionalServicePerm) ProtoMessage() {}
+
+func (x *AdditionalServicePerm) ProtoReflect() protoreflect.Message {
+	mi := &file_codegen_perms_perms_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *AdditionalServicePerm) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *AdditionalServicePerm) GetOrder() int32 {
+	if x != nil {
+		return x.Order
+	}
+	return 0
+}
+
+func (x *AdditionalServicePerm) GetAttrs() []*Attr {
+	if x != nil {
+		return x.Attrs
+	}
+	return nil
+}
+
+func (x *AdditionalServicePerm) SetName(v string) {
+	x.Name = v
+}
+
+func (x *AdditionalServicePerm) SetOrder(v int32) {
+	x.Order = v
+}
+
+func (x *AdditionalServicePerm) SetAttrs(v []*Attr) {
+	x.Attrs = v
+}
+
+type AdditionalServicePerm_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Name  string
+	Order int32
+	Attrs []*Attr
+}
+
+func (b0 AdditionalServicePerm_builder) Build() *AdditionalServicePerm {
+	m0 := &AdditionalServicePerm{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Name = b.Name
+	x.Order = b.Order
+	x.Attrs = b.Attrs
 	return m0
 }
 
@@ -404,35 +503,43 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\x12C\n" +
 	"\x04type\x18\x03 \x01(\x0e2/.resources.permissions.attributes.AttributeTypeR\x04type\x12*\n" +
-	"\x11valid_string_list\x18\x04 \x03(\tR\x0fvalidStringList\"H\n" +
+	"\x11valid_string_list\x18\x04 \x03(\tR\x0fvalidStringList\"\x99\x01\n" +
 	"\x0eServiceOptions\x12\x14\n" +
 	"\x05order\x18\x01 \x01(\x05R\x05order\x12\x17\n" +
-	"\x04icon\x18\x02 \x01(\tH\x00R\x04icon\x88\x01\x01B\a\n" +
-	"\x05_icon:S\n" +
+	"\x04icon\x18\x02 \x01(\tH\x00R\x04icon\x88\x01\x01\x12O\n" +
+	"\x10additional_perms\x18\x03 \x03(\v2$.codegen.perms.AdditionalServicePermR\x0fadditionalPermsB\a\n" +
+	"\x05_icon\"l\n" +
+	"\x15AdditionalServicePerm\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x14\n" +
+	"\x05order\x18\x04 \x01(\x05R\x05order\x12)\n" +
+	"\x05attrs\x18\x05 \x03(\v2\x13.codegen.perms.AttrR\x05attrs:S\n" +
 	"\x05perms\x12\x1e.google.protobuf.MethodOptions\x18\xba\x8e\x03 \x01(\v2\x1b.codegen.perms.PermsOptionsR\x05perms:]\n" +
 	"\tperms_svc\x12\x1f.google.protobuf.ServiceOptions\x18\xbd\x8e\x03 \x01(\v2\x1d.codegen.perms.ServiceOptionsR\bpermsSvcBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms;permsb\x06proto3"
 
-var file_codegen_perms_perms_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_codegen_perms_perms_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_codegen_perms_perms_proto_goTypes = []any{
 	(*PermsOptions)(nil),                // 0: codegen.perms.PermsOptions
 	(*Attr)(nil),                        // 1: codegen.perms.Attr
 	(*ServiceOptions)(nil),              // 2: codegen.perms.ServiceOptions
-	(attributes.AttributeType)(0),       // 3: resources.permissions.attributes.AttributeType
-	(*descriptorpb.MethodOptions)(nil),  // 4: google.protobuf.MethodOptions
-	(*descriptorpb.ServiceOptions)(nil), // 5: google.protobuf.ServiceOptions
+	(*AdditionalServicePerm)(nil),       // 3: codegen.perms.AdditionalServicePerm
+	(attributes.AttributeType)(0),       // 4: resources.permissions.attributes.AttributeType
+	(*descriptorpb.MethodOptions)(nil),  // 5: google.protobuf.MethodOptions
+	(*descriptorpb.ServiceOptions)(nil), // 6: google.protobuf.ServiceOptions
 }
 var file_codegen_perms_perms_proto_depIdxs = []int32{
 	1, // 0: codegen.perms.PermsOptions.attrs:type_name -> codegen.perms.Attr
-	3, // 1: codegen.perms.Attr.type:type_name -> resources.permissions.attributes.AttributeType
-	4, // 2: codegen.perms.perms:extendee -> google.protobuf.MethodOptions
-	5, // 3: codegen.perms.perms_svc:extendee -> google.protobuf.ServiceOptions
-	0, // 4: codegen.perms.perms:type_name -> codegen.perms.PermsOptions
-	2, // 5: codegen.perms.perms_svc:type_name -> codegen.perms.ServiceOptions
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	4, // [4:6] is the sub-list for extension type_name
-	2, // [2:4] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	4, // 1: codegen.perms.Attr.type:type_name -> resources.permissions.attributes.AttributeType
+	3, // 2: codegen.perms.ServiceOptions.additional_perms:type_name -> codegen.perms.AdditionalServicePerm
+	1, // 3: codegen.perms.AdditionalServicePerm.attrs:type_name -> codegen.perms.Attr
+	5, // 4: codegen.perms.perms:extendee -> google.protobuf.MethodOptions
+	6, // 5: codegen.perms.perms_svc:extendee -> google.protobuf.ServiceOptions
+	0, // 6: codegen.perms.perms:type_name -> codegen.perms.PermsOptions
+	2, // 7: codegen.perms.perms_svc:type_name -> codegen.perms.ServiceOptions
+	8, // [8:8] is the sub-list for method output_type
+	8, // [8:8] is the sub-list for method input_type
+	6, // [6:8] is the sub-list for extension type_name
+	4, // [4:6] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_codegen_perms_perms_proto_init() }
@@ -448,7 +555,7 @@ func file_codegen_perms_perms_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_codegen_perms_perms_proto_rawDesc), len(file_codegen_perms_perms_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 2,
 			NumServices:   0,
 		},

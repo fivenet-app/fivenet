@@ -1610,11 +1610,11 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\x0eSetMOTDRequest\x12\x1c\n" +
 	"\x04motd\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04motd\"%\n" +
 	"\x0fSetMOTDResponse\x12\x12\n" +
-	"\x04motd\x18\x01 \x01(\tR\x04motd2\xd0\n" +
+	"\x04motd\x18\x01 \x01(\tR\x04motd2\xf8\n" +
 	"\n" +
 	"\vJobsService\x12e\n" +
-	"\x0eListColleagues\x12$.services.jobs.ListColleaguesRequest\x1a%.services.jobs.ListColleaguesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12`\n" +
-	"\aGetSelf\x12\x1d.services.jobs.GetSelfRequest\x1a\x1e.services.jobs.GetSelfResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eListColleagues\x12\xa5\x01\n" +
+	"\x0eListColleagues\x12$.services.jobs.ListColleaguesRequest\x1a%.services.jobs.ListColleaguesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12r\n" +
+	"\aGetSelf\x12\x1d.services.jobs.GetSelfRequest\x1a\x1e.services.jobs.GetSelfResponse\"(\xd2\xf3\x18$\b\x012\x0eListColleagues2\x10ViewJobsOverview\x12\xa5\x01\n" +
 	"\fGetColleague\x12\".services.jobs.GetColleagueRequest\x1a#.services.jobs.GetColleagueResponse\"L\xd2\xf3\x18H\b\x01*+\n" +
 	"\x06Access\x18\x01\"\x03Own\"\n" +
 	"Lower_Rank\"\tSame_Rank\"\x03Any*\x17\n" +
@@ -1629,7 +1629,7 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\fManageLabels\x12\".services.jobs.ManageLabelsRequest\x1a#.services.jobs.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8e\x01\n" +
 	"\x17GetColleagueLabelsStats\x12-.services.jobs.GetColleagueLabelsStatsRequest\x1a..services.jobs.GetColleagueLabelsStatsResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fGetColleague\x12U\n" +
 	"\aGetMOTD\x12\x1d.services.jobs.GetMOTDRequest\x1a\x1e.services.jobs.GetMOTDResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12P\n" +
-	"\aSetMOTD\x12\x1d.services.jobs.SetMOTDRequest\x1a\x1e.services.jobs.SetMOTDResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x1f\xea\xf3\x18\x1b\b<\x12\x17i-mdi-briefcase-outlineBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"\aSetMOTD\x12\x1d.services.jobs.SetMOTDRequest\x1a\x1e.services.jobs.SetMOTDResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a5\xea\xf3\x181\b<\x12\x17i-mdi-briefcase-outline\x1a\x14\x1a\x10ViewJobsOverview =BFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var file_services_jobs_jobs_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_services_jobs_jobs_proto_goTypes = []any{

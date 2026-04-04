@@ -246,9 +246,8 @@ func (s *UsersSync) setOrUpdateUserHash(user *syncdata.DataUser) bool {
 
 			return true
 		}
-	} else {
-		s.hashes.Put(user.GetUserId(), hash, userHashCacheTTL)
 	}
+	s.hashes.Put(user.GetUserId(), hash, userHashCacheTTL)
 
 	return false
 }
@@ -537,7 +536,7 @@ func (s *UsersSync) retrieveLicenses(
 	userId int32,
 	identifier string,
 ) ([]*userslicenses.License, error) {
-	q := s.cfg.Tables.UserLicenses.GetQuery(0, 100)
+	q := s.cfg.Tables.UserLicenses.GetQuery(0, 50)
 	s.logger.Debug("users licenses sync query", zap.String("query", q))
 
 	args := []any{}

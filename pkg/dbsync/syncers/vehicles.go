@@ -193,9 +193,8 @@ func (s *VehiclesSync) syncOnce(
 					vehicles = slices.Delete(vehicles, i, i+1)
 					continue
 				}
-			} else {
-				s.hashes.Put(vehicle.GetPlate(), hash, vehicleHashCacheTTL)
 			}
+			s.hashes.Put(vehicle.GetPlate(), hash, vehicleHashCacheTTL)
 		}
 	}
 

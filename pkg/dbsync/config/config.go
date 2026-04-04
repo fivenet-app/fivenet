@@ -654,7 +654,7 @@ func (c *AccountsTable) GetQuery(
 	limit int64,
 	where ...string,
 ) string {
-	return prepareStringQuery(*c.Query, c.DBSyncTable, state, limit, "")
+	return prepareStringQuery(*c.Query, c.DBSyncTable, state, limit, "license")
 }
 
 type DBSyncTableSyncInterval interface {
@@ -754,7 +754,7 @@ type SyncLimits struct {
 	Jobs     int64 `default:"200" yaml:"jobs"     validate:"omitempty,gte=1,lte=200"`
 	Licenses int64 `default:"200" yaml:"licenses" validate:"omitempty,gte=1,lte=200"`
 
-	Accounts int64 `default:"100" yaml:"accounts" validate:"omitempty,gte=1,lte=100"`
+	Accounts int64 `default:"200" yaml:"accounts" validate:"omitempty,gte=1,lte=200"`
 	Users    int64 `default:"150" yaml:"users"    validate:"omitempty,gte=1,lte=300"`
 	Vehicles int64 `default:"500" yaml:"vehicles" validate:"omitempty,gte=1,lte=500"`
 }

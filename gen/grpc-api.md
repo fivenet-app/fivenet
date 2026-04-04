@@ -253,6 +253,19 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 ## codegen/perms/perms.proto
 
 
+### codegen.perms.AdditionalServicePerm
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  |  |
+| `order` | [int32](#int32) |  |  |
+| `attrs` | [Attr](#codegenpermsAttr) | repeated |  |
+
+
+
+
+
 ### codegen.perms.Attr
 
 
@@ -290,6 +303,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `order` | [int32](#int32) |  |  |
 | `icon` | [string](#string) | optional |  |
+| `additional_perms` | [AdditionalServicePerm](#codegenpermsAdditionalServicePerm) | repeated |  |
 
 
 

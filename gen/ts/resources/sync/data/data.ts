@@ -768,7 +768,7 @@ export const LastCharID = new LastCharID$Type();
 class DataAccounts$Type extends MessageType<DataAccounts> {
     constructor() {
         super("resources.sync.data.DataAccounts", [
-            { no: 1, name: "account_updates", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AccountUpdate, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
+            { no: 1, name: "account_updates", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AccountUpdate, options: { "buf.validate.field": { repeated: { maxItems: "200" } } } }
         ]);
     }
     create(value?: PartialMessage<DataAccounts>): DataAccounts {

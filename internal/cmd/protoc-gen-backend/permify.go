@@ -156,6 +156,9 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 			if serviceOpts.Order != 0 {
 				order = serviceOpts.Order
 			}
+			if len(serviceOpts.AdditionalPerms) > 0 {
+				// TODO register these permissions with their attributes
+			}
 
 			for _, m := range s.Methods() {
 				mName := string(m.Name())
@@ -274,7 +277,9 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 				} else {
 					p.Debugf("Permission already in list, updating: %q - %+v\n", mName, perm)
 					if len(perm.Attrs) > 0 {
-						data.Permissions[sName][perm.Name].Attrs = append(data.Permissions[sName][perm.Name].Attrs, perm.Attrs...)
+						data.Permissions[sName][perm.Name].Attrs = append(
+							data.Permissions[sName][perm.Name].Attrs,
+							perm.Attrs...)
 					}
 					perm.Order = data.Permissions[sName][perm.Name].Order
 				}

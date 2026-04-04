@@ -74,6 +74,27 @@ export interface ServiceOptions {
      * @generated from protobuf field: optional string icon = 2
      */
     icon?: string;
+    /**
+     * @generated from protobuf field: repeated codegen.perms.AdditionalServicePerm additional_perms = 3
+     */
+    additionalPerms: AdditionalServicePerm[];
+}
+/**
+ * @generated from protobuf message codegen.perms.AdditionalServicePerm
+ */
+export interface AdditionalServicePerm {
+    /**
+     * @generated from protobuf field: string name = 3
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: int32 order = 4
+     */
+    order: number;
+    /**
+     * @generated from protobuf field: repeated codegen.perms.Attr attrs = 5
+     */
+    attrs: Attr[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class PermsOptions$Type extends MessageType<PermsOptions> {
@@ -236,12 +257,14 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
     constructor() {
         super("codegen.perms.ServiceOptions", [
             { no: 1, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "additional_perms", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AdditionalServicePerm }
         ]);
     }
     create(value?: PartialMessage<ServiceOptions>): ServiceOptions {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.order = 0;
+        message.additionalPerms = [];
         if (value !== undefined)
             reflectionMergePartial<ServiceOptions>(this, message, value);
         return message;
@@ -256,6 +279,9 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
                     break;
                 case /* optional string icon */ 2:
                     message.icon = reader.string();
+                    break;
+                case /* repeated codegen.perms.AdditionalServicePerm additional_perms */ 3:
+                    message.additionalPerms.push(AdditionalServicePerm.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -275,6 +301,9 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
         /* optional string icon = 2; */
         if (message.icon !== undefined)
             writer.tag(2, WireType.LengthDelimited).string(message.icon);
+        /* repeated codegen.perms.AdditionalServicePerm additional_perms = 3; */
+        for (let i = 0; i < message.additionalPerms.length; i++)
+            AdditionalServicePerm.internalBinaryWrite(message.additionalPerms[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -285,3 +314,66 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
  * @generated MessageType for protobuf message codegen.perms.ServiceOptions
  */
 export const ServiceOptions = new ServiceOptions$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AdditionalServicePerm$Type extends MessageType<AdditionalServicePerm> {
+    constructor() {
+        super("codegen.perms.AdditionalServicePerm", [
+            { no: 3, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "attrs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Attr }
+        ]);
+    }
+    create(value?: PartialMessage<AdditionalServicePerm>): AdditionalServicePerm {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        message.order = 0;
+        message.attrs = [];
+        if (value !== undefined)
+            reflectionMergePartial<AdditionalServicePerm>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AdditionalServicePerm): AdditionalServicePerm {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 3:
+                    message.name = reader.string();
+                    break;
+                case /* int32 order */ 4:
+                    message.order = reader.int32();
+                    break;
+                case /* repeated codegen.perms.Attr attrs */ 5:
+                    message.attrs.push(Attr.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AdditionalServicePerm, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 3; */
+        if (message.name !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.name);
+        /* int32 order = 4; */
+        if (message.order !== 0)
+            writer.tag(4, WireType.Varint).int32(message.order);
+        /* repeated codegen.perms.Attr attrs = 5; */
+        for (let i = 0; i < message.attrs.length; i++)
+            Attr.internalBinaryWrite(message.attrs[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message codegen.perms.AdditionalServicePerm
+ */
+export const AdditionalServicePerm = new AdditionalServicePerm$Type();

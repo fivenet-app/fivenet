@@ -1332,7 +1332,7 @@ export const SetMOTDResponse = new SetMOTDResponse$Type();
  */
 export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "ListColleagues", options: { "codegen.perms.perms": { enabled: true } }, I: ListColleaguesRequest, O: ListColleaguesResponse },
-    { name: "GetSelf", options: { "codegen.perms.perms": { enabled: true, name: "ListColleagues" } }, I: GetSelfRequest, O: GetSelfResponse },
+    { name: "GetSelf", options: { "codegen.perms.perms": { enabled: true, names: ["ListColleagues", "ViewJobsOverview"] } }, I: GetSelfRequest, O: GetSelfResponse },
     { name: "GetColleague", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }, { key: "Types", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Note", "Labels"] }] } }, I: GetColleagueRequest, O: GetColleagueResponse },
     { name: "ListColleagueActivity", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Types", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"] }] } }, I: ListColleagueActivityRequest, O: ListColleagueActivityResponse },
     { name: "SetColleagueProps", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }, { key: "Types", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["AbsenceDate", "Note", "Labels", "Name"] }] } }, I: SetColleaguePropsRequest, O: SetColleaguePropsResponse },
@@ -1341,4 +1341,4 @@ export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "GetColleagueLabelsStats", options: { "codegen.perms.perms": { enabled: true, name: "GetColleague" } }, I: GetColleagueLabelsStatsRequest, O: GetColleagueLabelsStatsResponse },
     { name: "GetMOTD", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: GetMOTDRequest, O: GetMOTDResponse },
     { name: "SetMOTD", options: { "codegen.perms.perms": { enabled: true } }, I: SetMOTDRequest, O: SetMOTDResponse }
-], { "codegen.perms.perms_svc": { order: 60, icon: "i-mdi-briefcase-outline" } });
+], { "codegen.perms.perms_svc": { order: 60, icon: "i-mdi-briefcase-outline", additionalPerms: [{ name: "ViewJobsOverview", order: 61 }] } });

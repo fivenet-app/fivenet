@@ -3,11 +3,11 @@ syntax = "proto3";
 package resources.sync.data;
 
 import "buf/validate/validate.proto";
+import "resources/citizens/licenses/licenses.proto";
 import "resources/jobs/jobs.proto";
 import "resources/livemap/coords.proto";
 import "resources/sync/activity/activity.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/citizens/licenses/licenses.proto";
 import "resources/users/user.proto";
 import "resources/vehicles/vehicles.proto";
 import "tagger/tagger.proto";
@@ -62,7 +62,7 @@ message LastCharID {
 }
 
 message DataAccounts {
-  repeated resources.sync.activity.AccountUpdate account_updates = 1 [(buf.validate.field).repeated.max_items = 100];
+  repeated resources.sync.activity.AccountUpdate account_updates = 1 [(buf.validate.field).repeated.max_items = 200];
 }
 
 // Detailed user information for sync purposes

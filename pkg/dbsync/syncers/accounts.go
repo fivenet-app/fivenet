@@ -30,39 +30,78 @@ func NewAccountsSync(
 }
 
 func (s *AccountsSync) Sync(ctx context.Context) (int64, error) {
-	accounts, err := s.fetchAccounts(ctx)
-	if err != nil {
-		return 0, err
-	}
+	limit := s.cfg.Limits.Accounts
+	var total int64
+	prevCursorID := ""
 
-	s.logger.Debug("accountsSync", zap.Int("len", len(accounts)))
+	for batches := 0; ; batches++ {
+		accounts, cursorID, err := s.fetchAccounts(ctx)
+		if err != nil {
+			return total, err
+		}
 
-	if len(accounts) == 0 {
-		return 0, nil
-	}
+		fetched := int64(len(accounts))
+		s.logger.Debug("accountsSync", zap.Int64("len", fetched))
+		if fetched == 0 {
+			break
+		}
 
-	count := int64(len(accounts))
-	if count == 0 {
-		return 0, nil
-	}
-
-	// Sync jobs to FiveNet server
-	if err := s.sendData(ctx, &pbsync.SendDataRequest{
-		Data: &pbsync.SendDataRequest_Accounts{
-			Accounts: &syncdata.DataAccounts{
-				AccountUpdates: accounts,
+		// Sync accounts to FiveNet server.
+		if err := s.sendData(ctx, &pbsync.SendDataRequest{
+			Data: &pbsync.SendDataRequest_Accounts{
+				Accounts: &syncdata.DataAccounts{
+					AccountUpdates: accounts,
+				},
 			},
-		},
-	}); err != nil {
-		return 0, err
+		}); err != nil {
+			return total, err
+		}
+		total += fetched
+
+		// Nothing left for this cycle.
+		if fetched < limit {
+			break
+		}
+
+		// Guard against starvation when data changes continuously under high write load.
+		if batches+1 >= maxDrainBatchesPerSync {
+			s.logger.Info(
+				"accounts sync hit drain batch cap; remaining updates continue next interval",
+				zap.Int64("fetched", fetched),
+				zap.Stringp("cursor_id", cursorID),
+			)
+			break
+		}
+
+		// Guard against non-advancing cursor loops.
+		if cursorID == nil || *cursorID == "" {
+			s.logger.Info(
+				"accounts sync cursor missing, stopping drain loop",
+				zap.Int64("fetched", fetched),
+			)
+			break
+		}
+		if *cursorID == prevCursorID {
+			s.logger.Info(
+				"accounts sync cursor did not advance, stopping drain loop",
+				zap.String("cursor_id", *cursorID),
+				zap.Int64("fetched", fetched),
+			)
+			break
+		}
+		prevCursorID = *cursorID
+		s.state.SetCursor(nil, cursorID)
 	}
 
-	s.state.SetCursor(nil, nil)
+	// Accounts sync intentionally processes full snapshots each interval.
+	s.state.ResetCursor()
 
-	return count, nil
+	return total, nil
 }
 
-func (s *AccountsSync) fetchAccounts(ctx context.Context) ([]*syncactivity.AccountUpdate, error) {
+func (s *AccountsSync) fetchAccounts(
+	ctx context.Context,
+) ([]*syncactivity.AccountUpdate, *string, error) {
 	limit := s.cfg.Limits.Accounts
 	q := s.cfg.Tables.Accounts.GetQuery(s.state, 0, limit)
 	s.logger.Debug("accounts sync query", zap.String("query", q))
@@ -70,7 +109,7 @@ func (s *AccountsSync) fetchAccounts(ctx context.Context) ([]*syncactivity.Accou
 	accountsResults := []*syncactivity.AccountUpdate{}
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, &accountsResults); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, fmt.Errorf("failed to query accounts. %w", err)
+			return nil, nil, fmt.Errorf("failed to query accounts. %w", err)
 		}
 	}
 
@@ -82,5 +121,13 @@ func (s *AccountsSync) fetchAccounts(ctx context.Context) ([]*syncactivity.Accou
 		}
 	}
 
-	return accountsResults, nil
+	var cursorID *string
+	if len(accountsResults) > 0 {
+		lastID := accountsResults[len(accountsResults)-1].GetLicense()
+		if lastID != "" {
+			cursorID = &lastID
+		}
+	}
+
+	return accountsResults, cursorID, nil
 }

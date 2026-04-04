@@ -9,6 +9,31 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *AdditionalServicePerm) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Attrs
+	for idx, item := range m.Attrs {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Attr) Sanitize() error {
 	if m == nil {
 		return nil
@@ -76,6 +101,18 @@ func (m *PermsOptions) Sanitize() error {
 func (m *ServiceOptions) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: AdditionalPerms
+	for idx, item := range m.AdditionalPerms {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// Field: Icon

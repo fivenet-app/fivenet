@@ -127,6 +127,12 @@ service JobsService {
   option (codegen.perms.perms_svc) = {
     order: 60
     icon: "i-mdi-briefcase-outline"
+    additional_perms: [
+      {
+        name: "ViewJobsOverview"
+        order: 61
+      }
+    ]
   };
 
   rpc ListColleagues(ListColleaguesRequest) returns (ListColleaguesResponse) {
@@ -135,7 +141,10 @@ service JobsService {
   rpc GetSelf(GetSelfRequest) returns (GetSelfResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "ListColleagues"
+      names: [
+        "ListColleagues",
+        "ViewJobsOverview"
+      ]
     };
   }
 

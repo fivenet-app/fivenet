@@ -35,4 +35,12 @@ extend google.protobuf.ServiceOptions {
 message ServiceOptions {
   int32 order = 1;
   optional string icon = 2;
+
+  repeated AdditionalServicePerm additional_perms = 3;
+}
+
+message AdditionalServicePerm {
+  string name = 3;
+  int32 order = 4;
+  repeated Attr attrs = 5;
 }

@@ -1249,7 +1249,7 @@ var File_resources_sync_data_data_proto protoreflect.FileDescriptor
 
 const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/sync/data/data.proto\x12\x13resources.sync.data\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a&resources/sync/activity/activity.proto\x1a#resources/timestamp/timestamp.proto\x1a*resources/citizens/licenses/licenses.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\"\n" +
+	"\x1eresources/sync/data/data.proto\x12\x13resources.sync.data\x1a*resources/citizens/licenses/licenses.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a&resources/sync/activity/activity.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\"\n" +
 	"\n" +
 	"DataStatus\x12\x14\n" +
 	"\x05count\x18\x01 \x01(\x03R\x05count\"3\n" +

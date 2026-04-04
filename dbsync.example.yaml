@@ -367,6 +367,8 @@ tables:
   accounts:
     enabled: false
     tableName: "admin_accounts"
+    # Sync all accounts every X interval, to ensure eventual consistency of the data when an update has been missed for whatever reason.
+    syncInterval: "1m"
     # By default the dbsync will attempt to add the column if it does not exist, but you can
     # disable that by commenting this out. It is recommended to leave it enabled, for
     # performance reasons.
@@ -399,6 +401,6 @@ limits:
   jobs: 200
   licenses: 200
   # Main data
-  accounts: 100
+  accounts: 200
   users: 150
   vehicles: 400
