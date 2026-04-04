@@ -492,6 +492,26 @@ func (c *UsersTable) GetQuery(
 	return buildQueryFromColumns(c.TableName, columns, where, limit, orderBy)
 }
 
+// GetSyncQuery returns the users query while always combining state cursor conditions with extra where conditions.
+func (c *UsersTable) GetSyncQuery(
+	state *TableSyncState,
+	limit int64,
+	where ...string,
+) string {
+	if c.Query != nil {
+		return prepareStringQueryWithStateAndWhere(
+			*c.Query,
+			c.DBSyncTable,
+			state,
+			limit,
+			c.Columns.ID,
+			where,
+		)
+	}
+
+	return c.GetQuery(state, 0, limit, where...)
+}
+
 type UsersColumns struct {
 	ID          string `yaml:"id"          default:"id"`
 	Identifier  string `yaml:"identifier"  default:"identifier"`
@@ -634,6 +654,26 @@ func (c *VehiclesTable) GetQuery(
 
 	where = append(where, getWhereCondition(c.DBSyncTable, state, c.Columns.Plate))
 	return buildQueryFromColumns(c.TableName, columns, where, limit, orderBy)
+}
+
+// GetSyncQuery returns the vehicles query while always combining state cursor conditions with extra where conditions.
+func (c *VehiclesTable) GetSyncQuery(
+	state *TableSyncState,
+	limit int64,
+	where ...string,
+) string {
+	if c.Query != nil {
+		return prepareStringQueryWithStateAndWhere(
+			*c.Query,
+			c.DBSyncTable,
+			state,
+			limit,
+			c.Columns.Plate,
+			where,
+		)
+	}
+
+	return c.GetQuery(state, 0, limit, where...)
 }
 
 type VehiclesColumns struct {

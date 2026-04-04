@@ -66,6 +66,7 @@ func NewVehiclesSync(
 
 func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, *time.Time, error) {
 	limit := s.cfg.Limits.Vehicles
+	windowEnd := time.Now().UTC()
 
 	var totalFetched int64
 	var totalSent int64
@@ -73,9 +74,10 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, *time.Ti
 	var lastUpdatedAt *time.Time
 	prevID := ""
 	var prevUpdatedAt *time.Time
+	noopStreak := 0
 
 	for batches := 0; ; batches++ {
-		fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx)
+		fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx, &windowEnd)
 		if err != nil {
 			return totalFetched, totalSent, lastID, lastUpdatedAt, err
 		}
@@ -116,6 +118,24 @@ func (s *VehiclesSync) Sync(ctx context.Context) (int64, int64, string, *time.Ti
 			break
 		}
 
+		// Guard against repeated no-op batches where cursor keeps advancing but no rows are sent.
+		if sent == 0 {
+			noopStreak++
+			if noopStreak >= maxNoopBatchesPerSync {
+				s.logger.Info(
+					"vehicles sync hit no-op batch cap; stopping drain loop",
+					zap.Int("noop_streak", noopStreak),
+					zap.Int64("fetched", fetched),
+					zap.Int64("sent", sent),
+					zap.String("cursor_id", cursorID),
+					zap.Timep("cursor_time", cursorTime),
+				)
+				break
+			}
+		} else {
+			noopStreak = 0
+		}
+
 		prevID = cursorID
 		if cursorTime != nil {
 			t := *cursorTime
@@ -134,16 +154,21 @@ func (s *VehiclesSync) Resync(ctx context.Context) (int64, int64, string, *time.
 		s.state.SetLastCheck(nil)
 	}
 
-	fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx)
+	fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx, nil)
 	return fetched, sent, cursorID, cursorTime, err
 }
 
 func (s *VehiclesSync) syncOnce(
 	ctx context.Context,
+	windowEnd *time.Time,
 ) (int64, int64, string, *time.Time, error) {
 	limit := s.cfg.Limits.Vehicles
 	sQuery := s.cfg.Tables.Vehicles
-	q := sQuery.GetQuery(s.state, 0, limit)
+	q := sQuery.GetSyncQuery(
+		s.state,
+		limit,
+		updatedAtUpperBoundCondition(sQuery.UpdatedTimeColumn, windowEnd),
+	)
 	s.logger.Debug("vehicles sync query", zap.String("query", q))
 
 	vehicles := []*vehicles.Vehicle{}

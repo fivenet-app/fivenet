@@ -25,6 +25,7 @@ import (
 const (
 	userHashCacheTTL       = 6 * time.Hour
 	maxDrainBatchesPerSync = 10
+	maxNoopBatchesPerSync  = 3
 )
 
 type UsersSync struct {
@@ -69,6 +70,7 @@ func NewUsersSync(s *Syncer, state *dbsyncconfig.TableSyncState, saveUpdatedAt b
 
 func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, *time.Time, error) {
 	limit := s.cfg.Limits.Users
+	windowEnd := time.Now().UTC()
 
 	var totalFetched int64
 	var totalSent int64
@@ -78,7 +80,7 @@ func (s *UsersSync) Sync(ctx context.Context) (int64, int64, string, *time.Time,
 	var prevUpdatedAt *time.Time
 
 	for batches := 0; ; batches++ {
-		fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx)
+		fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx, &windowEnd)
 		if err != nil {
 			return totalFetched, totalSent, lastID, lastUpdatedAt, err
 		}
@@ -140,16 +142,21 @@ func (s *UsersSync) Resync(ctx context.Context) (int64, int64, string, *time.Tim
 		s.state.SetLastCheck(nil)
 	}
 
-	fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx)
+	fetched, sent, cursorID, cursorTime, err := s.syncOnce(ctx, nil)
 	return fetched, sent, cursorID, cursorTime, err
 }
 
 func (s *UsersSync) syncOnce(
 	ctx context.Context,
+	windowEnd *time.Time,
 ) (int64, int64, string, *time.Time, error) {
 	limit := s.cfg.Limits.Users
 	sQuery := s.cfg.Tables.Users
-	q := sQuery.GetQuery(s.state, 0, limit)
+	q := sQuery.GetSyncQuery(
+		s.state,
+		limit,
+		updatedAtUpperBoundCondition(sQuery.UpdatedTimeColumn, windowEnd),
+	)
 
 	us, err := s.fetchUsers(ctx, q)
 	if err != nil {

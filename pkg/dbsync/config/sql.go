@@ -76,15 +76,42 @@ func prepareStringQuery(
 	limit int64,
 	cursorIDColumn string,
 ) string {
+	return prepareStringQueryWithStateAndWhere(
+		q,
+		table,
+		state,
+		limit,
+		cursorIDColumn,
+		nil,
+	)
+}
+
+func prepareStringQueryWithStateAndWhere(
+	q string,
+	table DBSyncTable,
+	state *TableSyncState,
+	limit int64,
+	cursorIDColumn string,
+	whereCondition []string,
+) string {
 	limitStr := strconv.FormatInt(limit, 10)
 
 	q = strings.ReplaceAll(q, "$limit", limitStr)
 
-	where := getWhereCondition(table, state, cursorIDColumn)
-	if where != "" {
-		// Prepend "WHERE " if there is a condition
-		where = "WHERE " + where
+	conditions := []string{}
+	if cursorWhere := strings.TrimSpace(getWhereCondition(table, state, cursorIDColumn)); cursorWhere != "" {
+		conditions = append(conditions, cursorWhere)
 	}
+	whereCondition = slices.DeleteFunc(whereCondition, func(c string) bool {
+		return strings.TrimSpace(c) == ""
+	})
+	conditions = append(conditions, whereCondition...)
+
+	where := ""
+	if len(conditions) > 0 {
+		where = "WHERE " + strings.Join(conditions, " AND ") + "\n"
+	}
+
 	q = strings.ReplaceAll(q, "$whereCondition", where)
 
 	return q
