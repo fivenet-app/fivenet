@@ -622,7 +622,24 @@ func (s *Server) ListInactiveEmployees(
 		).
 		WHERE(condition).
 		ORDER_BY(orderBys...).
-		GROUP_BY(tTimeClock.UserID, tColleague.ID, tColleague.Job, tColleague.JobGrade).
+		GROUP_BY(
+			tTimeClock.UserID,
+			tColleague.ID,
+			tColleague.Job,
+			tColleague.JobGrade,
+			tColleague.Firstname,
+			tColleague.Lastname,
+			tColleague.Dateofbirth,
+			tColleague.PhoneNumber,
+			tUserProps.AvatarFileID,
+			tAvatar.FilePath,
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.AbsenceBegin,
+			tColleagueProps.AbsenceEnd,
+			tColleagueProps.NamePrefix,
+			tColleagueProps.NameSuffix,
+		).
 		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
 
