@@ -64,7 +64,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="$t('components.auth.change_username_modal.change_username')" :prevent-close="!canSubmit">
+    <UModal :title="$t('components.auth.change_username_modal.change_username')" :dismissible="!canSubmit">
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="currentUsername" :label="$t('components.auth.change_username_modal.current_username')">

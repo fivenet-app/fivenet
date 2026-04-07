@@ -71,6 +71,52 @@ func (p *PermifyModule) Execute(
 				continue
 			}
 
+			for _, s := range f.Services() {
+				sName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
+
+				var serviceOpts permspb.ServiceOptions
+				_, err := s.Extension(permspb.E_PermsSvc, &serviceOpts)
+				if err != nil {
+					p.Fail("error reading perms option:", err)
+				}
+
+				for _, v := range serviceOpts.AdditionalPerms {
+					if _, ok := data.Permissions[sName]; !ok {
+						data.Permissions[sName] = map[string]*Perm{}
+					}
+
+					perm := &Perm{
+						Name:    v.Name,
+						Service: &sName,
+					}
+
+					perm.Attrs = make([]Attr, len(v.Attrs))
+					for i, a := range v.Attrs {
+						atype := "StringList"
+						switch a.Type {
+						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_LIST:
+							atype = "JobList"
+						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_GRADE_LIST:
+							atype = "JobGradeList"
+						}
+
+						perm.Attrs[i] = Attr{
+							Key:  a.Key,
+							Type: atype,
+						}
+						if a.ValidStringList != nil {
+							perm.Attrs[i].Valid += "[]string{"
+							for _, v := range a.ValidStringList {
+								perm.Attrs[i].Valid += fmt.Sprintf("%q, ", v)
+							}
+							perm.Attrs[i].Valid += "}"
+						}
+					}
+
+					data.Permissions[sName][perm.Name] = perm
+				}
+			}
+
 			data.FS = append(data.FS, f)
 			for _, s := range f.Services() {
 				sName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")

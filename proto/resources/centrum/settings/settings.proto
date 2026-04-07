@@ -91,7 +91,10 @@ message Configuration {
     gt: 5
     lt: 1000000
   }];
-  optional google.protobuf.Duration deduplication_duration = 3;
+  optional google.protobuf.Duration deduplication_duration = 3 [(buf.validate.field).duration = {
+    gt: {seconds: 0}
+    lte: {seconds: 3600}
+  }];
 }
 
 message EffectiveAccess {

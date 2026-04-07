@@ -6,6 +6,8 @@ import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import InputDurationPicker from '~/components/partials/InputDurationPicker.vue';
+import { zodProtoDurationSchema } from '~/utils/validation';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { CentrumAccessLevel, type CentrumJobAccess } from '~~/gen/ts/resources/centrum/access/access';
 import { CentrumMode, CentrumType, type Settings } from '~~/gen/ts/resources/centrum/settings/settings';
@@ -74,7 +76,11 @@ const schema = z.object({
     configuration: z.object({
         deduplicationEnabled: z.coerce.boolean().default(true),
         deduplicationRadius: z.coerce.number().min(5).max(1000000).default(45),
-        deduplicationDuration: z.coerce.number().max(1000000).positive().default(180),
+        deduplicationDuration: zodProtoDurationSchema({
+            required: true,
+            min: secondsToDuration(1),
+            max: secondsToDuration(3600),
+        }),
     }),
 });
 
@@ -104,7 +110,7 @@ const state = reactive<Schema>({
     configuration: {
         deduplicationEnabled: true,
         deduplicationRadius: 45,
-        deduplicationDuration: 180,
+        deduplicationDuration: secondsToDuration(180),
     },
 });
 
@@ -128,10 +134,7 @@ async function updateSettings(values: Schema): Promise<void> {
                 configuration: {
                     deduplicationEnabled: values.configuration?.deduplicationEnabled ?? true,
                     deduplicationRadius: values.configuration?.deduplicationRadius ?? 45,
-                    deduplicationDuration: {
-                        seconds: values.configuration?.deduplicationDuration ?? 180,
-                        nanos: 0,
-                    },
+                    deduplicationDuration: values.configuration?.deduplicationDuration ?? secondsToDuration(180),
                 },
             },
         });
@@ -172,7 +175,7 @@ function setSettingsValues(): void {
     state.configuration = {
         deduplicationEnabled: settings.value.configuration?.deduplicationEnabled ?? true,
         deduplicationRadius: settings.value.configuration?.deduplicationRadius ?? 45,
-        deduplicationDuration: settings.value.configuration?.deduplicationDuration?.seconds ?? 180,
+        deduplicationDuration: settings.value.configuration?.deduplicationDuration ?? secondsToDuration(180),
     };
 }
 
@@ -369,12 +372,14 @@ const formRef = useTemplateRef('formRef');
                                 name="configuration.deduplicationDuration"
                                 :label="$t('components.centrum.settings.deduplication.deduplication_duration')"
                             >
-                                <UInputNumber
+                                <InputDurationPicker
                                     v-model="state.configuration.deduplicationDuration"
-                                    :min="30"
-                                    :placeholder="$t('common.time_ago.second', 2)"
+                                    :units="['minute', 'second']"
+                                    :step="1"
+                                    :min="secondsToDuration(1)"
+                                    :max="secondsToDuration(3600)"
                                     :disabled="!canSubmit"
-                                    :format-options="{ style: 'unit', unit: 'second', unitDisplay: 'short' }"
+                                    class="w-full"
                                 />
                             </UFormField>
 

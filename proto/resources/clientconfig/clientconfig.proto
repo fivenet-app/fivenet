@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.clientconfig;
 
 import "google/protobuf/duration.proto";
+import "buf/validate/validate.proto";
 import "resources/settings/banner.proto";
 import "resources/settings/config.proto";
 import "resources/settings/data.proto";
@@ -52,9 +53,21 @@ message Game {
   resources.settings.Livemap livemap = 3 [(tagger.tags) = "json:\"livemap\""];
 
   bool max_wanted_duration_user_enabled = 4 [(tagger.tags) = "json:\"maxWantedDurationUserEnabled\""];
-  optional google.protobuf.Duration max_wanted_duration_user = 5 [(tagger.tags) = "json:\"maxWantedDurationUser,omitempty\""];
+  optional google.protobuf.Duration max_wanted_duration_user = 5 [
+    (buf.validate.field).duration = {
+      gte: {seconds: 86400} /* 1 day */
+      lte: {seconds: 315360000} /* 3650 days */
+    },
+    (tagger.tags) = "json:\"maxWantedDurationUser,omitempty\""
+  ];
   bool max_wanted_duration_vehicle_enabled = 6 [(tagger.tags) = "json:\"maxWantedDurationVehicleEnabled\""];
-  optional google.protobuf.Duration max_wanted_duration_vehicle = 7 [(tagger.tags) = "json:\"maxWantedDurationVehicle,omitempty\""];
+  optional google.protobuf.Duration max_wanted_duration_vehicle = 7 [
+    (buf.validate.field).duration = {
+      gte: {seconds: 86400} /* 1 day */
+      lte: {seconds: 315360000} /* 3650 days */
+    },
+    (tagger.tags) = "json:\"maxWantedDurationVehicle,omitempty\""
+  ];
 }
 
 message System {

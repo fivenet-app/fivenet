@@ -1259,7 +1259,7 @@
                     "title": "Automatic Grading",
                     "description": "If enabled, the exam will be automatically graded after the user has submitted it. If disabled, the exam will be graded manually by a tutor. The system uses the selected answers to grade the exam automatically (answer key is for helping tutors.)"
                 },
-                "exam_duration": "Exam Duration (in seconds)",
+                "exam_duration": "Exam Duration",
                 "auto_grade_mode": {
                     "title": "Grade Mode",
                     "description": "The mode for the automatic grading. 'Strict mode' gives no points for partial answers (e.g., all multiple choice answers must be selected and correct.)"
@@ -1461,7 +1461,9 @@
             "citizen_labels": {
                 "title": "Citizen Labels",
                 "settings": {
-                    "requires_expiration": "Requires Expiration"
+                    "requires_expiration": "Requires Expiration",
+                    "min_duration": "Min Duration",
+                    "max_duration": "Max Duration"
                 }
             },
             "List": {
@@ -1717,7 +1719,7 @@
                         "description": "The maximum duration for wanted status. If enabled, this setting will limit the duration of the wanted status of citizens and vehicles (automatically removed after the duration).",
                         "enabled_user": "Enabled for citizens",
                         "enabled_vehicle": "Enabled for vehicles",
-                        "max": "Max Duration (in days)"
+                        "max": "Max Duration"
                     }
                 },
                 "quick_buttons": {
@@ -3919,6 +3921,13 @@
         },
         "custom": {
             "default": "{message}",
+            "duration": {
+                "invalid": "Invalid duration value.",
+                "required": "Duration is required.",
+                "min": "Duration is below the minimum allowed value.",
+                "max": "Duration exceeds the maximum allowed value.",
+                "min_max_order": "Maximum duration must be greater than or equal to minimum duration."
+            },
             "access_entry": {
                 "duplicate_job_grade": "A job and grade were selected multiple times. Please select each job and grade only once.",
                 "duplicate_user": "A citizen was selected multiple times. Please select each citizen only once.",

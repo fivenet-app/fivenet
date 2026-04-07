@@ -275,7 +275,7 @@ var PermsRemap = map[string][]string{
 		"Any",
 	},
 	"jobs.JobsService/GetSelf": []string{
-		"jobs.JobsService/ListColleagues", "jobs.JobsService/ViewJobsOverview",
+		"jobs.JobsService/ListColleagues",
 	},
 
 	// Service: jobs.TimeclockService

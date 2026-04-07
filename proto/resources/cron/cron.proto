@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.cron;
 
 import "codegen/sanitizer/sanitizer.proto";
+import "buf/validate/validate.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
 import "resources/timestamp/timestamp.proto";
@@ -29,7 +30,10 @@ message Cronjob {
   optional resources.timestamp.Timestamp started_time = 6;
 
   // Optional timeout for cronjob execution
-  optional google.protobuf.Duration timeout = 7;
+  optional google.protobuf.Duration timeout = 7 [(buf.validate.field).duration = {
+    gte: {seconds: 0}
+    lte: {seconds: 1800} /* 30 minutes */
+  }];
 
   // Cronjob data
   CronjobData data = 8;
@@ -72,7 +76,9 @@ message CronjobCompletedEvent {
   // Cronjob end time
   resources.timestamp.Timestamp end_date = 3;
   // Cronjob execution time/elapsed time
-  google.protobuf.Duration elapsed = 4;
+  google.protobuf.Duration elapsed = 4 [(buf.validate.field).duration = {
+    gte: {seconds: 0}
+  }];
 
   // Cronjob data (can be empty if not touched by the Cronjob handler)
   optional CronjobData data = 5;

@@ -1,5 +1,5 @@
+import type { Editor } from '@tiptap/core';
 import type { Transaction } from '@tiptap/pm/state';
-import type { Editor } from '@tiptap/vue-3';
 
 type TextAlign = 'left' | 'center' | 'right' | 'justify';
 

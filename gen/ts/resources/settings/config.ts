@@ -1509,9 +1509,9 @@ class Game$Type extends MessageType<Game> {
     constructor() {
         super("resources.settings.Game", [
             { no: 4, name: "max_wanted_duration_user_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "max_wanted_duration_user", kind: "message", T: () => Duration },
+            { no: 5, name: "max_wanted_duration_user", kind: "message", T: () => Duration, options: { "buf.validate.field": { duration: { lte: { seconds: "315360000" }, gte: { seconds: "86400" } } } } },
             { no: 6, name: "max_wanted_duration_vehicle_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "max_wanted_duration_vehicle", kind: "message", T: () => Duration }
+            { no: 7, name: "max_wanted_duration_vehicle", kind: "message", T: () => Duration, options: { "buf.validate.field": { duration: { lte: { seconds: "315360000" }, gte: { seconds: "86400" } } } } }
         ]);
     }
     create(value?: PartialMessage<Game>): Game {

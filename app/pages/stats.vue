@@ -53,21 +53,31 @@ type StatsState = { stats: Stats; fetchedAt?: number };
 
 const state = useState<StatsState>('stats', () => ({ stats: defaultStats, fetchedAt: undefined }));
 
-const { data: stats, status } = useLazyAsyncData('stats', () => getPublicStats(), {
-    transform: (input): StatsState => ({
-        stats: input,
-        fetchedAt: new Date().getTime(),
-    }),
-    getCachedData() {
-        if (!state.value.fetchedAt) return undefined;
-
-        const expireDate = new Date(state.value.fetchedAt);
-        expireDate.setTime(expireDate.getTime() + 60 * 1000);
-        if (expireDate.getTime() < Date.now()) return undefined;
-
-        return state.value;
+const { data: stats, status } = useLazyAsyncData<StatsState>(
+    'stats',
+    async () => {
+        const nextState: StatsState = {
+            stats: await getPublicStats(),
+            fetchedAt: Date.now(),
+        };
+        state.value = nextState;
+        return nextState;
     },
-});
+    {
+        default: () => state.value,
+        getCachedData() {
+            if (!state.value.fetchedAt) return undefined;
+
+            const expireDate = new Date(state.value.fetchedAt);
+            expireDate.setTime(expireDate.getTime() + 60 * 1000);
+            if (expireDate.getTime() < Date.now()) return undefined;
+
+            return state.value;
+        },
+    },
+);
+
+const displayStats = computed<Stats>(() => stats.value?.stats ?? defaultStats);
 
 async function getPublicStats(): Promise<Stats> {
     try {
@@ -131,15 +141,15 @@ onBeforeMount(async () => {
         <template #body>
             <UPageGrid>
                 <UPageCard
-                    v-for="(stat, key) in stats?.stats"
+                    v-for="(stat, key) in displayStats"
                     :key="key"
                     :title="$t(`pages.stats.stats.${key}`)"
-                    :icon="stat?.icon"
+                    :icon="stat.icon"
                     :ui="{ leadingIcon: 'size-8' }"
                 >
                     <template #description>
                         <p class="flex w-full items-center gap-x-1 text-2xl font-semibold tracking-tight text-highlighted">
-                            <USkeleton v-if="isRequestPending(status) || stat?.value === undefined" class="h-8 w-[175px]" />
+                            <USkeleton v-if="isRequestPending(status) || stat.value === undefined" class="h-8 w-[175px]" />
                             <ClientOnly v-else>
                                 <CountUp
                                     :start-val="0"

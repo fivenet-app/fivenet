@@ -13,6 +13,8 @@ export default defineNuxtPlugin({
         const t = (key: string, params?: Record<string, any>) =>
             (nuxtApp.$i18n?.t(key, params ?? {}) as unknown as string) ?? '';
 
+        const te = (key: string) => nuxtApp.$i18n?.te(key) ?? false;
+
         const hasKey = (key: string) => {
             const s = t(key);
             // vue-i18n returns the key itself when missing (unless you changed missing handler)
@@ -181,7 +183,7 @@ export default defineNuxtPlugin({
 
                 case 'custom': {
                     const msg = (issue as z.core.$ZodIssueCustom).message ?? '';
-                    return t('zod.custom.default', { message: $te(msg) ? t(msg) : msg }) || 'Invalid input';
+                    return t('zod.custom.default', { message: te(msg) ? t(msg) : msg }) || 'Invalid input';
                 }
 
                 default:

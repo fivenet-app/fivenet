@@ -6,6 +6,11 @@ export default defineConfig({
     appType: 'spa',
 
     test: {
+        // Stop Vue 3 from logging Suspense warnings in the console during tests
+        onConsoleLog: (l) => {
+            return !l.startsWith('<Suspense>');
+        },
+
         projects: [
             await defineVitestProject({
                 test: {

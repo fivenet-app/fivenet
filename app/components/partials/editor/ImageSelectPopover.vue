@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
-import type { Editor } from '@tiptap/vue-3';
+import type { Editor } from '@tiptap/core';
 import { z } from 'zod';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 

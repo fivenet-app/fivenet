@@ -532,9 +532,9 @@ class Game$Type extends MessageType<Game> {
             { no: 2, name: "start_job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "tagger.tags": "json:\"startJobGrade\"" } },
             { no: 3, name: "livemap", kind: "message", T: () => Livemap, options: { "tagger.tags": "json:\"livemap\"" } },
             { no: 4, name: "max_wanted_duration_user_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"maxWantedDurationUserEnabled\"" } },
-            { no: 5, name: "max_wanted_duration_user", kind: "message", T: () => Duration, options: { "tagger.tags": "json:\"maxWantedDurationUser,omitempty\"" } },
+            { no: 5, name: "max_wanted_duration_user", kind: "message", T: () => Duration, options: { "buf.validate.field": { duration: { lte: { seconds: "315360000" }, gte: { seconds: "86400" } } }, "tagger.tags": "json:\"maxWantedDurationUser,omitempty\"" } },
             { no: 6, name: "max_wanted_duration_vehicle_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"maxWantedDurationVehicleEnabled\"" } },
-            { no: 7, name: "max_wanted_duration_vehicle", kind: "message", T: () => Duration, options: { "tagger.tags": "json:\"maxWantedDurationVehicle,omitempty\"" } }
+            { no: 7, name: "max_wanted_duration_vehicle", kind: "message", T: () => Duration, options: { "buf.validate.field": { duration: { lte: { seconds: "315360000" }, gte: { seconds: "86400" } } }, "tagger.tags": "json:\"maxWantedDurationVehicle,omitempty\"" } }
         ]);
     }
     create(value?: PartialMessage<Game>): Game {

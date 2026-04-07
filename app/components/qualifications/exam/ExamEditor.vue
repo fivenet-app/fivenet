@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
+import InputDurationPicker from '~/components/partials/InputDurationPicker.vue';
+import { zodProtoDurationSchema } from '~/utils/validation';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { AutoGradeMode, type ExamQuestions, QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
 import ExamEditorQuestion from './ExamEditorQuestion.vue';
@@ -36,7 +38,11 @@ const { moveUp, moveDown } = useListReorder(toRef(exam.value.questions));
 
 <script lang="ts">
 export const examSettings = z.object({
-    time: zodDurationSchema,
+    time: zodProtoDurationSchema({
+        required: true,
+        min: { seconds: 60, nanos: 0 },
+        max: { seconds: 60 * 60 * 12, nanos: 0 },
+    }),
     autoGrade: z.coerce.boolean().default(false),
     autoGradeMode: z.enum(AutoGradeMode).default(AutoGradeMode.STRICT),
     minimumPoints: z.coerce.number().min(0).default(0),
@@ -76,13 +82,14 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                     name="examSettings.time"
                     :label="$t('components.qualifications.exam_editor.exam_duration')"
                 >
-                    <UInputNumber
+                    <InputDurationPicker
                         v-model="examSettings.time"
-                        :min="1"
-                        :step="1"
-                        :placeholder="$t('common.duration')"
+                        mode="composite"
+                        :units="['hour', 'minute', 'second']"
+                        :min="secondsToDuration(60)"
+                        :step="0.1"
+                        :max="secondsToDuration(60 * 60 * 12)"
                         class="w-full"
-                        :format-options="{ style: 'unit', unit: 'second', unitDisplay: 'short' }"
                     />
                 </UFormField>
 

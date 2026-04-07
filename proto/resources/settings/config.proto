@@ -251,7 +251,13 @@ message Livemap {
 
 message Game {
   bool max_wanted_duration_user_enabled = 4;
-  optional google.protobuf.Duration max_wanted_duration_user = 5;
+  optional google.protobuf.Duration max_wanted_duration_user = 5 [(buf.validate.field).duration = {
+    gte: {seconds: 86400} /* 1 day */
+    lte: {seconds: 315360000} /* 3650 days */
+  }];
   bool max_wanted_duration_vehicle_enabled = 6;
-  optional google.protobuf.Duration max_wanted_duration_vehicle = 7;
+  optional google.protobuf.Duration max_wanted_duration_vehicle = 7 [(buf.validate.field).duration = {
+    gte: {seconds: 86400} /* 1 day */
+    lte: {seconds: 315360000} /* 3650 days */
+  }];
 }

@@ -1,45 +1,151 @@
 import { z } from 'zod';
+import { durationToSeconds } from '~/utils/duration';
+import type { Duration } from '~~/gen/ts/google/protobuf/duration';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 export const pageNumberSchema = z.coerce.number().int().nonnegative().min(1).max(999_999_999).prefault(1);
 
-export const zodDurationSchema = z
-    .number()
-    .nonnegative()
-    .max(999_999)
-    .superRefine((duration, ctx) => {
-        if (!duration || duration < 0) {
-            ctx.addIssue({
-                code: 'custom',
-                params: {
-                    i18n: 'zod.errors.custom_types.duration.invalid',
-                },
-            });
+type DurationI18nKeys = {
+    invalid: string;
+    required: string;
+    min: string;
+    max: string;
+    minMaxOrder: string;
+};
+
+const defaultDurationI18nKeys: DurationI18nKeys = {
+    invalid: 'zod.custom.duration.invalid',
+    required: 'zod.custom.duration.required',
+    min: 'zod.custom.duration.min',
+    max: 'zod.custom.duration.max',
+    minMaxOrder: 'zod.custom.duration.min_max_order',
+};
+
+function getDurationI18nKeys(overrides?: Partial<DurationI18nKeys>): DurationI18nKeys {
+    return {
+        ...defaultDurationI18nKeys,
+        ...overrides,
+    };
+}
+
+function isDuration(value: unknown): value is Duration {
+    if (!value || typeof value !== 'object') {
+        return false;
+    }
+
+    const duration = value as Partial<Duration>;
+    return (
+        typeof duration.seconds === 'number' &&
+        Number.isFinite(duration.seconds) &&
+        typeof duration.nanos === 'number' &&
+        Number.isFinite(duration.nanos)
+    );
+}
+
+function addI18nIssue(
+    ctx: z.RefinementCtx,
+    i18n: string,
+    options?: {
+        path?: (string | number)[];
+        params?: Record<string, unknown>;
+    },
+): void {
+    ctx.addIssue({
+        code: 'custom',
+        path: options?.path,
+        params: {
+            i18n,
+            ...(options?.params ?? {}),
+        },
+    });
+}
+
+interface ProtoDurationSchemaOptions {
+    required?: boolean;
+    min?: Duration;
+    max?: Duration;
+    i18n?: Partial<DurationI18nKeys>;
+}
+
+export function zodProtoDurationSchema(options?: ProtoDurationSchemaOptions) {
+    const required = options?.required ?? false;
+    const keys = getDurationI18nKeys(options?.i18n);
+
+    return z.custom<Duration | undefined>().superRefine((value, ctx) => {
+        if (value === undefined || value === null) {
+            if (required) {
+                addI18nIssue(ctx, keys.required);
+            }
             return;
         }
 
-        const d = duration.toString();
-        if (!/^\d+(\.\d+)?$/.test(d)) {
-            ctx.addIssue({
-                code: 'custom',
-                params: {
-                    i18n: 'zod.errors.custom_types.duration.invalid',
-                },
-            });
+        if (!isDuration(value)) {
+            addI18nIssue(ctx, keys.invalid);
             return;
         }
 
-        const val = toDuration(d);
-        if (val.seconds <= 0 || val.nanos < 0 || (val.seconds === 0 && val.nanos > 0)) {
-            ctx.addIssue({
-                code: 'custom',
-                params: {
-                    i18n: 'zod.errors.custom_types.duration.invalid',
-                },
-            });
+        if (value.seconds < 0 || value.nanos < 0 || value.nanos > 999_999_999 || (value.seconds === 0 && value.nanos < 0)) {
+            addI18nIssue(ctx, keys.invalid);
             return;
+        }
+
+        const seconds = durationToSeconds(value);
+        if (seconds < 0) {
+            addI18nIssue(ctx, keys.invalid);
+            return;
+        }
+
+        if (options?.min) {
+            const minimum = durationToSeconds(options.min);
+            if (seconds < minimum) {
+                addI18nIssue(ctx, keys.min, { params: { minimum } });
+                return;
+            }
+        }
+
+        if (options?.max) {
+            const maximum = durationToSeconds(options.max);
+            if (seconds > maximum) {
+                addI18nIssue(ctx, keys.max, { params: { maximum } });
+            }
         }
     });
+}
+
+interface DurationMinMaxPairOptions {
+    min?: Duration;
+    max?: Duration;
+    i18n?: Partial<DurationI18nKeys>;
+}
+
+export function zodDurationMinMaxPair(options?: DurationMinMaxPairOptions) {
+    const keys = getDurationI18nKeys(options?.i18n);
+
+    return z
+        .object({
+            minDuration: zodProtoDurationSchema({
+                required: true,
+                min: options?.min,
+                max: options?.max,
+                i18n: options?.i18n,
+            }),
+            maxDuration: zodProtoDurationSchema({
+                required: true,
+                min: options?.min,
+                max: options?.max,
+                i18n: options?.i18n,
+            }),
+        })
+        .superRefine((value, ctx) => {
+            if (!value.minDuration || !value.maxDuration) {
+                return;
+            }
+
+            if (durationToSeconds(value.minDuration) > durationToSeconds(value.maxDuration)) {
+                addI18nIssue(ctx, keys.minMaxOrder, { path: ['maxDuration'] });
+            }
+        });
+}
 
 export const userAccessEntry = z.object({
     id: z.coerce.number(),

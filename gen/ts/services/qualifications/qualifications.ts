@@ -2071,7 +2071,7 @@ export const SubmitExamRequest = new SubmitExamRequest$Type();
 class SubmitExamResponse$Type extends MessageType<SubmitExamResponse> {
     constructor() {
         super("services.qualifications.SubmitExamResponse", [
-            { no: 1, name: "duration", kind: "message", T: () => Duration }
+            { no: 1, name: "duration", kind: "message", T: () => Duration, options: { "buf.validate.field": { duration: { gte: {} } } } }
         ]);
     }
     create(value?: PartialMessage<SubmitExamResponse>): SubmitExamResponse {

@@ -7,7 +7,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { useSettingsStore } from '~/stores/settings';
-import { toDuration } from '~/utils/duration';
+import { zodProtoDurationSchema } from '~/utils/validation';
 import { getSettingsConfigClient } from '~~/gen/ts/clients';
 import { GRPCServiceMethods, GRPCServices } from '~~/gen/ts/perms';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -15,6 +15,7 @@ import { DiscordBotPresenceType } from '~~/gen/ts/resources/settings/config';
 import type { GetAppConfigResponse } from '~~/gen/ts/services/settings/config';
 import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 import InputDatePicker from '../partials/InputDatePicker.vue';
+import InputDurationPicker from '../partials/InputDurationPicker.vue';
 import { currencies, intlLocales } from './helpers';
 
 const { t, locales } = useI18n();
@@ -55,6 +56,9 @@ const botPresenceTypes = ref<{ mode: DiscordBotPresenceType }[]>([
     { mode: DiscordBotPresenceType.WATCH },
 ]);
 
+const minDiscordSyncInterval = secondsToDuration(60);
+const maxDiscordSyncInterval = secondsToDuration(24 * 60 * 60);
+
 const schema = z.object({
     defaultLocale: z.custom<LocaleObject>(),
 
@@ -88,12 +92,24 @@ const schema = z.object({
         hiddenJobs: z.coerce.string().array().max(99).default([]),
     }),
     userTracker: z.object({
-        refreshTime: zodDurationSchema,
-        dbRefreshTime: zodDurationSchema,
+        refreshTime: zodProtoDurationSchema({
+            required: true,
+            min: secondsToDuration(1),
+            max: secondsToDuration(15 * 60 * 60),
+        }),
+        dbRefreshTime: zodProtoDurationSchema({
+            required: true,
+            min: secondsToDuration(1),
+            max: secondsToDuration(15 * 60 * 60),
+        }),
     }),
     discord: z.object({
         enabled: z.coerce.boolean(),
-        syncInterval: zodDurationSchema,
+        syncInterval: zodProtoDurationSchema({
+            required: true,
+            min: minDiscordSyncInterval,
+            max: maxDiscordSyncInterval,
+        }),
         botId: z.string().optional(),
         botPermissions: z.coerce.number(),
         inviteUrl: z.union([z.url().min(1).max(255).startsWith('https://discord.com/'), z.string().length(0).optional()]),
@@ -136,7 +152,7 @@ const schema = z.object({
                     })
                     .optional(),
                 maxCount: z.coerce.number().int().min(1).max(100).nonnegative().optional(),
-                maxLeeway: z.coerce.number().int().min(0).max(99).nonnegative().optional(),
+                maxLeeway: z.coerce.number().int().min(0).max(1).nonnegative().optional(),
                 warnSettings: z
                     .object({
                         enabled: z.coerce.boolean(),
@@ -150,7 +166,7 @@ const schema = z.object({
             .default({
                 detentionTimeUnit: {},
                 maxCount: 10,
-                maxLeeway: 25,
+                maxLeeway: 0.25,
                 warnSettings: { enabled: false },
             }),
     }),
@@ -159,9 +175,15 @@ const schema = z.object({
     }),
     game: z.object({
         maxWantedDurationUserEnabled: z.coerce.boolean().default(false),
-        maxWantedDurationUser: zodDurationSchema.optional(),
+        maxWantedDurationUser: zodProtoDurationSchema({
+            min: secondsToDuration(24 * 60 * 60),
+            max: secondsToDuration(3650 * 24 * 60 * 60),
+        }),
         maxWantedDurationVehicleEnabled: z.coerce.boolean().default(false),
-        maxWantedDurationVehicle: zodDurationSchema.optional(),
+        maxWantedDurationVehicle: zodProtoDurationSchema({
+            min: secondsToDuration(24 * 60 * 60),
+            max: secondsToDuration(3650 * 24 * 60 * 60),
+        }),
     }),
 });
 
@@ -190,12 +212,12 @@ const state = reactive<Schema>({
         },
     },
     userTracker: {
-        dbRefreshTime: 1.0,
-        refreshTime: 3.35,
+        dbRefreshTime: secondsToDuration(1),
+        refreshTime: secondsToDuration(3.35),
     },
     discord: {
         enabled: false,
-        syncInterval: 9.0,
+        syncInterval: secondsToDuration(900),
         botId: '',
         botPermissions: 0,
         inviteUrl: '',
@@ -229,7 +251,9 @@ const state = reactive<Schema>({
     },
     game: {
         maxWantedDurationUserEnabled: false,
+        maxWantedDurationUser: undefined,
         maxWantedDurationVehicleEnabled: false,
+        maxWantedDurationVehicle: undefined,
     },
 });
 
@@ -243,15 +267,15 @@ async function updateAppConfig(values: Schema): Promise<void> {
     config.value.config.website = values.website;
     config.value.config.jobInfo = values.jobInfo;
     config.value.config.userTracker = {
-        dbRefreshTime: toDuration(values.userTracker.dbRefreshTime),
-        refreshTime: toDuration(values.userTracker.refreshTime),
+        dbRefreshTime: values.userTracker.dbRefreshTime,
+        refreshTime: values.userTracker.refreshTime,
     };
     config.value.config.discord = {
         enabled: values.discord.enabled,
         inviteUrl: values.discord.inviteUrl,
         botId: values.discord.botId ? values.discord.botId : undefined,
         botPermissions: values.discord.botPermissions,
-        syncInterval: toDuration(values.discord.syncInterval),
+        syncInterval: values.discord.syncInterval,
         ignoredJobs: values.discord.ignoredJobs,
         botPresence: values.discord.botPresence,
     };
@@ -268,13 +292,9 @@ async function updateAppConfig(values: Schema): Promise<void> {
     config.value.config.livemap = values.livemap;
     config.value.config.game = {
         maxWantedDurationUserEnabled: values.game.maxWantedDurationUserEnabled,
-        maxWantedDurationUser: values.game.maxWantedDurationUser
-            ? toDuration(values.game.maxWantedDurationUser * 24 * 60 * 60) // Convert days to seconds
-            : undefined,
+        maxWantedDurationUser: values.game.maxWantedDurationUser,
         maxWantedDurationVehicleEnabled: values.game.maxWantedDurationVehicleEnabled,
-        maxWantedDurationVehicle: values.game.maxWantedDurationVehicle
-            ? toDuration(values.game.maxWantedDurationVehicle * 24 * 60 * 60) // Convert days to seconds
-            : undefined,
+        maxWantedDurationVehicle: values.game.maxWantedDurationVehicle,
     };
 
     try {
@@ -328,16 +348,16 @@ function setSettingsValues(): void {
     }
     if (config.value.config.userTracker) {
         if (config.value.config.userTracker.dbRefreshTime) {
-            state.userTracker.dbRefreshTime = fromDuration(config.value.config.userTracker.dbRefreshTime);
+            state.userTracker.dbRefreshTime = config.value.config.userTracker.dbRefreshTime;
         }
         if (config.value.config.userTracker.refreshTime) {
-            state.userTracker.refreshTime = fromDuration(config.value.config.userTracker.refreshTime);
+            state.userTracker.refreshTime = config.value.config.userTracker.refreshTime;
         }
     }
     if (config.value.config.discord) {
         state.discord.enabled = config.value.config.discord.enabled;
         if (config.value.config.discord.syncInterval) {
-            state.discord.syncInterval = fromDuration(config.value.config.discord.syncInterval);
+            state.discord.syncInterval = config.value.config.discord.syncInterval;
         }
         state.discord.botId = config.value.config.discord.botId;
         state.discord.botPermissions = config.value.config.discord.botPermissions;
@@ -371,7 +391,12 @@ function setSettingsValues(): void {
             if (!config.value.config.quickButtons.penaltyCalculator.warnSettings)
                 config.value.config.quickButtons.penaltyCalculator.warnSettings = { enabled: false };
 
-            state.quickButtons.penaltyCalculator = config.value.config.quickButtons.penaltyCalculator;
+            state.quickButtons.penaltyCalculator = {
+                detentionTimeUnit: config.value.config.quickButtons.penaltyCalculator.detentionTimeUnit,
+                maxCount: config.value.config.quickButtons.penaltyCalculator.maxCount ?? 10,
+                maxLeeway: (config.value.config.quickButtons.penaltyCalculator.maxLeeway ?? 25) / 100,
+                warnSettings: config.value.config.quickButtons.penaltyCalculator.warnSettings,
+            };
         }
     }
 
@@ -381,15 +406,10 @@ function setSettingsValues(): void {
 
     if (config.value.config.game) {
         state.game.maxWantedDurationUserEnabled = config.value.config.game.maxWantedDurationUserEnabled;
-        if (config.value.config.game.maxWantedDurationUser) {
-            state.game.maxWantedDurationUser = fromDuration(config.value.config.game.maxWantedDurationUser) / (24 * 60 * 60); // Convert seconds to days
-        }
+        state.game.maxWantedDurationUser = config.value.config.game.maxWantedDurationUser;
 
         state.game.maxWantedDurationVehicleEnabled = config.value.config.game.maxWantedDurationVehicleEnabled;
-        if (config.value.config.game.maxWantedDurationVehicle) {
-            state.game.maxWantedDurationVehicle =
-                fromDuration(config.value.config.game.maxWantedDurationVehicle) / (24 * 60 * 60); // Convert seconds to days
-        }
+        state.game.maxWantedDurationVehicle = config.value.config.game.maxWantedDurationVehicle;
     }
 }
 
@@ -770,13 +790,13 @@ const formRef = useTemplateRef('formRef');
                                 name="userTracker.refreshTime"
                                 :label="$t('components.settings.app_config.jobs_users.user_tracker.refresh_time')"
                             >
-                                <UInputNumber
+                                <InputDurationPicker
                                     v-model="state.userTracker.refreshTime"
-                                    :min="1"
+                                    :units="['second']"
+                                    :min="secondsToDuration(1)"
                                     :step="0.01"
-                                    :placeholder="$t('common.duration')"
+                                    :max="secondsToDuration(15 * 60 * 60)"
                                     class="w-full"
-                                    :format-options="{ style: 'unit', unit: 'second', unitDisplay: 'short' }"
                                 />
                             </UFormField>
 
@@ -785,13 +805,13 @@ const formRef = useTemplateRef('formRef');
                                 name="userTracker.dbRefreshTime"
                                 :label="$t('components.settings.app_config.jobs_users.user_tracker.db_refresh_time')"
                             >
-                                <UInputNumber
+                                <InputDurationPicker
                                     v-model="state.userTracker.dbRefreshTime"
-                                    :min="1"
+                                    :units="['second']"
+                                    :min="secondsToDuration(1)"
                                     :step="0.01"
-                                    :placeholder="$t('common.duration')"
+                                    :max="secondsToDuration(15 * 60 * 60)"
                                     class="w-full"
-                                    :format-options="{ style: 'unit', unit: 'second', unitDisplay: 'short' }"
                                 />
                             </UFormField>
                         </UPageCard>
@@ -815,14 +835,13 @@ const formRef = useTemplateRef('formRef');
                                 name="discord.syncInterval"
                                 :label="$t('components.settings.app_config.discord.sync_interval')"
                             >
-                                <UInputNumber
+                                <InputDurationPicker
                                     v-model="state.discord.syncInterval"
-                                    :min="1"
+                                    :units="['minute', 'second']"
                                     :step="1"
-                                    name="discord.syncInterval"
-                                    :placeholder="$t('common.duration')"
+                                    :min="minDiscordSyncInterval"
+                                    :max="maxDiscordSyncInterval"
                                     class="w-full"
-                                    :format-options="{ style: 'unit', unit: 'second', unitDisplay: 'short' }"
                                 />
                             </UFormField>
 
@@ -961,14 +980,13 @@ const formRef = useTemplateRef('formRef');
                                 :label="$t('components.settings.app_config.game.max_wanted_duration.max')"
                                 name="game.maxWantedDurationUser"
                             >
-                                <UInputNumber
+                                <InputDurationPicker
                                     v-model="state.game.maxWantedDurationUser"
-                                    :min="1"
+                                    :units="['day']"
+                                    :min="secondsToDuration(24 * 60 * 60)"
                                     :step="1"
-                                    :max="3650"
-                                    :placeholder="$t('common.duration')"
+                                    :max="secondsToDuration(3650 * 24 * 60 * 60)"
                                     class="w-full"
-                                    :format-options="{ style: 'unit', unit: 'day', unitDisplay: 'long' }"
                                 />
                             </UFormField>
 
@@ -983,14 +1001,13 @@ const formRef = useTemplateRef('formRef');
                                 :label="$t('components.settings.app_config.game.max_wanted_duration.max')"
                                 name="game.maxWantedDurationVehicle"
                             >
-                                <UInputNumber
+                                <InputDurationPicker
                                     v-model="state.game.maxWantedDurationVehicle"
-                                    :min="1"
+                                    :units="['day']"
+                                    :min="secondsToDuration(24 * 60 * 60)"
                                     :step="1"
-                                    :max="3650"
-                                    :placeholder="$t('common.duration')"
+                                    :max="secondsToDuration(3650 * 24 * 60 * 60)"
                                     class="w-full"
-                                    :format-options="{ style: 'unit', unit: 'day', unitDisplay: 'long' }"
                                 />
                             </UFormField>
                         </UPageCard>
@@ -1021,11 +1038,10 @@ const formRef = useTemplateRef('formRef');
                                 <UInputNumber
                                     v-model="state.quickButtons.penaltyCalculator.maxLeeway"
                                     :min="1"
+                                    :step="1"
                                     :max="99"
-                                    :placeholder="
-                                        $t('components.settings.app_config.quick_buttons.penalty_calculator.max_leeway')
-                                    "
                                     class="w-full"
+                                    :format-options="{ style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 0 }"
                                 />
                             </UFormField>
 

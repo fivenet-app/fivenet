@@ -5,8 +5,11 @@ import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
+import InputDurationPicker from '~/components/partials/InputDurationPicker.vue';
+import { secondsToDuration } from '~/utils/duration';
+import { zodDurationMinMaxPair } from '~/utils/validation';
 import { getCitizensLabelsClient } from '~~/gen/ts/clients';
-import type { Label, Settings } from '~~/gen/ts/resources/citizens/labels/labels';
+import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import type { CreateOrUpdateLabelResponse, GetLabelResponse } from '~~/gen/ts/services/citizens/labels';
 
 const props = defineProps<{
@@ -18,6 +21,9 @@ const emits = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
+const minLabelDuration = secondsToDuration(60 * 60);
+const maxLabelDuration = secondsToDuration(3650 * 60 * 60);
+
 const citizensLabelsClient = await getCitizensLabelsClient();
 
 const schema = z.object({
@@ -25,7 +31,13 @@ const schema = z.object({
     name: z.coerce.string().min(1).max(64),
     color: z.coerce.string().length(7),
     icon: z.coerce.string().max(255).optional(),
-    settings: z.custom<Settings>(),
+    settings: z.object({
+        requiresExpiration: z.boolean().default(false),
+        ...zodDurationMinMaxPair({
+            min: minLabelDuration,
+            max: maxLabelDuration,
+        }).shape,
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -37,6 +49,8 @@ const state = reactive<Schema>({
     icon: undefined,
     settings: {
         requiresExpiration: false,
+        minDuration: undefined,
+        maxDuration: undefined,
     },
 });
 
@@ -70,6 +84,8 @@ function setFromData(label: Label | undefined): void {
     state.color = label.color;
     state.icon = label.icon;
     state.settings.requiresExpiration = label.settings?.requiresExpiration ?? false;
+    state.settings.minDuration = label.settings?.minDuration;
+    state.settings.maxDuration = label.settings?.maxDuration;
 }
 
 watch(data, () => setFromData(data.value?.label));
@@ -85,6 +101,8 @@ async function createOrUpdateLabel(values: Schema): Promise<CreateOrUpdateLabelR
                 icon: values.icon,
                 settings: {
                     requiresExpiration: values.settings.requiresExpiration,
+                    minDuration: values.settings.minDuration,
+                    maxDuration: values.settings.maxDuration,
                 },
                 access: {
                     jobs: [],
@@ -122,41 +140,59 @@ const formRef = useTemplateRef('formRef');
 <template>
     <UModal :title="$t('components.citizens.citizen_labels.title')">
         <template #body>
-            <template v-if="labelId">
-                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
-                <DataErrorBlock v-else-if="error" :error="error" :retry="refresh" />
-            </template>
+            <DataPendingBlock
+                v-if="labelId && isRequestPending(status)"
+                :message="$t('common.loading', [$t('common.label', 2)])"
+            />
+            <DataErrorBlock v-else-if="labelId && error" :error="error" :retry="refresh" />
 
             <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                <UFormField class="flex-1" name="label.name" :label="$t('common.name')">
-                    <UInput
-                        v-model="state.name"
+                <UFormField class="flex-1" name="name" :label="$t('common.name')">
+                    <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.name')" />
+                </UFormField>
+
+                <UFormField name="color" :label="$t('common.color')">
+                    <ColorPicker v-model="state.color" class="w-full" name="color" />
+                </UFormField>
+
+                <UFormField name="icon" :label="$t('common.icon')">
+                    <IconSelectMenu v-model="state.icon" name="icon" :hex-color="state.color" class="w-full" clear />
+                </UFormField>
+
+                <UFormField name="settings" :label="$t('common.settings')">
+                    <UFormField
+                        name="settings.requiresExpiration"
+                        :label="$t('components.citizens.citizen_labels.settings.requires_expiration')"
+                    >
+                        <USwitch v-model="state.settings.requiresExpiration" name="settings.requiresExpiration" />
+                    </UFormField>
+                </UFormField>
+
+                <UFormField :label="$t('components.citizens.citizen_labels.settings.min_duration')" name="settings.minDuration">
+                    <InputDurationPicker
+                        v-model="state.settings.minDuration"
+                        :min="minLabelDuration"
+                        :max="maxLabelDuration"
+                        :units="['hour', 'day']"
+                        :step="1"
+                        clearable
                         class="w-full"
-                        name="label.name"
-                        type="text"
-                        :placeholder="$t('common.name')"
                     />
                 </UFormField>
 
-                <UFormField name="label.color" :label="$t('common.color')">
-                    <ColorPicker v-model="state.color" class="w-full" name="label.color" />
-                </UFormField>
-
-                <UFormField name="label.icon" :label="$t('common.icon')">
-                    <IconSelectMenu v-model="state.icon" name="label.icon" :hex-color="state.color" class="w-full" clear />
+                <UFormField :label="$t('components.citizens.citizen_labels.settings.max_duration')" name="settings.maxDuration">
+                    <InputDurationPicker
+                        v-model="state.settings.maxDuration"
+                        :min="minLabelDuration"
+                        :max="maxLabelDuration"
+                        :units="['hour', 'day']"
+                        :step="1"
+                        clearable
+                        class="w-full"
+                    />
                 </UFormField>
 
                 <!--
-                <UFormField name="label.settings" :label="$t('common.settings')">
-                    <UFormField
-                        name="label.settings.requiresExpiration"
-                        :label="$t('components.citizens.citizen_labels.settings.requires_expiration')"
-                    >
-                        <USwitch v-model="state.settings.requiresExpiration" name="label.settings.requiresExpiration" />
-                    </UFormField>
-                    <div>TODO</div>
-                </UFormField>
-
                 <UFormField name="access" :label="$t('common.access')">
                     <div>TODO</div>
                 </UFormField>

@@ -157,7 +157,45 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 				order = serviceOpts.Order
 			}
 			if len(serviceOpts.AdditionalPerms) > 0 {
-				// TODO register these permissions with their attributes
+				for _, v := range serviceOpts.AdditionalPerms {
+					if _, ok := data.Permissions[sName]; !ok {
+						data.Permissions[sName] = map[string]*Perm{}
+					}
+					if v.Order <= 0 {
+						v.Order = order
+					}
+					perm := &Perm{
+						Name:    v.Name,
+						Service: &sName,
+						Order:   order,
+						Icon:    icon,
+					}
+					perm.Order *= 100
+
+					perm.Attrs = make([]Attr, len(v.Attrs))
+					for i, a := range v.Attrs {
+						atype := "StringList"
+						switch a.Type {
+						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_LIST:
+							atype = "JobList"
+						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_GRADE_LIST:
+							atype = "JobGradeList"
+						}
+
+						perm.Attrs[i] = Attr{
+							Key:  a.Key,
+							Type: atype,
+						}
+						if a.ValidStringList != nil {
+							perm.Attrs[i].Valid += "[]string{"
+							for _, v := range a.ValidStringList {
+								perm.Attrs[i].Valid += fmt.Sprintf("%q, ", v)
+							}
+							perm.Attrs[i].Valid += "}"
+						}
+					}
+					data.Permissions[sName][v.Name] = perm
+				}
 			}
 
 			for _, m := range s.Methods() {

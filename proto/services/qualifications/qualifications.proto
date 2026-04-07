@@ -169,7 +169,9 @@ message SubmitExamRequest {
 }
 
 message SubmitExamResponse {
-  google.protobuf.Duration duration = 1;
+  google.protobuf.Duration duration = 1 [(buf.validate.field).duration = {
+    gte: {seconds: 0}
+  }];
 }
 
 message GetUserExamRequest {

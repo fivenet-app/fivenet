@@ -1,4 +1,4 @@
-import type { Editor } from '@tiptap/vue-3';
+import type { Editor } from '@tiptap/core';
 import { Plugin } from 'prosemirror-state';
 
 export function imageUploadPlugin(_: Editor, onFiles: (files: File[]) => Promise<void>) {

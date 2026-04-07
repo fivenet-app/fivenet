@@ -1259,7 +1259,7 @@
                     "title": "Automatische Benotung",
                     "description": "Wenn aktiviert, werden eingereichte Prüfungen automatisch bewertet. Das System verwendet die ausgewählten Antworten, um die Prüfung automatisch zu bewerten (der Antwortschlüssel dient zur Unterstützung der Tutoren)."
                 },
-                "exam_duration": "Prüfungsdauer (in Sekunden)",
+                "exam_duration": "Prüfungsdauer",
                 "auto_grade_mode": {
                     "title": "Bewertungsmodus",
                     "description": "Der Modus für die automatische Bewertung. 'Strikter Modus' gibt keine Punkte für teilweise richtige Antworten (z. B. müssen alle Multiple-Choice-Antworten ausgewählt und korrekt sein.)"
@@ -1461,7 +1461,9 @@
             "citizen_labels": {
                 "title": "Bürger-Labels",
                 "settings": {
-                    "requires_expiration": "Benötigt Ablaufdatum"
+                    "requires_expiration": "Benötigt Ablaufdatum",
+                    "min_duration": "Mindest Dauer",
+                    "max_duration": "Maximale Dauer"
                 }
             },
             "List": {
@@ -1717,7 +1719,7 @@
                         "description": "Die maximale Dauer, für die Personen und Fahrzeuge auf der Fahndungsliste bleiben kann, bevor sie automatisch entfernt wird.",
                         "enabled_user": "Aktivieren für Bürger",
                         "enabled_vehicle": "Aktivieren für Fahrzeuge",
-                        "max": "Maximale Dauer (in Tagen)"
+                        "max": "Maximale Dauer"
                     }
                 },
                 "quick_buttons": {
@@ -3919,6 +3921,13 @@
         },
         "custom": {
             "default": "{message}",
+            "duration": {
+                "invalid": "Ungültiger Dauerwert.",
+                "required": "Dauer ist erforderlich.",
+                "min": "Die Dauer liegt unter dem minimal zulässigen Wert.",
+                "max": "Die Dauer überschreitet den maximal zulässigen Wert.",
+                "min_max_order": "Die maximale Dauer muss größer oder gleich der minimalen Dauer sein."
+            },
             "access_entry": {
                 "duplicate_job_grade": "Ein Beruf und Rang wurden mehrfach ausgewählt. Bitte wählen Sie jeden Beruf und Rang nur einmal aus.",
                 "duplicate_user": "Ein Bürger wurde mehrfach ausgewählt. Bitte wählen Sie jeden Bürger nur einmal aus.",

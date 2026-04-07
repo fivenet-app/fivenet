@@ -60,7 +60,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="$t('components.auth.ChangePasswordModal.change_password')" :prevent-close="!canSubmit">
+    <UModal :title="$t('components.auth.ChangePasswordModal.change_password')" :dismissible="canSubmit">
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="currentPassword" :label="$t('components.auth.ChangePasswordModal.current_password')">

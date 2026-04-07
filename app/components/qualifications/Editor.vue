@@ -192,7 +192,7 @@ const state = reactive<Schema>({
     },
     examMode: QualificationExamMode.DISABLED,
     examSettings: {
-        time: 360,
+        time: secondsToDuration(360),
         autoGrade: false,
         autoGradeMode: AutoGradeMode.STRICT,
         minimumPoints: 0,
@@ -320,7 +320,7 @@ function setFromProps(): void {
             ? QualificationExamMode.DISABLED
             : qualification.value.examMode;
     state.examSettings = {
-        time: qualification.value.examSettings?.time?.seconds ?? 360,
+        time: qualification.value.examSettings?.time ?? secondsToDuration(360),
         autoGrade: qualification.value.examSettings?.autoGrade ?? false,
         autoGradeMode:
             qualification.value.examSettings?.autoGradeMode === AutoGradeMode.UNSPECIFIED
@@ -381,7 +381,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             discordSettings: values.discordSettings,
             examMode: values.examMode,
             examSettings: {
-                time: { seconds: values.examSettings.time ?? 360, nanos: 0 },
+                time: values.examSettings.time,
                 autoGrade: values.examSettings.autoGrade,
                 autoGradeMode: values.examSettings.autoGradeMode,
                 minimumPoints: values.examSettings.minimumPoints,

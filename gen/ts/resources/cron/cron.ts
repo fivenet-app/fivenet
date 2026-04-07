@@ -213,7 +213,7 @@ class Cronjob$Type extends MessageType<Cronjob> {
             { no: 4, name: "next_schedule_time", kind: "message", T: () => Timestamp },
             { no: 5, name: "last_attempt_time", kind: "message", T: () => Timestamp },
             { no: 6, name: "started_time", kind: "message", T: () => Timestamp },
-            { no: 7, name: "timeout", kind: "message", T: () => Duration },
+            { no: 7, name: "timeout", kind: "message", T: () => Duration, options: { "buf.validate.field": { duration: { lte: { seconds: "1800" }, gte: {} } } } },
             { no: 8, name: "data", kind: "message", T: () => CronjobData },
             { no: 9, name: "last_completed_event", kind: "message", T: () => CronjobCompletedEvent }
         ]);
@@ -469,7 +469,7 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
             { no: 2, name: "success", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 7, name: "cancelled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "end_date", kind: "message", T: () => Timestamp },
-            { no: 4, name: "elapsed", kind: "message", T: () => Duration },
+            { no: 4, name: "elapsed", kind: "message", T: () => Duration, options: { "buf.validate.field": { duration: { gte: {} } } } },
             { no: 5, name: "data", kind: "message", T: () => CronjobData },
             { no: 6, name: "node_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 8, name: "error_message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }

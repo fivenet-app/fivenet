@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Editor, Range } from '@tiptap/vue-3';
+import type { Editor, Range } from '@tiptap/core';
 
 const props = defineProps<{
     editor: Editor;

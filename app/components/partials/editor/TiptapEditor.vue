@@ -2,13 +2,12 @@
 import type { EditorContentType, EditorEmojiMenuItem, EditorSuggestionMenuItem, FormError } from '@nuxt/ui';
 import { formErrorsInjectionKey } from '@nuxt/ui/runtime/composables/useFormField.js';
 import type { ClientStreamingCall, RpcOptions } from '@protobuf-ts/runtime-rpc';
-import { generateJSON, getSchema, type Extensions, type JSONContent } from '@tiptap/core';
+import { generateJSON, getSchema, type Editor, type Extensions, type JSONContent } from '@tiptap/core';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCaret from '@tiptap/extension-collaboration-caret';
 import { gitHubEmojis } from '@tiptap/extension-emoji';
 import { UndoRedo } from '@tiptap/extensions';
 import type { Schema } from '@tiptap/pm/model';
-import type { Editor } from '@tiptap/vue-3';
 import { initProseMirrorDoc, prosemirrorJSONToYDoc } from '@tiptap/y-tiptap';
 import * as Y from 'yjs';
 import { toPenaltyCalculatorData, type SelectedPenalty } from '~/components/quickbuttons/penaltycalculator/helpers';
@@ -539,6 +538,11 @@ onMounted(() => {
 
     logger.info('Setting initial content for Tiptap editor (collab is disabled)');
     if (modelValue.value) {
+        // If contentType is 'json' and modelValue is a string we need to convert it to JSON
+        if (props.contentType === 'json' && typeof modelValue.value === 'string') {
+            modelValue.value = generateJSON(modelValue.value, extensions) as JSONContent;
+        }
+
         unref(editor)?.commands.setContent(modelValue.value, { emitUpdate: false, contentType: props.contentType });
         if (unref(editor)) syncPenaltyCalculatorData(unref(editor)!);
     }

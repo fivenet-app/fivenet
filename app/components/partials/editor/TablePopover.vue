@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
-import type { Editor } from '@tiptap/vue-3';
+import type { Editor } from '@tiptap/core';
 import { z } from 'zod';
 
 const props = defineProps<{
