@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import { UButton } from '#components';
 import { CalendarDate } from '@internationalized/date';
-import type { TabsItem } from '@nuxt/ui';
+import type { TableColumn, TabsItem } from '@nuxt/ui';
 import { addDays, addWeeks, isBefore, isFuture, nextSaturday, subDays, subMonths, subWeeks } from 'date-fns';
 import { z } from 'zod';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
@@ -14,7 +15,7 @@ import { useCompletorStore } from '~/stores/completor';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
-import { TimeclockMode, TimeclockViewMode } from '~~/gen/ts/resources/jobs/timeclock/timeclock';
+import { type TimeclockEntry, TimeclockMode, TimeclockViewMode } from '~~/gen/ts/resources/jobs/timeclock/timeclock';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 import ColleagueName from '../colleagues/ColleagueName.vue';
@@ -43,6 +44,8 @@ const props = withDefaults(
 const { t } = useI18n();
 
 const { attr } = useAuth();
+
+const appConfig = useAppConfig();
 
 const completorStore = useCompletorStore();
 
@@ -90,12 +93,12 @@ const schema = z.object({
                 .max(3)
                 .default([
                     {
-                        id: 'plate',
+                        id: 'date',
                         desc: false,
                     },
                 ]),
         })
-        .default({ columns: [{ id: 'plate', desc: false }] }),
+        .default({ columns: [{ id: 'date', desc: false }] }),
     page: pageNumberSchema,
 });
 
@@ -183,10 +186,25 @@ const totalTimeSum = computed(() => {
     return sum;
 });
 
-const columns = computed(() => [
+const columns = computed<TableColumn<TimeclockEntry>[]>(() => [
     {
         accessorKey: 'date',
-        header: t('common.date'),
+        header: ({ column }) => {
+            const isSorted = column.getIsSorted();
+
+            return h(UButton, {
+                color: 'neutral',
+                variant: 'ghost',
+                label: t('common.date'),
+                icon: isSorted
+                    ? isSorted === 'asc'
+                        ? appConfig.custom.icons.sortAsc
+                        : appConfig.custom.icons.sortDesc
+                    : appConfig.custom.icons.sort,
+                class: '-mx-2.5',
+                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+            });
+        },
         meta: {
             class: {
                 td:
@@ -202,7 +220,22 @@ const columns = computed(() => [
     },
     {
         accessorKey: 'name',
-        header: t('common.name'),
+        header: ({ column }) => {
+            const isSorted = column.getIsSorted();
+
+            return h(UButton, {
+                color: 'neutral',
+                variant: 'ghost',
+                label: t('common.name'),
+                icon: isSorted
+                    ? isSorted === 'asc'
+                        ? appConfig.custom.icons.sortAsc
+                        : appConfig.custom.icons.sortDesc
+                    : appConfig.custom.icons.sort,
+                class: '-mx-2.5',
+                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+            });
+        },
         meta: {
             class: {
                 td: props.userId === undefined && query.viewMode === TimeclockViewMode.ALL ? '' : 'hidden',
@@ -212,7 +245,22 @@ const columns = computed(() => [
     },
     {
         accessorKey: 'rank',
-        header: t('common.rank'),
+        header: ({ column }) => {
+            const isSorted = column.getIsSorted();
+
+            return h(UButton, {
+                color: 'neutral',
+                variant: 'ghost',
+                label: t('common.rank'),
+                icon: isSorted
+                    ? isSorted === 'asc'
+                        ? appConfig.custom.icons.sortAsc
+                        : appConfig.custom.icons.sortDesc
+                    : appConfig.custom.icons.sort,
+                class: '-mx-2.5',
+                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+            });
+        },
         meta: {
             class: {
                 td:
@@ -234,7 +282,22 @@ const columns = computed(() => [
     },
     {
         accessorKey: 'time',
-        header: t('common.time'),
+        header: ({ column }) => {
+            const isSorted = column.getIsSorted();
+
+            return h(UButton, {
+                color: 'neutral',
+                variant: 'ghost',
+                label: t('common.time'),
+                icon: isSorted
+                    ? isSorted === 'asc'
+                        ? appConfig.custom.icons.sortAsc
+                        : appConfig.custom.icons.sortDesc
+                    : appConfig.custom.icons.sort,
+                class: '-mx-2.5',
+                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+            });
+        },
     },
 ]);
 

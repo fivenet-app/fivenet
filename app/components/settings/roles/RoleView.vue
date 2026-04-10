@@ -406,7 +406,7 @@ async function impersonateRole(grade: number): Promise<void> {
 
         notifications.add({
             title: { key: 'notifications.action_failed.title', parameters: {} },
-            description: { key: 'notifications.common.coming_soon', parameters: {} },
+            description: { key: 'notifications.action_failed.content', parameters: {} },
             type: NotificationType.ERROR,
         });
     }

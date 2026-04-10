@@ -175,13 +175,13 @@ func (s *Server) ListTimeclock(
 			switch sc.GetId() {
 			case "date":
 				if sc.GetDesc() {
-					orderBys = append(orderBys, tTimeClock.Date.DESC())
+					orderBys = append(orderBys, mysql.DateColumn("agg.date").DESC())
 				} else {
-					orderBys = append(orderBys, tTimeClock.Date.ASC())
+					orderBys = append(orderBys, mysql.DateColumn("agg.date").ASC())
 				}
 			case rankColumn:
 				if !hasStaticDateOrder {
-					staticOrderBys = append(staticOrderBys, tTimeClock.Date.DESC())
+					staticOrderBys = append(staticOrderBys, mysql.DateColumn("agg.date").DESC())
 					hasStaticDateOrder = true
 				}
 				if sc.GetDesc() {
@@ -191,7 +191,7 @@ func (s *Server) ListTimeclock(
 				}
 			case nameColumn:
 				if !hasStaticDateOrder {
-					staticOrderBys = append(staticOrderBys, tTimeClock.Date.DESC())
+					staticOrderBys = append(staticOrderBys, mysql.DateColumn("agg.date").DESC())
 					hasStaticDateOrder = true
 				}
 				if sc.GetDesc() {
@@ -226,12 +226,7 @@ func (s *Server) ListTimeclock(
 			mysql.MAX(tTimeClock.EndTime).AS("agg.end_time"),
 			mysql.SUM(tTimeClock.SpentTime).AS("agg.spent_time"),
 		).
-		FROM(
-			tTimeClock.INNER_JOIN(
-				tColleague,
-				tColleague.ID.EQ(tTimeClock.UserID),
-			),
-		).
+		FROM(tTimeClock).
 		WHERE(condition).
 		GROUP_BY(groupBys...).
 		AsTable("agg")
