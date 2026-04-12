@@ -26,6 +26,7 @@ export default defineConfig({
                     include: ['app/test/nuxt/**/*.{test,spec}.ts'],
                     exclude: ['app/**/*.{e2e,unit}.{test,spec}.ts', ...configDefaults.exclude, '.direnv/*'],
                     environment: 'nuxt',
+                    hookTimeout: 30_000,
                 },
             }),
         ],
