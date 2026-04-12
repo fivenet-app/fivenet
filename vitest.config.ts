@@ -18,6 +18,7 @@ export default defineConfig({
                     include: ['app/**/*.{test,spec}.ts'],
                     exclude: ['app/test/**', ...configDefaults.exclude, '.direnv/*'],
                     environment: 'nuxt',
+                    hookTimeout: 30_000,
                 },
             }),
             await defineVitestProject({
