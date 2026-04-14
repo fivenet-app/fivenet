@@ -47,7 +47,7 @@ require (
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
 	github.com/nats-io/nats-server/v2 v2.12.7
 	github.com/nats-io/nats.go v1.51.0
-	github.com/ory/dockertest/v3 v3.12.0
+	github.com/ory/dockertest/v4 v4.0.0
 	github.com/ory/dockertest/v4 v4.0.0
 	github.com/paulmach/orb v0.13.0
 	github.com/pkg/errors v0.9.1
