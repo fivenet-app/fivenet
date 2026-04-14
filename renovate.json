@@ -13,10 +13,10 @@
     },
     "packageRules": [
         {
-            "description": "Temporarily ignore vitest 4.1.0 (Rollup/i18n JSON issue)",
+            "description": "Temporarily ignore vitest 4.1.4 (Rollup/i18n JSON issue)",
             "matchManagers": ["npm"],
             "matchPackageNames": ["vitest"],
-            "allowedVersions": "!/^4\\.1\\.0$/"
+            "allowedVersions": "!/^4\\.1\\.\\d+$/"
         },
         {
             "matchManagers": ["gomod"],
