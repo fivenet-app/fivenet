@@ -1892,8 +1892,11 @@ func (b0 StreamRequest_builder) Build() *StreamRequest {
 }
 
 type StreamResponse struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// Types that are valid to be assigned to Payload:
+	//
+	//	*StreamResponse_UserId
+	Payload       isStreamResponse_Payload `protobuf_oneof:"payload"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1923,30 +1926,103 @@ func (x *StreamResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *StreamResponse) GetPayload() isStreamResponse_Payload {
+	if x != nil {
+		return x.Payload
+	}
+	return nil
+}
+
 func (x *StreamResponse) GetUserId() int32 {
 	if x != nil {
-		return x.UserId
+		if x, ok := x.Payload.(*StreamResponse_UserId); ok {
+			return x.UserId
+		}
 	}
 	return 0
 }
 
 func (x *StreamResponse) SetUserId(v int32) {
-	x.UserId = v
+	x.Payload = &StreamResponse_UserId{v}
+}
+
+func (x *StreamResponse) HasPayload() bool {
+	if x == nil {
+		return false
+	}
+	return x.Payload != nil
+}
+
+func (x *StreamResponse) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Payload.(*StreamResponse_UserId)
+	return ok
+}
+
+func (x *StreamResponse) ClearPayload() {
+	x.Payload = nil
+}
+
+func (x *StreamResponse) ClearUserId() {
+	if _, ok := x.Payload.(*StreamResponse_UserId); ok {
+		x.Payload = nil
+	}
+}
+
+const StreamResponse_Payload_not_set_case case_StreamResponse_Payload = 0
+const StreamResponse_UserId_case case_StreamResponse_Payload = 1
+
+func (x *StreamResponse) WhichPayload() case_StreamResponse_Payload {
+	if x == nil {
+		return StreamResponse_Payload_not_set_case
+	}
+	switch x.Payload.(type) {
+	case *StreamResponse_UserId:
+		return StreamResponse_UserId_case
+	default:
+		return StreamResponse_Payload_not_set_case
+	}
 }
 
 type StreamResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	UserId int32
+	// Fields of oneof Payload:
+	UserId *int32
+	// -- end of Payload
 }
 
 func (b0 StreamResponse_builder) Build() *StreamResponse {
 	m0 := &StreamResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.UserId = b.UserId
+	if b.UserId != nil {
+		x.Payload = &StreamResponse_UserId{*b.UserId}
+	}
 	return m0
 }
+
+type case_StreamResponse_Payload protoreflect.FieldNumber
+
+func (x case_StreamResponse_Payload) String() string {
+	md := file_services_sync_sync_proto_msgTypes[13].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
+type isStreamResponse_Payload interface {
+	isStreamResponse_Payload()
+}
+
+type StreamResponse_UserId struct {
+	UserId int32 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3,oneof"`
+}
+
+func (*StreamResponse_UserId) isStreamResponse_Payload() {}
 
 var File_services_sync_sync_proto protoreflect.FileDescriptor
 
@@ -2021,9 +2097,10 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\rStreamRequest\x12\x1d\n" +
 	"\aversion\x18\x01 \x01(\tH\x00R\aversion\x88\x01\x01B\n" +
 	"\n" +
-	"\b_version\")\n" +
-	"\x0eStreamResponse\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId2\xe0\x04\n" +
+	"\b_version\"6\n" +
+	"\x0eStreamResponse\x12\x19\n" +
+	"\auser_id\x18\x01 \x01(\x05H\x00R\x06userIdB\t\n" +
+	"\apayload2\xe0\x04\n" +
 	"\vSyncService\x12N\n" +
 	"\tGetStatus\x12\x1f.services.sync.GetStatusRequest\x1a .services.sync.GetStatusResponse\x12T\n" +
 	"\vAddActivity\x12!.services.sync.AddActivityRequest\x1a\".services.sync.AddActivityResponse\x12`\n" +
@@ -2147,6 +2224,9 @@ func file_services_sync_sync_proto_init() {
 		(*DeleteDataRequest_Vehicles)(nil),
 	}
 	file_services_sync_sync_proto_msgTypes[12].OneofWrappers = []any{}
+	file_services_sync_sync_proto_msgTypes[13].OneofWrappers = []any{
+		(*StreamResponse_UserId)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

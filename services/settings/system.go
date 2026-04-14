@@ -171,7 +171,9 @@ func (s *Server) TriggerUserSync(
 		ctx,
 		fmt.Sprintf("%s.%s", sync.BaseSubject, sync.TopicUser),
 		&pbsync.StreamResponse{
-			UserId: req.GetUserId(),
+			Payload: &pbsync.StreamResponse_UserId{
+				UserId: req.GetUserId(),
+			},
 		},
 	)
 	if err != nil {

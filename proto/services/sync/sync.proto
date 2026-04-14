@@ -112,7 +112,11 @@ message StreamRequest {
 }
 
 message StreamResponse {
-  int32 user_id = 1;
+  oneof payload {
+    option (buf.validate.oneof).required = true;
+
+    int32 user_id = 1;
+  }
 }
 
 // Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instance and API calls

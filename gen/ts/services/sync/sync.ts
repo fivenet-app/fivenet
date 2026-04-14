@@ -305,9 +305,17 @@ export interface StreamRequest {
  */
 export interface StreamResponse {
     /**
-     * @generated from protobuf field: int32 user_id = 1
+     * @generated from protobuf oneof: payload
      */
-    userId: number;
+    payload: {
+        oneofKind: "userId";
+        /**
+         * @generated from protobuf field: int32 user_id = 1
+         */
+        userId: number;
+    } | {
+        oneofKind: undefined;
+    };
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GetStatusRequest$Type extends MessageType<GetStatusRequest> {
@@ -1118,12 +1126,12 @@ export const StreamRequest = new StreamRequest$Type();
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.sync.StreamResponse", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "user_id", kind: "scalar", oneof: "payload", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.userId = 0;
+        message.payload = { oneofKind: undefined };
         if (value !== undefined)
             reflectionMergePartial<StreamResponse>(this, message, value);
         return message;
@@ -1134,7 +1142,10 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
                 case /* int32 user_id */ 1:
-                    message.userId = reader.int32();
+                    message.payload = {
+                        oneofKind: "userId",
+                        userId: reader.int32()
+                    };
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1149,8 +1160,8 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
     }
     internalBinaryWrite(message: StreamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int32 user_id = 1; */
-        if (message.userId !== 0)
-            writer.tag(1, WireType.Varint).int32(message.userId);
+        if (message.payload.oneofKind === "userId")
+            writer.tag(1, WireType.Varint).int32(message.payload.userId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

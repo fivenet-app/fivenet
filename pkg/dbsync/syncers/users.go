@@ -26,6 +26,7 @@ const (
 	userHashCacheTTL       = 6 * time.Hour
 	maxDrainBatchesPerSync = 10
 	maxNoopBatchesPerSync  = 3
+	maxUsersPerSendRequest = 150
 )
 
 type UsersSync struct {
@@ -233,13 +234,7 @@ func (s *UsersSync) syncOnce(
 
 	// Sync users to FiveNet server (if there are any left after hash check)
 	if len(us) > 0 {
-		if err := s.sendData(ctx, &pbsync.SendDataRequest{
-			Data: &pbsync.SendDataRequest_Users{
-				Users: &syncdata.DataUsers{
-					Users: us,
-				},
-			},
-		}); err != nil {
+		if err := s.sendUsersDataInChunks(ctx, us); err != nil {
 			return 0, 0, "", nil, err
 		}
 	}
@@ -738,13 +733,7 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 	us = s.applyFiltersAndTransformations(us, s.cfg.Tables.Users)
 
 	if len(us) > 0 && s.cli != nil {
-		if err := s.sendData(ctx, &pbsync.SendDataRequest{
-			Data: &pbsync.SendDataRequest_Users{
-				Users: &syncdata.DataUsers{
-					Users: us,
-				},
-			},
-		}); err != nil {
+		if err := s.sendUsersDataInChunks(ctx, us); err != nil {
 			return fmt.Errorf("failed to send user data for user %d. %w", userId, err)
 		}
 	}
@@ -756,6 +745,28 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 		zap.Int32("job_grade", user.GetJobGrade()),
 		zap.Int("jobs_len", len(user.GetJobs())),
 	)
+
+	return nil
+}
+
+func (s *UsersSync) sendUsersDataInChunks(ctx context.Context, us []*syncdata.DataUser) error {
+	if len(us) == 0 {
+		return nil
+	}
+
+	for start := 0; start < len(us); start += maxUsersPerSendRequest {
+		end := min(start+maxUsersPerSendRequest, len(us))
+
+		if err := s.sendData(ctx, &pbsync.SendDataRequest{
+			Data: &pbsync.SendDataRequest_Users{
+				Users: &syncdata.DataUsers{
+					Users: us[start:end],
+				},
+			},
+		}); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
