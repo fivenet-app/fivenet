@@ -14,8 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/internal/tests"
 	"github.com/fivenet-app/fivenet/v2026/query"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/ory/dockertest/v3"
-	"github.com/ory/dockertest/v3/docker"
+	"github.com/ory/dockertest/v4"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -24,8 +23,8 @@ type dbServer struct {
 	t *testing.T
 
 	db       *sql.DB
-	pool     *dockertest.Pool
-	resource *dockertest.Resource
+	pool     dockertest.Pool
+	resource dockertest.Resource
 
 	stopped bool
 }
@@ -48,51 +47,32 @@ func (m *dbServer) Setup(ctx context.Context) {
 	image, tag := loadDockerComposeServiceImage(m.t, "mysql")
 
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
-	var err error
-	m.pool, err = dockertest.NewPool("")
-	if err != nil {
-		m.t.Fatalf("could not construct pool: %q", err)
-	}
+	m.pool = dockertest.NewPoolT(m.t, "")
 
-	// uses pool to try to connect to Docker
-	err = m.pool.Client.Ping()
-	if err != nil {
-		m.t.Fatalf("could not connect to Docker: %q", err)
-	}
-
-	// Pulls image, creates a container based on it and runs it
-	m.resource, err = m.pool.RunWithOptions(
-		&dockertest.RunOptions{
-			Repository: image,
-			Tag:        tag,
-			Env: []string{
-				"MYSQL_ROOT_PASSWORD=secret",
-				"MYSQL_USER=fivenet",
-				"MYSQL_PASSWORD=changeme",
-				"MYSQL_DATABASE=fivenettest",
-				"TZ=Europe/Berlin",
-			},
-			Cmd: []string{
-				"mysqld",
-				"--innodb-ft-min-token-size=2",
-				"--innodb-ft-max-token-size=50",
-				"--default-time-zone=Europe/Berlin",
-			},
-		},
-		func(config *docker.HostConfig) {
-			// set AutoRemove to true so that stopped container goes away by itself
-			config.AutoRemove = true
-			config.RestartPolicy = docker.RestartPolicy{
-				Name: "no",
-			}
-		},
+	// Pulls image, creates a container based on it and runs it.
+	// We disable reuse explicitly to guarantee test isolation.
+	m.resource = m.pool.RunT(
+		m.t,
+		image,
+		dockertest.WithTag(tag),
+		dockertest.WithEnv([]string{
+			"MYSQL_ROOT_PASSWORD=secret",
+			"MYSQL_USER=fivenet",
+			"MYSQL_PASSWORD=changeme",
+			"MYSQL_DATABASE=fivenettest",
+			"TZ=Europe/Berlin",
+		}),
+		dockertest.WithCmd([]string{
+			"mysqld",
+			"--innodb-ft-min-token-size=2",
+			"--innodb-ft-max-token-size=50",
+			"--default-time-zone=Europe/Berlin",
+		}),
+		dockertest.WithoutReuse(),
 	)
-	if err != nil {
-		m.t.Fatalf("could not start resource: %q", err)
-	}
 
-	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
-	if err := m.pool.Retry(func() error {
+	// Exponential backoff-retry, because the application in the container might not be ready to accept connections yet
+	if err := m.pool.Retry(ctx, 0, func() error {
 		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 		defer cancel()
 
@@ -126,13 +106,11 @@ func (m *dbServer) Setup(ctx context.Context) {
 		m.t.Fatalf("failed to load base data into database: %q", err)
 	}
 
+	var err error
 	m.db, err = sql.Open("mysql", m.getDSN())
 	if err != nil {
 		m.t.Fatalf("could not connect to database after setup: %q", err)
 	}
-
-	// Auto stop server when test is done
-	m.t.Cleanup(m.Stop)
 }
 
 func (m *dbServer) DB() (*sql.DB, error) {
@@ -218,9 +196,10 @@ func (m *dbServer) Stop() {
 	}
 	m.stopped = true
 
-	// You can't defer this because os.Exit doesn't care for defer
-	if err := m.pool.Purge(m.resource); err != nil {
-		m.t.Fatalf("could not purge container resource: %v", err)
+	if m.db != nil {
+		if err := m.db.Close(); err != nil {
+			m.t.Fatalf("could not close test database connection: %v", err)
+		}
 	}
 }
 
