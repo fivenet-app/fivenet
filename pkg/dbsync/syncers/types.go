@@ -9,6 +9,7 @@ import (
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
 )
 
 type Syncer struct {
@@ -34,10 +35,13 @@ func New(
 	}
 }
 
-func (s *Syncer) sendData(ctx context.Context, data *pbsync.SendDataRequest) error {
+func (s *Syncer) send(
+	ctx context.Context,
+	req proto.Message,
+	call func(context.Context, pbsync.SyncServiceClient) error,
+) error {
 	if s.cfg.Destination.DryRun {
-		s.logger.Info("dry run enabled, not sending data to server")
-		out, err := protoutils.MarshalToPrettyJSON(data)
+		out, err := protoutils.MarshalToPrettyJSON(req)
 		if err != nil {
 			s.logger.Error("failed to marshal data for dry run output", zap.Error(err))
 		} else {
@@ -48,7 +52,7 @@ func (s *Syncer) sendData(ctx context.Context, data *pbsync.SendDataRequest) err
 	}
 
 	if s.cli != nil {
-		if _, err := s.cli.SendData(ctx, data); err != nil {
+		if err := call(ctx, s.cli); err != nil {
 			return fmt.Errorf("failed to send data to server. %w", err)
 		}
 	}

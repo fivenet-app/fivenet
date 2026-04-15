@@ -7,7 +7,6 @@ import (
 	"slices"
 	"time"
 
-	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
@@ -245,12 +244,12 @@ func (s *VehiclesSync) syncOnce(
 
 	// Sync vehicles to FiveNet server (if there are any left after hash check)
 	if len(vehicles) > 0 {
-		if err := s.sendData(ctx, &pbsync.SendDataRequest{
-			Data: &pbsync.SendDataRequest_Vehicles{
-				Vehicles: &syncdata.DataVehicles{
-					Vehicles: vehicles,
-				},
-			},
+		req := &pbsync.SendVehiclesRequest{
+			Vehicles: vehicles,
+		}
+		if err := s.send(ctx, req, func(ctx context.Context, cli pbsync.SyncServiceClient) error {
+			_, err := cli.SendVehicles(ctx, req)
+			return err
 		}); err != nil {
 			return 0, 0, "", nil, fmt.Errorf(
 				"failed to send vehicles data to FiveNet server. %w",

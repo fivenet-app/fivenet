@@ -19,13 +19,31 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SyncService_GetStatus_FullMethodName       = "/services.sync.SyncService/GetStatus"
-	SyncService_AddActivity_FullMethodName     = "/services.sync.SyncService/AddActivity"
-	SyncService_RegisterAccount_FullMethodName = "/services.sync.SyncService/RegisterAccount"
-	SyncService_TransferAccount_FullMethodName = "/services.sync.SyncService/TransferAccount"
-	SyncService_SendData_FullMethodName        = "/services.sync.SyncService/SendData"
-	SyncService_DeleteData_FullMethodName      = "/services.sync.SyncService/DeleteData"
-	SyncService_Stream_FullMethodName          = "/services.sync.SyncService/Stream"
+	SyncService_GetStatus_FullMethodName            = "/services.sync.SyncService/GetStatus"
+	SyncService_RegisterAccount_FullMethodName      = "/services.sync.SyncService/RegisterAccount"
+	SyncService_TransferAccount_FullMethodName      = "/services.sync.SyncService/TransferAccount"
+	SyncService_AddUserOAuth2Conn_FullMethodName    = "/services.sync.SyncService/AddUserOAuth2Conn"
+	SyncService_AddAccountUpdate_FullMethodName     = "/services.sync.SyncService/AddAccountUpdate"
+	SyncService_AddUserUpdate_FullMethodName        = "/services.sync.SyncService/AddUserUpdate"
+	SyncService_AddUserActivity_FullMethodName      = "/services.sync.SyncService/AddUserActivity"
+	SyncService_AddUserProps_FullMethodName         = "/services.sync.SyncService/AddUserProps"
+	SyncService_AddColleagueActivity_FullMethodName = "/services.sync.SyncService/AddColleagueActivity"
+	SyncService_AddColleagueProps_FullMethodName    = "/services.sync.SyncService/AddColleagueProps"
+	SyncService_AddJobTimeclock_FullMethodName      = "/services.sync.SyncService/AddJobTimeclock"
+	SyncService_AddDispatch_FullMethodName          = "/services.sync.SyncService/AddDispatch"
+	SyncService_SendJobs_FullMethodName             = "/services.sync.SyncService/SendJobs"
+	SyncService_SendLicenses_FullMethodName         = "/services.sync.SyncService/SendLicenses"
+	SyncService_SendAccounts_FullMethodName         = "/services.sync.SyncService/SendAccounts"
+	SyncService_SendUsers_FullMethodName            = "/services.sync.SyncService/SendUsers"
+	SyncService_SendVehicles_FullMethodName         = "/services.sync.SyncService/SendVehicles"
+	SyncService_SendUserLocations_FullMethodName    = "/services.sync.SyncService/SendUserLocations"
+	SyncService_SetLastCharID_FullMethodName        = "/services.sync.SyncService/SetLastCharID"
+	SyncService_DeleteUsers_FullMethodName          = "/services.sync.SyncService/DeleteUsers"
+	SyncService_DeleteVehicles_FullMethodName       = "/services.sync.SyncService/DeleteVehicles"
+	SyncService_Stream_FullMethodName               = "/services.sync.SyncService/Stream"
+	SyncService_AddActivity_FullMethodName          = "/services.sync.SyncService/AddActivity"
+	SyncService_SendData_FullMethodName             = "/services.sync.SyncService/SendData"
+	SyncService_DeleteData_FullMethodName           = "/services.sync.SyncService/DeleteData"
 )
 
 // SyncServiceClient is the client API for SyncService service.
@@ -37,18 +55,42 @@ const (
 type SyncServiceClient interface {
 	// Get basic "sync state" from server side (currently simply the count of records on the server side).
 	GetStatus(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*GetStatusResponse, error)
-	// For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
-	AddActivity(ctx context.Context, in *AddActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	// Get registration token for a new user account or return the account id and username, for a given identifier/license.
 	RegisterAccount(ctx context.Context, in *RegisterAccountRequest, opts ...grpc.CallOption) (*RegisterAccountResponse, error)
 	// Transfer account from one license to another
 	TransferAccount(ctx context.Context, in *TransferAccountRequest, opts ...grpc.CallOption) (*TransferAccountResponse, error)
-	// DBSync's method of sending (mass) data to the FiveNet server for storing.
-	SendData(ctx context.Context, in *SendDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
-	// Way for the gameserver to delete certain data as well
-	DeleteData(ctx context.Context, in *DeleteDataRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error)
+	// Individual AddActivity methods
+	AddUserOAuth2Conn(ctx context.Context, in *AddUserOAuth2ConnRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	AddAccountUpdate(ctx context.Context, in *AddAccountUpdateRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	AddUserUpdate(ctx context.Context, in *AddUserUpdateRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	AddUserActivity(ctx context.Context, in *AddUserActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	AddUserProps(ctx context.Context, in *AddUserPropsRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	AddColleagueActivity(ctx context.Context, in *AddColleagueActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	AddColleagueProps(ctx context.Context, in *AddColleaguePropsRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	AddJobTimeclock(ctx context.Context, in *AddJobTimeclockRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	AddDispatch(ctx context.Context, in *AddDispatchRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// Individual SendData methods
+	SendJobs(ctx context.Context, in *SendJobsRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	SendLicenses(ctx context.Context, in *SendLicensesRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	SendAccounts(ctx context.Context, in *SendAccountsRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	SendUsers(ctx context.Context, in *SendUsersRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	SendVehicles(ctx context.Context, in *SendVehiclesRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	SendUserLocations(ctx context.Context, in *SendUserLocationsRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	SetLastCharID(ctx context.Context, in *SetLastCharIDRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	// Individual DeleteData methods
+	DeleteUsers(ctx context.Context, in *DeleteUsersRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error)
+	DeleteVehicles(ctx context.Context, in *DeleteVehiclesRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error)
 	// Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error)
+	// Deprecated: Do not use.
+	// DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
+	AddActivity(ctx context.Context, in *AddActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// Deprecated: Do not use.
+	// DEPRECATED:DBSync's method of sending (mass) data to the FiveNet server for storing.
+	SendData(ctx context.Context, in *SendDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	// Deprecated: Do not use.
+	// DEPRECATED:Way for the gameserver to delete certain data as well
+	DeleteData(ctx context.Context, in *DeleteDataRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error)
 }
 
 type syncServiceClient struct {
@@ -63,16 +105,6 @@ func (c *syncServiceClient) GetStatus(ctx context.Context, in *GetStatusRequest,
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetStatusResponse)
 	err := c.cc.Invoke(ctx, SyncService_GetStatus_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *syncServiceClient) AddActivity(ctx context.Context, in *AddActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AddActivityResponse)
-	err := c.cc.Invoke(ctx, SyncService_AddActivity_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -99,20 +131,180 @@ func (c *syncServiceClient) TransferAccount(ctx context.Context, in *TransferAcc
 	return out, nil
 }
 
-func (c *syncServiceClient) SendData(ctx context.Context, in *SendDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
+func (c *syncServiceClient) AddUserOAuth2Conn(ctx context.Context, in *AddUserOAuth2ConnRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SendDataResponse)
-	err := c.cc.Invoke(ctx, SyncService_SendData_FullMethodName, in, out, cOpts...)
+	out := new(AddActivityResponse)
+	err := c.cc.Invoke(ctx, SyncService_AddUserOAuth2Conn_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *syncServiceClient) DeleteData(ctx context.Context, in *DeleteDataRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error) {
+func (c *syncServiceClient) AddAccountUpdate(ctx context.Context, in *AddAccountUpdateRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddActivityResponse)
+	err := c.cc.Invoke(ctx, SyncService_AddAccountUpdate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) AddUserUpdate(ctx context.Context, in *AddUserUpdateRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddActivityResponse)
+	err := c.cc.Invoke(ctx, SyncService_AddUserUpdate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) AddUserActivity(ctx context.Context, in *AddUserActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddActivityResponse)
+	err := c.cc.Invoke(ctx, SyncService_AddUserActivity_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) AddUserProps(ctx context.Context, in *AddUserPropsRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddActivityResponse)
+	err := c.cc.Invoke(ctx, SyncService_AddUserProps_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) AddColleagueActivity(ctx context.Context, in *AddColleagueActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddActivityResponse)
+	err := c.cc.Invoke(ctx, SyncService_AddColleagueActivity_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) AddColleagueProps(ctx context.Context, in *AddColleaguePropsRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddActivityResponse)
+	err := c.cc.Invoke(ctx, SyncService_AddColleagueProps_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) AddJobTimeclock(ctx context.Context, in *AddJobTimeclockRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddActivityResponse)
+	err := c.cc.Invoke(ctx, SyncService_AddJobTimeclock_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) AddDispatch(ctx context.Context, in *AddDispatchRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddActivityResponse)
+	err := c.cc.Invoke(ctx, SyncService_AddDispatch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) SendJobs(ctx context.Context, in *SendJobsRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendDataResponse)
+	err := c.cc.Invoke(ctx, SyncService_SendJobs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) SendLicenses(ctx context.Context, in *SendLicensesRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendDataResponse)
+	err := c.cc.Invoke(ctx, SyncService_SendLicenses_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) SendAccounts(ctx context.Context, in *SendAccountsRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendDataResponse)
+	err := c.cc.Invoke(ctx, SyncService_SendAccounts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) SendUsers(ctx context.Context, in *SendUsersRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendDataResponse)
+	err := c.cc.Invoke(ctx, SyncService_SendUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) SendVehicles(ctx context.Context, in *SendVehiclesRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendDataResponse)
+	err := c.cc.Invoke(ctx, SyncService_SendVehicles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) SendUserLocations(ctx context.Context, in *SendUserLocationsRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendDataResponse)
+	err := c.cc.Invoke(ctx, SyncService_SendUserLocations_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) SetLastCharID(ctx context.Context, in *SetLastCharIDRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendDataResponse)
+	err := c.cc.Invoke(ctx, SyncService_SetLastCharID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) DeleteUsers(ctx context.Context, in *DeleteUsersRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteDataResponse)
-	err := c.cc.Invoke(ctx, SyncService_DeleteData_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SyncService_DeleteUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) DeleteVehicles(ctx context.Context, in *DeleteVehiclesRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteDataResponse)
+	err := c.cc.Invoke(ctx, SyncService_DeleteVehicles_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -138,6 +330,39 @@ func (c *syncServiceClient) Stream(ctx context.Context, in *StreamRequest, opts 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type SyncService_StreamClient = grpc.ServerStreamingClient[StreamResponse]
 
+// Deprecated: Do not use.
+func (c *syncServiceClient) AddActivity(ctx context.Context, in *AddActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddActivityResponse)
+	err := c.cc.Invoke(ctx, SyncService_AddActivity_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Deprecated: Do not use.
+func (c *syncServiceClient) SendData(ctx context.Context, in *SendDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendDataResponse)
+	err := c.cc.Invoke(ctx, SyncService_SendData_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Deprecated: Do not use.
+func (c *syncServiceClient) DeleteData(ctx context.Context, in *DeleteDataRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteDataResponse)
+	err := c.cc.Invoke(ctx, SyncService_DeleteData_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SyncServiceServer is the server API for SyncService service.
 // All implementations must embed UnimplementedSyncServiceServer
 // for forward compatibility.
@@ -147,18 +372,42 @@ type SyncService_StreamClient = grpc.ServerStreamingClient[StreamResponse]
 type SyncServiceServer interface {
 	// Get basic "sync state" from server side (currently simply the count of records on the server side).
 	GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error)
-	// For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
-	AddActivity(context.Context, *AddActivityRequest) (*AddActivityResponse, error)
 	// Get registration token for a new user account or return the account id and username, for a given identifier/license.
 	RegisterAccount(context.Context, *RegisterAccountRequest) (*RegisterAccountResponse, error)
 	// Transfer account from one license to another
 	TransferAccount(context.Context, *TransferAccountRequest) (*TransferAccountResponse, error)
-	// DBSync's method of sending (mass) data to the FiveNet server for storing.
-	SendData(context.Context, *SendDataRequest) (*SendDataResponse, error)
-	// Way for the gameserver to delete certain data as well
-	DeleteData(context.Context, *DeleteDataRequest) (*DeleteDataResponse, error)
+	// Individual AddActivity methods
+	AddUserOAuth2Conn(context.Context, *AddUserOAuth2ConnRequest) (*AddActivityResponse, error)
+	AddAccountUpdate(context.Context, *AddAccountUpdateRequest) (*AddActivityResponse, error)
+	AddUserUpdate(context.Context, *AddUserUpdateRequest) (*AddActivityResponse, error)
+	AddUserActivity(context.Context, *AddUserActivityRequest) (*AddActivityResponse, error)
+	AddUserProps(context.Context, *AddUserPropsRequest) (*AddActivityResponse, error)
+	AddColleagueActivity(context.Context, *AddColleagueActivityRequest) (*AddActivityResponse, error)
+	AddColleagueProps(context.Context, *AddColleaguePropsRequest) (*AddActivityResponse, error)
+	AddJobTimeclock(context.Context, *AddJobTimeclockRequest) (*AddActivityResponse, error)
+	AddDispatch(context.Context, *AddDispatchRequest) (*AddActivityResponse, error)
+	// Individual SendData methods
+	SendJobs(context.Context, *SendJobsRequest) (*SendDataResponse, error)
+	SendLicenses(context.Context, *SendLicensesRequest) (*SendDataResponse, error)
+	SendAccounts(context.Context, *SendAccountsRequest) (*SendDataResponse, error)
+	SendUsers(context.Context, *SendUsersRequest) (*SendDataResponse, error)
+	SendVehicles(context.Context, *SendVehiclesRequest) (*SendDataResponse, error)
+	SendUserLocations(context.Context, *SendUserLocationsRequest) (*SendDataResponse, error)
+	SetLastCharID(context.Context, *SetLastCharIDRequest) (*SendDataResponse, error)
+	// Individual DeleteData methods
+	DeleteUsers(context.Context, *DeleteUsersRequest) (*DeleteDataResponse, error)
+	DeleteVehicles(context.Context, *DeleteVehiclesRequest) (*DeleteDataResponse, error)
 	// Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
 	Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error
+	// Deprecated: Do not use.
+	// DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
+	AddActivity(context.Context, *AddActivityRequest) (*AddActivityResponse, error)
+	// Deprecated: Do not use.
+	// DEPRECATED:DBSync's method of sending (mass) data to the FiveNet server for storing.
+	SendData(context.Context, *SendDataRequest) (*SendDataResponse, error)
+	// Deprecated: Do not use.
+	// DEPRECATED:Way for the gameserver to delete certain data as well
+	DeleteData(context.Context, *DeleteDataRequest) (*DeleteDataResponse, error)
 	mustEmbedUnimplementedSyncServiceServer()
 }
 
@@ -172,23 +421,77 @@ type UnimplementedSyncServiceServer struct{}
 func (UnimplementedSyncServiceServer) GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStatus not implemented")
 }
-func (UnimplementedSyncServiceServer) AddActivity(context.Context, *AddActivityRequest) (*AddActivityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddActivity not implemented")
-}
 func (UnimplementedSyncServiceServer) RegisterAccount(context.Context, *RegisterAccountRequest) (*RegisterAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterAccount not implemented")
 }
 func (UnimplementedSyncServiceServer) TransferAccount(context.Context, *TransferAccountRequest) (*TransferAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TransferAccount not implemented")
 }
+func (UnimplementedSyncServiceServer) AddUserOAuth2Conn(context.Context, *AddUserOAuth2ConnRequest) (*AddActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUserOAuth2Conn not implemented")
+}
+func (UnimplementedSyncServiceServer) AddAccountUpdate(context.Context, *AddAccountUpdateRequest) (*AddActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddAccountUpdate not implemented")
+}
+func (UnimplementedSyncServiceServer) AddUserUpdate(context.Context, *AddUserUpdateRequest) (*AddActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUserUpdate not implemented")
+}
+func (UnimplementedSyncServiceServer) AddUserActivity(context.Context, *AddUserActivityRequest) (*AddActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUserActivity not implemented")
+}
+func (UnimplementedSyncServiceServer) AddUserProps(context.Context, *AddUserPropsRequest) (*AddActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUserProps not implemented")
+}
+func (UnimplementedSyncServiceServer) AddColleagueActivity(context.Context, *AddColleagueActivityRequest) (*AddActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddColleagueActivity not implemented")
+}
+func (UnimplementedSyncServiceServer) AddColleagueProps(context.Context, *AddColleaguePropsRequest) (*AddActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddColleagueProps not implemented")
+}
+func (UnimplementedSyncServiceServer) AddJobTimeclock(context.Context, *AddJobTimeclockRequest) (*AddActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddJobTimeclock not implemented")
+}
+func (UnimplementedSyncServiceServer) AddDispatch(context.Context, *AddDispatchRequest) (*AddActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddDispatch not implemented")
+}
+func (UnimplementedSyncServiceServer) SendJobs(context.Context, *SendJobsRequest) (*SendDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendJobs not implemented")
+}
+func (UnimplementedSyncServiceServer) SendLicenses(context.Context, *SendLicensesRequest) (*SendDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendLicenses not implemented")
+}
+func (UnimplementedSyncServiceServer) SendAccounts(context.Context, *SendAccountsRequest) (*SendDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendAccounts not implemented")
+}
+func (UnimplementedSyncServiceServer) SendUsers(context.Context, *SendUsersRequest) (*SendDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendUsers not implemented")
+}
+func (UnimplementedSyncServiceServer) SendVehicles(context.Context, *SendVehiclesRequest) (*SendDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendVehicles not implemented")
+}
+func (UnimplementedSyncServiceServer) SendUserLocations(context.Context, *SendUserLocationsRequest) (*SendDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendUserLocations not implemented")
+}
+func (UnimplementedSyncServiceServer) SetLastCharID(context.Context, *SetLastCharIDRequest) (*SendDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetLastCharID not implemented")
+}
+func (UnimplementedSyncServiceServer) DeleteUsers(context.Context, *DeleteUsersRequest) (*DeleteDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUsers not implemented")
+}
+func (UnimplementedSyncServiceServer) DeleteVehicles(context.Context, *DeleteVehiclesRequest) (*DeleteDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteVehicles not implemented")
+}
+func (UnimplementedSyncServiceServer) Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
+}
+func (UnimplementedSyncServiceServer) AddActivity(context.Context, *AddActivityRequest) (*AddActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddActivity not implemented")
+}
 func (UnimplementedSyncServiceServer) SendData(context.Context, *SendDataRequest) (*SendDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendData not implemented")
 }
 func (UnimplementedSyncServiceServer) DeleteData(context.Context, *DeleteDataRequest) (*DeleteDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteData not implemented")
-}
-func (UnimplementedSyncServiceServer) Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error {
-	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
 }
 func (UnimplementedSyncServiceServer) mustEmbedUnimplementedSyncServiceServer() {}
 func (UnimplementedSyncServiceServer) testEmbeddedByValue()                     {}
@@ -229,24 +532,6 @@ func _SyncService_GetStatus_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SyncService_AddActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddActivityRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SyncServiceServer).AddActivity(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SyncService_AddActivity_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyncServiceServer).AddActivity(ctx, req.(*AddActivityRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _SyncService_RegisterAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RegisterAccountRequest)
 	if err := dec(in); err != nil {
@@ -279,6 +564,359 @@ func _SyncService_TransferAccount_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SyncServiceServer).TransferAccount(ctx, req.(*TransferAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_AddUserOAuth2Conn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserOAuth2ConnRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).AddUserOAuth2Conn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_AddUserOAuth2Conn_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).AddUserOAuth2Conn(ctx, req.(*AddUserOAuth2ConnRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_AddAccountUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddAccountUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).AddAccountUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_AddAccountUpdate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).AddAccountUpdate(ctx, req.(*AddAccountUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_AddUserUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).AddUserUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_AddUserUpdate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).AddUserUpdate(ctx, req.(*AddUserUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_AddUserActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserActivityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).AddUserActivity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_AddUserActivity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).AddUserActivity(ctx, req.(*AddUserActivityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_AddUserProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserPropsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).AddUserProps(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_AddUserProps_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).AddUserProps(ctx, req.(*AddUserPropsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_AddColleagueActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddColleagueActivityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).AddColleagueActivity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_AddColleagueActivity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).AddColleagueActivity(ctx, req.(*AddColleagueActivityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_AddColleagueProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddColleaguePropsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).AddColleagueProps(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_AddColleagueProps_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).AddColleagueProps(ctx, req.(*AddColleaguePropsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_AddJobTimeclock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddJobTimeclockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).AddJobTimeclock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_AddJobTimeclock_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).AddJobTimeclock(ctx, req.(*AddJobTimeclockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_AddDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddDispatchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).AddDispatch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_AddDispatch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).AddDispatch(ctx, req.(*AddDispatchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_SendJobs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendJobsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).SendJobs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_SendJobs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).SendJobs(ctx, req.(*SendJobsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_SendLicenses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendLicensesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).SendLicenses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_SendLicenses_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).SendLicenses(ctx, req.(*SendLicensesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_SendAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendAccountsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).SendAccounts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_SendAccounts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).SendAccounts(ctx, req.(*SendAccountsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_SendUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).SendUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_SendUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).SendUsers(ctx, req.(*SendUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_SendVehicles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendVehiclesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).SendVehicles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_SendVehicles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).SendVehicles(ctx, req.(*SendVehiclesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_SendUserLocations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendUserLocationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).SendUserLocations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_SendUserLocations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).SendUserLocations(ctx, req.(*SendUserLocationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_SetLastCharID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetLastCharIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).SetLastCharID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_SetLastCharID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).SetLastCharID(ctx, req.(*SetLastCharIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_DeleteUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).DeleteUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_DeleteUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).DeleteUsers(ctx, req.(*DeleteUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_DeleteVehicles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteVehiclesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).DeleteVehicles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_DeleteVehicles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).DeleteVehicles(ctx, req.(*DeleteVehiclesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(StreamRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(SyncServiceServer).Stream(m, &grpc.GenericServerStream[StreamRequest, StreamResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type SyncService_StreamServer = grpc.ServerStreamingServer[StreamResponse]
+
+func _SyncService_AddActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddActivityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).AddActivity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_AddActivity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).AddActivity(ctx, req.(*AddActivityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -319,17 +957,6 @@ func _SyncService_DeleteData_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SyncService_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(StreamRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(SyncServiceServer).Stream(m, &grpc.GenericServerStream[StreamRequest, StreamResponse]{ServerStream: stream})
-}
-
-// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type SyncService_StreamServer = grpc.ServerStreamingServer[StreamResponse]
-
 // SyncService_ServiceDesc is the grpc.ServiceDesc for SyncService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -342,16 +969,88 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SyncService_GetStatus_Handler,
 		},
 		{
-			MethodName: "AddActivity",
-			Handler:    _SyncService_AddActivity_Handler,
-		},
-		{
 			MethodName: "RegisterAccount",
 			Handler:    _SyncService_RegisterAccount_Handler,
 		},
 		{
 			MethodName: "TransferAccount",
 			Handler:    _SyncService_TransferAccount_Handler,
+		},
+		{
+			MethodName: "AddUserOAuth2Conn",
+			Handler:    _SyncService_AddUserOAuth2Conn_Handler,
+		},
+		{
+			MethodName: "AddAccountUpdate",
+			Handler:    _SyncService_AddAccountUpdate_Handler,
+		},
+		{
+			MethodName: "AddUserUpdate",
+			Handler:    _SyncService_AddUserUpdate_Handler,
+		},
+		{
+			MethodName: "AddUserActivity",
+			Handler:    _SyncService_AddUserActivity_Handler,
+		},
+		{
+			MethodName: "AddUserProps",
+			Handler:    _SyncService_AddUserProps_Handler,
+		},
+		{
+			MethodName: "AddColleagueActivity",
+			Handler:    _SyncService_AddColleagueActivity_Handler,
+		},
+		{
+			MethodName: "AddColleagueProps",
+			Handler:    _SyncService_AddColleagueProps_Handler,
+		},
+		{
+			MethodName: "AddJobTimeclock",
+			Handler:    _SyncService_AddJobTimeclock_Handler,
+		},
+		{
+			MethodName: "AddDispatch",
+			Handler:    _SyncService_AddDispatch_Handler,
+		},
+		{
+			MethodName: "SendJobs",
+			Handler:    _SyncService_SendJobs_Handler,
+		},
+		{
+			MethodName: "SendLicenses",
+			Handler:    _SyncService_SendLicenses_Handler,
+		},
+		{
+			MethodName: "SendAccounts",
+			Handler:    _SyncService_SendAccounts_Handler,
+		},
+		{
+			MethodName: "SendUsers",
+			Handler:    _SyncService_SendUsers_Handler,
+		},
+		{
+			MethodName: "SendVehicles",
+			Handler:    _SyncService_SendVehicles_Handler,
+		},
+		{
+			MethodName: "SendUserLocations",
+			Handler:    _SyncService_SendUserLocations_Handler,
+		},
+		{
+			MethodName: "SetLastCharID",
+			Handler:    _SyncService_SetLastCharID_Handler,
+		},
+		{
+			MethodName: "DeleteUsers",
+			Handler:    _SyncService_DeleteUsers_Handler,
+		},
+		{
+			MethodName: "DeleteVehicles",
+			Handler:    _SyncService_DeleteVehicles_Handler,
+		},
+		{
+			MethodName: "AddActivity",
+			Handler:    _SyncService_AddActivity_Handler,
 		},
 		{
 			MethodName: "SendData",

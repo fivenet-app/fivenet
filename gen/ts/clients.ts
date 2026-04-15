@@ -176,12 +176,6 @@ export async function getSyncSyncClient() {
     return new SyncServiceClient(useGRPCTransport());
 }
 
-// Factory for sync.v2.sync client.
-export async function getSyncV2SyncClient() {
-    const { SyncServiceClient } = await import('~~/gen/ts/services/sync/v2/sync.client');
-    return new SyncServiceClient(useGRPCTransport());
-}
-
 // Factory for vehicles.vehicles client.
 export async function getVehiclesVehiclesClient() {
     const { VehiclesServiceClient } = await import('~~/gen/ts/services/vehicles/vehicles.client');

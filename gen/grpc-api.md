@@ -6845,54 +6845,6 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 
 
-## resources/sync/data/v2/data.proto
-
-
-### resources.sync.data.v2.DataUserJobs
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `jobs` | [resources.users.UserJob](#resourcesusersUserJob) | repeated |  |
-
-
-
-
-
-### resources.sync.data.v2.DataUserLicenses
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `licenses` | [resources.citizens.licenses.License](#resourcescitizenslicensesLicense) | repeated |  |
-
-
-
-
-
-### resources.sync.data.v2.DataUserPhoneNumbers
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `phone_numbers` | [resources.users.PhoneNumber](#resourcesusersPhoneNumber) | repeated |  |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 ## resources/tracker/mapping.proto
 
 
@@ -13102,6 +13054,17 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 ## services/sync/sync.proto
 
 
+### services.sync.AddAccountUpdateRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `account_update` | [resources.sync.activity.AccountUpdate](#resourcessyncactivityAccountUpdate) |  |  |
+
+
+
+
+
 ### services.sync.AddActivityRequest
 
 
@@ -13127,6 +13090,96 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
+### services.sync.AddColleagueActivityRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `colleague_activity` | [resources.jobs.colleagues.activity.ColleagueActivity](#resourcesjobscolleaguesactivityColleagueActivity) |  |  |
+
+
+
+
+
+### services.sync.AddColleaguePropsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `colleague_props` | [resources.sync.activity.ColleagueProps](#resourcessyncactivityColleagueProps) |  |  |
+
+
+
+
+
+### services.sync.AddDispatchRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dispatch` | [resources.centrum.dispatches.Dispatch](#resourcescentrumdispatchesDispatch) |  |  |
+
+
+
+
+
+### services.sync.AddJobTimeclockRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job_timeclock` | [resources.sync.activity.TimeclockUpdate](#resourcessyncactivityTimeclockUpdate) |  |  |
+
+
+
+
+
+### services.sync.AddUserActivityRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_activity` | [resources.users.activity.UserActivity](#resourcesusersactivityUserActivity) |  |  |
+
+
+
+
+
+### services.sync.AddUserOAuth2ConnRequest
+Individual AddActivity request messages
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_oauth2` | [resources.sync.activity.UserOAuth2Conn](#resourcessyncactivityUserOAuth2Conn) |  |  |
+
+
+
+
+
+### services.sync.AddUserPropsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_props` | [resources.sync.activity.UserProps](#resourcessyncactivityUserProps) |  |  |
+
+
+
+
+
+### services.sync.AddUserUpdateRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_update` | [resources.sync.activity.UserUpdate](#resourcessyncactivityUserUpdate) |  |  |
+
+
+
+
+
 ### services.sync.DeleteDataRequest
 
 
@@ -13144,7 +13197,31 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `affected_rows` | [int64](#int64) |  |  |
+| `rows_affected` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.sync.DeleteUsersRequest
+Individual DeleteData request messages
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_ids` | [int32](#int32) | repeated |  |
+
+
+
+
+
+### services.sync.DeleteVehiclesRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `plates` | [string](#string) | repeated |  |
 
 
 
@@ -13163,9 +13240,9 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | ----- | ---- | ----- | ----------- |
 | `jobs` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
 | `licenses` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
-| `accounts` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
 | `users` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
 | `vehicles` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
+| `accounts` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
 
 
 
@@ -13197,6 +13274,17 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
+### services.sync.SendAccountsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `account_updates` | [resources.sync.activity.AccountUpdate](#resourcessyncactivityAccountUpdate) | repeated |  |
+
+
+
+
+
 ### services.sync.SendDataRequest
 
 
@@ -13219,7 +13307,76 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `affected_rows` | [int64](#int64) |  |  |
+| `rows_affected` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.sync.SendJobsRequest
+Individual SendData request messages
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [resources.jobs.Job](#resourcesjobsJob) | repeated |  |
+
+
+
+
+
+### services.sync.SendLicensesRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `licenses` | [resources.citizens.licenses.License](#resourcescitizenslicensesLicense) | repeated |  |
+
+
+
+
+
+### services.sync.SendUserLocationsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `users` | [resources.sync.data.CitizenLocations](#resourcessyncdataCitizenLocations) | repeated |  |
+| `clear_all` | [bool](#bool) | optional |  |
+
+
+
+
+
+### services.sync.SendUsersRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `users` | [resources.sync.data.DataUser](#resourcessyncdataDataUser) | repeated |  |
+
+
+
+
+
+### services.sync.SendVehiclesRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `vehicles` | [resources.vehicles.Vehicle](#resourcesvehiclesVehicle) | repeated |  |
+
+
+
+
+
+### services.sync.SetLastCharIDRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `last_char_id` | [resources.sync.data.LastCharID](#resourcessyncdataLastCharID) |  |  |
 
 
 
@@ -13278,374 +13435,30 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | `GetStatus` | [GetStatusRequest](#servicessyncGetStatusRequest) | [GetStatusResponse](#servicessyncGetStatusResponse) |Get basic "sync state" from server side (currently simply the count of records on the server side). |
-| `AddActivity` | [AddActivityRequest](#servicessyncAddActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc. |
 | `RegisterAccount` | [RegisterAccountRequest](#servicessyncRegisterAccountRequest) | [RegisterAccountResponse](#servicessyncRegisterAccountResponse) |Get registration token for a new user account or return the account id and username, for a given identifier/license. |
 | `TransferAccount` | [TransferAccountRequest](#servicessyncTransferAccountRequest) | [TransferAccountResponse](#servicessyncTransferAccountResponse) |Transfer account from one license to another |
-| `SendData` | [SendDataRequest](#servicessyncSendDataRequest) | [SendDataResponse](#servicessyncSendDataResponse) |DBSync's method of sending (mass) data to the FiveNet server for storing. |
-| `DeleteData` | [DeleteDataRequest](#servicessyncDeleteDataRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |Way for the gameserver to delete certain data as well |
+| `AddUserOAuth2Conn` | [AddUserOAuth2ConnRequest](#servicessyncAddUserOAuth2ConnRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Individual AddActivity methods |
+| `AddAccountUpdate` | [AddAccountUpdateRequest](#servicessyncAddAccountUpdateRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
+| `AddUserUpdate` | [AddUserUpdateRequest](#servicessyncAddUserUpdateRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
+| `AddUserActivity` | [AddUserActivityRequest](#servicessyncAddUserActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
+| `AddUserProps` | [AddUserPropsRequest](#servicessyncAddUserPropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
+| `AddColleagueActivity` | [AddColleagueActivityRequest](#servicessyncAddColleagueActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
+| `AddColleagueProps` | [AddColleaguePropsRequest](#servicessyncAddColleaguePropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
+| `AddJobTimeclock` | [AddJobTimeclockRequest](#servicessyncAddJobTimeclockRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
+| `AddDispatch` | [AddDispatchRequest](#servicessyncAddDispatchRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) | |
+| `SendJobs` | [SendJobsRequest](#servicessyncSendJobsRequest) | [SendDataResponse](#servicessyncSendDataResponse) |Individual SendData methods |
+| `SendLicenses` | [SendLicensesRequest](#servicessyncSendLicensesRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
+| `SendAccounts` | [SendAccountsRequest](#servicessyncSendAccountsRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
+| `SendUsers` | [SendUsersRequest](#servicessyncSendUsersRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
+| `SendVehicles` | [SendVehiclesRequest](#servicessyncSendVehiclesRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
+| `SendUserLocations` | [SendUserLocationsRequest](#servicessyncSendUserLocationsRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
+| `SetLastCharID` | [SetLastCharIDRequest](#servicessyncSetLastCharIDRequest) | [SendDataResponse](#servicessyncSendDataResponse) | |
+| `DeleteUsers` | [DeleteUsersRequest](#servicessyncDeleteUsersRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |Individual DeleteData methods |
+| `DeleteVehicles` | [DeleteVehiclesRequest](#servicessyncDeleteVehiclesRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) | |
 | `Stream` | [StreamRequest](#servicessyncStreamRequest) | [StreamResponse](#servicessyncStreamResponse) stream |Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data) |
-
- <!-- end services -->
-
-
-
-## services/sync/v2/sync.proto
-
-
-### services.sync.v2.AddAccountUpdateRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `account_update` | [resources.sync.activity.AccountUpdate](#resourcessyncactivityAccountUpdate) |  |  |
-
-
-
-
-
-### services.sync.v2.AddActivityResponse
-
-
-
-
-
-### services.sync.v2.AddColleagueActivityRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `colleague_activity` | [resources.jobs.colleagues.activity.ColleagueActivity](#resourcesjobscolleaguesactivityColleagueActivity) |  |  |
-
-
-
-
-
-### services.sync.v2.AddColleaguePropsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `colleague_props` | [resources.sync.activity.ColleagueProps](#resourcessyncactivityColleagueProps) |  |  |
-
-
-
-
-
-### services.sync.v2.AddDispatchRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `dispatch` | [resources.centrum.dispatches.Dispatch](#resourcescentrumdispatchesDispatch) |  |  |
-
-
-
-
-
-### services.sync.v2.AddJobTimeclockRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job_timeclock` | [resources.sync.activity.TimeclockUpdate](#resourcessyncactivityTimeclockUpdate) |  |  |
-
-
-
-
-
-### services.sync.v2.AddUserActivityRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_activity` | [resources.users.activity.UserActivity](#resourcesusersactivityUserActivity) |  |  |
-
-
-
-
-
-### services.sync.v2.AddUserOAuth2ConnRequest
-Individual AddActivity request messages
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_oauth2` | [resources.sync.activity.UserOAuth2Conn](#resourcessyncactivityUserOAuth2Conn) |  |  |
-
-
-
-
-
-### services.sync.v2.AddUserPropsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_props` | [resources.sync.activity.UserProps](#resourcessyncactivityUserProps) |  |  |
-
-
-
-
-
-### services.sync.v2.AddUserUpdateRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_update` | [resources.sync.activity.UserUpdate](#resourcessyncactivityUserUpdate) |  |  |
-
-
-
-
-
-### services.sync.v2.DeleteDataResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `affected_rows` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.sync.v2.DeleteUsersDataRequest
-Individual DeleteData request messages
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_ids` | [int32](#int32) | repeated |  |
-
-
-
-
-
-### services.sync.v2.DeleteVehiclesDataRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `plates` | [string](#string) | repeated |  |
-
-
-
-
-
-### services.sync.v2.GetStatusRequest
-
-
-
-
-
-### services.sync.v2.GetStatusResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
-| `licenses` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
-| `accounts` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
-| `users` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
-| `vehicles` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
-
-
-
-
-
-### services.sync.v2.RegisterAccountRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `identifier` | [string](#string) |  |  |
-| `reset_token` | [bool](#bool) |  |  |
-| `last_char_id` | [int32](#int32) | optional |  |
-
-
-
-
-
-### services.sync.v2.RegisterAccountResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `reg_token` | [string](#string) | optional |  |
-| `account_id` | [int64](#int64) | optional |  |
-| `username` | [string](#string) | optional |  |
-
-
-
-
-
-### services.sync.v2.SendAccountsDataRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `account_updates` | [resources.sync.activity.AccountUpdate](#resourcessyncactivityAccountUpdate) | repeated |  |
-
-
-
-
-
-### services.sync.v2.SendDataResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `affected_rows` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.sync.v2.SendJobsDataRequest
-Individual SendData request messages
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [resources.jobs.Job](#resourcesjobsJob) | repeated |  |
-
-
-
-
-
-### services.sync.v2.SendLastCharIDDataRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `last_char_id` | [resources.sync.data.LastCharID](#resourcessyncdataLastCharID) |  |  |
-
-
-
-
-
-### services.sync.v2.SendLicensesDataRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `licenses` | [resources.citizens.licenses.License](#resourcescitizenslicensesLicense) | repeated |  |
-
-
-
-
-
-### services.sync.v2.SendUserLocationsDataRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `users` | [resources.sync.data.CitizenLocations](#resourcessyncdataCitizenLocations) | repeated |  |
-| `clear_all` | [bool](#bool) | optional |  |
-
-
-
-
-
-### services.sync.v2.SendUsersDataRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `users` | [resources.sync.data.DataUser](#resourcessyncdataDataUser) | repeated |  |
-
-
-
-
-
-### services.sync.v2.SendVehiclesDataRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `vehicles` | [resources.vehicles.Vehicle](#resourcesvehiclesVehicle) | repeated |  |
-
-
-
-
-
-### services.sync.v2.StreamRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `version` | [string](#string) | optional |  |
-
-
-
-
-
-### services.sync.v2.StreamResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-
-
-
-
-
-### services.sync.v2.TransferAccountRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `old_license` | [string](#string) |  |  |
-| `new_license` | [string](#string) |  |  |
-
-
-
-
-
-### services.sync.v2.TransferAccountResponse
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-### services.sync.v2.SyncService
-Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instance and API calls from the plugin (e.g., user activity, user props changes).
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `GetStatus` | [GetStatusRequest](#servicessyncv2GetStatusRequest) | [GetStatusResponse](#servicessyncv2GetStatusResponse) |Get basic "sync state" from server side (currently simply the count of records on the server side). |
-| `RegisterAccount` | [RegisterAccountRequest](#servicessyncv2RegisterAccountRequest) | [RegisterAccountResponse](#servicessyncv2RegisterAccountResponse) |Get registration token for a new user account or return the account id and username, for a given identifier/license. |
-| `TransferAccount` | [TransferAccountRequest](#servicessyncv2TransferAccountRequest) | [TransferAccountResponse](#servicessyncv2TransferAccountResponse) |Transfer account from one license to another |
-| `AddUserOAuth2Conn` | [AddUserOAuth2ConnRequest](#servicessyncv2AddUserOAuth2ConnRequest) | [AddActivityResponse](#servicessyncv2AddActivityResponse) |Individual AddActivity methods |
-| `AddDispatch` | [AddDispatchRequest](#servicessyncv2AddDispatchRequest) | [AddActivityResponse](#servicessyncv2AddActivityResponse) | |
-| `AddUserActivity` | [AddUserActivityRequest](#servicessyncv2AddUserActivityRequest) | [AddActivityResponse](#servicessyncv2AddActivityResponse) | |
-| `AddUserProps` | [AddUserPropsRequest](#servicessyncv2AddUserPropsRequest) | [AddActivityResponse](#servicessyncv2AddActivityResponse) | |
-| `AddColleagueActivity` | [AddColleagueActivityRequest](#servicessyncv2AddColleagueActivityRequest) | [AddActivityResponse](#servicessyncv2AddActivityResponse) | |
-| `AddColleagueProps` | [AddColleaguePropsRequest](#servicessyncv2AddColleaguePropsRequest) | [AddActivityResponse](#servicessyncv2AddActivityResponse) | |
-| `AddJobTimeclock` | [AddJobTimeclockRequest](#servicessyncv2AddJobTimeclockRequest) | [AddActivityResponse](#servicessyncv2AddActivityResponse) | |
-| `AddAccountUpdate` | [AddAccountUpdateRequest](#servicessyncv2AddAccountUpdateRequest) | [AddActivityResponse](#servicessyncv2AddActivityResponse) | |
-| `AddUserUpdate` | [AddUserUpdateRequest](#servicessyncv2AddUserUpdateRequest) | [AddActivityResponse](#servicessyncv2AddActivityResponse) | |
-| `SendJobsData` | [SendJobsDataRequest](#servicessyncv2SendJobsDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) |Individual SendData methods |
-| `SendLicensesData` | [SendLicensesDataRequest](#servicessyncv2SendLicensesDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
-| `SendAccountsData` | [SendAccountsDataRequest](#servicessyncv2SendAccountsDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
-| `SendUsersData` | [SendUsersDataRequest](#servicessyncv2SendUsersDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
-| `SendVehiclesData` | [SendVehiclesDataRequest](#servicessyncv2SendVehiclesDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
-| `SendUserLocationsData` | [SendUserLocationsDataRequest](#servicessyncv2SendUserLocationsDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
-| `SendLastCharIDData` | [SendLastCharIDDataRequest](#servicessyncv2SendLastCharIDDataRequest) | [SendDataResponse](#servicessyncv2SendDataResponse) | |
-| `DeleteUsersData` | [DeleteUsersDataRequest](#servicessyncv2DeleteUsersDataRequest) | [DeleteDataResponse](#servicessyncv2DeleteDataResponse) |Individual DeleteData methods |
-| `DeleteVehiclesData` | [DeleteVehiclesDataRequest](#servicessyncv2DeleteVehiclesDataRequest) | [DeleteDataResponse](#servicessyncv2DeleteDataResponse) | |
-| `Stream` | [StreamRequest](#servicessyncv2StreamRequest) | [StreamResponse](#servicessyncv2StreamResponse) stream |Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data) |
+| `AddActivity` | [AddActivityRequest](#servicessyncAddActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc. |
+| `SendData` | [SendDataRequest](#servicessyncSendDataRequest) | [SendDataResponse](#servicessyncSendDataResponse) |DEPRECATED:DBSync's method of sending (mass) data to the FiveNet server for storing. |
+| `DeleteData` | [DeleteDataRequest](#servicessyncDeleteDataRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |DEPRECATED:Way for the gameserver to delete certain data as well |
 
  <!-- end services -->
 

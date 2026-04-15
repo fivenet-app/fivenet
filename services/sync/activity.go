@@ -4,23 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"slices"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
+	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	colleaguesstore "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"go.uber.org/zap"
 )
 
 func (s *Server) AddActivity(
@@ -33,7 +30,7 @@ func (s *Server) AddActivity(
 
 	switch d := req.GetActivity().(type) {
 	case *pbsync.AddActivityRequest_UserOauth2:
-		if err := s.handleUserOauth2(ctx, d); err != nil {
+		if err := s.handleUserOauth2(ctx, d.UserOauth2); err != nil {
 			return nil, fmt.Errorf("failed to handle UserOauth2 activity. %w", err)
 		}
 
@@ -48,7 +45,7 @@ func (s *Server) AddActivity(
 		}
 
 	case *pbsync.AddActivityRequest_UserProps:
-		if err := s.handleUserProps(ctx, d); err != nil {
+		if err := s.handleUserProps(ctx, d.UserProps); err != nil {
 			return nil, fmt.Errorf("failed to handle UserProps activity. %w", err)
 		}
 
@@ -62,22 +59,22 @@ func (s *Server) AddActivity(
 		}
 
 	case *pbsync.AddActivityRequest_ColleagueProps:
-		if err := s.handleColleagueProps(ctx, d); err != nil {
+		if err := s.handleColleagueProps(ctx, d.ColleagueProps); err != nil {
 			return nil, fmt.Errorf("failed to handle ColleagueProps activity. %w", err)
 		}
 
 	case *pbsync.AddActivityRequest_JobTimeclock:
-		if err := s.handleTimeclockEntry(ctx, d); err != nil {
+		if err := s.handleTimeclockEntry(ctx, d.JobTimeclock); err != nil {
 			return nil, fmt.Errorf("failed to handle JobTimeclock activity. %w", err)
 		}
 
 	case *pbsync.AddActivityRequest_UserUpdate:
-		if err := s.handleUserUpdate(ctx, d); err != nil {
+		if err := s.handleUserUpdate(ctx, d.UserUpdate); err != nil {
 			return nil, fmt.Errorf("failed to handle UserUpdate activity. %w", err)
 		}
 
 	case *pbsync.AddActivityRequest_AccountUpdate:
-		if err := s.handleAccountUpdate(ctx, d); err != nil {
+		if err := s.handleAccountUpdate(ctx, d.AccountUpdate); err != nil {
 			return nil, fmt.Errorf("failed to handle AccountUpdate activity. %w", err)
 		}
 	}
@@ -85,84 +82,91 @@ func (s *Server) AddActivity(
 	return resp, nil
 }
 
-func (s *Server) handleUserOauth2(
+func (s *Server) AddUserActivity(
 	ctx context.Context,
-	data *pbsync.AddActivityRequest_UserOauth2,
-) error {
-	idx := slices.IndexFunc(s.cfg.OAuth2.Providers, func(in *config.OAuth2Provider) bool {
-		return in.Name == data.UserOauth2.GetProviderName()
-	})
-	if idx == -1 {
-		return fmt.Errorf("invalid provider name. %s", data.UserOauth2.GetProviderName())
+	req *pbsync.AddUserActivityRequest,
+) (*pbsync.AddActivityResponse, error) {
+	s.lastSyncedActivity.Store(time.Now().Unix())
+
+	if err := usersactivity.CreateUserActivities(ctx, s.db, req.GetUserActivity()); err != nil {
+		return nil, fmt.Errorf("failed to create user activities. %w", err)
 	}
 
-	provider := s.cfg.OAuth2.Providers[idx]
-	tAccounts := table.FivenetAccounts
+	return &pbsync.AddActivityResponse{}, nil
+}
 
-	// Struct to hold the query result
-	type Account struct {
-		ID int64
-	}
-	var account Account
+func (s *Server) AddUserProps(
+	ctx context.Context,
+	req *pbsync.AddUserPropsRequest,
+) (*pbsync.AddActivityResponse, error) {
+	s.lastSyncedActivity.Store(time.Now().Unix())
 
-	// Retrieve account via identifier
-	stmt := tAccounts.
-		SELECT(
-			tAccounts.ID,
-		).
-		FROM(tAccounts).
-		WHERE(tAccounts.License.EQ(mysql.String(data.UserOauth2.GetIdentifier()))).
-		LIMIT(1)
-
-	if err := stmt.QueryContext(ctx, s.db, &account); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return fmt.Errorf("failed to query account by identifier. %w", err)
-		}
+	if err := s.handleUserProps(ctx, req.GetUserProps()); err != nil {
+		return nil, fmt.Errorf("failed to handle UserProps activity. %w", err)
 	}
 
-	if account.ID == 0 {
-		s.logger.Warn(
-			"no fivenet account found for identifier in user oauth2 sync connect",
-			zap.String("provider", data.UserOauth2.GetProviderName()),
-			zap.String(
-				"identifier",
-				data.UserOauth2.GetIdentifier(),
-			),
-			zap.String("external_id", data.UserOauth2.GetExternalId()),
-		)
-		return nil
+	return &pbsync.AddActivityResponse{}, nil
+}
+
+func (s *Server) AddColleagueActivity(
+	ctx context.Context,
+	req *pbsync.AddColleagueActivityRequest,
+) (*pbsync.AddActivityResponse, error) {
+	s.lastSyncedActivity.Store(time.Now().Unix())
+
+	if err := colleaguesactivity.CreateColleagueActivity(
+		ctx,
+		s.db,
+		req.GetColleagueActivity(),
+	); err != nil {
+		return nil, fmt.Errorf("failed to create jobs user activities. %w", err)
 	}
 
-	tOAuth2Accs := table.FivenetAccountsOauth2
+	return &pbsync.AddActivityResponse{}, nil
+}
 
-	insertStmt := tOAuth2Accs.
-		INSERT(
-			tOAuth2Accs.AccountID,
-			tOAuth2Accs.Provider,
-			tOAuth2Accs.ExternalID,
-			tOAuth2Accs.Username,
-			tOAuth2Accs.Avatar,
-		).
-		VALUES(
-			account.ID,
-			provider.Name,
-			data.UserOauth2.GetExternalId(),
-			data.UserOauth2.GetUsername(),
-			provider.DefaultAvatar,
-		)
+func (s *Server) AddColleagueProps(
+	ctx context.Context,
+	req *pbsync.AddColleaguePropsRequest,
+) (*pbsync.AddActivityResponse, error) {
+	s.lastSyncedActivity.Store(time.Now().Unix())
 
-	if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
-		if !dbutils.IsDuplicateError(err) {
-			return fmt.Errorf("failed to insert OAuth2 account. %w", err)
-		}
+	if err := s.handleColleagueProps(ctx, req.GetColleagueProps()); err != nil {
+		return nil, fmt.Errorf("failed to handle ColleagueProps activity. %w", err)
 	}
 
-	return nil
+	return &pbsync.AddActivityResponse{}, nil
+}
+
+func (s *Server) AddJobTimeclock(
+	ctx context.Context,
+	req *pbsync.AddJobTimeclockRequest,
+) (*pbsync.AddActivityResponse, error) {
+	s.lastSyncedActivity.Store(time.Now().Unix())
+
+	if err := s.handleTimeclockEntry(ctx, req.GetJobTimeclock()); err != nil {
+		return nil, fmt.Errorf("failed to handle JobTimeclock activity. %w", err)
+	}
+
+	return &pbsync.AddActivityResponse{}, nil
+}
+
+func (s *Server) AddDispatch(
+	ctx context.Context,
+	req *pbsync.AddDispatchRequest,
+) (*pbsync.AddActivityResponse, error) {
+	s.lastSyncedActivity.Store(time.Now().Unix())
+
+	if _, err := s.dispatches.Create(ctx, req.GetDispatch()); err != nil {
+		return nil, fmt.Errorf("failed to create dispatch. %w", err)
+	}
+
+	return &pbsync.AddActivityResponse{}, nil
 }
 
 func (s *Server) handleUserProps(
 	ctx context.Context,
-	data *pbsync.AddActivityRequest_UserProps,
+	data *activity.UserProps,
 ) error {
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -172,15 +176,15 @@ func (s *Server) handleUserProps(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	reqP := data.UserProps.GetProps()
+	reqP := data.GetProps()
 	props, err := usersprops.GetUserProps(ctx, tx, reqP.GetUserId(), nil)
 	if err != nil {
 		return fmt.Errorf("failed to get user props. %w", err)
 	}
 
 	reason := ""
-	if data.UserProps.Reason != nil {
-		reason = data.UserProps.GetReason()
+	if data.Reason != nil {
+		reason = data.GetReason()
 	}
 
 	activities, err := props.HandleChanges(
@@ -194,7 +198,7 @@ func (s *Server) handleUserProps(
 		return fmt.Errorf("failed to handle user props changes. %w", err)
 	}
 
-	if data.UserProps.Reason != nil && data.UserProps.GetReason() != "" {
+	if data.Reason != nil && data.GetReason() != "" {
 		if err := usersactivity.CreateUserActivities(ctx, tx, activities...); err != nil {
 			return fmt.Errorf("failed to create user activities. %w", err)
 		}
@@ -210,7 +214,7 @@ func (s *Server) handleUserProps(
 
 func (s *Server) handleColleagueProps(
 	ctx context.Context,
-	data *pbsync.AddActivityRequest_ColleagueProps,
+	data *activity.ColleagueProps,
 ) error {
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -220,7 +224,7 @@ func (s *Server) handleColleagueProps(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	input := data.ColleagueProps.GetProps()
+	input := data.GetProps()
 	props, err := colleaguesstore.GetColleagueProps(
 		ctx,
 		tx,
@@ -233,8 +237,8 @@ func (s *Server) handleColleagueProps(
 	}
 
 	reason := ""
-	if data.ColleagueProps.Reason != nil {
-		reason = data.ColleagueProps.GetReason()
+	if data.Reason != nil {
+		reason = data.GetReason()
 	}
 
 	activities, err := colleaguesstore.HandleColleaguesPropsChanges(
@@ -250,7 +254,7 @@ func (s *Server) handleColleagueProps(
 		return fmt.Errorf("failed to handle jobs user props changes. %w", err)
 	}
 
-	if data.ColleagueProps.Reason != nil && data.ColleagueProps.GetReason() != "" {
+	if data.Reason != nil && data.GetReason() != "" {
 		if err := colleaguesactivity.CreateColleagueActivity(ctx, tx, activities...); err != nil {
 			return fmt.Errorf("failed to create jobs user activities. %w", err)
 		}
@@ -266,12 +270,11 @@ func (s *Server) handleColleagueProps(
 
 func (s *Server) handleTimeclockEntry(
 	ctx context.Context,
-	data *pbsync.AddActivityRequest_JobTimeclock,
+	data *activity.TimeclockUpdate,
 ) error {
 	tTimeClock := table.FivenetJobTimeclock
 
-	d := data.JobTimeclock
-	if d.GetStart() {
+	if data.GetStart() {
 		// Run select query to see if a timeclock entry needs to be created
 		stmt := tTimeClock.
 			SELECT(
@@ -281,8 +284,8 @@ func (s *Server) handleTimeclockEntry(
 			).
 			FROM(tTimeClock).
 			WHERE(mysql.AND(
-				tTimeClock.Job.EQ(mysql.String(d.GetJob())),
-				tTimeClock.UserID.EQ(mysql.Int32(d.GetUserId())),
+				tTimeClock.Job.EQ(mysql.String(data.GetJob())),
+				tTimeClock.UserID.EQ(mysql.Int32(data.GetUserId())),
 			)).
 			ORDER_BY(tTimeClock.Date.DESC()).
 			LIMIT(1)
@@ -306,8 +309,8 @@ func (s *Server) handleTimeclockEntry(
 				tTimeClock.Date,
 			).
 			VALUES(
-				d.GetJob(),
-				d.GetUserId(),
+				data.GetJob(),
+				data.GetUserId(),
 				mysql.CURRENT_DATE(),
 			)
 
@@ -324,8 +327,8 @@ func (s *Server) handleTimeclockEntry(
 				tTimeClock.EndTime.SET(mysql.CURRENT_TIMESTAMP()),
 			).
 			WHERE(mysql.AND(
-				tTimeClock.Job.EQ(mysql.String(d.GetJob())),
-				tTimeClock.UserID.EQ(mysql.Int32(d.GetUserId())),
+				tTimeClock.Job.EQ(mysql.String(data.GetJob())),
+				tTimeClock.UserID.EQ(mysql.Int32(data.GetUserId())),
 				tTimeClock.StartTime.IS_NOT_NULL(),
 				tTimeClock.EndTime.IS_NULL(),
 			))
@@ -340,10 +343,8 @@ func (s *Server) handleTimeclockEntry(
 
 func (s *Server) handleUserUpdate(
 	ctx context.Context,
-	data *pbsync.AddActivityRequest_UserUpdate,
+	data *activity.UserUpdate,
 ) error {
-	d := data.UserUpdate
-
 	tUser := table.FivenetUser
 
 	selectStmt := tUser.
@@ -351,7 +352,7 @@ func (s *Server) handleUserUpdate(
 			tUser.ID,
 		).
 		FROM(tUser).
-		WHERE(tUser.ID.EQ(mysql.Int32(d.GetUserId()))).
+		WHERE(tUser.ID.EQ(mysql.Int32(data.GetUserId()))).
 		LIMIT(1)
 
 	user := &users.User{}
@@ -364,28 +365,28 @@ func (s *Server) handleUserUpdate(
 	}
 
 	updateSets := []mysql.ColumnAssigment{}
-	if d.Group != nil {
-		updateSets = append(updateSets, tUser.Group.SET(mysql.String(d.GetGroup())))
+	if data.Group != nil {
+		updateSets = append(updateSets, tUser.Group.SET(mysql.String(data.GetGroup())))
 	}
-	if d.Job != nil {
-		updateSets = append(updateSets, tUser.Job.SET(mysql.String(d.GetJob())))
+	if data.Job != nil {
+		updateSets = append(updateSets, tUser.Job.SET(mysql.String(data.GetJob())))
 	}
-	if d.JobGrade != nil {
+	if data.JobGrade != nil {
 		updateSets = append(
 			updateSets,
-			tUser.JobGrade.SET(mysql.Int32(d.GetJobGrade())),
+			tUser.JobGrade.SET(mysql.Int32(data.GetJobGrade())),
 		)
 	}
-	if d.Firstname != nil {
+	if data.Firstname != nil {
 		updateSets = append(
 			updateSets,
-			tUser.Firstname.SET(mysql.String(d.GetFirstname())),
+			tUser.Firstname.SET(mysql.String(data.GetFirstname())),
 		)
 	}
-	if d.Lastname != nil {
+	if data.Lastname != nil {
 		updateSets = append(
 			updateSets,
-			tUser.Lastname.SET(mysql.String(d.GetLastname())),
+			tUser.Lastname.SET(mysql.String(data.GetLastname())),
 		)
 	}
 
@@ -393,47 +394,11 @@ func (s *Server) handleUserUpdate(
 		stmt := tUser.
 			UPDATE().
 			SET(updateSets[0]).
-			WHERE(tUser.ID.EQ(mysql.Int32(d.GetUserId())))
+			WHERE(tUser.ID.EQ(mysql.Int32(data.GetUserId())))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return fmt.Errorf("failed to update user. %w", err)
 		}
-	}
-
-	return nil
-}
-
-func (s *Server) handleAccountUpdate(
-	ctx context.Context,
-	data *pbsync.AddActivityRequest_AccountUpdate,
-) error {
-	account := data.AccountUpdate
-
-	tAccounts := table.FivenetAccounts
-
-	var groups *accounts.AccountGroups
-	if account.Groups != nil {
-		if account.GetGroups() != nil && len(account.GetGroups().GetGroups()) > 0 {
-			groups = account.GetGroups()
-		} else if account.GetGroup() != "" {
-			groups = &accounts.AccountGroups{
-				Groups: []string{account.GetGroup()},
-			}
-		}
-	}
-
-	stmt := tAccounts.
-		UPDATE(
-			tAccounts.Groups,
-		).
-		SET(
-			groups,
-		).
-		WHERE(tAccounts.License.EQ(mysql.String(account.License))).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return fmt.Errorf("failed to update account. %w", err)
 	}
 
 	return nil

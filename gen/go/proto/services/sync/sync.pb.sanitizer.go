@@ -9,6 +9,25 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *AddAccountUpdateRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: AccountUpdate
+	if m.AccountUpdate != nil {
+		if v, ok := any(m.GetAccountUpdate()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *AddActivityRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -105,6 +124,158 @@ func (m *AddActivityResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *AddColleagueActivityRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: ColleagueActivity
+	if m.ColleagueActivity != nil {
+		if v, ok := any(m.GetColleagueActivity()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *AddColleaguePropsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: ColleagueProps
+	if m.ColleagueProps != nil {
+		if v, ok := any(m.GetColleagueProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *AddDispatchRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Dispatch
+	if m.Dispatch != nil {
+		if v, ok := any(m.GetDispatch()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *AddJobTimeclockRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: JobTimeclock
+	if m.JobTimeclock != nil {
+		if v, ok := any(m.GetJobTimeclock()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *AddUserActivityRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: UserActivity
+	if m.UserActivity != nil {
+		if v, ok := any(m.GetUserActivity()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *AddUserOAuth2ConnRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: UserOauth2
+	if m.UserOauth2 != nil {
+		if v, ok := any(m.GetUserOauth2()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *AddUserPropsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: UserProps
+	if m.UserProps != nil {
+		if v, ok := any(m.GetUserProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *AddUserUpdateRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: UserUpdate
+	if m.UserUpdate != nil {
+		if v, ok := any(m.GetUserUpdate()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteDataRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -138,6 +309,34 @@ func (m *DeleteDataRequest) Sanitize() error {
 func (m *DeleteDataResponse) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *DeleteUsersRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *DeleteVehiclesRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Plates
+	for idx, item := range m.Plates {
+		_, _ = idx, item
+
+		m.Plates[idx] = htmlsanitizer.Sanitize(m.Plates[idx])
+
 	}
 
 	return nil
@@ -243,6 +442,28 @@ func (m *RegisterAccountResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *SendAccountsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: AccountUpdates
+	for idx, item := range m.AccountUpdates {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SendDataRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -316,6 +537,135 @@ func (m *SendDataRequest) Sanitize() error {
 func (m *SendDataResponse) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SendJobsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Jobs
+	for idx, item := range m.Jobs {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SendLicensesRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Licenses
+	for idx, item := range m.Licenses {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SendUserLocationsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Users
+	for idx, item := range m.Users {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SendUsersRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Users
+	for idx, item := range m.Users {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SendVehiclesRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Vehicles
+	for idx, item := range m.Vehicles {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SetLastCharIDRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: LastCharId
+	if m.LastCharId != nil {
+		if v, ok := any(m.GetLastCharId()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

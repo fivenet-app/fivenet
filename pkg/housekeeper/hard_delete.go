@@ -50,7 +50,7 @@ func (h *Housekeeper) runHardDelete(ctx context.Context, data *cron.GenericCronD
 		return err
 	}
 
-	metricHardDeleteAffectedRows.WithLabelValues(tbl.Table.TableName()).Set(float64(rowsAffected))
+	metricHardDeleteRowsAffected.WithLabelValues(tbl.Table.TableName()).Set(float64(rowsAffected))
 
 	// Only update the last table key if less than the limit rows were affected
 	if rowsAffected < DefaultDeleteLimit {

@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
-	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/go-jet/jet/v2/qrm"
@@ -48,12 +47,12 @@ func (s *JobsSync) Sync(ctx context.Context) (int64, error) {
 	}
 
 	// Sync jobs to FiveNet server
-	if err := s.sendData(ctx, &pbsync.SendDataRequest{
-		Data: &pbsync.SendDataRequest_Jobs{
-			Jobs: &syncdata.DataJobs{
-				Jobs: jobs,
-			},
-		},
+	req := &pbsync.SendJobsRequest{
+		Jobs: jobs,
+	}
+	if err := s.send(ctx, req, func(ctx context.Context, cli pbsync.SyncServiceClient) error {
+		_, err := cli.SendJobs(ctx, req)
+		return err
 	}); err != nil {
 		return 0, err
 	}

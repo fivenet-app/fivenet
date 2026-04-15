@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	syncactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
-	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/go-jet/jet/v2/qrm"
@@ -47,12 +46,12 @@ func (s *AccountsSync) Sync(ctx context.Context) (int64, error) {
 		}
 
 		// Sync accounts to FiveNet server.
-		if err := s.sendData(ctx, &pbsync.SendDataRequest{
-			Data: &pbsync.SendDataRequest_Accounts{
-				Accounts: &syncdata.DataAccounts{
-					AccountUpdates: accounts,
-				},
-			},
+		req := &pbsync.SendAccountsRequest{
+			AccountUpdates: accounts,
+		}
+		if err := s.send(ctx, req, func(ctx context.Context, cli pbsync.SyncServiceClient) error {
+			_, err := cli.SendAccounts(ctx, req)
+			return err
 		}); err != nil {
 			return total, err
 		}

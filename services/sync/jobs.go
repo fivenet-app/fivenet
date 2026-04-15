@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"time"
 
 	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
@@ -13,11 +14,27 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+func (s *Server) SendJobs(
+	ctx context.Context,
+	req *pbsync.SendJobsRequest,
+) (*pbsync.SendDataResponse, error) {
+	s.lastSyncedData.Store(time.Now().Unix())
+
+	rowsAffected, err := s.handleJobsData(ctx, req.GetJobs())
+	if err != nil {
+		return nil, fmt.Errorf("failed to handle jobs data. %w", err)
+	}
+
+	return &pbsync.SendDataResponse{
+		RowsAffected: rowsAffected,
+	}, nil
+}
+
 func (s *Server) handleJobsData(
 	ctx context.Context,
-	data *pbsync.SendDataRequest_Jobs,
+	jobs []*jobs.Job,
 ) (int64, error) {
-	if len(data.Jobs.GetJobs()) == 0 {
+	if len(jobs) == 0 {
 		return 0, nil
 	}
 
@@ -33,7 +50,7 @@ func (s *Server) handleJobsData(
 			tJobs.Label.SET(mysql.RawString("VALUES(`label`)")),
 		)
 
-	for _, job := range data.Jobs.GetJobs() {
+	for _, job := range jobs {
 		stmt = stmt.VALUES(
 			job.GetName(),
 			job.GetLabel(),
@@ -49,7 +66,7 @@ func (s *Server) handleJobsData(
 		return 0, fmt.Errorf("failed to retrieve rows affected for job insert. %w", err)
 	}
 
-	for _, job := range data.Jobs.GetJobs() {
+	for _, job := range jobs {
 		rowCounts, err := s.handleJobGrades(ctx, job)
 		if err != nil {
 			return 0, fmt.Errorf("failed to handle job grades for job %s. %w", job.GetName(), err)

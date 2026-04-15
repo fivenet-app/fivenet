@@ -732,7 +732,7 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 
 	us = s.applyFiltersAndTransformations(us, s.cfg.Tables.Users)
 
-	if len(us) > 0 && s.cli != nil {
+	if len(us) > 0 {
 		if err := s.sendUsersDataInChunks(ctx, us); err != nil {
 			return fmt.Errorf("failed to send user data for user %d. %w", userId, err)
 		}
@@ -756,13 +756,13 @@ func (s *UsersSync) sendUsersDataInChunks(ctx context.Context, us []*syncdata.Da
 
 	for start := 0; start < len(us); start += maxUsersPerSendRequest {
 		end := min(start+maxUsersPerSendRequest, len(us))
+		req := &pbsync.SendUsersRequest{
+			Users: us[start:end],
+		}
 
-		if err := s.sendData(ctx, &pbsync.SendDataRequest{
-			Data: &pbsync.SendDataRequest_Users{
-				Users: &syncdata.DataUsers{
-					Users: us[start:end],
-				},
-			},
+		if err := s.send(ctx, req, func(ctx context.Context, cli pbsync.SyncServiceClient) error {
+			_, err := cli.SendUsers(ctx, req)
+			return err
 		}); err != nil {
 			return err
 		}

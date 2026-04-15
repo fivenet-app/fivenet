@@ -28,7 +28,6 @@
 // source: services/settings/system.proto
 // source: services/stats/stats.proto
 // source: services/sync/sync.proto
-// source: services/sync/v2/sync.proto
 // source: services/vehicles/vehicles.proto
 // source: services/wiki/collab.proto
 // source: services/wiki/wiki.proto

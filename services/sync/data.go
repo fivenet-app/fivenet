@@ -6,6 +6,9 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	citizenslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
+	syncactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
+	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -18,7 +21,7 @@ func (s *Server) SendData(
 	req *pbsync.SendDataRequest,
 ) (*pbsync.SendDataResponse, error) {
 	resp := &pbsync.SendDataResponse{
-		AffectedRows: 0,
+		RowsAffected: 0,
 	}
 
 	s.lastSyncedData.Store(time.Now().Unix())
@@ -26,49 +29,78 @@ func (s *Server) SendData(
 	var err error
 	switch d := req.GetData().(type) {
 	case *pbsync.SendDataRequest_Jobs:
-		if resp.AffectedRows, err = s.handleJobsData(ctx, d); err != nil {
+		if resp.RowsAffected, err = s.handleJobsData(ctx, d.Jobs.GetJobs()); err != nil {
 			return nil, fmt.Errorf("failed to handle jobs data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_Licenses:
-		if resp.AffectedRows, err = s.handleLicensesData(ctx, d); err != nil {
+		if resp.RowsAffected, err = s.handleLicensesData(
+			ctx,
+			d.Licenses.GetLicenses(),
+		); err != nil {
 			return nil, fmt.Errorf("failed to handle licenses data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_Users:
-		if resp.AffectedRows, err = s.handleUsersData(ctx, d); err != nil {
+		if resp.RowsAffected, err = s.handleUsersData(ctx, d.Users.GetUsers()); err != nil {
 			return nil, fmt.Errorf("failed to handle users data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_Vehicles:
-		if resp.AffectedRows, err = s.handleVehiclesData(ctx, d); err != nil {
+		if resp.RowsAffected, err = s.handleVehiclesData(
+			ctx,
+			d.Vehicles.GetVehicles(),
+		); err != nil {
 			return nil, fmt.Errorf("failed to handle vehicles data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_Accounts:
-		if resp.AffectedRows, err = s.handleAccountsData(ctx, d); err != nil {
+		if resp.RowsAffected, err = s.handleAccountsData(
+			ctx,
+			d.Accounts.GetAccountUpdates(),
+		); err != nil {
 			return nil, fmt.Errorf("failed to handle accounts data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_UserLocations:
-		if resp.AffectedRows, err = s.handleUserLocations(ctx, d); err != nil {
+		if resp.RowsAffected, err = s.handleUserLocations(
+			ctx,
+			d.UserLocations.GetUsers(),
+			d.UserLocations.GetClearAll(),
+		); err != nil {
 			return nil, fmt.Errorf("failed to handle user locations data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_LastCharId:
-		if resp.AffectedRows, err = s.handleLastCharId(ctx, d); err != nil {
-			return nil, fmt.Errorf("failed to handle user locations data. %w", err)
+		if resp.RowsAffected, err = s.handleLastCharId(ctx, d.LastCharId); err != nil {
+			return nil, fmt.Errorf("failed to handle last char ID data. %w", err)
 		}
 	}
 
 	return resp, nil
 }
 
+func (s *Server) SendLicenses(
+	ctx context.Context,
+	req *pbsync.SendLicensesRequest,
+) (*pbsync.SendDataResponse, error) {
+	s.lastSyncedData.Store(time.Now().Unix())
+
+	rowsAffected, err := s.handleLicensesData(ctx, req.GetLicenses())
+	if err != nil {
+		return nil, fmt.Errorf("failed to handle licenses data. %w", err)
+	}
+
+	return &pbsync.SendDataResponse{
+		RowsAffected: rowsAffected,
+	}, nil
+}
+
 func (s *Server) handleLicensesData(
 	ctx context.Context,
-	data *pbsync.SendDataRequest_Licenses,
+	data []*citizenslicenses.License,
 ) (int64, error) {
-	if len(data.Licenses.GetLicenses()) == 0 {
+	if len(data) == 0 {
 		return 0, nil
 	}
 
@@ -83,7 +115,7 @@ func (s *Server) handleLicensesData(
 			tLicenses.Label.SET(mysql.RawString("VALUES(`label`)")),
 		)
 
-	for _, license := range data.Licenses.GetLicenses() {
+	for _, license := range data {
 		stmt = stmt.VALUES(
 			license.GetType(),
 			license.GetLabel(),
@@ -104,16 +136,16 @@ func (s *Server) handleLicensesData(
 
 func (s *Server) handleAccountsData(
 	ctx context.Context,
-	data *pbsync.SendDataRequest_Accounts,
+	data []*syncactivity.AccountUpdate,
 ) (int64, error) {
-	if len(data.Accounts.GetAccountUpdates()) == 0 {
+	if len(data) == 0 {
 		return 0, nil
 	}
 
 	tAccounts := table.FivenetAccounts
 
 	rowsAffected := int64(0)
-	for _, account := range data.Accounts.GetAccountUpdates() {
+	for _, account := range data {
 		var groups *accounts.AccountGroups
 		if account.GetGroups() != nil && len(account.GetGroups().GetGroups()) > 0 {
 			groups = account.GetGroups()
@@ -151,30 +183,45 @@ func (s *Server) handleAccountsData(
 	return rowsAffected, nil
 }
 
+func (s *Server) SendAccounts(
+	ctx context.Context,
+	req *pbsync.SendAccountsRequest,
+) (*pbsync.SendDataResponse, error) {
+	s.lastSyncedData.Store(time.Now().Unix())
+
+	rowsAffected, err := s.handleAccountsData(ctx, req.GetAccountUpdates())
+	if err != nil {
+		return nil, fmt.Errorf("failed to handle accounts data. %w", err)
+	}
+
+	return &pbsync.SendDataResponse{
+		RowsAffected: rowsAffected,
+	}, nil
+}
+
 func (s *Server) handleLastCharId(
 	ctx context.Context,
-	data *pbsync.SendDataRequest_LastCharId,
+	data *syncdata.LastCharID,
 ) (int64, error) {
-	if data.LastCharId == nil || data.LastCharId.GetIdentifier() == "" ||
-		data.LastCharId.LastCharId == nil ||
-		data.LastCharId.GetLastCharId() == 0 {
+	if data.LastCharId == nil || data.GetIdentifier() == "" ||
+		data.LastCharId == nil ||
+		data.GetLastCharId() == 0 {
 		return 0, status.Error(
 			codes.InvalidArgument,
-			"LastCharId must contain UserId and CharacterId",
+			"LastCharId must contain CharacterId and an UserId or Identifier",
 		)
 	}
 
 	tAccounts := table.FivenetAccounts
-
 	stmt := tAccounts.
 		UPDATE(
 			tAccounts.LastChar,
 		).
 		SET(
-			tAccounts.LastChar.SET(mysql.Int32(data.LastCharId.GetLastCharId())),
+			tAccounts.LastChar.SET(mysql.Int32(data.GetLastCharId())),
 		).
 		WHERE(
-			tAccounts.License.EQ(mysql.String(data.LastCharId.GetIdentifier())),
+			tAccounts.License.EQ(mysql.String(data.GetIdentifier())),
 		).
 		LIMIT(1)
 
@@ -190,63 +237,37 @@ func (s *Server) handleLastCharId(
 	return rowsAffected, nil
 }
 
+func (s *Server) SetLastCharID(
+	ctx context.Context,
+	req *pbsync.SetLastCharIDRequest,
+) (*pbsync.SendDataResponse, error) {
+	s.lastSyncedData.Store(time.Now().Unix())
+
+	rowsAffected, err := s.handleLastCharId(ctx, req.GetLastCharId())
+	if err != nil {
+		return nil, fmt.Errorf("failed to handle last character data. %w", err)
+	}
+
+	return &pbsync.SendDataResponse{
+		RowsAffected: rowsAffected,
+	}, nil
+}
+
 func (s *Server) DeleteData(
 	ctx context.Context,
 	req *pbsync.DeleteDataRequest,
 ) (*pbsync.DeleteDataResponse, error) {
-	rowsAffected := int64(0)
-
 	switch d := req.GetData().(type) {
 	case *pbsync.DeleteDataRequest_Users:
-		userIds := []mysql.Expression{}
-		for _, identifier := range d.Users.GetUserIds() {
-			userIds = append(userIds, mysql.Int32(identifier))
-		}
-
-		tUsers := table.FivenetUser
-
-		delStmt := tUsers.
-			DELETE().
-			WHERE(tUsers.ID.IN(userIds...)).
-			LIMIT(int64(len(d.Users.GetUserIds())))
-
-		res, err := delStmt.ExecContext(ctx, s.db)
-		if err != nil {
-			return nil, fmt.Errorf("failed to execute users delete statement. %w", err)
-		}
-		rows, err := res.RowsAffected()
-		if err != nil {
-			return nil, fmt.Errorf("failed to retrieve rows affected for users delete. %w", err)
-		}
-
-		rowsAffected += rows
+		return s.DeleteUsers(ctx, &pbsync.DeleteUsersRequest{
+			UserIds: d.Users.GetUserIds(),
+		})
 
 	case *pbsync.DeleteDataRequest_Vehicles:
-		plates := []mysql.Expression{}
-		for _, plate := range d.Vehicles.GetPlates() {
-			plates = append(plates, mysql.String(plate))
-		}
-
-		tVehicles := table.FivenetOwnedVehicles
-
-		delStmt := tVehicles.
-			DELETE().
-			WHERE(tVehicles.Plate.IN(plates...)).
-			LIMIT(int64(len(d.Vehicles.GetPlates())))
-
-		res, err := delStmt.ExecContext(ctx, s.db)
-		if err != nil {
-			return nil, fmt.Errorf("failed to execute vehicles delete statement. %w", err)
-		}
-		rows, err := res.RowsAffected()
-		if err != nil {
-			return nil, fmt.Errorf("failed to retrieve rows affected for vehicles delete. %w", err)
-		}
-
-		rowsAffected += rows
+		return s.DeleteVehicles(ctx, &pbsync.DeleteVehiclesRequest{
+			Plates: d.Vehicles.GetPlates(),
+		})
 	}
 
-	return &pbsync.DeleteDataResponse{
-		AffectedRows: rowsAffected,
-	}, nil
+	return &pbsync.DeleteDataResponse{}, nil
 }

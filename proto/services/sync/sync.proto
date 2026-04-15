@@ -4,10 +4,13 @@ package services.sync;
 
 import "buf/validate/validate.proto";
 import "resources/centrum/dispatches/dispatches.proto";
+import "resources/citizens/licenses/licenses.proto";
 import "resources/jobs/colleagues/activity/activity.proto";
+import "resources/jobs/jobs.proto";
 import "resources/sync/activity/activity.proto";
 import "resources/sync/data/data.proto";
 import "resources/users/activity/activity.proto";
+import "resources/vehicles/vehicles.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync;sync";
 
@@ -17,9 +20,121 @@ message GetStatusResponse {
   resources.sync.data.DataStatus jobs = 1;
   resources.sync.data.DataStatus licenses = 2;
 
-  resources.sync.data.DataStatus accounts = 5;
   resources.sync.data.DataStatus users = 3;
   resources.sync.data.DataStatus vehicles = 4;
+  resources.sync.data.DataStatus accounts = 5;
+}
+
+message RegisterAccountRequest {
+  string identifier = 1 [(buf.validate.field).string.max_len = 64];
+  bool reset_token = 2;
+  optional int32 last_char_id = 3 [(buf.validate.field).int32.gt = 0];
+}
+
+message RegisterAccountResponse {
+  optional string reg_token = 1 [(buf.validate.field).string = {
+    len: 6
+    pattern: "^[0-9]{6}$"
+  }];
+  optional int64 account_id = 2;
+  optional string username = 3;
+}
+
+message TransferAccountRequest {
+  string old_license = 1 [(buf.validate.field).string.max_len = 64];
+  string new_license = 2 [(buf.validate.field).string.max_len = 64];
+}
+
+message TransferAccountResponse {}
+
+// Individual AddActivity request messages
+message AddUserOAuth2ConnRequest {
+  resources.sync.activity.UserOAuth2Conn user_oauth2 = 1;
+}
+
+message AddDispatchRequest {
+  resources.centrum.dispatches.Dispatch dispatch = 1;
+}
+
+message AddUserActivityRequest {
+  resources.users.activity.UserActivity user_activity = 1;
+}
+
+message AddUserPropsRequest {
+  resources.sync.activity.UserProps user_props = 1;
+}
+
+message AddColleagueActivityRequest {
+  resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 1;
+}
+
+message AddColleaguePropsRequest {
+  resources.sync.activity.ColleagueProps colleague_props = 1;
+}
+
+message AddJobTimeclockRequest {
+  resources.sync.activity.TimeclockUpdate job_timeclock = 1;
+}
+
+message AddAccountUpdateRequest {
+  resources.sync.activity.AccountUpdate account_update = 1;
+}
+
+message AddUserUpdateRequest {
+  resources.sync.activity.UserUpdate user_update = 1;
+}
+
+message AddActivityResponse {}
+
+// Individual SendData request messages
+message SendJobsRequest {
+  repeated resources.jobs.Job jobs = 1 [(buf.validate.field).repeated.max_items = 200];
+}
+
+message SendLicensesRequest {
+  repeated resources.citizens.licenses.License licenses = 1 [(buf.validate.field).repeated.max_items = 200];
+}
+
+message SendAccountsRequest {
+  repeated resources.sync.activity.AccountUpdate account_updates = 1 [(buf.validate.field).repeated.max_items = 100];
+}
+
+message SendUsersRequest {
+  repeated resources.sync.data.DataUser users = 1 [(buf.validate.field).repeated.max_items = 300];
+}
+
+message SendVehiclesRequest {
+  repeated resources.vehicles.Vehicle vehicles = 1 [(buf.validate.field).repeated.max_items = 500];
+}
+
+message SendUserLocationsRequest {
+  repeated resources.sync.data.CitizenLocations users = 1 [(buf.validate.field).repeated.max_items = 2000];
+  optional bool clear_all = 2;
+}
+
+message SetLastCharIDRequest {
+  resources.sync.data.LastCharID last_char_id = 1;
+}
+
+message SendDataResponse {
+  int64 rows_affected = 1;
+}
+
+// Individual DeleteData request messages
+message DeleteUsersRequest {
+  repeated int32 user_ids = 1 [(buf.validate.field).repeated.max_items = 100];
+}
+
+message DeleteVehiclesRequest {
+  repeated string plates = 1 [(buf.validate.field).repeated.max_items = 100];
+}
+
+message StreamResponse {
+  oneof payload {
+    option (buf.validate.oneof).required = true;
+
+    int32 user_id = 1;
+  }
 }
 
 message AddActivityRequest {
@@ -49,30 +164,6 @@ message AddActivityRequest {
   }
 }
 
-message AddActivityResponse {}
-
-message RegisterAccountRequest {
-  string identifier = 1 [(buf.validate.field).string.max_len = 64];
-  bool reset_token = 2;
-  optional int32 last_char_id = 3 [(buf.validate.field).int32.gt = 0];
-}
-
-message RegisterAccountResponse {
-  optional string reg_token = 1 [(buf.validate.field).string = {
-    len: 6
-    pattern: "^[0-9]{6}$"
-  }];
-  optional int64 account_id = 2;
-  optional string username = 3;
-}
-
-message TransferAccountRequest {
-  string old_license = 1 [(buf.validate.field).string.max_len = 64];
-  string new_license = 2 [(buf.validate.field).string.max_len = 64];
-}
-
-message TransferAccountResponse {}
-
 message SendDataRequest {
   oneof data {
     option (buf.validate.oneof).required = true;
@@ -90,10 +181,6 @@ message SendDataRequest {
   }
 }
 
-message SendDataResponse {
-  int64 affected_rows = 1;
-}
-
 message DeleteDataRequest {
   oneof data {
     option (buf.validate.oneof).required = true;
@@ -104,19 +191,11 @@ message DeleteDataRequest {
 }
 
 message DeleteDataResponse {
-  int64 affected_rows = 1;
+  int64 rows_affected = 1;
 }
 
 message StreamRequest {
   optional string version = 1 [(buf.validate.field).string.max_len = 32];
-}
-
-message StreamResponse {
-  oneof payload {
-    option (buf.validate.oneof).required = true;
-
-    int32 user_id = 1;
-  }
 }
 
 // Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instance and API calls
@@ -125,19 +204,47 @@ service SyncService {
   // Get basic "sync state" from server side (currently simply the count of records on the server side).
   rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
 
-  // For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
-  rpc AddActivity(AddActivityRequest) returns (AddActivityResponse);
-
   // Get registration token for a new user account or return the account id and username, for a given identifier/license.
   rpc RegisterAccount(RegisterAccountRequest) returns (RegisterAccountResponse);
   // Transfer account from one license to another
   rpc TransferAccount(TransferAccountRequest) returns (TransferAccountResponse);
 
-  // DBSync's method of sending (mass) data to the FiveNet server for storing.
-  rpc SendData(SendDataRequest) returns (SendDataResponse);
-  // Way for the gameserver to delete certain data as well
-  rpc DeleteData(DeleteDataRequest) returns (DeleteDataResponse);
+  // Individual AddActivity methods
+  rpc AddUserOAuth2Conn(AddUserOAuth2ConnRequest) returns (AddActivityResponse);
+  rpc AddAccountUpdate(AddAccountUpdateRequest) returns (AddActivityResponse);
+  rpc AddUserUpdate(AddUserUpdateRequest) returns (AddActivityResponse);
+  rpc AddUserActivity(AddUserActivityRequest) returns (AddActivityResponse);
+  rpc AddUserProps(AddUserPropsRequest) returns (AddActivityResponse);
+  rpc AddColleagueActivity(AddColleagueActivityRequest) returns (AddActivityResponse);
+  rpc AddColleagueProps(AddColleaguePropsRequest) returns (AddActivityResponse);
+  rpc AddJobTimeclock(AddJobTimeclockRequest) returns (AddActivityResponse);
+  rpc AddDispatch(AddDispatchRequest) returns (AddActivityResponse);
 
+  // Individual SendData methods
+  rpc SendJobs(SendJobsRequest) returns (SendDataResponse);
+  rpc SendLicenses(SendLicensesRequest) returns (SendDataResponse);
+  rpc SendAccounts(SendAccountsRequest) returns (SendDataResponse);
+  rpc SendUsers(SendUsersRequest) returns (SendDataResponse);
+  rpc SendVehicles(SendVehiclesRequest) returns (SendDataResponse);
+  rpc SendUserLocations(SendUserLocationsRequest) returns (SendDataResponse);
+  rpc SetLastCharID(SetLastCharIDRequest) returns (SendDataResponse);
+
+  // Individual DeleteData methods
+  rpc DeleteUsers(DeleteUsersRequest) returns (DeleteDataResponse);
+  rpc DeleteVehicles(DeleteVehiclesRequest) returns (DeleteDataResponse);
   // Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
   rpc Stream(StreamRequest) returns (stream StreamResponse);
+
+  // DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
+  rpc AddActivity(AddActivityRequest) returns (AddActivityResponse) {
+    option deprecated = true;
+  }
+  // DEPRECATED:DBSync's method of sending (mass) data to the FiveNet server for storing.
+  rpc SendData(SendDataRequest) returns (SendDataResponse) {
+    option deprecated = true;
+  }
+  // DEPRECATED:Way for the gameserver to delete certain data as well
+  rpc DeleteData(DeleteDataRequest) returns (DeleteDataResponse) {
+    option deprecated = true;
+  }
 }

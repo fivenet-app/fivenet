@@ -451,7 +451,7 @@ func (s *Server) RegisterCronjobHandlers(h *croner.Handlers) error {
 			if err != nil {
 				return err
 			}
-			dest.SetAttribute("affected_rows", strconv.FormatInt(rowsAffected, 10))
+			dest.SetAttribute("rows_affected", strconv.FormatInt(rowsAffected, 10))
 
 			// Marshal the updated cron data
 			if err := data.MarshalFrom(dest); err != nil {

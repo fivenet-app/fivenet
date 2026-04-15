@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -169,4 +171,51 @@ func (s *Server) TransferAccount(
 	}
 
 	return resp, nil
+}
+
+func (s *Server) handleAccountUpdate(
+	ctx context.Context,
+	data *activity.AccountUpdate,
+) error {
+	tAccounts := table.FivenetAccounts
+
+	var groups *accounts.AccountGroups
+	if data.Groups != nil {
+		if data.GetGroups() != nil && len(data.GetGroups().GetGroups()) > 0 {
+			groups = data.GetGroups()
+		} else if data.GetGroup() != "" {
+			groups = &accounts.AccountGroups{
+				Groups: []string{data.GetGroup()},
+			}
+		}
+	}
+
+	stmt := tAccounts.
+		UPDATE(
+			tAccounts.Groups,
+		).
+		SET(
+			groups,
+		).
+		WHERE(tAccounts.License.EQ(mysql.String(data.License))).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return fmt.Errorf("failed to update account. %w", err)
+	}
+
+	return nil
+}
+
+func (s *Server) AddAccountUpdate(
+	ctx context.Context,
+	req *pbsync.AddAccountUpdateRequest,
+) (*pbsync.AddActivityResponse, error) {
+	s.lastSyncedActivity.Store(time.Now().Unix())
+
+	if err := s.handleAccountUpdate(ctx, req.GetAccountUpdate()); err != nil {
+		return nil, fmt.Errorf("failed to handle account update. %w", err)
+	}
+
+	return &pbsync.AddActivityResponse{}, nil
 }

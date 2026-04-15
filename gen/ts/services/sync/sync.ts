@@ -14,13 +14,18 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { DeleteVehicles } from "../../resources/sync/data/data";
 import { DeleteUsers } from "../../resources/sync/data/data";
-import { LastCharID } from "../../resources/sync/data/data";
 import { DataUserLocations } from "../../resources/sync/data/data";
 import { DataVehicles } from "../../resources/sync/data/data";
 import { DataUsers } from "../../resources/sync/data/data";
 import { DataAccounts } from "../../resources/sync/data/data";
 import { DataLicenses } from "../../resources/sync/data/data";
 import { DataJobs } from "../../resources/sync/data/data";
+import { LastCharID } from "../../resources/sync/data/data";
+import { CitizenLocations } from "../../resources/sync/data/data";
+import { Vehicle } from "../../resources/vehicles/vehicles";
+import { DataUser } from "../../resources/sync/data/data";
+import { License } from "../../resources/citizens/licenses/licenses";
+import { Job } from "../../resources/jobs/jobs";
 import { UserUpdate } from "../../resources/sync/activity/activity";
 import { AccountUpdate } from "../../resources/sync/activity/activity";
 import { TimeclockUpdate } from "../../resources/sync/activity/activity";
@@ -49,10 +54,6 @@ export interface GetStatusResponse {
      */
     licenses?: DataStatus;
     /**
-     * @generated from protobuf field: resources.sync.data.DataStatus accounts = 5
-     */
-    accounts?: DataStatus;
-    /**
      * @generated from protobuf field: resources.sync.data.DataStatus users = 3
      */
     users?: DataStatus;
@@ -60,6 +61,265 @@ export interface GetStatusResponse {
      * @generated from protobuf field: resources.sync.data.DataStatus vehicles = 4
      */
     vehicles?: DataStatus;
+    /**
+     * @generated from protobuf field: resources.sync.data.DataStatus accounts = 5
+     */
+    accounts?: DataStatus;
+}
+/**
+ * @generated from protobuf message services.sync.RegisterAccountRequest
+ */
+export interface RegisterAccountRequest {
+    /**
+     * @generated from protobuf field: string identifier = 1
+     */
+    identifier: string;
+    /**
+     * @generated from protobuf field: bool reset_token = 2
+     */
+    resetToken: boolean;
+    /**
+     * @generated from protobuf field: optional int32 last_char_id = 3
+     */
+    lastCharId?: number;
+}
+/**
+ * @generated from protobuf message services.sync.RegisterAccountResponse
+ */
+export interface RegisterAccountResponse {
+    /**
+     * @generated from protobuf field: optional string reg_token = 1
+     */
+    regToken?: string;
+    /**
+     * @generated from protobuf field: optional int64 account_id = 2
+     */
+    accountId?: number;
+    /**
+     * @generated from protobuf field: optional string username = 3
+     */
+    username?: string;
+}
+/**
+ * @generated from protobuf message services.sync.TransferAccountRequest
+ */
+export interface TransferAccountRequest {
+    /**
+     * @generated from protobuf field: string old_license = 1
+     */
+    oldLicense: string;
+    /**
+     * @generated from protobuf field: string new_license = 2
+     */
+    newLicense: string;
+}
+/**
+ * @generated from protobuf message services.sync.TransferAccountResponse
+ */
+export interface TransferAccountResponse {
+}
+/**
+ * Individual AddActivity request messages
+ *
+ * @generated from protobuf message services.sync.AddUserOAuth2ConnRequest
+ */
+export interface AddUserOAuth2ConnRequest {
+    /**
+     * @generated from protobuf field: resources.sync.activity.UserOAuth2Conn user_oauth2 = 1
+     */
+    userOauth2?: UserOAuth2Conn;
+}
+/**
+ * @generated from protobuf message services.sync.AddDispatchRequest
+ */
+export interface AddDispatchRequest {
+    /**
+     * @generated from protobuf field: resources.centrum.dispatches.Dispatch dispatch = 1
+     */
+    dispatch?: Dispatch;
+}
+/**
+ * @generated from protobuf message services.sync.AddUserActivityRequest
+ */
+export interface AddUserActivityRequest {
+    /**
+     * @generated from protobuf field: resources.users.activity.UserActivity user_activity = 1
+     */
+    userActivity?: UserActivity;
+}
+/**
+ * @generated from protobuf message services.sync.AddUserPropsRequest
+ */
+export interface AddUserPropsRequest {
+    /**
+     * @generated from protobuf field: resources.sync.activity.UserProps user_props = 1
+     */
+    userProps?: UserProps;
+}
+/**
+ * @generated from protobuf message services.sync.AddColleagueActivityRequest
+ */
+export interface AddColleagueActivityRequest {
+    /**
+     * @generated from protobuf field: resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 1
+     */
+    colleagueActivity?: ColleagueActivity;
+}
+/**
+ * @generated from protobuf message services.sync.AddColleaguePropsRequest
+ */
+export interface AddColleaguePropsRequest {
+    /**
+     * @generated from protobuf field: resources.sync.activity.ColleagueProps colleague_props = 1
+     */
+    colleagueProps?: ColleagueProps;
+}
+/**
+ * @generated from protobuf message services.sync.AddJobTimeclockRequest
+ */
+export interface AddJobTimeclockRequest {
+    /**
+     * @generated from protobuf field: resources.sync.activity.TimeclockUpdate job_timeclock = 1
+     */
+    jobTimeclock?: TimeclockUpdate;
+}
+/**
+ * @generated from protobuf message services.sync.AddAccountUpdateRequest
+ */
+export interface AddAccountUpdateRequest {
+    /**
+     * @generated from protobuf field: resources.sync.activity.AccountUpdate account_update = 1
+     */
+    accountUpdate?: AccountUpdate;
+}
+/**
+ * @generated from protobuf message services.sync.AddUserUpdateRequest
+ */
+export interface AddUserUpdateRequest {
+    /**
+     * @generated from protobuf field: resources.sync.activity.UserUpdate user_update = 1
+     */
+    userUpdate?: UserUpdate;
+}
+/**
+ * @generated from protobuf message services.sync.AddActivityResponse
+ */
+export interface AddActivityResponse {
+}
+/**
+ * Individual SendData request messages
+ *
+ * @generated from protobuf message services.sync.SendJobsRequest
+ */
+export interface SendJobsRequest {
+    /**
+     * @generated from protobuf field: repeated resources.jobs.Job jobs = 1
+     */
+    jobs: Job[];
+}
+/**
+ * @generated from protobuf message services.sync.SendLicensesRequest
+ */
+export interface SendLicensesRequest {
+    /**
+     * @generated from protobuf field: repeated resources.citizens.licenses.License licenses = 1
+     */
+    licenses: License[];
+}
+/**
+ * @generated from protobuf message services.sync.SendAccountsRequest
+ */
+export interface SendAccountsRequest {
+    /**
+     * @generated from protobuf field: repeated resources.sync.activity.AccountUpdate account_updates = 1
+     */
+    accountUpdates: AccountUpdate[];
+}
+/**
+ * @generated from protobuf message services.sync.SendUsersRequest
+ */
+export interface SendUsersRequest {
+    /**
+     * @generated from protobuf field: repeated resources.sync.data.DataUser users = 1
+     */
+    users: DataUser[];
+}
+/**
+ * @generated from protobuf message services.sync.SendVehiclesRequest
+ */
+export interface SendVehiclesRequest {
+    /**
+     * @generated from protobuf field: repeated resources.vehicles.Vehicle vehicles = 1
+     */
+    vehicles: Vehicle[];
+}
+/**
+ * @generated from protobuf message services.sync.SendUserLocationsRequest
+ */
+export interface SendUserLocationsRequest {
+    /**
+     * @generated from protobuf field: repeated resources.sync.data.CitizenLocations users = 1
+     */
+    users: CitizenLocations[];
+    /**
+     * @generated from protobuf field: optional bool clear_all = 2
+     */
+    clearAll?: boolean;
+}
+/**
+ * @generated from protobuf message services.sync.SetLastCharIDRequest
+ */
+export interface SetLastCharIDRequest {
+    /**
+     * @generated from protobuf field: resources.sync.data.LastCharID last_char_id = 1
+     */
+    lastCharId?: LastCharID;
+}
+/**
+ * @generated from protobuf message services.sync.SendDataResponse
+ */
+export interface SendDataResponse {
+    /**
+     * @generated from protobuf field: int64 rows_affected = 1
+     */
+    rowsAffected: number;
+}
+/**
+ * Individual DeleteData request messages
+ *
+ * @generated from protobuf message services.sync.DeleteUsersRequest
+ */
+export interface DeleteUsersRequest {
+    /**
+     * @generated from protobuf field: repeated int32 user_ids = 1
+     */
+    userIds: number[];
+}
+/**
+ * @generated from protobuf message services.sync.DeleteVehiclesRequest
+ */
+export interface DeleteVehiclesRequest {
+    /**
+     * @generated from protobuf field: repeated string plates = 1
+     */
+    plates: string[];
+}
+/**
+ * @generated from protobuf message services.sync.StreamResponse
+ */
+export interface StreamResponse {
+    /**
+     * @generated from protobuf oneof: payload
+     */
+    payload: {
+        oneofKind: "userId";
+        /**
+         * @generated from protobuf field: int32 user_id = 1
+         */
+        userId: number;
+    } | {
+        oneofKind: undefined;
+    };
 }
 /**
  * @generated from protobuf message services.sync.AddActivityRequest
@@ -141,63 +401,6 @@ export interface AddActivityRequest {
     };
 }
 /**
- * @generated from protobuf message services.sync.AddActivityResponse
- */
-export interface AddActivityResponse {
-}
-/**
- * @generated from protobuf message services.sync.RegisterAccountRequest
- */
-export interface RegisterAccountRequest {
-    /**
-     * @generated from protobuf field: string identifier = 1
-     */
-    identifier: string;
-    /**
-     * @generated from protobuf field: bool reset_token = 2
-     */
-    resetToken: boolean;
-    /**
-     * @generated from protobuf field: optional int32 last_char_id = 3
-     */
-    lastCharId?: number;
-}
-/**
- * @generated from protobuf message services.sync.RegisterAccountResponse
- */
-export interface RegisterAccountResponse {
-    /**
-     * @generated from protobuf field: optional string reg_token = 1
-     */
-    regToken?: string;
-    /**
-     * @generated from protobuf field: optional int64 account_id = 2
-     */
-    accountId?: number;
-    /**
-     * @generated from protobuf field: optional string username = 3
-     */
-    username?: string;
-}
-/**
- * @generated from protobuf message services.sync.TransferAccountRequest
- */
-export interface TransferAccountRequest {
-    /**
-     * @generated from protobuf field: string old_license = 1
-     */
-    oldLicense: string;
-    /**
-     * @generated from protobuf field: string new_license = 2
-     */
-    newLicense: string;
-}
-/**
- * @generated from protobuf message services.sync.TransferAccountResponse
- */
-export interface TransferAccountResponse {
-}
-/**
  * @generated from protobuf message services.sync.SendDataRequest
  */
 export interface SendDataRequest {
@@ -251,15 +454,6 @@ export interface SendDataRequest {
     };
 }
 /**
- * @generated from protobuf message services.sync.SendDataResponse
- */
-export interface SendDataResponse {
-    /**
-     * @generated from protobuf field: int64 affected_rows = 1
-     */
-    affectedRows: number;
-}
-/**
  * @generated from protobuf message services.sync.DeleteDataRequest
  */
 export interface DeleteDataRequest {
@@ -287,9 +481,9 @@ export interface DeleteDataRequest {
  */
 export interface DeleteDataResponse {
     /**
-     * @generated from protobuf field: int64 affected_rows = 1
+     * @generated from protobuf field: int64 rows_affected = 1
      */
-    affectedRows: number;
+    rowsAffected: number;
 }
 /**
  * @generated from protobuf message services.sync.StreamRequest
@@ -299,23 +493,6 @@ export interface StreamRequest {
      * @generated from protobuf field: optional string version = 1
      */
     version?: string;
-}
-/**
- * @generated from protobuf message services.sync.StreamResponse
- */
-export interface StreamResponse {
-    /**
-     * @generated from protobuf oneof: payload
-     */
-    payload: {
-        oneofKind: "userId";
-        /**
-         * @generated from protobuf field: int32 user_id = 1
-         */
-        userId: number;
-    } | {
-        oneofKind: undefined;
-    };
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GetStatusRequest$Type extends MessageType<GetStatusRequest> {
@@ -361,9 +538,9 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
         super("services.sync.GetStatusResponse", [
             { no: 1, name: "jobs", kind: "message", T: () => DataStatus },
             { no: 2, name: "licenses", kind: "message", T: () => DataStatus },
-            { no: 5, name: "accounts", kind: "message", T: () => DataStatus },
             { no: 3, name: "users", kind: "message", T: () => DataStatus },
-            { no: 4, name: "vehicles", kind: "message", T: () => DataStatus }
+            { no: 4, name: "vehicles", kind: "message", T: () => DataStatus },
+            { no: 5, name: "accounts", kind: "message", T: () => DataStatus }
         ]);
     }
     create(value?: PartialMessage<GetStatusResponse>): GetStatusResponse {
@@ -383,14 +560,14 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
                 case /* resources.sync.data.DataStatus licenses */ 2:
                     message.licenses = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.licenses);
                     break;
-                case /* resources.sync.data.DataStatus accounts */ 5:
-                    message.accounts = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.accounts);
-                    break;
                 case /* resources.sync.data.DataStatus users */ 3:
                     message.users = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.users);
                     break;
                 case /* resources.sync.data.DataStatus vehicles */ 4:
                     message.vehicles = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.vehicles);
+                    break;
+                case /* resources.sync.data.DataStatus accounts */ 5:
+                    message.accounts = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.accounts);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -429,174 +606,6 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
  * @generated MessageType for protobuf message services.sync.GetStatusResponse
  */
 export const GetStatusResponse = new GetStatusResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
-    constructor() {
-        super("services.sync.AddActivityRequest", [
-            { no: 1, name: "user_oauth2", kind: "message", oneof: "activity", T: () => UserOAuth2Conn },
-            { no: 2, name: "dispatch", kind: "message", oneof: "activity", T: () => Dispatch },
-            { no: 3, name: "user_activity", kind: "message", oneof: "activity", T: () => UserActivity },
-            { no: 4, name: "user_props", kind: "message", oneof: "activity", T: () => UserProps },
-            { no: 5, name: "colleague_activity", kind: "message", oneof: "activity", T: () => ColleagueActivity },
-            { no: 6, name: "colleague_props", kind: "message", oneof: "activity", T: () => ColleagueProps },
-            { no: 7, name: "job_timeclock", kind: "message", oneof: "activity", T: () => TimeclockUpdate },
-            { no: 9, name: "account_update", kind: "message", oneof: "activity", T: () => AccountUpdate },
-            { no: 8, name: "user_update", kind: "message", oneof: "activity", T: () => UserUpdate }
-        ]);
-    }
-    create(value?: PartialMessage<AddActivityRequest>): AddActivityRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.activity = { oneofKind: undefined };
-        if (value !== undefined)
-            reflectionMergePartial<AddActivityRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddActivityRequest): AddActivityRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.sync.activity.UserOAuth2Conn user_oauth2 */ 1:
-                    message.activity = {
-                        oneofKind: "userOauth2",
-                        userOauth2: UserOAuth2Conn.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userOauth2)
-                    };
-                    break;
-                case /* resources.centrum.dispatches.Dispatch dispatch */ 2:
-                    message.activity = {
-                        oneofKind: "dispatch",
-                        dispatch: Dispatch.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).dispatch)
-                    };
-                    break;
-                case /* resources.users.activity.UserActivity user_activity */ 3:
-                    message.activity = {
-                        oneofKind: "userActivity",
-                        userActivity: UserActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userActivity)
-                    };
-                    break;
-                case /* resources.sync.activity.UserProps user_props */ 4:
-                    message.activity = {
-                        oneofKind: "userProps",
-                        userProps: UserProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userProps)
-                    };
-                    break;
-                case /* resources.jobs.colleagues.activity.ColleagueActivity colleague_activity */ 5:
-                    message.activity = {
-                        oneofKind: "colleagueActivity",
-                        colleagueActivity: ColleagueActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).colleagueActivity)
-                    };
-                    break;
-                case /* resources.sync.activity.ColleagueProps colleague_props */ 6:
-                    message.activity = {
-                        oneofKind: "colleagueProps",
-                        colleagueProps: ColleagueProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).colleagueProps)
-                    };
-                    break;
-                case /* resources.sync.activity.TimeclockUpdate job_timeclock */ 7:
-                    message.activity = {
-                        oneofKind: "jobTimeclock",
-                        jobTimeclock: TimeclockUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobTimeclock)
-                    };
-                    break;
-                case /* resources.sync.activity.AccountUpdate account_update */ 9:
-                    message.activity = {
-                        oneofKind: "accountUpdate",
-                        accountUpdate: AccountUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).accountUpdate)
-                    };
-                    break;
-                case /* resources.sync.activity.UserUpdate user_update */ 8:
-                    message.activity = {
-                        oneofKind: "userUpdate",
-                        userUpdate: UserUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userUpdate)
-                    };
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: AddActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.sync.activity.UserOAuth2Conn user_oauth2 = 1; */
-        if (message.activity.oneofKind === "userOauth2")
-            UserOAuth2Conn.internalBinaryWrite(message.activity.userOauth2, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.dispatches.Dispatch dispatch = 2; */
-        if (message.activity.oneofKind === "dispatch")
-            Dispatch.internalBinaryWrite(message.activity.dispatch, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.activity.UserActivity user_activity = 3; */
-        if (message.activity.oneofKind === "userActivity")
-            UserActivity.internalBinaryWrite(message.activity.userActivity, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.activity.UserProps user_props = 4; */
-        if (message.activity.oneofKind === "userProps")
-            UserProps.internalBinaryWrite(message.activity.userProps, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 5; */
-        if (message.activity.oneofKind === "colleagueActivity")
-            ColleagueActivity.internalBinaryWrite(message.activity.colleagueActivity, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.activity.ColleagueProps colleague_props = 6; */
-        if (message.activity.oneofKind === "colleagueProps")
-            ColleagueProps.internalBinaryWrite(message.activity.colleagueProps, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.activity.TimeclockUpdate job_timeclock = 7; */
-        if (message.activity.oneofKind === "jobTimeclock")
-            TimeclockUpdate.internalBinaryWrite(message.activity.jobTimeclock, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.activity.UserUpdate user_update = 8; */
-        if (message.activity.oneofKind === "userUpdate")
-            UserUpdate.internalBinaryWrite(message.activity.userUpdate, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.activity.AccountUpdate account_update = 9; */
-        if (message.activity.oneofKind === "accountUpdate")
-            AccountUpdate.internalBinaryWrite(message.activity.accountUpdate, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.AddActivityRequest
- */
-export const AddActivityRequest = new AddActivityRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class AddActivityResponse$Type extends MessageType<AddActivityResponse> {
-    constructor() {
-        super("services.sync.AddActivityResponse", []);
-    }
-    create(value?: PartialMessage<AddActivityResponse>): AddActivityResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<AddActivityResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddActivityResponse): AddActivityResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: AddActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.AddActivityResponse
- */
-export const AddActivityResponse = new AddActivityResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class RegisterAccountRequest$Type extends MessageType<RegisterAccountRequest> {
     constructor() {
@@ -813,6 +822,1122 @@ class TransferAccountResponse$Type extends MessageType<TransferAccountResponse> 
  */
 export const TransferAccountResponse = new TransferAccountResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class AddUserOAuth2ConnRequest$Type extends MessageType<AddUserOAuth2ConnRequest> {
+    constructor() {
+        super("services.sync.AddUserOAuth2ConnRequest", [
+            { no: 1, name: "user_oauth2", kind: "message", T: () => UserOAuth2Conn }
+        ]);
+    }
+    create(value?: PartialMessage<AddUserOAuth2ConnRequest>): AddUserOAuth2ConnRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddUserOAuth2ConnRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddUserOAuth2ConnRequest): AddUserOAuth2ConnRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.sync.activity.UserOAuth2Conn user_oauth2 */ 1:
+                    message.userOauth2 = UserOAuth2Conn.internalBinaryRead(reader, reader.uint32(), options, message.userOauth2);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddUserOAuth2ConnRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.sync.activity.UserOAuth2Conn user_oauth2 = 1; */
+        if (message.userOauth2)
+            UserOAuth2Conn.internalBinaryWrite(message.userOauth2, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddUserOAuth2ConnRequest
+ */
+export const AddUserOAuth2ConnRequest = new AddUserOAuth2ConnRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddDispatchRequest$Type extends MessageType<AddDispatchRequest> {
+    constructor() {
+        super("services.sync.AddDispatchRequest", [
+            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch }
+        ]);
+    }
+    create(value?: PartialMessage<AddDispatchRequest>): AddDispatchRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddDispatchRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddDispatchRequest): AddDispatchRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.centrum.dispatches.Dispatch dispatch */ 1:
+                    message.dispatch = Dispatch.internalBinaryRead(reader, reader.uint32(), options, message.dispatch);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddDispatchRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.centrum.dispatches.Dispatch dispatch = 1; */
+        if (message.dispatch)
+            Dispatch.internalBinaryWrite(message.dispatch, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddDispatchRequest
+ */
+export const AddDispatchRequest = new AddDispatchRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddUserActivityRequest$Type extends MessageType<AddUserActivityRequest> {
+    constructor() {
+        super("services.sync.AddUserActivityRequest", [
+            { no: 1, name: "user_activity", kind: "message", T: () => UserActivity }
+        ]);
+    }
+    create(value?: PartialMessage<AddUserActivityRequest>): AddUserActivityRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddUserActivityRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddUserActivityRequest): AddUserActivityRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.users.activity.UserActivity user_activity */ 1:
+                    message.userActivity = UserActivity.internalBinaryRead(reader, reader.uint32(), options, message.userActivity);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddUserActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.users.activity.UserActivity user_activity = 1; */
+        if (message.userActivity)
+            UserActivity.internalBinaryWrite(message.userActivity, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddUserActivityRequest
+ */
+export const AddUserActivityRequest = new AddUserActivityRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddUserPropsRequest$Type extends MessageType<AddUserPropsRequest> {
+    constructor() {
+        super("services.sync.AddUserPropsRequest", [
+            { no: 1, name: "user_props", kind: "message", T: () => UserProps }
+        ]);
+    }
+    create(value?: PartialMessage<AddUserPropsRequest>): AddUserPropsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddUserPropsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddUserPropsRequest): AddUserPropsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.sync.activity.UserProps user_props */ 1:
+                    message.userProps = UserProps.internalBinaryRead(reader, reader.uint32(), options, message.userProps);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddUserPropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.sync.activity.UserProps user_props = 1; */
+        if (message.userProps)
+            UserProps.internalBinaryWrite(message.userProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddUserPropsRequest
+ */
+export const AddUserPropsRequest = new AddUserPropsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddColleagueActivityRequest$Type extends MessageType<AddColleagueActivityRequest> {
+    constructor() {
+        super("services.sync.AddColleagueActivityRequest", [
+            { no: 1, name: "colleague_activity", kind: "message", T: () => ColleagueActivity }
+        ]);
+    }
+    create(value?: PartialMessage<AddColleagueActivityRequest>): AddColleagueActivityRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddColleagueActivityRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddColleagueActivityRequest): AddColleagueActivityRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.colleagues.activity.ColleagueActivity colleague_activity */ 1:
+                    message.colleagueActivity = ColleagueActivity.internalBinaryRead(reader, reader.uint32(), options, message.colleagueActivity);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddColleagueActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 1; */
+        if (message.colleagueActivity)
+            ColleagueActivity.internalBinaryWrite(message.colleagueActivity, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddColleagueActivityRequest
+ */
+export const AddColleagueActivityRequest = new AddColleagueActivityRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddColleaguePropsRequest$Type extends MessageType<AddColleaguePropsRequest> {
+    constructor() {
+        super("services.sync.AddColleaguePropsRequest", [
+            { no: 1, name: "colleague_props", kind: "message", T: () => ColleagueProps }
+        ]);
+    }
+    create(value?: PartialMessage<AddColleaguePropsRequest>): AddColleaguePropsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddColleaguePropsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddColleaguePropsRequest): AddColleaguePropsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.sync.activity.ColleagueProps colleague_props */ 1:
+                    message.colleagueProps = ColleagueProps.internalBinaryRead(reader, reader.uint32(), options, message.colleagueProps);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddColleaguePropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.sync.activity.ColleagueProps colleague_props = 1; */
+        if (message.colleagueProps)
+            ColleagueProps.internalBinaryWrite(message.colleagueProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddColleaguePropsRequest
+ */
+export const AddColleaguePropsRequest = new AddColleaguePropsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddJobTimeclockRequest$Type extends MessageType<AddJobTimeclockRequest> {
+    constructor() {
+        super("services.sync.AddJobTimeclockRequest", [
+            { no: 1, name: "job_timeclock", kind: "message", T: () => TimeclockUpdate }
+        ]);
+    }
+    create(value?: PartialMessage<AddJobTimeclockRequest>): AddJobTimeclockRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddJobTimeclockRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddJobTimeclockRequest): AddJobTimeclockRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.sync.activity.TimeclockUpdate job_timeclock */ 1:
+                    message.jobTimeclock = TimeclockUpdate.internalBinaryRead(reader, reader.uint32(), options, message.jobTimeclock);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddJobTimeclockRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.sync.activity.TimeclockUpdate job_timeclock = 1; */
+        if (message.jobTimeclock)
+            TimeclockUpdate.internalBinaryWrite(message.jobTimeclock, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddJobTimeclockRequest
+ */
+export const AddJobTimeclockRequest = new AddJobTimeclockRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddAccountUpdateRequest$Type extends MessageType<AddAccountUpdateRequest> {
+    constructor() {
+        super("services.sync.AddAccountUpdateRequest", [
+            { no: 1, name: "account_update", kind: "message", T: () => AccountUpdate }
+        ]);
+    }
+    create(value?: PartialMessage<AddAccountUpdateRequest>): AddAccountUpdateRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddAccountUpdateRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddAccountUpdateRequest): AddAccountUpdateRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.sync.activity.AccountUpdate account_update */ 1:
+                    message.accountUpdate = AccountUpdate.internalBinaryRead(reader, reader.uint32(), options, message.accountUpdate);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddAccountUpdateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.sync.activity.AccountUpdate account_update = 1; */
+        if (message.accountUpdate)
+            AccountUpdate.internalBinaryWrite(message.accountUpdate, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddAccountUpdateRequest
+ */
+export const AddAccountUpdateRequest = new AddAccountUpdateRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddUserUpdateRequest$Type extends MessageType<AddUserUpdateRequest> {
+    constructor() {
+        super("services.sync.AddUserUpdateRequest", [
+            { no: 1, name: "user_update", kind: "message", T: () => UserUpdate }
+        ]);
+    }
+    create(value?: PartialMessage<AddUserUpdateRequest>): AddUserUpdateRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddUserUpdateRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddUserUpdateRequest): AddUserUpdateRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.sync.activity.UserUpdate user_update */ 1:
+                    message.userUpdate = UserUpdate.internalBinaryRead(reader, reader.uint32(), options, message.userUpdate);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddUserUpdateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.sync.activity.UserUpdate user_update = 1; */
+        if (message.userUpdate)
+            UserUpdate.internalBinaryWrite(message.userUpdate, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddUserUpdateRequest
+ */
+export const AddUserUpdateRequest = new AddUserUpdateRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddActivityResponse$Type extends MessageType<AddActivityResponse> {
+    constructor() {
+        super("services.sync.AddActivityResponse", []);
+    }
+    create(value?: PartialMessage<AddActivityResponse>): AddActivityResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddActivityResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddActivityResponse): AddActivityResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddActivityResponse
+ */
+export const AddActivityResponse = new AddActivityResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SendJobsRequest$Type extends MessageType<SendJobsRequest> {
+    constructor() {
+        super("services.sync.SendJobsRequest", [
+            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Job, options: { "buf.validate.field": { repeated: { maxItems: "200" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SendJobsRequest>): SendJobsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.jobs = [];
+        if (value !== undefined)
+            reflectionMergePartial<SendJobsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SendJobsRequest): SendJobsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.jobs.Job jobs */ 1:
+                    message.jobs.push(Job.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SendJobsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.jobs.Job jobs = 1; */
+        for (let i = 0; i < message.jobs.length; i++)
+            Job.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.SendJobsRequest
+ */
+export const SendJobsRequest = new SendJobsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SendLicensesRequest$Type extends MessageType<SendLicensesRequest> {
+    constructor() {
+        super("services.sync.SendLicensesRequest", [
+            { no: 1, name: "licenses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => License, options: { "buf.validate.field": { repeated: { maxItems: "200" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SendLicensesRequest>): SendLicensesRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.licenses = [];
+        if (value !== undefined)
+            reflectionMergePartial<SendLicensesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SendLicensesRequest): SendLicensesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.citizens.licenses.License licenses */ 1:
+                    message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SendLicensesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.citizens.licenses.License licenses = 1; */
+        for (let i = 0; i < message.licenses.length; i++)
+            License.internalBinaryWrite(message.licenses[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.SendLicensesRequest
+ */
+export const SendLicensesRequest = new SendLicensesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SendAccountsRequest$Type extends MessageType<SendAccountsRequest> {
+    constructor() {
+        super("services.sync.SendAccountsRequest", [
+            { no: 1, name: "account_updates", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AccountUpdate, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SendAccountsRequest>): SendAccountsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.accountUpdates = [];
+        if (value !== undefined)
+            reflectionMergePartial<SendAccountsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SendAccountsRequest): SendAccountsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.sync.activity.AccountUpdate account_updates */ 1:
+                    message.accountUpdates.push(AccountUpdate.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SendAccountsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.sync.activity.AccountUpdate account_updates = 1; */
+        for (let i = 0; i < message.accountUpdates.length; i++)
+            AccountUpdate.internalBinaryWrite(message.accountUpdates[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.SendAccountsRequest
+ */
+export const SendAccountsRequest = new SendAccountsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SendUsersRequest$Type extends MessageType<SendUsersRequest> {
+    constructor() {
+        super("services.sync.SendUsersRequest", [
+            { no: 1, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DataUser, options: { "buf.validate.field": { repeated: { maxItems: "300" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SendUsersRequest>): SendUsersRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.users = [];
+        if (value !== undefined)
+            reflectionMergePartial<SendUsersRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SendUsersRequest): SendUsersRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.sync.data.DataUser users */ 1:
+                    message.users.push(DataUser.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SendUsersRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.sync.data.DataUser users = 1; */
+        for (let i = 0; i < message.users.length; i++)
+            DataUser.internalBinaryWrite(message.users[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.SendUsersRequest
+ */
+export const SendUsersRequest = new SendUsersRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SendVehiclesRequest$Type extends MessageType<SendVehiclesRequest> {
+    constructor() {
+        super("services.sync.SendVehiclesRequest", [
+            { no: 1, name: "vehicles", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Vehicle, options: { "buf.validate.field": { repeated: { maxItems: "500" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SendVehiclesRequest>): SendVehiclesRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.vehicles = [];
+        if (value !== undefined)
+            reflectionMergePartial<SendVehiclesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SendVehiclesRequest): SendVehiclesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.vehicles.Vehicle vehicles */ 1:
+                    message.vehicles.push(Vehicle.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SendVehiclesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.vehicles.Vehicle vehicles = 1; */
+        for (let i = 0; i < message.vehicles.length; i++)
+            Vehicle.internalBinaryWrite(message.vehicles[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.SendVehiclesRequest
+ */
+export const SendVehiclesRequest = new SendVehiclesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SendUserLocationsRequest$Type extends MessageType<SendUserLocationsRequest> {
+    constructor() {
+        super("services.sync.SendUserLocationsRequest", [
+            { no: 1, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => CitizenLocations, options: { "buf.validate.field": { repeated: { maxItems: "2000" } } } },
+            { no: 2, name: "clear_all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SendUserLocationsRequest>): SendUserLocationsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.users = [];
+        if (value !== undefined)
+            reflectionMergePartial<SendUserLocationsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SendUserLocationsRequest): SendUserLocationsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.sync.data.CitizenLocations users */ 1:
+                    message.users.push(CitizenLocations.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* optional bool clear_all */ 2:
+                    message.clearAll = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SendUserLocationsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.sync.data.CitizenLocations users = 1; */
+        for (let i = 0; i < message.users.length; i++)
+            CitizenLocations.internalBinaryWrite(message.users[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool clear_all = 2; */
+        if (message.clearAll !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.clearAll);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.SendUserLocationsRequest
+ */
+export const SendUserLocationsRequest = new SendUserLocationsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetLastCharIDRequest$Type extends MessageType<SetLastCharIDRequest> {
+    constructor() {
+        super("services.sync.SetLastCharIDRequest", [
+            { no: 1, name: "last_char_id", kind: "message", T: () => LastCharID }
+        ]);
+    }
+    create(value?: PartialMessage<SetLastCharIDRequest>): SetLastCharIDRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SetLastCharIDRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetLastCharIDRequest): SetLastCharIDRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.sync.data.LastCharID last_char_id */ 1:
+                    message.lastCharId = LastCharID.internalBinaryRead(reader, reader.uint32(), options, message.lastCharId);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SetLastCharIDRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.sync.data.LastCharID last_char_id = 1; */
+        if (message.lastCharId)
+            LastCharID.internalBinaryWrite(message.lastCharId, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.SetLastCharIDRequest
+ */
+export const SetLastCharIDRequest = new SetLastCharIDRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SendDataResponse$Type extends MessageType<SendDataResponse> {
+    constructor() {
+        super("services.sync.SendDataResponse", [
+            { no: 1, name: "rows_affected", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SendDataResponse>): SendDataResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.rowsAffected = 0;
+        if (value !== undefined)
+            reflectionMergePartial<SendDataResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SendDataResponse): SendDataResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 rows_affected */ 1:
+                    message.rowsAffected = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SendDataResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 rows_affected = 1; */
+        if (message.rowsAffected !== 0)
+            writer.tag(1, WireType.Varint).int64(message.rowsAffected);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.SendDataResponse
+ */
+export const SendDataResponse = new SendDataResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteUsersRequest$Type extends MessageType<DeleteUsersRequest> {
+    constructor() {
+        super("services.sync.DeleteUsersRequest", [
+            { no: 1, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteUsersRequest>): DeleteUsersRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userIds = [];
+        if (value !== undefined)
+            reflectionMergePartial<DeleteUsersRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteUsersRequest): DeleteUsersRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated int32 user_ids */ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.userIds.push(reader.int32());
+                    else
+                        message.userIds.push(reader.int32());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteUsersRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated int32 user_ids = 1; */
+        if (message.userIds.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.userIds.length; i++)
+                writer.int32(message.userIds[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.DeleteUsersRequest
+ */
+export const DeleteUsersRequest = new DeleteUsersRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteVehiclesRequest$Type extends MessageType<DeleteVehiclesRequest> {
+    constructor() {
+        super("services.sync.DeleteVehiclesRequest", [
+            { no: 1, name: "plates", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteVehiclesRequest>): DeleteVehiclesRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.plates = [];
+        if (value !== undefined)
+            reflectionMergePartial<DeleteVehiclesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteVehiclesRequest): DeleteVehiclesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string plates */ 1:
+                    message.plates.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteVehiclesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string plates = 1; */
+        for (let i = 0; i < message.plates.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.plates[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.DeleteVehiclesRequest
+ */
+export const DeleteVehiclesRequest = new DeleteVehiclesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class StreamResponse$Type extends MessageType<StreamResponse> {
+    constructor() {
+        super("services.sync.StreamResponse", [
+            { no: 1, name: "user_id", kind: "scalar", oneof: "payload", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<StreamResponse>): StreamResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.payload = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<StreamResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StreamResponse): StreamResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.payload = {
+                        oneofKind: "userId",
+                        userId: reader.int32()
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: StreamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.payload.oneofKind === "userId")
+            writer.tag(1, WireType.Varint).int32(message.payload.userId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.StreamResponse
+ */
+export const StreamResponse = new StreamResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
+    constructor() {
+        super("services.sync.AddActivityRequest", [
+            { no: 1, name: "user_oauth2", kind: "message", oneof: "activity", T: () => UserOAuth2Conn },
+            { no: 2, name: "dispatch", kind: "message", oneof: "activity", T: () => Dispatch },
+            { no: 3, name: "user_activity", kind: "message", oneof: "activity", T: () => UserActivity },
+            { no: 4, name: "user_props", kind: "message", oneof: "activity", T: () => UserProps },
+            { no: 5, name: "colleague_activity", kind: "message", oneof: "activity", T: () => ColleagueActivity },
+            { no: 6, name: "colleague_props", kind: "message", oneof: "activity", T: () => ColleagueProps },
+            { no: 7, name: "job_timeclock", kind: "message", oneof: "activity", T: () => TimeclockUpdate },
+            { no: 9, name: "account_update", kind: "message", oneof: "activity", T: () => AccountUpdate },
+            { no: 8, name: "user_update", kind: "message", oneof: "activity", T: () => UserUpdate }
+        ]);
+    }
+    create(value?: PartialMessage<AddActivityRequest>): AddActivityRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.activity = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<AddActivityRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddActivityRequest): AddActivityRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.sync.activity.UserOAuth2Conn user_oauth2 */ 1:
+                    message.activity = {
+                        oneofKind: "userOauth2",
+                        userOauth2: UserOAuth2Conn.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userOauth2)
+                    };
+                    break;
+                case /* resources.centrum.dispatches.Dispatch dispatch */ 2:
+                    message.activity = {
+                        oneofKind: "dispatch",
+                        dispatch: Dispatch.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).dispatch)
+                    };
+                    break;
+                case /* resources.users.activity.UserActivity user_activity */ 3:
+                    message.activity = {
+                        oneofKind: "userActivity",
+                        userActivity: UserActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userActivity)
+                    };
+                    break;
+                case /* resources.sync.activity.UserProps user_props */ 4:
+                    message.activity = {
+                        oneofKind: "userProps",
+                        userProps: UserProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userProps)
+                    };
+                    break;
+                case /* resources.jobs.colleagues.activity.ColleagueActivity colleague_activity */ 5:
+                    message.activity = {
+                        oneofKind: "colleagueActivity",
+                        colleagueActivity: ColleagueActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).colleagueActivity)
+                    };
+                    break;
+                case /* resources.sync.activity.ColleagueProps colleague_props */ 6:
+                    message.activity = {
+                        oneofKind: "colleagueProps",
+                        colleagueProps: ColleagueProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).colleagueProps)
+                    };
+                    break;
+                case /* resources.sync.activity.TimeclockUpdate job_timeclock */ 7:
+                    message.activity = {
+                        oneofKind: "jobTimeclock",
+                        jobTimeclock: TimeclockUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobTimeclock)
+                    };
+                    break;
+                case /* resources.sync.activity.AccountUpdate account_update */ 9:
+                    message.activity = {
+                        oneofKind: "accountUpdate",
+                        accountUpdate: AccountUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).accountUpdate)
+                    };
+                    break;
+                case /* resources.sync.activity.UserUpdate user_update */ 8:
+                    message.activity = {
+                        oneofKind: "userUpdate",
+                        userUpdate: UserUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userUpdate)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.sync.activity.UserOAuth2Conn user_oauth2 = 1; */
+        if (message.activity.oneofKind === "userOauth2")
+            UserOAuth2Conn.internalBinaryWrite(message.activity.userOauth2, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.dispatches.Dispatch dispatch = 2; */
+        if (message.activity.oneofKind === "dispatch")
+            Dispatch.internalBinaryWrite(message.activity.dispatch, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.activity.UserActivity user_activity = 3; */
+        if (message.activity.oneofKind === "userActivity")
+            UserActivity.internalBinaryWrite(message.activity.userActivity, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.activity.UserProps user_props = 4; */
+        if (message.activity.oneofKind === "userProps")
+            UserProps.internalBinaryWrite(message.activity.userProps, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 5; */
+        if (message.activity.oneofKind === "colleagueActivity")
+            ColleagueActivity.internalBinaryWrite(message.activity.colleagueActivity, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.activity.ColleagueProps colleague_props = 6; */
+        if (message.activity.oneofKind === "colleagueProps")
+            ColleagueProps.internalBinaryWrite(message.activity.colleagueProps, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.activity.TimeclockUpdate job_timeclock = 7; */
+        if (message.activity.oneofKind === "jobTimeclock")
+            TimeclockUpdate.internalBinaryWrite(message.activity.jobTimeclock, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.activity.UserUpdate user_update = 8; */
+        if (message.activity.oneofKind === "userUpdate")
+            UserUpdate.internalBinaryWrite(message.activity.userUpdate, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.activity.AccountUpdate account_update = 9; */
+        if (message.activity.oneofKind === "accountUpdate")
+            AccountUpdate.internalBinaryWrite(message.activity.accountUpdate, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddActivityRequest
+ */
+export const AddActivityRequest = new AddActivityRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class SendDataRequest$Type extends MessageType<SendDataRequest> {
     constructor() {
         super("services.sync.SendDataRequest", [
@@ -923,53 +2048,6 @@ class SendDataRequest$Type extends MessageType<SendDataRequest> {
  */
 export const SendDataRequest = new SendDataRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class SendDataResponse$Type extends MessageType<SendDataResponse> {
-    constructor() {
-        super("services.sync.SendDataResponse", [
-            { no: 1, name: "affected_rows", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
-        ]);
-    }
-    create(value?: PartialMessage<SendDataResponse>): SendDataResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.affectedRows = 0;
-        if (value !== undefined)
-            reflectionMergePartial<SendDataResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SendDataResponse): SendDataResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 affected_rows */ 1:
-                    message.affectedRows = reader.int64().toNumber();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: SendDataResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 affected_rows = 1; */
-        if (message.affectedRows !== 0)
-            writer.tag(1, WireType.Varint).int64(message.affectedRows);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.SendDataResponse
- */
-export const SendDataResponse = new SendDataResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class DeleteDataRequest$Type extends MessageType<DeleteDataRequest> {
     constructor() {
         super("services.sync.DeleteDataRequest", [
@@ -1033,12 +2111,12 @@ export const DeleteDataRequest = new DeleteDataRequest$Type();
 class DeleteDataResponse$Type extends MessageType<DeleteDataResponse> {
     constructor() {
         super("services.sync.DeleteDataResponse", [
-            { no: 1, name: "affected_rows", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "rows_affected", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteDataResponse>): DeleteDataResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.affectedRows = 0;
+        message.rowsAffected = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteDataResponse>(this, message, value);
         return message;
@@ -1048,8 +2126,8 @@ class DeleteDataResponse$Type extends MessageType<DeleteDataResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 affected_rows */ 1:
-                    message.affectedRows = reader.int64().toNumber();
+                case /* int64 rows_affected */ 1:
+                    message.rowsAffected = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1063,9 +2141,9 @@ class DeleteDataResponse$Type extends MessageType<DeleteDataResponse> {
         return message;
     }
     internalBinaryWrite(message: DeleteDataResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 affected_rows = 1; */
-        if (message.affectedRows !== 0)
-            writer.tag(1, WireType.Varint).int64(message.affectedRows);
+        /* int64 rows_affected = 1; */
+        if (message.rowsAffected !== 0)
+            writer.tag(1, WireType.Varint).int64(message.rowsAffected);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1122,65 +2200,33 @@ class StreamRequest$Type extends MessageType<StreamRequest> {
  * @generated MessageType for protobuf message services.sync.StreamRequest
  */
 export const StreamRequest = new StreamRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class StreamResponse$Type extends MessageType<StreamResponse> {
-    constructor() {
-        super("services.sync.StreamResponse", [
-            { no: 1, name: "user_id", kind: "scalar", oneof: "payload", T: 5 /*ScalarType.INT32*/ }
-        ]);
-    }
-    create(value?: PartialMessage<StreamResponse>): StreamResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.payload = { oneofKind: undefined };
-        if (value !== undefined)
-            reflectionMergePartial<StreamResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StreamResponse): StreamResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int32 user_id */ 1:
-                    message.payload = {
-                        oneofKind: "userId",
-                        userId: reader.int32()
-                    };
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: StreamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 user_id = 1; */
-        if (message.payload.oneofKind === "userId")
-            writer.tag(1, WireType.Varint).int32(message.payload.userId);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.StreamResponse
- */
-export const StreamResponse = new StreamResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.sync.SyncService
  */
 export const SyncService = new ServiceType("services.sync.SyncService", [
     { name: "GetStatus", options: {}, I: GetStatusRequest, O: GetStatusResponse },
-    { name: "AddActivity", options: {}, I: AddActivityRequest, O: AddActivityResponse },
     { name: "RegisterAccount", options: {}, I: RegisterAccountRequest, O: RegisterAccountResponse },
     { name: "TransferAccount", options: {}, I: TransferAccountRequest, O: TransferAccountResponse },
+    { name: "AddUserOAuth2Conn", options: {}, I: AddUserOAuth2ConnRequest, O: AddActivityResponse },
+    { name: "AddAccountUpdate", options: {}, I: AddAccountUpdateRequest, O: AddActivityResponse },
+    { name: "AddUserUpdate", options: {}, I: AddUserUpdateRequest, O: AddActivityResponse },
+    { name: "AddUserActivity", options: {}, I: AddUserActivityRequest, O: AddActivityResponse },
+    { name: "AddUserProps", options: {}, I: AddUserPropsRequest, O: AddActivityResponse },
+    { name: "AddColleagueActivity", options: {}, I: AddColleagueActivityRequest, O: AddActivityResponse },
+    { name: "AddColleagueProps", options: {}, I: AddColleaguePropsRequest, O: AddActivityResponse },
+    { name: "AddJobTimeclock", options: {}, I: AddJobTimeclockRequest, O: AddActivityResponse },
+    { name: "AddDispatch", options: {}, I: AddDispatchRequest, O: AddActivityResponse },
+    { name: "SendJobs", options: {}, I: SendJobsRequest, O: SendDataResponse },
+    { name: "SendLicenses", options: {}, I: SendLicensesRequest, O: SendDataResponse },
+    { name: "SendAccounts", options: {}, I: SendAccountsRequest, O: SendDataResponse },
+    { name: "SendUsers", options: {}, I: SendUsersRequest, O: SendDataResponse },
+    { name: "SendVehicles", options: {}, I: SendVehiclesRequest, O: SendDataResponse },
+    { name: "SendUserLocations", options: {}, I: SendUserLocationsRequest, O: SendDataResponse },
+    { name: "SetLastCharID", options: {}, I: SetLastCharIDRequest, O: SendDataResponse },
+    { name: "DeleteUsers", options: {}, I: DeleteUsersRequest, O: DeleteDataResponse },
+    { name: "DeleteVehicles", options: {}, I: DeleteVehiclesRequest, O: DeleteDataResponse },
+    { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse },
+    { name: "AddActivity", options: {}, I: AddActivityRequest, O: AddActivityResponse },
     { name: "SendData", options: {}, I: SendDataRequest, O: SendDataResponse },
-    { name: "DeleteData", options: {}, I: DeleteDataRequest, O: DeleteDataResponse },
-    { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse }
+    { name: "DeleteData", options: {}, I: DeleteDataRequest, O: DeleteDataResponse }
 ]);

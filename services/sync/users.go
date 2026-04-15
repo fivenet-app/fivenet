@@ -42,6 +42,35 @@ var (
 	tSyncUser = table.FivenetSyncUser
 )
 
+func (s *Server) AddUserUpdate(
+	ctx context.Context,
+	req *pbsync.AddUserUpdateRequest,
+) (*pbsync.AddActivityResponse, error) {
+	s.lastSyncedActivity.Store(time.Now().Unix())
+
+	if err := s.handleUserUpdate(ctx, req.GetUserUpdate()); err != nil {
+		return nil, fmt.Errorf("failed to handle user update data. %w", err)
+	}
+
+	return &pbsync.AddActivityResponse{}, nil
+}
+
+func (s *Server) SendUsers(
+	ctx context.Context,
+	req *pbsync.SendUsersRequest,
+) (*pbsync.SendDataResponse, error) {
+	s.lastSyncedData.Store(time.Now().Unix())
+
+	rowsAffected, err := s.handleUsersData(ctx, req.GetUsers())
+	if err != nil {
+		return nil, fmt.Errorf("failed to handle users data. %w", err)
+	}
+
+	return &pbsync.SendDataResponse{
+		RowsAffected: rowsAffected,
+	}, nil
+}
+
 type existingUser struct {
 	UserID     int32  `alias:"user_id"`
 	Identifier string `alias:"identifier"`
@@ -50,12 +79,11 @@ type existingUser struct {
 
 func (s *Server) handleUsersData(
 	ctx context.Context,
-	data *pbsync.SendDataRequest_Users,
+	us []*syncdata.DataUser,
 ) (int64, error) {
 	syncedAt := time.Now()
 
 	userIds := []mysql.Expression{}
-	us := data.Users.GetUsers()
 	for i := range us {
 		userIds = append(userIds, mysql.Int32(us[i].GetUserId()))
 
@@ -151,9 +179,9 @@ func (s *Server) handleUsersData(
 	toCreate, toUpdate := []*syncdata.DataUser{}, []*syncdata.DataUser{}
 	// Check which users already exist in the database and check which to create/update accordingly
 	if len(existing) == 0 {
-		toCreate = data.Users.GetUsers()
+		toCreate = us
 	} else {
-		for _, user := range data.Users.GetUsers() {
+		for _, user := range us {
 			if idx := slices.IndexFunc(existing, func(userId *existingUser) bool {
 				return userId.UserID == user.GetUserId()
 			}); idx == -1 {
@@ -1034,4 +1062,38 @@ func comparePhoneNumbers(
 	}
 
 	return toAdd, toUpdate, toRemove
+}
+
+func (s *Server) DeleteUsers(
+	ctx context.Context,
+	req *pbsync.DeleteUsersRequest,
+) (*pbsync.DeleteDataResponse, error) {
+	if len(req.GetUserIds()) == 0 {
+		return &pbsync.DeleteDataResponse{}, nil
+	}
+
+	userIds := []mysql.Expression{}
+	for _, identifier := range req.GetUserIds() {
+		userIds = append(userIds, mysql.Int32(identifier))
+	}
+
+	tUsers := table.FivenetUser
+
+	delStmt := tUsers.
+		DELETE().
+		WHERE(tUsers.ID.IN(userIds...)).
+		LIMIT(int64(len(req.GetUserIds())))
+
+	res, err := delStmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute users delete statement. %w", err)
+	}
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve rows affected for users delete. %w", err)
+	}
+
+	return &pbsync.DeleteDataResponse{
+		RowsAffected: rows,
+	}, nil
 }

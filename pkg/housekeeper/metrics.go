@@ -8,19 +8,19 @@ import (
 )
 
 var (
-	// metricSoftDeleteAffectedRows tracks the number of rows affected by the soft delete operation.
-	metricSoftDeleteAffectedRows = promauto.NewGauge(prometheus.GaugeOpts{
+	// metricSoftDeleteRowsAffected tracks the number of rows affected by the soft delete operation.
+	metricSoftDeleteRowsAffected = promauto.NewGauge(prometheus.GaugeOpts{
 		Namespace: admin.MetricsNamespace,
 		Subsystem: "housekeeper",
-		Name:      "soft_delete_affected_rows_count",
+		Name:      "soft_delete_rows_affected_count",
 		Help:      "Number of rows affected by the soft delete operation.",
 	})
 
-	// metricHardDeleteAffectedRows tracks the number of rows affected by the hard delete operation, labeled by table name.
-	metricHardDeleteAffectedRows = promauto.NewGaugeVec(prometheus.GaugeOpts{
+	// metricHardDeleteRowsAffected tracks the number of rows affected by the hard delete operation, labeled by table name.
+	metricHardDeleteRowsAffected = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: admin.MetricsNamespace,
 		Subsystem: "housekeeper",
-		Name:      "hard_delete_affected_rows_count",
+		Name:      "hard_delete_rows_affected_count",
 		Help:      "Number of rows affected by the hard delete operation.",
 	}, []string{"table_name"})
 )

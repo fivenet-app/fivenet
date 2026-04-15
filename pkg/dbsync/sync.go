@@ -186,6 +186,8 @@ func (s *Sync) start() error {
 		s.wg.Go(func() {
 			s.RunStream(s.ctx)
 		})
+	} else {
+		s.logger.Warn("dry run enabled, not sending data to server")
 	}
 
 	return nil

@@ -3,21 +3,40 @@ package sync
 import (
 	"context"
 	"fmt"
+	"time"
 
+	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/zap"
 )
 
+func (s *Server) SendUserLocations(
+	ctx context.Context,
+	req *pbsync.SendUserLocationsRequest,
+) (*pbsync.SendDataResponse, error) {
+	s.lastSyncedData.Store(time.Now().Unix())
+
+	rowsAffected, err := s.handleUserLocations(ctx, req.GetUsers(), req.GetClearAll())
+	if err != nil {
+		return nil, fmt.Errorf("failed to handle user locations data. %w", err)
+	}
+
+	return &pbsync.SendDataResponse{
+		RowsAffected: rowsAffected,
+	}, nil
+}
+
 func (s *Server) handleUserLocations(
 	ctx context.Context,
-	data *pbsync.SendDataRequest_UserLocations,
+	users []*syncdata.CitizenLocations,
+	clearAll bool,
 ) (int64, error) {
 	tLocations := table.FivenetCentrumUserLocations
 
 	// Handle clear all
-	if data.UserLocations.ClearAll != nil && data.UserLocations.GetClearAll() {
+	if clearAll {
 		stmt := tLocations.
 			DELETE().
 			WHERE(tLocations.UserID.IS_NOT_NULL().OR(tLocations.UserID.IS_NULL()))
@@ -39,7 +58,7 @@ func (s *Server) handleUserLocations(
 
 	atLeastOne := false
 	toDelete := []int32{}
-	for _, location := range data.UserLocations.GetUsers() {
+	for _, location := range users {
 		// Collect user locations are marked for removal
 		if location.GetRemove() {
 			toDelete = append(toDelete, location.GetUserId())
@@ -78,7 +97,8 @@ func (s *Server) handleUserLocations(
 		if err != nil {
 			s.logger.Debug(
 				"failed to execute user locations insert statement",
-				zap.Any("data", data),
+				zap.Bool("clear_all", clearAll),
+				zap.Any("users", users),
 				zap.Error(err),
 			)
 			return 0, fmt.Errorf("failed to execute user locations insert statement. %w", err)

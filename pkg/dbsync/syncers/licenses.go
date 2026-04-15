@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
-	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/go-jet/jet/v2/qrm"
@@ -42,12 +41,12 @@ func (s *LicensesSync) Sync(ctx context.Context) (int64, error) {
 	}
 
 	// Sync licenses to FiveNet server
-	if err := s.sendData(ctx, &pbsync.SendDataRequest{
-		Data: &pbsync.SendDataRequest_Licenses{
-			Licenses: &syncdata.DataLicenses{
-				Licenses: licenses,
-			},
-		},
+	req := &pbsync.SendLicensesRequest{
+		Licenses: licenses,
+	}
+	if err := s.send(ctx, req, func(ctx context.Context, cli pbsync.SyncServiceClient) error {
+		_, err := cli.SendLicenses(ctx, req)
+		return err
 	}); err != nil {
 		return 0, err
 	}

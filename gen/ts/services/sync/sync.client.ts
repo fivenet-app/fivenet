@@ -5,19 +5,37 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { SyncService } from "./sync";
+import type { DeleteDataRequest } from "./sync";
+import type { SendDataRequest } from "./sync";
+import type { AddActivityRequest } from "./sync";
 import type { StreamResponse } from "./sync";
 import type { StreamRequest } from "./sync";
 import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
+import type { DeleteVehiclesRequest } from "./sync";
 import type { DeleteDataResponse } from "./sync";
-import type { DeleteDataRequest } from "./sync";
+import type { DeleteUsersRequest } from "./sync";
+import type { SetLastCharIDRequest } from "./sync";
+import type { SendUserLocationsRequest } from "./sync";
+import type { SendVehiclesRequest } from "./sync";
+import type { SendUsersRequest } from "./sync";
+import type { SendAccountsRequest } from "./sync";
+import type { SendLicensesRequest } from "./sync";
 import type { SendDataResponse } from "./sync";
-import type { SendDataRequest } from "./sync";
+import type { SendJobsRequest } from "./sync";
+import type { AddDispatchRequest } from "./sync";
+import type { AddJobTimeclockRequest } from "./sync";
+import type { AddColleaguePropsRequest } from "./sync";
+import type { AddColleagueActivityRequest } from "./sync";
+import type { AddUserPropsRequest } from "./sync";
+import type { AddUserActivityRequest } from "./sync";
+import type { AddUserUpdateRequest } from "./sync";
+import type { AddAccountUpdateRequest } from "./sync";
+import type { AddActivityResponse } from "./sync";
+import type { AddUserOAuth2ConnRequest } from "./sync";
 import type { TransferAccountResponse } from "./sync";
 import type { TransferAccountRequest } from "./sync";
 import type { RegisterAccountResponse } from "./sync";
 import type { RegisterAccountRequest } from "./sync";
-import type { AddActivityResponse } from "./sync";
-import type { AddActivityRequest } from "./sync";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { GetStatusResponse } from "./sync";
 import type { GetStatusRequest } from "./sync";
@@ -37,12 +55,6 @@ export interface ISyncServiceClient {
      */
     getStatus(input: GetStatusRequest, options?: RpcOptions): UnaryCall<GetStatusRequest, GetStatusResponse>;
     /**
-     * For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
-     *
-     * @generated from protobuf rpc: AddActivity
-     */
-    addActivity(input: AddActivityRequest, options?: RpcOptions): UnaryCall<AddActivityRequest, AddActivityResponse>;
-    /**
      * Get registration token for a new user account or return the account id and username, for a given identifier/license.
      *
      * @generated from protobuf rpc: RegisterAccount
@@ -55,23 +67,110 @@ export interface ISyncServiceClient {
      */
     transferAccount(input: TransferAccountRequest, options?: RpcOptions): UnaryCall<TransferAccountRequest, TransferAccountResponse>;
     /**
-     * DBSync's method of sending (mass) data to the FiveNet server for storing.
+     * Individual AddActivity methods
      *
-     * @generated from protobuf rpc: SendData
+     * @generated from protobuf rpc: AddUserOAuth2Conn
      */
-    sendData(input: SendDataRequest, options?: RpcOptions): UnaryCall<SendDataRequest, SendDataResponse>;
+    addUserOAuth2Conn(input: AddUserOAuth2ConnRequest, options?: RpcOptions): UnaryCall<AddUserOAuth2ConnRequest, AddActivityResponse>;
     /**
-     * Way for the gameserver to delete certain data as well
-     *
-     * @generated from protobuf rpc: DeleteData
+     * @generated from protobuf rpc: AddAccountUpdate
      */
-    deleteData(input: DeleteDataRequest, options?: RpcOptions): UnaryCall<DeleteDataRequest, DeleteDataResponse>;
+    addAccountUpdate(input: AddAccountUpdateRequest, options?: RpcOptions): UnaryCall<AddAccountUpdateRequest, AddActivityResponse>;
+    /**
+     * @generated from protobuf rpc: AddUserUpdate
+     */
+    addUserUpdate(input: AddUserUpdateRequest, options?: RpcOptions): UnaryCall<AddUserUpdateRequest, AddActivityResponse>;
+    /**
+     * @generated from protobuf rpc: AddUserActivity
+     */
+    addUserActivity(input: AddUserActivityRequest, options?: RpcOptions): UnaryCall<AddUserActivityRequest, AddActivityResponse>;
+    /**
+     * @generated from protobuf rpc: AddUserProps
+     */
+    addUserProps(input: AddUserPropsRequest, options?: RpcOptions): UnaryCall<AddUserPropsRequest, AddActivityResponse>;
+    /**
+     * @generated from protobuf rpc: AddColleagueActivity
+     */
+    addColleagueActivity(input: AddColleagueActivityRequest, options?: RpcOptions): UnaryCall<AddColleagueActivityRequest, AddActivityResponse>;
+    /**
+     * @generated from protobuf rpc: AddColleagueProps
+     */
+    addColleagueProps(input: AddColleaguePropsRequest, options?: RpcOptions): UnaryCall<AddColleaguePropsRequest, AddActivityResponse>;
+    /**
+     * @generated from protobuf rpc: AddJobTimeclock
+     */
+    addJobTimeclock(input: AddJobTimeclockRequest, options?: RpcOptions): UnaryCall<AddJobTimeclockRequest, AddActivityResponse>;
+    /**
+     * @generated from protobuf rpc: AddDispatch
+     */
+    addDispatch(input: AddDispatchRequest, options?: RpcOptions): UnaryCall<AddDispatchRequest, AddActivityResponse>;
+    /**
+     * Individual SendData methods
+     *
+     * @generated from protobuf rpc: SendJobs
+     */
+    sendJobs(input: SendJobsRequest, options?: RpcOptions): UnaryCall<SendJobsRequest, SendDataResponse>;
+    /**
+     * @generated from protobuf rpc: SendLicenses
+     */
+    sendLicenses(input: SendLicensesRequest, options?: RpcOptions): UnaryCall<SendLicensesRequest, SendDataResponse>;
+    /**
+     * @generated from protobuf rpc: SendAccounts
+     */
+    sendAccounts(input: SendAccountsRequest, options?: RpcOptions): UnaryCall<SendAccountsRequest, SendDataResponse>;
+    /**
+     * @generated from protobuf rpc: SendUsers
+     */
+    sendUsers(input: SendUsersRequest, options?: RpcOptions): UnaryCall<SendUsersRequest, SendDataResponse>;
+    /**
+     * @generated from protobuf rpc: SendVehicles
+     */
+    sendVehicles(input: SendVehiclesRequest, options?: RpcOptions): UnaryCall<SendVehiclesRequest, SendDataResponse>;
+    /**
+     * @generated from protobuf rpc: SendUserLocations
+     */
+    sendUserLocations(input: SendUserLocationsRequest, options?: RpcOptions): UnaryCall<SendUserLocationsRequest, SendDataResponse>;
+    /**
+     * @generated from protobuf rpc: SetLastCharID
+     */
+    setLastCharID(input: SetLastCharIDRequest, options?: RpcOptions): UnaryCall<SetLastCharIDRequest, SendDataResponse>;
+    /**
+     * Individual DeleteData methods
+     *
+     * @generated from protobuf rpc: DeleteUsers
+     */
+    deleteUsers(input: DeleteUsersRequest, options?: RpcOptions): UnaryCall<DeleteUsersRequest, DeleteDataResponse>;
+    /**
+     * @generated from protobuf rpc: DeleteVehicles
+     */
+    deleteVehicles(input: DeleteVehiclesRequest, options?: RpcOptions): UnaryCall<DeleteVehiclesRequest, DeleteDataResponse>;
     /**
      * Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
      *
      * @generated from protobuf rpc: Stream
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse>;
+    /**
+     * DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
+     *
+     * @deprecated
+     * @generated from protobuf rpc: AddActivity
+     */
+    addActivity(input: AddActivityRequest, options?: RpcOptions): UnaryCall<AddActivityRequest, AddActivityResponse>;
+    /**
+     * DEPRECATED:DBSync's method of sending (mass) data to the FiveNet server for storing.
+     *
+     * @deprecated
+     * @generated from protobuf rpc: SendData
+     */
+    sendData(input: SendDataRequest, options?: RpcOptions): UnaryCall<SendDataRequest, SendDataResponse>;
+    /**
+     * DEPRECATED:Way for the gameserver to delete certain data as well
+     *
+     * @deprecated
+     * @generated from protobuf rpc: DeleteData
+     */
+    deleteData(input: DeleteDataRequest, options?: RpcOptions): UnaryCall<DeleteDataRequest, DeleteDataResponse>;
 }
 /**
  * Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instance and API calls
@@ -95,21 +194,12 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
         return stackIntercept<GetStatusRequest, GetStatusResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
-     *
-     * @generated from protobuf rpc: AddActivity
-     */
-    addActivity(input: AddActivityRequest, options?: RpcOptions): UnaryCall<AddActivityRequest, AddActivityResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<AddActivityRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
      * Get registration token for a new user account or return the account id and username, for a given identifier/license.
      *
      * @generated from protobuf rpc: RegisterAccount
      */
     registerAccount(input: RegisterAccountRequest, options?: RpcOptions): UnaryCall<RegisterAccountRequest, RegisterAccountResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<RegisterAccountRequest, RegisterAccountResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -118,26 +208,140 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
      * @generated from protobuf rpc: TransferAccount
      */
     transferAccount(input: TransferAccountRequest, options?: RpcOptions): UnaryCall<TransferAccountRequest, TransferAccountResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<TransferAccountRequest, TransferAccountResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * DBSync's method of sending (mass) data to the FiveNet server for storing.
+     * Individual AddActivity methods
      *
-     * @generated from protobuf rpc: SendData
+     * @generated from protobuf rpc: AddUserOAuth2Conn
      */
-    sendData(input: SendDataRequest, options?: RpcOptions): UnaryCall<SendDataRequest, SendDataResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
-        return stackIntercept<SendDataRequest, SendDataResponse>("unary", this._transport, method, opt, input);
+    addUserOAuth2Conn(input: AddUserOAuth2ConnRequest, options?: RpcOptions): UnaryCall<AddUserOAuth2ConnRequest, AddActivityResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AddUserOAuth2ConnRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * Way for the gameserver to delete certain data as well
-     *
-     * @generated from protobuf rpc: DeleteData
+     * @generated from protobuf rpc: AddAccountUpdate
      */
-    deleteData(input: DeleteDataRequest, options?: RpcOptions): UnaryCall<DeleteDataRequest, DeleteDataResponse> {
+    addAccountUpdate(input: AddAccountUpdateRequest, options?: RpcOptions): UnaryCall<AddAccountUpdateRequest, AddActivityResponse> {
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AddAccountUpdateRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: AddUserUpdate
+     */
+    addUserUpdate(input: AddUserUpdateRequest, options?: RpcOptions): UnaryCall<AddUserUpdateRequest, AddActivityResponse> {
         const method = this.methods[5], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteDataRequest, DeleteDataResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<AddUserUpdateRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: AddUserActivity
+     */
+    addUserActivity(input: AddUserActivityRequest, options?: RpcOptions): UnaryCall<AddUserActivityRequest, AddActivityResponse> {
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AddUserActivityRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: AddUserProps
+     */
+    addUserProps(input: AddUserPropsRequest, options?: RpcOptions): UnaryCall<AddUserPropsRequest, AddActivityResponse> {
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AddUserPropsRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: AddColleagueActivity
+     */
+    addColleagueActivity(input: AddColleagueActivityRequest, options?: RpcOptions): UnaryCall<AddColleagueActivityRequest, AddActivityResponse> {
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AddColleagueActivityRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: AddColleagueProps
+     */
+    addColleagueProps(input: AddColleaguePropsRequest, options?: RpcOptions): UnaryCall<AddColleaguePropsRequest, AddActivityResponse> {
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AddColleaguePropsRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: AddJobTimeclock
+     */
+    addJobTimeclock(input: AddJobTimeclockRequest, options?: RpcOptions): UnaryCall<AddJobTimeclockRequest, AddActivityResponse> {
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AddJobTimeclockRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: AddDispatch
+     */
+    addDispatch(input: AddDispatchRequest, options?: RpcOptions): UnaryCall<AddDispatchRequest, AddActivityResponse> {
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AddDispatchRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * Individual SendData methods
+     *
+     * @generated from protobuf rpc: SendJobs
+     */
+    sendJobs(input: SendJobsRequest, options?: RpcOptions): UnaryCall<SendJobsRequest, SendDataResponse> {
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SendJobsRequest, SendDataResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: SendLicenses
+     */
+    sendLicenses(input: SendLicensesRequest, options?: RpcOptions): UnaryCall<SendLicensesRequest, SendDataResponse> {
+        const method = this.methods[13], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SendLicensesRequest, SendDataResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: SendAccounts
+     */
+    sendAccounts(input: SendAccountsRequest, options?: RpcOptions): UnaryCall<SendAccountsRequest, SendDataResponse> {
+        const method = this.methods[14], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SendAccountsRequest, SendDataResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: SendUsers
+     */
+    sendUsers(input: SendUsersRequest, options?: RpcOptions): UnaryCall<SendUsersRequest, SendDataResponse> {
+        const method = this.methods[15], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SendUsersRequest, SendDataResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: SendVehicles
+     */
+    sendVehicles(input: SendVehiclesRequest, options?: RpcOptions): UnaryCall<SendVehiclesRequest, SendDataResponse> {
+        const method = this.methods[16], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SendVehiclesRequest, SendDataResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: SendUserLocations
+     */
+    sendUserLocations(input: SendUserLocationsRequest, options?: RpcOptions): UnaryCall<SendUserLocationsRequest, SendDataResponse> {
+        const method = this.methods[17], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SendUserLocationsRequest, SendDataResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: SetLastCharID
+     */
+    setLastCharID(input: SetLastCharIDRequest, options?: RpcOptions): UnaryCall<SetLastCharIDRequest, SendDataResponse> {
+        const method = this.methods[18], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SetLastCharIDRequest, SendDataResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * Individual DeleteData methods
+     *
+     * @generated from protobuf rpc: DeleteUsers
+     */
+    deleteUsers(input: DeleteUsersRequest, options?: RpcOptions): UnaryCall<DeleteUsersRequest, DeleteDataResponse> {
+        const method = this.methods[19], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DeleteUsersRequest, DeleteDataResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: DeleteVehicles
+     */
+    deleteVehicles(input: DeleteVehiclesRequest, options?: RpcOptions): UnaryCall<DeleteVehiclesRequest, DeleteDataResponse> {
+        const method = this.methods[20], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DeleteVehiclesRequest, DeleteDataResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
@@ -145,7 +349,37 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
      * @generated from protobuf rpc: Stream
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[21], opt = this._transport.mergeOptions(options);
         return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
+    }
+    /**
+     * DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
+     *
+     * @deprecated
+     * @generated from protobuf rpc: AddActivity
+     */
+    addActivity(input: AddActivityRequest, options?: RpcOptions): UnaryCall<AddActivityRequest, AddActivityResponse> {
+        const method = this.methods[22], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AddActivityRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * DEPRECATED:DBSync's method of sending (mass) data to the FiveNet server for storing.
+     *
+     * @deprecated
+     * @generated from protobuf rpc: SendData
+     */
+    sendData(input: SendDataRequest, options?: RpcOptions): UnaryCall<SendDataRequest, SendDataResponse> {
+        const method = this.methods[23], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SendDataRequest, SendDataResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * DEPRECATED:Way for the gameserver to delete certain data as well
+     *
+     * @deprecated
+     * @generated from protobuf rpc: DeleteData
+     */
+    deleteData(input: DeleteDataRequest, options?: RpcOptions): UnaryCall<DeleteDataRequest, DeleteDataResponse> {
+        const method = this.methods[24], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DeleteDataRequest, DeleteDataResponse>("unary", this._transport, method, opt, input);
     }
 }

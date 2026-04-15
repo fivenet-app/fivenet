@@ -79,7 +79,7 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 		)
 	}
 
-	metricSoftDeleteAffectedRows.Set(float64(rowsAffected))
+	metricSoftDeleteRowsAffected.Set(float64(rowsAffected))
 
 	// Advance table key only if this table had no more rows to delete
 	if rowsAffected < DefaultDeleteLimit {
