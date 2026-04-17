@@ -220,7 +220,7 @@ tables:
     #  FROM
     #    `users`
     #  $whereCondition
-    #  ORDER BY `user.updated_at`, `id`
+    #  ORDER BY `user.updated_at` ASC, `id` ASC
     #  LIMIT $limit;
     # If a lastname is not returned by the query, attempt to split the firstname into "two" parts
     splitName: true
@@ -356,7 +356,7 @@ tables:
     #    `updated_at` AS `vehicle.updated_at`
     #  FROM
     #    `owned_vehicles`
-    #  ORDER BY `vehicle.plate`
+    #  ORDER BY `vehicle.updated_at` ASC, `vehicle.plate` ASC
     #  LIMIT $limit;
     #
     # Interval in which a batch of vehicles data is "re-synced". A "step" is a single batch of vehicles that is re-synced,
