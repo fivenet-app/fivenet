@@ -789,14 +789,12 @@ type TableManagerConfig struct {
 }
 
 // SyncLimits defines limits for the sync process, such as maximum number of records to sync per table.
-// Must be kept in-sync with the current sync API limits.
-//
-// Current limits from: `services/sync/v2/sync.proto`.
+// Accounts, Users and Vehicles split the data into multiple requests if they exceed the API limits.
 type SyncLimits struct {
 	Jobs     int64 `default:"200" yaml:"jobs"     validate:"omitempty,gte=1,lte=200"`
 	Licenses int64 `default:"200" yaml:"licenses" validate:"omitempty,gte=1,lte=200"`
 
-	Accounts int64 `default:"200" yaml:"accounts" validate:"omitempty,gte=1,lte=200"`
-	Users    int64 `default:"150" yaml:"users"    validate:"omitempty,gte=1,lte=300"`
-	Vehicles int64 `default:"500" yaml:"vehicles" validate:"omitempty,gte=1,lte=500"`
+	Accounts int64 `default:"200" yaml:"accounts" validate:"omitempty,gte=1,lte=1000"`
+	Users    int64 `default:"150" yaml:"users"    validate:"omitempty,gte=1,lte=1000"`
+	Vehicles int64 `default:"500" yaml:"vehicles" validate:"omitempty,gte=1,lte=1500"`
 }

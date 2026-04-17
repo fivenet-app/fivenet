@@ -379,7 +379,7 @@ export const DataUsers = new DataUsers$Type();
 class DataVehicles$Type extends MessageType<DataVehicles> {
     constructor() {
         super("resources.sync.data.DataVehicles", [
-            { no: 1, name: "vehicles", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Vehicle, options: { "buf.validate.field": { repeated: { maxItems: "1000" } } } }
+            { no: 1, name: "vehicles", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Vehicle, options: { "buf.validate.field": { repeated: { maxItems: "500" } } } }
         ]);
     }
     create(value?: PartialMessage<DataVehicles>): DataVehicles {

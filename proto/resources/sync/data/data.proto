@@ -27,7 +27,7 @@ message DataUsers {
 }
 
 message DataVehicles {
-  repeated resources.vehicles.Vehicle vehicles = 1 [(buf.validate.field).repeated.max_items = 1000];
+  repeated resources.vehicles.Vehicle vehicles = 1 [(buf.validate.field).repeated.max_items = 500];
 }
 
 message DataLicenses {

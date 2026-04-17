@@ -96,7 +96,7 @@ message SendLicensesRequest {
 }
 
 message SendAccountsRequest {
-  repeated resources.sync.activity.AccountUpdate account_updates = 1 [(buf.validate.field).repeated.max_items = 100];
+  repeated resources.sync.activity.AccountUpdate account_updates = 1 [(buf.validate.field).repeated.max_items = 200];
 }
 
 message SendUsersRequest {
@@ -122,11 +122,11 @@ message SendDataResponse {
 
 // Individual DeleteData request messages
 message DeleteUsersRequest {
-  repeated int32 user_ids = 1 [(buf.validate.field).repeated.max_items = 100];
+  repeated int32 user_ids = 1 [(buf.validate.field).repeated.max_items = 300];
 }
 
 message DeleteVehiclesRequest {
-  repeated string plates = 1 [(buf.validate.field).repeated.max_items = 100];
+  repeated string plates = 1 [(buf.validate.field).repeated.max_items = 500];
 }
 
 message StreamResponse {

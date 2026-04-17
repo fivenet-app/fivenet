@@ -6,11 +6,14 @@ import (
 	"fmt"
 
 	syncactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
+
+const maxAccountsPerSendRequeust = 100
 
 type AccountsSync struct {
 	*Syncer
@@ -45,15 +48,22 @@ func (s *AccountsSync) Sync(ctx context.Context) (int64, error) {
 			break
 		}
 
-		// Sync accounts to FiveNet server.
-		req := &pbsync.SendAccountsRequest{
-			AccountUpdates: accounts,
-		}
-		if err := s.send(ctx, req, func(ctx context.Context, cli pbsync.SyncServiceClient) error {
-			_, err := cli.SendAccounts(ctx, req)
-			return err
-		}); err != nil {
-			return total, err
+		// Sync accounts to FiveNet server (in batches if higher than API limit).
+		for start := 0; start < len(accounts); start += sync.MaxAccountsPerRequest {
+			end := min(start+maxUsersPerSendRequest, len(accounts))
+			req := &pbsync.SendAccountsRequest{
+				AccountUpdates: accounts[start:end],
+			}
+			if err := s.send(
+				ctx,
+				req,
+				func(ctx context.Context, cli pbsync.SyncServiceClient) error {
+					_, err := cli.SendAccounts(ctx, req)
+					return err
+				},
+			); err != nil {
+				return total, err
+			}
 		}
 		total += fetched
 

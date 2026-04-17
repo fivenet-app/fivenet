@@ -1371,7 +1371,7 @@ export const SendLicensesRequest = new SendLicensesRequest$Type();
 class SendAccountsRequest$Type extends MessageType<SendAccountsRequest> {
     constructor() {
         super("services.sync.SendAccountsRequest", [
-            { no: 1, name: "account_updates", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AccountUpdate, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
+            { no: 1, name: "account_updates", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AccountUpdate, options: { "buf.validate.field": { repeated: { maxItems: "200" } } } }
         ]);
     }
     create(value?: PartialMessage<SendAccountsRequest>): SendAccountsRequest {
@@ -1659,7 +1659,7 @@ export const SendDataResponse = new SendDataResponse$Type();
 class DeleteUsersRequest$Type extends MessageType<DeleteUsersRequest> {
     constructor() {
         super("services.sync.DeleteUsersRequest", [
-            { no: 1, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
+            { no: 1, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "300" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteUsersRequest>): DeleteUsersRequest {
@@ -1714,7 +1714,7 @@ export const DeleteUsersRequest = new DeleteUsersRequest$Type();
 class DeleteVehiclesRequest$Type extends MessageType<DeleteVehiclesRequest> {
     constructor() {
         super("services.sync.DeleteVehiclesRequest", [
-            { no: 1, name: "plates", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
+            { no: 1, name: "plates", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "500" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteVehiclesRequest>): DeleteVehiclesRequest {
