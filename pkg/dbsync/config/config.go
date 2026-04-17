@@ -356,7 +356,7 @@ func (c *JobsTable) GetQuery(
 	limit int64,
 	where ...string,
 ) string {
-	if c.Query != nil {
+	if c.Query != nil && *c.Query != "" {
 		return prepareStringQuery(*c.Query, c.DBSyncTable, nil, limit, "")
 	}
 
@@ -383,7 +383,7 @@ func (c *JobGradesTable) GetQuery(
 	limit int64,
 	where ...string,
 ) string {
-	if c.Query != nil {
+	if c.Query != nil && *c.Query != "" {
 		q := prepareStringQuery(*c.Query, c.DBSyncTable, state, limit, "")
 		q = strings.ReplaceAll(q, "$jobName", "?")
 		return q
@@ -416,7 +416,7 @@ func (c *LicensesTable) GetQuery(
 	limit int64,
 	where ...string,
 ) string {
-	if c.Query != nil {
+	if c.Query != nil && *c.Query != "" {
 		return prepareStringQuery(*c.Query, c.DBSyncTable, nil, limit, "")
 	}
 	where = append(where, getWhereCondition(c.DBSyncTable, nil, ""))
@@ -453,7 +453,7 @@ func (c *UsersTable) GetQuery(
 	limit int64,
 	where ...string,
 ) string {
-	if c.Query != nil {
+	if c.Query != nil && *c.Query != "" {
 		where = slices.DeleteFunc(where, func(cond string) bool {
 			return strings.TrimSpace(cond) == ""
 		})
@@ -466,9 +466,10 @@ func (c *UsersTable) GetQuery(
 
 	orderBy := []string{}
 	if c.UpdatedTimeColumn != nil && *c.UpdatedTimeColumn != "" {
-		orderBy = append([]string{*c.UpdatedTimeColumn}, orderBy...)
+		// Ensure updated time column is always the first in the order by for consistent pagination.
+		orderBy = append([]string{*c.UpdatedTimeColumn + " ASC"}, orderBy...)
 	}
-	orderBy = append(orderBy, c.Columns.ID)
+	orderBy = append(orderBy, c.Columns.ID+" ASC")
 
 	columns := map[string]string{
 		"user.id":           c.Columns.ID,
@@ -498,7 +499,7 @@ func (c *UsersTable) GetSyncQuery(
 	limit int64,
 	where ...string,
 ) string {
-	if c.Query != nil {
+	if c.Query != nil && *c.Query != "" {
 		return prepareStringQueryWithStateAndWhere(
 			*c.Query,
 			c.DBSyncTable,
@@ -577,7 +578,7 @@ func (c *UserLicensesTable) GetQuery(
 	limit int64,
 	where ...string,
 ) string {
-	if c.Query != nil {
+	if c.Query != nil && *c.Query != "" {
 		return prepareStringQuery(*c.Query, c.DBSyncTable, nil, limit, "")
 	}
 
@@ -632,15 +633,16 @@ func (c *VehiclesTable) GetQuery(
 	limit int64,
 	where ...string,
 ) string {
-	if c.Query != nil {
+	if c.Query != nil && *c.Query != "" {
 		return prepareStringQuery(*c.Query, c.DBSyncTable, state, limit, c.Columns.Plate)
 	}
 
 	orderBy := []string{}
 	if c.UpdatedTimeColumn != nil && *c.UpdatedTimeColumn != "" {
-		orderBy = append([]string{*c.UpdatedTimeColumn}, orderBy...)
+		// Ensure updated time column is always the first in the order by for consistent pagination.
+		orderBy = append([]string{*c.UpdatedTimeColumn + " ASC"}, orderBy...)
 	}
-	orderBy = append(orderBy, c.Columns.Plate)
+	orderBy = append(orderBy, c.Columns.Plate+" ASC")
 
 	columns := map[string]string{
 		"vehicle.ownerIdentifier": c.Columns.OwnerIdentifier,
@@ -662,7 +664,7 @@ func (c *VehiclesTable) GetSyncQuery(
 	limit int64,
 	where ...string,
 ) string {
-	if c.Query != nil {
+	if c.Query != nil && *c.Query != "" {
 		return prepareStringQueryWithStateAndWhere(
 			*c.Query,
 			c.DBSyncTable,
