@@ -51,7 +51,7 @@ require (
 	github.com/paulmach/orb v0.13.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.23.2
-	github.com/puzpuzpuz/xsync/v4 v4.4.0
+	github.com/puzpuzpuz/xsync/v4 v4.5.0
 	github.com/rs/cors v1.11.1
 	github.com/sergi/go-diff v1.4.0
 	github.com/sethvargo/go-retry v0.3.0
