@@ -21,3 +21,5 @@ packageExtensions:
   '@nuxtjs/mdc@0.20.1':
     dependencies:
       '@shikijs/engine-javascript': ^3.22.0
+
+saveExact: true

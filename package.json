@@ -150,7 +150,8 @@
         "sass": "1.99.0",
         "tailwindcss": "4.2.2",
         "typescript": "6.0.3",
-        "vitest": "4.0.18",
+        "vite": "7.3.2",
+        "vitest": "4.1.4",
         "vue-router": "4.6.4",
         "vue-tsc": "3.2.6",
         "westures": "1.1.1"
