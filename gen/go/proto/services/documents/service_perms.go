@@ -152,9 +152,14 @@ func init() {
 		{
 			Category: permkeys.DocumentsServicePerm,
 			Name:     permkeys.DocumentsServiceListCategoriesPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
+			Attrs: []perms.Attr{
+				{
+					Key:  permkeys.DocumentsServiceListCategoriesJobsPermField,
+					Type: permissionsattributes.JobListAttributeType,
+				},
+			},
+			Order: 5000,
+			Icon:  "i-mdi-file-document-box-multiple-outline",
 		},
 		{
 			Category: permkeys.DocumentsServicePerm,

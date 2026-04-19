@@ -40,6 +40,7 @@ const (
 	DocumentsServiceDeleteDocumentReqPerm              perms.Name = "DeleteDocumentReq"
 	DocumentsServiceDeleteTemplatePerm                 perms.Name = "DeleteTemplate"
 	DocumentsServiceListCategoriesPerm                 perms.Name = "ListCategories"
+	DocumentsServiceListCategoriesJobsPermField        perms.Key  = "Jobs"
 	DocumentsServiceListDocumentActivityPerm           perms.Name = "ListDocumentActivity"
 	DocumentsServiceListDocumentReqsPerm               perms.Name = "ListDocumentReqs"
 	DocumentsServiceListDocumentsPerm                  perms.Name = "ListDocuments"

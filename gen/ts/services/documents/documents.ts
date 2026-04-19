@@ -4619,7 +4619,7 @@ export const DocumentsService = new ServiceType("services.documents.DocumentsSer
     { name: "UpdateDocumentReq", options: { "codegen.perms.perms": { enabled: true, name: "CreateDocumentReq" } }, I: UpdateDocumentReqRequest, O: UpdateDocumentReqResponse },
     { name: "DeleteDocumentReq", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteDocumentReqRequest, O: DeleteDocumentReqResponse },
     { name: "ListUserDocuments", options: { "codegen.perms.perms": { enabled: true } }, I: ListUserDocumentsRequest, O: ListUserDocumentsResponse },
-    { name: "ListCategories", options: { "codegen.perms.perms": { enabled: true } }, I: ListCategoriesRequest, O: ListCategoriesResponse },
+    { name: "ListCategories", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Jobs", type: "ATTRIBUTE_TYPE_JOB_LIST" }] } }, I: ListCategoriesRequest, O: ListCategoriesResponse },
     { name: "CreateOrUpdateCategory", options: { "codegen.perms.perms": { enabled: true } }, I: CreateOrUpdateCategoryRequest, O: CreateOrUpdateCategoryResponse },
     { name: "DeleteCategory", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteCategoryRequest, O: DeleteCategoryResponse },
     { name: "ListDocumentPins", options: { "codegen.perms.perms": { enabled: true, name: "ListDocuments" } }, I: ListDocumentPinsRequest, O: ListDocumentPinsResponse },

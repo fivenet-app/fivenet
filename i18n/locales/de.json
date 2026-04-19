@@ -3196,26 +3196,19 @@
             },
             "LabelsService": {
                 "category": "Bürger-Labels",
-                "ManageLabels": {
-                    "key": "Verwalten von Bürger-Labels",
-                    "description": "Erstellen, aktualisieren und löschen von Bürger-Labels."
+                "CreateOrUpdateLabel": {
+                    "key": "Erstellen/Aktualisieren von Bürger-Labels",
+                    "description": "Erstellen und aktualisieren von Bürger-Labels."
+                },
+                "DeleteLabel": {
+                    "key": "Löschen von Bürger-Labels",
+                    "description": "Löschen von Bürger-Labels."
                 }
             }
         },
         "completor": {
             "CompletorService": {
                 "category": "Autovervollständigung",
-                "CompleteJobs": {
-                    "key": "Vollständige Job-Namen und Ränge",
-                    "description": "Vollständige Job-Namen und Ränge."
-                },
-                "CompleteDocumentCategories": {
-                    "key": "Auflisten von Dokumentkategorien",
-                    "description": "Auflisten der Dokumentkategorien von bestimmten Jobs.",
-                    "attrs_types": {
-                        "Jobs": "Fraktionen"
-                    }
-                },
                 "CompleteCitizenLabels": {
                     "key": "Auflisten von Bürger-Labels",
                     "description": "Damit wird der Zugriff auf Bürger-Labels von anderen Berufen kontrolliert.",

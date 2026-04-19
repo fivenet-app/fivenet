@@ -663,7 +663,15 @@ service DocumentsService {
   }
 
   rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse) {
-    option (codegen.perms.perms) = {enabled: true};
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Jobs"
+          type: ATTRIBUTE_TYPE_JOB_LIST
+        }
+      ]
+    };
   }
   rpc CreateOrUpdateCategory(CreateOrUpdateCategoryRequest) returns (CreateOrUpdateCategoryResponse) {
     option (codegen.perms.perms) = {enabled: true};

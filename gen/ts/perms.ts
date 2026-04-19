@@ -56,7 +56,6 @@ export type GRPCServicePerms =
 	| 'citizens.LabelsService/CreateOrUpdateLabel'
 	| 'citizens.LabelsService/DeleteLabel'
 	| 'completor.CompletorService/CompleteCitizenLabels'
-	| 'completor.CompletorService/CompleteDocumentCategories'
 	| 'documents.ApprovalService/DeleteApprovalTasks'
 	| 'documents.ApprovalService/RevokeApproval'
 	| 'documents.ApprovalService/UpsertApprovalPolicy'
@@ -171,7 +170,6 @@ export const GRPCServiceMethods = [
 	'citizens.LabelsService/CreateOrUpdateLabel',
 	'citizens.LabelsService/DeleteLabel',
 	'completor.CompletorService/CompleteCitizenLabels',
-	'completor.CompletorService/CompleteDocumentCategories',
 	'documents.ApprovalService/DeleteApprovalTasks',
 	'documents.ApprovalService/RevokeApproval',
 	'documents.ApprovalService/UpsertApprovalPolicy',

@@ -664,7 +664,7 @@ export const CompleteCitizenLabelsResponse = new CompleteCitizenLabelsResponse$T
 export const CompletorService = new ServiceType("services.completor.CompletorService", [
     { name: "CompleteCitizens", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: CompleteCitizensRequest, O: CompleteCitizensResponse },
     { name: "CompleteJobs", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: CompleteJobsRequest, O: CompleteJobsResponse },
-    { name: "CompleteDocumentCategories", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Jobs", type: "ATTRIBUTE_TYPE_JOB_LIST" }] } }, I: CompleteDocumentCategoriesRequest, O: CompleteDocumentCategoriesResponse },
+    { name: "CompleteDocumentCategories", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListCategories" } }, I: CompleteDocumentCategoriesRequest, O: CompleteDocumentCategoriesResponse },
     { name: "ListLawBooks", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ListLawBooksRequest, O: ListLawBooksResponse },
     { name: "CompleteCitizenLabels", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Jobs", type: "ATTRIBUTE_TYPE_JOB_LIST" }] } }, I: CompleteCitizenLabelsRequest, O: CompleteCitizenLabelsResponse }
 ], { "codegen.perms.perms_svc": { order: 10, icon: "i-mdi-keyboard-tab" } });

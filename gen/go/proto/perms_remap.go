@@ -151,6 +151,9 @@ var PermsRemap = map[string][]string{
 	"completor.CompletorService/CompleteCitizens": []string{
 		"Any",
 	},
+	"completor.CompletorService/CompleteDocumentCategories": []string{
+		"documents.DocumentsService/ListCategories",
+	},
 	"completor.CompletorService/CompleteJobs": []string{
 		"Any",
 	},

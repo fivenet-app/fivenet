@@ -18,10 +18,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-var (
-	tDCategory         = table.FivenetDocumentsCategories.AS("category")
-	tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("label")
-)
+var tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("label")
 
 func (s *Server) CompleteCitizens(
 	ctx context.Context,
@@ -109,115 +106,6 @@ func (s *Server) CompleteCitizens(
 
 	return &pbcompletor.CompleteCitizensResponse{
 		Users: dest,
-	}, nil
-}
-
-func (s *Server) CompleteJobs(
-	ctx context.Context,
-	req *pbcompletor.CompleteJobsRequest,
-) (*pbcompletor.CompleteJobsResponse, error) {
-	var search string
-	if req.Search != nil && req.GetSearch() != "" {
-		search = req.GetSearch()
-	}
-	if req.CurrentJob != nil && req.GetCurrentJob() {
-		userInfo := auth.MustGetUserInfoFromContext(ctx)
-		search = userInfo.GetJob()
-	}
-	exactMatch := false
-	if req.ExactMatch != nil {
-		exactMatch = req.GetExactMatch()
-	}
-
-	resp := &pbcompletor.CompleteJobsResponse{}
-	if search != "" {
-		var err error
-		resp.Jobs, err = s.jobsSearch.Search(ctx, search, exactMatch)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
-		}
-	} else {
-		resp.Jobs = s.jobsSearch.List()
-	}
-
-	return resp, nil
-}
-
-func (s *Server) CompleteDocumentCategories(
-	ctx context.Context,
-	req *pbcompletor.CompleteDocumentCategoriesRequest,
-) (*pbcompletor.CompleteDocumentCategoriesResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	jobs, err := s.ps.AttrJobList(
-		userInfo,
-		permscompletor.CompletorServicePerm,
-		permscompletor.CompletorServiceCompleteDocumentCategoriesPerm,
-		permscompletor.CompletorServiceCompleteDocumentCategoriesJobsPermField,
-	)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
-	}
-	if jobs.Len() == 0 {
-		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
-	}
-
-	jobsExp := make([]mysql.Expression, jobs.Len())
-	for i := range jobs.GetStrings() {
-		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
-	}
-
-	orderBys := []mysql.OrderByClause{}
-	condition := tDCategory.Job.IN(jobsExp...)
-
-	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
-		condition = condition.AND(
-			tDCategory.Name.LIKE(mysql.String(search)),
-		)
-	}
-
-	if len(req.GetCategoryIds()) > 0 {
-		categoryIds := []mysql.Expression{}
-		for _, v := range req.GetCategoryIds() {
-			categoryIds = append(categoryIds, mysql.Int64(v))
-		}
-
-		// Make sure to sort by the category IDs if provided
-		orderBys = append(orderBys, tDCategory.ID.IN(categoryIds...).DESC())
-	}
-
-	orderBys = append(orderBys, tDCategory.SortKey.ASC())
-
-	stmt := tDCategory.
-		SELECT(
-			tDCategory.ID,
-			tDCategory.Name,
-			tDCategory.Description,
-			tDCategory.Job,
-			tDCategory.Color,
-			tDCategory.Icon,
-		).
-		FROM(tDCategory).
-		WHERE(condition).
-		ORDER_BY(orderBys...).
-		LIMIT(15)
-
-	resp := &pbcompletor.CompleteDocumentCategoriesResponse{}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Categories); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
-		}
-	}
-
-	return resp, nil
-}
-
-func (s *Server) ListLawBooks(
-	ctx context.Context,
-	req *pbcompletor.ListLawBooksRequest,
-) (*pbcompletor.ListLawBooksResponse, error) {
-	return &pbcompletor.ListLawBooksResponse{
-		Books: s.laws.GetLawBooks(),
 	}, nil
 }
 

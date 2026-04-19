@@ -25,7 +25,6 @@ export const policeJobTemplate: Template = {
         { category: 'citizens.CitizensService', name: 'ListCitizens' },
         { category: 'citizens.CitizensService', name: 'ListUserActivity' },
         { category: 'citizens.CitizensService', name: 'SetUserProps' },
-        { category: 'completor.CompletorService', name: 'CompleteDocumentCategories' },
         { category: 'vehicles.VehiclesService', name: 'ListVehicles' },
         { category: 'documents.DocumentsService', name: 'AddDocumentReference' },
         { category: 'documents.DocumentsService', name: 'AddDocumentRelation' },
@@ -160,13 +159,6 @@ export const policeJobTemplate: Template = {
             },
         },
         {
-            category: 'completor.CompletorService',
-            name: 'CompleteDocumentCategories',
-            key: 'Jobs',
-            type: 'JobList',
-            validValues: { validValues: { oneofKind: 'jobList', jobList: { strings: [] } } },
-        },
-        {
             category: 'livemap.LivemapService',
             name: 'Stream',
             key: 'Players',
@@ -201,6 +193,13 @@ export const policeJobTemplate: Template = {
                     stringList: { strings: ['Own', 'Lower_Rank', 'Same_Rank', 'Any'] },
                 },
             },
+        },
+        {
+            category: 'documents.DocumentsService',
+            name: 'ListCategories',
+            key: 'Jobs',
+            type: 'JobList',
+            validValues: { validValues: { oneofKind: 'jobList', jobList: { strings: [] } } },
         },
         {
             category: 'documents.DocumentsService',
@@ -476,6 +475,13 @@ export const neutralJobTemplate: Template = {
         { category: 'wiki.WikiService', name: 'CreatePage' },
     ],
     attributes: [
+        {
+            category: 'documents.DocumentsService',
+            name: 'ListCategories',
+            key: 'Jobs',
+            type: 'JobList',
+            validValues: { validValues: { oneofKind: 'jobList', jobList: { strings: [] } } },
+        },
         {
             category: 'livemap.LivemapService',
             name: 'CreateOrUpdateMarker',

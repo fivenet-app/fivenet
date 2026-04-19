@@ -194,7 +194,7 @@ defineShortcuts({
 
                     <UFieldGroup class="inline-flex">
                         <UButton
-                            v-if="can('completor.CompletorService/CompleteDocumentCategories').value"
+                            v-if="can('documents.DocumentsService/ListCategories').value"
                             to="/documents/categories"
                             icon="i-mdi-shape"
                             truncate

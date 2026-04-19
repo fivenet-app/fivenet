@@ -79,12 +79,8 @@ service CompletorService {
   rpc CompleteDocumentCategories(CompleteDocumentCategoriesRequest) returns (CompleteDocumentCategoriesResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      attrs: [
-        {
-          key: "Jobs"
-          type: ATTRIBUTE_TYPE_JOB_LIST
-        }
-      ]
+      service: "documents.DocumentsService"
+      name: "ListCategories"
     };
   }
   rpc ListLawBooks(ListLawBooksRequest) returns (ListLawBooksResponse) {

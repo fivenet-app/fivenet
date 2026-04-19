@@ -175,7 +175,7 @@ export const useCompletorStore = defineStore(
          */
         const completeDocumentCategories = async (search: string, ...ids: (number | undefined)[]): Promise<Category[]> => {
             const { can } = useAuth();
-            if (!can('completor.CompletorService/CompleteDocumentCategories').value) return [];
+            if (!can('documents.DocumentsService/ListCategories').value) return [];
 
             const completorCompletorClient = await getCompletorCompletorClient();
             try {

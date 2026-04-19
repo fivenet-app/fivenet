@@ -3196,26 +3196,19 @@
             },
             "LabelsService": {
                 "category": "Citizens: Labels",
-                "ManageLabels": {
-                    "key": "Manage Citizen Labels",
-                    "description": "Create, update and delete citizens labels."
+                "CreateOrUpdateLabel": {
+                    "key": "Create/Uppdate Citizen Labels",
+                    "description": "Create and update citizens labels."
+                },
+                "DeleteLabel": {
+                    "key": "Delete Citizen Labels",
+                    "description": "Delete citizens labels."
                 }
             }
         },
         "completor": {
             "CompletorService": {
                 "category": "Auto Complete",
-                "CompleteJobs": {
-                    "key": "Complete job names and ranks",
-                    "description": "Complete job names and ranks."
-                },
-                "CompleteDocumentCategories": {
-                    "key": "List document categories",
-                    "description": "Complete a document categories.",
-                    "attrs_types": {
-                        "Jobs": "Factions"
-                    }
-                },
                 "CompleteCitizenLabels": {
                     "key": "List job's citizen labels",
                     "description": "Complete citizen labels from multiple jobs.",
@@ -3343,7 +3336,10 @@
                 },
                 "ListCategories": {
                     "key": "ListCategories",
-                    "description": "View and List document categories."
+                    "description": "View and List document categories.",
+                    "attrs_types": {
+                        "Jobs": "Factions"
+                    }
                 },
                 "ListDocumentActivity": {
                     "key": "ListDocumentActivity",

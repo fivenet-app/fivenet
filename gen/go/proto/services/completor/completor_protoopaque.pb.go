@@ -838,12 +838,11 @@ const file_services_completor_completor_proto_rawDesc = "" +
 	"\x1cCompleteCitizenLabelsRequest\x12\x16\n" +
 	"\x06search\x18\x01 \x01(\tR\x06search\"Y\n" +
 	"\x1dCompleteCitizenLabelsResponse\x128\n" +
-	"\x06labels\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x06labels2\xbb\x05\n" +
+	"\x06labels\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x06labels2\xdd\x05\n" +
 	"\x10CompletorService\x12z\n" +
 	"\x10CompleteCitizens\x12+.services.completor.CompleteCitizensRequest\x1a,.services.completor.CompleteCitizensResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12n\n" +
-	"\fCompleteJobs\x12'.services.completor.CompleteJobsRequest\x1a(.services.completor.CompleteJobsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x9d\x01\n" +
-	"\x1aCompleteDocumentCategories\x125.services.completor.CompleteDocumentCategoriesRequest\x1a6.services.completor.CompleteDocumentCategoriesResponse\"\x10\xd2\xf3\x18\f\b\x01*\b\n" +
-	"\x04Jobs\x18\x02\x12n\n" +
+	"\fCompleteJobs\x12'.services.completor.CompleteJobsRequest\x1a(.services.completor.CompleteJobsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\xbf\x01\n" +
+	"\x1aCompleteDocumentCategories\x125.services.completor.CompleteDocumentCategoriesRequest\x1a6.services.completor.CompleteDocumentCategoriesResponse\"2\xd2\xf3\x18.\b\x01\x12\x1adocuments.DocumentsService\x1a\x0eListCategories\x12n\n" +
 	"\fListLawBooks\x12'.services.completor.ListLawBooksRequest\x1a(.services.completor.ListLawBooksResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x8e\x01\n" +
 	"\x15CompleteCitizenLabels\x120.services.completor.CompleteCitizenLabelsRequest\x1a1.services.completor.CompleteCitizenLabelsResponse\"\x10\xd2\xf3\x18\f\b\x01*\b\n" +
 	"\x04Jobs\x18\x02\x1a\x1a\xea\xf3\x18\x16\b\n" +

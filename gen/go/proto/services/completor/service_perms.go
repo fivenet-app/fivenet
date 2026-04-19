@@ -25,17 +25,5 @@ func init() {
 			Order: 1000,
 			Icon:  "i-mdi-keyboard-tab",
 		},
-		{
-			Category: permkeys.CompletorServicePerm,
-			Name:     permkeys.CompletorServiceCompleteDocumentCategoriesPerm,
-			Attrs: []perms.Attr{
-				{
-					Key:  permkeys.CompletorServiceCompleteDocumentCategoriesJobsPermField,
-					Type: permissionsattributes.JobListAttributeType,
-				},
-			},
-			Order: 1000,
-			Icon:  "i-mdi-keyboard-tab",
-		},
 	})
 }
