@@ -233,8 +233,8 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(vue@3.5.32(typescript@6.0.3))
       uuid:
-        specifier: 13.0.0
-        version: 13.0.0
+        specifier: 14.0.0
+        version: 14.0.0
       v-calendar:
         specifier: 3.1.2
         version: 3.1.2(@popperjs/core@2.11.8)(vue@3.5.32(typescript@6.0.3))
@@ -9080,8 +9080,8 @@ packages:
     resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
     hasBin: true
 
-  uuid@13.0.0:
-    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
+  uuid@14.0.0:
+    resolution: {integrity: sha512-Qo+uWgilfSmAhXCMav1uYFynlQO7fMFiMVZsQqZRMIXp0O7rR7qjkj+cPvBHLgBqi960QCoo/PH2/6ZtVqKvrg==}
     hasBin: true
 
   v-calendar@3.1.2:
@@ -19454,7 +19454,7 @@ snapshots:
 
   uuid@10.0.0: {}
 
-  uuid@13.0.0: {}
+  uuid@14.0.0: {}
 
   v-calendar@3.1.2(@popperjs/core@2.11.8)(vue@3.5.32(typescript@6.0.3)):
     dependencies:
