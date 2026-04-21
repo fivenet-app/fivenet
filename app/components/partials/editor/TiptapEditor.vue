@@ -2,11 +2,12 @@
 import type { EditorContentType, EditorEmojiMenuItem, EditorSuggestionMenuItem, FormError } from '@nuxt/ui';
 import { formErrorsInjectionKey } from '@nuxt/ui/runtime/composables/useFormField.js';
 import type { ClientStreamingCall, RpcOptions } from '@protobuf-ts/runtime-rpc';
-import { generateJSON, getSchema, type Editor, type Extensions, type JSONContent } from '@tiptap/core';
+import { getSchema, type Editor, type Extensions, type JSONContent } from '@tiptap/core';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCaret from '@tiptap/extension-collaboration-caret';
 import { gitHubEmojis } from '@tiptap/extension-emoji';
 import { UndoRedo } from '@tiptap/extensions';
+import { generateJSON } from '@tiptap/html';
 import type { Schema } from '@tiptap/pm/model';
 import { initProseMirrorDoc, prosemirrorJSONToYDoc } from '@tiptap/y-tiptap';
 import * as Y from 'yjs';
@@ -128,7 +129,7 @@ function seedDocument(schema: Schema, value: JSONContent | string): void {
         if (value === '') return;
 
         // HTML -> ProseMirror JSON
-        const json = generateJSON(value, extensions);
+        const json = generateJSON(value, extensions, { preserveWhitespace: 'full' });
         // ProseMirror JSON -> Yjs update in-place
         seedDoc = prosemirrorJSONToYDoc(schema, json, 'content');
     } else {
@@ -239,6 +240,16 @@ function hasFileById(files: FileGrpc[] | undefined | null, id: number): boolean 
 
 const disabled = computed(() => props.disabled || loading.value);
 
+function normalizeToJSONContent(value: JSONContent | string | undefined): JSONContent {
+    if (!value) return { type: 'doc', content: [{ type: 'paragraph' }] };
+
+    if (typeof value === 'string') {
+        return generateJSON(value, extensions, { preserveWhitespace: 'full' }) as JSONContent;
+    }
+
+    return value;
+}
+
 function hasPenaltyCalculatorNode(editor: Editor): boolean {
     let found = false;
     editor.state.doc.descendants((node) => {
@@ -270,6 +281,9 @@ let fileUploadHandler: undefined | ((files: File[]) => Promise<void>) = undefine
 
 const editor = useEditor({
     content: '',
+    parseOptions: {
+        preserveWhitespace: 'full',
+    },
     editorProps: {
         attributes: {
             class: 'prose prose-sm sm:prose-base lg:prose-lg m-5 focus:outline-hidden dark:prose-invert max-w-full break-words',
@@ -293,7 +307,7 @@ const editor = useEditor({
             return;
         }
 
-        modelValue.value = unref(editor)?.getJSON();
+        modelValue.value = editor.getJSON();
     },
 });
 
@@ -340,25 +354,20 @@ const stopWatch = watch(modelValue, (value) => {
     const editorJSON = unref(editor)?.getJSON();
     if (!editorJSON) return;
 
-    if (!value) {
-        value = '<p></p>';
-    }
-    if (typeof value === 'string') {
-        value = generateJSON(value, extensions) as JSONContent;
-    }
+    const normalizedValue = normalizeToJSONContent(value);
 
-    const isSame = isSameDoc(editorJSON, value, extensions);
+    const isSame = isSameDoc(editorJSON, normalizedValue, extensions);
     if (isSame) return;
 
     if (props.enableCollab && ydoc && yjsProvider) {
         // If not authoritative, don't set the content
         if (!yjsProvider.isAuthoritative) return;
 
-        seedDocument(yjsSchema!, value);
+        seedDocument(yjsSchema!, normalizedValue);
 
         stopWatch();
     } else {
-        unref(editor)?.commands.setContent(value, { emitUpdate: true });
+        unref(editor)?.commands.setContent(normalizedValue, { emitUpdate: false });
     }
 });
 
@@ -537,15 +546,10 @@ onMounted(() => {
     if (props.enableCollab) return;
 
     logger.info('Setting initial content for Tiptap editor (collab is disabled)');
-    if (modelValue.value) {
-        // If contentType is 'json' and modelValue is a string we need to convert it to JSON
-        if (props.contentType === 'json' && typeof modelValue.value === 'string') {
-            modelValue.value = generateJSON(modelValue.value, extensions) as JSONContent;
-        }
+    const initialContent = normalizeToJSONContent(modelValue.value);
 
-        unref(editor)?.commands.setContent(modelValue.value, { emitUpdate: false, contentType: props.contentType });
-        if (unref(editor)) syncPenaltyCalculatorData(unref(editor)!);
-    }
+    unref(editor)?.commands.setContent(initialContent, { emitUpdate: false });
+    if (unref(editor)) syncPenaltyCalculatorData(unref(editor)!);
 });
 
 onBeforeUnmount(() => {
