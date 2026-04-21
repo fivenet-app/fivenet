@@ -103,6 +103,7 @@ func (s *Server) ListLabels(
 		tCitizensLabelsJob.Name,
 		tCitizensLabelsJob.Color,
 		tCitizensLabelsJob.Icon,
+		tCitizensLabelsJob.Settings,
 	}
 	if userInfo.GetSuperuser() {
 		columns = append(columns, tCitizensLabelsJob.DeletedAt)
@@ -176,6 +177,7 @@ func (s *Server) getLabel(
 			tCitizensLabelsJob.Name,
 			tCitizensLabelsJob.Color,
 			tCitizensLabelsJob.Icon,
+			tCitizensLabelsJob.Settings,
 		).
 		FROM(tCitizensLabelsJob).
 		WHERE(mysql.AND(
@@ -346,6 +348,7 @@ func (s *Server) getUserLabels(
 			tCitizensLabelsJob.Name,
 			tCitizensLabelsJob.Color,
 			tCitizensLabelsJob.Icon,
+			tCitizensLabelsJob.Settings,
 		).
 		FROM(
 			tCitizenLabels.
