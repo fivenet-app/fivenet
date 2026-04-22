@@ -19,6 +19,11 @@ async function getStatus() {
         throw err;
     }
 }
+
+const version = APP_VERSION;
+async function copyVersionToClipboard() {
+    copyToClipboardWrapper(`${$t('common.version')}: ${version}`);
+}
 </script>
 
 <template>
@@ -32,6 +37,13 @@ async function getStatus() {
             <div class="flex items-center gap-2">
                 <UIcon name="i-mdi-server" class="size-5 text-primary" />
                 <h3 class="text-md flex-1 font-semibold">{{ $t('components.settings.system_status.title') }}</h3>
+
+                <UTooltip :text="$t('common.copy')">
+                    <UButton variant="soft" size="xs" @click="copyVersionToClipboard">
+                        <span class="hidden truncate sm:block">{{ $t('common.version') }}:</span>
+                        <span>{{ version }}</span>
+                    </UButton>
+                </UTooltip>
 
                 <UTooltip
                     v-if="data?.version?.newVersion?.version"
