@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.4.0] - 2026-04-23
+
+### 🚀 Features
+
+- Enable pagination edge buttons
+- Add InputDurationPicker and improve duration selection
+- Merge sync v2 into main api
+- Merge CompleteDocumentCategories to ListCategories perm
+
+### 🐛 Bug Fixes
+
+- Citizens errors key
+- Split dbsync user hash check to separate func
+- Attempt to improve dbsync syncers for users and vehicles
+- Don't select data json in users sync
+- Attempt to use per sync run now guard to improve sync performance
+- Don't rely on UTC use time directly for dbsync queries
+- Dbsync timestamp timezone issue
+- Jobs timeclock inactive list group by issue
+- Timeclock list time issue
+- Further increase vitest hook timeout
+- Send users in chunks in dbsync
+- Ignore vitest updates
+- Update dockertest pkg to v4 and update go-grpc-middleware dep
+- Check if custom query is not nil and not empty
+- Missing ORDER BY for example vehicles custom dbsync query
+- Update sync api limits and chunk accounts data if needed
+- Vitest upgrade issue caused by vitest 8 being pulled in
+- Tiptap json to html and back conversion causing spaces to disappear
+- Return missing citizen labels settings
+- Add fivenet version to system status title
+
 ## [2026.3.2] - 2026-03-29
 
 ### 🚀 Features
