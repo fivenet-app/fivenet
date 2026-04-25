@@ -23,6 +23,12 @@ const items = computed<TimelineItem[]>(() =>
     props.data.map((d) =>
         d.startTime && d.endTime
             ? {
+                  id:
+                      d.userId.toString() +
+                      '-' +
+                      toDate(d.startTime).getTime().toString() +
+                      '-' +
+                      toDate(d.endTime).getTime().toString(),
                   type: 'range',
                   group: d.userId.toString(),
                   start: toDate(d.startTime).getTime(),
@@ -30,11 +36,13 @@ const items = computed<TimelineItem[]>(() =>
               }
             : d.startTime
               ? {
+                    id: d.userId.toString() + '-' + toDate(d.startTime).getTime().toString(),
                     type: 'point',
                     group: d.userId.toString(),
                     start: toDate(d.startTime).getTime(),
                 }
               : {
+                    id: d.userId.toString() + '-' + toDate(d.date).getTime().toString(),
                     type: 'point',
                     group: d.userId.toString(),
                     start: toDate(d.date).getTime(),
@@ -43,15 +51,15 @@ const items = computed<TimelineItem[]>(() =>
 );
 
 const markers = computed<TimelineMarker[]>(() =>
-    [
-        mouseHoverPosition.value
-            ? ({
-                  type: 'marker',
+    mouseHoverPosition.value
+        ? [
+              {
                   id: 'mousehover',
+                  type: 'marker',
                   start: mouseHoverPosition.value,
-              } as TimelineMarker)
-            : undefined,
-    ].flatMap((item) => (item !== undefined ? [item] : [])),
+              } as TimelineMarker,
+          ]
+        : [],
 );
 
 const mouseHoverPosition = ref<number | null>(null);
