@@ -31,12 +31,12 @@ const schema = z.object({
     name: z.coerce.string().min(1).max(64),
     color: z.coerce.string().length(7),
     icon: z.coerce.string().max(255).optional(),
-    settings: z.object({
+    settings: zodDurationMinMaxPair({
+        requiredWhen: (settings) => settings.requiresExpiration === true,
+        min: minLabelDuration,
+        max: maxLabelDuration,
+    }).extend({
         requiresExpiration: z.boolean().default(false),
-        ...zodDurationMinMaxPair({
-            min: minLabelDuration,
-            max: maxLabelDuration,
-        }).shape,
     }),
 });
 
@@ -177,6 +177,7 @@ const formRef = useTemplateRef('formRef');
                         :step="1"
                         clearable
                         class="w-full"
+                        :disabled="!state.settings.requiresExpiration"
                     />
                 </UFormField>
 
@@ -189,6 +190,7 @@ const formRef = useTemplateRef('formRef');
                         :step="1"
                         clearable
                         class="w-full"
+                        :disabled="!state.settings.requiresExpiration"
                     />
                 </UFormField>
 

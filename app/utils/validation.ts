@@ -113,31 +113,59 @@ export function zodProtoDurationSchema(options?: ProtoDurationSchemaOptions) {
 }
 
 interface DurationMinMaxPairOptions {
+    required?: boolean;
+    requiredWhen?: (value: DurationMinMaxPairValue) => boolean;
     min?: Duration;
     max?: Duration;
     i18n?: Partial<DurationI18nKeys>;
 }
 
+type DurationMinMaxPairValue = {
+    minDuration?: Duration;
+    maxDuration?: Duration;
+} & Record<string, unknown>;
+
 export function zodDurationMinMaxPair(options?: DurationMinMaxPairOptions) {
     const keys = getDurationI18nKeys(options?.i18n);
+    const fieldRequired = options?.requiredWhen ? false : (options?.required ?? true);
 
     return z
         .object({
             minDuration: zodProtoDurationSchema({
-                required: true,
+                required: fieldRequired,
                 min: options?.min,
                 max: options?.max,
                 i18n: options?.i18n,
             }),
             maxDuration: zodProtoDurationSchema({
-                required: true,
+                required: fieldRequired,
                 min: options?.min,
                 max: options?.max,
                 i18n: options?.i18n,
             }),
         })
         .superRefine((value, ctx) => {
-            if (!value.minDuration || !value.maxDuration) {
+            const pairRequired = options?.requiredWhen?.(value as DurationMinMaxPairValue) ?? options?.required ?? true;
+
+            if (!fieldRequired && pairRequired) {
+                let missingRequiredDuration = false;
+
+                if (value.minDuration === undefined || value.minDuration === null) {
+                    addI18nIssue(ctx, keys.required, { path: ['minDuration'] });
+                    missingRequiredDuration = true;
+                }
+
+                if (value.maxDuration === undefined || value.maxDuration === null) {
+                    addI18nIssue(ctx, keys.required, { path: ['maxDuration'] });
+                    missingRequiredDuration = true;
+                }
+
+                if (missingRequiredDuration) {
+                    return;
+                }
+            }
+
+            if (!isDuration(value.minDuration) || !isDuration(value.maxDuration)) {
                 return;
             }
 

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { z } from 'zod';
 import { secondsToDuration } from './duration';
 import { zodDurationMinMaxPair, zodProtoDurationSchema } from './validation';
 
@@ -119,5 +120,69 @@ describe('zodDurationMinMaxPair', () => {
 
         expect(equal.success).toBe(true);
         expect(ascending.success).toBe(true);
+    });
+
+    it('allows a missing pair when requiredWhen returns false', () => {
+        const schema = zodDurationMinMaxPair({
+            requiredWhen: (value) => value.requiresExpiration === true,
+        }).extend({
+            requiresExpiration: z.boolean(),
+        });
+
+        const result = schema.safeParse({
+            requiresExpiration: false,
+        });
+
+        expect(result.success).toBe(true);
+    });
+
+    it('requires both fields when requiredWhen returns true', () => {
+        const schema = zodDurationMinMaxPair({
+            requiredWhen: (value) => value.requiresExpiration === true,
+        }).extend({
+            requiresExpiration: z.boolean(),
+        });
+
+        const result = schema.safeParse({
+            requiresExpiration: true,
+        });
+
+        expect(result.success).toBe(false);
+        if (!result.success) {
+            const issues = result.error.issues.map((issue) => ({
+                path: issue.path,
+                i18n: (issue as { params?: { i18n?: string } }).params?.i18n,
+            }));
+            expect(issues).toContainEqual({
+                path: ['minDuration'],
+                i18n: 'zod.custom.duration.required',
+            });
+            expect(issues).toContainEqual({
+                path: ['maxDuration'],
+                i18n: 'zod.custom.duration.required',
+            });
+        }
+    });
+
+    it('keeps the range order validation when extended with another field', () => {
+        const schema = zodDurationMinMaxPair({
+            requiredWhen: (value) => value.requiresExpiration === true,
+        }).extend({
+            requiresExpiration: z.boolean(),
+        });
+
+        const result = schema.safeParse({
+            requiresExpiration: true,
+            minDuration: secondsToDuration(3600),
+            maxDuration: secondsToDuration(600),
+        });
+
+        expect(result.success).toBe(false);
+        if (!result.success) {
+            const issue = result.error.issues.find(
+                (i) => (i as { params?: { i18n?: string } }).params?.i18n === 'zod.custom.duration.min_max_order',
+            ) as { path?: (string | number)[] } | undefined;
+            expect(issue?.path).toEqual(['maxDuration']);
+        }
     });
 });
