@@ -25,4 +25,4 @@ packageExtensions:
 saveExact: true
 
 overrides:
-  unimport: '6.0.2'
+  unimport: '6.1.1'
