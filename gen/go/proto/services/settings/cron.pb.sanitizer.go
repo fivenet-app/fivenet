@@ -3,6 +3,10 @@
 
 package settings
 
+import (
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
+)
+
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
 func (m *ListCronjobsRequest) Sanitize() error {
@@ -30,6 +34,29 @@ func (m *ListCronjobsResponse) Sanitize() error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *RunCronjobRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *RunCronjobResponse) Sanitize() error {
+	if m == nil {
+		return nil
 	}
 
 	return nil

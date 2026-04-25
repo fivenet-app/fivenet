@@ -54,6 +54,7 @@ type Server struct {
 	appCfg       appconfig.IConfig
 	js           *events.JSWrapper
 	cronRegistry *croner.Registry
+	croner       croner.IScheduler
 	crypt        *crypt.Crypt
 	notifi       notifi.INotifi
 
@@ -80,6 +81,7 @@ type Params struct {
 	Config       *config.Config
 	AppConfig    appconfig.IConfig
 	JS           *events.JSWrapper
+	Croner       croner.IScheduler
 	CronRegistry *croner.Registry
 	Crypt        *crypt.Crypt
 	Notifi       notifi.INotifi
@@ -130,6 +132,7 @@ func NewServer(p Params) *Server {
 		cfg:          p.Config,
 		appCfg:       p.AppConfig,
 		js:           p.JS,
+		croner:       p.Croner,
 		cronRegistry: p.CronRegistry,
 		crypt:        p.Crypt,
 		notifi:       p.Notifi,

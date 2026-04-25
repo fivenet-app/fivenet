@@ -27,6 +27,10 @@ var SchedulerModule = fx.Module("cron_scheduler",
 
 const OwnerKey = "_owner"
 
+type IScheduler interface {
+	RunJob(ctx context.Context, name string) (*jetstream.PubAck, error)
+}
+
 type SchedulerParams struct {
 	fx.In
 
@@ -38,7 +42,16 @@ type SchedulerParams struct {
 	Cfg    *config.Config
 }
 
+type SchedulerResult struct {
+	fx.Out
+
+	Scheduler  *Scheduler
+	IScheduler IScheduler
+}
+
 type Scheduler struct {
+	IScheduler
+
 	logger    *zap.Logger
 	ctxCancel context.Context //nolint:containedctx // Scheduler keeps a root cancelable context for store operations and subscriptions.
 	js        *events.JSWrapper
@@ -50,7 +63,7 @@ type Scheduler struct {
 	jsCons   jetstream.ConsumeContext
 }
 
-func NewScheduler(p SchedulerParams) (*Scheduler, error) {
+func NewScheduler(p SchedulerParams) (SchedulerResult, error) {
 	nodeName := instance.ID() + "_cron_scheduler"
 
 	ctxCancel, cancel := context.WithCancel(context.Background())
@@ -103,7 +116,10 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 		return nil
 	}))
 
-	return s, nil
+	return SchedulerResult{
+		Scheduler:  s,
+		IScheduler: s,
+	}, nil
 }
 
 func (s *Scheduler) start(ctx context.Context) {
@@ -178,7 +194,7 @@ func (s *Scheduler) start(ctx context.Context) {
 							)
 						}
 
-						if err := s.runCronjob(ctx, job); err != nil {
+						if _, err := s.runCronjob(ctx, job); err != nil {
 							s.logger.Error(
 								"failed to trigger cron job run",
 								zap.String("job_name", job.GetName()),
@@ -195,18 +211,28 @@ func (s *Scheduler) start(ctx context.Context) {
 	}
 }
 
-func (s *Scheduler) runCronjob(ctx context.Context, job *cron.Cronjob) error {
-	if _, err := s.js.PublishProto(
+func (s *Scheduler) runCronjob(ctx context.Context, job *cron.Cronjob) (*jetstream.PubAck, error) {
+	pa, err := s.js.PublishProto(
 		ctx,
 		fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic),
 		&cron.CronjobSchedulerEvent{
 			Cronjob: job,
 		},
-	); err != nil {
-		return err
+	)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	return pa, nil
+}
+
+func (s *Scheduler) RunJob(ctx context.Context, name string) (*jetstream.PubAck, error) {
+	job, err := s.registry.GetCronjob(ctx, name)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get cron job. %w", err)
+	}
+
+	return s.runCronjob(ctx, job)
 }
 
 func (s *Scheduler) registerSubscriptions(

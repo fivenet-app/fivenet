@@ -29,3 +29,17 @@ func (s *Server) ListCronjobs(
 		Jobs: jobs,
 	}, nil
 }
+
+func (s *Server) RunCronjob(
+	ctx context.Context,
+	req *pbsettings.RunCronjobRequest,
+) (*pbsettings.RunCronjobResponse, error) {
+	pa, err := s.croner.RunJob(ctx, req.GetName())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pbsettings.RunCronjobResponse{
+		Sequence: pa.Sequence,
+	}, nil
+}

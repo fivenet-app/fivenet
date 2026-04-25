@@ -783,7 +783,8 @@
             "d": "Divers",
             "o": "Andere",
             "n": "Nicht angegeben"
-        }
+        },
+        "run": "Ausführen | Läuft"
     },
     "components": {
         "partials": {

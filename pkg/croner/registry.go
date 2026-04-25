@@ -139,6 +139,10 @@ func (r *Registry) ListCronjobs(_ context.Context) []*cron.Cronjob {
 	return cj
 }
 
+func (r *Registry) GetCronjob(ctx context.Context, name string) (*cron.Cronjob, error) {
+	return r.store.Get(name)
+}
+
 func (r *Registry) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
 	if job.GetName() == "" {
 		return fmt.Errorf("cron job name is required or uses reserved name: %s", job.GetName())

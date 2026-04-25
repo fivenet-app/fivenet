@@ -124,6 +124,120 @@ func (b0 ListCronjobsResponse_builder) Build() *ListCronjobsResponse {
 	return m0
 }
 
+type RunCronjobRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RunCronjobRequest) Reset() {
+	*x = RunCronjobRequest{}
+	mi := &file_services_settings_cron_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RunCronjobRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RunCronjobRequest) ProtoMessage() {}
+
+func (x *RunCronjobRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_cron_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RunCronjobRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *RunCronjobRequest) SetName(v string) {
+	x.Name = v
+}
+
+type RunCronjobRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Name string
+}
+
+func (b0 RunCronjobRequest_builder) Build() *RunCronjobRequest {
+	m0 := &RunCronjobRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Name = b.Name
+	return m0
+}
+
+type RunCronjobResponse struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Sequence      uint64                 `protobuf:"varint,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RunCronjobResponse) Reset() {
+	*x = RunCronjobResponse{}
+	mi := &file_services_settings_cron_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RunCronjobResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RunCronjobResponse) ProtoMessage() {}
+
+func (x *RunCronjobResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_cron_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RunCronjobResponse) GetSequence() uint64 {
+	if x != nil {
+		return x.Sequence
+	}
+	return 0
+}
+
+func (x *RunCronjobResponse) SetSequence(v uint64) {
+	x.Sequence = v
+}
+
+type RunCronjobResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Sequence uint64
+}
+
+func (b0 RunCronjobResponse_builder) Build() *RunCronjobResponse {
+	m0 := &RunCronjobResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Sequence = b.Sequence
+	return m0
+}
+
 var File_services_settings_cron_proto protoreflect.FileDescriptor
 
 const file_services_settings_cron_proto_rawDesc = "" +
@@ -131,22 +245,32 @@ const file_services_settings_cron_proto_rawDesc = "" +
 	"\x1cservices/settings/cron.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a\x19resources/cron/cron.proto\"\x15\n" +
 	"\x13ListCronjobsRequest\"C\n" +
 	"\x14ListCronjobsResponse\x12+\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x17.resources.cron.CronjobR\x04jobs2\x81\x01\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x17.resources.cron.CronjobR\x04jobs\"'\n" +
+	"\x11RunCronjobRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\"0\n" +
+	"\x12RunCronjobResponse\x12\x1a\n" +
+	"\bsequence\x18\x01 \x01(\x04R\bsequence2\xef\x01\n" +
 	"\vCronService\x12r\n" +
-	"\fListCronjobs\x12&.services.settings.ListCronjobsRequest\x1a'.services.settings.ListCronjobsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\fListCronjobs\x12&.services.settings.ListCronjobsRequest\x1a'.services.settings.ListCronjobsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12l\n" +
+	"\n" +
+	"RunCronjob\x12$.services.settings.RunCronjobRequest\x1a%.services.settings.RunCronjobResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
-var file_services_settings_cron_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_services_settings_cron_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_services_settings_cron_proto_goTypes = []any{
 	(*ListCronjobsRequest)(nil),  // 0: services.settings.ListCronjobsRequest
 	(*ListCronjobsResponse)(nil), // 1: services.settings.ListCronjobsResponse
-	(*cron.Cronjob)(nil),         // 2: resources.cron.Cronjob
+	(*RunCronjobRequest)(nil),    // 2: services.settings.RunCronjobRequest
+	(*RunCronjobResponse)(nil),   // 3: services.settings.RunCronjobResponse
+	(*cron.Cronjob)(nil),         // 4: resources.cron.Cronjob
 }
 var file_services_settings_cron_proto_depIdxs = []int32{
-	2, // 0: services.settings.ListCronjobsResponse.jobs:type_name -> resources.cron.Cronjob
+	4, // 0: services.settings.ListCronjobsResponse.jobs:type_name -> resources.cron.Cronjob
 	0, // 1: services.settings.CronService.ListCronjobs:input_type -> services.settings.ListCronjobsRequest
-	1, // 2: services.settings.CronService.ListCronjobs:output_type -> services.settings.ListCronjobsResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
+	2, // 2: services.settings.CronService.RunCronjob:input_type -> services.settings.RunCronjobRequest
+	1, // 3: services.settings.CronService.ListCronjobs:output_type -> services.settings.ListCronjobsResponse
+	3, // 4: services.settings.CronService.RunCronjob:output_type -> services.settings.RunCronjobResponse
+	3, // [3:5] is the sub-list for method output_type
+	1, // [1:3] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -163,7 +287,7 @@ func file_services_settings_cron_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_settings_cron_proto_rawDesc), len(file_services_settings_cron_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

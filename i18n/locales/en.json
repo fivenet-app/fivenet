@@ -783,7 +783,8 @@
             "d": "Diverse",
             "o": "Other",
             "n": "Not specified"
-        }
+        },
+        "run": "Run | Running"
     },
     "components": {
         "partials": {

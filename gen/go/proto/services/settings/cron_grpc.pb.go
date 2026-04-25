@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	CronService_ListCronjobs_FullMethodName = "/services.settings.CronService/ListCronjobs"
+	CronService_RunCronjob_FullMethodName   = "/services.settings.CronService/RunCronjob"
 )
 
 // CronServiceClient is the client API for CronService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CronServiceClient interface {
 	ListCronjobs(ctx context.Context, in *ListCronjobsRequest, opts ...grpc.CallOption) (*ListCronjobsResponse, error)
+	RunCronjob(ctx context.Context, in *RunCronjobRequest, opts ...grpc.CallOption) (*RunCronjobResponse, error)
 }
 
 type cronServiceClient struct {
@@ -47,11 +49,22 @@ func (c *cronServiceClient) ListCronjobs(ctx context.Context, in *ListCronjobsRe
 	return out, nil
 }
 
+func (c *cronServiceClient) RunCronjob(ctx context.Context, in *RunCronjobRequest, opts ...grpc.CallOption) (*RunCronjobResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RunCronjobResponse)
+	err := c.cc.Invoke(ctx, CronService_RunCronjob_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CronServiceServer is the server API for CronService service.
 // All implementations must embed UnimplementedCronServiceServer
 // for forward compatibility.
 type CronServiceServer interface {
 	ListCronjobs(context.Context, *ListCronjobsRequest) (*ListCronjobsResponse, error)
+	RunCronjob(context.Context, *RunCronjobRequest) (*RunCronjobResponse, error)
 	mustEmbedUnimplementedCronServiceServer()
 }
 
@@ -64,6 +77,9 @@ type UnimplementedCronServiceServer struct{}
 
 func (UnimplementedCronServiceServer) ListCronjobs(context.Context, *ListCronjobsRequest) (*ListCronjobsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCronjobs not implemented")
+}
+func (UnimplementedCronServiceServer) RunCronjob(context.Context, *RunCronjobRequest) (*RunCronjobResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RunCronjob not implemented")
 }
 func (UnimplementedCronServiceServer) mustEmbedUnimplementedCronServiceServer() {}
 func (UnimplementedCronServiceServer) testEmbeddedByValue()                     {}
@@ -104,6 +120,24 @@ func _CronService_ListCronjobs_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CronService_RunCronjob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RunCronjobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CronServiceServer).RunCronjob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CronService_RunCronjob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CronServiceServer).RunCronjob(ctx, req.(*RunCronjobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CronService_ServiceDesc is the grpc.ServiceDesc for CronService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +148,10 @@ var CronService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListCronjobs",
 			Handler:    _CronService_ListCronjobs_Handler,
+		},
+		{
+			MethodName: "RunCronjob",
+			Handler:    _CronService_RunCronjob_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -422,6 +422,9 @@ var PermsRemap = map[string][]string{
 	"settings.CronService/ListCronjobs": []string{
 		"Superuser",
 	},
+	"settings.CronService/RunCronjob": []string{
+		"Superuser",
+	},
 
 	// Service: settings.LawsService
 	"settings.LawsService/CreateOrUpdateLaw": []string{

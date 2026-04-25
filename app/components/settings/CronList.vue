@@ -14,6 +14,13 @@ import Pagination from '../partials/Pagination.vue';
 
 const settingsCronClient = await getSettingsCronClient();
 
+const { t } = useI18n();
+
+const notifications = useNotificationsStore();
+
+const uiState = useUIStateStore();
+const { windowFocus } = storeToRefs(uiState);
+
 const { data: cronjobs, status, refresh, error } = useLazyAsyncData(`settings-cronjobs`, () => listCronjobs());
 
 async function listCronjobs(): Promise<ListCronjobsResponse> {
@@ -29,9 +36,17 @@ async function listCronjobs(): Promise<ListCronjobsResponse> {
     }
 }
 
-const { t } = useI18n();
+async function runCronjob(name: string): Promise<void> {
+    try {
+        await settingsCronClient.runCronjob({
+            name: name,
+        });
 
-const notifications = useNotificationsStore();
+        refresh();
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+    }
+}
 
 function copyLinkToClipboard(text: string): void {
     copyToClipboardWrapper(text);
@@ -43,9 +58,6 @@ function copyLinkToClipboard(text: string): void {
         type: NotificationType.INFO,
     });
 }
-
-const uiState = useUIStateStore();
-const { windowFocus } = storeToRefs(uiState);
 
 // Auto refresh the list every minute (if window is active)
 const { remaining, start, pause, resume } = useCountdown(60, {
@@ -81,6 +93,17 @@ const columns = computed(
                                 leadingIcon: ['transition-transform', row.getIsExpanded() ? 'duration-200 rotate-180' : ''],
                             },
                             onClick: () => row.toggleExpanded(),
+                        }),
+                    ),
+            },
+            {
+                id: 'actions',
+                cell: ({ row }) =>
+                    h(UTooltip, { text: t('common.run') }, () =>
+                        h(UButton, {
+                            variant: 'ghost',
+                            icon: 'i-mdi-play',
+                            onClick: async () => runCronjob(row.original.name),
                         }),
                     ),
             },

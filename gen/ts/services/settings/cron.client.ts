@@ -5,6 +5,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CronService } from "./cron";
+import type { RunCronjobResponse } from "./cron";
+import type { RunCronjobRequest } from "./cron";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { ListCronjobsResponse } from "./cron";
 import type { ListCronjobsRequest } from "./cron";
@@ -18,6 +20,10 @@ export interface ICronServiceClient {
      * @generated from protobuf rpc: ListCronjobs
      */
     listCronjobs(input: ListCronjobsRequest, options?: RpcOptions): UnaryCall<ListCronjobsRequest, ListCronjobsResponse>;
+    /**
+     * @generated from protobuf rpc: RunCronjob
+     */
+    runCronjob(input: RunCronjobRequest, options?: RpcOptions): UnaryCall<RunCronjobRequest, RunCronjobResponse>;
 }
 /**
  * @generated from protobuf service services.settings.CronService
@@ -34,5 +40,12 @@ export class CronServiceClient implements ICronServiceClient, ServiceInfo {
     listCronjobs(input: ListCronjobsRequest, options?: RpcOptions): UnaryCall<ListCronjobsRequest, ListCronjobsResponse> {
         const method = this.methods[0], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListCronjobsRequest, ListCronjobsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: RunCronjob
+     */
+    runCronjob(input: RunCronjobRequest, options?: RpcOptions): UnaryCall<RunCronjobRequest, RunCronjobResponse> {
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RunCronjobRequest, RunCronjobResponse>("unary", this._transport, method, opt, input);
     }
 }

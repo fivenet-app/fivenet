@@ -13,8 +13,23 @@ message ListCronjobsResponse {
   repeated resources.cron.Cronjob jobs = 1;
 }
 
+message RunCronjobRequest {
+  string name = 1;
+}
+
+message RunCronjobResponse {
+  uint64 sequence = 1;
+}
+
 service CronService {
   rpc ListCronjobs(ListCronjobsRequest) returns (ListCronjobsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+
+  rpc RunCronjob(RunCronjobRequest) returns (RunCronjobResponse) {
     option (codegen.perms.perms) = {
       enabled: true
       name: "Superuser"

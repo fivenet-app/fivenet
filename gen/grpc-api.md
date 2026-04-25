@@ -12445,6 +12445,28 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
+
+### services.settings.RunCronjobRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  |  |
+
+
+
+
+
+### services.settings.RunCronjobResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sequence` | [uint64](#uint64) |  |  |
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -12457,6 +12479,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | `ListCronjobs` | [ListCronjobsRequest](#servicessettingsListCronjobsRequest) | [ListCronjobsResponse](#servicessettingsListCronjobsResponse) | |
+| `RunCronjob` | [RunCronjobRequest](#servicessettingsRunCronjobRequest) | [RunCronjobResponse](#servicessettingsRunCronjobResponse) | |
 
  <!-- end services -->
 
