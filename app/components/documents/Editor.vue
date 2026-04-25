@@ -476,7 +476,7 @@ useYArrayFiltered<File>(
 );
 
 // Data
-useYStructure<DocumentData>(ydoc.getMap('data'), toRef(state, 'data'), {}, { provider: provider });
+useYStructure<DocumentData>(ydoc.getMap('data'), toRef(state, 'data'), undefined, { provider: provider });
 
 // References and Relations
 useYArrayFiltered<DocumentReference>(

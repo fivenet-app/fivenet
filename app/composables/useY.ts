@@ -409,7 +409,14 @@ export function useYStructure<T extends object>(
         ('only' in fieldsOrFilterOrOpts || 'omit' in fieldsOrFilterOrOpts)
             ? (fieldsOrFilterOrOpts as OptsKeyFilter)
             : undefined;
-    const opts = fields ? optsMaybe : filter ? optsMaybe : ((fieldsOrFilterOrOpts as YjsSyncOptions | undefined) ?? optsMaybe);
+    const opts = fields
+        ? optsMaybe
+        : filter
+          ? optsMaybe
+          : ({
+                ...optsMaybe,
+                ...((fieldsOrFilterOrOpts as YjsSyncOptions | undefined) ?? {}),
+            } satisfies YjsSyncOptions);
 
     const keyWatcherStops = new Map<string, WatchStopHandle>();
     const bound = new Set<string>();
