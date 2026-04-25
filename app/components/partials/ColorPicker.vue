@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { vMaska } from 'maska/vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 defineProps<{
     disabled?: boolean;
@@ -17,22 +18,33 @@ defineOptions({
 
 const modelValue = defineModel<string>();
 
-watch(modelValue, (val) => {
-    manual.value = val ?? '';
-});
+const notifications = useNotificationsStore();
 
-const manual = ref('');
+watch(modelValue, (val) => (manual.value = val ?? ''));
+
+const manual = ref(modelValue.value ?? '');
 watch(manual, (val) => {
     if (/^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/.test(val)) {
         modelValue.value = val;
     }
 });
+
+async function copyColor() {
+    copyToClipboardWrapper(manual.value);
+
+    notifications.add({
+        title: { key: 'notifications.clipboard.copied.title', parameters: {} },
+        description: { key: 'notifications.clipboard.copied.content', parameters: {} },
+        duration: 1500,
+        type: NotificationType.INFO,
+    });
+}
 </script>
 
 <template>
     <UPopover>
         <UButton
-            :label="!hideLabel ? $t('common.choose_color') : undefined"
+            :label="!hideLabel ? (modelValue ? modelValue : $t('common.choose_color')) : undefined"
             color="neutral"
             variant="outline"
             :disabled="disabled"
@@ -63,7 +75,7 @@ watch(manual, (val) => {
                             size="sm"
                             icon="i-mdi-content-copy"
                             :aria-label="$t('common.copy')"
-                            @click="copyToClipboardWrapper(manual)"
+                            @click="copyColor"
                         />
                     </UTooltip>
                 </template>
