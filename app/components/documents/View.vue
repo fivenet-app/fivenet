@@ -59,7 +59,7 @@ const {
 } = useLazyAsyncData(`document-${props.documentId}`, () => documentsDocuments.getDocument(props.documentId));
 
 const documentData = computed<DocumentData | undefined>(() => doc.value?.document?.data);
-provide('documents:editor:data', documentData);
+provide('documents:content:data', documentData);
 
 useHead({
     title: () =>

@@ -370,9 +370,9 @@ func (s *Service) QueryPenaltySeriesOverTime(
 
 	stmt := tRollup.
 		SELECT(
-			periodExpr.AS("day"),
-			tRollup.MetricKey.AS("key"),
-			mysql.SUM(tRollup.Value).AS("value"),
+			periodExpr.AS("periodseriesvalue.day"),
+			tRollup.MetricKey.AS("periodseriesvalue.key"),
+			mysql.SUM(tRollup.Value).AS("periodseriesvalue.value"),
 		).
 		FROM(tRollup).
 		WHERE(mysql.AND(
@@ -599,8 +599,8 @@ func (s *Service) QueryPeriodValues(
 
 	stmt := tRollup.
 		SELECT(
-			periodExpr.AS("day"),
-			mysql.SUM(tRollup.Value).AS("value"),
+			periodExpr.AS("dailyvalue.day"),
+			mysql.SUM(tRollup.Value).AS("dailyvalue.value"),
 		).
 		FROM(tRollup).
 		WHERE(mysql.AND(

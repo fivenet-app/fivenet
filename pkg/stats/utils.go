@@ -34,7 +34,7 @@ func periodStartDateExpr(period pbstats.StatsPeriod) mysql.DateExpression {
 	case pbstats.StatsPeriod_STATS_PERIOD_MONTHLY:
 		return mysql.DateExp(
 			tRollup.Day.SUB(
-				mysql.INTERVAL(
+				mysql.INTERVALe(
 					mysql.Raw("DAYOFMONTH(`fivenet_stats_daily_rollup`.`day`) - 1"),
 					mysql.DAY,
 				),
@@ -44,7 +44,10 @@ func periodStartDateExpr(period pbstats.StatsPeriod) mysql.DateExpression {
 	case pbstats.StatsPeriod_STATS_PERIOD_WEEKLY:
 		return mysql.DateExp(
 			tRollup.Day.SUB(
-				mysql.INTERVAL(mysql.Raw("WEEKDAY(`fivenet_stats_daily_rollup`.`day`)"), mysql.DAY),
+				mysql.INTERVALe(
+					mysql.Raw("WEEKDAY(`fivenet_stats_daily_rollup`.`day`)"),
+					mysql.DAY,
+				),
 			),
 		)
 
