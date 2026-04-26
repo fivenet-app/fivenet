@@ -59,7 +59,7 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
 }
 
 const previousStatus = ref<WebSocketStatus>('OPEN');
-const { resume } = watchPausable(
+const { resume } = watch(
     status,
     async () => {
         if (previousStatus.value !== status.value) {
