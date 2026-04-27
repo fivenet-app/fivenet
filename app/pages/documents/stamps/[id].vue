@@ -16,7 +16,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.stamps.update',
     requiresAuth: true,
-    permission: 'documents.StampsService/UpsertStampPerm',
+    permission: 'documents.StampsService/UpsertStamp',
     validate: async (route) => {
         route = route as TypedRouteFromName<'documents-stamps-id'>;
         // Check if the id is made up of digits

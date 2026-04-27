@@ -39,8 +39,6 @@ async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
 
     return response;
 }
-
-// TODO add logic for creating/updating stamps
 </script>
 
 <template>

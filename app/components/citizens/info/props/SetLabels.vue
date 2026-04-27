@@ -36,6 +36,7 @@ const schema = z.object({
             id: z.coerce.number(),
             name: z.coerce.string().min(1),
             color: z.coerce.string().length(7),
+            // TODO expiration settings needed, but only when enabled for the label
         })
         .array()
         .max(10)

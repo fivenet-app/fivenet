@@ -12,7 +12,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.stamps.create',
     requiresAuth: true,
-    permission: 'documents.StampsService/UpsertStampPerm',
+    permission: 'documents.StampsService/UpsertStamp',
 });
 
 const { can } = useAuth();
