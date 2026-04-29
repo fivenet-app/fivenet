@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
@@ -20,9 +23,10 @@ var svcConfig = &service.Config{
 type DBSyncCmd struct {
 	RunCmd RunCmd `cmd:"" default:"1" help:"Run the DBSync service (default if not subcommand is specified)" name:"run"`
 
-	Start  StartCmd  `cmd:"" help:"Start the DBSync service via your OS's service manager"`
-	Status StatusCmd `cmd:"" help:"Get the status of the DBSync service via your OS's service manager"`
-	Stop   StopCmd   `cmd:"" help:"Stop the DBSync service via your OS's service manager"`
+	Start   StartCmd   `cmd:"" help:"Start the DBSync service via your OS's service manager"`
+	Restart RestartCmd `cmd:"" help:"Restart the DBSync service via your OS's service manager"`
+	Status  StatusCmd  `cmd:"" help:"Get the status of the DBSync service via your OS's service manager"`
+	Stop    StopCmd    `cmd:"" help:"Stop the DBSync service via your OS's service manager"`
 
 	Install   InstallCmd   `cmd:"" help:"Install the DBSync service to your OS's service manager"`
 	Uninstall UninstallCmd `cmd:"" help:"Uninstall the DBSync service from your OS's service manager"`
@@ -74,6 +78,21 @@ func (c *StartCmd) Run(_ *Context) error {
 	return nil
 }
 
+type RestartCmd struct{}
+
+func (c *RestartCmd) Run(_ *Context) error {
+	log.Println("Restarting FiveNet DBSync service")
+
+	s := getService()
+	if err := s.Restart(); err != nil {
+		return err
+	}
+
+	log.Println("Restarted FiveNet DBSync service")
+
+	return nil
+}
+
 type StopCmd struct{}
 
 func (c *StopCmd) Run(_ *Context) error {
@@ -117,6 +136,9 @@ type InstallCmd struct{}
 func (c *InstallCmd) Run(_ *Context) error {
 	log.Println("Installing FiveNet DBSync service")
 
+	// Check default config file location/name
+	c.checkIfConfigInWd("dbsync.yaml")
+
 	s := getService()
 	if err := s.Install(); err != nil {
 		log.Fatalf("Failed to install service. %v", err)
@@ -126,6 +148,25 @@ func (c *InstallCmd) Run(_ *Context) error {
 		"Service installed successfully. You can now start the service with 'fivenet dbsync start' or via your OS's service manager.",
 	)
 	return nil
+}
+
+func (c *InstallCmd) checkIfConfigInWd(cfg string) {
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("Failed to get current working directory. %v", err)
+	}
+
+	if _, err := os.Stat(filepath.Join(wd, cfg)); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return
+		}
+		log.Fatalf("Failed to stat dbsync config file in working directory. %v", err)
+	}
+
+	log.Println(
+		`WARNING! The FiveNetDBSync service requires the config file to be in the /etc/fivenet directory.
+        Please make sure to copy it to the /etc/fivenet directory for the service to find its config successfully.`,
+	)
 }
 
 type UninstallCmd struct{}
