@@ -231,7 +231,8 @@ func (s *Server) SetEmailSettings(
 				WHERE(mysql.AND(
 					tSettingsBlocks.EmailID.EQ(mysql.Int64(req.GetSettings().GetEmailId())),
 					tSettingsBlocks.TargetEmail.IN(targets...),
-				))
+				)).
+				LIMIT(int64(len(targets)))
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

@@ -230,33 +230,36 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 	}
 
 	if len(toDelete) > 0 {
+		grades := []mysql.Expression{}
 		for _, grade := range toDelete {
-			stmt := tJobsGrades.
-				DELETE().
-				WHERE(mysql.AND(
-					tJobsGrades.JobName.EQ(mysql.String(job.GetName())),
-					tJobsGrades.Grade.EQ(mysql.Int32(grade.GetGrade())),
-				)).
-				LIMIT(1)
-
-			res, err := stmt.ExecContext(ctx, s.db)
-			if err != nil {
-				return 0, fmt.Errorf(
-					"failed to execute job grades delete statement for grade %d. %w",
-					grade.GetGrade(),
-					err,
-				)
-			}
-			rowsAffected, err := res.RowsAffected()
-			if err != nil {
-				return 0, fmt.Errorf(
-					"failed to retrieve rows affected for job grades delete. %w",
-					err,
-				)
-			}
-
-			rowsAffectedCount += rowsAffected
+			grades = append(grades, mysql.Int32(grade.GetGrade()))
 		}
+
+		stmt := tJobsGrades.
+			DELETE().
+			WHERE(mysql.AND(
+				tJobsGrades.JobName.EQ(mysql.String(job.GetName())),
+				tJobsGrades.Grade.IN(grades...),
+			)).
+			LIMIT(int64(len(grades)))
+
+		res, err := stmt.ExecContext(ctx, s.db)
+		if err != nil {
+			return 0, fmt.Errorf(
+				"failed to execute job grades delete statement for grades %+v. %w",
+				toDelete,
+				err,
+			)
+		}
+		rowsAffected, err := res.RowsAffected()
+		if err != nil {
+			return 0, fmt.Errorf(
+				"failed to retrieve rows affected for job grades delete. %w",
+				err,
+			)
+		}
+
+		rowsAffectedCount += rowsAffected
 	}
 
 	return rowsAffectedCount, nil
