@@ -164,8 +164,9 @@ func (c *InstallCmd) checkIfConfigInWd(cfg string) {
 	}
 
 	log.Println(
-		`WARNING! The FiveNetDBSync service requires the config file to be in the /etc/fivenet directory.
-        Please make sure to copy it to the /etc/fivenet directory for the service to find its config successfully.`,
+		`WARNING!
+The FiveNetDBSync service requires the dbsync config file to be in the /etc/fivenet directory.
+You must copy the dbsync config file to the /etc/fivenet directory yourself for the service to find the file successfully.`,
 	)
 }
 

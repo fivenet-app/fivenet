@@ -257,7 +257,6 @@ export default defineNuxtConfig({
                 'y-protocols/awareness',
                 'yjs',
                 'zod',
-                'zod/v4',
             ],
         },
         server: {

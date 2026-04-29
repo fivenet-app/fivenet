@@ -1,5 +1,5 @@
 import { defineNuxtPlugin, useNuxtApp } from '#app';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 export default defineNuxtPlugin({
     name: 'zod-i18n',
