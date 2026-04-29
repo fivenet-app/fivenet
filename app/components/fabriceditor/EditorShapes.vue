@@ -33,7 +33,7 @@ const text = ref<string>(t('components.fabric_editor.curved_text.title').valueOf
                 <template #content>
                     <div class="flex flex-col gap-2 p-2">
                         <UFormField :label="$t('common.content')">
-                            <UInput v-model="text" type="text" class="w-full" />
+                            <UInput v-model="text" class="w-full" type="text" />
                         </UFormField>
 
                         <UButton

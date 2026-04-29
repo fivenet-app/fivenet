@@ -66,7 +66,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
                     {{ $t('components.qualifications.all_qualifications') }}
                 </h3>
 
-                <UForm :schema="schema" :state="query" class="flex items-center gap-2" @submit="refresh">
+                <UForm class="flex items-center gap-2" :schema="schema" :state="query" @submit="refresh">
                     <UFormField name="search">
                         <UInput
                             v-model="query.search"

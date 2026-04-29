@@ -43,7 +43,7 @@ const { can } = useAuth();
                     <p v-else class="font-semibold">{{ $t('common.no_actions_available') }}</p>
                 </div>
 
-                <ul role="list" class="mt-1">
+                <ul class="mt-1" role="list">
                     <li v-if="vehicle.props?.updatedAt">
                         <span class="font-semibold">{{ $t('common.last_updated') }}:</span>
                         <GenericTime class="ml-1" :value="vehicle.props?.updatedAt" />

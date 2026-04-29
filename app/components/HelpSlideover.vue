@@ -145,11 +145,11 @@ const filteredCategories = computed(() => {
             <div v-if="shortcuts" class="space-y-6">
                 <UInput
                     v-model="query"
+                    class="w-full"
                     icon="i-mdi-search"
                     :placeholder="$t('common.search_field')"
                     autofocus
                     color="neutral"
-                    class="w-full"
                 />
 
                 <USeparator />

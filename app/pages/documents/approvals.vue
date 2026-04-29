@@ -119,9 +119,9 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.statuses"
+                                    class="w-full"
                                     :items="statuses"
                                     multiple
-                                    class="w-full"
                                     label-key="label"
                                     value-key="value"
                                     :search-input="{ placeholder: $t('common.search_field') }"
@@ -142,8 +142,8 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.onlyDrafts"
-                                    :items="onlyDrafts"
                                     class="w-full"
+                                    :items="onlyDrafts"
                                     label-key="label"
                                     value-key="value"
                                     :search-input="{ placeholder: $t('common.search_field') }"
@@ -295,16 +295,16 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                     <div class="flex min-w-0 flex-1 flex-row flex-wrap justify-between gap-2">
                         <UNavigationMenu
                             v-if="itemsLeft.length > 0"
+                            class="-mx-1"
                             orientation="horizontal"
                             :items="itemsLeft"
-                            class="-mx-1"
                         />
 
                         <UNavigationMenu
                             v-if="itemsRight.length > 0"
+                            class="-mx-1"
                             orientation="horizontal"
                             :items="itemsRight"
-                            class="-mx-1"
                         />
                     </div>
                 </UDashboardToolbar>

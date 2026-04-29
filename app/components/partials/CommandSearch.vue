@@ -197,9 +197,9 @@ const groups = computed<CommandPaletteGroup<CommandPaletteItem>[]>(() => [
     <UDashboardSearch
         v-model:open="isCommandSearchOpen"
         v-model:search-term="searchTerm"
+        class="h-80 flex-1"
         :groups="groups"
         :loading="isRequestPending(citizensStatus) || isRequestPending(documentsStatus)"
-        class="h-80 flex-1"
         :placeholder="`${$t('common.search_field')} (${$t('commandpalette.footer', { key1: '@', key2: '#' })})`"
         :ui="{ root: 'flex-1', content: 'flex-1' }"
     >
@@ -211,15 +211,15 @@ const groups = computed<CommandPaletteGroup<CommandPaletteItem>[]>(() => [
             <div class="flex items-center justify-between gap-2">
                 <FiveNetLogo class="ml-1 size-5 text-dimmed" />
                 <div class="flex items-center gap-1">
-                    <UButton color="neutral" variant="ghost" :label="$t('common.open_command')" class="text-dimmed" size="xs">
+                    <UButton class="text-dimmed" color="neutral" variant="ghost" :label="$t('common.open_command')" size="xs">
                         <template #trailing>
                             <UKbd value="enter" />
                         </template>
                     </UButton>
 
-                    <USeparator orientation="vertical" class="h-4" />
+                    <USeparator class="h-4" orientation="vertical" />
 
-                    <UButton color="neutral" variant="ghost" :label="$t('common.commandpalette')" class="text-dimmed" size="xs">
+                    <UButton class="text-dimmed" color="neutral" variant="ghost" :label="$t('common.commandpalette')" size="xs">
                         <template #trailing>
                             <UKbd value="meta" />
                             <UKbd value="k" />

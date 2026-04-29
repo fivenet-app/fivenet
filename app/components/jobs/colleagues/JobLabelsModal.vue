@@ -126,7 +126,7 @@ const formRef = useTemplateRef('formRef');
                                     </UFormField>
 
                                     <div class="flex flex-1 flex-row gap-2">
-                                        <UFormField :name="`${idx}.color`" :label="$t('common.color')" class="flex-1">
+                                        <UFormField class="flex-1" :name="`${idx}.color`" :label="$t('common.color')">
                                             <ColorPicker
                                                 v-model="state.labels[idx]!.color"
                                                 class="w-full"
@@ -134,7 +134,7 @@ const formRef = useTemplateRef('formRef');
                                             />
                                         </UFormField>
 
-                                        <UFormField :name="`${idx}.icon`" :label="$t('common.icon')" class="flex-1">
+                                        <UFormField class="flex-1" :name="`${idx}.icon`" :label="$t('common.icon')">
                                             <IconSelectMenu
                                                 v-model="state.labels[idx]!.icon"
                                                 class="w-full"

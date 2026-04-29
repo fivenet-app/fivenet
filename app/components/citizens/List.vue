@@ -340,10 +340,10 @@ defineShortcuts({
                             <UInput
                                 ref="input"
                                 v-model="query.name"
+                                class="w-full"
                                 type="text"
                                 name="name"
                                 :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
-                                class="w-full"
                                 leading-icon="i-mdi-search"
                             >
                                 <template #trailing>
@@ -356,10 +356,10 @@ defineShortcuts({
                             <UInput
                                 v-model="query.dateofbirth"
                                 v-maska
+                                class="w-full"
                                 type="text"
                                 name="dateofbirth"
                                 placeholder="DD.MM.YYYY"
-                                class="w-full"
                                 data-maska="##.##.####"
                             />
                         </UFormField>
@@ -401,10 +401,10 @@ defineShortcuts({
                                     >
                                         <UInput
                                             v-model="query.phoneNumber"
+                                            class="w-full"
                                             type="tel"
                                             name="phoneNumber"
                                             :placeholder="$t('common.phone_number')"
-                                            class="w-full"
                                         />
                                     </UFormField>
 
@@ -412,11 +412,11 @@ defineShortcuts({
                                         <div class="flex w-full flex-col items-center gap-1 pr-1">
                                             <USlider
                                                 v-model="query.height"
+                                                class="w-full"
                                                 name="height"
                                                 :min="0"
                                                 :step="1"
                                                 :max="250"
-                                                class="w-full"
                                                 :placeholder="`${$t('common.height')} (cm)`"
                                             />
 
@@ -440,10 +440,10 @@ defineShortcuts({
                                     >
                                         <UInputNumber
                                             v-model="query.trafficInfractionPoints"
+                                            class="w-full"
                                             name="trafficInfractionPoints"
                                             :min="0"
                                             :placeholder="$t('common.traffic_infraction_points')"
-                                            class="w-full"
                                         />
                                     </UFormField>
 
@@ -457,11 +457,11 @@ defineShortcuts({
                                     >
                                         <UInputNumber
                                             v-model="query.openFines"
+                                            class="w-full"
                                             name="openFines"
                                             :min="0"
                                             :step="1000"
                                             :placeholder="`${$t('common.fine')}`"
-                                            class="w-full"
                                             :format-options="{
                                                 style: 'currency',
                                                 currency: display.currencyName,

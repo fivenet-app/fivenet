@@ -165,12 +165,12 @@ const isOpen = ref(false);
                 <div class="my-2 flex flex-1 flex-row items-center gap-1">
                     <div class="flex flex-1 items-center gap-2">
                         <ProfilePictureImg
+                            class="shrink-0"
                             :src="user?.props?.mugshot?.filePath"
                             :name="`${user.firstname} ${user.lastname}`"
                             :alt="$t('common.mugshot')"
                             enable-popup
                             size="3xl"
-                            class="shrink-0"
                         />
 
                         <div class="flex-1">
@@ -197,8 +197,8 @@ const isOpen = ref(false);
 
                         <div class="flex flex-col gap-1 sm:flex-row">
                             <UButton
-                                :label="$t('common.action', 2)"
                                 class="lg:hidden"
+                                :label="$t('common.action', 2)"
                                 icon="i-mdi-menu"
                                 @click="isOpen = true"
                             />
@@ -221,7 +221,7 @@ const isOpen = ref(false);
             </UDashboardToolbar>
 
             <UDashboardToolbar v-if="user">
-                <UNavigationMenu orientation="horizontal" :items="items" class="-mx-1 flex-1" />
+                <UNavigationMenu class="-mx-1 flex-1" orientation="horizontal" :items="items" />
             </UDashboardToolbar>
         </template>
 
@@ -246,11 +246,11 @@ const isOpen = ref(false);
     <UDashboardPanel
         v-if="!isMobile"
         id="citizen-id-actions"
+        class="bg-elevated/25"
         :default-size="25"
         :min-size="20"
         :max-size="40"
         resizable
-        class="bg-elevated/25"
         :ui="{ body: 'gap-2 sm:gap-2' }"
     >
         <template #header>
@@ -281,7 +281,7 @@ const isOpen = ref(false);
                     {{ $t('common.label', 2) }}
                 </h2>
 
-                <SetLabels v-model="user.props!.labels" :user-id="user.userId" class="flex-1" />
+                <SetLabels v-model="user.props!.labels" class="flex-1" :user-id="user.userId" />
             </div>
         </template>
     </UDashboardPanel>
@@ -294,10 +294,10 @@ const isOpen = ref(false);
                         <UDashboardNavbar :title="$t('common.action', 2)" :ui="{ toggle: 'hidden' }">
                             <template #leading>
                                 <UButton
+                                    class="-ms-1.5"
                                     icon="i-mdi-close"
                                     color="neutral"
                                     variant="ghost"
-                                    class="-ms-1.5"
                                     @click="isOpen = false"
                                 />
                             </template>
@@ -328,7 +328,7 @@ const isOpen = ref(false);
                                 {{ $t('common.label', 2) }}
                             </h1>
 
-                            <SetLabels v-model="user.props!.labels" :user-id="user.userId" class="flex-1" />
+                            <SetLabels v-model="user.props!.labels" class="flex-1" :user-id="user.userId" />
                         </div>
                     </template>
                 </UDashboardPanel>

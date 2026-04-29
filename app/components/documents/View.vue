@@ -655,10 +655,10 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                         <div>
                             <UTooltip :text="$t('common.expand_collapse')">
                                 <UButton
+                                    class="group place-self-end"
                                     icon="i-mdi-chevron-double-down"
                                     variant="link"
                                     size="sm"
-                                    class="group place-self-end"
                                     :ui="{
                                         leadingIcon: 'transition-transform duration-200 group-data-[state=open]:rotate-180',
                                     }"
@@ -707,8 +707,8 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
 
                 <div class="mx-auto w-full max-w-(--breakpoint-xl)">
                     <UAccordion
-                        :default-value="['access', 'comments']"
                         class="print:hidden"
+                        :default-value="['access', 'comments']"
                         type="multiple"
                         :items="accordionItems"
                     >

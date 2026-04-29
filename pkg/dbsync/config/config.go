@@ -68,8 +68,9 @@ func New(p ParamsConfig) (ResultConfig, error) {
 		v.SetConfigFile(configFile)
 	} else {
 		v.SetConfigName("dbsync")
-		v.AddConfigPath(".")
-		v.AddConfigPath("/config")
+		v.AddConfigPath(config.CwdConfigDir)
+		v.AddConfigPath(config.ContainerConfigDir)
+		v.AddConfigPath(config.SystemConfigDir)
 	}
 
 	v.AutomaticEnv()

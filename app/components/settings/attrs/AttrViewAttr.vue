@@ -201,8 +201,8 @@ const { game } = useAppConfig();
     <div v-if="attribute">
         <UCollapsible>
             <UButton
-                block
                 class="group"
+                block
                 color="neutral"
                 variant="subtle"
                 trailing-icon="i-mdi-chevron-down"

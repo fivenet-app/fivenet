@@ -31,8 +31,8 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
         </UFormField>
 
         <UFormField
-            :name="`exam.questions.${index}.data.data.multipleChoice.choices`"
             class="flex-1"
+            :name="`exam.questions.${index}.data.data.multipleChoice.choices`"
             :label="$t('common.option', 2)"
             required
         >
@@ -97,15 +97,15 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
             </UTooltip>
 
             <UFormField
+                class="mt-2"
                 :name="`exam.questions.${index}.answer.multipleChoice.choices`"
                 :label="$t('common.answer')"
-                class="mt-2"
             >
                 <USelect
                     v-model="question.answer!.answer.multipleChoice.choices"
+                    class="w-full"
                     multiple
                     :items="question.data!.data.multipleChoice?.choices"
-                    class="w-full"
                 />
             </UFormField>
         </UFormField>

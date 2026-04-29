@@ -22,6 +22,8 @@ const notifications = useNotificationsStore();
 
 const appConfig = useAppConfig();
 
+const formatDuration = useDurationFormatter();
+
 const citizensLabelsClient = await getCitizensLabelsClient();
 
 const { data: labels, status, error, refresh } = useLazyAsyncData('citizens-labels', () => listLabels());
@@ -102,6 +104,20 @@ const columns = computed<TableColumn<Label>[]>(() => [
                 class: 'size-5',
                 fill: row.original.color ?? 'currentColor',
             }),
+    },
+    {
+        accessorKey: 'expiration',
+        header: t('common.expiration'),
+        cell: ({ row }) =>
+            h(
+                'span',
+                !row.original.settings?.requiresExpiration
+                    ? t('common.no')
+                    : h(
+                          'span',
+                          `${t('common.yes')} (${t('common.min')}: ${row.original.settings.minDuration ? formatDuration(row.original.settings.minDuration) : t('common.na')}, ${t('common.max')}: ${row.original.settings.maxDuration ? formatDuration(row.original.settings.maxDuration) : t('common.na')})`,
+                      ),
+            ),
     },
     {
         id: 'actions',

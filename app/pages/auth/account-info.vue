@@ -112,7 +112,7 @@ onBeforeMount(async () => {
             </UDashboardNavbar>
 
             <UDashboardToolbar>
-                <UNavigationMenu :items="items" highlight class="-mx-1 flex-1" />
+                <UNavigationMenu class="-mx-1 flex-1" :items="items" highlight />
             </UDashboardToolbar>
         </template>
 

@@ -368,9 +368,9 @@ const columnsNew = computed(
             <UFormField class="mb-2" name="title" :label="$t('common.search')">
                 <UInput
                     v-model="queryDoc"
+                    class="w-full"
                     type="text"
                     name="title"
-                    class="w-full"
                     :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
                     leading-icon="i-mdi-search"
                 />

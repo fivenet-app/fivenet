@@ -329,8 +329,8 @@ const viewOptions = [
                                 <div class="p-2">
                                     <DataPendingBlock
                                         v-if="isRequestPending(calendarsStatus)"
-                                        :message="$t('common.loading', [$t('common.calendar')])"
                                         class="max-w-60"
+                                        :message="$t('common.loading', [$t('common.calendar')])"
                                     />
                                     <DataErrorBlock
                                         v-else-if="calendarsError"
@@ -600,11 +600,11 @@ const viewOptions = [
                             />
 
                             <UButton
+                                class="px-0.5 py-0"
                                 :color="calendar.color as ButtonProps['color']"
                                 variant="link"
                                 size="sm"
                                 truncate
-                                class="px-0.5 py-0"
                                 @click="calendarViewSlideover.open({ calendarId: calendar.id })"
                             >
                                 <UBadge :color="calendar.color as BadgeProps['color']" size="md" label="&nbsp;" />
@@ -631,10 +631,10 @@ const viewOptions = [
                     <ClientOnly>
                         <USelectMenu
                             v-model="view"
+                            class="w-full min-w-44"
                             :items="viewOptions"
                             :icon="viewOptions.find((o) => o.value === view)?.icon"
                             value-key="value"
-                            class="w-full min-w-44"
                         />
                     </ClientOnly>
                 </UFormField>

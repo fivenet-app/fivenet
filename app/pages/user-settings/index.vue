@@ -49,11 +49,11 @@ watch(designDocumentListStyle, async () => {
             name="darkMode"
             :label="$t('components.auth.user_settings.color_mode')"
         >
-            <UColorModeSelect color="neutral" variant="outline" class="w-full" />
+            <UColorModeSelect class="w-full" color="neutral" variant="outline" />
         </UFormField>
 
         <UFormField class="grid grid-cols-2 items-center gap-2" name="primaryColor" :label="$t('common.color', 1)">
-            <ColorPickerTW v-model="design.ui.primary" name="primaryColor" class="w-full" />
+            <ColorPickerTW v-model="design.ui.primary" class="w-full" name="primaryColor" />
         </UFormField>
 
         <UFormField
@@ -61,7 +61,7 @@ watch(designDocumentListStyle, async () => {
             name="grayColor"
             :label="$t('components.auth.user_settings.background_color')"
         >
-            <ColorPickerTW v-model="design.ui.gray" name="grayColor" class="w-full" />
+            <ColorPickerTW v-model="design.ui.gray" class="w-full" name="grayColor" />
         </UFormField>
 
         <UFormField
@@ -93,9 +93,9 @@ watch(designDocumentListStyle, async () => {
             <ClientOnly v-if="activeChar">
                 <USelectMenu
                     v-model="selectedHomepage"
+                    class="w-full"
                     :items="startpages.filter((h) => h.permission === undefined || can(h.permission).value)"
                     :search-input="{ placeholder: $t('common.search_field') }"
-                    class="w-full"
                 />
             </ClientOnly>
             <p v-else class="text-sm">
@@ -104,10 +104,10 @@ watch(designDocumentListStyle, async () => {
         </UFormField>
 
         <UFormField
+            class="grid grid-cols-2 items-center gap-2"
             :label="$t('components.auth.user_settings.events_disabled.label')"
             :description="$t('components.auth.user_settings.events_disabled.description')"
             name="eventsDisabled"
-            class="grid grid-cols-2 items-center gap-2"
         >
             <USwitch v-model="eventsDisabled" />
         </UFormField>

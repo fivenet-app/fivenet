@@ -276,12 +276,12 @@ defineShortcuts({
                     <UInput
                         ref="input"
                         v-model="query.licensePlate"
+                        class="w-full"
                         type="text"
                         name="licensePlate"
                         :placeholder="$t('common.license_plate')"
                         block
                         leading-icon="i-mdi-search"
-                        class="w-full"
                     >
                         <template #trailing>
                             <UKbd value="/" />
@@ -290,12 +290,13 @@ defineShortcuts({
                 </UFormField>
 
                 <UFormField v-if="!hideVehicleModell" class="flex-1" name="model" :label="$t('common.model')">
-                    <UInput v-model="query.model" type="text" name="model" :placeholder="$t('common.model')" class="w-full" />
+                    <UInput v-model="query.model" class="w-full" type="text" name="model" :placeholder="$t('common.model')" />
                 </UFormField>
 
                 <UFormField v-if="userId === undefined" class="flex-1" name="userIds" :label="$t('common.owner')">
                     <SelectMenu
                         v-model="query.userIds"
+                        class="w-full"
                         name="userIds"
                         multiple
                         :searchable="
@@ -307,7 +308,6 @@ defineShortcuts({
                         "
                         searchable-key="completor-citizens"
                         :filter-fields="['firstname', 'lastname']"
-                        class="w-full"
                         :placeholder="$t('common.owner')"
                         trailing
                         value-key="userId"

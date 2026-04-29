@@ -320,7 +320,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton color="neutral" class="flex-1" block @click="$emit('close', false)">
+                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
                     {{ $t('common.close', 1) }}
                 </UButton>
 

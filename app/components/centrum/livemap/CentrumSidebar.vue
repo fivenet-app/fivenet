@@ -446,11 +446,11 @@ defineShortcuts({
 
     <UDashboardPanel
         v-if="canStream && open"
+        class="max-w-[25rem]"
         resizable
         :min-size="14.0"
         :max-size="25"
         :default-size="15.25"
-        class="max-w-[25rem]"
         :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0 border-b border-default' }"
     >
         <template #body>

@@ -337,7 +337,7 @@ const { game } = useAppConfig();
         <template #header>
             <UDashboardToolbar>
                 <template #default>
-                    <UForm :schema="schema" :state="query" class="flex flex-1 flex-col gap-1" @submit="refresh">
+                    <UForm class="flex flex-1 flex-col gap-1" :schema="schema" :state="query" @submit="refresh">
                         <div class="flex min-w-0 flex-col justify-between lg:flex-row">
                             <UTabs
                                 v-if="props.userId === undefined && tabItems.length > 1"
@@ -400,6 +400,7 @@ const { game } = useAppConfig();
                                 >
                                     <SelectMenu
                                         v-model="query.users"
+                                        class="w-full"
                                         :searchable="async (q: string) => (await completorStore.completeColleagues(q)) ?? []"
                                         multiple
                                         :search-input="{
@@ -410,7 +411,6 @@ const { game } = useAppConfig();
                                         ignore-filter
                                         leading-icon="i-mdi-search"
                                         value-key="userId"
-                                        class="w-full"
                                     >
                                         <template #default="{ items }">
                                             <div

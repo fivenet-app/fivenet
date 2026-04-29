@@ -70,13 +70,13 @@ const insertBlock = () => {
                     <UFormField>
                         <UInput
                             v-model="expression"
+                            class="w-full"
                             :placeholder="
                                 selected
                                     ? $t('components.partials.tiptap_editor.extensions.template_block.block_placeholder.select')
                                     : $t('components.partials.tiptap_editor.extensions.template_block.block_placeholder.empty')
                             "
                             :disabled="!selected"
-                            class="w-full"
                         />
                     </UFormField>
 

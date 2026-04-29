@@ -207,10 +207,10 @@ const confirmModal = overlay.create(ConfirmModal);
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.type"
+                                        class="w-full"
                                         :items="cTypes"
                                         value-key="status"
                                         :search-input="{ placeholder: $t('common.search_field') }"
-                                        class="w-full"
                                     >
                                         <template #default>
                                             <UBadge :color="conductTypesToBadgeColor(state.type)" truncate>
@@ -244,6 +244,7 @@ const confirmModal = overlay.create(ConfirmModal);
                             <UFormField name="targetUserId">
                                 <SelectMenu
                                     v-model="state.targetUserId"
+                                    class="w-full"
                                     :searchable="
                                         async (q: string) =>
                                             await completorStore.completeColleagues(
@@ -257,7 +258,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                     block
                                     :placeholder="$t('common.colleague')"
                                     trailing
-                                    class="w-full"
                                     value-key="userId"
                                 >
                                     <template #default="{ items }">
@@ -295,8 +295,8 @@ const confirmModal = overlay.create(ConfirmModal);
                                     <TiptapEditor
                                         v-model="state.message"
                                         v-model:files="state.files"
-                                        name="message"
                                         class="min-h-120 w-full"
+                                        name="message"
                                         :target-id="entry?.id"
                                         history-type="jobs-conduct"
                                         :limit="maxContentLength"

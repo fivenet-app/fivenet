@@ -49,7 +49,7 @@ const qualifications = await useQualifications();
             </UDashboardNavbar>
 
             <UDashboardToolbar>
-                <UNavigationMenu orientation="horizontal" :items="items" class="-mx-1 flex-1" />
+                <UNavigationMenu class="-mx-1 flex-1" orientation="horizontal" :items="items" />
             </UDashboardToolbar>
         </template>
 

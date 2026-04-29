@@ -380,6 +380,7 @@ defineShortcuts({
                                         :filter-fields="['name']"
                                         label-key="name"
                                         value-key="id"
+                                        :ui="{ itemLeadingIcon: 'hidden' }"
                                     >
                                         <template #default="{ items }">
                                             <div
@@ -633,10 +634,10 @@ defineShortcuts({
                                         :text="$t('components.jobs.self_service.set_absence_date')"
                                     >
                                         <UButton
+                                            class="min-w-0"
                                             :label="$t('components.jobs.self_service.set_absence_date')"
                                             icon="i-mdi-island"
                                             block
-                                            class="min-w-0"
                                             @click="
                                                 selfServicePropsAbsenceDateModal.open({
                                                     userId: colleague.userId,
@@ -655,10 +656,10 @@ defineShortcuts({
                                         :text="$t('common.show')"
                                     >
                                         <UButton
+                                            class="min-w-0"
                                             :label="$t('common.show')"
                                             icon="i-mdi-eye"
                                             block
-                                            class="min-w-0"
                                             :to="{
                                                 name: 'jobs-colleagues-id-info',
                                                 params: { id: colleague.userId ?? 0 },

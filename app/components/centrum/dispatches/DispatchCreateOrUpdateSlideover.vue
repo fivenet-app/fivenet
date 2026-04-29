@@ -116,10 +116,10 @@ const formRef = useTemplateRef('formRef');
                             <UFormField class="flex-1" name="message" required>
                                 <UInput
                                     v-model="state.message"
+                                    class="w-full"
                                     type="text"
                                     name="message"
                                     :placeholder="$t('common.message')"
-                                    class="w-full"
                                 />
                             </UFormField>
                         </dd>
@@ -132,13 +132,13 @@ const formRef = useTemplateRef('formRef');
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="description" class="flex-1">
+                            <UFormField class="flex-1" name="description">
                                 <UTextarea
                                     v-model="state.description"
+                                    class="w-full"
                                     type="text"
                                     name="description"
                                     :placeholder="$t('common.description')"
-                                    class="w-full"
                                     :rows="3"
                                 />
                             </UFormField>
@@ -171,6 +171,7 @@ const formRef = useTemplateRef('formRef');
                             <UFormField name="jobs.jobs" required>
                                 <USelectMenu
                                     v-model="state.jobs.jobs"
+                                    class="w-full"
                                     name="jobs.jobs"
                                     multiple
                                     :placeholder="$t('common.job')"
@@ -180,7 +181,6 @@ const formRef = useTemplateRef('formRef');
                                     :items="dispatchTargetJobs"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     :disabled="dispatchTargetJobs.length <= 1"
-                                    class="w-full"
                                 >
                                     <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
                                 </USelectMenu>

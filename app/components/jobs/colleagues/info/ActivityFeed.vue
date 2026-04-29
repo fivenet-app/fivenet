@@ -13,6 +13,7 @@ import type { SortByColumn } from '~~/gen/ts/resources/common/database/database'
 import { ColleagueActivityType } from '~~/gen/ts/resources/jobs/colleagues/activity/activity';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
 import ColleagueName from '../ColleagueName.vue';
+import { jobsUserActivityTypeBGColor, jobsUserActivityTypeIcon } from './helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -120,8 +121,8 @@ watch(props, async () => refresh());
                     <UFormField v-if="userId === undefined" class="flex-1" name="colleagues" :label="$t('common.search')">
                         <SelectMenu
                             v-model="query.colleagues"
-                            multiple
                             class="w-full"
+                            multiple
                             :searchable="async (q: string) => await completorStore.completeColleagues(q, query.colleagues)"
                             searchable-key="completor-colleagues"
                             :search-input="{ placeholder: $t('common.search_field') }"
@@ -158,7 +159,15 @@ watch(props, async () => refresh());
                                 v-model="query.types"
                                 class="w-48 min-w-40 flex-initial"
                                 multiple
-                                :items="activityTypes.map((aType) => ({ aType: aType }))"
+                                :items="
+                                    activityTypes.map((aType) => ({
+                                        aType: aType,
+                                        icon: jobsUserActivityTypeIcon(aType),
+                                        ui: {
+                                            itemLeadingIcon: jobsUserActivityTypeBGColor(aType),
+                                        },
+                                    }))
+                                "
                                 value-key="aType"
                                 :search-input="{ placeholder: $t('common.type', 2) }"
                             >

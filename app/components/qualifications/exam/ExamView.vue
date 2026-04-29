@@ -148,7 +148,7 @@ watch(data, async () => {
                             :ui="{ icon: 'size-8', title: 'text-xl' }"
                         />
 
-                        <PartialsBackButton block :to="`/qualifications/${qualificationId}`" class="mt-4" />
+                        <PartialsBackButton class="mt-4" block :to="`/qualifications/${qualificationId}`" />
                     </template>
 
                     <UButton

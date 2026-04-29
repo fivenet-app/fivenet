@@ -76,14 +76,14 @@ defineExpose({
             />
 
             <UFieldGroup v-if="!disabled" class="absolute bottom-0 left-0 flex flex-row">
-                <UBadge icon="i-mdi-color" class="!cursor-default rounded-l-none" size="lg" />
+                <UBadge class="!cursor-default rounded-l-none" icon="i-mdi-color" size="lg" />
 
                 <UButton
                     v-for="(color, idx) in colors"
                     :key="color.color"
-                    :style="{ background: color.color }"
                     class="inline-flex w-8 items-center"
                     :class="idx === colors.length - 1 ? 'rounded-br-none' : ''"
+                    :style="{ background: color.color }"
                     @click="signatureSettings.penColor = color.color"
                 >
                     <UIcon
@@ -96,11 +96,11 @@ defineExpose({
 
             <UFieldGroup v-if="!disabled" class="absolute right-0 bottom-0 flex flex-row">
                 <UTooltip :text="$t('common.undo')">
-                    <UButton icon="i-mdi-undo" class="rounded-bl-none" @click="handleUndo" />
+                    <UButton class="rounded-bl-none" icon="i-mdi-undo" @click="handleUndo" />
                 </UTooltip>
 
                 <UTooltip :text="$t('common.clear')">
-                    <UButton icon="i-mdi-clear" class="rounded-r-none" @click="handleClearCanvas" />
+                    <UButton class="rounded-r-none" icon="i-mdi-clear" @click="handleClearCanvas" />
                 </UTooltip>
             </UFieldGroup>
         </div>

@@ -63,12 +63,12 @@ function updateAttachmentDocument(idx: number, document: DocumentShort | null) {
                 <template v-if="attachments[idx]?.data.oneofKind === 'document'">
                     <UFormField class="flex-1" :name="`attachments.${idx}.data.documentId`">
                         <SelectMenu
+                            class="w-full flex-1"
                             :model-value="
                                 attachments[idx].data.document.id > 0
                                     ? (attachments[idx].data.document as DocumentShort)
                                     : undefined
                             "
-                            class="w-full flex-1"
                             :disabled="!canSubmit"
                             :searchable="listDocuments"
                             :searchable-key="`mailer-thread-attachment-documents-search`"

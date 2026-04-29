@@ -88,20 +88,20 @@ async function onSubmit(values: FormSubmitEvent<Schema>) {
 
         <template #body>
             <div class="mx-auto w-full max-w-[80%] min-w-3/4">
-                <UForm :schema="schema" :state="state" class="flex flex-1 flex-col gap-4" @submit="onSubmit">
+                <UForm class="flex flex-1 flex-col gap-4" :schema="schema" :state="state" @submit="onSubmit">
                     <UFormField
                         v-if="approve"
+                        class="mx-auto"
                         name="signature"
                         :label="$t('common.signature')"
                         :description="policy?.signatureRequired ? undefined : $t('common.optional')"
                         :required="policy?.signatureRequired"
-                        class="mx-auto"
                     >
                         <SignaturePad v-model="state.signature" />
                     </UFormField>
 
                     <UFormField name="reason" :label="$t('common.reason')" :description="$t('common.optional')">
-                        <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
+                        <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                     </UFormField>
 
                     <UFormField>

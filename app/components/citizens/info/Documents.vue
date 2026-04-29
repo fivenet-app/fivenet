@@ -162,9 +162,9 @@ const formRef = useTemplateRef('formRef');
                     <ClientOnly>
                         <USelectMenu
                             v-model="query.closed"
+                            class="w-full"
                             :items="openclose"
                             value-key="value"
-                            class="w-full"
                             :search-input="{ placeholder: $t('common.search_field') }"
                         >
                             <template #default>
@@ -210,10 +210,10 @@ const formRef = useTemplateRef('formRef');
                     <ClientOnly>
                         <USelectMenu
                             v-model="query.relations"
+                            class="w-full"
                             multiple
                             :items="docRelations"
                             value-key="value"
-                            class="w-full"
                             :search-input="{ placeholder: $t('common.relation', 2) }"
                         >
                             <template #default>
@@ -238,7 +238,7 @@ const formRef = useTemplateRef('formRef');
                         <USwitch v-model="query.includeCreated" />
 
                         <UTooltip :text="$t('components.citizens.documents.include_created.description')">
-                            <UIcon name="i-mdi-information" class="size-4" />
+                            <UIcon class="size-4" name="i-mdi-information" />
                         </UTooltip>
                     </div>
                 </UFormField>

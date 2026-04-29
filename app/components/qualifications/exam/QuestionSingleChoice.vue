@@ -48,7 +48,7 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                         </UFieldGroup>
                     </div>
 
-                    <UFormField :name="`exam.questions.${index}.data.data.singleChoice.choices.${idx}`" class="w-full">
+                    <UFormField class="w-full" :name="`exam.questions.${index}.data.data.singleChoice.choices.${idx}`">
                         <UInput
                             v-model="question.data!.data.singleChoice.choices[idx]"
                             class="w-full"
@@ -78,11 +78,11 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                 />
             </UTooltip>
 
-            <UFormField :name="`exam.questions.${index}.answer.singleChoice.choice`" :label="$t('common.answer')" class="mt-2">
+            <UFormField class="mt-2" :name="`exam.questions.${index}.answer.singleChoice.choice`" :label="$t('common.answer')">
                 <USelect
                     v-model="question.answer!.answer.singleChoice.choice"
-                    :items="question.data!.data.singleChoice?.choices"
                     class="w-full"
+                    :items="question.data!.data.singleChoice?.choices"
                 />
             </UFormField>
         </UFormField>

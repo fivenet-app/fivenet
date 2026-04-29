@@ -142,22 +142,22 @@ const formRef = useTemplateRef('formRef');
                 <UFormField class="flex-1" name="name" :label="$t('common.name')">
                     <UInput
                         v-model="state.name"
+                        class="w-full"
                         type="text"
                         name="name"
                         :disabled="!canEdit"
                         :placeholder="$t('common.name', 1)"
                         :label="$t('common.name', 1)"
-                        class="w-full"
                     />
                 </UFormField>
 
                 <UFormField class="flex-1" name="description" :label="$t('common.description')">
                     <UTextarea
                         v-model="state.description"
+                        class="w-full"
                         name="description"
                         :disabled="!canEdit"
                         :placeholder="$t('common.description')"
-                        class="w-full"
                     />
                 </UFormField>
 

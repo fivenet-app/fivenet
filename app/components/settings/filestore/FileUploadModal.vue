@@ -84,15 +84,15 @@ const formRef = useTemplateRef('formRef');
                     <ClientOnly>
                         <USelectMenu
                             v-model="state.category"
-                            :items="categories"
                             class="w-full"
+                            :items="categories"
                             :search-input="{ placeholder: $t('common.search_field') }"
                         />
                     </ClientOnly>
                 </UFormField>
 
                 <UFormField class="flex-1" name="name" :label="$t('common.name')" required>
-                    <UInput v-model="state.name" type="text" name="name" class="w-full" :placeholder="$t('common.name')" />
+                    <UInput v-model="state.name" class="w-full" type="text" name="name" :placeholder="$t('common.name')" />
                 </UFormField>
 
                 <UFormField class="flex-1" name="file" :label="$t('common.file')">
@@ -100,8 +100,8 @@ const formRef = useTemplateRef('formRef');
                     <UFileUpload
                         v-else
                         v-model="state.file"
-                        name="file"
                         class="mx-auto max-w-md flex-1"
+                        name="file"
                         :accept="fileUpload.types.images.join(',')"
                         :placeholder="$t('common.image')"
                         :label="$t('common.file_upload_label')"

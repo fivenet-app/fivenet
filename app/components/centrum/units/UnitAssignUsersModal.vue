@@ -77,6 +77,7 @@ const formRef = useTemplateRef('formRef');
                         <UFormField class="flex-1" name="users" :label="$t('common.colleague', 2)">
                             <SelectMenu
                                 v-model="state.users"
+                                class="w-full"
                                 multiple
                                 :searchable="
                                     async (q: string) =>
@@ -92,7 +93,6 @@ const formRef = useTemplateRef('formRef');
                                 :placeholder="$t('common.search')"
                                 trailing
                                 :disabled="!canSubmit"
-                                class="w-full"
                             >
                                 <template #item-label="{ item }">
                                     {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}

@@ -97,11 +97,11 @@ const formRef = useTemplateRef('formRef');
                     <ClientOnly>
                         <USelectMenu
                             v-model="state.status"
+                            class="w-full"
                             :items="availableStatus"
                             value-key="status"
                             :placeholder="$t('common.status')"
                             :search-input="{ placeholder: $t('common.search_field') }"
-                            class="w-full"
                         >
                             <template #default>
                                 <UBadge class="truncate" :color="requestStatusToBadgeColor(state.status)">
@@ -125,10 +125,10 @@ const formRef = useTemplateRef('formRef');
                 <UFormField class="flex-1" name="approverComment" :label="$t('common.message')">
                     <UTextarea
                         v-model="state.approverComment"
+                        class="w-full"
                         name="approverComment"
                         :rows="3"
                         :placeholder="$t('common.message')"
-                        class="w-full"
                     />
                 </UFormField>
             </UForm>

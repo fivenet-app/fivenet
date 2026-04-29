@@ -122,12 +122,12 @@ watch(
             <div class="relative" :style="node.attrs.style || ''">
                 <img
                     ref="imgRef"
-                    v-bind="node.attrs"
-                    style="border-radius: 4px"
                     class="h-auto max-w-full cursor-pointer select-none"
                     :class="[selected || isResizing ? 'border border-primary-500' : '']"
+                    style="border-radius: 4px"
                     :draggable="true"
                     :src="cleanupImageURL(node.attrs.src)"
+                    v-bind="node.attrs"
                     @click="onImageClick"
                 />
 

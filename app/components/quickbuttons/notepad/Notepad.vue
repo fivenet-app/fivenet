@@ -82,15 +82,15 @@ watchDebounced(
 <template>
     <UForm
         ref="formRef"
+        class="flex min-h-full w-full max-w-full flex-1 flex-col overflow-y-auto"
         :schema="schema"
         :state="state"
-        class="flex min-h-full w-full max-w-full flex-1 flex-col overflow-y-auto"
     >
         <ClientOnly>
             <TiptapEditor
                 v-model="state.content"
-                name="content"
                 class="mx-auto my-2 h-full w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
+                name="content"
                 :history-type="historyType"
                 :saving="saving"
                 disable-images

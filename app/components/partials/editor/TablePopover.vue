@@ -126,9 +126,9 @@ const isOpen = ref(false);
 
                     <UFormField class="mt-2">
                         <UButton
+                            class="w-full"
                             type="submit"
                             icon="i-mdi-table-plus"
-                            class="w-full"
                             :label="$t('common.create')"
                             :disabled="disabled"
                         />

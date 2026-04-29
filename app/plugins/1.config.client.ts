@@ -21,8 +21,8 @@ async function loadConfig(): Promise<ClientConfig> {
         console.error('Failed to get FiveNet config from backend', e);
         const err = e as Error;
         throw createError({
-            statusCode: 500,
-            statusMessage: 'Failed to get FiveNet config from backend',
+            status: 500,
+            statusText: 'Failed to get FiveNet config from backend',
             message: err.message + '(Cause: ' + err.cause + ')',
             fatal: true,
             unhandled: false,

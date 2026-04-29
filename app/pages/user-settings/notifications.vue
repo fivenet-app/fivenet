@@ -166,8 +166,8 @@ const sounds = computed<
                 >
                     <UFieldGroup>
                         <USelectMenu
-                            :model-value="audio.sounds[sound.name]"
                             class="w-full"
+                            :model-value="audio.sounds[sound.name]"
                             value-key="value"
                             :items="sound.items"
                             :ui="{ base: 'line-clamp-2' }"

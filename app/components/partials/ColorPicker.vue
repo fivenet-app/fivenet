@@ -52,7 +52,7 @@ async function copyColor() {
             v-bind="$attrs"
         >
             <template #leading>
-                <span :style="{ backgroundColor: modelValue ?? 'black' }" class="size-5 rounded-sm" />
+                <span class="size-5 rounded-sm" :style="{ backgroundColor: modelValue ?? 'black' }" />
             </template>
         </UButton>
 
@@ -63,9 +63,9 @@ async function copyColor() {
                 v-model="manual"
                 v-maska
                 type="text"
+                :ui="{ trailing: 'pr-0.5' }"
                 data-maska="!#HHHHHH"
                 data-maska-tokens="H:[0-9a-fA-F]"
-                :ui="{ trailing: 'pr-0.5' }"
             >
                 <template v-if="manual?.length" #trailing>
                     <UTooltip :text="$t('common.copy')" :content="{ side: 'right' }">

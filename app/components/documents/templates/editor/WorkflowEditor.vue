@@ -63,8 +63,8 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
             <div class="flex flex-col gap-1">
                 <VueDraggable
                     v-model="workflow.reminders.reminderSettings.reminders"
-                    :disabled="disabled"
                     class="flex flex-col gap-2"
+                    :disabled="disabled"
                     handle=".handle"
                 >
                     <div

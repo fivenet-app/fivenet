@@ -245,10 +245,10 @@ defineShortcuts({
                             <UInput
                                 ref="inputRef"
                                 v-model="query.title"
+                                class="w-full"
                                 type="text"
                                 name="title"
                                 :placeholder="$t('common.title')"
-                                class="w-full"
                                 leading-icon="i-mdi-search"
                             >
                                 <template #trailing>
@@ -266,8 +266,8 @@ defineShortcuts({
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.onlyDrafts"
-                                    :items="onlyDrafts"
                                     class="w-full"
+                                    :items="onlyDrafts"
                                     label-key="label"
                                     value-key="value"
                                     :search-input="{ placeholder: $t('common.search_field') }"
@@ -306,19 +306,19 @@ defineShortcuts({
                                 >
                                     <UInput
                                         v-model="query.documentIds"
+                                        class="w-full"
                                         type="text"
                                         name="documentIds"
                                         placeholder="DOC-..."
-                                        class="w-full"
                                     />
                                 </UFormField>
 
                                 <UFormField class="flex-1" name="category" :label="$t('common.category', 1)">
                                     <SelectMenu
                                         v-model="query.categories"
+                                        class="w-full"
                                         multiple
                                         :filter-fields="['name']"
-                                        class="w-full"
                                         :searchable="
                                             async (search: string) => {
                                                 try {
@@ -336,7 +336,7 @@ defineShortcuts({
                                         :search-input="{ placeholder: $t('common.category', 1) }"
                                         value-key="id"
                                         clear
-                                        :ui="{ base: query.categories.length ? 'py-1' : '' }"
+                                        :ui="{ base: query.categories.length ? 'py-1' : '', itemLeadingIcon: 'hidden' }"
                                     >
                                         <template v-if="query.categories" #default="{ items }">
                                             <CategoryBadge
@@ -364,9 +364,9 @@ defineShortcuts({
                                 <UFormField class="flex-1" name="creator" :label="$t('common.creator')">
                                     <SelectMenu
                                         v-model="query.creators"
+                                        class="w-full"
                                         multiple
                                         nullable
-                                        class="w-full"
                                         :searchable="
                                             async (q: string): Promise<UserShort[]> =>
                                                 await completorStore.completeCitizens({
@@ -401,9 +401,9 @@ defineShortcuts({
                                     <ClientOnly>
                                         <USelectMenu
                                             v-model="query.closed"
+                                            class="w-full"
                                             :items="openclose"
                                             value-key="value"
-                                            class="w-full"
                                             :search-input="{ placeholder: $t('common.search_field') }"
                                         >
                                             <template #default>
@@ -511,13 +511,13 @@ defineShortcuts({
             <UDashboardToolbar :ui="{ root: 'min-h-[33px] p-0 sm:p-0 gap-0 sm:gap-0' }">
                 <UTabs
                     v-model="activeTab"
+                    class="w-full"
                     :content="false"
                     :items="[
                         { value: 'all', label: $t('common.all_documents') },
                         { value: 'own', label: $t('common.own_documents') },
                     ]"
                     size="xs"
-                    class="w-full"
                     :ui="{ list: 'rounded-none' }"
                 />
             </UDashboardToolbar>

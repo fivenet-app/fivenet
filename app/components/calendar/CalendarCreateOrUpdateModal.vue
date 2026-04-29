@@ -149,7 +149,7 @@ const formRef = useTemplateRef('formRef');
         "
     >
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
+            <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <DataPendingBlock
                     v-if="props.calendarId && isRequestPending(status)"
                     :message="$t('common.loading', [$t('common.calendar')])"
@@ -168,7 +168,7 @@ const formRef = useTemplateRef('formRef');
 
                 <template v-else>
                     <UFormField class="flex-1" name="title" :label="$t('common.name')" required>
-                        <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" class="w-full" />
+                        <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.name')" />
                     </UFormField>
 
                     <UFormField class="flex-1" name="color" :label="$t('common.color')">
@@ -178,9 +178,9 @@ const formRef = useTemplateRef('formRef');
                     <UFormField class="flex-1" name="description" :label="$t('common.description')">
                         <TiptapEditor
                             v-model="state.description"
+                            class="w-full"
                             name="content"
                             wrapper-class="min-h-80"
-                            class="w-full"
                             :placeholder="$t('common.description')"
                             :limit="1_000"
                         />

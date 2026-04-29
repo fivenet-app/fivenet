@@ -69,12 +69,12 @@ const target = route.query.target as string;
 
                 <template #footer>
                     <UButton
+                        class="mb-2"
                         trailing-icon="i-mdi-link-variant"
                         size="lg"
                         :to="nuiEnabled ? undefined : target"
                         external
                         rel="noreferrer"
-                        class="mb-2"
                         block
                         @click="nuiEnabled ? openURLInWindow(target) : undefined"
                     >

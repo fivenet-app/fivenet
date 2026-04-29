@@ -84,18 +84,18 @@ const formRef = useTemplateRef('formRef');
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="reason" :label="$t('common.reason')" required>
-                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
+                    <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>
 
                 <UFormField class="flex-1" name="requestType" :label="$t('common.access')">
                     <ClientOnly>
                         <USelectMenu
                             v-model="state.accessLevel"
+                            class="w-full"
                             :items="accessLevels"
                             :placeholder="$t('common.access')"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             value-key="value"
-                            class="w-full"
                         >
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.attributes', 2)]) }}

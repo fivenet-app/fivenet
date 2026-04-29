@@ -241,7 +241,7 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
                 />
 
                 <template #content>
-                    <PermList :permissions="permissions" :attributes="attributes" disabled class="w-full" />
+                    <PermList class="w-full" :permissions="permissions" :attributes="attributes" disabled />
                 </template>
             </UCollapsible>
         </UFormField>

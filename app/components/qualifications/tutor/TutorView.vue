@@ -36,10 +36,11 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
     <UDashboardPanel :ui="{ root: 'h-full min-h-0' }">
         <template #header>
             <UDashboardToolbar>
-                <UForm :schema="schema" :state="query" class="mb-2 flex-1">
+                <UForm class="mb-2 flex-1" :schema="schema" :state="query">
                     <UFormField class="flex-1" name="users" :label="$t('common.search')">
                         <SelectMenu
                             v-model="query.users"
+                            class="w-full"
                             multiple
                             :filter-fields="['firstname', 'lastname']"
                             :placeholder="$t('common.citizen', 2)"
@@ -53,7 +54,6 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
                             searchable-key="completor-citizens"
                             leading-icon="i-mdi-search"
                             value-key="userId"
-                            class="w-full"
                         >
                             <template v-if="query.users.length > 0" #default>
                                 {{ $t('common.selected', query.users.length) }}

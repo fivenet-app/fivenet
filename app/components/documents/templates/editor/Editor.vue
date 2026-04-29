@@ -531,9 +531,9 @@ const formRef = useTemplateRef('formRef');
                         <UContainer class="flex flex-col gap-4 p-4 sm:p-4">
                             <UPageCard :title="$t('common.detail', 2)">
                                 <UFormField
+                                    class="grid grid-cols-2 items-center gap-2"
                                     name="weight"
                                     :label="`${$t('common.template', 1)} ${$t('common.weight')}`"
-                                    class="grid grid-cols-2 items-center gap-2"
                                 >
                                     <UInputNumber
                                         v-model="state.weight"
@@ -546,45 +546,45 @@ const formRef = useTemplateRef('formRef');
                                 </UFormField>
 
                                 <UFormField
+                                    class="grid grid-cols-2 items-center gap-2"
                                     name="title"
                                     :label="`${$t('common.template')} ${$t('common.title')}`"
-                                    class="grid grid-cols-2 items-center gap-2"
                                     required
                                 >
                                     <UInput
                                         v-model="state.title"
+                                        class="w-full"
                                         name="title"
                                         :placeholder="$t('common.title')"
                                         size="lg"
-                                        class="w-full"
                                     />
                                 </UFormField>
 
                                 <UFormField
+                                    class="grid grid-cols-2 items-center gap-2"
                                     name="description"
                                     :label="`${$t('common.template')} ${$t('common.description')}`"
-                                    class="grid grid-cols-2 items-center gap-2"
                                 >
                                     <UTextarea
                                         v-model="state.description"
+                                        class="w-full"
                                         name="description"
                                         :rows="4"
                                         :label="$t('common.description')"
-                                        class="w-full"
                                     />
                                 </UFormField>
 
                                 <UFormField
+                                    class="grid grid-cols-2 items-center gap-2"
                                     name="color"
                                     :label="$t('common.color')"
-                                    class="grid grid-cols-2 items-center gap-2"
                                 >
                                     <div class="flex flex-1 gap-1">
                                         <ColorPickerTW v-model="state.color" class="flex-1" />
                                     </div>
                                 </UFormField>
 
-                                <UFormField name="icon" :label="$t('common.icon')" class="grid grid-cols-2 items-center gap-2">
+                                <UFormField class="grid grid-cols-2 items-center gap-2" name="icon" :label="$t('common.icon')">
                                     <div class="flex flex-1 gap-1">
                                         <IconSelectMenu
                                             v-model="state.icon"
@@ -653,16 +653,16 @@ const formRef = useTemplateRef('formRef');
                                     :label="`${$t('common.content')} ${$t('common.title')}`"
                                     required
                                 >
-                                    <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" class="w-full" />
+                                    <UTextarea v-model="state.contentTitle" class="w-full" name="contentTitle" :rows="2" />
                                 </UFormField>
 
                                 <UFormField name="category" :label="$t('common.category', 1)">
                                     <SelectMenu
                                         v-model="state.category"
+                                        class="w-full"
                                         :filter-fields="['name']"
                                         block
                                         nullable
-                                        class="w-full"
                                         :searchable="
                                             async (q: string) => {
                                                 try {
@@ -675,6 +675,7 @@ const formRef = useTemplateRef('formRef');
                                         "
                                         searchable-key="completor-document-categories"
                                         :search-input="{ placeholder: $t('common.search_field') }"
+                                        :ui="{ itemLeadingIcon: 'hidden' }"
                                     >
                                         <template v-if="state.category" #default>
                                             <CategoryBadge :category="state.category" />
@@ -691,7 +692,7 @@ const formRef = useTemplateRef('formRef');
                                 </UFormField>
 
                                 <UFormField name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
-                                    <UTextarea v-model="state.contentState" name="contentState" :rows="2" class="w-full" />
+                                    <UTextarea v-model="state.contentState" class="w-full" name="contentState" :rows="2" />
                                 </UFormField>
 
                                 <SingleHint
@@ -712,8 +713,8 @@ const formRef = useTemplateRef('formRef');
                                     <ClientOnly>
                                         <TiptapEditor
                                             v-model="state.content"
-                                            name="content"
                                             class="min-h-120 flex-1 overflow-y-hidden"
+                                            name="content"
                                             :extensions="extensions"
                                             :limit="125_000"
                                             show-penalty-calculator-button

@@ -137,10 +137,10 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
 
                         <UButton
                             v-if="can('citizens.CitizensService/ListCitizens').value"
+                            class="!text-(--ui-primary)"
                             variant="link"
                             icon="i-mdi-account"
                             block
-                            class="!text-(--ui-primary)"
                             :label="$t('common.profile')"
                             :to="`/citizens/${marker.user?.userId ?? 0}`"
                         />
@@ -152,21 +152,21 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                                 marker.user?.job === activeChar?.job &&
                                 checkIfCanAccessColleague(marker.user, 'jobs.JobsService/GetColleague')
                             "
+                            class="!text-(--ui-primary)"
                             variant="link"
                             icon="i-mdi-briefcase"
                             block
-                            class="!text-(--ui-primary)"
                             :label="$t('common.colleague')"
                             :to="`/jobs/colleagues/${marker.user?.userId ?? 0}/info`"
                         />
 
                         <PhoneNumberBlock
                             v-if="marker.user?.phoneNumber"
+                            class="px-2.5 py-1.5"
                             :number="marker.user?.phoneNumber"
                             hide-number
                             show-label
                             block
-                            class="px-2.5 py-1.5"
                         />
 
                         <UButton

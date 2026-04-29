@@ -78,10 +78,10 @@ const formRef = useTemplateRef('formRef');
                                 <UFormField class="flex-1" :name="`emails.${idx}`">
                                     <UInput
                                         v-model="state.emails[idx]"
+                                        class="w-full"
                                         type="text"
                                         :placeholder="$t('common.mail')"
                                         :disabled="disabled || !canManage"
-                                        class="w-full"
                                     />
                                 </UFormField>
 

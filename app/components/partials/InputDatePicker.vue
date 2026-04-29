@@ -92,10 +92,10 @@ const smallerThanSm = breakpoints.smaller('sm');
 <template>
     <UPopover>
         <UButton
+            class="inline-flex w-full gap-2"
             color="neutral"
             variant="subtle"
             :icon="hideIcon || smallerThanSm ? undefined : 'i-mdi-calendar'"
-            class="inline-flex w-full gap-2"
             block
             v-bind="button"
         >
@@ -117,22 +117,22 @@ const smallerThanSm = breakpoints.smaller('sm');
                     v-model="internalModelValue"
                     class="p-1"
                     :number-of-months="smallerThanSm ? 1 : 2"
-                    v-bind="$attrs"
                     :range="false"
+                    v-bind="$attrs"
                 />
 
                 <UForm
                     v-if="time"
+                    class="flex w-full flex-col items-center justify-center gap-2 pb-2 md:flex-row"
                     :schema="{}"
                     :state="timeState"
-                    class="flex w-full flex-col items-center justify-center gap-2 pb-2 md:flex-row"
                 >
                     <div class="flex flex-1 items-center justify-center">
                         <UFormField :label="$t('common.time')">
                             <div class="inline-flex flex-row items-center gap-1">
                                 <UInputNumber
-                                    :model-value="timeState.hours"
                                     class="max-w-24"
+                                    :model-value="timeState.hours"
                                     :min="0"
                                     :max="23"
                                     @update:model-value="
@@ -141,8 +141,8 @@ const smallerThanSm = breakpoints.smaller('sm');
                                 />
                                 <span class="font-bold">:</span>
                                 <UInputNumber
-                                    :model-value="timeState.minutes"
                                     class="max-w-24"
+                                    :model-value="timeState.minutes"
                                     :min="0"
                                     :max="59"
                                     @update:model-value="

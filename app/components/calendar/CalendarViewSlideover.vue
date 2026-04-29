@@ -121,11 +121,11 @@ const calendar = computed(() => data.value?.calendar);
                 class="group flex flex-col gap-2"
             >
                 <UButton
+                    class="w-full"
                     color="neutral"
                     variant="subtle"
                     :label="$t('common.access')"
                     icon="i-mdi-lock"
-                    class="w-full"
                     trailing-icon="i-mdi-chevron-down"
                     block
                     :ui="{

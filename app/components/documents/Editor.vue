@@ -603,9 +603,9 @@ provide('yjsProvider', provider);
                                     <UFormField name="title" :label="$t('common.title')" required>
                                         <UInput
                                             v-model="state.title"
+                                            class="w-full"
                                             type="text"
                                             size="xl"
-                                            class="w-full"
                                             :placeholder="$t('common.title')"
                                             :disabled="!canDo.edit"
                                         />
@@ -615,11 +615,11 @@ provide('yjsProvider', provider);
                                         <UFormField class="flex-1" name="category" :label="$t('common.category', 1)">
                                             <SelectMenu
                                                 v-model="categoryModel"
+                                                class="w-full"
                                                 :filter-fields="['name']"
                                                 block
                                                 nullable
                                                 :disabled="!canDo.edit"
-                                                class="w-full"
                                                 :searchable="
                                                     async (q: string) => {
                                                         try {
@@ -645,7 +645,10 @@ provide('yjsProvider', provider);
                                                 searchable-key="completor-document-categories"
                                                 :search-input="{ placeholder: $t('common.search_field') }"
                                                 :clear="state.category?.id !== emptyCategory.id"
-                                                :ui="{ base: state.category?.id !== emptyCategory.id ? 'py-1' : '' }"
+                                                :ui="{
+                                                    base: state.category?.id !== emptyCategory.id ? 'py-1' : '',
+                                                    itemLeadingIcon: 'hidden',
+                                                }"
                                             >
                                                 <template v-if="state.category?.id" #default>
                                                     <CategoryBadge :category="state.category" />
@@ -664,8 +667,8 @@ provide('yjsProvider', provider);
                                         <UFormField class="flex-1" name="state" :label="$t('common.state')">
                                             <UInput
                                                 v-model="state.state"
-                                                type="text"
                                                 class="w-full"
+                                                type="text"
                                                 :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
                                                 :disabled="!canDo.edit"
                                             />
@@ -683,8 +686,8 @@ provide('yjsProvider', provider);
                             <TiptapEditor
                                 v-model="state.content"
                                 v-model:files="state.files"
-                                name="content"
                                 class="m-2 mx-auto w-full max-w-(--breakpoint-xl) flex-1"
+                                name="content"
                                 :disabled="!canDo.edit"
                                 history-type="document"
                                 :limit="maxContentLength"

@@ -144,26 +144,26 @@ const formRef = useTemplateRef('formRef');
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="name" :label="$t('common.name')">
-                    <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" class="w-full" />
+                    <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.name')" />
                 </UFormField>
 
                 <UFormField class="flex-1" name="initials" :label="$t('common.initials')">
                     <UInput
                         v-model="state.initials"
+                        class="w-full"
                         name="initials"
                         type="text"
                         :placeholder="$t('common.initials')"
-                        class="w-full"
                     />
                 </UFormField>
 
                 <UFormField class="flex-1" name="description" :label="$t('common.description')">
                     <UInput
                         v-model="state.description"
+                        class="w-full"
                         name="description"
                         type="text"
                         :placeholder="$t('common.description')"
-                        class="w-full"
                     />
                 </UFormField>
 
@@ -171,12 +171,12 @@ const formRef = useTemplateRef('formRef');
                     <ClientOnly>
                         <USelectMenu
                             v-model="state.attributes"
+                            class="w-full"
                             multiple
                             nullable
                             :items="availableAttributes"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             value-key="value"
-                            class="w-full"
                         >
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
@@ -190,16 +190,16 @@ const formRef = useTemplateRef('formRef');
                 </UFormField>
 
                 <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
-                    <IconSelectMenu v-model="state.icon" :hex-color="state.color" class="w-full" />
+                    <IconSelectMenu v-model="state.icon" class="w-full" :hex-color="state.color" />
                 </UFormField>
 
                 <UFormField class="flex-1" name="homePostal" :label="`${$t('common.department')} ${$t('common.postal_code')}`">
                     <UInput
                         v-model="state.homePostal"
+                        class="w-full"
                         name="homePostal"
                         type="text"
                         :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
-                        class="w-full"
                     />
                 </UFormField>
 

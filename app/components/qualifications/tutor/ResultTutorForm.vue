@@ -167,9 +167,9 @@ const formRef = useTemplateRef('formRef');
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.status"
+                                class="w-full"
                                 :items="availableStatus"
                                 value-key="status"
-                                class="w-full"
                                 :placeholder="$t('common.status')"
                                 :search-input="{ placeholder: $t('common.search_field') }"
                             >
@@ -209,10 +209,10 @@ const formRef = useTemplateRef('formRef');
                     <UFormField class="flex-1" name="summary" :label="$t('common.summary')">
                         <UTextarea
                             v-model="state.summary"
+                            class="w-full"
                             name="summary"
                             :rows="3"
                             :placeholder="$t('common.summary')"
-                            class="w-full"
                         />
                     </UFormField>
                 </template>

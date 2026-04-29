@@ -15,8 +15,8 @@ const { documentSize, snapThreshold } = useFabricEditor();
             <UFormField :label="$t('components.fabric_editor.width')">
                 <UInputNumber
                     v-model="documentSize.width"
-                    size="xs"
                     class="w-20"
+                    size="xs"
                     :step="1"
                     :min="128"
                     :max="1280"
@@ -32,8 +32,8 @@ const { documentSize, snapThreshold } = useFabricEditor();
             <UFormField :label="$t('components.fabric_editor.height')">
                 <UInputNumber
                     v-model="documentSize.height"
-                    size="xs"
                     class="w-20"
+                    size="xs"
                     :step="1"
                     :min="128"
                     :max="1280"
@@ -49,7 +49,7 @@ const { documentSize, snapThreshold } = useFabricEditor();
 
         <UFormField :label="$t('components.fabric_editor.snap_threshold')">
             <div class="inline-flex items-center gap-1">
-                <UInputNumber v-model="snapThreshold" size="xs" class="w-20" />
+                <UInputNumber v-model="snapThreshold" class="w-20" size="xs" />
                 <span class="text-xs text-muted">px</span>
             </div>
         </UFormField>

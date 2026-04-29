@@ -39,8 +39,8 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
 
             <UIcon
                 v-if="showIcon && unit.icon && unit.icon !== defaultUnitIcon"
-                :name="convertComponentIconNameToDynamic(unit.icon)"
                 class="size-4"
+                :name="convertComponentIconNameToDynamic(unit.icon)"
             />
 
             <span>
@@ -58,8 +58,8 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
                 <p class="text-base leading-none font-semibold">
                     <UIcon
                         v-if="showIcon && unit.icon && unit.icon !== defaultUnitIcon"
-                        :name="convertComponentIconNameToDynamic(unit.icon)"
                         class="!size-4"
+                        :name="convertComponentIconNameToDynamic(unit.icon)"
                         :style="{ color: unit.color ?? 'currentColor' }"
                     />
 

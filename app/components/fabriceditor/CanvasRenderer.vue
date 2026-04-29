@@ -193,8 +193,8 @@ watchDeep(form, () => {
                     <component
                         :is="getComponent(field)"
                         v-model="form[field.name]"
-                        :type="field.inputType"
                         class="w-full"
+                        :type="field.inputType"
                         v-bind="{ ...field.fieldProps }"
                     />
                 </template>

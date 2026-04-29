@@ -82,7 +82,7 @@ const maxDate = new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getD
 
 <template>
     <UPopover :content="{ align: 'start' }" :modal="true">
-        <UButton color="neutral" variant="subtle" icon="i-mdi-calendar" class="group data-[state=open]:bg-elevated">
+        <UButton class="group data-[state=open]:bg-elevated" color="neutral" variant="subtle" icon="i-mdi-calendar">
             <span class="truncate">
                 <template v-if="selected.start">
                     <template v-if="selected.end"> {{ formatDate(selected.start) }} - {{ formatDate(selected.end) }} </template>
@@ -95,8 +95,8 @@ const maxDate = new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getD
 
             <template #trailing>
                 <UIcon
-                    name="i-mdi-chevron-down"
                     class="size-5 shrink-0 text-dimmed transition-transform duration-200 group-data-[state=open]:rotate-180"
+                    name="i-mdi-chevron-down"
                 />
             </template>
         </UButton>
@@ -107,11 +107,11 @@ const maxDate = new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getD
                     <UButton
                         v-for="(range, index) in ranges"
                         :key="index"
+                        class="rounded-none px-4"
+                        :class="[isRangeSelected(range) ? 'bg-elevated' : 'hover:bg-elevated/50']"
                         :label="range.label"
                         color="neutral"
                         variant="ghost"
-                        class="rounded-none px-4"
-                        :class="[isRangeSelected(range) ? 'bg-elevated' : 'hover:bg-elevated/50']"
                         truncate
                         @click="selectRange(range)"
                     />

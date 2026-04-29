@@ -478,9 +478,9 @@ const formRef = useTemplateRef('formRef');
         <template #body>
             <UForm
                 ref="formRef"
+                class="flex min-h-full w-full max-w-full flex-1 flex-col overflow-y-auto"
                 :schema="schema"
                 :state="state"
-                class="flex min-h-full w-full max-w-full flex-1 flex-col overflow-y-auto"
                 @submit="onSubmitThrottle"
             >
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page', 1)])" />
@@ -549,8 +549,8 @@ const formRef = useTemplateRef('formRef');
                                             <UFormField name="meta.title" :label="$t('common.title')">
                                                 <UInput
                                                     v-model="state.meta.title"
-                                                    size="xl"
                                                     class="w-full"
+                                                    size="xl"
                                                     :disabled="!canDo.edit"
                                                 />
                                             </UFormField>
@@ -606,9 +606,9 @@ const formRef = useTemplateRef('formRef');
                                     <TiptapEditor
                                         v-model="state.content"
                                         v-model:files="state.files"
+                                        class="mx-auto my-2 h-full w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                         name="content"
                                         :limit="maxContentLength"
-                                        class="mx-auto my-2 h-full w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                         :disabled="!canDo.edit"
                                         history-type="wiki"
                                         :saving="saving"

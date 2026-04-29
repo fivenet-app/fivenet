@@ -108,8 +108,8 @@ onBeforeMount(() => setFromProps());
             <UButton icon="i-mdi-cancel" color="error" :label="$t('common.cancel')" @click="$emit('close', false)" />
         </UFieldGroup>
 
-        <UFormField name="title" :label="$t('common.name')" class="w-full">
-            <UInput v-model="state.title" type="text" class="w-full" size="xl" />
+        <UFormField class="w-full" name="title" :label="$t('common.name')">
+            <UInput v-model="state.title" class="w-full" type="text" size="xl" />
         </UFormField>
 
         <UFormField
@@ -121,8 +121,8 @@ onBeforeMount(() => setFromProps());
             <ClientOnly>
                 <TiptapEditor
                     v-model="state.content"
-                    name="content"
                     class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
+                    name="content"
                     wrapper-class="min-h-100"
                     :limit="1024"
                 />

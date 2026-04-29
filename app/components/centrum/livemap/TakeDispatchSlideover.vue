@@ -100,11 +100,11 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                 <UFormField name="search">
                                     <UInput
                                         v-model="queryDispatches"
+                                        class="w-full"
                                         type="text"
                                         name="search"
                                         :placeholder="$t('common.search')"
                                         leading-icon="i-mdi-search"
-                                        class="w-full"
                                     />
                                 </UFormField>
                             </dd>

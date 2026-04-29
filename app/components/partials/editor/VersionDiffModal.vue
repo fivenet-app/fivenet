@@ -56,8 +56,8 @@ const editorRef = useTemplateRef('editorRef');
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton :label="$t('common.apply')" class="flex-1" color="primary" @click="applySelected" />
-                <UButton :label="$t('common.cancel')" class="flex-1" color="neutral" @click="$emit('close', false)" />
+                <UButton class="flex-1" :label="$t('common.apply')" color="primary" @click="applySelected" />
+                <UButton class="flex-1" :label="$t('common.cancel')" color="neutral" @click="$emit('close', false)" />
             </UFieldGroup>
         </template>
     </UModal>

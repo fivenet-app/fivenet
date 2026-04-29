@@ -374,12 +374,12 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <InputDurationPicker
                                     v-model="state.configuration.deduplicationDuration"
+                                    class="w-full"
                                     :units="['minute', 'second']"
                                     :step="1"
                                     :min="secondsToDuration(1)"
                                     :max="secondsToDuration(3600)"
                                     :disabled="!canSubmit"
-                                    class="w-full"
                                 />
                             </UFormField>
 

@@ -280,9 +280,9 @@ const isMobile = breakpoints.smaller('lg');
                 <UTabs
                     v-if="!selectedEmail?.deactivated"
                     v-model="selectedTab"
+                    class="w-full flex-1"
                     :items="items"
                     variant="link"
-                    class="w-full flex-1"
                     :ui="{ trigger: ['w-full'] }"
                 />
             </UDashboardToolbar>

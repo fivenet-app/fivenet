@@ -161,9 +161,9 @@ const formRef = useTemplateRef('formRef');
         <template #body>
             <UForm
                 ref="formRef"
+                class="mx-auto w-full max-w-(--breakpoint-xl)"
                 :schema="schema"
                 :state="state"
-                class="mx-auto w-full max-w-(--breakpoint-xl)"
                 @submit="onSubmitThrottle"
             >
                 <template v-if="canDo.create">
@@ -194,7 +194,7 @@ const formRef = useTemplateRef('formRef');
                         </UFormField>
 
                         <UFormField name="reason" :label="$t('common.reason')" required>
-                            <UTextarea v-model="state.reason" :placeholder="$t('common.reason')" :rows="4" class="w-full" />
+                            <UTextarea v-model="state.reason" class="w-full" :placeholder="$t('common.reason')" :rows="4" />
                         </UFormField>
                     </div>
 

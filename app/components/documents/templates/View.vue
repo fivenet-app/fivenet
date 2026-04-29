@@ -210,7 +210,7 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                     <div class="flex flex-col gap-4">
                         <UPageCard :title="$t('common.detail', 2)">
                             <UFormField :label="`${$t('common.template', 2)} ${$t('common.weight')}`">
-                                <UInputNumber type="text" name="weight" disabled :value="template.weight" class="w-full" />
+                                <UInputNumber class="w-full" type="text" name="weight" disabled :value="template.weight" />
                             </UFormField>
 
                             <UFormField v-if="template.jobAccess" :label="`${$t('common.template', 2)} ${$t('common.access')}`">
@@ -249,7 +249,7 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                             </UFormField>
 
                             <UFormField v-if="template.state" :label="$t('common.state')">
-                                <UInput type="text" name="state" disabled :value="template.state" class="w-full" />
+                                <UInput class="w-full" type="text" name="state" disabled :value="template.state" />
                             </UFormField>
 
                             <UFormField v-if="template.category" :label="$t('common.category')">
@@ -315,11 +315,11 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                                     </div>
                                 </UFormField>
 
-                                <UFormField :label="$t('common.message')" class="flex-1">
+                                <UFormField class="flex-1" :label="$t('common.message')">
                                     <UInput
+                                        class="w-full"
                                         :model-value="template.workflow?.autoCloseSettings?.message ?? $t('common.na')"
                                         disabled
-                                        class="w-full"
                                     />
                                 </UFormField>
                             </template>

@@ -17,6 +17,7 @@ module.exports = {
         '^(v-)?slot$',
         '^#',
         '^v-model$',
+        '^model-value$',
         '^v-(?!bind(:|$)|on(:|$)|html$|text$)',
         '^class$',
         '^(v-bind)?:class$',

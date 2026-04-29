@@ -542,9 +542,9 @@ const formRef = useTemplateRef('formRef');
         <template #body>
             <UForm
                 ref="formRef"
+                class="flex min-h-0 w-full flex-1 flex-col overflow-y-hidden"
                 :schema="schema"
                 :state="state"
-                class="flex min-h-0 w-full flex-1 flex-col overflow-y-hidden"
                 @submit="onSubmitThrottle"
             >
                 <DataPendingBlock
@@ -591,24 +591,24 @@ const formRef = useTemplateRef('formRef');
                                             >
                                                 <UInput
                                                     v-model="state.abbreviation"
+                                                    class="w-full"
                                                     name="abbreviation"
                                                     type="text"
                                                     size="xl"
                                                     :placeholder="$t('common.abbreviation')"
                                                     :disabled="!canDo.edit"
-                                                    class="w-full"
                                                 />
                                             </UFormField>
 
                                             <UFormField class="flex-1" name="title" :label="$t('common.title')" required>
                                                 <UInput
                                                     v-model="state.title"
+                                                    class="w-full"
                                                     name="title"
                                                     type="text"
                                                     size="xl"
                                                     :placeholder="$t('common.title')"
                                                     :disabled="!canDo.edit"
-                                                    class="w-full"
                                                 />
                                             </UFormField>
                                         </div>
@@ -617,11 +617,11 @@ const formRef = useTemplateRef('formRef');
                                             <UFormField class="flex-1" name="description" :label="$t('common.description')">
                                                 <UTextarea
                                                     v-model="state.description"
+                                                    class="w-full"
                                                     name="description"
                                                     block
                                                     :placeholder="$t('common.description')"
                                                     :disabled="!canDo.edit"
-                                                    class="w-full"
                                                 />
                                             </UFormField>
 
@@ -647,8 +647,8 @@ const formRef = useTemplateRef('formRef');
                                 <TiptapEditor
                                     v-model="state.content"
                                     v-model:files="state.files"
-                                    name="content"
                                     class="m-2 mx-auto w-full max-w-(--breakpoint-xl) flex-1"
+                                    name="content"
                                     :disabled="!canDo.edit"
                                     :saving="saving"
                                     history-type="qualification"
@@ -724,11 +724,11 @@ const formRef = useTemplateRef('formRef');
                                         <UFormField name="discordSettings.roleName" :label="$t('common.role')">
                                             <UInput
                                                 v-model="state.discordSettings.roleName"
+                                                class="w-full"
                                                 name="discordSettings.roleName"
                                                 type="text"
                                                 :placeholder="$t('common.role')"
                                                 :disabled="!canDo.edit"
-                                                class="w-full"
                                             />
                                         </UFormField>
 
@@ -802,8 +802,8 @@ const formRef = useTemplateRef('formRef');
                                     v-model:exam-mode="state.examMode"
                                     v-model:settings="state.examSettings"
                                     v-model:exam="state.exam"
-                                    :disabled="!canDo.edit"
                                     class="mx-auto max-w-(--breakpoint-xl)"
+                                    :disabled="!canDo.edit"
                                     :qualification-id="props.qualificationId"
                                     @file-uploaded="(file) => state.files.push(file)"
                                 />

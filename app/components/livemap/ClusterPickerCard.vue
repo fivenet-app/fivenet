@@ -58,8 +58,8 @@ function clicked(h: Hit): void {
                         <template v-if="h.markerMarker">
                             <UIcon
                                 v-if="h.markerMarker?.data?.data.oneofKind === 'icon'"
-                                :name="convertComponentIconNameToDynamic(h.markerMarker.data?.data.icon.icon)"
                                 class="size-5"
+                                :name="convertComponentIconNameToDynamic(h.markerMarker.data?.data.icon.icon)"
                                 :style="{ color: h.markerMarker.color ?? 'currentColor' }"
                             />
 

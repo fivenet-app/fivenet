@@ -334,6 +334,7 @@ const tomorrow = addDays(today, 1);
                             <UFormField class="flex-1" name="user" :label="$t('common.user')">
                                 <SelectMenu
                                     v-model="query.users"
+                                    class="w-full"
                                     multiple
                                     :searchable="
                                         async (q: string) =>
@@ -349,7 +350,6 @@ const tomorrow = addDays(today, 1);
                                     :placeholder="$t('common.user', 2)"
                                     trailing
                                     value-key="userId"
-                                    class="w-full"
                                 >
                                     <template #item-label="{ item }">
                                         {{ userToLabel(item) }}
@@ -362,12 +362,12 @@ const tomorrow = addDays(today, 1);
                             <UFormField class="flex-1" name="data" :label="$t('common.data')">
                                 <UInput
                                     v-model="query.search"
+                                    class="w-full"
                                     type="text"
                                     name="data"
                                     block
                                     :placeholder="$t('common.search')"
                                     leading-icon="i-mdi-search"
-                                    class="w-full"
                                     :ui="{ trailing: 'pe-1' }"
                                 >
                                     <template #trailing>
@@ -405,11 +405,11 @@ const tomorrow = addDays(today, 1);
                                         <ClientOnly>
                                             <USelectMenu
                                                 v-model="query.services"
+                                                class="w-full"
                                                 multiple
                                                 name="service"
                                                 :placeholder="$t('common.service')"
                                                 :items="grpcServices"
-                                                class="w-full"
                                             >
                                                 <template #empty>
                                                     {{ $t('common.not_found', [$t('common.service')]) }}
@@ -421,11 +421,11 @@ const tomorrow = addDays(today, 1);
                                     <UFormField class="flex-1" name="method" :label="$t('common.method')">
                                         <USelectMenu
                                             v-model="query.methods"
+                                            class="w-full"
                                             multiple
                                             name="method"
                                             :placeholder="$t('common.method')"
                                             :items="grpcMethods.filter((m) => query.services.some((s) => m.includes(s + '/')))"
-                                            class="w-full"
                                         >
                                             <template #item-label="{ item }">
                                                 {{ item.split('/').pop() }}
@@ -441,13 +441,13 @@ const tomorrow = addDays(today, 1);
                                         <ClientOnly>
                                             <USelectMenu
                                                 v-model="query.actions"
+                                                class="w-full"
                                                 multiple
                                                 name="states"
                                                 :placeholder="$t('common.state')"
                                                 :items="actionOptions"
                                                 label-key="label"
                                                 value-key="value"
-                                                class="w-full"
                                             >
                                                 <template v-if="query.actions.length" #default>
                                                     {{ actionsToLabel(query.actions) }}
@@ -464,13 +464,13 @@ const tomorrow = addDays(today, 1);
                                         <ClientOnly>
                                             <USelectMenu
                                                 v-model="query.results"
+                                                class="w-full"
                                                 multiple
                                                 name="results"
                                                 :placeholder="$t('common.result')"
                                                 :items="resultOptions"
                                                 label-key="label"
                                                 value-key="value"
-                                                class="w-full"
                                             >
                                                 <template v-if="query.actions.length" #default>
                                                     {{ resultsToLabel(query.results) }}
@@ -522,11 +522,11 @@ const tomorrow = addDays(today, 1);
                                 <div>
                                     <UTooltip :text="$t('common.expand_collapse')">
                                         <UButton
+                                            class="place-self-end"
+                                            :class="dataToggled ? 'rotate-180' : ''"
                                             icon="i-mdi-chevron-double-down"
                                             variant="link"
                                             size="sm"
-                                            class="place-self-end"
-                                            :class="dataToggled ? 'rotate-180' : ''"
                                             :ui="{
                                                 leadingIcon: 'transition-transform duration-200',
                                             }"

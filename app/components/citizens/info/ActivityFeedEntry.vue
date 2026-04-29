@@ -5,6 +5,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import { UserActivityType, type UserActivity } from '~~/gen/ts/resources/users/activity/activity';
+import { citizenUserActivityIconColor, citizenUserActivityTypeIcon } from './helpers';
 
 const props = defineProps<{
     activity: UserActivity;
@@ -20,7 +21,10 @@ const numberFormatter = useIntlNumberFormat();
         <template v-if="activity.type === UserActivityType.NAME && activity.data?.data.oneofKind === 'nameChange'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                    <UIcon class="size-full text-info-600" name="i-mdi-identification-card" />
+                    <UIcon
+                        :class="[citizenUserActivityIconColor(activity), 'size-full']"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
+                    />
                 </div>
 
                 <div class="flex-1 space-y-1">
@@ -69,10 +73,14 @@ const numberFormatter = useIntlNumberFormat();
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
                     <UIcon
                         v-if="activity.data.data.documentRelation.added"
-                        class="size-full text-info-600"
-                        name="i-mdi-file-account"
+                        :class="[citizenUserActivityIconColor(activity), 'size-full']"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
                     />
-                    <UIcon v-else class="text-base-600 size-full" name="i-mdi-file-account-outline" />
+                    <UIcon
+                        v-else
+                        :class="[citizenUserActivityIconColor(activity), 'size-full']"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
+                    />
                 </div>
 
                 <div class="flex-1 space-y-1">
@@ -130,10 +138,14 @@ const numberFormatter = useIntlNumberFormat();
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
                     <UIcon
                         v-if="activity.data.data.wantedChange.wanted"
-                        class="size-full text-error-400"
-                        name="i-mdi-bell-alert"
+                        :class="[citizenUserActivityIconColor(activity), 'size-full']"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
                     />
-                    <UIcon v-else class="size-full text-success-400" name="i-mdi-bell-sleep" />
+                    <UIcon
+                        v-else
+                        :class="[citizenUserActivityIconColor(activity), 'size-full']"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
+                    />
                 </div>
 
                 <div class="flex-1 space-y-1">
@@ -173,7 +185,10 @@ const numberFormatter = useIntlNumberFormat();
         <template v-else-if="activity.type === UserActivityType.JOB && activity.data?.data.oneofKind === 'jobChange'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                    <UIcon class="size-full text-gray-400" name="i-mdi-briefcase" />
+                    <UIcon
+                        :class="[citizenUserActivityIconColor(activity), 'size-full']"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
+                    />
                 </div>
 
                 <div class="flex-1 space-y-1">
@@ -218,14 +233,8 @@ const numberFormatter = useIntlNumberFormat();
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
                     <UIcon
-                        class="size-full"
-                        :class="
-                            activity.data.data.trafficInfractionPointsChange.old >
-                            activity.data.data.trafficInfractionPointsChange.new
-                                ? 'text-gray-400'
-                                : 'text-orange-400'
-                        "
-                        name="i-mdi-traffic-cone"
+                        :class="[citizenUserActivityIconColor(activity), 'size-full']"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
                     />
                 </div>
 
@@ -274,9 +283,8 @@ const numberFormatter = useIntlNumberFormat();
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
                     <UIcon
-                        class="size-full text-amber-400"
-                        :class="activity.data.data.mugshotChange.new ? 'text-gray-400' : 'text-amber-400'"
-                        name="i-mdi-camera-account"
+                        :class="[citizenUserActivityIconColor(activity), 'size-full']"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
                     />
                 </div>
 
@@ -315,7 +323,10 @@ const numberFormatter = useIntlNumberFormat();
         <template v-else-if="activity.type === UserActivityType.LABELS && activity.data?.data.oneofKind === 'labelsChange'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                    <UIcon class="size-full text-amber-200" name="i-mdi-tag" />
+                    <UIcon
+                        :class="[citizenUserActivityIconColor(activity), 'size-full']"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
+                    />
                 </div>
 
                 <div class="flex-1 space-y-1">
@@ -327,23 +338,41 @@ const numberFormatter = useIntlNumberFormat();
 
                             <div class="inline-flex gap-1">
                                 <UBadge
-                                    v-for="attribute in activity.data.data.labelsChange.removed"
-                                    :key="attribute.name"
+                                    v-for="label in activity.data.data.labelsChange.removed"
+                                    :key="label.name"
                                     class="justify-between gap-2 line-through"
-                                    :class="isColorBright(hexToRgb(attribute.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
-                                    :style="{ backgroundColor: attribute.color }"
+                                    :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
+                                    :style="{ backgroundColor: label.color }"
+                                    :icon="
+                                        label.icon && label.icon !== ''
+                                            ? convertComponentIconNameToDynamic(label.icon)
+                                            : undefined
+                                    "
                                 >
-                                    {{ attribute.name }}
+                                    {{ label.name }}
+                                    <span v-if="activity.data.data.labelsChange.expired"
+                                        >&nbsp;({{ $t('common.expires_at') }}:
+                                        <GenericTime :value="label.expiresAt" type="long" />)</span
+                                    >
                                 </UBadge>
 
                                 <UBadge
-                                    v-for="attribute in activity.data.data.labelsChange.added"
-                                    :key="attribute.name"
+                                    v-for="label in activity.data.data.labelsChange.added"
+                                    :key="label.name"
                                     class="justify-between gap-2"
-                                    :class="isColorBright(hexToRgb(attribute.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
-                                    :style="{ backgroundColor: attribute.color }"
+                                    :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
+                                    :style="{ backgroundColor: label.color }"
+                                    :icon="
+                                        label.icon && label.icon !== ''
+                                            ? convertComponentIconNameToDynamic(label.icon)
+                                            : undefined
+                                    "
                                 >
-                                    {{ attribute.name }}
+                                    {{ label.name }}
+                                    <span v-if="label.expiresAt"
+                                        >&nbsp;({{ $t('common.expires_at') }}:
+                                        <GenericTime :value="label.expiresAt" type="long" />)</span
+                                    >
                                 </UBadge>
                             </div>
                         </h3>
@@ -373,9 +402,8 @@ const numberFormatter = useIntlNumberFormat();
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
                     <UIcon
-                        class="size-full"
-                        :class="activity.data.data.licensesChange.added ? 'text-info-600' : 'text-amber-600'"
-                        name="i-mdi-license"
+                        :class="[citizenUserActivityIconColor(activity), 'size-full']"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
                     />
                 </div>
 
@@ -413,9 +441,17 @@ const numberFormatter = useIntlNumberFormat();
         <template v-else-if="activity.type === UserActivityType.JAIL && activity.data?.data.oneofKind === 'jailChange'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                    <UIcon v-if="activity.data.data.jailChange.seconds > 0" class="size-full" name="i-mdi-handcuffs" />
-                    <UIcon v-else-if="activity.data.data.jailChange.seconds === 0" class="size-full" name="i-mdi-door-open" />
-                    <UIcon v-else class="size-full" name="i-mdi-run-fast" />
+                    <UIcon
+                        v-if="activity.data.data.jailChange.seconds > 0"
+                        class="size-full"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
+                    />
+                    <UIcon
+                        v-else-if="activity.data.data.jailChange.seconds === 0"
+                        class="size-full"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
+                    />
+                    <UIcon v-else class="size-full" :name="citizenUserActivityTypeIcon(activity.type)" />
                 </div>
 
                 <div class="flex-1 space-y-1">
@@ -462,15 +498,19 @@ const numberFormatter = useIntlNumberFormat();
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
                     <UIcon
                         v-if="activity.data.data.fineChange.removed"
-                        class="size-full text-red-400"
-                        name="i-mdi-receipt-text-remove"
+                        :class="[citizenUserActivityIconColor(activity), 'size-full']"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
                     />
                     <UIcon
                         v-else-if="activity.data.data.fineChange.amount < 0"
-                        class="size-full text-success-400"
-                        name="i-mdi-receipt-text-check"
+                        :class="[citizenUserActivityIconColor(activity), 'size-full']"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
                     />
-                    <UIcon v-else class="size-full text-info-400" name="i-mdi-receipt-text-plus" />
+                    <UIcon
+                        v-else
+                        :class="[citizenUserActivityIconColor(activity), 'size-full']"
+                        :name="citizenUserActivityTypeIcon(activity.type)"
+                    />
                 </div>
 
                 <div class="flex-1 space-y-1">
@@ -515,7 +555,7 @@ const numberFormatter = useIntlNumberFormat();
         <template v-else>
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                    <UIcon class="size-full" name="i-mdi-help-circle" />
+                    <UIcon class="size-full" :name="citizenUserActivityTypeIcon(activity.type)" />
                 </div>
 
                 <div class="flex-1 space-y-1">

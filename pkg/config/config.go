@@ -14,6 +14,12 @@ import (
 	"golang.org/x/oauth2"
 )
 
+const (
+	CwdConfigDir       = "."
+	ContainerConfigDir = "/config"
+	SystemConfigDir    = "/etc/fivenet"
+)
+
 type Config struct {
 	Mode string `default:"release" yaml:"mode"`
 

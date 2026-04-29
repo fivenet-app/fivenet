@@ -243,8 +243,8 @@ const isOpen = ref(props.defaultOpen ?? false);
     <div v-if="attribute">
         <UCollapsible :open="isOpen" :disabled="defaultOpen">
             <UButton
-                block
                 class="group"
+                block
                 color="neutral"
                 variant="subtle"
                 trailing-icon="i-mdi-chevron-down"

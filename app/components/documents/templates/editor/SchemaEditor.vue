@@ -26,8 +26,8 @@ onBeforeMount(() => {
     <div class="flex flex-col gap-1 divide-y divide-default">
         <UFormField
             v-if="templateSchema.users"
-            :label="$t('common.citizen', 2)"
             class="pb-2"
+            :label="$t('common.citizen', 2)"
             :ui="{ label: 'font-bold', container: 'flex flex-1 flex-row gap-1' }"
         >
             <UFormField class="flex-1" name="users.required" :label="$t('common.required')">
@@ -50,8 +50,8 @@ onBeforeMount(() => {
 
         <UFormField
             v-if="templateSchema.documents"
-            :label="$t('common.document', 2)"
             class="pb-2"
+            :label="$t('common.document', 2)"
             :ui="{ label: 'font-bold', container: 'flex flex-1 flex-row gap-1' }"
         >
             <UFormField class="flex-1" name="documents.required" :label="$t('common.required')">
@@ -74,8 +74,8 @@ onBeforeMount(() => {
 
         <UFormField
             v-if="templateSchema.vehicles"
-            :label="$t('common.vehicle', 2)"
             class="pb-2"
+            :label="$t('common.vehicle', 2)"
             :ui="{ label: 'font-bold', container: 'flex flex-1 flex-row gap-1 justify-between' }"
         >
             <UFormField class="flex-1" name="vehicles.required" :label="$t('common.required')">

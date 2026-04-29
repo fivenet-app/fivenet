@@ -254,10 +254,10 @@ defineShortcuts({
                                 <UInput
                                     ref="inputRef"
                                     v-model="query.prefix"
+                                    class="w-full"
                                     type="text"
                                     name="prefix"
                                     :placeholder="$t('common.path')"
-                                    class="w-full"
                                     leading-icon="i-mdi-search"
                                 >
                                     <template #trailing>

@@ -46,8 +46,9 @@ func Load() (Result, error) {
 		v.SetConfigFile(configFile)
 	} else {
 		v.SetConfigName("config")
-		v.AddConfigPath(".")
-		v.AddConfigPath("/config")
+		v.AddConfigPath(CwdConfigDir)
+		v.AddConfigPath(ContainerConfigDir)
+		v.AddConfigPath(SystemConfigDir)
 	}
 
 	v.AutomaticEnv()

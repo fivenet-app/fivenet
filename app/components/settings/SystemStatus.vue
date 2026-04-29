@@ -35,7 +35,7 @@ async function copyVersionToClipboard() {
     >
         <template #header>
             <div class="flex items-center gap-2">
-                <UIcon name="i-mdi-server" class="size-5 text-primary" />
+                <UIcon class="size-5 text-primary" name="i-mdi-server" />
                 <h3 class="text-md flex-1 font-semibold">{{ $t('components.settings.system_status.title') }}</h3>
 
                 <UTooltip :text="$t('common.copy')">

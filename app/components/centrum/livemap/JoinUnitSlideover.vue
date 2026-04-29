@@ -78,11 +78,11 @@ const filteredUnits = computed(() => ({
                 <UFormField name="search" :label="$t('common.search')">
                     <UInput
                         v-model="queryUnit"
+                        class="w-full"
                         type="text"
                         name="search"
                         :placeholder="$t('common.search')"
                         leading-icon="i-mdi-search"
-                        class="w-full"
                     />
                 </UFormField>
 

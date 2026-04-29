@@ -128,7 +128,7 @@ const superuserItems = computed<CardElements>(() => [
                     <UCard :title="$t('components.settings.system_settings')" icon="i-mdi-administrator" variant="subtle">
                         <template #header>
                             <div class="flex items-center gap-2">
-                                <UIcon name="i-mdi-administrator" class="size-5 text-primary" />
+                                <UIcon class="size-5 text-primary" name="i-mdi-administrator" />
                                 <h3 class="text-md font-semibold">{{ $t('components.settings.system_settings') }}</h3>
                             </div>
                         </template>

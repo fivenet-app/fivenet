@@ -88,17 +88,17 @@ const formRef = useTemplateRef('formRef');
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="reason" :label="$t('common.reason')" required>
-                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
+                    <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>
 
                 <UFormField name="trafficInfractionPoints" :label="$t('common.traffic_infraction_points')">
                     <UInputNumber
                         v-model="state.trafficInfractionPoints"
+                        class="w-full"
                         :min="0"
                         :max="9999999"
                         :step="1"
                         :placeholder="$t('common.traffic_infraction_points')"
-                        class="w-full"
                     />
                 </UFormField>
             </UForm>
@@ -116,8 +116,8 @@ const formRef = useTemplateRef('formRef');
                 />
 
                 <UButton
-                    color="error"
                     class="flex-1"
+                    color="error"
                     block
                     :disabled="!canSubmit"
                     :loading="!canSubmit"

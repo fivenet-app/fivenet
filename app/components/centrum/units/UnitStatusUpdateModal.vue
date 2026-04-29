@@ -111,8 +111,8 @@ const formRef = useTemplateRef('formRef');
                         <UFormField class="grid grid-cols-2 items-center gap-2" name="code" :label="$t('common.code')">
                             <UInput
                                 v-model="state.code"
-                                type="text"
                                 class="w-full"
+                                type="text"
                                 name="code"
                                 :placeholder="$t('common.code')"
                                 :label="$t('common.code')"
@@ -120,18 +120,18 @@ const formRef = useTemplateRef('formRef');
                         </UFormField>
 
                         <UFormField
-                            name="reason"
                             class="grid grid-cols-2 items-center gap-2"
+                            name="reason"
                             :label="$t('common.reason')"
                             required
                         >
-                            <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
+                            <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                         </UFormField>
 
                         <UFormField
                             v-if="settings?.predefinedStatus && settings?.predefinedStatus.unitStatus.length > 0"
-                            name="unitStatus"
                             class="grid grid-cols-2 items-center gap-2"
+                            name="unitStatus"
                             :label="`${$t('common.predefined', 2)} ${$t('common.reason', 2)}`"
                         >
                             <ClientOnly>

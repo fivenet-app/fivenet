@@ -75,10 +75,10 @@ defineShortcuts({
                         <UInput
                             ref="inputRef"
                             v-model="query.title"
+                            class="w-full"
                             type="text"
                             name="title"
                             :placeholder="$t('common.title')"
-                            class="w-full"
                             leading-icon="i-mdi-search"
                         >
                             <template #trailing>

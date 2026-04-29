@@ -105,7 +105,7 @@ const formRef = useTemplateRef('formRef');
                     </UFormField>
 
                     <UFormField name="message" :label="$t('common.message')">
-                        <UInput v-model="state.message" type="text" :placeholder="$t('common.message')" class="w-full" />
+                        <UInput v-model="state.message" class="w-full" type="text" :placeholder="$t('common.message')" />
                     </UFormField>
 
                     <!--

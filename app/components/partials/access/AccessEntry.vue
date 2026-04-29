@@ -134,8 +134,8 @@ watch(
                 </UFormField>
 
                 <UFormField
-                    :name="`${$props.name}.type`"
                     class="h-full min-w-40 flex-initial"
+                    :name="`${$props.name}.type`"
                     :label="$t('common.type')"
                     :ui="{ label: 'md:hidden' }"
                 >
@@ -304,8 +304,8 @@ watch(
         <UFormField class="md:mt-1" :ui="{ container: 'flex justify-end-safe md:inline' }">
             <UTooltip v-if="!disabled" :text="$t('components.access.remove_entry')">
                 <UButton
-                    color="red"
                     class="flex-initial"
+                    color="red"
                     icon="i-mdi-remove"
                     :label="$t('components.access.remove_entry')"
                     :ui="{ label: 'md:hidden' }"

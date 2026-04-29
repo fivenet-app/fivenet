@@ -134,10 +134,10 @@ const mount = ref(false);
                                         <UInput
                                             ref="input"
                                             v-model="query.postal"
+                                            class="w-full"
                                             type="text"
                                             name="postal"
                                             :placeholder="$t('common.postal')"
-                                            class="w-full"
                                         >
                                             <template #trailing>
                                                 <UKbd value="/" />
@@ -148,12 +148,12 @@ const mount = ref(false);
                                     <UFormField class="flex-1" name="id" :label="$t('common.id')">
                                         <UInput
                                             v-model="query.id"
+                                            class="w-full"
                                             type="text"
                                             name="id"
                                             :min="1"
                                             :max="99999999999"
                                             :placeholder="$t('common.id')"
-                                            class="w-full"
                                         />
                                     </UFormField>
                                 </UForm>

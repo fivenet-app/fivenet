@@ -356,6 +356,7 @@ tables:
     #    `updated_at` AS `vehicle.updated_at`
     #  FROM
     #    `owned_vehicles`
+    #  $whereCondition
     #  ORDER BY `vehicle.updated_at` ASC, `vehicle.plate` ASC
     #  LIMIT $limit;
     #

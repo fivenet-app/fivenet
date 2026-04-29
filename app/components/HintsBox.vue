@@ -50,12 +50,12 @@ const hints = computed(() =>
     >
         <UCarousel
             v-slot="{ item: hint }"
+            class="mb-4"
             :items="hints"
             dots
             loop
             :autoplay="{ delay: 7500 }"
             :ui="{ dots: '-bottom-6' }"
-            class="mb-4"
         >
             <div class="box-border w-full min-w-0">
                 <div class="flex min-w-0 flex-wrap items-center gap-3 overflow-hidden">

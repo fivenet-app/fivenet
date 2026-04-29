@@ -144,10 +144,10 @@ const formRef = useTemplateRef('formRef');
                             <UFormField name="name">
                                 <UInput
                                     v-model="state.name"
+                                    class="w-full"
                                     type="text"
                                     name="name"
                                     :placeholder="$t('common.name')"
-                                    class="w-full"
                                 />
                             </UFormField>
                         </dd>
@@ -162,10 +162,10 @@ const formRef = useTemplateRef('formRef');
                             <UFormField name="description">
                                 <UInput
                                     v-model="state.description"
+                                    class="w-full"
                                     type="text"
                                     name="description"
                                     :placeholder="$t('common.description')"
-                                    class="w-full"
                                 />
                             </UFormField>
                         </dd>
@@ -206,11 +206,11 @@ const formRef = useTemplateRef('formRef');
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.markerType"
+                                        class="w-full"
                                         name="markerType"
                                         :items="markerTypes"
                                         value-key="value"
                                         :search-input="{ placeholder: $t('common.search_field') }"
-                                        class="w-full"
                                     >
                                         <template #default>
                                             {{ $t(`enums.livemap.MarkerType.${MarkerType[state.markerType ?? 0]}`) }}
@@ -238,11 +238,11 @@ const formRef = useTemplateRef('formRef');
                             <UFormField name="circleRadius">
                                 <UInputNumber
                                     v-model="state.circleRadius"
+                                    class="w-full"
                                     name="circleRadius"
                                     :min="5"
                                     :max="250"
                                     :placeholder="$t('common.radius')"
-                                    class="w-full"
                                 />
                             </UFormField>
                         </dd>
@@ -259,7 +259,7 @@ const formRef = useTemplateRef('formRef');
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="icon">
-                                <IconSelectMenu v-model="state.icon" :hex-color="state.color" class="w-full" />
+                                <IconSelectMenu v-model="state.icon" class="w-full" :hex-color="state.color" />
                             </UFormField>
                         </dd>
                     </div>

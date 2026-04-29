@@ -70,7 +70,7 @@ async function getTemplate(): Promise<Template> {
             <div v-else class="mx-auto w-full max-w-(--breakpoint-xl)">
                 <div class="mb-2">
                     <UFormField name="title" :label="$t('common.title')">
-                        <UInput :model-value="template?.title" type="text" size="xl" class="w-full" disabled />
+                        <UInput class="w-full" :model-value="template?.title" type="text" size="xl" disabled />
                     </UFormField>
 
                     <div class="flex flex-row gap-2">
@@ -80,7 +80,7 @@ async function getTemplate(): Promise<Template> {
                         </UFormField>
 
                         <UFormField class="flex-1" name="state" :label="$t('common.state')">
-                            <UInput :model-value="template?.state" type="text" class="w-full" disabled />
+                            <UInput class="w-full" :model-value="template?.state" type="text" disabled />
                         </UFormField>
                     </div>
                 </div>

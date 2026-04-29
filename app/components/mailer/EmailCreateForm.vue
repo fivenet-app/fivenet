@@ -240,7 +240,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </UFormField>
 
         <UFormField v-if="!hideLabel" name="label" :label="$t('common.label')">
-            <UInput v-model="state.label" type="text" :disabled="disabled" class="w-full" />
+            <UInput v-model="state.label" class="w-full" type="text" :disabled="disabled" />
         </UFormField>
 
         <UFormField

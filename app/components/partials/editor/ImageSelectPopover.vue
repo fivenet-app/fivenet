@@ -155,7 +155,7 @@ const formRef = useTemplateRef('formRef');
 
                 <UForm ref="formRef" :schema="schema" :state="imageState" @submit="onSubmitThrottle">
                     <UFormField name="url" :label="$t('components.partials.tiptap_editor.url')">
-                        <UInput v-model="imageState.url" type="text" name="url" class="w-full" :disabled="disabled" />
+                        <UInput v-model="imageState.url" class="w-full" type="text" name="url" :disabled="disabled" />
                     </UFormField>
 
                     <UFormField class="mt-2 w-full">

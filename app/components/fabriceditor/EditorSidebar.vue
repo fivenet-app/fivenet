@@ -132,28 +132,28 @@ const updateCurvedTextFillColor = (val: string) => {
                 <div v-if="activeObject.isType('textbox')" class="flex flex-col gap-2">
                     <UFormField :label="$t('common.content')">
                         <UInput
+                            class="w-full"
                             type="text"
                             :model-value="(activeObject as Textbox).text"
-                            class="w-full"
                             @update:model-value="updateText($event)"
                         />
                     </UFormField>
 
                     <UFormField :label="$t('components.partials.tiptap_editor.font_size')">
                         <UInputNumber
+                            class="w-full"
                             :model-value="(activeObject as Textbox).fontSize"
                             :min="8"
                             :max="100"
                             :step="1"
-                            class="w-full"
                             @update:model-value="($event) => updateFontSize($event ?? 0)"
                         />
                     </UFormField>
 
                     <UFormField :label="$t('components.partials.tiptap_editor.font_family')">
                         <UInputMenu
-                            :model-value="(activeObject as Textbox).fontFamily"
                             class="w-full"
+                            :model-value="(activeObject as Textbox).fontFamily"
                             name="selectedFont"
                             :filter-fields="['label']"
                             :items="
@@ -175,8 +175,8 @@ const updateCurvedTextFillColor = (val: string) => {
 
                     <UFormField label="Text Color">
                         <ColorPicker
-                            :model-value="typeof activeObject.fill === 'string' ? activeObject.fill : '#000000'"
                             class="w-full"
+                            :model-value="typeof activeObject.fill === 'string' ? activeObject.fill : '#000000'"
                             @update:model-value="updateFillColor($event ?? '#000000')"
                         />
                     </UFormField>
@@ -185,27 +185,27 @@ const updateCurvedTextFillColor = (val: string) => {
                 <div v-else-if="activeObject.isType('curved-text')" class="flex flex-col gap-2">
                     <UFormField :label="$t('common.content')">
                         <UInput
+                            class="w-full"
                             type="text"
                             :model-value="(activeObject as FabricCurvedText).text"
-                            class="w-full"
                             @update:model-value="updateCurvedText($event)"
                         />
                     </UFormField>
 
                     <UFormField :label="$t('components.partials.tiptap_editor.font_size')">
                         <UInputNumber
+                            class="w-full"
                             :model-value="(activeObject as FabricCurvedText).options?.fontSize ?? 16"
                             :min="8"
                             :max="100"
-                            class="w-full"
                             @update:model-value="($event) => updateCurvedTextFontSize($event ?? 0)"
                         />
                     </UFormField>
 
                     <UFormField :label="$t('components.partials.tiptap_editor.font_family')">
                         <UInputMenu
-                            :model-value="(activeObject as FabricCurvedText).options?.fontFamily"
                             class="w-full"
+                            :model-value="(activeObject as FabricCurvedText).options?.fontFamily"
                             name="selectedFont"
                             :filter-fields="['label']"
                             :items="fonts"
@@ -230,12 +230,12 @@ const updateCurvedTextFillColor = (val: string) => {
                         {{ (activeObject as FabricCurvedText).fill }}
 
                         <ColorPicker
+                            class="w-full"
                             :model-value="
                                 typeof (activeObject as FabricCurvedText).fill === 'string'
                                     ? ((activeObject as FabricCurvedText).fill as string)
                                     : '#000000'
                             "
-                            class="w-full"
                             @update:model-value="updateCurvedTextFillColor($event ?? '#000000')"
                         />
                     </UFormField>
@@ -245,57 +245,57 @@ const updateCurvedTextFillColor = (val: string) => {
                 <div v-else-if="activeObject.isType('rect', 'circle')" class="flex flex-col gap-2">
                     <UFormField label="Fill Color">
                         <ColorPicker
+                            class="w-full"
                             :model-value="
                                 typeof activeObject.fill === 'string' && !activeObject.fill.includes('url(')
                                     ? activeObject.fill
                                     : '#000000'
                             "
-                            class="w-full"
                             @update:model-value="updateFillColor($event ?? '#000000')"
                         />
                     </UFormField>
 
                     <UFormField label="Stroke Color">
                         <ColorPicker
+                            class="w-full"
                             :model-value="
                                 typeof activeObject.stroke === 'string' && !activeObject.stroke.includes('url(')
                                     ? activeObject.stroke
                                     : '#000000'
                             "
-                            class="w-full"
                             @update:model-value="updateStrokeColor($event ?? '#000000')"
                         />
                     </UFormField>
 
                     <UFormField label="Stroke Width">
                         <USlider
+                            class="w-full"
                             :model-value="activeObject.strokeWidth"
                             :min="0"
                             :step="1"
                             :max="24"
-                            class="w-full"
                             @update:model-value="updateStrokeWidth($event ?? 0)"
                         />
                     </UFormField>
 
                     <UFormField label="Stroke Pattern">
                         <USelectMenu
+                            class="w-full"
                             :model-value="activeObject.strokeDashArray"
                             :items="strokeDashes"
                             label-key="name"
                             value-key="value"
-                            class="w-full"
                             @update:model-value="updateStrokeDash($event)"
                         />
                     </UFormField>
 
                     <UFormField label="Opacity">
                         <USlider
+                            class="w-full"
                             :min="0"
                             :max="1"
                             :step="0.1"
                             :model-value="activeObject.opacity ?? 1"
-                            class="w-full"
                             @update:model-value="updateOpacity($event ?? 1)"
                         />
                     </UFormField>
@@ -303,10 +303,10 @@ const updateCurvedTextFillColor = (val: string) => {
                     <UFormField label="Pattern">
                         <USelectMenu
                             v-model="selectedPattern"
+                            class="w-full"
                             :items="svgPatterns"
                             label-key="name"
                             value-key="value"
-                            class="w-full"
                         />
                     </UFormField>
 
@@ -318,11 +318,11 @@ const updateCurvedTextFillColor = (val: string) => {
                 <div v-else-if="activeObject.isType('image')" class="flex flex-col gap-2">
                     <UFormField label="Opacity">
                         <USlider
+                            class="w-full"
                             :min="0"
                             :max="1"
                             :step="0.1"
                             :model-value="activeObject.opacity ?? 1"
-                            class="w-full"
                             @update:model-value="updateOpacity($event ?? 1)"
                         />
                     </UFormField>
@@ -332,9 +332,9 @@ const updateCurvedTextFillColor = (val: string) => {
                 <div v-else-if="activeObject.isType('html-input')" class="flex flex-col gap-2">
                     <UFormField label="Name" required>
                         <UInput
+                            class="w-full"
                             type="text"
                             :model-value="(activeObject as FabricHtmlInput).name"
-                            class="w-full"
                             @update:model-value="
                                 (val) => {
                                     (activeObject as FabricHtmlInput)!.name = val;
@@ -346,6 +346,7 @@ const updateCurvedTextFillColor = (val: string) => {
 
                     <UFormField label="Input Type">
                         <USelectMenu
+                            class="w-full"
                             :model-value="(activeObject as FabricHtmlInput).inputType"
                             :items="[
                                 { name: $t('components.fabric_editor.input_types.text'), value: 'text' },
@@ -359,7 +360,6 @@ const updateCurvedTextFillColor = (val: string) => {
                             ]"
                             label-key="name"
                             value-key="value"
-                            class="w-full"
                             @update:model-value="
                                 (val) => {
                                     (activeObject as FabricHtmlInput)!.inputType = val;
@@ -372,9 +372,9 @@ const updateCurvedTextFillColor = (val: string) => {
 
                     <UFormField v-if="(activeObject as FabricHtmlInput).inputType !== 'checkbox'" label="Placeholder">
                         <UInput
+                            class="w-full"
                             type="text"
                             :model-value="(activeObject as FabricHtmlInput).placeholder"
-                            class="w-full"
                             @update:model-value="
                                 (val) => {
                                     (activeObject as FabricHtmlInput)!.placeholder = val;
@@ -386,18 +386,18 @@ const updateCurvedTextFillColor = (val: string) => {
 
                     <UFormField :label="$t('components.partials.tiptap_editor.font_size')">
                         <UInputNumber
+                            class="w-full"
                             :model-value="(activeObject as Textbox).fontSize"
                             :min="8"
                             :max="100"
-                            class="w-full"
                             @update:model-value="($event) => updateFontSize($event ?? 0)"
                         />
                     </UFormField>
 
                     <UFormField :label="$t('components.partials.tiptap_editor.font_family')">
                         <UInputMenu
-                            :model-value="(activeObject as Textbox).fontFamily"
                             class="w-full"
+                            :model-value="(activeObject as Textbox).fontFamily"
                             name="selectedFont"
                             :filter-fields="['label']"
                             :items="fonts"
@@ -420,8 +420,8 @@ const updateCurvedTextFillColor = (val: string) => {
 
                     <UFormField label="Text Color">
                         <ColorPicker
-                            :model-value="typeof activeObject.fill === 'string' ? activeObject.fill : '#000000'"
                             class="w-full"
+                            :model-value="typeof activeObject.fill === 'string' ? activeObject.fill : '#000000'"
                             @update:model-value="updateFillColor($event ?? '#000000')"
                         />
                     </UFormField>
@@ -437,6 +437,7 @@ const updateCurvedTextFillColor = (val: string) => {
 
                     <UFormField v-if="(activeObject as FabricHtmlInput).inputType === 'checkbox'" label="Checkbox Style">
                         <USelectMenu
+                            class="w-full"
                             :model-value="(activeObject as FabricHtmlInput).fieldProps.mark || 'check'"
                             :items="[
                                 { name: 'Checkmark', value: 'check' },
@@ -445,7 +446,6 @@ const updateCurvedTextFillColor = (val: string) => {
                             ]"
                             label-key="name"
                             value-key="value"
-                            class="w-full"
                             @update:model-value="
                                 (val) => {
                                     (activeObject as FabricHtmlInput)!.fieldProps.mark = val;

@@ -8,9 +8,9 @@ defineProps<{
 
 <template>
     <UNavigationMenu
+        class="mt-1 sm:mt-0"
         orientation="vertical"
         :items="items"
-        class="mt-1 sm:mt-0"
         highlight
         color="primary"
         :ui="{ link: 'data-[active=]:font-bold' }"

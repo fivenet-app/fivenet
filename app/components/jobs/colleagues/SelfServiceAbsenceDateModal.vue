@@ -139,9 +139,9 @@ const formRef = useTemplateRef('formRef');
 <template>
     <UModal :title="$t('components.jobs.self_service.set_absence_date')">
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
+            <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField name="reason" :label="$t('common.reason')" required>
-                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
+                    <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>
 
                 <UFormField name="absenceBegin" :label="$t('common.time_range')">
@@ -161,8 +161,8 @@ const formRef = useTemplateRef('formRef');
                 <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UButton
-                    color="error"
                     class="flex-1"
+                    color="error"
                     block
                     :disabled="!canSubmit || (!userProps?.absenceBegin && !userProps?.absenceEnd)"
                     :loading="!canSubmit"

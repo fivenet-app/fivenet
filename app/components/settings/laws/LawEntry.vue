@@ -94,7 +94,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </UFormField>
 
             <UFormField class="flex-1 text-sm font-medium" :label="$t('common.law')" name="name">
-                <UInput v-model="state.name" name="name" type="text" class="w-full" :placeholder="$t('common.law')" />
+                <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.law')" />
             </UFormField>
         </div>
 
@@ -140,15 +140,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UFormField :label="$t('common.description')" name="description">
             <UTextarea
                 v-model="state.description"
+                class="w-full"
                 name="description"
                 type="text"
-                class="w-full"
                 :placeholder="$t('common.description')"
             />
         </UFormField>
 
         <UFormField :label="$t('common.hint')" name="hint">
-            <UTextarea v-model="state.hint" name="hint" type="text" class="w-full" :placeholder="$t('common.hint')" />
+            <UTextarea v-model="state.hint" class="w-full" name="hint" type="text" :placeholder="$t('common.hint')" />
         </UFormField>
     </UForm>
 </template>

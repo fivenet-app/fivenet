@@ -77,9 +77,9 @@ const formRef = useTemplateRef('formRef');
                 <UFormField class="flex-1" name="userComment" :label="$t('common.message')">
                     <UTextarea
                         v-model="state.userComment"
+                        class="w-full"
                         name="userComment"
                         :placeholder="$t('common.message')"
-                        class="w-full"
                     />
                 </UFormField>
             </UForm>

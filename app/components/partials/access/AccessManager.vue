@@ -232,10 +232,10 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             :disabled="disabled"
             :show-required="showRequired"
             :jobs="jobsList"
-            v-bind="$attrs"
             :hide-grade="hideGrade"
             :hide-jobs="hideJobs"
             :name="`${$props.name}${fullName ? '' : `.${entry.type}s`}.${idx}`"
+            v-bind="$attrs"
             @delete="access?.splice(idx, 1)"
         />
 

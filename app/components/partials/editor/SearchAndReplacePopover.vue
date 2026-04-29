@@ -90,7 +90,7 @@ const replaceAll = () => props.editor?.commands.replaceAll();
 
         <template #content>
             <div class="flex gap-0.5 p-4">
-                <UForm :state="searchAndReplace" class="flex flex-col gap-2">
+                <UForm class="flex flex-col gap-2" :state="searchAndReplace">
                     <UFormField name="search" :label="$t('common.search')">
                         <UInput v-model="searchAndReplace.search" class="w-full" :disabled="disabled" />
                     </UFormField>

@@ -10,6 +10,7 @@ import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { UserActivityType } from '~~/gen/ts/resources/users/activity/activity';
 import type { ListUserActivityResponse } from '~~/gen/ts/services/citizens/citizens';
+import { citizenUserActivityTypeBGColor, citizenUserActivityTypeIcon } from './helpers';
 
 const props = defineProps<{
     userId: number;
@@ -31,7 +32,15 @@ const activityTypes = Object.keys(UserActivityType)
         }
         return true;
     });
-const options = activityTypes.map((at) => ({ label: t(`enums.users.UserActivityType.${UserActivityType[at]}`), value: at }));
+
+const options = activityTypes.map((at) => ({
+    label: t(`enums.users.UserActivityType.${UserActivityType[at]}`),
+    icon: citizenUserActivityTypeIcon(at),
+    value: at,
+    ui: {
+        itemLeadingIcon: citizenUserActivityTypeBGColor(at),
+    },
+}));
 
 const schema = z.object({
     types: z.enum(UserActivityType).array().max(activityTypes.length).default(activityTypes),

@@ -110,10 +110,10 @@ const smallerThanSm = breakpoints.smaller('sm');
 <template>
     <UPopover>
         <UButton
+            class="inline-flex w-full gap-2"
             color="neutral"
             variant="subtle"
             :icon="smallerThanSm ? undefined : 'i-mdi-calendar'"
-            class="inline-flex w-full gap-2"
             block
         >
             <template v-if="modelValue?.start">
@@ -135,15 +135,15 @@ const smallerThanSm = breakpoints.smaller('sm');
                     v-model="internalModelValue"
                     class="p-1"
                     :number-of-months="smallerThanSm ? 1 : 2"
-                    v-bind="$attrs"
                     range
+                    v-bind="$attrs"
                 />
 
                 <UForm
                     v-if="time"
+                    class="flex w-full flex-col items-center justify-center gap-2 pb-2 md:flex-row"
                     :schema="{}"
                     :state="state"
-                    class="flex w-full flex-col items-center justify-center gap-2 pb-2 md:flex-row"
                 >
                     <div class="flex flex-1 items-center justify-center">
                         <UFormField :label="$t('common.from')">

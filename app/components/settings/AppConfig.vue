@@ -548,9 +548,9 @@ const formRef = useTemplateRef('formRef');
                                             <ClientOnly>
                                                 <USelectMenu
                                                     v-model="state.perms.default[idx]!.category"
+                                                    class="w-full"
                                                     :placeholder="$t('common.service')"
                                                     :items="GRPCServices"
-                                                    class="w-full"
                                                 >
                                                     <template v-if="state.perms.default[idx]!.category" #default>
                                                         {{ $t(`perms.${state.perms.default[idx]!.category}.category`) }}
@@ -570,13 +570,13 @@ const formRef = useTemplateRef('formRef');
                                         <UFormField class="flex-1" :name="`perms.default.${idx}.name`">
                                             <USelectMenu
                                                 v-model="state.perms.default[idx]!.name"
+                                                class="w-full"
                                                 :placeholder="$t('common.method')"
                                                 :items="
                                                     GRPCServiceMethods.filter((m) =>
                                                         m.startsWith(state.perms.default[idx]!.category + '/'),
                                                     ).map((m) => m.split('/').at(1) ?? m)
                                                 "
-                                                class="w-full"
                                                 :disabled="!state.perms.default[idx]?.category"
                                             >
                                                 <template v-if="state.perms.default[idx]!.name" #default>
@@ -686,12 +686,12 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <USelectMenu
                                     v-model="state.jobInfo.unemployedJob.name"
+                                    class="w-full"
                                     :placeholder="$t('common.job')"
                                     :items="jobs ?? []"
                                     value-key="name"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     :filter-fields="['label', 'name']"
-                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -702,6 +702,7 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <UInputNumber
                                     v-model="state.jobInfo.unemployedJob.grade"
+                                    class="w-full"
                                     :min="
                                         jobs?.find((j) => j.name === state.jobInfo.unemployedJob.name)?.grades?.[0]?.grade ?? 0
                                     "
@@ -712,7 +713,6 @@ const formRef = useTemplateRef('formRef');
                                     name="jobInfoUnemployedGrade"
                                     :placeholder="$t('common.rank')"
                                     :label="$t('common.rank')"
-                                    class="w-full"
                                 />
                             </UFormField>
                         </UPageCard>
@@ -729,12 +729,12 @@ const formRef = useTemplateRef('formRef');
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.jobInfo.publicJobs"
+                                        class="w-full"
                                         multiple
                                         :items="jobs ?? []"
                                         value-key="name"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         :filter-fields="['label', 'name']"
-                                        class="w-full"
                                     >
                                         <template #default>
                                             <span v-if="state.jobInfo.publicJobs.length" class="truncate">{{
@@ -758,12 +758,12 @@ const formRef = useTemplateRef('formRef');
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.jobInfo.hiddenJobs"
+                                        class="w-full"
                                         multiple
                                         :items="jobs ?? []"
                                         value-key="name"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         :filter-fields="['label', 'name']"
-                                        class="w-full"
                                     >
                                         <template #default>
                                             <span v-if="state.jobInfo.hiddenJobs.length" class="truncate">{{
@@ -792,11 +792,11 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <InputDurationPicker
                                     v-model="state.userTracker.refreshTime"
+                                    class="w-full"
                                     :units="['second']"
                                     :min="secondsToDuration(1)"
                                     :step="0.01"
                                     :max="secondsToDuration(15 * 60 * 60)"
-                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -807,11 +807,11 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <InputDurationPicker
                                     v-model="state.userTracker.dbRefreshTime"
+                                    class="w-full"
                                     :units="['second']"
                                     :min="secondsToDuration(1)"
                                     :step="0.01"
                                     :max="secondsToDuration(15 * 60 * 60)"
-                                    class="w-full"
                                 />
                             </UFormField>
                         </UPageCard>
@@ -837,11 +837,11 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <InputDurationPicker
                                     v-model="state.discord.syncInterval"
+                                    class="w-full"
                                     :units="['minute', 'second']"
                                     :step="1"
                                     :min="minDiscordSyncInterval"
                                     :max="maxDiscordSyncInterval"
-                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -852,9 +852,9 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <UInput
                                     v-model="state.discord.botId"
+                                    class="w-full"
                                     type="text"
                                     :placeholder="$t('components.settings.app_config.discord.bot_id')"
-                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -865,9 +865,9 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <UInput
                                     v-model="state.discord.botPermissions"
+                                    class="w-full"
                                     type="text"
                                     :placeholder="$t('components.settings.app_config.discord.bot_permissions')"
-                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -879,12 +879,12 @@ const formRef = useTemplateRef('formRef');
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.discord.ignoredJobs"
+                                        class="w-full"
                                         multiple
                                         :items="jobs ?? []"
                                         value-key="name"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         :filter-fields="['label', 'name']"
-                                        class="w-full"
                                     >
                                         <template #default>
                                             <span v-if="state.discord.ignoredJobs.length > 0" class="truncate">{{
@@ -913,10 +913,10 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <USelectMenu
                                     v-model="state.discord.botPresence.type"
+                                    class="w-full"
                                     :items="botPresenceTypes"
                                     value-key="mode"
                                     :placeholder="$t('components.settings.app_config.discord.bot_presence.type')"
-                                    class="w-full"
                                 >
                                     <template #default>
                                         {{
@@ -943,9 +943,9 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <UInput
                                     v-model="state.discord.botPresence.status"
+                                    class="w-full"
                                     type="text"
                                     :placeholder="$t('common.status')"
-                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -956,9 +956,9 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <UInput
                                     v-model="state.discord.botPresence.url"
+                                    class="w-full"
                                     type="text"
                                     :placeholder="$t('components.settings.app_config.discord.bot_presence.url')"
-                                    class="w-full"
                                 />
                             </UFormField>
                         </UPageCard>
@@ -982,11 +982,11 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <InputDurationPicker
                                     v-model="state.game.maxWantedDurationUser"
+                                    class="w-full"
                                     :units="['day']"
                                     :min="secondsToDuration(24 * 60 * 60)"
                                     :step="1"
                                     :max="secondsToDuration(3650 * 24 * 60 * 60)"
-                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -1003,11 +1003,11 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <InputDurationPicker
                                     v-model="state.game.maxWantedDurationVehicle"
+                                    class="w-full"
                                     :units="['day']"
                                     :min="secondsToDuration(24 * 60 * 60)"
                                     :step="1"
                                     :max="secondsToDuration(3650 * 24 * 60 * 60)"
-                                    class="w-full"
                                 />
                             </UFormField>
                         </UPageCard>
@@ -1022,12 +1022,12 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <UInputNumber
                                     v-model="state.quickButtons.penaltyCalculator.maxCount"
+                                    class="w-full"
                                     :min="1"
                                     :max="100"
                                     :placeholder="
                                         $t('components.settings.app_config.quick_buttons.penalty_calculator.max_count')
                                     "
-                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -1037,10 +1037,10 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <UInputNumber
                                     v-model="state.quickButtons.penaltyCalculator.maxLeeway"
+                                    class="w-full"
                                     :min="1"
                                     :step="1"
                                     :max="99"
-                                    class="w-full"
                                     :format-options="{ style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 0 }"
                                 />
                             </UFormField>
@@ -1059,31 +1059,32 @@ const formRef = useTemplateRef('formRef');
                                 :ui="{ container: 'flex w-full flex-row gap-2' }"
                             >
                                 <UFormField
+                                    class="flex-1"
                                     :label="$t('common.singular')"
                                     name="quickButtons.penaltyCalculator.detentionTimeUnit.singular"
-                                    class="flex-1"
                                 >
                                     <UInput
                                         v-model="state.quickButtons.penaltyCalculator.detentionTimeUnit!.singular"
-                                        type="text"
                                         class="w-full"
+                                        type="text"
                                     />
                                 </UFormField>
 
                                 <UFormField
+                                    class="flex-1"
                                     :label="$t('common.plural')"
                                     name="quickButtons.penaltyCalculator.detentionTimeUnit.plural"
-                                    class="flex-1"
                                 >
                                     <UInput
                                         v-model="state.quickButtons.penaltyCalculator.detentionTimeUnit!.plural"
-                                        type="text"
                                         class="w-full"
+                                        type="text"
                                     />
                                 </UFormField>
                             </UFormField>
 
                             <UFormField
+                                class="flex-1"
                                 :label="
                                     $t('components.settings.app_config.quick_buttons.penalty_calculator.warn_settings.title')
                                 "
@@ -1092,7 +1093,6 @@ const formRef = useTemplateRef('formRef');
                                         'components.settings.app_config.quick_buttons.penalty_calculator.warn_settings.description',
                                     )
                                 "
-                                class="flex-1"
                             >
                                 <UFormField name="quickButtons.penaltyCalculator.warnSettings.enabled">
                                     <USwitch v-model="state.quickButtons.penaltyCalculator.warnSettings!.enabled" />
@@ -1112,12 +1112,13 @@ const formRef = useTemplateRef('formRef');
                                 >
                                     <div class="flex gap-2 sm:flex-row">
                                         <UFormField
+                                            class="flex-1"
                                             :label="$t('common.fine', 2)"
                                             name="quickButtons.penaltyCalculator.warnSettings.fine"
-                                            class="flex-1"
                                         >
                                             <UInputNumber
                                                 v-model="state.quickButtons.penaltyCalculator.warnSettings!.fine"
+                                                class="w-full"
                                                 :min="0"
                                                 :step="1000"
                                                 :format-options="{
@@ -1127,33 +1128,32 @@ const formRef = useTemplateRef('formRef');
                                                     currencySign: 'accounting',
                                                     maximumFractionDigits: 0,
                                                 }"
-                                                class="w-full"
                                             />
                                         </UFormField>
 
                                         <UFormField
+                                            class="flex-1"
                                             :label="$t('common.detention_time', 2)"
                                             name="quickButtons.penaltyCalculator.warnSettings.detentionTime"
-                                            class="flex-1"
                                         >
                                             <UInputNumber
                                                 v-model="state.quickButtons.penaltyCalculator.warnSettings!.detentionTime"
+                                                class="w-full"
                                                 :min="0"
                                                 :step="1"
-                                                class="w-full"
                                             />
                                         </UFormField>
 
                                         <UFormField
+                                            class="flex-1"
                                             :label="$t('common.traffic_infraction_points', 2)"
                                             name="quickButtons.penaltyCalculator.warnSettings.stvoPoints"
-                                            class="flex-1"
                                         >
                                             <UInputNumber
                                                 v-model="state.quickButtons.penaltyCalculator.warnSettings!.stvoPoints"
+                                                class="w-full"
                                                 :min="0"
                                                 :step="1"
-                                                class="w-full"
                                             />
                                         </UFormField>
                                     </div>
@@ -1208,11 +1208,11 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <USelectMenu
                                     v-model="state.defaultLocale"
+                                    class="w-full"
                                     :placeholder="$t('common.language', 1)"
                                     :items="locales"
                                     label-key="name"
                                     :icon="state.defaultLocale?.icon"
-                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -1223,6 +1223,7 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <USelectMenu
                                     v-model="state.display.intlLocale"
+                                    class="w-full"
                                     :placeholder="$t('components.settings.app_config.display.intl_locale')"
                                     :items="intlLocales"
                                     label-key="name"
@@ -1232,7 +1233,6 @@ const formRef = useTemplateRef('formRef');
                                             ? intlLocales?.find((l) => l.code === state.display.intlLocale)?.icon
                                             : undefined
                                     "
-                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -1243,6 +1243,7 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <USelectMenu
                                     v-model="state.display.currencyName"
+                                    class="w-full"
                                     :placeholder="$t('common.currency')"
                                     :items="currencies"
                                     label-key="name"
@@ -1252,7 +1253,6 @@ const formRef = useTemplateRef('formRef');
                                             ? currencies?.find((c) => c.code === state.display.currencyName)?.flag
                                             : undefined
                                     "
-                                    class="w-full"
                                 />
                             </UFormField>
                         </UPageCard>
@@ -1268,10 +1268,10 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <UInput
                                     v-model="state.website.links.privacyPolicy"
+                                    class="w-full"
                                     type="text"
                                     :placeholder="$t('common.privacy_policy')"
                                     maxlength="255"
-                                    class="w-full"
                                 />
                             </UFormField>
 
@@ -1282,10 +1282,10 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <UInput
                                     v-model="state.website.links.imprint"
+                                    class="w-full"
                                     type="text"
                                     :placeholder="$t('common.imprint')"
                                     maxlength="255"
-                                    class="w-full"
                                 />
                             </UFormField>
                         </UPageCard>

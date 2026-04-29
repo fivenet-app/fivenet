@@ -55,30 +55,31 @@ onBeforeMount(async () => listJobs());
             <div class="flex flex-1 flex-col gap-1">
                 <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
                     <UFormField
-                        name="ruleKind"
                         class="min-w-40 flex-initial"
+                        name="ruleKind"
                         :label="$t('components.documents.approval.policy_form.rule_kind')"
                     >
                         <USelectMenu
                             v-model="task.ruleKind"
+                            class="w-full"
                             :items="[
                                 { label: $t('common.user'), value: ApprovalAssigneeKind.USER },
                                 { label: $t('common.job'), value: ApprovalAssigneeKind.JOB_GRADE },
                             ]"
                             value-key="value"
-                            class="w-full"
                             :disabled="disabled"
                         />
                     </UFormField>
 
                     <UFormField
                         v-if="task.ruleKind === ApprovalAssigneeKind.USER"
-                        name="ruleKind"
                         class="flex-1"
+                        name="ruleKind"
                         :label="$t('common.target')"
                     >
                         <SelectMenu
                             v-model="task.userId"
+                            class="w-full"
                             :searchable="
                                 async (q: string) => {
                                     const users = await completorStore.completeCitizens({
@@ -94,7 +95,6 @@ onBeforeMount(async () => listJobs());
                             block
                             :placeholder="$t('common.target')"
                             trailing
-                            class="w-full"
                             value-key="userId"
                             :disabled="disabled"
                         >
@@ -113,15 +113,15 @@ onBeforeMount(async () => listJobs());
                     </UFormField>
 
                     <template v-else-if="task.ruleKind === ApprovalAssigneeKind.JOB_GRADE">
-                        <UFormField name="job" class="flex-1" :label="$t('common.job')">
+                        <UFormField class="flex-1" name="job" :label="$t('common.job')">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="task.job"
+                                    class="w-full"
                                     :items="jobs ?? []"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     :filter-fields="['label', 'name']"
                                     value-key="name"
-                                    class="w-full"
                                     :disabled="disabled"
                                 >
                                     <template #empty>
@@ -131,14 +131,14 @@ onBeforeMount(async () => listJobs());
                             </ClientOnly>
                         </UFormField>
 
-                        <UFormField name="minimumGrade" class="flex-1" :label="$t('common.job_grade')">
+                        <UFormField class="flex-1" name="minimumGrade" :label="$t('common.job_grade')">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="task.minimumGrade"
+                                    class="w-full"
                                     :items="jobs.find((j) => j.name === task.job)?.grades ?? []"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     value-key="grade"
-                                    class="w-full"
                                     :disabled="disabled"
                                 >
                                     <template v-if="task.minimumGrade" #default>
@@ -161,8 +161,8 @@ onBeforeMount(async () => listJobs());
                     </template>
 
                     <UFormField
-                        name="dueInDays"
                         class="flex-1"
+                        name="dueInDays"
                         :label="$t('components.documents.template_approval_editor.due_in')"
                     >
                         <UFieldGroup>
@@ -178,13 +178,13 @@ onBeforeMount(async () => listJobs());
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
-                    <UFormField name="label" class="flex-1" :label="$t('common.label')">
+                    <UFormField class="flex-1" name="label" :label="$t('common.label')">
                         <UInput v-model="task.label" class="w-full" :disabled="disabled" />
                     </UFormField>
 
                     <UFormField
-                        name="signatureRequired"
                         class="h-full flex-initial"
+                        name="signatureRequired"
                         :label="$t('components.documents.approval.signature_required')"
                     >
                         <USwitch v-model="task.signatureRequired" :disabled="signatureRequired || disabled" />
@@ -192,14 +192,14 @@ onBeforeMount(async () => listJobs());
 
                     <UFormField
                         v-if="task.ruleKind === ApprovalAssigneeKind.JOB_GRADE"
-                        name="slots"
                         class="flex-initial"
+                        name="slots"
                         :label="$t('components.documents.approval.slots')"
                     >
                         <UInputNumber
                             v-model="task.slots"
-                            name="slots"
                             class="w-full"
+                            name="slots"
                             :placeholder="$t('components.documents.approval.slots')"
                             :min="1"
                             :step="1"
@@ -210,8 +210,8 @@ onBeforeMount(async () => listJobs());
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
-                    <UFormField name="comment" class="flex-1" :label="$t('common.comment')">
-                        <UInput v-model="task.comment" type="text" name="comment" class="w-full" :disabled="disabled" />
+                    <UFormField class="flex-1" name="comment" :label="$t('common.comment')">
+                        <UInput v-model="task.comment" class="w-full" type="text" name="comment" :disabled="disabled" />
                     </UFormField>
                 </div>
             </div>
@@ -219,8 +219,8 @@ onBeforeMount(async () => listJobs());
             <UFormField class="md:mt-1" :ui="{ container: 'flex justify-end-safe md:inline' }">
                 <UTooltip :text="$t('components.access.remove_entry')">
                     <UButton
-                        color="red"
                         class="flex-initial"
+                        color="red"
                         icon="i-mdi-remove"
                         :label="$t('components.access.remove_entry')"
                         :disabled="disabled"

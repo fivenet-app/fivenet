@@ -461,10 +461,10 @@ const scrollRef = useTemplateRef('scrollRef');
                                                     <div class="inline-flex items-center justify-center">
                                                         <GenericImg
                                                             v-if="file.contentType.startsWith('image/')"
+                                                            class="h-full max-h-40 w-40"
                                                             :src="file.filePath"
                                                             :alt="file.filePath"
                                                             size="3xl"
-                                                            class="h-full max-h-40 w-40"
                                                         />
                                                         <UIcon
                                                             v-else

@@ -54,6 +54,7 @@ const orderedUnits = computed(() => unitOrder.filter((unit) => activeUnits.value
 const unitOptions = computed(() => activeUnits.value.map((unit) => ({ value: unit })));
 
 const selectedUnit = ref<DurationUnit>(activeUnits.value[0] ?? 'minute');
+const isInternalSingleValueUpdate = ref(false);
 watch(
     activeUnits,
     (units) => {
@@ -105,9 +106,46 @@ watch(
 );
 
 const singleUnitSeconds = computed(() => unitSecondsMap[selectedUnit.value]);
+
+function getStepPrecision(step: number): number {
+    if (!Number.isFinite(step) || step <= 0) return 6;
+    const [, decimals = ''] = step.toString().split('.');
+    return Math.min(Math.max(decimals.length, 0) + 3, 9);
+}
+
+function snapSingleValueToStep(value: number): number {
+    if (!Number.isFinite(value)) return 0;
+    if (!Number.isFinite(props.step) || props.step <= 0) return value;
+
+    const snapped = Math.round(value / props.step) * props.step;
+    return Number(snapped.toFixed(getStepPrecision(props.step)));
+}
+
+function isStepAligned(value: number): boolean {
+    if (!Number.isFinite(value)) return false;
+    if (!Number.isFinite(props.step) || props.step <= 0) return Number.isInteger(value);
+
+    const quotient = value / props.step;
+    return Math.abs(quotient - Math.round(quotient)) < 1e-9;
+}
+
+function resolvePreferredSingleUnit(seconds: number): DurationUnit {
+    const units = orderedUnits.value;
+    if (units.length === 0) return 'minute';
+
+    const alignedUnit = units.find((unit) => isStepAligned(seconds / unitSecondsMap[unit]));
+    if (alignedUnit) return alignedUnit;
+
+    const unitAtOrAboveOne = units.find((unit) => seconds / unitSecondsMap[unit] >= 1);
+    if (unitAtOrAboveOne) return unitAtOrAboveOne;
+
+    return units[units.length - 1] ?? 'minute';
+}
+
 const singleValue = computed(() => {
     if (!props.modelValue) return 0;
-    return durationToSeconds(clampModelValue(props.modelValue)) / singleUnitSeconds.value;
+    const normalized = durationToSeconds(clampModelValue(props.modelValue)) / singleUnitSeconds.value;
+    return snapSingleValueToStep(normalized);
 });
 
 const singleMin = computed(() =>
@@ -117,9 +155,29 @@ const singleMax = computed(() =>
     props.max ? durationToSeconds(clampModelValue(props.max) ?? props.max) / singleUnitSeconds.value : undefined,
 );
 
+watch(
+    () => [props.modelValue, orderedUnits.value, props.step] as const,
+    () => {
+        if (isInternalSingleValueUpdate.value) {
+            isInternalSingleValueUpdate.value = false;
+            return;
+        }
+
+        if (!props.modelValue) return;
+
+        const seconds = durationToSeconds(clampModelValue(props.modelValue));
+        const preferredUnit = resolvePreferredSingleUnit(seconds);
+        if (preferredUnit !== selectedUnit.value) {
+            selectedUnit.value = preferredUnit;
+        }
+    },
+    { immediate: true },
+);
+
 function onSingleValueUpdate(value: number | undefined): void {
     if (value === undefined || value === null) return;
-    emitClampedSeconds(value * singleUnitSeconds.value);
+    isInternalSingleValueUpdate.value = true;
+    emitClampedSeconds(snapSingleValueToStep(value) * singleUnitSeconds.value);
 }
 
 function onSingleUnitUpdate(unit: DurationUnit): void {
@@ -153,7 +211,7 @@ function decomposeSecondsForComposite(totalSeconds: number, units: DurationUnit[
 
     const smallestUnit = units[units.length - 1]!;
     const smallestSeconds = unitSecondsMap[smallestUnit];
-    const roundedTotalSeconds = Math.max(0, Math.round(totalSeconds / smallestSeconds) * smallestSeconds);
+    const roundedTotalSeconds = Math.max(0, Math.floor(totalSeconds / smallestSeconds) * smallestSeconds);
 
     let remaining = roundedTotalSeconds;
     units.forEach((unit, index) => {
@@ -202,11 +260,11 @@ function clearValue(): void {
         <div v-if="mode === 'single'" class="flex items-center gap-2">
             <UFieldGroup class="w-full">
                 <UInputNumber
+                    class="w-full"
                     :model-value="singleValue"
                     :step="step"
                     :min="singleMin"
                     :max="singleMax"
-                    class="w-full"
                     :disabled="disabled"
                     :readonly="readonly"
                     @update:model-value="onSingleValueUpdate"
@@ -214,11 +272,11 @@ function clearValue(): void {
 
                 <ClientOnly>
                     <USelectMenu
+                        class="min-w-36"
                         :model-value="selectedUnit"
                         value-key="value"
                         :items="unitOptions"
                         :disabled="disabled || readonly || activeUnits.length <= 1"
-                        class="min-w-36"
                         @update:model-value="onSingleUnitUpdate"
                     >
                         <template #default>
@@ -250,10 +308,10 @@ function clearValue(): void {
         >
             <UFormField v-for="unit in orderedUnits" :key="unit" :label="$t(`common.time_ago.${unit}`, 2)">
                 <UInputNumber
+                    class="w-full"
                     :model-value="compositeState[unit]"
                     :step="1"
                     :min="0"
-                    class="w-full"
                     :disabled="disabled"
                     :readonly="readonly"
                     @update:model-value="(value) => onCompositeFieldUpdate(unit, value)"

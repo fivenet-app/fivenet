@@ -80,30 +80,31 @@ watch(
     <div class="flex flex-col gap-1">
         <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
             <UFormField
-                name="ruleKind"
                 class="min-w-40 flex-initial"
+                name="ruleKind"
                 :label="$t('components.documents.approval.policy_form.rule_kind')"
             >
                 <USelectMenu
                     v-model="task.ruleKind"
+                    class="w-full"
                     :items="[
                         { label: $t('common.user'), value: ApprovalAssigneeKind.USER },
                         { label: $t('common.job'), value: ApprovalAssigneeKind.JOB_GRADE },
                     ]"
                     value-key="value"
-                    class="w-full"
                     :disabled="disabled"
                 />
             </UFormField>
 
             <UFormField
                 v-if="task.ruleKind === ApprovalAssigneeKind.USER"
-                name="ruleKind"
                 class="flex-1"
+                name="ruleKind"
                 :label="$t('common.target')"
             >
                 <SelectMenu
                     v-model="task.user"
+                    class="w-full"
                     :searchable="
                         async (q: string) => {
                             const users = await completorStore.completeCitizens({
@@ -119,7 +120,6 @@ watch(
                     block
                     :placeholder="$t('common.target')"
                     trailing
-                    class="w-full"
                     :disabled="disabled"
                 >
                     <template v-if="task.user" #default>
@@ -135,15 +135,15 @@ watch(
             </UFormField>
 
             <template v-else-if="task.ruleKind === ApprovalAssigneeKind.JOB_GRADE">
-                <UFormField name="job" class="flex-1" :label="$t('common.job')">
+                <UFormField class="flex-1" name="job" :label="$t('common.job')">
                     <ClientOnly>
                         <USelectMenu
                             v-model="task.job"
+                            class="w-full"
                             :items="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :filter-fields="['label', 'name']"
                             value-key="name"
-                            class="w-full"
                             :disabled="disabled"
                         >
                             <template #empty>
@@ -153,14 +153,14 @@ watch(
                     </ClientOnly>
                 </UFormField>
 
-                <UFormField name="minimumGrade" class="flex-1" :label="$t('common.job_grade')">
+                <UFormField class="flex-1" name="minimumGrade" :label="$t('common.job_grade')">
                     <ClientOnly>
                         <USelectMenu
                             v-model="task.minimumGrade"
+                            class="w-full"
                             :items="jobs.find((j) => j.name === task.job)?.grades ?? []"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             value-key="grade"
-                            class="w-full"
                             :disabled="disabled"
                         >
                             <template v-if="task.minimumGrade" #default>
@@ -181,19 +181,19 @@ watch(
                 </UFormField>
             </template>
 
-            <UFormField name="dueAt" class="flex-1" :label="$t('common.due_at')">
+            <UFormField class="flex-1" name="dueAt" :label="$t('common.due_at')">
                 <InputDatePicker v-model="task.dueAt" class="w-full" :disabled="disabled" />
             </UFormField>
         </div>
 
         <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
-            <UFormField name="label" class="flex-1" :label="$t('common.label')">
+            <UFormField class="flex-1" name="label" :label="$t('common.label')">
                 <UInput v-model="task.label" class="w-full" :disabled="disabled" />
             </UFormField>
 
             <UFormField
-                name="signatureRequired"
                 class="h-full flex-initial"
+                name="signatureRequired"
                 :label="$t('components.documents.approval.signature_required')"
             >
                 <USwitch v-model="task.signatureRequired" :disabled="policy?.signatureRequired === true || disabled" />
@@ -201,14 +201,14 @@ watch(
 
             <UFormField
                 v-if="task.ruleKind === ApprovalAssigneeKind.JOB_GRADE"
-                name="slots"
                 class="flex-initial"
+                name="slots"
                 :label="$t('components.documents.approval.slots')"
             >
                 <UInputNumber
                     v-model="task.slots"
-                    name="slots"
                     class="w-full"
+                    name="slots"
                     :placeholder="$t('components.documents.approval.slots')"
                     :min="1"
                     :step="1"
@@ -219,8 +219,8 @@ watch(
         </div>
 
         <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
-            <UFormField name="comment" class="flex-1" :label="$t('common.comment')">
-                <UInput v-model="task.comment" type="text" name="comment" class="w-full" :disabled="disabled" />
+            <UFormField class="flex-1" name="comment" :label="$t('common.comment')">
+                <UInput v-model="task.comment" class="w-full" type="text" name="comment" :disabled="disabled" />
             </UFormField>
         </div>
     </div>

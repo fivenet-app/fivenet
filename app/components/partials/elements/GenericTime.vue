@@ -50,7 +50,7 @@ if (props.updateCallback) {
 
 <template>
     <UTooltip :text="$d(date, tooltipType ?? tooltipTypeMap[type] ?? type)">
-        <UBadge v-if="badge" v-bind="{ ...$attrs, ...timeAttrs }" :size="size">
+        <UBadge v-if="badge" :size="size" v-bind="{ ...$attrs, ...timeAttrs }">
             <time :datetime="date.toLocaleTimeString()" v-bind="$attrs">
                 {{ !ago ? $d(date, type) : useLocaleTimeAgo(date).value }}
             </time>

@@ -372,8 +372,8 @@ watch(
         <UFormField :name="`exam.questions.${index}.data.data.oneofKind`">
             <ClientOnly>
                 <USelectMenu
-                    :model-value="question.data!.data.oneofKind"
                     class="w-40 max-w-40"
+                    :model-value="question.data!.data.oneofKind"
                     :items="questionTypes"
                     :search-input="{ placeholder: $t('common.search_field') }"
                     :disabled="disabled"
@@ -395,18 +395,18 @@ watch(
         <div class="flex flex-1 flex-col gap-2 p-4">
             <div class="flex flex-1 flex-col gap-2">
                 <UFormField :name="`exam.questions.${index}.title`" :label="$t('common.title')" required>
-                    <UInput v-model="question.title" type="text" :placeholder="$t('common.title')" size="xl" class="w-full" />
+                    <UInput v-model="question.title" class="w-full" type="text" :placeholder="$t('common.title')" size="xl" />
                 </UFormField>
 
-                <UFormField :name="`exam.questions.${index}.description`" :label="$t('common.description')" class="flex-1">
+                <UFormField class="flex-1" :name="`exam.questions.${index}.description`" :label="$t('common.description')">
                     <UTextarea
                         v-model="question.description"
+                        class="w-full"
                         type="text"
                         :rows="3"
                         resize
                         :placeholder="$t('common.description')"
                         :disabled="disabled"
-                        class="w-full"
                     />
                 </UFormField>
             </div>
@@ -426,8 +426,8 @@ watch(
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <template v-else>
                             <UFileUpload
-                                :disabled="disabled"
                                 class="w-full"
+                                :disabled="disabled"
                                 :accept="appConfig.fileUpload.types.images.join(',')"
                                 :placeholder="$t('common.image')"
                                 :label="$t('common.file_upload_label')"
@@ -511,10 +511,10 @@ watch(
                         <UFormField :name="`exam.questions.${index}.answer.answer.freeText.text`" :label="$t('common.answer')">
                             <UTextarea
                                 v-model="question.answer!.answer.freeText.text"
+                                class="w-full"
                                 :rows="5"
                                 resize
                                 :disabled="disabled"
-                                class="w-full"
                             />
                         </UFormField>
                     </div>
@@ -548,11 +548,11 @@ watch(
                     >
                         <UTextarea
                             v-model="question.answer!.answerKey"
+                            class="w-full"
                             :placeholder="$t('common.answer_key')"
                             :rows="2"
                             resize
                             :disabled="disabled"
-                            class="w-full"
                         />
                     </UFormField>
 

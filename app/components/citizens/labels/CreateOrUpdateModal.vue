@@ -21,6 +21,10 @@ const emits = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
+const { t } = useI18n();
+
+const { maxAccessEntries } = useAppConfig();
+
 const minLabelDuration = secondsToDuration(60 * 60);
 const maxLabelDuration = secondsToDuration(3650 * 60 * 60);
 
@@ -38,6 +42,9 @@ const schema = z.object({
     }).extend({
         requiresExpiration: z.boolean().default(false),
     }),
+    access: z.object({
+        jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -51,6 +58,9 @@ const state = reactive<Schema>({
         requiresExpiration: false,
         minDuration: undefined,
         maxDuration: undefined,
+    },
+    access: {
+        jobs: [],
     },
 });
 
@@ -86,6 +96,7 @@ function setFromData(label: Label | undefined): void {
     state.settings.requiresExpiration = label.settings?.requiresExpiration ?? false;
     state.settings.minDuration = label.settings?.minDuration;
     state.settings.maxDuration = label.settings?.maxDuration;
+    state.access.jobs = label.access?.jobs ?? [];
 }
 
 watch(data, () => setFromData(data.value?.label));
@@ -117,6 +128,11 @@ async function createOrUpdateLabel(values: Schema): Promise<CreateOrUpdateLabelR
         state.id = label.id;
         state.name = label.name;
         state.color = label.color;
+        state.icon = label.icon;
+        state.settings.requiresExpiration = label.settings?.requiresExpiration ?? false;
+        state.settings.minDuration = label.settings?.minDuration;
+        state.settings.maxDuration = label.settings?.maxDuration;
+        state.access.jobs = label.access?.jobs ?? [];
 
         emits('refresh');
         emits('close', false);
@@ -156,27 +172,27 @@ const formRef = useTemplateRef('formRef');
                 </UFormField>
 
                 <UFormField name="icon" :label="$t('common.icon')">
-                    <IconSelectMenu v-model="state.icon" name="icon" :hex-color="state.color" class="w-full" clear />
+                    <IconSelectMenu v-model="state.icon" class="w-full" name="icon" :hex-color="state.color" clear />
                 </UFormField>
 
-                <UFormField name="settings" :label="$t('common.settings')">
-                    <UFormField
-                        name="settings.requiresExpiration"
-                        :label="$t('components.citizens.citizen_labels.settings.requires_expiration')"
-                    >
-                        <USwitch v-model="state.settings.requiresExpiration" name="settings.requiresExpiration" />
-                    </UFormField>
+                <USeparator class="my-2" />
+
+                <UFormField
+                    name="settings.requiresExpiration"
+                    :label="$t('components.citizens.citizen_labels.settings.requires_expiration')"
+                >
+                    <USwitch v-model="state.settings.requiresExpiration" name="settings.requiresExpiration" />
                 </UFormField>
 
                 <UFormField :label="$t('components.citizens.citizen_labels.settings.min_duration')" name="settings.minDuration">
                     <InputDurationPicker
                         v-model="state.settings.minDuration"
+                        class="w-full"
                         :min="minLabelDuration"
                         :max="maxLabelDuration"
                         :units="['hour', 'day']"
                         :step="1"
                         clearable
-                        class="w-full"
                         :disabled="!state.settings.requiresExpiration"
                     />
                 </UFormField>
@@ -184,21 +200,17 @@ const formRef = useTemplateRef('formRef');
                 <UFormField :label="$t('components.citizens.citizen_labels.settings.max_duration')" name="settings.maxDuration">
                     <InputDurationPicker
                         v-model="state.settings.maxDuration"
+                        class="w-full"
                         :min="minLabelDuration"
                         :max="maxLabelDuration"
                         :units="['hour', 'day']"
                         :step="1"
                         clearable
-                        class="w-full"
                         :disabled="!state.settings.requiresExpiration"
                     />
                 </UFormField>
 
-                <!--
-                <UFormField name="access" :label="$t('common.access')">
-                    <div>TODO</div>
-                </UFormField>
-                -->
+                <UFormField name="access" :label="$t('common.access')"> TODO Access Manager </UFormField>
             </UForm>
         </template>
 

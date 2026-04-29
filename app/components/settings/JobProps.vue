@@ -391,9 +391,9 @@ const confirmModal = overlay.create(ConfirmModal);
                                         class="flex w-full flex-1 items-center justify-center"
                                     >
                                         <GenericImg
+                                            class="mb-2 size-full max-h-40 min-h-40 max-w-40"
                                             :src="`/api/filestore/${jobProps.logoFile.filePath}`"
                                             :alt="`${jobProps.jobLabel ?? jobProps.job} ${$t('common.logo')}`"
-                                            class="mb-2 size-full max-h-40 min-h-40 max-w-40"
                                         />
                                     </div>
 
@@ -411,11 +411,11 @@ const confirmModal = overlay.create(ConfirmModal);
 
                                         <UButton
                                             v-if="jobProps.logoFileId"
+                                            class="grow-0"
                                             variant="outline"
                                             color="red"
                                             trailing-icon="i-mdi-clear"
                                             :label="$t('common.clear')"
-                                            class="grow-0"
                                             @click="
                                                 () => {
                                                     confirmModal.open({
@@ -434,8 +434,8 @@ const confirmModal = overlay.create(ConfirmModal);
                                 >
                                     <ColorPicker
                                         v-model="state.livemapMarkerColor"
-                                        :disabled="!canSubmit || !canEdit"
                                         class="w-full"
+                                        :disabled="!canSubmit || !canEdit"
                                     />
                                 </UFormField>
 
@@ -447,13 +447,13 @@ const confirmModal = overlay.create(ConfirmModal);
                                     <UInput
                                         v-model="state.radioFrequency"
                                         v-maska
+                                        class="w-full"
                                         type="text"
                                         :disabled="!canSubmit || !canEdit"
                                         :placeholder="$t('common.radio_frequency')"
                                         :label="$t('common.radio_frequency')"
                                         data-maska="0.9"
                                         data-maska-tokens="0:\d:multiple|9:\d:multiple"
-                                        class="w-full"
                                     />
                                 </UFormField>
 
@@ -565,6 +565,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                     <USelectMenu
                                         v-else
                                         v-model="state.discordGuildId"
+                                        class="w-full"
                                         :items="userGuilds"
                                         :filter-fields="['name', 'id']"
                                         :placeholder="
@@ -573,7 +574,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                         value-key="id"
                                         :disabled="!canSubmit || !canEdit || userGuilds?.length === 0"
                                         size="lg"
-                                        class="w-full"
                                     >
                                         <template #default>
                                             <div class="inline-flex items-center gap-2">
@@ -632,6 +632,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                 >
                                     <SelectMenu
                                         v-model="state.discordSyncSettings.statusLogSettings!.channelId"
+                                        class="w-full"
                                         name="discordSyncSettings.statusLogSettings.channelId"
                                         :disabled="
                                             !state.discordGuildId ||
@@ -654,7 +655,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                         :filter-fields="['name']"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         value-key="id"
-                                        class="w-full"
                                         nullable
                                         :placeholder="
                                             $t(
@@ -796,6 +796,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                         <ClientOnly>
                                             <USelectMenu
                                                 v-model="state.discordSyncSettings.userInfoSyncSettings.unemployedMode"
+                                                class="w-full"
                                                 :disabled="
                                                     !state.discordSyncSettings.userInfoSync ||
                                                     !state.discordSyncSettings.userInfoSyncSettings.unemployedEnabled ||
@@ -814,7 +815,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                     },
                                                 ]"
                                                 :search-input="{ placeholder: $t('common.search_field') }"
-                                                class="w-full"
                                             >
                                                 <template #default>
                                                     {{
@@ -851,6 +851,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                     >
                                         <UInput
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.unemployedRoleName"
+                                            class="w-full"
                                             type="text"
                                             name="unemployedRoleName"
                                             :disabled="
@@ -864,7 +865,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                     'components.settings.job_props.discord_sync_settings.user_info_sync_settings.unemployed_role_name',
                                                 )
                                             "
-                                            class="w-full"
                                         />
                                     </UFormField>
 
@@ -1062,6 +1062,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                         >
                                             <UInput
                                                 v-model="state.discordSyncSettings.jobsAbsenceSettings.absenceRole"
+                                                class="w-full"
                                                 type="text"
                                                 name="discordSyncSettings.jobsAbsenceSettings.absenceRole"
                                                 :disabled="
@@ -1075,7 +1076,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                         'components.settings.job_props.discord_sync_settings.jobs_absence_settings.jobs_absence_role_name',
                                                     )
                                                 "
-                                                class="w-full"
                                             />
                                         </UFormField>
                                     </template>

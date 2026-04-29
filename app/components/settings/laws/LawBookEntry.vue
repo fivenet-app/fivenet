@@ -293,15 +293,15 @@ const confirmModal = overlay.create(ConfirmModal);
                 </UTooltip>
 
                 <UFormField class="flex-initial" name="name" :label="$t('common.law_book')">
-                    <UInput v-model="state.name" name="name" type="text" class="w-full" :placeholder="$t('common.law_book')" />
+                    <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.law_book')" />
                 </UFormField>
 
                 <UFormField class="flex-auto" name="description" :label="$t('common.description')">
                     <UInput
                         v-model="state.description"
+                        class="w-full"
                         name="description"
                         type="text"
-                        class="w-full"
                         :placeholder="$t('common.description')"
                     />
                 </UFormField>

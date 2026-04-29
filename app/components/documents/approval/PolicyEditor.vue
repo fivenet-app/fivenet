@@ -47,10 +47,10 @@ const onEditBehaviors = computed(() => [
     <UFormField name="ruleKind" :label="$t('components.documents.approval.policy_form.rule_kind')">
         <USelectMenu
             v-model="policy.ruleKind"
+            class="w-full"
             :items="ruleKinds"
             value-key="value"
             label-key="label"
-            class="w-full"
             :disabled="disabled"
         >
             <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
@@ -62,7 +62,7 @@ const onEditBehaviors = computed(() => [
         name="requiredCount"
         :label="$t('components.documents.approval.policy_form.required_approvals')"
     >
-        <UInputNumber v-model="policy.requiredCount" :min="0" :max="10" class="w-full" :disabled="disabled" />
+        <UInputNumber v-model="policy.requiredCount" class="w-full" :min="0" :max="10" :disabled="disabled" />
     </UFormField>
 
     <UFormField name="signatureRequired" :label="$t('components.documents.approval.signature_required')">
@@ -80,10 +80,10 @@ const onEditBehaviors = computed(() => [
     <UFormField name="onEditBehavior" :label="$t('components.documents.approval.policy_form.on_edit_behavior')">
         <USelectMenu
             v-model="policy.onEditBehavior"
+            class="w-full"
             :items="onEditBehaviors"
             value-key="value"
             label-key="label"
-            class="w-full"
             :disabled="disabled"
         >
             <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>

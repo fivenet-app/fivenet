@@ -61,7 +61,7 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                     :label="$t('components.qualifications.exam_mode')"
                 >
                     <ClientOnly>
-                        <USelectMenu v-model="examMode" :items="examModes" value-key="mode" class="w-full">
+                        <USelectMenu v-model="examMode" class="w-full" :items="examModes" value-key="mode">
                             <template #default>
                                 {{ $t(`enums.qualifications.QualificationExamMode.${QualificationExamMode[examMode]}`) }}
                             </template>
@@ -84,12 +84,12 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                 >
                     <InputDurationPicker
                         v-model="examSettings.time"
+                        class="w-full"
                         mode="composite"
                         :units="['hour', 'minute', 'second']"
                         :min="secondsToDuration(60)"
                         :step="0.1"
                         :max="secondsToDuration(60 * 60 * 12)"
-                        class="w-full"
                     />
                 </UFormField>
 
@@ -111,10 +111,10 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                     <ClientOnly>
                         <USelectMenu
                             v-model="examSettings.autoGradeMode"
+                            class="w-full"
                             :items="modes"
                             value-key="mode"
                             :search-input="{ placeholder: $t('common.search_field') }"
-                            class="w-full"
                         >
                             <template #default>
                                 {{ $t(`enums.qualifications.AutoGradeMode.${AutoGradeMode[settings.autoGradeMode ?? 0]}`) }}
@@ -134,11 +134,11 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                 >
                     <UInputNumber
                         v-model="examSettings.minimumPoints"
+                        class="w-full"
                         :min="0"
                         :max="999999"
                         :step="1"
                         :placeholder="$t('components.qualifications.exam_editor.minimum_points')"
-                        class="w-full"
                     />
                 </UFormField>
             </UPageCard>

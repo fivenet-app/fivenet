@@ -213,9 +213,9 @@ const columns = computed(
                     <UFormField name="search">
                         <UInput
                             v-model="querySearchRaw"
+                            class="w-full"
                             type="text"
                             name="search"
-                            class="w-full"
                             :placeholder="$t('common.filter')"
                             :ui="{ trailing: 'pe-1' }"
                         >
@@ -244,6 +244,7 @@ const columns = computed(
                                 >
                                     <template #count-cell="{ row }">
                                         <UInputNumber
+                                            class="max-w-22 min-w-20 grow-0"
                                             :model-value="
                                                 selectedPenalties.find((p) => p.law.id === row.original.id)?.count ?? 0
                                             "
@@ -251,7 +252,6 @@ const columns = computed(
                                             :min="0"
                                             :max="quickButtons.penaltyCalculator?.maxCount ?? 10"
                                             :step="1"
-                                            class="max-w-22 min-w-20 grow-0"
                                             @update:model-value="
                                                 ($event) =>
                                                     updateLaw({ law: row.original, count: $event === null ? 0 : $event })
@@ -266,7 +266,7 @@ const columns = computed(
             </div>
         </div>
 
-        <USeparator :label="$t('common.result')" class="mb-2" />
+        <USeparator class="mb-2" :label="$t('common.result')" />
 
         <PenaltyStats :summary="summary" :reduction="reduction" />
 

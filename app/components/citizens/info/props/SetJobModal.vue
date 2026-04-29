@@ -98,7 +98,7 @@ onBeforeMount(async () => listJobs());
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>
-                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
+                    <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>
 
                 <UFormField class="flex-1" name="job" :label="$t('common.job')">
@@ -154,8 +154,8 @@ onBeforeMount(async () => listJobs());
                 />
 
                 <UButton
-                    color="error"
                     class="flex-1"
+                    color="error"
                     block
                     :disabled="!canSubmit"
                     :loading="!canSubmit"

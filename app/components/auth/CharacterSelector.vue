@@ -65,11 +65,11 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
         <div v-else class="relative overflow-hidden rounded-lg">
             <UCarousel
                 v-slot="{ item: char }"
+                class="mb-8"
                 :items="chars"
                 arrows
                 dots
                 orientation="horizontal"
-                class="mb-8"
                 :ui="{ item: 'basis-full sm:basis-md md:basis-md lg:basis-md', container: 'gap-4' }"
             >
                 <CharacterSelectorCard

@@ -177,12 +177,13 @@ const editing = ref(false);
         <UFormField v-if="editing" name="labels">
             <SelectMenu
                 v-model="state.labels"
+                class="w-full"
                 multiple
                 :searchable="async (q: string) => (await getColleagueLabels(q))?.labels ?? []"
                 searchable-key="completor-jobs-colleague-labels"
                 :search-input="{ placeholder: $t('common.search_field') }"
                 :filter-fields="['name']"
-                class="w-full"
+                :ui="{ itemLeadingIcon: 'hidden' }"
             >
                 <template #item-label="{ item }">
                     <UBadge

@@ -290,6 +290,7 @@ const columns = computed(
                                 <SelectMenu
                                     ref="input"
                                     v-model="query.user"
+                                    class="w-full"
                                     :searchable="
                                         async (q: string) =>
                                             await completorStore.completeColleagues(q, query.user ? [query.user] : [])
@@ -301,7 +302,6 @@ const columns = computed(
                                     :placeholder="$t('common.colleague')"
                                     trailing
                                     leading-icon="i-mdi-search"
-                                    class="w-full"
                                     value-key="userId"
                                 >
                                     <template #default="{ items }">
@@ -324,13 +324,13 @@ const columns = computed(
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="query.types"
+                                        class="w-full"
                                         multiple
                                         nullable
                                         :items="availableTypes"
                                         value-key="status"
                                         :placeholder="$t('common.na')"
                                         :search-input="{ placeholder: $t('common.search_field') }"
-                                        class="w-full"
                                     >
                                         <template #default>
                                             {{ $t('common.selected', query.types.length) }}
@@ -350,10 +350,10 @@ const columns = computed(
                             <UFormField class="flex-initial" name="id" :label="$t('common.id')">
                                 <UInput
                                     v-model="query.id"
+                                    class="w-full"
                                     type="text"
                                     name="id"
                                     :placeholder="$t('common.id')"
-                                    class="w-full"
                                 />
                             </UFormField>
 

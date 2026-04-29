@@ -103,10 +103,10 @@ watchOnce(opened, async () => {
                 <USkeleton v-if="!user && isRequestPending(status)" class="h-6 w-6" />
                 <ProfilePictureImg
                     v-else
+                    class="p-0"
                     :src="user?.profilePicture"
                     :name="`${user?.firstname} ${user?.lastname}`"
                     size="3xs"
-                    class="p-0"
                 />
             </template>
 

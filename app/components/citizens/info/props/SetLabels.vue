@@ -36,6 +36,7 @@ const schema = z.object({
             id: z.coerce.number(),
             name: z.coerce.string().min(1),
             color: z.coerce.string().length(7),
+            icon: z.coerce.string().max(255).optional(),
             // TODO expiration settings needed, but only when enabled for the label
         })
         .array()
@@ -110,25 +111,26 @@ const formRef = useTemplateRef('formRef');
         </p>
         <template v-else>
             <div class="flex max-w-72 flex-row flex-wrap gap-1">
-                <UFieldGroup v-for="(attribute, idx) in state.labels" :key="attribute.name">
+                <UFieldGroup v-for="(label, idx) in state.labels" :key="label.name">
                     <UBadge
-                        :class="isColorBright(hexToRgb(attribute.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
-                        :style="{ backgroundColor: attribute.color }"
+                        :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
+                        :style="{ backgroundColor: label.color }"
                         size="md"
+                        :icon="label.icon && label.icon !== '' ? convertComponentIconNameToDynamic(label.icon) : undefined"
                     >
-                        <span>{{ attribute.name }}</span>
+                        <span>{{ label.name }}</span>
                     </UBadge>
 
                     <UButton
                         v-if="canDo.set"
                         :class="
-                            isColorBright(hexToRgb(attribute.color, rgbBlack)!)
+                            isColorBright(hexToRgb(label.color, rgbBlack)!)
                                 ? 'bg-white/20! text-black!'
                                 : 'bg-black/20! text-white!'
                         "
                         variant="subtle"
                         color="red"
-                        size="md"
+                        size="sm"
                         icon="i-mdi-remove"
                         @click="
                             changed = true;
@@ -142,24 +144,27 @@ const formRef = useTemplateRef('formRef');
         <UFormField v-if="canDo.set && can('completor.CompletorService/CompleteCitizenLabels').value" name="labels">
             <SelectMenu
                 v-model="state.labels"
+                class="w-full"
                 multiple
                 :searchable="async (q: string) => await completorStore.completeCitizenLabels(q)"
                 searchable-key="completor-citizens-labels"
                 :search-input="{ placeholder: $t('common.search_field') }"
                 :search-labels="['name']"
-                class="w-full"
+                :ui="{ itemLeadingIcon: 'hidden' }"
             >
                 <template #default>
                     {{ $t('common.selected', state.labels.length) }}
                 </template>
 
                 <template #item-label="{ item }">
-                    <span
+                    <UBadge
                         class="truncate"
                         :class="isColorBright(hexToRgb(item.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                         :style="{ backgroundColor: item.color }"
-                        >{{ item.name }}</span
+                        :icon="item.icon && item.icon !== '' ? convertComponentIconNameToDynamic(item.icon) : undefined"
                     >
+                        {{ item.name }}
+                    </UBadge>
                 </template>
 
                 <template #empty>
@@ -170,7 +175,7 @@ const formRef = useTemplateRef('formRef');
 
         <template v-if="changed">
             <UFormField name="reason" :label="$t('common.reason')" required>
-                <UInput v-model="state.reason" type="text" class="w-full" />
+                <UInput v-model="state.reason" class="w-full" type="text" />
             </UFormField>
 
             <UButton

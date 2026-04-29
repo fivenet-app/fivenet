@@ -67,7 +67,7 @@ const template = (d?: SeriesPoint) => {
             </div>
         </template>
 
-        <VisXYContainer :data="data ?? []" :padding="{ top: 10, right: 12, left: 8, bottom: 8 }" class="h-72" :width="width">
+        <VisXYContainer class="h-72" :data="data ?? []" :padding="{ top: 10, right: 12, left: 8, bottom: 8 }" :width="width">
             <VisGroupedBar :x="x" :y="y" :color="color" />
 
             <VisAxis type="x" :x="x" :tick-format="xTicks" />

@@ -131,12 +131,12 @@ const canSubmit = ref(true);
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="query.categories"
+                                        class="w-full"
                                         multiple
                                         name="categories"
                                         :items="categories"
                                         value-key="mode"
                                         :search-input="{ placeholder: $t('common.search_field') }"
-                                        class="w-full"
                                     >
                                         <template #default>
                                             {{
@@ -205,11 +205,11 @@ const canSubmit = ref(true);
                             <h3 class="text-base leading-6 font-semibold">
                                 <UButton
                                     v-if="not.data && not.data.link"
+                                    class="w-full pr-1 pl-0"
                                     variant="link"
                                     :color="!not.readAt ? 'primary' : 'neutral'"
                                     :to="not.data.link.to"
                                     trailing-icon="i-mdi-link-variant"
-                                    class="w-full pr-1 pl-0"
                                     :label="$t(not.title!.key, not.title?.parameters ?? {})"
                                     @click="
                                         markUnread(false, not.id);

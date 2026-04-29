@@ -532,7 +532,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                                         :description="$t('components.qualifications.content_unavailable')"
                                     />
 
-                                    <UAccordion v-if="qualification" :items="accordionItems" type="multiple" class="p-2 sm:p-2">
+                                    <UAccordion v-if="qualification" class="p-2 sm:p-2" :items="accordionItems" type="multiple">
                                         <template v-if="qualification.result" #result>
                                             <UContainer class="mb-2">
                                                 <div class="flex flex-col gap-1">

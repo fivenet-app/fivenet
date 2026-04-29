@@ -61,7 +61,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UForm :state="state" :schema="schema" class="flex w-full flex-1" @submit="onSubmitThrottle">
+    <UForm class="flex w-full flex-1" :state="state" :schema="schema" @submit="onSubmitThrottle">
         <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
             <template #header>
                 <UDashboardNavbar :title="$t('pages.documents.stamps.create')">
@@ -98,7 +98,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </template>
 
                             <UFormField name="name" :label="$t('common.name')">
-                                <UInput v-model="state.name" type="text" class="w-full" />
+                                <UInput v-model="state.name" class="w-full" type="text" />
                             </UFormField>
                         </UCard>
                     </template>

@@ -233,10 +233,10 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
 
                 <template #leading>
                     <UButton
+                        class="-ms-1.5"
                         icon="i-mdi-close"
                         color="neutral"
                         variant="ghost"
-                        class="-ms-1.5"
                         @click="$emit('close', false)"
                     />
                 </template>
@@ -519,24 +519,24 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                     :ui="{ content: 'max-h-[50vh] overflow-y-auto' }"
                 >
                     <UButton
+                        class="w-full"
                         :label="$t('components.mailer.reply')"
                         icon="i-mdi-paper-airplane"
                         variant="subtle"
                         color="neutral"
-                        class="w-full"
                         block
                         truncate
                     />
 
                     <template #content>
-                        <UCard variant="subtle" class="mt-auto" :ui="{ body: 'min-w-0 p-2 sm:p-2' }">
+                        <UCard class="mt-auto" variant="subtle" :ui="{ body: 'min-w-0 p-2 sm:p-2' }">
                             <UForm
                                 class="flex flex-1 grow-0 flex-col gap-2 px-1"
                                 :schema="schema"
                                 :state="state"
                                 @submit="onSubmitThrottle"
                             >
-                                <UFormField name="recipients" :label="$t('common.additional_recipients')" class="flex-1">
+                                <UFormField class="flex-1" name="recipients" :label="$t('common.additional_recipients')">
                                     <ClientOnly>
                                         <USelectMenu
                                             v-model="state.recipients"
@@ -605,8 +605,8 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
 
                                         <TemplateSelector
                                             v-if="editorRef"
-                                            :editor="unref(editorRef).editor"
                                             class="ml-auto"
+                                            :editor="unref(editorRef).editor"
                                             size="lg"
                                         />
                                     </div>

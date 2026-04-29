@@ -23,11 +23,11 @@ const availableColorOptions = [...primaryColors, ...backgroundColors];
             <template #leading="{ modelValue, ui }">
                 <UChip
                     v-if="modelValue"
+                    :class="ui.itemLeadingChip()"
                     :color="availableColorOptions.find((c) => c.label === modelValue)?.chip?.color || 'primary'"
                     inset
                     standalone
                     :size="ui.itemLeadingChipSize() as ChipProps['size']"
-                    :class="ui.itemLeadingChip()"
                 />
             </template>
         </USelectMenu>

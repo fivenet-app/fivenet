@@ -125,21 +125,21 @@ onBeforeMount(async () => listJobs());
         <template #body>
             <div class="mx-auto w-full max-w-[80%] min-w-3/4">
                 <UCard :ui="{ body: 'p-4 sm:p-4', footer: 'p-4 sm:px-4' }">
-                    <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
+                    <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
                         <div class="flex flex-col gap-1 divide-y divide-default md:divide-y-0">
                             <div
                                 v-for="(_, idx) in state.tasks"
                                 :key="idx"
                                 class="flex flex-1 flex-col gap-1 pb-2 md:flex-row md:pb-0"
                             >
-                                <TaskFormEntry v-model="state.tasks[idx]!" :jobs="jobs" class="flex-1" />
+                                <TaskFormEntry v-model="state.tasks[idx]!" class="flex-1" :jobs="jobs" />
 
                                 <UFormField class="md:mt-1" :ui="{ container: 'flex justify-end-safe md:inline' }">
                                     <UTooltip :text="$t('components.access.remove_entry')">
                                         <UButton
-                                            color="red"
                                             class="flex-initial"
                                             :class="idx === 0 ? 'pointer-events-none opacity-0' : ''"
+                                            color="red"
                                             icon="i-mdi-remove"
                                             :label="$t('components.access.remove_entry')"
                                             :ui="{ label: 'md:hidden' }"
@@ -166,10 +166,10 @@ onBeforeMount(async () => listJobs());
                     <template #footer>
                         <UFieldGroup class="w-full flex-1">
                             <UButton
+                                class="w-full"
                                 type="submit"
                                 :disabled="!canSubmit"
                                 block
-                                class="w-full"
                                 :label="$t('common.submit')"
                                 trailing-icon="i-mdi-arrow-forward"
                                 @click="formRef?.submit()"

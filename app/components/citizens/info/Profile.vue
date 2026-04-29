@@ -142,6 +142,11 @@ const numberFormatter = useIntlNumberFormat();
                                         :key="label.name"
                                         class="justify-between gap-2"
                                         :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
+                                        :icon="
+                                            label.icon && label.icon !== ''
+                                                ? convertComponentIconNameToDynamic(label.icon)
+                                                : undefined
+                                        "
                                         :style="{ backgroundColor: label.color }"
                                         size="md"
                                     >

@@ -288,8 +288,8 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                     <UCard
                         v-for="dispatch in group.dispatches"
                         :key="dispatch.id"
-                        :title="dispatch.message"
                         class="px-px"
+                        :title="dispatch.message"
                         :ui="{ header: 'p-1 sm:px-1', body: 'p-1 sm:p-1', footer: 'p-1 sm:px-1' }"
                     >
                         <template #header>
@@ -352,11 +352,11 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
 
                                     <div class="flex flex-1 items-center justify-center gap-2">
                                         <GenericTime
+                                            class="text-highlighted"
                                             :value="dispatch.createdAt"
                                             type="compact"
                                             badge
                                             size="sm"
-                                            class="text-highlighted"
                                             :update-callback="
                                                 () =>
                                                     dispatchTimeToBadge(

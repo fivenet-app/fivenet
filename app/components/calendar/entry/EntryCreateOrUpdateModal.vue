@@ -171,7 +171,7 @@ const formRef = useTemplateRef('formRef');
         "
     >
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
+            <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <DataPendingBlock
                     v-if="props.entryId && isRequestPending(status)"
                     :message="$t('common.loading', [$t('common.entry', 1)])"
@@ -192,6 +192,7 @@ const formRef = useTemplateRef('formRef');
                     <UFormField class="flex-1" name="calendar" :label="$t('common.calendar')" required>
                         <SelectMenu
                             v-model="state.calendar"
+                            class="w-full"
                             label-key="name"
                             :disabled="!!entryId"
                             :searchable="
@@ -217,16 +218,15 @@ const formRef = useTemplateRef('formRef');
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :filter-fields="['name']"
                             :placeholder="$t('common.calendar')"
-                            class="w-full"
                         >
                             <template #leading="{ modelValue, ui }">
                                 <UChip
                                     v-if="modelValue"
+                                    :class="ui.itemLeadingChip()"
                                     :color="(modelValue?.color ?? 'primary') as ChipProps['color']"
                                     inset
                                     standalone
                                     :size="ui.itemLeadingChipSize() as ChipProps['size']"
-                                    :class="ui.itemLeadingChip()"
                                 />
                             </template>
 
@@ -239,10 +239,10 @@ const formRef = useTemplateRef('formRef');
                     <UFormField class="flex-1" name="title" :label="$t('common.title')" required>
                         <UInput
                             v-model="state.title"
+                            class="w-full"
                             name="title"
                             type="text"
                             :placeholder="$t('common.title')"
-                            class="w-full"
                         />
                     </UFormField>
 
@@ -250,10 +250,10 @@ const formRef = useTemplateRef('formRef');
                         <UFormField class="flex-1" name="startTime" :label="$t('common.begins_at')" required>
                             <InputDatePicker
                                 v-model="state.startTime"
+                                class="w-full"
                                 clearable
                                 :date-format="!state.allDay ? undefined : 'date'"
                                 :time="!state.allDay"
-                                class="w-full"
                             />
                         </UFormField>
 
@@ -263,16 +263,16 @@ const formRef = useTemplateRef('formRef');
                     </div>
 
                     <UFormField v-if="!state.allDay" class="flex-1" name="endTime" :label="$t('common.ends_at')" required>
-                        <InputDatePicker v-model="state.endTime" clearable time class="w-full" />
+                        <InputDatePicker v-model="state.endTime" class="w-full" clearable time />
                     </UFormField>
 
                     <UFormField class="flex-1" name="content" :label="$t('common.content')" required :ui="{ error: 'hidden' }">
                         <ClientOnly>
                             <TiptapEditor
                                 v-model="state.content"
+                                class="w-full"
                                 name="content"
                                 wrapper-class="min-h-80"
-                                class="w-full"
                                 :limit="10_000"
                             />
                         </ClientOnly>
@@ -289,8 +289,8 @@ const formRef = useTemplateRef('formRef');
                     <UFormField class="flex-1" name="users" :label="$t('common.guest', 2)">
                         <SelectMenu
                             v-model="state.users"
-                            multiple
                             class="w-full"
+                            multiple
                             :searchable="
                                 async (q: string) =>
                                     await completorStore.completeCitizens({

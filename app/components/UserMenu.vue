@@ -76,12 +76,12 @@ const name = computed(() =>
     >
         <template #default>
             <UButton
+                class="data-[state=open]:bg-elevated"
                 :label="collapsed ? undefined : name"
                 color="neutral"
                 variant="ghost"
                 block
                 :square="collapsed"
-                class="data-[state=open]:bg-elevated"
                 :trailing-icon="collapsed ? undefined : 'i-mdi-ellipsis-vertical'"
                 :ui="{
                     trailingIcon: 'text-dimmed',

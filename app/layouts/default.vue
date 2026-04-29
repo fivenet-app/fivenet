@@ -363,12 +363,12 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
         <UDashboardSidebar
             id="default"
             v-model:open="open"
+            class="bg-elevated/25"
             :default-size="15"
             :min-size="10"
             :max-size="25"
             collapsible
             resizable
-            class="bg-elevated/25"
             :ui="{ footer: 'lg:border-t lg:border-default' }"
         >
             <template #header="{ collapsed }">

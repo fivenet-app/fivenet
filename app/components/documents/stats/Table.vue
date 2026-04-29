@@ -128,9 +128,9 @@ const topLawData = computed<TopLawRow[]>(() =>
                     <span class="inline-block" :style="{ width: `calc(${row.depth} * 1rem)` }" />
 
                     <UButton
+                        class="mr-1"
                         variant="outline"
                         color="neutral"
-                        class="mr-1"
                         size="xs"
                         :icon="row.getIsExpanded() ? 'i-mdi-minus' : 'i-mdi-plus'"
                         @click="row.toggleExpanded()"

@@ -53,11 +53,11 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
         <UFormField class="flex-1" name="selectedQualification">
             <SelectMenu
                 v-model="selectedQualification"
+                class="w-full"
                 block
                 :searchable="async (q: string) => await listQualifications(q)"
                 :searchable-key="`qualification-${qualificationId}-requirement-entry`"
                 :search-input="{ placeholder: $t('common.search_field') }"
-                class="w-full"
             >
                 <template v-if="selectedQualification" #default>
                     {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}

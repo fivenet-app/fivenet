@@ -90,8 +90,8 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
 
                                 <span class="flex items-center">
                                     <UIcon
-                                        name="i-mdi-chevron-down"
                                         class="size-5 transition-transform duration-200 group-data-[state=open]:rotate-180"
+                                        name="i-mdi-chevron-down"
                                     />
                                 </span>
                             </h3>

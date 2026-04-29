@@ -126,10 +126,10 @@ const formRef = useTemplateRef('formRef');
                             <UFormField class="flex-1" name="code">
                                 <UInput
                                     v-model="state.code"
+                                    class="w-full"
                                     type="text"
                                     name="code"
                                     :placeholder="$t('common.code')"
-                                    class="w-full"
                                 />
                             </UFormField>
                         </dd>
@@ -143,7 +143,7 @@ const formRef = useTemplateRef('formRef');
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField class="flex-1" name="reason" required>
-                                <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
+                                <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                             </UFormField>
                         </dd>
                     </div>

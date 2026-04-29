@@ -137,6 +137,33 @@ describe('InputDurationPicker', () => {
         expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual({ seconds: 5400, nanos: 0 });
     });
 
+    it('snaps single mode updates to step increments', async () => {
+        const wrapper = createWrapper({
+            modelValue: { seconds: 3600, nanos: 0 },
+            mode: 'single',
+            units: ['hour', 'day'],
+            step: 1,
+        });
+
+        wrapper.findComponent(USelectMenuStub).vm.$emit('update:modelValue', 'day');
+        wrapper.findComponent(UInputNumberStub).vm.$emit('update:modelValue', 1.042);
+        await nextTick();
+
+        expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual({ seconds: 86400, nanos: 0 });
+    });
+
+    it('auto-selects day unit for day-aligned duration values', async () => {
+        const wrapper = createWrapper({
+            modelValue: { seconds: 312 * 3600, nanos: 0 },
+            mode: 'single',
+            units: ['hour', 'day'],
+            step: 1,
+        });
+        await nextTick();
+
+        expect(wrapper.findComponent(USelectMenuStub).props('modelValue')).toBe('day');
+    });
+
     it('keeps clamped value when switching mode', async () => {
         const wrapper = createWrapper({
             modelValue: { seconds: 10800, nanos: 0 },

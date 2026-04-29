@@ -79,7 +79,7 @@ const template = (d?: DataRecord) => {
             </div>
         </template>
 
-        <VisXYContainer :data="data ?? []" :padding="{ top: 40 }" class="h-96" :width="width">
+        <VisXYContainer class="h-96" :data="data ?? []" :padding="{ top: 40 }" :width="width">
             <VisGroupedBar :x="x" :y="y" color="var(--ui-primary)" />
 
             <VisLine :x="x" :y="(d: DataRecord) => d.vacation" color="var(--ui-warning)" />

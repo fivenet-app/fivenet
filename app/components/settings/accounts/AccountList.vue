@@ -261,12 +261,12 @@ const columns = computed(
                             <UInput
                                 ref="input"
                                 v-model="query.license"
+                                class="w-full"
                                 type="text"
                                 name="license"
                                 :placeholder="$t('common.license')"
                                 block
                                 leading-icon="i-mdi-search"
-                                class="w-full"
                             >
                                 <template #trailing>
                                     <UKbd value="/" />
@@ -304,11 +304,11 @@ const columns = computed(
                                 <UFormField class="flex-1" name="username" :label="$t('common.username')">
                                     <UInput
                                         v-model="query.username"
+                                        class="w-full"
                                         type="text"
                                         name="username"
                                         :placeholder="$t('common.username')"
                                         block
-                                        class="w-full"
                                     />
                                 </UFormField>
 
@@ -319,11 +319,11 @@ const columns = computed(
                                 >
                                     <UInput
                                         v-model="query.externalId"
+                                        class="w-full"
                                         type="text"
                                         name="externalId"
                                         :placeholder="$t('components.auth.SocialLogins.external_id')"
                                         block
-                                        class="w-full"
                                     />
                                 </UFormField>
                             </div>

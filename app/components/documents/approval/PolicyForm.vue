@@ -128,16 +128,16 @@ const formRef = useTemplateRef('formRef');
                         </div>
                     </template>
 
-                    <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
+                    <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
                         <PolicyEditor v-model="state" />
                     </UForm>
 
                     <template #footer>
                         <UFieldGroup class="w-full flex-1">
                             <UButton
+                                class="w-full"
                                 :disabled="!canSubmit"
                                 block
-                                class="w-full"
                                 :label="$t('common.save')"
                                 @click="formRef?.submit()"
                             />

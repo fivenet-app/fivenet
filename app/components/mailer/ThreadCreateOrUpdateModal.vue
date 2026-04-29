@@ -232,6 +232,7 @@ const formRef = useTemplateRef('formRef');
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.recipients"
+                                        class="w-full"
                                         :placeholder="$t('common.recipient')"
                                         block
                                         multiple
@@ -242,7 +243,6 @@ const formRef = useTemplateRef('formRef');
                                         ]"
                                         :search-input="{ placeholder: $t('common.mail', 1) }"
                                         :disabled="!canSubmit"
-                                        class="w-full"
                                         create-item
                                         @create="(item) => onCreate(item)"
                                     >
@@ -284,15 +284,15 @@ const formRef = useTemplateRef('formRef');
                             <div class="flex flex-1 flex-col items-center sm:flex-row">
                                 <span class="flex-1">{{ $t('common.template', 1) }}</span>
 
-                                <TemplateSelector v-if="editorRef" :editor="unref(editorRef).editor" class="ml-auto" />
+                                <TemplateSelector v-if="editorRef" class="ml-auto" :editor="unref(editorRef).editor" />
                             </div>
 
                             <ClientOnly>
                                 <TiptapEditor
                                     ref="editorRef"
                                     v-model="state.content"
-                                    name="content"
                                     class="flex-1 overflow-y-hidden"
+                                    name="content"
                                     :disabled="!canSubmit"
                                     :limit="maxContentLength"
                                     wrapper-class="min-h-96"
