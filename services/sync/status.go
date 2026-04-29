@@ -2,9 +2,11 @@ package sync
 
 import (
 	"context"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -15,6 +17,14 @@ func (s *Server) GetStatus(
 	req *pbsync.GetStatusRequest,
 ) (*pbsync.GetStatusResponse, error) {
 	resp := &pbsync.GetStatusResponse{}
+
+	if v := s.lastSyncedData.Load(); v > 0 {
+		resp.LastSyncedData = timestamp.New(time.Unix(v, 0))
+	}
+
+	if v := s.lastSyncedActivity.Load(); v > 0 {
+		resp.LastSyncedActivity = timestamp.New(time.Unix(v, 0))
+	}
 
 	tJobs := table.FivenetJobs
 	tUsers := table.FivenetUser

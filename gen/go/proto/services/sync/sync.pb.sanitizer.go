@@ -377,6 +377,24 @@ func (m *GetStatusResponse) Sanitize() error {
 		}
 	}
 
+	// Field: LastSyncedActivity
+	if m.LastSyncedActivity != nil {
+		if v, ok := any(m.GetLastSyncedActivity()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: LastSyncedData
+	if m.LastSyncedData != nil {
+		if v, ok := any(m.GetLastSyncedData()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Licenses
 	if m.Licenses != nil {
 		if v, ok := any(m.GetLicenses()).(interface{ Sanitize() error }); ok {

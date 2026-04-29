@@ -86,10 +86,10 @@ type SyncServiceClient interface {
 	// DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
 	AddActivity(ctx context.Context, in *AddActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	// Deprecated: Do not use.
-	// DEPRECATED:DBSync's method of sending (mass) data to the FiveNet server for storing.
+	// DEPRECATED: DBSync's method of sending (mass) data to the FiveNet server for storing.
 	SendData(ctx context.Context, in *SendDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
 	// Deprecated: Do not use.
-	// DEPRECATED:Way for the gameserver to delete certain data as well
+	// DEPRECATED: Way for the gameserver to delete certain data as well
 	DeleteData(ctx context.Context, in *DeleteDataRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error)
 }
 
@@ -403,10 +403,10 @@ type SyncServiceServer interface {
 	// DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
 	AddActivity(context.Context, *AddActivityRequest) (*AddActivityResponse, error)
 	// Deprecated: Do not use.
-	// DEPRECATED:DBSync's method of sending (mass) data to the FiveNet server for storing.
+	// DEPRECATED: DBSync's method of sending (mass) data to the FiveNet server for storing.
 	SendData(context.Context, *SendDataRequest) (*SendDataResponse, error)
 	// Deprecated: Do not use.
-	// DEPRECATED:Way for the gameserver to delete certain data as well
+	// DEPRECATED: Way for the gameserver to delete certain data as well
 	DeleteData(context.Context, *DeleteDataRequest) (*DeleteDataResponse, error)
 	mustEmbedUnimplementedSyncServiceServer()
 }

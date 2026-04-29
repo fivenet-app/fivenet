@@ -36,6 +36,7 @@ import { UserActivity } from "../../resources/users/activity/activity";
 import { Dispatch } from "../../resources/centrum/dispatches/dispatches";
 import { UserOAuth2Conn } from "../../resources/sync/activity/activity";
 import { DataStatus } from "../../resources/sync/data/data";
+import { Timestamp } from "../../resources/timestamp/timestamp";
 /**
  * @generated from protobuf message services.sync.GetStatusRequest
  */
@@ -45,6 +46,14 @@ export interface GetStatusRequest {
  * @generated from protobuf message services.sync.GetStatusResponse
  */
 export interface GetStatusResponse {
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp last_synced_data = 6
+     */
+    lastSyncedData?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp last_synced_activity = 7
+     */
+    lastSyncedActivity?: Timestamp;
     /**
      * @generated from protobuf field: resources.sync.data.DataStatus jobs = 1
      */
@@ -536,6 +545,8 @@ export const GetStatusRequest = new GetStatusRequest$Type();
 class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
     constructor() {
         super("services.sync.GetStatusResponse", [
+            { no: 6, name: "last_synced_data", kind: "message", T: () => Timestamp },
+            { no: 7, name: "last_synced_activity", kind: "message", T: () => Timestamp },
             { no: 1, name: "jobs", kind: "message", T: () => DataStatus },
             { no: 2, name: "licenses", kind: "message", T: () => DataStatus },
             { no: 3, name: "users", kind: "message", T: () => DataStatus },
@@ -554,6 +565,12 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* optional resources.timestamp.Timestamp last_synced_data */ 6:
+                    message.lastSyncedData = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.lastSyncedData);
+                    break;
+                case /* optional resources.timestamp.Timestamp last_synced_activity */ 7:
+                    message.lastSyncedActivity = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.lastSyncedActivity);
+                    break;
                 case /* resources.sync.data.DataStatus jobs */ 1:
                     message.jobs = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.jobs);
                     break;
@@ -596,6 +613,12 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
         /* resources.sync.data.DataStatus accounts = 5; */
         if (message.accounts)
             DataStatus.internalBinaryWrite(message.accounts, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp last_synced_data = 6; */
+        if (message.lastSyncedData)
+            Timestamp.internalBinaryWrite(message.lastSyncedData, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp last_synced_activity = 7; */
+        if (message.lastSyncedActivity)
+            Timestamp.internalBinaryWrite(message.lastSyncedActivity, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

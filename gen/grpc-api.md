@@ -13261,6 +13261,8 @@ Individual DeleteData request messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `last_synced_data` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `last_synced_activity` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `jobs` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
 | `licenses` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
 | `users` | [resources.sync.data.DataStatus](#resourcessyncdataDataStatus) |  |  |
@@ -13480,8 +13482,8 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `DeleteVehicles` | [DeleteVehiclesRequest](#servicessyncDeleteVehiclesRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) | |
 | `Stream` | [StreamRequest](#servicessyncStreamRequest) | [StreamResponse](#servicessyncStreamResponse) stream |Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data) |
 | `AddActivity` | [AddActivityRequest](#servicessyncAddActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |DEPRECATED: For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc. |
-| `SendData` | [SendDataRequest](#servicessyncSendDataRequest) | [SendDataResponse](#servicessyncSendDataResponse) |DEPRECATED:DBSync's method of sending (mass) data to the FiveNet server for storing. |
-| `DeleteData` | [DeleteDataRequest](#servicessyncDeleteDataRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |DEPRECATED:Way for the gameserver to delete certain data as well |
+| `SendData` | [SendDataRequest](#servicessyncSendDataRequest) | [SendDataResponse](#servicessyncSendDataResponse) |DEPRECATED: DBSync's method of sending (mass) data to the FiveNet server for storing. |
+| `DeleteData` | [DeleteDataRequest](#servicessyncDeleteDataRequest) | [DeleteDataResponse](#servicessyncDeleteDataResponse) |DEPRECATED: Way for the gameserver to delete certain data as well |
 
  <!-- end services -->
 

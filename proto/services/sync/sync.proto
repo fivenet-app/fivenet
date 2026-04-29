@@ -9,6 +9,7 @@ import "resources/jobs/colleagues/activity/activity.proto";
 import "resources/jobs/jobs.proto";
 import "resources/sync/activity/activity.proto";
 import "resources/sync/data/data.proto";
+import "resources/timestamp/timestamp.proto";
 import "resources/users/activity/activity.proto";
 import "resources/vehicles/vehicles.proto";
 
@@ -17,6 +18,9 @@ option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/
 message GetStatusRequest {}
 
 message GetStatusResponse {
+  optional resources.timestamp.Timestamp last_synced_data = 6;
+  optional resources.timestamp.Timestamp last_synced_activity = 7;
+
   resources.sync.data.DataStatus jobs = 1;
   resources.sync.data.DataStatus licenses = 2;
 

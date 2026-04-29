@@ -21,7 +21,9 @@ func (s *Sync) RunStream(ctx context.Context) {
 		})
 	}
 
-	s.logger.Info("starting sync stream")
+	cfg := s.cfg.Load()
+	api := cfg.Destination.API
+	s.logger.Info("starting sync stream", zap.String("host", api.URL))
 	for {
 		if err := s.runStream(ctx); err != nil {
 			s.logger.Warn("error during sync stream, restarting in a second", zap.Error(err))
