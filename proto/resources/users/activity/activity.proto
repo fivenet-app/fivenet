@@ -125,6 +125,7 @@ message MugshotChange {
 message LabelsChange {
   repeated resources.citizens.labels.Label added = 1;
   repeated resources.citizens.labels.Label removed = 2;
+  bool expired = 4;
 }
 
 message LabelChange {

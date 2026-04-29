@@ -72,10 +72,6 @@ export interface Label {
      * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 11
      */
     expiresAt?: Timestamp;
-    /**
-     * @generated from protobuf field: optional string reason = 12
-     */
-    reason?: string;
 }
 /**
  * @generated from protobuf message resources.citizens.labels.Settings
@@ -222,8 +218,7 @@ class Label$Type extends MessageType<Label> {
             { no: 8, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 9, name: "settings", kind: "message", T: () => Settings },
             { no: 10, name: "access", kind: "message", T: () => Access, options: { "buf.validate.field": { required: true } } },
-            { no: 11, name: "expires_at", kind: "message", T: () => Timestamp },
-            { no: 12, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
+            { no: 11, name: "expires_at", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<Label>): Label {
@@ -273,9 +268,6 @@ class Label$Type extends MessageType<Label> {
                 case /* optional resources.timestamp.Timestamp expires_at */ 11:
                     message.expiresAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expiresAt);
                     break;
-                case /* optional string reason */ 12:
-                    message.reason = reader.string();
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -321,9 +313,6 @@ class Label$Type extends MessageType<Label> {
         /* optional resources.timestamp.Timestamp expires_at = 11; */
         if (message.expiresAt)
             Timestamp.internalBinaryWrite(message.expiresAt, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* optional string reason = 12; */
-        if (message.reason !== undefined)
-            writer.tag(12, WireType.LengthDelimited).string(message.reason);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

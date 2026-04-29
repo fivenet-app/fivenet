@@ -229,6 +229,10 @@ export interface LabelsChange {
      * @generated from protobuf field: repeated resources.citizens.labels.Label removed = 2
      */
     removed: Label[];
+    /**
+     * @generated from protobuf field: bool expired = 4
+     */
+    expired: boolean;
 }
 /**
  * @generated from protobuf message resources.users.activity.LabelChange
@@ -925,13 +929,15 @@ class LabelsChange$Type extends MessageType<LabelsChange> {
     constructor() {
         super("resources.users.activity.LabelsChange", [
             { no: 1, name: "added", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label },
-            { no: 2, name: "removed", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label }
+            { no: 2, name: "removed", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label },
+            { no: 4, name: "expired", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<LabelsChange>): LabelsChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.added = [];
         message.removed = [];
+        message.expired = false;
         if (value !== undefined)
             reflectionMergePartial<LabelsChange>(this, message, value);
         return message;
@@ -946,6 +952,9 @@ class LabelsChange$Type extends MessageType<LabelsChange> {
                     break;
                 case /* repeated resources.citizens.labels.Label removed */ 2:
                     message.removed.push(Label.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* bool expired */ 4:
+                    message.expired = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -965,6 +974,9 @@ class LabelsChange$Type extends MessageType<LabelsChange> {
         /* repeated resources.citizens.labels.Label removed = 2; */
         for (let i = 0; i < message.removed.length; i++)
             Label.internalBinaryWrite(message.removed[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* bool expired = 4; */
+        if (message.expired !== false)
+            writer.tag(4, WireType.Varint).bool(message.expired);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

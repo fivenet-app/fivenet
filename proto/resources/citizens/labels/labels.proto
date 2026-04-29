@@ -1,3 +1,4 @@
+
 syntax = "proto3";
 
 package resources.citizens.labels;
@@ -54,10 +55,6 @@ message Label {
 
   // Citizen label assignment data
   optional resources.timestamp.Timestamp expires_at = 11;
-  optional string reason = 12 [
-    (buf.validate.field).string.max_len = 255,
-    (codegen.sanitizer.sanitizer) = {enabled: true}
-  ];
 }
 
 message Settings {

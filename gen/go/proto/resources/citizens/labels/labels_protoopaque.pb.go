@@ -149,7 +149,6 @@ type Label struct {
 	xxx_hidden_Settings    *Settings              `protobuf:"bytes,9,opt,name=settings,proto3,oneof"`
 	xxx_hidden_Access      *Access                `protobuf:"bytes,10,opt,name=access,proto3,oneof"`
 	xxx_hidden_ExpiresAt   *timestamp.Timestamp   `protobuf:"bytes,11,opt,name=expires_at,json=expiresAt,proto3,oneof"`
-	xxx_hidden_Reason      *string                `protobuf:"bytes,12,opt,name=reason,proto3,oneof"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -264,16 +263,6 @@ func (x *Label) GetExpiresAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *Label) GetReason() string {
-	if x != nil {
-		if x.xxx_hidden_Reason != nil {
-			return *x.xxx_hidden_Reason
-		}
-		return ""
-	}
-	return ""
-}
-
 func (x *Label) SetId(v int64) {
 	x.xxx_hidden_Id = v
 }
@@ -292,7 +281,7 @@ func (x *Label) SetDeletedAt(v *timestamp.Timestamp) {
 
 func (x *Label) SetJob(v string) {
 	x.xxx_hidden_Job = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 12)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 11)
 }
 
 func (x *Label) SetName(v string) {
@@ -305,7 +294,7 @@ func (x *Label) SetColor(v string) {
 
 func (x *Label) SetIcon(v string) {
 	x.xxx_hidden_Icon = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 12)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 11)
 }
 
 func (x *Label) SetSettings(v *Settings) {
@@ -318,11 +307,6 @@ func (x *Label) SetAccess(v *Access) {
 
 func (x *Label) SetExpiresAt(v *timestamp.Timestamp) {
 	x.xxx_hidden_ExpiresAt = v
-}
-
-func (x *Label) SetReason(v string) {
-	x.xxx_hidden_Reason = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 12)
 }
 
 func (x *Label) HasCreatedAt() bool {
@@ -381,13 +365,6 @@ func (x *Label) HasExpiresAt() bool {
 	return x.xxx_hidden_ExpiresAt != nil
 }
 
-func (x *Label) HasReason() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
-}
-
 func (x *Label) ClearCreatedAt() {
 	x.xxx_hidden_CreatedAt = nil
 }
@@ -422,11 +399,6 @@ func (x *Label) ClearExpiresAt() {
 	x.xxx_hidden_ExpiresAt = nil
 }
 
-func (x *Label) ClearReason() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
-	x.xxx_hidden_Reason = nil
-}
-
 type Label_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -442,7 +414,6 @@ type Label_builder struct {
 	Access    *Access
 	// Citizen label assignment data
 	ExpiresAt *timestamp.Timestamp
-	Reason    *string
 }
 
 func (b0 Label_builder) Build() *Label {
@@ -454,22 +425,18 @@ func (b0 Label_builder) Build() *Label {
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	x.xxx_hidden_DeletedAt = b.DeletedAt
 	if b.Job != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 12)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 11)
 		x.xxx_hidden_Job = b.Job
 	}
 	x.xxx_hidden_Name = b.Name
 	x.xxx_hidden_Color = b.Color
 	if b.Icon != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 12)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 11)
 		x.xxx_hidden_Icon = b.Icon
 	}
 	x.xxx_hidden_Settings = b.Settings
 	x.xxx_hidden_Access = b.Access
 	x.xxx_hidden_ExpiresAt = b.ExpiresAt
-	if b.Reason != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 12)
-		x.xxx_hidden_Reason = b.Reason
-	}
 	return m0
 }
 
@@ -826,7 +793,7 @@ const file_resources_citizens_labels_labels_proto_rawDesc = "" +
 	"\n" +
 	"&resources/citizens/labels/labels.proto\x12\x19resources.citizens.labels\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"F\n" +
 	"\x06Labels\x124\n" +
-	"\x04list\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x04list:\x06\xe2\xf3\x18\x02\b\x01\"\xc9\x05\n" +
+	"\x04list\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x04list:\x06\xe2\xf3\x18\x02\b\x01\"\x99\x05\n" +
 	"\x05Label\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12=\n" +
 	"\n" +
@@ -843,16 +810,14 @@ const file_resources_citizens_labels_labels_proto_rawDesc = "" +
 	"\x06access\x18\n" +
 	" \x01(\v2!.resources.citizens.labels.AccessH\x05R\x06access\x88\x01\x01\x12B\n" +
 	"\n" +
-	"expires_at\x18\v \x01(\v2\x1e.resources.timestamp.TimestampH\x06R\texpiresAt\x88\x01\x01\x12#\n" +
-	"\x06reason\x18\f \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\aR\x06reason\x88\x01\x01B\r\n" +
+	"expires_at\x18\v \x01(\v2\x1e.resources.timestamp.TimestampH\x06R\texpiresAt\x88\x01\x01B\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x06\n" +
 	"\x04_jobB\a\n" +
 	"\x05_iconB\v\n" +
 	"\t_settingsB\t\n" +
 	"\a_accessB\r\n" +
-	"\v_expires_atB\t\n" +
-	"\a_reason\"\xeb\x01\n" +
+	"\v_expires_at\"\xeb\x01\n" +
 	"\bSettings\x12/\n" +
 	"\x13requires_expiration\x18\x01 \x01(\bR\x12requiresExpiration\x12A\n" +
 	"\fmin_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationH\x00R\vminDuration\x88\x01\x01\x12A\n" +

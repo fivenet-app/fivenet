@@ -239,11 +239,11 @@ service SyncService {
   rpc AddActivity(AddActivityRequest) returns (AddActivityResponse) {
     option deprecated = true;
   }
-  // DEPRECATED:DBSync's method of sending (mass) data to the FiveNet server for storing.
+  // DEPRECATED: DBSync's method of sending (mass) data to the FiveNet server for storing.
   rpc SendData(SendDataRequest) returns (SendDataResponse) {
     option deprecated = true;
   }
-  // DEPRECATED:Way for the gameserver to delete certain data as well
+  // DEPRECATED: Way for the gameserver to delete certain data as well
   rpc DeleteData(DeleteDataRequest) returns (DeleteDataResponse) {
     option deprecated = true;
   }

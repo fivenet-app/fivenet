@@ -148,7 +148,6 @@ type Label struct {
 	Access    *Access                `protobuf:"bytes,10,opt,name=access,proto3,oneof" json:"access,omitempty"`
 	// Citizen label assignment data
 	ExpiresAt     *timestamp.Timestamp `protobuf:"bytes,11,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
-	Reason        *string              `protobuf:"bytes,12,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -255,13 +254,6 @@ func (x *Label) GetExpiresAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *Label) GetReason() string {
-	if x != nil && x.Reason != nil {
-		return *x.Reason
-	}
-	return ""
-}
-
 func (x *Label) SetId(v int64) {
 	x.Id = v
 }
@@ -304,10 +296,6 @@ func (x *Label) SetAccess(v *Access) {
 
 func (x *Label) SetExpiresAt(v *timestamp.Timestamp) {
 	x.ExpiresAt = v
-}
-
-func (x *Label) SetReason(v string) {
-	x.Reason = &v
 }
 
 func (x *Label) HasCreatedAt() bool {
@@ -366,13 +354,6 @@ func (x *Label) HasExpiresAt() bool {
 	return x.ExpiresAt != nil
 }
 
-func (x *Label) HasReason() bool {
-	if x == nil {
-		return false
-	}
-	return x.Reason != nil
-}
-
 func (x *Label) ClearCreatedAt() {
 	x.CreatedAt = nil
 }
@@ -405,10 +386,6 @@ func (x *Label) ClearExpiresAt() {
 	x.ExpiresAt = nil
 }
 
-func (x *Label) ClearReason() {
-	x.Reason = nil
-}
-
 type Label_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -424,7 +401,6 @@ type Label_builder struct {
 	Access    *Access
 	// Citizen label assignment data
 	ExpiresAt *timestamp.Timestamp
-	Reason    *string
 }
 
 func (b0 Label_builder) Build() *Label {
@@ -442,7 +418,6 @@ func (b0 Label_builder) Build() *Label {
 	x.Settings = b.Settings
 	x.Access = b.Access
 	x.ExpiresAt = b.ExpiresAt
-	x.Reason = b.Reason
 	return m0
 }
 
@@ -779,7 +754,7 @@ const file_resources_citizens_labels_labels_proto_rawDesc = "" +
 	"\n" +
 	"&resources/citizens/labels/labels.proto\x12\x19resources.citizens.labels\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"F\n" +
 	"\x06Labels\x124\n" +
-	"\x04list\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x04list:\x06\xe2\xf3\x18\x02\b\x01\"\xc9\x05\n" +
+	"\x04list\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x04list:\x06\xe2\xf3\x18\x02\b\x01\"\x99\x05\n" +
 	"\x05Label\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12=\n" +
 	"\n" +
@@ -796,16 +771,14 @@ const file_resources_citizens_labels_labels_proto_rawDesc = "" +
 	"\x06access\x18\n" +
 	" \x01(\v2!.resources.citizens.labels.AccessH\x05R\x06access\x88\x01\x01\x12B\n" +
 	"\n" +
-	"expires_at\x18\v \x01(\v2\x1e.resources.timestamp.TimestampH\x06R\texpiresAt\x88\x01\x01\x12#\n" +
-	"\x06reason\x18\f \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\aR\x06reason\x88\x01\x01B\r\n" +
+	"expires_at\x18\v \x01(\v2\x1e.resources.timestamp.TimestampH\x06R\texpiresAt\x88\x01\x01B\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x06\n" +
 	"\x04_jobB\a\n" +
 	"\x05_iconB\v\n" +
 	"\t_settingsB\t\n" +
 	"\a_accessB\r\n" +
-	"\v_expires_atB\t\n" +
-	"\a_reason\"\xeb\x01\n" +
+	"\v_expires_at\"\xeb\x01\n" +
 	"\bSettings\x12/\n" +
 	"\x13requires_expiration\x18\x01 \x01(\bR\x12requiresExpiration\x12A\n" +
 	"\fmin_duration\x18\x02 \x01(\v2\x19.google.protobuf.DurationH\x00R\vminDuration\x88\x01\x01\x12A\n" +

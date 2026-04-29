@@ -555,7 +555,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `settings` | [Settings](#resourcescitizenslabelsSettings) | optional |  |
 | `access` | [Access](#resourcescitizenslabelsAccess) | optional |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Citizen label assignment data |
-| `reason` | [string](#string) | optional |  |
 
 
 
@@ -6949,6 +6948,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | ----- | ---- | ----- | ----------- |
 | `added` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
 | `removed` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
+| `expired` | [bool](#bool) |  |  |
 
 
 

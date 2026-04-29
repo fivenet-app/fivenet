@@ -111,11 +111,6 @@ func (m *Label) Sanitize() error {
 	// Field: Name
 	m.Name = htmlsanitizer.StripHTMLTags(m.Name)
 
-	// Field: Reason
-	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
-	}
-
 	// Field: Settings
 	if m.Settings != nil {
 		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {

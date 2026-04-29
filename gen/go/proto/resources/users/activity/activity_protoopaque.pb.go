@@ -1317,6 +1317,7 @@ type LabelsChange struct {
 	state              protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Added   *[]*labels.Label       `protobuf:"bytes,1,rep,name=added,proto3"`
 	xxx_hidden_Removed *[]*labels.Label       `protobuf:"bytes,2,rep,name=removed,proto3"`
+	xxx_hidden_Expired bool                   `protobuf:"varint,4,opt,name=expired,proto3"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -1364,6 +1365,13 @@ func (x *LabelsChange) GetRemoved() []*labels.Label {
 	return nil
 }
 
+func (x *LabelsChange) GetExpired() bool {
+	if x != nil {
+		return x.xxx_hidden_Expired
+	}
+	return false
+}
+
 func (x *LabelsChange) SetAdded(v []*labels.Label) {
 	x.xxx_hidden_Added = &v
 }
@@ -1372,11 +1380,16 @@ func (x *LabelsChange) SetRemoved(v []*labels.Label) {
 	x.xxx_hidden_Removed = &v
 }
 
+func (x *LabelsChange) SetExpired(v bool) {
+	x.xxx_hidden_Expired = v
+}
+
 type LabelsChange_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Added   []*labels.Label
 	Removed []*labels.Label
+	Expired bool
 }
 
 func (b0 LabelsChange_builder) Build() *LabelsChange {
@@ -1385,6 +1398,7 @@ func (b0 LabelsChange_builder) Build() *LabelsChange {
 	_, _ = b, x
 	x.xxx_hidden_Added = &b.Added
 	x.xxx_hidden_Removed = &b.Removed
+	x.xxx_hidden_Expired = b.Expired
 	return m0
 }
 
@@ -2003,10 +2017,11 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\x03new\x18\x02 \x01(\rR\x03new\".\n" +
 	"\rMugshotChange\x12\x15\n" +
 	"\x03new\x18\x01 \x01(\tH\x00R\x03new\x88\x01\x01B\x06\n" +
-	"\x04_new\"\x82\x01\n" +
+	"\x04_new\"\x9c\x01\n" +
 	"\fLabelsChange\x126\n" +
 	"\x05added\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x05added\x12:\n" +
-	"\aremoved\x18\x02 \x03(\v2 .resources.citizens.labels.LabelR\aremoved\"\xc8\x01\n" +
+	"\aremoved\x18\x02 \x03(\v2 .resources.citizens.labels.LabelR\aremoved\x12\x18\n" +
+	"\aexpired\x18\x04 \x01(\bR\aexpired\"\xc8\x01\n" +
 	"\vLabelChange\x126\n" +
 	"\x05label\x18\x01 \x01(\v2 .resources.citizens.labels.LabelR\x05label\x12\x14\n" +
 	"\x05added\x18\x02 \x01(\bR\x05added\x12B\n" +
