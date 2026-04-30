@@ -252,6 +252,8 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId int64) error {
 		}
 	}
 
+	p.clearUserCanCache()
+
 	return nil
 }
 

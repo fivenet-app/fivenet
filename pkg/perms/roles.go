@@ -327,6 +327,7 @@ func (p *Perms) deleteRole(id int64, job string, grade int32) {
 	grades.Delete(grade)
 
 	p.roleIDToJobMap.Delete(id)
+	p.clearUserCanCache()
 }
 
 func (p *Perms) GetRoleByJobAndGrade(
@@ -510,6 +511,7 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId int64, perms .
 	for _, v := range rolePerms {
 		roleCache.Store(v.PermissionID, v.Val)
 	}
+	p.clearUserCanCache()
 
 	if err := p.publishMessage(ctx, RolePermUpdateSubject, &permissionsevents.RoleIDEvent{
 		RoleId: roleId,
@@ -551,6 +553,7 @@ func (p *Perms) RemovePermissionsFromRole(
 			permsRoleMap.Delete(permId)
 		}
 	}
+	p.clearUserCanCache()
 
 	if err := p.publishMessage(ctx, RolePermUpdateSubject, &permissionsevents.RoleIDEvent{
 		RoleId: roleId,

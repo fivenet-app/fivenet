@@ -176,6 +176,8 @@ type Permissions interface {
 
 type userCacheKey struct {
 	userId int32
+	job    string
+	grade  int32
 	permId int64
 }
 

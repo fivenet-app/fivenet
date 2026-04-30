@@ -93,6 +93,11 @@ func (c *LRUCache[K, V]) Delete(key K) {
 	c.store.Delete(key)
 }
 
+// Clear removes all key/value pairs from the cache.
+func (c *LRUCache[K, V]) Clear() {
+	c.store.Clear()
+}
+
 // Len reports the current number of items, including any yet-uncollected
 // expired ones (Cheap O(1)).
 func (c *LRUCache[K, V]) Len() int { return c.store.Size() }

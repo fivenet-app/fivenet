@@ -47,6 +47,20 @@ func TestLRUCacheDelete(t *testing.T) {
 	assert.False(t, ok, "expected 'a' to be deleted")
 }
 
+func TestLRUCacheClear(t *testing.T) {
+	t.Parallel()
+	cache := NewLRUCache[string, int](2)
+	cache.Put("a", 1, 0)
+	cache.Put("b", 2, 0)
+	cache.Clear()
+
+	assert.Equal(t, 0, cache.Len())
+	_, ok := cache.Get("a")
+	assert.False(t, ok, "expected 'a' to be cleared")
+	_, ok = cache.Get("b")
+	assert.False(t, ok, "expected 'b' to be cleared")
+}
+
 func TestLRUCacheTTL(t *testing.T) {
 	t.Parallel()
 	cache := NewLRUCache[string, int](2)

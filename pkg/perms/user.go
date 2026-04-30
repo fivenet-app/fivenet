@@ -88,6 +88,8 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 
 	cacheKey := userCacheKey{
 		userId: userInfo.GetUserId(),
+		job:    userInfo.GetJob(),
+		grade:  userInfo.GetJobGrade(),
 		permId: permId,
 	}
 	result, ok := p.userCanCache.Get(cacheKey)
@@ -133,4 +135,10 @@ func (p *Perms) checkRoleJob(job string, grade int32, permId int64) (bool, bool)
 	}
 
 	return false, false
+}
+
+func (p *Perms) clearUserCanCache() {
+	if p.userCanCache != nil {
+		p.userCanCache.Clear()
+	}
 }
