@@ -23,6 +23,3 @@ packageExtensions:
       '@shikijs/engine-javascript': ^3.22.0
 
 saveExact: true
-
-overrides:
-  unimport: '6.2.0'
