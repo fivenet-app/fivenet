@@ -3,56 +3,48 @@
 <style>
     .loader {
         position: fixed;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
+        inset: 0;
         z-index: 99999999;
         user-select: none;
+        background-color: #1a202c;
     }
     .loader-overlay {
+        position: relative;
+        isolation: isolate;
         display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
+        min-height: 100vh;
         min-height: 100dvh;
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 50px;
+        text-align: center;
     }
-    .loader-overlay-img {
-        margin: 25px auto;
-    }
-    .loader-overlay img {
-        max-width: 92px;
-    }
+    .loader-overlay-img,
     .loader-spinner {
-        margin: 25px auto;
+        margin: 0;
+    }
+    .loader-overlay img,
+    .loader-spinner svg {
+        width: 92px;
+        height: 92px;
     }
     .loader-spinner svg {
-        height: 92px;
-        max-width: 92px;
-        fill: #ffffff;
-        animation-name: spin;
-        animation-duration: 900ms;
-        animation-iteration-count: infinite;
-        animation-timing-function: linear;
+        fill: #fff;
+        animation: spin 900ms linear infinite;
     }
 
-    @-moz-keyframes spin {
-        from {
-            -moz-transform: rotate(0deg);
-        }
-        to {
-            -moz-transform: rotate(360deg);
+    .hero-overlay > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .loader-spinner svg {
+            animation: none;
         }
     }
-    @-webkit-keyframes spin {
-        from {
-            -webkit-transform: rotate(0deg);
-        }
-        to {
-            -webkit-transform: rotate(360deg);
-        }
-    }
+
     @keyframes spin {
         from {
             transform: rotate(0deg);
@@ -66,7 +58,7 @@
 <div class="loader hero">
     <div class="loader-overlay hero-overlay">
         <div class="loader-overlay-img">
-            <img src="/images/logo.webp" alt="FiveNet Logo" />
+            <img src="/images/logo-200x200.webp" width="92" height="92" alt="FiveNet Logo" decoding="async" />
         </div>
 
         <div class="loader-spinner">

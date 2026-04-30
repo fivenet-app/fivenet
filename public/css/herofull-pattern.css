@@ -4,5 +4,15 @@
 }
 
 .hero-overlay {
-    background-color: var(--ui-bg) / 0.6;
+    background: transparent;
+}
+
+.hero-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-color: var(--ui-bg, #1a202c);
+    opacity: 0.6;
+    transition: background-color 250ms ease;
 }

@@ -65,8 +65,8 @@ const { data: stats, status } = useLazyAsyncData<StatsState>(
     },
     {
         default: () => state.value,
-        getCachedData() {
-            if (!state.value.fetchedAt) return undefined;
+        getCachedData(_, ctx) {
+            if (!state.value.fetchedAt || ctx.cause === 'refresh:manual') return undefined;
 
             const expireDate = new Date(state.value.fetchedAt);
             expireDate.setTime(expireDate.getTime() + 60 * 1000);

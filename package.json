@@ -141,7 +141,7 @@
         "nuxt-typed-router": "4.0.7",
         "pinia-plugin-persistedstate": "4.7.1",
         "playwright-core": "1.59.1",
-        "postcss": "8.5.12",
+        "postcss": "8.5.13",
         "postcss-preset-env": "11.2.1",
         "prettier": "3.8.3",
         "prettier-plugin-organize-attributes": "1.0.0",
