@@ -3,7 +3,6 @@ package modules
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/DeRuina/timberjack"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
@@ -42,13 +41,13 @@ func NewLogger(p LoggerParams) (LoggerResults, error) {
 	var logger *zap.Logger
 	if p.Config.Log.LogToFile {
 		tl := &timberjack.Logger{
-			Filename:         "/var/log/myapp/foo.log",
-			MaxSize:          500,
-			MaxBackups:       3,
-			MaxAge:           28,
-			Compress:         true,
+			Filename:         p.Config.Log.File.Path,
+			MaxSize:          p.Config.Log.File.Rotation.MaxSize,
+			MaxBackups:       p.Config.Log.File.Rotation.MaxBackups,
+			MaxAge:           p.Config.Log.File.Rotation.MaxAge,
+			Compress:         p.Config.Log.File.Rotation.Compress,
 			LocalTime:        true,
-			RotationInterval: 24 * time.Hour,
+			RotationInterval: p.Config.Log.File.Rotation.RotationInterval,
 		}
 		w := zapcore.AddSync(tl)
 

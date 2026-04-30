@@ -12,14 +12,19 @@ log:
   # Contains the configuration for file logging (if LogToFile is true, make sure to configure this).
   file:
     # Path to the log file.
-    path: "./fivenet.log"
+    path: "fivenet.log"
     # Contains the configuration for log rotation.
     rotation:
-      # Megabytes
-      maxSize: 10
+      # MaxSize is the maximum size in megabytes of the log file before it gets rotated.
+      maxSize: 100 # MB
+      # MaxBackups is the maximum number of old log files to retain.
       maxBackups: 7
+      # MaxAge is the maximum number of days to retain old log files based on the timestamp.
       maxAge: 14
+      # Compress determines if the rotated log files should be compressed using gzip.
       compress: true
+      # Rotation interval for log rotation (e.g., daily rotation).
+      rotationInterval: 24h
 
   levelOverrides:
     kvstore: "INFO"

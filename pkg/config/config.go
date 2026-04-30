@@ -75,10 +75,12 @@ type LogRotation struct {
 	MaxSize int `default:"10" yaml:"maxSize"`
 	// MaxBackups is the maximum number of old log files to retain.
 	MaxBackups int `default:"7" yaml:"maxBackups"`
-	// MaxAge is the maximum number of days to retain old log files based on the timestamp
+	// MaxAge is the maximum number of days to retain old log files based on the timestamp.
 	MaxAge int `default:"14" yaml:"maxAge"`
 	// Compress determines if the rotated log files should be compressed using gzip.
 	Compress bool `default:"true" yaml:"compress"`
+	// Rotation interval for log rotation (e.g., daily rotation).
+	RotationInterval time.Duration `default:"24h" yaml:"rotationInterval"`
 }
 
 type LoggingComponent string
