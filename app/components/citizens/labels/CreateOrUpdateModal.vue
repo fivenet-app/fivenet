@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
+import AccessManager from '~/components/partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -9,7 +11,7 @@ import InputDurationPicker from '~/components/partials/InputDurationPicker.vue';
 import { secondsToDuration } from '~/utils/duration';
 import { zodDurationMinMaxPair } from '~/utils/validation';
 import { getCitizensLabelsClient } from '~~/gen/ts/clients';
-import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
+import { AccessLevel, type Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import type { CreateOrUpdateLabelResponse, GetLabelResponse } from '~~/gen/ts/services/citizens/labels';
 
 const props = defineProps<{
@@ -210,7 +212,15 @@ const formRef = useTemplateRef('formRef');
                     />
                 </UFormField>
 
-                <UFormField name="access" :label="$t('common.access')"> TODO Access Manager </UFormField>
+                <UFormField name="access" :label="$t('common.access')">
+                    <AccessManager
+                        v-model:jobs="state.access.jobs"
+                        :target-id="state.id"
+                        :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.citizens.labels.AccessLevel')"
+                        :access-types="[{ label: $t('common.job', 2), value: 'job' }]"
+                        name="access"
+                    />
+                </UFormField>
             </UForm>
         </template>
 

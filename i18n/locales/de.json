@@ -3004,6 +3004,17 @@
                 "TOP_LAWS": "Top Gesetze",
                 "PENALTIES_OVER_TIME": "Strafen im Zeitverlauf"
             }
+        },
+        "citizens": {
+            "labels": {
+                "AccessLevel": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "BLOCKED": "Blockiert",
+                    "VIEW": "Ansehen",
+                    "GIVE": "Vergeben",
+                    "REMOVE": "Entfernen"
+                }
+            }
         }
     },
     "commandpalette": {

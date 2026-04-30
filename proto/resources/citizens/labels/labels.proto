@@ -1,4 +1,3 @@
-
 syntax = "proto3";
 
 package resources.citizens.labels;
@@ -74,9 +73,8 @@ message Settings {
 enum AccessLevel {
   ACCESS_LEVEL_UNSPECIFIED = 0;
   ACCESS_LEVEL_VIEW = 1;
-  ACCESS_LEVEL_ADD = 2;
+  ACCESS_LEVEL_GIVE = 2;
   ACCESS_LEVEL_REMOVE = 3;
-  ACCESS_LEVEL_EDIT = 4;
 }
 
 message Access {

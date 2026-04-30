@@ -127,27 +127,22 @@ type DurationMinMaxPairValue = {
 
 export function zodDurationMinMaxPair(options?: DurationMinMaxPairOptions) {
     const keys = getDurationI18nKeys(options?.i18n);
-    const fieldRequired = options?.requiredWhen ? false : (options?.required ?? true);
+    const durationSchema = zodProtoDurationSchema({
+        required: false,
+        min: options?.min,
+        max: options?.max,
+        i18n: options?.i18n,
+    }).optional();
 
     return z
         .object({
-            minDuration: zodProtoDurationSchema({
-                required: fieldRequired,
-                min: options?.min,
-                max: options?.max,
-                i18n: options?.i18n,
-            }),
-            maxDuration: zodProtoDurationSchema({
-                required: fieldRequired,
-                min: options?.min,
-                max: options?.max,
-                i18n: options?.i18n,
-            }),
+            minDuration: durationSchema,
+            maxDuration: durationSchema,
         })
         .superRefine((value, ctx) => {
             const pairRequired = options?.requiredWhen?.(value as DurationMinMaxPairValue) ?? options?.required ?? true;
 
-            if (!fieldRequired && pairRequired) {
+            if (pairRequired) {
                 let missingRequiredDuration = false;
 
                 if (value.minDuration === undefined || value.minDuration === null) {

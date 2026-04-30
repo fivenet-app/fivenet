@@ -3004,6 +3004,17 @@
                 "TOP_LAWS": "Top Laws",
                 "PENALTIES_OVER_TIME": "Penalties over time"
             }
+        },
+        "citizens": {
+            "labels": {
+                "AccessLevel": {
+                    "UNSPECIFIED": "Unspecified",
+                    "BLOCKED": "Blocked",
+                    "VIEW": "View",
+                    "GIVE": "Give",
+                    "REMOVE": "Remove"
+                }
+            }
         }
     },
     "commandpalette": {

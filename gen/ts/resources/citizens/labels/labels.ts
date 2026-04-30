@@ -145,17 +145,13 @@ export enum AccessLevel {
      */
     VIEW = 1,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_ADD = 2;
+     * @generated from protobuf enum value: ACCESS_LEVEL_GIVE = 2;
      */
-    ADD = 2,
+    GIVE = 2,
     /**
      * @generated from protobuf enum value: ACCESS_LEVEL_REMOVE = 3;
      */
-    REMOVE = 3,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_EDIT = 4;
-     */
-    EDIT = 4
+    REMOVE = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Labels$Type extends MessageType<Labels> {

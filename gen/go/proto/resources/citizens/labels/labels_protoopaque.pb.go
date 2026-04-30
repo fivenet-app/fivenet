@@ -32,9 +32,8 @@ type AccessLevel int32
 const (
 	AccessLevel_ACCESS_LEVEL_UNSPECIFIED AccessLevel = 0
 	AccessLevel_ACCESS_LEVEL_VIEW        AccessLevel = 1
-	AccessLevel_ACCESS_LEVEL_ADD         AccessLevel = 2
+	AccessLevel_ACCESS_LEVEL_GIVE        AccessLevel = 2
 	AccessLevel_ACCESS_LEVEL_REMOVE      AccessLevel = 3
-	AccessLevel_ACCESS_LEVEL_EDIT        AccessLevel = 4
 )
 
 // Enum value maps for AccessLevel.
@@ -42,16 +41,14 @@ var (
 	AccessLevel_name = map[int32]string{
 		0: "ACCESS_LEVEL_UNSPECIFIED",
 		1: "ACCESS_LEVEL_VIEW",
-		2: "ACCESS_LEVEL_ADD",
+		2: "ACCESS_LEVEL_GIVE",
 		3: "ACCESS_LEVEL_REMOVE",
-		4: "ACCESS_LEVEL_EDIT",
 	}
 	AccessLevel_value = map[string]int32{
 		"ACCESS_LEVEL_UNSPECIFIED": 0,
 		"ACCESS_LEVEL_VIEW":        1,
-		"ACCESS_LEVEL_ADD":         2,
+		"ACCESS_LEVEL_GIVE":        2,
 		"ACCESS_LEVEL_REMOVE":      3,
-		"ACCESS_LEVEL_EDIT":        4,
 	}
 )
 
@@ -836,13 +833,12 @@ const file_resources_citizens_labels_labels_proto_rawDesc = "" +
 	"\x06access\x18\a \x01(\x0e2&.resources.citizens.labels.AccessLevelR\x06accessB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
-	"\x10_job_grade_label*\x88\x01\n" +
+	"\x10_job_grade_label*r\n" +
 	"\vAccessLevel\x12\x1c\n" +
 	"\x18ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x15\n" +
-	"\x11ACCESS_LEVEL_VIEW\x10\x01\x12\x14\n" +
-	"\x10ACCESS_LEVEL_ADD\x10\x02\x12\x17\n" +
-	"\x13ACCESS_LEVEL_REMOVE\x10\x03\x12\x15\n" +
-	"\x11ACCESS_LEVEL_EDIT\x10\x04B\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels;citizenslabelsb\x06proto3"
+	"\x11ACCESS_LEVEL_VIEW\x10\x01\x12\x15\n" +
+	"\x11ACCESS_LEVEL_GIVE\x10\x02\x12\x17\n" +
+	"\x13ACCESS_LEVEL_REMOVE\x10\x03B\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels;citizenslabelsb\x06proto3"
 
 var file_resources_citizens_labels_labels_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_citizens_labels_labels_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
