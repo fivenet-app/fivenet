@@ -18,7 +18,7 @@ require (
 	github.com/creasty/defaults v1.8.0
 	github.com/desertbit/timer v1.0.1
 	github.com/diamondburned/arikawa/v3 v3.6.0
-	github.com/fsnotify/fsnotify v1.9.0
+	github.com/fsnotify/fsnotify v1.10.0
 	github.com/galexrt/iconify-go v0.2.0
 	github.com/gin-contrib/cors v1.7.7
 	github.com/gin-contrib/pprof v1.5.4
@@ -28,7 +28,7 @@ require (
 	github.com/gin-gonic/gin v1.12.0
 	github.com/go-jet/jet/v2 v2.14.1
 	github.com/go-playground/validator/v10 v10.30.2
-	github.com/go-sql-driver/mysql v1.9.3
+	github.com/go-sql-driver/mysql v1.10.0
 	github.com/goccy/go-yaml v1.19.2
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/golang-migrate/migrate/v4 v4.19.1
@@ -43,9 +43,9 @@ require (
 	github.com/markusmobius/go-dateparser v1.2.4
 	github.com/maruel/natural v1.3.0
 	github.com/microcosm-cc/bluemonday v1.0.27
-	github.com/minio/minio-go/v7 v7.0.100
+	github.com/minio/minio-go/v7 v7.1.0
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
-	github.com/nats-io/nats-server/v2 v2.12.7
+	github.com/nats-io/nats-server/v2 v2.12.8
 	github.com/nats-io/nats.go v1.51.0
 	github.com/ory/dockertest/v4 v4.0.0
 	github.com/paulmach/orb v0.13.0
@@ -76,7 +76,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.43.0
 	go.uber.org/fx v1.24.0
 	go.uber.org/multierr v1.11.0
-	go.uber.org/zap v1.27.1
+	go.uber.org/zap v1.28.0
 	golang.org/x/crypto v0.50.0
 	golang.org/x/image v0.39.0
 	golang.org/x/net v0.53.0
@@ -94,7 +94,7 @@ require (
 	cel.dev/expr v0.25.1 // indirect
 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
 	dario.cat/mergo v1.0.2 // indirect
-	filippo.io/edwards25519 v1.1.0 // indirect
+	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
@@ -216,6 +216,7 @@ require (
 	github.com/ugorji/go/codec v1.3.1 // indirect
 	github.com/wasilibs/go-re2 v1.10.0 // indirect
 	github.com/wasilibs/wazero-helpers v0.0.0-20250123031827-cd30c44769bb // indirect
+	github.com/zeebo/xxh3 v1.1.0 // indirect
 	go.etcd.io/bbolt v1.4.0 // indirect
 	go.mongodb.org/mongo-driver/v2 v2.5.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
