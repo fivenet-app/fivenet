@@ -278,10 +278,9 @@ const viewOptions = [
                         <UButton
                             icon="i-mdi-calendar-today"
                             :disabled="isRequestPending(calendarsStatus)"
+                            :label="$t('common.today')"
                             @click="resetToToday"
-                        >
-                            {{ $t('common.today') }}
-                        </UButton>
+                        />
                     </div>
 
                     <UFieldGroup
@@ -374,10 +373,9 @@ const viewOptions = [
                         <UButton
                             icon="i-mdi-calendar-today"
                             :disabled="isRequestPending(calendarsStatus)"
+                            :label="$t('common.today')"
                             @click="resetToToday"
-                        >
-                            {{ $t('common.today') }}
-                        </UButton>
+                        />
                     </div>
                 </template>
             </UDashboardToolbar>

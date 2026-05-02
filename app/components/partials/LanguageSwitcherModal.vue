@@ -65,9 +65,14 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
         </template>
 
         <template #footer>
-            <UButton class="flex-1" block color="neutral" :disabled="preventClose" @click="$emit('close', false)">
-                {{ $t('common.close', 1) }}
-            </UButton>
+            <UButton
+                class="flex-1"
+                block
+                color="neutral"
+                :disabled="preventClose"
+                :label="$t('common.close', 1)"
+                @click="$emit('close', false)"
+            />
         </template>
     </UModal>
 </template>

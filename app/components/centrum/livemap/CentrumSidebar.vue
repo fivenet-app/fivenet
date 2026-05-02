@@ -590,10 +590,9 @@ defineShortcuts({
                                             color="primary"
                                             size="xs"
                                             block
+                                            :label="$t('components.centrum.update_dispatch_status.title')"
                                             @click="updateDspStatus(selectedDispatch)"
-                                        >
-                                            {{ $t('components.centrum.update_dispatch_status.title') }}
-                                        </UButton>
+                                        />
                                     </UTooltip>
                                 </div>
                             </li>
@@ -605,9 +604,14 @@ defineShortcuts({
                             </li>
 
                             <li v-if="getSortedOwnDispatches.length === 0">
-                                <UButton variant="soft" color="neutral" icon="i-mdi-car-emergency" size="xs" block>
-                                    {{ $t('common.no_assigned_dispatches') }}
-                                </UButton>
+                                <UButton
+                                    variant="soft"
+                                    color="neutral"
+                                    icon="i-mdi-car-emergency"
+                                    size="xs"
+                                    block
+                                    :label="$t('common.no_assigned_dispatches')"
+                                />
                             </li>
 
                             <template v-else>

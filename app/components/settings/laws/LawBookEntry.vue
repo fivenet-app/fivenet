@@ -265,9 +265,13 @@ const confirmModal = overlay.create(ConfirmModal);
                 </div>
 
                 <UTooltip class="shrink-0" :text="$t('pages.settings.laws.add_new_law')">
-                    <UButton color="neutral" variant="outline" trailing-icon="i-mdi-plus" @click="addLaw">
-                        {{ $t('pages.settings.laws.add_new_law') }}
-                    </UButton>
+                    <UButton
+                        color="neutral"
+                        variant="outline"
+                        trailing-icon="i-mdi-plus"
+                        :label="$t('pages.settings.laws.add_new_law')"
+                        @click="addLaw"
+                    />
                 </UTooltip>
             </div>
             <UForm

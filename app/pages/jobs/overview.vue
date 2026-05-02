@@ -84,9 +84,13 @@ const showRadioFrequency = ref(false);
                             >
                         </div>
 
-                        <UButton v-if="nuiEnabled" block variant="soft" @click="setRadioFrequency(jobProps.radioFrequency)">
-                            {{ $t('common.connect') }}
-                        </UButton>
+                        <UButton
+                            v-if="nuiEnabled"
+                            block
+                            variant="soft"
+                            :label="$t('common.connect')"
+                            @click="setRadioFrequency(jobProps.radioFrequency)"
+                        />
                     </div>
                 </UCard>
             </div>

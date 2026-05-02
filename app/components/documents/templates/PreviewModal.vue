@@ -130,9 +130,7 @@ async function getTemplate(): Promise<Template> {
         </template>
 
         <template #footer>
-            <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                {{ $t('common.close', 1) }}
-            </UButton>
+            <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
         </template>
     </UModal>
 </template>

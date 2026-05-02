@@ -71,9 +71,10 @@ const changePasswordModal = overlay.create(ChangePasswordModal);
                 name="change_username"
                 :label="$t('components.auth.AccountInfo.change_username')"
             >
-                <UButton @click="changeUsernameModal.open()">
-                    {{ $t('components.auth.AccountInfo.change_username_button') }}
-                </UButton>
+                <UButton
+                    :label="$t('components.auth.AccountInfo.change_username_button')"
+                    @click="changeUsernameModal.open()"
+                />
             </UFormField>
 
             <UFormField
@@ -81,9 +82,10 @@ const changePasswordModal = overlay.create(ChangePasswordModal);
                 name="change_password"
                 :label="$t('components.auth.AccountInfo.change_password')"
             >
-                <UButton @click="changePasswordModal.open()">
-                    {{ $t('components.auth.AccountInfo.change_password_button') }}
-                </UButton>
+                <UButton
+                    :label="$t('components.auth.AccountInfo.change_password_button')"
+                    @click="changePasswordModal.open()"
+                />
             </UFormField>
         </UPageCard>
     </div>

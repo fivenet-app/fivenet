@@ -115,9 +115,12 @@ const filteredRequirementTypes = computed(() => {
         <template #body>
             <div class="mx-auto w-full max-w-[80%] min-w-3/4">
                 <template v-if="steps.selectTemplate">
-                    <UButton block icon="i-mdi-plus" @click="clipboardDialog()">
-                        {{ $t('components.documents.templates.templates_modal.no_template') }}
-                    </UButton>
+                    <UButton
+                        block
+                        icon="i-mdi-plus"
+                        :label="$t('components.documents.templates.templates_modal.no_template')"
+                        @click="clipboardDialog()"
+                    />
 
                     <USeparator class="my-4" />
 
@@ -154,18 +157,25 @@ const filteredRequirementTypes = computed(() => {
                 v-if="template !== undefined && reqs !== undefined && steps.selectClipboard"
                 class="inline-flex w-full"
             >
-                <UButton class="flex-1" color="neutral" block @click="goBackDialog()">
-                    {{ $t('common.go_back') }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.go_back')" @click="goBackDialog()" />
 
-                <UButton class="flex-1" block :disabled="!readyToCreate" @click="clipboardDialog()">
-                    {{ $t('common.create') }}
-                </UButton>
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!readyToCreate"
+                    :label="$t('common.create')"
+                    @click="clipboardDialog()"
+                />
             </UFieldGroup>
 
-            <UButton v-else class="flex-1" color="neutral" block @click="$emit('close', false)">
-                {{ $t('common.close', 1) }}
-            </UButton>
+            <UButton
+                v-else
+                class="flex-1"
+                color="neutral"
+                block
+                :label="$t('common.close', 1)"
+                @click="$emit('close', false)"
+            />
         </template>
     </UDrawer>
 </template>

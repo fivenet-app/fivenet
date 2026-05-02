@@ -534,15 +534,17 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 :disabled="!changed || !canSubmit"
                                 :loading="!canSubmit"
                                 icon="i-mdi-content-save"
+                                :label="$t('common.save', 1)"
                                 @click="onSubmitThrottle"
-                            >
-                                {{ $t('common.save', 1) }}
-                            </UButton>
+                            />
 
                             <UPopover>
-                                <UButton :disabled="changed" color="neutral" icon="i-mdi-form-textarea">
-                                    {{ $t('common.paste') }}
-                                </UButton>
+                                <UButton
+                                    :disabled="changed"
+                                    color="neutral"
+                                    icon="i-mdi-form-textarea"
+                                    :label="$t('common.paste')"
+                                />
 
                                 <template #content>
                                     <div class="p-4">
@@ -559,9 +561,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         </template>
                         <span v-else class="flex-1" />
 
-                        <UButton icon="i-mdi-content-copy" :disabled="changed" color="neutral" @click="copyRole">
-                            {{ $t('common.copy') }}
-                        </UButton>
+                        <UButton
+                            icon="i-mdi-content-copy"
+                            :disabled="changed"
+                            color="neutral"
+                            :label="$t('common.copy')"
+                            @click="copyRole"
+                        />
                     </div>
 
                     <UAccordion :items="accordionCategories" type="multiple">

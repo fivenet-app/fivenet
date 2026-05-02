@@ -120,10 +120,9 @@ const confirmModal = overlay.create(ConfirmModal);
                     :loading="!canSubmit"
                     color="success"
                     :variant="ownEntry?.response === RsvpResponses.YES ? 'soft' : 'solid'"
+                    :label="$t('common.yes')"
                     @click="onSubmitThrottle(RsvpResponses.YES)"
-                >
-                    {{ $t('common.yes') }}
-                </UButton>
+                />
 
                 <UButton
                     class="flex-1"
@@ -132,10 +131,9 @@ const confirmModal = overlay.create(ConfirmModal);
                     :loading="!canSubmit"
                     color="warning"
                     :variant="ownEntry?.response === RsvpResponses.MAYBE ? 'soft' : 'solid'"
+                    :label="$t('common.maybe')"
                     @click="onSubmitThrottle(RsvpResponses.MAYBE)"
-                >
-                    {{ $t('common.maybe') }}
-                </UButton>
+                />
 
                 <UButton
                     class="flex-1"
@@ -144,10 +142,9 @@ const confirmModal = overlay.create(ConfirmModal);
                     :loading="!canSubmit"
                     color="error"
                     :variant="ownEntry?.response === RsvpResponses.NO ? 'soft' : 'solid'"
+                    :label="$t('common.no')"
                     @click="onSubmitThrottle(RsvpResponses.NO)"
-                >
-                    {{ $t('common.no') }}
-                </UButton>
+                />
             </UFieldGroup>
 
             <UFieldGroup class="inline-flex">

@@ -145,24 +145,20 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                     color="success"
                     :disabled="!canTakeDispatch || !canSubmit"
                     :loading="!canSubmit"
+                    :label="$t('common.accept')"
                     @click="onSubmitThrottle(TakeDispatchResp.ACCEPTED)"
-                >
-                    {{ $t('common.accept') }}
-                </UButton>
+                />
 
                 <UButton
                     class="flex-1"
                     color="error"
                     :disabled="!canTakeDispatch || !canSubmit"
                     :loading="!canSubmit"
+                    :label="$t('common.decline')"
                     @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"
-                >
-                    {{ $t('common.decline') }}
-                </UButton>
+                />
 
-                <UButton class="flex-1" @click="$emit('close', false)">
-                    {{ $t('common.close') }}
-                </UButton>
+                <UButton class="flex-1" :label="$t('common.close')" @click="$emit('close', false)" />
             </UFieldGroup>
         </template>
     </USlideover>

@@ -144,9 +144,12 @@ watchOnce(opened, async () => {
                     />
 
                     <UTooltip v-if="can('documents.DocumentsService/ListDocuments').value" :text="$t('common.open')">
-                        <UButton variant="link" icon="i-mdi-eye" :to="`/documents/${documentId ?? document?.id ?? 0}`">
-                            {{ $t('common.open') }}
-                        </UButton>
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-eye"
+                            :to="`/documents/${documentId ?? document?.id ?? 0}`"
+                            :label="$t('common.open')"
+                        />
                     </UTooltip>
                 </div>
 

@@ -62,9 +62,13 @@ function updateLaw(event: { id: number; law: Law }): void {
                 <template #right>
                     <PartialsBackButton fallback-to="/settings" />
 
-                    <UButton color="neutral" variant="outline" trailing-icon="i-mdi-plus" @click="addLawBook">
-                        {{ $t('pages.settings.laws.add_new_law_book') }}
-                    </UButton>
+                    <UButton
+                        color="neutral"
+                        variant="outline"
+                        trailing-icon="i-mdi-plus"
+                        :label="$t('pages.settings.laws.add_new_law_book')"
+                        @click="addLawBook"
+                    />
                 </template>
             </UDashboardNavbar>
         </template>

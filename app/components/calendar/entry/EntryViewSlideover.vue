@@ -82,11 +82,8 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 <template>
     <USlideover :title="entry?.title ?? $t('common.appointment', 1)" :overlay="false">
         <template #actions>
-            <div class="flex items-center justify-between gap-2">
-                <UTooltip
-                    v-if="entry && can('calendar.CalendarService/CreateCalendar').value && canDo.edit"
-                    :text="$t('common.edit')"
-                >
+            <div v-if="entry" class="flex items-center justify-between gap-2">
+                <UTooltip v-if="can('calendar.CalendarService/CreateCalendar').value && canDo.edit" :text="$t('common.edit')">
                     <UButton
                         variant="link"
                         icon="i-mdi-pencil"
@@ -99,7 +96,7 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                     />
                 </UTooltip>
 
-                <UTooltip v-if="entry && canDo.manage" :text="$t('common.delete')">
+                <UTooltip v-if="canDo.manage" :text="$t('common.delete')">
                     <UButton
                         variant="link"
                         icon="i-mdi-delete"
@@ -112,7 +109,9 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                     />
                 </UTooltip>
 
-                <UButton variant="link" icon="i-mdi-share" @click="copyLinkToClipboard()" />
+                <UTooltip :text="$t('common.share')">
+                    <UButton variant="link" icon="i-mdi-share" @click="copyLinkToClipboard()" />
+                </UTooltip>
             </div>
         </template>
 

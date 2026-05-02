@@ -132,10 +132,9 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                         size="xs"
                                         variant="link"
                                         icon="i-mdi-map-marker"
+                                        :label="$t('common.go_to_location')"
                                         @click="gotoCoords({ x: dispatch.x, y: dispatch.y })"
-                                    >
-                                        {{ $t('common.go_to_location') }}
-                                    </UButton>
+                                    />
                                 </div>
                             </dd>
                         </div>
@@ -216,19 +215,17 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                         v-if="canDo('TakeControl') && canAccessDispatch.dispatch"
                                         icon="i-mdi-account-multiple-plus"
                                         truncate
+                                        :label="$t('common.assign')"
                                         @click="dispatchAssignModal.open({ dispatchId: dispatchId })"
-                                    >
-                                        {{ $t('common.assign') }}
-                                    </UButton>
+                                    />
 
                                     <UButton
                                         v-if="canDo('TakeDispatch') && canAccessDispatch.participate"
                                         icon="i-mdi-plus"
                                         truncate
+                                        :label="$t('common.self_assign')"
                                         @click="selfAssign(dispatch.id)"
-                                    >
-                                        {{ $t('common.self_assign') }}
-                                    </UButton>
+                                    />
                                 </UFieldGroup>
                             </dd>
                         </div>
@@ -261,15 +258,14 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                         size="xs"
                                         variant="link"
                                         icon="i-mdi-map-marker"
+                                        :label="$t('common.go_to_location')"
                                         @click="
                                             gotoCoords({
                                                 x: dispatch.status?.x,
                                                 y: dispatch.status?.y,
                                             })
                                         "
-                                    >
-                                        {{ $t('common.go_to_location') }}
-                                    </UButton>
+                                    />
                                     <span v-else>{{ $t('common.no_location') }}</span>
                                 </div>
                             </dd>
@@ -285,10 +281,9 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                     :color="dispatchStatusColor"
                                     :icon="dispatchStatusToIcon(dispatch.status?.status)"
                                     :disabled="!canAccessDispatch.participate"
+                                    :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)"
                                     @click="dispatchStatusUpdateModal.open({ dispatchId: dispatch.id })"
-                                >
-                                    {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
-                                </UButton>
+                                />
                             </dd>
                         </div>
 
@@ -320,9 +315,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UTooltip
                     v-if="can('centrum.CentrumService/DeleteDispatch').value && canAccessDispatch.dispatch"

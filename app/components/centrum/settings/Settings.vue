@@ -249,10 +249,9 @@ const formRef = useTemplateRef('formRef');
                         trailing-icon="i-mdi-content-save"
                         :disabled="!canSubmit"
                         :loading="!canSubmit"
+                        :label="$t('common.save', 1)"
                         @click="() => formRef?.submit()"
-                    >
-                        {{ $t('common.save', 1) }}
-                    </UButton>
+                    />
                 </template>
             </UDashboardNavbar>
         </template>

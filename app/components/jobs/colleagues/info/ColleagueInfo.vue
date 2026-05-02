@@ -73,6 +73,7 @@ const selfServicePropsAbsenceDateModal = overlay.create(SelfServiceAbsenceDateMo
                 "
                 icon="i-mdi-island"
                 size="md"
+                :label="$t('components.jobs.self_service.set_absence_date')"
                 @click="
                     selfServicePropsAbsenceDateModal.open({
                         userId: colleague.userId,
@@ -80,9 +81,7 @@ const selfServicePropsAbsenceDateModal = overlay.create(SelfServiceAbsenceDateMo
                         'onUpdate:absenceDates': ($event) => $emit('update:absenceDates', $event),
                     })
                 "
-            >
-                {{ $t('components.jobs.self_service.set_absence_date') }}
-            </UButton>
+            />
         </div>
     </div>
 </template>

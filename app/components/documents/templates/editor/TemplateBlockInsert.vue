@@ -81,9 +81,12 @@ const insertBlock = () => {
                     </UFormField>
 
                     <UFormField>
-                        <UButton block :disabled="!canInsert" @click="insertBlock">
-                            {{ $t('components.partials.tiptap_editor.extensions.template_block.insert_block') }}
-                        </UButton>
+                        <UButton
+                            block
+                            :disabled="!canInsert"
+                            :label="$t('components.partials.tiptap_editor.extensions.template_block.insert_block')"
+                            @click="insertBlock"
+                        />
                     </UFormField>
                 </div>
             </div>

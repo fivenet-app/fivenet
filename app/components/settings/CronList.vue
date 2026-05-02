@@ -204,22 +204,27 @@ const columns = computed(
                                         </div>
                                     </div>
 
-                                    <UButton
-                                        v-if="row.original.lastCompletedEvent.data?.data"
-                                        variant="link"
-                                        icon="i-mdi-share"
-                                        @click="
-                                            copyLinkToClipboard(
-                                                JSON.stringify(
-                                                    row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
-                                                        '/resources.cron.GenericCronData',
-                                                    )
-                                                        ? Any.unpack(row.original.lastCompletedEvent.data.data, GenericCronData)
-                                                        : row.original.lastCompletedEvent.data,
-                                                ),
-                                            )
-                                        "
-                                    />
+                                    <UTooltip v-if="row.original.lastCompletedEvent.data?.data" :text="$t('common.copy')">
+                                        <UButton
+                                            variant="link"
+                                            icon="mdi-content-copy"
+                                            @click="
+                                                copyLinkToClipboard(
+                                                    `Cronjob ${row.original.name} Data:\n` +
+                                                        JSON.stringify(
+                                                            row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
+                                                                '/resources.cron.GenericCronData',
+                                                            )
+                                                                ? Any.unpack(
+                                                                      row.original.lastCompletedEvent.data.data,
+                                                                      GenericCronData,
+                                                                  )
+                                                                : row.original.lastCompletedEvent.data,
+                                                        ),
+                                                )
+                                            "
+                                        />
+                                    </UTooltip>
                                 </div>
                             </template>
 

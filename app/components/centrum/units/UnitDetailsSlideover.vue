@@ -74,15 +74,14 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit.status?.st
                             :class="unitStatusColor"
                             :disabled="!checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
                             :icon="unitStatusToIcon(props.unit.status?.status)"
+                            :label="$t(`enums.centrum.StatusUnit.${StatusUnit[unit.status?.status ?? 0]}`)"
                             @click="
                                 unitStatusUpdateModal.open({
                                     unit: unit,
                                     status: statusSelected,
                                 })
                             "
-                        >
-                            {{ $t(`enums.centrum.StatusUnit.${StatusUnit[unit.status?.status ?? 0]}`) }}
-                        </UButton>
+                        />
                     </dd>
                 </div>
 
@@ -120,10 +119,9 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit.status?.st
                                 size="xs"
                                 variant="link"
                                 icon="i-mdi-map-marker"
+                                :label="$t('common.go_to_location')"
                                 @click="gotoCoords({ x: unit.status?.x, y: unit.status?.y })"
-                            >
-                                {{ $t('common.go_to_location') }}
-                            </UButton>
+                            />
                             <span v-else>{{ $t('common.no_location') }}</span>
                         </div>
                     </dd>
@@ -184,14 +182,13 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit.status?.st
                                 v-if="canDo('TakeControl')"
                                 icon="i-mdi-pencil"
                                 truncate
+                                :label="$t('common.assign')"
                                 @click="
                                     unitAssignUsersModal.open({
                                         unit: unit,
                                     })
                                 "
-                            >
-                                {{ $t('common.assign') }}
-                            </UButton>
+                            />
                         </span>
                     </dd>
                 </div>
@@ -203,9 +200,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit.status?.st
         </template>
 
         <template #footer>
-            <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                {{ $t('common.close', 1) }}
-            </UButton>
+            <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
         </template>
     </USlideover>
 </template>

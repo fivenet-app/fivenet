@@ -84,14 +84,13 @@ const confirmModal = overlay.create(ConfirmModal);
                         icon="i-mdi-remove"
                         color="error"
                         variant="soft"
+                        :label="$t('common.disconnect')"
                         @click="
                             confirmModal.open({
                                 confirm: async () => disconnectSocialLogin(provider),
                             })
                         "
-                    >
-                        {{ $t('common.disconnect') }}
-                    </UButton>
+                    />
                 </div>
 
                 <SocialLoginConnectButton v-else-if="!nuiEnabled" :provider="provider" />

@@ -70,10 +70,9 @@ const provider = computed(() => auth.providers.find((p) => p.name === props.conn
                     <UButton
                         icon="i-mdi-remove"
                         color="error"
+                        :label="$t('common.disconnect')"
                         @click="disconnectSocialLogin(accountId, connection.providerName)"
-                    >
-                        {{ $t('common.disconnect') }}
-                    </UButton>
+                    />
                 </div>
             </div>
         </template>

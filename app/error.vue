@@ -168,7 +168,7 @@ const isDev = import.meta.dev;
                             />
                         </div>
 
-                        <UButton v-if="isDev" @click="() => setDevConfig()"> Set Dev App Config </UButton>
+                        <UButton v-if="isDev" label="Set Dev App Config" @click="() => setDevConfig()" />
                     </div>
                 </template>
             </UCard>

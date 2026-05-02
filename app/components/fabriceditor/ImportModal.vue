@@ -31,9 +31,7 @@ const content = defineModel<string>({
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
             </UFieldGroup>
         </template>
     </UModal>

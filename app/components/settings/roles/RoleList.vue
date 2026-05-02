@@ -176,6 +176,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                 color="neutral"
                                 variant="outline"
                                 icon="i-mdi-plus"
+                                :label="$t('common.create')"
                                 @click="
                                     confirmModal.open({
                                         title: $t('components.hints.settings_roles_list.title'),
@@ -186,9 +187,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                         confirm: async () => await formRef?.submit(),
                                     })
                                 "
-                            >
-                                {{ $t('common.create') }}
-                            </UButton>
+                            />
                         </UFormField>
                     </UForm>
 

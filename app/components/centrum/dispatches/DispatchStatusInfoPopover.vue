@@ -41,14 +41,13 @@ const dispatch = props.status?.dispatchId ? centrumStore.dispatches.get(props.st
                         <UButton
                             variant="link"
                             icon="i-mdi-car-emergency"
+                            :label="$t('common.detail', 2)"
                             @click="
                                 dispatchDetailsByIDSlideover.open({
                                     dispatchId: status.dispatchId,
                                 })
                             "
-                        >
-                            {{ $t('common.detail', 2) }}
-                        </UButton>
+                        />
                     </UTooltip>
                 </div>
 

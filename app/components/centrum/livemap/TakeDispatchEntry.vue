@@ -109,10 +109,9 @@ onBeforeMount(() => {
                             size="xs"
                             variant="link"
                             icon="i-mdi-map-marker"
+                            :label="$t('common.go_to_location')"
                             @click="gotoCoords({ x: dispatch.x, y: dispatch.y })"
-                        >
-                            {{ $t('common.go_to_location') }}
-                        </UButton>
+                        />
                     </div>
                 </li>
                 <li class="flex items-center gap-1 py-3 pr-4 pl-3 text-sm">

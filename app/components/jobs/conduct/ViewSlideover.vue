@@ -129,9 +129,7 @@ if (props.entry.id > 0) {
         </template>
 
         <template #footer>
-            <UButton class="flex-1" color="neutral" block @click="$emit('close', false)">
-                {{ $t('common.close', 1) }}
-            </UButton>
+            <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
         </template>
     </USlideover>
 </template>

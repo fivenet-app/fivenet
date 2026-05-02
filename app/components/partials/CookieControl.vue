@@ -44,9 +44,8 @@ const { website } = useAppConfig();
                         block
                         :to="website.links.privacyPolicy"
                         external
-                    >
-                        {{ $t('common.privacy_policy') }}
-                    </UButton>
+                        :label="$t('common.privacy_policy')"
+                    />
 
                     <UButton
                         v-if="website.links?.imprint"
@@ -55,13 +54,16 @@ const { website } = useAppConfig();
                         block
                         :to="website.links.imprint"
                         external
-                    >
-                        {{ $t('common.imprint') }}
-                    </UButton>
+                        :label="$t('common.imprint')"
+                    />
 
-                    <UButton class="flex-1" variant="link" block to="/api/clear-site-data">
-                        {{ $t('components.CookieControl.clear_data') }}
-                    </UButton>
+                    <UButton
+                        class="flex-1"
+                        variant="link"
+                        block
+                        to="/api/clear-site-data"
+                        :label="$t('components.CookieControl.clear_data')"
+                    />
                 </UFieldGroup>
 
                 <p class="text-xs">{{ $t('components.CookieControl.description') }}</p>
@@ -69,35 +71,31 @@ const { website } = useAppConfig();
 
             <template #footer>
                 <UFieldGroup class="inline-flex w-full">
-                    <UButton class="flex-1" color="neutral" block @click="open = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
+                    <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="open = false" />
 
                     <UButton
                         class="flex-1"
                         block
                         color="error"
                         :variant="cookiesState === false ? 'soft' : 'solid'"
+                        :label="$t('common.decline', 1)"
                         @click="
                             cookiesState = false;
                             open = false;
                         "
-                    >
-                        {{ $t('common.decline', 1) }}
-                    </UButton>
+                    />
 
                     <UButton
                         class="flex-1"
                         block
                         color="success"
                         :variant="cookiesState === true ? 'soft' : 'solid'"
+                        :label="$t('common.accept', 1)"
                         @click="
                             cookiesState = true;
                             open = false;
                         "
-                    >
-                        {{ $t('common.accept', 1) }}
-                    </UButton>
+                    />
                 </UFieldGroup>
             </template>
         </UCard>

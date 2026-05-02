@@ -141,15 +141,14 @@ defineShortcuts({
             <UButton
                 block
                 icon="i-mdi-briefcase"
+                :label="$t('components.citizens.CitizenInfoProfile.set_job')"
                 @click="
                     setJobModal.open({
                         user: user,
                         'onUpdate:job': ($event) => $emit('update:job', $event),
                     })
                 "
-            >
-                {{ $t('components.citizens.CitizenInfoProfile.set_job') }}
-            </UButton>
+            />
         </UTooltip>
 
         <UTooltip
@@ -160,15 +159,14 @@ defineShortcuts({
             <UButton
                 block
                 icon="i-mdi-counter"
+                :label="$t('components.citizens.CitizenInfoProfile.set_traffic_points')"
                 @click="
                     setTrafficPointsModal.open({
                         user: user,
                         'onUpdate:trafficInfractionPoints': ($event) => $emit('update:trafficInfractionPoints', $event),
                     })
                 "
-            >
-                {{ $t('components.citizens.CitizenInfoProfile.set_traffic_points') }}
-            </UButton>
+            />
         </UTooltip>
 
         <UTooltip
@@ -179,15 +177,14 @@ defineShortcuts({
             <UButton
                 block
                 icon="i-mdi-camera"
+                :label="$t('components.citizens.CitizenInfoProfile.set_mugshot')"
                 @click="
                     setMugshotModal.open({
                         user: user,
                         'onUpdate:mugshot': ($event) => $emit('update:mugshot', $event),
                     })
                 "
-            >
-                {{ $t('components.citizens.CitizenInfoProfile.set_mugshot') }}
-            </UButton>
+            />
         </UTooltip>
 
         <UTooltip
@@ -195,9 +192,12 @@ defineShortcuts({
             :text="$t('components.citizens.CitizenInfoProfile.create_new_document')"
             :kbds="['C', 'D']"
         >
-            <UButton block icon="i-mdi-file-document-plus" @click="openTemplates()">
-                {{ $t('components.citizens.CitizenInfoProfile.create_new_document') }}
-            </UButton>
+            <UButton
+                block
+                icon="i-mdi-file-document-plus"
+                :label="$t('components.citizens.CitizenInfoProfile.create_new_document')"
+                @click="openTemplates()"
+            />
         </UTooltip>
 
         <UButton
@@ -209,14 +209,16 @@ defineShortcuts({
             block
             icon="i-mdi-account-circle"
             :to="`/jobs/colleagues/${user.userId}/info`"
-        >
-            {{ $t('components.citizens.CitizenInfoProfile.go_to_colleague_info') }}
-        </UButton>
+            :label="$t('components.citizens.CitizenInfoProfile.go_to_colleague_info')"
+        />
 
         <USeparator />
 
-        <UButton block icon="i-mdi-link-variant" @click="copyLinkToClipboard()">
-            {{ $t('components.citizens.CitizenInfoProfile.copy_profile_link') }}
-        </UButton>
+        <UButton
+            block
+            icon="i-mdi-link-variant"
+            :label="$t('components.citizens.CitizenInfoProfile.copy_profile_link')"
+            @click="copyLinkToClipboard()"
+        />
     </div>
 </template>

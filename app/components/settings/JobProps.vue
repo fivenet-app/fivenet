@@ -534,9 +534,8 @@ const confirmModal = overlay.create(ConfirmModal);
                                         :disabled="!canSubmit || !canEdit"
                                         to="/api/discord/invite-bot"
                                         external
-                                    >
-                                        {{ $t('components.settings.job_props.discord_sync_settings.invite_bot') }}
-                                    </UButton>
+                                        :label="$t('components.settings.job_props.discord_sync_settings.invite_bot')"
+                                    />
                                 </template>
 
                                 <UFormField
