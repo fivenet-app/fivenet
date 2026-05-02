@@ -81,7 +81,7 @@ async function toggleStream(): Promise<void> {
         stop();
         await stopStream(true);
 
-        notificationsStore.resetData();
+        notificationsStore.reset();
     }
 }
 

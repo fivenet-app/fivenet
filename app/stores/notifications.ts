@@ -80,20 +80,22 @@ export const useNotificationsStore = defineStore(
          * Adds a new notification to the list.
          * @param notification - The notification to add.
          */
-        const add = (notification: Notification): void => {
-            if (notification.duration === undefined) {
-                notification.duration = useAppConfig().timeouts.notification;
-            }
-            if (notification.id === undefined) {
-                notification.id = Date.now() + Math.floor(Math.random() * 1000);
-            }
+        const add = (
+            notification: Partial<Omit<Notification, 'title' | 'description'>> & Pick<Notification, 'title' | 'description'>,
+        ): void => {
+            if (notification.duration === undefined) notification.duration = useAppConfig().timeouts.notification;
+            if (notification.id === undefined) notification.id = Date.now() + Math.floor(Math.random() * 1000);
+            if (notification.type === undefined) notification.type = NotificationType.INFO;
+            if (notification.category === undefined) notification.category = NotificationCategory.GENERAL;
+            if (notification.actions === undefined) notification.actions = [];
+
             notifications.value.push(notification);
         };
 
         /**
          * Resets the notification data, clearing the list and count.
          */
-        const resetData = (): void => {
+        const reset = (): void => {
             notificationsCount.value = 0;
             notifications.value = [];
         };
@@ -101,7 +103,6 @@ export const useNotificationsStore = defineStore(
         // Stream
         let currentStream: DuplexStreamingCall<StreamRequest, StreamResponse> | undefined = undefined;
 
-        // Handles userEvent logic
         /**
          * Handles the refresh token event by refreshing the user's token.
          * @param authStore - The authentication store instance.
@@ -422,7 +423,7 @@ export const useNotificationsStore = defineStore(
             // Actions
             remove,
             add,
-            resetData,
+            reset,
             startStream,
             stopStream,
             restartStream,
