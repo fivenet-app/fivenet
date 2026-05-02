@@ -136,11 +136,10 @@ const numberFormatter = useIntlNumberFormat();
                                 {{ $t('common.none', [$t('common.label', 2)]) }}
                             </p>
                             <template v-else>
-                                <div class="flex max-w-80 flex-row flex-wrap gap-1">
+                                <div class="grid grid-cols-2 gap-1 md:grid-cols-1">
                                     <UBadge
                                         v-for="label in user.props?.labels?.list"
                                         :key="label.name"
-                                        class="justify-between gap-2"
                                         :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                                         :icon="
                                             label.icon && label.icon !== ''
@@ -149,9 +148,9 @@ const numberFormatter = useIntlNumberFormat();
                                         "
                                         :style="{ backgroundColor: label.color }"
                                         size="md"
-                                    >
-                                        {{ label.name }}
-                                    </UBadge>
+                                        :label="label.name"
+                                        block
+                                    />
                                 </div>
                             </template>
                         </dd>

@@ -784,7 +784,8 @@
             "o": "Andere",
             "n": "Nicht angegeben"
         },
-        "run": "Ausführen | Läuft"
+        "run": "Ausführen | Läuft",
+        "share": "Teilen"
     },
     "components": {
         "partials": {

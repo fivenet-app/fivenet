@@ -784,7 +784,8 @@
             "o": "Other",
             "n": "Not specified"
         },
-        "run": "Run | Running"
+        "run": "Run | Running",
+        "share": "Share"
     },
     "components": {
         "partials": {
