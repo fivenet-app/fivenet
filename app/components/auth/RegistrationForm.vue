@@ -100,7 +100,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         "
                     >
                         <template #command>
-                            <UKbd class="h-7 min-w-[24px] text-[13px] normal-case" size="md">/fivenet</UKbd>
+                            <UKbd class="h-7 min-w-[24px] text-[13px] normal-case" size="md" value="/fivenet" />
                         </template>
                     </I18nT>
                 </template>

@@ -91,9 +91,10 @@ if (props.entry.id > 0) {
                         {{ $t('common.type') }}
                     </dt>
                     <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
-                        <UBadge :color="conductTypesToBadgeColor(entry.type)">
-                            {{ $t(`enums.jobs.ConductType.${ConductType[entry.type ?? 0]}`) }}
-                        </UBadge>
+                        <UBadge
+                            :color="conductTypesToBadgeColor(entry.type)"
+                            :label="$t(`enums.jobs.ConductType.${ConductType[entry.type ?? 0]}`)"
+                        />
                     </dd>
                 </div>
 

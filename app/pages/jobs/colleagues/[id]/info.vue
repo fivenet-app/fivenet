@@ -124,9 +124,8 @@ const { attr, can } = useAuth();
                                             "
                                             :style="{ backgroundColor: label.color }"
                                             size="md"
-                                        >
-                                            {{ label.name }}
-                                        </UBadge>
+                                            :label="label.name"
+                                        />
                                     </div>
                                 </template>
                             </template>

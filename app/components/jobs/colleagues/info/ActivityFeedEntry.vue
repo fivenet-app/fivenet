@@ -62,9 +62,8 @@ withDefaults(
                                         :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                                         :style="{ backgroundColor: label.color }"
                                         size="md"
-                                    >
-                                        {{ label.name }}
-                                    </UBadge>
+                                        :label="label.name"
+                                    />
 
                                     <UBadge
                                         v-for="label in activity.data.data.labelsChange?.added"
@@ -73,9 +72,8 @@ withDefaults(
                                         :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                                         :style="{ backgroundColor: label.color }"
                                         size="md"
-                                    >
-                                        {{ label.name }}
-                                    </UBadge>
+                                        :label="label.name"
+                                    />
                                 </div>
                             </template>
 

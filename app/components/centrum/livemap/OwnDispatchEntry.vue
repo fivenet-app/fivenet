@@ -89,9 +89,8 @@ useIntervalFn(
                             class="line-clamp-2 px-px py-0.5 break-words"
                             variant="solid"
                             :color="dispatchStatusToBadgeColor(dispatch.status?.status)"
-                        >
-                            {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
-                        </UBadge>
+                            :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)"
+                        />
                     </div>
 
                     <div class="inline-flex flex-col items-center">

@@ -49,9 +49,13 @@ const { game } = useAppConfig();
             <dd class="mb-1 flex items-center justify-center gap-2">
                 <CharSexBadge :sex="char.sex ?? 'f'" />
 
-                <UBadge v-if="lastCharID === char.userId" class="flex-initial" size="md" variant="subtle">
-                    {{ $t('common.last_used') }}
-                </UBadge>
+                <UBadge
+                    v-if="lastCharID === char.userId"
+                    class="flex-initial"
+                    size="md"
+                    variant="subtle"
+                    :label="$t('common.last_used')"
+                />
             </dd>
 
             <dt class="text-sm font-semibold">

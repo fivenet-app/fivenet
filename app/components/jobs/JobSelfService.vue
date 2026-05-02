@@ -61,18 +61,21 @@ const selfServicePropsAvatarModal = overlay.create(SelfServiceAvatarModal);
                 class="flex-1"
                 block
                 icon="i-mdi-island"
+                :label="$t('components.jobs.self_service.set_absence_date')"
                 @click="
                     selfServicePropsAbsenceDateModal.open({
                         userId: colleagueSelf.colleague.userId,
                         userProps: colleagueSelf.colleague.props,
                     })
                 "
-            >
-                <span>{{ $t('components.jobs.self_service.set_absence_date') }}</span>
-            </UButton>
-            <UButton class="flex-1" block icon="i-mdi-camera" @click="selfServicePropsAvatarModal.open({})">
-                <span>{{ $t('components.jobs.self_service.set_profile_picture') }}</span>
-            </UButton>
+            />
+            <UButton
+                class="flex-1"
+                block
+                icon="i-mdi-camera"
+                :label="$t('components.jobs.self_service.set_profile_picture')"
+                @click="selfServicePropsAvatarModal.open({})"
+            />
         </div>
     </UCard>
 </template>

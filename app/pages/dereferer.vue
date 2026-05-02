@@ -76,10 +76,9 @@ const target = route.query.target as string;
                         external
                         rel="noreferrer"
                         block
+                        :label="$t('pages.dereferer.goto')"
                         @click="nuiEnabled ? openURLInWindow(target) : undefined"
-                    >
-                        <span>{{ $t('pages.dereferer.goto') }}</span>
-                    </UButton>
+                    />
 
                     <UButton
                         block

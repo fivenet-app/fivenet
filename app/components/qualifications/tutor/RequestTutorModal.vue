@@ -104,15 +104,19 @@ const formRef = useTemplateRef('formRef');
                             :search-input="{ placeholder: $t('common.search_field') }"
                         >
                             <template #default>
-                                <UBadge class="truncate" :color="requestStatusToBadgeColor(state.status)">
-                                    {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[state.status]}`) }}
-                                </UBadge>
+                                <UBadge
+                                    class="truncate"
+                                    :color="requestStatusToBadgeColor(state.status)"
+                                    :label="$t(`enums.qualifications.RequestStatus.${RequestStatus[state.status]}`)"
+                                />
                             </template>
 
                             <template #item-label="{ item }">
-                                <UBadge class="truncate" :color="requestStatusToBadgeColor(item.status)">
-                                    {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[item.status]}`) }}
-                                </UBadge>
+                                <UBadge
+                                    class="truncate"
+                                    :color="requestStatusToBadgeColor(item.status)"
+                                    :label="$t(`enums.qualifications.RequestStatus.${RequestStatus[item.status]}`)"
+                                />
                             </template>
 
                             <template #empty>

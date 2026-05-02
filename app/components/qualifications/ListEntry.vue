@@ -63,10 +63,8 @@ defineProps<{
                         :color="resultStatusToBadgeColor(qualification.result?.status ?? 0)"
                         size="sm"
                         icon="i-mdi-list-status"
-                    >
-                        {{ $t('common.result') }}:
-                        {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`) }}
-                    </UBadge>
+                        :label="`${$t('common.result')}: ${$t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`)}`"
+                    />
 
                     <OpenClosedBadge :closed="qualification.closed" />
                 </div>

@@ -27,9 +27,10 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
         </template>
 
         <template #actions>
-            <UBadge color="neutral">
-                {{ $t('common.mode') }}: {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
-            </UBadge>
+            <UBadge
+                color="neutral"
+                :label="`${$t('common.mode')}: ${$t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`)}`"
+            />
         </template>
 
         <template #body>

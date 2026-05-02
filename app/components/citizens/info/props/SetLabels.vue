@@ -134,9 +134,8 @@ const formRef = useTemplateRef('formRef');
                         :class="isColorBright(hexToRgb(item.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                         :style="{ backgroundColor: item.color }"
                         :icon="item.icon && item.icon !== '' ? convertComponentIconNameToDynamic(item.icon) : undefined"
-                    >
-                        {{ item.name }}
-                    </UBadge>
+                        :label="item.name"
+                    />
                 </template>
 
                 <template #empty>
@@ -156,9 +155,8 @@ const formRef = useTemplateRef('formRef');
                     :style="{ backgroundColor: label.color }"
                     size="md"
                     :icon="label.icon && label.icon !== '' ? convertComponentIconNameToDynamic(label.icon) : undefined"
-                >
-                    <span>{{ label.name }}</span>
-                </UBadge>
+                    :label="label.name"
+                />
 
                 <UTooltip v-if="canDo.set" :text="$t('common.remove')">
                     <UButton

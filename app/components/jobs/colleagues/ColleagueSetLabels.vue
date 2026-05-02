@@ -191,9 +191,8 @@ const editing = ref(false);
                         :class="isColorBright(item.color) ? 'text-black!' : 'text-white!'"
                         :icon="item.icon && item.icon !== '' ? convertComponentIconNameToDynamic(item.icon) : undefined"
                         :style="{ backgroundColor: item.color }"
-                    >
-                        {{ item.name }}
-                    </UBadge>
+                        :label="item.name"
+                    />
                 </template>
 
                 <template #empty>

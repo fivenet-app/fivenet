@@ -361,14 +361,14 @@ const requestUserModal = overlay.create(RequestUserModal);
                             :label="$t('common.public')"
                         />
 
-                        <UBadge class="inline-flex gap-1" icon="i-mdi-test-tube" size="md">
-                            {{ $t('common.exam', 1) }}:
-                            {{
-                                $t(
-                                    `enums.qualifications.QualificationExamMode.${QualificationExamMode[qualification.examMode]}`,
-                                )
-                            }}
-                        </UBadge>
+                        <UBadge
+                            class="inline-flex gap-1"
+                            icon="i-mdi-test-tube"
+                            size="md"
+                            :label="`${$t('common.exam', 1)}: ${$t(
+                                `enums.qualifications.QualificationExamMode.${QualificationExamMode[qualification.examMode]}`,
+                            )}`"
+                        />
 
                         <UBadge
                             v-if="qualification.result?.status"
@@ -376,20 +376,16 @@ const requestUserModal = overlay.create(RequestUserModal);
                             icon="i-mdi-list-status"
                             :color="resultStatusToBadgeColor(qualification.result?.status ?? 0)"
                             size="md"
-                        >
-                            {{ $t('common.result') }}:
-                            {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`) }}
-                        </UBadge>
+                            :label="`${$t('common.result')}: ${$t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`)}`"
+                        />
                         <UBadge
                             v-else-if="qualification.request?.status"
                             class="inline-flex gap-1"
                             icon="i-mdi-mail"
                             :color="requestStatusToBadgeColor(qualification.request?.status ?? 0)"
                             size="md"
-                        >
-                            {{ $t('common.request') }}:
-                            {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`) }}
-                        </UBadge>
+                            :label="`${$t('common.request')}: ${$t(`enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`)}`"
+                        />
                     </div>
 
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">

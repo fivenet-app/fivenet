@@ -97,27 +97,31 @@ watch(data, async () => {
             <UDashboardToolbar v-if="data">
                 <template #left>
                     <div class="flex gap-2">
-                        <UBadge v-if="data?.qualification?.examSettings?.time" class="inline-flex gap-1" icon="i-mdi-clock">
-                            {{ $t('common.duration') }}: {{ fromDuration(data.qualification.examSettings.time) }}s
-                        </UBadge>
-                        <UBadge class="inline-flex gap-1" icon="i-mdi-question-mark">
-                            {{ $t('common.count') }}: {{ data?.questionCount }}
-                            {{ $t('common.question', data?.questionCount ?? 1) }}
-                        </UBadge>
+                        <UBadge
+                            v-if="data?.qualification?.examSettings?.time"
+                            class="inline-flex gap-1"
+                            icon="i-mdi-clock"
+                            :label="`${$t('common.duration')}: ${fromDuration(data.qualification.examSettings.time)}s`"
+                        />
+                        <UBadge
+                            class="inline-flex gap-1"
+                            icon="i-mdi-question-mark"
+                            :label="`${$t('common.count')}: ${data?.questionCount} ${$t('common.question', data?.questionCount ?? 1)}`"
+                        />
                     </div>
                 </template>
 
                 <template #right>
                     <div class="flex gap-2">
-                        <UBadge v-if="data.examUser?.startedAt">
-                            {{ $t('common.begins_at') }}
-                            {{ $d(toDate(data.examUser?.startedAt), 'long') }}
-                        </UBadge>
+                        <UBadge
+                            v-if="data.examUser?.startedAt"
+                            :label="`${$t('common.begins_at')} ${$d(toDate(data.examUser?.startedAt), 'long')}`"
+                        />
 
-                        <UBadge v-if="data?.examUser?.endsAt">
-                            {{ $t('common.ends_at') }}
-                            {{ $d(toDate(data?.examUser?.endsAt), 'long') }}
-                        </UBadge>
+                        <UBadge
+                            v-if="data?.examUser?.endsAt"
+                            :label="`${$t('common.ends_at')} ${$d(toDate(data?.examUser?.endsAt), 'long')}`"
+                        />
                     </div>
                 </template>
             </UDashboardToolbar>

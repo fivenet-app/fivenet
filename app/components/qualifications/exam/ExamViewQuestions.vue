@@ -289,13 +289,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <template #right>
                     <div class="flex justify-between gap-2">
                         <div class="flex gap-2">
-                            <UBadge v-if="qualification?.examSettings?.time" class="inline-flex gap-1" icon="i-mdi-clock">
-                                {{ $t('common.duration') }}: {{ fromDuration(qualification.examSettings.time) }}s
-                            </UBadge>
-                            <UBadge class="inline-flex gap-1" icon="i-mdi-question-mark">
-                                {{ $t('common.count') }}: {{ exam.questions.length }}
-                                {{ $t('common.question', exam.questions.length) }}
-                            </UBadge>
+                            <UBadge
+                                v-if="qualification?.examSettings?.time"
+                                class="inline-flex gap-1"
+                                icon="i-mdi-clock"
+                                :label="`${$t('common.duration')}: ${fromDuration(qualification.examSettings.time)}s`"
+                            />
+                            <UBadge
+                                class="inline-flex gap-1"
+                                icon="i-mdi-question-mark"
+                                :label="`${$t('common.count')}: ${exam.questions.length} ${$t('common.question', exam.questions.length)}`"
+                            />
                         </div>
                     </div>
                 </template>

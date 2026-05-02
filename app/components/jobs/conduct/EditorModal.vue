@@ -213,15 +213,19 @@ const confirmModal = overlay.create(ConfirmModal);
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                     >
                                         <template #default>
-                                            <UBadge :color="conductTypesToBadgeColor(state.type)" truncate>
-                                                {{ $t(`enums.jobs.ConductType.${ConductType[state.type ?? 0]}`) }}
-                                            </UBadge>
+                                            <UBadge
+                                                :color="conductTypesToBadgeColor(state.type)"
+                                                truncate
+                                                :label="$t(`enums.jobs.ConductType.${ConductType[state.type ?? 0]}`)"
+                                            />
                                         </template>
 
                                         <template #item-label="{ item }">
-                                            <UBadge :color="conductTypesToBadgeColor(item.status)" truncate>
-                                                {{ $t(`enums.jobs.ConductType.${ConductType[item.status ?? 0]}`) }}
-                                            </UBadge>
+                                            <UBadge
+                                                :color="conductTypesToBadgeColor(item.status)"
+                                                truncate
+                                                :label="$t(`enums.jobs.ConductType.${ConductType[item.status ?? 0]}`)"
+                                            />
                                         </template>
 
                                         <template #empty>

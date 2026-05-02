@@ -17,9 +17,8 @@ const users = computed(() => {
             color="neutral"
             variant="link"
             trailing-icon="i-mdi-chevron-down"
-        >
-            {{ users.length }} {{ $t('common.user', users.length) }}
-        </UButton>
+            :label="`${users.length} ${$t('common.user', users.length)}`"
+        />
 
         <template #content>
             <div class="p-4">

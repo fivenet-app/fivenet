@@ -510,9 +510,7 @@ defineShortcuts({
 
                         <span>{{ row.original.firstname }} {{ row.original.lastname }}</span>
 
-                        <UBadge v-if="row.original.props?.wanted" color="error">
-                            {{ $t('common.wanted').toUpperCase() }}
-                        </UBadge>
+                        <UBadge v-if="row.original.props?.wanted" color="error" :label="$t('common.wanted').toUpperCase()" />
                     </div>
                 </template>
             </UTable>

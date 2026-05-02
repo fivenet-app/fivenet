@@ -225,9 +225,8 @@ const formRef = useTemplateRef('formRef');
                                     class="truncate"
                                     :color="docRelationToBadge(item.value)"
                                     :icon="docRelationToIcon(item.value)"
-                                >
-                                    {{ $t(`enums.documents.DocRelation.${DocRelation[item.value]}`) }}
-                                </UBadge>
+                                    :label="$t(`enums.documents.DocRelation.${DocRelation[item.value]}`)"
+                                />
                             </template>
                         </USelectMenu>
                     </ClientOnly>

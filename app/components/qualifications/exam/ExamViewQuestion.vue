@@ -109,14 +109,14 @@ const response = modelValue;
                     </div>
 
                     <div>
-                        <UBadge v-if="modelValue?.question.data!.data.freeText.minLength > 0">
-                            {{ $t('common.min') }}: {{ modelValue?.question.data!.data.freeText.minLength }}
-                            {{ $t('common.chars', modelValue?.question.data!.data.freeText.minLength) }}
-                        </UBadge>
-                        <UBadge v-if="modelValue?.question.data!.data.freeText.maxLength > 0">
-                            {{ $t('common.max') }}: {{ modelValue?.question.data!.data.freeText.maxLength }}
-                            {{ $t('common.chars', modelValue?.question.data!.data.freeText.maxLength) }}
-                        </UBadge>
+                        <UBadge
+                            v-if="modelValue?.question.data!.data.freeText.minLength > 0"
+                            :label="`${$t('common.min')}: ${modelValue?.question.data!.data.freeText.minLength} ${$t('common.chars', modelValue?.question.data!.data.freeText.minLength)}`"
+                        />
+                        <UBadge
+                            v-if="modelValue?.question.data!.data.freeText.maxLength > 0"
+                            :label="`${$t('common.max')}: ${modelValue?.question.data!.data.freeText.maxLength} ${$t('common.chars', modelValue?.question.data!.data.freeText.maxLength)}`"
+                        />
                     </div>
                 </div>
 
@@ -175,10 +175,8 @@ const response = modelValue;
                             modelValue?.question.data!.data.multipleChoice.limit &&
                             modelValue?.question.data!.data.multipleChoice.limit > 0
                         "
-                    >
-                        {{ $t('common.max') }}: {{ modelValue?.question.data!.data.multipleChoice.limit }}
-                        {{ $t('common.option', modelValue?.question.data!.data.multipleChoice.limit) }}
-                    </UBadge>
+                        :label="`${$t('common.max')}: ${modelValue?.question.data!.data.multipleChoice.limit} ${$t('common.option', modelValue?.question.data!.data.multipleChoice.limit)}`"
+                    />
                 </div>
 
                 <UFormField class="flex-1" :label="$t('common.option', 2)">

@@ -337,9 +337,11 @@ const columns = computed(
                                         </template>
 
                                         <template #item-label="{ item }">
-                                            <UBadge class="truncate" :color="conductTypesToBadgeColor(item.status)">
-                                                {{ $t(`enums.jobs.ConductType.${ConductType[item.status]}`) }}
-                                            </UBadge>
+                                            <UBadge
+                                                class="truncate"
+                                                :color="conductTypesToBadgeColor(item.status)"
+                                                :label="$t(`enums.jobs.ConductType.${ConductType[item.status]}`)"
+                                            />
                                         </template>
 
                                         <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>

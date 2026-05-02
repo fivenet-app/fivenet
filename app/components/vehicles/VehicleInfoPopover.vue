@@ -50,9 +50,7 @@ const { can } = useAuth();
                     </li>
 
                     <li v-if="vehicle.props?.wanted" class="inline-flex items-center gap-2">
-                        <UBadge color="error">
-                            {{ $t('common.wanted').toUpperCase() }}
-                        </UBadge>
+                        <UBadge color="error" :label="$t('common.wanted').toUpperCase()" />
 
                         <span class="line-clamp-3 font-semibold">{{ $t('common.reason') }}:</span>
                         {{ vehicle.props?.wantedReason ?? $t('common.na') }}

@@ -118,19 +118,18 @@ defineShortcuts({
                 block
                 truncate
                 :icon="user?.props?.wanted ? 'i-mdi-account-alert' : 'i-mdi-account-cancel'"
+                :label="
+                    user?.props?.wanted
+                        ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
+                        : $t('components.citizens.CitizenInfoProfile.set_wanted')
+                "
                 @click="
                     setWantedModal.open({
                         user: user,
                         'onUpdate:wantedStatus': ($event) => $emit('update:wantedStatus', $event),
                     })
                 "
-            >
-                {{
-                    user?.props?.wanted
-                        ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
-                        : $t('components.citizens.CitizenInfoProfile.set_wanted')
-                }}
-            </UButton>
+            />
         </UTooltip>
 
         <UTooltip

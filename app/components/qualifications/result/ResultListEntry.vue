@@ -36,10 +36,8 @@ defineProps<{
                     class="inline-flex gap-1"
                     :color="resultStatusToBadgeColor(result?.status ?? 0)"
                     icon="i-mdi-list-status"
-                >
-                    {{ $t('common.result') }}:
-                    {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[result.status ?? 0]}`) }}
-                </UBadge>
+                    :label="`${$t('common.result')}: ${$t(`enums.qualifications.ResultStatus.${ResultStatus[result.status ?? 0]}`)}`"
+                />
 
                 <p v-if="result.createdAt" class="mt-1 text-xs leading-5">
                     {{ $t('common.created_at') }} <GenericTime :value="result.createdAt" />
