@@ -3,6 +3,7 @@ package modules
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/DeRuina/timberjack"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
@@ -38,7 +39,13 @@ func NewLogger(p LoggerParams) (LoggerResults, error) {
 		return LoggerResults{}, fmt.Errorf("failed to parse log level from config. %w", err)
 	}
 
-	var logger *zap.Logger
+	// Setup log "targets"
+	writers := []zapcore.WriteSyncer{}
+	if p.Config.Log.LogToStderr {
+		writers = append(writers, zapcore.AddSync(os.Stderr))
+	} else {
+		writers = append(writers, zapcore.AddSync(os.Stdout))
+	}
 	if p.Config.Log.LogToFile {
 		tl := &timberjack.Logger{
 			Filename:         p.Config.Log.File.Path,
@@ -49,24 +56,15 @@ func NewLogger(p LoggerParams) (LoggerResults, error) {
 			LocalTime:        true,
 			RotationInterval: p.Config.Log.File.Rotation.RotationInterval,
 		}
-		w := zapcore.AddSync(tl)
-
-		core := zapcore.NewCore(
-			zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()),
-			w, level,
-		)
-
-		logger = zap.New(core)
-	} else {
-		loggerConfig := zap.NewProductionConfig()
-		loggerConfig.Level.SetLevel(level)
-
-		logger, err = loggerConfig.Build()
-		if err != nil {
-			return LoggerResults{}, fmt.Errorf("failed to configure logger. %w", err)
-		}
+		writers = append(writers, zapcore.AddSync(tl))
 	}
 
+	core := zapcore.NewCore(
+		zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()),
+		zap.CombineWriteSyncers(writers...), level,
+	)
+
+	logger := zap.New(core)
 	zap.ReplaceGlobals(logger)
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
