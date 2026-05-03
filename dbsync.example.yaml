@@ -4,7 +4,9 @@ mode: "release"
 # Can be "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
 logLevel: "INFO"
 log:
-  # Indicates whether to log to a file instead of stdout.
+  # If enabled logs are sent to stderr instead of stdout.
+  logToStderr: true
+  # Enable logging to file.
   logToFile: false
   # Contains the configuration for file logging (if LogToFile is true, make sure to configure this).
   file:

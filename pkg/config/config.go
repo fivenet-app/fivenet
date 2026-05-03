@@ -54,7 +54,9 @@ type Config struct {
 }
 
 type Log struct {
-	// LogToFile indicates whether to log to a file instead of stdout.
+	// LogToStderr If enabled logs are sent to stderr instead of stdout.
+	LogToStderr bool `default:"false" yaml:"logToStderr"`
+	// LogToFile enable logging to file.
 	LogToFile bool `default:"false" yaml:"logToFile"`
 	// File contains the configuration for file logging (if LogToFile is true, make sure to configure this).
 	File LogFile `yaml:"file"`
