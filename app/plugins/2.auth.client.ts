@@ -1,3 +1,4 @@
+import { titleCase } from 'scule';
 import { parseQuery, type RouteLocationNormalized } from 'vue-router';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -99,9 +100,7 @@ export default defineNuxtPlugin({
                         description: {
                             key: 'notifications.auth.no_permission.content',
                             parameters: {
-                                path: to.name
-                                    ? toTitleCase(to.name?.toString().replaceAll('-', ' ')) + ` (${to.path})`
-                                    : to.path,
+                                path: to.name ? titleCase(to.name?.toString().replaceAll('-', ' ')) + ` (${to.path})` : to.path,
                             },
                         },
                         type: NotificationType.WARNING,

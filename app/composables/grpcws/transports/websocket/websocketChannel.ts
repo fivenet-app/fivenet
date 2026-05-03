@@ -1,11 +1,10 @@
 import type { UseWebSocketReturn } from '@vueuse/core';
-import { writeUInt32BE } from '~/utils/array';
 import { Body, Cancel, GrpcFrame, Header, HeaderValue } from '~~/gen/ts/resources/grpcws/grpcws';
 import { headersToMetadata } from '../../bridge/utils';
 import { errCancelled, errInternal } from '../../errors';
 import type { Metadata } from '../../metadata';
 import type { Transport, TransportFactory, TransportOptions } from '../transport';
-import { createRpcError } from './utils';
+import { createRpcError, writeUInt32BE } from './utils';
 
 const websocketChannelMaxStreamCount = 7;
 

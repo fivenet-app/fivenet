@@ -5,7 +5,6 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import type { ClassProp } from '~/utils/types';
 import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import ColleagueName from './ColleagueName.vue';
@@ -14,7 +13,9 @@ const props = withDefaults(
     defineProps<{
         userId?: number;
         user?: Colleague;
-        textClass?: ClassProp;
+        // Class attribute is "untyped" so use any here
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        textClass?: any;
         showAvatar?: boolean;
         trailing?: boolean;
         hideProps?: boolean;

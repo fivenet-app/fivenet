@@ -1,6 +1,7 @@
 // Based upon https://github.com/harlan-zw/nuxt-seo-kit/blob/8517ccf0fedefdb93af869f813e44a58e944d848/layer/composables/breacrumbs.ts
 // Licensed under MIT License © 2022-PRESENT Harlan Wilton, see https://github.com/harlan-zw/nuxt-seo-kit/blob/8517ccf0fedefdb93af869f813e44a58e944d848/README.md#license
 
+import { titleCase } from 'scule';
 import {
     type ParsedURL,
     hasTrailingSlash,
@@ -91,7 +92,7 @@ export function useBreadcrumbs(opts?: Partial<Opts>) {
                         title = 'Home';
                         // pop last url segment and title case it
                     } else {
-                        title = toTitleCase(withoutTrailingSlash(path).split('/').pop() || '');
+                        title = titleCase(withoutTrailingSlash(path).split('/').pop() || '');
                     }
                 }
 

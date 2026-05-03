@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import CardsList from '~/components/partials/CardsList.vue';
 import SystemStatus from '~/components/settings/SystemStatus.vue';
-import type { CardElements } from '~/utils/types';
+import type { CardElement } from '~/utils/types';
 
 const { t } = useI18n();
 
@@ -22,7 +22,7 @@ definePageMeta({
 
 const { isSuperuser } = useAuth();
 
-const items = computed<CardElements>(() => [
+const items = computed<CardElement[]>(() => [
     {
         title: t('components.settings.job_props.job_properties'),
         description: t('pages.settings.features.properties'),
@@ -67,7 +67,7 @@ const items = computed<CardElements>(() => [
     },
 ]);
 
-const superuserItems = computed<CardElements>(() => [
+const superuserItems = computed<CardElement[]>(() => [
     {
         title: t('pages.settings.limiter.title'),
         description: t('pages.settings.features.limiter'),

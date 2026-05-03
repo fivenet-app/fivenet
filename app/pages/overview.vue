@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import HintsBox from '~/components/HintsBox.vue';
 import CardsList from '~/components/partials/CardsList.vue';
-import type { CardElements } from '~/utils/types';
+import type { CardElement } from '~/utils/types';
 
 useHead({
     title: 'common.overview',
@@ -14,7 +14,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const items = computed<CardElements>(() => [
+const items = computed<CardElement[]>(() => [
     {
         title: t('common.mail'),
         description: t('pages.overview.features.mailer'),

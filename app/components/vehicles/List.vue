@@ -16,6 +16,7 @@ import type { ListVehiclesResponse } from '~~/gen/ts/services/vehicles/vehicles'
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 import SelectMenu from '../partials/SelectMenu.vue';
 import VehicleInfoPopover from './VehicleInfoPopover.vue';
+import { titleCase } from 'scule';
 
 const { t } = useI18n();
 
@@ -192,7 +193,7 @@ const columns = computed(() =>
             {
                 accessorKey: 'type',
                 header: t('common.type'),
-                cell: ({ row }) => toTitleCase(row.original.type),
+                cell: ({ row }) => titleCase(row.original.type),
             },
             !props.hideOwner
                 ? {

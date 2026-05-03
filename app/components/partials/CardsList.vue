@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import type { CardElements } from '~/utils/types';
+import type { CardElement } from '~/utils/types';
 import { availableIcons, fallbackIcon } from './icons';
 
 withDefaults(
     defineProps<{
-        items: CardElements;
+        items: CardElement[];
         showIcon?: boolean;
     }>(),
     {

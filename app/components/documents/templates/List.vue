@@ -2,7 +2,7 @@
 import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import type { CardElements } from '~/utils/types';
+import type { CardElement } from '~/utils/types';
 import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import type { TemplateShort } from '~~/gen/ts/resources/documents/templates/templates';
 
@@ -40,7 +40,7 @@ async function listTemplates(): Promise<TemplateShort[]> {
     }
 }
 
-const items = computed<CardElements>(
+const items = computed<CardElement[]>(
     () =>
         templates.value?.map((v) => ({
             title: v?.title,

@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import type { ButtonProps } from '@nuxt/ui';
 import EmailBlock from '~/components/partials/citizens/EmailBlock.vue';
-import type { ClassProp } from '~/utils/types';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(
     defineProps<{
         email: string | undefined;
-        textClass?: ClassProp;
+        // Class attribute is "untyped" so use any here
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        textClass?: any;
         trailing?: boolean;
         variant?: ButtonProps['variant'];
         color?: ButtonProps['color'];
