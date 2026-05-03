@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.5.0] - 2026-05-03
+
+### 🚀 Features
+
+- Add run cronjob manually function
+- Warn about config location and add restart command for dbsync
+- Return last activity/data time in getstatus sync api
+- Add basic tests to pkg/perms
+- Continue work on citizens labels settings
+- Add log to stderr option
+
+### 🐛 Bug Fixes
+
+- Ensure ids are set for vue-timeline-chart groups, items and markers
+- Show color code in color picker input
+- Label settings validation
+- Document editor data issue with penalty calculator
+- Penalty calculator editor and view not in sync and doc stats query
+- Stamps create page perm
+- Pnpm lock file outdated
+- Change citizens labels structure
+- Adjust dbsync install config file warning text
+- Use single delete query instead of per grade execution
+- Remove reason from citizen label and fix duration pair validation
+- Cleanup spa loading template and experimental nuxt opts
+- Log to file not working correctly and added log rotation interval
+- Use label/value attribute for more components
+- Adjust add notification arg
+- Split up grpc services into more manageable apis
+- Tweak german translation
+
 ## [2026.4.0] - 2026-04-23
 
 ### 🚀 Features
