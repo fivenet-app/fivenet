@@ -14,12 +14,6 @@ import type { ToggleDocumentPinResponse } from "./documents";
 import type { ToggleDocumentPinRequest } from "./documents";
 import type { ListDocumentPinsResponse } from "./documents";
 import type { ListDocumentPinsRequest } from "./documents";
-import type { DeleteCategoryResponse } from "./documents";
-import type { DeleteCategoryRequest } from "./documents";
-import type { CreateOrUpdateCategoryResponse } from "./documents";
-import type { CreateOrUpdateCategoryRequest } from "./documents";
-import type { ListCategoriesResponse } from "./documents";
-import type { ListCategoriesRequest } from "./documents";
 import type { ListUserDocumentsResponse } from "./documents";
 import type { ListUserDocumentsRequest } from "./documents";
 import type { DeleteDocumentReqResponse } from "./documents";
@@ -36,14 +30,6 @@ import type { SetDocumentAccessResponse } from "./documents";
 import type { SetDocumentAccessRequest } from "./documents";
 import type { GetDocumentAccessResponse } from "./documents";
 import type { GetDocumentAccessRequest } from "./documents";
-import type { DeleteCommentResponse } from "./documents";
-import type { DeleteCommentRequest } from "./documents";
-import type { EditCommentResponse } from "./documents";
-import type { EditCommentRequest } from "./documents";
-import type { PostCommentResponse } from "./documents";
-import type { PostCommentRequest } from "./documents";
-import type { GetCommentsResponse } from "./documents";
-import type { GetCommentsRequest } from "./documents";
 import type { RemoveDocumentRelationResponse } from "./documents";
 import type { RemoveDocumentRelationRequest } from "./documents";
 import type { AddDocumentRelationResponse } from "./documents";
@@ -68,45 +54,15 @@ import type { CreateDocumentResponse } from "./documents";
 import type { CreateDocumentRequest } from "./documents";
 import type { GetDocumentResponse } from "./documents";
 import type { GetDocumentRequest } from "./documents";
+import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { ListDocumentsResponse } from "./documents";
 import type { ListDocumentsRequest } from "./documents";
-import type { DeleteTemplateResponse } from "./documents";
-import type { DeleteTemplateRequest } from "./documents";
-import type { UpdateTemplateResponse } from "./documents";
-import type { UpdateTemplateRequest } from "./documents";
-import type { CreateTemplateResponse } from "./documents";
-import type { CreateTemplateRequest } from "./documents";
-import type { GetTemplateResponse } from "./documents";
-import type { GetTemplateRequest } from "./documents";
-import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { ListTemplatesResponse } from "./documents";
-import type { ListTemplatesRequest } from "./documents";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
  * @generated from protobuf service services.documents.DocumentsService
  */
 export interface IDocumentsServiceClient {
-    /**
-     * @generated from protobuf rpc: ListTemplates
-     */
-    listTemplates(input: ListTemplatesRequest, options?: RpcOptions): UnaryCall<ListTemplatesRequest, ListTemplatesResponse>;
-    /**
-     * @generated from protobuf rpc: GetTemplate
-     */
-    getTemplate(input: GetTemplateRequest, options?: RpcOptions): UnaryCall<GetTemplateRequest, GetTemplateResponse>;
-    /**
-     * @generated from protobuf rpc: CreateTemplate
-     */
-    createTemplate(input: CreateTemplateRequest, options?: RpcOptions): UnaryCall<CreateTemplateRequest, CreateTemplateResponse>;
-    /**
-     * @generated from protobuf rpc: UpdateTemplate
-     */
-    updateTemplate(input: UpdateTemplateRequest, options?: RpcOptions): UnaryCall<UpdateTemplateRequest, UpdateTemplateResponse>;
-    /**
-     * @generated from protobuf rpc: DeleteTemplate
-     */
-    deleteTemplate(input: DeleteTemplateRequest, options?: RpcOptions): UnaryCall<DeleteTemplateRequest, DeleteTemplateResponse>;
     /**
      * @generated from protobuf rpc: ListDocuments
      */
@@ -160,22 +116,6 @@ export interface IDocumentsServiceClient {
      */
     removeDocumentRelation(input: RemoveDocumentRelationRequest, options?: RpcOptions): UnaryCall<RemoveDocumentRelationRequest, RemoveDocumentRelationResponse>;
     /**
-     * @generated from protobuf rpc: GetComments
-     */
-    getComments(input: GetCommentsRequest, options?: RpcOptions): UnaryCall<GetCommentsRequest, GetCommentsResponse>;
-    /**
-     * @generated from protobuf rpc: PostComment
-     */
-    postComment(input: PostCommentRequest, options?: RpcOptions): UnaryCall<PostCommentRequest, PostCommentResponse>;
-    /**
-     * @generated from protobuf rpc: EditComment
-     */
-    editComment(input: EditCommentRequest, options?: RpcOptions): UnaryCall<EditCommentRequest, EditCommentResponse>;
-    /**
-     * @generated from protobuf rpc: DeleteComment
-     */
-    deleteComment(input: DeleteCommentRequest, options?: RpcOptions): UnaryCall<DeleteCommentRequest, DeleteCommentResponse>;
-    /**
      * @generated from protobuf rpc: GetDocumentAccess
      */
     getDocumentAccess(input: GetDocumentAccessRequest, options?: RpcOptions): UnaryCall<GetDocumentAccessRequest, GetDocumentAccessResponse>;
@@ -208,18 +148,6 @@ export interface IDocumentsServiceClient {
      */
     listUserDocuments(input: ListUserDocumentsRequest, options?: RpcOptions): UnaryCall<ListUserDocumentsRequest, ListUserDocumentsResponse>;
     /**
-     * @generated from protobuf rpc: ListCategories
-     */
-    listCategories(input: ListCategoriesRequest, options?: RpcOptions): UnaryCall<ListCategoriesRequest, ListCategoriesResponse>;
-    /**
-     * @generated from protobuf rpc: CreateOrUpdateCategory
-     */
-    createOrUpdateCategory(input: CreateOrUpdateCategoryRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateCategoryRequest, CreateOrUpdateCategoryResponse>;
-    /**
-     * @generated from protobuf rpc: DeleteCategory
-     */
-    deleteCategory(input: DeleteCategoryRequest, options?: RpcOptions): UnaryCall<DeleteCategoryRequest, DeleteCategoryResponse>;
-    /**
      * @generated from protobuf rpc: ListDocumentPins
      */
     listDocumentPins(input: ListDocumentPinsRequest, options?: RpcOptions): UnaryCall<ListDocumentPinsRequest, ListDocumentPinsResponse>;
@@ -246,262 +174,178 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @generated from protobuf rpc: ListTemplates
-     */
-    listTemplates(input: ListTemplatesRequest, options?: RpcOptions): UnaryCall<ListTemplatesRequest, ListTemplatesResponse> {
-        const method = this.methods[0], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListTemplatesRequest, ListTemplatesResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: GetTemplate
-     */
-    getTemplate(input: GetTemplateRequest, options?: RpcOptions): UnaryCall<GetTemplateRequest, GetTemplateResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetTemplateRequest, GetTemplateResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: CreateTemplate
-     */
-    createTemplate(input: CreateTemplateRequest, options?: RpcOptions): UnaryCall<CreateTemplateRequest, CreateTemplateResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CreateTemplateRequest, CreateTemplateResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: UpdateTemplate
-     */
-    updateTemplate(input: UpdateTemplateRequest, options?: RpcOptions): UnaryCall<UpdateTemplateRequest, UpdateTemplateResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpdateTemplateRequest, UpdateTemplateResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: DeleteTemplate
-     */
-    deleteTemplate(input: DeleteTemplateRequest, options?: RpcOptions): UnaryCall<DeleteTemplateRequest, DeleteTemplateResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteTemplateRequest, DeleteTemplateResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
      * @generated from protobuf rpc: ListDocuments
      */
     listDocuments(input: ListDocumentsRequest, options?: RpcOptions): UnaryCall<ListDocumentsRequest, ListDocumentsResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[0], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListDocumentsRequest, ListDocumentsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: GetDocument
      */
     getDocument(input: GetDocumentRequest, options?: RpcOptions): UnaryCall<GetDocumentRequest, GetDocumentResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetDocumentRequest, GetDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: CreateDocument
      */
     createDocument(input: CreateDocumentRequest, options?: RpcOptions): UnaryCall<CreateDocumentRequest, CreateDocumentResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateDocumentRequest, CreateDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: UpdateDocument
      */
     updateDocument(input: UpdateDocumentRequest, options?: RpcOptions): UnaryCall<UpdateDocumentRequest, UpdateDocumentResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateDocumentRequest, UpdateDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteDocument
      */
     deleteDocument(input: DeleteDocumentRequest, options?: RpcOptions): UnaryCall<DeleteDocumentRequest, DeleteDocumentResponse> {
-        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteDocumentRequest, DeleteDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: ToggleDocument
      */
     toggleDocument(input: ToggleDocumentRequest, options?: RpcOptions): UnaryCall<ToggleDocumentRequest, ToggleDocumentResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<ToggleDocumentRequest, ToggleDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: ChangeDocumentOwner
      */
     changeDocumentOwner(input: ChangeDocumentOwnerRequest, options?: RpcOptions): UnaryCall<ChangeDocumentOwnerRequest, ChangeDocumentOwnerResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<ChangeDocumentOwnerRequest, ChangeDocumentOwnerResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: GetDocumentReferences
      */
     getDocumentReferences(input: GetDocumentReferencesRequest, options?: RpcOptions): UnaryCall<GetDocumentReferencesRequest, GetDocumentReferencesResponse> {
-        const method = this.methods[12], opt = this._transport.mergeOptions(options);
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetDocumentReferencesRequest, GetDocumentReferencesResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: GetDocumentRelations
      */
     getDocumentRelations(input: GetDocumentRelationsRequest, options?: RpcOptions): UnaryCall<GetDocumentRelationsRequest, GetDocumentRelationsResponse> {
-        const method = this.methods[13], opt = this._transport.mergeOptions(options);
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetDocumentRelationsRequest, GetDocumentRelationsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: AddDocumentReference
      */
     addDocumentReference(input: AddDocumentReferenceRequest, options?: RpcOptions): UnaryCall<AddDocumentReferenceRequest, AddDocumentReferenceResponse> {
-        const method = this.methods[14], opt = this._transport.mergeOptions(options);
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<AddDocumentReferenceRequest, AddDocumentReferenceResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: RemoveDocumentReference
      */
     removeDocumentReference(input: RemoveDocumentReferenceRequest, options?: RpcOptions): UnaryCall<RemoveDocumentReferenceRequest, RemoveDocumentReferenceResponse> {
-        const method = this.methods[15], opt = this._transport.mergeOptions(options);
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
         return stackIntercept<RemoveDocumentReferenceRequest, RemoveDocumentReferenceResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: AddDocumentRelation
      */
     addDocumentRelation(input: AddDocumentRelationRequest, options?: RpcOptions): UnaryCall<AddDocumentRelationRequest, AddDocumentRelationResponse> {
-        const method = this.methods[16], opt = this._transport.mergeOptions(options);
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
         return stackIntercept<AddDocumentRelationRequest, AddDocumentRelationResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: RemoveDocumentRelation
      */
     removeDocumentRelation(input: RemoveDocumentRelationRequest, options?: RpcOptions): UnaryCall<RemoveDocumentRelationRequest, RemoveDocumentRelationResponse> {
-        const method = this.methods[17], opt = this._transport.mergeOptions(options);
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
         return stackIntercept<RemoveDocumentRelationRequest, RemoveDocumentRelationResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: GetComments
-     */
-    getComments(input: GetCommentsRequest, options?: RpcOptions): UnaryCall<GetCommentsRequest, GetCommentsResponse> {
-        const method = this.methods[18], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetCommentsRequest, GetCommentsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: PostComment
-     */
-    postComment(input: PostCommentRequest, options?: RpcOptions): UnaryCall<PostCommentRequest, PostCommentResponse> {
-        const method = this.methods[19], opt = this._transport.mergeOptions(options);
-        return stackIntercept<PostCommentRequest, PostCommentResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: EditComment
-     */
-    editComment(input: EditCommentRequest, options?: RpcOptions): UnaryCall<EditCommentRequest, EditCommentResponse> {
-        const method = this.methods[20], opt = this._transport.mergeOptions(options);
-        return stackIntercept<EditCommentRequest, EditCommentResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: DeleteComment
-     */
-    deleteComment(input: DeleteCommentRequest, options?: RpcOptions): UnaryCall<DeleteCommentRequest, DeleteCommentResponse> {
-        const method = this.methods[21], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteCommentRequest, DeleteCommentResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: GetDocumentAccess
      */
     getDocumentAccess(input: GetDocumentAccessRequest, options?: RpcOptions): UnaryCall<GetDocumentAccessRequest, GetDocumentAccessResponse> {
-        const method = this.methods[22], opt = this._transport.mergeOptions(options);
+        const method = this.methods[13], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetDocumentAccessRequest, GetDocumentAccessResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: SetDocumentAccess
      */
     setDocumentAccess(input: SetDocumentAccessRequest, options?: RpcOptions): UnaryCall<SetDocumentAccessRequest, SetDocumentAccessResponse> {
-        const method = this.methods[23], opt = this._transport.mergeOptions(options);
+        const method = this.methods[14], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetDocumentAccessRequest, SetDocumentAccessResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: ListDocumentActivity
      */
     listDocumentActivity(input: ListDocumentActivityRequest, options?: RpcOptions): UnaryCall<ListDocumentActivityRequest, ListDocumentActivityResponse> {
-        const method = this.methods[24], opt = this._transport.mergeOptions(options);
+        const method = this.methods[15], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListDocumentActivityRequest, ListDocumentActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: ListDocumentReqs
      */
     listDocumentReqs(input: ListDocumentReqsRequest, options?: RpcOptions): UnaryCall<ListDocumentReqsRequest, ListDocumentReqsResponse> {
-        const method = this.methods[25], opt = this._transport.mergeOptions(options);
+        const method = this.methods[16], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListDocumentReqsRequest, ListDocumentReqsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: CreateDocumentReq
      */
     createDocumentReq(input: CreateDocumentReqRequest, options?: RpcOptions): UnaryCall<CreateDocumentReqRequest, CreateDocumentReqResponse> {
-        const method = this.methods[26], opt = this._transport.mergeOptions(options);
+        const method = this.methods[17], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateDocumentReqRequest, CreateDocumentReqResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: UpdateDocumentReq
      */
     updateDocumentReq(input: UpdateDocumentReqRequest, options?: RpcOptions): UnaryCall<UpdateDocumentReqRequest, UpdateDocumentReqResponse> {
-        const method = this.methods[27], opt = this._transport.mergeOptions(options);
+        const method = this.methods[18], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateDocumentReqRequest, UpdateDocumentReqResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteDocumentReq
      */
     deleteDocumentReq(input: DeleteDocumentReqRequest, options?: RpcOptions): UnaryCall<DeleteDocumentReqRequest, DeleteDocumentReqResponse> {
-        const method = this.methods[28], opt = this._transport.mergeOptions(options);
+        const method = this.methods[19], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteDocumentReqRequest, DeleteDocumentReqResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: ListUserDocuments
      */
     listUserDocuments(input: ListUserDocumentsRequest, options?: RpcOptions): UnaryCall<ListUserDocumentsRequest, ListUserDocumentsResponse> {
-        const method = this.methods[29], opt = this._transport.mergeOptions(options);
+        const method = this.methods[20], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListUserDocumentsRequest, ListUserDocumentsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: ListCategories
-     */
-    listCategories(input: ListCategoriesRequest, options?: RpcOptions): UnaryCall<ListCategoriesRequest, ListCategoriesResponse> {
-        const method = this.methods[30], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListCategoriesRequest, ListCategoriesResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: CreateOrUpdateCategory
-     */
-    createOrUpdateCategory(input: CreateOrUpdateCategoryRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateCategoryRequest, CreateOrUpdateCategoryResponse> {
-        const method = this.methods[31], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CreateOrUpdateCategoryRequest, CreateOrUpdateCategoryResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: DeleteCategory
-     */
-    deleteCategory(input: DeleteCategoryRequest, options?: RpcOptions): UnaryCall<DeleteCategoryRequest, DeleteCategoryResponse> {
-        const method = this.methods[32], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteCategoryRequest, DeleteCategoryResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: ListDocumentPins
      */
     listDocumentPins(input: ListDocumentPinsRequest, options?: RpcOptions): UnaryCall<ListDocumentPinsRequest, ListDocumentPinsResponse> {
-        const method = this.methods[33], opt = this._transport.mergeOptions(options);
+        const method = this.methods[21], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListDocumentPinsRequest, ListDocumentPinsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: ToggleDocumentPin
      */
     toggleDocumentPin(input: ToggleDocumentPinRequest, options?: RpcOptions): UnaryCall<ToggleDocumentPinRequest, ToggleDocumentPinResponse> {
-        const method = this.methods[34], opt = this._transport.mergeOptions(options);
+        const method = this.methods[22], opt = this._transport.mergeOptions(options);
         return stackIntercept<ToggleDocumentPinRequest, ToggleDocumentPinResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: SetDocumentReminder
      */
     setDocumentReminder(input: SetDocumentReminderRequest, options?: RpcOptions): UnaryCall<SetDocumentReminderRequest, SetDocumentReminderResponse> {
-        const method = this.methods[35], opt = this._transport.mergeOptions(options);
+        const method = this.methods[23], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetDocumentReminderRequest, SetDocumentReminderResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: UploadFile
      */
     uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
-        const method = this.methods[36], opt = this._transport.mergeOptions(options);
+        const method = this.methods[24], opt = this._transport.mergeOptions(options);
         return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
 }

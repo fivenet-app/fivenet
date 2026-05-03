@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package services.documents;
+
+import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
+import "resources/common/database/database.proto";
+import "resources/documents/comment/comment.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documents";
+
+message GetCommentsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  int64 document_id = 2;
+}
+
+message GetCommentsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.comment.Comment comments = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message PostCommentRequest {
+  resources.documents.comment.Comment comment = 1 [(buf.validate.field).required = true];
+}
+
+message PostCommentResponse {
+  resources.documents.comment.Comment comment = 1;
+}
+
+message EditCommentRequest {
+  resources.documents.comment.Comment comment = 1 [(buf.validate.field).required = true];
+}
+
+message EditCommentResponse {
+  resources.documents.comment.Comment comment = 1;
+}
+
+message DeleteCommentRequest {
+  int64 comment_id = 1;
+}
+
+message DeleteCommentResponse {}
+
+service CommentsService {
+  option (codegen.perms.perms_svc) = {
+    name: "documents.DocumentsService"
+  };
+
+  rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListDocuments"
+    };
+  }
+  rpc PostComment(PostCommentRequest) returns (PostCommentResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListDocuments"
+    };
+  }
+  rpc EditComment(EditCommentRequest) returns (EditCommentResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListDocuments"
+    };
+  }
+  rpc DeleteComment(DeleteCommentRequest) returns (DeleteCommentResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Access"
+          type: ATTRIBUTE_TYPE_STRING_LIST
+          valid_string_list: [
+            "Own",
+            "Lower_Rank",
+            "Same_Rank",
+            "Any"
+          ]
+        }
+      ]
+    };
+  }
+}

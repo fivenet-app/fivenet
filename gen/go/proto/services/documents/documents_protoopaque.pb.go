@@ -17,8 +17,6 @@ import (
 	documents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
-	category "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/category"
-	comment "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/comment"
 	data "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/data"
 	pins "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/pins"
 	references "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/references"
@@ -41,665 +39,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ListTemplatesRequest struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListTemplatesRequest) Reset() {
-	*x = ListTemplatesRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListTemplatesRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListTemplatesRequest) ProtoMessage() {}
-
-func (x *ListTemplatesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type ListTemplatesRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 ListTemplatesRequest_builder) Build() *ListTemplatesRequest {
-	m0 := &ListTemplatesRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
-type ListTemplatesResponse struct {
-	state                protoimpl.MessageState      `protogen:"opaque.v1"`
-	xxx_hidden_Templates *[]*templates.TemplateShort `protobuf:"bytes,1,rep,name=templates,proto3"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
-}
-
-func (x *ListTemplatesResponse) Reset() {
-	*x = ListTemplatesResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListTemplatesResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListTemplatesResponse) ProtoMessage() {}
-
-func (x *ListTemplatesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListTemplatesResponse) GetTemplates() []*templates.TemplateShort {
-	if x != nil {
-		if x.xxx_hidden_Templates != nil {
-			return *x.xxx_hidden_Templates
-		}
-	}
-	return nil
-}
-
-func (x *ListTemplatesResponse) SetTemplates(v []*templates.TemplateShort) {
-	x.xxx_hidden_Templates = &v
-}
-
-type ListTemplatesResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Templates []*templates.TemplateShort
-}
-
-func (b0 ListTemplatesResponse_builder) Build() *ListTemplatesResponse {
-	m0 := &ListTemplatesResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Templates = &b.Templates
-	return m0
-}
-
-type GetTemplateRequest struct {
-	state                  protoimpl.MessageState  `protogen:"opaque.v1"`
-	xxx_hidden_TemplateId  int64                   `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3"`
-	xxx_hidden_Data        *templates.TemplateData `protobuf:"bytes,2,opt,name=data,proto3,oneof"`
-	xxx_hidden_Render      bool                    `protobuf:"varint,3,opt,name=render,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *GetTemplateRequest) Reset() {
-	*x = GetTemplateRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetTemplateRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetTemplateRequest) ProtoMessage() {}
-
-func (x *GetTemplateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *GetTemplateRequest) GetTemplateId() int64 {
-	if x != nil {
-		return x.xxx_hidden_TemplateId
-	}
-	return 0
-}
-
-func (x *GetTemplateRequest) GetData() *templates.TemplateData {
-	if x != nil {
-		return x.xxx_hidden_Data
-	}
-	return nil
-}
-
-func (x *GetTemplateRequest) GetRender() bool {
-	if x != nil {
-		return x.xxx_hidden_Render
-	}
-	return false
-}
-
-func (x *GetTemplateRequest) SetTemplateId(v int64) {
-	x.xxx_hidden_TemplateId = v
-}
-
-func (x *GetTemplateRequest) SetData(v *templates.TemplateData) {
-	x.xxx_hidden_Data = v
-}
-
-func (x *GetTemplateRequest) SetRender(v bool) {
-	x.xxx_hidden_Render = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
-}
-
-func (x *GetTemplateRequest) HasData() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Data != nil
-}
-
-func (x *GetTemplateRequest) HasRender() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
-func (x *GetTemplateRequest) ClearData() {
-	x.xxx_hidden_Data = nil
-}
-
-func (x *GetTemplateRequest) ClearRender() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Render = false
-}
-
-type GetTemplateRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	TemplateId int64
-	Data       *templates.TemplateData
-	Render     *bool
-}
-
-func (b0 GetTemplateRequest_builder) Build() *GetTemplateRequest {
-	m0 := &GetTemplateRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_TemplateId = b.TemplateId
-	x.xxx_hidden_Data = b.Data
-	if b.Render != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_Render = *b.Render
-	}
-	return m0
-}
-
-type GetTemplateResponse struct {
-	state               protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Template *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3"`
-	xxx_hidden_Rendered bool                   `protobuf:"varint,2,opt,name=rendered,proto3"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *GetTemplateResponse) Reset() {
-	*x = GetTemplateResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetTemplateResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetTemplateResponse) ProtoMessage() {}
-
-func (x *GetTemplateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *GetTemplateResponse) GetTemplate() *templates.Template {
-	if x != nil {
-		return x.xxx_hidden_Template
-	}
-	return nil
-}
-
-func (x *GetTemplateResponse) GetRendered() bool {
-	if x != nil {
-		return x.xxx_hidden_Rendered
-	}
-	return false
-}
-
-func (x *GetTemplateResponse) SetTemplate(v *templates.Template) {
-	x.xxx_hidden_Template = v
-}
-
-func (x *GetTemplateResponse) SetRendered(v bool) {
-	x.xxx_hidden_Rendered = v
-}
-
-func (x *GetTemplateResponse) HasTemplate() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Template != nil
-}
-
-func (x *GetTemplateResponse) ClearTemplate() {
-	x.xxx_hidden_Template = nil
-}
-
-type GetTemplateResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Template *templates.Template
-	Rendered bool
-}
-
-func (b0 GetTemplateResponse_builder) Build() *GetTemplateResponse {
-	m0 := &GetTemplateResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Template = b.Template
-	x.xxx_hidden_Rendered = b.Rendered
-	return m0
-}
-
-type CreateTemplateRequest struct {
-	state               protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Template *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *CreateTemplateRequest) Reset() {
-	*x = CreateTemplateRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateTemplateRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateTemplateRequest) ProtoMessage() {}
-
-func (x *CreateTemplateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *CreateTemplateRequest) GetTemplate() *templates.Template {
-	if x != nil {
-		return x.xxx_hidden_Template
-	}
-	return nil
-}
-
-func (x *CreateTemplateRequest) SetTemplate(v *templates.Template) {
-	x.xxx_hidden_Template = v
-}
-
-func (x *CreateTemplateRequest) HasTemplate() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Template != nil
-}
-
-func (x *CreateTemplateRequest) ClearTemplate() {
-	x.xxx_hidden_Template = nil
-}
-
-type CreateTemplateRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Template *templates.Template
-}
-
-func (b0 CreateTemplateRequest_builder) Build() *CreateTemplateRequest {
-	m0 := &CreateTemplateRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Template = b.Template
-	return m0
-}
-
-type CreateTemplateResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id int64                  `protobuf:"varint,1,opt,name=id,proto3"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateTemplateResponse) Reset() {
-	*x = CreateTemplateResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateTemplateResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateTemplateResponse) ProtoMessage() {}
-
-func (x *CreateTemplateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *CreateTemplateResponse) GetId() int64 {
-	if x != nil {
-		return x.xxx_hidden_Id
-	}
-	return 0
-}
-
-func (x *CreateTemplateResponse) SetId(v int64) {
-	x.xxx_hidden_Id = v
-}
-
-type CreateTemplateResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Id int64
-}
-
-func (b0 CreateTemplateResponse_builder) Build() *CreateTemplateResponse {
-	m0 := &CreateTemplateResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Id = b.Id
-	return m0
-}
-
-type UpdateTemplateRequest struct {
-	state               protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Template *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *UpdateTemplateRequest) Reset() {
-	*x = UpdateTemplateRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateTemplateRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateTemplateRequest) ProtoMessage() {}
-
-func (x *UpdateTemplateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *UpdateTemplateRequest) GetTemplate() *templates.Template {
-	if x != nil {
-		return x.xxx_hidden_Template
-	}
-	return nil
-}
-
-func (x *UpdateTemplateRequest) SetTemplate(v *templates.Template) {
-	x.xxx_hidden_Template = v
-}
-
-func (x *UpdateTemplateRequest) HasTemplate() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Template != nil
-}
-
-func (x *UpdateTemplateRequest) ClearTemplate() {
-	x.xxx_hidden_Template = nil
-}
-
-type UpdateTemplateRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Template *templates.Template
-}
-
-func (b0 UpdateTemplateRequest_builder) Build() *UpdateTemplateRequest {
-	m0 := &UpdateTemplateRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Template = b.Template
-	return m0
-}
-
-type UpdateTemplateResponse struct {
-	state               protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Template *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *UpdateTemplateResponse) Reset() {
-	*x = UpdateTemplateResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateTemplateResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateTemplateResponse) ProtoMessage() {}
-
-func (x *UpdateTemplateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *UpdateTemplateResponse) GetTemplate() *templates.Template {
-	if x != nil {
-		return x.xxx_hidden_Template
-	}
-	return nil
-}
-
-func (x *UpdateTemplateResponse) SetTemplate(v *templates.Template) {
-	x.xxx_hidden_Template = v
-}
-
-func (x *UpdateTemplateResponse) HasTemplate() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Template != nil
-}
-
-func (x *UpdateTemplateResponse) ClearTemplate() {
-	x.xxx_hidden_Template = nil
-}
-
-type UpdateTemplateResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Template *templates.Template
-}
-
-func (b0 UpdateTemplateResponse_builder) Build() *UpdateTemplateResponse {
-	m0 := &UpdateTemplateResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Template = b.Template
-	return m0
-}
-
-type DeleteTemplateRequest struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id int64                  `protobuf:"varint,1,opt,name=id,proto3"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteTemplateRequest) Reset() {
-	*x = DeleteTemplateRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[8]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteTemplateRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteTemplateRequest) ProtoMessage() {}
-
-func (x *DeleteTemplateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[8]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *DeleteTemplateRequest) GetId() int64 {
-	if x != nil {
-		return x.xxx_hidden_Id
-	}
-	return 0
-}
-
-func (x *DeleteTemplateRequest) SetId(v int64) {
-	x.xxx_hidden_Id = v
-}
-
-type DeleteTemplateRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Id int64
-}
-
-func (b0 DeleteTemplateRequest_builder) Build() *DeleteTemplateRequest {
-	m0 := &DeleteTemplateRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Id = b.Id
-	return m0
-}
-
-type DeleteTemplateResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteTemplateResponse) Reset() {
-	*x = DeleteTemplateResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteTemplateResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteTemplateResponse) ProtoMessage() {}
-
-func (x *DeleteTemplateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[9]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type DeleteTemplateResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 DeleteTemplateResponse_builder) Build() *DeleteTemplateResponse {
-	m0 := &DeleteTemplateResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
 type ListDocumentsRequest struct {
 	state                  protoimpl.MessageState      `protogen:"opaque.v1"`
 	xxx_hidden_Pagination  *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
@@ -720,7 +59,7 @@ type ListDocumentsRequest struct {
 
 func (x *ListDocumentsRequest) Reset() {
 	*x = ListDocumentsRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[10]
+	mi := &file_services_documents_documents_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -732,7 +71,7 @@ func (x *ListDocumentsRequest) String() string {
 func (*ListDocumentsRequest) ProtoMessage() {}
 
 func (x *ListDocumentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[10]
+	mi := &file_services_documents_documents_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -995,7 +334,7 @@ type ListDocumentsResponse struct {
 
 func (x *ListDocumentsResponse) Reset() {
 	*x = ListDocumentsResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[11]
+	mi := &file_services_documents_documents_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1007,7 +346,7 @@ func (x *ListDocumentsResponse) String() string {
 func (*ListDocumentsResponse) ProtoMessage() {}
 
 func (x *ListDocumentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[11]
+	mi := &file_services_documents_documents_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1081,7 +420,7 @@ type GetDocumentRequest struct {
 
 func (x *GetDocumentRequest) Reset() {
 	*x = GetDocumentRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[12]
+	mi := &file_services_documents_documents_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1093,7 +432,7 @@ func (x *GetDocumentRequest) String() string {
 func (*GetDocumentRequest) ProtoMessage() {}
 
 func (x *GetDocumentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[12]
+	mi := &file_services_documents_documents_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1168,7 +507,7 @@ type GetDocumentResponse struct {
 
 func (x *GetDocumentResponse) Reset() {
 	*x = GetDocumentResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[13]
+	mi := &file_services_documents_documents_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1180,7 +519,7 @@ func (x *GetDocumentResponse) String() string {
 func (*GetDocumentResponse) ProtoMessage() {}
 
 func (x *GetDocumentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[13]
+	mi := &file_services_documents_documents_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1260,7 +599,7 @@ type GetDocumentReferencesRequest struct {
 
 func (x *GetDocumentReferencesRequest) Reset() {
 	*x = GetDocumentReferencesRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[14]
+	mi := &file_services_documents_documents_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1272,7 +611,7 @@ func (x *GetDocumentReferencesRequest) String() string {
 func (*GetDocumentReferencesRequest) ProtoMessage() {}
 
 func (x *GetDocumentReferencesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[14]
+	mi := &file_services_documents_documents_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1317,7 +656,7 @@ type GetDocumentReferencesResponse struct {
 
 func (x *GetDocumentReferencesResponse) Reset() {
 	*x = GetDocumentReferencesResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[15]
+	mi := &file_services_documents_documents_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1329,7 +668,7 @@ func (x *GetDocumentReferencesResponse) String() string {
 func (*GetDocumentReferencesResponse) ProtoMessage() {}
 
 func (x *GetDocumentReferencesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[15]
+	mi := &file_services_documents_documents_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1376,7 +715,7 @@ type GetDocumentRelationsRequest struct {
 
 func (x *GetDocumentRelationsRequest) Reset() {
 	*x = GetDocumentRelationsRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[16]
+	mi := &file_services_documents_documents_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1388,7 +727,7 @@ func (x *GetDocumentRelationsRequest) String() string {
 func (*GetDocumentRelationsRequest) ProtoMessage() {}
 
 func (x *GetDocumentRelationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[16]
+	mi := &file_services_documents_documents_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1433,7 +772,7 @@ type GetDocumentRelationsResponse struct {
 
 func (x *GetDocumentRelationsResponse) Reset() {
 	*x = GetDocumentRelationsResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[17]
+	mi := &file_services_documents_documents_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1445,7 +784,7 @@ func (x *GetDocumentRelationsResponse) String() string {
 func (*GetDocumentRelationsResponse) ProtoMessage() {}
 
 func (x *GetDocumentRelationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[17]
+	mi := &file_services_documents_documents_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1492,7 +831,7 @@ type AddDocumentReferenceRequest struct {
 
 func (x *AddDocumentReferenceRequest) Reset() {
 	*x = AddDocumentReferenceRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[18]
+	mi := &file_services_documents_documents_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1504,7 +843,7 @@ func (x *AddDocumentReferenceRequest) String() string {
 func (*AddDocumentReferenceRequest) ProtoMessage() {}
 
 func (x *AddDocumentReferenceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[18]
+	mi := &file_services_documents_documents_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1560,7 +899,7 @@ type AddDocumentReferenceResponse struct {
 
 func (x *AddDocumentReferenceResponse) Reset() {
 	*x = AddDocumentReferenceResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[19]
+	mi := &file_services_documents_documents_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1572,7 +911,7 @@ func (x *AddDocumentReferenceResponse) String() string {
 func (*AddDocumentReferenceResponse) ProtoMessage() {}
 
 func (x *AddDocumentReferenceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[19]
+	mi := &file_services_documents_documents_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1617,7 +956,7 @@ type RemoveDocumentReferenceRequest struct {
 
 func (x *RemoveDocumentReferenceRequest) Reset() {
 	*x = RemoveDocumentReferenceRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[20]
+	mi := &file_services_documents_documents_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1629,7 +968,7 @@ func (x *RemoveDocumentReferenceRequest) String() string {
 func (*RemoveDocumentReferenceRequest) ProtoMessage() {}
 
 func (x *RemoveDocumentReferenceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[20]
+	mi := &file_services_documents_documents_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1673,7 +1012,7 @@ type RemoveDocumentReferenceResponse struct {
 
 func (x *RemoveDocumentReferenceResponse) Reset() {
 	*x = RemoveDocumentReferenceResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[21]
+	mi := &file_services_documents_documents_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1685,7 +1024,7 @@ func (x *RemoveDocumentReferenceResponse) String() string {
 func (*RemoveDocumentReferenceResponse) ProtoMessage() {}
 
 func (x *RemoveDocumentReferenceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[21]
+	mi := &file_services_documents_documents_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1717,7 +1056,7 @@ type AddDocumentRelationRequest struct {
 
 func (x *AddDocumentRelationRequest) Reset() {
 	*x = AddDocumentRelationRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[22]
+	mi := &file_services_documents_documents_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1729,7 +1068,7 @@ func (x *AddDocumentRelationRequest) String() string {
 func (*AddDocumentRelationRequest) ProtoMessage() {}
 
 func (x *AddDocumentRelationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[22]
+	mi := &file_services_documents_documents_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1785,7 +1124,7 @@ type AddDocumentRelationResponse struct {
 
 func (x *AddDocumentRelationResponse) Reset() {
 	*x = AddDocumentRelationResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[23]
+	mi := &file_services_documents_documents_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1797,7 +1136,7 @@ func (x *AddDocumentRelationResponse) String() string {
 func (*AddDocumentRelationResponse) ProtoMessage() {}
 
 func (x *AddDocumentRelationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[23]
+	mi := &file_services_documents_documents_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1842,7 +1181,7 @@ type RemoveDocumentRelationRequest struct {
 
 func (x *RemoveDocumentRelationRequest) Reset() {
 	*x = RemoveDocumentRelationRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[24]
+	mi := &file_services_documents_documents_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1854,7 +1193,7 @@ func (x *RemoveDocumentRelationRequest) String() string {
 func (*RemoveDocumentRelationRequest) ProtoMessage() {}
 
 func (x *RemoveDocumentRelationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[24]
+	mi := &file_services_documents_documents_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1898,7 +1237,7 @@ type RemoveDocumentRelationResponse struct {
 
 func (x *RemoveDocumentRelationResponse) Reset() {
 	*x = RemoveDocumentRelationResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[25]
+	mi := &file_services_documents_documents_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1910,7 +1249,7 @@ func (x *RemoveDocumentRelationResponse) String() string {
 func (*RemoveDocumentRelationResponse) ProtoMessage() {}
 
 func (x *RemoveDocumentRelationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[25]
+	mi := &file_services_documents_documents_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1933,544 +1272,6 @@ func (b0 RemoveDocumentRelationResponse_builder) Build() *RemoveDocumentRelation
 	return m0
 }
 
-type GetCommentsRequest struct {
-	state                 protoimpl.MessageState      `protogen:"opaque.v1"`
-	xxx_hidden_Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_DocumentId int64                       `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *GetCommentsRequest) Reset() {
-	*x = GetCommentsRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[26]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetCommentsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetCommentsRequest) ProtoMessage() {}
-
-func (x *GetCommentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[26]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *GetCommentsRequest) GetPagination() *database.PaginationRequest {
-	if x != nil {
-		return x.xxx_hidden_Pagination
-	}
-	return nil
-}
-
-func (x *GetCommentsRequest) GetDocumentId() int64 {
-	if x != nil {
-		return x.xxx_hidden_DocumentId
-	}
-	return 0
-}
-
-func (x *GetCommentsRequest) SetPagination(v *database.PaginationRequest) {
-	x.xxx_hidden_Pagination = v
-}
-
-func (x *GetCommentsRequest) SetDocumentId(v int64) {
-	x.xxx_hidden_DocumentId = v
-}
-
-func (x *GetCommentsRequest) HasPagination() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Pagination != nil
-}
-
-func (x *GetCommentsRequest) ClearPagination() {
-	x.xxx_hidden_Pagination = nil
-}
-
-type GetCommentsRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Pagination *database.PaginationRequest
-	DocumentId int64
-}
-
-func (b0 GetCommentsRequest_builder) Build() *GetCommentsRequest {
-	m0 := &GetCommentsRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Pagination = b.Pagination
-	x.xxx_hidden_DocumentId = b.DocumentId
-	return m0
-}
-
-type GetCommentsResponse struct {
-	state                 protoimpl.MessageState       `protogen:"opaque.v1"`
-	xxx_hidden_Pagination *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Comments   *[]*comment.Comment          `protobuf:"bytes,2,rep,name=comments,proto3"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *GetCommentsResponse) Reset() {
-	*x = GetCommentsResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[27]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetCommentsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetCommentsResponse) ProtoMessage() {}
-
-func (x *GetCommentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[27]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *GetCommentsResponse) GetPagination() *database.PaginationResponse {
-	if x != nil {
-		return x.xxx_hidden_Pagination
-	}
-	return nil
-}
-
-func (x *GetCommentsResponse) GetComments() []*comment.Comment {
-	if x != nil {
-		if x.xxx_hidden_Comments != nil {
-			return *x.xxx_hidden_Comments
-		}
-	}
-	return nil
-}
-
-func (x *GetCommentsResponse) SetPagination(v *database.PaginationResponse) {
-	x.xxx_hidden_Pagination = v
-}
-
-func (x *GetCommentsResponse) SetComments(v []*comment.Comment) {
-	x.xxx_hidden_Comments = &v
-}
-
-func (x *GetCommentsResponse) HasPagination() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Pagination != nil
-}
-
-func (x *GetCommentsResponse) ClearPagination() {
-	x.xxx_hidden_Pagination = nil
-}
-
-type GetCommentsResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Pagination *database.PaginationResponse
-	Comments   []*comment.Comment
-}
-
-func (b0 GetCommentsResponse_builder) Build() *GetCommentsResponse {
-	m0 := &GetCommentsResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Pagination = b.Pagination
-	x.xxx_hidden_Comments = &b.Comments
-	return m0
-}
-
-type PostCommentRequest struct {
-	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Comment *comment.Comment       `protobuf:"bytes,1,opt,name=comment,proto3"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *PostCommentRequest) Reset() {
-	*x = PostCommentRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[28]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PostCommentRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PostCommentRequest) ProtoMessage() {}
-
-func (x *PostCommentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[28]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *PostCommentRequest) GetComment() *comment.Comment {
-	if x != nil {
-		return x.xxx_hidden_Comment
-	}
-	return nil
-}
-
-func (x *PostCommentRequest) SetComment(v *comment.Comment) {
-	x.xxx_hidden_Comment = v
-}
-
-func (x *PostCommentRequest) HasComment() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Comment != nil
-}
-
-func (x *PostCommentRequest) ClearComment() {
-	x.xxx_hidden_Comment = nil
-}
-
-type PostCommentRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Comment *comment.Comment
-}
-
-func (b0 PostCommentRequest_builder) Build() *PostCommentRequest {
-	m0 := &PostCommentRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Comment = b.Comment
-	return m0
-}
-
-type PostCommentResponse struct {
-	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Comment *comment.Comment       `protobuf:"bytes,1,opt,name=comment,proto3"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *PostCommentResponse) Reset() {
-	*x = PostCommentResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[29]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PostCommentResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PostCommentResponse) ProtoMessage() {}
-
-func (x *PostCommentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[29]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *PostCommentResponse) GetComment() *comment.Comment {
-	if x != nil {
-		return x.xxx_hidden_Comment
-	}
-	return nil
-}
-
-func (x *PostCommentResponse) SetComment(v *comment.Comment) {
-	x.xxx_hidden_Comment = v
-}
-
-func (x *PostCommentResponse) HasComment() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Comment != nil
-}
-
-func (x *PostCommentResponse) ClearComment() {
-	x.xxx_hidden_Comment = nil
-}
-
-type PostCommentResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Comment *comment.Comment
-}
-
-func (b0 PostCommentResponse_builder) Build() *PostCommentResponse {
-	m0 := &PostCommentResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Comment = b.Comment
-	return m0
-}
-
-type EditCommentRequest struct {
-	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Comment *comment.Comment       `protobuf:"bytes,1,opt,name=comment,proto3"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *EditCommentRequest) Reset() {
-	*x = EditCommentRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[30]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *EditCommentRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*EditCommentRequest) ProtoMessage() {}
-
-func (x *EditCommentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[30]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *EditCommentRequest) GetComment() *comment.Comment {
-	if x != nil {
-		return x.xxx_hidden_Comment
-	}
-	return nil
-}
-
-func (x *EditCommentRequest) SetComment(v *comment.Comment) {
-	x.xxx_hidden_Comment = v
-}
-
-func (x *EditCommentRequest) HasComment() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Comment != nil
-}
-
-func (x *EditCommentRequest) ClearComment() {
-	x.xxx_hidden_Comment = nil
-}
-
-type EditCommentRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Comment *comment.Comment
-}
-
-func (b0 EditCommentRequest_builder) Build() *EditCommentRequest {
-	m0 := &EditCommentRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Comment = b.Comment
-	return m0
-}
-
-type EditCommentResponse struct {
-	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Comment *comment.Comment       `protobuf:"bytes,1,opt,name=comment,proto3"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *EditCommentResponse) Reset() {
-	*x = EditCommentResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[31]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *EditCommentResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*EditCommentResponse) ProtoMessage() {}
-
-func (x *EditCommentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[31]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *EditCommentResponse) GetComment() *comment.Comment {
-	if x != nil {
-		return x.xxx_hidden_Comment
-	}
-	return nil
-}
-
-func (x *EditCommentResponse) SetComment(v *comment.Comment) {
-	x.xxx_hidden_Comment = v
-}
-
-func (x *EditCommentResponse) HasComment() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Comment != nil
-}
-
-func (x *EditCommentResponse) ClearComment() {
-	x.xxx_hidden_Comment = nil
-}
-
-type EditCommentResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Comment *comment.Comment
-}
-
-func (b0 EditCommentResponse_builder) Build() *EditCommentResponse {
-	m0 := &EditCommentResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Comment = b.Comment
-	return m0
-}
-
-type DeleteCommentRequest struct {
-	state                protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_CommentId int64                  `protobuf:"varint,1,opt,name=comment_id,json=commentId,proto3"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
-}
-
-func (x *DeleteCommentRequest) Reset() {
-	*x = DeleteCommentRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[32]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteCommentRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteCommentRequest) ProtoMessage() {}
-
-func (x *DeleteCommentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[32]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *DeleteCommentRequest) GetCommentId() int64 {
-	if x != nil {
-		return x.xxx_hidden_CommentId
-	}
-	return 0
-}
-
-func (x *DeleteCommentRequest) SetCommentId(v int64) {
-	x.xxx_hidden_CommentId = v
-}
-
-type DeleteCommentRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	CommentId int64
-}
-
-func (b0 DeleteCommentRequest_builder) Build() *DeleteCommentRequest {
-	m0 := &DeleteCommentRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_CommentId = b.CommentId
-	return m0
-}
-
-type DeleteCommentResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteCommentResponse) Reset() {
-	*x = DeleteCommentResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[33]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteCommentResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteCommentResponse) ProtoMessage() {}
-
-func (x *DeleteCommentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[33]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type DeleteCommentResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 DeleteCommentResponse_builder) Build() *DeleteCommentResponse {
-	m0 := &DeleteCommentResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
 type UpdateDocumentResponse struct {
 	state               protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Document *documents.Document    `protobuf:"bytes,1,opt,name=document,proto3"`
@@ -2480,7 +1281,7 @@ type UpdateDocumentResponse struct {
 
 func (x *UpdateDocumentResponse) Reset() {
 	*x = UpdateDocumentResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[34]
+	mi := &file_services_documents_documents_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2492,7 +1293,7 @@ func (x *UpdateDocumentResponse) String() string {
 func (*UpdateDocumentResponse) ProtoMessage() {}
 
 func (x *UpdateDocumentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[34]
+	mi := &file_services_documents_documents_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2551,7 +1352,7 @@ type DeleteDocumentRequest struct {
 
 func (x *DeleteDocumentRequest) Reset() {
 	*x = DeleteDocumentRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[35]
+	mi := &file_services_documents_documents_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2563,7 +1364,7 @@ func (x *DeleteDocumentRequest) String() string {
 func (*DeleteDocumentRequest) ProtoMessage() {}
 
 func (x *DeleteDocumentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[35]
+	mi := &file_services_documents_documents_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2639,7 +1440,7 @@ type DeleteDocumentResponse struct {
 
 func (x *DeleteDocumentResponse) Reset() {
 	*x = DeleteDocumentResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[36]
+	mi := &file_services_documents_documents_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2651,7 +1452,7 @@ func (x *DeleteDocumentResponse) String() string {
 func (*DeleteDocumentResponse) ProtoMessage() {}
 
 func (x *DeleteDocumentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[36]
+	mi := &file_services_documents_documents_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2684,7 +1485,7 @@ type ToggleDocumentRequest struct {
 
 func (x *ToggleDocumentRequest) Reset() {
 	*x = ToggleDocumentRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[37]
+	mi := &file_services_documents_documents_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2696,7 +1497,7 @@ func (x *ToggleDocumentRequest) String() string {
 func (*ToggleDocumentRequest) ProtoMessage() {}
 
 func (x *ToggleDocumentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[37]
+	mi := &file_services_documents_documents_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2753,7 +1554,7 @@ type ToggleDocumentResponse struct {
 
 func (x *ToggleDocumentResponse) Reset() {
 	*x = ToggleDocumentResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[38]
+	mi := &file_services_documents_documents_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2765,7 +1566,7 @@ func (x *ToggleDocumentResponse) String() string {
 func (*ToggleDocumentResponse) ProtoMessage() {}
 
 func (x *ToggleDocumentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[38]
+	mi := &file_services_documents_documents_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2800,7 +1601,7 @@ type ChangeDocumentOwnerRequest struct {
 
 func (x *ChangeDocumentOwnerRequest) Reset() {
 	*x = ChangeDocumentOwnerRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[39]
+	mi := &file_services_documents_documents_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2812,7 +1613,7 @@ func (x *ChangeDocumentOwnerRequest) String() string {
 func (*ChangeDocumentOwnerRequest) ProtoMessage() {}
 
 func (x *ChangeDocumentOwnerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[39]
+	mi := &file_services_documents_documents_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2885,7 +1686,7 @@ type ChangeDocumentOwnerResponse struct {
 
 func (x *ChangeDocumentOwnerResponse) Reset() {
 	*x = ChangeDocumentOwnerResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[40]
+	mi := &file_services_documents_documents_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2897,7 +1698,7 @@ func (x *ChangeDocumentOwnerResponse) String() string {
 func (*ChangeDocumentOwnerResponse) ProtoMessage() {}
 
 func (x *ChangeDocumentOwnerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[40]
+	mi := &file_services_documents_documents_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2933,7 +1734,7 @@ type CreateDocumentRequest struct {
 
 func (x *CreateDocumentRequest) Reset() {
 	*x = CreateDocumentRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[41]
+	mi := &file_services_documents_documents_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2945,7 +1746,7 @@ func (x *CreateDocumentRequest) String() string {
 func (*CreateDocumentRequest) ProtoMessage() {}
 
 func (x *CreateDocumentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[41]
+	mi := &file_services_documents_documents_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3043,7 +1844,7 @@ type CreateDocumentResponse struct {
 
 func (x *CreateDocumentResponse) Reset() {
 	*x = CreateDocumentResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[42]
+	mi := &file_services_documents_documents_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3055,7 +1856,7 @@ func (x *CreateDocumentResponse) String() string {
 func (*CreateDocumentResponse) ProtoMessage() {}
 
 func (x *CreateDocumentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[42]
+	mi := &file_services_documents_documents_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3110,7 +1911,7 @@ type UpdateDocumentRequest struct {
 
 func (x *UpdateDocumentRequest) Reset() {
 	*x = UpdateDocumentRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[43]
+	mi := &file_services_documents_documents_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3122,7 +1923,7 @@ func (x *UpdateDocumentRequest) String() string {
 func (*UpdateDocumentRequest) ProtoMessage() {}
 
 func (x *UpdateDocumentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[43]
+	mi := &file_services_documents_documents_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3335,7 +2136,7 @@ type ListDocumentActivityRequest struct {
 
 func (x *ListDocumentActivityRequest) Reset() {
 	*x = ListDocumentActivityRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[44]
+	mi := &file_services_documents_documents_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3347,7 +2148,7 @@ func (x *ListDocumentActivityRequest) String() string {
 func (*ListDocumentActivityRequest) ProtoMessage() {}
 
 func (x *ListDocumentActivityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[44]
+	mi := &file_services_documents_documents_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3431,7 +2232,7 @@ type ListDocumentActivityResponse struct {
 
 func (x *ListDocumentActivityResponse) Reset() {
 	*x = ListDocumentActivityResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[45]
+	mi := &file_services_documents_documents_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3443,7 +2244,7 @@ func (x *ListDocumentActivityResponse) String() string {
 func (*ListDocumentActivityResponse) ProtoMessage() {}
 
 func (x *ListDocumentActivityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[45]
+	mi := &file_services_documents_documents_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3515,7 +2316,7 @@ type ListDocumentReqsRequest struct {
 
 func (x *ListDocumentReqsRequest) Reset() {
 	*x = ListDocumentReqsRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[46]
+	mi := &file_services_documents_documents_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3527,7 +2328,7 @@ func (x *ListDocumentReqsRequest) String() string {
 func (*ListDocumentReqsRequest) ProtoMessage() {}
 
 func (x *ListDocumentReqsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[46]
+	mi := &file_services_documents_documents_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3597,7 +2398,7 @@ type ListDocumentReqsResponse struct {
 
 func (x *ListDocumentReqsResponse) Reset() {
 	*x = ListDocumentReqsResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[47]
+	mi := &file_services_documents_documents_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3609,7 +2410,7 @@ func (x *ListDocumentReqsResponse) String() string {
 func (*ListDocumentReqsResponse) ProtoMessage() {}
 
 func (x *ListDocumentReqsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[47]
+	mi := &file_services_documents_documents_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3685,7 +2486,7 @@ type CreateDocumentReqRequest struct {
 
 func (x *CreateDocumentReqRequest) Reset() {
 	*x = CreateDocumentReqRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[48]
+	mi := &file_services_documents_documents_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3697,7 +2498,7 @@ func (x *CreateDocumentReqRequest) String() string {
 func (*CreateDocumentReqRequest) ProtoMessage() {}
 
 func (x *CreateDocumentReqRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[48]
+	mi := &file_services_documents_documents_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3811,7 +2612,7 @@ type CreateDocumentReqResponse struct {
 
 func (x *CreateDocumentReqResponse) Reset() {
 	*x = CreateDocumentReqResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[49]
+	mi := &file_services_documents_documents_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3823,7 +2624,7 @@ func (x *CreateDocumentReqResponse) String() string {
 func (*CreateDocumentReqResponse) ProtoMessage() {}
 
 func (x *CreateDocumentReqResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[49]
+	mi := &file_services_documents_documents_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3885,7 +2686,7 @@ type UpdateDocumentReqRequest struct {
 
 func (x *UpdateDocumentReqRequest) Reset() {
 	*x = UpdateDocumentReqRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[50]
+	mi := &file_services_documents_documents_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3897,7 +2698,7 @@ func (x *UpdateDocumentReqRequest) String() string {
 func (*UpdateDocumentReqRequest) ProtoMessage() {}
 
 func (x *UpdateDocumentReqRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[50]
+	mi := &file_services_documents_documents_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4024,7 +2825,7 @@ type UpdateDocumentReqResponse struct {
 
 func (x *UpdateDocumentReqResponse) Reset() {
 	*x = UpdateDocumentReqResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[51]
+	mi := &file_services_documents_documents_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4036,7 +2837,7 @@ func (x *UpdateDocumentReqResponse) String() string {
 func (*UpdateDocumentReqResponse) ProtoMessage() {}
 
 func (x *UpdateDocumentReqResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[51]
+	mi := &file_services_documents_documents_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4092,7 +2893,7 @@ type DeleteDocumentReqRequest struct {
 
 func (x *DeleteDocumentReqRequest) Reset() {
 	*x = DeleteDocumentReqRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[52]
+	mi := &file_services_documents_documents_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4104,7 +2905,7 @@ func (x *DeleteDocumentReqRequest) String() string {
 func (*DeleteDocumentReqRequest) ProtoMessage() {}
 
 func (x *DeleteDocumentReqRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[52]
+	mi := &file_services_documents_documents_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4148,7 +2949,7 @@ type DeleteDocumentReqResponse struct {
 
 func (x *DeleteDocumentReqResponse) Reset() {
 	*x = DeleteDocumentReqResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[53]
+	mi := &file_services_documents_documents_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4160,7 +2961,7 @@ func (x *DeleteDocumentReqResponse) String() string {
 func (*DeleteDocumentReqResponse) ProtoMessage() {}
 
 func (x *DeleteDocumentReqResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[53]
+	mi := &file_services_documents_documents_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4192,7 +2993,7 @@ type GetDocumentAccessRequest struct {
 
 func (x *GetDocumentAccessRequest) Reset() {
 	*x = GetDocumentAccessRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[54]
+	mi := &file_services_documents_documents_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4204,7 +3005,7 @@ func (x *GetDocumentAccessRequest) String() string {
 func (*GetDocumentAccessRequest) ProtoMessage() {}
 
 func (x *GetDocumentAccessRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[54]
+	mi := &file_services_documents_documents_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4249,7 +3050,7 @@ type GetDocumentAccessResponse struct {
 
 func (x *GetDocumentAccessResponse) Reset() {
 	*x = GetDocumentAccessResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[55]
+	mi := &file_services_documents_documents_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4261,7 +3062,7 @@ func (x *GetDocumentAccessResponse) String() string {
 func (*GetDocumentAccessResponse) ProtoMessage() {}
 
 func (x *GetDocumentAccessResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[55]
+	mi := &file_services_documents_documents_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4318,7 +3119,7 @@ type SetDocumentAccessRequest struct {
 
 func (x *SetDocumentAccessRequest) Reset() {
 	*x = SetDocumentAccessRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[56]
+	mi := &file_services_documents_documents_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4330,7 +3131,7 @@ func (x *SetDocumentAccessRequest) String() string {
 func (*SetDocumentAccessRequest) ProtoMessage() {}
 
 func (x *SetDocumentAccessRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[56]
+	mi := &file_services_documents_documents_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4398,7 +3199,7 @@ type SetDocumentAccessResponse struct {
 
 func (x *SetDocumentAccessResponse) Reset() {
 	*x = SetDocumentAccessResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[57]
+	mi := &file_services_documents_documents_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4410,7 +3211,7 @@ func (x *SetDocumentAccessResponse) String() string {
 func (*SetDocumentAccessResponse) ProtoMessage() {}
 
 func (x *SetDocumentAccessResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[57]
+	mi := &file_services_documents_documents_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4449,7 +3250,7 @@ type ListUserDocumentsRequest struct {
 
 func (x *ListUserDocumentsRequest) Reset() {
 	*x = ListUserDocumentsRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[58]
+	mi := &file_services_documents_documents_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4461,7 +3262,7 @@ func (x *ListUserDocumentsRequest) String() string {
 func (*ListUserDocumentsRequest) ProtoMessage() {}
 
 func (x *ListUserDocumentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[58]
+	mi := &file_services_documents_documents_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4627,7 +3428,7 @@ type ListUserDocumentsResponse struct {
 
 func (x *ListUserDocumentsResponse) Reset() {
 	*x = ListUserDocumentsResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[59]
+	mi := &file_services_documents_documents_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4639,7 +3440,7 @@ func (x *ListUserDocumentsResponse) String() string {
 func (*ListUserDocumentsResponse) ProtoMessage() {}
 
 func (x *ListUserDocumentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[59]
+	mi := &file_services_documents_documents_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4701,344 +3502,6 @@ func (b0 ListUserDocumentsResponse_builder) Build() *ListUserDocumentsResponse {
 	return m0
 }
 
-type ListCategoriesRequest struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListCategoriesRequest) Reset() {
-	*x = ListCategoriesRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[60]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListCategoriesRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListCategoriesRequest) ProtoMessage() {}
-
-func (x *ListCategoriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[60]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type ListCategoriesRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 ListCategoriesRequest_builder) Build() *ListCategoriesRequest {
-	m0 := &ListCategoriesRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
-type ListCategoriesResponse struct {
-	state                 protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Categories *[]*category.Category  `protobuf:"bytes,1,rep,name=categories,proto3"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *ListCategoriesResponse) Reset() {
-	*x = ListCategoriesResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[61]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListCategoriesResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListCategoriesResponse) ProtoMessage() {}
-
-func (x *ListCategoriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[61]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListCategoriesResponse) GetCategories() []*category.Category {
-	if x != nil {
-		if x.xxx_hidden_Categories != nil {
-			return *x.xxx_hidden_Categories
-		}
-	}
-	return nil
-}
-
-func (x *ListCategoriesResponse) SetCategories(v []*category.Category) {
-	x.xxx_hidden_Categories = &v
-}
-
-type ListCategoriesResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Categories []*category.Category
-}
-
-func (b0 ListCategoriesResponse_builder) Build() *ListCategoriesResponse {
-	m0 := &ListCategoriesResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Categories = &b.Categories
-	return m0
-}
-
-type CreateOrUpdateCategoryRequest struct {
-	state               protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Category *category.Category     `protobuf:"bytes,1,opt,name=category,proto3"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *CreateOrUpdateCategoryRequest) Reset() {
-	*x = CreateOrUpdateCategoryRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[62]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateOrUpdateCategoryRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateOrUpdateCategoryRequest) ProtoMessage() {}
-
-func (x *CreateOrUpdateCategoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[62]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *CreateOrUpdateCategoryRequest) GetCategory() *category.Category {
-	if x != nil {
-		return x.xxx_hidden_Category
-	}
-	return nil
-}
-
-func (x *CreateOrUpdateCategoryRequest) SetCategory(v *category.Category) {
-	x.xxx_hidden_Category = v
-}
-
-func (x *CreateOrUpdateCategoryRequest) HasCategory() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Category != nil
-}
-
-func (x *CreateOrUpdateCategoryRequest) ClearCategory() {
-	x.xxx_hidden_Category = nil
-}
-
-type CreateOrUpdateCategoryRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Category *category.Category
-}
-
-func (b0 CreateOrUpdateCategoryRequest_builder) Build() *CreateOrUpdateCategoryRequest {
-	m0 := &CreateOrUpdateCategoryRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Category = b.Category
-	return m0
-}
-
-type CreateOrUpdateCategoryResponse struct {
-	state               protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Category *category.Category     `protobuf:"bytes,1,opt,name=category,proto3"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *CreateOrUpdateCategoryResponse) Reset() {
-	*x = CreateOrUpdateCategoryResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[63]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateOrUpdateCategoryResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateOrUpdateCategoryResponse) ProtoMessage() {}
-
-func (x *CreateOrUpdateCategoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[63]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *CreateOrUpdateCategoryResponse) GetCategory() *category.Category {
-	if x != nil {
-		return x.xxx_hidden_Category
-	}
-	return nil
-}
-
-func (x *CreateOrUpdateCategoryResponse) SetCategory(v *category.Category) {
-	x.xxx_hidden_Category = v
-}
-
-func (x *CreateOrUpdateCategoryResponse) HasCategory() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Category != nil
-}
-
-func (x *CreateOrUpdateCategoryResponse) ClearCategory() {
-	x.xxx_hidden_Category = nil
-}
-
-type CreateOrUpdateCategoryResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Category *category.Category
-}
-
-func (b0 CreateOrUpdateCategoryResponse_builder) Build() *CreateOrUpdateCategoryResponse {
-	m0 := &CreateOrUpdateCategoryResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Category = b.Category
-	return m0
-}
-
-type DeleteCategoryRequest struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id int64                  `protobuf:"varint,1,opt,name=id,proto3"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteCategoryRequest) Reset() {
-	*x = DeleteCategoryRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[64]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteCategoryRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteCategoryRequest) ProtoMessage() {}
-
-func (x *DeleteCategoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[64]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *DeleteCategoryRequest) GetId() int64 {
-	if x != nil {
-		return x.xxx_hidden_Id
-	}
-	return 0
-}
-
-func (x *DeleteCategoryRequest) SetId(v int64) {
-	x.xxx_hidden_Id = v
-}
-
-type DeleteCategoryRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Id int64
-}
-
-func (b0 DeleteCategoryRequest_builder) Build() *DeleteCategoryRequest {
-	m0 := &DeleteCategoryRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Id = b.Id
-	return m0
-}
-
-type DeleteCategoryResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteCategoryResponse) Reset() {
-	*x = DeleteCategoryResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[65]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteCategoryResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteCategoryResponse) ProtoMessage() {}
-
-func (x *DeleteCategoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[65]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type DeleteCategoryResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 DeleteCategoryResponse_builder) Build() *DeleteCategoryResponse {
-	m0 := &DeleteCategoryResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
 type ListDocumentPinsRequest struct {
 	state                  protoimpl.MessageState      `protogen:"opaque.v1"`
 	xxx_hidden_Pagination  *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
@@ -5051,7 +3514,7 @@ type ListDocumentPinsRequest struct {
 
 func (x *ListDocumentPinsRequest) Reset() {
 	*x = ListDocumentPinsRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[66]
+	mi := &file_services_documents_documents_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5063,7 +3526,7 @@ func (x *ListDocumentPinsRequest) String() string {
 func (*ListDocumentPinsRequest) ProtoMessage() {}
 
 func (x *ListDocumentPinsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[66]
+	mi := &file_services_documents_documents_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5151,7 +3614,7 @@ type ListDocumentPinsResponse struct {
 
 func (x *ListDocumentPinsResponse) Reset() {
 	*x = ListDocumentPinsResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[67]
+	mi := &file_services_documents_documents_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5163,7 +3626,7 @@ func (x *ListDocumentPinsResponse) String() string {
 func (*ListDocumentPinsResponse) ProtoMessage() {}
 
 func (x *ListDocumentPinsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[67]
+	mi := &file_services_documents_documents_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5238,7 +3701,7 @@ type ToggleDocumentPinRequest struct {
 
 func (x *ToggleDocumentPinRequest) Reset() {
 	*x = ToggleDocumentPinRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[68]
+	mi := &file_services_documents_documents_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5250,7 +3713,7 @@ func (x *ToggleDocumentPinRequest) String() string {
 func (*ToggleDocumentPinRequest) ProtoMessage() {}
 
 func (x *ToggleDocumentPinRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[68]
+	mi := &file_services_documents_documents_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5338,7 +3801,7 @@ type ToggleDocumentPinResponse struct {
 
 func (x *ToggleDocumentPinResponse) Reset() {
 	*x = ToggleDocumentPinResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[69]
+	mi := &file_services_documents_documents_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5350,7 +3813,7 @@ func (x *ToggleDocumentPinResponse) String() string {
 func (*ToggleDocumentPinResponse) ProtoMessage() {}
 
 func (x *ToggleDocumentPinResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[69]
+	mi := &file_services_documents_documents_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5411,7 +3874,7 @@ type SetDocumentReminderRequest struct {
 
 func (x *SetDocumentReminderRequest) Reset() {
 	*x = SetDocumentReminderRequest{}
-	mi := &file_services_documents_documents_proto_msgTypes[70]
+	mi := &file_services_documents_documents_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5423,7 +3886,7 @@ func (x *SetDocumentReminderRequest) String() string {
 func (*SetDocumentReminderRequest) ProtoMessage() {}
 
 func (x *SetDocumentReminderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[70]
+	mi := &file_services_documents_documents_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5536,7 +3999,7 @@ type SetDocumentReminderResponse struct {
 
 func (x *SetDocumentReminderResponse) Reset() {
 	*x = SetDocumentReminderResponse{}
-	mi := &file_services_documents_documents_proto_msgTypes[71]
+	mi := &file_services_documents_documents_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5548,7 +4011,7 @@ func (x *SetDocumentReminderResponse) String() string {
 func (*SetDocumentReminderResponse) ProtoMessage() {}
 
 func (x *SetDocumentReminderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_documents_proto_msgTypes[71]
+	mi := &file_services_documents_documents_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5575,31 +4038,7 @@ var File_services_documents_documents_proto protoreflect.FileDescriptor
 
 const file_services_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"\"services/documents/documents.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a'resources/documents/access/access.proto\x1a+resources/documents/activity/activity.proto\x1a+resources/documents/category/category.proto\x1a)resources/documents/comment/comment.proto\x1a#resources/documents/data/data.proto\x1a#resources/documents/documents.proto\x1a#resources/documents/pins/pins.proto\x1a/resources/documents/references/references.proto\x1a-resources/documents/relations/relations.proto\x1a+resources/documents/requests/requests.proto\x1a-resources/documents/templates/templates.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x16\n" +
-	"\x14ListTemplatesRequest\"c\n" +
-	"\x15ListTemplatesResponse\x12J\n" +
-	"\ttemplates\x18\x01 \x03(\v2,.resources.documents.templates.TemplateShortR\ttemplates\"\xac\x01\n" +
-	"\x12GetTemplateRequest\x12\x1f\n" +
-	"\vtemplate_id\x18\x01 \x01(\x03R\n" +
-	"templateId\x12D\n" +
-	"\x04data\x18\x02 \x01(\v2+.resources.documents.templates.TemplateDataH\x00R\x04data\x88\x01\x01\x12\x1b\n" +
-	"\x06render\x18\x03 \x01(\bH\x01R\x06render\x88\x01\x01B\a\n" +
-	"\x05_dataB\t\n" +
-	"\a_render\"v\n" +
-	"\x13GetTemplateResponse\x12C\n" +
-	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\x12\x1a\n" +
-	"\brendered\x18\x02 \x01(\bR\brendered\"\\\n" +
-	"\x15CreateTemplateRequest\x12C\n" +
-	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"(\n" +
-	"\x16CreateTemplateResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\\\n" +
-	"\x15UpdateTemplateRequest\x12C\n" +
-	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"]\n" +
-	"\x16UpdateTemplateResponse\x12C\n" +
-	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"'\n" +
-	"\x15DeleteTemplateRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
-	"\x16DeleteTemplateResponse\"\x92\x04\n" +
+	"\"services/documents/documents.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a'resources/documents/access/access.proto\x1a+resources/documents/activity/activity.proto\x1a#resources/documents/data/data.proto\x1a#resources/documents/documents.proto\x1a#resources/documents/pins/pins.proto\x1a/resources/documents/references/references.proto\x1a-resources/documents/relations/relations.proto\x1a+resources/documents/requests/requests.proto\x1a-resources/documents/templates/templates.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x92\x04\n" +
 	"\x14ListDocumentsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -5661,30 +4100,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"/\n" +
 	"\x1dRemoveDocumentRelationRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\" \n" +
-	"\x1eRemoveDocumentRelationResponse\"\x83\x01\n" +
-	"\x12GetCommentsRequest\x12L\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
-	"pagination\x12\x1f\n" +
-	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\"\xac\x01\n" +
-	"\x13GetCommentsResponse\x12M\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12F\n" +
-	"\bcomments\x18\x02 \x03(\v2$.resources.documents.comment.CommentB\x04\xc8\xf3\x18\x01R\bcomments\"T\n" +
-	"\x12PostCommentRequest\x12>\n" +
-	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentR\acomment\"U\n" +
-	"\x13PostCommentResponse\x12>\n" +
-	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentR\acomment\"T\n" +
-	"\x12EditCommentRequest\x12>\n" +
-	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentR\acomment\"U\n" +
-	"\x13EditCommentResponse\x12>\n" +
-	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentR\acomment\"5\n" +
-	"\x14DeleteCommentRequest\x12\x1d\n" +
-	"\n" +
-	"comment_id\x18\x01 \x01(\x03R\tcommentId\"\x17\n" +
-	"\x15DeleteCommentResponse\"S\n" +
+	"\x1eRemoveDocumentRelationResponse\"S\n" +
 	"\x16UpdateDocumentResponse\x129\n" +
 	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\"{\n" +
 	"\x15DeleteDocumentRequest\x120\n" +
@@ -5805,19 +4221,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12S\n" +
-	"\trelations\x18\x02 \x03(\v2/.resources.documents.relations.DocumentRelationB\x04\xc8\xf3\x18\x01R\trelations\"\x17\n" +
-	"\x15ListCategoriesRequest\"`\n" +
-	"\x16ListCategoriesResponse\x12F\n" +
-	"\n" +
-	"categories\x18\x01 \x03(\v2&.resources.documents.category.CategoryR\n" +
-	"categories\"c\n" +
-	"\x1dCreateOrUpdateCategoryRequest\x12B\n" +
-	"\bcategory\x18\x01 \x01(\v2&.resources.documents.category.CategoryR\bcategory\"d\n" +
-	"\x1eCreateOrUpdateCategoryResponse\x12B\n" +
-	"\bcategory\x18\x01 \x01(\v2&.resources.documents.category.CategoryR\bcategory\"'\n" +
-	"\x15DeleteCategoryRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
-	"\x16DeleteCategoryResponse\"\x95\x01\n" +
+	"\trelations\x18\x02 \x03(\v2/.resources.documents.relations.DocumentRelationB\x04\xc8\xf3\x18\x01R\trelations\"\x95\x01\n" +
 	"\x17ListDocumentPinsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -5847,13 +4251,8 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x0e_reminder_timeB\n" +
 	"\n" +
 	"\b_message\"\x1d\n" +
-	"\x1bSetDocumentReminderResponse2\xb0'\n" +
+	"\x1bSetDocumentReminderResponse2\xf1\x1b\n" +
 	"\x10DocumentsService\x12l\n" +
-	"\rListTemplates\x12(.services.documents.ListTemplatesRequest\x1a).services.documents.ListTemplatesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
-	"\vGetTemplate\x12&.services.documents.GetTemplateRequest\x1a'.services.documents.GetTemplateResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListTemplates\x12o\n" +
-	"\x0eCreateTemplate\x12).services.documents.CreateTemplateRequest\x1a*.services.documents.CreateTemplateResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x7f\n" +
-	"\x0eUpdateTemplate\x12).services.documents.UpdateTemplateRequest\x1a*.services.documents.UpdateTemplateResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eCreateTemplate\x12o\n" +
-	"\x0eDeleteTemplate\x12).services.documents.DeleteTemplateRequest\x1a*.services.documents.DeleteTemplateResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12l\n" +
 	"\rListDocuments\x12(.services.documents.ListDocumentsRequest\x1a).services.documents.ListDocumentsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
 	"\vGetDocument\x12&.services.documents.GetDocumentRequest\x1a'.services.documents.GetDocumentResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12\x7f\n" +
 	"\x0eCreateDocument\x12).services.documents.CreateDocumentRequest\x1a*.services.documents.CreateDocumentResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eUpdateDocument\x12\x9c\x01\n" +
@@ -5874,13 +4273,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x14AddDocumentReference\x12/.services.documents.AddDocumentReferenceRequest\x1a0.services.documents.AddDocumentReferenceResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\xa0\x01\n" +
 	"\x17RemoveDocumentReference\x122.services.documents.RemoveDocumentReferenceRequest\x1a3.services.documents.RemoveDocumentReferenceResponse\"\x1c\xd2\xf3\x18\x18\b\x01\x1a\x14AddDocumentReference\x12~\n" +
 	"\x13AddDocumentRelation\x12..services.documents.AddDocumentRelationRequest\x1a/.services.documents.AddDocumentRelationResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x9c\x01\n" +
-	"\x16RemoveDocumentRelation\x121.services.documents.RemoveDocumentRelationRequest\x1a2.services.documents.RemoveDocumentRelationResponse\"\x1b\xd2\xf3\x18\x17\b\x01\x1a\x13AddDocumentRelation\x12u\n" +
-	"\vGetComments\x12&.services.documents.GetCommentsRequest\x1a'.services.documents.GetCommentsResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12u\n" +
-	"\vPostComment\x12&.services.documents.PostCommentRequest\x1a'.services.documents.PostCommentResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12u\n" +
-	"\vEditComment\x12&.services.documents.EditCommentRequest\x1a'.services.documents.EditCommentResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12\x99\x01\n" +
-	"\rDeleteComment\x12(.services.documents.DeleteCommentRequest\x1a).services.documents.DeleteCommentResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
-	"\x06Access\x18\x01\"\x03Own\"\n" +
-	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\x87\x01\n" +
+	"\x16RemoveDocumentRelation\x121.services.documents.RemoveDocumentRelationRequest\x1a2.services.documents.RemoveDocumentRelationResponse\"\x1b\xd2\xf3\x18\x17\b\x01\x1a\x13AddDocumentRelation\x12\x87\x01\n" +
 	"\x11GetDocumentAccess\x12,.services.documents.GetDocumentAccessRequest\x1a-.services.documents.GetDocumentAccessResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12\x88\x01\n" +
 	"\x11SetDocumentAccess\x12,.services.documents.SetDocumentAccessRequest\x1a-.services.documents.SetDocumentAccessResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eUpdateDocument\x12\x81\x01\n" +
 	"\x14ListDocumentActivity\x12/.services.documents.ListDocumentActivityRequest\x1a0.services.documents.ListDocumentActivityResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
@@ -5889,11 +4282,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x05Types\x18\x01\"\x06Access\"\aClosure\"\x06Update\"\bDeletion\"\vOwnerChange\x12\x8b\x01\n" +
 	"\x11UpdateDocumentReq\x12,.services.documents.UpdateDocumentReqRequest\x1a-.services.documents.UpdateDocumentReqResponse\"\x19\xd2\xf3\x18\x15\b\x01\x1a\x11CreateDocumentReq\x12x\n" +
 	"\x11DeleteDocumentReq\x12,.services.documents.DeleteDocumentReqRequest\x1a-.services.documents.DeleteDocumentReqResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12x\n" +
-	"\x11ListUserDocuments\x12,.services.documents.ListUserDocumentsRequest\x1a-.services.documents.ListUserDocumentsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12y\n" +
-	"\x0eListCategories\x12).services.documents.ListCategoriesRequest\x1a*.services.documents.ListCategoriesResponse\"\x10\xd2\xf3\x18\f\b\x01*\b\n" +
-	"\x04Jobs\x18\x02\x12\x87\x01\n" +
-	"\x16CreateOrUpdateCategory\x121.services.documents.CreateOrUpdateCategoryRequest\x1a2.services.documents.CreateOrUpdateCategoryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12o\n" +
-	"\x0eDeleteCategory\x12).services.documents.DeleteCategoryRequest\x1a*.services.documents.DeleteCategoryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x84\x01\n" +
+	"\x11ListUserDocuments\x12,.services.documents.ListUserDocumentsRequest\x1a-.services.documents.ListUserDocumentsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x84\x01\n" +
 	"\x10ListDocumentPins\x12+.services.documents.ListDocumentPinsRequest\x1a,.services.documents.ListDocumentPinsResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12\x8c\x01\n" +
 	"\x11ToggleDocumentPin\x12,.services.documents.ToggleDocumentPinRequest\x1a-.services.documents.ToggleDocumentPinResponse\"\x1a\xd2\xf3\x18\x16\b\x01*\x12\n" +
 	"\x05Types\x18\x01\"\aJobWide\x12~\n" +
@@ -5901,249 +4290,181 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\n" +
 	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eUpdateDocument(\x01\x1a0\xea\xf3\x18,\b2\x12(i-mdi-file-document-box-multiple-outlineBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
-var file_services_documents_documents_proto_msgTypes = make([]protoimpl.MessageInfo, 72)
+var file_services_documents_documents_proto_msgTypes = make([]protoimpl.MessageInfo, 48)
 var file_services_documents_documents_proto_goTypes = []any{
-	(*ListTemplatesRequest)(nil),            // 0: services.documents.ListTemplatesRequest
-	(*ListTemplatesResponse)(nil),           // 1: services.documents.ListTemplatesResponse
-	(*GetTemplateRequest)(nil),              // 2: services.documents.GetTemplateRequest
-	(*GetTemplateResponse)(nil),             // 3: services.documents.GetTemplateResponse
-	(*CreateTemplateRequest)(nil),           // 4: services.documents.CreateTemplateRequest
-	(*CreateTemplateResponse)(nil),          // 5: services.documents.CreateTemplateResponse
-	(*UpdateTemplateRequest)(nil),           // 6: services.documents.UpdateTemplateRequest
-	(*UpdateTemplateResponse)(nil),          // 7: services.documents.UpdateTemplateResponse
-	(*DeleteTemplateRequest)(nil),           // 8: services.documents.DeleteTemplateRequest
-	(*DeleteTemplateResponse)(nil),          // 9: services.documents.DeleteTemplateResponse
-	(*ListDocumentsRequest)(nil),            // 10: services.documents.ListDocumentsRequest
-	(*ListDocumentsResponse)(nil),           // 11: services.documents.ListDocumentsResponse
-	(*GetDocumentRequest)(nil),              // 12: services.documents.GetDocumentRequest
-	(*GetDocumentResponse)(nil),             // 13: services.documents.GetDocumentResponse
-	(*GetDocumentReferencesRequest)(nil),    // 14: services.documents.GetDocumentReferencesRequest
-	(*GetDocumentReferencesResponse)(nil),   // 15: services.documents.GetDocumentReferencesResponse
-	(*GetDocumentRelationsRequest)(nil),     // 16: services.documents.GetDocumentRelationsRequest
-	(*GetDocumentRelationsResponse)(nil),    // 17: services.documents.GetDocumentRelationsResponse
-	(*AddDocumentReferenceRequest)(nil),     // 18: services.documents.AddDocumentReferenceRequest
-	(*AddDocumentReferenceResponse)(nil),    // 19: services.documents.AddDocumentReferenceResponse
-	(*RemoveDocumentReferenceRequest)(nil),  // 20: services.documents.RemoveDocumentReferenceRequest
-	(*RemoveDocumentReferenceResponse)(nil), // 21: services.documents.RemoveDocumentReferenceResponse
-	(*AddDocumentRelationRequest)(nil),      // 22: services.documents.AddDocumentRelationRequest
-	(*AddDocumentRelationResponse)(nil),     // 23: services.documents.AddDocumentRelationResponse
-	(*RemoveDocumentRelationRequest)(nil),   // 24: services.documents.RemoveDocumentRelationRequest
-	(*RemoveDocumentRelationResponse)(nil),  // 25: services.documents.RemoveDocumentRelationResponse
-	(*GetCommentsRequest)(nil),              // 26: services.documents.GetCommentsRequest
-	(*GetCommentsResponse)(nil),             // 27: services.documents.GetCommentsResponse
-	(*PostCommentRequest)(nil),              // 28: services.documents.PostCommentRequest
-	(*PostCommentResponse)(nil),             // 29: services.documents.PostCommentResponse
-	(*EditCommentRequest)(nil),              // 30: services.documents.EditCommentRequest
-	(*EditCommentResponse)(nil),             // 31: services.documents.EditCommentResponse
-	(*DeleteCommentRequest)(nil),            // 32: services.documents.DeleteCommentRequest
-	(*DeleteCommentResponse)(nil),           // 33: services.documents.DeleteCommentResponse
-	(*UpdateDocumentResponse)(nil),          // 34: services.documents.UpdateDocumentResponse
-	(*DeleteDocumentRequest)(nil),           // 35: services.documents.DeleteDocumentRequest
-	(*DeleteDocumentResponse)(nil),          // 36: services.documents.DeleteDocumentResponse
-	(*ToggleDocumentRequest)(nil),           // 37: services.documents.ToggleDocumentRequest
-	(*ToggleDocumentResponse)(nil),          // 38: services.documents.ToggleDocumentResponse
-	(*ChangeDocumentOwnerRequest)(nil),      // 39: services.documents.ChangeDocumentOwnerRequest
-	(*ChangeDocumentOwnerResponse)(nil),     // 40: services.documents.ChangeDocumentOwnerResponse
-	(*CreateDocumentRequest)(nil),           // 41: services.documents.CreateDocumentRequest
-	(*CreateDocumentResponse)(nil),          // 42: services.documents.CreateDocumentResponse
-	(*UpdateDocumentRequest)(nil),           // 43: services.documents.UpdateDocumentRequest
-	(*ListDocumentActivityRequest)(nil),     // 44: services.documents.ListDocumentActivityRequest
-	(*ListDocumentActivityResponse)(nil),    // 45: services.documents.ListDocumentActivityResponse
-	(*ListDocumentReqsRequest)(nil),         // 46: services.documents.ListDocumentReqsRequest
-	(*ListDocumentReqsResponse)(nil),        // 47: services.documents.ListDocumentReqsResponse
-	(*CreateDocumentReqRequest)(nil),        // 48: services.documents.CreateDocumentReqRequest
-	(*CreateDocumentReqResponse)(nil),       // 49: services.documents.CreateDocumentReqResponse
-	(*UpdateDocumentReqRequest)(nil),        // 50: services.documents.UpdateDocumentReqRequest
-	(*UpdateDocumentReqResponse)(nil),       // 51: services.documents.UpdateDocumentReqResponse
-	(*DeleteDocumentReqRequest)(nil),        // 52: services.documents.DeleteDocumentReqRequest
-	(*DeleteDocumentReqResponse)(nil),       // 53: services.documents.DeleteDocumentReqResponse
-	(*GetDocumentAccessRequest)(nil),        // 54: services.documents.GetDocumentAccessRequest
-	(*GetDocumentAccessResponse)(nil),       // 55: services.documents.GetDocumentAccessResponse
-	(*SetDocumentAccessRequest)(nil),        // 56: services.documents.SetDocumentAccessRequest
-	(*SetDocumentAccessResponse)(nil),       // 57: services.documents.SetDocumentAccessResponse
-	(*ListUserDocumentsRequest)(nil),        // 58: services.documents.ListUserDocumentsRequest
-	(*ListUserDocumentsResponse)(nil),       // 59: services.documents.ListUserDocumentsResponse
-	(*ListCategoriesRequest)(nil),           // 60: services.documents.ListCategoriesRequest
-	(*ListCategoriesResponse)(nil),          // 61: services.documents.ListCategoriesResponse
-	(*CreateOrUpdateCategoryRequest)(nil),   // 62: services.documents.CreateOrUpdateCategoryRequest
-	(*CreateOrUpdateCategoryResponse)(nil),  // 63: services.documents.CreateOrUpdateCategoryResponse
-	(*DeleteCategoryRequest)(nil),           // 64: services.documents.DeleteCategoryRequest
-	(*DeleteCategoryResponse)(nil),          // 65: services.documents.DeleteCategoryResponse
-	(*ListDocumentPinsRequest)(nil),         // 66: services.documents.ListDocumentPinsRequest
-	(*ListDocumentPinsResponse)(nil),        // 67: services.documents.ListDocumentPinsResponse
-	(*ToggleDocumentPinRequest)(nil),        // 68: services.documents.ToggleDocumentPinRequest
-	(*ToggleDocumentPinResponse)(nil),       // 69: services.documents.ToggleDocumentPinResponse
-	(*SetDocumentReminderRequest)(nil),      // 70: services.documents.SetDocumentReminderRequest
-	(*SetDocumentReminderResponse)(nil),     // 71: services.documents.SetDocumentReminderResponse
-	(*templates.TemplateShort)(nil),         // 72: resources.documents.templates.TemplateShort
-	(*templates.TemplateData)(nil),          // 73: resources.documents.templates.TemplateData
-	(*templates.Template)(nil),              // 74: resources.documents.templates.Template
-	(*database.PaginationRequest)(nil),      // 75: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),                   // 76: resources.common.database.Sort
-	(*timestamp.Timestamp)(nil),             // 77: resources.timestamp.Timestamp
-	(*database.PaginationResponse)(nil),     // 78: resources.common.database.PaginationResponse
-	(*documents.DocumentShort)(nil),         // 79: resources.documents.DocumentShort
-	(*documents.Document)(nil),              // 80: resources.documents.Document
-	(*access.DocumentAccess)(nil),           // 81: resources.documents.access.DocumentAccess
-	(*references.DocumentReference)(nil),    // 82: resources.documents.references.DocumentReference
-	(*relations.DocumentRelation)(nil),      // 83: resources.documents.relations.DocumentRelation
-	(*comment.Comment)(nil),                 // 84: resources.documents.comment.Comment
-	(content.ContentType)(0),                // 85: resources.common.content.ContentType
-	(*content.Content)(nil),                 // 86: resources.common.content.Content
-	(*data.DocumentData)(nil),               // 87: resources.documents.data.DocumentData
-	(*documents.DocumentMeta)(nil),          // 88: resources.documents.DocumentMeta
-	(*file.File)(nil),                       // 89: resources.file.File
-	(activity.DocActivityType)(0),           // 90: resources.documents.activity.DocActivityType
-	(*activity.DocActivity)(nil),            // 91: resources.documents.activity.DocActivity
-	(*requests.DocRequest)(nil),             // 92: resources.documents.requests.DocRequest
-	(*activity.DocActivityData)(nil),        // 93: resources.documents.activity.DocActivityData
-	(relations.DocRelation)(0),              // 94: resources.documents.relations.DocRelation
-	(*category.Category)(nil),               // 95: resources.documents.category.Category
-	(*pins.DocumentPin)(nil),                // 96: resources.documents.pins.DocumentPin
-	(*file.UploadFileRequest)(nil),          // 97: resources.file.UploadFileRequest
-	(*file.UploadFileResponse)(nil),         // 98: resources.file.UploadFileResponse
+	(*ListDocumentsRequest)(nil),            // 0: services.documents.ListDocumentsRequest
+	(*ListDocumentsResponse)(nil),           // 1: services.documents.ListDocumentsResponse
+	(*GetDocumentRequest)(nil),              // 2: services.documents.GetDocumentRequest
+	(*GetDocumentResponse)(nil),             // 3: services.documents.GetDocumentResponse
+	(*GetDocumentReferencesRequest)(nil),    // 4: services.documents.GetDocumentReferencesRequest
+	(*GetDocumentReferencesResponse)(nil),   // 5: services.documents.GetDocumentReferencesResponse
+	(*GetDocumentRelationsRequest)(nil),     // 6: services.documents.GetDocumentRelationsRequest
+	(*GetDocumentRelationsResponse)(nil),    // 7: services.documents.GetDocumentRelationsResponse
+	(*AddDocumentReferenceRequest)(nil),     // 8: services.documents.AddDocumentReferenceRequest
+	(*AddDocumentReferenceResponse)(nil),    // 9: services.documents.AddDocumentReferenceResponse
+	(*RemoveDocumentReferenceRequest)(nil),  // 10: services.documents.RemoveDocumentReferenceRequest
+	(*RemoveDocumentReferenceResponse)(nil), // 11: services.documents.RemoveDocumentReferenceResponse
+	(*AddDocumentRelationRequest)(nil),      // 12: services.documents.AddDocumentRelationRequest
+	(*AddDocumentRelationResponse)(nil),     // 13: services.documents.AddDocumentRelationResponse
+	(*RemoveDocumentRelationRequest)(nil),   // 14: services.documents.RemoveDocumentRelationRequest
+	(*RemoveDocumentRelationResponse)(nil),  // 15: services.documents.RemoveDocumentRelationResponse
+	(*UpdateDocumentResponse)(nil),          // 16: services.documents.UpdateDocumentResponse
+	(*DeleteDocumentRequest)(nil),           // 17: services.documents.DeleteDocumentRequest
+	(*DeleteDocumentResponse)(nil),          // 18: services.documents.DeleteDocumentResponse
+	(*ToggleDocumentRequest)(nil),           // 19: services.documents.ToggleDocumentRequest
+	(*ToggleDocumentResponse)(nil),          // 20: services.documents.ToggleDocumentResponse
+	(*ChangeDocumentOwnerRequest)(nil),      // 21: services.documents.ChangeDocumentOwnerRequest
+	(*ChangeDocumentOwnerResponse)(nil),     // 22: services.documents.ChangeDocumentOwnerResponse
+	(*CreateDocumentRequest)(nil),           // 23: services.documents.CreateDocumentRequest
+	(*CreateDocumentResponse)(nil),          // 24: services.documents.CreateDocumentResponse
+	(*UpdateDocumentRequest)(nil),           // 25: services.documents.UpdateDocumentRequest
+	(*ListDocumentActivityRequest)(nil),     // 26: services.documents.ListDocumentActivityRequest
+	(*ListDocumentActivityResponse)(nil),    // 27: services.documents.ListDocumentActivityResponse
+	(*ListDocumentReqsRequest)(nil),         // 28: services.documents.ListDocumentReqsRequest
+	(*ListDocumentReqsResponse)(nil),        // 29: services.documents.ListDocumentReqsResponse
+	(*CreateDocumentReqRequest)(nil),        // 30: services.documents.CreateDocumentReqRequest
+	(*CreateDocumentReqResponse)(nil),       // 31: services.documents.CreateDocumentReqResponse
+	(*UpdateDocumentReqRequest)(nil),        // 32: services.documents.UpdateDocumentReqRequest
+	(*UpdateDocumentReqResponse)(nil),       // 33: services.documents.UpdateDocumentReqResponse
+	(*DeleteDocumentReqRequest)(nil),        // 34: services.documents.DeleteDocumentReqRequest
+	(*DeleteDocumentReqResponse)(nil),       // 35: services.documents.DeleteDocumentReqResponse
+	(*GetDocumentAccessRequest)(nil),        // 36: services.documents.GetDocumentAccessRequest
+	(*GetDocumentAccessResponse)(nil),       // 37: services.documents.GetDocumentAccessResponse
+	(*SetDocumentAccessRequest)(nil),        // 38: services.documents.SetDocumentAccessRequest
+	(*SetDocumentAccessResponse)(nil),       // 39: services.documents.SetDocumentAccessResponse
+	(*ListUserDocumentsRequest)(nil),        // 40: services.documents.ListUserDocumentsRequest
+	(*ListUserDocumentsResponse)(nil),       // 41: services.documents.ListUserDocumentsResponse
+	(*ListDocumentPinsRequest)(nil),         // 42: services.documents.ListDocumentPinsRequest
+	(*ListDocumentPinsResponse)(nil),        // 43: services.documents.ListDocumentPinsResponse
+	(*ToggleDocumentPinRequest)(nil),        // 44: services.documents.ToggleDocumentPinRequest
+	(*ToggleDocumentPinResponse)(nil),       // 45: services.documents.ToggleDocumentPinResponse
+	(*SetDocumentReminderRequest)(nil),      // 46: services.documents.SetDocumentReminderRequest
+	(*SetDocumentReminderResponse)(nil),     // 47: services.documents.SetDocumentReminderResponse
+	(*database.PaginationRequest)(nil),      // 48: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),                   // 49: resources.common.database.Sort
+	(*timestamp.Timestamp)(nil),             // 50: resources.timestamp.Timestamp
+	(*database.PaginationResponse)(nil),     // 51: resources.common.database.PaginationResponse
+	(*documents.DocumentShort)(nil),         // 52: resources.documents.DocumentShort
+	(*documents.Document)(nil),              // 53: resources.documents.Document
+	(*access.DocumentAccess)(nil),           // 54: resources.documents.access.DocumentAccess
+	(*references.DocumentReference)(nil),    // 55: resources.documents.references.DocumentReference
+	(*relations.DocumentRelation)(nil),      // 56: resources.documents.relations.DocumentRelation
+	(content.ContentType)(0),                // 57: resources.common.content.ContentType
+	(*templates.TemplateData)(nil),          // 58: resources.documents.templates.TemplateData
+	(*content.Content)(nil),                 // 59: resources.common.content.Content
+	(*data.DocumentData)(nil),               // 60: resources.documents.data.DocumentData
+	(*documents.DocumentMeta)(nil),          // 61: resources.documents.DocumentMeta
+	(*file.File)(nil),                       // 62: resources.file.File
+	(activity.DocActivityType)(0),           // 63: resources.documents.activity.DocActivityType
+	(*activity.DocActivity)(nil),            // 64: resources.documents.activity.DocActivity
+	(*requests.DocRequest)(nil),             // 65: resources.documents.requests.DocRequest
+	(*activity.DocActivityData)(nil),        // 66: resources.documents.activity.DocActivityData
+	(relations.DocRelation)(0),              // 67: resources.documents.relations.DocRelation
+	(*pins.DocumentPin)(nil),                // 68: resources.documents.pins.DocumentPin
+	(*file.UploadFileRequest)(nil),          // 69: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),         // 70: resources.file.UploadFileResponse
 }
 var file_services_documents_documents_proto_depIdxs = []int32{
-	72, // 0: services.documents.ListTemplatesResponse.templates:type_name -> resources.documents.templates.TemplateShort
-	73, // 1: services.documents.GetTemplateRequest.data:type_name -> resources.documents.templates.TemplateData
-	74, // 2: services.documents.GetTemplateResponse.template:type_name -> resources.documents.templates.Template
-	74, // 3: services.documents.CreateTemplateRequest.template:type_name -> resources.documents.templates.Template
-	74, // 4: services.documents.UpdateTemplateRequest.template:type_name -> resources.documents.templates.Template
-	74, // 5: services.documents.UpdateTemplateResponse.template:type_name -> resources.documents.templates.Template
-	75, // 6: services.documents.ListDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	76, // 7: services.documents.ListDocumentsRequest.sort:type_name -> resources.common.database.Sort
-	77, // 8: services.documents.ListDocumentsRequest.from:type_name -> resources.timestamp.Timestamp
-	77, // 9: services.documents.ListDocumentsRequest.to:type_name -> resources.timestamp.Timestamp
-	78, // 10: services.documents.ListDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	79, // 11: services.documents.ListDocumentsResponse.documents:type_name -> resources.documents.DocumentShort
-	80, // 12: services.documents.GetDocumentResponse.document:type_name -> resources.documents.Document
-	81, // 13: services.documents.GetDocumentResponse.access:type_name -> resources.documents.access.DocumentAccess
-	82, // 14: services.documents.GetDocumentReferencesResponse.references:type_name -> resources.documents.references.DocumentReference
-	83, // 15: services.documents.GetDocumentRelationsResponse.relations:type_name -> resources.documents.relations.DocumentRelation
-	82, // 16: services.documents.AddDocumentReferenceRequest.reference:type_name -> resources.documents.references.DocumentReference
-	83, // 17: services.documents.AddDocumentRelationRequest.relation:type_name -> resources.documents.relations.DocumentRelation
-	75, // 18: services.documents.GetCommentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	78, // 19: services.documents.GetCommentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	84, // 20: services.documents.GetCommentsResponse.comments:type_name -> resources.documents.comment.Comment
-	84, // 21: services.documents.PostCommentRequest.comment:type_name -> resources.documents.comment.Comment
-	84, // 22: services.documents.PostCommentResponse.comment:type_name -> resources.documents.comment.Comment
-	84, // 23: services.documents.EditCommentRequest.comment:type_name -> resources.documents.comment.Comment
-	84, // 24: services.documents.EditCommentResponse.comment:type_name -> resources.documents.comment.Comment
-	80, // 25: services.documents.UpdateDocumentResponse.document:type_name -> resources.documents.Document
-	85, // 26: services.documents.CreateDocumentRequest.content_type:type_name -> resources.common.content.ContentType
-	73, // 27: services.documents.CreateDocumentRequest.template_data:type_name -> resources.documents.templates.TemplateData
-	86, // 28: services.documents.UpdateDocumentRequest.content:type_name -> resources.common.content.Content
-	85, // 29: services.documents.UpdateDocumentRequest.content_type:type_name -> resources.common.content.ContentType
-	87, // 30: services.documents.UpdateDocumentRequest.data:type_name -> resources.documents.data.DocumentData
-	88, // 31: services.documents.UpdateDocumentRequest.meta:type_name -> resources.documents.DocumentMeta
-	81, // 32: services.documents.UpdateDocumentRequest.access:type_name -> resources.documents.access.DocumentAccess
-	89, // 33: services.documents.UpdateDocumentRequest.files:type_name -> resources.file.File
-	75, // 34: services.documents.ListDocumentActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	90, // 35: services.documents.ListDocumentActivityRequest.activity_types:type_name -> resources.documents.activity.DocActivityType
-	78, // 36: services.documents.ListDocumentActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	91, // 37: services.documents.ListDocumentActivityResponse.activity:type_name -> resources.documents.activity.DocActivity
-	75, // 38: services.documents.ListDocumentReqsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	78, // 39: services.documents.ListDocumentReqsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	92, // 40: services.documents.ListDocumentReqsResponse.requests:type_name -> resources.documents.requests.DocRequest
-	90, // 41: services.documents.CreateDocumentReqRequest.request_type:type_name -> resources.documents.activity.DocActivityType
-	93, // 42: services.documents.CreateDocumentReqRequest.data:type_name -> resources.documents.activity.DocActivityData
-	92, // 43: services.documents.CreateDocumentReqResponse.request:type_name -> resources.documents.requests.DocRequest
-	93, // 44: services.documents.UpdateDocumentReqRequest.data:type_name -> resources.documents.activity.DocActivityData
-	92, // 45: services.documents.UpdateDocumentReqResponse.request:type_name -> resources.documents.requests.DocRequest
-	81, // 46: services.documents.GetDocumentAccessResponse.access:type_name -> resources.documents.access.DocumentAccess
-	81, // 47: services.documents.SetDocumentAccessRequest.access:type_name -> resources.documents.access.DocumentAccess
-	75, // 48: services.documents.ListUserDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	76, // 49: services.documents.ListUserDocumentsRequest.sort:type_name -> resources.common.database.Sort
-	94, // 50: services.documents.ListUserDocumentsRequest.relations:type_name -> resources.documents.relations.DocRelation
-	78, // 51: services.documents.ListUserDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	83, // 52: services.documents.ListUserDocumentsResponse.relations:type_name -> resources.documents.relations.DocumentRelation
-	95, // 53: services.documents.ListCategoriesResponse.categories:type_name -> resources.documents.category.Category
-	95, // 54: services.documents.CreateOrUpdateCategoryRequest.category:type_name -> resources.documents.category.Category
-	95, // 55: services.documents.CreateOrUpdateCategoryResponse.category:type_name -> resources.documents.category.Category
-	75, // 56: services.documents.ListDocumentPinsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	78, // 57: services.documents.ListDocumentPinsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	79, // 58: services.documents.ListDocumentPinsResponse.documents:type_name -> resources.documents.DocumentShort
-	96, // 59: services.documents.ToggleDocumentPinResponse.pin:type_name -> resources.documents.pins.DocumentPin
-	77, // 60: services.documents.SetDocumentReminderRequest.reminder_time:type_name -> resources.timestamp.Timestamp
-	0,  // 61: services.documents.DocumentsService.ListTemplates:input_type -> services.documents.ListTemplatesRequest
-	2,  // 62: services.documents.DocumentsService.GetTemplate:input_type -> services.documents.GetTemplateRequest
-	4,  // 63: services.documents.DocumentsService.CreateTemplate:input_type -> services.documents.CreateTemplateRequest
-	6,  // 64: services.documents.DocumentsService.UpdateTemplate:input_type -> services.documents.UpdateTemplateRequest
-	8,  // 65: services.documents.DocumentsService.DeleteTemplate:input_type -> services.documents.DeleteTemplateRequest
-	10, // 66: services.documents.DocumentsService.ListDocuments:input_type -> services.documents.ListDocumentsRequest
-	12, // 67: services.documents.DocumentsService.GetDocument:input_type -> services.documents.GetDocumentRequest
-	41, // 68: services.documents.DocumentsService.CreateDocument:input_type -> services.documents.CreateDocumentRequest
-	43, // 69: services.documents.DocumentsService.UpdateDocument:input_type -> services.documents.UpdateDocumentRequest
-	35, // 70: services.documents.DocumentsService.DeleteDocument:input_type -> services.documents.DeleteDocumentRequest
-	37, // 71: services.documents.DocumentsService.ToggleDocument:input_type -> services.documents.ToggleDocumentRequest
-	39, // 72: services.documents.DocumentsService.ChangeDocumentOwner:input_type -> services.documents.ChangeDocumentOwnerRequest
-	14, // 73: services.documents.DocumentsService.GetDocumentReferences:input_type -> services.documents.GetDocumentReferencesRequest
-	16, // 74: services.documents.DocumentsService.GetDocumentRelations:input_type -> services.documents.GetDocumentRelationsRequest
-	18, // 75: services.documents.DocumentsService.AddDocumentReference:input_type -> services.documents.AddDocumentReferenceRequest
-	20, // 76: services.documents.DocumentsService.RemoveDocumentReference:input_type -> services.documents.RemoveDocumentReferenceRequest
-	22, // 77: services.documents.DocumentsService.AddDocumentRelation:input_type -> services.documents.AddDocumentRelationRequest
-	24, // 78: services.documents.DocumentsService.RemoveDocumentRelation:input_type -> services.documents.RemoveDocumentRelationRequest
-	26, // 79: services.documents.DocumentsService.GetComments:input_type -> services.documents.GetCommentsRequest
-	28, // 80: services.documents.DocumentsService.PostComment:input_type -> services.documents.PostCommentRequest
-	30, // 81: services.documents.DocumentsService.EditComment:input_type -> services.documents.EditCommentRequest
-	32, // 82: services.documents.DocumentsService.DeleteComment:input_type -> services.documents.DeleteCommentRequest
-	54, // 83: services.documents.DocumentsService.GetDocumentAccess:input_type -> services.documents.GetDocumentAccessRequest
-	56, // 84: services.documents.DocumentsService.SetDocumentAccess:input_type -> services.documents.SetDocumentAccessRequest
-	44, // 85: services.documents.DocumentsService.ListDocumentActivity:input_type -> services.documents.ListDocumentActivityRequest
-	46, // 86: services.documents.DocumentsService.ListDocumentReqs:input_type -> services.documents.ListDocumentReqsRequest
-	48, // 87: services.documents.DocumentsService.CreateDocumentReq:input_type -> services.documents.CreateDocumentReqRequest
-	50, // 88: services.documents.DocumentsService.UpdateDocumentReq:input_type -> services.documents.UpdateDocumentReqRequest
-	52, // 89: services.documents.DocumentsService.DeleteDocumentReq:input_type -> services.documents.DeleteDocumentReqRequest
-	58, // 90: services.documents.DocumentsService.ListUserDocuments:input_type -> services.documents.ListUserDocumentsRequest
-	60, // 91: services.documents.DocumentsService.ListCategories:input_type -> services.documents.ListCategoriesRequest
-	62, // 92: services.documents.DocumentsService.CreateOrUpdateCategory:input_type -> services.documents.CreateOrUpdateCategoryRequest
-	64, // 93: services.documents.DocumentsService.DeleteCategory:input_type -> services.documents.DeleteCategoryRequest
-	66, // 94: services.documents.DocumentsService.ListDocumentPins:input_type -> services.documents.ListDocumentPinsRequest
-	68, // 95: services.documents.DocumentsService.ToggleDocumentPin:input_type -> services.documents.ToggleDocumentPinRequest
-	70, // 96: services.documents.DocumentsService.SetDocumentReminder:input_type -> services.documents.SetDocumentReminderRequest
-	97, // 97: services.documents.DocumentsService.UploadFile:input_type -> resources.file.UploadFileRequest
-	1,  // 98: services.documents.DocumentsService.ListTemplates:output_type -> services.documents.ListTemplatesResponse
-	3,  // 99: services.documents.DocumentsService.GetTemplate:output_type -> services.documents.GetTemplateResponse
-	5,  // 100: services.documents.DocumentsService.CreateTemplate:output_type -> services.documents.CreateTemplateResponse
-	7,  // 101: services.documents.DocumentsService.UpdateTemplate:output_type -> services.documents.UpdateTemplateResponse
-	9,  // 102: services.documents.DocumentsService.DeleteTemplate:output_type -> services.documents.DeleteTemplateResponse
-	11, // 103: services.documents.DocumentsService.ListDocuments:output_type -> services.documents.ListDocumentsResponse
-	13, // 104: services.documents.DocumentsService.GetDocument:output_type -> services.documents.GetDocumentResponse
-	42, // 105: services.documents.DocumentsService.CreateDocument:output_type -> services.documents.CreateDocumentResponse
-	34, // 106: services.documents.DocumentsService.UpdateDocument:output_type -> services.documents.UpdateDocumentResponse
-	36, // 107: services.documents.DocumentsService.DeleteDocument:output_type -> services.documents.DeleteDocumentResponse
-	38, // 108: services.documents.DocumentsService.ToggleDocument:output_type -> services.documents.ToggleDocumentResponse
-	40, // 109: services.documents.DocumentsService.ChangeDocumentOwner:output_type -> services.documents.ChangeDocumentOwnerResponse
-	15, // 110: services.documents.DocumentsService.GetDocumentReferences:output_type -> services.documents.GetDocumentReferencesResponse
-	17, // 111: services.documents.DocumentsService.GetDocumentRelations:output_type -> services.documents.GetDocumentRelationsResponse
-	19, // 112: services.documents.DocumentsService.AddDocumentReference:output_type -> services.documents.AddDocumentReferenceResponse
-	21, // 113: services.documents.DocumentsService.RemoveDocumentReference:output_type -> services.documents.RemoveDocumentReferenceResponse
-	23, // 114: services.documents.DocumentsService.AddDocumentRelation:output_type -> services.documents.AddDocumentRelationResponse
-	25, // 115: services.documents.DocumentsService.RemoveDocumentRelation:output_type -> services.documents.RemoveDocumentRelationResponse
-	27, // 116: services.documents.DocumentsService.GetComments:output_type -> services.documents.GetCommentsResponse
-	29, // 117: services.documents.DocumentsService.PostComment:output_type -> services.documents.PostCommentResponse
-	31, // 118: services.documents.DocumentsService.EditComment:output_type -> services.documents.EditCommentResponse
-	33, // 119: services.documents.DocumentsService.DeleteComment:output_type -> services.documents.DeleteCommentResponse
-	55, // 120: services.documents.DocumentsService.GetDocumentAccess:output_type -> services.documents.GetDocumentAccessResponse
-	57, // 121: services.documents.DocumentsService.SetDocumentAccess:output_type -> services.documents.SetDocumentAccessResponse
-	45, // 122: services.documents.DocumentsService.ListDocumentActivity:output_type -> services.documents.ListDocumentActivityResponse
-	47, // 123: services.documents.DocumentsService.ListDocumentReqs:output_type -> services.documents.ListDocumentReqsResponse
-	49, // 124: services.documents.DocumentsService.CreateDocumentReq:output_type -> services.documents.CreateDocumentReqResponse
-	51, // 125: services.documents.DocumentsService.UpdateDocumentReq:output_type -> services.documents.UpdateDocumentReqResponse
-	53, // 126: services.documents.DocumentsService.DeleteDocumentReq:output_type -> services.documents.DeleteDocumentReqResponse
-	59, // 127: services.documents.DocumentsService.ListUserDocuments:output_type -> services.documents.ListUserDocumentsResponse
-	61, // 128: services.documents.DocumentsService.ListCategories:output_type -> services.documents.ListCategoriesResponse
-	63, // 129: services.documents.DocumentsService.CreateOrUpdateCategory:output_type -> services.documents.CreateOrUpdateCategoryResponse
-	65, // 130: services.documents.DocumentsService.DeleteCategory:output_type -> services.documents.DeleteCategoryResponse
-	67, // 131: services.documents.DocumentsService.ListDocumentPins:output_type -> services.documents.ListDocumentPinsResponse
-	69, // 132: services.documents.DocumentsService.ToggleDocumentPin:output_type -> services.documents.ToggleDocumentPinResponse
-	71, // 133: services.documents.DocumentsService.SetDocumentReminder:output_type -> services.documents.SetDocumentReminderResponse
-	98, // 134: services.documents.DocumentsService.UploadFile:output_type -> resources.file.UploadFileResponse
-	98, // [98:135] is the sub-list for method output_type
-	61, // [61:98] is the sub-list for method input_type
-	61, // [61:61] is the sub-list for extension type_name
-	61, // [61:61] is the sub-list for extension extendee
-	0,  // [0:61] is the sub-list for field type_name
+	48, // 0: services.documents.ListDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	49, // 1: services.documents.ListDocumentsRequest.sort:type_name -> resources.common.database.Sort
+	50, // 2: services.documents.ListDocumentsRequest.from:type_name -> resources.timestamp.Timestamp
+	50, // 3: services.documents.ListDocumentsRequest.to:type_name -> resources.timestamp.Timestamp
+	51, // 4: services.documents.ListDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	52, // 5: services.documents.ListDocumentsResponse.documents:type_name -> resources.documents.DocumentShort
+	53, // 6: services.documents.GetDocumentResponse.document:type_name -> resources.documents.Document
+	54, // 7: services.documents.GetDocumentResponse.access:type_name -> resources.documents.access.DocumentAccess
+	55, // 8: services.documents.GetDocumentReferencesResponse.references:type_name -> resources.documents.references.DocumentReference
+	56, // 9: services.documents.GetDocumentRelationsResponse.relations:type_name -> resources.documents.relations.DocumentRelation
+	55, // 10: services.documents.AddDocumentReferenceRequest.reference:type_name -> resources.documents.references.DocumentReference
+	56, // 11: services.documents.AddDocumentRelationRequest.relation:type_name -> resources.documents.relations.DocumentRelation
+	53, // 12: services.documents.UpdateDocumentResponse.document:type_name -> resources.documents.Document
+	57, // 13: services.documents.CreateDocumentRequest.content_type:type_name -> resources.common.content.ContentType
+	58, // 14: services.documents.CreateDocumentRequest.template_data:type_name -> resources.documents.templates.TemplateData
+	59, // 15: services.documents.UpdateDocumentRequest.content:type_name -> resources.common.content.Content
+	57, // 16: services.documents.UpdateDocumentRequest.content_type:type_name -> resources.common.content.ContentType
+	60, // 17: services.documents.UpdateDocumentRequest.data:type_name -> resources.documents.data.DocumentData
+	61, // 18: services.documents.UpdateDocumentRequest.meta:type_name -> resources.documents.DocumentMeta
+	54, // 19: services.documents.UpdateDocumentRequest.access:type_name -> resources.documents.access.DocumentAccess
+	62, // 20: services.documents.UpdateDocumentRequest.files:type_name -> resources.file.File
+	48, // 21: services.documents.ListDocumentActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	63, // 22: services.documents.ListDocumentActivityRequest.activity_types:type_name -> resources.documents.activity.DocActivityType
+	51, // 23: services.documents.ListDocumentActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	64, // 24: services.documents.ListDocumentActivityResponse.activity:type_name -> resources.documents.activity.DocActivity
+	48, // 25: services.documents.ListDocumentReqsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	51, // 26: services.documents.ListDocumentReqsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	65, // 27: services.documents.ListDocumentReqsResponse.requests:type_name -> resources.documents.requests.DocRequest
+	63, // 28: services.documents.CreateDocumentReqRequest.request_type:type_name -> resources.documents.activity.DocActivityType
+	66, // 29: services.documents.CreateDocumentReqRequest.data:type_name -> resources.documents.activity.DocActivityData
+	65, // 30: services.documents.CreateDocumentReqResponse.request:type_name -> resources.documents.requests.DocRequest
+	66, // 31: services.documents.UpdateDocumentReqRequest.data:type_name -> resources.documents.activity.DocActivityData
+	65, // 32: services.documents.UpdateDocumentReqResponse.request:type_name -> resources.documents.requests.DocRequest
+	54, // 33: services.documents.GetDocumentAccessResponse.access:type_name -> resources.documents.access.DocumentAccess
+	54, // 34: services.documents.SetDocumentAccessRequest.access:type_name -> resources.documents.access.DocumentAccess
+	48, // 35: services.documents.ListUserDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	49, // 36: services.documents.ListUserDocumentsRequest.sort:type_name -> resources.common.database.Sort
+	67, // 37: services.documents.ListUserDocumentsRequest.relations:type_name -> resources.documents.relations.DocRelation
+	51, // 38: services.documents.ListUserDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	56, // 39: services.documents.ListUserDocumentsResponse.relations:type_name -> resources.documents.relations.DocumentRelation
+	48, // 40: services.documents.ListDocumentPinsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	51, // 41: services.documents.ListDocumentPinsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	52, // 42: services.documents.ListDocumentPinsResponse.documents:type_name -> resources.documents.DocumentShort
+	68, // 43: services.documents.ToggleDocumentPinResponse.pin:type_name -> resources.documents.pins.DocumentPin
+	50, // 44: services.documents.SetDocumentReminderRequest.reminder_time:type_name -> resources.timestamp.Timestamp
+	0,  // 45: services.documents.DocumentsService.ListDocuments:input_type -> services.documents.ListDocumentsRequest
+	2,  // 46: services.documents.DocumentsService.GetDocument:input_type -> services.documents.GetDocumentRequest
+	23, // 47: services.documents.DocumentsService.CreateDocument:input_type -> services.documents.CreateDocumentRequest
+	25, // 48: services.documents.DocumentsService.UpdateDocument:input_type -> services.documents.UpdateDocumentRequest
+	17, // 49: services.documents.DocumentsService.DeleteDocument:input_type -> services.documents.DeleteDocumentRequest
+	19, // 50: services.documents.DocumentsService.ToggleDocument:input_type -> services.documents.ToggleDocumentRequest
+	21, // 51: services.documents.DocumentsService.ChangeDocumentOwner:input_type -> services.documents.ChangeDocumentOwnerRequest
+	4,  // 52: services.documents.DocumentsService.GetDocumentReferences:input_type -> services.documents.GetDocumentReferencesRequest
+	6,  // 53: services.documents.DocumentsService.GetDocumentRelations:input_type -> services.documents.GetDocumentRelationsRequest
+	8,  // 54: services.documents.DocumentsService.AddDocumentReference:input_type -> services.documents.AddDocumentReferenceRequest
+	10, // 55: services.documents.DocumentsService.RemoveDocumentReference:input_type -> services.documents.RemoveDocumentReferenceRequest
+	12, // 56: services.documents.DocumentsService.AddDocumentRelation:input_type -> services.documents.AddDocumentRelationRequest
+	14, // 57: services.documents.DocumentsService.RemoveDocumentRelation:input_type -> services.documents.RemoveDocumentRelationRequest
+	36, // 58: services.documents.DocumentsService.GetDocumentAccess:input_type -> services.documents.GetDocumentAccessRequest
+	38, // 59: services.documents.DocumentsService.SetDocumentAccess:input_type -> services.documents.SetDocumentAccessRequest
+	26, // 60: services.documents.DocumentsService.ListDocumentActivity:input_type -> services.documents.ListDocumentActivityRequest
+	28, // 61: services.documents.DocumentsService.ListDocumentReqs:input_type -> services.documents.ListDocumentReqsRequest
+	30, // 62: services.documents.DocumentsService.CreateDocumentReq:input_type -> services.documents.CreateDocumentReqRequest
+	32, // 63: services.documents.DocumentsService.UpdateDocumentReq:input_type -> services.documents.UpdateDocumentReqRequest
+	34, // 64: services.documents.DocumentsService.DeleteDocumentReq:input_type -> services.documents.DeleteDocumentReqRequest
+	40, // 65: services.documents.DocumentsService.ListUserDocuments:input_type -> services.documents.ListUserDocumentsRequest
+	42, // 66: services.documents.DocumentsService.ListDocumentPins:input_type -> services.documents.ListDocumentPinsRequest
+	44, // 67: services.documents.DocumentsService.ToggleDocumentPin:input_type -> services.documents.ToggleDocumentPinRequest
+	46, // 68: services.documents.DocumentsService.SetDocumentReminder:input_type -> services.documents.SetDocumentReminderRequest
+	69, // 69: services.documents.DocumentsService.UploadFile:input_type -> resources.file.UploadFileRequest
+	1,  // 70: services.documents.DocumentsService.ListDocuments:output_type -> services.documents.ListDocumentsResponse
+	3,  // 71: services.documents.DocumentsService.GetDocument:output_type -> services.documents.GetDocumentResponse
+	24, // 72: services.documents.DocumentsService.CreateDocument:output_type -> services.documents.CreateDocumentResponse
+	16, // 73: services.documents.DocumentsService.UpdateDocument:output_type -> services.documents.UpdateDocumentResponse
+	18, // 74: services.documents.DocumentsService.DeleteDocument:output_type -> services.documents.DeleteDocumentResponse
+	20, // 75: services.documents.DocumentsService.ToggleDocument:output_type -> services.documents.ToggleDocumentResponse
+	22, // 76: services.documents.DocumentsService.ChangeDocumentOwner:output_type -> services.documents.ChangeDocumentOwnerResponse
+	5,  // 77: services.documents.DocumentsService.GetDocumentReferences:output_type -> services.documents.GetDocumentReferencesResponse
+	7,  // 78: services.documents.DocumentsService.GetDocumentRelations:output_type -> services.documents.GetDocumentRelationsResponse
+	9,  // 79: services.documents.DocumentsService.AddDocumentReference:output_type -> services.documents.AddDocumentReferenceResponse
+	11, // 80: services.documents.DocumentsService.RemoveDocumentReference:output_type -> services.documents.RemoveDocumentReferenceResponse
+	13, // 81: services.documents.DocumentsService.AddDocumentRelation:output_type -> services.documents.AddDocumentRelationResponse
+	15, // 82: services.documents.DocumentsService.RemoveDocumentRelation:output_type -> services.documents.RemoveDocumentRelationResponse
+	37, // 83: services.documents.DocumentsService.GetDocumentAccess:output_type -> services.documents.GetDocumentAccessResponse
+	39, // 84: services.documents.DocumentsService.SetDocumentAccess:output_type -> services.documents.SetDocumentAccessResponse
+	27, // 85: services.documents.DocumentsService.ListDocumentActivity:output_type -> services.documents.ListDocumentActivityResponse
+	29, // 86: services.documents.DocumentsService.ListDocumentReqs:output_type -> services.documents.ListDocumentReqsResponse
+	31, // 87: services.documents.DocumentsService.CreateDocumentReq:output_type -> services.documents.CreateDocumentReqResponse
+	33, // 88: services.documents.DocumentsService.UpdateDocumentReq:output_type -> services.documents.UpdateDocumentReqResponse
+	35, // 89: services.documents.DocumentsService.DeleteDocumentReq:output_type -> services.documents.DeleteDocumentReqResponse
+	41, // 90: services.documents.DocumentsService.ListUserDocuments:output_type -> services.documents.ListUserDocumentsResponse
+	43, // 91: services.documents.DocumentsService.ListDocumentPins:output_type -> services.documents.ListDocumentPinsResponse
+	45, // 92: services.documents.DocumentsService.ToggleDocumentPin:output_type -> services.documents.ToggleDocumentPinResponse
+	47, // 93: services.documents.DocumentsService.SetDocumentReminder:output_type -> services.documents.SetDocumentReminderResponse
+	70, // 94: services.documents.DocumentsService.UploadFile:output_type -> resources.file.UploadFileResponse
+	70, // [70:95] is the sub-list for method output_type
+	45, // [45:70] is the sub-list for method input_type
+	45, // [45:45] is the sub-list for extension type_name
+	45, // [45:45] is the sub-list for extension extendee
+	0,  // [0:45] is the sub-list for field type_name
 }
 
 func init() { file_services_documents_documents_proto_init() }
@@ -6151,27 +4472,26 @@ func file_services_documents_documents_proto_init() {
 	if File_services_documents_documents_proto != nil {
 		return
 	}
+	file_services_documents_documents_proto_msgTypes[0].OneofWrappers = []any{}
 	file_services_documents_documents_proto_msgTypes[2].OneofWrappers = []any{}
-	file_services_documents_documents_proto_msgTypes[10].OneofWrappers = []any{}
-	file_services_documents_documents_proto_msgTypes[12].OneofWrappers = []any{}
-	file_services_documents_documents_proto_msgTypes[35].OneofWrappers = []any{}
-	file_services_documents_documents_proto_msgTypes[39].OneofWrappers = []any{}
-	file_services_documents_documents_proto_msgTypes[41].OneofWrappers = []any{}
-	file_services_documents_documents_proto_msgTypes[43].OneofWrappers = []any{}
-	file_services_documents_documents_proto_msgTypes[48].OneofWrappers = []any{}
-	file_services_documents_documents_proto_msgTypes[50].OneofWrappers = []any{}
-	file_services_documents_documents_proto_msgTypes[58].OneofWrappers = []any{}
-	file_services_documents_documents_proto_msgTypes[66].OneofWrappers = []any{}
-	file_services_documents_documents_proto_msgTypes[68].OneofWrappers = []any{}
-	file_services_documents_documents_proto_msgTypes[69].OneofWrappers = []any{}
-	file_services_documents_documents_proto_msgTypes[70].OneofWrappers = []any{}
+	file_services_documents_documents_proto_msgTypes[17].OneofWrappers = []any{}
+	file_services_documents_documents_proto_msgTypes[21].OneofWrappers = []any{}
+	file_services_documents_documents_proto_msgTypes[23].OneofWrappers = []any{}
+	file_services_documents_documents_proto_msgTypes[25].OneofWrappers = []any{}
+	file_services_documents_documents_proto_msgTypes[30].OneofWrappers = []any{}
+	file_services_documents_documents_proto_msgTypes[32].OneofWrappers = []any{}
+	file_services_documents_documents_proto_msgTypes[40].OneofWrappers = []any{}
+	file_services_documents_documents_proto_msgTypes[42].OneofWrappers = []any{}
+	file_services_documents_documents_proto_msgTypes[44].OneofWrappers = []any{}
+	file_services_documents_documents_proto_msgTypes[45].OneofWrappers = []any{}
+	file_services_documents_documents_proto_msgTypes[46].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_documents_documents_proto_rawDesc), len(file_services_documents_documents_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   72,
+			NumMessages:   48,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

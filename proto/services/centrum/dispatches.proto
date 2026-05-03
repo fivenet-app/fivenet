@@ -1,0 +1,170 @@
+syntax = "proto3";
+
+package services.centrum;
+
+import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "resources/centrum/dispatchers/dispatchers.proto";
+import "resources/centrum/dispatches/dispatches.proto";
+import "resources/centrum/settings/settings.proto";
+import "resources/centrum/units/units.proto";
+import "resources/common/database/database.proto";
+import "resources/jobs/jobs.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrum";
+
+message ListDispatchesRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.centrum.dispatches.StatusDispatch status = 2 [(buf.validate.field).repeated.items.enum.defined_only = true];
+  repeated resources.centrum.dispatches.StatusDispatch not_status = 3 [(buf.validate.field).repeated.items.enum.defined_only = true];
+  repeated int64 ids = 4 [(buf.validate.field).repeated.max_items = 10];
+  optional string postal = 5 [(buf.validate.field).string.max_len = 12];
+}
+
+message ListDispatchesResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.centrum.dispatches.Dispatch dispatches = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message GetDispatchRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message GetDispatchResponse {
+  resources.centrum.dispatches.Dispatch dispatch = 1;
+}
+
+message ListDispatchActivityRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  int64 id = 2;
+}
+
+message ListDispatchActivityResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.centrum.dispatches.DispatchStatus activity = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message CreateDispatchRequest {
+  resources.centrum.dispatches.Dispatch dispatch = 1 [(buf.validate.field).required = true];
+}
+
+message CreateDispatchResponse {
+  resources.centrum.dispatches.Dispatch dispatch = 1;
+}
+
+message UpdateDispatchRequest {
+  resources.centrum.dispatches.Dispatch dispatch = 1 [(buf.validate.field).required = true];
+}
+
+message UpdateDispatchResponse {
+  resources.centrum.dispatches.Dispatch dispatch = 1;
+}
+
+message DeleteDispatchRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message DeleteDispatchResponse {}
+
+message ListDispatchTargetJobsRequest {}
+
+message ListDispatchTargetJobsResponse {
+  repeated resources.jobs.Job jobs = 1 [(codegen.itemslen.enabled) = true];
+}
+
+message UpdateDispatchStatusRequest {
+  int64 dispatch_id = 1;
+  resources.centrum.dispatches.StatusDispatch status = 2 [(buf.validate.field).enum.defined_only = true];
+  optional string reason = 3 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string code = 4 [
+    (buf.validate.field).string.max_len = 24,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+}
+
+message UpdateDispatchStatusResponse {}
+
+message AssignDispatchRequest {
+  int64 dispatch_id = 1;
+  repeated int64 to_add = 2;
+  repeated int64 to_remove = 3;
+  optional bool forced = 4;
+}
+
+message AssignDispatchResponse {}
+
+message TakeDispatchRequest {
+  repeated int64 dispatch_ids = 1 [(buf.validate.field).repeated.min_items = 1];
+  resources.centrum.dispatches.TakeDispatchResp resp = 2 [(buf.validate.field).enum.defined_only = true];
+  optional string reason = 3 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+}
+
+message TakeDispatchResponse {}
+
+service DispatchesService {
+  option (codegen.perms.perms_svc) = {
+    name: "centrum.CentrumService"
+  };
+
+  rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc UpdateDispatch(UpdateDispatchRequest) returns (UpdateDispatchResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteDispatch(DeleteDispatchRequest) returns (DeleteDispatchResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+
+  rpc ListDispatchTargetJobs(ListDispatchTargetJobsRequest) returns (ListDispatchTargetJobsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateDispatch"
+    };
+  }
+
+  rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "TakeControl"
+    };
+  }
+
+  rpc GetDispatch(GetDispatchRequest) returns (GetDispatchResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
+  rpc ListDispatches(ListDispatchesRequest) returns (ListDispatchesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
+  rpc ListDispatchActivity(ListDispatchActivityRequest) returns (ListDispatchActivityResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
+
+  rpc TakeDispatch(TakeDispatchRequest) returns (TakeDispatchResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc UpdateDispatchStatus(UpdateDispatchStatusRequest) returns (UpdateDispatchStatusResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "TakeDispatch"
+    };
+  }
+}

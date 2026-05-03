@@ -68,6 +68,7 @@ func init() {
 
 type Server struct {
 	pbjobs.ConductServiceServer
+	pbjobs.ColleaguesServiceServer
 	pbjobs.JobsServiceServer
 	pbjobs.TimeclockServiceServer
 	pbjobs.StatsServiceServer
@@ -136,7 +137,8 @@ func NewServer(p Params) *Server {
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbjobs.RegisterConductServiceServer(srv, s)
+	pbjobs.RegisterColleaguesServiceServer(srv, s)
 	pbjobs.RegisterJobsServiceServer(srv, s)
-	pbjobs.RegisterTimeclockServiceServer(srv, s)
 	pbjobs.RegisterStatsServiceServer(srv, s)
+	pbjobs.RegisterTimeclockServiceServer(srv, s)
 }

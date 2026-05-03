@@ -4,12 +4,12 @@ import ColleagueInfo from '~/components/jobs/colleagues/info/ColleagueInfo.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { getJobsJobsClient } from '~~/gen/ts/clients';
+import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { Perms } from '~~/gen/ts/perms';
 import { ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import type { GetColleagueResponse } from '~~/gen/ts/services/jobs/jobs';
+import type { GetColleagueResponse } from '~~/gen/ts/services/jobs/colleagues';
 
 useHead({
     title: 'pages.jobs.colleagues.id.title',
@@ -38,7 +38,7 @@ const notifications = useNotificationsStore();
 
 const route = useRoute('jobs-colleagues-id-info');
 
-const jobsJobsClient = await getJobsJobsClient();
+const jobsColleaguesClient = await getJobsColleaguesClient();
 
 const {
     data: colleague,
@@ -49,7 +49,7 @@ const {
 
 async function getColleague(userId: number): Promise<GetColleagueResponse> {
     try {
-        const call = jobsJobsClient.getColleague({
+        const call = jobsColleaguesClient.getColleague({
             userId,
         });
         const { response } = await call;

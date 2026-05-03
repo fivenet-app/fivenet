@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import type { Editor, JSONContent } from '@tiptap/core';
 import { useMailerStore } from '~/stores/mailer';
-import { getMailerMailerClient } from '~~/gen/ts/clients';
+import { getMailerSettingsClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import type { Template } from '~~/gen/ts/resources/mailer/templates/template';
-import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
+import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/settings';
 
 const props = defineProps<{
     editor: Editor | undefined;
 }>();
 
-const mailerMailerClient = await getMailerMailerClient();
+const mailerSettingsClient = await getMailerSettingsClient();
 
 defineOptions({
     inheritAttrs: false,
@@ -23,7 +23,7 @@ const { data: templates } = useLazyAsyncData(`mailer-templates:${selectedEmail.v
 
 async function listTemplates(): Promise<ListTemplatesResponse> {
     try {
-        const call = mailerMailerClient.listTemplates({
+        const call = mailerSettingsClient.listTemplates({
             emailId: selectedEmail.value!.id,
         });
         const { response } = await call;

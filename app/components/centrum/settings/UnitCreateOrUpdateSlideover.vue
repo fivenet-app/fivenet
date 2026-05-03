@@ -5,7 +5,7 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
-import { getCentrumCentrumClient } from '~~/gen/ts/clients';
+import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units/access/access';
 import { type Unit, UnitAttribute } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -25,7 +25,7 @@ const { t } = useI18n();
 
 const notifications = useNotificationsStore();
 
-const centrumCentrumClient = await getCentrumCentrumClient();
+const centrumUnitsClient = await getCentrumUnitsClient();
 
 const availableAttributes = ref<{ label: string; value: UnitAttribute }[]>([
     { label: t(`enums.centrum.UnitAttribute.${UnitAttribute[UnitAttribute.STATIC]}`, 2), value: UnitAttribute.STATIC },
@@ -71,7 +71,7 @@ async function createOrUpdateUnit(values: Schema): Promise<void> {
     values.access.qualifications.forEach((quali) => quali.id < 0 && (quali.id = 0));
 
     try {
-        const call = centrumCentrumClient.createOrUpdateUnit({
+        const call = centrumUnitsClient.createOrUpdateUnit({
             unit: {
                 id: props.unit?.id ?? 0,
                 job: '',

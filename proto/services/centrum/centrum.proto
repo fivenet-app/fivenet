@@ -17,17 +17,7 @@ import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrum";
 
-// Common
-
-message ListDispatchActivityRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  int64 id = 2;
-}
-
-message ListUnitActivityRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  int64 id = 2;
-}
+// Settings
 
 message GetSettingsRequest {}
 
@@ -44,52 +34,7 @@ message UpdateSettingsResponse {
   resources.centrum.settings.Settings settings = 1;
 }
 
-// Unit Management
-
-message ListUnitsRequest {
-  repeated resources.centrum.units.StatusUnit status = 1 [(buf.validate.field).repeated.items.enum.defined_only = true];
-}
-
-message ListUnitsResponse {
-  repeated resources.centrum.units.Unit units = 1 [(codegen.itemslen.enabled) = true];
-}
-
-message CreateOrUpdateUnitRequest {
-  resources.centrum.units.Unit unit = 1 [(buf.validate.field).required = true];
-}
-
-message CreateOrUpdateUnitResponse {
-  resources.centrum.units.Unit unit = 1;
-}
-
-message DeleteUnitRequest {
-  int64 unit_id = 1;
-}
-
-message DeleteUnitResponse {}
-
-message UpdateUnitStatusRequest {
-  int64 unit_id = 1;
-  resources.centrum.units.StatusUnit status = 2 [(buf.validate.field).enum.defined_only = true];
-  optional string reason = 3 [
-    (buf.validate.field).string.max_len = 255,
-    (codegen.sanitizer.sanitizer) = {enabled: true}
-  ];
-  optional string code = 4 [
-    (buf.validate.field).string.max_len = 20,
-    (codegen.sanitizer.sanitizer) = {enabled: true}
-  ];
-}
-
-message UpdateUnitStatusResponse {}
-
-message AssignUnitRequest {
-  int64 unit_id = 1;
-  repeated int32 to_add = 2;
-  repeated int32 to_remove = 3;
-}
-
-message AssignUnitResponse {}
+// Heatmap
 
 message GetDispatchHeatmapRequest {}
 
@@ -98,20 +43,7 @@ message GetDispatchHeatmapResponse {
   repeated resources.livemap.heatmap.HeatmapEntry entries = 2;
 }
 
-message UpdateDispatchersRequest {
-  repeated int32 to_remove = 1 [(buf.validate.field).repeated.max_items = 10];
-}
-
-message UpdateDispatchersResponse {
-  resources.centrum.dispatchers.Dispatchers dispatchers = 1;
-}
-
-message ListUnitActivityResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.centrum.units.UnitStatus activity = 2 [(codegen.itemslen.enabled) = true];
-}
-
-// Dispatch Management
+// Dispatchers
 
 message TakeControlRequest {
   bool signon = 1;
@@ -119,102 +51,13 @@ message TakeControlRequest {
 
 message TakeControlResponse {}
 
-message ListDispatchesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.centrum.dispatches.StatusDispatch status = 2 [(buf.validate.field).repeated.items.enum.defined_only = true];
-  repeated resources.centrum.dispatches.StatusDispatch not_status = 3 [(buf.validate.field).repeated.items.enum.defined_only = true];
-  repeated int64 ids = 4 [(buf.validate.field).repeated.max_items = 10];
-  optional string postal = 5 [(buf.validate.field).string.max_len = 12];
+message UpdateDispatchersRequest {
+  repeated int32 to_remove = 1 [(buf.validate.field).repeated.max_items = 10];
 }
 
-message ListDispatchesResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.centrum.dispatches.Dispatch dispatches = 2 [(codegen.itemslen.enabled) = true];
+message UpdateDispatchersResponse {
+  resources.centrum.dispatchers.Dispatchers dispatchers = 1;
 }
-
-message GetDispatchRequest {
-  int64 id = 1 [(buf.validate.field).int64.gt = 0];
-}
-
-message GetDispatchResponse {
-  resources.centrum.dispatches.Dispatch dispatch = 1;
-}
-
-message CreateDispatchRequest {
-  resources.centrum.dispatches.Dispatch dispatch = 1 [(buf.validate.field).required = true];
-}
-
-message CreateDispatchResponse {
-  resources.centrum.dispatches.Dispatch dispatch = 1;
-}
-
-message UpdateDispatchRequest {
-  resources.centrum.dispatches.Dispatch dispatch = 1 [(buf.validate.field).required = true];
-}
-
-message UpdateDispatchResponse {
-  resources.centrum.dispatches.Dispatch dispatch = 1;
-}
-
-message DeleteDispatchRequest {
-  int64 id = 1 [(buf.validate.field).int64.gt = 0];
-}
-
-message DeleteDispatchResponse {}
-
-message ListDispatchTargetJobsRequest {}
-
-message ListDispatchTargetJobsResponse {
-  repeated resources.jobs.Job jobs = 1 [(codegen.itemslen.enabled) = true];
-}
-
-message UpdateDispatchStatusRequest {
-  int64 dispatch_id = 1;
-  resources.centrum.dispatches.StatusDispatch status = 2 [(buf.validate.field).enum.defined_only = true];
-  optional string reason = 3 [
-    (buf.validate.field).string.max_len = 255,
-    (codegen.sanitizer.sanitizer) = {enabled: true}
-  ];
-  optional string code = 4 [
-    (buf.validate.field).string.max_len = 24,
-    (codegen.sanitizer.sanitizer) = {enabled: true}
-  ];
-}
-
-message UpdateDispatchStatusResponse {}
-
-message AssignDispatchRequest {
-  int64 dispatch_id = 1;
-  repeated int64 to_add = 2;
-  repeated int64 to_remove = 3;
-  optional bool forced = 4;
-}
-
-message AssignDispatchResponse {}
-
-message ListDispatchActivityResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.centrum.dispatches.DispatchStatus activity = 2 [(codegen.itemslen.enabled) = true];
-}
-
-message JoinUnitRequest {
-  optional int64 unit_id = 1;
-}
-
-message JoinUnitResponse {
-  resources.centrum.units.Unit unit = 1;
-}
-
-message TakeDispatchRequest {
-  repeated int64 dispatch_ids = 1 [(buf.validate.field).repeated.min_items = 1];
-  resources.centrum.dispatches.TakeDispatchResp resp = 2 [(buf.validate.field).enum.defined_only = true];
-  optional string reason = 3 [
-    (buf.validate.field).string.max_len = 255,
-    (codegen.sanitizer.sanitizer) = {enabled: true}
-  ];
-}
-
-message TakeDispatchResponse {}
 
 message StreamHandshake {
   resources.timestamp.Timestamp server_time = 1;
@@ -259,6 +102,13 @@ service CentrumService {
     icon: "i-mdi-car-emergency"
   };
 
+  rpc GetSettings(GetSettingsRequest) returns (GetSettingsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
+
   rpc UpdateSettings(UpdateSettingsRequest) returns (UpdateSettingsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
@@ -275,43 +125,15 @@ service CentrumService {
     };
   }
 
-  rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse) {
-    option (codegen.perms.perms) = {enabled: true};
-  }
-  rpc UpdateDispatch(UpdateDispatchRequest) returns (UpdateDispatchResponse) {
-    option (codegen.perms.perms) = {enabled: true};
-  }
-  rpc DeleteDispatch(DeleteDispatchRequest) returns (DeleteDispatchResponse) {
-    option (codegen.perms.perms) = {enabled: true};
-  }
-
-  rpc ListDispatchTargetJobs(ListDispatchTargetJobsRequest) returns (ListDispatchTargetJobsResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "CreateDispatch"
-    };
-  }
-
-  rpc TakeControl(TakeControlRequest) returns (TakeControlResponse) {
-    option (codegen.perms.perms) = {enabled: true};
-  }
-  rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "TakeControl"
-    };
-  }
-  rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "TakeControl"
-    };
-  }
   rpc GetDispatchHeatmap(GetDispatchHeatmapRequest) returns (GetDispatchHeatmapResponse) {
     option (codegen.perms.perms) = {
       enabled: true
       name: "TakeControl"
     };
+  }
+
+  rpc TakeControl(TakeControlRequest) returns (TakeControlResponse) {
+    option (codegen.perms.perms) = {enabled: true};
   }
 
   rpc UpdateDispatchers(UpdateDispatchersRequest) returns (UpdateDispatchersResponse) {
@@ -320,73 +142,5 @@ service CentrumService {
 
   rpc Stream(StreamRequest) returns (stream StreamResponse) {
     option (codegen.perms.perms) = {enabled: true};
-  }
-
-  rpc GetSettings(GetSettingsRequest) returns (GetSettingsResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "Stream"
-    };
-  }
-
-  rpc JoinUnit(JoinUnitRequest) returns (JoinUnitResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "Stream"
-    };
-  }
-  rpc ListUnits(ListUnitsRequest) returns (ListUnitsResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "Stream"
-    };
-  }
-  rpc ListUnitActivity(ListUnitActivityRequest) returns (ListUnitActivityResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "Stream"
-    };
-  }
-
-  rpc GetDispatch(GetDispatchRequest) returns (GetDispatchResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "Stream"
-    };
-  }
-  rpc ListDispatches(ListDispatchesRequest) returns (ListDispatchesResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "Stream"
-    };
-  }
-  rpc ListDispatchActivity(ListDispatchActivityRequest) returns (ListDispatchActivityResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "Stream"
-    };
-  }
-
-  rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse) {
-    option (codegen.perms.perms) = {enabled: true};
-  }
-  rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse) {
-    option (codegen.perms.perms) = {enabled: true};
-  }
-
-  rpc TakeDispatch(TakeDispatchRequest) returns (TakeDispatchResponse) {
-    option (codegen.perms.perms) = {enabled: true};
-  }
-  rpc UpdateUnitStatus(UpdateUnitStatusRequest) returns (UpdateUnitStatusResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "TakeDispatch"
-    };
-  }
-  rpc UpdateDispatchStatus(UpdateDispatchStatusRequest) returns (UpdateDispatchStatusResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "TakeDispatch"
-    };
   }
 }

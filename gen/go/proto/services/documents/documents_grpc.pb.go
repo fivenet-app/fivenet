@@ -20,11 +20,6 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	DocumentsService_ListTemplates_FullMethodName           = "/services.documents.DocumentsService/ListTemplates"
-	DocumentsService_GetTemplate_FullMethodName             = "/services.documents.DocumentsService/GetTemplate"
-	DocumentsService_CreateTemplate_FullMethodName          = "/services.documents.DocumentsService/CreateTemplate"
-	DocumentsService_UpdateTemplate_FullMethodName          = "/services.documents.DocumentsService/UpdateTemplate"
-	DocumentsService_DeleteTemplate_FullMethodName          = "/services.documents.DocumentsService/DeleteTemplate"
 	DocumentsService_ListDocuments_FullMethodName           = "/services.documents.DocumentsService/ListDocuments"
 	DocumentsService_GetDocument_FullMethodName             = "/services.documents.DocumentsService/GetDocument"
 	DocumentsService_CreateDocument_FullMethodName          = "/services.documents.DocumentsService/CreateDocument"
@@ -38,10 +33,6 @@ const (
 	DocumentsService_RemoveDocumentReference_FullMethodName = "/services.documents.DocumentsService/RemoveDocumentReference"
 	DocumentsService_AddDocumentRelation_FullMethodName     = "/services.documents.DocumentsService/AddDocumentRelation"
 	DocumentsService_RemoveDocumentRelation_FullMethodName  = "/services.documents.DocumentsService/RemoveDocumentRelation"
-	DocumentsService_GetComments_FullMethodName             = "/services.documents.DocumentsService/GetComments"
-	DocumentsService_PostComment_FullMethodName             = "/services.documents.DocumentsService/PostComment"
-	DocumentsService_EditComment_FullMethodName             = "/services.documents.DocumentsService/EditComment"
-	DocumentsService_DeleteComment_FullMethodName           = "/services.documents.DocumentsService/DeleteComment"
 	DocumentsService_GetDocumentAccess_FullMethodName       = "/services.documents.DocumentsService/GetDocumentAccess"
 	DocumentsService_SetDocumentAccess_FullMethodName       = "/services.documents.DocumentsService/SetDocumentAccess"
 	DocumentsService_ListDocumentActivity_FullMethodName    = "/services.documents.DocumentsService/ListDocumentActivity"
@@ -50,9 +41,6 @@ const (
 	DocumentsService_UpdateDocumentReq_FullMethodName       = "/services.documents.DocumentsService/UpdateDocumentReq"
 	DocumentsService_DeleteDocumentReq_FullMethodName       = "/services.documents.DocumentsService/DeleteDocumentReq"
 	DocumentsService_ListUserDocuments_FullMethodName       = "/services.documents.DocumentsService/ListUserDocuments"
-	DocumentsService_ListCategories_FullMethodName          = "/services.documents.DocumentsService/ListCategories"
-	DocumentsService_CreateOrUpdateCategory_FullMethodName  = "/services.documents.DocumentsService/CreateOrUpdateCategory"
-	DocumentsService_DeleteCategory_FullMethodName          = "/services.documents.DocumentsService/DeleteCategory"
 	DocumentsService_ListDocumentPins_FullMethodName        = "/services.documents.DocumentsService/ListDocumentPins"
 	DocumentsService_ToggleDocumentPin_FullMethodName       = "/services.documents.DocumentsService/ToggleDocumentPin"
 	DocumentsService_SetDocumentReminder_FullMethodName     = "/services.documents.DocumentsService/SetDocumentReminder"
@@ -63,11 +51,6 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DocumentsServiceClient interface {
-	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
-	GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error)
-	CreateTemplate(ctx context.Context, in *CreateTemplateRequest, opts ...grpc.CallOption) (*CreateTemplateResponse, error)
-	UpdateTemplate(ctx context.Context, in *UpdateTemplateRequest, opts ...grpc.CallOption) (*UpdateTemplateResponse, error)
-	DeleteTemplate(ctx context.Context, in *DeleteTemplateRequest, opts ...grpc.CallOption) (*DeleteTemplateResponse, error)
 	ListDocuments(ctx context.Context, in *ListDocumentsRequest, opts ...grpc.CallOption) (*ListDocumentsResponse, error)
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
 	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
@@ -81,10 +64,6 @@ type DocumentsServiceClient interface {
 	RemoveDocumentReference(ctx context.Context, in *RemoveDocumentReferenceRequest, opts ...grpc.CallOption) (*RemoveDocumentReferenceResponse, error)
 	AddDocumentRelation(ctx context.Context, in *AddDocumentRelationRequest, opts ...grpc.CallOption) (*AddDocumentRelationResponse, error)
 	RemoveDocumentRelation(ctx context.Context, in *RemoveDocumentRelationRequest, opts ...grpc.CallOption) (*RemoveDocumentRelationResponse, error)
-	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error)
-	PostComment(ctx context.Context, in *PostCommentRequest, opts ...grpc.CallOption) (*PostCommentResponse, error)
-	EditComment(ctx context.Context, in *EditCommentRequest, opts ...grpc.CallOption) (*EditCommentResponse, error)
-	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error)
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
 	ListDocumentActivity(ctx context.Context, in *ListDocumentActivityRequest, opts ...grpc.CallOption) (*ListDocumentActivityResponse, error)
@@ -93,9 +72,6 @@ type DocumentsServiceClient interface {
 	UpdateDocumentReq(ctx context.Context, in *UpdateDocumentReqRequest, opts ...grpc.CallOption) (*UpdateDocumentReqResponse, error)
 	DeleteDocumentReq(ctx context.Context, in *DeleteDocumentReqRequest, opts ...grpc.CallOption) (*DeleteDocumentReqResponse, error)
 	ListUserDocuments(ctx context.Context, in *ListUserDocumentsRequest, opts ...grpc.CallOption) (*ListUserDocumentsResponse, error)
-	ListCategories(ctx context.Context, in *ListCategoriesRequest, opts ...grpc.CallOption) (*ListCategoriesResponse, error)
-	CreateOrUpdateCategory(ctx context.Context, in *CreateOrUpdateCategoryRequest, opts ...grpc.CallOption) (*CreateOrUpdateCategoryResponse, error)
-	DeleteCategory(ctx context.Context, in *DeleteCategoryRequest, opts ...grpc.CallOption) (*DeleteCategoryResponse, error)
 	ListDocumentPins(ctx context.Context, in *ListDocumentPinsRequest, opts ...grpc.CallOption) (*ListDocumentPinsResponse, error)
 	ToggleDocumentPin(ctx context.Context, in *ToggleDocumentPinRequest, opts ...grpc.CallOption) (*ToggleDocumentPinResponse, error)
 	SetDocumentReminder(ctx context.Context, in *SetDocumentReminderRequest, opts ...grpc.CallOption) (*SetDocumentReminderResponse, error)
@@ -108,56 +84,6 @@ type documentsServiceClient struct {
 
 func NewDocumentsServiceClient(cc grpc.ClientConnInterface) DocumentsServiceClient {
 	return &documentsServiceClient{cc}
-}
-
-func (c *documentsServiceClient) ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListTemplatesResponse)
-	err := c.cc.Invoke(ctx, DocumentsService_ListTemplates_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *documentsServiceClient) GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetTemplateResponse)
-	err := c.cc.Invoke(ctx, DocumentsService_GetTemplate_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *documentsServiceClient) CreateTemplate(ctx context.Context, in *CreateTemplateRequest, opts ...grpc.CallOption) (*CreateTemplateResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateTemplateResponse)
-	err := c.cc.Invoke(ctx, DocumentsService_CreateTemplate_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *documentsServiceClient) UpdateTemplate(ctx context.Context, in *UpdateTemplateRequest, opts ...grpc.CallOption) (*UpdateTemplateResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateTemplateResponse)
-	err := c.cc.Invoke(ctx, DocumentsService_UpdateTemplate_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *documentsServiceClient) DeleteTemplate(ctx context.Context, in *DeleteTemplateRequest, opts ...grpc.CallOption) (*DeleteTemplateResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteTemplateResponse)
-	err := c.cc.Invoke(ctx, DocumentsService_DeleteTemplate_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *documentsServiceClient) ListDocuments(ctx context.Context, in *ListDocumentsRequest, opts ...grpc.CallOption) (*ListDocumentsResponse, error) {
@@ -290,46 +216,6 @@ func (c *documentsServiceClient) RemoveDocumentRelation(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *documentsServiceClient) GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetCommentsResponse)
-	err := c.cc.Invoke(ctx, DocumentsService_GetComments_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *documentsServiceClient) PostComment(ctx context.Context, in *PostCommentRequest, opts ...grpc.CallOption) (*PostCommentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PostCommentResponse)
-	err := c.cc.Invoke(ctx, DocumentsService_PostComment_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *documentsServiceClient) EditComment(ctx context.Context, in *EditCommentRequest, opts ...grpc.CallOption) (*EditCommentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EditCommentResponse)
-	err := c.cc.Invoke(ctx, DocumentsService_EditComment_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *documentsServiceClient) DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteCommentResponse)
-	err := c.cc.Invoke(ctx, DocumentsService_DeleteComment_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *documentsServiceClient) GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetDocumentAccessResponse)
@@ -410,36 +296,6 @@ func (c *documentsServiceClient) ListUserDocuments(ctx context.Context, in *List
 	return out, nil
 }
 
-func (c *documentsServiceClient) ListCategories(ctx context.Context, in *ListCategoriesRequest, opts ...grpc.CallOption) (*ListCategoriesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListCategoriesResponse)
-	err := c.cc.Invoke(ctx, DocumentsService_ListCategories_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *documentsServiceClient) CreateOrUpdateCategory(ctx context.Context, in *CreateOrUpdateCategoryRequest, opts ...grpc.CallOption) (*CreateOrUpdateCategoryResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateOrUpdateCategoryResponse)
-	err := c.cc.Invoke(ctx, DocumentsService_CreateOrUpdateCategory_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *documentsServiceClient) DeleteCategory(ctx context.Context, in *DeleteCategoryRequest, opts ...grpc.CallOption) (*DeleteCategoryResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteCategoryResponse)
-	err := c.cc.Invoke(ctx, DocumentsService_DeleteCategory_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *documentsServiceClient) ListDocumentPins(ctx context.Context, in *ListDocumentPinsRequest, opts ...grpc.CallOption) (*ListDocumentPinsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListDocumentPinsResponse)
@@ -487,11 +343,6 @@ type DocumentsService_UploadFileClient = grpc.ClientStreamingClient[file.UploadF
 // All implementations must embed UnimplementedDocumentsServiceServer
 // for forward compatibility.
 type DocumentsServiceServer interface {
-	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
-	GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error)
-	CreateTemplate(context.Context, *CreateTemplateRequest) (*CreateTemplateResponse, error)
-	UpdateTemplate(context.Context, *UpdateTemplateRequest) (*UpdateTemplateResponse, error)
-	DeleteTemplate(context.Context, *DeleteTemplateRequest) (*DeleteTemplateResponse, error)
 	ListDocuments(context.Context, *ListDocumentsRequest) (*ListDocumentsResponse, error)
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
 	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
@@ -505,10 +356,6 @@ type DocumentsServiceServer interface {
 	RemoveDocumentReference(context.Context, *RemoveDocumentReferenceRequest) (*RemoveDocumentReferenceResponse, error)
 	AddDocumentRelation(context.Context, *AddDocumentRelationRequest) (*AddDocumentRelationResponse, error)
 	RemoveDocumentRelation(context.Context, *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error)
-	GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error)
-	PostComment(context.Context, *PostCommentRequest) (*PostCommentResponse, error)
-	EditComment(context.Context, *EditCommentRequest) (*EditCommentResponse, error)
-	DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error)
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
 	ListDocumentActivity(context.Context, *ListDocumentActivityRequest) (*ListDocumentActivityResponse, error)
@@ -517,9 +364,6 @@ type DocumentsServiceServer interface {
 	UpdateDocumentReq(context.Context, *UpdateDocumentReqRequest) (*UpdateDocumentReqResponse, error)
 	DeleteDocumentReq(context.Context, *DeleteDocumentReqRequest) (*DeleteDocumentReqResponse, error)
 	ListUserDocuments(context.Context, *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error)
-	ListCategories(context.Context, *ListCategoriesRequest) (*ListCategoriesResponse, error)
-	CreateOrUpdateCategory(context.Context, *CreateOrUpdateCategoryRequest) (*CreateOrUpdateCategoryResponse, error)
-	DeleteCategory(context.Context, *DeleteCategoryRequest) (*DeleteCategoryResponse, error)
 	ListDocumentPins(context.Context, *ListDocumentPinsRequest) (*ListDocumentPinsResponse, error)
 	ToggleDocumentPin(context.Context, *ToggleDocumentPinRequest) (*ToggleDocumentPinResponse, error)
 	SetDocumentReminder(context.Context, *SetDocumentReminderRequest) (*SetDocumentReminderResponse, error)
@@ -534,21 +378,6 @@ type DocumentsServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedDocumentsServiceServer struct{}
 
-func (UnimplementedDocumentsServiceServer) ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListTemplates not implemented")
-}
-func (UnimplementedDocumentsServiceServer) GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTemplate not implemented")
-}
-func (UnimplementedDocumentsServiceServer) CreateTemplate(context.Context, *CreateTemplateRequest) (*CreateTemplateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateTemplate not implemented")
-}
-func (UnimplementedDocumentsServiceServer) UpdateTemplate(context.Context, *UpdateTemplateRequest) (*UpdateTemplateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateTemplate not implemented")
-}
-func (UnimplementedDocumentsServiceServer) DeleteTemplate(context.Context, *DeleteTemplateRequest) (*DeleteTemplateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteTemplate not implemented")
-}
 func (UnimplementedDocumentsServiceServer) ListDocuments(context.Context, *ListDocumentsRequest) (*ListDocumentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDocuments not implemented")
 }
@@ -588,18 +417,6 @@ func (UnimplementedDocumentsServiceServer) AddDocumentRelation(context.Context, 
 func (UnimplementedDocumentsServiceServer) RemoveDocumentRelation(context.Context, *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveDocumentRelation not implemented")
 }
-func (UnimplementedDocumentsServiceServer) GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetComments not implemented")
-}
-func (UnimplementedDocumentsServiceServer) PostComment(context.Context, *PostCommentRequest) (*PostCommentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PostComment not implemented")
-}
-func (UnimplementedDocumentsServiceServer) EditComment(context.Context, *EditCommentRequest) (*EditCommentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EditComment not implemented")
-}
-func (UnimplementedDocumentsServiceServer) DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
-}
 func (UnimplementedDocumentsServiceServer) GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentAccess not implemented")
 }
@@ -623,15 +440,6 @@ func (UnimplementedDocumentsServiceServer) DeleteDocumentReq(context.Context, *D
 }
 func (UnimplementedDocumentsServiceServer) ListUserDocuments(context.Context, *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserDocuments not implemented")
-}
-func (UnimplementedDocumentsServiceServer) ListCategories(context.Context, *ListCategoriesRequest) (*ListCategoriesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListCategories not implemented")
-}
-func (UnimplementedDocumentsServiceServer) CreateOrUpdateCategory(context.Context, *CreateOrUpdateCategoryRequest) (*CreateOrUpdateCategoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateCategory not implemented")
-}
-func (UnimplementedDocumentsServiceServer) DeleteCategory(context.Context, *DeleteCategoryRequest) (*DeleteCategoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteCategory not implemented")
 }
 func (UnimplementedDocumentsServiceServer) ListDocumentPins(context.Context, *ListDocumentPinsRequest) (*ListDocumentPinsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDocumentPins not implemented")
@@ -664,96 +472,6 @@ func RegisterDocumentsServiceServer(s grpc.ServiceRegistrar, srv DocumentsServic
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&DocumentsService_ServiceDesc, srv)
-}
-
-func _DocumentsService_ListTemplates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListTemplatesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentsServiceServer).ListTemplates(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DocumentsService_ListTemplates_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).ListTemplates(ctx, req.(*ListTemplatesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DocumentsService_GetTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTemplateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentsServiceServer).GetTemplate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DocumentsService_GetTemplate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).GetTemplate(ctx, req.(*GetTemplateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DocumentsService_CreateTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateTemplateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentsServiceServer).CreateTemplate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DocumentsService_CreateTemplate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).CreateTemplate(ctx, req.(*CreateTemplateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DocumentsService_UpdateTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateTemplateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentsServiceServer).UpdateTemplate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DocumentsService_UpdateTemplate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).UpdateTemplate(ctx, req.(*UpdateTemplateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DocumentsService_DeleteTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteTemplateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentsServiceServer).DeleteTemplate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DocumentsService_DeleteTemplate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).DeleteTemplate(ctx, req.(*DeleteTemplateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _DocumentsService_ListDocuments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -990,78 +708,6 @@ func _DocumentsService_RemoveDocumentRelation_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocumentsService_GetComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetCommentsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentsServiceServer).GetComments(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DocumentsService_GetComments_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).GetComments(ctx, req.(*GetCommentsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DocumentsService_PostComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PostCommentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentsServiceServer).PostComment(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DocumentsService_PostComment_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).PostComment(ctx, req.(*PostCommentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DocumentsService_EditComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EditCommentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentsServiceServer).EditComment(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DocumentsService_EditComment_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).EditComment(ctx, req.(*EditCommentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DocumentsService_DeleteComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteCommentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentsServiceServer).DeleteComment(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DocumentsService_DeleteComment_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).DeleteComment(ctx, req.(*DeleteCommentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _DocumentsService_GetDocumentAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetDocumentAccessRequest)
 	if err := dec(in); err != nil {
@@ -1206,60 +852,6 @@ func _DocumentsService_ListUserDocuments_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocumentsService_ListCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListCategoriesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentsServiceServer).ListCategories(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DocumentsService_ListCategories_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).ListCategories(ctx, req.(*ListCategoriesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DocumentsService_CreateOrUpdateCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateOrUpdateCategoryRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentsServiceServer).CreateOrUpdateCategory(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DocumentsService_CreateOrUpdateCategory_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).CreateOrUpdateCategory(ctx, req.(*CreateOrUpdateCategoryRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DocumentsService_DeleteCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteCategoryRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocumentsServiceServer).DeleteCategory(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DocumentsService_DeleteCategory_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocumentsServiceServer).DeleteCategory(ctx, req.(*DeleteCategoryRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _DocumentsService_ListDocumentPins_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListDocumentPinsRequest)
 	if err := dec(in); err != nil {
@@ -1329,26 +921,6 @@ var DocumentsService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*DocumentsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ListTemplates",
-			Handler:    _DocumentsService_ListTemplates_Handler,
-		},
-		{
-			MethodName: "GetTemplate",
-			Handler:    _DocumentsService_GetTemplate_Handler,
-		},
-		{
-			MethodName: "CreateTemplate",
-			Handler:    _DocumentsService_CreateTemplate_Handler,
-		},
-		{
-			MethodName: "UpdateTemplate",
-			Handler:    _DocumentsService_UpdateTemplate_Handler,
-		},
-		{
-			MethodName: "DeleteTemplate",
-			Handler:    _DocumentsService_DeleteTemplate_Handler,
-		},
-		{
 			MethodName: "ListDocuments",
 			Handler:    _DocumentsService_ListDocuments_Handler,
 		},
@@ -1401,22 +973,6 @@ var DocumentsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocumentsService_RemoveDocumentRelation_Handler,
 		},
 		{
-			MethodName: "GetComments",
-			Handler:    _DocumentsService_GetComments_Handler,
-		},
-		{
-			MethodName: "PostComment",
-			Handler:    _DocumentsService_PostComment_Handler,
-		},
-		{
-			MethodName: "EditComment",
-			Handler:    _DocumentsService_EditComment_Handler,
-		},
-		{
-			MethodName: "DeleteComment",
-			Handler:    _DocumentsService_DeleteComment_Handler,
-		},
-		{
 			MethodName: "GetDocumentAccess",
 			Handler:    _DocumentsService_GetDocumentAccess_Handler,
 		},
@@ -1447,18 +1003,6 @@ var DocumentsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUserDocuments",
 			Handler:    _DocumentsService_ListUserDocuments_Handler,
-		},
-		{
-			MethodName: "ListCategories",
-			Handler:    _DocumentsService_ListCategories_Handler,
-		},
-		{
-			MethodName: "CreateOrUpdateCategory",
-			Handler:    _DocumentsService_CreateOrUpdateCategory_Handler,
-		},
-		{
-			MethodName: "DeleteCategory",
-			Handler:    _DocumentsService_DeleteCategory_Handler,
 		},
 		{
 			MethodName: "ListDocumentPins",

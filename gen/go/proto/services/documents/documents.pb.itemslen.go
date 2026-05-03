@@ -3,14 +3,6 @@
 
 package documents
 
-// ItemsLen returns the length of Comments.
-func (m *GetCommentsResponse) ItemsLen() int {
-	if m == nil {
-		return 0
-	}
-	return len(m.GetComments())
-}
-
 // ItemsLen returns the length of Activity.
 func (m *ListDocumentActivityResponse) ItemsLen() int {
 	if m == nil {

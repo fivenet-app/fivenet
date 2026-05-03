@@ -5,7 +5,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
-import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import type { Template } from '~~/gen/ts/resources/documents/templates/templates';
 
 const props = defineProps<{
@@ -23,7 +23,7 @@ const { activeChar } = storeToRefs(authStore);
 
 const logger = useLogger('📃 Doc Templates');
 
-const documentsDocumentsClient = await getDocumentsDocumentsClient();
+const documentsTemplatesClient = await getDocumentsTemplatesClient();
 
 const {
     data: template,
@@ -38,7 +38,7 @@ async function getTemplate(): Promise<Template> {
         data.activeChar = activeChar.value!;
         logger.debug('Documents: Editor - Clipboard Template Data', data);
 
-        const call = documentsDocumentsClient.getTemplate({
+        const call = documentsTemplatesClient.getTemplate({
             templateId: props.templateId,
             data: data,
             render: true,

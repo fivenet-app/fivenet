@@ -9,16 +9,6 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *CreatePageRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *CreatePageResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -26,36 +16,6 @@ func (m *CreatePageResponse) Sanitize() error {
 
 	// Field: Job
 	m.Job = htmlsanitizer.Sanitize(m.Job)
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeletePageRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeletePageResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *GetPageRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
 
 	return nil
 }

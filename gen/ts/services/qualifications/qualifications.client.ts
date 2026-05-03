@@ -8,14 +8,6 @@ import { QualificationsService } from "./qualifications";
 import type { UploadFileResponse } from "../../resources/file/filestore";
 import type { UploadFileRequest } from "../../resources/file/filestore";
 import type { ClientStreamingCall } from "@protobuf-ts/runtime-rpc";
-import type { GetUserExamResponse } from "./qualifications";
-import type { GetUserExamRequest } from "./qualifications";
-import type { SubmitExamResponse } from "./qualifications";
-import type { SubmitExamRequest } from "./qualifications";
-import type { TakeExamResponse } from "./qualifications";
-import type { TakeExamRequest } from "./qualifications";
-import type { GetExamInfoResponse } from "./qualifications";
-import type { GetExamInfoRequest } from "./qualifications";
 import type { DeleteQualificationResultResponse } from "./qualifications";
 import type { DeleteQualificationResultRequest } from "./qualifications";
 import type { CreateOrUpdateQualificationResultResponse } from "./qualifications";
@@ -89,22 +81,6 @@ export interface IQualificationsServiceClient {
      * @generated from protobuf rpc: DeleteQualificationResult
      */
     deleteQualificationResult(input: DeleteQualificationResultRequest, options?: RpcOptions): UnaryCall<DeleteQualificationResultRequest, DeleteQualificationResultResponse>;
-    /**
-     * @generated from protobuf rpc: GetExamInfo
-     */
-    getExamInfo(input: GetExamInfoRequest, options?: RpcOptions): UnaryCall<GetExamInfoRequest, GetExamInfoResponse>;
-    /**
-     * @generated from protobuf rpc: TakeExam
-     */
-    takeExam(input: TakeExamRequest, options?: RpcOptions): UnaryCall<TakeExamRequest, TakeExamResponse>;
-    /**
-     * @generated from protobuf rpc: SubmitExam
-     */
-    submitExam(input: SubmitExamRequest, options?: RpcOptions): UnaryCall<SubmitExamRequest, SubmitExamResponse>;
-    /**
-     * @generated from protobuf rpc: GetUserExam
-     */
-    getUserExam(input: GetUserExamRequest, options?: RpcOptions): UnaryCall<GetUserExamRequest, GetUserExamResponse>;
     /**
      * @generated from protobuf rpc: UploadFile
      */
@@ -197,38 +173,10 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<DeleteQualificationResultRequest, DeleteQualificationResultResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: GetExamInfo
-     */
-    getExamInfo(input: GetExamInfoRequest, options?: RpcOptions): UnaryCall<GetExamInfoRequest, GetExamInfoResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetExamInfoRequest, GetExamInfoResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: TakeExam
-     */
-    takeExam(input: TakeExamRequest, options?: RpcOptions): UnaryCall<TakeExamRequest, TakeExamResponse> {
-        const method = this.methods[12], opt = this._transport.mergeOptions(options);
-        return stackIntercept<TakeExamRequest, TakeExamResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: SubmitExam
-     */
-    submitExam(input: SubmitExamRequest, options?: RpcOptions): UnaryCall<SubmitExamRequest, SubmitExamResponse> {
-        const method = this.methods[13], opt = this._transport.mergeOptions(options);
-        return stackIntercept<SubmitExamRequest, SubmitExamResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: GetUserExam
-     */
-    getUserExam(input: GetUserExamRequest, options?: RpcOptions): UnaryCall<GetUserExamRequest, GetUserExamResponse> {
-        const method = this.methods[14], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetUserExamRequest, GetUserExamResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
      * @generated from protobuf rpc: UploadFile
      */
     uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
-        const method = this.methods[15], opt = this._transport.mergeOptions(options);
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
         return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
 }

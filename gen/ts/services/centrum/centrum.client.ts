@@ -5,54 +5,20 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CentrumService } from "./centrum";
-import type { UpdateDispatchStatusResponse } from "./centrum";
-import type { UpdateDispatchStatusRequest } from "./centrum";
-import type { UpdateUnitStatusResponse } from "./centrum";
-import type { UpdateUnitStatusRequest } from "./centrum";
-import type { TakeDispatchResponse } from "./centrum";
-import type { TakeDispatchRequest } from "./centrum";
-import type { DeleteUnitResponse } from "./centrum";
-import type { DeleteUnitRequest } from "./centrum";
-import type { CreateOrUpdateUnitResponse } from "./centrum";
-import type { CreateOrUpdateUnitRequest } from "./centrum";
-import type { ListDispatchActivityResponse } from "./centrum";
-import type { ListDispatchActivityRequest } from "./centrum";
-import type { ListDispatchesResponse } from "./centrum";
-import type { ListDispatchesRequest } from "./centrum";
-import type { GetDispatchResponse } from "./centrum";
-import type { GetDispatchRequest } from "./centrum";
-import type { ListUnitActivityResponse } from "./centrum";
-import type { ListUnitActivityRequest } from "./centrum";
-import type { ListUnitsResponse } from "./centrum";
-import type { ListUnitsRequest } from "./centrum";
-import type { JoinUnitResponse } from "./centrum";
-import type { JoinUnitRequest } from "./centrum";
-import type { GetSettingsResponse } from "./centrum";
-import type { GetSettingsRequest } from "./centrum";
 import type { StreamResponse } from "./centrum";
 import type { StreamRequest } from "./centrum";
 import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { UpdateDispatchersResponse } from "./centrum";
 import type { UpdateDispatchersRequest } from "./centrum";
-import type { GetDispatchHeatmapResponse } from "./centrum";
-import type { GetDispatchHeatmapRequest } from "./centrum";
-import type { AssignUnitResponse } from "./centrum";
-import type { AssignUnitRequest } from "./centrum";
-import type { AssignDispatchResponse } from "./centrum";
-import type { AssignDispatchRequest } from "./centrum";
 import type { TakeControlResponse } from "./centrum";
 import type { TakeControlRequest } from "./centrum";
-import type { ListDispatchTargetJobsResponse } from "./centrum";
-import type { ListDispatchTargetJobsRequest } from "./centrum";
-import type { DeleteDispatchResponse } from "./centrum";
-import type { DeleteDispatchRequest } from "./centrum";
-import type { UpdateDispatchResponse } from "./centrum";
-import type { UpdateDispatchRequest } from "./centrum";
-import type { CreateDispatchResponse } from "./centrum";
-import type { CreateDispatchRequest } from "./centrum";
-import { stackIntercept } from "@protobuf-ts/runtime-rpc";
+import type { GetDispatchHeatmapResponse } from "./centrum";
+import type { GetDispatchHeatmapRequest } from "./centrum";
 import type { UpdateSettingsResponse } from "./centrum";
 import type { UpdateSettingsRequest } from "./centrum";
+import { stackIntercept } from "@protobuf-ts/runtime-rpc";
+import type { GetSettingsResponse } from "./centrum";
+import type { GetSettingsRequest } from "./centrum";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
@@ -60,41 +26,21 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICentrumServiceClient {
     /**
+     * @generated from protobuf rpc: GetSettings
+     */
+    getSettings(input: GetSettingsRequest, options?: RpcOptions): UnaryCall<GetSettingsRequest, GetSettingsResponse>;
+    /**
      * @generated from protobuf rpc: UpdateSettings
      */
     updateSettings(input: UpdateSettingsRequest, options?: RpcOptions): UnaryCall<UpdateSettingsRequest, UpdateSettingsResponse>;
     /**
-     * @generated from protobuf rpc: CreateDispatch
+     * @generated from protobuf rpc: GetDispatchHeatmap
      */
-    createDispatch(input: CreateDispatchRequest, options?: RpcOptions): UnaryCall<CreateDispatchRequest, CreateDispatchResponse>;
-    /**
-     * @generated from protobuf rpc: UpdateDispatch
-     */
-    updateDispatch(input: UpdateDispatchRequest, options?: RpcOptions): UnaryCall<UpdateDispatchRequest, UpdateDispatchResponse>;
-    /**
-     * @generated from protobuf rpc: DeleteDispatch
-     */
-    deleteDispatch(input: DeleteDispatchRequest, options?: RpcOptions): UnaryCall<DeleteDispatchRequest, DeleteDispatchResponse>;
-    /**
-     * @generated from protobuf rpc: ListDispatchTargetJobs
-     */
-    listDispatchTargetJobs(input: ListDispatchTargetJobsRequest, options?: RpcOptions): UnaryCall<ListDispatchTargetJobsRequest, ListDispatchTargetJobsResponse>;
+    getDispatchHeatmap(input: GetDispatchHeatmapRequest, options?: RpcOptions): UnaryCall<GetDispatchHeatmapRequest, GetDispatchHeatmapResponse>;
     /**
      * @generated from protobuf rpc: TakeControl
      */
     takeControl(input: TakeControlRequest, options?: RpcOptions): UnaryCall<TakeControlRequest, TakeControlResponse>;
-    /**
-     * @generated from protobuf rpc: AssignDispatch
-     */
-    assignDispatch(input: AssignDispatchRequest, options?: RpcOptions): UnaryCall<AssignDispatchRequest, AssignDispatchResponse>;
-    /**
-     * @generated from protobuf rpc: AssignUnit
-     */
-    assignUnit(input: AssignUnitRequest, options?: RpcOptions): UnaryCall<AssignUnitRequest, AssignUnitResponse>;
-    /**
-     * @generated from protobuf rpc: GetDispatchHeatmap
-     */
-    getDispatchHeatmap(input: GetDispatchHeatmapRequest, options?: RpcOptions): UnaryCall<GetDispatchHeatmapRequest, GetDispatchHeatmapResponse>;
     /**
      * @generated from protobuf rpc: UpdateDispatchers
      */
@@ -103,54 +49,6 @@ export interface ICentrumServiceClient {
      * @generated from protobuf rpc: Stream
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse>;
-    /**
-     * @generated from protobuf rpc: GetSettings
-     */
-    getSettings(input: GetSettingsRequest, options?: RpcOptions): UnaryCall<GetSettingsRequest, GetSettingsResponse>;
-    /**
-     * @generated from protobuf rpc: JoinUnit
-     */
-    joinUnit(input: JoinUnitRequest, options?: RpcOptions): UnaryCall<JoinUnitRequest, JoinUnitResponse>;
-    /**
-     * @generated from protobuf rpc: ListUnits
-     */
-    listUnits(input: ListUnitsRequest, options?: RpcOptions): UnaryCall<ListUnitsRequest, ListUnitsResponse>;
-    /**
-     * @generated from protobuf rpc: ListUnitActivity
-     */
-    listUnitActivity(input: ListUnitActivityRequest, options?: RpcOptions): UnaryCall<ListUnitActivityRequest, ListUnitActivityResponse>;
-    /**
-     * @generated from protobuf rpc: GetDispatch
-     */
-    getDispatch(input: GetDispatchRequest, options?: RpcOptions): UnaryCall<GetDispatchRequest, GetDispatchResponse>;
-    /**
-     * @generated from protobuf rpc: ListDispatches
-     */
-    listDispatches(input: ListDispatchesRequest, options?: RpcOptions): UnaryCall<ListDispatchesRequest, ListDispatchesResponse>;
-    /**
-     * @generated from protobuf rpc: ListDispatchActivity
-     */
-    listDispatchActivity(input: ListDispatchActivityRequest, options?: RpcOptions): UnaryCall<ListDispatchActivityRequest, ListDispatchActivityResponse>;
-    /**
-     * @generated from protobuf rpc: CreateOrUpdateUnit
-     */
-    createOrUpdateUnit(input: CreateOrUpdateUnitRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateUnitRequest, CreateOrUpdateUnitResponse>;
-    /**
-     * @generated from protobuf rpc: DeleteUnit
-     */
-    deleteUnit(input: DeleteUnitRequest, options?: RpcOptions): UnaryCall<DeleteUnitRequest, DeleteUnitResponse>;
-    /**
-     * @generated from protobuf rpc: TakeDispatch
-     */
-    takeDispatch(input: TakeDispatchRequest, options?: RpcOptions): UnaryCall<TakeDispatchRequest, TakeDispatchResponse>;
-    /**
-     * @generated from protobuf rpc: UpdateUnitStatus
-     */
-    updateUnitStatus(input: UpdateUnitStatusRequest, options?: RpcOptions): UnaryCall<UpdateUnitStatusRequest, UpdateUnitStatusResponse>;
-    /**
-     * @generated from protobuf rpc: UpdateDispatchStatus
-     */
-    updateDispatchStatus(input: UpdateDispatchStatusRequest, options?: RpcOptions): UnaryCall<UpdateDispatchStatusRequest, UpdateDispatchStatusResponse>;
 }
 /**
  * @generated from protobuf service services.centrum.CentrumService
@@ -162,164 +60,45 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * @generated from protobuf rpc: GetSettings
+     */
+    getSettings(input: GetSettingsRequest, options?: RpcOptions): UnaryCall<GetSettingsRequest, GetSettingsResponse> {
+        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetSettingsRequest, GetSettingsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: UpdateSettings
      */
     updateSettings(input: UpdateSettingsRequest, options?: RpcOptions): UnaryCall<UpdateSettingsRequest, UpdateSettingsResponse> {
-        const method = this.methods[0], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpdateSettingsRequest, UpdateSettingsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: CreateDispatch
-     */
-    createDispatch(input: CreateDispatchRequest, options?: RpcOptions): UnaryCall<CreateDispatchRequest, CreateDispatchResponse> {
         const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CreateDispatchRequest, CreateDispatchResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: UpdateDispatch
-     */
-    updateDispatch(input: UpdateDispatchRequest, options?: RpcOptions): UnaryCall<UpdateDispatchRequest, UpdateDispatchResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpdateDispatchRequest, UpdateDispatchResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: DeleteDispatch
-     */
-    deleteDispatch(input: DeleteDispatchRequest, options?: RpcOptions): UnaryCall<DeleteDispatchRequest, DeleteDispatchResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteDispatchRequest, DeleteDispatchResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: ListDispatchTargetJobs
-     */
-    listDispatchTargetJobs(input: ListDispatchTargetJobsRequest, options?: RpcOptions): UnaryCall<ListDispatchTargetJobsRequest, ListDispatchTargetJobsResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListDispatchTargetJobsRequest, ListDispatchTargetJobsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: TakeControl
-     */
-    takeControl(input: TakeControlRequest, options?: RpcOptions): UnaryCall<TakeControlRequest, TakeControlResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
-        return stackIntercept<TakeControlRequest, TakeControlResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: AssignDispatch
-     */
-    assignDispatch(input: AssignDispatchRequest, options?: RpcOptions): UnaryCall<AssignDispatchRequest, AssignDispatchResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
-        return stackIntercept<AssignDispatchRequest, AssignDispatchResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: AssignUnit
-     */
-    assignUnit(input: AssignUnitRequest, options?: RpcOptions): UnaryCall<AssignUnitRequest, AssignUnitResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
-        return stackIntercept<AssignUnitRequest, AssignUnitResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<UpdateSettingsRequest, UpdateSettingsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: GetDispatchHeatmap
      */
     getDispatchHeatmap(input: GetDispatchHeatmapRequest, options?: RpcOptions): UnaryCall<GetDispatchHeatmapRequest, GetDispatchHeatmapResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetDispatchHeatmapRequest, GetDispatchHeatmapResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: TakeControl
+     */
+    takeControl(input: TakeControlRequest, options?: RpcOptions): UnaryCall<TakeControlRequest, TakeControlResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<TakeControlRequest, TakeControlResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: UpdateDispatchers
      */
     updateDispatchers(input: UpdateDispatchersRequest, options?: RpcOptions): UnaryCall<UpdateDispatchersRequest, UpdateDispatchersResponse> {
-        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateDispatchersRequest, UpdateDispatchersResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: Stream
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: GetSettings
-     */
-    getSettings(input: GetSettingsRequest, options?: RpcOptions): UnaryCall<GetSettingsRequest, GetSettingsResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetSettingsRequest, GetSettingsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: JoinUnit
-     */
-    joinUnit(input: JoinUnitRequest, options?: RpcOptions): UnaryCall<JoinUnitRequest, JoinUnitResponse> {
-        const method = this.methods[12], opt = this._transport.mergeOptions(options);
-        return stackIntercept<JoinUnitRequest, JoinUnitResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: ListUnits
-     */
-    listUnits(input: ListUnitsRequest, options?: RpcOptions): UnaryCall<ListUnitsRequest, ListUnitsResponse> {
-        const method = this.methods[13], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListUnitsRequest, ListUnitsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: ListUnitActivity
-     */
-    listUnitActivity(input: ListUnitActivityRequest, options?: RpcOptions): UnaryCall<ListUnitActivityRequest, ListUnitActivityResponse> {
-        const method = this.methods[14], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListUnitActivityRequest, ListUnitActivityResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: GetDispatch
-     */
-    getDispatch(input: GetDispatchRequest, options?: RpcOptions): UnaryCall<GetDispatchRequest, GetDispatchResponse> {
-        const method = this.methods[15], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetDispatchRequest, GetDispatchResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: ListDispatches
-     */
-    listDispatches(input: ListDispatchesRequest, options?: RpcOptions): UnaryCall<ListDispatchesRequest, ListDispatchesResponse> {
-        const method = this.methods[16], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListDispatchesRequest, ListDispatchesResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: ListDispatchActivity
-     */
-    listDispatchActivity(input: ListDispatchActivityRequest, options?: RpcOptions): UnaryCall<ListDispatchActivityRequest, ListDispatchActivityResponse> {
-        const method = this.methods[17], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListDispatchActivityRequest, ListDispatchActivityResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: CreateOrUpdateUnit
-     */
-    createOrUpdateUnit(input: CreateOrUpdateUnitRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateUnitRequest, CreateOrUpdateUnitResponse> {
-        const method = this.methods[18], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CreateOrUpdateUnitRequest, CreateOrUpdateUnitResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: DeleteUnit
-     */
-    deleteUnit(input: DeleteUnitRequest, options?: RpcOptions): UnaryCall<DeleteUnitRequest, DeleteUnitResponse> {
-        const method = this.methods[19], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteUnitRequest, DeleteUnitResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: TakeDispatch
-     */
-    takeDispatch(input: TakeDispatchRequest, options?: RpcOptions): UnaryCall<TakeDispatchRequest, TakeDispatchResponse> {
-        const method = this.methods[20], opt = this._transport.mergeOptions(options);
-        return stackIntercept<TakeDispatchRequest, TakeDispatchResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: UpdateUnitStatus
-     */
-    updateUnitStatus(input: UpdateUnitStatusRequest, options?: RpcOptions): UnaryCall<UpdateUnitStatusRequest, UpdateUnitStatusResponse> {
-        const method = this.methods[21], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpdateUnitStatusRequest, UpdateUnitStatusResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: UpdateDispatchStatus
-     */
-    updateDispatchStatus(input: UpdateDispatchStatusRequest, options?: RpcOptions): UnaryCall<UpdateDispatchStatusRequest, UpdateDispatchStatusResponse> {
-        const method = this.methods[22], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpdateDispatchStatusRequest, UpdateDispatchStatusResponse>("unary", this._transport, method, opt, input);
     }
 }

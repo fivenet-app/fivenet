@@ -9,16 +9,6 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *CalendarData) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *Data) Sanitize() error {
 	if m == nil {
 		return nil

@@ -6,6 +6,7 @@ import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "google/protobuf/duration.proto";
+import "resources/citizens/labels/access.proto";
 import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
 
@@ -50,7 +51,7 @@ message Label {
   ];
 
   optional Settings settings = 9;
-  optional Access access = 10 [(buf.validate.field).required = true];
+  optional LabelAccess access = 10 [(buf.validate.field).required = true];
 
   // Citizen label assignment data
   optional resources.timestamp.Timestamp expires_at = 11;
@@ -68,28 +69,4 @@ message Settings {
     gte: {seconds: 900} /* 15 minutes */
     lte: {seconds: 157680000} /* 5 years */
   }];
-}
-
-enum AccessLevel {
-  ACCESS_LEVEL_UNSPECIFIED = 0;
-  ACCESS_LEVEL_VIEW = 1;
-  ACCESS_LEVEL_GIVE = 2;
-  ACCESS_LEVEL_REMOVE = 3;
-}
-
-message Access {
-  repeated JobAccess jobs = 1 [
-    (buf.validate.field).repeated.max_items = 20,
-    (tagger.tags) = "alias:\"job_access\""
-  ];
-}
-
-message JobAccess {
-  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\""];
-  int64 target_id = 2;
-  string job = 3 [(buf.validate.field).string.max_len = 20];
-  optional string job_label = 4 [(buf.validate.field).string.max_len = 50];
-  int32 minimum_grade = 5 [(buf.validate.field).int32.gte = 0];
-  optional string job_grade_label = 6 [(buf.validate.field).string.max_len = 50];
-  AccessLevel access = 7 [(buf.validate.field).enum.defined_only = true];
 }

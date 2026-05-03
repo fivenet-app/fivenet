@@ -31,16 +31,6 @@ func (m *ExamGrading) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ExamGradingResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *ExamQuestion) Sanitize() error {
 	if m == nil {
 		return nil
@@ -248,16 +238,6 @@ func (m *ExamQuestionMultipleChoice) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ExamQuestionSeparator) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *ExamQuestionSingleChoice) Sanitize() error {
 	if m == nil {
 		return nil
@@ -269,26 +249,6 @@ func (m *ExamQuestionSingleChoice) Sanitize() error {
 
 		m.Choices[idx] = htmlsanitizer.StripHTMLTags(m.Choices[idx])
 
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ExamQuestionText) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ExamQuestionYesNo) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil
@@ -418,16 +378,6 @@ func (m *ExamResponseMultipleChoice) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ExamResponseSeparator) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *ExamResponseSingleChoice) Sanitize() error {
 	if m == nil {
 		return nil
@@ -448,16 +398,6 @@ func (m *ExamResponseText) Sanitize() error {
 
 	// Field: Text
 	m.Text = htmlsanitizer.StripHTMLTags(m.Text)
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ExamResponseYesNo) Sanitize() error {
-	if m == nil {
-		return nil
-	}
 
 	return nil
 }

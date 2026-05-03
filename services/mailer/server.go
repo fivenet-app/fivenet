@@ -55,6 +55,8 @@ func init() {
 
 type Server struct {
 	pbmailer.MailerServiceServer
+	pbmailer.SettingsServiceServer
+	pbmailer.ThreadServiceServer
 
 	db       *sql.DB
 	ps       perms.Permissions
@@ -160,4 +162,6 @@ func NewServer(p Params) *Server {
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbmailer.RegisterMailerServiceServer(srv, s)
+	pbmailer.RegisterSettingsServiceServer(srv, s)
+	pbmailer.RegisterThreadServiceServer(srv, s)
 }

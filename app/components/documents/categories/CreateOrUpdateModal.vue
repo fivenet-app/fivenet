@@ -4,7 +4,7 @@ import { ShapeIcon } from 'mdi-vue3';
 import { z } from 'zod';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
-import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import { getDocumentsCategoriesClient } from '~~/gen/ts/clients';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -23,7 +23,7 @@ const { fallbackColor } = useAppConfig();
 
 const notifications = useNotificationsStore();
 
-const documentsDocumentsClient = await getDocumentsDocumentsClient();
+const documentsCategoriesClient = await getDocumentsCategoriesClient();
 
 const canEdit = can('documents.DocumentsService/CreateOrUpdateCategory');
 
@@ -44,7 +44,7 @@ const state = reactive<Schema>({
 
 async function createOrUpdateCategory(values: Schema): Promise<void> {
     try {
-        await documentsDocumentsClient.createOrUpdateCategory({
+        await documentsCategoriesClient.createOrUpdateCategory({
             category: {
                 id: props.category?.id ?? 0,
                 name: values.name,
@@ -80,7 +80,7 @@ async function deleteCategory(): Promise<void> {
     if (props.category === undefined) return;
 
     try {
-        await documentsDocumentsClient.deleteCategory({
+        await documentsCategoriesClient.deleteCategory({
             id: props.category.id!,
         });
 

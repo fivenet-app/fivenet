@@ -5,20 +5,20 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { CardElements } from '~/utils/types';
-import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import { getDocumentsCategoriesClient } from '~~/gen/ts/clients';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
 
 const { can } = useAuth();
 
 const overlay = useOverlay();
 
-const documentsDocumentsClient = await getDocumentsDocumentsClient();
+const documentsCategoriesClient = await getDocumentsCategoriesClient();
 
 const { data: categories, status, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
 
 async function listCategories(): Promise<Category[]> {
     try {
-        const call = documentsDocumentsClient.listCategories({});
+        const call = documentsCategoriesClient.listCategories({});
         const { response } = await call;
 
         return response.categories;

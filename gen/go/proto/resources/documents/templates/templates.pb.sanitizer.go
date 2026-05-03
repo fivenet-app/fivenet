@@ -9,16 +9,6 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ObjectSpecs) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *Template) Sanitize() error {
 	if m == nil {
 		return nil
@@ -161,16 +151,6 @@ func (m *TemplateApproval) Sanitize() error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *TemplateApprovalPolicy) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil
@@ -416,16 +396,6 @@ func (m *TemplateShort) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *TemplateUserAccess) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil

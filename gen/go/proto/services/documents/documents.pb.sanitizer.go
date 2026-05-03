@@ -28,16 +28,6 @@ func (m *AddDocumentReferenceRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *AddDocumentReferenceResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *AddDocumentRelationRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -50,36 +40,6 @@ func (m *AddDocumentRelationRequest) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *AddDocumentRelationResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ChangeDocumentOwnerRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ChangeDocumentOwnerResponse) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil
@@ -149,143 +109,6 @@ func (m *CreateDocumentRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *CreateDocumentResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *CreateOrUpdateCategoryRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Category
-	if m.Category != nil {
-		if v, ok := any(m.GetCategory()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *CreateOrUpdateCategoryResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Category
-	if m.Category != nil {
-		if v, ok := any(m.GetCategory()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *CreateTemplateRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Template
-	if m.Template != nil {
-		if v, ok := any(m.GetTemplate()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *CreateTemplateResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteCategoryRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteCategoryResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteCommentRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteCommentResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteDocumentReqRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteDocumentReqResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *DeleteDocumentRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -294,134 +117,6 @@ func (m *DeleteDocumentRequest) Sanitize() error {
 	// Field: Reason
 	if m.Reason != nil {
 		*m.Reason = htmlsanitizer.StripHTMLTags(*m.Reason)
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteDocumentResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteTemplateRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteTemplateResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *EditCommentRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Comment
-	if m.Comment != nil {
-		if v, ok := any(m.GetComment()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *EditCommentResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Comment
-	if m.Comment != nil {
-		if v, ok := any(m.GetComment()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *GetCommentsRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Pagination
-	if m.Pagination != nil {
-		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *GetCommentsResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Comments
-	for idx, item := range m.Comments {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: Pagination
-	if m.Pagination != nil {
-		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *GetDocumentAccessRequest) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil
@@ -441,16 +136,6 @@ func (m *GetDocumentAccessResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *GetDocumentReferencesRequest) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil
@@ -480,16 +165,6 @@ func (m *GetDocumentReferencesResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *GetDocumentRelationsRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *GetDocumentRelationsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -505,16 +180,6 @@ func (m *GetDocumentRelationsResponse) Sanitize() error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *GetDocumentRequest) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil
@@ -543,76 +208,6 @@ func (m *GetDocumentResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *GetTemplateRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Data
-	if m.Data != nil {
-		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *GetTemplateResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Template
-	if m.Template != nil {
-		if v, ok := any(m.GetTemplate()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ListCategoriesRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ListCategoriesResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Categories
-	for idx, item := range m.Categories {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	return nil
@@ -858,38 +453,6 @@ func (m *ListDocumentsResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ListTemplatesRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ListTemplatesResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Templates
-	for idx, item := range m.Templates {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *ListUserDocumentsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -955,84 +518,6 @@ func (m *ListUserDocumentsResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *PostCommentRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Comment
-	if m.Comment != nil {
-		if v, ok := any(m.GetComment()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *PostCommentResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Comment
-	if m.Comment != nil {
-		if v, ok := any(m.GetComment()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *RemoveDocumentReferenceRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *RemoveDocumentReferenceResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *RemoveDocumentRelationRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *RemoveDocumentRelationResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *SetDocumentAccessRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -1045,16 +530,6 @@ func (m *SetDocumentAccessRequest) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *SetDocumentAccessResponse) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil
@@ -1086,26 +561,6 @@ func (m *SetDocumentReminderRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *SetDocumentReminderResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ToggleDocumentPinRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *ToggleDocumentPinResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -1118,26 +573,6 @@ func (m *ToggleDocumentPinResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ToggleDocumentRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ToggleDocumentResponse) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil
@@ -1257,44 +692,6 @@ func (m *UpdateDocumentResponse) Sanitize() error {
 	// Field: Document
 	if m.Document != nil {
 		if v, ok := any(m.GetDocument()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *UpdateTemplateRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Template
-	if m.Template != nil {
-		if v, ok := any(m.GetTemplate()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *UpdateTemplateResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Template
-	if m.Template != nil {
-		if v, ok := any(m.GetTemplate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -47,26 +47,6 @@ func (m *CreateAccountResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DeleteAccountRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteAccountResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *DisconnectSocialLoginRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -74,16 +54,6 @@ func (m *DisconnectSocialLoginRequest) Sanitize() error {
 
 	// Field: ProviderName
 	m.ProviderName = htmlsanitizer.Sanitize(m.ProviderName)
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DisconnectSocialLoginResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
 
 	return nil
 }
@@ -162,16 +132,6 @@ func (m *ListAccountsResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *UpdateAccountRequest) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil

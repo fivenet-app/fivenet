@@ -209,16 +209,6 @@ func (m *PageActivityData) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *PageFilesChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *PageUpdated) Sanitize() error {
 	if m == nil {
 		return nil

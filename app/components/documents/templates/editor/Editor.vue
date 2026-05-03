@@ -15,13 +15,13 @@ import { TemplateBlock } from '~/composables/tiptap/extensions/TemplateBlock';
 import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
-import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
 import { ApprovalAssigneeKind, ApprovalRuleKind, OnEditBehavior } from '~~/gen/ts/resources/documents/approval/approval';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/documents/documents';
+import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/documents/templates';
 import PolicyEditor from '../../approval/PolicyEditor.vue';
 import ApprovalTasksEditor from './ApprovalTasksEditor.vue';
 import SchemaEditor from './SchemaEditor.vue';
@@ -45,7 +45,7 @@ const completorStore = useCompletorStore();
 
 const { maxAccessEntries } = useAppConfig();
 
-const documentsDocumentsClient = await getDocumentsDocumentsClient();
+const documentsTemplatesClient = await getDocumentsTemplatesClient();
 
 const schema = z.object({
     weight: z.coerce.number().min(0).max(999_999),
@@ -280,7 +280,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
 
     try {
         if (templateId === undefined) {
-            const call = documentsDocumentsClient.createTemplate(req);
+            const call = documentsTemplatesClient.createTemplate(req);
             const { response } = await call;
 
             notifications.add({
@@ -294,7 +294,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
                 params: { id: response.id },
             });
         } else {
-            const call = documentsDocumentsClient.updateTemplate(req);
+            const call = documentsTemplatesClient.updateTemplate(req);
             const { response } = await call;
             if (response.template) {
                 setValuesFromTemplate(response.template);
@@ -404,7 +404,7 @@ const extensions = [TemplateVar.configure(), TemplateBlock.configure()];
 onBeforeMount(async () => {
     if (props.templateId) {
         try {
-            const call = documentsDocumentsClient.getTemplate({
+            const call = documentsTemplatesClient.getTemplate({
                 templateId: props.templateId,
                 render: false,
             });

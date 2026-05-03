@@ -105,36 +105,6 @@ func (m *DecideApprovalResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DeleteApprovalTasksRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteApprovalTasksResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ListApprovalPoliciesRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *ListApprovalPoliciesResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -291,16 +261,6 @@ func (m *ListApprovalsResponse) Sanitize() error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *RecomputeApprovalPolicyCountersRequest) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil

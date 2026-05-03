@@ -4,12 +4,12 @@ import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { getMailerMailerClient } from '~~/gen/ts/clients';
+import { getMailerSettingsClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Template } from '~~/gen/ts/resources/mailer/templates/template';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { CreateOrUpdateTemplateRequest } from '~~/gen/ts/services/mailer/mailer';
+import type { CreateOrUpdateTemplateRequest } from '~~/gen/ts/services/mailer/settings';
 
 const props = defineProps<{
     template?: Template;
@@ -25,7 +25,7 @@ const notifications = useNotificationsStore();
 const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);
 
-const mailerMailerClient = await getMailerMailerClient();
+const mailerSettingsClient = await getMailerSettingsClient();
 
 const schema = z.object({
     title: z.coerce.string().min(3).max(255),
@@ -56,7 +56,7 @@ watch(props, () => setFromProps());
 
 async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTemplateRequest> {
     try {
-        const call = mailerMailerClient.createOrUpdateTemplate({
+        const call = mailerSettingsClient.createOrUpdateTemplate({
             template: {
                 id: props.template?.id ?? 0,
                 emailId: selectedEmail.value!.id,

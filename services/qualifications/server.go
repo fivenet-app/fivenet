@@ -63,6 +63,7 @@ var (
 
 type Server struct {
 	pbqualifications.QualificationsServiceServer
+	pbqualifications.ExamServiceServer
 
 	logger   *zap.Logger
 	db       *sql.DB
@@ -168,4 +169,5 @@ func NewServer(p Params) *Server {
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbqualifications.RegisterQualificationsServiceServer(srv, s)
+	pbqualifications.RegisterExamServiceServer(srv, s)
 }

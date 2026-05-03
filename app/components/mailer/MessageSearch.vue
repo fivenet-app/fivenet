@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { CommandPaletteGroup, CommandPaletteItem } from '@nuxt/ui';
 import { useMailerStore } from '~/stores/mailer';
-import { getMailerMailerClient } from '~~/gen/ts/clients';
+import { getMailerThreadClient } from '~~/gen/ts/clients';
 
 const { t, d } = useI18n();
 
@@ -12,7 +12,7 @@ const isOpen = ref(false);
 const mailerStore = useMailerStore();
 const { selectedEmail, selectedThread } = storeToRefs(mailerStore);
 
-const mailerMailerClient = await getMailerMailerClient();
+const mailerThreadClient = await getMailerThreadClient();
 
 const searchTerm = ref('');
 const searchTermDebounced = debouncedRef(searchTerm, 200);
@@ -29,7 +29,7 @@ async function searchThreads(q: string): Promise<CommandPaletteItem[]> {
     if (q.length < 3) return [];
 
     try {
-        const call = mailerMailerClient.searchThreads({
+        const call = mailerThreadClient.searchThreads({
             pagination: {
                 offset: 0,
                 pageSize: 6,

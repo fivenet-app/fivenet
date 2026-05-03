@@ -2,7 +2,7 @@ import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
 import type { NotificationActionI18n } from '~/types/notifications';
-import { getCentrumCentrumClient } from '~~/gen/ts/clients';
+import { getCentrumCentrumClient, getCentrumDispatchesClient } from '~~/gen/ts/clients';
 import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers/dispatchers';
 import {
     type Dispatch,
@@ -985,10 +985,10 @@ export const useCentrumStore = defineStore(
                 return;
             }
 
-            const centrumCentrumClient = await getCentrumCentrumClient();
+            const centrumDispatchesClient = await getCentrumDispatchesClient();
 
             try {
-                const call = centrumCentrumClient.takeDispatch({
+                const call = centrumDispatchesClient.takeDispatch({
                     dispatchIds: [id],
                     resp: TakeDispatchResp.ACCEPTED,
                 });

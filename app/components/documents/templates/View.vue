@@ -8,7 +8,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
-import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
 import { ApprovalAssigneeKind } from '~~/gen/ts/resources/documents/approval/approval';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates/templates';
@@ -29,7 +29,7 @@ const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
 
-const documentsDocumentsClient = await getDocumentsDocumentsClient();
+const documentsTemplatesClient = await getDocumentsTemplatesClient();
 
 const reqs = ref<undefined | TemplateRequirements>();
 
@@ -42,7 +42,7 @@ const {
 
 async function getTemplate(): Promise<Template | undefined> {
     try {
-        const call = documentsDocumentsClient.getTemplate({
+        const call = documentsTemplatesClient.getTemplate({
             templateId: props.templateId,
             render: false,
         });
@@ -68,7 +68,7 @@ useHead({
 
 async function deleteTemplate(id: number): Promise<void> {
     try {
-        await documentsDocumentsClient.deleteTemplate({ id });
+        await documentsTemplatesClient.deleteTemplate({ id });
 
         notifications.add({
             title: { key: 'notifications.templates.deleted.title', parameters: {} },

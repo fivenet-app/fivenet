@@ -2,11 +2,11 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
-import { getJobsJobsClient } from '~~/gen/ts/clients';
+import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import type { Labels } from '~~/gen/ts/resources/jobs/labels/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { GetColleagueLabelsResponse, SetColleaguePropsResponse } from '~~/gen/ts/services/jobs/jobs';
+import type { GetColleagueLabelsResponse, SetColleaguePropsResponse } from '~~/gen/ts/services/jobs/colleagues';
 
 const props = defineProps<{
     userId: number;
@@ -20,11 +20,11 @@ const labels = defineModel<Labels | undefined>();
 
 const notifications = useNotificationsStore();
 
-const jobsJobsClient = await getJobsJobsClient();
+const jobsColleaguesClient = await getJobsColleaguesClient();
 
 async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsResponse> {
     try {
-        const { response } = await jobsJobsClient.getColleagueLabels({
+        const { response } = await jobsColleaguesClient.getColleagueLabels({
             search: search,
         });
 
@@ -69,7 +69,7 @@ async function setUserJobProp(userId: number, values: Schema): Promise<SetCollea
     };
 
     try {
-        const call = jobsJobsClient.setColleagueProps({
+        const call = jobsColleaguesClient.setColleagueProps({
             props: jobsUserProps,
             reason: values.reason,
         });

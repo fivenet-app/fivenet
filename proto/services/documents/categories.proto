@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package services.documents;
+
+import "buf/validate/validate.proto";
+import "codegen/perms/perms.proto";
+import "resources/documents/category/category.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documents";
+
+message ListCategoriesRequest {}
+
+message ListCategoriesResponse {
+  repeated resources.documents.category.Category categories = 1;
+}
+
+message CreateOrUpdateCategoryRequest {
+  resources.documents.category.Category category = 1 [(buf.validate.field).required = true];
+}
+
+message CreateOrUpdateCategoryResponse {
+  resources.documents.category.Category category = 1 [(buf.validate.field).required = true];
+}
+
+message DeleteCategoryRequest {
+  int64 id = 1;
+}
+
+message DeleteCategoryResponse {}
+
+service CategoriesService {
+  option (codegen.perms.perms_svc) = {
+    name: "documents.DocumentsService"
+  };
+
+  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      attrs: [
+        {
+          key: "Jobs"
+          type: ATTRIBUTE_TYPE_JOB_LIST
+        }
+      ]
+    };
+  }
+  rpc CreateOrUpdateCategory(CreateOrUpdateCategoryRequest) returns (CreateOrUpdateCategoryResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+}

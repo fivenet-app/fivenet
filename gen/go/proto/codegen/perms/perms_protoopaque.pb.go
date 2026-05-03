@@ -296,6 +296,7 @@ type ServiceOptions struct {
 	state                      protoimpl.MessageState    `protogen:"opaque.v1"`
 	xxx_hidden_Order           int32                     `protobuf:"varint,1,opt,name=order,proto3"`
 	xxx_hidden_Icon            *string                   `protobuf:"bytes,2,opt,name=icon,proto3,oneof"`
+	xxx_hidden_Name            *string                   `protobuf:"bytes,4,opt,name=name,proto3,oneof"`
 	xxx_hidden_AdditionalPerms *[]*AdditionalServicePerm `protobuf:"bytes,3,rep,name=additional_perms,json=additionalPerms,proto3"`
 	XXX_raceDetectHookData     protoimpl.RaceDetectHookData
 	XXX_presence               [1]uint32
@@ -345,6 +346,16 @@ func (x *ServiceOptions) GetIcon() string {
 	return ""
 }
 
+func (x *ServiceOptions) GetName() string {
+	if x != nil {
+		if x.xxx_hidden_Name != nil {
+			return *x.xxx_hidden_Name
+		}
+		return ""
+	}
+	return ""
+}
+
 func (x *ServiceOptions) GetAdditionalPerms() []*AdditionalServicePerm {
 	if x != nil {
 		if x.xxx_hidden_AdditionalPerms != nil {
@@ -360,7 +371,12 @@ func (x *ServiceOptions) SetOrder(v int32) {
 
 func (x *ServiceOptions) SetIcon(v string) {
 	x.xxx_hidden_Icon = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
+}
+
+func (x *ServiceOptions) SetName(v string) {
+	x.xxx_hidden_Name = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
 }
 
 func (x *ServiceOptions) SetAdditionalPerms(v []*AdditionalServicePerm) {
@@ -374,9 +390,21 @@ func (x *ServiceOptions) HasIcon() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
+func (x *ServiceOptions) HasName() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
 func (x *ServiceOptions) ClearIcon() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
 	x.xxx_hidden_Icon = nil
+}
+
+func (x *ServiceOptions) ClearName() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Name = nil
 }
 
 type ServiceOptions_builder struct {
@@ -384,6 +412,7 @@ type ServiceOptions_builder struct {
 
 	Order           int32
 	Icon            *string
+	Name            *string
 	AdditionalPerms []*AdditionalServicePerm
 }
 
@@ -393,8 +422,12 @@ func (b0 ServiceOptions_builder) Build() *ServiceOptions {
 	_, _ = b, x
 	x.xxx_hidden_Order = b.Order
 	if b.Icon != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
 		x.xxx_hidden_Icon = b.Icon
+	}
+	if b.Name != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
+		x.xxx_hidden_Name = b.Name
 	}
 	x.xxx_hidden_AdditionalPerms = &b.AdditionalPerms
 	return m0
@@ -537,12 +570,14 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\x12C\n" +
 	"\x04type\x18\x03 \x01(\x0e2/.resources.permissions.attributes.AttributeTypeR\x04type\x12*\n" +
-	"\x11valid_string_list\x18\x04 \x03(\tR\x0fvalidStringList\"\x99\x01\n" +
+	"\x11valid_string_list\x18\x04 \x03(\tR\x0fvalidStringList\"\xbb\x01\n" +
 	"\x0eServiceOptions\x12\x14\n" +
 	"\x05order\x18\x01 \x01(\x05R\x05order\x12\x17\n" +
-	"\x04icon\x18\x02 \x01(\tH\x00R\x04icon\x88\x01\x01\x12O\n" +
+	"\x04icon\x18\x02 \x01(\tH\x00R\x04icon\x88\x01\x01\x12\x17\n" +
+	"\x04name\x18\x04 \x01(\tH\x01R\x04name\x88\x01\x01\x12O\n" +
 	"\x10additional_perms\x18\x03 \x03(\v2$.codegen.perms.AdditionalServicePermR\x0fadditionalPermsB\a\n" +
-	"\x05_icon\"l\n" +
+	"\x05_iconB\a\n" +
+	"\x05_name\"l\n" +
 	"\x15AdditionalServicePerm\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x14\n" +
 	"\x05order\x18\x04 \x01(\x05R\x05order\x12)\n" +

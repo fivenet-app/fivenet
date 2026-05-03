@@ -10,10 +10,10 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import Pagination from '~/components/partials/Pagination.vue';
-import { getCentrumCentrumClient } from '~~/gen/ts/clients';
+import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
+import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/units';
 
 const { t } = useI18n();
 
@@ -23,13 +23,13 @@ const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
 
-const centrumCentrumClient = await getCentrumCentrumClient();
+const centrumUnitsClient = await getCentrumUnitsClient();
 
 const { data: units, status, refresh, error } = useLazyAsyncData('centrum-units', () => listUnits());
 
 async function listUnits(): Promise<ListUnitsResponse> {
     try {
-        const call = centrumCentrumClient.listUnits({
+        const call = centrumUnitsClient.listUnits({
             status: [],
         });
         const { response } = await call;
@@ -43,7 +43,7 @@ async function listUnits(): Promise<ListUnitsResponse> {
 
 async function deleteUnit(id: number): Promise<void> {
     try {
-        const call = centrumCentrumClient.deleteUnit({
+        const call = centrumUnitsClient.deleteUnit({
             unitId: id,
         });
         await call;

@@ -1,6 +1,6 @@
 import type { JSONContent } from '@tiptap/core';
 import type { NotificationActionI18n } from '~/types/notifications';
-import { getMailerMailerClient } from '~~/gen/ts/clients';
+import { getMailerMailerClient, getMailerSettingsClient, getMailerThreadClient } from '~~/gen/ts/clients';
 import type { Email } from '~~/gen/ts/resources/mailer/emails/email';
 import type { MailerEvent } from '~~/gen/ts/resources/mailer/events/events';
 import type { Message, MessageAttachment } from '~~/gen/ts/resources/mailer/messages/message';
@@ -9,26 +9,30 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type {
     CreateOrUpdateEmailRequest,
     CreateOrUpdateEmailResponse,
-    CreateThreadRequest,
-    CreateThreadResponse,
     DeleteEmailRequest,
     DeleteEmailResponse,
+    ListEmailsResponse,
+} from '~~/gen/ts/services/mailer/mailer';
+import type {
+    GetEmailSettingsRequest,
+    GetEmailSettingsResponse,
+    SetEmailSettingsRequest,
+    SetEmailSettingsResponse,
+} from '~~/gen/ts/services/mailer/settings';
+import type {
+    CreateThreadRequest,
+    CreateThreadResponse,
     DeleteMessageRequest,
     DeleteMessageResponse,
     DeleteThreadRequest,
     DeleteThreadResponse,
-    GetEmailSettingsRequest,
-    GetEmailSettingsResponse,
-    ListEmailsResponse,
     ListThreadMessagesRequest,
     ListThreadMessagesResponse,
     ListThreadsRequest,
     ListThreadsResponse,
     PostMessageRequest,
     PostMessageResponse,
-    SetEmailSettingsRequest,
-    SetEmailSettingsResponse,
-} from '~~/gen/ts/services/mailer/mailer';
+} from '~~/gen/ts/services/mailer/thread';
 
 const logger = useLogger('💬 Mailer');
 
@@ -515,10 +519,10 @@ export const useMailerStore = defineStore(
             req: ListThreadsRequest,
             store: boolean = true,
         ): Promise<ListThreadsResponse | undefined> => {
-            const mailerMailerClient = await getMailerMailerClient();
+            const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerMailerClient.listThreads(req);
+                const call = mailerThreadClient.listThreads(req);
                 const { response } = await call;
 
                 // If response is at offset 0 and request is not for archived threads, update unread threads list
@@ -569,10 +573,10 @@ export const useMailerStore = defineStore(
         const getThread = async (threadId: number): Promise<Thread | undefined> => {
             if (!selectedEmail.value) return;
 
-            const mailerMailerClient = await getMailerMailerClient();
+            const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerMailerClient.getThread({
+                const call = mailerThreadClient.getThread({
                     emailId: selectedEmail.value.id,
                     threadId,
                 });
@@ -611,10 +615,10 @@ export const useMailerStore = defineStore(
          * @returns {Promise<CreateThreadResponse>} - The response containing the created thread.
          */
         const createThread = async (req: CreateThreadRequest): Promise<CreateThreadResponse> => {
-            const mailerMailerClient = await getMailerMailerClient();
+            const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerMailerClient.createThread(req);
+                const call = mailerThreadClient.createThread(req);
                 const { response } = await call;
 
                 if (response.thread) {
@@ -640,10 +644,10 @@ export const useMailerStore = defineStore(
          * @returns {Promise<DeleteThreadResponse>} - The response confirming the deletion.
          */
         const deleteThread = async (req: DeleteThreadRequest): Promise<DeleteThreadResponse> => {
-            const mailerMailerClient = await getMailerMailerClient();
+            const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerMailerClient.deleteThread(req);
+                const call = mailerThreadClient.deleteThread(req);
                 const { response } = await call;
 
                 if (selectedThread.value?.id === req.threadId) {
@@ -670,10 +674,10 @@ export const useMailerStore = defineStore(
          * @returns {Promise<ThreadState | undefined>} - The thread state, if found.
          */
         const getThreadState = async (threadId: number): Promise<ThreadState | undefined> => {
-            const mailerMailerClient = await getMailerMailerClient();
+            const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerMailerClient.getThreadState({
+                const call = mailerThreadClient.getThreadState({
                     emailId: selectedEmail.value!.id,
                     threadId,
                 });
@@ -736,9 +740,9 @@ export const useMailerStore = defineStore(
         ): Promise<ThreadState | undefined> => {
             if (!selectedEmail.value) return;
 
-            const mailerMailerClient = await getMailerMailerClient();
+            const mailerThreadClient = await getMailerThreadClient();
 
-            const { response } = await mailerMailerClient.setThreadState({
+            const { response } = await mailerThreadClient.setThreadState({
                 state: {
                     ...state,
                     threadId: state.threadId!,
@@ -772,10 +776,10 @@ export const useMailerStore = defineStore(
         const listThreadMessages = async (req: ListThreadMessagesRequest): Promise<ListThreadMessagesResponse | undefined> => {
             if (!selectedEmail.value) return;
 
-            const mailerMailerClient = await getMailerMailerClient();
+            const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerMailerClient.listThreadMessages(req);
+                const call = mailerThreadClient.listThreadMessages(req);
                 const { response } = await call;
 
                 messages.value = response;
@@ -801,10 +805,10 @@ export const useMailerStore = defineStore(
          * @returns {Promise<PostMessageResponse>} - The response containing the posted message.
          */
         const postMessage = async (req: PostMessageRequest): Promise<PostMessageResponse> => {
-            const mailerMailerClient = await getMailerMailerClient();
+            const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerMailerClient.postMessage(req);
+                const call = mailerThreadClient.postMessage(req);
                 const { response } = await call;
 
                 if (response.message) {
@@ -827,10 +831,10 @@ export const useMailerStore = defineStore(
          * @returns {Promise<DeleteMessageResponse>} - The response confirming the deletion.
          */
         const deleteMessage = async (req: DeleteMessageRequest): Promise<DeleteMessageResponse> => {
-            const mailerMailerClient = await getMailerMailerClient();
+            const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerMailerClient.deleteMessage(req);
+                const call = mailerThreadClient.deleteMessage(req);
                 const { response } = await call;
 
                 notifications.add({
@@ -854,10 +858,10 @@ export const useMailerStore = defineStore(
          * @returns {Promise<GetEmailSettingsResponse>} - The response containing the email settings.
          */
         const getEmailSettings = async (req: GetEmailSettingsRequest): Promise<GetEmailSettingsResponse> => {
-            const mailerMailerClient = await getMailerMailerClient();
+            const mailerSettingsClient = await getMailerSettingsClient();
 
             try {
-                const call = mailerMailerClient.getEmailSettings(req);
+                const call = mailerSettingsClient.getEmailSettings(req);
                 const { response } = await call;
 
                 if (response.settings && selectedEmail.value) {
@@ -878,10 +882,10 @@ export const useMailerStore = defineStore(
          * @returns {Promise<SetEmailSettingsResponse>} - The response confirming the update.
          */
         const setEmailSettings = async (req: SetEmailSettingsRequest): Promise<SetEmailSettingsResponse> => {
-            const mailerMailerClient = await getMailerMailerClient();
+            const mailerSettingsClient = await getMailerSettingsClient();
 
             try {
-                const call = mailerMailerClient.setEmailSettings(req);
+                const call = mailerSettingsClient.setEmailSettings(req);
                 const { response } = await call;
 
                 if (response.settings && selectedEmail.value) {

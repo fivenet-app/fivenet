@@ -19,30 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	JobsService_ListColleagues_FullMethodName          = "/services.jobs.JobsService/ListColleagues"
-	JobsService_GetSelf_FullMethodName                 = "/services.jobs.JobsService/GetSelf"
-	JobsService_GetColleague_FullMethodName            = "/services.jobs.JobsService/GetColleague"
-	JobsService_ListColleagueActivity_FullMethodName   = "/services.jobs.JobsService/ListColleagueActivity"
-	JobsService_SetColleagueProps_FullMethodName       = "/services.jobs.JobsService/SetColleagueProps"
-	JobsService_GetColleagueLabels_FullMethodName      = "/services.jobs.JobsService/GetColleagueLabels"
-	JobsService_ManageLabels_FullMethodName            = "/services.jobs.JobsService/ManageLabels"
-	JobsService_GetColleagueLabelsStats_FullMethodName = "/services.jobs.JobsService/GetColleagueLabelsStats"
-	JobsService_GetMOTD_FullMethodName                 = "/services.jobs.JobsService/GetMOTD"
-	JobsService_SetMOTD_FullMethodName                 = "/services.jobs.JobsService/SetMOTD"
+	JobsService_GetMOTD_FullMethodName = "/services.jobs.JobsService/GetMOTD"
+	JobsService_SetMOTD_FullMethodName = "/services.jobs.JobsService/SetMOTD"
 )
 
 // JobsServiceClient is the client API for JobsService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type JobsServiceClient interface {
-	ListColleagues(ctx context.Context, in *ListColleaguesRequest, opts ...grpc.CallOption) (*ListColleaguesResponse, error)
-	GetSelf(ctx context.Context, in *GetSelfRequest, opts ...grpc.CallOption) (*GetSelfResponse, error)
-	GetColleague(ctx context.Context, in *GetColleagueRequest, opts ...grpc.CallOption) (*GetColleagueResponse, error)
-	ListColleagueActivity(ctx context.Context, in *ListColleagueActivityRequest, opts ...grpc.CallOption) (*ListColleagueActivityResponse, error)
-	SetColleagueProps(ctx context.Context, in *SetColleaguePropsRequest, opts ...grpc.CallOption) (*SetColleaguePropsResponse, error)
-	GetColleagueLabels(ctx context.Context, in *GetColleagueLabelsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsResponse, error)
-	ManageLabels(ctx context.Context, in *ManageLabelsRequest, opts ...grpc.CallOption) (*ManageLabelsResponse, error)
-	GetColleagueLabelsStats(ctx context.Context, in *GetColleagueLabelsStatsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsStatsResponse, error)
 	GetMOTD(ctx context.Context, in *GetMOTDRequest, opts ...grpc.CallOption) (*GetMOTDResponse, error)
 	SetMOTD(ctx context.Context, in *SetMOTDRequest, opts ...grpc.CallOption) (*SetMOTDResponse, error)
 }
@@ -53,86 +37,6 @@ type jobsServiceClient struct {
 
 func NewJobsServiceClient(cc grpc.ClientConnInterface) JobsServiceClient {
 	return &jobsServiceClient{cc}
-}
-
-func (c *jobsServiceClient) ListColleagues(ctx context.Context, in *ListColleaguesRequest, opts ...grpc.CallOption) (*ListColleaguesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListColleaguesResponse)
-	err := c.cc.Invoke(ctx, JobsService_ListColleagues_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *jobsServiceClient) GetSelf(ctx context.Context, in *GetSelfRequest, opts ...grpc.CallOption) (*GetSelfResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetSelfResponse)
-	err := c.cc.Invoke(ctx, JobsService_GetSelf_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *jobsServiceClient) GetColleague(ctx context.Context, in *GetColleagueRequest, opts ...grpc.CallOption) (*GetColleagueResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetColleagueResponse)
-	err := c.cc.Invoke(ctx, JobsService_GetColleague_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *jobsServiceClient) ListColleagueActivity(ctx context.Context, in *ListColleagueActivityRequest, opts ...grpc.CallOption) (*ListColleagueActivityResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListColleagueActivityResponse)
-	err := c.cc.Invoke(ctx, JobsService_ListColleagueActivity_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *jobsServiceClient) SetColleagueProps(ctx context.Context, in *SetColleaguePropsRequest, opts ...grpc.CallOption) (*SetColleaguePropsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SetColleaguePropsResponse)
-	err := c.cc.Invoke(ctx, JobsService_SetColleagueProps_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *jobsServiceClient) GetColleagueLabels(ctx context.Context, in *GetColleagueLabelsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetColleagueLabelsResponse)
-	err := c.cc.Invoke(ctx, JobsService_GetColleagueLabels_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *jobsServiceClient) ManageLabels(ctx context.Context, in *ManageLabelsRequest, opts ...grpc.CallOption) (*ManageLabelsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ManageLabelsResponse)
-	err := c.cc.Invoke(ctx, JobsService_ManageLabels_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *jobsServiceClient) GetColleagueLabelsStats(ctx context.Context, in *GetColleagueLabelsStatsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsStatsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetColleagueLabelsStatsResponse)
-	err := c.cc.Invoke(ctx, JobsService_GetColleagueLabelsStats_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *jobsServiceClient) GetMOTD(ctx context.Context, in *GetMOTDRequest, opts ...grpc.CallOption) (*GetMOTDResponse, error) {
@@ -159,14 +63,6 @@ func (c *jobsServiceClient) SetMOTD(ctx context.Context, in *SetMOTDRequest, opt
 // All implementations must embed UnimplementedJobsServiceServer
 // for forward compatibility.
 type JobsServiceServer interface {
-	ListColleagues(context.Context, *ListColleaguesRequest) (*ListColleaguesResponse, error)
-	GetSelf(context.Context, *GetSelfRequest) (*GetSelfResponse, error)
-	GetColleague(context.Context, *GetColleagueRequest) (*GetColleagueResponse, error)
-	ListColleagueActivity(context.Context, *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error)
-	SetColleagueProps(context.Context, *SetColleaguePropsRequest) (*SetColleaguePropsResponse, error)
-	GetColleagueLabels(context.Context, *GetColleagueLabelsRequest) (*GetColleagueLabelsResponse, error)
-	ManageLabels(context.Context, *ManageLabelsRequest) (*ManageLabelsResponse, error)
-	GetColleagueLabelsStats(context.Context, *GetColleagueLabelsStatsRequest) (*GetColleagueLabelsStatsResponse, error)
 	GetMOTD(context.Context, *GetMOTDRequest) (*GetMOTDResponse, error)
 	SetMOTD(context.Context, *SetMOTDRequest) (*SetMOTDResponse, error)
 	mustEmbedUnimplementedJobsServiceServer()
@@ -179,30 +75,6 @@ type JobsServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedJobsServiceServer struct{}
 
-func (UnimplementedJobsServiceServer) ListColleagues(context.Context, *ListColleaguesRequest) (*ListColleaguesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListColleagues not implemented")
-}
-func (UnimplementedJobsServiceServer) GetSelf(context.Context, *GetSelfRequest) (*GetSelfResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSelf not implemented")
-}
-func (UnimplementedJobsServiceServer) GetColleague(context.Context, *GetColleagueRequest) (*GetColleagueResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetColleague not implemented")
-}
-func (UnimplementedJobsServiceServer) ListColleagueActivity(context.Context, *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListColleagueActivity not implemented")
-}
-func (UnimplementedJobsServiceServer) SetColleagueProps(context.Context, *SetColleaguePropsRequest) (*SetColleaguePropsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetColleagueProps not implemented")
-}
-func (UnimplementedJobsServiceServer) GetColleagueLabels(context.Context, *GetColleagueLabelsRequest) (*GetColleagueLabelsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetColleagueLabels not implemented")
-}
-func (UnimplementedJobsServiceServer) ManageLabels(context.Context, *ManageLabelsRequest) (*ManageLabelsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ManageLabels not implemented")
-}
-func (UnimplementedJobsServiceServer) GetColleagueLabelsStats(context.Context, *GetColleagueLabelsStatsRequest) (*GetColleagueLabelsStatsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetColleagueLabelsStats not implemented")
-}
 func (UnimplementedJobsServiceServer) GetMOTD(context.Context, *GetMOTDRequest) (*GetMOTDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMOTD not implemented")
 }
@@ -228,150 +100,6 @@ func RegisterJobsServiceServer(s grpc.ServiceRegistrar, srv JobsServiceServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&JobsService_ServiceDesc, srv)
-}
-
-func _JobsService_ListColleagues_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListColleaguesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(JobsServiceServer).ListColleagues(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: JobsService_ListColleagues_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JobsServiceServer).ListColleagues(ctx, req.(*ListColleaguesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _JobsService_GetSelf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSelfRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(JobsServiceServer).GetSelf(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: JobsService_GetSelf_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JobsServiceServer).GetSelf(ctx, req.(*GetSelfRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _JobsService_GetColleague_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetColleagueRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(JobsServiceServer).GetColleague(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: JobsService_GetColleague_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JobsServiceServer).GetColleague(ctx, req.(*GetColleagueRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _JobsService_ListColleagueActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListColleagueActivityRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(JobsServiceServer).ListColleagueActivity(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: JobsService_ListColleagueActivity_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JobsServiceServer).ListColleagueActivity(ctx, req.(*ListColleagueActivityRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _JobsService_SetColleagueProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetColleaguePropsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(JobsServiceServer).SetColleagueProps(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: JobsService_SetColleagueProps_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JobsServiceServer).SetColleagueProps(ctx, req.(*SetColleaguePropsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _JobsService_GetColleagueLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetColleagueLabelsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(JobsServiceServer).GetColleagueLabels(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: JobsService_GetColleagueLabels_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JobsServiceServer).GetColleagueLabels(ctx, req.(*GetColleagueLabelsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _JobsService_ManageLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ManageLabelsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(JobsServiceServer).ManageLabels(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: JobsService_ManageLabels_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JobsServiceServer).ManageLabels(ctx, req.(*ManageLabelsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _JobsService_GetColleagueLabelsStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetColleagueLabelsStatsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(JobsServiceServer).GetColleagueLabelsStats(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: JobsService_GetColleagueLabelsStats_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JobsServiceServer).GetColleagueLabelsStats(ctx, req.(*GetColleagueLabelsStatsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _JobsService_GetMOTD_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -417,38 +145,6 @@ var JobsService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.jobs.JobsService",
 	HandlerType: (*JobsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "ListColleagues",
-			Handler:    _JobsService_ListColleagues_Handler,
-		},
-		{
-			MethodName: "GetSelf",
-			Handler:    _JobsService_GetSelf_Handler,
-		},
-		{
-			MethodName: "GetColleague",
-			Handler:    _JobsService_GetColleague_Handler,
-		},
-		{
-			MethodName: "ListColleagueActivity",
-			Handler:    _JobsService_ListColleagueActivity_Handler,
-		},
-		{
-			MethodName: "SetColleagueProps",
-			Handler:    _JobsService_SetColleagueProps_Handler,
-		},
-		{
-			MethodName: "GetColleagueLabels",
-			Handler:    _JobsService_GetColleagueLabels_Handler,
-		},
-		{
-			MethodName: "ManageLabels",
-			Handler:    _JobsService_ManageLabels_Handler,
-		},
-		{
-			MethodName: "GetColleagueLabelsStats",
-			Handler:    _JobsService_GetColleagueLabelsStats_Handler,
-		},
 		{
 			MethodName: "GetMOTD",
 			Handler:    _JobsService_GetMOTD_Handler,

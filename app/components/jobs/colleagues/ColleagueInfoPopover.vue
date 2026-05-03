@@ -6,7 +6,7 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { ClassProp } from '~/utils/types';
-import { getJobsJobsClient } from '~~/gen/ts/clients';
+import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import ColleagueName from './ColleagueName.vue';
 
@@ -33,7 +33,7 @@ const { can, activeChar } = useAuth();
 
 const { game, popover } = useAppConfig();
 
-const jobsJobsClient = await getJobsJobsClient();
+const jobsColleaguesClient = await getJobsColleaguesClient();
 
 const userId = computed(() => props.userId ?? props.user?.userId ?? 0);
 
@@ -42,7 +42,7 @@ const { data, refresh, status, error } = useLazyAsyncData(`colleague-info-${user
 });
 
 async function getCitizen(id: number): Promise<Colleague> {
-    const call = jobsJobsClient.getColleague({
+    const call = jobsColleaguesClient.getColleague({
         userId: id,
         infoOnly: true,
     });

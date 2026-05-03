@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { useLivemapStore } from '~/stores/livemap';
-import { getCentrumCentrumClient } from '~~/gen/ts/clients';
+import { getCentrumDispatchesClient } from '~~/gen/ts/clients';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import type { Coordinate } from '~~/shared/types/types';
 
@@ -20,11 +20,11 @@ const { activeChar } = useAuth();
 const livemapStore = useLivemapStore();
 const { location: storeLocation } = storeToRefs(livemapStore);
 
-const centrumCentrumClient = await getCentrumCentrumClient();
+const centrumDispatchesClient = await getCentrumDispatchesClient();
 
 const { data: dispatchTargetJobs } = useLazyAsyncData('centrum-dispatches-target-jobs', async () => {
     try {
-        const call = centrumCentrumClient.listDispatchTargetJobs({});
+        const call = centrumDispatchesClient.listDispatchTargetJobs({});
         const { response } = await call;
 
         return response.jobs ?? [];
@@ -56,7 +56,7 @@ const state = reactive<Schema>({
 
 async function createDispatch(values: Schema): Promise<void> {
     try {
-        const call = centrumCentrumClient.createDispatch({
+        const call = centrumDispatchesClient.createDispatch({
             dispatch: {
                 id: 0,
                 job: '',

@@ -10,27 +10,3 @@ func (m *ListEmailsResponse) ItemsLen() int {
 	}
 	return len(m.GetEmails())
 }
-
-// ItemsLen returns the length of Messages.
-func (m *ListThreadMessagesResponse) ItemsLen() int {
-	if m == nil {
-		return 0
-	}
-	return len(m.GetMessages())
-}
-
-// ItemsLen returns the length of Threads.
-func (m *ListThreadsResponse) ItemsLen() int {
-	if m == nil {
-		return 0
-	}
-	return len(m.GetThreads())
-}
-
-// ItemsLen returns the length of Messages.
-func (m *SearchThreadsResponse) ItemsLen() int {
-	if m == nil {
-		return 0
-	}
-	return len(m.GetMessages())
-}

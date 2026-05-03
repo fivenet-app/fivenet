@@ -10,5 +10,6 @@ import (
 const (
 	AuthServicePerm perms.Category = "auth.AuthService"
 
+	// Service: AuthService
 	AuthServiceChooseCharacterPerm perms.Name = "ChooseCharacter"
 )

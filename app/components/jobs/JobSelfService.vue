@@ -3,7 +3,7 @@ import { isToday, parse } from 'date-fns';
 import { emojiBlasts } from 'emoji-blast';
 import SelfServiceAbsenceDateModal from '~/components/jobs/colleagues/SelfServiceAbsenceDateModal.vue';
 import SelfServiceAvatarModal from '~/components/jobs/colleagues/SelfServiceAvatarModal.vue';
-import { getJobsJobsClient } from '~~/gen/ts/clients';
+import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 
 defineProps<{
     userId: number;
@@ -13,11 +13,11 @@ const overlay = useOverlay();
 
 const { can, activeChar } = useAuth();
 
-const jobsJobsClient = await getJobsJobsClient();
+const jobsColleaguesClient = await getJobsColleaguesClient();
 
 const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () => {
     try {
-        const call = jobsJobsClient.getSelf({});
+        const call = jobsColleaguesClient.getSelf({});
         const { response } = await call;
 
         return response;

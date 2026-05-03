@@ -3,9 +3,9 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import ResultTutorForm from '~/components/qualifications/tutor/ResultTutorForm.vue';
-import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
+import { getQualificationsExamClient } from '~~/gen/ts/clients';
 import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
-import type { GetUserExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import type { GetUserExamResponse } from '~~/gen/ts/services/qualifications/exam';
 import ExamViewResult from '../exam/ExamViewResult.vue';
 
 const props = withDefaults(
@@ -28,7 +28,7 @@ defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
+const qualificationsExamClient = await getQualificationsExamClient();
 
 const { data, status, refresh, error } = useLazyAsyncData(
     `qualification-${props.qualificationId}-result-examinfo-${props.userId}`,
@@ -36,7 +36,7 @@ const { data, status, refresh, error } = useLazyAsyncData(
 );
 
 async function getUserExam(): Promise<GetUserExamResponse> {
-    const call = qualificationsQualificationsClient.getUserExam({
+    const call = qualificationsExamClient.getUserExam({
         qualificationId: props.qualificationId,
         userId: props.userId,
     });

@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package services.qualifications;
+
+import "buf/validate/validate.proto";
+import "codegen/perms/perms.proto";
+import "google/protobuf/duration.proto";
+import "resources/qualifications/exam/exam.proto";
+import "resources/qualifications/qualifications.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications;qualifications";
+
+message GetExamInfoRequest {
+  int64 qualification_id = 1;
+}
+
+message GetExamInfoResponse {
+  resources.qualifications.QualificationShort qualification = 1;
+  int64 question_count = 2;
+  optional resources.qualifications.exam.ExamUser exam_user = 3;
+}
+
+message TakeExamRequest {
+  int64 qualification_id = 1;
+  optional bool cancel = 2;
+}
+
+message TakeExamResponse {
+  resources.qualifications.exam.ExamQuestions exam = 1;
+  resources.qualifications.exam.ExamUser exam_user = 2;
+  resources.qualifications.exam.ExamResponses responses = 3;
+  bool times_up = 4;
+}
+
+message SubmitExamRequest {
+  int64 qualification_id = 1;
+  resources.qualifications.exam.ExamResponses responses = 2;
+  bool partial = 3;
+}
+
+message SubmitExamResponse {
+  google.protobuf.Duration duration = 1 [(buf.validate.field).duration = {
+    gte: {seconds: 0}
+  }];
+}
+
+message GetUserExamRequest {
+  int64 qualification_id = 1;
+  int32 user_id = 2 [(buf.validate.field).int32.gte = 0];
+}
+
+message GetUserExamResponse {
+  resources.qualifications.exam.ExamQuestions exam = 1;
+  resources.qualifications.exam.ExamUser exam_user = 2;
+  resources.qualifications.exam.ExamResponses responses = 3;
+  resources.qualifications.exam.ExamGrading grading = 4;
+}
+
+service ExamService {
+  option (codegen.perms.perms_svc) = {
+    name: "qualifications.QualificationsService"
+  };
+
+  rpc GetExamInfo(GetExamInfoRequest) returns (GetExamInfoResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
+  rpc TakeExam(TakeExamRequest) returns (TakeExamResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
+  rpc SubmitExam(SubmitExamRequest) returns (SubmitExamResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
+  rpc GetUserExam(GetUserExamRequest) returns (GetUserExamResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
+    };
+  }
+}

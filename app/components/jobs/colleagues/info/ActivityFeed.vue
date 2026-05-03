@@ -8,10 +8,10 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
-import { getJobsJobsClient } from '~~/gen/ts/clients';
+import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { ColleagueActivityType } from '~~/gen/ts/resources/jobs/colleagues/activity/activity';
-import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
+import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/colleagues';
 import ColleagueName from '../ColleagueName.vue';
 import { jobsUserActivityTypeBGColor, jobsUserActivityTypeIcon } from './helpers';
 
@@ -30,7 +30,7 @@ const { attrStringList, isSuperuser } = useAuth();
 
 const completorStore = useCompletorStore();
 
-const jobsJobsClient = await getJobsJobsClient();
+const jobsColleaguesClient = await getJobsColleaguesClient();
 
 const typesAttrs = computed(() =>
     (isSuperuser.value
@@ -86,7 +86,7 @@ const { data, status, refresh, error } = useLazyAsyncData(
 
 async function listColleagueActivity(values: Schema): Promise<ListColleagueActivityResponse> {
     try {
-        const call = jobsJobsClient.listColleagueActivity({
+        const call = jobsColleaguesClient.listColleagueActivity({
             pagination: {
                 offset: calculateOffset(values.page, data.value?.pagination),
             },

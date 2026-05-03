@@ -3,7 +3,7 @@ import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
-import { getCentrumCentrumClient } from '~~/gen/ts/clients';
+import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units/units';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
@@ -17,7 +17,7 @@ const emit = defineEmits<{
 
 const completorStore = useCompletorStore();
 
-const centrumCentrumClient = await getCentrumCentrumClient();
+const centrumUnitsClient = await getCentrumUnitsClient();
 
 const schema = z.object({
     users: z.custom<UserShort>().array().max(10).default([]),
@@ -43,7 +43,7 @@ async function assignUnit(unitId: number): Promise<void> {
             }
         });
 
-        const call = centrumCentrumClient.assignUnit({
+        const call = centrumUnitsClient.assignUnit({
             unitId: unitId,
             toAdd: toAdd,
             toRemove: toRemove,

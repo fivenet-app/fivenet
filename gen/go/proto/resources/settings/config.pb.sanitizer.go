@@ -133,16 +133,6 @@ func (m *AppConfig) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *Auth) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *Discord) Sanitize() error {
 	if m == nil {
 		return nil
@@ -301,16 +291,6 @@ func (m *Links) Sanitize() error {
 	// Field: PrivacyPolicy
 	if m.PrivacyPolicy != nil {
 		*m.PrivacyPolicy = htmlsanitizer.StripHTMLTags(*m.PrivacyPolicy)
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *Livemap) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil

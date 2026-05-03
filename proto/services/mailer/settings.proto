@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package services.mailer;
+
+import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
+import "resources/mailer/settings/settings.proto";
+import "resources/mailer/templates/template.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer;mailer";
+
+// Templates
+
+message ListTemplatesRequest {
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message ListTemplatesResponse {
+  repeated resources.mailer.templates.Template templates = 1 [(codegen.itemslen.enabled) = true];
+}
+
+message GetTemplateRequest {
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 template_id = 2 [(buf.validate.field).int64.gt = 0];
+}
+
+message GetTemplateResponse {
+  resources.mailer.templates.Template template = 1 [(buf.validate.field).required = true];
+}
+
+message CreateOrUpdateTemplateRequest {
+  resources.mailer.templates.Template template = 1 [(buf.validate.field).required = true];
+}
+
+message CreateOrUpdateTemplateResponse {
+  resources.mailer.templates.Template template = 1 [(buf.validate.field).required = true];
+}
+
+message DeleteTemplateRequest {
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 id = 2 [(buf.validate.field).int64.gt = 0];
+}
+
+message DeleteTemplateResponse {}
+
+// Settings
+
+message GetEmailSettingsRequest {
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message GetEmailSettingsResponse {
+  resources.mailer.settings.EmailSettings settings = 1;
+}
+
+message SetEmailSettingsRequest {
+  resources.mailer.settings.EmailSettings settings = 1 [(buf.validate.field).required = true];
+}
+
+message SetEmailSettingsResponse {
+  resources.mailer.settings.EmailSettings settings = 1;
+}
+
+service SettingsService {
+  option (codegen.perms.perms_svc) = {
+    name: "mailer.MailerService"
+  };
+
+  rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc CreateOrUpdateTemplate(CreateOrUpdateTemplateRequest) returns (CreateOrUpdateTemplateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+
+  rpc GetEmailSettings(GetEmailSettingsRequest) returns (GetEmailSettingsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc SetEmailSettings(SetEmailSettingsRequest) returns (SetEmailSettingsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+}

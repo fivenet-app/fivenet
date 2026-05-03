@@ -6,9 +6,9 @@ import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
-import { getJobsJobsClient } from '~~/gen/ts/clients';
+import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { GetColleagueLabelsResponse, ManageLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
+import type { GetColleagueLabelsResponse, ManageLabelsResponse } from '~~/gen/ts/services/jobs/colleagues';
 
 const emit = defineEmits<{
     (e: 'close', v: boolean): void;
@@ -16,7 +16,7 @@ const emit = defineEmits<{
 
 const notifications = useNotificationsStore();
 
-const jobsJobsClient = await getJobsJobsClient();
+const jobsColleaguesClient = await getJobsColleaguesClient();
 
 const schema = z.object({
     labels: z
@@ -40,7 +40,7 @@ const state = reactive<Schema>({
 
 async function getColleagueLabels(): Promise<GetColleagueLabelsResponse> {
     try {
-        const { response } = await jobsJobsClient.getColleagueLabels({});
+        const { response } = await jobsColleaguesClient.getColleagueLabels({});
 
         return response;
     } catch (e) {
@@ -53,7 +53,7 @@ const { data: labels, status, error, refresh } = useLazyAsyncData('jobs-colleagu
 
 async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
     try {
-        const { response } = await jobsJobsClient.manageLabels({
+        const { response } = await jobsColleaguesClient.manageLabels({
             labels: values.labels,
         });
 

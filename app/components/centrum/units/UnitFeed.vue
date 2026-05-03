@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import UnitFeedItem from '~/components/centrum/units/UnitFeedItem.vue';
-import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import type { ListUnitActivityResponse } from '~~/gen/ts/services/centrum/centrum';
+import { getCentrumUnitsClient } from '~~/gen/ts/clients';
+import type { ListUnitActivityResponse } from '~~/gen/ts/services/centrum/units';
 
 const props = defineProps<{
     unitId: number;
 }>();
 
-const centrumCentrumClient = await getCentrumCentrumClient();
+const centrumUnitsClient = await getCentrumUnitsClient();
 
 const offset = ref(0);
 
@@ -15,7 +15,7 @@ const { data, refresh } = useLazyAsyncData(`centrum-unit-${props.unitId}-activit
 
 async function listUnitActivity(): Promise<ListUnitActivityResponse> {
     try {
-        const call = centrumCentrumClient.listUnitActivity({
+        const call = centrumUnitsClient.listUnitActivity({
             pagination: {
                 offset: offset.value,
             },

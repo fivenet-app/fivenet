@@ -11,7 +11,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
-import type { ListThreadsResponse } from '~~/gen/ts/services/mailer/mailer';
+import type { ListThreadsResponse } from '~~/gen/ts/services/mailer/thread';
 
 useHead({
     title: 'common.mail',

@@ -20,13 +20,16 @@ const (
 	SettingsServicePerm perms.Category = "settings.SettingsService"
 	SystemServicePerm   perms.Category = "settings.SystemService"
 
+	// Service: LawsService
 	LawsServiceCreateOrUpdateLawBookPerm perms.Name = "CreateOrUpdateLawBook"
 	LawsServiceDeleteLawBookPerm         perms.Name = "DeleteLawBook"
-	SettingsServiceCreateRolePerm        perms.Name = "CreateRole"
-	SettingsServiceDeleteRolePerm        perms.Name = "DeleteRole"
-	SettingsServiceGetJobPropsPerm       perms.Name = "GetJobProps"
-	SettingsServiceGetRolesPerm          perms.Name = "GetRoles"
-	SettingsServiceSetJobPropsPerm       perms.Name = "SetJobProps"
-	SettingsServiceUpdateRolePermsPerm   perms.Name = "UpdateRolePerms"
-	SettingsServiceViewAuditLogPerm      perms.Name = "ViewAuditLog"
+
+	// Service: SettingsService
+	SettingsServiceCreateRolePerm      perms.Name = "CreateRole"
+	SettingsServiceDeleteRolePerm      perms.Name = "DeleteRole"
+	SettingsServiceGetJobPropsPerm     perms.Name = "GetJobProps"
+	SettingsServiceGetRolesPerm        perms.Name = "GetRoles"
+	SettingsServiceSetJobPropsPerm     perms.Name = "SetJobProps"
+	SettingsServiceUpdateRolePermsPerm perms.Name = "UpdateRolePerms"
+	SettingsServiceViewAuditLogPerm    perms.Name = "ViewAuditLog"
 )

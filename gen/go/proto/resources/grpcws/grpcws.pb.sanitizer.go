@@ -21,26 +21,6 @@ func (m *Body) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *Cancel) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *Complete) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *Failure) Sanitize() error {
 	if m == nil {
 		return nil
@@ -167,16 +147,6 @@ func (m *HeaderValue) Sanitize() error {
 
 		m.Value[idx] = htmlsanitizer.Sanitize(m.Value[idx])
 
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *Ping) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil

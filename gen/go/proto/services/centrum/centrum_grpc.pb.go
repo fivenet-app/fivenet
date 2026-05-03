@@ -19,58 +19,24 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CentrumService_UpdateSettings_FullMethodName         = "/services.centrum.CentrumService/UpdateSettings"
-	CentrumService_CreateDispatch_FullMethodName         = "/services.centrum.CentrumService/CreateDispatch"
-	CentrumService_UpdateDispatch_FullMethodName         = "/services.centrum.CentrumService/UpdateDispatch"
-	CentrumService_DeleteDispatch_FullMethodName         = "/services.centrum.CentrumService/DeleteDispatch"
-	CentrumService_ListDispatchTargetJobs_FullMethodName = "/services.centrum.CentrumService/ListDispatchTargetJobs"
-	CentrumService_TakeControl_FullMethodName            = "/services.centrum.CentrumService/TakeControl"
-	CentrumService_AssignDispatch_FullMethodName         = "/services.centrum.CentrumService/AssignDispatch"
-	CentrumService_AssignUnit_FullMethodName             = "/services.centrum.CentrumService/AssignUnit"
-	CentrumService_GetDispatchHeatmap_FullMethodName     = "/services.centrum.CentrumService/GetDispatchHeatmap"
-	CentrumService_UpdateDispatchers_FullMethodName      = "/services.centrum.CentrumService/UpdateDispatchers"
-	CentrumService_Stream_FullMethodName                 = "/services.centrum.CentrumService/Stream"
-	CentrumService_GetSettings_FullMethodName            = "/services.centrum.CentrumService/GetSettings"
-	CentrumService_JoinUnit_FullMethodName               = "/services.centrum.CentrumService/JoinUnit"
-	CentrumService_ListUnits_FullMethodName              = "/services.centrum.CentrumService/ListUnits"
-	CentrumService_ListUnitActivity_FullMethodName       = "/services.centrum.CentrumService/ListUnitActivity"
-	CentrumService_GetDispatch_FullMethodName            = "/services.centrum.CentrumService/GetDispatch"
-	CentrumService_ListDispatches_FullMethodName         = "/services.centrum.CentrumService/ListDispatches"
-	CentrumService_ListDispatchActivity_FullMethodName   = "/services.centrum.CentrumService/ListDispatchActivity"
-	CentrumService_CreateOrUpdateUnit_FullMethodName     = "/services.centrum.CentrumService/CreateOrUpdateUnit"
-	CentrumService_DeleteUnit_FullMethodName             = "/services.centrum.CentrumService/DeleteUnit"
-	CentrumService_TakeDispatch_FullMethodName           = "/services.centrum.CentrumService/TakeDispatch"
-	CentrumService_UpdateUnitStatus_FullMethodName       = "/services.centrum.CentrumService/UpdateUnitStatus"
-	CentrumService_UpdateDispatchStatus_FullMethodName   = "/services.centrum.CentrumService/UpdateDispatchStatus"
+	CentrumService_GetSettings_FullMethodName        = "/services.centrum.CentrumService/GetSettings"
+	CentrumService_UpdateSettings_FullMethodName     = "/services.centrum.CentrumService/UpdateSettings"
+	CentrumService_GetDispatchHeatmap_FullMethodName = "/services.centrum.CentrumService/GetDispatchHeatmap"
+	CentrumService_TakeControl_FullMethodName        = "/services.centrum.CentrumService/TakeControl"
+	CentrumService_UpdateDispatchers_FullMethodName  = "/services.centrum.CentrumService/UpdateDispatchers"
+	CentrumService_Stream_FullMethodName             = "/services.centrum.CentrumService/Stream"
 )
 
 // CentrumServiceClient is the client API for CentrumService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CentrumServiceClient interface {
+	GetSettings(ctx context.Context, in *GetSettingsRequest, opts ...grpc.CallOption) (*GetSettingsResponse, error)
 	UpdateSettings(ctx context.Context, in *UpdateSettingsRequest, opts ...grpc.CallOption) (*UpdateSettingsResponse, error)
-	CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error)
-	UpdateDispatch(ctx context.Context, in *UpdateDispatchRequest, opts ...grpc.CallOption) (*UpdateDispatchResponse, error)
-	DeleteDispatch(ctx context.Context, in *DeleteDispatchRequest, opts ...grpc.CallOption) (*DeleteDispatchResponse, error)
-	ListDispatchTargetJobs(ctx context.Context, in *ListDispatchTargetJobsRequest, opts ...grpc.CallOption) (*ListDispatchTargetJobsResponse, error)
-	TakeControl(ctx context.Context, in *TakeControlRequest, opts ...grpc.CallOption) (*TakeControlResponse, error)
-	AssignDispatch(ctx context.Context, in *AssignDispatchRequest, opts ...grpc.CallOption) (*AssignDispatchResponse, error)
-	AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error)
 	GetDispatchHeatmap(ctx context.Context, in *GetDispatchHeatmapRequest, opts ...grpc.CallOption) (*GetDispatchHeatmapResponse, error)
+	TakeControl(ctx context.Context, in *TakeControlRequest, opts ...grpc.CallOption) (*TakeControlResponse, error)
 	UpdateDispatchers(ctx context.Context, in *UpdateDispatchersRequest, opts ...grpc.CallOption) (*UpdateDispatchersResponse, error)
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error)
-	GetSettings(ctx context.Context, in *GetSettingsRequest, opts ...grpc.CallOption) (*GetSettingsResponse, error)
-	JoinUnit(ctx context.Context, in *JoinUnitRequest, opts ...grpc.CallOption) (*JoinUnitResponse, error)
-	ListUnits(ctx context.Context, in *ListUnitsRequest, opts ...grpc.CallOption) (*ListUnitsResponse, error)
-	ListUnitActivity(ctx context.Context, in *ListUnitActivityRequest, opts ...grpc.CallOption) (*ListUnitActivityResponse, error)
-	GetDispatch(ctx context.Context, in *GetDispatchRequest, opts ...grpc.CallOption) (*GetDispatchResponse, error)
-	ListDispatches(ctx context.Context, in *ListDispatchesRequest, opts ...grpc.CallOption) (*ListDispatchesResponse, error)
-	ListDispatchActivity(ctx context.Context, in *ListDispatchActivityRequest, opts ...grpc.CallOption) (*ListDispatchActivityResponse, error)
-	CreateOrUpdateUnit(ctx context.Context, in *CreateOrUpdateUnitRequest, opts ...grpc.CallOption) (*CreateOrUpdateUnitResponse, error)
-	DeleteUnit(ctx context.Context, in *DeleteUnitRequest, opts ...grpc.CallOption) (*DeleteUnitResponse, error)
-	TakeDispatch(ctx context.Context, in *TakeDispatchRequest, opts ...grpc.CallOption) (*TakeDispatchResponse, error)
-	UpdateUnitStatus(ctx context.Context, in *UpdateUnitStatusRequest, opts ...grpc.CallOption) (*UpdateUnitStatusResponse, error)
-	UpdateDispatchStatus(ctx context.Context, in *UpdateDispatchStatusRequest, opts ...grpc.CallOption) (*UpdateDispatchStatusResponse, error)
 }
 
 type centrumServiceClient struct {
@@ -79,6 +45,16 @@ type centrumServiceClient struct {
 
 func NewCentrumServiceClient(cc grpc.ClientConnInterface) CentrumServiceClient {
 	return &centrumServiceClient{cc}
+}
+
+func (c *centrumServiceClient) GetSettings(ctx context.Context, in *GetSettingsRequest, opts ...grpc.CallOption) (*GetSettingsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSettingsResponse)
+	err := c.cc.Invoke(ctx, CentrumService_GetSettings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *centrumServiceClient) UpdateSettings(ctx context.Context, in *UpdateSettingsRequest, opts ...grpc.CallOption) (*UpdateSettingsResponse, error) {
@@ -91,40 +67,10 @@ func (c *centrumServiceClient) UpdateSettings(ctx context.Context, in *UpdateSet
 	return out, nil
 }
 
-func (c *centrumServiceClient) CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error) {
+func (c *centrumServiceClient) GetDispatchHeatmap(ctx context.Context, in *GetDispatchHeatmapRequest, opts ...grpc.CallOption) (*GetDispatchHeatmapResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateDispatchResponse)
-	err := c.cc.Invoke(ctx, CentrumService_CreateDispatch_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) UpdateDispatch(ctx context.Context, in *UpdateDispatchRequest, opts ...grpc.CallOption) (*UpdateDispatchResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateDispatchResponse)
-	err := c.cc.Invoke(ctx, CentrumService_UpdateDispatch_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) DeleteDispatch(ctx context.Context, in *DeleteDispatchRequest, opts ...grpc.CallOption) (*DeleteDispatchResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteDispatchResponse)
-	err := c.cc.Invoke(ctx, CentrumService_DeleteDispatch_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) ListDispatchTargetJobs(ctx context.Context, in *ListDispatchTargetJobsRequest, opts ...grpc.CallOption) (*ListDispatchTargetJobsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListDispatchTargetJobsResponse)
-	err := c.cc.Invoke(ctx, CentrumService_ListDispatchTargetJobs_FullMethodName, in, out, cOpts...)
+	out := new(GetDispatchHeatmapResponse)
+	err := c.cc.Invoke(ctx, CentrumService_GetDispatchHeatmap_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -135,36 +81,6 @@ func (c *centrumServiceClient) TakeControl(ctx context.Context, in *TakeControlR
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TakeControlResponse)
 	err := c.cc.Invoke(ctx, CentrumService_TakeControl_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) AssignDispatch(ctx context.Context, in *AssignDispatchRequest, opts ...grpc.CallOption) (*AssignDispatchResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AssignDispatchResponse)
-	err := c.cc.Invoke(ctx, CentrumService_AssignDispatch_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AssignUnitResponse)
-	err := c.cc.Invoke(ctx, CentrumService_AssignUnit_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) GetDispatchHeatmap(ctx context.Context, in *GetDispatchHeatmapRequest, opts ...grpc.CallOption) (*GetDispatchHeatmapResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetDispatchHeatmapResponse)
-	err := c.cc.Invoke(ctx, CentrumService_GetDispatchHeatmap_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -200,153 +116,16 @@ func (c *centrumServiceClient) Stream(ctx context.Context, in *StreamRequest, op
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type CentrumService_StreamClient = grpc.ServerStreamingClient[StreamResponse]
 
-func (c *centrumServiceClient) GetSettings(ctx context.Context, in *GetSettingsRequest, opts ...grpc.CallOption) (*GetSettingsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetSettingsResponse)
-	err := c.cc.Invoke(ctx, CentrumService_GetSettings_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) JoinUnit(ctx context.Context, in *JoinUnitRequest, opts ...grpc.CallOption) (*JoinUnitResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(JoinUnitResponse)
-	err := c.cc.Invoke(ctx, CentrumService_JoinUnit_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) ListUnits(ctx context.Context, in *ListUnitsRequest, opts ...grpc.CallOption) (*ListUnitsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListUnitsResponse)
-	err := c.cc.Invoke(ctx, CentrumService_ListUnits_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) ListUnitActivity(ctx context.Context, in *ListUnitActivityRequest, opts ...grpc.CallOption) (*ListUnitActivityResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListUnitActivityResponse)
-	err := c.cc.Invoke(ctx, CentrumService_ListUnitActivity_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) GetDispatch(ctx context.Context, in *GetDispatchRequest, opts ...grpc.CallOption) (*GetDispatchResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetDispatchResponse)
-	err := c.cc.Invoke(ctx, CentrumService_GetDispatch_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) ListDispatches(ctx context.Context, in *ListDispatchesRequest, opts ...grpc.CallOption) (*ListDispatchesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListDispatchesResponse)
-	err := c.cc.Invoke(ctx, CentrumService_ListDispatches_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) ListDispatchActivity(ctx context.Context, in *ListDispatchActivityRequest, opts ...grpc.CallOption) (*ListDispatchActivityResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListDispatchActivityResponse)
-	err := c.cc.Invoke(ctx, CentrumService_ListDispatchActivity_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) CreateOrUpdateUnit(ctx context.Context, in *CreateOrUpdateUnitRequest, opts ...grpc.CallOption) (*CreateOrUpdateUnitResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateOrUpdateUnitResponse)
-	err := c.cc.Invoke(ctx, CentrumService_CreateOrUpdateUnit_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) DeleteUnit(ctx context.Context, in *DeleteUnitRequest, opts ...grpc.CallOption) (*DeleteUnitResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteUnitResponse)
-	err := c.cc.Invoke(ctx, CentrumService_DeleteUnit_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) TakeDispatch(ctx context.Context, in *TakeDispatchRequest, opts ...grpc.CallOption) (*TakeDispatchResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TakeDispatchResponse)
-	err := c.cc.Invoke(ctx, CentrumService_TakeDispatch_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) UpdateUnitStatus(ctx context.Context, in *UpdateUnitStatusRequest, opts ...grpc.CallOption) (*UpdateUnitStatusResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateUnitStatusResponse)
-	err := c.cc.Invoke(ctx, CentrumService_UpdateUnitStatus_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *centrumServiceClient) UpdateDispatchStatus(ctx context.Context, in *UpdateDispatchStatusRequest, opts ...grpc.CallOption) (*UpdateDispatchStatusResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateDispatchStatusResponse)
-	err := c.cc.Invoke(ctx, CentrumService_UpdateDispatchStatus_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // CentrumServiceServer is the server API for CentrumService service.
 // All implementations must embed UnimplementedCentrumServiceServer
 // for forward compatibility.
 type CentrumServiceServer interface {
+	GetSettings(context.Context, *GetSettingsRequest) (*GetSettingsResponse, error)
 	UpdateSettings(context.Context, *UpdateSettingsRequest) (*UpdateSettingsResponse, error)
-	CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error)
-	UpdateDispatch(context.Context, *UpdateDispatchRequest) (*UpdateDispatchResponse, error)
-	DeleteDispatch(context.Context, *DeleteDispatchRequest) (*DeleteDispatchResponse, error)
-	ListDispatchTargetJobs(context.Context, *ListDispatchTargetJobsRequest) (*ListDispatchTargetJobsResponse, error)
-	TakeControl(context.Context, *TakeControlRequest) (*TakeControlResponse, error)
-	AssignDispatch(context.Context, *AssignDispatchRequest) (*AssignDispatchResponse, error)
-	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
 	GetDispatchHeatmap(context.Context, *GetDispatchHeatmapRequest) (*GetDispatchHeatmapResponse, error)
+	TakeControl(context.Context, *TakeControlRequest) (*TakeControlResponse, error)
 	UpdateDispatchers(context.Context, *UpdateDispatchersRequest) (*UpdateDispatchersResponse, error)
 	Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error
-	GetSettings(context.Context, *GetSettingsRequest) (*GetSettingsResponse, error)
-	JoinUnit(context.Context, *JoinUnitRequest) (*JoinUnitResponse, error)
-	ListUnits(context.Context, *ListUnitsRequest) (*ListUnitsResponse, error)
-	ListUnitActivity(context.Context, *ListUnitActivityRequest) (*ListUnitActivityResponse, error)
-	GetDispatch(context.Context, *GetDispatchRequest) (*GetDispatchResponse, error)
-	ListDispatches(context.Context, *ListDispatchesRequest) (*ListDispatchesResponse, error)
-	ListDispatchActivity(context.Context, *ListDispatchActivityRequest) (*ListDispatchActivityResponse, error)
-	CreateOrUpdateUnit(context.Context, *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error)
-	DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error)
-	TakeDispatch(context.Context, *TakeDispatchRequest) (*TakeDispatchResponse, error)
-	UpdateUnitStatus(context.Context, *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error)
-	UpdateDispatchStatus(context.Context, *UpdateDispatchStatusRequest) (*UpdateDispatchStatusResponse, error)
 	mustEmbedUnimplementedCentrumServiceServer()
 }
 
@@ -357,74 +136,23 @@ type CentrumServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedCentrumServiceServer struct{}
 
+func (UnimplementedCentrumServiceServer) GetSettings(context.Context, *GetSettingsRequest) (*GetSettingsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSettings not implemented")
+}
 func (UnimplementedCentrumServiceServer) UpdateSettings(context.Context, *UpdateSettingsRequest) (*UpdateSettingsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateSettings not implemented")
 }
-func (UnimplementedCentrumServiceServer) CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateDispatch not implemented")
-}
-func (UnimplementedCentrumServiceServer) UpdateDispatch(context.Context, *UpdateDispatchRequest) (*UpdateDispatchResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateDispatch not implemented")
-}
-func (UnimplementedCentrumServiceServer) DeleteDispatch(context.Context, *DeleteDispatchRequest) (*DeleteDispatchResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteDispatch not implemented")
-}
-func (UnimplementedCentrumServiceServer) ListDispatchTargetJobs(context.Context, *ListDispatchTargetJobsRequest) (*ListDispatchTargetJobsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListDispatchTargetJobs not implemented")
+func (UnimplementedCentrumServiceServer) GetDispatchHeatmap(context.Context, *GetDispatchHeatmapRequest) (*GetDispatchHeatmapResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDispatchHeatmap not implemented")
 }
 func (UnimplementedCentrumServiceServer) TakeControl(context.Context, *TakeControlRequest) (*TakeControlResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TakeControl not implemented")
-}
-func (UnimplementedCentrumServiceServer) AssignDispatch(context.Context, *AssignDispatchRequest) (*AssignDispatchResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AssignDispatch not implemented")
-}
-func (UnimplementedCentrumServiceServer) AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AssignUnit not implemented")
-}
-func (UnimplementedCentrumServiceServer) GetDispatchHeatmap(context.Context, *GetDispatchHeatmapRequest) (*GetDispatchHeatmapResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDispatchHeatmap not implemented")
 }
 func (UnimplementedCentrumServiceServer) UpdateDispatchers(context.Context, *UpdateDispatchersRequest) (*UpdateDispatchersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDispatchers not implemented")
 }
 func (UnimplementedCentrumServiceServer) Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
-}
-func (UnimplementedCentrumServiceServer) GetSettings(context.Context, *GetSettingsRequest) (*GetSettingsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSettings not implemented")
-}
-func (UnimplementedCentrumServiceServer) JoinUnit(context.Context, *JoinUnitRequest) (*JoinUnitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method JoinUnit not implemented")
-}
-func (UnimplementedCentrumServiceServer) ListUnits(context.Context, *ListUnitsRequest) (*ListUnitsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListUnits not implemented")
-}
-func (UnimplementedCentrumServiceServer) ListUnitActivity(context.Context, *ListUnitActivityRequest) (*ListUnitActivityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListUnitActivity not implemented")
-}
-func (UnimplementedCentrumServiceServer) GetDispatch(context.Context, *GetDispatchRequest) (*GetDispatchResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDispatch not implemented")
-}
-func (UnimplementedCentrumServiceServer) ListDispatches(context.Context, *ListDispatchesRequest) (*ListDispatchesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListDispatches not implemented")
-}
-func (UnimplementedCentrumServiceServer) ListDispatchActivity(context.Context, *ListDispatchActivityRequest) (*ListDispatchActivityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListDispatchActivity not implemented")
-}
-func (UnimplementedCentrumServiceServer) CreateOrUpdateUnit(context.Context, *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateUnit not implemented")
-}
-func (UnimplementedCentrumServiceServer) DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUnit not implemented")
-}
-func (UnimplementedCentrumServiceServer) TakeDispatch(context.Context, *TakeDispatchRequest) (*TakeDispatchResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TakeDispatch not implemented")
-}
-func (UnimplementedCentrumServiceServer) UpdateUnitStatus(context.Context, *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUnitStatus not implemented")
-}
-func (UnimplementedCentrumServiceServer) UpdateDispatchStatus(context.Context, *UpdateDispatchStatusRequest) (*UpdateDispatchStatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateDispatchStatus not implemented")
 }
 func (UnimplementedCentrumServiceServer) mustEmbedUnimplementedCentrumServiceServer() {}
 func (UnimplementedCentrumServiceServer) testEmbeddedByValue()                        {}
@@ -447,6 +175,24 @@ func RegisterCentrumServiceServer(s grpc.ServiceRegistrar, srv CentrumServiceSer
 	s.RegisterService(&CentrumService_ServiceDesc, srv)
 }
 
+func _CentrumService_GetSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSettingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).GetSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CentrumService_GetSettings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).GetSettings(ctx, req.(*GetSettingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CentrumService_UpdateSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateSettingsRequest)
 	if err := dec(in); err != nil {
@@ -465,74 +211,20 @@ func _CentrumService_UpdateSettings_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CentrumService_CreateDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateDispatchRequest)
+func _CentrumService_GetDispatchHeatmap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDispatchHeatmapRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CentrumServiceServer).CreateDispatch(ctx, in)
+		return srv.(CentrumServiceServer).GetDispatchHeatmap(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CentrumService_CreateDispatch_FullMethodName,
+		FullMethod: CentrumService_GetDispatchHeatmap_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).CreateDispatch(ctx, req.(*CreateDispatchRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_UpdateDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateDispatchRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).UpdateDispatch(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_UpdateDispatch_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).UpdateDispatch(ctx, req.(*UpdateDispatchRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_DeleteDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteDispatchRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).DeleteDispatch(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_DeleteDispatch_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).DeleteDispatch(ctx, req.(*DeleteDispatchRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_ListDispatchTargetJobs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListDispatchTargetJobsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).ListDispatchTargetJobs(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_ListDispatchTargetJobs_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).ListDispatchTargetJobs(ctx, req.(*ListDispatchTargetJobsRequest))
+		return srv.(CentrumServiceServer).GetDispatchHeatmap(ctx, req.(*GetDispatchHeatmapRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -551,60 +243,6 @@ func _CentrumService_TakeControl_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CentrumServiceServer).TakeControl(ctx, req.(*TakeControlRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_AssignDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AssignDispatchRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).AssignDispatch(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_AssignDispatch_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).AssignDispatch(ctx, req.(*AssignDispatchRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_AssignUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AssignUnitRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).AssignUnit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_AssignUnit_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).AssignUnit(ctx, req.(*AssignUnitRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_GetDispatchHeatmap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetDispatchHeatmapRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).GetDispatchHeatmap(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_GetDispatchHeatmap_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).GetDispatchHeatmap(ctx, req.(*GetDispatchHeatmapRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -638,222 +276,6 @@ func _CentrumService_Stream_Handler(srv interface{}, stream grpc.ServerStream) e
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type CentrumService_StreamServer = grpc.ServerStreamingServer[StreamResponse]
 
-func _CentrumService_GetSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSettingsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).GetSettings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_GetSettings_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).GetSettings(ctx, req.(*GetSettingsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_JoinUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(JoinUnitRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).JoinUnit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_JoinUnit_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).JoinUnit(ctx, req.(*JoinUnitRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_ListUnits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListUnitsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).ListUnits(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_ListUnits_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).ListUnits(ctx, req.(*ListUnitsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_ListUnitActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListUnitActivityRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).ListUnitActivity(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_ListUnitActivity_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).ListUnitActivity(ctx, req.(*ListUnitActivityRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_GetDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetDispatchRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).GetDispatch(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_GetDispatch_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).GetDispatch(ctx, req.(*GetDispatchRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_ListDispatches_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListDispatchesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).ListDispatches(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_ListDispatches_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).ListDispatches(ctx, req.(*ListDispatchesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_ListDispatchActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListDispatchActivityRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).ListDispatchActivity(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_ListDispatchActivity_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).ListDispatchActivity(ctx, req.(*ListDispatchActivityRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_CreateOrUpdateUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateOrUpdateUnitRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).CreateOrUpdateUnit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_CreateOrUpdateUnit_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).CreateOrUpdateUnit(ctx, req.(*CreateOrUpdateUnitRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_DeleteUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteUnitRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).DeleteUnit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_DeleteUnit_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).DeleteUnit(ctx, req.(*DeleteUnitRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_TakeDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TakeDispatchRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).TakeDispatch(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_TakeDispatch_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).TakeDispatch(ctx, req.(*TakeDispatchRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_UpdateUnitStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUnitStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).UpdateUnitStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_UpdateUnitStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).UpdateUnitStatus(ctx, req.(*UpdateUnitStatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CentrumService_UpdateDispatchStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateDispatchStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).UpdateDispatchStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_UpdateDispatchStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).UpdateDispatchStatus(ctx, req.(*UpdateDispatchStatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // CentrumService_ServiceDesc is the grpc.ServiceDesc for CentrumService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -862,92 +284,24 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CentrumServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "GetSettings",
+			Handler:    _CentrumService_GetSettings_Handler,
+		},
+		{
 			MethodName: "UpdateSettings",
 			Handler:    _CentrumService_UpdateSettings_Handler,
-		},
-		{
-			MethodName: "CreateDispatch",
-			Handler:    _CentrumService_CreateDispatch_Handler,
-		},
-		{
-			MethodName: "UpdateDispatch",
-			Handler:    _CentrumService_UpdateDispatch_Handler,
-		},
-		{
-			MethodName: "DeleteDispatch",
-			Handler:    _CentrumService_DeleteDispatch_Handler,
-		},
-		{
-			MethodName: "ListDispatchTargetJobs",
-			Handler:    _CentrumService_ListDispatchTargetJobs_Handler,
-		},
-		{
-			MethodName: "TakeControl",
-			Handler:    _CentrumService_TakeControl_Handler,
-		},
-		{
-			MethodName: "AssignDispatch",
-			Handler:    _CentrumService_AssignDispatch_Handler,
-		},
-		{
-			MethodName: "AssignUnit",
-			Handler:    _CentrumService_AssignUnit_Handler,
 		},
 		{
 			MethodName: "GetDispatchHeatmap",
 			Handler:    _CentrumService_GetDispatchHeatmap_Handler,
 		},
 		{
+			MethodName: "TakeControl",
+			Handler:    _CentrumService_TakeControl_Handler,
+		},
+		{
 			MethodName: "UpdateDispatchers",
 			Handler:    _CentrumService_UpdateDispatchers_Handler,
-		},
-		{
-			MethodName: "GetSettings",
-			Handler:    _CentrumService_GetSettings_Handler,
-		},
-		{
-			MethodName: "JoinUnit",
-			Handler:    _CentrumService_JoinUnit_Handler,
-		},
-		{
-			MethodName: "ListUnits",
-			Handler:    _CentrumService_ListUnits_Handler,
-		},
-		{
-			MethodName: "ListUnitActivity",
-			Handler:    _CentrumService_ListUnitActivity_Handler,
-		},
-		{
-			MethodName: "GetDispatch",
-			Handler:    _CentrumService_GetDispatch_Handler,
-		},
-		{
-			MethodName: "ListDispatches",
-			Handler:    _CentrumService_ListDispatches_Handler,
-		},
-		{
-			MethodName: "ListDispatchActivity",
-			Handler:    _CentrumService_ListDispatchActivity_Handler,
-		},
-		{
-			MethodName: "CreateOrUpdateUnit",
-			Handler:    _CentrumService_CreateOrUpdateUnit_Handler,
-		},
-		{
-			MethodName: "DeleteUnit",
-			Handler:    _CentrumService_DeleteUnit_Handler,
-		},
-		{
-			MethodName: "TakeDispatch",
-			Handler:    _CentrumService_TakeDispatch_Handler,
-		},
-		{
-			MethodName: "UpdateUnitStatus",
-			Handler:    _CentrumService_UpdateUnitStatus_Handler,
-		},
-		{
-			MethodName: "UpdateDispatchStatus",
-			Handler:    _CentrumService_UpdateDispatchStatus_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

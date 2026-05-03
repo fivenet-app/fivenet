@@ -21,7 +21,7 @@ import { setWaypointPLZ } from '~/composables/nui';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
-import { getCentrumCentrumClient } from '~~/gen/ts/clients';
+import { getCentrumDispatchesClient, getCentrumUnitsClient } from '~~/gen/ts/clients';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings/settings';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
@@ -44,7 +44,8 @@ const { livemap } = storeToRefs(settingsStore);
 
 const overlay = useOverlay();
 
-const centrumCentrumClient = await getCentrumCentrumClient();
+const centrumDispatchesClient = await getCentrumDispatchesClient();
+const centrumUnitsClient = await getCentrumUnitsClient();
 
 const logger = useLogger('⛑️ Centrum');
 
@@ -60,7 +61,7 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
 
 async function updateDispatchStatus(dispatchId: number, status: StatusDispatch): Promise<void> {
     try {
-        const call = centrumCentrumClient.updateDispatchStatus({ dispatchId, status });
+        const call = centrumDispatchesClient.updateDispatchStatus({ dispatchId, status });
         await call;
 
         notifications.add({
@@ -97,7 +98,7 @@ async function updateDspStatus(dispatchId?: number, status?: StatusDispatch): Pr
 
 async function updateUnitStatus(id: number, status: StatusUnit): Promise<void> {
     try {
-        const call = centrumCentrumClient.updateUnitStatus({
+        const call = centrumUnitsClient.updateUnitStatus({
             unitId: id,
             status,
         });

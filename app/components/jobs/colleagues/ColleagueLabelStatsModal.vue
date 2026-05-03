@@ -3,15 +3,15 @@ import { StackedBar } from '@unovis/ts';
 import { VisAxis, VisStackedBar, VisTooltip, VisXYContainer } from '@unovis/vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
-import { getJobsJobsClient } from '~~/gen/ts/clients';
+import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { LabelCount } from '~~/gen/ts/resources/jobs/labels/labels';
-import type { GetColleagueLabelsStatsResponse } from '~~/gen/ts/services/jobs/jobs';
+import type { GetColleagueLabelsStatsResponse } from '~~/gen/ts/services/jobs/colleagues';
 
 defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const jobsJobsClient = await getJobsJobsClient();
+const jobsColleaguesClient = await getJobsColleaguesClient();
 
 const bodyRef = useTemplateRef('bodyRef');
 const { height, width } = useElementSize(bodyRef);
@@ -21,7 +21,7 @@ const canSubmit = ref(true);
 async function getColleagueLabelsStats(): Promise<GetColleagueLabelsStatsResponse> {
     canSubmit.value = false;
     try {
-        const { response } = await jobsJobsClient.getColleagueLabelsStats({
+        const { response } = await jobsColleaguesClient.getColleagueLabelsStats({
             labelIds: [],
         });
 

@@ -14,10 +14,28 @@ export async function getCalendarCalendarClient() {
     return new CalendarServiceClient(useGRPCTransport());
 }
 
+// Factory for calendar.entries client.
+export async function getCalendarEntriesClient() {
+    const { EntriesServiceClient } = await import('~~/gen/ts/services/calendar/entries.client');
+    return new EntriesServiceClient(useGRPCTransport());
+}
+
 // Factory for centrum.centrum client.
 export async function getCentrumCentrumClient() {
     const { CentrumServiceClient } = await import('~~/gen/ts/services/centrum/centrum.client');
     return new CentrumServiceClient(useGRPCTransport());
+}
+
+// Factory for centrum.dispatches client.
+export async function getCentrumDispatchesClient() {
+    const { DispatchesServiceClient } = await import('~~/gen/ts/services/centrum/dispatches.client');
+    return new DispatchesServiceClient(useGRPCTransport());
+}
+
+// Factory for centrum.units client.
+export async function getCentrumUnitsClient() {
+    const { UnitsServiceClient } = await import('~~/gen/ts/services/centrum/units.client');
+    return new UnitsServiceClient(useGRPCTransport());
 }
 
 // Factory for citizens.citizens client.
@@ -44,10 +62,22 @@ export async function getDocumentsApprovalClient() {
     return new ApprovalServiceClient(useGRPCTransport());
 }
 
+// Factory for documents.categories client.
+export async function getDocumentsCategoriesClient() {
+    const { CategoriesServiceClient } = await import('~~/gen/ts/services/documents/categories.client');
+    return new CategoriesServiceClient(useGRPCTransport());
+}
+
 // Factory for documents.collab client.
 export async function getDocumentsCollabClient() {
     const { CollabServiceClient } = await import('~~/gen/ts/services/documents/collab.client');
     return new CollabServiceClient(useGRPCTransport());
+}
+
+// Factory for documents.comments client.
+export async function getDocumentsCommentsClient() {
+    const { CommentsServiceClient } = await import('~~/gen/ts/services/documents/comments.client');
+    return new CommentsServiceClient(useGRPCTransport());
 }
 
 // Factory for documents.documents client.
@@ -74,10 +104,22 @@ export async function getDocumentsStatsClient() {
     return new StatsServiceClient(useGRPCTransport());
 }
 
+// Factory for documents.templates client.
+export async function getDocumentsTemplatesClient() {
+    const { TemplatesServiceClient } = await import('~~/gen/ts/services/documents/templates.client');
+    return new TemplatesServiceClient(useGRPCTransport());
+}
+
 // Factory for filestore.filestore client.
 export async function getFilestoreFilestoreClient() {
     const { FilestoreServiceClient } = await import('~~/gen/ts/services/filestore/filestore.client');
     return new FilestoreServiceClient(useGRPCTransport());
+}
+
+// Factory for jobs.colleagues client.
+export async function getJobsColleaguesClient() {
+    const { ColleaguesServiceClient } = await import('~~/gen/ts/services/jobs/colleagues.client');
+    return new ColleaguesServiceClient(useGRPCTransport());
 }
 
 // Factory for jobs.conduct client.
@@ -116,10 +158,28 @@ export async function getMailerMailerClient() {
     return new MailerServiceClient(useGRPCTransport());
 }
 
+// Factory for mailer.settings client.
+export async function getMailerSettingsClient() {
+    const { SettingsServiceClient } = await import('~~/gen/ts/services/mailer/settings.client');
+    return new SettingsServiceClient(useGRPCTransport());
+}
+
+// Factory for mailer.thread client.
+export async function getMailerThreadClient() {
+    const { ThreadServiceClient } = await import('~~/gen/ts/services/mailer/thread.client');
+    return new ThreadServiceClient(useGRPCTransport());
+}
+
 // Factory for notifications.notifications client.
 export async function getNotificationsNotificationsClient() {
     const { NotificationsServiceClient } = await import('~~/gen/ts/services/notifications/notifications.client');
     return new NotificationsServiceClient(useGRPCTransport());
+}
+
+// Factory for qualifications.exam client.
+export async function getQualificationsExamClient() {
+    const { ExamServiceClient } = await import('~~/gen/ts/services/qualifications/exam.client');
+    return new ExamServiceClient(useGRPCTransport());
 }
 
 // Factory for qualifications.qualifications client.

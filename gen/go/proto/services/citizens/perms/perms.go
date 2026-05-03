@@ -12,6 +12,7 @@ const (
 	CitizensServicePerm perms.Category = "citizens.CitizensService"
 	LabelsServicePerm   perms.Category = "citizens.LabelsService"
 
+	// Service: CitizensService
 	CitizensServiceGetUserPerm                     perms.Name = "GetUser"
 	CitizensServiceGetUserJobsPermField            perms.Key  = "Jobs"
 	CitizensServiceListCitizensPerm                perms.Name = "ListCitizens"
@@ -20,6 +21,8 @@ const (
 	CitizensServiceListUserActivityFieldsPermField perms.Key  = "Fields"
 	CitizensServiceSetUserPropsPerm                perms.Name = "SetUserProps"
 	CitizensServiceSetUserPropsFieldsPermField     perms.Key  = "Fields"
-	LabelsServiceCreateOrUpdateLabelPerm           perms.Name = "CreateOrUpdateLabel"
-	LabelsServiceDeleteLabelPerm                   perms.Name = "DeleteLabel"
+
+	// Service: LabelsService
+	LabelsServiceCreateOrUpdateLabelPerm perms.Name = "CreateOrUpdateLabel"
+	LabelsServiceDeleteLabelPerm         perms.Name = "DeleteLabel"
 )

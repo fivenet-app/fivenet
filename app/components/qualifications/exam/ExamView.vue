@@ -3,16 +3,16 @@ import { isPast } from 'date-fns';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
+import { getQualificationsExamClient } from '~~/gen/ts/clients';
 import type { ExamQuestions, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam/exam';
-import type { GetExamInfoResponse, TakeExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import type { GetExamInfoResponse, TakeExamResponse } from '~~/gen/ts/services/qualifications/exam';
 import ExamViewQuestions from './ExamViewQuestions.vue';
 
 const props = defineProps<{
     qualificationId: number;
 }>();
 
-const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
+const qualificationsExamClient = await getQualificationsExamClient();
 
 const { data, status, refresh, error } = useLazyAsyncData(`qualification-${props.qualificationId}-examinfo`, () =>
     getExamInfo(props.qualificationId),
@@ -20,7 +20,7 @@ const { data, status, refresh, error } = useLazyAsyncData(`qualification-${props
 
 async function getExamInfo(qualificationId: number): Promise<GetExamInfoResponse> {
     try {
-        const call = qualificationsQualificationsClient.getExamInfo({
+        const call = qualificationsExamClient.getExamInfo({
             qualificationId: qualificationId,
         });
         const { response } = await call;
@@ -36,7 +36,7 @@ async function getExamInfo(qualificationId: number): Promise<GetExamInfoResponse
 
 async function takeExam(cancel = false): Promise<TakeExamResponse> {
     try {
-        const call = qualificationsQualificationsClient.takeExam({
+        const call = qualificationsExamClient.takeExam({
             qualificationId: props.qualificationId,
             cancel: cancel,
         });

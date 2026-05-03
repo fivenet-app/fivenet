@@ -5,16 +5,6 @@ package documents
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *GetFormRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *GetFormResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -27,16 +17,6 @@ func (m *GetFormResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ListFormsRequest) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil

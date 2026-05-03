@@ -112,10 +112,13 @@ func init() {
 
 type Server struct {
 	pbdocuments.DocumentsServiceServer
+	pbdocuments.CategoriesServiceServer
 	pbdocuments.CollabServiceServer
+	pbdocuments.CommentsServiceServer
 	pbdocuments.ApprovalServiceServer
 	pbdocuments.StampsServiceServer
 	pbdocuments.StatsServiceServer
+	pbdocuments.TemplatesServiceServer
 
 	logger *zap.Logger
 	tracer trace.Tracer
@@ -392,10 +395,13 @@ func newAccess(
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbdocuments.RegisterDocumentsServiceServer(srv, s)
+	pbdocuments.RegisterCategoriesServiceServer(srv, s)
 	pbdocuments.RegisterCollabServiceServer(srv, s)
+	pbdocuments.RegisterCommentsServiceServer(srv, s)
 	pbdocuments.RegisterApprovalServiceServer(srv, s)
 	pbdocuments.RegisterStampsServiceServer(srv, s)
 	pbdocuments.RegisterStatsServiceServer(srv, s)
+	pbdocuments.RegisterTemplatesServiceServer(srv, s)
 }
 
 func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {

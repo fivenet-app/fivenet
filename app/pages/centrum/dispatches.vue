@@ -10,8 +10,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useLivemapStore } from '~/stores/livemap';
-import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import type { ListDispatchesRequest, ListDispatchesResponse } from '~~/gen/ts/services/centrum/centrum';
+import { getCentrumDispatchesClient } from '~~/gen/ts/clients';
+import type { ListDispatchesRequest, ListDispatchesResponse } from '~~/gen/ts/services/centrum/dispatches';
 
 useHead({
     title: 'common.dispatches',
@@ -26,7 +26,7 @@ definePageMeta({
 const livemapStore = useLivemapStore();
 const { showLocationMarker } = storeToRefs(livemapStore);
 
-const centrumCentrumClient = await getCentrumCentrumClient();
+const centrumDispatchesClient = await getCentrumDispatchesClient();
 
 const schema = z.object({
     postal: z.coerce.string().trim().max(12).default(''),
@@ -54,7 +54,7 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
             req.ids.push(query.id);
         }
 
-        const call = centrumCentrumClient.listDispatches(req);
+        const call = centrumDispatchesClient.listDispatches(req);
         const { response } = await call;
 
         return response;

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { type GroupedUnits, statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/stores/centrum';
-import { getCentrumCentrumClient } from '~~/gen/ts/clients';
+import { getCentrumDispatchesClient } from '~~/gen/ts/clients';
 import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
 
 const props = defineProps<{
@@ -19,7 +19,7 @@ const { dispatches, getSortedUnits } = storeToRefs(centrumStore);
 
 const dispatch = computed(() => dispatches.value.get(props.dispatchId));
 
-const centrumCentrumClient = await getCentrumCentrumClient();
+const centrumDispatchesClient = await getCentrumDispatchesClient();
 
 const schema = z.object({
     units: z.custom<number>().array().max(10).default([]),
@@ -47,7 +47,7 @@ async function assignDispatch(): Promise<void> {
             }
         });
 
-        const call = centrumCentrumClient.assignDispatch({
+        const call = centrumDispatchesClient.assignDispatch({
             dispatchId: props.dispatchId,
             toAdd: toAdd,
             toRemove: toRemove,

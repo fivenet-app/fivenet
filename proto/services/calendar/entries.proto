@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+package services.calendar;
+
+import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
+import "resources/calendar/entries/entries.proto";
+import "resources/common/database/database.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar;calendar";
+
+// Calendar Entries
+
+message ListCalendarEntriesRequest {
+  int32 year = 1 [(buf.validate.field).int32 = {gte: 2023}];
+  int32 month = 2 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 12
+  }];
+  repeated int64 calendar_ids = 3;
+  optional bool show_hidden = 4;
+  optional resources.timestamp.Timestamp after = 5;
+}
+
+message ListCalendarEntriesResponse {
+  repeated resources.calendar.entries.CalendarEntry entries = 1;
+}
+
+message GetUpcomingEntriesRequest {
+  int32 seconds = 1;
+}
+
+message GetUpcomingEntriesResponse {
+  repeated resources.calendar.entries.CalendarEntry entries = 1;
+}
+
+message GetCalendarEntryRequest {
+  int64 entry_id = 1;
+}
+
+message GetCalendarEntryResponse {
+  resources.calendar.entries.CalendarEntry entry = 1;
+}
+
+message CreateOrUpdateCalendarEntryRequest {
+  resources.calendar.entries.CalendarEntry entry = 1 [(buf.validate.field).required = true];
+  repeated int32 user_ids = 2;
+}
+
+message CreateOrUpdateCalendarEntryResponse {
+  resources.calendar.entries.CalendarEntry entry = 1;
+}
+
+message DeleteCalendarEntryRequest {
+  int64 entry_id = 1;
+}
+
+message DeleteCalendarEntryResponse {}
+
+message ShareCalendarEntryRequest {
+  int64 entry_id = 1;
+  repeated int32 user_ids = 2;
+}
+
+message ShareCalendarEntryResponse {}
+
+// RSVP
+
+message ListCalendarEntryRSVPRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  int64 entry_id = 2;
+}
+
+message ListCalendarEntryRSVPResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.calendar.entries.CalendarEntryRSVP entries = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message RSVPCalendarEntryRequest {
+  resources.calendar.entries.CalendarEntryRSVP entry = 1;
+  bool subscribe = 2;
+  optional bool remove = 3;
+}
+
+message RSVPCalendarEntryResponse {
+  optional resources.calendar.entries.CalendarEntryRSVP entry = 1;
+}
+
+service EntriesService {
+  option (codegen.perms.perms_svc) = {
+    name: "calendar.CalendarService"
+  };
+
+  rpc ListCalendarEntries(ListCalendarEntriesRequest) returns (ListCalendarEntriesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc GetUpcomingEntries(GetUpcomingEntriesRequest) returns (GetUpcomingEntriesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc GetCalendarEntry(GetCalendarEntryRequest) returns (GetCalendarEntryResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc CreateOrUpdateCalendarEntry(CreateOrUpdateCalendarEntryRequest) returns (CreateOrUpdateCalendarEntryResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc DeleteCalendarEntry(DeleteCalendarEntryRequest) returns (DeleteCalendarEntryResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc ShareCalendarEntry(ShareCalendarEntryRequest) returns (ShareCalendarEntryResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+
+  rpc ListCalendarEntryRSVP(ListCalendarEntryRSVPRequest) returns (ListCalendarEntryRSVPResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc RSVPCalendarEntry(RSVPCalendarEntryRequest) returns (RSVPCalendarEntryResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+}

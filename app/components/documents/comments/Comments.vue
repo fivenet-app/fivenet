@@ -8,12 +8,12 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { HistoryContent } from '~/types/history';
-import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import { getDocumentsCommentsClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Comment } from '~~/gen/ts/resources/documents/comment/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { GetCommentsResponse } from '~~/gen/ts/services/documents/documents';
+import type { GetCommentsResponse } from '~~/gen/ts/services/documents/comments';
 import CommentEntry from './CommentEntry.vue';
 
 const props = withDefaults(
@@ -40,7 +40,7 @@ const notifications = useNotificationsStore();
 
 const historyStore = useHistoryStore();
 
-const documentsDocumentsClient = await getDocumentsDocumentsClient();
+const documentsCommentsClient = await getDocumentsCommentsClient();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
@@ -54,7 +54,7 @@ const { data, status, refresh, error } = useLazyAsyncData(
 
 async function getComments(): Promise<GetCommentsResponse> {
     try {
-        const call = documentsDocumentsClient.getComments({
+        const call = documentsCommentsClient.getComments({
             pagination: {
                 offset: calculateOffset(page.value, data.value?.pagination),
             },
@@ -149,7 +149,7 @@ async function addComment(documentId: number, values: Schema): Promise<void> {
     };
 
     try {
-        const call = documentsDocumentsClient.postComment({ comment });
+        const call = documentsCommentsClient.postComment({ comment });
         const { response } = await call;
 
         notifications.add({

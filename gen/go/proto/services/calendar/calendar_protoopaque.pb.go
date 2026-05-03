@@ -13,7 +13,6 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
 	calendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
-	entries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -766,1160 +765,6 @@ func (b0 DeleteCalendarResponse_builder) Build() *DeleteCalendarResponse {
 	return m0
 }
 
-type ListCalendarEntriesRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Year        int32                  `protobuf:"varint,1,opt,name=year,proto3"`
-	xxx_hidden_Month       int32                  `protobuf:"varint,2,opt,name=month,proto3"`
-	xxx_hidden_CalendarIds []int64                `protobuf:"varint,3,rep,packed,name=calendar_ids,json=calendarIds,proto3"`
-	xxx_hidden_ShowHidden  bool                   `protobuf:"varint,4,opt,name=show_hidden,json=showHidden,proto3,oneof"`
-	xxx_hidden_After       *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=after,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *ListCalendarEntriesRequest) Reset() {
-	*x = ListCalendarEntriesRequest{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListCalendarEntriesRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListCalendarEntriesRequest) ProtoMessage() {}
-
-func (x *ListCalendarEntriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListCalendarEntriesRequest) GetYear() int32 {
-	if x != nil {
-		return x.xxx_hidden_Year
-	}
-	return 0
-}
-
-func (x *ListCalendarEntriesRequest) GetMonth() int32 {
-	if x != nil {
-		return x.xxx_hidden_Month
-	}
-	return 0
-}
-
-func (x *ListCalendarEntriesRequest) GetCalendarIds() []int64 {
-	if x != nil {
-		return x.xxx_hidden_CalendarIds
-	}
-	return nil
-}
-
-func (x *ListCalendarEntriesRequest) GetShowHidden() bool {
-	if x != nil {
-		return x.xxx_hidden_ShowHidden
-	}
-	return false
-}
-
-func (x *ListCalendarEntriesRequest) GetAfter() *timestamp.Timestamp {
-	if x != nil {
-		return x.xxx_hidden_After
-	}
-	return nil
-}
-
-func (x *ListCalendarEntriesRequest) SetYear(v int32) {
-	x.xxx_hidden_Year = v
-}
-
-func (x *ListCalendarEntriesRequest) SetMonth(v int32) {
-	x.xxx_hidden_Month = v
-}
-
-func (x *ListCalendarEntriesRequest) SetCalendarIds(v []int64) {
-	x.xxx_hidden_CalendarIds = v
-}
-
-func (x *ListCalendarEntriesRequest) SetShowHidden(v bool) {
-	x.xxx_hidden_ShowHidden = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
-}
-
-func (x *ListCalendarEntriesRequest) SetAfter(v *timestamp.Timestamp) {
-	x.xxx_hidden_After = v
-}
-
-func (x *ListCalendarEntriesRequest) HasShowHidden() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
-}
-
-func (x *ListCalendarEntriesRequest) HasAfter() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_After != nil
-}
-
-func (x *ListCalendarEntriesRequest) ClearShowHidden() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_ShowHidden = false
-}
-
-func (x *ListCalendarEntriesRequest) ClearAfter() {
-	x.xxx_hidden_After = nil
-}
-
-type ListCalendarEntriesRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Year        int32
-	Month       int32
-	CalendarIds []int64
-	ShowHidden  *bool
-	After       *timestamp.Timestamp
-}
-
-func (b0 ListCalendarEntriesRequest_builder) Build() *ListCalendarEntriesRequest {
-	m0 := &ListCalendarEntriesRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Year = b.Year
-	x.xxx_hidden_Month = b.Month
-	x.xxx_hidden_CalendarIds = b.CalendarIds
-	if b.ShowHidden != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
-		x.xxx_hidden_ShowHidden = *b.ShowHidden
-	}
-	x.xxx_hidden_After = b.After
-	return m0
-}
-
-type ListCalendarEntriesResponse struct {
-	state              protoimpl.MessageState    `protogen:"opaque.v1"`
-	xxx_hidden_Entries *[]*entries.CalendarEntry `protobuf:"bytes,1,rep,name=entries,proto3"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *ListCalendarEntriesResponse) Reset() {
-	*x = ListCalendarEntriesResponse{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListCalendarEntriesResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListCalendarEntriesResponse) ProtoMessage() {}
-
-func (x *ListCalendarEntriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListCalendarEntriesResponse) GetEntries() []*entries.CalendarEntry {
-	if x != nil {
-		if x.xxx_hidden_Entries != nil {
-			return *x.xxx_hidden_Entries
-		}
-	}
-	return nil
-}
-
-func (x *ListCalendarEntriesResponse) SetEntries(v []*entries.CalendarEntry) {
-	x.xxx_hidden_Entries = &v
-}
-
-type ListCalendarEntriesResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Entries []*entries.CalendarEntry
-}
-
-func (b0 ListCalendarEntriesResponse_builder) Build() *ListCalendarEntriesResponse {
-	m0 := &ListCalendarEntriesResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Entries = &b.Entries
-	return m0
-}
-
-type GetUpcomingEntriesRequest struct {
-	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Seconds int32                  `protobuf:"varint,1,opt,name=seconds,proto3"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *GetUpcomingEntriesRequest) Reset() {
-	*x = GetUpcomingEntriesRequest{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetUpcomingEntriesRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetUpcomingEntriesRequest) ProtoMessage() {}
-
-func (x *GetUpcomingEntriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *GetUpcomingEntriesRequest) GetSeconds() int32 {
-	if x != nil {
-		return x.xxx_hidden_Seconds
-	}
-	return 0
-}
-
-func (x *GetUpcomingEntriesRequest) SetSeconds(v int32) {
-	x.xxx_hidden_Seconds = v
-}
-
-type GetUpcomingEntriesRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Seconds int32
-}
-
-func (b0 GetUpcomingEntriesRequest_builder) Build() *GetUpcomingEntriesRequest {
-	m0 := &GetUpcomingEntriesRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Seconds = b.Seconds
-	return m0
-}
-
-type GetUpcomingEntriesResponse struct {
-	state              protoimpl.MessageState    `protogen:"opaque.v1"`
-	xxx_hidden_Entries *[]*entries.CalendarEntry `protobuf:"bytes,1,rep,name=entries,proto3"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *GetUpcomingEntriesResponse) Reset() {
-	*x = GetUpcomingEntriesResponse{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetUpcomingEntriesResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetUpcomingEntriesResponse) ProtoMessage() {}
-
-func (x *GetUpcomingEntriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *GetUpcomingEntriesResponse) GetEntries() []*entries.CalendarEntry {
-	if x != nil {
-		if x.xxx_hidden_Entries != nil {
-			return *x.xxx_hidden_Entries
-		}
-	}
-	return nil
-}
-
-func (x *GetUpcomingEntriesResponse) SetEntries(v []*entries.CalendarEntry) {
-	x.xxx_hidden_Entries = &v
-}
-
-type GetUpcomingEntriesResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Entries []*entries.CalendarEntry
-}
-
-func (b0 GetUpcomingEntriesResponse_builder) Build() *GetUpcomingEntriesResponse {
-	m0 := &GetUpcomingEntriesResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Entries = &b.Entries
-	return m0
-}
-
-type GetCalendarEntryRequest struct {
-	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_EntryId int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *GetCalendarEntryRequest) Reset() {
-	*x = GetCalendarEntryRequest{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetCalendarEntryRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetCalendarEntryRequest) ProtoMessage() {}
-
-func (x *GetCalendarEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *GetCalendarEntryRequest) GetEntryId() int64 {
-	if x != nil {
-		return x.xxx_hidden_EntryId
-	}
-	return 0
-}
-
-func (x *GetCalendarEntryRequest) SetEntryId(v int64) {
-	x.xxx_hidden_EntryId = v
-}
-
-type GetCalendarEntryRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	EntryId int64
-}
-
-func (b0 GetCalendarEntryRequest_builder) Build() *GetCalendarEntryRequest {
-	m0 := &GetCalendarEntryRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_EntryId = b.EntryId
-	return m0
-}
-
-type GetCalendarEntryResponse struct {
-	state            protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Entry *entries.CalendarEntry `protobuf:"bytes,1,opt,name=entry,proto3"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *GetCalendarEntryResponse) Reset() {
-	*x = GetCalendarEntryResponse{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[15]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetCalendarEntryResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetCalendarEntryResponse) ProtoMessage() {}
-
-func (x *GetCalendarEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[15]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *GetCalendarEntryResponse) GetEntry() *entries.CalendarEntry {
-	if x != nil {
-		return x.xxx_hidden_Entry
-	}
-	return nil
-}
-
-func (x *GetCalendarEntryResponse) SetEntry(v *entries.CalendarEntry) {
-	x.xxx_hidden_Entry = v
-}
-
-func (x *GetCalendarEntryResponse) HasEntry() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Entry != nil
-}
-
-func (x *GetCalendarEntryResponse) ClearEntry() {
-	x.xxx_hidden_Entry = nil
-}
-
-type GetCalendarEntryResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Entry *entries.CalendarEntry
-}
-
-func (b0 GetCalendarEntryResponse_builder) Build() *GetCalendarEntryResponse {
-	m0 := &GetCalendarEntryResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Entry = b.Entry
-	return m0
-}
-
-type CreateOrUpdateCalendarEntryRequest struct {
-	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Entry   *entries.CalendarEntry `protobuf:"bytes,1,opt,name=entry,proto3"`
-	xxx_hidden_UserIds []int32                `protobuf:"varint,2,rep,packed,name=user_ids,json=userIds,proto3"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *CreateOrUpdateCalendarEntryRequest) Reset() {
-	*x = CreateOrUpdateCalendarEntryRequest{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[16]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateOrUpdateCalendarEntryRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateOrUpdateCalendarEntryRequest) ProtoMessage() {}
-
-func (x *CreateOrUpdateCalendarEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[16]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *CreateOrUpdateCalendarEntryRequest) GetEntry() *entries.CalendarEntry {
-	if x != nil {
-		return x.xxx_hidden_Entry
-	}
-	return nil
-}
-
-func (x *CreateOrUpdateCalendarEntryRequest) GetUserIds() []int32 {
-	if x != nil {
-		return x.xxx_hidden_UserIds
-	}
-	return nil
-}
-
-func (x *CreateOrUpdateCalendarEntryRequest) SetEntry(v *entries.CalendarEntry) {
-	x.xxx_hidden_Entry = v
-}
-
-func (x *CreateOrUpdateCalendarEntryRequest) SetUserIds(v []int32) {
-	x.xxx_hidden_UserIds = v
-}
-
-func (x *CreateOrUpdateCalendarEntryRequest) HasEntry() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Entry != nil
-}
-
-func (x *CreateOrUpdateCalendarEntryRequest) ClearEntry() {
-	x.xxx_hidden_Entry = nil
-}
-
-type CreateOrUpdateCalendarEntryRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Entry   *entries.CalendarEntry
-	UserIds []int32
-}
-
-func (b0 CreateOrUpdateCalendarEntryRequest_builder) Build() *CreateOrUpdateCalendarEntryRequest {
-	m0 := &CreateOrUpdateCalendarEntryRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Entry = b.Entry
-	x.xxx_hidden_UserIds = b.UserIds
-	return m0
-}
-
-type CreateOrUpdateCalendarEntryResponse struct {
-	state            protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Entry *entries.CalendarEntry `protobuf:"bytes,1,opt,name=entry,proto3"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *CreateOrUpdateCalendarEntryResponse) Reset() {
-	*x = CreateOrUpdateCalendarEntryResponse{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[17]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateOrUpdateCalendarEntryResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateOrUpdateCalendarEntryResponse) ProtoMessage() {}
-
-func (x *CreateOrUpdateCalendarEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[17]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *CreateOrUpdateCalendarEntryResponse) GetEntry() *entries.CalendarEntry {
-	if x != nil {
-		return x.xxx_hidden_Entry
-	}
-	return nil
-}
-
-func (x *CreateOrUpdateCalendarEntryResponse) SetEntry(v *entries.CalendarEntry) {
-	x.xxx_hidden_Entry = v
-}
-
-func (x *CreateOrUpdateCalendarEntryResponse) HasEntry() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Entry != nil
-}
-
-func (x *CreateOrUpdateCalendarEntryResponse) ClearEntry() {
-	x.xxx_hidden_Entry = nil
-}
-
-type CreateOrUpdateCalendarEntryResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Entry *entries.CalendarEntry
-}
-
-func (b0 CreateOrUpdateCalendarEntryResponse_builder) Build() *CreateOrUpdateCalendarEntryResponse {
-	m0 := &CreateOrUpdateCalendarEntryResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Entry = b.Entry
-	return m0
-}
-
-type DeleteCalendarEntryRequest struct {
-	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_EntryId int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *DeleteCalendarEntryRequest) Reset() {
-	*x = DeleteCalendarEntryRequest{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[18]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteCalendarEntryRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteCalendarEntryRequest) ProtoMessage() {}
-
-func (x *DeleteCalendarEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[18]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *DeleteCalendarEntryRequest) GetEntryId() int64 {
-	if x != nil {
-		return x.xxx_hidden_EntryId
-	}
-	return 0
-}
-
-func (x *DeleteCalendarEntryRequest) SetEntryId(v int64) {
-	x.xxx_hidden_EntryId = v
-}
-
-type DeleteCalendarEntryRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	EntryId int64
-}
-
-func (b0 DeleteCalendarEntryRequest_builder) Build() *DeleteCalendarEntryRequest {
-	m0 := &DeleteCalendarEntryRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_EntryId = b.EntryId
-	return m0
-}
-
-type DeleteCalendarEntryResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteCalendarEntryResponse) Reset() {
-	*x = DeleteCalendarEntryResponse{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[19]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteCalendarEntryResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteCalendarEntryResponse) ProtoMessage() {}
-
-func (x *DeleteCalendarEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[19]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type DeleteCalendarEntryResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 DeleteCalendarEntryResponse_builder) Build() *DeleteCalendarEntryResponse {
-	m0 := &DeleteCalendarEntryResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
-type ShareCalendarEntryRequest struct {
-	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_EntryId int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3"`
-	xxx_hidden_UserIds []int32                `protobuf:"varint,2,rep,packed,name=user_ids,json=userIds,proto3"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *ShareCalendarEntryRequest) Reset() {
-	*x = ShareCalendarEntryRequest{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[20]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ShareCalendarEntryRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ShareCalendarEntryRequest) ProtoMessage() {}
-
-func (x *ShareCalendarEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[20]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ShareCalendarEntryRequest) GetEntryId() int64 {
-	if x != nil {
-		return x.xxx_hidden_EntryId
-	}
-	return 0
-}
-
-func (x *ShareCalendarEntryRequest) GetUserIds() []int32 {
-	if x != nil {
-		return x.xxx_hidden_UserIds
-	}
-	return nil
-}
-
-func (x *ShareCalendarEntryRequest) SetEntryId(v int64) {
-	x.xxx_hidden_EntryId = v
-}
-
-func (x *ShareCalendarEntryRequest) SetUserIds(v []int32) {
-	x.xxx_hidden_UserIds = v
-}
-
-type ShareCalendarEntryRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	EntryId int64
-	UserIds []int32
-}
-
-func (b0 ShareCalendarEntryRequest_builder) Build() *ShareCalendarEntryRequest {
-	m0 := &ShareCalendarEntryRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_EntryId = b.EntryId
-	x.xxx_hidden_UserIds = b.UserIds
-	return m0
-}
-
-type ShareCalendarEntryResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ShareCalendarEntryResponse) Reset() {
-	*x = ShareCalendarEntryResponse{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[21]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ShareCalendarEntryResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ShareCalendarEntryResponse) ProtoMessage() {}
-
-func (x *ShareCalendarEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[21]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type ShareCalendarEntryResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 ShareCalendarEntryResponse_builder) Build() *ShareCalendarEntryResponse {
-	m0 := &ShareCalendarEntryResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
-type ListCalendarEntryRSVPRequest struct {
-	state                 protoimpl.MessageState      `protogen:"opaque.v1"`
-	xxx_hidden_Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_EntryId    int64                       `protobuf:"varint,2,opt,name=entry_id,json=entryId,proto3"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *ListCalendarEntryRSVPRequest) Reset() {
-	*x = ListCalendarEntryRSVPRequest{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[22]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListCalendarEntryRSVPRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListCalendarEntryRSVPRequest) ProtoMessage() {}
-
-func (x *ListCalendarEntryRSVPRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[22]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListCalendarEntryRSVPRequest) GetPagination() *database.PaginationRequest {
-	if x != nil {
-		return x.xxx_hidden_Pagination
-	}
-	return nil
-}
-
-func (x *ListCalendarEntryRSVPRequest) GetEntryId() int64 {
-	if x != nil {
-		return x.xxx_hidden_EntryId
-	}
-	return 0
-}
-
-func (x *ListCalendarEntryRSVPRequest) SetPagination(v *database.PaginationRequest) {
-	x.xxx_hidden_Pagination = v
-}
-
-func (x *ListCalendarEntryRSVPRequest) SetEntryId(v int64) {
-	x.xxx_hidden_EntryId = v
-}
-
-func (x *ListCalendarEntryRSVPRequest) HasPagination() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Pagination != nil
-}
-
-func (x *ListCalendarEntryRSVPRequest) ClearPagination() {
-	x.xxx_hidden_Pagination = nil
-}
-
-type ListCalendarEntryRSVPRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Pagination *database.PaginationRequest
-	EntryId    int64
-}
-
-func (b0 ListCalendarEntryRSVPRequest_builder) Build() *ListCalendarEntryRSVPRequest {
-	m0 := &ListCalendarEntryRSVPRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Pagination = b.Pagination
-	x.xxx_hidden_EntryId = b.EntryId
-	return m0
-}
-
-type ListCalendarEntryRSVPResponse struct {
-	state                 protoimpl.MessageState        `protogen:"opaque.v1"`
-	xxx_hidden_Pagination *database.PaginationResponse  `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Entries    *[]*entries.CalendarEntryRSVP `protobuf:"bytes,2,rep,name=entries,proto3"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *ListCalendarEntryRSVPResponse) Reset() {
-	*x = ListCalendarEntryRSVPResponse{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[23]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListCalendarEntryRSVPResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListCalendarEntryRSVPResponse) ProtoMessage() {}
-
-func (x *ListCalendarEntryRSVPResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[23]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListCalendarEntryRSVPResponse) GetPagination() *database.PaginationResponse {
-	if x != nil {
-		return x.xxx_hidden_Pagination
-	}
-	return nil
-}
-
-func (x *ListCalendarEntryRSVPResponse) GetEntries() []*entries.CalendarEntryRSVP {
-	if x != nil {
-		if x.xxx_hidden_Entries != nil {
-			return *x.xxx_hidden_Entries
-		}
-	}
-	return nil
-}
-
-func (x *ListCalendarEntryRSVPResponse) SetPagination(v *database.PaginationResponse) {
-	x.xxx_hidden_Pagination = v
-}
-
-func (x *ListCalendarEntryRSVPResponse) SetEntries(v []*entries.CalendarEntryRSVP) {
-	x.xxx_hidden_Entries = &v
-}
-
-func (x *ListCalendarEntryRSVPResponse) HasPagination() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Pagination != nil
-}
-
-func (x *ListCalendarEntryRSVPResponse) ClearPagination() {
-	x.xxx_hidden_Pagination = nil
-}
-
-type ListCalendarEntryRSVPResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Pagination *database.PaginationResponse
-	Entries    []*entries.CalendarEntryRSVP
-}
-
-func (b0 ListCalendarEntryRSVPResponse_builder) Build() *ListCalendarEntryRSVPResponse {
-	m0 := &ListCalendarEntryRSVPResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Pagination = b.Pagination
-	x.xxx_hidden_Entries = &b.Entries
-	return m0
-}
-
-type RSVPCalendarEntryRequest struct {
-	state                  protoimpl.MessageState     `protogen:"opaque.v1"`
-	xxx_hidden_Entry       *entries.CalendarEntryRSVP `protobuf:"bytes,1,opt,name=entry,proto3"`
-	xxx_hidden_Subscribe   bool                       `protobuf:"varint,2,opt,name=subscribe,proto3"`
-	xxx_hidden_Remove      bool                       `protobuf:"varint,3,opt,name=remove,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *RSVPCalendarEntryRequest) Reset() {
-	*x = RSVPCalendarEntryRequest{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[24]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RSVPCalendarEntryRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RSVPCalendarEntryRequest) ProtoMessage() {}
-
-func (x *RSVPCalendarEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[24]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *RSVPCalendarEntryRequest) GetEntry() *entries.CalendarEntryRSVP {
-	if x != nil {
-		return x.xxx_hidden_Entry
-	}
-	return nil
-}
-
-func (x *RSVPCalendarEntryRequest) GetSubscribe() bool {
-	if x != nil {
-		return x.xxx_hidden_Subscribe
-	}
-	return false
-}
-
-func (x *RSVPCalendarEntryRequest) GetRemove() bool {
-	if x != nil {
-		return x.xxx_hidden_Remove
-	}
-	return false
-}
-
-func (x *RSVPCalendarEntryRequest) SetEntry(v *entries.CalendarEntryRSVP) {
-	x.xxx_hidden_Entry = v
-}
-
-func (x *RSVPCalendarEntryRequest) SetSubscribe(v bool) {
-	x.xxx_hidden_Subscribe = v
-}
-
-func (x *RSVPCalendarEntryRequest) SetRemove(v bool) {
-	x.xxx_hidden_Remove = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
-}
-
-func (x *RSVPCalendarEntryRequest) HasEntry() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Entry != nil
-}
-
-func (x *RSVPCalendarEntryRequest) HasRemove() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
-func (x *RSVPCalendarEntryRequest) ClearEntry() {
-	x.xxx_hidden_Entry = nil
-}
-
-func (x *RSVPCalendarEntryRequest) ClearRemove() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Remove = false
-}
-
-type RSVPCalendarEntryRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Entry     *entries.CalendarEntryRSVP
-	Subscribe bool
-	Remove    *bool
-}
-
-func (b0 RSVPCalendarEntryRequest_builder) Build() *RSVPCalendarEntryRequest {
-	m0 := &RSVPCalendarEntryRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Entry = b.Entry
-	x.xxx_hidden_Subscribe = b.Subscribe
-	if b.Remove != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_Remove = *b.Remove
-	}
-	return m0
-}
-
-type RSVPCalendarEntryResponse struct {
-	state            protoimpl.MessageState     `protogen:"opaque.v1"`
-	xxx_hidden_Entry *entries.CalendarEntryRSVP `protobuf:"bytes,1,opt,name=entry,proto3,oneof"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *RSVPCalendarEntryResponse) Reset() {
-	*x = RSVPCalendarEntryResponse{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[25]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RSVPCalendarEntryResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RSVPCalendarEntryResponse) ProtoMessage() {}
-
-func (x *RSVPCalendarEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[25]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *RSVPCalendarEntryResponse) GetEntry() *entries.CalendarEntryRSVP {
-	if x != nil {
-		return x.xxx_hidden_Entry
-	}
-	return nil
-}
-
-func (x *RSVPCalendarEntryResponse) SetEntry(v *entries.CalendarEntryRSVP) {
-	x.xxx_hidden_Entry = v
-}
-
-func (x *RSVPCalendarEntryResponse) HasEntry() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Entry != nil
-}
-
-func (x *RSVPCalendarEntryResponse) ClearEntry() {
-	x.xxx_hidden_Entry = nil
-}
-
-type RSVPCalendarEntryResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Entry *entries.CalendarEntryRSVP
-}
-
-func (b0 RSVPCalendarEntryResponse_builder) Build() *RSVPCalendarEntryResponse {
-	m0 := &RSVPCalendarEntryResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Entry = b.Entry
-	return m0
-}
-
 type ListSubscriptionsRequest struct {
 	state                 protoimpl.MessageState      `protogen:"opaque.v1"`
 	xxx_hidden_Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
@@ -1929,7 +774,7 @@ type ListSubscriptionsRequest struct {
 
 func (x *ListSubscriptionsRequest) Reset() {
 	*x = ListSubscriptionsRequest{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[26]
+	mi := &file_services_calendar_calendar_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1941,7 +786,7 @@ func (x *ListSubscriptionsRequest) String() string {
 func (*ListSubscriptionsRequest) ProtoMessage() {}
 
 func (x *ListSubscriptionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[26]
+	mi := &file_services_calendar_calendar_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1998,7 +843,7 @@ type ListSubscriptionsResponse struct {
 
 func (x *ListSubscriptionsResponse) Reset() {
 	*x = ListSubscriptionsResponse{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[27]
+	mi := &file_services_calendar_calendar_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2010,7 +855,7 @@ func (x *ListSubscriptionsResponse) String() string {
 func (*ListSubscriptionsResponse) ProtoMessage() {}
 
 func (x *ListSubscriptionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[27]
+	mi := &file_services_calendar_calendar_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2082,7 +927,7 @@ type SubscribeToCalendarRequest struct {
 
 func (x *SubscribeToCalendarRequest) Reset() {
 	*x = SubscribeToCalendarRequest{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[28]
+	mi := &file_services_calendar_calendar_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2094,7 +939,7 @@ func (x *SubscribeToCalendarRequest) String() string {
 func (*SubscribeToCalendarRequest) ProtoMessage() {}
 
 func (x *SubscribeToCalendarRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[28]
+	mi := &file_services_calendar_calendar_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2163,7 +1008,7 @@ type SubscribeToCalendarResponse struct {
 
 func (x *SubscribeToCalendarResponse) Reset() {
 	*x = SubscribeToCalendarResponse{}
-	mi := &file_services_calendar_calendar_proto_msgTypes[29]
+	mi := &file_services_calendar_calendar_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2175,7 +1020,7 @@ func (x *SubscribeToCalendarResponse) String() string {
 func (*SubscribeToCalendarResponse) ProtoMessage() {}
 
 func (x *SubscribeToCalendarResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_calendar_calendar_proto_msgTypes[29]
+	mi := &file_services_calendar_calendar_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2226,7 +1071,7 @@ var File_services_calendar_calendar_proto protoreflect.FileDescriptor
 
 const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
-	" services/calendar/calendar.proto\x12\x11services.calendar\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a&resources/calendar/access/access.proto\x1a!resources/calendar/calendar.proto\x1a(resources/calendar/entries/entries.proto\x1a(resources/common/database/database.proto\x1a#resources/timestamp/timestamp.proto\"\xd9\x02\n" +
+	" services/calendar/calendar.proto\x12\x11services.calendar\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a&resources/calendar/access/access.proto\x1a!resources/calendar/calendar.proto\x1a(resources/common/database/database.proto\x1a#resources/timestamp/timestamp.proto\"\xd9\x02\n" +
 	"\x14ListCalendarsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -2259,56 +1104,7 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\x15DeleteCalendarRequest\x12\x1f\n" +
 	"\vcalendar_id\x18\x01 \x01(\x03R\n" +
 	"calendarId\"\x18\n" +
-	"\x16DeleteCalendarResponse\"\xe4\x01\n" +
-	"\x1aListCalendarEntriesRequest\x12\x12\n" +
-	"\x04year\x18\x01 \x01(\x05R\x04year\x12\x14\n" +
-	"\x05month\x18\x02 \x01(\x05R\x05month\x12!\n" +
-	"\fcalendar_ids\x18\x03 \x03(\x03R\vcalendarIds\x12$\n" +
-	"\vshow_hidden\x18\x04 \x01(\bH\x00R\n" +
-	"showHidden\x88\x01\x01\x129\n" +
-	"\x05after\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05after\x88\x01\x01B\x0e\n" +
-	"\f_show_hiddenB\b\n" +
-	"\x06_after\"b\n" +
-	"\x1bListCalendarEntriesResponse\x12C\n" +
-	"\aentries\x18\x01 \x03(\v2).resources.calendar.entries.CalendarEntryR\aentries\"5\n" +
-	"\x19GetUpcomingEntriesRequest\x12\x18\n" +
-	"\aseconds\x18\x01 \x01(\x05R\aseconds\"a\n" +
-	"\x1aGetUpcomingEntriesResponse\x12C\n" +
-	"\aentries\x18\x01 \x03(\v2).resources.calendar.entries.CalendarEntryR\aentries\"4\n" +
-	"\x17GetCalendarEntryRequest\x12\x19\n" +
-	"\bentry_id\x18\x01 \x01(\x03R\aentryId\"[\n" +
-	"\x18GetCalendarEntryResponse\x12?\n" +
-	"\x05entry\x18\x01 \x01(\v2).resources.calendar.entries.CalendarEntryR\x05entry\"\x80\x01\n" +
-	"\"CreateOrUpdateCalendarEntryRequest\x12?\n" +
-	"\x05entry\x18\x01 \x01(\v2).resources.calendar.entries.CalendarEntryR\x05entry\x12\x19\n" +
-	"\buser_ids\x18\x02 \x03(\x05R\auserIds\"f\n" +
-	"#CreateOrUpdateCalendarEntryResponse\x12?\n" +
-	"\x05entry\x18\x01 \x01(\v2).resources.calendar.entries.CalendarEntryR\x05entry\"7\n" +
-	"\x1aDeleteCalendarEntryRequest\x12\x19\n" +
-	"\bentry_id\x18\x01 \x01(\x03R\aentryId\"\x1d\n" +
-	"\x1bDeleteCalendarEntryResponse\"Q\n" +
-	"\x19ShareCalendarEntryRequest\x12\x19\n" +
-	"\bentry_id\x18\x01 \x01(\x03R\aentryId\x12\x19\n" +
-	"\buser_ids\x18\x02 \x03(\x05R\auserIds\"\x1c\n" +
-	"\x1aShareCalendarEntryResponse\"\x87\x01\n" +
-	"\x1cListCalendarEntryRSVPRequest\x12L\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
-	"pagination\x12\x19\n" +
-	"\bentry_id\x18\x02 \x01(\x03R\aentryId\"\xbd\x01\n" +
-	"\x1dListCalendarEntryRSVPResponse\x12M\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12M\n" +
-	"\aentries\x18\x02 \x03(\v2-.resources.calendar.entries.CalendarEntryRSVPB\x04\xc8\xf3\x18\x01R\aentries\"\xa5\x01\n" +
-	"\x18RSVPCalendarEntryRequest\x12C\n" +
-	"\x05entry\x18\x01 \x01(\v2-.resources.calendar.entries.CalendarEntryRSVPR\x05entry\x12\x1c\n" +
-	"\tsubscribe\x18\x02 \x01(\bR\tsubscribe\x12\x1b\n" +
-	"\x06remove\x18\x03 \x01(\bH\x00R\x06remove\x88\x01\x01B\t\n" +
-	"\a_remove\"o\n" +
-	"\x19RSVPCalendarEntryResponse\x12H\n" +
-	"\x05entry\x18\x01 \x01(\v2-.resources.calendar.entries.CalendarEntryRSVPH\x00R\x05entry\x88\x01\x01B\b\n" +
-	"\x06_entry\"h\n" +
+	"\x16DeleteCalendarResponse\"h\n" +
 	"\x18ListSubscriptionsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -2322,128 +1118,75 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\x03sub\x18\x01 \x01(\v2\x1f.resources.calendar.CalendarSubR\x03sub\x12\x16\n" +
 	"\x06delete\x18\x02 \x01(\bR\x06delete\"P\n" +
 	"\x1bSubscribeToCalendarResponse\x121\n" +
-	"\x03sub\x18\x01 \x01(\v2\x1f.resources.calendar.CalendarSubR\x03sub2\xa4\x0f\n" +
+	"\x03sub\x18\x01 \x01(\v2\x1f.resources.calendar.CalendarSubR\x03sub2\xff\x06\n" +
 	"\x0fCalendarService\x12o\n" +
 	"\rListCalendars\x12'.services.calendar.ListCalendarsRequest\x1a(.services.calendar.ListCalendarsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12i\n" +
 	"\vGetCalendar\x12%.services.calendar.GetCalendarRequest\x1a&.services.calendar.GetCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x86\x01\n" +
 	"\x0eCreateCalendar\x12(.services.calendar.CreateCalendarRequest\x1a).services.calendar.CreateCalendarResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\x17\n" +
 	"\x06Fields\x18\x01\"\x03Job\"\x06Public\x12r\n" +
 	"\x0eUpdateCalendar\x12(.services.calendar.UpdateCalendarRequest\x1a).services.calendar.UpdateCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12r\n" +
-	"\x0eDeleteCalendar\x12(.services.calendar.DeleteCalendarRequest\x1a).services.calendar.DeleteCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x81\x01\n" +
-	"\x13ListCalendarEntries\x12-.services.calendar.ListCalendarEntriesRequest\x1a..services.calendar.ListCalendarEntriesResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12~\n" +
-	"\x12GetUpcomingEntries\x12,.services.calendar.GetUpcomingEntriesRequest\x1a-.services.calendar.GetUpcomingEntriesResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12x\n" +
-	"\x10GetCalendarEntry\x12*.services.calendar.GetCalendarEntryRequest\x1a+.services.calendar.GetCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x99\x01\n" +
-	"\x1bCreateOrUpdateCalendarEntry\x125.services.calendar.CreateOrUpdateCalendarEntryRequest\x1a6.services.calendar.CreateOrUpdateCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x81\x01\n" +
-	"\x13DeleteCalendarEntry\x12-.services.calendar.DeleteCalendarEntryRequest\x1a..services.calendar.DeleteCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12~\n" +
-	"\x12ShareCalendarEntry\x12,.services.calendar.ShareCalendarEntryRequest\x1a-.services.calendar.ShareCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x87\x01\n" +
-	"\x15ListCalendarEntryRSVP\x12/.services.calendar.ListCalendarEntryRSVPRequest\x1a0.services.calendar.ListCalendarEntryRSVPResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12{\n" +
-	"\x11RSVPCalendarEntry\x12+.services.calendar.RSVPCalendarEntryRequest\x1a,.services.calendar.RSVPCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12{\n" +
+	"\x0eDeleteCalendar\x12(.services.calendar.DeleteCalendarRequest\x1a).services.calendar.DeleteCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12{\n" +
 	"\x11ListSubscriptions\x12+.services.calendar.ListSubscriptionsRequest\x1a,.services.calendar.ListSubscriptionsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x81\x01\n" +
 	"\x13SubscribeToCalendar\x12-.services.calendar.SubscribeToCalendarRequest\x1a..services.calendar.SubscribeToCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x1a\x1e\xea\xf3\x18\x1a\bF\x12\x16i-mdi-calendar-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar;calendarb\x06proto3"
 
-var file_services_calendar_calendar_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
+var file_services_calendar_calendar_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_services_calendar_calendar_proto_goTypes = []any{
-	(*ListCalendarsRequest)(nil),                // 0: services.calendar.ListCalendarsRequest
-	(*ListCalendarsResponse)(nil),               // 1: services.calendar.ListCalendarsResponse
-	(*GetCalendarRequest)(nil),                  // 2: services.calendar.GetCalendarRequest
-	(*GetCalendarResponse)(nil),                 // 3: services.calendar.GetCalendarResponse
-	(*CreateCalendarRequest)(nil),               // 4: services.calendar.CreateCalendarRequest
-	(*CreateCalendarResponse)(nil),              // 5: services.calendar.CreateCalendarResponse
-	(*UpdateCalendarRequest)(nil),               // 6: services.calendar.UpdateCalendarRequest
-	(*UpdateCalendarResponse)(nil),              // 7: services.calendar.UpdateCalendarResponse
-	(*DeleteCalendarRequest)(nil),               // 8: services.calendar.DeleteCalendarRequest
-	(*DeleteCalendarResponse)(nil),              // 9: services.calendar.DeleteCalendarResponse
-	(*ListCalendarEntriesRequest)(nil),          // 10: services.calendar.ListCalendarEntriesRequest
-	(*ListCalendarEntriesResponse)(nil),         // 11: services.calendar.ListCalendarEntriesResponse
-	(*GetUpcomingEntriesRequest)(nil),           // 12: services.calendar.GetUpcomingEntriesRequest
-	(*GetUpcomingEntriesResponse)(nil),          // 13: services.calendar.GetUpcomingEntriesResponse
-	(*GetCalendarEntryRequest)(nil),             // 14: services.calendar.GetCalendarEntryRequest
-	(*GetCalendarEntryResponse)(nil),            // 15: services.calendar.GetCalendarEntryResponse
-	(*CreateOrUpdateCalendarEntryRequest)(nil),  // 16: services.calendar.CreateOrUpdateCalendarEntryRequest
-	(*CreateOrUpdateCalendarEntryResponse)(nil), // 17: services.calendar.CreateOrUpdateCalendarEntryResponse
-	(*DeleteCalendarEntryRequest)(nil),          // 18: services.calendar.DeleteCalendarEntryRequest
-	(*DeleteCalendarEntryResponse)(nil),         // 19: services.calendar.DeleteCalendarEntryResponse
-	(*ShareCalendarEntryRequest)(nil),           // 20: services.calendar.ShareCalendarEntryRequest
-	(*ShareCalendarEntryResponse)(nil),          // 21: services.calendar.ShareCalendarEntryResponse
-	(*ListCalendarEntryRSVPRequest)(nil),        // 22: services.calendar.ListCalendarEntryRSVPRequest
-	(*ListCalendarEntryRSVPResponse)(nil),       // 23: services.calendar.ListCalendarEntryRSVPResponse
-	(*RSVPCalendarEntryRequest)(nil),            // 24: services.calendar.RSVPCalendarEntryRequest
-	(*RSVPCalendarEntryResponse)(nil),           // 25: services.calendar.RSVPCalendarEntryResponse
-	(*ListSubscriptionsRequest)(nil),            // 26: services.calendar.ListSubscriptionsRequest
-	(*ListSubscriptionsResponse)(nil),           // 27: services.calendar.ListSubscriptionsResponse
-	(*SubscribeToCalendarRequest)(nil),          // 28: services.calendar.SubscribeToCalendarRequest
-	(*SubscribeToCalendarResponse)(nil),         // 29: services.calendar.SubscribeToCalendarResponse
-	(*database.PaginationRequest)(nil),          // 30: resources.common.database.PaginationRequest
-	(access.AccessLevel)(0),                     // 31: resources.calendar.access.AccessLevel
-	(*timestamp.Timestamp)(nil),                 // 32: resources.timestamp.Timestamp
-	(*database.PaginationResponse)(nil),         // 33: resources.common.database.PaginationResponse
-	(*calendar.Calendar)(nil),                   // 34: resources.calendar.Calendar
-	(*entries.CalendarEntry)(nil),               // 35: resources.calendar.entries.CalendarEntry
-	(*entries.CalendarEntryRSVP)(nil),           // 36: resources.calendar.entries.CalendarEntryRSVP
-	(*calendar.CalendarSub)(nil),                // 37: resources.calendar.CalendarSub
+	(*ListCalendarsRequest)(nil),        // 0: services.calendar.ListCalendarsRequest
+	(*ListCalendarsResponse)(nil),       // 1: services.calendar.ListCalendarsResponse
+	(*GetCalendarRequest)(nil),          // 2: services.calendar.GetCalendarRequest
+	(*GetCalendarResponse)(nil),         // 3: services.calendar.GetCalendarResponse
+	(*CreateCalendarRequest)(nil),       // 4: services.calendar.CreateCalendarRequest
+	(*CreateCalendarResponse)(nil),      // 5: services.calendar.CreateCalendarResponse
+	(*UpdateCalendarRequest)(nil),       // 6: services.calendar.UpdateCalendarRequest
+	(*UpdateCalendarResponse)(nil),      // 7: services.calendar.UpdateCalendarResponse
+	(*DeleteCalendarRequest)(nil),       // 8: services.calendar.DeleteCalendarRequest
+	(*DeleteCalendarResponse)(nil),      // 9: services.calendar.DeleteCalendarResponse
+	(*ListSubscriptionsRequest)(nil),    // 10: services.calendar.ListSubscriptionsRequest
+	(*ListSubscriptionsResponse)(nil),   // 11: services.calendar.ListSubscriptionsResponse
+	(*SubscribeToCalendarRequest)(nil),  // 12: services.calendar.SubscribeToCalendarRequest
+	(*SubscribeToCalendarResponse)(nil), // 13: services.calendar.SubscribeToCalendarResponse
+	(*database.PaginationRequest)(nil),  // 14: resources.common.database.PaginationRequest
+	(access.AccessLevel)(0),             // 15: resources.calendar.access.AccessLevel
+	(*timestamp.Timestamp)(nil),         // 16: resources.timestamp.Timestamp
+	(*database.PaginationResponse)(nil), // 17: resources.common.database.PaginationResponse
+	(*calendar.Calendar)(nil),           // 18: resources.calendar.Calendar
+	(*calendar.CalendarSub)(nil),        // 19: resources.calendar.CalendarSub
 }
 var file_services_calendar_calendar_proto_depIdxs = []int32{
-	30, // 0: services.calendar.ListCalendarsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	31, // 1: services.calendar.ListCalendarsRequest.min_access_level:type_name -> resources.calendar.access.AccessLevel
-	32, // 2: services.calendar.ListCalendarsRequest.after:type_name -> resources.timestamp.Timestamp
-	33, // 3: services.calendar.ListCalendarsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	34, // 4: services.calendar.ListCalendarsResponse.calendars:type_name -> resources.calendar.Calendar
-	34, // 5: services.calendar.GetCalendarResponse.calendar:type_name -> resources.calendar.Calendar
-	34, // 6: services.calendar.CreateCalendarRequest.calendar:type_name -> resources.calendar.Calendar
-	34, // 7: services.calendar.CreateCalendarResponse.calendar:type_name -> resources.calendar.Calendar
-	34, // 8: services.calendar.UpdateCalendarRequest.calendar:type_name -> resources.calendar.Calendar
-	34, // 9: services.calendar.UpdateCalendarResponse.calendar:type_name -> resources.calendar.Calendar
-	32, // 10: services.calendar.ListCalendarEntriesRequest.after:type_name -> resources.timestamp.Timestamp
-	35, // 11: services.calendar.ListCalendarEntriesResponse.entries:type_name -> resources.calendar.entries.CalendarEntry
-	35, // 12: services.calendar.GetUpcomingEntriesResponse.entries:type_name -> resources.calendar.entries.CalendarEntry
-	35, // 13: services.calendar.GetCalendarEntryResponse.entry:type_name -> resources.calendar.entries.CalendarEntry
-	35, // 14: services.calendar.CreateOrUpdateCalendarEntryRequest.entry:type_name -> resources.calendar.entries.CalendarEntry
-	35, // 15: services.calendar.CreateOrUpdateCalendarEntryResponse.entry:type_name -> resources.calendar.entries.CalendarEntry
-	30, // 16: services.calendar.ListCalendarEntryRSVPRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	33, // 17: services.calendar.ListCalendarEntryRSVPResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	36, // 18: services.calendar.ListCalendarEntryRSVPResponse.entries:type_name -> resources.calendar.entries.CalendarEntryRSVP
-	36, // 19: services.calendar.RSVPCalendarEntryRequest.entry:type_name -> resources.calendar.entries.CalendarEntryRSVP
-	36, // 20: services.calendar.RSVPCalendarEntryResponse.entry:type_name -> resources.calendar.entries.CalendarEntryRSVP
-	30, // 21: services.calendar.ListSubscriptionsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	33, // 22: services.calendar.ListSubscriptionsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	37, // 23: services.calendar.ListSubscriptionsResponse.subs:type_name -> resources.calendar.CalendarSub
-	37, // 24: services.calendar.SubscribeToCalendarRequest.sub:type_name -> resources.calendar.CalendarSub
-	37, // 25: services.calendar.SubscribeToCalendarResponse.sub:type_name -> resources.calendar.CalendarSub
-	0,  // 26: services.calendar.CalendarService.ListCalendars:input_type -> services.calendar.ListCalendarsRequest
-	2,  // 27: services.calendar.CalendarService.GetCalendar:input_type -> services.calendar.GetCalendarRequest
-	4,  // 28: services.calendar.CalendarService.CreateCalendar:input_type -> services.calendar.CreateCalendarRequest
-	6,  // 29: services.calendar.CalendarService.UpdateCalendar:input_type -> services.calendar.UpdateCalendarRequest
-	8,  // 30: services.calendar.CalendarService.DeleteCalendar:input_type -> services.calendar.DeleteCalendarRequest
-	10, // 31: services.calendar.CalendarService.ListCalendarEntries:input_type -> services.calendar.ListCalendarEntriesRequest
-	12, // 32: services.calendar.CalendarService.GetUpcomingEntries:input_type -> services.calendar.GetUpcomingEntriesRequest
-	14, // 33: services.calendar.CalendarService.GetCalendarEntry:input_type -> services.calendar.GetCalendarEntryRequest
-	16, // 34: services.calendar.CalendarService.CreateOrUpdateCalendarEntry:input_type -> services.calendar.CreateOrUpdateCalendarEntryRequest
-	18, // 35: services.calendar.CalendarService.DeleteCalendarEntry:input_type -> services.calendar.DeleteCalendarEntryRequest
-	20, // 36: services.calendar.CalendarService.ShareCalendarEntry:input_type -> services.calendar.ShareCalendarEntryRequest
-	22, // 37: services.calendar.CalendarService.ListCalendarEntryRSVP:input_type -> services.calendar.ListCalendarEntryRSVPRequest
-	24, // 38: services.calendar.CalendarService.RSVPCalendarEntry:input_type -> services.calendar.RSVPCalendarEntryRequest
-	26, // 39: services.calendar.CalendarService.ListSubscriptions:input_type -> services.calendar.ListSubscriptionsRequest
-	28, // 40: services.calendar.CalendarService.SubscribeToCalendar:input_type -> services.calendar.SubscribeToCalendarRequest
-	1,  // 41: services.calendar.CalendarService.ListCalendars:output_type -> services.calendar.ListCalendarsResponse
-	3,  // 42: services.calendar.CalendarService.GetCalendar:output_type -> services.calendar.GetCalendarResponse
-	5,  // 43: services.calendar.CalendarService.CreateCalendar:output_type -> services.calendar.CreateCalendarResponse
-	7,  // 44: services.calendar.CalendarService.UpdateCalendar:output_type -> services.calendar.UpdateCalendarResponse
-	9,  // 45: services.calendar.CalendarService.DeleteCalendar:output_type -> services.calendar.DeleteCalendarResponse
-	11, // 46: services.calendar.CalendarService.ListCalendarEntries:output_type -> services.calendar.ListCalendarEntriesResponse
-	13, // 47: services.calendar.CalendarService.GetUpcomingEntries:output_type -> services.calendar.GetUpcomingEntriesResponse
-	15, // 48: services.calendar.CalendarService.GetCalendarEntry:output_type -> services.calendar.GetCalendarEntryResponse
-	17, // 49: services.calendar.CalendarService.CreateOrUpdateCalendarEntry:output_type -> services.calendar.CreateOrUpdateCalendarEntryResponse
-	19, // 50: services.calendar.CalendarService.DeleteCalendarEntry:output_type -> services.calendar.DeleteCalendarEntryResponse
-	21, // 51: services.calendar.CalendarService.ShareCalendarEntry:output_type -> services.calendar.ShareCalendarEntryResponse
-	23, // 52: services.calendar.CalendarService.ListCalendarEntryRSVP:output_type -> services.calendar.ListCalendarEntryRSVPResponse
-	25, // 53: services.calendar.CalendarService.RSVPCalendarEntry:output_type -> services.calendar.RSVPCalendarEntryResponse
-	27, // 54: services.calendar.CalendarService.ListSubscriptions:output_type -> services.calendar.ListSubscriptionsResponse
-	29, // 55: services.calendar.CalendarService.SubscribeToCalendar:output_type -> services.calendar.SubscribeToCalendarResponse
-	41, // [41:56] is the sub-list for method output_type
-	26, // [26:41] is the sub-list for method input_type
-	26, // [26:26] is the sub-list for extension type_name
-	26, // [26:26] is the sub-list for extension extendee
-	0,  // [0:26] is the sub-list for field type_name
+	14, // 0: services.calendar.ListCalendarsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	15, // 1: services.calendar.ListCalendarsRequest.min_access_level:type_name -> resources.calendar.access.AccessLevel
+	16, // 2: services.calendar.ListCalendarsRequest.after:type_name -> resources.timestamp.Timestamp
+	17, // 3: services.calendar.ListCalendarsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	18, // 4: services.calendar.ListCalendarsResponse.calendars:type_name -> resources.calendar.Calendar
+	18, // 5: services.calendar.GetCalendarResponse.calendar:type_name -> resources.calendar.Calendar
+	18, // 6: services.calendar.CreateCalendarRequest.calendar:type_name -> resources.calendar.Calendar
+	18, // 7: services.calendar.CreateCalendarResponse.calendar:type_name -> resources.calendar.Calendar
+	18, // 8: services.calendar.UpdateCalendarRequest.calendar:type_name -> resources.calendar.Calendar
+	18, // 9: services.calendar.UpdateCalendarResponse.calendar:type_name -> resources.calendar.Calendar
+	14, // 10: services.calendar.ListSubscriptionsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	17, // 11: services.calendar.ListSubscriptionsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	19, // 12: services.calendar.ListSubscriptionsResponse.subs:type_name -> resources.calendar.CalendarSub
+	19, // 13: services.calendar.SubscribeToCalendarRequest.sub:type_name -> resources.calendar.CalendarSub
+	19, // 14: services.calendar.SubscribeToCalendarResponse.sub:type_name -> resources.calendar.CalendarSub
+	0,  // 15: services.calendar.CalendarService.ListCalendars:input_type -> services.calendar.ListCalendarsRequest
+	2,  // 16: services.calendar.CalendarService.GetCalendar:input_type -> services.calendar.GetCalendarRequest
+	4,  // 17: services.calendar.CalendarService.CreateCalendar:input_type -> services.calendar.CreateCalendarRequest
+	6,  // 18: services.calendar.CalendarService.UpdateCalendar:input_type -> services.calendar.UpdateCalendarRequest
+	8,  // 19: services.calendar.CalendarService.DeleteCalendar:input_type -> services.calendar.DeleteCalendarRequest
+	10, // 20: services.calendar.CalendarService.ListSubscriptions:input_type -> services.calendar.ListSubscriptionsRequest
+	12, // 21: services.calendar.CalendarService.SubscribeToCalendar:input_type -> services.calendar.SubscribeToCalendarRequest
+	1,  // 22: services.calendar.CalendarService.ListCalendars:output_type -> services.calendar.ListCalendarsResponse
+	3,  // 23: services.calendar.CalendarService.GetCalendar:output_type -> services.calendar.GetCalendarResponse
+	5,  // 24: services.calendar.CalendarService.CreateCalendar:output_type -> services.calendar.CreateCalendarResponse
+	7,  // 25: services.calendar.CalendarService.UpdateCalendar:output_type -> services.calendar.UpdateCalendarResponse
+	9,  // 26: services.calendar.CalendarService.DeleteCalendar:output_type -> services.calendar.DeleteCalendarResponse
+	11, // 27: services.calendar.CalendarService.ListSubscriptions:output_type -> services.calendar.ListSubscriptionsResponse
+	13, // 28: services.calendar.CalendarService.SubscribeToCalendar:output_type -> services.calendar.SubscribeToCalendarResponse
+	22, // [22:29] is the sub-list for method output_type
+	15, // [15:22] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_services_calendar_calendar_proto_init() }
@@ -2452,16 +1195,13 @@ func file_services_calendar_calendar_proto_init() {
 		return
 	}
 	file_services_calendar_calendar_proto_msgTypes[0].OneofWrappers = []any{}
-	file_services_calendar_calendar_proto_msgTypes[10].OneofWrappers = []any{}
-	file_services_calendar_calendar_proto_msgTypes[24].OneofWrappers = []any{}
-	file_services_calendar_calendar_proto_msgTypes[25].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_calendar_calendar_proto_rawDesc), len(file_services_calendar_calendar_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   30,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

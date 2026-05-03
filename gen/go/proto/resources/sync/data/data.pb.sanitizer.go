@@ -97,16 +97,6 @@ func (m *DataLicenses) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DataStatus) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *DataUser) Sanitize() error {
 	if m == nil {
 		return nil
@@ -263,16 +253,6 @@ func (m *DataVehicles) Sanitize() error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteUsers) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil

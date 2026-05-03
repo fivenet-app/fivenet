@@ -13,6 +13,7 @@ import (
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	pgs "github.com/lyft/protoc-gen-star/v2"
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
+	"google.golang.org/protobuf/proto"
 )
 
 // PermifyModule holds all state for this plugin.
@@ -106,6 +107,18 @@ func (p *PermifyModule) Execute(
 	return p.Artifacts()
 }
 
+func getServiceByName(fs []pgs.File, name string) pgs.Service {
+	for _, f := range fs {
+		for _, s := range f.Services() {
+			if strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.") == name {
+				return s
+			}
+		}
+	}
+
+	return nil
+}
+
 func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 	f := fs[0]
 
@@ -136,11 +149,6 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 
 	for _, f := range fs {
 		for _, s := range f.Services() {
-			sName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
-
-			data.PermissionServiceKeys = append(data.PermissionServiceKeys, sName)
-			p.Debugf("Service: %s (%s)", sName, data.PermissionServiceKeys)
-
 			var order int32
 			var icon *string
 
@@ -150,12 +158,40 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 				p.Fail("error reading perms option:", err)
 			}
 
-			if serviceOpts.Icon != nil {
-				icon = serviceOpts.Icon
+			sName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
+			if serviceOpts.GetName() != "" {
+				sbn := getServiceByName(fs, serviceOpts.GetName())
+				if sbn == nil {
+					p.Failf("unable to find override service", serviceOpts.GetName())
+				}
+
+				sName = strings.TrimPrefix(string(sbn.FullyQualifiedName()), ".services.")
+
+				var serviceOptsT permspb.ServiceOptions
+				_, err := sbn.Extension(permspb.E_PermsSvc, &serviceOptsT)
+				if err != nil {
+					p.Fail("error reading perms option:", err)
+				}
+
+				so := proto.Clone(&serviceOptsT).(*permspb.ServiceOptions)
+				if so.GetIcon() != "" {
+					serviceOpts.Icon = new(so.GetIcon())
+				}
+				if so.GetOrder() != 0 {
+					serviceOpts.Order = so.GetOrder()
+				}
+			} else {
+				data.PermissionServiceKeys = append(data.PermissionServiceKeys, sName)
 			}
-			if serviceOpts.Order != 0 {
-				order = serviceOpts.Order
+			p.Debugf("Service: %s (%s)", sName, data.PermissionServiceKeys)
+
+			if serviceOpts.GetIcon() != "" {
+				icon = new(serviceOpts.GetIcon())
 			}
+			if serviceOpts.GetOrder() != 0 {
+				order = serviceOpts.GetOrder()
+			}
+
 			if len(serviceOpts.AdditionalPerms) > 0 {
 				for _, v := range serviceOpts.AdditionalPerms {
 					if _, ok := data.Permissions[sName]; !ok {
@@ -267,10 +303,7 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 				for _, name := range names {
 					if name != mName || len(names) > 1 {
 						p.Debugf("names %+v; name: %s, mName: %s", names, name, mName)
-						remapServiceName := strings.TrimPrefix(
-							string(s.FullyQualifiedName()),
-							".services.",
-						)
+						remapServiceName := sName
 
 						var service *string
 						if perm.Service != nil {
@@ -402,14 +435,15 @@ const (
     {{ serviceName $sName }}Perm perms.Category = "{{ $sName }}"
 {{ end }}
 
-{{ range $sName, $service := $.Permissions -}}
-	    {{- range $perm := $service }}
+{{ range $sName, $service := $.Permissions }}
+    // Service: {{ serviceName $sName }}
+	{{- range $perm := $service }}
 	{{ serviceName $sName }}{{ $perm.Name }}Perm perms.Name = "{{ $perm.Name }}"
             {{- range $attr := $perm.Attrs }}
     {{ serviceName $sName }}{{ $perm.Name }}{{ $attr.Key }}PermField perms.Key = "{{ $attr.Key }}"
             {{- end }}
 		{{- end }}
-	{{- end }}
+	{{ end }}
 )
 {{ end }}
 `

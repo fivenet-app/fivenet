@@ -31,10 +31,6 @@ const (
 	QualificationsService_ListQualificationsResults_FullMethodName          = "/services.qualifications.QualificationsService/ListQualificationsResults"
 	QualificationsService_CreateOrUpdateQualificationResult_FullMethodName  = "/services.qualifications.QualificationsService/CreateOrUpdateQualificationResult"
 	QualificationsService_DeleteQualificationResult_FullMethodName          = "/services.qualifications.QualificationsService/DeleteQualificationResult"
-	QualificationsService_GetExamInfo_FullMethodName                        = "/services.qualifications.QualificationsService/GetExamInfo"
-	QualificationsService_TakeExam_FullMethodName                           = "/services.qualifications.QualificationsService/TakeExam"
-	QualificationsService_SubmitExam_FullMethodName                         = "/services.qualifications.QualificationsService/SubmitExam"
-	QualificationsService_GetUserExam_FullMethodName                        = "/services.qualifications.QualificationsService/GetUserExam"
 	QualificationsService_UploadFile_FullMethodName                         = "/services.qualifications.QualificationsService/UploadFile"
 )
 
@@ -53,10 +49,6 @@ type QualificationsServiceClient interface {
 	ListQualificationsResults(ctx context.Context, in *ListQualificationsResultsRequest, opts ...grpc.CallOption) (*ListQualificationsResultsResponse, error)
 	CreateOrUpdateQualificationResult(ctx context.Context, in *CreateOrUpdateQualificationResultRequest, opts ...grpc.CallOption) (*CreateOrUpdateQualificationResultResponse, error)
 	DeleteQualificationResult(ctx context.Context, in *DeleteQualificationResultRequest, opts ...grpc.CallOption) (*DeleteQualificationResultResponse, error)
-	GetExamInfo(ctx context.Context, in *GetExamInfoRequest, opts ...grpc.CallOption) (*GetExamInfoResponse, error)
-	TakeExam(ctx context.Context, in *TakeExamRequest, opts ...grpc.CallOption) (*TakeExamResponse, error)
-	SubmitExam(ctx context.Context, in *SubmitExamRequest, opts ...grpc.CallOption) (*SubmitExamResponse, error)
-	GetUserExam(ctx context.Context, in *GetUserExamRequest, opts ...grpc.CallOption) (*GetUserExamResponse, error)
 	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 }
 
@@ -178,46 +170,6 @@ func (c *qualificationsServiceClient) DeleteQualificationResult(ctx context.Cont
 	return out, nil
 }
 
-func (c *qualificationsServiceClient) GetExamInfo(ctx context.Context, in *GetExamInfoRequest, opts ...grpc.CallOption) (*GetExamInfoResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetExamInfoResponse)
-	err := c.cc.Invoke(ctx, QualificationsService_GetExamInfo_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *qualificationsServiceClient) TakeExam(ctx context.Context, in *TakeExamRequest, opts ...grpc.CallOption) (*TakeExamResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TakeExamResponse)
-	err := c.cc.Invoke(ctx, QualificationsService_TakeExam_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *qualificationsServiceClient) SubmitExam(ctx context.Context, in *SubmitExamRequest, opts ...grpc.CallOption) (*SubmitExamResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SubmitExamResponse)
-	err := c.cc.Invoke(ctx, QualificationsService_SubmitExam_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *qualificationsServiceClient) GetUserExam(ctx context.Context, in *GetUserExamRequest, opts ...grpc.CallOption) (*GetUserExamResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetUserExamResponse)
-	err := c.cc.Invoke(ctx, QualificationsService_GetUserExam_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *qualificationsServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &QualificationsService_ServiceDesc.Streams[0], QualificationsService_UploadFile_FullMethodName, cOpts...)
@@ -246,10 +198,6 @@ type QualificationsServiceServer interface {
 	ListQualificationsResults(context.Context, *ListQualificationsResultsRequest) (*ListQualificationsResultsResponse, error)
 	CreateOrUpdateQualificationResult(context.Context, *CreateOrUpdateQualificationResultRequest) (*CreateOrUpdateQualificationResultResponse, error)
 	DeleteQualificationResult(context.Context, *DeleteQualificationResultRequest) (*DeleteQualificationResultResponse, error)
-	GetExamInfo(context.Context, *GetExamInfoRequest) (*GetExamInfoResponse, error)
-	TakeExam(context.Context, *TakeExamRequest) (*TakeExamResponse, error)
-	SubmitExam(context.Context, *SubmitExamRequest) (*SubmitExamResponse, error)
-	GetUserExam(context.Context, *GetUserExamRequest) (*GetUserExamResponse, error)
 	UploadFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	mustEmbedUnimplementedQualificationsServiceServer()
 }
@@ -293,18 +241,6 @@ func (UnimplementedQualificationsServiceServer) CreateOrUpdateQualificationResul
 }
 func (UnimplementedQualificationsServiceServer) DeleteQualificationResult(context.Context, *DeleteQualificationResultRequest) (*DeleteQualificationResultResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteQualificationResult not implemented")
-}
-func (UnimplementedQualificationsServiceServer) GetExamInfo(context.Context, *GetExamInfoRequest) (*GetExamInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetExamInfo not implemented")
-}
-func (UnimplementedQualificationsServiceServer) TakeExam(context.Context, *TakeExamRequest) (*TakeExamResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TakeExam not implemented")
-}
-func (UnimplementedQualificationsServiceServer) SubmitExam(context.Context, *SubmitExamRequest) (*SubmitExamResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SubmitExam not implemented")
-}
-func (UnimplementedQualificationsServiceServer) GetUserExam(context.Context, *GetUserExamRequest) (*GetUserExamResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserExam not implemented")
 }
 func (UnimplementedQualificationsServiceServer) UploadFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
@@ -528,78 +464,6 @@ func _QualificationsService_DeleteQualificationResult_Handler(srv interface{}, c
 	return interceptor(ctx, in, info, handler)
 }
 
-func _QualificationsService_GetExamInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetExamInfoRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QualificationsServiceServer).GetExamInfo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: QualificationsService_GetExamInfo_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QualificationsServiceServer).GetExamInfo(ctx, req.(*GetExamInfoRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _QualificationsService_TakeExam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TakeExamRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QualificationsServiceServer).TakeExam(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: QualificationsService_TakeExam_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QualificationsServiceServer).TakeExam(ctx, req.(*TakeExamRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _QualificationsService_SubmitExam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubmitExamRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QualificationsServiceServer).SubmitExam(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: QualificationsService_SubmitExam_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QualificationsServiceServer).SubmitExam(ctx, req.(*SubmitExamRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _QualificationsService_GetUserExam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserExamRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QualificationsServiceServer).GetUserExam(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: QualificationsService_GetUserExam_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QualificationsServiceServer).GetUserExam(ctx, req.(*GetUserExamRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _QualificationsService_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
 	return srv.(QualificationsServiceServer).UploadFile(&grpc.GenericServerStream[file.UploadFileRequest, file.UploadFileResponse]{ServerStream: stream})
 }
@@ -657,22 +521,6 @@ var QualificationsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteQualificationResult",
 			Handler:    _QualificationsService_DeleteQualificationResult_Handler,
-		},
-		{
-			MethodName: "GetExamInfo",
-			Handler:    _QualificationsService_GetExamInfo_Handler,
-		},
-		{
-			MethodName: "TakeExam",
-			Handler:    _QualificationsService_TakeExam_Handler,
-		},
-		{
-			MethodName: "SubmitExam",
-			Handler:    _QualificationsService_SubmitExam_Handler,
-		},
-		{
-			MethodName: "GetUserExam",
-			Handler:    _QualificationsService_GetUserExam_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

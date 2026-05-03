@@ -27,16 +27,6 @@ func (m *JobEvent) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *JobGradeEvent) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *SystemEvent) Sanitize() error {
 	if m == nil {
 		return nil

@@ -75,6 +75,10 @@ export interface ServiceOptions {
      */
     icon?: string;
     /**
+     * @generated from protobuf field: optional string name = 4
+     */
+    name?: string;
+    /**
      * @generated from protobuf field: repeated codegen.perms.AdditionalServicePerm additional_perms = 3
      */
     additionalPerms: AdditionalServicePerm[];
@@ -258,6 +262,7 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
         super("codegen.perms.ServiceOptions", [
             { no: 1, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "additional_perms", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AdditionalServicePerm }
         ]);
     }
@@ -279,6 +284,9 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
                     break;
                 case /* optional string icon */ 2:
                     message.icon = reader.string();
+                    break;
+                case /* optional string name */ 4:
+                    message.name = reader.string();
                     break;
                 case /* repeated codegen.perms.AdditionalServicePerm additional_perms */ 3:
                     message.additionalPerms.push(AdditionalServicePerm.internalBinaryRead(reader, reader.uint32(), options));
@@ -304,6 +312,9 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
         /* repeated codegen.perms.AdditionalServicePerm additional_perms = 3; */
         for (let i = 0; i < message.additionalPerms.length; i++)
             AdditionalServicePerm.internalBinaryWrite(message.additionalPerms[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional string name = 4; */
+        if (message.name !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.name);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

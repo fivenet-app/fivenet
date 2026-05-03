@@ -303,6 +303,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `order` | [int32](#int32) |  |  |
 | `icon` | [string](#string) | optional |  |
+| `name` | [string](#string) | optional |  |
 | `additional_perms` | [AdditionalServicePerm](#codegenpermsAdditionalServicePerm) | repeated |  |
 
 
@@ -508,18 +509,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-## resources/citizens/labels/labels.proto
-
-
-### resources.citizens.labels.Access
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [JobAccess](#resourcescitizenslabelsJobAccess) | repeated |  |
-
-
-
+## resources/citizens/labels/access.proto
 
 
 ### resources.citizens.labels.JobAccess
@@ -539,6 +529,40 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+### resources.citizens.labels.LabelAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [JobAccess](#resourcescitizenslabelsJobAccess) | repeated |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.citizens.labels.AccessLevel
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_VIEW` | 1 |  |
+| `ACCESS_LEVEL_GIVE` | 2 |  |
+| `ACCESS_LEVEL_REMOVE` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/citizens/labels/labels.proto
+
+
 ### resources.citizens.labels.Label
 
 
@@ -553,7 +577,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `color` | [string](#string) |  |  |
 | `icon` | [string](#string) | optional |  |
 | `settings` | [Settings](#resourcescitizenslabelsSettings) | optional |  |
-| `access` | [Access](#resourcescitizenslabelsAccess) | optional |  |
+| `access` | [LabelAccess](#resourcescitizenslabelsLabelAccess) | optional |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Citizen label assignment data |
 
 
@@ -584,17 +608,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
  <!-- end messages -->
-
-
-### resources.citizens.labels.AccessLevel
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_VIEW` | 1 |  |
-| `ACCESS_LEVEL_GIVE` | 2 |  |
-| `ACCESS_LEVEL_REMOVE` | 3 |  |
-
 
  <!-- end enums -->
 
@@ -7731,6 +7744,165 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+### services.calendar.DeleteCalendarRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `calendar_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.calendar.DeleteCalendarResponse
+
+
+
+
+
+### services.calendar.GetCalendarRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `calendar_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.calendar.GetCalendarResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `calendar` | [resources.calendar.Calendar](#resourcescalendarCalendar) |  |  |
+
+
+
+
+
+### services.calendar.ListCalendarsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `only_public` | [bool](#bool) |  | Search params |
+| `min_access_level` | [resources.calendar.access.AccessLevel](#resourcescalendaraccessAccessLevel) | optional |  |
+| `after` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `calendar_ids` | [int64](#int64) | repeated |  |
+
+
+
+
+
+### services.calendar.ListCalendarsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `calendars` | [resources.calendar.Calendar](#resourcescalendarCalendar) | repeated |  |
+
+
+
+
+
+### services.calendar.ListSubscriptionsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+
+
+
+
+
+### services.calendar.ListSubscriptionsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `subs` | [resources.calendar.CalendarSub](#resourcescalendarCalendarSub) | repeated |  |
+
+
+
+
+
+### services.calendar.SubscribeToCalendarRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sub` | [resources.calendar.CalendarSub](#resourcescalendarCalendarSub) |  |  |
+| `delete` | [bool](#bool) |  |  |
+
+
+
+
+
+### services.calendar.SubscribeToCalendarResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sub` | [resources.calendar.CalendarSub](#resourcescalendarCalendarSub) |  |  |
+
+
+
+
+
+### services.calendar.UpdateCalendarRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `calendar` | [resources.calendar.Calendar](#resourcescalendarCalendar) |  |  |
+
+
+
+
+
+### services.calendar.UpdateCalendarResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `calendar` | [resources.calendar.Calendar](#resourcescalendarCalendar) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.calendar.CalendarService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListCalendars` | [ListCalendarsRequest](#servicescalendarListCalendarsRequest) | [ListCalendarsResponse](#servicescalendarListCalendarsResponse) | |
+| `GetCalendar` | [GetCalendarRequest](#servicescalendarGetCalendarRequest) | [GetCalendarResponse](#servicescalendarGetCalendarResponse) | |
+| `CreateCalendar` | [CreateCalendarRequest](#servicescalendarCreateCalendarRequest) | [CreateCalendarResponse](#servicescalendarCreateCalendarResponse) | |
+| `UpdateCalendar` | [UpdateCalendarRequest](#servicescalendarUpdateCalendarRequest) | [UpdateCalendarResponse](#servicescalendarUpdateCalendarResponse) | |
+| `DeleteCalendar` | [DeleteCalendarRequest](#servicescalendarDeleteCalendarRequest) | [DeleteCalendarResponse](#servicescalendarDeleteCalendarResponse) | |
+| `ListSubscriptions` | [ListSubscriptionsRequest](#servicescalendarListSubscriptionsRequest) | [ListSubscriptionsResponse](#servicescalendarListSubscriptionsResponse) | |
+| `SubscribeToCalendar` | [SubscribeToCalendarRequest](#servicescalendarSubscribeToCalendarRequest) | [SubscribeToCalendarResponse](#servicescalendarSubscribeToCalendarResponse) | |
+
+ <!-- end services -->
+
+
+
+## services/calendar/entries.proto
+
+
 ### services.calendar.CreateOrUpdateCalendarEntryRequest
 
 
@@ -7771,23 +7943,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.calendar.DeleteCalendarRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `calendar_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.calendar.DeleteCalendarResponse
-
-
-
-
-
 ### services.calendar.GetCalendarEntryRequest
 
 
@@ -7805,28 +7960,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `entry` | [resources.calendar.entries.CalendarEntry](#resourcescalendarentriesCalendarEntry) |  |  |
-
-
-
-
-
-### services.calendar.GetCalendarRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `calendar_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.calendar.GetCalendarResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `calendar` | [resources.calendar.Calendar](#resourcescalendarCalendar) |  |  |
 
 
 
@@ -7904,56 +8037,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.calendar.ListCalendarsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `only_public` | [bool](#bool) |  | Search params |
-| `min_access_level` | [resources.calendar.access.AccessLevel](#resourcescalendaraccessAccessLevel) | optional |  |
-| `after` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `calendar_ids` | [int64](#int64) | repeated |  |
-
-
-
-
-
-### services.calendar.ListCalendarsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
-| `calendars` | [resources.calendar.Calendar](#resourcescalendarCalendar) | repeated |  |
-
-
-
-
-
-### services.calendar.ListSubscriptionsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-
-
-
-
-
-### services.calendar.ListSubscriptionsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
-| `subs` | [resources.calendar.CalendarSub](#resourcescalendarCalendarSub) | repeated |  |
-
-
-
-
-
 ### services.calendar.RSVPCalendarEntryRequest
 
 
@@ -7995,47 +8078,179 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+ <!-- end messages -->
 
-### services.calendar.SubscribeToCalendarRequest
+ <!-- end enums -->
 
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `sub` | [resources.calendar.CalendarSub](#resourcescalendarCalendarSub) |  |  |
-| `delete` | [bool](#bool) |  |  |
+ <!-- end HasExtensions -->
 
 
+### services.calendar.EntriesService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListCalendarEntries` | [ListCalendarEntriesRequest](#servicescalendarListCalendarEntriesRequest) | [ListCalendarEntriesResponse](#servicescalendarListCalendarEntriesResponse) | |
+| `GetUpcomingEntries` | [GetUpcomingEntriesRequest](#servicescalendarGetUpcomingEntriesRequest) | [GetUpcomingEntriesResponse](#servicescalendarGetUpcomingEntriesResponse) | |
+| `GetCalendarEntry` | [GetCalendarEntryRequest](#servicescalendarGetCalendarEntryRequest) | [GetCalendarEntryResponse](#servicescalendarGetCalendarEntryResponse) | |
+| `CreateOrUpdateCalendarEntry` | [CreateOrUpdateCalendarEntryRequest](#servicescalendarCreateOrUpdateCalendarEntryRequest) | [CreateOrUpdateCalendarEntryResponse](#servicescalendarCreateOrUpdateCalendarEntryResponse) | |
+| `DeleteCalendarEntry` | [DeleteCalendarEntryRequest](#servicescalendarDeleteCalendarEntryRequest) | [DeleteCalendarEntryResponse](#servicescalendarDeleteCalendarEntryResponse) | |
+| `ShareCalendarEntry` | [ShareCalendarEntryRequest](#servicescalendarShareCalendarEntryRequest) | [ShareCalendarEntryResponse](#servicescalendarShareCalendarEntryResponse) | |
+| `ListCalendarEntryRSVP` | [ListCalendarEntryRSVPRequest](#servicescalendarListCalendarEntryRSVPRequest) | [ListCalendarEntryRSVPResponse](#servicescalendarListCalendarEntryRSVPResponse) | |
+| `RSVPCalendarEntry` | [RSVPCalendarEntryRequest](#servicescalendarRSVPCalendarEntryRequest) | [RSVPCalendarEntryResponse](#servicescalendarRSVPCalendarEntryResponse) | |
+
+ <!-- end services -->
 
 
 
-### services.calendar.SubscribeToCalendarResponse
+## services/centrum/centrum.proto
 
 
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `sub` | [resources.calendar.CalendarSub](#resourcescalendarCalendarSub) |  |  |
-
-
-
-
-
-### services.calendar.UpdateCalendarRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `calendar` | [resources.calendar.Calendar](#resourcescalendarCalendar) |  |  |
+### services.centrum.GetDispatchHeatmapRequest
 
 
 
 
 
-### services.calendar.UpdateCalendarResponse
+### services.centrum.GetDispatchHeatmapResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `calendar` | [resources.calendar.Calendar](#resourcescalendarCalendar) |  |  |
+| `max_entries` | [int32](#int32) |  |  |
+| `entries` | [resources.livemap.heatmap.HeatmapEntry](#resourceslivemapheatmapHeatmapEntry) | repeated |  |
+
+
+
+
+
+### services.centrum.GetSettingsRequest
+
+
+
+
+
+### services.centrum.GetSettingsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `settings` | [resources.centrum.settings.Settings](#resourcescentrumsettingsSettings) |  |  |
+| `effective_access` | [resources.centrum.settings.EffectiveAccess](#resourcescentrumsettingsEffectiveAccess) |  |  |
+
+
+
+
+
+### services.centrum.LatestState
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dispatchers` | [resources.centrum.dispatchers.JobDispatchers](#resourcescentrumdispatchersJobDispatchers) |  |  |
+| `own_unit_id` | [int64](#int64) | optional |  |
+| `units` | [resources.centrum.units.Unit](#resourcescentrumunitsUnit) | repeated | Send the current units and dispatches |
+| `dispatches` | [resources.centrum.dispatches.Dispatch](#resourcescentrumdispatchesDispatch) | repeated |  |
+
+
+
+
+
+### services.centrum.StreamHandshake
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `server_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `settings` | [resources.centrum.settings.Settings](#resourcescentrumsettingsSettings) |  |  |
+| `access` | [resources.centrum.settings.EffectiveAccess](#resourcescentrumsettingsEffectiveAccess) |  |  |
+
+
+
+
+
+### services.centrum.StreamRequest
+
+
+
+
+
+### services.centrum.StreamResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `handshake` | [StreamHandshake](#servicescentrumStreamHandshake) |  |  |
+| `latest_state` | [LatestState](#servicescentrumLatestState) |  |  |
+| `settings` | [resources.centrum.settings.Settings](#resourcescentrumsettingsSettings) |  |  |
+| `access` | [resources.centrum.settings.EffectiveAccess](#resourcescentrumsettingsEffectiveAccess) |  |  |
+| `dispatchers` | [resources.centrum.dispatchers.Dispatchers](#resourcescentrumdispatchersDispatchers) |  |  |
+| `unit_deleted` | [int64](#int64) |  |  |
+| `unit_updated` | [resources.centrum.units.Unit](#resourcescentrumunitsUnit) |  |  |
+| `unit_status` | [resources.centrum.units.UnitStatus](#resourcescentrumunitsUnitStatus) |  |  |
+| `dispatch_deleted` | [int64](#int64) |  |  |
+| `dispatch_updated` | [resources.centrum.dispatches.Dispatch](#resourcescentrumdispatchesDispatch) |  |  |
+| `dispatch_status` | [resources.centrum.dispatches.DispatchStatus](#resourcescentrumdispatchesDispatchStatus) |  |  |
+
+
+
+
+
+### services.centrum.TakeControlRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `signon` | [bool](#bool) |  |  |
+
+
+
+
+
+### services.centrum.TakeControlResponse
+
+
+
+
+
+### services.centrum.UpdateDispatchersRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `to_remove` | [int32](#int32) | repeated |  |
+
+
+
+
+
+### services.centrum.UpdateDispatchersResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dispatchers` | [resources.centrum.dispatchers.Dispatchers](#resourcescentrumdispatchersDispatchers) |  |  |
+
+
+
+
+
+### services.centrum.UpdateSettingsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `settings` | [resources.centrum.settings.Settings](#resourcescentrumsettingsSettings) |  |  |
+
+
+
+
+
+### services.centrum.UpdateSettingsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `settings` | [resources.centrum.settings.Settings](#resourcescentrumsettingsSettings) |  |  |
 
 
 
@@ -8047,31 +8262,22 @@ Auth Service handles user authentication, character selection and oauth2 connect
  <!-- end HasExtensions -->
 
 
-### services.calendar.CalendarService
+### services.centrum.CentrumService
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListCalendars` | [ListCalendarsRequest](#servicescalendarListCalendarsRequest) | [ListCalendarsResponse](#servicescalendarListCalendarsResponse) | |
-| `GetCalendar` | [GetCalendarRequest](#servicescalendarGetCalendarRequest) | [GetCalendarResponse](#servicescalendarGetCalendarResponse) | |
-| `CreateCalendar` | [CreateCalendarRequest](#servicescalendarCreateCalendarRequest) | [CreateCalendarResponse](#servicescalendarCreateCalendarResponse) | |
-| `UpdateCalendar` | [UpdateCalendarRequest](#servicescalendarUpdateCalendarRequest) | [UpdateCalendarResponse](#servicescalendarUpdateCalendarResponse) | |
-| `DeleteCalendar` | [DeleteCalendarRequest](#servicescalendarDeleteCalendarRequest) | [DeleteCalendarResponse](#servicescalendarDeleteCalendarResponse) | |
-| `ListCalendarEntries` | [ListCalendarEntriesRequest](#servicescalendarListCalendarEntriesRequest) | [ListCalendarEntriesResponse](#servicescalendarListCalendarEntriesResponse) | |
-| `GetUpcomingEntries` | [GetUpcomingEntriesRequest](#servicescalendarGetUpcomingEntriesRequest) | [GetUpcomingEntriesResponse](#servicescalendarGetUpcomingEntriesResponse) | |
-| `GetCalendarEntry` | [GetCalendarEntryRequest](#servicescalendarGetCalendarEntryRequest) | [GetCalendarEntryResponse](#servicescalendarGetCalendarEntryResponse) | |
-| `CreateOrUpdateCalendarEntry` | [CreateOrUpdateCalendarEntryRequest](#servicescalendarCreateOrUpdateCalendarEntryRequest) | [CreateOrUpdateCalendarEntryResponse](#servicescalendarCreateOrUpdateCalendarEntryResponse) | |
-| `DeleteCalendarEntry` | [DeleteCalendarEntryRequest](#servicescalendarDeleteCalendarEntryRequest) | [DeleteCalendarEntryResponse](#servicescalendarDeleteCalendarEntryResponse) | |
-| `ShareCalendarEntry` | [ShareCalendarEntryRequest](#servicescalendarShareCalendarEntryRequest) | [ShareCalendarEntryResponse](#servicescalendarShareCalendarEntryResponse) | |
-| `ListCalendarEntryRSVP` | [ListCalendarEntryRSVPRequest](#servicescalendarListCalendarEntryRSVPRequest) | [ListCalendarEntryRSVPResponse](#servicescalendarListCalendarEntryRSVPResponse) | |
-| `RSVPCalendarEntry` | [RSVPCalendarEntryRequest](#servicescalendarRSVPCalendarEntryRequest) | [RSVPCalendarEntryResponse](#servicescalendarRSVPCalendarEntryResponse) | |
-| `ListSubscriptions` | [ListSubscriptionsRequest](#servicescalendarListSubscriptionsRequest) | [ListSubscriptionsResponse](#servicescalendarListSubscriptionsResponse) | |
-| `SubscribeToCalendar` | [SubscribeToCalendarRequest](#servicescalendarSubscribeToCalendarRequest) | [SubscribeToCalendarResponse](#servicescalendarSubscribeToCalendarResponse) | |
+| `GetSettings` | [GetSettingsRequest](#servicescentrumGetSettingsRequest) | [GetSettingsResponse](#servicescentrumGetSettingsResponse) | |
+| `UpdateSettings` | [UpdateSettingsRequest](#servicescentrumUpdateSettingsRequest) | [UpdateSettingsResponse](#servicescentrumUpdateSettingsResponse) | |
+| `GetDispatchHeatmap` | [GetDispatchHeatmapRequest](#servicescentrumGetDispatchHeatmapRequest) | [GetDispatchHeatmapResponse](#servicescentrumGetDispatchHeatmapResponse) | |
+| `TakeControl` | [TakeControlRequest](#servicescentrumTakeControlRequest) | [TakeControlResponse](#servicescentrumTakeControlResponse) | |
+| `UpdateDispatchers` | [UpdateDispatchersRequest](#servicescentrumUpdateDispatchersRequest) | [UpdateDispatchersResponse](#servicescentrumUpdateDispatchersResponse) | |
+| `Stream` | [StreamRequest](#servicescentrumStreamRequest) | [StreamResponse](#servicescentrumStreamResponse) stream | |
 
  <!-- end services -->
 
 
 
-## services/centrum/centrum.proto
+## services/centrum/dispatches.proto
 
 
 ### services.centrum.AssignDispatchRequest
@@ -8089,25 +8295,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 ### services.centrum.AssignDispatchResponse
-
-
-
-
-
-### services.centrum.AssignUnitRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_id` | [int64](#int64) |  |  |
-| `to_add` | [int32](#int32) | repeated |  |
-| `to_remove` | [int32](#int32) | repeated |  |
-
-
-
-
-
-### services.centrum.AssignUnitResponse
 
 
 
@@ -8135,28 +8322,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.centrum.CreateOrUpdateUnitRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit` | [resources.centrum.units.Unit](#resourcescentrumunitsUnit) |  |  |
-
-
-
-
-
-### services.centrum.CreateOrUpdateUnitResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit` | [resources.centrum.units.Unit](#resourcescentrumunitsUnit) |  |  |
-
-
-
-
-
 ### services.centrum.DeleteDispatchRequest
 
 
@@ -8169,41 +8334,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 ### services.centrum.DeleteDispatchResponse
-
-
-
-
-
-### services.centrum.DeleteUnitRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.centrum.DeleteUnitResponse
-
-
-
-
-
-### services.centrum.GetDispatchHeatmapRequest
-
-
-
-
-
-### services.centrum.GetDispatchHeatmapResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `max_entries` | [int32](#int32) |  |  |
-| `entries` | [resources.livemap.heatmap.HeatmapEntry](#resourceslivemapheatmapHeatmapEntry) | repeated |  |
 
 
 
@@ -8226,60 +8356,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `dispatch` | [resources.centrum.dispatches.Dispatch](#resourcescentrumdispatchesDispatch) |  |  |
-
-
-
-
-
-### services.centrum.GetSettingsRequest
-
-
-
-
-
-### services.centrum.GetSettingsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `settings` | [resources.centrum.settings.Settings](#resourcescentrumsettingsSettings) |  |  |
-| `effective_access` | [resources.centrum.settings.EffectiveAccess](#resourcescentrumsettingsEffectiveAccess) |  |  |
-
-
-
-
-
-### services.centrum.JoinUnitRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_id` | [int64](#int64) | optional |  |
-
-
-
-
-
-### services.centrum.JoinUnitResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit` | [resources.centrum.units.Unit](#resourcescentrumunitsUnit) |  |  |
-
-
-
-
-
-### services.centrum.LatestState
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `dispatchers` | [resources.centrum.dispatchers.JobDispatchers](#resourcescentrumdispatchersJobDispatchers) |  |  |
-| `own_unit_id` | [int64](#int64) | optional |  |
-| `units` | [resources.centrum.units.Unit](#resourcescentrumunitsUnit) | repeated | Send the current units and dispatches |
-| `dispatches` | [resources.centrum.dispatches.Dispatch](#resourcescentrumdispatchesDispatch) | repeated |  |
 
 
 
@@ -8353,109 +8429,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.centrum.ListUnitActivityRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.centrum.ListUnitActivityResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
-| `activity` | [resources.centrum.units.UnitStatus](#resourcescentrumunitsUnitStatus) | repeated |  |
-
-
-
-
-
-### services.centrum.ListUnitsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `status` | [resources.centrum.units.StatusUnit](#resourcescentrumunitsStatusUnit) | repeated |  |
-
-
-
-
-
-### services.centrum.ListUnitsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `units` | [resources.centrum.units.Unit](#resourcescentrumunitsUnit) | repeated |  |
-
-
-
-
-
-### services.centrum.StreamHandshake
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `server_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `settings` | [resources.centrum.settings.Settings](#resourcescentrumsettingsSettings) |  |  |
-| `access` | [resources.centrum.settings.EffectiveAccess](#resourcescentrumsettingsEffectiveAccess) |  |  |
-
-
-
-
-
-### services.centrum.StreamRequest
-
-
-
-
-
-### services.centrum.StreamResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `handshake` | [StreamHandshake](#servicescentrumStreamHandshake) |  |  |
-| `latest_state` | [LatestState](#servicescentrumLatestState) |  |  |
-| `settings` | [resources.centrum.settings.Settings](#resourcescentrumsettingsSettings) |  |  |
-| `access` | [resources.centrum.settings.EffectiveAccess](#resourcescentrumsettingsEffectiveAccess) |  |  |
-| `dispatchers` | [resources.centrum.dispatchers.Dispatchers](#resourcescentrumdispatchersDispatchers) |  |  |
-| `unit_deleted` | [int64](#int64) |  |  |
-| `unit_updated` | [resources.centrum.units.Unit](#resourcescentrumunitsUnit) |  |  |
-| `unit_status` | [resources.centrum.units.UnitStatus](#resourcescentrumunitsUnitStatus) |  |  |
-| `dispatch_deleted` | [int64](#int64) |  |  |
-| `dispatch_updated` | [resources.centrum.dispatches.Dispatch](#resourcescentrumdispatchesDispatch) |  |  |
-| `dispatch_status` | [resources.centrum.dispatches.DispatchStatus](#resourcescentrumdispatchesDispatchStatus) |  |  |
-
-
-
-
-
-### services.centrum.TakeControlRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `signon` | [bool](#bool) |  |  |
-
-
-
-
-
-### services.centrum.TakeControlResponse
-
-
-
-
-
 ### services.centrum.TakeDispatchRequest
 
 
@@ -8516,46 +8489,156 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+ <!-- end messages -->
 
-### services.centrum.UpdateDispatchersRequest
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.centrum.DispatchesService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `CreateDispatch` | [CreateDispatchRequest](#servicescentrumCreateDispatchRequest) | [CreateDispatchResponse](#servicescentrumCreateDispatchResponse) | |
+| `UpdateDispatch` | [UpdateDispatchRequest](#servicescentrumUpdateDispatchRequest) | [UpdateDispatchResponse](#servicescentrumUpdateDispatchResponse) | |
+| `DeleteDispatch` | [DeleteDispatchRequest](#servicescentrumDeleteDispatchRequest) | [DeleteDispatchResponse](#servicescentrumDeleteDispatchResponse) | |
+| `ListDispatchTargetJobs` | [ListDispatchTargetJobsRequest](#servicescentrumListDispatchTargetJobsRequest) | [ListDispatchTargetJobsResponse](#servicescentrumListDispatchTargetJobsResponse) | |
+| `AssignDispatch` | [AssignDispatchRequest](#servicescentrumAssignDispatchRequest) | [AssignDispatchResponse](#servicescentrumAssignDispatchResponse) | |
+| `GetDispatch` | [GetDispatchRequest](#servicescentrumGetDispatchRequest) | [GetDispatchResponse](#servicescentrumGetDispatchResponse) | |
+| `ListDispatches` | [ListDispatchesRequest](#servicescentrumListDispatchesRequest) | [ListDispatchesResponse](#servicescentrumListDispatchesResponse) | |
+| `ListDispatchActivity` | [ListDispatchActivityRequest](#servicescentrumListDispatchActivityRequest) | [ListDispatchActivityResponse](#servicescentrumListDispatchActivityResponse) | |
+| `TakeDispatch` | [TakeDispatchRequest](#servicescentrumTakeDispatchRequest) | [TakeDispatchResponse](#servicescentrumTakeDispatchResponse) | |
+| `UpdateDispatchStatus` | [UpdateDispatchStatusRequest](#servicescentrumUpdateDispatchStatusRequest) | [UpdateDispatchStatusResponse](#servicescentrumUpdateDispatchStatusResponse) | |
+
+ <!-- end services -->
+
+
+
+## services/centrum/units.proto
+
+
+### services.centrum.AssignUnitRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `unit_id` | [int64](#int64) |  |  |
+| `to_add` | [int32](#int32) | repeated |  |
 | `to_remove` | [int32](#int32) | repeated |  |
 
 
 
 
 
-### services.centrum.UpdateDispatchersResponse
+### services.centrum.AssignUnitResponse
+
+
+
+
+
+### services.centrum.CreateOrUpdateUnitRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dispatchers` | [resources.centrum.dispatchers.Dispatchers](#resourcescentrumdispatchersDispatchers) |  |  |
+| `unit` | [resources.centrum.units.Unit](#resourcescentrumunitsUnit) |  |  |
 
 
 
 
 
-### services.centrum.UpdateSettingsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `settings` | [resources.centrum.settings.Settings](#resourcescentrumsettingsSettings) |  |  |
-
-
-
-
-
-### services.centrum.UpdateSettingsResponse
+### services.centrum.CreateOrUpdateUnitResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `settings` | [resources.centrum.settings.Settings](#resourcescentrumsettingsSettings) |  |  |
+| `unit` | [resources.centrum.units.Unit](#resourcescentrumunitsUnit) |  |  |
+
+
+
+
+
+### services.centrum.DeleteUnitRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unit_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.centrum.DeleteUnitResponse
+
+
+
+
+
+### services.centrum.JoinUnitRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unit_id` | [int64](#int64) | optional |  |
+
+
+
+
+
+### services.centrum.JoinUnitResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unit` | [resources.centrum.units.Unit](#resourcescentrumunitsUnit) |  |  |
+
+
+
+
+
+### services.centrum.ListUnitActivityRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.centrum.ListUnitActivityResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `activity` | [resources.centrum.units.UnitStatus](#resourcescentrumunitsUnitStatus) | repeated |  |
+
+
+
+
+
+### services.centrum.ListUnitsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `status` | [resources.centrum.units.StatusUnit](#resourcescentrumunitsStatusUnit) | repeated |  |
+
+
+
+
+
+### services.centrum.ListUnitsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `units` | [resources.centrum.units.Unit](#resourcescentrumunitsUnit) | repeated |  |
 
 
 
@@ -8587,33 +8670,17 @@ Auth Service handles user authentication, character selection and oauth2 connect
  <!-- end HasExtensions -->
 
 
-### services.centrum.CentrumService
+### services.centrum.UnitsService
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `UpdateSettings` | [UpdateSettingsRequest](#servicescentrumUpdateSettingsRequest) | [UpdateSettingsResponse](#servicescentrumUpdateSettingsResponse) | |
-| `CreateDispatch` | [CreateDispatchRequest](#servicescentrumCreateDispatchRequest) | [CreateDispatchResponse](#servicescentrumCreateDispatchResponse) | |
-| `UpdateDispatch` | [UpdateDispatchRequest](#servicescentrumUpdateDispatchRequest) | [UpdateDispatchResponse](#servicescentrumUpdateDispatchResponse) | |
-| `DeleteDispatch` | [DeleteDispatchRequest](#servicescentrumDeleteDispatchRequest) | [DeleteDispatchResponse](#servicescentrumDeleteDispatchResponse) | |
-| `ListDispatchTargetJobs` | [ListDispatchTargetJobsRequest](#servicescentrumListDispatchTargetJobsRequest) | [ListDispatchTargetJobsResponse](#servicescentrumListDispatchTargetJobsResponse) | |
-| `TakeControl` | [TakeControlRequest](#servicescentrumTakeControlRequest) | [TakeControlResponse](#servicescentrumTakeControlResponse) | |
-| `AssignDispatch` | [AssignDispatchRequest](#servicescentrumAssignDispatchRequest) | [AssignDispatchResponse](#servicescentrumAssignDispatchResponse) | |
-| `AssignUnit` | [AssignUnitRequest](#servicescentrumAssignUnitRequest) | [AssignUnitResponse](#servicescentrumAssignUnitResponse) | |
-| `GetDispatchHeatmap` | [GetDispatchHeatmapRequest](#servicescentrumGetDispatchHeatmapRequest) | [GetDispatchHeatmapResponse](#servicescentrumGetDispatchHeatmapResponse) | |
-| `UpdateDispatchers` | [UpdateDispatchersRequest](#servicescentrumUpdateDispatchersRequest) | [UpdateDispatchersResponse](#servicescentrumUpdateDispatchersResponse) | |
-| `Stream` | [StreamRequest](#servicescentrumStreamRequest) | [StreamResponse](#servicescentrumStreamResponse) stream | |
-| `GetSettings` | [GetSettingsRequest](#servicescentrumGetSettingsRequest) | [GetSettingsResponse](#servicescentrumGetSettingsResponse) | |
 | `JoinUnit` | [JoinUnitRequest](#servicescentrumJoinUnitRequest) | [JoinUnitResponse](#servicescentrumJoinUnitResponse) | |
 | `ListUnits` | [ListUnitsRequest](#servicescentrumListUnitsRequest) | [ListUnitsResponse](#servicescentrumListUnitsResponse) | |
 | `ListUnitActivity` | [ListUnitActivityRequest](#servicescentrumListUnitActivityRequest) | [ListUnitActivityResponse](#servicescentrumListUnitActivityResponse) | |
-| `GetDispatch` | [GetDispatchRequest](#servicescentrumGetDispatchRequest) | [GetDispatchResponse](#servicescentrumGetDispatchResponse) | |
-| `ListDispatches` | [ListDispatchesRequest](#servicescentrumListDispatchesRequest) | [ListDispatchesResponse](#servicescentrumListDispatchesResponse) | |
-| `ListDispatchActivity` | [ListDispatchActivityRequest](#servicescentrumListDispatchActivityRequest) | [ListDispatchActivityResponse](#servicescentrumListDispatchActivityResponse) | |
 | `CreateOrUpdateUnit` | [CreateOrUpdateUnitRequest](#servicescentrumCreateOrUpdateUnitRequest) | [CreateOrUpdateUnitResponse](#servicescentrumCreateOrUpdateUnitResponse) | |
 | `DeleteUnit` | [DeleteUnitRequest](#servicescentrumDeleteUnitRequest) | [DeleteUnitResponse](#servicescentrumDeleteUnitResponse) | |
-| `TakeDispatch` | [TakeDispatchRequest](#servicescentrumTakeDispatchRequest) | [TakeDispatchResponse](#servicescentrumTakeDispatchResponse) | |
+| `AssignUnit` | [AssignUnitRequest](#servicescentrumAssignUnitRequest) | [AssignUnitResponse](#servicescentrumAssignUnitResponse) | |
 | `UpdateUnitStatus` | [UpdateUnitStatusRequest](#servicescentrumUpdateUnitStatusRequest) | [UpdateUnitStatusResponse](#servicescentrumUpdateUnitStatusResponse) | |
-| `UpdateDispatchStatus` | [UpdateDispatchStatusRequest](#servicescentrumUpdateDispatchStatusRequest) | [UpdateDispatchStatusResponse](#servicescentrumUpdateDispatchStatusResponse) | |
 
  <!-- end services -->
 
@@ -9339,6 +9406,83 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 
+## services/documents/categories.proto
+
+
+### services.documents.CreateOrUpdateCategoryRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `category` | [resources.documents.category.Category](#resourcesdocumentscategoryCategory) |  |  |
+
+
+
+
+
+### services.documents.CreateOrUpdateCategoryResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `category` | [resources.documents.category.Category](#resourcesdocumentscategoryCategory) |  |  |
+
+
+
+
+
+### services.documents.DeleteCategoryRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.DeleteCategoryResponse
+
+
+
+
+
+### services.documents.ListCategoriesRequest
+
+
+
+
+
+### services.documents.ListCategoriesResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `categories` | [resources.documents.category.Category](#resourcesdocumentscategoryCategory) | repeated |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.documents.CategoriesService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListCategories` | [ListCategoriesRequest](#servicesdocumentsListCategoriesRequest) | [ListCategoriesResponse](#servicesdocumentsListCategoriesResponse) | |
+| `CreateOrUpdateCategory` | [CreateOrUpdateCategoryRequest](#servicesdocumentsCreateOrUpdateCategoryRequest) | [CreateOrUpdateCategoryResponse](#servicesdocumentsCreateOrUpdateCategoryResponse) | |
+| `DeleteCategory` | [DeleteCategoryRequest](#servicesdocumentsDeleteCategoryRequest) | [DeleteCategoryResponse](#servicesdocumentsDeleteCategoryResponse) | |
+
+ <!-- end services -->
+
+
+
 ## services/documents/collab.proto
 
  <!-- end messages -->
@@ -9353,6 +9497,113 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | `JoinRoom` | [.resources.collab.ClientPacket](#resourcescollabClientPacket) stream | [.resources.collab.ServerPacket](#resourcescollabServerPacket) stream |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
+
+ <!-- end services -->
+
+
+
+## services/documents/comments.proto
+
+
+### services.documents.DeleteCommentRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `comment_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.DeleteCommentResponse
+
+
+
+
+
+### services.documents.EditCommentRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `comment` | [resources.documents.comment.Comment](#resourcesdocumentscommentComment) |  |  |
+
+
+
+
+
+### services.documents.EditCommentResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `comment` | [resources.documents.comment.Comment](#resourcesdocumentscommentComment) |  |  |
+
+
+
+
+
+### services.documents.GetCommentsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.GetCommentsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `comments` | [resources.documents.comment.Comment](#resourcesdocumentscommentComment) | repeated |  |
+
+
+
+
+
+### services.documents.PostCommentRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `comment` | [resources.documents.comment.Comment](#resourcesdocumentscommentComment) |  |  |
+
+
+
+
+
+### services.documents.PostCommentResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `comment` | [resources.documents.comment.Comment](#resourcesdocumentscommentComment) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.documents.CommentsService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `GetComments` | [GetCommentsRequest](#servicesdocumentsGetCommentsRequest) | [GetCommentsResponse](#servicesdocumentsGetCommentsResponse) | |
+| `PostComment` | [PostCommentRequest](#servicesdocumentsPostCommentRequest) | [PostCommentResponse](#servicesdocumentsPostCommentResponse) | |
+| `EditComment` | [EditCommentRequest](#servicesdocumentsEditCommentRequest) | [EditCommentResponse](#servicesdocumentsEditCommentResponse) | |
+| `DeleteComment` | [DeleteCommentRequest](#servicesdocumentsDeleteCommentRequest) | [DeleteCommentResponse](#servicesdocumentsDeleteCommentResponse) | |
 
  <!-- end services -->
 
@@ -9472,84 +9723,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 
-### services.documents.CreateOrUpdateCategoryRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `category` | [resources.documents.category.Category](#resourcesdocumentscategoryCategory) |  |  |
-
-
-
-
-
-### services.documents.CreateOrUpdateCategoryResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `category` | [resources.documents.category.Category](#resourcesdocumentscategoryCategory) |  |  |
-
-
-
-
-
-### services.documents.CreateTemplateRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `template` | [resources.documents.templates.Template](#resourcesdocumentstemplatesTemplate) |  |  |
-
-
-
-
-
-### services.documents.CreateTemplateResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.DeleteCategoryRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.DeleteCategoryResponse
-
-
-
-
-
-### services.documents.DeleteCommentRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `comment_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.DeleteCommentResponse
-
-
-
-
-
 ### services.documents.DeleteDocumentReqRequest
 
 
@@ -9580,69 +9753,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 ### services.documents.DeleteDocumentResponse
-
-
-
-
-
-### services.documents.DeleteTemplateRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.DeleteTemplateResponse
-
-
-
-
-
-### services.documents.EditCommentRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `comment` | [resources.documents.comment.Comment](#resourcesdocumentscommentComment) |  |  |
-
-
-
-
-
-### services.documents.EditCommentResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `comment` | [resources.documents.comment.Comment](#resourcesdocumentscommentComment) |  |  |
-
-
-
-
-
-### services.documents.GetCommentsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `document_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.GetCommentsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
-| `comments` | [resources.documents.comment.Comment](#resourcesdocumentscommentComment) | repeated |  |
 
 
 
@@ -9733,48 +9843,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | ----- | ---- | ----- | ----------- |
 | `document` | [resources.documents.Document](#resourcesdocumentsDocument) |  |  |
 | `access` | [resources.documents.access.DocumentAccess](#resourcesdocumentsaccessDocumentAccess) |  |  |
-
-
-
-
-
-### services.documents.GetTemplateRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `template_id` | [int64](#int64) |  |  |
-| `data` | [resources.documents.templates.TemplateData](#resourcesdocumentstemplatesTemplateData) | optional |  |
-| `render` | [bool](#bool) | optional |  |
-
-
-
-
-
-### services.documents.GetTemplateResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `template` | [resources.documents.templates.Template](#resourcesdocumentstemplatesTemplate) |  |  |
-| `rendered` | [bool](#bool) |  |  |
-
-
-
-
-
-### services.documents.ListCategoriesRequest
-
-
-
-
-
-### services.documents.ListCategoriesResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `categories` | [resources.documents.category.Category](#resourcesdocumentscategoryCategory) | repeated |  |
 
 
 
@@ -9885,23 +9953,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 
-### services.documents.ListTemplatesRequest
-
-
-
-
-
-### services.documents.ListTemplatesResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `templates` | [resources.documents.templates.TemplateShort](#resourcesdocumentstemplatesTemplateShort) | repeated |  |
-
-
-
-
-
 ### services.documents.ListUserDocumentsRequest
 
 
@@ -9925,28 +9976,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
 | `relations` | [resources.documents.relations.DocumentRelation](#resourcesdocumentsrelationsDocumentRelation) | repeated |  |
-
-
-
-
-
-### services.documents.PostCommentRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `comment` | [resources.documents.comment.Comment](#resourcesdocumentscommentComment) |  |  |
-
-
-
-
-
-### services.documents.PostCommentResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `comment` | [resources.documents.comment.Comment](#resourcesdocumentscommentComment) |  |  |
 
 
 
@@ -10121,28 +10150,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 
-
-### services.documents.UpdateTemplateRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `template` | [resources.documents.templates.Template](#resourcesdocumentstemplatesTemplate) |  |  |
-
-
-
-
-
-### services.documents.UpdateTemplateResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `template` | [resources.documents.templates.Template](#resourcesdocumentstemplatesTemplate) |  |  |
-
-
-
-
  <!-- end messages -->
 
  <!-- end enums -->
@@ -10154,11 +10161,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListTemplates` | [ListTemplatesRequest](#servicesdocumentsListTemplatesRequest) | [ListTemplatesResponse](#servicesdocumentsListTemplatesResponse) | |
-| `GetTemplate` | [GetTemplateRequest](#servicesdocumentsGetTemplateRequest) | [GetTemplateResponse](#servicesdocumentsGetTemplateResponse) | |
-| `CreateTemplate` | [CreateTemplateRequest](#servicesdocumentsCreateTemplateRequest) | [CreateTemplateResponse](#servicesdocumentsCreateTemplateResponse) | |
-| `UpdateTemplate` | [UpdateTemplateRequest](#servicesdocumentsUpdateTemplateRequest) | [UpdateTemplateResponse](#servicesdocumentsUpdateTemplateResponse) | |
-| `DeleteTemplate` | [DeleteTemplateRequest](#servicesdocumentsDeleteTemplateRequest) | [DeleteTemplateResponse](#servicesdocumentsDeleteTemplateResponse) | |
 | `ListDocuments` | [ListDocumentsRequest](#servicesdocumentsListDocumentsRequest) | [ListDocumentsResponse](#servicesdocumentsListDocumentsResponse) | |
 | `GetDocument` | [GetDocumentRequest](#servicesdocumentsGetDocumentRequest) | [GetDocumentResponse](#servicesdocumentsGetDocumentResponse) | |
 | `CreateDocument` | [CreateDocumentRequest](#servicesdocumentsCreateDocumentRequest) | [CreateDocumentResponse](#servicesdocumentsCreateDocumentResponse) | |
@@ -10172,10 +10174,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `RemoveDocumentReference` | [RemoveDocumentReferenceRequest](#servicesdocumentsRemoveDocumentReferenceRequest) | [RemoveDocumentReferenceResponse](#servicesdocumentsRemoveDocumentReferenceResponse) | |
 | `AddDocumentRelation` | [AddDocumentRelationRequest](#servicesdocumentsAddDocumentRelationRequest) | [AddDocumentRelationResponse](#servicesdocumentsAddDocumentRelationResponse) | |
 | `RemoveDocumentRelation` | [RemoveDocumentRelationRequest](#servicesdocumentsRemoveDocumentRelationRequest) | [RemoveDocumentRelationResponse](#servicesdocumentsRemoveDocumentRelationResponse) | |
-| `GetComments` | [GetCommentsRequest](#servicesdocumentsGetCommentsRequest) | [GetCommentsResponse](#servicesdocumentsGetCommentsResponse) | |
-| `PostComment` | [PostCommentRequest](#servicesdocumentsPostCommentRequest) | [PostCommentResponse](#servicesdocumentsPostCommentResponse) | |
-| `EditComment` | [EditCommentRequest](#servicesdocumentsEditCommentRequest) | [EditCommentResponse](#servicesdocumentsEditCommentResponse) | |
-| `DeleteComment` | [DeleteCommentRequest](#servicesdocumentsDeleteCommentRequest) | [DeleteCommentResponse](#servicesdocumentsDeleteCommentResponse) | |
 | `GetDocumentAccess` | [GetDocumentAccessRequest](#servicesdocumentsGetDocumentAccessRequest) | [GetDocumentAccessResponse](#servicesdocumentsGetDocumentAccessResponse) | |
 | `SetDocumentAccess` | [SetDocumentAccessRequest](#servicesdocumentsSetDocumentAccessRequest) | [SetDocumentAccessResponse](#servicesdocumentsSetDocumentAccessResponse) | |
 | `ListDocumentActivity` | [ListDocumentActivityRequest](#servicesdocumentsListDocumentActivityRequest) | [ListDocumentActivityResponse](#servicesdocumentsListDocumentActivityResponse) | |
@@ -10184,9 +10182,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `UpdateDocumentReq` | [UpdateDocumentReqRequest](#servicesdocumentsUpdateDocumentReqRequest) | [UpdateDocumentReqResponse](#servicesdocumentsUpdateDocumentReqResponse) | |
 | `DeleteDocumentReq` | [DeleteDocumentReqRequest](#servicesdocumentsDeleteDocumentReqRequest) | [DeleteDocumentReqResponse](#servicesdocumentsDeleteDocumentReqResponse) | |
 | `ListUserDocuments` | [ListUserDocumentsRequest](#servicesdocumentsListUserDocumentsRequest) | [ListUserDocumentsResponse](#servicesdocumentsListUserDocumentsResponse) | |
-| `ListCategories` | [ListCategoriesRequest](#servicesdocumentsListCategoriesRequest) | [ListCategoriesResponse](#servicesdocumentsListCategoriesResponse) | |
-| `CreateOrUpdateCategory` | [CreateOrUpdateCategoryRequest](#servicesdocumentsCreateOrUpdateCategoryRequest) | [CreateOrUpdateCategoryResponse](#servicesdocumentsCreateOrUpdateCategoryResponse) | |
-| `DeleteCategory` | [DeleteCategoryRequest](#servicesdocumentsDeleteCategoryRequest) | [DeleteCategoryResponse](#servicesdocumentsDeleteCategoryResponse) | |
 | `ListDocumentPins` | [ListDocumentPinsRequest](#servicesdocumentsListDocumentPinsRequest) | [ListDocumentPinsResponse](#servicesdocumentsListDocumentPinsResponse) | |
 | `ToggleDocumentPin` | [ToggleDocumentPinRequest](#servicesdocumentsToggleDocumentPinRequest) | [ToggleDocumentPinResponse](#servicesdocumentsToggleDocumentPinResponse) | |
 | `SetDocumentReminder` | [SetDocumentReminderRequest](#servicesdocumentsSetDocumentReminderRequest) | [SetDocumentReminderResponse](#servicesdocumentsSetDocumentReminderResponse) | |
@@ -10412,6 +10407,132 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 
+## services/documents/templates.proto
+
+
+### services.documents.CreateTemplateRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `template` | [resources.documents.templates.Template](#resourcesdocumentstemplatesTemplate) |  |  |
+
+
+
+
+
+### services.documents.CreateTemplateResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.DeleteTemplateRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.DeleteTemplateResponse
+
+
+
+
+
+### services.documents.GetTemplateRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `template_id` | [int64](#int64) |  |  |
+| `data` | [resources.documents.templates.TemplateData](#resourcesdocumentstemplatesTemplateData) | optional |  |
+| `render` | [bool](#bool) | optional |  |
+
+
+
+
+
+### services.documents.GetTemplateResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `template` | [resources.documents.templates.Template](#resourcesdocumentstemplatesTemplate) |  |  |
+| `rendered` | [bool](#bool) |  |  |
+
+
+
+
+
+### services.documents.ListTemplatesRequest
+
+
+
+
+
+### services.documents.ListTemplatesResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `templates` | [resources.documents.templates.TemplateShort](#resourcesdocumentstemplatesTemplateShort) | repeated |  |
+
+
+
+
+
+### services.documents.UpdateTemplateRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `template` | [resources.documents.templates.Template](#resourcesdocumentstemplatesTemplate) |  |  |
+
+
+
+
+
+### services.documents.UpdateTemplateResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `template` | [resources.documents.templates.Template](#resourcesdocumentstemplatesTemplate) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.documents.TemplatesService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListTemplates` | [ListTemplatesRequest](#servicesdocumentsListTemplatesRequest) | [ListTemplatesResponse](#servicesdocumentsListTemplatesResponse) | |
+| `GetTemplate` | [GetTemplateRequest](#servicesdocumentsGetTemplateRequest) | [GetTemplateResponse](#servicesdocumentsGetTemplateResponse) | |
+| `CreateTemplate` | [CreateTemplateRequest](#servicesdocumentsCreateTemplateRequest) | [CreateTemplateResponse](#servicesdocumentsCreateTemplateResponse) | |
+| `UpdateTemplate` | [UpdateTemplateRequest](#servicesdocumentsUpdateTemplateRequest) | [UpdateTemplateResponse](#servicesdocumentsUpdateTemplateResponse) | |
+| `DeleteTemplate` | [DeleteTemplateRequest](#servicesdocumentsDeleteTemplateRequest) | [DeleteTemplateResponse](#servicesdocumentsDeleteTemplateResponse) | |
+
+ <!-- end services -->
+
+
+
 ## services/filestore/filestore.proto
 
 
@@ -10470,6 +10591,218 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `ListFiles` | [ListFilesRequest](#servicesfilestoreListFilesRequest) | [ListFilesResponse](#servicesfilestoreListFilesResponse) | |
 | `DeleteFile` | [.resources.file.DeleteFileRequest](#resourcesfileDeleteFileRequest) | [.resources.file.DeleteFileResponse](#resourcesfileDeleteFileResponse) | |
 | `DeleteFileByPath` | [DeleteFileByPathRequest](#servicesfilestoreDeleteFileByPathRequest) | [DeleteFileByPathResponse](#servicesfilestoreDeleteFileByPathResponse) | |
+
+ <!-- end services -->
+
+
+
+## services/jobs/colleagues.proto
+
+
+### services.jobs.GetColleagueLabelsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `search` | [string](#string) | optional |  |
+
+
+
+
+
+### services.jobs.GetColleagueLabelsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `labels` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated |  |
+
+
+
+
+
+### services.jobs.GetColleagueLabelsStatsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `label_ids` | [int64](#int64) | repeated |  |
+
+
+
+
+
+### services.jobs.GetColleagueLabelsStatsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `count` | [resources.jobs.labels.LabelCount](#resourcesjobslabelsLabelCount) | repeated |  |
+
+
+
+
+
+### services.jobs.GetColleagueRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `info_only` | [bool](#bool) | optional |  |
+
+
+
+
+
+### services.jobs.GetColleagueResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `colleague` | [resources.jobs.colleagues.Colleague](#resourcesjobscolleaguesColleague) |  |  |
+
+
+
+
+
+### services.jobs.GetSelfRequest
+
+
+
+
+
+### services.jobs.GetSelfResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `colleague` | [resources.jobs.colleagues.Colleague](#resourcesjobscolleaguesColleague) |  |  |
+
+
+
+
+
+### services.jobs.ListColleagueActivityRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
+| `user_ids` | [int32](#int32) | repeated | Search params |
+| `activity_types` | [resources.jobs.colleagues.activity.ColleagueActivityType](#resourcesjobscolleaguesactivityColleagueActivityType) | repeated |  |
+
+
+
+
+
+### services.jobs.ListColleagueActivityResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `activity` | [resources.jobs.colleagues.activity.ColleagueActivity](#resourcesjobscolleaguesactivityColleagueActivity) | repeated |  |
+
+
+
+
+
+### services.jobs.ListColleaguesRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
+| `search` | [string](#string) |  | Search params |
+| `user_ids` | [int32](#int32) | repeated |  |
+| `user_only` | [bool](#bool) | optional |  |
+| `absent` | [bool](#bool) | optional |  |
+| `label_ids` | [int64](#int64) | repeated |  |
+| `name_prefix` | [string](#string) | optional |  |
+| `name_suffix` | [string](#string) | optional |  |
+
+
+
+
+
+### services.jobs.ListColleaguesResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `colleagues` | [resources.jobs.colleagues.Colleague](#resourcesjobscolleaguesColleague) | repeated |  |
+
+
+
+
+
+### services.jobs.ManageLabelsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `labels` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated |  |
+
+
+
+
+
+### services.jobs.ManageLabelsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `labels` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated |  |
+
+
+
+
+
+### services.jobs.SetColleaguePropsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `props` | [resources.jobs.colleagues.ColleagueProps](#resourcesjobscolleaguesColleagueProps) |  |  |
+| `reason` | [string](#string) |  |  |
+
+
+
+
+
+### services.jobs.SetColleaguePropsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `props` | [resources.jobs.colleagues.ColleagueProps](#resourcesjobscolleaguesColleagueProps) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.jobs.ColleaguesService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListColleagues` | [ListColleaguesRequest](#servicesjobsListColleaguesRequest) | [ListColleaguesResponse](#servicesjobsListColleaguesResponse) | |
+| `GetSelf` | [GetSelfRequest](#servicesjobsGetSelfRequest) | [GetSelfResponse](#servicesjobsGetSelfResponse) | |
+| `GetColleague` | [GetColleagueRequest](#servicesjobsGetColleagueRequest) | [GetColleagueResponse](#servicesjobsGetColleagueResponse) | |
+| `ListColleagueActivity` | [ListColleagueActivityRequest](#servicesjobsListColleagueActivityRequest) | [ListColleagueActivityResponse](#servicesjobsListColleagueActivityResponse) | |
+| `SetColleagueProps` | [SetColleaguePropsRequest](#servicesjobsSetColleaguePropsRequest) | [SetColleaguePropsResponse](#servicesjobsSetColleaguePropsResponse) | |
+| `GetColleagueLabels` | [GetColleagueLabelsRequest](#servicesjobsGetColleagueLabelsRequest) | [GetColleagueLabelsResponse](#servicesjobsGetColleagueLabelsResponse) | |
+| `ManageLabels` | [ManageLabelsRequest](#servicesjobsManageLabelsRequest) | [ManageLabelsResponse](#servicesjobsManageLabelsResponse) | |
+| `GetColleagueLabelsStats` | [GetColleagueLabelsStatsRequest](#servicesjobsGetColleagueLabelsStatsRequest) | [GetColleagueLabelsStatsResponse](#servicesjobsGetColleagueLabelsStatsResponse) | |
 
  <!-- end services -->
 
@@ -10614,73 +10947,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 ## services/jobs/jobs.proto
 
 
-### services.jobs.GetColleagueLabelsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `search` | [string](#string) | optional |  |
-
-
-
-
-
-### services.jobs.GetColleagueLabelsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `labels` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated |  |
-
-
-
-
-
-### services.jobs.GetColleagueLabelsStatsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `label_ids` | [int64](#int64) | repeated |  |
-
-
-
-
-
-### services.jobs.GetColleagueLabelsStatsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `count` | [resources.jobs.labels.LabelCount](#resourcesjobslabelsLabelCount) | repeated |  |
-
-
-
-
-
-### services.jobs.GetColleagueRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `info_only` | [bool](#bool) | optional |  |
-
-
-
-
-
-### services.jobs.GetColleagueResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `colleague` | [resources.jobs.colleagues.Colleague](#resourcesjobscolleaguesColleague) |  |  |
-
-
-
-
-
 ### services.jobs.GetMOTDRequest
 
 
@@ -10693,125 +10959,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `motd` | [string](#string) |  |  |
-
-
-
-
-
-### services.jobs.GetSelfRequest
-
-
-
-
-
-### services.jobs.GetSelfResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `colleague` | [resources.jobs.colleagues.Colleague](#resourcesjobscolleaguesColleague) |  |  |
-
-
-
-
-
-### services.jobs.ListColleagueActivityRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
-| `user_ids` | [int32](#int32) | repeated | Search params |
-| `activity_types` | [resources.jobs.colleagues.activity.ColleagueActivityType](#resourcesjobscolleaguesactivityColleagueActivityType) | repeated |  |
-
-
-
-
-
-### services.jobs.ListColleagueActivityResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
-| `activity` | [resources.jobs.colleagues.activity.ColleagueActivity](#resourcesjobscolleaguesactivityColleagueActivity) | repeated |  |
-
-
-
-
-
-### services.jobs.ListColleaguesRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
-| `search` | [string](#string) |  | Search params |
-| `user_ids` | [int32](#int32) | repeated |  |
-| `user_only` | [bool](#bool) | optional |  |
-| `absent` | [bool](#bool) | optional |  |
-| `label_ids` | [int64](#int64) | repeated |  |
-| `name_prefix` | [string](#string) | optional |  |
-| `name_suffix` | [string](#string) | optional |  |
-
-
-
-
-
-### services.jobs.ListColleaguesResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
-| `colleagues` | [resources.jobs.colleagues.Colleague](#resourcesjobscolleaguesColleague) | repeated |  |
-
-
-
-
-
-### services.jobs.ManageLabelsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `labels` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated |  |
-
-
-
-
-
-### services.jobs.ManageLabelsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `labels` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated |  |
-
-
-
-
-
-### services.jobs.SetColleaguePropsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `props` | [resources.jobs.colleagues.ColleagueProps](#resourcesjobscolleaguesColleagueProps) |  |  |
-| `reason` | [string](#string) |  |  |
-
-
-
-
-
-### services.jobs.SetColleaguePropsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `props` | [resources.jobs.colleagues.ColleagueProps](#resourcesjobscolleaguesColleagueProps) |  |  |
 
 
 
@@ -10849,14 +10996,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListColleagues` | [ListColleaguesRequest](#servicesjobsListColleaguesRequest) | [ListColleaguesResponse](#servicesjobsListColleaguesResponse) | |
-| `GetSelf` | [GetSelfRequest](#servicesjobsGetSelfRequest) | [GetSelfResponse](#servicesjobsGetSelfResponse) | |
-| `GetColleague` | [GetColleagueRequest](#servicesjobsGetColleagueRequest) | [GetColleagueResponse](#servicesjobsGetColleagueResponse) | |
-| `ListColleagueActivity` | [ListColleagueActivityRequest](#servicesjobsListColleagueActivityRequest) | [ListColleagueActivityResponse](#servicesjobsListColleagueActivityResponse) | |
-| `SetColleagueProps` | [SetColleaguePropsRequest](#servicesjobsSetColleaguePropsRequest) | [SetColleaguePropsResponse](#servicesjobsSetColleaguePropsResponse) | |
-| `GetColleagueLabels` | [GetColleagueLabelsRequest](#servicesjobsGetColleagueLabelsRequest) | [GetColleagueLabelsResponse](#servicesjobsGetColleagueLabelsResponse) | |
-| `ManageLabels` | [ManageLabelsRequest](#servicesjobsManageLabelsRequest) | [ManageLabelsResponse](#servicesjobsManageLabelsResponse) | |
-| `GetColleagueLabelsStats` | [GetColleagueLabelsStatsRequest](#servicesjobsGetColleagueLabelsStatsRequest) | [GetColleagueLabelsStatsResponse](#servicesjobsGetColleagueLabelsStatsResponse) | |
 | `GetMOTD` | [GetMOTDRequest](#servicesjobsGetMOTDRequest) | [GetMOTDResponse](#servicesjobsGetMOTDResponse) | |
 | `SetMOTD` | [SetMOTDRequest](#servicesjobsSetMOTDRequest) | [SetMOTDResponse](#servicesjobsSetMOTDResponse) | |
 
@@ -11232,52 +11371,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
-### services.mailer.CreateOrUpdateTemplateRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `template` | [resources.mailer.templates.Template](#resourcesmailertemplatesTemplate) |  |  |
-
-
-
-
-
-### services.mailer.CreateOrUpdateTemplateResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `template` | [resources.mailer.templates.Template](#resourcesmailertemplatesTemplate) |  |  |
-
-
-
-
-
-### services.mailer.CreateThreadRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `thread` | [resources.mailer.threads.Thread](#resourcesmailerthreadsThread) |  |  |
-| `message` | [resources.mailer.messages.Message](#resourcesmailermessagesMessage) |  |  |
-| `recipients` | [string](#string) | repeated |  |
-
-
-
-
-
-### services.mailer.CreateThreadResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `thread` | [resources.mailer.threads.Thread](#resourcesmailerthreadsThread) |  |  |
-
-
-
-
-
 ### services.mailer.DeleteEmailRequest
 
 
@@ -11290,61 +11383,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 ### services.mailer.DeleteEmailResponse
-
-
-
-
-
-### services.mailer.DeleteMessageRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `email_id` | [int64](#int64) |  |  |
-| `thread_id` | [int64](#int64) |  |  |
-| `message_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.mailer.DeleteMessageResponse
-
-
-
-
-
-### services.mailer.DeleteTemplateRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `email_id` | [int64](#int64) |  |  |
-| `id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.mailer.DeleteTemplateResponse
-
-
-
-
-
-### services.mailer.DeleteThreadRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `email_id` | [int64](#int64) |  |  |
-| `thread_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.mailer.DeleteThreadResponse
 
 
 
@@ -11397,6 +11435,93 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
+### services.mailer.ListEmailsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `all` | [bool](#bool) | optional | Search params |
+
+
+
+
+
+### services.mailer.ListEmailsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `emails` | [resources.mailer.emails.Email](#resourcesmaileremailsEmail) | repeated |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.mailer.MailerService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListEmails` | [ListEmailsRequest](#servicesmailerListEmailsRequest) | [ListEmailsResponse](#servicesmailerListEmailsResponse) | |
+| `GetEmail` | [GetEmailRequest](#servicesmailerGetEmailRequest) | [GetEmailResponse](#servicesmailerGetEmailResponse) | |
+| `CreateOrUpdateEmail` | [CreateOrUpdateEmailRequest](#servicesmailerCreateOrUpdateEmailRequest) | [CreateOrUpdateEmailResponse](#servicesmailerCreateOrUpdateEmailResponse) | |
+| `DeleteEmail` | [DeleteEmailRequest](#servicesmailerDeleteEmailRequest) | [DeleteEmailResponse](#servicesmailerDeleteEmailResponse) | |
+| `GetEmailProposals` | [GetEmailProposalsRequest](#servicesmailerGetEmailProposalsRequest) | [GetEmailProposalsResponse](#servicesmailerGetEmailProposalsResponse) | |
+
+ <!-- end services -->
+
+
+
+## services/mailer/settings.proto
+
+
+### services.mailer.CreateOrUpdateTemplateRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `template` | [resources.mailer.templates.Template](#resourcesmailertemplatesTemplate) |  |  |
+
+
+
+
+
+### services.mailer.CreateOrUpdateTemplateResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `template` | [resources.mailer.templates.Template](#resourcesmailertemplatesTemplate) |  |  |
+
+
+
+
+
+### services.mailer.DeleteTemplateRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `email_id` | [int64](#int64) |  |  |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.mailer.DeleteTemplateResponse
+
+
+
+
+
 ### services.mailer.GetEmailSettingsRequest
 
 
@@ -11437,6 +11562,135 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `template` | [resources.mailer.templates.Template](#resourcesmailertemplatesTemplate) |  |  |
+
+
+
+
+
+### services.mailer.ListTemplatesRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `email_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.mailer.ListTemplatesResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `templates` | [resources.mailer.templates.Template](#resourcesmailertemplatesTemplate) | repeated |  |
+
+
+
+
+
+### services.mailer.SetEmailSettingsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `settings` | [resources.mailer.settings.EmailSettings](#resourcesmailersettingsEmailSettings) |  |  |
+
+
+
+
+
+### services.mailer.SetEmailSettingsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `settings` | [resources.mailer.settings.EmailSettings](#resourcesmailersettingsEmailSettings) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.mailer.SettingsService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListTemplates` | [ListTemplatesRequest](#servicesmailerListTemplatesRequest) | [ListTemplatesResponse](#servicesmailerListTemplatesResponse) | |
+| `GetTemplate` | [GetTemplateRequest](#servicesmailerGetTemplateRequest) | [GetTemplateResponse](#servicesmailerGetTemplateResponse) | |
+| `CreateOrUpdateTemplate` | [CreateOrUpdateTemplateRequest](#servicesmailerCreateOrUpdateTemplateRequest) | [CreateOrUpdateTemplateResponse](#servicesmailerCreateOrUpdateTemplateResponse) | |
+| `DeleteTemplate` | [DeleteTemplateRequest](#servicesmailerDeleteTemplateRequest) | [DeleteTemplateResponse](#servicesmailerDeleteTemplateResponse) | |
+| `GetEmailSettings` | [GetEmailSettingsRequest](#servicesmailerGetEmailSettingsRequest) | [GetEmailSettingsResponse](#servicesmailerGetEmailSettingsResponse) | |
+| `SetEmailSettings` | [SetEmailSettingsRequest](#servicesmailerSetEmailSettingsRequest) | [SetEmailSettingsResponse](#servicesmailerSetEmailSettingsResponse) | |
+
+ <!-- end services -->
+
+
+
+## services/mailer/thread.proto
+
+
+### services.mailer.CreateThreadRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `thread` | [resources.mailer.threads.Thread](#resourcesmailerthreadsThread) |  |  |
+| `message` | [resources.mailer.messages.Message](#resourcesmailermessagesMessage) |  |  |
+| `recipients` | [string](#string) | repeated |  |
+
+
+
+
+
+### services.mailer.CreateThreadResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `thread` | [resources.mailer.threads.Thread](#resourcesmailerthreadsThread) |  |  |
+
+
+
+
+
+### services.mailer.DeleteMessageRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `email_id` | [int64](#int64) |  |  |
+| `thread_id` | [int64](#int64) |  |  |
+| `message_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.mailer.DeleteMessageResponse
+
+
+
+
+
+### services.mailer.DeleteThreadRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `email_id` | [int64](#int64) |  |  |
+| `thread_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.mailer.DeleteThreadResponse
 
 
 
@@ -11483,52 +11737,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `state` | [resources.mailer.threads.ThreadState](#resourcesmailerthreadsThreadState) |  |  |
-
-
-
-
-
-### services.mailer.ListEmailsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `all` | [bool](#bool) | optional | Search params |
-
-
-
-
-
-### services.mailer.ListEmailsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
-| `emails` | [resources.mailer.emails.Email](#resourcesmaileremailsEmail) | repeated |  |
-
-
-
-
-
-### services.mailer.ListTemplatesRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `email_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.mailer.ListTemplatesResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `templates` | [resources.mailer.templates.Template](#resourcesmailertemplatesTemplate) | repeated |  |
 
 
 
@@ -11633,28 +11841,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
-### services.mailer.SetEmailSettingsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `settings` | [resources.mailer.settings.EmailSettings](#resourcesmailersettingsEmailSettings) |  |  |
-
-
-
-
-
-### services.mailer.SetEmailSettingsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `settings` | [resources.mailer.settings.EmailSettings](#resourcesmailersettingsEmailSettings) |  |  |
-
-
-
-
-
 ### services.mailer.SetThreadStateRequest
 
 
@@ -11683,19 +11869,10 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
  <!-- end HasExtensions -->
 
 
-### services.mailer.MailerService
+### services.mailer.ThreadService
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListEmails` | [ListEmailsRequest](#servicesmailerListEmailsRequest) | [ListEmailsResponse](#servicesmailerListEmailsResponse) | |
-| `GetEmail` | [GetEmailRequest](#servicesmailerGetEmailRequest) | [GetEmailResponse](#servicesmailerGetEmailResponse) | |
-| `CreateOrUpdateEmail` | [CreateOrUpdateEmailRequest](#servicesmailerCreateOrUpdateEmailRequest) | [CreateOrUpdateEmailResponse](#servicesmailerCreateOrUpdateEmailResponse) | |
-| `DeleteEmail` | [DeleteEmailRequest](#servicesmailerDeleteEmailRequest) | [DeleteEmailResponse](#servicesmailerDeleteEmailResponse) | |
-| `GetEmailProposals` | [GetEmailProposalsRequest](#servicesmailerGetEmailProposalsRequest) | [GetEmailProposalsResponse](#servicesmailerGetEmailProposalsResponse) | |
-| `ListTemplates` | [ListTemplatesRequest](#servicesmailerListTemplatesRequest) | [ListTemplatesResponse](#servicesmailerListTemplatesResponse) | |
-| `GetTemplate` | [GetTemplateRequest](#servicesmailerGetTemplateRequest) | [GetTemplateResponse](#servicesmailerGetTemplateResponse) | |
-| `CreateOrUpdateTemplate` | [CreateOrUpdateTemplateRequest](#servicesmailerCreateOrUpdateTemplateRequest) | [CreateOrUpdateTemplateResponse](#servicesmailerCreateOrUpdateTemplateResponse) | |
-| `DeleteTemplate` | [DeleteTemplateRequest](#servicesmailerDeleteTemplateRequest) | [DeleteTemplateResponse](#servicesmailerDeleteTemplateResponse) | |
 | `ListThreads` | [ListThreadsRequest](#servicesmailerListThreadsRequest) | [ListThreadsResponse](#servicesmailerListThreadsResponse) | |
 | `GetThread` | [GetThreadRequest](#servicesmailerGetThreadRequest) | [GetThreadResponse](#servicesmailerGetThreadResponse) | |
 | `CreateThread` | [CreateThreadRequest](#servicesmailerCreateThreadRequest) | [CreateThreadResponse](#servicesmailerCreateThreadResponse) | |
@@ -11706,8 +11883,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `ListThreadMessages` | [ListThreadMessagesRequest](#servicesmailerListThreadMessagesRequest) | [ListThreadMessagesResponse](#servicesmailerListThreadMessagesResponse) | |
 | `PostMessage` | [PostMessageRequest](#servicesmailerPostMessageRequest) | [PostMessageResponse](#servicesmailerPostMessageResponse) | |
 | `DeleteMessage` | [DeleteMessageRequest](#servicesmailerDeleteMessageRequest) | [DeleteMessageResponse](#servicesmailerDeleteMessageResponse) | |
-| `GetEmailSettings` | [GetEmailSettingsRequest](#servicesmailerGetEmailSettingsRequest) | [GetEmailSettingsResponse](#servicesmailerGetEmailSettingsResponse) | |
-| `SetEmailSettings` | [SetEmailSettingsRequest](#servicesmailerSetEmailSettingsRequest) | [SetEmailSettingsResponse](#servicesmailerSetEmailSettingsResponse) | |
 
  <!-- end services -->
 
@@ -11807,6 +11982,128 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `GetNotifications` | [GetNotificationsRequest](#servicesnotificationsGetNotificationsRequest) | [GetNotificationsResponse](#servicesnotificationsGetNotificationsResponse) | |
 | `MarkNotifications` | [MarkNotificationsRequest](#servicesnotificationsMarkNotificationsRequest) | [MarkNotificationsResponse](#servicesnotificationsMarkNotificationsResponse) | |
 | `Stream` | [StreamRequest](#servicesnotificationsStreamRequest) stream | [StreamResponse](#servicesnotificationsStreamResponse) stream | |
+
+ <!-- end services -->
+
+
+
+## services/qualifications/exam.proto
+
+
+### services.qualifications.GetExamInfoRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `qualification_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.qualifications.GetExamInfoResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `qualification` | [resources.qualifications.QualificationShort](#resourcesqualificationsQualificationShort) |  |  |
+| `question_count` | [int64](#int64) |  |  |
+| `exam_user` | [resources.qualifications.exam.ExamUser](#resourcesqualificationsexamExamUser) | optional |  |
+
+
+
+
+
+### services.qualifications.GetUserExamRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `qualification_id` | [int64](#int64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+
+
+
+
+
+### services.qualifications.GetUserExamResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `exam` | [resources.qualifications.exam.ExamQuestions](#resourcesqualificationsexamExamQuestions) |  |  |
+| `exam_user` | [resources.qualifications.exam.ExamUser](#resourcesqualificationsexamExamUser) |  |  |
+| `responses` | [resources.qualifications.exam.ExamResponses](#resourcesqualificationsexamExamResponses) |  |  |
+| `grading` | [resources.qualifications.exam.ExamGrading](#resourcesqualificationsexamExamGrading) |  |  |
+
+
+
+
+
+### services.qualifications.SubmitExamRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `qualification_id` | [int64](#int64) |  |  |
+| `responses` | [resources.qualifications.exam.ExamResponses](#resourcesqualificationsexamExamResponses) |  |  |
+| `partial` | [bool](#bool) |  |  |
+
+
+
+
+
+### services.qualifications.SubmitExamResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `duration` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  |  |
+
+
+
+
+
+### services.qualifications.TakeExamRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `qualification_id` | [int64](#int64) |  |  |
+| `cancel` | [bool](#bool) | optional |  |
+
+
+
+
+
+### services.qualifications.TakeExamResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `exam` | [resources.qualifications.exam.ExamQuestions](#resourcesqualificationsexamExamQuestions) |  |  |
+| `exam_user` | [resources.qualifications.exam.ExamUser](#resourcesqualificationsexamExamUser) |  |  |
+| `responses` | [resources.qualifications.exam.ExamResponses](#resourcesqualificationsexamExamResponses) |  |  |
+| `times_up` | [bool](#bool) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.qualifications.ExamService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `GetExamInfo` | [GetExamInfoRequest](#servicesqualificationsGetExamInfoRequest) | [GetExamInfoResponse](#servicesqualificationsGetExamInfoResponse) | |
+| `TakeExam` | [TakeExamRequest](#servicesqualificationsTakeExamRequest) | [TakeExamResponse](#servicesqualificationsTakeExamResponse) | |
+| `SubmitExam` | [SubmitExamRequest](#servicesqualificationsSubmitExamRequest) | [SubmitExamResponse](#servicesqualificationsSubmitExamResponse) | |
+| `GetUserExam` | [GetUserExamRequest](#servicesqualificationsGetUserExamRequest) | [GetUserExamResponse](#servicesqualificationsGetUserExamResponse) | |
 
  <!-- end services -->
 
@@ -11934,30 +12231,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
-### services.qualifications.GetExamInfoRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `qualification_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.qualifications.GetExamInfoResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `qualification` | [resources.qualifications.QualificationShort](#resourcesqualificationsQualificationShort) |  |  |
-| `question_count` | [int64](#int64) |  |  |
-| `exam_user` | [resources.qualifications.exam.ExamUser](#resourcesqualificationsexamExamUser) | optional |  |
-
-
-
-
-
 ### services.qualifications.GetQualificationAccessRequest
 
 
@@ -11998,32 +12271,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `qualification` | [resources.qualifications.Qualification](#resourcesqualificationsQualification) |  |  |
-
-
-
-
-
-### services.qualifications.GetUserExamRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `qualification_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-
-
-
-
-
-### services.qualifications.GetUserExamResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `exam` | [resources.qualifications.exam.ExamQuestions](#resourcesqualificationsexamExamQuestions) |  |  |
-| `exam_user` | [resources.qualifications.exam.ExamUser](#resourcesqualificationsexamExamUser) |  |  |
-| `responses` | [resources.qualifications.exam.ExamResponses](#resourcesqualificationsexamExamResponses) |  |  |
-| `grading` | [resources.qualifications.exam.ExamGrading](#resourcesqualificationsexamExamGrading) |  |  |
 
 
 
@@ -12127,56 +12374,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
-### services.qualifications.SubmitExamRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `qualification_id` | [int64](#int64) |  |  |
-| `responses` | [resources.qualifications.exam.ExamResponses](#resourcesqualificationsexamExamResponses) |  |  |
-| `partial` | [bool](#bool) |  |  |
-
-
-
-
-
-### services.qualifications.SubmitExamResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `duration` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  |  |
-
-
-
-
-
-### services.qualifications.TakeExamRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `qualification_id` | [int64](#int64) |  |  |
-| `cancel` | [bool](#bool) | optional |  |
-
-
-
-
-
-### services.qualifications.TakeExamResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `exam` | [resources.qualifications.exam.ExamQuestions](#resourcesqualificationsexamExamQuestions) |  |  |
-| `exam_user` | [resources.qualifications.exam.ExamUser](#resourcesqualificationsexamExamUser) |  |  |
-| `responses` | [resources.qualifications.exam.ExamResponses](#resourcesqualificationsexamExamResponses) |  |  |
-| `times_up` | [bool](#bool) |  |  |
-
-
-
-
-
 ### services.qualifications.UpdateQualificationRequest
 
 
@@ -12220,10 +12417,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `ListQualificationsResults` | [ListQualificationsResultsRequest](#servicesqualificationsListQualificationsResultsRequest) | [ListQualificationsResultsResponse](#servicesqualificationsListQualificationsResultsResponse) | |
 | `CreateOrUpdateQualificationResult` | [CreateOrUpdateQualificationResultRequest](#servicesqualificationsCreateOrUpdateQualificationResultRequest) | [CreateOrUpdateQualificationResultResponse](#servicesqualificationsCreateOrUpdateQualificationResultResponse) | |
 | `DeleteQualificationResult` | [DeleteQualificationResultRequest](#servicesqualificationsDeleteQualificationResultRequest) | [DeleteQualificationResultResponse](#servicesqualificationsDeleteQualificationResultResponse) | |
-| `GetExamInfo` | [GetExamInfoRequest](#servicesqualificationsGetExamInfoRequest) | [GetExamInfoResponse](#servicesqualificationsGetExamInfoResponse) | |
-| `TakeExam` | [TakeExamRequest](#servicesqualificationsTakeExamRequest) | [TakeExamResponse](#servicesqualificationsTakeExamResponse) | |
-| `SubmitExam` | [SubmitExamRequest](#servicesqualificationsSubmitExamRequest) | [SubmitExamResponse](#servicesqualificationsSubmitExamResponse) | |
-| `GetUserExam` | [GetUserExamRequest](#servicesqualificationsGetUserExamRequest) | [GetUserExamResponse](#servicesqualificationsGetUserExamResponse) | |
 | `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) | |
 
  <!-- end services -->

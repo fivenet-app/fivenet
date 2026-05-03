@@ -9,15 +9,11 @@
 package centrum
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
-	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	dispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
 	dispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	settings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
 	units "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
-	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	heatmap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/heatmap"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -33,170 +29,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ListDispatchActivityRequest struct {
-	state                 protoimpl.MessageState      `protogen:"opaque.v1"`
-	xxx_hidden_Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Id         int64                       `protobuf:"varint,2,opt,name=id,proto3"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *ListDispatchActivityRequest) Reset() {
-	*x = ListDispatchActivityRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListDispatchActivityRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListDispatchActivityRequest) ProtoMessage() {}
-
-func (x *ListDispatchActivityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListDispatchActivityRequest) GetPagination() *database.PaginationRequest {
-	if x != nil {
-		return x.xxx_hidden_Pagination
-	}
-	return nil
-}
-
-func (x *ListDispatchActivityRequest) GetId() int64 {
-	if x != nil {
-		return x.xxx_hidden_Id
-	}
-	return 0
-}
-
-func (x *ListDispatchActivityRequest) SetPagination(v *database.PaginationRequest) {
-	x.xxx_hidden_Pagination = v
-}
-
-func (x *ListDispatchActivityRequest) SetId(v int64) {
-	x.xxx_hidden_Id = v
-}
-
-func (x *ListDispatchActivityRequest) HasPagination() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Pagination != nil
-}
-
-func (x *ListDispatchActivityRequest) ClearPagination() {
-	x.xxx_hidden_Pagination = nil
-}
-
-type ListDispatchActivityRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Pagination *database.PaginationRequest
-	Id         int64
-}
-
-func (b0 ListDispatchActivityRequest_builder) Build() *ListDispatchActivityRequest {
-	m0 := &ListDispatchActivityRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Pagination = b.Pagination
-	x.xxx_hidden_Id = b.Id
-	return m0
-}
-
-type ListUnitActivityRequest struct {
-	state                 protoimpl.MessageState      `protogen:"opaque.v1"`
-	xxx_hidden_Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Id         int64                       `protobuf:"varint,2,opt,name=id,proto3"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *ListUnitActivityRequest) Reset() {
-	*x = ListUnitActivityRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListUnitActivityRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListUnitActivityRequest) ProtoMessage() {}
-
-func (x *ListUnitActivityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListUnitActivityRequest) GetPagination() *database.PaginationRequest {
-	if x != nil {
-		return x.xxx_hidden_Pagination
-	}
-	return nil
-}
-
-func (x *ListUnitActivityRequest) GetId() int64 {
-	if x != nil {
-		return x.xxx_hidden_Id
-	}
-	return 0
-}
-
-func (x *ListUnitActivityRequest) SetPagination(v *database.PaginationRequest) {
-	x.xxx_hidden_Pagination = v
-}
-
-func (x *ListUnitActivityRequest) SetId(v int64) {
-	x.xxx_hidden_Id = v
-}
-
-func (x *ListUnitActivityRequest) HasPagination() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Pagination != nil
-}
-
-func (x *ListUnitActivityRequest) ClearPagination() {
-	x.xxx_hidden_Pagination = nil
-}
-
-type ListUnitActivityRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Pagination *database.PaginationRequest
-	Id         int64
-}
-
-func (b0 ListUnitActivityRequest_builder) Build() *ListUnitActivityRequest {
-	m0 := &ListUnitActivityRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Pagination = b.Pagination
-	x.xxx_hidden_Id = b.Id
-	return m0
-}
-
 type GetSettingsRequest struct {
 	state         protoimpl.MessageState `protogen:"opaque.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -205,7 +37,7 @@ type GetSettingsRequest struct {
 
 func (x *GetSettingsRequest) Reset() {
 	*x = GetSettingsRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[2]
+	mi := &file_services_centrum_centrum_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -217,7 +49,7 @@ func (x *GetSettingsRequest) String() string {
 func (*GetSettingsRequest) ProtoMessage() {}
 
 func (x *GetSettingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[2]
+	mi := &file_services_centrum_centrum_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -250,7 +82,7 @@ type GetSettingsResponse struct {
 
 func (x *GetSettingsResponse) Reset() {
 	*x = GetSettingsResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[3]
+	mi := &file_services_centrum_centrum_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -262,7 +94,7 @@ func (x *GetSettingsResponse) String() string {
 func (*GetSettingsResponse) ProtoMessage() {}
 
 func (x *GetSettingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[3]
+	mi := &file_services_centrum_centrum_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -342,7 +174,7 @@ type UpdateSettingsRequest struct {
 
 func (x *UpdateSettingsRequest) Reset() {
 	*x = UpdateSettingsRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[4]
+	mi := &file_services_centrum_centrum_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -354,7 +186,7 @@ func (x *UpdateSettingsRequest) String() string {
 func (*UpdateSettingsRequest) ProtoMessage() {}
 
 func (x *UpdateSettingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[4]
+	mi := &file_services_centrum_centrum_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -410,7 +242,7 @@ type UpdateSettingsResponse struct {
 
 func (x *UpdateSettingsResponse) Reset() {
 	*x = UpdateSettingsResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[5]
+	mi := &file_services_centrum_centrum_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -422,7 +254,7 @@ func (x *UpdateSettingsResponse) String() string {
 func (*UpdateSettingsResponse) ProtoMessage() {}
 
 func (x *UpdateSettingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[5]
+	mi := &file_services_centrum_centrum_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -469,668 +301,6 @@ func (b0 UpdateSettingsResponse_builder) Build() *UpdateSettingsResponse {
 	return m0
 }
 
-type ListUnitsRequest struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Status []units.StatusUnit     `protobuf:"varint,1,rep,packed,name=status,proto3,enum=resources.centrum.units.StatusUnit"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
-}
-
-func (x *ListUnitsRequest) Reset() {
-	*x = ListUnitsRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListUnitsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListUnitsRequest) ProtoMessage() {}
-
-func (x *ListUnitsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListUnitsRequest) GetStatus() []units.StatusUnit {
-	if x != nil {
-		return x.xxx_hidden_Status
-	}
-	return nil
-}
-
-func (x *ListUnitsRequest) SetStatus(v []units.StatusUnit) {
-	x.xxx_hidden_Status = v
-}
-
-type ListUnitsRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Status []units.StatusUnit
-}
-
-func (b0 ListUnitsRequest_builder) Build() *ListUnitsRequest {
-	m0 := &ListUnitsRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Status = b.Status
-	return m0
-}
-
-type ListUnitsResponse struct {
-	state            protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Units *[]*units.Unit         `protobuf:"bytes,1,rep,name=units,proto3"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *ListUnitsResponse) Reset() {
-	*x = ListUnitsResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListUnitsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListUnitsResponse) ProtoMessage() {}
-
-func (x *ListUnitsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListUnitsResponse) GetUnits() []*units.Unit {
-	if x != nil {
-		if x.xxx_hidden_Units != nil {
-			return *x.xxx_hidden_Units
-		}
-	}
-	return nil
-}
-
-func (x *ListUnitsResponse) SetUnits(v []*units.Unit) {
-	x.xxx_hidden_Units = &v
-}
-
-type ListUnitsResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Units []*units.Unit
-}
-
-func (b0 ListUnitsResponse_builder) Build() *ListUnitsResponse {
-	m0 := &ListUnitsResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Units = &b.Units
-	return m0
-}
-
-type CreateOrUpdateUnitRequest struct {
-	state           protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Unit *units.Unit            `protobuf:"bytes,1,opt,name=unit,proto3"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *CreateOrUpdateUnitRequest) Reset() {
-	*x = CreateOrUpdateUnitRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[8]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateOrUpdateUnitRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateOrUpdateUnitRequest) ProtoMessage() {}
-
-func (x *CreateOrUpdateUnitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[8]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *CreateOrUpdateUnitRequest) GetUnit() *units.Unit {
-	if x != nil {
-		return x.xxx_hidden_Unit
-	}
-	return nil
-}
-
-func (x *CreateOrUpdateUnitRequest) SetUnit(v *units.Unit) {
-	x.xxx_hidden_Unit = v
-}
-
-func (x *CreateOrUpdateUnitRequest) HasUnit() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Unit != nil
-}
-
-func (x *CreateOrUpdateUnitRequest) ClearUnit() {
-	x.xxx_hidden_Unit = nil
-}
-
-type CreateOrUpdateUnitRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Unit *units.Unit
-}
-
-func (b0 CreateOrUpdateUnitRequest_builder) Build() *CreateOrUpdateUnitRequest {
-	m0 := &CreateOrUpdateUnitRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Unit = b.Unit
-	return m0
-}
-
-type CreateOrUpdateUnitResponse struct {
-	state           protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Unit *units.Unit            `protobuf:"bytes,1,opt,name=unit,proto3"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *CreateOrUpdateUnitResponse) Reset() {
-	*x = CreateOrUpdateUnitResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateOrUpdateUnitResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateOrUpdateUnitResponse) ProtoMessage() {}
-
-func (x *CreateOrUpdateUnitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[9]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *CreateOrUpdateUnitResponse) GetUnit() *units.Unit {
-	if x != nil {
-		return x.xxx_hidden_Unit
-	}
-	return nil
-}
-
-func (x *CreateOrUpdateUnitResponse) SetUnit(v *units.Unit) {
-	x.xxx_hidden_Unit = v
-}
-
-func (x *CreateOrUpdateUnitResponse) HasUnit() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Unit != nil
-}
-
-func (x *CreateOrUpdateUnitResponse) ClearUnit() {
-	x.xxx_hidden_Unit = nil
-}
-
-type CreateOrUpdateUnitResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Unit *units.Unit
-}
-
-func (b0 CreateOrUpdateUnitResponse_builder) Build() *CreateOrUpdateUnitResponse {
-	m0 := &CreateOrUpdateUnitResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Unit = b.Unit
-	return m0
-}
-
-type DeleteUnitRequest struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_UnitId int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
-}
-
-func (x *DeleteUnitRequest) Reset() {
-	*x = DeleteUnitRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteUnitRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteUnitRequest) ProtoMessage() {}
-
-func (x *DeleteUnitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *DeleteUnitRequest) GetUnitId() int64 {
-	if x != nil {
-		return x.xxx_hidden_UnitId
-	}
-	return 0
-}
-
-func (x *DeleteUnitRequest) SetUnitId(v int64) {
-	x.xxx_hidden_UnitId = v
-}
-
-type DeleteUnitRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	UnitId int64
-}
-
-func (b0 DeleteUnitRequest_builder) Build() *DeleteUnitRequest {
-	m0 := &DeleteUnitRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_UnitId = b.UnitId
-	return m0
-}
-
-type DeleteUnitResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteUnitResponse) Reset() {
-	*x = DeleteUnitResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteUnitResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteUnitResponse) ProtoMessage() {}
-
-func (x *DeleteUnitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type DeleteUnitResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 DeleteUnitResponse_builder) Build() *DeleteUnitResponse {
-	m0 := &DeleteUnitResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
-type UpdateUnitStatusRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_UnitId      int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3"`
-	xxx_hidden_Status      units.StatusUnit       `protobuf:"varint,2,opt,name=status,proto3,enum=resources.centrum.units.StatusUnit"`
-	xxx_hidden_Reason      *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
-	xxx_hidden_Code        *string                `protobuf:"bytes,4,opt,name=code,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *UpdateUnitStatusRequest) Reset() {
-	*x = UpdateUnitStatusRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateUnitStatusRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateUnitStatusRequest) ProtoMessage() {}
-
-func (x *UpdateUnitStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *UpdateUnitStatusRequest) GetUnitId() int64 {
-	if x != nil {
-		return x.xxx_hidden_UnitId
-	}
-	return 0
-}
-
-func (x *UpdateUnitStatusRequest) GetStatus() units.StatusUnit {
-	if x != nil {
-		return x.xxx_hidden_Status
-	}
-	return units.StatusUnit(0)
-}
-
-func (x *UpdateUnitStatusRequest) GetReason() string {
-	if x != nil {
-		if x.xxx_hidden_Reason != nil {
-			return *x.xxx_hidden_Reason
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *UpdateUnitStatusRequest) GetCode() string {
-	if x != nil {
-		if x.xxx_hidden_Code != nil {
-			return *x.xxx_hidden_Code
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *UpdateUnitStatusRequest) SetUnitId(v int64) {
-	x.xxx_hidden_UnitId = v
-}
-
-func (x *UpdateUnitStatusRequest) SetStatus(v units.StatusUnit) {
-	x.xxx_hidden_Status = v
-}
-
-func (x *UpdateUnitStatusRequest) SetReason(v string) {
-	x.xxx_hidden_Reason = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
-}
-
-func (x *UpdateUnitStatusRequest) SetCode(v string) {
-	x.xxx_hidden_Code = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
-}
-
-func (x *UpdateUnitStatusRequest) HasReason() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
-func (x *UpdateUnitStatusRequest) HasCode() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
-}
-
-func (x *UpdateUnitStatusRequest) ClearReason() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Reason = nil
-}
-
-func (x *UpdateUnitStatusRequest) ClearCode() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_Code = nil
-}
-
-type UpdateUnitStatusRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	UnitId int64
-	Status units.StatusUnit
-	Reason *string
-	Code   *string
-}
-
-func (b0 UpdateUnitStatusRequest_builder) Build() *UpdateUnitStatusRequest {
-	m0 := &UpdateUnitStatusRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_UnitId = b.UnitId
-	x.xxx_hidden_Status = b.Status
-	if b.Reason != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
-		x.xxx_hidden_Reason = b.Reason
-	}
-	if b.Code != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
-		x.xxx_hidden_Code = b.Code
-	}
-	return m0
-}
-
-type UpdateUnitStatusResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateUnitStatusResponse) Reset() {
-	*x = UpdateUnitStatusResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateUnitStatusResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateUnitStatusResponse) ProtoMessage() {}
-
-func (x *UpdateUnitStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type UpdateUnitStatusResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 UpdateUnitStatusResponse_builder) Build() *UpdateUnitStatusResponse {
-	m0 := &UpdateUnitStatusResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
-type AssignUnitRequest struct {
-	state               protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_UnitId   int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3"`
-	xxx_hidden_ToAdd    []int32                `protobuf:"varint,2,rep,packed,name=to_add,json=toAdd,proto3"`
-	xxx_hidden_ToRemove []int32                `protobuf:"varint,3,rep,packed,name=to_remove,json=toRemove,proto3"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *AssignUnitRequest) Reset() {
-	*x = AssignUnitRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AssignUnitRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AssignUnitRequest) ProtoMessage() {}
-
-func (x *AssignUnitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *AssignUnitRequest) GetUnitId() int64 {
-	if x != nil {
-		return x.xxx_hidden_UnitId
-	}
-	return 0
-}
-
-func (x *AssignUnitRequest) GetToAdd() []int32 {
-	if x != nil {
-		return x.xxx_hidden_ToAdd
-	}
-	return nil
-}
-
-func (x *AssignUnitRequest) GetToRemove() []int32 {
-	if x != nil {
-		return x.xxx_hidden_ToRemove
-	}
-	return nil
-}
-
-func (x *AssignUnitRequest) SetUnitId(v int64) {
-	x.xxx_hidden_UnitId = v
-}
-
-func (x *AssignUnitRequest) SetToAdd(v []int32) {
-	x.xxx_hidden_ToAdd = v
-}
-
-func (x *AssignUnitRequest) SetToRemove(v []int32) {
-	x.xxx_hidden_ToRemove = v
-}
-
-type AssignUnitRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	UnitId   int64
-	ToAdd    []int32
-	ToRemove []int32
-}
-
-func (b0 AssignUnitRequest_builder) Build() *AssignUnitRequest {
-	m0 := &AssignUnitRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_UnitId = b.UnitId
-	x.xxx_hidden_ToAdd = b.ToAdd
-	x.xxx_hidden_ToRemove = b.ToRemove
-	return m0
-}
-
-type AssignUnitResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AssignUnitResponse) Reset() {
-	*x = AssignUnitResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[15]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AssignUnitResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AssignUnitResponse) ProtoMessage() {}
-
-func (x *AssignUnitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[15]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type AssignUnitResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 AssignUnitResponse_builder) Build() *AssignUnitResponse {
-	m0 := &AssignUnitResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
 type GetDispatchHeatmapRequest struct {
 	state         protoimpl.MessageState `protogen:"opaque.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1139,7 +309,7 @@ type GetDispatchHeatmapRequest struct {
 
 func (x *GetDispatchHeatmapRequest) Reset() {
 	*x = GetDispatchHeatmapRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[16]
+	mi := &file_services_centrum_centrum_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1151,7 +321,7 @@ func (x *GetDispatchHeatmapRequest) String() string {
 func (*GetDispatchHeatmapRequest) ProtoMessage() {}
 
 func (x *GetDispatchHeatmapRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[16]
+	mi := &file_services_centrum_centrum_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1184,7 +354,7 @@ type GetDispatchHeatmapResponse struct {
 
 func (x *GetDispatchHeatmapResponse) Reset() {
 	*x = GetDispatchHeatmapResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[17]
+	mi := &file_services_centrum_centrum_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1196,7 +366,7 @@ func (x *GetDispatchHeatmapResponse) String() string {
 func (*GetDispatchHeatmapResponse) ProtoMessage() {}
 
 func (x *GetDispatchHeatmapResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[17]
+	mi := &file_services_centrum_centrum_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1247,6 +417,106 @@ func (b0 GetDispatchHeatmapResponse_builder) Build() *GetDispatchHeatmapResponse
 	return m0
 }
 
+type TakeControlRequest struct {
+	state             protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Signon bool                   `protobuf:"varint,1,opt,name=signon,proto3"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *TakeControlRequest) Reset() {
+	*x = TakeControlRequest{}
+	mi := &file_services_centrum_centrum_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TakeControlRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TakeControlRequest) ProtoMessage() {}
+
+func (x *TakeControlRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_centrum_centrum_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *TakeControlRequest) GetSignon() bool {
+	if x != nil {
+		return x.xxx_hidden_Signon
+	}
+	return false
+}
+
+func (x *TakeControlRequest) SetSignon(v bool) {
+	x.xxx_hidden_Signon = v
+}
+
+type TakeControlRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Signon bool
+}
+
+func (b0 TakeControlRequest_builder) Build() *TakeControlRequest {
+	m0 := &TakeControlRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Signon = b.Signon
+	return m0
+}
+
+type TakeControlResponse struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TakeControlResponse) Reset() {
+	*x = TakeControlResponse{}
+	mi := &file_services_centrum_centrum_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TakeControlResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TakeControlResponse) ProtoMessage() {}
+
+func (x *TakeControlResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_centrum_centrum_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type TakeControlResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 TakeControlResponse_builder) Build() *TakeControlResponse {
+	m0 := &TakeControlResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
 type UpdateDispatchersRequest struct {
 	state               protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_ToRemove []int32                `protobuf:"varint,1,rep,packed,name=to_remove,json=toRemove,proto3"`
@@ -1256,7 +526,7 @@ type UpdateDispatchersRequest struct {
 
 func (x *UpdateDispatchersRequest) Reset() {
 	*x = UpdateDispatchersRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[18]
+	mi := &file_services_centrum_centrum_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1268,7 +538,7 @@ func (x *UpdateDispatchersRequest) String() string {
 func (*UpdateDispatchersRequest) ProtoMessage() {}
 
 func (x *UpdateDispatchersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[18]
+	mi := &file_services_centrum_centrum_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1313,7 +583,7 @@ type UpdateDispatchersResponse struct {
 
 func (x *UpdateDispatchersResponse) Reset() {
 	*x = UpdateDispatchersResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[19]
+	mi := &file_services_centrum_centrum_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1325,7 +595,7 @@ func (x *UpdateDispatchersResponse) String() string {
 func (*UpdateDispatchersResponse) ProtoMessage() {}
 
 func (x *UpdateDispatchersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[19]
+	mi := &file_services_centrum_centrum_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1372,1736 +642,6 @@ func (b0 UpdateDispatchersResponse_builder) Build() *UpdateDispatchersResponse {
 	return m0
 }
 
-type ListUnitActivityResponse struct {
-	state                 protoimpl.MessageState       `protogen:"opaque.v1"`
-	xxx_hidden_Pagination *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Activity   *[]*units.UnitStatus         `protobuf:"bytes,2,rep,name=activity,proto3"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *ListUnitActivityResponse) Reset() {
-	*x = ListUnitActivityResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[20]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListUnitActivityResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListUnitActivityResponse) ProtoMessage() {}
-
-func (x *ListUnitActivityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[20]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListUnitActivityResponse) GetPagination() *database.PaginationResponse {
-	if x != nil {
-		return x.xxx_hidden_Pagination
-	}
-	return nil
-}
-
-func (x *ListUnitActivityResponse) GetActivity() []*units.UnitStatus {
-	if x != nil {
-		if x.xxx_hidden_Activity != nil {
-			return *x.xxx_hidden_Activity
-		}
-	}
-	return nil
-}
-
-func (x *ListUnitActivityResponse) SetPagination(v *database.PaginationResponse) {
-	x.xxx_hidden_Pagination = v
-}
-
-func (x *ListUnitActivityResponse) SetActivity(v []*units.UnitStatus) {
-	x.xxx_hidden_Activity = &v
-}
-
-func (x *ListUnitActivityResponse) HasPagination() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Pagination != nil
-}
-
-func (x *ListUnitActivityResponse) ClearPagination() {
-	x.xxx_hidden_Pagination = nil
-}
-
-type ListUnitActivityResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Pagination *database.PaginationResponse
-	Activity   []*units.UnitStatus
-}
-
-func (b0 ListUnitActivityResponse_builder) Build() *ListUnitActivityResponse {
-	m0 := &ListUnitActivityResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Pagination = b.Pagination
-	x.xxx_hidden_Activity = &b.Activity
-	return m0
-}
-
-type TakeControlRequest struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Signon bool                   `protobuf:"varint,1,opt,name=signon,proto3"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
-}
-
-func (x *TakeControlRequest) Reset() {
-	*x = TakeControlRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[21]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TakeControlRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TakeControlRequest) ProtoMessage() {}
-
-func (x *TakeControlRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[21]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *TakeControlRequest) GetSignon() bool {
-	if x != nil {
-		return x.xxx_hidden_Signon
-	}
-	return false
-}
-
-func (x *TakeControlRequest) SetSignon(v bool) {
-	x.xxx_hidden_Signon = v
-}
-
-type TakeControlRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Signon bool
-}
-
-func (b0 TakeControlRequest_builder) Build() *TakeControlRequest {
-	m0 := &TakeControlRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Signon = b.Signon
-	return m0
-}
-
-type TakeControlResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TakeControlResponse) Reset() {
-	*x = TakeControlResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[22]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TakeControlResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TakeControlResponse) ProtoMessage() {}
-
-func (x *TakeControlResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[22]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type TakeControlResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 TakeControlResponse_builder) Build() *TakeControlResponse {
-	m0 := &TakeControlResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
-type ListDispatchesRequest struct {
-	state                  protoimpl.MessageState      `protogen:"opaque.v1"`
-	xxx_hidden_Pagination  *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Status      []dispatches.StatusDispatch `protobuf:"varint,2,rep,packed,name=status,proto3,enum=resources.centrum.dispatches.StatusDispatch"`
-	xxx_hidden_NotStatus   []dispatches.StatusDispatch `protobuf:"varint,3,rep,packed,name=not_status,json=notStatus,proto3,enum=resources.centrum.dispatches.StatusDispatch"`
-	xxx_hidden_Ids         []int64                     `protobuf:"varint,4,rep,packed,name=ids,proto3"`
-	xxx_hidden_Postal      *string                     `protobuf:"bytes,5,opt,name=postal,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *ListDispatchesRequest) Reset() {
-	*x = ListDispatchesRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[23]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListDispatchesRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListDispatchesRequest) ProtoMessage() {}
-
-func (x *ListDispatchesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[23]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListDispatchesRequest) GetPagination() *database.PaginationRequest {
-	if x != nil {
-		return x.xxx_hidden_Pagination
-	}
-	return nil
-}
-
-func (x *ListDispatchesRequest) GetStatus() []dispatches.StatusDispatch {
-	if x != nil {
-		return x.xxx_hidden_Status
-	}
-	return nil
-}
-
-func (x *ListDispatchesRequest) GetNotStatus() []dispatches.StatusDispatch {
-	if x != nil {
-		return x.xxx_hidden_NotStatus
-	}
-	return nil
-}
-
-func (x *ListDispatchesRequest) GetIds() []int64 {
-	if x != nil {
-		return x.xxx_hidden_Ids
-	}
-	return nil
-}
-
-func (x *ListDispatchesRequest) GetPostal() string {
-	if x != nil {
-		if x.xxx_hidden_Postal != nil {
-			return *x.xxx_hidden_Postal
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *ListDispatchesRequest) SetPagination(v *database.PaginationRequest) {
-	x.xxx_hidden_Pagination = v
-}
-
-func (x *ListDispatchesRequest) SetStatus(v []dispatches.StatusDispatch) {
-	x.xxx_hidden_Status = v
-}
-
-func (x *ListDispatchesRequest) SetNotStatus(v []dispatches.StatusDispatch) {
-	x.xxx_hidden_NotStatus = v
-}
-
-func (x *ListDispatchesRequest) SetIds(v []int64) {
-	x.xxx_hidden_Ids = v
-}
-
-func (x *ListDispatchesRequest) SetPostal(v string) {
-	x.xxx_hidden_Postal = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
-}
-
-func (x *ListDispatchesRequest) HasPagination() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Pagination != nil
-}
-
-func (x *ListDispatchesRequest) HasPostal() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
-}
-
-func (x *ListDispatchesRequest) ClearPagination() {
-	x.xxx_hidden_Pagination = nil
-}
-
-func (x *ListDispatchesRequest) ClearPostal() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
-	x.xxx_hidden_Postal = nil
-}
-
-type ListDispatchesRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Pagination *database.PaginationRequest
-	Status     []dispatches.StatusDispatch
-	NotStatus  []dispatches.StatusDispatch
-	Ids        []int64
-	Postal     *string
-}
-
-func (b0 ListDispatchesRequest_builder) Build() *ListDispatchesRequest {
-	m0 := &ListDispatchesRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Pagination = b.Pagination
-	x.xxx_hidden_Status = b.Status
-	x.xxx_hidden_NotStatus = b.NotStatus
-	x.xxx_hidden_Ids = b.Ids
-	if b.Postal != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
-		x.xxx_hidden_Postal = b.Postal
-	}
-	return m0
-}
-
-type ListDispatchesResponse struct {
-	state                 protoimpl.MessageState       `protogen:"opaque.v1"`
-	xxx_hidden_Pagination *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Dispatches *[]*dispatches.Dispatch      `protobuf:"bytes,2,rep,name=dispatches,proto3"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *ListDispatchesResponse) Reset() {
-	*x = ListDispatchesResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[24]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListDispatchesResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListDispatchesResponse) ProtoMessage() {}
-
-func (x *ListDispatchesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[24]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListDispatchesResponse) GetPagination() *database.PaginationResponse {
-	if x != nil {
-		return x.xxx_hidden_Pagination
-	}
-	return nil
-}
-
-func (x *ListDispatchesResponse) GetDispatches() []*dispatches.Dispatch {
-	if x != nil {
-		if x.xxx_hidden_Dispatches != nil {
-			return *x.xxx_hidden_Dispatches
-		}
-	}
-	return nil
-}
-
-func (x *ListDispatchesResponse) SetPagination(v *database.PaginationResponse) {
-	x.xxx_hidden_Pagination = v
-}
-
-func (x *ListDispatchesResponse) SetDispatches(v []*dispatches.Dispatch) {
-	x.xxx_hidden_Dispatches = &v
-}
-
-func (x *ListDispatchesResponse) HasPagination() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Pagination != nil
-}
-
-func (x *ListDispatchesResponse) ClearPagination() {
-	x.xxx_hidden_Pagination = nil
-}
-
-type ListDispatchesResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Pagination *database.PaginationResponse
-	Dispatches []*dispatches.Dispatch
-}
-
-func (b0 ListDispatchesResponse_builder) Build() *ListDispatchesResponse {
-	m0 := &ListDispatchesResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Pagination = b.Pagination
-	x.xxx_hidden_Dispatches = &b.Dispatches
-	return m0
-}
-
-type GetDispatchRequest struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id int64                  `protobuf:"varint,1,opt,name=id,proto3"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetDispatchRequest) Reset() {
-	*x = GetDispatchRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[25]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetDispatchRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetDispatchRequest) ProtoMessage() {}
-
-func (x *GetDispatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[25]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *GetDispatchRequest) GetId() int64 {
-	if x != nil {
-		return x.xxx_hidden_Id
-	}
-	return 0
-}
-
-func (x *GetDispatchRequest) SetId(v int64) {
-	x.xxx_hidden_Id = v
-}
-
-type GetDispatchRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Id int64
-}
-
-func (b0 GetDispatchRequest_builder) Build() *GetDispatchRequest {
-	m0 := &GetDispatchRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Id = b.Id
-	return m0
-}
-
-type GetDispatchResponse struct {
-	state               protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Dispatch *dispatches.Dispatch   `protobuf:"bytes,1,opt,name=dispatch,proto3"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *GetDispatchResponse) Reset() {
-	*x = GetDispatchResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[26]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetDispatchResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetDispatchResponse) ProtoMessage() {}
-
-func (x *GetDispatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[26]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *GetDispatchResponse) GetDispatch() *dispatches.Dispatch {
-	if x != nil {
-		return x.xxx_hidden_Dispatch
-	}
-	return nil
-}
-
-func (x *GetDispatchResponse) SetDispatch(v *dispatches.Dispatch) {
-	x.xxx_hidden_Dispatch = v
-}
-
-func (x *GetDispatchResponse) HasDispatch() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Dispatch != nil
-}
-
-func (x *GetDispatchResponse) ClearDispatch() {
-	x.xxx_hidden_Dispatch = nil
-}
-
-type GetDispatchResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Dispatch *dispatches.Dispatch
-}
-
-func (b0 GetDispatchResponse_builder) Build() *GetDispatchResponse {
-	m0 := &GetDispatchResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Dispatch = b.Dispatch
-	return m0
-}
-
-type CreateDispatchRequest struct {
-	state               protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Dispatch *dispatches.Dispatch   `protobuf:"bytes,1,opt,name=dispatch,proto3"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *CreateDispatchRequest) Reset() {
-	*x = CreateDispatchRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[27]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateDispatchRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateDispatchRequest) ProtoMessage() {}
-
-func (x *CreateDispatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[27]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *CreateDispatchRequest) GetDispatch() *dispatches.Dispatch {
-	if x != nil {
-		return x.xxx_hidden_Dispatch
-	}
-	return nil
-}
-
-func (x *CreateDispatchRequest) SetDispatch(v *dispatches.Dispatch) {
-	x.xxx_hidden_Dispatch = v
-}
-
-func (x *CreateDispatchRequest) HasDispatch() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Dispatch != nil
-}
-
-func (x *CreateDispatchRequest) ClearDispatch() {
-	x.xxx_hidden_Dispatch = nil
-}
-
-type CreateDispatchRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Dispatch *dispatches.Dispatch
-}
-
-func (b0 CreateDispatchRequest_builder) Build() *CreateDispatchRequest {
-	m0 := &CreateDispatchRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Dispatch = b.Dispatch
-	return m0
-}
-
-type CreateDispatchResponse struct {
-	state               protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Dispatch *dispatches.Dispatch   `protobuf:"bytes,1,opt,name=dispatch,proto3"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *CreateDispatchResponse) Reset() {
-	*x = CreateDispatchResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[28]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateDispatchResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateDispatchResponse) ProtoMessage() {}
-
-func (x *CreateDispatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[28]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *CreateDispatchResponse) GetDispatch() *dispatches.Dispatch {
-	if x != nil {
-		return x.xxx_hidden_Dispatch
-	}
-	return nil
-}
-
-func (x *CreateDispatchResponse) SetDispatch(v *dispatches.Dispatch) {
-	x.xxx_hidden_Dispatch = v
-}
-
-func (x *CreateDispatchResponse) HasDispatch() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Dispatch != nil
-}
-
-func (x *CreateDispatchResponse) ClearDispatch() {
-	x.xxx_hidden_Dispatch = nil
-}
-
-type CreateDispatchResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Dispatch *dispatches.Dispatch
-}
-
-func (b0 CreateDispatchResponse_builder) Build() *CreateDispatchResponse {
-	m0 := &CreateDispatchResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Dispatch = b.Dispatch
-	return m0
-}
-
-type UpdateDispatchRequest struct {
-	state               protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Dispatch *dispatches.Dispatch   `protobuf:"bytes,1,opt,name=dispatch,proto3"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *UpdateDispatchRequest) Reset() {
-	*x = UpdateDispatchRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[29]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateDispatchRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateDispatchRequest) ProtoMessage() {}
-
-func (x *UpdateDispatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[29]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *UpdateDispatchRequest) GetDispatch() *dispatches.Dispatch {
-	if x != nil {
-		return x.xxx_hidden_Dispatch
-	}
-	return nil
-}
-
-func (x *UpdateDispatchRequest) SetDispatch(v *dispatches.Dispatch) {
-	x.xxx_hidden_Dispatch = v
-}
-
-func (x *UpdateDispatchRequest) HasDispatch() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Dispatch != nil
-}
-
-func (x *UpdateDispatchRequest) ClearDispatch() {
-	x.xxx_hidden_Dispatch = nil
-}
-
-type UpdateDispatchRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Dispatch *dispatches.Dispatch
-}
-
-func (b0 UpdateDispatchRequest_builder) Build() *UpdateDispatchRequest {
-	m0 := &UpdateDispatchRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Dispatch = b.Dispatch
-	return m0
-}
-
-type UpdateDispatchResponse struct {
-	state               protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Dispatch *dispatches.Dispatch   `protobuf:"bytes,1,opt,name=dispatch,proto3"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *UpdateDispatchResponse) Reset() {
-	*x = UpdateDispatchResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[30]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateDispatchResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateDispatchResponse) ProtoMessage() {}
-
-func (x *UpdateDispatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[30]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *UpdateDispatchResponse) GetDispatch() *dispatches.Dispatch {
-	if x != nil {
-		return x.xxx_hidden_Dispatch
-	}
-	return nil
-}
-
-func (x *UpdateDispatchResponse) SetDispatch(v *dispatches.Dispatch) {
-	x.xxx_hidden_Dispatch = v
-}
-
-func (x *UpdateDispatchResponse) HasDispatch() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Dispatch != nil
-}
-
-func (x *UpdateDispatchResponse) ClearDispatch() {
-	x.xxx_hidden_Dispatch = nil
-}
-
-type UpdateDispatchResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Dispatch *dispatches.Dispatch
-}
-
-func (b0 UpdateDispatchResponse_builder) Build() *UpdateDispatchResponse {
-	m0 := &UpdateDispatchResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Dispatch = b.Dispatch
-	return m0
-}
-
-type DeleteDispatchRequest struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id int64                  `protobuf:"varint,1,opt,name=id,proto3"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteDispatchRequest) Reset() {
-	*x = DeleteDispatchRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[31]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteDispatchRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteDispatchRequest) ProtoMessage() {}
-
-func (x *DeleteDispatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[31]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *DeleteDispatchRequest) GetId() int64 {
-	if x != nil {
-		return x.xxx_hidden_Id
-	}
-	return 0
-}
-
-func (x *DeleteDispatchRequest) SetId(v int64) {
-	x.xxx_hidden_Id = v
-}
-
-type DeleteDispatchRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Id int64
-}
-
-func (b0 DeleteDispatchRequest_builder) Build() *DeleteDispatchRequest {
-	m0 := &DeleteDispatchRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Id = b.Id
-	return m0
-}
-
-type DeleteDispatchResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteDispatchResponse) Reset() {
-	*x = DeleteDispatchResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[32]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteDispatchResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteDispatchResponse) ProtoMessage() {}
-
-func (x *DeleteDispatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[32]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type DeleteDispatchResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 DeleteDispatchResponse_builder) Build() *DeleteDispatchResponse {
-	m0 := &DeleteDispatchResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
-type ListDispatchTargetJobsRequest struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListDispatchTargetJobsRequest) Reset() {
-	*x = ListDispatchTargetJobsRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[33]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListDispatchTargetJobsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListDispatchTargetJobsRequest) ProtoMessage() {}
-
-func (x *ListDispatchTargetJobsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[33]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type ListDispatchTargetJobsRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 ListDispatchTargetJobsRequest_builder) Build() *ListDispatchTargetJobsRequest {
-	m0 := &ListDispatchTargetJobsRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
-type ListDispatchTargetJobsResponse struct {
-	state           protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Jobs *[]*jobs.Job           `protobuf:"bytes,1,rep,name=jobs,proto3"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *ListDispatchTargetJobsResponse) Reset() {
-	*x = ListDispatchTargetJobsResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[34]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListDispatchTargetJobsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListDispatchTargetJobsResponse) ProtoMessage() {}
-
-func (x *ListDispatchTargetJobsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[34]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListDispatchTargetJobsResponse) GetJobs() []*jobs.Job {
-	if x != nil {
-		if x.xxx_hidden_Jobs != nil {
-			return *x.xxx_hidden_Jobs
-		}
-	}
-	return nil
-}
-
-func (x *ListDispatchTargetJobsResponse) SetJobs(v []*jobs.Job) {
-	x.xxx_hidden_Jobs = &v
-}
-
-type ListDispatchTargetJobsResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Jobs []*jobs.Job
-}
-
-func (b0 ListDispatchTargetJobsResponse_builder) Build() *ListDispatchTargetJobsResponse {
-	m0 := &ListDispatchTargetJobsResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Jobs = &b.Jobs
-	return m0
-}
-
-type UpdateDispatchStatusRequest struct {
-	state                  protoimpl.MessageState    `protogen:"opaque.v1"`
-	xxx_hidden_DispatchId  int64                     `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3"`
-	xxx_hidden_Status      dispatches.StatusDispatch `protobuf:"varint,2,opt,name=status,proto3,enum=resources.centrum.dispatches.StatusDispatch"`
-	xxx_hidden_Reason      *string                   `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
-	xxx_hidden_Code        *string                   `protobuf:"bytes,4,opt,name=code,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *UpdateDispatchStatusRequest) Reset() {
-	*x = UpdateDispatchStatusRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[35]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateDispatchStatusRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateDispatchStatusRequest) ProtoMessage() {}
-
-func (x *UpdateDispatchStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[35]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *UpdateDispatchStatusRequest) GetDispatchId() int64 {
-	if x != nil {
-		return x.xxx_hidden_DispatchId
-	}
-	return 0
-}
-
-func (x *UpdateDispatchStatusRequest) GetStatus() dispatches.StatusDispatch {
-	if x != nil {
-		return x.xxx_hidden_Status
-	}
-	return dispatches.StatusDispatch(0)
-}
-
-func (x *UpdateDispatchStatusRequest) GetReason() string {
-	if x != nil {
-		if x.xxx_hidden_Reason != nil {
-			return *x.xxx_hidden_Reason
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *UpdateDispatchStatusRequest) GetCode() string {
-	if x != nil {
-		if x.xxx_hidden_Code != nil {
-			return *x.xxx_hidden_Code
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *UpdateDispatchStatusRequest) SetDispatchId(v int64) {
-	x.xxx_hidden_DispatchId = v
-}
-
-func (x *UpdateDispatchStatusRequest) SetStatus(v dispatches.StatusDispatch) {
-	x.xxx_hidden_Status = v
-}
-
-func (x *UpdateDispatchStatusRequest) SetReason(v string) {
-	x.xxx_hidden_Reason = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
-}
-
-func (x *UpdateDispatchStatusRequest) SetCode(v string) {
-	x.xxx_hidden_Code = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
-}
-
-func (x *UpdateDispatchStatusRequest) HasReason() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
-func (x *UpdateDispatchStatusRequest) HasCode() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
-}
-
-func (x *UpdateDispatchStatusRequest) ClearReason() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Reason = nil
-}
-
-func (x *UpdateDispatchStatusRequest) ClearCode() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_Code = nil
-}
-
-type UpdateDispatchStatusRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	DispatchId int64
-	Status     dispatches.StatusDispatch
-	Reason     *string
-	Code       *string
-}
-
-func (b0 UpdateDispatchStatusRequest_builder) Build() *UpdateDispatchStatusRequest {
-	m0 := &UpdateDispatchStatusRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_DispatchId = b.DispatchId
-	x.xxx_hidden_Status = b.Status
-	if b.Reason != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
-		x.xxx_hidden_Reason = b.Reason
-	}
-	if b.Code != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
-		x.xxx_hidden_Code = b.Code
-	}
-	return m0
-}
-
-type UpdateDispatchStatusResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateDispatchStatusResponse) Reset() {
-	*x = UpdateDispatchStatusResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[36]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateDispatchStatusResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateDispatchStatusResponse) ProtoMessage() {}
-
-func (x *UpdateDispatchStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[36]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type UpdateDispatchStatusResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 UpdateDispatchStatusResponse_builder) Build() *UpdateDispatchStatusResponse {
-	m0 := &UpdateDispatchStatusResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
-type AssignDispatchRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_DispatchId  int64                  `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3"`
-	xxx_hidden_ToAdd       []int64                `protobuf:"varint,2,rep,packed,name=to_add,json=toAdd,proto3"`
-	xxx_hidden_ToRemove    []int64                `protobuf:"varint,3,rep,packed,name=to_remove,json=toRemove,proto3"`
-	xxx_hidden_Forced      bool                   `protobuf:"varint,4,opt,name=forced,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *AssignDispatchRequest) Reset() {
-	*x = AssignDispatchRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[37]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AssignDispatchRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AssignDispatchRequest) ProtoMessage() {}
-
-func (x *AssignDispatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[37]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *AssignDispatchRequest) GetDispatchId() int64 {
-	if x != nil {
-		return x.xxx_hidden_DispatchId
-	}
-	return 0
-}
-
-func (x *AssignDispatchRequest) GetToAdd() []int64 {
-	if x != nil {
-		return x.xxx_hidden_ToAdd
-	}
-	return nil
-}
-
-func (x *AssignDispatchRequest) GetToRemove() []int64 {
-	if x != nil {
-		return x.xxx_hidden_ToRemove
-	}
-	return nil
-}
-
-func (x *AssignDispatchRequest) GetForced() bool {
-	if x != nil {
-		return x.xxx_hidden_Forced
-	}
-	return false
-}
-
-func (x *AssignDispatchRequest) SetDispatchId(v int64) {
-	x.xxx_hidden_DispatchId = v
-}
-
-func (x *AssignDispatchRequest) SetToAdd(v []int64) {
-	x.xxx_hidden_ToAdd = v
-}
-
-func (x *AssignDispatchRequest) SetToRemove(v []int64) {
-	x.xxx_hidden_ToRemove = v
-}
-
-func (x *AssignDispatchRequest) SetForced(v bool) {
-	x.xxx_hidden_Forced = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
-}
-
-func (x *AssignDispatchRequest) HasForced() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
-}
-
-func (x *AssignDispatchRequest) ClearForced() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_Forced = false
-}
-
-type AssignDispatchRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	DispatchId int64
-	ToAdd      []int64
-	ToRemove   []int64
-	Forced     *bool
-}
-
-func (b0 AssignDispatchRequest_builder) Build() *AssignDispatchRequest {
-	m0 := &AssignDispatchRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_DispatchId = b.DispatchId
-	x.xxx_hidden_ToAdd = b.ToAdd
-	x.xxx_hidden_ToRemove = b.ToRemove
-	if b.Forced != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
-		x.xxx_hidden_Forced = *b.Forced
-	}
-	return m0
-}
-
-type AssignDispatchResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AssignDispatchResponse) Reset() {
-	*x = AssignDispatchResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[38]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AssignDispatchResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AssignDispatchResponse) ProtoMessage() {}
-
-func (x *AssignDispatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[38]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type AssignDispatchResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 AssignDispatchResponse_builder) Build() *AssignDispatchResponse {
-	m0 := &AssignDispatchResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
-type ListDispatchActivityResponse struct {
-	state                 protoimpl.MessageState        `protogen:"opaque.v1"`
-	xxx_hidden_Pagination *database.PaginationResponse  `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Activity   *[]*dispatches.DispatchStatus `protobuf:"bytes,2,rep,name=activity,proto3"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *ListDispatchActivityResponse) Reset() {
-	*x = ListDispatchActivityResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[39]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListDispatchActivityResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListDispatchActivityResponse) ProtoMessage() {}
-
-func (x *ListDispatchActivityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[39]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListDispatchActivityResponse) GetPagination() *database.PaginationResponse {
-	if x != nil {
-		return x.xxx_hidden_Pagination
-	}
-	return nil
-}
-
-func (x *ListDispatchActivityResponse) GetActivity() []*dispatches.DispatchStatus {
-	if x != nil {
-		if x.xxx_hidden_Activity != nil {
-			return *x.xxx_hidden_Activity
-		}
-	}
-	return nil
-}
-
-func (x *ListDispatchActivityResponse) SetPagination(v *database.PaginationResponse) {
-	x.xxx_hidden_Pagination = v
-}
-
-func (x *ListDispatchActivityResponse) SetActivity(v []*dispatches.DispatchStatus) {
-	x.xxx_hidden_Activity = &v
-}
-
-func (x *ListDispatchActivityResponse) HasPagination() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Pagination != nil
-}
-
-func (x *ListDispatchActivityResponse) ClearPagination() {
-	x.xxx_hidden_Pagination = nil
-}
-
-type ListDispatchActivityResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Pagination *database.PaginationResponse
-	Activity   []*dispatches.DispatchStatus
-}
-
-func (b0 ListDispatchActivityResponse_builder) Build() *ListDispatchActivityResponse {
-	m0 := &ListDispatchActivityResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Pagination = b.Pagination
-	x.xxx_hidden_Activity = &b.Activity
-	return m0
-}
-
-type JoinUnitRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_UnitId      int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *JoinUnitRequest) Reset() {
-	*x = JoinUnitRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[40]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *JoinUnitRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*JoinUnitRequest) ProtoMessage() {}
-
-func (x *JoinUnitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[40]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *JoinUnitRequest) GetUnitId() int64 {
-	if x != nil {
-		return x.xxx_hidden_UnitId
-	}
-	return 0
-}
-
-func (x *JoinUnitRequest) SetUnitId(v int64) {
-	x.xxx_hidden_UnitId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
-}
-
-func (x *JoinUnitRequest) HasUnitId() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *JoinUnitRequest) ClearUnitId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_UnitId = 0
-}
-
-type JoinUnitRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	UnitId *int64
-}
-
-func (b0 JoinUnitRequest_builder) Build() *JoinUnitRequest {
-	m0 := &JoinUnitRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	if b.UnitId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_UnitId = *b.UnitId
-	}
-	return m0
-}
-
-type JoinUnitResponse struct {
-	state           protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Unit *units.Unit            `protobuf:"bytes,1,opt,name=unit,proto3"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *JoinUnitResponse) Reset() {
-	*x = JoinUnitResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[41]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *JoinUnitResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*JoinUnitResponse) ProtoMessage() {}
-
-func (x *JoinUnitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[41]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *JoinUnitResponse) GetUnit() *units.Unit {
-	if x != nil {
-		return x.xxx_hidden_Unit
-	}
-	return nil
-}
-
-func (x *JoinUnitResponse) SetUnit(v *units.Unit) {
-	x.xxx_hidden_Unit = v
-}
-
-func (x *JoinUnitResponse) HasUnit() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Unit != nil
-}
-
-func (x *JoinUnitResponse) ClearUnit() {
-	x.xxx_hidden_Unit = nil
-}
-
-type JoinUnitResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Unit *units.Unit
-}
-
-func (b0 JoinUnitResponse_builder) Build() *JoinUnitResponse {
-	m0 := &JoinUnitResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Unit = b.Unit
-	return m0
-}
-
-type TakeDispatchRequest struct {
-	state                  protoimpl.MessageState      `protogen:"opaque.v1"`
-	xxx_hidden_DispatchIds []int64                     `protobuf:"varint,1,rep,packed,name=dispatch_ids,json=dispatchIds,proto3"`
-	xxx_hidden_Resp        dispatches.TakeDispatchResp `protobuf:"varint,2,opt,name=resp,proto3,enum=resources.centrum.dispatches.TakeDispatchResp"`
-	xxx_hidden_Reason      *string                     `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
-}
-
-func (x *TakeDispatchRequest) Reset() {
-	*x = TakeDispatchRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[42]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TakeDispatchRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TakeDispatchRequest) ProtoMessage() {}
-
-func (x *TakeDispatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[42]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *TakeDispatchRequest) GetDispatchIds() []int64 {
-	if x != nil {
-		return x.xxx_hidden_DispatchIds
-	}
-	return nil
-}
-
-func (x *TakeDispatchRequest) GetResp() dispatches.TakeDispatchResp {
-	if x != nil {
-		return x.xxx_hidden_Resp
-	}
-	return dispatches.TakeDispatchResp(0)
-}
-
-func (x *TakeDispatchRequest) GetReason() string {
-	if x != nil {
-		if x.xxx_hidden_Reason != nil {
-			return *x.xxx_hidden_Reason
-		}
-		return ""
-	}
-	return ""
-}
-
-func (x *TakeDispatchRequest) SetDispatchIds(v []int64) {
-	x.xxx_hidden_DispatchIds = v
-}
-
-func (x *TakeDispatchRequest) SetResp(v dispatches.TakeDispatchResp) {
-	x.xxx_hidden_Resp = v
-}
-
-func (x *TakeDispatchRequest) SetReason(v string) {
-	x.xxx_hidden_Reason = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
-}
-
-func (x *TakeDispatchRequest) HasReason() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
-func (x *TakeDispatchRequest) ClearReason() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Reason = nil
-}
-
-type TakeDispatchRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	DispatchIds []int64
-	Resp        dispatches.TakeDispatchResp
-	Reason      *string
-}
-
-func (b0 TakeDispatchRequest_builder) Build() *TakeDispatchRequest {
-	m0 := &TakeDispatchRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_DispatchIds = b.DispatchIds
-	x.xxx_hidden_Resp = b.Resp
-	if b.Reason != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_Reason = b.Reason
-	}
-	return m0
-}
-
-type TakeDispatchResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TakeDispatchResponse) Reset() {
-	*x = TakeDispatchResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[43]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TakeDispatchResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TakeDispatchResponse) ProtoMessage() {}
-
-func (x *TakeDispatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[43]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type TakeDispatchResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 TakeDispatchResponse_builder) Build() *TakeDispatchResponse {
-	m0 := &TakeDispatchResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
 type StreamHandshake struct {
 	state                 protoimpl.MessageState    `protogen:"opaque.v1"`
 	xxx_hidden_ServerTime *timestamp.Timestamp      `protobuf:"bytes,1,opt,name=server_time,json=serverTime,proto3"`
@@ -3113,7 +653,7 @@ type StreamHandshake struct {
 
 func (x *StreamHandshake) Reset() {
 	*x = StreamHandshake{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[44]
+	mi := &file_services_centrum_centrum_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3125,7 +665,7 @@ func (x *StreamHandshake) String() string {
 func (*StreamHandshake) ProtoMessage() {}
 
 func (x *StreamHandshake) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[44]
+	mi := &file_services_centrum_centrum_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3234,7 +774,7 @@ type LatestState struct {
 
 func (x *LatestState) Reset() {
 	*x = LatestState{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[45]
+	mi := &file_services_centrum_centrum_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3246,7 +786,7 @@ func (x *LatestState) String() string {
 func (*LatestState) ProtoMessage() {}
 
 func (x *LatestState) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[45]
+	mi := &file_services_centrum_centrum_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3361,7 +901,7 @@ type StreamRequest struct {
 
 func (x *StreamRequest) Reset() {
 	*x = StreamRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[46]
+	mi := &file_services_centrum_centrum_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3373,7 +913,7 @@ func (x *StreamRequest) String() string {
 func (*StreamRequest) ProtoMessage() {}
 
 func (x *StreamRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[46]
+	mi := &file_services_centrum_centrum_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3405,7 +945,7 @@ type StreamResponse struct {
 
 func (x *StreamResponse) Reset() {
 	*x = StreamResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[47]
+	mi := &file_services_centrum_centrum_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3417,7 +957,7 @@ func (x *StreamResponse) String() string {
 func (*StreamResponse) ProtoMessage() {}
 
 func (x *StreamResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[47]
+	mi := &file_services_centrum_centrum_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3878,7 +1418,7 @@ func (b0 StreamResponse_builder) Build() *StreamResponse {
 type case_StreamResponse_Change protoreflect.FieldNumber
 
 func (x case_StreamResponse_Change) String() string {
-	md := file_services_centrum_centrum_proto_msgTypes[47].Descriptor()
+	md := file_services_centrum_centrum_proto_msgTypes[13].Descriptor()
 	if x == 0 {
 		return "not set"
 	}
@@ -3959,17 +1499,7 @@ var File_services_centrum_centrum_proto protoreflect.FileDescriptor
 
 const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/centrum/centrum.proto\x12\x10services.centrum\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a/resources/centrum/dispatchers/dispatchers.proto\x1a-resources/centrum/dispatches/dispatches.proto\x1a)resources/centrum/settings/settings.proto\x1a#resources/centrum/units/units.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\x1a'resources/livemap/heatmap/heatmap.proto\x1a#resources/timestamp/timestamp.proto\"{\n" +
-	"\x1bListDispatchActivityRequest\x12L\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
-	"pagination\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"w\n" +
-	"\x17ListUnitActivityRequest\x12L\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
-	"pagination\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\x14\n" +
+	"\x1eservices/centrum/centrum.proto\x12\x10services.centrum\x1a\x19codegen/perms/perms.proto\x1a/resources/centrum/dispatchers/dispatchers.proto\x1a-resources/centrum/dispatches/dispatches.proto\x1a)resources/centrum/settings/settings.proto\x1a#resources/centrum/units/units.proto\x1a'resources/livemap/heatmap/heatmap.proto\x1a#resources/timestamp/timestamp.proto\"\x14\n" +
 	"\x12GetSettingsRequest\"\xaf\x01\n" +
 	"\x13GetSettingsResponse\x12@\n" +
 	"\bsettings\x18\x01 \x01(\v2$.resources.centrum.settings.SettingsR\bsettings\x12V\n" +
@@ -3977,117 +1507,19 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\x15UpdateSettingsRequest\x12@\n" +
 	"\bsettings\x18\x01 \x01(\v2$.resources.centrum.settings.SettingsR\bsettings\"Z\n" +
 	"\x16UpdateSettingsResponse\x12@\n" +
-	"\bsettings\x18\x01 \x01(\v2$.resources.centrum.settings.SettingsR\bsettings\"O\n" +
-	"\x10ListUnitsRequest\x12;\n" +
-	"\x06status\x18\x01 \x03(\x0e2#.resources.centrum.units.StatusUnitR\x06status\"N\n" +
-	"\x11ListUnitsResponse\x129\n" +
-	"\x05units\x18\x01 \x03(\v2\x1d.resources.centrum.units.UnitB\x04\xc8\xf3\x18\x01R\x05units\"N\n" +
-	"\x19CreateOrUpdateUnitRequest\x121\n" +
-	"\x04unit\x18\x01 \x01(\v2\x1d.resources.centrum.units.UnitR\x04unit\"O\n" +
-	"\x1aCreateOrUpdateUnitResponse\x121\n" +
-	"\x04unit\x18\x01 \x01(\v2\x1d.resources.centrum.units.UnitR\x04unit\",\n" +
-	"\x11DeleteUnitRequest\x12\x17\n" +
-	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\"\x14\n" +
-	"\x12DeleteUnitResponse\"\xc9\x01\n" +
-	"\x17UpdateUnitStatusRequest\x12\x17\n" +
-	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\x12;\n" +
-	"\x06status\x18\x02 \x01(\x0e2#.resources.centrum.units.StatusUnitR\x06status\x12#\n" +
-	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12\x1f\n" +
-	"\x04code\x18\x04 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x01R\x04code\x88\x01\x01B\t\n" +
-	"\a_reasonB\a\n" +
-	"\x05_code\"\x1a\n" +
-	"\x18UpdateUnitStatusResponse\"`\n" +
-	"\x11AssignUnitRequest\x12\x17\n" +
-	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\x12\x15\n" +
-	"\x06to_add\x18\x02 \x03(\x05R\x05toAdd\x12\x1b\n" +
-	"\tto_remove\x18\x03 \x03(\x05R\btoRemove\"\x14\n" +
-	"\x12AssignUnitResponse\"\x1b\n" +
+	"\bsettings\x18\x01 \x01(\v2$.resources.centrum.settings.SettingsR\bsettings\"\x1b\n" +
 	"\x19GetDispatchHeatmapRequest\"\x80\x01\n" +
 	"\x1aGetDispatchHeatmapResponse\x12\x1f\n" +
 	"\vmax_entries\x18\x01 \x01(\x05R\n" +
 	"maxEntries\x12A\n" +
-	"\aentries\x18\x02 \x03(\v2'.resources.livemap.heatmap.HeatmapEntryR\aentries\"7\n" +
+	"\aentries\x18\x02 \x03(\v2'.resources.livemap.heatmap.HeatmapEntryR\aentries\",\n" +
+	"\x12TakeControlRequest\x12\x16\n" +
+	"\x06signon\x18\x01 \x01(\bR\x06signon\"\x15\n" +
+	"\x13TakeControlResponse\"7\n" +
 	"\x18UpdateDispatchersRequest\x12\x1b\n" +
 	"\tto_remove\x18\x01 \x03(\x05R\btoRemove\"i\n" +
 	"\x19UpdateDispatchersResponse\x12L\n" +
-	"\vdispatchers\x18\x01 \x01(\v2*.resources.centrum.dispatchers.DispatchersR\vdispatchers\"\xb0\x01\n" +
-	"\x18ListUnitActivityResponse\x12M\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12E\n" +
-	"\bactivity\x18\x02 \x03(\v2#.resources.centrum.units.UnitStatusB\x04\xc8\xf3\x18\x01R\bactivity\",\n" +
-	"\x12TakeControlRequest\x12\x16\n" +
-	"\x06signon\x18\x01 \x01(\bR\x06signon\"\x15\n" +
-	"\x13TakeControlResponse\"\xb2\x02\n" +
-	"\x15ListDispatchesRequest\x12L\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
-	"pagination\x12D\n" +
-	"\x06status\x18\x02 \x03(\x0e2,.resources.centrum.dispatches.StatusDispatchR\x06status\x12K\n" +
-	"\n" +
-	"not_status\x18\x03 \x03(\x0e2,.resources.centrum.dispatches.StatusDispatchR\tnotStatus\x12\x10\n" +
-	"\x03ids\x18\x04 \x03(\x03R\x03ids\x12\x1b\n" +
-	"\x06postal\x18\x05 \x01(\tH\x00R\x06postal\x88\x01\x01B\t\n" +
-	"\a_postal\"\xb5\x01\n" +
-	"\x16ListDispatchesResponse\x12M\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12L\n" +
-	"\n" +
-	"dispatches\x18\x02 \x03(\v2&.resources.centrum.dispatches.DispatchB\x04\xc8\xf3\x18\x01R\n" +
-	"dispatches\"$\n" +
-	"\x12GetDispatchRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"Y\n" +
-	"\x13GetDispatchResponse\x12B\n" +
-	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchR\bdispatch\"[\n" +
-	"\x15CreateDispatchRequest\x12B\n" +
-	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchR\bdispatch\"\\\n" +
-	"\x16CreateDispatchResponse\x12B\n" +
-	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchR\bdispatch\"[\n" +
-	"\x15UpdateDispatchRequest\x12B\n" +
-	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchR\bdispatch\"\\\n" +
-	"\x16UpdateDispatchResponse\x12B\n" +
-	"\bdispatch\x18\x01 \x01(\v2&.resources.centrum.dispatches.DispatchR\bdispatch\"'\n" +
-	"\x15DeleteDispatchRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
-	"\x16DeleteDispatchResponse\"\x1f\n" +
-	"\x1dListDispatchTargetJobsRequest\"O\n" +
-	"\x1eListDispatchTargetJobsResponse\x12-\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobB\x04\xc8\xf3\x18\x01R\x04jobs\"\xde\x01\n" +
-	"\x1bUpdateDispatchStatusRequest\x12\x1f\n" +
-	"\vdispatch_id\x18\x01 \x01(\x03R\n" +
-	"dispatchId\x12D\n" +
-	"\x06status\x18\x02 \x01(\x0e2,.resources.centrum.dispatches.StatusDispatchR\x06status\x12#\n" +
-	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12\x1f\n" +
-	"\x04code\x18\x04 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x01R\x04code\x88\x01\x01B\t\n" +
-	"\a_reasonB\a\n" +
-	"\x05_code\"\x1e\n" +
-	"\x1cUpdateDispatchStatusResponse\"\x94\x01\n" +
-	"\x15AssignDispatchRequest\x12\x1f\n" +
-	"\vdispatch_id\x18\x01 \x01(\x03R\n" +
-	"dispatchId\x12\x15\n" +
-	"\x06to_add\x18\x02 \x03(\x03R\x05toAdd\x12\x1b\n" +
-	"\tto_remove\x18\x03 \x03(\x03R\btoRemove\x12\x1b\n" +
-	"\x06forced\x18\x04 \x01(\bH\x00R\x06forced\x88\x01\x01B\t\n" +
-	"\a_forced\"\x18\n" +
-	"\x16AssignDispatchResponse\"\xbd\x01\n" +
-	"\x1cListDispatchActivityResponse\x12M\n" +
-	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12N\n" +
-	"\bactivity\x18\x02 \x03(\v2,.resources.centrum.dispatches.DispatchStatusB\x04\xc8\xf3\x18\x01R\bactivity\";\n" +
-	"\x0fJoinUnitRequest\x12\x1c\n" +
-	"\aunit_id\x18\x01 \x01(\x03H\x00R\x06unitId\x88\x01\x01B\n" +
-	"\n" +
-	"\b_unit_id\"E\n" +
-	"\x10JoinUnitResponse\x121\n" +
-	"\x04unit\x18\x01 \x01(\v2\x1d.resources.centrum.units.UnitR\x04unit\"\xac\x01\n" +
-	"\x13TakeDispatchRequest\x12!\n" +
-	"\fdispatch_ids\x18\x01 \x03(\x03R\vdispatchIds\x12B\n" +
-	"\x04resp\x18\x02 \x01(\x0e2..resources.centrum.dispatches.TakeDispatchRespR\x04resp\x12#\n" +
-	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01B\t\n" +
-	"\a_reason\"\x16\n" +
-	"\x14TakeDispatchResponse\"\xd9\x01\n" +
+	"\vdispatchers\x18\x01 \x01(\v2*.resources.centrum.dispatchers.DispatchersR\vdispatchers\"\xd9\x01\n" +
 	"\x0fStreamHandshake\x12?\n" +
 	"\vserver_time\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\n" +
 	"serverTime\x12@\n" +
@@ -4116,207 +1548,83 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\x10dispatch_updated\x18\n" +
 	" \x01(\v2&.resources.centrum.dispatches.DispatchH\x00R\x0fdispatchUpdated\x12W\n" +
 	"\x0fdispatch_status\x18\v \x01(\v2,.resources.centrum.dispatches.DispatchStatusH\x00R\x0edispatchStatusB\b\n" +
-	"\x06change2\x9d\x15\n" +
-	"\x0eCentrumService\x12\x87\x01\n" +
-	"\x0eUpdateSettings\x12'.services.centrum.UpdateSettingsRequest\x1a(.services.centrum.UpdateSettingsResponse\"\"\xd2\xf3\x18\x1e\b\x01*\x1a\n" +
-	"\x06Access\x18\x01\"\x06Shared\"\x06Public\x12k\n" +
-	"\x0eCreateDispatch\x12'.services.centrum.CreateDispatchRequest\x1a(.services.centrum.CreateDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12k\n" +
-	"\x0eUpdateDispatch\x12'.services.centrum.UpdateDispatchRequest\x1a(.services.centrum.UpdateDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12k\n" +
-	"\x0eDeleteDispatch\x12'.services.centrum.DeleteDispatchRequest\x1a(.services.centrum.DeleteDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x93\x01\n" +
-	"\x16ListDispatchTargetJobs\x12/.services.centrum.ListDispatchTargetJobsRequest\x1a0.services.centrum.ListDispatchTargetJobsResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eCreateDispatch\x12b\n" +
-	"\vTakeControl\x12$.services.centrum.TakeControlRequest\x1a%.services.centrum.TakeControlResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12x\n" +
-	"\x0eAssignDispatch\x12'.services.centrum.AssignDispatchRequest\x1a(.services.centrum.AssignDispatchResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vTakeControl\x12l\n" +
-	"\n" +
-	"AssignUnit\x12#.services.centrum.AssignUnitRequest\x1a$.services.centrum.AssignUnitResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vTakeControl\x12\x84\x01\n" +
-	"\x12GetDispatchHeatmap\x12+.services.centrum.GetDispatchHeatmapRequest\x1a,.services.centrum.GetDispatchHeatmapResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vTakeControl\x12t\n" +
-	"\x11UpdateDispatchers\x12*.services.centrum.UpdateDispatchersRequest\x1a+.services.centrum.UpdateDispatchersResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12U\n" +
-	"\x06Stream\x12\x1f.services.centrum.StreamRequest\x1a .services.centrum.StreamResponse\"\x06\xd2\xf3\x18\x02\b\x010\x01\x12j\n" +
+	"\x06change2\xdb\x05\n" +
+	"\x0eCentrumService\x12j\n" +
 	"\vGetSettings\x12$.services.centrum.GetSettingsRequest\x1a%.services.centrum.GetSettingsResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12a\n" +
-	"\bJoinUnit\x12!.services.centrum.JoinUnitRequest\x1a\".services.centrum.JoinUnitResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12d\n" +
-	"\tListUnits\x12\".services.centrum.ListUnitsRequest\x1a#.services.centrum.ListUnitsResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12y\n" +
-	"\x10ListUnitActivity\x12).services.centrum.ListUnitActivityRequest\x1a*.services.centrum.ListUnitActivityResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12j\n" +
-	"\vGetDispatch\x12$.services.centrum.GetDispatchRequest\x1a%.services.centrum.GetDispatchResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12s\n" +
-	"\x0eListDispatches\x12'.services.centrum.ListDispatchesRequest\x1a(.services.centrum.ListDispatchesResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12\x85\x01\n" +
-	"\x14ListDispatchActivity\x12-.services.centrum.ListDispatchActivityRequest\x1a..services.centrum.ListDispatchActivityResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12w\n" +
-	"\x12CreateOrUpdateUnit\x12+.services.centrum.CreateOrUpdateUnitRequest\x1a,.services.centrum.CreateOrUpdateUnitResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12_\n" +
-	"\n" +
-	"DeleteUnit\x12#.services.centrum.DeleteUnitRequest\x1a$.services.centrum.DeleteUnitResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12e\n" +
-	"\fTakeDispatch\x12%.services.centrum.TakeDispatchRequest\x1a&.services.centrum.TakeDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x7f\n" +
-	"\x10UpdateUnitStatus\x12).services.centrum.UpdateUnitStatusRequest\x1a*.services.centrum.UpdateUnitStatusResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fTakeDispatch\x12\x8b\x01\n" +
-	"\x14UpdateDispatchStatus\x12-.services.centrum.UpdateDispatchStatusRequest\x1a..services.centrum.UpdateDispatchStatusResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fTakeDispatch\x1a\x1b\xea\xf3\x18\x17\bd\x12\x13i-mdi-car-emergencyBLZJgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrumb\x06proto3"
+	"\b\x01\x1a\x06Stream\x12\x87\x01\n" +
+	"\x0eUpdateSettings\x12'.services.centrum.UpdateSettingsRequest\x1a(.services.centrum.UpdateSettingsResponse\"\"\xd2\xf3\x18\x1e\b\x01*\x1a\n" +
+	"\x06Access\x18\x01\"\x06Shared\"\x06Public\x12\x84\x01\n" +
+	"\x12GetDispatchHeatmap\x12+.services.centrum.GetDispatchHeatmapRequest\x1a,.services.centrum.GetDispatchHeatmapResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vTakeControl\x12b\n" +
+	"\vTakeControl\x12$.services.centrum.TakeControlRequest\x1a%.services.centrum.TakeControlResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12t\n" +
+	"\x11UpdateDispatchers\x12*.services.centrum.UpdateDispatchersRequest\x1a+.services.centrum.UpdateDispatchersResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12U\n" +
+	"\x06Stream\x12\x1f.services.centrum.StreamRequest\x1a .services.centrum.StreamResponse\"\x06\xd2\xf3\x18\x02\b\x010\x01\x1a\x1b\xea\xf3\x18\x17\bd\x12\x13i-mdi-car-emergencyBLZJgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrumb\x06proto3"
 
-var file_services_centrum_centrum_proto_msgTypes = make([]protoimpl.MessageInfo, 48)
+var file_services_centrum_centrum_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_services_centrum_centrum_proto_goTypes = []any{
-	(*ListDispatchActivityRequest)(nil),    // 0: services.centrum.ListDispatchActivityRequest
-	(*ListUnitActivityRequest)(nil),        // 1: services.centrum.ListUnitActivityRequest
-	(*GetSettingsRequest)(nil),             // 2: services.centrum.GetSettingsRequest
-	(*GetSettingsResponse)(nil),            // 3: services.centrum.GetSettingsResponse
-	(*UpdateSettingsRequest)(nil),          // 4: services.centrum.UpdateSettingsRequest
-	(*UpdateSettingsResponse)(nil),         // 5: services.centrum.UpdateSettingsResponse
-	(*ListUnitsRequest)(nil),               // 6: services.centrum.ListUnitsRequest
-	(*ListUnitsResponse)(nil),              // 7: services.centrum.ListUnitsResponse
-	(*CreateOrUpdateUnitRequest)(nil),      // 8: services.centrum.CreateOrUpdateUnitRequest
-	(*CreateOrUpdateUnitResponse)(nil),     // 9: services.centrum.CreateOrUpdateUnitResponse
-	(*DeleteUnitRequest)(nil),              // 10: services.centrum.DeleteUnitRequest
-	(*DeleteUnitResponse)(nil),             // 11: services.centrum.DeleteUnitResponse
-	(*UpdateUnitStatusRequest)(nil),        // 12: services.centrum.UpdateUnitStatusRequest
-	(*UpdateUnitStatusResponse)(nil),       // 13: services.centrum.UpdateUnitStatusResponse
-	(*AssignUnitRequest)(nil),              // 14: services.centrum.AssignUnitRequest
-	(*AssignUnitResponse)(nil),             // 15: services.centrum.AssignUnitResponse
-	(*GetDispatchHeatmapRequest)(nil),      // 16: services.centrum.GetDispatchHeatmapRequest
-	(*GetDispatchHeatmapResponse)(nil),     // 17: services.centrum.GetDispatchHeatmapResponse
-	(*UpdateDispatchersRequest)(nil),       // 18: services.centrum.UpdateDispatchersRequest
-	(*UpdateDispatchersResponse)(nil),      // 19: services.centrum.UpdateDispatchersResponse
-	(*ListUnitActivityResponse)(nil),       // 20: services.centrum.ListUnitActivityResponse
-	(*TakeControlRequest)(nil),             // 21: services.centrum.TakeControlRequest
-	(*TakeControlResponse)(nil),            // 22: services.centrum.TakeControlResponse
-	(*ListDispatchesRequest)(nil),          // 23: services.centrum.ListDispatchesRequest
-	(*ListDispatchesResponse)(nil),         // 24: services.centrum.ListDispatchesResponse
-	(*GetDispatchRequest)(nil),             // 25: services.centrum.GetDispatchRequest
-	(*GetDispatchResponse)(nil),            // 26: services.centrum.GetDispatchResponse
-	(*CreateDispatchRequest)(nil),          // 27: services.centrum.CreateDispatchRequest
-	(*CreateDispatchResponse)(nil),         // 28: services.centrum.CreateDispatchResponse
-	(*UpdateDispatchRequest)(nil),          // 29: services.centrum.UpdateDispatchRequest
-	(*UpdateDispatchResponse)(nil),         // 30: services.centrum.UpdateDispatchResponse
-	(*DeleteDispatchRequest)(nil),          // 31: services.centrum.DeleteDispatchRequest
-	(*DeleteDispatchResponse)(nil),         // 32: services.centrum.DeleteDispatchResponse
-	(*ListDispatchTargetJobsRequest)(nil),  // 33: services.centrum.ListDispatchTargetJobsRequest
-	(*ListDispatchTargetJobsResponse)(nil), // 34: services.centrum.ListDispatchTargetJobsResponse
-	(*UpdateDispatchStatusRequest)(nil),    // 35: services.centrum.UpdateDispatchStatusRequest
-	(*UpdateDispatchStatusResponse)(nil),   // 36: services.centrum.UpdateDispatchStatusResponse
-	(*AssignDispatchRequest)(nil),          // 37: services.centrum.AssignDispatchRequest
-	(*AssignDispatchResponse)(nil),         // 38: services.centrum.AssignDispatchResponse
-	(*ListDispatchActivityResponse)(nil),   // 39: services.centrum.ListDispatchActivityResponse
-	(*JoinUnitRequest)(nil),                // 40: services.centrum.JoinUnitRequest
-	(*JoinUnitResponse)(nil),               // 41: services.centrum.JoinUnitResponse
-	(*TakeDispatchRequest)(nil),            // 42: services.centrum.TakeDispatchRequest
-	(*TakeDispatchResponse)(nil),           // 43: services.centrum.TakeDispatchResponse
-	(*StreamHandshake)(nil),                // 44: services.centrum.StreamHandshake
-	(*LatestState)(nil),                    // 45: services.centrum.LatestState
-	(*StreamRequest)(nil),                  // 46: services.centrum.StreamRequest
-	(*StreamResponse)(nil),                 // 47: services.centrum.StreamResponse
-	(*database.PaginationRequest)(nil),     // 48: resources.common.database.PaginationRequest
-	(*settings.Settings)(nil),              // 49: resources.centrum.settings.Settings
-	(*settings.EffectiveAccess)(nil),       // 50: resources.centrum.settings.EffectiveAccess
-	(units.StatusUnit)(0),                  // 51: resources.centrum.units.StatusUnit
-	(*units.Unit)(nil),                     // 52: resources.centrum.units.Unit
-	(*heatmap.HeatmapEntry)(nil),           // 53: resources.livemap.heatmap.HeatmapEntry
-	(*dispatchers.Dispatchers)(nil),        // 54: resources.centrum.dispatchers.Dispatchers
-	(*database.PaginationResponse)(nil),    // 55: resources.common.database.PaginationResponse
-	(*units.UnitStatus)(nil),               // 56: resources.centrum.units.UnitStatus
-	(dispatches.StatusDispatch)(0),         // 57: resources.centrum.dispatches.StatusDispatch
-	(*dispatches.Dispatch)(nil),            // 58: resources.centrum.dispatches.Dispatch
-	(*jobs.Job)(nil),                       // 59: resources.jobs.Job
-	(*dispatches.DispatchStatus)(nil),      // 60: resources.centrum.dispatches.DispatchStatus
-	(dispatches.TakeDispatchResp)(0),       // 61: resources.centrum.dispatches.TakeDispatchResp
-	(*timestamp.Timestamp)(nil),            // 62: resources.timestamp.Timestamp
-	(*dispatchers.JobDispatchers)(nil),     // 63: resources.centrum.dispatchers.JobDispatchers
+	(*GetSettingsRequest)(nil),         // 0: services.centrum.GetSettingsRequest
+	(*GetSettingsResponse)(nil),        // 1: services.centrum.GetSettingsResponse
+	(*UpdateSettingsRequest)(nil),      // 2: services.centrum.UpdateSettingsRequest
+	(*UpdateSettingsResponse)(nil),     // 3: services.centrum.UpdateSettingsResponse
+	(*GetDispatchHeatmapRequest)(nil),  // 4: services.centrum.GetDispatchHeatmapRequest
+	(*GetDispatchHeatmapResponse)(nil), // 5: services.centrum.GetDispatchHeatmapResponse
+	(*TakeControlRequest)(nil),         // 6: services.centrum.TakeControlRequest
+	(*TakeControlResponse)(nil),        // 7: services.centrum.TakeControlResponse
+	(*UpdateDispatchersRequest)(nil),   // 8: services.centrum.UpdateDispatchersRequest
+	(*UpdateDispatchersResponse)(nil),  // 9: services.centrum.UpdateDispatchersResponse
+	(*StreamHandshake)(nil),            // 10: services.centrum.StreamHandshake
+	(*LatestState)(nil),                // 11: services.centrum.LatestState
+	(*StreamRequest)(nil),              // 12: services.centrum.StreamRequest
+	(*StreamResponse)(nil),             // 13: services.centrum.StreamResponse
+	(*settings.Settings)(nil),          // 14: resources.centrum.settings.Settings
+	(*settings.EffectiveAccess)(nil),   // 15: resources.centrum.settings.EffectiveAccess
+	(*heatmap.HeatmapEntry)(nil),       // 16: resources.livemap.heatmap.HeatmapEntry
+	(*dispatchers.Dispatchers)(nil),    // 17: resources.centrum.dispatchers.Dispatchers
+	(*timestamp.Timestamp)(nil),        // 18: resources.timestamp.Timestamp
+	(*dispatchers.JobDispatchers)(nil), // 19: resources.centrum.dispatchers.JobDispatchers
+	(*units.Unit)(nil),                 // 20: resources.centrum.units.Unit
+	(*dispatches.Dispatch)(nil),        // 21: resources.centrum.dispatches.Dispatch
+	(*units.UnitStatus)(nil),           // 22: resources.centrum.units.UnitStatus
+	(*dispatches.DispatchStatus)(nil),  // 23: resources.centrum.dispatches.DispatchStatus
 }
 var file_services_centrum_centrum_proto_depIdxs = []int32{
-	48, // 0: services.centrum.ListDispatchActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	48, // 1: services.centrum.ListUnitActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	49, // 2: services.centrum.GetSettingsResponse.settings:type_name -> resources.centrum.settings.Settings
-	50, // 3: services.centrum.GetSettingsResponse.effective_access:type_name -> resources.centrum.settings.EffectiveAccess
-	49, // 4: services.centrum.UpdateSettingsRequest.settings:type_name -> resources.centrum.settings.Settings
-	49, // 5: services.centrum.UpdateSettingsResponse.settings:type_name -> resources.centrum.settings.Settings
-	51, // 6: services.centrum.ListUnitsRequest.status:type_name -> resources.centrum.units.StatusUnit
-	52, // 7: services.centrum.ListUnitsResponse.units:type_name -> resources.centrum.units.Unit
-	52, // 8: services.centrum.CreateOrUpdateUnitRequest.unit:type_name -> resources.centrum.units.Unit
-	52, // 9: services.centrum.CreateOrUpdateUnitResponse.unit:type_name -> resources.centrum.units.Unit
-	51, // 10: services.centrum.UpdateUnitStatusRequest.status:type_name -> resources.centrum.units.StatusUnit
-	53, // 11: services.centrum.GetDispatchHeatmapResponse.entries:type_name -> resources.livemap.heatmap.HeatmapEntry
-	54, // 12: services.centrum.UpdateDispatchersResponse.dispatchers:type_name -> resources.centrum.dispatchers.Dispatchers
-	55, // 13: services.centrum.ListUnitActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	56, // 14: services.centrum.ListUnitActivityResponse.activity:type_name -> resources.centrum.units.UnitStatus
-	48, // 15: services.centrum.ListDispatchesRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	57, // 16: services.centrum.ListDispatchesRequest.status:type_name -> resources.centrum.dispatches.StatusDispatch
-	57, // 17: services.centrum.ListDispatchesRequest.not_status:type_name -> resources.centrum.dispatches.StatusDispatch
-	55, // 18: services.centrum.ListDispatchesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	58, // 19: services.centrum.ListDispatchesResponse.dispatches:type_name -> resources.centrum.dispatches.Dispatch
-	58, // 20: services.centrum.GetDispatchResponse.dispatch:type_name -> resources.centrum.dispatches.Dispatch
-	58, // 21: services.centrum.CreateDispatchRequest.dispatch:type_name -> resources.centrum.dispatches.Dispatch
-	58, // 22: services.centrum.CreateDispatchResponse.dispatch:type_name -> resources.centrum.dispatches.Dispatch
-	58, // 23: services.centrum.UpdateDispatchRequest.dispatch:type_name -> resources.centrum.dispatches.Dispatch
-	58, // 24: services.centrum.UpdateDispatchResponse.dispatch:type_name -> resources.centrum.dispatches.Dispatch
-	59, // 25: services.centrum.ListDispatchTargetJobsResponse.jobs:type_name -> resources.jobs.Job
-	57, // 26: services.centrum.UpdateDispatchStatusRequest.status:type_name -> resources.centrum.dispatches.StatusDispatch
-	55, // 27: services.centrum.ListDispatchActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	60, // 28: services.centrum.ListDispatchActivityResponse.activity:type_name -> resources.centrum.dispatches.DispatchStatus
-	52, // 29: services.centrum.JoinUnitResponse.unit:type_name -> resources.centrum.units.Unit
-	61, // 30: services.centrum.TakeDispatchRequest.resp:type_name -> resources.centrum.dispatches.TakeDispatchResp
-	62, // 31: services.centrum.StreamHandshake.server_time:type_name -> resources.timestamp.Timestamp
-	49, // 32: services.centrum.StreamHandshake.settings:type_name -> resources.centrum.settings.Settings
-	50, // 33: services.centrum.StreamHandshake.access:type_name -> resources.centrum.settings.EffectiveAccess
-	63, // 34: services.centrum.LatestState.dispatchers:type_name -> resources.centrum.dispatchers.JobDispatchers
-	52, // 35: services.centrum.LatestState.units:type_name -> resources.centrum.units.Unit
-	58, // 36: services.centrum.LatestState.dispatches:type_name -> resources.centrum.dispatches.Dispatch
-	44, // 37: services.centrum.StreamResponse.handshake:type_name -> services.centrum.StreamHandshake
-	45, // 38: services.centrum.StreamResponse.latest_state:type_name -> services.centrum.LatestState
-	49, // 39: services.centrum.StreamResponse.settings:type_name -> resources.centrum.settings.Settings
-	50, // 40: services.centrum.StreamResponse.access:type_name -> resources.centrum.settings.EffectiveAccess
-	54, // 41: services.centrum.StreamResponse.dispatchers:type_name -> resources.centrum.dispatchers.Dispatchers
-	52, // 42: services.centrum.StreamResponse.unit_updated:type_name -> resources.centrum.units.Unit
-	56, // 43: services.centrum.StreamResponse.unit_status:type_name -> resources.centrum.units.UnitStatus
-	58, // 44: services.centrum.StreamResponse.dispatch_updated:type_name -> resources.centrum.dispatches.Dispatch
-	60, // 45: services.centrum.StreamResponse.dispatch_status:type_name -> resources.centrum.dispatches.DispatchStatus
-	4,  // 46: services.centrum.CentrumService.UpdateSettings:input_type -> services.centrum.UpdateSettingsRequest
-	27, // 47: services.centrum.CentrumService.CreateDispatch:input_type -> services.centrum.CreateDispatchRequest
-	29, // 48: services.centrum.CentrumService.UpdateDispatch:input_type -> services.centrum.UpdateDispatchRequest
-	31, // 49: services.centrum.CentrumService.DeleteDispatch:input_type -> services.centrum.DeleteDispatchRequest
-	33, // 50: services.centrum.CentrumService.ListDispatchTargetJobs:input_type -> services.centrum.ListDispatchTargetJobsRequest
-	21, // 51: services.centrum.CentrumService.TakeControl:input_type -> services.centrum.TakeControlRequest
-	37, // 52: services.centrum.CentrumService.AssignDispatch:input_type -> services.centrum.AssignDispatchRequest
-	14, // 53: services.centrum.CentrumService.AssignUnit:input_type -> services.centrum.AssignUnitRequest
-	16, // 54: services.centrum.CentrumService.GetDispatchHeatmap:input_type -> services.centrum.GetDispatchHeatmapRequest
-	18, // 55: services.centrum.CentrumService.UpdateDispatchers:input_type -> services.centrum.UpdateDispatchersRequest
-	46, // 56: services.centrum.CentrumService.Stream:input_type -> services.centrum.StreamRequest
-	2,  // 57: services.centrum.CentrumService.GetSettings:input_type -> services.centrum.GetSettingsRequest
-	40, // 58: services.centrum.CentrumService.JoinUnit:input_type -> services.centrum.JoinUnitRequest
-	6,  // 59: services.centrum.CentrumService.ListUnits:input_type -> services.centrum.ListUnitsRequest
-	1,  // 60: services.centrum.CentrumService.ListUnitActivity:input_type -> services.centrum.ListUnitActivityRequest
-	25, // 61: services.centrum.CentrumService.GetDispatch:input_type -> services.centrum.GetDispatchRequest
-	23, // 62: services.centrum.CentrumService.ListDispatches:input_type -> services.centrum.ListDispatchesRequest
-	0,  // 63: services.centrum.CentrumService.ListDispatchActivity:input_type -> services.centrum.ListDispatchActivityRequest
-	8,  // 64: services.centrum.CentrumService.CreateOrUpdateUnit:input_type -> services.centrum.CreateOrUpdateUnitRequest
-	10, // 65: services.centrum.CentrumService.DeleteUnit:input_type -> services.centrum.DeleteUnitRequest
-	42, // 66: services.centrum.CentrumService.TakeDispatch:input_type -> services.centrum.TakeDispatchRequest
-	12, // 67: services.centrum.CentrumService.UpdateUnitStatus:input_type -> services.centrum.UpdateUnitStatusRequest
-	35, // 68: services.centrum.CentrumService.UpdateDispatchStatus:input_type -> services.centrum.UpdateDispatchStatusRequest
-	5,  // 69: services.centrum.CentrumService.UpdateSettings:output_type -> services.centrum.UpdateSettingsResponse
-	28, // 70: services.centrum.CentrumService.CreateDispatch:output_type -> services.centrum.CreateDispatchResponse
-	30, // 71: services.centrum.CentrumService.UpdateDispatch:output_type -> services.centrum.UpdateDispatchResponse
-	32, // 72: services.centrum.CentrumService.DeleteDispatch:output_type -> services.centrum.DeleteDispatchResponse
-	34, // 73: services.centrum.CentrumService.ListDispatchTargetJobs:output_type -> services.centrum.ListDispatchTargetJobsResponse
-	22, // 74: services.centrum.CentrumService.TakeControl:output_type -> services.centrum.TakeControlResponse
-	38, // 75: services.centrum.CentrumService.AssignDispatch:output_type -> services.centrum.AssignDispatchResponse
-	15, // 76: services.centrum.CentrumService.AssignUnit:output_type -> services.centrum.AssignUnitResponse
-	17, // 77: services.centrum.CentrumService.GetDispatchHeatmap:output_type -> services.centrum.GetDispatchHeatmapResponse
-	19, // 78: services.centrum.CentrumService.UpdateDispatchers:output_type -> services.centrum.UpdateDispatchersResponse
-	47, // 79: services.centrum.CentrumService.Stream:output_type -> services.centrum.StreamResponse
-	3,  // 80: services.centrum.CentrumService.GetSettings:output_type -> services.centrum.GetSettingsResponse
-	41, // 81: services.centrum.CentrumService.JoinUnit:output_type -> services.centrum.JoinUnitResponse
-	7,  // 82: services.centrum.CentrumService.ListUnits:output_type -> services.centrum.ListUnitsResponse
-	20, // 83: services.centrum.CentrumService.ListUnitActivity:output_type -> services.centrum.ListUnitActivityResponse
-	26, // 84: services.centrum.CentrumService.GetDispatch:output_type -> services.centrum.GetDispatchResponse
-	24, // 85: services.centrum.CentrumService.ListDispatches:output_type -> services.centrum.ListDispatchesResponse
-	39, // 86: services.centrum.CentrumService.ListDispatchActivity:output_type -> services.centrum.ListDispatchActivityResponse
-	9,  // 87: services.centrum.CentrumService.CreateOrUpdateUnit:output_type -> services.centrum.CreateOrUpdateUnitResponse
-	11, // 88: services.centrum.CentrumService.DeleteUnit:output_type -> services.centrum.DeleteUnitResponse
-	43, // 89: services.centrum.CentrumService.TakeDispatch:output_type -> services.centrum.TakeDispatchResponse
-	13, // 90: services.centrum.CentrumService.UpdateUnitStatus:output_type -> services.centrum.UpdateUnitStatusResponse
-	36, // 91: services.centrum.CentrumService.UpdateDispatchStatus:output_type -> services.centrum.UpdateDispatchStatusResponse
-	69, // [69:92] is the sub-list for method output_type
-	46, // [46:69] is the sub-list for method input_type
-	46, // [46:46] is the sub-list for extension type_name
-	46, // [46:46] is the sub-list for extension extendee
-	0,  // [0:46] is the sub-list for field type_name
+	14, // 0: services.centrum.GetSettingsResponse.settings:type_name -> resources.centrum.settings.Settings
+	15, // 1: services.centrum.GetSettingsResponse.effective_access:type_name -> resources.centrum.settings.EffectiveAccess
+	14, // 2: services.centrum.UpdateSettingsRequest.settings:type_name -> resources.centrum.settings.Settings
+	14, // 3: services.centrum.UpdateSettingsResponse.settings:type_name -> resources.centrum.settings.Settings
+	16, // 4: services.centrum.GetDispatchHeatmapResponse.entries:type_name -> resources.livemap.heatmap.HeatmapEntry
+	17, // 5: services.centrum.UpdateDispatchersResponse.dispatchers:type_name -> resources.centrum.dispatchers.Dispatchers
+	18, // 6: services.centrum.StreamHandshake.server_time:type_name -> resources.timestamp.Timestamp
+	14, // 7: services.centrum.StreamHandshake.settings:type_name -> resources.centrum.settings.Settings
+	15, // 8: services.centrum.StreamHandshake.access:type_name -> resources.centrum.settings.EffectiveAccess
+	19, // 9: services.centrum.LatestState.dispatchers:type_name -> resources.centrum.dispatchers.JobDispatchers
+	20, // 10: services.centrum.LatestState.units:type_name -> resources.centrum.units.Unit
+	21, // 11: services.centrum.LatestState.dispatches:type_name -> resources.centrum.dispatches.Dispatch
+	10, // 12: services.centrum.StreamResponse.handshake:type_name -> services.centrum.StreamHandshake
+	11, // 13: services.centrum.StreamResponse.latest_state:type_name -> services.centrum.LatestState
+	14, // 14: services.centrum.StreamResponse.settings:type_name -> resources.centrum.settings.Settings
+	15, // 15: services.centrum.StreamResponse.access:type_name -> resources.centrum.settings.EffectiveAccess
+	17, // 16: services.centrum.StreamResponse.dispatchers:type_name -> resources.centrum.dispatchers.Dispatchers
+	20, // 17: services.centrum.StreamResponse.unit_updated:type_name -> resources.centrum.units.Unit
+	22, // 18: services.centrum.StreamResponse.unit_status:type_name -> resources.centrum.units.UnitStatus
+	21, // 19: services.centrum.StreamResponse.dispatch_updated:type_name -> resources.centrum.dispatches.Dispatch
+	23, // 20: services.centrum.StreamResponse.dispatch_status:type_name -> resources.centrum.dispatches.DispatchStatus
+	0,  // 21: services.centrum.CentrumService.GetSettings:input_type -> services.centrum.GetSettingsRequest
+	2,  // 22: services.centrum.CentrumService.UpdateSettings:input_type -> services.centrum.UpdateSettingsRequest
+	4,  // 23: services.centrum.CentrumService.GetDispatchHeatmap:input_type -> services.centrum.GetDispatchHeatmapRequest
+	6,  // 24: services.centrum.CentrumService.TakeControl:input_type -> services.centrum.TakeControlRequest
+	8,  // 25: services.centrum.CentrumService.UpdateDispatchers:input_type -> services.centrum.UpdateDispatchersRequest
+	12, // 26: services.centrum.CentrumService.Stream:input_type -> services.centrum.StreamRequest
+	1,  // 27: services.centrum.CentrumService.GetSettings:output_type -> services.centrum.GetSettingsResponse
+	3,  // 28: services.centrum.CentrumService.UpdateSettings:output_type -> services.centrum.UpdateSettingsResponse
+	5,  // 29: services.centrum.CentrumService.GetDispatchHeatmap:output_type -> services.centrum.GetDispatchHeatmapResponse
+	7,  // 30: services.centrum.CentrumService.TakeControl:output_type -> services.centrum.TakeControlResponse
+	9,  // 31: services.centrum.CentrumService.UpdateDispatchers:output_type -> services.centrum.UpdateDispatchersResponse
+	13, // 32: services.centrum.CentrumService.Stream:output_type -> services.centrum.StreamResponse
+	27, // [27:33] is the sub-list for method output_type
+	21, // [21:27] is the sub-list for method input_type
+	21, // [21:21] is the sub-list for extension type_name
+	21, // [21:21] is the sub-list for extension extendee
+	0,  // [0:21] is the sub-list for field type_name
 }
 
 func init() { file_services_centrum_centrum_proto_init() }
@@ -4324,14 +1632,8 @@ func file_services_centrum_centrum_proto_init() {
 	if File_services_centrum_centrum_proto != nil {
 		return
 	}
-	file_services_centrum_centrum_proto_msgTypes[12].OneofWrappers = []any{}
-	file_services_centrum_centrum_proto_msgTypes[23].OneofWrappers = []any{}
-	file_services_centrum_centrum_proto_msgTypes[35].OneofWrappers = []any{}
-	file_services_centrum_centrum_proto_msgTypes[37].OneofWrappers = []any{}
-	file_services_centrum_centrum_proto_msgTypes[40].OneofWrappers = []any{}
-	file_services_centrum_centrum_proto_msgTypes[42].OneofWrappers = []any{}
-	file_services_centrum_centrum_proto_msgTypes[45].OneofWrappers = []any{}
-	file_services_centrum_centrum_proto_msgTypes[47].OneofWrappers = []any{
+	file_services_centrum_centrum_proto_msgTypes[11].OneofWrappers = []any{}
+	file_services_centrum_centrum_proto_msgTypes[13].OneofWrappers = []any{
 		(*streamResponse_Handshake)(nil),
 		(*streamResponse_LatestState)(nil),
 		(*streamResponse_Settings)(nil),
@@ -4350,7 +1652,7 @@ func file_services_centrum_centrum_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_centrum_centrum_proto_rawDesc), len(file_services_centrum_centrum_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   48,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

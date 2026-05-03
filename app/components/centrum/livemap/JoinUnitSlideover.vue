@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
-import { getCentrumCentrumClient } from '~~/gen/ts/clients';
+import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units/access/access';
 import type { Unit } from '~~/gen/ts/resources/centrum/units/units';
 import { checkUnitAccess } from '../helpers';
@@ -15,11 +15,11 @@ const emit = defineEmits<{
 const centrumStore = useCentrumStore();
 const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
 
-const centrumCentrumClient = await getCentrumCentrumClient();
+const centrumUnitsClient = await getCentrumUnitsClient();
 
 async function joinOrLeaveUnit(unitId?: number): Promise<void> {
     try {
-        const call = centrumCentrumClient.joinUnit({
+        const call = centrumUnitsClient.joinUnit({
             unitId: unitId,
         });
         const { response } = await call;

@@ -3,11 +3,11 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { differenceInMinutes, isPast } from 'date-fns';
 import { z } from 'zod';
 import ScrollToTop from '~/components/partials/ScrollToTop.vue';
-import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
+import { getQualificationsExamClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ExamQuestions, ExamResponse, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam/exam';
 import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { SubmitExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import type { SubmitExamResponse } from '~~/gen/ts/services/qualifications/exam';
 import ExamViewQuestion from './ExamViewQuestion.vue';
 
 const props = defineProps<{
@@ -25,7 +25,7 @@ const emits = defineEmits<{
 
 const notifications = useNotificationsStore();
 
-const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
+const qualificationsExamClient = await getQualificationsExamClient();
 
 const schema = z.object({
     responses: z.custom<ExamResponse>().array().max(100).default([]),
@@ -43,7 +43,7 @@ const state = useState<Schema>('qualifications-exam-responses', () => ({
 
 async function submitExam(values: Schema, partial: boolean = false): Promise<SubmitExamResponse> {
     try {
-        const call = qualificationsQualificationsClient.submitExam({
+        const call = qualificationsExamClient.submitExam({
             qualificationId: props.qualificationId,
             responses: {
                 qualificationId: props.qualificationId,

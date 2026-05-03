@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package services.documents;
+
+import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
+import "resources/documents/templates/templates.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documents";
+
+message ListTemplatesRequest {}
+
+message ListTemplatesResponse {
+  repeated resources.documents.templates.TemplateShort templates = 1 [(codegen.itemslen.enabled) = true];
+}
+
+message GetTemplateRequest {
+  int64 template_id = 1;
+  optional resources.documents.templates.TemplateData data = 2;
+  optional bool render = 3;
+}
+
+message GetTemplateResponse {
+  resources.documents.templates.Template template = 1;
+  bool rendered = 2;
+}
+
+message CreateTemplateRequest {
+  resources.documents.templates.Template template = 1 [(buf.validate.field).required = true];
+}
+
+message CreateTemplateResponse {
+  int64 id = 1;
+}
+
+message UpdateTemplateRequest {
+  resources.documents.templates.Template template = 1 [(buf.validate.field).required = true];
+}
+
+message UpdateTemplateResponse {
+  resources.documents.templates.Template template = 1;
+}
+
+message DeleteTemplateRequest {
+  int64 id = 1;
+}
+
+message DeleteTemplateResponse {}
+
+service TemplatesService {
+  option (codegen.perms.perms_svc) = {
+    name: "documents.DocumentsService"
+  };
+
+  rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListTemplates"
+    };
+  }
+  rpc CreateTemplate(CreateTemplateRequest) returns (CreateTemplateResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc UpdateTemplate(UpdateTemplateRequest) returns (UpdateTemplateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateTemplate"
+    };
+  }
+  rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+}

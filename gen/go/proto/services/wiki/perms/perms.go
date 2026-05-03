@@ -12,6 +12,7 @@ const (
 	CollabServicePerm perms.Category = "wiki.CollabService"
 	WikiServicePerm   perms.Category = "wiki.WikiService"
 
+	// Service: WikiService
 	WikiServiceCreatePagePerm            perms.Name = "CreatePage"
 	WikiServiceDeletePagePerm            perms.Name = "DeletePage"
 	WikiServiceListPageActivityPerm      perms.Name = "ListPageActivity"

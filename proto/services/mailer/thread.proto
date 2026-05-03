@@ -1,0 +1,217 @@
+syntax = "proto3";
+
+package services.mailer;
+
+import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "resources/common/database/database.proto";
+import "resources/mailer/messages/message.proto";
+import "resources/mailer/threads/thread.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer;mailer";
+
+// Threads
+
+message ListThreadsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  // Search params
+  repeated int64 email_ids = 2 [(buf.validate.field).repeated = {
+    min_items: 1
+    max_items: 10
+    items: {
+      int64: {gt: 0}
+    }
+  }];
+  optional bool unread = 4;
+  optional bool archived = 5;
+}
+
+message ListThreadsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.mailer.threads.Thread threads = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message GetThreadRequest {
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 thread_id = 2 [(buf.validate.field).int64.gt = 0];
+}
+
+message GetThreadResponse {
+  resources.mailer.threads.Thread thread = 1;
+}
+
+message CreateThreadRequest {
+  resources.mailer.threads.Thread thread = 1 [(buf.validate.field).required = true];
+  resources.mailer.messages.Message message = 2 [(buf.validate.field).required = true];
+  repeated string recipients = 3 [
+    (buf.validate.field).repeated = {
+      min_items: 1
+      max_items: 15
+      items: {
+        string: {
+          min_len: 6
+          max_len: 80
+        }
+      }
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+}
+
+message CreateThreadResponse {
+  resources.mailer.threads.Thread thread = 1;
+}
+
+message DeleteThreadRequest {
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 thread_id = 2 [(buf.validate.field).int64.gt = 0];
+}
+
+message DeleteThreadResponse {}
+
+message GetThreadStateRequest {
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 thread_id = 2 [(buf.validate.field).int64.gt = 0];
+}
+
+message GetThreadStateResponse {
+  resources.mailer.threads.ThreadState state = 1;
+}
+
+message SetThreadStateRequest {
+  resources.mailer.threads.ThreadState state = 1 [(buf.validate.field).required = true];
+}
+
+message SetThreadStateResponse {
+  resources.mailer.threads.ThreadState state = 1;
+}
+
+// Messages
+
+message SearchThreadsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  // Search params
+  string search = 2 [(buf.validate.field).string.max_len = 64];
+}
+
+message SearchThreadsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.mailer.messages.Message messages = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message ListThreadMessagesRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  int64 email_id = 2 [(buf.validate.field).int64.gt = 0];
+  int64 thread_id = 3 [(buf.validate.field).int64.gt = 0];
+  optional resources.timestamp.Timestamp after = 4;
+}
+
+message ListThreadMessagesResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.mailer.messages.Message messages = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message PostMessageRequest {
+  resources.mailer.messages.Message message = 1 [(buf.validate.field).required = true];
+  repeated string recipients = 2 [
+    (buf.validate.field).repeated = {
+      max_items: 10
+      items: {
+        string: {
+          min_len: 6
+          max_len: 80
+        }
+      }
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+}
+
+message PostMessageResponse {
+  resources.mailer.messages.Message message = 1;
+}
+
+message DeleteMessageRequest {
+  int64 email_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 thread_id = 2 [(buf.validate.field).int64.gt = 0];
+  int64 message_id = 3 [(buf.validate.field).int64.gt = 0];
+}
+
+message DeleteMessageResponse {}
+
+service ThreadService {
+  option (codegen.perms.perms_svc) = {
+    name: "mailer.MailerService"
+  };
+
+  rpc ListThreads(ListThreadsRequest) returns (ListThreadsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc GetThread(GetThreadRequest) returns (GetThreadResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc CreateThread(CreateThreadRequest) returns (CreateThreadResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+  rpc GetThreadState(GetThreadStateRequest) returns (GetThreadStateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc SetThreadState(SetThreadStateRequest) returns (SetThreadStateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+
+  rpc SearchThreads(SearchThreadsRequest) returns (SearchThreadsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc ListThreadMessages(ListThreadMessagesRequest) returns (ListThreadMessagesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc PostMessage(PostMessageRequest) returns (PostMessageResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListEmails"
+    };
+  }
+  rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+}

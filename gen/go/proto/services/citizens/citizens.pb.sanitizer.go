@@ -9,26 +9,6 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DeleteAvatarRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteAvatarResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *DeleteMugshotRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -36,26 +16,6 @@ func (m *DeleteMugshotRequest) Sanitize() error {
 
 	// Field: Reason
 	m.Reason = htmlsanitizer.Sanitize(m.Reason)
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteMugshotResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *GetUserRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
 
 	return nil
 }

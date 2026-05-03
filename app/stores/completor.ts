@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { getCompletorCompletorClient, getJobsJobsClient } from '~~/gen/ts/clients';
+import { getCompletorCompletorClient, getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
@@ -7,7 +7,7 @@ import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { LawBook } from '~~/gen/ts/resources/laws/laws';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
-import type { ListColleaguesRequest } from '~~/gen/ts/services/jobs/jobs';
+import type { ListColleaguesRequest } from '~~/gen/ts/services/jobs/colleagues';
 
 const maxCacheAge = 10 * 60 * 1000; // 10 minutes
 
@@ -131,9 +131,9 @@ export const useCompletorStore = defineStore(
             if (!req.pagination) {
                 req.pagination = { offset: 0 };
             }
-            const jobsJobsClient = await getJobsJobsClient();
+            const jobsColleaguesClient = await getJobsColleaguesClient();
             try {
-                const call = jobsJobsClient.listColleagues(req);
+                const call = jobsColleaguesClient.listColleagues(req);
                 const { response } = await call;
                 return response.colleagues;
             } catch (e) {

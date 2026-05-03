@@ -133,16 +133,6 @@ func (m *GroupSyncSettings) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *JobSettings) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *JobsAbsenceSettings) Sanitize() error {
 	if m == nil {
 		return nil

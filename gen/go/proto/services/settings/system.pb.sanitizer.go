@@ -22,16 +22,6 @@ func (m *DeleteFactionRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DeleteFactionResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *GetAllPermissionsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -134,16 +124,6 @@ func (m *GetJobLimitsResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *GetStatusRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *GetStatusResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -156,26 +136,6 @@ func (m *GetStatusResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *TriggerUserSyncRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *TriggerUserSyncResponse) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil
@@ -207,16 +167,6 @@ func (m *UpdateJobLimitsRequest) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *UpdateJobLimitsResponse) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil

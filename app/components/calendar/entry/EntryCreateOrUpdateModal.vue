@@ -18,7 +18,7 @@ import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import type { CalendarShort } from '~~/gen/ts/resources/calendar/calendar';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
-import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
+import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/calendar/entries';
 
 const props = defineProps<{
     calendarId?: number;

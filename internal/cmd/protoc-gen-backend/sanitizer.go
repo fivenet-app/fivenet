@@ -68,6 +68,10 @@ func (p *SanitizerModule) generate(f pgs.File) {
 	}
 
 	for _, m := range f.Messages() {
+		// No fields? Skip.
+		if len(m.Fields()) == 0 {
+			continue
+		}
 		data.FMap[string(m.Name())] = map[string]*Sanitize{}
 
 		for _, f := range m.Fields() {
@@ -108,6 +112,11 @@ func (p *SanitizerModule) generate(f pgs.File) {
 			}
 
 			data.FMap[string(m.Name())][string(f.Name().UpperCamelCase())] = s
+		}
+
+		// Remove "empty" messages from the FMap
+		if len(data.FMap[string(m.Name())]) == 0 {
+			delete(data.FMap, string(m.Name()))
 		}
 	}
 

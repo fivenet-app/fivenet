@@ -3,14 +3,6 @@
 
 package calendar
 
-// ItemsLen returns the length of Entries.
-func (m *ListCalendarEntryRSVPResponse) ItemsLen() int {
-	if m == nil {
-		return 0
-	}
-	return len(m.GetEntries())
-}
-
 // ItemsLen returns the length of Calendars.
 func (m *ListCalendarsResponse) ItemsLen() int {
 	if m == nil {

@@ -10,6 +10,7 @@ import (
 const (
 	LivemapServicePerm perms.Category = "livemap.LivemapService"
 
+	// Service: LivemapService
 	LivemapServiceCreateOrUpdateMarkerPerm            perms.Name = "CreateOrUpdateMarker"
 	LivemapServiceCreateOrUpdateMarkerAccessPermField perms.Key  = "Access"
 	LivemapServiceDeleteMarkerPerm                    perms.Name = "DeleteMarker"

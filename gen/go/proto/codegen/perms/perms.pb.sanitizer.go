@@ -120,5 +120,10 @@ func (m *ServiceOptions) Sanitize() error {
 		*m.Icon = htmlsanitizer.Sanitize(*m.Icon)
 	}
 
+	// Field: Name
+	if m.Name != nil {
+		*m.Name = htmlsanitizer.Sanitize(*m.Name)
+	}
+
 	return nil
 }

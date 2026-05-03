@@ -11,7 +11,8 @@ import InputDurationPicker from '~/components/partials/InputDurationPicker.vue';
 import { secondsToDuration } from '~/utils/duration';
 import { zodDurationMinMaxPair } from '~/utils/validation';
 import { getCitizensLabelsClient } from '~~/gen/ts/clients';
-import { AccessLevel, type Label } from '~~/gen/ts/resources/citizens/labels/labels';
+import { AccessLevel } from '~~/gen/ts/resources/citizens/labels/access';
+import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import type { CreateOrUpdateLabelResponse, GetLabelResponse } from '~~/gen/ts/services/citizens/labels';
 
 const props = defineProps<{

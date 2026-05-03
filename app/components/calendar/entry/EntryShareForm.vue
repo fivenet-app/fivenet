@@ -5,9 +5,9 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
-import { getCalendarCalendarClient } from '~~/gen/ts/clients';
+import { getCalendarEntriesClient } from '~~/gen/ts/clients';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
-import type { ShareCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
+import type { ShareCalendarEntryResponse } from '~~/gen/ts/services/calendar/entries';
 
 const props = defineProps<{
     entryId: number;
@@ -23,7 +23,7 @@ const { activeChar } = storeToRefs(authStore);
 
 const completorStore = useCompletorStore();
 
-const calendarCalendarClient = await getCalendarCalendarClient();
+const calendarEntriesClient = await getCalendarEntriesClient();
 
 const schema = z.object({
     users: z.custom<UserShort>().array().max(20).default([]),
@@ -41,7 +41,7 @@ async function shareCalendarEntry(values: Schema): Promise<undefined | ShareCale
         return;
     }
 
-    const call = calendarCalendarClient.shareCalendarEntry({
+    const call = calendarEntriesClient.shareCalendarEntry({
         entryId: props.entryId,
         userIds: values.users.map((u) => u.userId),
     });

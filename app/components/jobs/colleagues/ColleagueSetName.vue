@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
-import { getJobsJobsClient } from '~~/gen/ts/clients';
+import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { SetColleaguePropsResponse } from '~~/gen/ts/services/jobs/jobs';
+import type { SetColleaguePropsResponse } from '~~/gen/ts/services/jobs/colleagues';
 
 const props = defineProps<{
     userId: number;
@@ -18,7 +18,7 @@ const nameSuffix = defineModel<string | undefined>('nameSuffix');
 
 const notifications = useNotificationsStore();
 
-const jobsJobsClient = await getJobsJobsClient();
+const jobsColleaguesClient = await getJobsColleaguesClient();
 
 const schema = z.object({
     reason: z.coerce.string().min(3).max(255),
@@ -43,7 +43,7 @@ const changed = ref(false);
 
 async function setJobsUserNote(values: Schema): Promise<undefined | SetColleaguePropsResponse> {
     try {
-        const call = jobsJobsClient.setColleagueProps({
+        const call = jobsColleaguesClient.setColleagueProps({
             reason: values.reason,
             props: {
                 userId: props.userId,

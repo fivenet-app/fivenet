@@ -85,6 +85,8 @@ func init() {
 
 type Server struct {
 	pbcentrum.CentrumServiceServer
+	pbcentrum.DispatchesServiceServer
+	pbcentrum.UnitsServiceServer
 
 	logger *zap.Logger
 	tracer trace.Tracer
@@ -227,6 +229,8 @@ func (s *Server) RegisterCronjobHandlers(hand *croner.Handlers) error {
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbcentrum.RegisterCentrumServiceServer(srv, s)
+	pbcentrum.RegisterDispatchesServiceServer(srv, s)
+	pbcentrum.RegisterUnitsServiceServer(srv, s)
 }
 
 func (s *Server) loadData(ctx context.Context) error {

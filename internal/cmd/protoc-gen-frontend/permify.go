@@ -80,6 +80,10 @@ func (p *PermifyModule) Execute(
 					p.Fail("error reading perms option:", err)
 				}
 
+				if serviceOpts.GetName() != "" {
+					sName = serviceOpts.GetName()
+				}
+
 				for _, v := range serviceOpts.AdditionalPerms {
 					if _, ok := data.Permissions[sName]; !ok {
 						data.Permissions[sName] = map[string]*Perm{}
@@ -120,6 +124,16 @@ func (p *PermifyModule) Execute(
 			data.FS = append(data.FS, f)
 			for _, s := range f.Services() {
 				sName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
+
+				var serviceOpts permspb.ServiceOptions
+				_, err := s.Extension(permspb.E_PermsSvc, &serviceOpts)
+				if err != nil {
+					p.Fail("error reading perms option:", err)
+				}
+
+				if serviceOpts.GetName() != "" {
+					sName = serviceOpts.GetName()
+				}
 
 				p.Debugf("Service: %s", sName)
 

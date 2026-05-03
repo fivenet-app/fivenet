@@ -3,7 +3,7 @@ import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import type { CardElements } from '~/utils/types';
-import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
 import type { TemplateShort } from '~~/gen/ts/resources/documents/templates/templates';
 
 const props = defineProps<{
@@ -26,11 +26,11 @@ defineExpose({
     refresh,
 });
 
-const documentsDocumentsClient = await getDocumentsDocumentsClient();
+const documentsTemplatesClient = await getDocumentsTemplatesClient();
 
 async function listTemplates(): Promise<TemplateShort[]> {
     try {
-        const call = documentsDocumentsClient.listTemplates({});
+        const call = documentsTemplatesClient.listTemplates({});
         const { response } = await call;
 
         return response.templates;

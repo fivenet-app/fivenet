@@ -3,7 +3,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { unitStatusToBadgeColor, unitStatuses } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/stores/centrum';
-import { getCentrumCentrumClient } from '~~/gen/ts/clients';
+import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Coordinate } from '~~/shared/types/types';
@@ -23,7 +23,7 @@ const { settings } = storeToRefs(centrumStore);
 
 const notifications = useNotificationsStore();
 
-const centrumCentrumClient = await getCentrumCentrumClient();
+const centrumUnitsClient = await getCentrumUnitsClient();
 
 const schema = z.object({
     status: z.enum(StatusUnit),
@@ -39,7 +39,7 @@ const state = reactive<Schema>({
 
 async function updateUnitStatus(id: number, values: Schema): Promise<void> {
     try {
-        const call = centrumCentrumClient.updateUnitStatus({
+        const call = centrumUnitsClient.updateUnitStatus({
             unitId: id,
             status: values.status,
             code: values.code,

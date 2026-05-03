@@ -65,6 +65,7 @@ func init() {
 
 type Server struct {
 	pbcalendar.CalendarServiceServer
+	pbcalendar.EntriesServiceServer
 
 	db       *sql.DB
 	ps       perms.Permissions
@@ -155,4 +156,5 @@ func NewServer(p Params) *Server {
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbcalendar.RegisterCalendarServiceServer(srv, s)
+	pbcalendar.RegisterEntriesServiceServer(srv, s)
 }

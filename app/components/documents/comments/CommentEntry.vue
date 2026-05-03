@@ -8,7 +8,7 @@ import CustomContentRenderer from '~/components/partials/content/CustomContentRe
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { HistoryContent } from '~/types/history';
-import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import { getDocumentsCommentsClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Comment } from '~~/gen/ts/resources/documents/comment/comment';
@@ -40,7 +40,7 @@ const notifications = useNotificationsStore();
 
 const historyStore = useHistoryStore();
 
-const documentsDocumentsClient = await getDocumentsDocumentsClient();
+const documentsCommentsClient = await getDocumentsCommentsClient();
 
 const editing = ref(false);
 
@@ -107,7 +107,7 @@ watchDebounced(
 
 async function editComment(documentId: number, commentId: number, values: Schema): Promise<void> {
     try {
-        const { response } = await documentsDocumentsClient.editComment({
+        const { response } = await documentsCommentsClient.editComment({
             comment: {
                 id: commentId,
                 documentId,
@@ -140,7 +140,7 @@ async function editComment(documentId: number, commentId: number, values: Schema
 
 async function deleteComment(id: number): Promise<void> {
     try {
-        await documentsDocumentsClient.deleteComment({
+        await documentsCommentsClient.deleteComment({
             commentId: id,
         });
 

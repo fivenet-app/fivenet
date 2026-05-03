@@ -9,26 +9,6 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *CitizenDocumentRelation) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *FineChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *JailChange) Sanitize() error {
 	if m == nil {
 		return nil
@@ -178,16 +158,6 @@ func (m *NameChange) Sanitize() error {
 
 	// Field: Old
 	m.Old = htmlsanitizer.Sanitize(m.Old)
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *TrafficInfractionPointsChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
 
 	return nil
 }
@@ -347,16 +317,6 @@ func (m *UserActivityData) Sanitize() error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *WantedChange) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil

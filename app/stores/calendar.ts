@@ -1,30 +1,32 @@
 import { format } from 'date-fns';
 import { defineStore } from 'pinia';
 import { checkCalendarAccess } from '~/components/calendar/helpers';
-import { getCalendarCalendarClient } from '~~/gen/ts/clients';
+import { getCalendarCalendarClient, getCalendarEntriesClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import type { Calendar } from '~~/gen/ts/resources/calendar/calendar';
 import { type CalendarEntry, RsvpResponses } from '~~/gen/ts/resources/calendar/entries/entries';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type {
     CreateCalendarResponse,
+    GetCalendarRequest,
+    GetCalendarResponse,
+    ListCalendarsRequest,
+    ListCalendarsResponse,
+    UpdateCalendarResponse,
+} from '~~/gen/ts/services/calendar/calendar';
+import type {
     CreateOrUpdateCalendarEntryResponse,
     GetCalendarEntryRequest,
     GetCalendarEntryResponse,
-    GetCalendarRequest,
-    GetCalendarResponse,
     GetUpcomingEntriesRequest,
     GetUpcomingEntriesResponse,
     ListCalendarEntriesRequest,
     ListCalendarEntriesResponse,
     ListCalendarEntryRSVPRequest,
     ListCalendarEntryRSVPResponse,
-    ListCalendarsRequest,
-    ListCalendarsResponse,
     RSVPCalendarEntryRequest,
     RSVPCalendarEntryResponse,
-    UpdateCalendarResponse,
-} from '~~/gen/ts/services/calendar/calendar';
+} from '~~/gen/ts/services/calendar/entries';
 
 const logger = useLogger('📅 Calendar');
 
@@ -281,9 +283,9 @@ export const useCalendarStore = defineStore(
          * @returns {Promise<GetCalendarEntryResponse>} A promise that resolves with the calendar entry response.
          */
         const getCalendarEntry = async (req: GetCalendarEntryRequest): Promise<GetCalendarEntryResponse> => {
-            const calendarCalendarClient = await getCalendarCalendarClient();
+            const calendarEntriesClient = await getCalendarEntriesClient();
 
-            const call = calendarCalendarClient.getCalendarEntry(req);
+            const call = calendarEntriesClient.getCalendarEntry(req);
             const { response } = await call;
 
             if (response.entry) {
@@ -311,10 +313,10 @@ export const useCalendarStore = defineStore(
                     month: currentDate.value.month,
                 };
             }
-            const calendarCalendarClient = await getCalendarCalendarClient();
+            const calendarEntriesClient = await getCalendarEntriesClient();
 
             try {
-                const call = calendarCalendarClient.listCalendarEntries(req);
+                const call = calendarEntriesClient.listCalendarEntries(req);
                 const { response } = await call;
 
                 if (response.entries.length > 0) {
@@ -346,10 +348,10 @@ export const useCalendarStore = defineStore(
          * @returns {Promise<GetUpcomingEntriesResponse>} A promise that resolves with the upcoming entries response.
          */
         const getUpcomingEntries = async (req: GetUpcomingEntriesRequest): Promise<GetUpcomingEntriesResponse> => {
-            const calendarCalendarClient = await getCalendarCalendarClient();
+            const calendarEntriesClient = await getCalendarEntriesClient();
 
             try {
-                const call = calendarCalendarClient.getUpcomingEntries(req);
+                const call = calendarEntriesClient.getUpcomingEntries(req);
                 const { response } = await call;
 
                 return response;
@@ -369,9 +371,9 @@ export const useCalendarStore = defineStore(
             entryParam: CalendarEntry,
             users?: number[],
         ): Promise<CreateOrUpdateCalendarEntryResponse> => {
-            const calendarCalendarClient = await getCalendarCalendarClient();
+            const calendarEntriesClient = await getCalendarEntriesClient();
 
-            const call = calendarCalendarClient.createOrUpdateCalendarEntry({
+            const call = calendarEntriesClient.createOrUpdateCalendarEntry({
                 entry: entryParam,
                 userIds: users || [],
             });
@@ -395,10 +397,10 @@ export const useCalendarStore = defineStore(
          * @returns {Promise<void>} A promise that resolves when the calendar entry is deleted.
          */
         const deleteCalendarEntry = async (entryId: number): Promise<void> => {
-            const calendarCalendarClient = await getCalendarCalendarClient();
+            const calendarEntriesClient = await getCalendarEntriesClient();
 
             try {
-                const call = calendarCalendarClient.deleteCalendarEntry({
+                const call = calendarEntriesClient.deleteCalendarEntry({
                     entryId: entryId,
                 });
                 await call;
@@ -420,10 +422,10 @@ export const useCalendarStore = defineStore(
          * @returns {Promise<ListCalendarEntryRSVPResponse>} A promise that resolves with the RSVP responses.
          */
         const listCalendarEntryRSVP = async (req: ListCalendarEntryRSVPRequest): Promise<ListCalendarEntryRSVPResponse> => {
-            const calendarCalendarClient = await getCalendarCalendarClient();
+            const calendarEntriesClient = await getCalendarEntriesClient();
 
             try {
-                const call = calendarCalendarClient.listCalendarEntryRSVP(req);
+                const call = calendarEntriesClient.listCalendarEntryRSVP(req);
                 const { response } = await call;
 
                 return response;
@@ -439,10 +441,10 @@ export const useCalendarStore = defineStore(
          * @returns {Promise<RSVPCalendarEntryResponse>} A promise that resolves with the RSVP response.
          */
         const rsvpCalendarEntry = async (req: RSVPCalendarEntryRequest): Promise<RSVPCalendarEntryResponse> => {
-            const calendarCalendarClient = await getCalendarCalendarClient();
+            const calendarEntriesClient = await getCalendarEntriesClient();
 
             try {
-                const call = calendarCalendarClient.rSVPCalendarEntry(req);
+                const call = calendarEntriesClient.rSVPCalendarEntry(req);
                 const { response } = await call;
 
                 // Retrieve calendar entry if a "should be visible" response and it is not in our list yet

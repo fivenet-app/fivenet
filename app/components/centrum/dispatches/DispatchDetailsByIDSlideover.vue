@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 import { useCentrumStore } from '~/stores/centrum';
-import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import type { GetDispatchResponse } from '~~/gen/ts/services/centrum/centrum';
+import { getCentrumDispatchesClient } from '~~/gen/ts/clients';
+import type { GetDispatchResponse } from '~~/gen/ts/services/centrum/dispatches';
 
 const props = defineProps<{
     dispatchId: number;
@@ -15,7 +15,7 @@ const emit = defineEmits<{
 const centrumStore = useCentrumStore();
 const { dispatches } = storeToRefs(centrumStore);
 
-const centrumCentrumClient = await getCentrumCentrumClient();
+const centrumDispatchesClient = await getCentrumDispatchesClient();
 
 const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId}`, () => getDispatch(props.dispatchId));
 
@@ -27,7 +27,7 @@ async function getDispatch(id: number): Promise<GetDispatchResponse> {
     }
 
     try {
-        const call = centrumCentrumClient.getDispatch({ id });
+        const call = centrumDispatchesClient.getDispatch({ id });
         const { response } = await call;
 
         return response;

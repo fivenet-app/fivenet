@@ -7,7 +7,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useCalendarStore } from '~/stores/calendar';
 import { type CalendarEntryRSVP, RsvpResponses } from '~~/gen/ts/resources/calendar/entries/entries';
-import type { ListCalendarEntryRSVPResponse, RSVPCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
+import type { ListCalendarEntryRSVPResponse, RSVPCalendarEntryResponse } from '~~/gen/ts/services/calendar/entries';
 import EntryShareForm from './EntryShareForm.vue';
 
 const props = withDefaults(

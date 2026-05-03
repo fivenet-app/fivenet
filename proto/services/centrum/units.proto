@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package services.centrum;
+
+import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "resources/centrum/dispatchers/dispatchers.proto";
+import "resources/centrum/dispatches/dispatches.proto";
+import "resources/centrum/settings/settings.proto";
+import "resources/centrum/units/units.proto";
+import "resources/common/database/database.proto";
+import "resources/jobs/jobs.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrum";
+
+message JoinUnitRequest {
+  optional int64 unit_id = 1;
+}
+
+message JoinUnitResponse {
+  resources.centrum.units.Unit unit = 1;
+}
+
+message ListUnitsRequest {
+  repeated resources.centrum.units.StatusUnit status = 1 [(buf.validate.field).repeated.items.enum.defined_only = true];
+}
+
+message ListUnitsResponse {
+  repeated resources.centrum.units.Unit units = 1 [(codegen.itemslen.enabled) = true];
+}
+
+message CreateOrUpdateUnitRequest {
+  resources.centrum.units.Unit unit = 1 [(buf.validate.field).required = true];
+}
+
+message CreateOrUpdateUnitResponse {
+  resources.centrum.units.Unit unit = 1;
+}
+
+message DeleteUnitRequest {
+  int64 unit_id = 1;
+}
+
+message DeleteUnitResponse {}
+
+message UpdateUnitStatusRequest {
+  int64 unit_id = 1;
+  resources.centrum.units.StatusUnit status = 2 [(buf.validate.field).enum.defined_only = true];
+  optional string reason = 3 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string code = 4 [
+    (buf.validate.field).string.max_len = 20,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+}
+
+message UpdateUnitStatusResponse {}
+
+message AssignUnitRequest {
+  int64 unit_id = 1;
+  repeated int32 to_add = 2;
+  repeated int32 to_remove = 3;
+}
+
+message AssignUnitResponse {}
+
+message ListUnitActivityRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  int64 id = 2;
+}
+
+message ListUnitActivityResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.centrum.units.UnitStatus activity = 2 [(codegen.itemslen.enabled) = true];
+}
+
+service UnitsService {
+  option (codegen.perms.perms_svc) = {
+    name: "centrum.CentrumService"
+  };
+
+  rpc JoinUnit(JoinUnitRequest) returns (JoinUnitResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
+  rpc ListUnits(ListUnitsRequest) returns (ListUnitsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
+  rpc ListUnitActivity(ListUnitActivityRequest) returns (ListUnitActivityResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Stream"
+    };
+  }
+
+  rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "TakeControl"
+    };
+  }
+
+  rpc UpdateUnitStatus(UpdateUnitStatusRequest) returns (UpdateUnitStatusResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "TakeDispatch"
+    };
+  }
+}

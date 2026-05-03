@@ -5,10 +5,10 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { getMailerMailerClient } from '~~/gen/ts/clients';
+import { getMailerSettingsClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
-import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
+import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/settings';
 import { canAccess } from './helpers';
 import TemplateEditForm from './TemplateEditForm.vue';
 
@@ -19,7 +19,7 @@ defineEmits<{
 const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);
 
-const mailerMailerClient = await getMailerMailerClient();
+const mailerSettingsClient = await getMailerSettingsClient();
 
 const {
     data: templates,
@@ -30,7 +30,7 @@ const {
 
 async function listTemplates(): Promise<ListTemplatesResponse> {
     try {
-        const call = mailerMailerClient.listTemplates({
+        const call = mailerSettingsClient.listTemplates({
             emailId: selectedEmail.value!.id,
         });
         const { response } = await call;

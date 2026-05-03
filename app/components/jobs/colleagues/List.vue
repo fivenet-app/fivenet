@@ -14,12 +14,12 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useSettingsStore } from '~/stores/settings';
-import { getJobsJobsClient } from '~~/gen/ts/clients';
+import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import type { Label } from '~~/gen/ts/resources/jobs/labels/labels';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import type { GetColleagueLabelsResponse, ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
+import type { GetColleagueLabelsResponse, ListColleaguesResponse } from '~~/gen/ts/services/jobs/colleagues';
 import ColleagueLabelStatsModal from './ColleagueLabelStatsModal.vue';
 import ColleagueName from './ColleagueName.vue';
 import JobLabelsModal from './JobLabelsModal.vue';
@@ -31,7 +31,7 @@ const overlay = useOverlay();
 
 const { attr, can, activeChar } = useAuth();
 
-const jobsJobsClient = await getJobsJobsClient();
+const jobsColleaguesClient = await getJobsColleaguesClient();
 
 const schema = z.object({
     name: z.coerce.string().max(50).default(''),
@@ -69,7 +69,7 @@ const { data, status, refresh, error } = useLazyAsyncData(
 
 async function listColleagues(): Promise<ListColleaguesResponse> {
     try {
-        const call = jobsJobsClient.listColleagues({
+        const call = jobsColleaguesClient.listColleagues({
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
             },
@@ -92,7 +92,7 @@ async function listColleagues(): Promise<ListColleaguesResponse> {
 
 async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsResponse> {
     try {
-        const { response } = await jobsJobsClient.getColleagueLabels({
+        const { response } = await jobsColleaguesClient.getColleagueLabels({
             search: search,
         });
 

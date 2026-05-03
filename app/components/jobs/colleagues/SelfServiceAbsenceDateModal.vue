@@ -5,7 +5,7 @@ import { addDays, isBefore, isFuture, subDays } from 'date-fns';
 import { z } from 'zod';
 import InputDateRangePopover from '~/components/partials/InputDateRangePopover.vue';
 import { useAuthStore } from '~/stores/auth';
-import { getJobsJobsClient } from '~~/gen/ts/clients';
+import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -25,7 +25,7 @@ const notifications = useNotificationsStore();
 const authStore = useAuthStore();
 const { jobProps } = storeToRefs(authStore);
 
-const jobsJobsClient = await getJobsJobsClient();
+const jobsColleaguesClient = await getJobsColleaguesClient();
 
 const today = new Date();
 const minStart = subDays(today, jobProps.value?.settings?.absencePastDays ?? 7);
@@ -77,7 +77,7 @@ async function setAbsenceDate(values: Schema): Promise<void> {
     }
 
     try {
-        const call = jobsJobsClient.setColleagueProps({
+        const call = jobsColleaguesClient.setColleagueProps({
             props: userProps,
             reason: values.reason,
         });
