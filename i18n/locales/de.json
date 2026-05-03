@@ -216,7 +216,7 @@
                 "cron": "Status der Hintergrundaufgaben anzeigen.",
                 "accounts": "Auflisten und verwalten von FiveNet Konten.",
                 "dispatch_center": "Verknüpfung zur Verwaltung der Leitstellen-Einstellungen.",
-                "jobs": "Liste der Berufe in deiner FiveNet-Instanz."
+                "jobs": "Liste der Berufe in der FiveNet-Instanz."
             },
             "roles": {
                 "title": "Rollen",
