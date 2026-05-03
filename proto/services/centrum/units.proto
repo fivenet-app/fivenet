@@ -6,13 +6,8 @@ import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
-import "resources/centrum/dispatchers/dispatchers.proto";
-import "resources/centrum/dispatches/dispatches.proto";
-import "resources/centrum/settings/settings.proto";
 import "resources/centrum/units/units.proto";
 import "resources/common/database/database.proto";
-import "resources/jobs/jobs.proto";
-import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrum";
 
@@ -80,9 +75,7 @@ message ListUnitActivityResponse {
 }
 
 service UnitsService {
-  option (codegen.perms.perms_svc) = {
-    name: "centrum.CentrumService"
-  };
+  option (codegen.perms.perms_svc) = {name: "centrum.CentrumService"};
 
   rpc JoinUnit(JoinUnitRequest) returns (JoinUnitResponse) {
     option (codegen.perms.perms) = {

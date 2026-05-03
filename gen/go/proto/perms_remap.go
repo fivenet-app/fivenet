@@ -151,10 +151,7 @@ var PermsRemap = map[string][]string{
 
 	// Service: citizens.LabelsService
 	"citizens.LabelsService/GetLabel": []string{
-		"completor.CompletorService/CompleteCitizenLabels",
-	},
-	"citizens.LabelsService/ListLabels": []string{
-		"completor.CompletorService/CompleteCitizenLabels",
+		"citizens.LabelsService/ListLabels",
 	},
 
 	// Service: completor.CompletorService

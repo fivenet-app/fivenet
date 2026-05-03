@@ -296,7 +296,6 @@ export const grpcMethods = [
 	'completor.CompletorService/CompleteJobs',
 	'completor.CompletorService/CompleteDocumentCategories',
 	'completor.CompletorService/ListLawBooks',
-	'completor.CompletorService/CompleteCitizenLabels',
 	'documents.ApprovalService/ListApprovalTasksInbox',
 	'documents.ApprovalService/ListApprovalPolicies',
 	'documents.ApprovalService/UpsertApprovalPolicy',

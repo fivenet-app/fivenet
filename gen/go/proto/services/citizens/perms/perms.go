@@ -25,4 +25,5 @@ const (
 	// Service: LabelsService
 	LabelsServiceCreateOrUpdateLabelPerm perms.Name = "CreateOrUpdateLabel"
 	LabelsServiceDeleteLabelPerm         perms.Name = "DeleteLabel"
+	LabelsServiceListLabelsPerm          perms.Name = "ListLabels"
 )

@@ -85,7 +85,7 @@ export interface DeleteLabelResponse {
 class ListLabelsRequest$Type extends MessageType<ListLabelsRequest> {
     constructor() {
         super("services.citizens.ListLabelsRequest", [
-            { no: 1, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<ListLabelsRequest>): ListLabelsRequest {
@@ -448,8 +448,8 @@ export const DeleteLabelResponse = new DeleteLabelResponse$Type();
  * @generated ServiceType for protobuf service services.citizens.LabelsService
  */
 export const LabelsService = new ServiceType("services.citizens.LabelsService", [
-    { name: "ListLabels", options: { "codegen.perms.perms": { enabled: true, service: "completor.CompletorService", name: "CompleteCitizenLabels" } }, I: ListLabelsRequest, O: ListLabelsResponse },
-    { name: "GetLabel", options: { "codegen.perms.perms": { enabled: true, service: "completor.CompletorService", name: "CompleteCitizenLabels" } }, I: GetLabelRequest, O: GetLabelResponse },
+    { name: "ListLabels", options: { "codegen.perms.perms": { enabled: true } }, I: ListLabelsRequest, O: ListLabelsResponse },
+    { name: "GetLabel", options: { "codegen.perms.perms": { enabled: true, name: "ListLabels" } }, I: GetLabelRequest, O: GetLabelResponse },
     { name: "CreateOrUpdateLabel", options: { "codegen.perms.perms": { enabled: true } }, I: CreateOrUpdateLabelRequest, O: CreateOrUpdateLabelResponse },
     { name: "DeleteLabel", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteLabelRequest, O: DeleteLabelResponse }
 ], { "codegen.perms.perms_svc": { order: 32, icon: "i-mdi-label-multiple" } });

@@ -530,11 +530,12 @@ const file_services_citizens_labels_proto_rawDesc = "" +
 	"\x05label\x18\x01 \x01(\v2 .resources.citizens.labels.LabelR\x05label\"$\n" +
 	"\x12DeleteLabelRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x15\n" +
-	"\x13DeleteLabelResponse2\xb9\x04\n" +
-	"\rLabelsService\x12\x94\x01\n" +
+	"\x13DeleteLabelResponse2\xdd\x03\n" +
+	"\rLabelsService\x12a\n" +
 	"\n" +
-	"ListLabels\x12$.services.citizens.ListLabelsRequest\x1a%.services.citizens.ListLabelsResponse\"9\xd2\xf3\x185\b\x01\x12\x1acompletor.CompletorService\x1a\x15CompleteCitizenLabels\x12\x8e\x01\n" +
-	"\bGetLabel\x12\".services.citizens.GetLabelRequest\x1a#.services.citizens.GetLabelResponse\"9\xd2\xf3\x185\b\x01\x12\x1acompletor.CompletorService\x1a\x15CompleteCitizenLabels\x12|\n" +
+	"ListLabels\x12$.services.citizens.ListLabelsRequest\x1a%.services.citizens.ListLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12g\n" +
+	"\bGetLabel\x12\".services.citizens.GetLabelRequest\x1a#.services.citizens.GetLabelResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"ListLabels\x12|\n" +
 	"\x13CreateOrUpdateLabel\x12-.services.citizens.CreateOrUpdateLabelRequest\x1a..services.citizens.CreateOrUpdateLabelResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12d\n" +
 	"\vDeleteLabel\x12%.services.citizens.DeleteLabelRequest\x1a&.services.citizens.DeleteLabelResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x1c\xea\xf3\x18\x18\b \x12\x14i-mdi-label-multipleBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
 

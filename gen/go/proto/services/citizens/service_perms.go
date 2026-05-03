@@ -81,5 +81,12 @@ func init() {
 			Order:    3200,
 			Icon:     "i-mdi-label-multiple",
 		},
+		{
+			Category: permkeys.LabelsServicePerm,
+			Name:     permkeys.LabelsServiceListLabelsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    3200,
+			Icon:     "i-mdi-label-multiple",
+		},
 	})
 }

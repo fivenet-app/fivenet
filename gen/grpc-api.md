@@ -8954,28 +8954,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 ## services/completor/completor.proto
 
 
-### services.completor.CompleteCitizenLabelsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `search` | [string](#string) |  |  |
-
-
-
-
-
-### services.completor.CompleteCitizenLabelsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `labels` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
-
-
-
-
-
 ### services.completor.CompleteCitizensRequest
 
 
@@ -9080,7 +9058,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `CompleteJobs` | [CompleteJobsRequest](#servicescompletorCompleteJobsRequest) | [CompleteJobsResponse](#servicescompletorCompleteJobsResponse) | |
 | `CompleteDocumentCategories` | [CompleteDocumentCategoriesRequest](#servicescompletorCompleteDocumentCategoriesRequest) | [CompleteDocumentCategoriesResponse](#servicescompletorCompleteDocumentCategoriesResponse) | |
 | `ListLawBooks` | [ListLawBooksRequest](#servicescompletorListLawBooksRequest) | [ListLawBooksResponse](#servicescompletorListLawBooksResponse) | |
-| `CompleteCitizenLabels` | [CompleteCitizenLabelsRequest](#servicescompletorCompleteCitizenLabelsRequest) | [CompleteCitizenLabelsResponse](#servicescompletorCompleteCitizenLabelsResponse) | |
 
  <!-- end services -->
 

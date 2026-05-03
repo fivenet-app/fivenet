@@ -9,7 +9,7 @@ import "resources/citizens/labels/labels.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizens";
 
 message ListLabelsRequest {
-  optional string search = 1;
+  optional string search = 1 [(buf.validate.field).string.max_len = 64];
 }
 
 message ListLabelsResponse {
@@ -45,18 +45,13 @@ service LabelsService {
   };
 
   rpc ListLabels(ListLabelsRequest) returns (ListLabelsResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      service: "completor.CompletorService"
-      name: "CompleteCitizenLabels"
-    };
+    option (codegen.perms.perms) = {enabled: true};
   }
 
   rpc GetLabel(GetLabelRequest) returns (GetLabelResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "completor.CompletorService"
-      name: "CompleteCitizenLabels"
+      name: "ListLabels"
     };
   }
 
