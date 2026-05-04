@@ -5,10 +5,8 @@ import (
 	"errors"
 	"slices"
 
-	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbcompletor "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor"
-	permscompletor "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -107,64 +105,4 @@ func (s *Server) CompleteCitizens(
 	return &pbcompletor.CompleteCitizensResponse{
 		Users: dest,
 	}, nil
-}
-
-func (s *Server) CompleteCitizenLabels(
-	ctx context.Context,
-	req *pbcompletor.CompleteCitizenLabelsRequest,
-) (*pbcompletor.CompleteCitizenLabelsResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	jobs, err := s.ps.AttrJobList(
-		userInfo,
-		permscompletor.CompletorServicePerm,
-		permscompletor.CompletorServiceCompleteCitizenLabelsPerm,
-		permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField,
-	)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
-	}
-	if jobs.Len() == 0 {
-		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
-	}
-
-	jobsExp := make([]mysql.Expression, jobs.Len())
-	for i := range jobs.GetStrings() {
-		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
-	}
-
-	condition := mysql.AND(
-		tCitizensLabelsJob.Job.IN(jobsExp...),
-		tCitizensLabelsJob.DeletedAt.IS_NULL(),
-	)
-
-	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
-		condition = condition.AND(tCitizensLabelsJob.Name.LIKE(mysql.String(search)))
-	}
-
-	stmt := tCitizensLabelsJob.
-		SELECT(
-			tCitizensLabelsJob.ID,
-			tCitizensLabelsJob.CreatedAt,
-			tCitizensLabelsJob.Name,
-			tCitizensLabelsJob.Color,
-			tCitizensLabelsJob.Icon,
-		).
-		FROM(tCitizensLabelsJob).
-		WHERE(condition).
-		ORDER_BY(
-			tCitizensLabelsJob.SortKey.ASC(),
-		).
-		LIMIT(15)
-
-	resp := &pbcompletor.CompleteCitizenLabelsResponse{
-		Labels: []*citizenslabels.Label{},
-	}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
-		}
-	}
-
-	return resp, nil
 }

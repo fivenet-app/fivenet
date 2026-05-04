@@ -108,7 +108,7 @@ const formRef = useTemplateRef('formRef');
 
 <template>
     <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
-        <UFormField v-if="canDo.set && can('completor.CompletorService/CompleteCitizenLabels').value" name="labels">
+        <UFormField v-if="canDo.set && can('citizens.LabelsService/ListLabels').value" name="labels">
             <SelectMenu
                 v-model="state.labels"
                 class="w-full"

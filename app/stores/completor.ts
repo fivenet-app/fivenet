@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { getCompletorCompletorClient, getJobsColleaguesClient } from '~~/gen/ts/clients';
+import { getCitizensLabelsClient, getCompletorCompletorClient, getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
@@ -227,9 +227,9 @@ export const useCompletorStore = defineStore(
          * @returns {Promise<Label[]>} - The completed citizen labels.
          */
         const completeCitizenLabels = async (search: string): Promise<Label[]> => {
-            const completorCompletorClient = await getCompletorCompletorClient();
+            const citizensLabelsClient = await getCitizensLabelsClient();
             try {
-                const call = completorCompletorClient.completeCitizenLabels({
+                const call = citizensLabelsClient.listLabels({
                     search: search,
                 });
                 const { response } = await call;

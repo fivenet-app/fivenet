@@ -10,7 +10,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
-	permscompletor "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -35,25 +34,6 @@ func (s *Server) validateLabels(
 		return true, nil
 	}
 
-	jobs, err := s.ps.AttrStringList(
-		userInfo,
-		permscompletor.CompletorServicePerm,
-		permscompletor.CompletorServiceCompleteCitizenLabelsPerm,
-		permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField,
-	)
-	if err != nil {
-		return false, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
-
-	if jobs.Len() == 0 {
-		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
-	}
-
-	jobsExp := make([]mysql.Expression, len(jobs.GetStrings()))
-	for i := range jobs.GetStrings() {
-		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
-	}
-
 	idsExp := make([]mysql.Expression, len(labels))
 	for i := range labels {
 		idsExp[i] = mysql.Int64(labels[i].GetId())
@@ -65,7 +45,7 @@ func (s *Server) validateLabels(
 		).
 		FROM(tCitizensLabelsJob).
 		WHERE(mysql.AND(
-			tCitizensLabelsJob.Job.IN(jobsExp...),
+			tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
 			tCitizensLabelsJob.ID.IN(idsExp...),
 		)).
 		LIMIT(25)
@@ -322,24 +302,7 @@ func (s *Server) getUserLabels(
 	userInfo *userinfo.UserInfo,
 	userId int32,
 ) (*citizenslabels.Labels, error) {
-	jobs, err := s.ps.AttrStringList(
-		userInfo,
-		permscompletor.CompletorServicePerm,
-		permscompletor.CompletorServiceCompleteCitizenLabelsPerm,
-		permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField,
-	)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
-
-	if jobs.Len() == 0 {
-		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
-	}
-
-	jobsExp := make([]mysql.Expression, jobs.Len())
-	for i := range jobs.GetStrings() {
-		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
-	}
+	// TODO
 
 	stmt := tCitizenLabels.
 		SELECT(
@@ -358,7 +321,7 @@ func (s *Server) getUserLabels(
 		).
 		WHERE(mysql.AND(
 			tCitizenLabels.UserID.EQ(mysql.Int32(userId)),
-			tCitizensLabelsJob.Job.IN(jobsExp...),
+			tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
 			tCitizensLabelsJob.DeletedAt.IS_NULL(),
 		)).
 		ORDER_BY(tCitizensLabelsJob.SortKey.ASC(), tCitizensLabelsJob.ID.DESC())
