@@ -57,31 +57,35 @@ message GetUserExamResponse {
 }
 
 service ExamService {
-  option (codegen.perms.perms_svc) = {
-    name: "qualifications.QualificationsService"
-  };
-
   rpc GetExamInfo(GetExamInfoRequest) returns (GetExamInfoResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "qualifications"
+      service: "QualificationsService"
       name: "ListQualifications"
     };
   }
   rpc TakeExam(TakeExamRequest) returns (TakeExamResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "qualifications"
+      service: "QualificationsService"
       name: "ListQualifications"
     };
   }
   rpc SubmitExam(SubmitExamRequest) returns (SubmitExamResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "qualifications"
+      service: "QualificationsService"
       name: "ListQualifications"
     };
   }
   rpc GetUserExam(GetUserExamRequest) returns (GetUserExamResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "qualifications"
+      service: "QualificationsService"
       name: "ListQualifications"
     };
   }

@@ -61,9 +61,7 @@ func (s *Server) ListCitizens(
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permscitizens.CitizensServicePerm,
-		permscitizens.CitizensServiceListCitizensPerm,
-		permscitizens.CitizensServiceListCitizensFieldsPermField,
+		permscitizens.CitizensService.ListCitizens.Fields,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -299,9 +297,7 @@ func (s *Server) GetUser(
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permscitizens.CitizensServicePerm,
-		permscitizens.CitizensServiceListCitizensPerm,
-		permscitizens.CitizensServiceListCitizensFieldsPermField,
+		permscitizens.CitizensService.ListCitizens.Fields,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -505,9 +501,7 @@ func (s *Server) SetUserProps(
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permscitizens.CitizensServicePerm,
-		permscitizens.CitizensServiceSetUserPropsPerm,
-		permscitizens.CitizensServiceSetUserPropsFieldsPermField,
+		permscitizens.CitizensService.SetUserProps.Fields,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -758,9 +752,7 @@ func (s *Server) checkIfUserCanAccess(
 
 	jobGrades, err := s.ps.AttrJobGradeList(
 		userInfo,
-		permscitizens.CitizensServicePerm,
-		permscitizens.CitizensServiceGetUserPerm,
-		permscitizens.CitizensServiceGetUserJobsPermField,
+		permscitizens.CitizensService.GetUser.Jobs,
 	)
 	if err != nil {
 		return false, errswrap.NewError(err, errorscitizens.ErrFailedQuery)

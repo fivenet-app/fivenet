@@ -28,12 +28,13 @@ type Permission struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Id          int64                  `protobuf:"varint,1,opt,name=id,proto3"`
 	xxx_hidden_CreatedAt   *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
-	xxx_hidden_Category    string                 `protobuf:"bytes,3,opt,name=category,proto3"`
-	xxx_hidden_Name        string                 `protobuf:"bytes,4,opt,name=name,proto3"`
-	xxx_hidden_GuardName   string                 `protobuf:"bytes,5,opt,name=guard_name,json=guardName,proto3"`
-	xxx_hidden_Val         bool                   `protobuf:"varint,6,opt,name=val,proto3"`
-	xxx_hidden_Order       int32                  `protobuf:"varint,7,opt,name=order,proto3,oneof"`
-	xxx_hidden_Icon        *string                `protobuf:"bytes,8,opt,name=icon,proto3,oneof"`
+	xxx_hidden_Namespace   string                 `protobuf:"bytes,3,opt,name=namespace,proto3"`
+	xxx_hidden_Service     string                 `protobuf:"bytes,4,opt,name=service,proto3"`
+	xxx_hidden_Name        string                 `protobuf:"bytes,5,opt,name=name,proto3"`
+	xxx_hidden_GuardName   string                 `protobuf:"bytes,6,opt,name=guard_name,json=guardName,proto3"`
+	xxx_hidden_Val         bool                   `protobuf:"varint,7,opt,name=val,proto3"`
+	xxx_hidden_Order       int32                  `protobuf:"varint,8,opt,name=order,proto3,oneof"`
+	xxx_hidden_Icon        *string                `protobuf:"bytes,9,opt,name=icon,proto3,oneof"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -79,9 +80,16 @@ func (x *Permission) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *Permission) GetCategory() string {
+func (x *Permission) GetNamespace() string {
 	if x != nil {
-		return x.xxx_hidden_Category
+		return x.xxx_hidden_Namespace
+	}
+	return ""
+}
+
+func (x *Permission) GetService() string {
+	if x != nil {
+		return x.xxx_hidden_Service
 	}
 	return ""
 }
@@ -132,8 +140,12 @@ func (x *Permission) SetCreatedAt(v *timestamp.Timestamp) {
 	x.xxx_hidden_CreatedAt = v
 }
 
-func (x *Permission) SetCategory(v string) {
-	x.xxx_hidden_Category = v
+func (x *Permission) SetNamespace(v string) {
+	x.xxx_hidden_Namespace = v
+}
+
+func (x *Permission) SetService(v string) {
+	x.xxx_hidden_Service = v
 }
 
 func (x *Permission) SetName(v string) {
@@ -150,12 +162,12 @@ func (x *Permission) SetVal(v bool) {
 
 func (x *Permission) SetOrder(v int32) {
 	x.xxx_hidden_Order = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 8)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 9)
 }
 
 func (x *Permission) SetIcon(v string) {
 	x.xxx_hidden_Icon = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 8)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 9)
 }
 
 func (x *Permission) HasCreatedAt() bool {
@@ -169,14 +181,14 @@ func (x *Permission) HasOrder() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
 }
 
 func (x *Permission) HasIcon() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *Permission) ClearCreatedAt() {
@@ -184,12 +196,12 @@ func (x *Permission) ClearCreatedAt() {
 }
 
 func (x *Permission) ClearOrder() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
 	x.xxx_hidden_Order = 0
 }
 
 func (x *Permission) ClearIcon() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
 	x.xxx_hidden_Icon = nil
 }
 
@@ -198,7 +210,8 @@ type Permission_builder struct {
 
 	Id        int64
 	CreatedAt *timestamp.Timestamp
-	Category  string
+	Namespace string
+	Service   string
 	Name      string
 	GuardName string
 	Val       bool
@@ -212,16 +225,17 @@ func (b0 Permission_builder) Build() *Permission {
 	_, _ = b, x
 	x.xxx_hidden_Id = b.Id
 	x.xxx_hidden_CreatedAt = b.CreatedAt
-	x.xxx_hidden_Category = b.Category
+	x.xxx_hidden_Namespace = b.Namespace
+	x.xxx_hidden_Service = b.Service
 	x.xxx_hidden_Name = b.Name
 	x.xxx_hidden_GuardName = b.GuardName
 	x.xxx_hidden_Val = b.Val
 	if b.Order != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 8)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 9)
 		x.xxx_hidden_Order = *b.Order
 	}
 	if b.Icon != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 8)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 9)
 		x.xxx_hidden_Icon = b.Icon
 	}
 	return m0
@@ -512,19 +526,20 @@ var File_resources_permissions_permissions_permissions_proto protoreflect.FileDe
 
 const file_resources_permissions_permissions_permissions_proto_rawDesc = "" +
 	"\n" +
-	"3resources/permissions/permissions/permissions.proto\x12!resources.permissions.permissions\x1a1resources/permissions/attributes/attributes.proto\x1a#resources/timestamp/timestamp.proto\"\x97\x02\n" +
+	"3resources/permissions/permissions/permissions.proto\x12!resources.permissions.permissions\x1a1resources/permissions/attributes/attributes.proto\x1a#resources/timestamp/timestamp.proto\"\xb3\x02\n" +
 	"\n" +
 	"Permission\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1a\n" +
-	"\bcategory\x18\x03 \x01(\tR\bcategory\x12\x12\n" +
-	"\x04name\x18\x04 \x01(\tR\x04name\x12\x1d\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1c\n" +
+	"\tnamespace\x18\x03 \x01(\tR\tnamespace\x12\x18\n" +
+	"\aservice\x18\x04 \x01(\tR\aservice\x12\x12\n" +
+	"\x04name\x18\x05 \x01(\tR\x04name\x12\x1d\n" +
 	"\n" +
-	"guard_name\x18\x05 \x01(\tR\tguardName\x12\x10\n" +
-	"\x03val\x18\x06 \x01(\bR\x03val\x12\x19\n" +
-	"\x05order\x18\a \x01(\x05H\x01R\x05order\x88\x01\x01\x12\x17\n" +
-	"\x04icon\x18\b \x01(\tH\x02R\x04icon\x88\x01\x01B\r\n" +
+	"guard_name\x18\x06 \x01(\tR\tguardName\x12\x10\n" +
+	"\x03val\x18\a \x01(\bR\x03val\x12\x19\n" +
+	"\x05order\x18\b \x01(\x05H\x01R\x05order\x88\x01\x01\x12\x17\n" +
+	"\x04icon\x18\t \x01(\tH\x02R\x04icon\x88\x01\x01B\r\n" +
 	"\v_created_atB\b\n" +
 	"\x06_orderB\a\n" +
 	"\x05_icon\"\xa4\x03\n" +

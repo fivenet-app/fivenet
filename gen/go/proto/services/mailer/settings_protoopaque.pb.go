@@ -822,20 +822,20 @@ const file_services_mailer_settings_proto_rawDesc = "" +
 	"\x17SetEmailSettingsRequest\x12D\n" +
 	"\bsettings\x18\x01 \x01(\v2(.resources.mailer.settings.EmailSettingsR\bsettings\"`\n" +
 	"\x18SetEmailSettingsResponse\x12D\n" +
-	"\bsettings\x18\x01 \x01(\v2(.resources.mailer.settings.EmailSettingsR\bsettings2\x90\x06\n" +
+	"\bsettings\x18\x01 \x01(\v2(.resources.mailer.settings.EmailSettingsR\bsettings2\x91\x06\n" +
 	"\x0fSettingsService\x12r\n" +
-	"\rListTemplates\x12%.services.mailer.ListTemplatesRequest\x1a&.services.mailer.ListTemplatesResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\rListTemplates\x12%.services.mailer.ListTemplatesRequest\x1a&.services.mailer.ListTemplatesResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12l\n" +
-	"\vGetTemplate\x12#.services.mailer.GetTemplateRequest\x1a$.services.mailer.GetTemplateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\vGetTemplate\x12#.services.mailer.GetTemplateRequest\x1a$.services.mailer.GetTemplateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12\x8d\x01\n" +
-	"\x16CreateOrUpdateTemplate\x12..services.mailer.CreateOrUpdateTemplateRequest\x1a/.services.mailer.CreateOrUpdateTemplateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\x16CreateOrUpdateTemplate\x12..services.mailer.CreateOrUpdateTemplateRequest\x1a/.services.mailer.CreateOrUpdateTemplateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12u\n" +
-	"\x0eDeleteTemplate\x12&.services.mailer.DeleteTemplateRequest\x1a'.services.mailer.DeleteTemplateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\x0eDeleteTemplate\x12&.services.mailer.DeleteTemplateRequest\x1a'.services.mailer.DeleteTemplateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12{\n" +
-	"\x10GetEmailSettings\x12(.services.mailer.GetEmailSettingsRequest\x1a).services.mailer.GetEmailSettingsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\x10GetEmailSettings\x12(.services.mailer.GetEmailSettingsRequest\x1a).services.mailer.GetEmailSettingsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12{\n" +
-	"\x10SetEmailSettings\x12(.services.mailer.SetEmailSettingsRequest\x1a).services.mailer.SetEmailSettingsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
-	"ListEmails\x1a\x1a\xea\xf3\x18\x16\"\x14mailer.MailerServiceBJZHgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer;mailerb\x06proto3"
+	"\x10SetEmailSettings\x12(.services.mailer.SetEmailSettingsRequest\x1a).services.mailer.SetEmailSettingsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
+	"ListEmails\x1a\x1b\xea\xf3\x18\x17\x1a\x06mailer\"\rMailerServiceBJZHgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer;mailerb\x06proto3"
 
 var file_services_mailer_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_services_mailer_settings_proto_goTypes = []any{

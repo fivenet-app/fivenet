@@ -12,7 +12,6 @@ import (
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	permissionsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/events"
 	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
-	"github.com/fivenet-app/fivenet/v2026/pkg/perms/collections"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -25,16 +24,18 @@ var (
 )
 
 type (
-	Category string
-	Name     string
+	Namespace string
+	Service   string
+	Name      string
 )
 
 type Perm struct {
-	Category Category
-	Name     Name
-	Attrs    []Attr
-	Order    int32
-	Icon     string
+	Namespace Namespace
+	Service   Service
+	Name      Name
+	Attrs     []Attr
+	Order     int32
+	Icon      string
 }
 
 type Attr struct {
@@ -52,16 +53,16 @@ func AddPermsToList(perms []*Perm) {
 	permsList = append(permsList, perms...)
 }
 
-func BuildGuard(category Category, name Name) string {
-	return Guard(string(category) + "." + string(name))
+func BuildGuard(namespace Namespace, service Service, name Name) string {
+	return guard(string(namespace) + "." + string(service) + "/" + string(name))
 }
 
-func BuildGuardWithKey(category Category, name Name, key Key) string {
-	return Guard(string(category) + "." + string(name) + "." + string(key))
+func BuildGuardWithKey(namespace Namespace, service Service, name Name, key Key) string {
+	return guard(string(namespace) + "." + string(service) + "/" + string(name) + "." + string(key))
 }
 
-func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
-	if err := p.cleanupRoles(ctx); err != nil {
+func (ps *Perms) register(ctx context.Context, defaultRolePerms []string) error {
+	if err := ps.cleanupRoles(ctx); err != nil {
 		return fmt.Errorf("failed to cleanup roles. %w", err)
 	}
 
@@ -71,28 +72,37 @@ func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
 			icon = &perm.Icon
 		}
 
-		permId, err := p.createOrUpdatePermission(ctx, perm.Category, perm.Name, perm.Order, icon)
+		permId, err := ps.createOrUpdatePermission(
+			ctx,
+			perm.Namespace,
+			perm.Service,
+			perm.Name,
+			perm.Order,
+			icon,
+		)
 		if err != nil {
 			return fmt.Errorf(
-				"failed to create or update permission (category: %s, name: %s). %w",
-				perm.Category,
+				"failed to create or update permission (namespace: %s, service: %s, name: %s). %w",
+				perm.Namespace,
+				perm.Service,
 				perm.Name,
 				err,
 			)
 		}
 
-		p.permsMap.Store(permId, &cachePerm{
+		ps.permsMap.Store(permId, &cachePerm{
 			ID:        permId,
-			Category:  perm.Category,
+			Namespace: perm.Namespace,
+			Service:   perm.Service,
 			Name:      perm.Name,
-			GuardName: BuildGuard(perm.Category, perm.Name),
+			GuardName: BuildGuard(perm.Namespace, perm.Service, perm.Name),
 			Order:     &perm.Order,
 			Icon:      icon,
 		})
-		p.permsGuardToIDMap.Store(BuildGuard(perm.Category, perm.Name), permId)
+		ps.permsGuardToIDMap.Store(BuildGuard(perm.Namespace, perm.Service, perm.Name), permId)
 
 		for _, attr := range perm.Attrs {
-			if _, err := p.registerOrUpdateAttribute(
+			if _, err := ps.registerOrUpdateAttribute(
 				ctx,
 				permId,
 				attr.Key,
@@ -107,34 +117,34 @@ func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
 				)
 			}
 		}
-		p.logger.Debug(
+		ps.logger.Debug(
 			"registered permission",
-			zap.String("guard", BuildGuard(perm.Category, perm.Name)),
+			zap.String("guard", BuildGuard(perm.Namespace, perm.Service, perm.Name)),
 		)
 	}
 
-	if err := p.SetDefaultRolePerms(ctx, defaultRolePerms); err != nil {
+	if err := ps.SetDefaultRolePerms(ctx, defaultRolePerms); err != nil {
 		return fmt.Errorf("failed to set default role perms. %w", err)
 	}
 
 	return nil
 }
 
-func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) error {
+func (ps *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) error {
 	if len(defaultPerms) == 0 {
 		return nil
 	}
 
-	role, err := p.CreateRole(ctx, DefaultRoleJob, p.startJobGrade)
+	role, err := ps.CreateRole(ctx, DefaultRoleJob, ps.startJobGrade)
 	if err != nil {
 		return fmt.Errorf("failed to create role. %w", err)
 	}
 
 	addPerms := []AddPerm{}
 	for _, perm := range defaultPerms {
-		permId, ok := p.permsGuardToIDMap.Load(perm)
+		permId, ok := ps.permsGuardToIDMap.Load(perm)
 		if !ok {
-			p.logger.Warn("default perm not found, skipping", zap.String("guard", perm))
+			ps.logger.Warn("default perm not found, skipping", zap.String("guard", perm))
 			continue
 		}
 
@@ -144,7 +154,7 @@ func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) 
 		})
 	}
 
-	currentPerms, err := p.GetRolePermissions(ctx, role.GetId())
+	currentPerms, err := ps.GetRolePermissions(ctx, role.GetId())
 	if err != nil {
 		return fmt.Errorf("failed to get role permissions. %w", err)
 	}
@@ -166,32 +176,33 @@ func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) 
 	}
 
 	if len(addPerms) > 0 {
-		if err := p.UpdateRolePermissions(ctx, role.GetId(), addPerms...); err != nil {
+		if err := ps.UpdateRolePermissions(ctx, role.GetId(), addPerms...); err != nil {
 			return fmt.Errorf("failed to update role permissions. %w", err)
 		}
 	}
 
 	if len(removePerms) > 0 {
-		if err := p.RemovePermissionsFromRole(ctx, role.GetId(), removePerms...); err != nil {
+		if err := ps.RemovePermissionsFromRole(ctx, role.GetId(), removePerms...); err != nil {
 			return fmt.Errorf("failed to remove permissions from role. %w", err)
 		}
 	}
 
-	if err := p.loadRolePermissions(ctx, role.GetId()); err != nil {
+	if err := ps.loadRolePermissions(ctx, role.GetId()); err != nil {
 		return fmt.Errorf("failed to load role permissions. %w", err)
 	}
 
 	return nil
 }
 
-func (p *Perms) createOrUpdatePermission(
+func (ps *Perms) createOrUpdatePermission(
 	ctx context.Context,
-	category Category,
+	namespace Namespace,
+	service Service,
 	name Name,
 	order int32,
 	icon *string,
 ) (int64, error) {
-	perm, err := p.loadPermissionFromDatabaseByCategoryName(ctx, category, name)
+	perm, err := ps.loadPermissionFromDatabaseByCategoryName(ctx, namespace, service, name)
 	if err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return 0, fmt.Errorf("failed to load permission from database by guard. %w", err)
@@ -199,12 +210,15 @@ func (p *Perms) createOrUpdatePermission(
 	}
 
 	if perm != nil {
-		if Category(perm.GetCategory()) != category || Name(perm.GetName()) != name ||
-			(perm.GetOrder() != order) || (icon == nil || perm.GetIcon() != *icon) {
-			if err := p.UpdatePermission(
+		if Namespace(perm.GetNamespace()) != namespace || Service(perm.GetService()) != service ||
+			Name(perm.GetName()) != name ||
+			(perm.GetOrder() != order) ||
+			(icon == nil || perm.GetIcon() != *icon) {
+			if err := ps.updatePermission(
 				ctx,
 				perm.GetId(),
-				category,
+				namespace,
+				service,
 				name,
 				order,
 				icon,
@@ -216,17 +230,17 @@ func (p *Perms) createOrUpdatePermission(
 		return perm.GetId(), nil
 	}
 
-	return p.CreatePermission(ctx, category, name, order, icon)
+	return ps.createPermission(ctx, namespace, service, name, order, icon)
 }
 
-func (p *Perms) registerOrUpdateAttribute(
+func (ps *Perms) registerOrUpdateAttribute(
 	ctx context.Context,
 	permId int64,
 	key Key,
 	aType permissionsattributes.AttributeTypes,
 	validValues any,
 ) (int64, error) {
-	attr, err := p.getAttributeFromDatabase(ctx, permId, key)
+	attr, err := ps.getAttributeFromDatabase(ctx, permId, key)
 	if err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return 0, fmt.Errorf("failed to get attribute from database. %w", err)
@@ -235,7 +249,7 @@ func (p *Perms) registerOrUpdateAttribute(
 
 	attrValidValues := &permissionsattributes.AttributeValues{}
 	if attr != nil && attr.ValidValues != nil {
-		if err := p.convertRawValue(attrValidValues, *attr.ValidValues, aType); err != nil {
+		if err := ps.convertRawValue(attrValidValues, *attr.ValidValues, aType); err != nil {
 			return 0, fmt.Errorf("failed to convert raw value. %w", err)
 		}
 	}
@@ -264,17 +278,17 @@ func (p *Perms) registerOrUpdateAttribute(
 	}
 
 	validVals := &permissionsattributes.AttributeValues{}
-	if err := p.convertRawValue(validVals, validValsOut, aType); err != nil {
+	if err := ps.convertRawValue(validVals, validValsOut, aType); err != nil {
 		return 0, fmt.Errorf("failed to convert raw value for valid values. %w", err)
 	}
 
 	if attr != nil && attr.ID > 0 {
-		if err := p.addOrUpdateAttributeInMap(permId, attr.ID, key, aType, validVals); err != nil {
+		if err := ps.addOrUpdateAttributeInMap(permId, attr.ID, key, aType, validVals); err != nil {
 			return 0, fmt.Errorf("failed to add or update attribute in map. %w", err)
 		}
 
 		if attr.Type != string(aType) || (attr.ValidValues == nil || validVals != attrValidValues) {
-			if err := p.UpdateAttribute(ctx, attr.ID, permId, key, aType, validVals); err != nil {
+			if err := ps.updateAttribute(ctx, attr.ID, permId, key, aType, validVals); err != nil {
 				return attr.ID, fmt.Errorf("failed to update attribute. %w", err)
 			}
 			return attr.ID, nil
@@ -283,20 +297,20 @@ func (p *Perms) registerOrUpdateAttribute(
 		return attr.ID, nil
 	}
 
-	attrId, err := p.CreateAttribute(ctx, permId, key, aType, validVals)
+	attrId, err := ps.createAttribute(ctx, permId, key, aType, validVals)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create attribute. %w", err)
 	}
 
-	if err := p.addOrUpdateAttributeInMap(permId, attrId, key, aType, validVals); err != nil {
+	if err := ps.addOrUpdateAttributeInMap(permId, attrId, key, aType, validVals); err != nil {
 		return 0, fmt.Errorf("failed to add or update attribute in map after creation. %w", err)
 	}
 
 	return attrId, nil
 }
 
-func (p *Perms) cleanupRoles(ctx context.Context) error {
-	if err := p.updateDefaultRole(ctx); err != nil {
+func (ps *Perms) cleanupRoles(ctx context.Context) error {
+	if err := ps.updateDefaultRole(ctx); err != nil {
 		return err
 	}
 
@@ -319,26 +333,26 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 		)
 
 	var dest []*jobs.Job
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf("failed to query jobs and job grades. %w", err)
 		}
 	}
 
-	existingRoles, err := p.GetRoles(ctx, false)
+	existingRoles, err := ps.GetRoles(ctx, false)
 	if err != nil {
 		return fmt.Errorf("failed to get roles. %w", err)
 	}
 
 	// Remove default role from the list of roles
 	existingRoles = slices.DeleteFunc(existingRoles, func(role *permissionspermissions.Role) bool {
-		return role.GetJob() == DefaultRoleJob && role.GetGrade() == p.startJobGrade
+		return role.GetJob() == DefaultRoleJob && role.GetGrade() == ps.startJobGrade
 	})
 
 	// Iterate over current job and job grades to find any non-existent roles in our database
 	for i := range dest {
 		for _, grade := range dest[i].GetGrades() {
-			role, err := p.GetRoleByJobAndGrade(ctx, dest[i].GetName(), grade.GetGrade())
+			role, err := ps.GetRoleByJobAndGrade(ctx, dest[i].GetName(), grade.GetGrade())
 			if err != nil {
 				return fmt.Errorf("failed to get role by job and grade. %w", err)
 			}
@@ -356,8 +370,8 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 	}
 
 	// Skip removal of roles if the cleanup is disabled
-	if !p.cleanupRolesForMissingJobs {
-		p.logger.Debug(
+	if !ps.cleanupRolesForMissingJobs {
+		ps.logger.Debug(
 			"skipping cleanup of roles for missing jobs",
 			zap.Any("roles", existingRoles),
 		)
@@ -366,7 +380,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 
 	// Remove all roles that shouldn't exist anymore
 	for i := range existingRoles {
-		if err := p.DeleteRole(ctx, existingRoles[i].GetId()); err != nil {
+		if err := ps.DeleteRole(ctx, existingRoles[i].GetId()); err != nil {
 			return fmt.Errorf("failed to delete role. %w", err)
 		}
 	}
@@ -374,26 +388,26 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 	return nil
 }
 
-func (p *Perms) updateDefaultRole(ctx context.Context) error {
+func (ps *Perms) updateDefaultRole(ctx context.Context) error {
 	// Make sure the start job grade is set correctly
 	stmt := tRoles.
 		UPDATE(
 			tRoles.Grade,
 		).
 		SET(
-			tRoles.Grade.SET(mysql.Int32(p.startJobGrade)),
+			tRoles.Grade.SET(mysql.Int32(ps.startJobGrade)),
 		).
 		WHERE(tRoles.Job.EQ(mysql.String(DefaultRoleJob))).
 		LIMIT(1)
 
-	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		return fmt.Errorf("failed to update default role grade. %w", err)
 	}
 
 	return nil
 }
 
-func (p *Perms) getActiveJobs(ctx context.Context) ([]string, error) {
+func (ps *Perms) getActiveJobs(ctx context.Context) ([]string, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.Job,
@@ -405,7 +419,7 @@ func (p *Perms) getActiveJobs(ctx context.Context) ([]string, error) {
 		GROUP_BY(tRoles.Job)
 
 	var dest []string
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query active jobs. %w", err)
 		}
@@ -414,25 +428,25 @@ func (p *Perms) getActiveJobs(ctx context.Context) ([]string, error) {
 	return dest, nil
 }
 
-func (p *Perms) ApplyJobPermissions(ctx context.Context, job string) error {
+func (ps *Perms) ApplyJobPermissions(ctx context.Context, job string) error {
 	jobs := []string{}
 	if job != "" {
 		jobs = append(jobs, job)
 	} else {
 		var err error
-		jobs, err = p.getActiveJobs(ctx)
+		jobs, err = ps.getActiveJobs(ctx)
 		if err != nil {
 			return fmt.Errorf("failed to get active jobs. %w", err)
 		}
 	}
 
 	for _, job := range jobs {
-		if err := p.applyJobPermissions(ctx, job); err != nil {
+		if err := ps.applyJobPermissions(ctx, job); err != nil {
 			return fmt.Errorf("failed to apply job permissions for job %s. %w", job, err)
 		}
 	}
 
-	if err := p.publishMessage(ctx, JobLimitsUpdatedSubject, &permissionsevents.RoleIDEvent{
+	if err := ps.publishMessage(ctx, JobLimitsUpdatedSubject, &permissionsevents.RoleIDEvent{
 		Job: job,
 	}); err != nil {
 		return fmt.Errorf("failed to publish job perm update message for job %s. %w", job, err)
@@ -522,9 +536,9 @@ func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
 	return nil
 }
 
-func (p *Perms) applyJobPermissionsToAttrs(
+func (ps *Perms) applyJobPermissionsToAttrs(
 	ctx context.Context,
-	roles collections.Roles,
+	roles []*permissionspermissions.Role,
 	jps []*permissionspermissions.Permission,
 ) error {
 	if len(roles) == 0 {
@@ -532,7 +546,7 @@ func (p *Perms) applyJobPermissionsToAttrs(
 	}
 
 	for _, role := range roles {
-		attrs, err := p.GetRoleAttributes(ctx, role.GetJob(), role.GetGrade())
+		attrs, err := ps.GetRoleAttributes(ctx, role.GetJob(), role.GetGrade())
 		if err != nil {
 			return fmt.Errorf(
 				"failed to get role attributes for job %s and grade %d. %w",
@@ -547,11 +561,11 @@ func (p *Perms) applyJobPermissionsToAttrs(
 		}
 
 		if len(jps) == 0 {
-			p.logger.Debug(
+			ps.logger.Debug(
 				"removing all attributes from role due to job perms change",
 				zap.String("job", role.GetJob()),
 			)
-			if err := p.RemoveAttributesFromRole(ctx, role.GetId(), attrs...); err != nil {
+			if err := ps.RemoveAttributesFromRole(ctx, role.GetId(), attrs...); err != nil {
 				return fmt.Errorf(
 					"failed to remove all attributes from role %d. %w",
 					role.GetId(),
@@ -564,14 +578,14 @@ func (p *Perms) applyJobPermissionsToAttrs(
 		toRemove := []*permissionsattributes.RoleAttribute{}
 		toUpdate := []*permissionsattributes.RoleAttribute{}
 		for _, attr := range attrs {
-			maxValues, _ := p.GetJobAttributeValue(ctx, role.GetJob(), attr.GetAttrId())
+			maxValues, _ := ps.GetJobAttributeValue(ctx, role.GetJob(), attr.GetAttrId())
 
 			if slices.ContainsFunc(jps, func(in *permissionspermissions.Permission) bool {
 				return in.GetId() == attr.GetPermissionId()
 			}) {
 				if _, changed := attr.GetValue().
 					Check(permissionsattributes.AttributeTypes(attr.GetType()), attr.GetValidValues(), maxValues); changed {
-					p.logger.Debug(
+					ps.logger.Debug(
 						"attribute changed on role due to job perms change",
 						zap.String("job", role.GetJob()),
 						zap.Int64("attr_id", attr.GetAttrId()),
@@ -581,7 +595,7 @@ func (p *Perms) applyJobPermissionsToAttrs(
 					)
 					toUpdate = append(toUpdate, attr)
 				} else {
-					p.logger.Debug(
+					ps.logger.Debug(
 						"attribute not changed on role due to job perms change",
 						zap.String("job", role.GetJob()),
 						zap.Int64("attr_id", attr.GetAttrId()),
@@ -596,23 +610,23 @@ func (p *Perms) applyJobPermissionsToAttrs(
 		}
 
 		if len(toRemove) > 0 {
-			p.logger.Debug(
+			ps.logger.Debug(
 				"removing attribute from role due to job perms change",
 				zap.String("job", role.GetJob()),
 				zap.Int("perms_length", len(toRemove)),
 			)
-			if err := p.RemoveAttributesFromRole(ctx, role.GetId(), toRemove...); err != nil {
+			if err := ps.RemoveAttributesFromRole(ctx, role.GetId(), toRemove...); err != nil {
 				return fmt.Errorf("failed to remove attributes from role %d. %w", role.GetId(), err)
 			}
 		}
 
 		if len(toUpdate) > 0 {
-			p.logger.Debug(
+			ps.logger.Debug(
 				"updating attribute on role due to job perms change",
 				zap.String("job", role.GetJob()),
 				zap.Int("perms_length", len(toUpdate)),
 			)
-			if err := p.UpdateRoleAttributes(
+			if err := ps.UpdateRoleAttributes(
 				ctx,
 				role.GetJob(),
 				role.GetId(),

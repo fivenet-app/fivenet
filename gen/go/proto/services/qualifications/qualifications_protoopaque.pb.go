@@ -2141,23 +2141,23 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"!DeleteQualificationResultResponse2\xbb\x10\n" +
 	"\x15QualificationsService\x12\x85\x01\n" +
 	"\x12ListQualifications\x122.services.qualifications.ListQualificationsRequest\x1a3.services.qualifications.ListQualificationsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x93\x01\n" +
-	"\x10GetQualification\x120.services.qualifications.GetQualificationRequest\x1a1.services.qualifications.GetQualificationResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\x9d\x01\n" +
-	"\x13CreateQualification\x123.services.qualifications.CreateQualificationRequest\x1a4.services.qualifications.CreateQualificationResponse\"\x1b\xd2\xf3\x18\x17\b\x01\x1a\x13UpdateQualification\x12\xc9\x01\n" +
-	"\x13UpdateQualification\x123.services.qualifications.UpdateQualificationRequest\x1a4.services.qualifications.UpdateQualificationResponse\"G\xd2\xf3\x18C\b\x01*+\n" +
+	"\x10GetQualification\x120.services.qualifications.GetQualificationRequest\x1a1.services.qualifications.GetQualificationResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListQualifications\x12\x9d\x01\n" +
+	"\x13CreateQualification\x123.services.qualifications.CreateQualificationRequest\x1a4.services.qualifications.CreateQualificationResponse\"\x1b\xd2\xf3\x18\x17\b\x01\"\x13UpdateQualification\x12\xc9\x01\n" +
+	"\x13UpdateQualification\x123.services.qualifications.UpdateQualificationRequest\x1a4.services.qualifications.UpdateQualificationResponse\"G\xd2\xf3\x18C\b\x01:+\n" +
 	"\x06Access\x18\x01\"\x03Own\"\n" +
-	"Lower_Rank\"\tSame_Rank\"\x03Any*\x12\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03Any:\x12\n" +
 	"\x06Fields\x18\x01\"\x06Public\x12\xb5\x01\n" +
-	"\x13DeleteQualification\x123.services.qualifications.DeleteQualificationRequest\x1a4.services.qualifications.DeleteQualificationResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
+	"\x13DeleteQualification\x123.services.qualifications.DeleteQualificationRequest\x1a4.services.qualifications.DeleteQualificationResponse\"3\xd2\xf3\x18/\b\x01:+\n" +
 	"\x06Access\x18\x01\"\x03Own\"\n" +
 	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\xae\x01\n" +
-	"\x19ListQualificationRequests\x129.services.qualifications.ListQualificationRequestsRequest\x1a:.services.qualifications.ListQualificationRequestsResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\xc9\x01\n" +
-	"\"CreateOrUpdateQualificationRequest\x12B.services.qualifications.CreateOrUpdateQualificationRequestRequest\x1aC.services.qualifications.CreateOrUpdateQualificationRequestResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\xa5\x01\n" +
-	"\x16DeleteQualificationReq\x126.services.qualifications.DeleteQualificationReqRequest\x1a7.services.qualifications.DeleteQualificationReqResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\xae\x01\n" +
-	"\x19ListQualificationsResults\x129.services.qualifications.ListQualificationsResultsRequest\x1a:.services.qualifications.ListQualificationsResultsResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\xc6\x01\n" +
-	"!CreateOrUpdateQualificationResult\x12A.services.qualifications.CreateOrUpdateQualificationResultRequest\x1aB.services.qualifications.CreateOrUpdateQualificationResultResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\xae\x01\n" +
-	"\x19DeleteQualificationResult\x129.services.qualifications.DeleteQualificationResultRequest\x1a:.services.qualifications.DeleteQualificationResultResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12r\n" +
+	"\x19ListQualificationRequests\x129.services.qualifications.ListQualificationRequestsRequest\x1a:.services.qualifications.ListQualificationRequestsResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListQualifications\x12\xc9\x01\n" +
+	"\"CreateOrUpdateQualificationRequest\x12B.services.qualifications.CreateOrUpdateQualificationRequestRequest\x1aC.services.qualifications.CreateOrUpdateQualificationRequestResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListQualifications\x12\xa5\x01\n" +
+	"\x16DeleteQualificationReq\x126.services.qualifications.DeleteQualificationReqRequest\x1a7.services.qualifications.DeleteQualificationReqResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListQualifications\x12\xae\x01\n" +
+	"\x19ListQualificationsResults\x129.services.qualifications.ListQualificationsResultsRequest\x1a:.services.qualifications.ListQualificationsResultsResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListQualifications\x12\xc6\x01\n" +
+	"!CreateOrUpdateQualificationResult\x12A.services.qualifications.CreateOrUpdateQualificationResultRequest\x1aB.services.qualifications.CreateOrUpdateQualificationResultResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListQualifications\x12\xae\x01\n" +
+	"\x19DeleteQualificationResult\x129.services.qualifications.DeleteQualificationResultRequest\x1a:.services.qualifications.DeleteQualificationResultResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListQualifications\x12r\n" +
 	"\n" +
-	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1b\xd2\xf3\x18\x17\b\x01\x1a\x13UpdateQualification(\x01\x1a\x1c\xea\xf3\x18\x18\bP\x12\x14i-mdi-school-outlineBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1b\xd2\xf3\x18\x17\b\x01\"\x13UpdateQualification(\x01\x1a\x1c\xea\xf3\x18\x18\bP\x12\x14i-mdi-school-outlineBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
 
 var file_services_qualifications_qualifications_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_services_qualifications_qualifications_proto_goTypes = []any{

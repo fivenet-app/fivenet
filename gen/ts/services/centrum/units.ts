@@ -866,11 +866,11 @@ export const ListUnitActivityResponse = new ListUnitActivityResponse$Type();
  * @generated ServiceType for protobuf service services.centrum.UnitsService
  */
 export const UnitsService = new ServiceType("services.centrum.UnitsService", [
-    { name: "JoinUnit", options: { "codegen.perms.perms": { enabled: true, name: "Stream" } }, I: JoinUnitRequest, O: JoinUnitResponse },
-    { name: "ListUnits", options: { "codegen.perms.perms": { enabled: true, name: "Stream" } }, I: ListUnitsRequest, O: ListUnitsResponse },
-    { name: "ListUnitActivity", options: { "codegen.perms.perms": { enabled: true, name: "Stream" } }, I: ListUnitActivityRequest, O: ListUnitActivityResponse },
+    { name: "JoinUnit", options: { "codegen.perms.perms": { enabled: true, namespace: "centrum", service: "CentrumService", name: "Stream" } }, I: JoinUnitRequest, O: JoinUnitResponse },
+    { name: "ListUnits", options: { "codegen.perms.perms": { enabled: true, namespace: "centrum", service: "CentrumService", name: "Stream" } }, I: ListUnitsRequest, O: ListUnitsResponse },
+    { name: "ListUnitActivity", options: { "codegen.perms.perms": { enabled: true, namespace: "centrum", service: "CentrumService", name: "Stream" } }, I: ListUnitActivityRequest, O: ListUnitActivityResponse },
     { name: "CreateOrUpdateUnit", options: { "codegen.perms.perms": { enabled: true } }, I: CreateOrUpdateUnitRequest, O: CreateOrUpdateUnitResponse },
     { name: "DeleteUnit", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteUnitRequest, O: DeleteUnitResponse },
-    { name: "AssignUnit", options: { "codegen.perms.perms": { enabled: true, name: "TakeControl" } }, I: AssignUnitRequest, O: AssignUnitResponse },
-    { name: "UpdateUnitStatus", options: { "codegen.perms.perms": { enabled: true, name: "TakeDispatch" } }, I: UpdateUnitStatusRequest, O: UpdateUnitStatusResponse }
-], { "codegen.perms.perms_svc": { name: "centrum.CentrumService" } });
+    { name: "AssignUnit", options: { "codegen.perms.perms": { enabled: true, namespace: "centrum", service: "CentrumService", name: "TakeControl" } }, I: AssignUnitRequest, O: AssignUnitResponse },
+    { name: "UpdateUnitStatus", options: { "codegen.perms.perms": { enabled: true, namespace: "centrum", service: "DispatchesService", name: "TakeDispatch" } }, I: UpdateUnitStatusRequest, O: UpdateUnitStatusResponse }
+], { "codegen.perms.perms_svc": { order: 110, icon: "i-mdi-account-group" } });

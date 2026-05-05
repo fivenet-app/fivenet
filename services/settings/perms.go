@@ -16,7 +16,6 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2026/pkg/perms/collections"
 	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -128,24 +127,23 @@ func (s *Server) GetRoles(
 ) (*pbsettings.GetRolesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	var roles collections.Roles
+	var roles []*permissionspermissions.Role
 	var err error
 
 	if userInfo.GetSuperuser() && req.LowestRank != nil && req.GetLowestRank() {
-		roles, err = s.ps.GetRoles(ctx, true)
+		rs, err := s.ps.GetRoles(ctx, true)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
 
 		collectedRoles := map[string]*permissionspermissions.Role{}
-		for _, role := range roles {
+		for _, role := range rs {
 			if _, ok := collectedRoles[role.GetJob()]; !ok {
 				collectedRoles[role.GetJob()] = role
 				continue
 			}
 		}
 
-		roles = collections.Roles{}
 		for _, role := range collectedRoles {
 			roles = append(roles, role)
 		}

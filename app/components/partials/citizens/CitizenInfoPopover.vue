@@ -142,7 +142,7 @@ watchOnce(opened, async () => {
                     />
 
                     <UButton
-                        v-if="can('jobs.JobsService/GetColleague').value && user?.job === activeChar?.job"
+                        v-if="can('jobs.ColleaguesService/GetColleague').value && user?.job === activeChar?.job"
                         variant="link"
                         icon="i-mdi-briefcase"
                         :label="$t('common.colleague')"

@@ -88,6 +88,11 @@ func (m *PermsOptions) Sanitize() error {
 
 	}
 
+	// Field: Namespace
+	if m.Namespace != nil {
+		*m.Namespace = htmlsanitizer.Sanitize(*m.Namespace)
+	}
+
 	// Field: Service
 	if m.Service != nil {
 		*m.Service = htmlsanitizer.Sanitize(*m.Service)
@@ -120,9 +125,14 @@ func (m *ServiceOptions) Sanitize() error {
 		*m.Icon = htmlsanitizer.Sanitize(*m.Icon)
 	}
 
-	// Field: Name
-	if m.Name != nil {
-		*m.Name = htmlsanitizer.Sanitize(*m.Name)
+	// Field: Namespace
+	if m.Namespace != nil {
+		*m.Namespace = htmlsanitizer.Sanitize(*m.Namespace)
+	}
+
+	// Field: Service
+	if m.Service != nil {
+		*m.Service = htmlsanitizer.Sanitize(*m.Service)
 	}
 
 	return nil

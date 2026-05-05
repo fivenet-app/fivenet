@@ -10,18 +10,119 @@ import (
 )
 
 const (
-	CentrumServicePerm perms.Category = "centrum.CentrumService"
+	Namespace perms.Namespace = "centrum"
 
-	// Service: CentrumService
-	CentrumServiceCreateDispatchPerm            perms.Name = "CreateDispatch"
-	CentrumServiceCreateOrUpdateUnitPerm        perms.Name = "CreateOrUpdateUnit"
-	CentrumServiceDeleteDispatchPerm            perms.Name = "DeleteDispatch"
-	CentrumServiceDeleteUnitPerm                perms.Name = "DeleteUnit"
+	CentrumServicePerm    perms.Service = "CentrumService"
+	DispatchesServicePerm perms.Service = "DispatchesService"
+	UnitsServicePerm      perms.Service = "UnitsService"
+
+	// Service: centrum.CentrumService
 	CentrumServiceStreamPerm                    perms.Name = "Stream"
 	CentrumServiceTakeControlPerm               perms.Name = "TakeControl"
-	CentrumServiceTakeDispatchPerm              perms.Name = "TakeDispatch"
-	CentrumServiceUpdateDispatchPerm            perms.Name = "UpdateDispatch"
 	CentrumServiceUpdateDispatchersPerm         perms.Name = "UpdateDispatchers"
 	CentrumServiceUpdateSettingsPerm            perms.Name = "UpdateSettings"
 	CentrumServiceUpdateSettingsAccessPermField perms.Key  = "Access"
+
+	// Service: centrum.DispatchesService
+	DispatchesServiceCreateDispatchPerm perms.Name = "CreateDispatch"
+	DispatchesServiceDeleteDispatchPerm perms.Name = "DeleteDispatch"
+	DispatchesServiceTakeDispatchPerm   perms.Name = "TakeDispatch"
+	DispatchesServiceUpdateDispatchPerm perms.Name = "UpdateDispatch"
+
+	// Service: centrum.UnitsService
+	UnitsServiceCreateOrUpdateUnitPerm perms.Name = "CreateOrUpdateUnit"
+	UnitsServiceDeleteUnitPerm         perms.Name = "DeleteUnit"
 )
+
+type CentrumServicePerms struct {
+	Stream            CentrumServiceStreamPermRef
+	TakeControl       CentrumServiceTakeControlPermRef
+	UpdateDispatchers CentrumServiceUpdateDispatchersPermRef
+	UpdateSettings    CentrumServiceUpdateSettingsPermRef
+}
+type CentrumServiceStreamPermRef struct {
+	Perm perms.PermissionRef
+}
+type CentrumServiceTakeControlPermRef struct {
+	Perm perms.PermissionRef
+}
+type CentrumServiceUpdateDispatchersPermRef struct {
+	Perm perms.PermissionRef
+}
+type CentrumServiceUpdateSettingsPermRef struct {
+	Perm   perms.PermissionRef
+	Access perms.AttrRef[perms.StringListAttr]
+}
+
+var CentrumService = CentrumServicePerms{
+	Stream: CentrumServiceStreamPermRef{
+		Perm: perms.NewPermissionRef(Namespace, CentrumServicePerm, CentrumServiceStreamPerm),
+	},
+	TakeControl: CentrumServiceTakeControlPermRef{
+		Perm: perms.NewPermissionRef(Namespace, CentrumServicePerm, CentrumServiceTakeControlPerm),
+	},
+	UpdateDispatchers: CentrumServiceUpdateDispatchersPermRef{
+		Perm: perms.NewPermissionRef(Namespace, CentrumServicePerm, CentrumServiceUpdateDispatchersPerm),
+	},
+	UpdateSettings: CentrumServiceUpdateSettingsPermRef{
+		Perm: perms.NewPermissionRef(Namespace, CentrumServicePerm, CentrumServiceUpdateSettingsPerm),
+		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, CentrumServicePerm, CentrumServiceUpdateSettingsPerm),
+			CentrumServiceUpdateSettingsAccessPermField,
+		),
+	},
+}
+
+type DispatchesServicePerms struct {
+	CreateDispatch DispatchesServiceCreateDispatchPermRef
+	DeleteDispatch DispatchesServiceDeleteDispatchPermRef
+	TakeDispatch   DispatchesServiceTakeDispatchPermRef
+	UpdateDispatch DispatchesServiceUpdateDispatchPermRef
+}
+type DispatchesServiceCreateDispatchPermRef struct {
+	Perm perms.PermissionRef
+}
+type DispatchesServiceDeleteDispatchPermRef struct {
+	Perm perms.PermissionRef
+}
+type DispatchesServiceTakeDispatchPermRef struct {
+	Perm perms.PermissionRef
+}
+type DispatchesServiceUpdateDispatchPermRef struct {
+	Perm perms.PermissionRef
+}
+
+var DispatchesService = DispatchesServicePerms{
+	CreateDispatch: DispatchesServiceCreateDispatchPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DispatchesServicePerm, DispatchesServiceCreateDispatchPerm),
+	},
+	DeleteDispatch: DispatchesServiceDeleteDispatchPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DispatchesServicePerm, DispatchesServiceDeleteDispatchPerm),
+	},
+	TakeDispatch: DispatchesServiceTakeDispatchPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DispatchesServicePerm, DispatchesServiceTakeDispatchPerm),
+	},
+	UpdateDispatch: DispatchesServiceUpdateDispatchPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DispatchesServicePerm, DispatchesServiceUpdateDispatchPerm),
+	},
+}
+
+type UnitsServicePerms struct {
+	CreateOrUpdateUnit UnitsServiceCreateOrUpdateUnitPermRef
+	DeleteUnit         UnitsServiceDeleteUnitPermRef
+}
+type UnitsServiceCreateOrUpdateUnitPermRef struct {
+	Perm perms.PermissionRef
+}
+type UnitsServiceDeleteUnitPermRef struct {
+	Perm perms.PermissionRef
+}
+
+var UnitsService = UnitsServicePerms{
+	CreateOrUpdateUnit: UnitsServiceCreateOrUpdateUnitPermRef{
+		Perm: perms.NewPermissionRef(Namespace, UnitsServicePerm, UnitsServiceCreateOrUpdateUnitPerm),
+	},
+	DeleteUnit: UnitsServiceDeleteUnitPermRef{
+		Perm: perms.NewPermissionRef(Namespace, UnitsServicePerm, UnitsServiceDeleteUnitPerm),
+	},
+}

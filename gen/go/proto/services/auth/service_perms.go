@@ -10,14 +10,16 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+		// Namespace: auth
 
 		// Service: auth.AuthService
 		{
-			Category: permkeys.AuthServicePerm,
-			Name:     permkeys.AuthServiceChooseCharacterPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-			Icon:     "i-mdi-key-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.AuthServicePerm,
+			Name:      permkeys.AuthServiceChooseCharacterPerm,
+			Attrs:     []perms.Attr{},
+			Order:     0,
+			Icon:      "i-mdi-key-outline",
 		},
 	})
 }

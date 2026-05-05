@@ -15,25 +15,99 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+		// Namespace: jobs
+
+		// Service: jobs.ColleaguesService
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ColleaguesServicePerm,
+			Name:      permkeys.ColleaguesServiceGetColleaguePerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.ColleaguesServiceGetColleagueAccessPermField,
+					Type:        permissionsattributes.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
+				},
+				{
+					Key:         permkeys.ColleaguesServiceGetColleagueTypesPermField,
+					Type:        permissionsattributes.StringListAttributeType,
+					ValidValues: []string{"Note", "Labels"},
+				},
+			},
+			Order: 6100,
+			Icon:  "i-mdi-briefcase-outline",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ColleaguesServicePerm,
+			Name:      permkeys.ColleaguesServiceListColleagueActivityPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.ColleaguesServiceListColleagueActivityTypesPermField,
+					Type:        permissionsattributes.StringListAttributeType,
+					ValidValues: []string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"},
+				},
+			},
+			Order: 6100,
+			Icon:  "i-mdi-briefcase-outline",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ColleaguesServicePerm,
+			Name:      permkeys.ColleaguesServiceListColleaguesPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6100,
+			Icon:      "i-mdi-briefcase-outline",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ColleaguesServicePerm,
+			Name:      permkeys.ColleaguesServiceManageLabelsPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6100,
+			Icon:      "i-mdi-briefcase-outline",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ColleaguesServicePerm,
+			Name:      permkeys.ColleaguesServiceSetColleaguePropsPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.ColleaguesServiceSetColleaguePropsAccessPermField,
+					Type:        permissionsattributes.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
+				},
+				{
+					Key:         permkeys.ColleaguesServiceSetColleaguePropsTypesPermField,
+					Type:        permissionsattributes.StringListAttributeType,
+					ValidValues: []string{"AbsenceDate", "Note", "Labels", "Name"},
+				},
+			},
+			Order: 6100,
+			Icon:  "i-mdi-briefcase-outline",
+		},
 
 		// Service: jobs.ConductService
 		{
-			Category: permkeys.ConductServicePerm,
-			Name:     permkeys.ConductServiceCreateConductEntryPerm,
-			Attrs:    []perms.Attr{},
-			Order:    6700,
-			Icon:     "i-mdi-list-status",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ConductServicePerm,
+			Name:      permkeys.ConductServiceCreateConductEntryPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6700,
+			Icon:      "i-mdi-list-status",
 		},
 		{
-			Category: permkeys.ConductServicePerm,
-			Name:     permkeys.ConductServiceDeleteConductEntryPerm,
-			Attrs:    []perms.Attr{},
-			Order:    6700,
-			Icon:     "i-mdi-list-status",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ConductServicePerm,
+			Name:      permkeys.ConductServiceDeleteConductEntryPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6700,
+			Icon:      "i-mdi-list-status",
 		},
 		{
-			Category: permkeys.ConductServicePerm,
-			Name:     permkeys.ConductServiceListConductEntriesPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ConductServicePerm,
+			Name:      permkeys.ConductServiceListConductEntriesPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.ConductServiceListConductEntriesAccessPermField,
@@ -45,105 +119,47 @@ func init() {
 			Icon:  "i-mdi-list-status",
 		},
 		{
-			Category: permkeys.ConductServicePerm,
-			Name:     permkeys.ConductServiceUpdateConductEntryPerm,
-			Attrs:    []perms.Attr{},
-			Order:    6700,
-			Icon:     "i-mdi-list-status",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ConductServicePerm,
+			Name:      permkeys.ConductServiceUpdateConductEntryPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6700,
+			Icon:      "i-mdi-list-status",
 		},
 
 		// Service: jobs.JobsService
 		{
-			Category: permkeys.JobsServicePerm,
-			Name:     permkeys.JobsServiceGetColleaguePerm,
-			Attrs: []perms.Attr{
-				{
-					Key:         permkeys.JobsServiceGetColleagueAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
-					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
-				},
-				{
-					Key:         permkeys.JobsServiceGetColleagueTypesPermField,
-					Type:        permissionsattributes.StringListAttributeType,
-					ValidValues: []string{"Note", "Labels"},
-				},
-			},
-			Order: 6000,
-			Icon:  "i-mdi-briefcase-outline",
-		},
-		{
-			Category: permkeys.JobsServicePerm,
-			Name:     permkeys.JobsServiceListColleagueActivityPerm,
-			Attrs: []perms.Attr{
-				{
-					Key:         permkeys.JobsServiceListColleagueActivityTypesPermField,
-					Type:        permissionsattributes.StringListAttributeType,
-					ValidValues: []string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"},
-				},
-			},
-			Order: 6000,
-			Icon:  "i-mdi-briefcase-outline",
-		},
-		{
-			Category: permkeys.JobsServicePerm,
-			Name:     permkeys.JobsServiceListColleaguesPerm,
-			Attrs:    []perms.Attr{},
-			Order:    6000,
-			Icon:     "i-mdi-briefcase-outline",
-		},
-		{
-			Category: permkeys.JobsServicePerm,
-			Name:     permkeys.JobsServiceManageLabelsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    6000,
-			Icon:     "i-mdi-briefcase-outline",
-		},
-		{
-			Category: permkeys.JobsServicePerm,
-			Name:     permkeys.JobsServiceSetColleaguePropsPerm,
-			Attrs: []perms.Attr{
-				{
-					Key:         permkeys.JobsServiceSetColleaguePropsAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
-					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
-				},
-				{
-					Key:         permkeys.JobsServiceSetColleaguePropsTypesPermField,
-					Type:        permissionsattributes.StringListAttributeType,
-					ValidValues: []string{"AbsenceDate", "Note", "Labels", "Name"},
-				},
-			},
-			Order: 6000,
-			Icon:  "i-mdi-briefcase-outline",
-		},
-		{
-			Category: permkeys.JobsServicePerm,
-			Name:     permkeys.JobsServiceSetMOTDPerm,
-			Attrs:    []perms.Attr{},
-			Order:    6000,
-			Icon:     "i-mdi-briefcase-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.JobsServicePerm,
+			Name:      permkeys.JobsServiceSetMOTDPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6000,
+			Icon:      "i-mdi-briefcase-outline",
 		},
 
 		// Service: jobs.StatsService
 		{
-			Category: permkeys.StatsServicePerm,
-			Name:     permkeys.StatsServiceGetStatsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    6800,
-			Icon:     "i-mdi-graph-box-multiple-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.StatsServicePerm,
+			Name:      permkeys.StatsServiceGetStatsPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6800,
+			Icon:      "i-mdi-graph-box-multiple-outline",
 		},
 
 		// Service: jobs.TimeclockService
 		{
-			Category: permkeys.TimeclockServicePerm,
-			Name:     permkeys.TimeclockServiceListInactiveEmployeesPerm,
-			Attrs:    []perms.Attr{},
-			Order:    6200,
-			Icon:     "i-mdi-timeline-clock-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.TimeclockServicePerm,
+			Name:      permkeys.TimeclockServiceListInactiveEmployeesPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6200,
+			Icon:      "i-mdi-timeline-clock-outline",
 		},
 		{
-			Category: permkeys.TimeclockServicePerm,
-			Name:     permkeys.TimeclockServiceListTimeclockPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.TimeclockServicePerm,
+			Name:      permkeys.TimeclockServiceListTimeclockPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.TimeclockServiceListTimeclockAccessPermField,

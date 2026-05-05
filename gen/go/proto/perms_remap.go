@@ -44,459 +44,489 @@
 
 package goproto
 
-var PermsRemap = map[string][]string{
+import (
+	permscentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum/perms"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
+	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
+	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
+	permsmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer/perms"
+	permsqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications/perms"
+	permssettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings/perms"
+	permswiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki/perms"
+	perms "github.com/fivenet-app/fivenet/v2026/pkg/perms"
+)
+
+var PermsRemap = map[string][]perms.PermissionRef{
 	// Service: auth.AuthService
-	"auth.AuthService/ImpersonateJob": []string{
-		"settings.SettingsService/UpdateRolePerms",
+	"auth.AuthService/ImpersonateJob": {
+		permssettings.SettingsService.UpdateRolePerms.Perm,
 	},
 
 	// Service: calendar.CalendarService
-	"calendar.CalendarService/CreateOrUpdateCalendarEntry": []string{
-		"Any",
+	"calendar.CalendarService/DeleteCalendar": {
+		perms.PermAnyRef,
 	},
-	"calendar.CalendarService/DeleteCalendar": []string{
-		"Any",
+	"calendar.CalendarService/GetCalendar": {
+		perms.PermAnyRef,
 	},
-	"calendar.CalendarService/DeleteCalendarEntry": []string{
-		"Any",
+	"calendar.CalendarService/ListCalendars": {
+		perms.PermAnyRef,
 	},
-	"calendar.CalendarService/GetCalendar": []string{
-		"Any",
+	"calendar.CalendarService/ListSubscriptions": {
+		perms.PermAnyRef,
 	},
-	"calendar.CalendarService/GetCalendarEntry": []string{
-		"Any",
+	"calendar.CalendarService/SubscribeToCalendar": {
+		perms.PermAnyRef,
 	},
-	"calendar.CalendarService/GetUpcomingEntries": []string{
-		"Any",
+	"calendar.CalendarService/UpdateCalendar": {
+		perms.PermAnyRef,
 	},
-	"calendar.CalendarService/ListCalendarEntries": []string{
-		"Any",
+
+	// Service: calendar.EntriesService
+	"calendar.EntriesService/CreateOrUpdateCalendarEntry": {
+		perms.PermAnyRef,
 	},
-	"calendar.CalendarService/ListCalendarEntryRSVP": []string{
-		"Any",
+	"calendar.EntriesService/DeleteCalendarEntry": {
+		perms.PermAnyRef,
 	},
-	"calendar.CalendarService/ListCalendars": []string{
-		"Any",
+	"calendar.EntriesService/GetCalendarEntry": {
+		perms.PermAnyRef,
 	},
-	"calendar.CalendarService/ListSubscriptions": []string{
-		"Any",
+	"calendar.EntriesService/GetUpcomingEntries": {
+		perms.PermAnyRef,
 	},
-	"calendar.CalendarService/RSVPCalendarEntry": []string{
-		"Any",
+	"calendar.EntriesService/ListCalendarEntries": {
+		perms.PermAnyRef,
 	},
-	"calendar.CalendarService/ShareCalendarEntry": []string{
-		"Any",
+	"calendar.EntriesService/ListCalendarEntryRSVP": {
+		perms.PermAnyRef,
 	},
-	"calendar.CalendarService/SubscribeToCalendar": []string{
-		"Any",
+	"calendar.EntriesService/RSVPCalendarEntry": {
+		perms.PermAnyRef,
 	},
-	"calendar.CalendarService/UpdateCalendar": []string{
-		"Any",
+	"calendar.EntriesService/ShareCalendarEntry": {
+		perms.PermAnyRef,
 	},
 
 	// Service: centrum.CentrumService
-	"centrum.CentrumService/AssignDispatch": []string{
-		"centrum.CentrumService/TakeControl",
+	"centrum.CentrumService/GetDispatchHeatmap": {
+		permscentrum.CentrumService.TakeControl.Perm,
 	},
-	"centrum.CentrumService/AssignUnit": []string{
-		"centrum.CentrumService/TakeControl",
+	"centrum.CentrumService/GetSettings": {
+		permscentrum.CentrumService.Stream.Perm,
 	},
-	"centrum.CentrumService/GetDispatch": []string{
-		"centrum.CentrumService/Stream",
+
+	// Service: centrum.DispatchesService
+	"centrum.DispatchesService/AssignDispatch": {
+		permscentrum.CentrumService.TakeControl.Perm,
 	},
-	"centrum.CentrumService/GetDispatchHeatmap": []string{
-		"centrum.CentrumService/TakeControl",
+	"centrum.DispatchesService/GetDispatch": {
+		permscentrum.CentrumService.Stream.Perm,
 	},
-	"centrum.CentrumService/GetSettings": []string{
-		"centrum.CentrumService/Stream",
+	"centrum.DispatchesService/ListDispatchActivity": {
+		permscentrum.CentrumService.Stream.Perm,
 	},
-	"centrum.CentrumService/JoinUnit": []string{
-		"centrum.CentrumService/Stream",
+	"centrum.DispatchesService/ListDispatchTargetJobs": {
+		permscentrum.DispatchesService.CreateDispatch.Perm,
 	},
-	"centrum.CentrumService/ListDispatchActivity": []string{
-		"centrum.CentrumService/Stream",
+	"centrum.DispatchesService/ListDispatches": {
+		permscentrum.CentrumService.Stream.Perm,
 	},
-	"centrum.CentrumService/ListDispatchTargetJobs": []string{
-		"centrum.CentrumService/CreateDispatch",
+	"centrum.DispatchesService/UpdateDispatchStatus": {
+		permscentrum.DispatchesService.TakeDispatch.Perm,
 	},
-	"centrum.CentrumService/ListDispatches": []string{
-		"centrum.CentrumService/Stream",
+
+	// Service: centrum.UnitsService
+	"centrum.UnitsService/AssignUnit": {
+		permscentrum.CentrumService.TakeControl.Perm,
 	},
-	"centrum.CentrumService/ListUnitActivity": []string{
-		"centrum.CentrumService/Stream",
+	"centrum.UnitsService/JoinUnit": {
+		permscentrum.CentrumService.Stream.Perm,
 	},
-	"centrum.CentrumService/ListUnits": []string{
-		"centrum.CentrumService/Stream",
+	"centrum.UnitsService/ListUnitActivity": {
+		permscentrum.CentrumService.Stream.Perm,
 	},
-	"centrum.CentrumService/UpdateDispatchStatus": []string{
-		"centrum.CentrumService/TakeDispatch",
+	"centrum.UnitsService/ListUnits": {
+		permscentrum.CentrumService.Stream.Perm,
 	},
-	"centrum.CentrumService/UpdateUnitStatus": []string{
-		"centrum.CentrumService/TakeDispatch",
+	"centrum.UnitsService/UpdateUnitStatus": {
+		permscentrum.DispatchesService.TakeDispatch.Perm,
 	},
 
 	// Service: citizens.CitizensService
-	"citizens.CitizensService/DeleteAvatar": []string{
-		"Any",
+	"citizens.CitizensService/DeleteAvatar": {
+		perms.PermAnyRef,
 	},
-	"citizens.CitizensService/DeleteMugshot": []string{
-		"citizens.CitizensService/SetUserProps",
+	"citizens.CitizensService/DeleteMugshot": {
+		permscitizens.CitizensService.SetUserProps.Perm,
 	},
-	"citizens.CitizensService/UploadAvatar": []string{
-		"Any",
+	"citizens.CitizensService/UploadAvatar": {
+		perms.PermAnyRef,
 	},
-	"citizens.CitizensService/UploadMugshot": []string{
-		"citizens.CitizensService/SetUserProps",
+	"citizens.CitizensService/UploadMugshot": {
+		permscitizens.CitizensService.SetUserProps.Perm,
 	},
 
 	// Service: citizens.LabelsService
-	"citizens.LabelsService/GetLabel": []string{
-		"citizens.LabelsService/ListLabels",
+	"citizens.LabelsService/GetLabel": {
+		permscitizens.LabelsService.ListLabels.Perm,
 	},
 
 	// Service: completor.CompletorService
-	"completor.CompletorService/CompleteCitizens": []string{
-		"Any",
+	"completor.CompletorService/CompleteCitizens": {
+		perms.PermAnyRef,
 	},
-	"completor.CompletorService/CompleteDocumentCategories": []string{
-		"documents.DocumentsService/ListCategories",
+	"completor.CompletorService/CompleteDocumentCategories": {
+		permsdocuments.CategoriesService.ListCategories.Perm,
 	},
-	"completor.CompletorService/CompleteJobs": []string{
-		"Any",
+	"completor.CompletorService/CompleteJobs": {
+		perms.PermAnyRef,
 	},
-	"completor.CompletorService/ListLawBooks": []string{
-		"Any",
+	"completor.CompletorService/ListLawBooks": {
+		perms.PermAnyRef,
 	},
 
 	// Service: documents.ApprovalService
-	"documents.ApprovalService/DecideApproval": []string{
-		"documents.DocumentsService/ListDocuments",
+	"documents.ApprovalService/DecideApproval": {
+		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
-	"documents.ApprovalService/ListApprovalPolicies": []string{
-		"documents.DocumentsService/ListDocuments",
+	"documents.ApprovalService/ListApprovalPolicies": {
+		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
-	"documents.ApprovalService/ListApprovalTasks": []string{
-		"documents.DocumentsService/ListDocuments",
+	"documents.ApprovalService/ListApprovalTasks": {
+		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
-	"documents.ApprovalService/ListApprovalTasksInbox": []string{
-		"documents.DocumentsService/ListDocuments",
+	"documents.ApprovalService/ListApprovalTasksInbox": {
+		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
-	"documents.ApprovalService/ListApprovals": []string{
-		"documents.DocumentsService/ListDocuments",
+	"documents.ApprovalService/ListApprovals": {
+		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
-	"documents.ApprovalService/RecomputeApprovalPolicyCounters": []string{
-		"documents.ApprovalService/RevokeApproval",
+	"documents.ApprovalService/RecomputeApprovalPolicyCounters": {
+		permsdocuments.ApprovalService.RevokeApproval.Perm,
 	},
-	"documents.ApprovalService/ReopenApprovalTask": []string{
-		"documents.ApprovalService/RevokeApproval",
+	"documents.ApprovalService/ReopenApprovalTask": {
+		permsdocuments.ApprovalService.RevokeApproval.Perm,
 	},
 
 	// Service: documents.CollabService
-	"documents.CollabService/JoinRoom": []string{
-		"documents.DocumentsService/UpdateDocument",
+	"documents.CollabService/JoinRoom": {
+		permsdocuments.DocumentsService.UpdateDocument.Perm,
+	},
+
+	// Service: documents.CommentsService
+	"documents.CommentsService/EditComment": {
+		permsdocuments.DocumentsService.ListDocuments.Perm,
+	},
+	"documents.CommentsService/GetComments": {
+		permsdocuments.DocumentsService.ListDocuments.Perm,
+	},
+	"documents.CommentsService/PostComment": {
+		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
 
 	// Service: documents.DocumentsService
-	"documents.DocumentsService/CreateDocument": []string{
-		"documents.DocumentsService/UpdateDocument",
+	"documents.DocumentsService/CreateDocument": {
+		permsdocuments.DocumentsService.UpdateDocument.Perm,
 	},
-	"documents.DocumentsService/EditComment": []string{
-		"documents.DocumentsService/ListDocuments",
+	"documents.DocumentsService/GetDocument": {
+		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
-	"documents.DocumentsService/GetComments": []string{
-		"documents.DocumentsService/ListDocuments",
+	"documents.DocumentsService/GetDocumentAccess": {
+		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
-	"documents.DocumentsService/GetDocument": []string{
-		"documents.DocumentsService/ListDocuments",
+	"documents.DocumentsService/GetDocumentReferences": {
+		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
-	"documents.DocumentsService/GetDocumentAccess": []string{
-		"documents.DocumentsService/ListDocuments",
+	"documents.DocumentsService/GetDocumentRelations": {
+		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
-	"documents.DocumentsService/GetDocumentReferences": []string{
-		"documents.DocumentsService/ListDocuments",
+	"documents.DocumentsService/ListDocumentPins": {
+		permsdocuments.DocumentsService.ListDocuments.Perm,
 	},
-	"documents.DocumentsService/GetDocumentRelations": []string{
-		"documents.DocumentsService/ListDocuments",
+	"documents.DocumentsService/RemoveDocumentReference": {
+		permsdocuments.DocumentsService.AddDocumentReference.Perm,
 	},
-	"documents.DocumentsService/GetTemplate": []string{
-		"documents.DocumentsService/ListTemplates",
+	"documents.DocumentsService/RemoveDocumentRelation": {
+		permsdocuments.DocumentsService.AddDocumentRelation.Perm,
 	},
-	"documents.DocumentsService/ListDocumentPins": []string{
-		"documents.DocumentsService/ListDocuments",
+	"documents.DocumentsService/SetDocumentAccess": {
+		permsdocuments.DocumentsService.UpdateDocument.Perm,
 	},
-	"documents.DocumentsService/PostComment": []string{
-		"documents.DocumentsService/ListDocuments",
+	"documents.DocumentsService/UpdateDocumentReq": {
+		permsdocuments.DocumentsService.CreateDocumentReq.Perm,
 	},
-	"documents.DocumentsService/RemoveDocumentReference": []string{
-		"documents.DocumentsService/AddDocumentReference",
-	},
-	"documents.DocumentsService/RemoveDocumentRelation": []string{
-		"documents.DocumentsService/AddDocumentRelation",
-	},
-	"documents.DocumentsService/SetDocumentAccess": []string{
-		"documents.DocumentsService/UpdateDocument",
-	},
-	"documents.DocumentsService/UpdateDocumentReq": []string{
-		"documents.DocumentsService/CreateDocumentReq",
-	},
-	"documents.DocumentsService/UpdateTemplate": []string{
-		"documents.DocumentsService/CreateTemplate",
-	},
-	"documents.DocumentsService/UploadFile": []string{
-		"documents.DocumentsService/UpdateDocument",
+	"documents.DocumentsService/UploadFile": {
+		permsdocuments.DocumentsService.UpdateDocument.Perm,
 	},
 
 	// Service: documents.StampsService
-	"documents.StampsService/GetStamp": []string{
-		"documents.StampsService/ListUsableStamps",
+	"documents.StampsService/GetStamp": {
+		permsdocuments.StampsService.ListUsableStamps.Perm,
+	},
+
+	// Service: documents.TemplatesService
+	"documents.TemplatesService/GetTemplate": {
+		permsdocuments.TemplatesService.ListTemplates.Perm,
+	},
+	"documents.TemplatesService/UpdateTemplate": {
+		permsdocuments.TemplatesService.CreateTemplate.Perm,
 	},
 
 	// Service: filestore.FilestoreService
-	"filestore.FilestoreService/DeleteFile": []string{
-		"Superuser",
+	"filestore.FilestoreService/DeleteFile": {
+		perms.PermSuperuserRef,
 	},
-	"filestore.FilestoreService/DeleteFileByPath": []string{
-		"Superuser",
+	"filestore.FilestoreService/DeleteFileByPath": {
+		perms.PermSuperuserRef,
 	},
-	"filestore.FilestoreService/ListFiles": []string{
-		"Superuser",
+	"filestore.FilestoreService/ListFiles": {
+		perms.PermSuperuserRef,
 	},
-	"filestore.FilestoreService/Upload": []string{
-		"Superuser",
+	"filestore.FilestoreService/Upload": {
+		perms.PermSuperuserRef,
+	},
+
+	// Service: jobs.ColleaguesService
+	"jobs.ColleaguesService/GetColleagueLabels": {
+		permsjobs.ColleaguesService.GetColleague.Perm,
+	},
+	"jobs.ColleaguesService/GetColleagueLabelsStats": {
+		permsjobs.ColleaguesService.GetColleague.Perm,
+	},
+	"jobs.ColleaguesService/GetSelf": {
+		permsjobs.ColleaguesService.ListColleagues.Perm,
 	},
 
 	// Service: jobs.ConductService
-	"jobs.ConductService/GetConductEntry": []string{
-		"jobs.ConductService/ListConductEntries",
+	"jobs.ConductService/GetConductEntry": {
+		permsjobs.ConductService.ListConductEntries.Perm,
 	},
-	"jobs.ConductService/UploadFile": []string{
-		"jobs.ConductService/CreateConductEntry", "jobs.ConductService/UpdateConductEntry",
+	"jobs.ConductService/UploadFile": {
+		permsjobs.ConductService.CreateConductEntry.Perm, permsjobs.ConductService.UpdateConductEntry.Perm,
 	},
 
 	// Service: jobs.JobsService
-	"jobs.JobsService/GetColleagueLabels": []string{
-		"jobs.JobsService/GetColleague",
-	},
-	"jobs.JobsService/GetColleagueLabelsStats": []string{
-		"jobs.JobsService/GetColleague",
-	},
-	"jobs.JobsService/GetMOTD": []string{
-		"Any",
-	},
-	"jobs.JobsService/GetSelf": []string{
-		"jobs.JobsService/ListColleagues",
+	"jobs.JobsService/GetMOTD": {
+		perms.PermAnyRef,
 	},
 
 	// Service: jobs.TimeclockService
-	"jobs.TimeclockService/GetTimeclockStats": []string{
-		"jobs.TimeclockService/ListTimeclock",
+	"jobs.TimeclockService/GetTimeclockStats": {
+		permsjobs.TimeclockService.ListTimeclock.Perm,
 	},
 
 	// Service: mailer.MailerService
-	"mailer.MailerService/CreateOrUpdateTemplate": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.MailerService/GetEmail": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/CreateThread": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.MailerService/GetEmailProposals": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/DeleteMessage": []string{
-		"Superuser",
+
+	// Service: mailer.SettingsService
+	"mailer.SettingsService/CreateOrUpdateTemplate": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/DeleteTemplate": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.SettingsService/DeleteTemplate": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/DeleteThread": []string{
-		"Superuser",
+	"mailer.SettingsService/GetEmailSettings": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/GetEmail": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.SettingsService/GetTemplate": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/GetEmailProposals": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.SettingsService/ListTemplates": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/GetEmailSettings": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.SettingsService/SetEmailSettings": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/GetTemplate": []string{
-		"mailer.MailerService/ListEmails",
+
+	// Service: mailer.ThreadService
+	"mailer.ThreadService/CreateThread": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/GetThread": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.ThreadService/DeleteMessage": {
+		perms.PermSuperuserRef,
 	},
-	"mailer.MailerService/GetThreadState": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.ThreadService/DeleteThread": {
+		perms.PermSuperuserRef,
 	},
-	"mailer.MailerService/ListTemplates": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.ThreadService/GetThread": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/ListThreadMessages": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.ThreadService/GetThreadState": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/ListThreads": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.ThreadService/ListThreadMessages": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/PostMessage": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.ThreadService/ListThreads": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/SearchThreads": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.ThreadService/PostMessage": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/SetEmailSettings": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.ThreadService/SearchThreads": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
-	"mailer.MailerService/SetThreadState": []string{
-		"mailer.MailerService/ListEmails",
+	"mailer.ThreadService/SetThreadState": {
+		permsmailer.MailerService.ListEmails.Perm,
 	},
 
 	// Service: notifications.NotificationsService
-	"notifications.NotificationsService/GetNotifications": []string{
-		"Any",
+	"notifications.NotificationsService/GetNotifications": {
+		perms.PermAnyRef,
 	},
-	"notifications.NotificationsService/MarkNotifications": []string{
-		"Any",
+	"notifications.NotificationsService/MarkNotifications": {
+		perms.PermAnyRef,
 	},
-	"notifications.NotificationsService/Stream": []string{
-		"Any",
+	"notifications.NotificationsService/Stream": {
+		perms.PermAnyRef,
+	},
+
+	// Service: qualifications.ExamService
+	"qualifications.ExamService/GetExamInfo": {
+		permsqualifications.QualificationsService.ListQualifications.Perm,
+	},
+	"qualifications.ExamService/GetUserExam": {
+		permsqualifications.QualificationsService.ListQualifications.Perm,
+	},
+	"qualifications.ExamService/SubmitExam": {
+		permsqualifications.QualificationsService.ListQualifications.Perm,
+	},
+	"qualifications.ExamService/TakeExam": {
+		permsqualifications.QualificationsService.ListQualifications.Perm,
 	},
 
 	// Service: qualifications.QualificationsService
-	"qualifications.QualificationsService/CreateOrUpdateQualificationRequest": []string{
-		"qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/CreateOrUpdateQualificationRequest": {
+		permsqualifications.QualificationsService.ListQualifications.Perm,
 	},
-	"qualifications.QualificationsService/CreateOrUpdateQualificationResult": []string{
-		"qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/CreateOrUpdateQualificationResult": {
+		permsqualifications.QualificationsService.ListQualifications.Perm,
 	},
-	"qualifications.QualificationsService/CreateQualification": []string{
-		"qualifications.QualificationsService/UpdateQualification",
+	"qualifications.QualificationsService/CreateQualification": {
+		permsqualifications.QualificationsService.UpdateQualification.Perm,
 	},
-	"qualifications.QualificationsService/DeleteQualificationReq": []string{
-		"qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/DeleteQualificationReq": {
+		permsqualifications.QualificationsService.ListQualifications.Perm,
 	},
-	"qualifications.QualificationsService/DeleteQualificationResult": []string{
-		"qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/DeleteQualificationResult": {
+		permsqualifications.QualificationsService.ListQualifications.Perm,
 	},
-	"qualifications.QualificationsService/GetExamInfo": []string{
-		"qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/GetQualification": {
+		permsqualifications.QualificationsService.ListQualifications.Perm,
 	},
-	"qualifications.QualificationsService/GetQualification": []string{
-		"qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/ListQualificationRequests": {
+		permsqualifications.QualificationsService.ListQualifications.Perm,
 	},
-	"qualifications.QualificationsService/GetUserExam": []string{
-		"qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/ListQualificationsResults": {
+		permsqualifications.QualificationsService.ListQualifications.Perm,
 	},
-	"qualifications.QualificationsService/ListQualificationRequests": []string{
-		"qualifications.QualificationsService/ListQualifications",
-	},
-	"qualifications.QualificationsService/ListQualificationsResults": []string{
-		"qualifications.QualificationsService/ListQualifications",
-	},
-	"qualifications.QualificationsService/SubmitExam": []string{
-		"qualifications.QualificationsService/ListQualifications",
-	},
-	"qualifications.QualificationsService/TakeExam": []string{
-		"qualifications.QualificationsService/ListQualifications",
-	},
-	"qualifications.QualificationsService/UploadFile": []string{
-		"qualifications.QualificationsService/UpdateQualification",
+	"qualifications.QualificationsService/UploadFile": {
+		permsqualifications.QualificationsService.UpdateQualification.Perm,
 	},
 
 	// Service: settings.AccountsService
-	"settings.AccountsService/CreateAccount": []string{
-		"Superuser",
+	"settings.AccountsService/CreateAccount": {
+		perms.PermSuperuserRef,
 	},
-	"settings.AccountsService/DeleteAccount": []string{
-		"Superuser",
+	"settings.AccountsService/DeleteAccount": {
+		perms.PermSuperuserRef,
 	},
-	"settings.AccountsService/DisconnectSocialLogin": []string{
-		"Superuser",
+	"settings.AccountsService/DisconnectSocialLogin": {
+		perms.PermSuperuserRef,
 	},
-	"settings.AccountsService/ListAccounts": []string{
-		"Superuser",
+	"settings.AccountsService/ListAccounts": {
+		perms.PermSuperuserRef,
 	},
-	"settings.AccountsService/UpdateAccount": []string{
-		"Superuser",
+	"settings.AccountsService/UpdateAccount": {
+		perms.PermSuperuserRef,
 	},
 
 	// Service: settings.ConfigService
-	"settings.ConfigService/GetAppConfig": []string{
-		"Superuser",
+	"settings.ConfigService/GetAppConfig": {
+		perms.PermSuperuserRef,
 	},
-	"settings.ConfigService/UpdateAppConfig": []string{
-		"Superuser",
+	"settings.ConfigService/UpdateAppConfig": {
+		perms.PermSuperuserRef,
 	},
 
 	// Service: settings.CronService
-	"settings.CronService/ListCronjobs": []string{
-		"Superuser",
+	"settings.CronService/ListCronjobs": {
+		perms.PermSuperuserRef,
 	},
-	"settings.CronService/RunCronjob": []string{
-		"Superuser",
+	"settings.CronService/RunCronjob": {
+		perms.PermSuperuserRef,
 	},
 
 	// Service: settings.LawsService
-	"settings.LawsService/CreateOrUpdateLaw": []string{
-		"settings.LawsService/CreateOrUpdateLawBook",
+	"settings.LawsService/CreateOrUpdateLaw": {
+		permssettings.LawsService.CreateOrUpdateLawBook.Perm,
 	},
-	"settings.LawsService/DeleteLaw": []string{
-		"settings.LawsService/DeleteLawBook",
+	"settings.LawsService/DeleteLaw": {
+		permssettings.LawsService.DeleteLawBook.Perm,
 	},
 
 	// Service: settings.SettingsService
-	"settings.SettingsService/DeleteJobLogo": []string{
-		"settings.SettingsService/SetJobProps",
+	"settings.SettingsService/DeleteJobLogo": {
+		permssettings.SettingsService.SetJobProps.Perm,
 	},
-	"settings.SettingsService/GetEffectivePermissions": []string{
-		"settings.SettingsService/GetRoles",
+	"settings.SettingsService/GetEffectivePermissions": {
+		permssettings.SettingsService.GetRoles.Perm,
 	},
-	"settings.SettingsService/GetPermissions": []string{
-		"settings.SettingsService/GetRoles",
+	"settings.SettingsService/GetPermissions": {
+		permssettings.SettingsService.GetRoles.Perm,
 	},
-	"settings.SettingsService/GetRole": []string{
-		"settings.SettingsService/GetRoles",
+	"settings.SettingsService/GetRole": {
+		permssettings.SettingsService.GetRoles.Perm,
 	},
-	"settings.SettingsService/ListDiscordChannels": []string{
-		"settings.SettingsService/SetJobProps",
+	"settings.SettingsService/ListDiscordChannels": {
+		permssettings.SettingsService.SetJobProps.Perm,
 	},
-	"settings.SettingsService/ListUserGuilds": []string{
-		"settings.SettingsService/SetJobProps",
+	"settings.SettingsService/ListUserGuilds": {
+		permssettings.SettingsService.SetJobProps.Perm,
 	},
-	"settings.SettingsService/UploadJobLogo": []string{
-		"settings.SettingsService/SetJobProps",
+	"settings.SettingsService/UploadJobLogo": {
+		permssettings.SettingsService.SetJobProps.Perm,
 	},
 
 	// Service: settings.SystemService
-	"settings.SystemService/DeleteFaction": []string{
-		"Superuser",
+	"settings.SystemService/DeleteFaction": {
+		perms.PermSuperuserRef,
 	},
-	"settings.SystemService/GetAllPermissions": []string{
-		"Superuser",
+	"settings.SystemService/GetAllPermissions": {
+		perms.PermSuperuserRef,
 	},
-	"settings.SystemService/GetJobLimits": []string{
-		"Superuser",
+	"settings.SystemService/GetJobLimits": {
+		perms.PermSuperuserRef,
 	},
-	"settings.SystemService/GetStatus": []string{
-		"Superuser",
+	"settings.SystemService/GetStatus": {
+		perms.PermSuperuserRef,
 	},
-	"settings.SystemService/TriggerUserSync": []string{
-		"Superuser",
+	"settings.SystemService/TriggerUserSync": {
+		perms.PermSuperuserRef,
 	},
-	"settings.SystemService/UpdateJobLimits": []string{
-		"Superuser",
+	"settings.SystemService/UpdateJobLimits": {
+		perms.PermSuperuserRef,
 	},
 
 	// Service: wiki.CollabService
-	"wiki.CollabService/JoinRoom": []string{
-		"wiki.WikiService/UpdatePage",
+	"wiki.CollabService/JoinRoom": {
+		permswiki.WikiService.UpdatePage.Perm,
 	},
 
 	// Service: wiki.WikiService
-	"wiki.WikiService/GetPage": []string{
-		"wiki.WikiService/ListPages",
+	"wiki.WikiService/GetPage": {
+		permswiki.WikiService.ListPages.Perm,
 	},
-	"wiki.WikiService/UpdatePage": []string{
-		"wiki.WikiService/UpdatePage", "wiki.WikiService/CreatePage",
+	"wiki.WikiService/UpdatePage": {
+		permswiki.WikiService.UpdatePage.Perm, permswiki.WikiService.CreatePage.Perm,
 	},
-	"wiki.WikiService/UploadFile": []string{
-		"wiki.WikiService/CreatePage", "wiki.WikiService/UpdatePage",
+	"wiki.WikiService/UploadFile": {
+		permswiki.WikiService.CreatePage.Perm, permswiki.WikiService.UpdatePage.Perm,
 	},
 }

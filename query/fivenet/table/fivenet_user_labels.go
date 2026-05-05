@@ -17,8 +17,11 @@ type fivenetUserLabelsTable struct {
 	mysql.Table
 
 	// Columns
-	UserID  mysql.ColumnInteger
-	LabelID mysql.ColumnInteger
+	UserID    mysql.ColumnInteger
+	LabelID   mysql.ColumnInteger
+	CreatedAt mysql.ColumnTimestamp
+	ExpiresAt mysql.ColumnTimestamp
+	DeletedAt mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -60,19 +63,25 @@ func newFivenetUserLabelsTable(schemaName, tableName, alias string) *FivenetUser
 
 func newFivenetUserLabelsTableImpl(schemaName, tableName, alias string) fivenetUserLabelsTable {
 	var (
-		UserIDColumn   = mysql.IntegerColumn("user_id")
-		LabelIDColumn  = mysql.IntegerColumn("label_id")
-		allColumns     = mysql.ColumnList{UserIDColumn, LabelIDColumn}
-		mutableColumns = mysql.ColumnList{UserIDColumn, LabelIDColumn}
-		defaultColumns = mysql.ColumnList{}
+		UserIDColumn    = mysql.IntegerColumn("user_id")
+		LabelIDColumn   = mysql.IntegerColumn("label_id")
+		CreatedAtColumn = mysql.TimestampColumn("created_at")
+		ExpiresAtColumn = mysql.TimestampColumn("expires_at")
+		DeletedAtColumn = mysql.TimestampColumn("deleted_at")
+		allColumns      = mysql.ColumnList{UserIDColumn, LabelIDColumn, CreatedAtColumn, ExpiresAtColumn, DeletedAtColumn}
+		mutableColumns  = mysql.ColumnList{UserIDColumn, LabelIDColumn, CreatedAtColumn, ExpiresAtColumn, DeletedAtColumn}
+		defaultColumns  = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetUserLabelsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		UserID:  UserIDColumn,
-		LabelID: LabelIDColumn,
+		UserID:    UserIDColumn,
+		LabelID:   LabelIDColumn,
+		CreatedAt: CreatedAtColumn,
+		ExpiresAt: ExpiresAtColumn,
+		DeletedAt: DeletedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

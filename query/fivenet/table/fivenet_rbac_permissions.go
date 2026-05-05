@@ -19,7 +19,8 @@ type fivenetRbacPermissionsTable struct {
 	// Columns
 	ID        mysql.ColumnInteger
 	CreatedAt mysql.ColumnTimestamp
-	Category  mysql.ColumnString
+	Namespace mysql.ColumnString
+	Service   mysql.ColumnString
 	Name      mysql.ColumnString
 	GuardName mysql.ColumnString
 	Order     mysql.ColumnInteger
@@ -67,13 +68,14 @@ func newFivenetRbacPermissionsTableImpl(schemaName, tableName, alias string) fiv
 	var (
 		IDColumn        = mysql.IntegerColumn("id")
 		CreatedAtColumn = mysql.TimestampColumn("created_at")
-		CategoryColumn  = mysql.StringColumn("category")
+		NamespaceColumn = mysql.StringColumn("namespace")
+		ServiceColumn   = mysql.StringColumn("service")
 		NameColumn      = mysql.StringColumn("name")
 		GuardNameColumn = mysql.StringColumn("guard_name")
 		OrderColumn     = mysql.IntegerColumn("order")
 		IconColumn      = mysql.StringColumn("icon")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, CategoryColumn, NameColumn, GuardNameColumn, OrderColumn, IconColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, CategoryColumn, NameColumn, GuardNameColumn, OrderColumn, IconColumn}
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, NamespaceColumn, ServiceColumn, NameColumn, GuardNameColumn, OrderColumn, IconColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, NamespaceColumn, ServiceColumn, NameColumn, GuardNameColumn, OrderColumn, IconColumn}
 		defaultColumns  = mysql.ColumnList{CreatedAtColumn, OrderColumn}
 	)
 
@@ -83,7 +85,8 @@ func newFivenetRbacPermissionsTableImpl(schemaName, tableName, alias string) fiv
 		//Columns
 		ID:        IDColumn,
 		CreatedAt: CreatedAtColumn,
-		Category:  CategoryColumn,
+		Namespace: NamespaceColumn,
+		Service:   ServiceColumn,
 		Name:      NameColumn,
 		GuardName: GuardNameColumn,
 		Order:     OrderColumn,

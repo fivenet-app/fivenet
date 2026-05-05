@@ -1551,10 +1551,10 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\x06change2\xdb\x05\n" +
 	"\x0eCentrumService\x12j\n" +
 	"\vGetSettings\x12$.services.centrum.GetSettingsRequest\x1a%.services.centrum.GetSettingsResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12\x87\x01\n" +
-	"\x0eUpdateSettings\x12'.services.centrum.UpdateSettingsRequest\x1a(.services.centrum.UpdateSettingsResponse\"\"\xd2\xf3\x18\x1e\b\x01*\x1a\n" +
+	"\b\x01\"\x06Stream\x12\x87\x01\n" +
+	"\x0eUpdateSettings\x12'.services.centrum.UpdateSettingsRequest\x1a(.services.centrum.UpdateSettingsResponse\"\"\xd2\xf3\x18\x1e\b\x01:\x1a\n" +
 	"\x06Access\x18\x01\"\x06Shared\"\x06Public\x12\x84\x01\n" +
-	"\x12GetDispatchHeatmap\x12+.services.centrum.GetDispatchHeatmapRequest\x1a,.services.centrum.GetDispatchHeatmapResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vTakeControl\x12b\n" +
+	"\x12GetDispatchHeatmap\x12+.services.centrum.GetDispatchHeatmapRequest\x1a,.services.centrum.GetDispatchHeatmapResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vTakeControl\x12b\n" +
 	"\vTakeControl\x12$.services.centrum.TakeControlRequest\x1a%.services.centrum.TakeControlResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12t\n" +
 	"\x11UpdateDispatchers\x12*.services.centrum.UpdateDispatchersRequest\x1a+.services.centrum.UpdateDispatchersResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12U\n" +
 	"\x06Stream\x12\x1f.services.centrum.StreamRequest\x1a .services.centrum.StreamResponse\"\x06\xd2\xf3\x18\x02\b\x010\x01\x1a\x1b\xea\xf3\x18\x17\bd\x12\x13i-mdi-car-emergencyBLZJgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrumb\x06proto3"

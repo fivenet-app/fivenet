@@ -28,9 +28,9 @@ var File_services_wiki_collab_proto protoreflect.FileDescriptor
 
 const file_services_wiki_collab_proto_rawDesc = "" +
 	"\n" +
-	"\x1aservices/wiki/collab.proto\x12\rservices.wiki\x1a\x19codegen/perms/perms.proto\x1a\x1dresources/collab/collab.proto2\x85\x01\n" +
-	"\rCollabService\x12t\n" +
-	"\bJoinRoom\x12\x1e.resources.collab.ClientPacket\x1a\x1e.resources.collab.ServerPacket\"$\xd2\xf3\x18 \b\x01\x12\x10wiki.WikiService\x1a\n" +
+	"\x1aservices/wiki/collab.proto\x12\rservices.wiki\x1a\x19codegen/perms/perms.proto\x1a\x1dresources/collab/collab.proto2\x80\x01\n" +
+	"\rCollabService\x12o\n" +
+	"\bJoinRoom\x12\x1e.resources.collab.ClientPacket\x1a\x1e.resources.collab.ServerPacket\"\x1f\xd2\xf3\x18\x1b\b\x01\x1a\vWikiService\"\n" +
 	"UpdatePage(\x010\x01BFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki;wikib\x06proto3"
 
 var file_services_wiki_collab_proto_goTypes = []any{

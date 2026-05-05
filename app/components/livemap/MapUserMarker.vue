@@ -147,10 +147,10 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
 
                         <UButton
                             v-if="
-                                can('jobs.JobsService/GetColleague').value &&
+                                can('jobs.ColleaguesService/GetColleague').value &&
                                 marker.user &&
                                 marker.user?.job === activeChar?.job &&
-                                checkIfCanAccessColleague(marker.user, 'jobs.JobsService/GetColleague')
+                                checkIfCanAccessColleague(marker.user, 'jobs.ColleaguesService/GetColleague')
                             "
                             class="!text-(--ui-primary)"
                             variant="link"

@@ -12,11 +12,13 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+		// Namespace: calendar
 
 		// Service: calendar.CalendarService
 		{
-			Category: permkeys.CalendarServicePerm,
-			Name:     permkeys.CalendarServiceCreateCalendarPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CalendarServicePerm,
+			Name:      permkeys.CalendarServiceCreateCalendarPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.CalendarServiceCreateCalendarFieldsPermField,

@@ -83,7 +83,7 @@ const calendar = computed(() => data.value?.calendar);
                 :error="error"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="!calendar" :type="$t('common.calendar')" icon="i-mdi-comment-text-multiple" />
+            <DataNoDataBlock v-else-if="!calendar" :type="$t('common.calendar')" icon="i-mdi-calendar" />
 
             <template v-else>
                 <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">

@@ -1108,14 +1108,14 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\x1bSubscribeToCalendarResponse\x121\n" +
 	"\x03sub\x18\x01 \x01(\v2\x1f.resources.calendar.CalendarSubR\x03sub2\xff\x06\n" +
 	"\x0fCalendarService\x12o\n" +
-	"\rListCalendars\x12'.services.calendar.ListCalendarsRequest\x1a(.services.calendar.ListCalendarsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12i\n" +
-	"\vGetCalendar\x12%.services.calendar.GetCalendarRequest\x1a&.services.calendar.GetCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x86\x01\n" +
-	"\x0eCreateCalendar\x12(.services.calendar.CreateCalendarRequest\x1a).services.calendar.CreateCalendarResponse\"\x1f\xd2\xf3\x18\x1b\b\x01*\x17\n" +
+	"\rListCalendars\x12'.services.calendar.ListCalendarsRequest\x1a(.services.calendar.ListCalendarsResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12i\n" +
+	"\vGetCalendar\x12%.services.calendar.GetCalendarRequest\x1a&.services.calendar.GetCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12\x86\x01\n" +
+	"\x0eCreateCalendar\x12(.services.calendar.CreateCalendarRequest\x1a).services.calendar.CreateCalendarResponse\"\x1f\xd2\xf3\x18\x1b\b\x01:\x17\n" +
 	"\x06Fields\x18\x01\"\x03Job\"\x06Public\x12r\n" +
-	"\x0eUpdateCalendar\x12(.services.calendar.UpdateCalendarRequest\x1a).services.calendar.UpdateCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12r\n" +
-	"\x0eDeleteCalendar\x12(.services.calendar.DeleteCalendarRequest\x1a).services.calendar.DeleteCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12{\n" +
-	"\x11ListSubscriptions\x12+.services.calendar.ListSubscriptionsRequest\x1a,.services.calendar.ListSubscriptionsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x81\x01\n" +
-	"\x13SubscribeToCalendar\x12-.services.calendar.SubscribeToCalendarRequest\x1a..services.calendar.SubscribeToCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x1a\x1e\xea\xf3\x18\x1a\bF\x12\x16i-mdi-calendar-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar;calendarb\x06proto3"
+	"\x0eUpdateCalendar\x12(.services.calendar.UpdateCalendarRequest\x1a).services.calendar.UpdateCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12r\n" +
+	"\x0eDeleteCalendar\x12(.services.calendar.DeleteCalendarRequest\x1a).services.calendar.DeleteCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12{\n" +
+	"\x11ListSubscriptions\x12+.services.calendar.ListSubscriptionsRequest\x1a,.services.calendar.ListSubscriptionsResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12\x81\x01\n" +
+	"\x13SubscribeToCalendar\x12-.services.calendar.SubscribeToCalendarRequest\x1a..services.calendar.SubscribeToCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x1a\x1e\xea\xf3\x18\x1a\bF\x12\x16i-mdi-calendar-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar;calendarb\x06proto3"
 
 var file_services_calendar_calendar_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_services_calendar_calendar_proto_goTypes = []any{

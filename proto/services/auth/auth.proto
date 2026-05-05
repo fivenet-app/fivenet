@@ -235,7 +235,8 @@ service AuthService {
   rpc ImpersonateJob(ImpersonateJobRequest) returns (ImpersonateJobResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "settings.SettingsService"
+      namespace: "settings"
+      service: "SettingsService"
       name: "UpdateRolePerms"
     };
   }

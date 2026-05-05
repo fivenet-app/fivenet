@@ -25,7 +25,7 @@ const notifications = useNotificationsStore();
 
 const documentsCategoriesClient = await getDocumentsCategoriesClient();
 
-const canEdit = can('documents.DocumentsService/CreateOrUpdateCategory');
+const canEdit = can('documents.CategoriesService/CreateOrUpdateCategory');
 
 const schema = z.object({
     name: z.coerce.string().min(3).max(128),
@@ -188,7 +188,7 @@ const formRef = useTemplateRef('formRef');
                 <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UButton
-                    v-if="category !== undefined && canEdit && can('documents.DocumentsService/DeleteCategory').value"
+                    v-if="category !== undefined && canEdit && can('documents.CategoriesService/DeleteCategory').value"
                     class="flex-1"
                     block
                     :color="!category.deletedAt ? 'error' : 'success'"

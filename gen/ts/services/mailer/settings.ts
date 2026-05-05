@@ -705,4 +705,4 @@ export const SettingsService = new ServiceType("services.mailer.SettingsService"
     { name: "DeleteTemplate", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: DeleteTemplateRequest, O: DeleteTemplateResponse },
     { name: "GetEmailSettings", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: GetEmailSettingsRequest, O: GetEmailSettingsResponse },
     { name: "SetEmailSettings", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: SetEmailSettingsRequest, O: SetEmailSettingsResponse }
-], { "codegen.perms.perms_svc": { name: "mailer.MailerService" } });
+], { "codegen.perms.perms_svc": { namespace: "mailer", service: "MailerService" } });

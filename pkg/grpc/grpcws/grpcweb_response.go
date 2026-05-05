@@ -127,7 +127,9 @@ func (w *grpcWebResponse) copyTrailersToPayload() {
 
 	binary.BigEndian.PutUint32(
 		trailerGrpcDataHeader[1:5],
-		uint32(len(trailerBytes)), //nolint:gosec // trailerBytes is truncated to <= math.MaxUint32 above.
+		uint32(
+			len(trailerBytes),
+		), //nolint:gosec // trailerBytes is truncated to <= math.MaxUint32 above.
 	)
 	w.wrapped.Write(trailerGrpcDataHeader)
 	w.wrapped.Write(trailerBytes)

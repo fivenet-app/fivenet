@@ -99,9 +99,7 @@ func (s *Server) UploadMugshot(
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permscitizens.CitizensServicePerm,
-		permscitizens.CitizensServiceSetUserPropsPerm,
-		permscitizens.CitizensServiceSetUserPropsFieldsPermField,
+		permscitizens.CitizensService.SetUserProps.Fields,
 	)
 	if err != nil {
 		return errswrap.NewError(err, errorscitizens.ErrFailedQuery)

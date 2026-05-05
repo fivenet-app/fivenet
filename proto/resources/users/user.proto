@@ -3,8 +3,8 @@ syntax = "proto3";
 package resources.users;
 
 import "buf/validate/validate.proto";
-import "resources/timestamp/timestamp.proto";
 import "resources/citizens/licenses/licenses.proto";
+import "resources/timestamp/timestamp.proto";
 import "resources/users/props/props.proto";
 import "tagger/tagger.proto";
 

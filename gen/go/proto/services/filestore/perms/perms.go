@@ -8,5 +8,7 @@ import (
 )
 
 const (
-	FilestoreServicePerm perms.Category = "filestore.FilestoreService"
+	Namespace perms.Namespace = "filestore"
+
+	FilestoreServicePerm perms.Service = "FilestoreService"
 )

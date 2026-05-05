@@ -551,6 +551,6 @@ export const ListLawBooksResponse = new ListLawBooksResponse$Type();
 export const CompletorService = new ServiceType("services.completor.CompletorService", [
     { name: "CompleteCitizens", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: CompleteCitizensRequest, O: CompleteCitizensResponse },
     { name: "CompleteJobs", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: CompleteJobsRequest, O: CompleteJobsResponse },
-    { name: "CompleteDocumentCategories", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListCategories" } }, I: CompleteDocumentCategoriesRequest, O: CompleteDocumentCategoriesResponse },
+    { name: "CompleteDocumentCategories", options: { "codegen.perms.perms": { enabled: true, namespace: "documents", service: "CategoriesService", name: "ListCategories" } }, I: CompleteDocumentCategoriesRequest, O: CompleteDocumentCategoriesResponse },
     { name: "ListLawBooks", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ListLawBooksRequest, O: ListLawBooksResponse }
 ], { "codegen.perms.perms_svc": { order: 10, icon: "i-mdi-keyboard-tab" } });

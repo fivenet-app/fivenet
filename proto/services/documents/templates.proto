@@ -50,7 +50,8 @@ message DeleteTemplateResponse {}
 
 service TemplatesService {
   option (codegen.perms.perms_svc) = {
-    name: "documents.DocumentsService"
+    order: 55
+    icon: "i-mdi-file-code"
   };
 
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse) {

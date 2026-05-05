@@ -12,11 +12,13 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+		// Namespace: qualifications
 
 		// Service: qualifications.QualificationsService
 		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceDeleteQualificationPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.QualificationsServicePerm,
+			Name:      permkeys.QualificationsServiceDeleteQualificationPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.QualificationsServiceDeleteQualificationAccessPermField,
@@ -28,15 +30,17 @@ func init() {
 			Icon:  "i-mdi-school-outline",
 		},
 		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceListQualificationsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.QualificationsServicePerm,
+			Name:      permkeys.QualificationsServiceListQualificationsPerm,
+			Attrs:     []perms.Attr{},
+			Order:     8000,
+			Icon:      "i-mdi-school-outline",
 		},
 		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceUpdateQualificationPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.QualificationsServicePerm,
+			Name:      permkeys.QualificationsServiceUpdateQualificationPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.QualificationsServiceUpdateQualificationAccessPermField,

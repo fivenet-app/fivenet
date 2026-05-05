@@ -41,9 +41,7 @@ func (s *Server) ListConductEntries(
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permsjobs.ConductServicePerm,
-		permsjobs.ConductServiceListConductEntriesPerm,
-		permsjobs.ConductServiceListConductEntriesAccessPermField,
+		permsjobs.ConductService.ListConductEntries.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)

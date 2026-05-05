@@ -11,11 +11,13 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+		// Namespace: livemap
 
 		// Service: livemap.LivemapService
 		{
-			Category: permkeys.LivemapServicePerm,
-			Name:     permkeys.LivemapServiceCreateOrUpdateMarkerPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.LivemapServicePerm,
+			Name:      permkeys.LivemapServiceCreateOrUpdateMarkerPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.LivemapServiceCreateOrUpdateMarkerAccessPermField,
@@ -27,8 +29,9 @@ func init() {
 			Icon:  "i-mdi-map-outline",
 		},
 		{
-			Category: permkeys.LivemapServicePerm,
-			Name:     permkeys.LivemapServiceDeleteMarkerPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.LivemapServicePerm,
+			Name:      permkeys.LivemapServiceDeleteMarkerPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.LivemapServiceDeleteMarkerAccessPermField,
@@ -40,8 +43,9 @@ func init() {
 			Icon:  "i-mdi-map-outline",
 		},
 		{
-			Category: permkeys.LivemapServicePerm,
-			Name:     permkeys.LivemapServiceStreamPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.LivemapServicePerm,
+			Name:      permkeys.LivemapServiceStreamPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:  permkeys.LivemapServiceStreamMarkersPermField,

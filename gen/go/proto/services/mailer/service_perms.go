@@ -13,11 +13,13 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+		// Namespace: mailer
 
 		// Service: mailer.MailerService
 		{
-			Category: permkeys.MailerServicePerm,
-			Name:     permkeys.MailerServiceCreateOrUpdateEmailPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.MailerServicePerm,
+			Name:      permkeys.MailerServiceCreateOrUpdateEmailPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.MailerServiceCreateOrUpdateEmailFieldsPermField,
@@ -29,18 +31,20 @@ func init() {
 			Icon:  "i-mdi-inbox-full-outline",
 		},
 		{
-			Category: permkeys.MailerServicePerm,
-			Name:     permkeys.MailerServiceDeleteEmailPerm,
-			Attrs:    []perms.Attr{},
-			Order:    2000,
-			Icon:     "i-mdi-inbox-full-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.MailerServicePerm,
+			Name:      permkeys.MailerServiceDeleteEmailPerm,
+			Attrs:     []perms.Attr{},
+			Order:     2000,
+			Icon:      "i-mdi-inbox-full-outline",
 		},
 		{
-			Category: permkeys.MailerServicePerm,
-			Name:     permkeys.MailerServiceListEmailsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    2000,
-			Icon:     "i-mdi-inbox-full-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.MailerServicePerm,
+			Name:      permkeys.MailerServiceListEmailsPerm,
+			Attrs:     []perms.Attr{},
+			Order:     2000,
+			Icon:      "i-mdi-inbox-full-outline",
 		},
 	})
 }

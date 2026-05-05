@@ -75,23 +75,32 @@ message ListUnitActivityResponse {
 }
 
 service UnitsService {
-  option (codegen.perms.perms_svc) = {name: "centrum.CentrumService"};
+  option (codegen.perms.perms_svc) = {
+    order: 110
+    icon: "i-mdi-account-group"
+  };
 
   rpc JoinUnit(JoinUnitRequest) returns (JoinUnitResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "centrum"
+      service: "CentrumService"
       name: "Stream"
     };
   }
   rpc ListUnits(ListUnitsRequest) returns (ListUnitsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "centrum"
+      service: "CentrumService"
       name: "Stream"
     };
   }
   rpc ListUnitActivity(ListUnitActivityRequest) returns (ListUnitActivityResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "centrum"
+      service: "CentrumService"
       name: "Stream"
     };
   }
@@ -105,6 +114,8 @@ service UnitsService {
   rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "centrum"
+      service: "CentrumService"
       name: "TakeControl"
     };
   }
@@ -112,6 +123,8 @@ service UnitsService {
   rpc UpdateUnitStatus(UpdateUnitStatusRequest) returns (UpdateUnitStatusResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "centrum"
+      service: "DispatchesService"
       name: "TakeDispatch"
     };
   }

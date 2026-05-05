@@ -23,6 +23,7 @@ import (
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
@@ -688,7 +689,7 @@ func (s *Server) ChooseCharacter(
 
 	if len(ps) == 0 ||
 		(!canBeSuperuser && !slices.ContainsFunc(ps, func(p *permissionspermissions.Permission) bool {
-			return p.GetCategory() == string(permsauth.AuthServicePerm) && p.GetName() == string(permsauth.AuthServiceChooseCharacterPerm)
+			return p.GetName() == string(permsauth.AuthServicePerm) && p.GetName() == string(permsauth.AuthServiceChooseCharacterPerm)
 		})) {
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
@@ -769,10 +770,10 @@ func (s *Server) listUserPerms(
 	}
 
 	if canBeSuperuser {
-		userPs = append(userPs, auth.PermCanBeSuperuser)
+		userPs = append(userPs, perms.PermCanBeSuperuser)
 
 		if isSuperuserActive {
-			userPs = append(userPs, auth.PermSuperuser)
+			userPs = append(userPs, perms.PermSuperuser)
 		}
 	}
 
@@ -941,8 +942,8 @@ func (s *Server) SetSuperuserMode(
 		s.enricher.EnrichJobInfo(char)
 
 		ps = []*permissionspermissions.Permission{
-			auth.PermCanBeSuperuser,
-			auth.PermSuperuser,
+			perms.PermCanBeSuperuser,
+			perms.PermSuperuser,
 		}
 	} else {
 		ps, attrs, err = s.listUserPerms(ctx, char, true, false)

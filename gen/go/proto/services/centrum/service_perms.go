@@ -13,74 +13,37 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+		// Namespace: centrum
 
 		// Service: centrum.CentrumService
 		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceCreateDispatchPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CentrumServicePerm,
+			Name:      permkeys.CentrumServiceStreamPerm,
+			Attrs:     []perms.Attr{},
+			Order:     10000,
+			Icon:      "i-mdi-car-emergency",
 		},
 		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceCreateOrUpdateUnitPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CentrumServicePerm,
+			Name:      permkeys.CentrumServiceTakeControlPerm,
+			Attrs:     []perms.Attr{},
+			Order:     10000,
+			Icon:      "i-mdi-car-emergency",
 		},
 		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceDeleteDispatchPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CentrumServicePerm,
+			Name:      permkeys.CentrumServiceUpdateDispatchersPerm,
+			Attrs:     []perms.Attr{},
+			Order:     10000,
+			Icon:      "i-mdi-car-emergency",
 		},
 		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceDeleteUnitPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceStreamPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceTakeControlPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceTakeDispatchPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceUpdateDispatchPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceUpdateDispatchersPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceUpdateSettingsPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CentrumServicePerm,
+			Name:      permkeys.CentrumServiceUpdateSettingsPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.CentrumServiceUpdateSettingsAccessPermField,
@@ -90,6 +53,58 @@ func init() {
 			},
 			Order: 10000,
 			Icon:  "i-mdi-car-emergency",
+		},
+
+		// Service: centrum.DispatchesService
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DispatchesServicePerm,
+			Name:      permkeys.DispatchesServiceCreateDispatchPerm,
+			Attrs:     []perms.Attr{},
+			Order:     10500,
+			Icon:      "i-mdi-target-arrow",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DispatchesServicePerm,
+			Name:      permkeys.DispatchesServiceDeleteDispatchPerm,
+			Attrs:     []perms.Attr{},
+			Order:     10500,
+			Icon:      "i-mdi-target-arrow",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DispatchesServicePerm,
+			Name:      permkeys.DispatchesServiceTakeDispatchPerm,
+			Attrs:     []perms.Attr{},
+			Order:     10500,
+			Icon:      "i-mdi-target-arrow",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DispatchesServicePerm,
+			Name:      permkeys.DispatchesServiceUpdateDispatchPerm,
+			Attrs:     []perms.Attr{},
+			Order:     10500,
+			Icon:      "i-mdi-target-arrow",
+		},
+
+		// Service: centrum.UnitsService
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.UnitsServicePerm,
+			Name:      permkeys.UnitsServiceCreateOrUpdateUnitPerm,
+			Attrs:     []perms.Attr{},
+			Order:     11000,
+			Icon:      "i-mdi-account-group",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.UnitsServicePerm,
+			Name:      permkeys.UnitsServiceDeleteUnitPerm,
+			Attrs:     []perms.Attr{},
+			Order:     11000,
+			Icon:      "i-mdi-account-group",
 		},
 	})
 }

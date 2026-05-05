@@ -90,7 +90,8 @@ message RSVPCalendarEntryResponse {
 
 service EntriesService {
   option (codegen.perms.perms_svc) = {
-    name: "calendar.CalendarService"
+    namespace: "calendar"
+    service: "CalendarService"
   };
 
   rpc ListCalendarEntries(ListCalendarEntriesRequest) returns (ListCalendarEntriesResponse) {

@@ -2,6 +2,13 @@
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import {
+    buildPermissionGroups,
+    getPermissionNamespaceLabel,
+    getPermissionServiceLabel,
+    type PermissionNamespaceGroup,
+    type PermissionServiceGroup,
+} from '~/components/settings/permissions';
 import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
 import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
@@ -19,7 +26,7 @@ defineEmits<{
     close: [boolean];
 }>();
 
-const { t } = useI18n();
+const { t, te } = useI18n();
 
 async function getEffectivePermissions(roleId: number): Promise<GetEffectivePermissionsResponse> {
     try {
@@ -48,17 +55,13 @@ const {
 } = useLazyAsyncData(`settings-roles-${props.roleId}-effective`, () => getEffectivePermissions(props.roleId));
 
 const permList = ref<Permission[]>([]);
-const permCategories = ref<Set<string>>(new Set());
+const permNamespaces = ref<PermissionNamespaceGroup[]>([]);
 const permStates = ref(new Map<number, boolean | undefined>());
 
 const attrList = ref<RoleAttribute[]>([]);
 
 async function genPermissionCategories(): Promise<void> {
-    permCategories.value.clear();
-
-    permList.value.forEach((perm) => {
-        permCategories.value.add(perm.category);
-    });
+    permNamespaces.value = buildPermissionGroups(permList.value);
 }
 
 async function propogatePermissionStates(): Promise<void> {
@@ -76,13 +79,25 @@ async function initializeRoleView(): Promise<void> {
 watch(role, async () => initializeRoleView());
 
 const permCategoriesSorted = computed(() =>
-    [...permCategories.value.entries()].map((category) => {
+    permNamespaces.value.map((namespace) => {
+        const services = namespace.services.map((service) => ({
+            ...service,
+            label: getPermissionServiceLabel(service.namespace, service.service, t, te),
+        }));
+        const singleService = services.length === 1 ? services[0] : undefined;
+
         return {
-            label: t(`perms.${category[1]}.category`),
-            category: category[0],
+            ...namespace,
+            services,
+            singleService,
+            label: singleService?.label ?? getPermissionNamespaceLabel(namespace.namespace, t, te),
         };
     }),
 );
+
+function getPermissionsForService(service: PermissionServiceGroup): Permission[] {
+    return permList.value.filter((perm) => perm.namespace === service.namespace && perm.service === service.service);
+}
 </script>
 
 <template>
@@ -118,66 +133,129 @@ const permCategoriesSorted = computed(() =>
             <DataNoDataBlock v-else-if="!role" :type="$t('common.role')" icon="i-mdi-comment-text-multiple" />
 
             <div v-else class="flex flex-col gap-2">
-                <UCard v-for="category in permCategoriesSorted" :key="category.category">
-                    <template #header>
-                        <h3 class="text-xl" :title="`ID: ${role.role?.id}`">
-                            {{ category.label }}
-                        </h3>
-                    </template>
-
-                    <div class="flex flex-col divide-y divide-default">
-                        <div
-                            v-for="perm in permList.filter((p) => p.category === category.category)"
-                            :key="perm.id"
-                            class="flex flex-col gap-1 py-1"
-                        >
-                            <UFormField
-                                class="flex flex-1 flex-row items-center gap-2"
-                                :label="$t(`perms.${perm.category}.${perm.name}.key`)"
-                                :description="$t(`perms.${perm.category}.${perm.name}.description`)"
-                                :ui="{ wrapper: 'flex-1' }"
+                <UAccordion :items="permCategoriesSorted" type="multiple" default-open>
+                    <template #content="{ item: namespace }">
+                        <div v-if="namespace.singleService" class="flex flex-col divide-y divide-default">
+                            <div
+                                v-for="perm in getPermissionsForService(namespace.singleService)"
+                                :key="perm.id"
+                                class="flex flex-col gap-1 py-1"
                             >
-                                <UFieldGroup class="inline-flex flex-initial">
-                                    <UButton
-                                        color="success"
-                                        :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
-                                        icon="i-mdi-check"
-                                        disabled
-                                    />
+                                <UFormField
+                                    class="flex flex-1 flex-row items-center gap-2"
+                                    :label="$t(`perms.${perm.namespace}.${perm.service}.${perm.name}.key`)"
+                                    :description="$t(`perms.${perm.namespace}.${perm.service}.${perm.name}.description`)"
+                                    :ui="{ wrapper: 'flex-1' }"
+                                >
+                                    <UFieldGroup class="inline-flex flex-initial">
+                                        <UButton
+                                            color="success"
+                                            :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
+                                            icon="i-mdi-check"
+                                            disabled
+                                        />
 
-                                    <UButton
-                                        color="neutral"
-                                        :variant="
-                                            !permStates.has(perm.id) || permStates.get(perm.id) === undefined ? 'solid' : 'soft'
-                                        "
-                                        icon="i-mdi-minus"
-                                        disabled
-                                    />
+                                        <UButton
+                                            color="neutral"
+                                            :variant="
+                                                !permStates.has(perm.id) || permStates.get(perm.id) === undefined
+                                                    ? 'solid'
+                                                    : 'soft'
+                                            "
+                                            icon="i-mdi-minus"
+                                            disabled
+                                        />
 
-                                    <UButton
-                                        color="error"
-                                        :variant="
-                                            permStates.get(perm.id) !== undefined && !permStates.get(perm.id) ? 'solid' : 'soft'
-                                        "
-                                        icon="i-mdi-close"
-                                        disabled
-                                    />
-                                </UFieldGroup>
-                            </UFormField>
+                                        <UButton
+                                            color="error"
+                                            :variant="
+                                                permStates.get(perm.id) !== undefined && !permStates.get(perm.id)
+                                                    ? 'solid'
+                                                    : 'soft'
+                                            "
+                                            icon="i-mdi-close"
+                                            disabled
+                                        />
+                                    </UFieldGroup>
+                                </UFormField>
 
-                            <template v-for="(attr, idx) in attrList" :key="attr.attrId">
-                                <RoleViewAttr
-                                    v-if="attr.permissionId === perm.id && !isEmptyAttributes(attr.maxValues)"
-                                    v-model="attrList[idx]!"
-                                    :permission="perm"
-                                    disabled
-                                    default-open
-                                    hide-fine-grained
-                                />
-                            </template>
+                                <template v-for="(attr, idx) in attrList" :key="attr.attrId">
+                                    <RoleViewAttr
+                                        v-if="attr.permissionId === perm.id && !isEmptyAttributes(attr.maxValues)"
+                                        v-model="attrList[idx]!"
+                                        :permission="perm"
+                                        disabled
+                                        default-open
+                                        hide-fine-grained
+                                    />
+                                </template>
+                            </div>
                         </div>
-                    </div>
-                </UCard>
+
+                        <UAccordion v-else class="p-1" :items="namespace.services" type="multiple" default-open>
+                            <template #content="{ item: service }">
+                                <div class="flex flex-col divide-y divide-default">
+                                    <div
+                                        v-for="perm in getPermissionsForService(service)"
+                                        :key="perm.id"
+                                        class="flex flex-col gap-1 py-1"
+                                    >
+                                        <UFormField
+                                            class="flex flex-1 flex-row items-center gap-2"
+                                            :label="$t(`perms.${perm.namespace}.${perm.service}.${perm.name}.key`)"
+                                            :description="
+                                                $t(`perms.${perm.namespace}.${perm.service}.${perm.name}.description`)
+                                            "
+                                            :ui="{ wrapper: 'flex-1' }"
+                                        >
+                                            <UFieldGroup class="inline-flex flex-initial">
+                                                <UButton
+                                                    color="success"
+                                                    :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
+                                                    icon="i-mdi-check"
+                                                    disabled
+                                                />
+
+                                                <UButton
+                                                    color="neutral"
+                                                    :variant="
+                                                        !permStates.has(perm.id) || permStates.get(perm.id) === undefined
+                                                            ? 'solid'
+                                                            : 'soft'
+                                                    "
+                                                    icon="i-mdi-minus"
+                                                    disabled
+                                                />
+
+                                                <UButton
+                                                    color="error"
+                                                    :variant="
+                                                        permStates.get(perm.id) !== undefined && !permStates.get(perm.id)
+                                                            ? 'solid'
+                                                            : 'soft'
+                                                    "
+                                                    icon="i-mdi-close"
+                                                    disabled
+                                                />
+                                            </UFieldGroup>
+                                        </UFormField>
+
+                                        <template v-for="(attr, idx) in attrList" :key="attr.attrId">
+                                            <RoleViewAttr
+                                                v-if="attr.permissionId === perm.id && !isEmptyAttributes(attr.maxValues)"
+                                                v-model="attrList[idx]!"
+                                                :permission="perm"
+                                                disabled
+                                                default-open
+                                                hide-fine-grained
+                                            />
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                        </UAccordion>
+                    </template>
+                </UAccordion>
             </div>
         </template>
 

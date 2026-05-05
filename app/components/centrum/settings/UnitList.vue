@@ -70,7 +70,7 @@ const columns = computed<TableColumn<Unit>[]>(() => [
                     UTooltip,
                     {
                         text: t('common.update'),
-                        vIf: can('centrum.CentrumService/CreateOrUpdateUnit').value,
+                        vIf: can('centrum.UnitsService/CreateOrUpdateUnit').value,
                     },
                     [
                         h(UButton, {
@@ -89,7 +89,7 @@ const columns = computed<TableColumn<Unit>[]>(() => [
                     UTooltip,
                     {
                         text: t('common.delete'),
-                        vIf: can('centrum.CentrumService/DeleteUnit').value,
+                        vIf: can('centrum.UnitsService/DeleteUnit').value,
                     },
                     [
                         h(UButton, {
@@ -202,7 +202,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     </UTooltip>
 
                     <UButton
-                        v-if="can('centrum.CentrumService/CreateOrUpdateUnit').value"
+                        v-if="can('centrum.UnitsService/CreateOrUpdateUnit').value"
                         color="neutral"
                         variant="outline"
                         trailing-icon="i-mdi-plus"

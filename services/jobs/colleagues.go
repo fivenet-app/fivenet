@@ -57,9 +57,7 @@ func (s *Server) ListColleagues(
 	// Access Permission Check
 	types, err := s.ps.AttrStringList(
 		userInfo,
-		permsjobs.JobsServicePerm,
-		permsjobs.JobsServiceGetColleaguePerm,
-		permsjobs.JobsServiceGetColleagueTypesPermField,
+		permsjobs.ColleaguesService.GetColleague.Types,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -424,9 +422,7 @@ func (s *Server) GetColleague(
 	// Access Permission Check
 	colleagueAccess, err := s.ps.AttrStringList(
 		userInfo,
-		permsjobs.JobsServicePerm,
-		permsjobs.JobsServiceGetColleaguePerm,
-		permsjobs.JobsServiceGetColleagueAccessPermField,
+		permsjobs.ColleaguesService.GetColleague.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -463,9 +459,7 @@ func (s *Server) GetColleague(
 	if !infoOnly {
 		fields, err = s.ps.AttrStringList(
 			userInfo,
-			permsjobs.JobsServicePerm,
-			permsjobs.JobsServiceGetColleaguePerm,
-			permsjobs.JobsServiceGetColleagueTypesPermField,
+			permsjobs.ColleaguesService.GetColleague.Types,
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -510,9 +504,7 @@ func (s *Server) GetSelf(
 	// Field Permission Check
 	types, err := s.ps.AttrStringList(
 		userInfo,
-		permsjobs.JobsServicePerm,
-		permsjobs.JobsServiceGetColleaguePerm,
-		permsjobs.JobsServiceGetColleagueTypesPermField,
+		permsjobs.ColleaguesService.GetColleague.Types,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -563,9 +555,7 @@ func (s *Server) SetColleagueProps(
 	// Access Permission Check
 	colleagueAccess, err := s.ps.AttrStringList(
 		userInfo,
-		permsjobs.JobsServicePerm,
-		permsjobs.JobsServiceSetColleaguePropsPerm,
-		permsjobs.JobsServiceSetColleaguePropsAccessPermField,
+		permsjobs.ColleaguesService.SetColleagueProps.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -601,9 +591,7 @@ func (s *Server) SetColleagueProps(
 	// Types Permission Check
 	types, err := s.ps.AttrStringList(
 		userInfo,
-		permsjobs.JobsServicePerm,
-		permsjobs.JobsServiceSetColleaguePropsPerm,
-		permsjobs.JobsServiceSetColleaguePropsTypesPermField,
+		permsjobs.ColleaguesService.SetColleagueProps.Types,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -791,9 +779,7 @@ func (s *Server) ListColleagueActivity(
 	// Access Field Permission Check
 	colleagueAccess, err := s.ps.AttrStringList(
 		userInfo,
-		permsjobs.JobsServicePerm,
-		permsjobs.JobsServiceGetColleaguePerm,
-		permsjobs.JobsServiceGetColleagueAccessPermField,
+		permsjobs.ColleaguesService.GetColleague.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -869,9 +855,7 @@ func (s *Server) ListColleagueActivity(
 	// Types Field Permission Check
 	types, err := s.ps.AttrStringList(
 		userInfo,
-		permsjobs.JobsServicePerm,
-		permsjobs.JobsServiceListColleagueActivityPerm,
-		permsjobs.JobsServiceListColleagueActivityTypesPermField,
+		permsjobs.ColleaguesService.ListColleagueActivity.Types,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)

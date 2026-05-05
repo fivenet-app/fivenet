@@ -1534,21 +1534,19 @@ const file_services_centrum_dispatches_proto_rawDesc = "" +
 	"\x04resp\x18\x02 \x01(\x0e2..resources.centrum.dispatches.TakeDispatchRespR\x04resp\x12#\n" +
 	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"\x16\n" +
-	"\x14TakeDispatchResponse2\xe6\t\n" +
+	"\x14TakeDispatchResponse2\xcb\n" +
+	"\n" +
 	"\x11DispatchesService\x12k\n" +
 	"\x0eCreateDispatch\x12'.services.centrum.CreateDispatchRequest\x1a(.services.centrum.CreateDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12k\n" +
 	"\x0eUpdateDispatch\x12'.services.centrum.UpdateDispatchRequest\x1a(.services.centrum.UpdateDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12k\n" +
 	"\x0eDeleteDispatch\x12'.services.centrum.DeleteDispatchRequest\x1a(.services.centrum.DeleteDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x93\x01\n" +
-	"\x16ListDispatchTargetJobs\x12/.services.centrum.ListDispatchTargetJobsRequest\x1a0.services.centrum.ListDispatchTargetJobsResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eCreateDispatch\x12x\n" +
-	"\x0eAssignDispatch\x12'.services.centrum.AssignDispatchRequest\x1a(.services.centrum.AssignDispatchResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vTakeControl\x12j\n" +
-	"\vGetDispatch\x12$.services.centrum.GetDispatchRequest\x1a%.services.centrum.GetDispatchResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12s\n" +
-	"\x0eListDispatches\x12'.services.centrum.ListDispatchesRequest\x1a(.services.centrum.ListDispatchesResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12\x85\x01\n" +
-	"\x14ListDispatchActivity\x12-.services.centrum.ListDispatchActivityRequest\x1a..services.centrum.ListDispatchActivityResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12e\n" +
+	"\x16ListDispatchTargetJobs\x12/.services.centrum.ListDispatchTargetJobsRequest\x1a0.services.centrum.ListDispatchTargetJobsResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eCreateDispatch\x12\x91\x01\n" +
+	"\x0eAssignDispatch\x12'.services.centrum.AssignDispatchRequest\x1a(.services.centrum.AssignDispatchResponse\",\xd2\xf3\x18(\b\x01\x12\acentrum\x1a\x0eCentrumService\"\vTakeControl\x12\x83\x01\n" +
+	"\vGetDispatch\x12$.services.centrum.GetDispatchRequest\x1a%.services.centrum.GetDispatchResponse\"'\xd2\xf3\x18#\b\x01\x12\acentrum\x1a\x0eCentrumService\"\x06Stream\x12\x8c\x01\n" +
+	"\x0eListDispatches\x12'.services.centrum.ListDispatchesRequest\x1a(.services.centrum.ListDispatchesResponse\"'\xd2\xf3\x18#\b\x01\x12\acentrum\x1a\x0eCentrumService\"\x06Stream\x12\x9e\x01\n" +
+	"\x14ListDispatchActivity\x12-.services.centrum.ListDispatchActivityRequest\x1a..services.centrum.ListDispatchActivityResponse\"'\xd2\xf3\x18#\b\x01\x12\acentrum\x1a\x0eCentrumService\"\x06Stream\x12e\n" +
 	"\fTakeDispatch\x12%.services.centrum.TakeDispatchRequest\x1a&.services.centrum.TakeDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8b\x01\n" +
-	"\x14UpdateDispatchStatus\x12-.services.centrum.UpdateDispatchStatusRequest\x1a..services.centrum.UpdateDispatchStatusResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fTakeDispatch\x1a\x1c\xea\xf3\x18\x18\"\x16centrum.CentrumServiceBLZJgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrumb\x06proto3"
+	"\x14UpdateDispatchStatus\x12-.services.centrum.UpdateDispatchStatusRequest\x1a..services.centrum.UpdateDispatchStatusResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fTakeDispatch\x1a\x1a\xea\xf3\x18\x16\bi\x12\x12i-mdi-target-arrowBLZJgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrumb\x06proto3"
 
 var file_services_centrum_dispatches_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_services_centrum_dispatches_proto_goTypes = []any{

@@ -194,6 +194,7 @@ func TestFullAuthFlow(t *testing.T) {
 
 	perm, err := srv.ps.GetPermission(
 		ctx,
+		permsauth.Namespace,
 		permsauth.AuthServicePerm,
 		permsauth.AuthServiceChooseCharacterPerm,
 	)

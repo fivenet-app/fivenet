@@ -852,18 +852,18 @@ export const useCentrumStore = defineStore(
                     return can('centrum.CentrumService/TakeControl').value;
                 case 'TakeDispatch':
                     return (
-                        can('centrum.CentrumService/TakeDispatch').value && getCurrentMode.value !== CentrumMode.CENTRAL_COMMAND
+                        can('centrum.DispatchesService/TakeDispatch').value && getCurrentMode.value !== CentrumMode.CENTRAL_COMMAND
                     );
                 case 'AssignDispatch':
                     return can('centrum.CentrumService/TakeControl').value;
                 case 'UpdateDispatchStatus':
                     return (
                         dispatchParam !== undefined &&
-                        can('centrum.CentrumService/TakeDispatch').value &&
+                        can('centrum.DispatchesService/TakeDispatch').value &&
                         checkIfUnitAssignedToDispatch(dispatchParam, ownUnitId.value)
                     );
                 case 'UpdateUnitStatus':
-                    return can('centrum.CentrumService/TakeDispatch').value;
+                    return can('centrum.DispatchesService/TakeDispatch').value;
                 default:
                     return false;
             }

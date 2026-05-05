@@ -64,7 +64,8 @@ message SetEmailSettingsResponse {
 
 service SettingsService {
   option (codegen.perms.perms_svc) = {
-    name: "mailer.MailerService"
+    namespace: "mailer"
+    service: "MailerService"
   };
 
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse) {

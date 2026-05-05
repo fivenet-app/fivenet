@@ -107,7 +107,10 @@ message TakeDispatchRequest {
 message TakeDispatchResponse {}
 
 service DispatchesService {
-  option (codegen.perms.perms_svc) = {name: "centrum.CentrumService"};
+  option (codegen.perms.perms_svc) = {
+    order: 105
+    icon: "i-mdi-target-arrow"
+  };
 
   rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse) {
     option (codegen.perms.perms) = {enabled: true};
@@ -129,6 +132,8 @@ service DispatchesService {
   rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "centrum"
+      service: "CentrumService"
       name: "TakeControl"
     };
   }
@@ -136,18 +141,24 @@ service DispatchesService {
   rpc GetDispatch(GetDispatchRequest) returns (GetDispatchResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "centrum"
+      service: "CentrumService"
       name: "Stream"
     };
   }
   rpc ListDispatches(ListDispatchesRequest) returns (ListDispatchesResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "centrum"
+      service: "CentrumService"
       name: "Stream"
     };
   }
   rpc ListDispatchActivity(ListDispatchActivityRequest) returns (ListDispatchActivityResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "centrum"
+      service: "CentrumService"
       name: "Stream"
     };
   }

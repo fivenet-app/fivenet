@@ -27,11 +27,12 @@ const (
 type PermsOptions struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	Service       *string                `protobuf:"bytes,2,opt,name=service,proto3,oneof" json:"service,omitempty"`
-	Name          *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	Names         []string               `protobuf:"bytes,6,rep,name=names,proto3" json:"names,omitempty"`
-	Order         int32                  `protobuf:"varint,4,opt,name=order,proto3" json:"order,omitempty"`
-	Attrs         []*Attr                `protobuf:"bytes,5,rep,name=attrs,proto3" json:"attrs,omitempty"`
+	Namespace     *string                `protobuf:"bytes,2,opt,name=namespace,proto3,oneof" json:"namespace,omitempty"`
+	Service       *string                `protobuf:"bytes,3,opt,name=service,proto3,oneof" json:"service,omitempty"`
+	Name          *string                `protobuf:"bytes,4,opt,name=name,proto3,oneof" json:"name,omitempty"`
+	Names         []string               `protobuf:"bytes,5,rep,name=names,proto3" json:"names,omitempty"`
+	Order         int32                  `protobuf:"varint,6,opt,name=order,proto3" json:"order,omitempty"`
+	Attrs         []*Attr                `protobuf:"bytes,7,rep,name=attrs,proto3" json:"attrs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -66,6 +67,13 @@ func (x *PermsOptions) GetEnabled() bool {
 		return x.Enabled
 	}
 	return false
+}
+
+func (x *PermsOptions) GetNamespace() string {
+	if x != nil && x.Namespace != nil {
+		return *x.Namespace
+	}
+	return ""
 }
 
 func (x *PermsOptions) GetService() string {
@@ -107,6 +115,10 @@ func (x *PermsOptions) SetEnabled(v bool) {
 	x.Enabled = v
 }
 
+func (x *PermsOptions) SetNamespace(v string) {
+	x.Namespace = &v
+}
+
 func (x *PermsOptions) SetService(v string) {
 	x.Service = &v
 }
@@ -127,6 +139,13 @@ func (x *PermsOptions) SetAttrs(v []*Attr) {
 	x.Attrs = v
 }
 
+func (x *PermsOptions) HasNamespace() bool {
+	if x == nil {
+		return false
+	}
+	return x.Namespace != nil
+}
+
 func (x *PermsOptions) HasService() bool {
 	if x == nil {
 		return false
@@ -141,6 +160,10 @@ func (x *PermsOptions) HasName() bool {
 	return x.Name != nil
 }
 
+func (x *PermsOptions) ClearNamespace() {
+	x.Namespace = nil
+}
+
 func (x *PermsOptions) ClearService() {
 	x.Service = nil
 }
@@ -152,12 +175,13 @@ func (x *PermsOptions) ClearName() {
 type PermsOptions_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Enabled bool
-	Service *string
-	Name    *string
-	Names   []string
-	Order   int32
-	Attrs   []*Attr
+	Enabled   bool
+	Namespace *string
+	Service   *string
+	Name      *string
+	Names     []string
+	Order     int32
+	Attrs     []*Attr
 }
 
 func (b0 PermsOptions_builder) Build() *PermsOptions {
@@ -165,6 +189,7 @@ func (b0 PermsOptions_builder) Build() *PermsOptions {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.Enabled = b.Enabled
+	x.Namespace = b.Namespace
 	x.Service = b.Service
 	x.Name = b.Name
 	x.Names = b.Names
@@ -276,8 +301,9 @@ type ServiceOptions struct {
 	state           protoimpl.MessageState   `protogen:"hybrid.v1"`
 	Order           int32                    `protobuf:"varint,1,opt,name=order,proto3" json:"order,omitempty"`
 	Icon            *string                  `protobuf:"bytes,2,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
-	Name            *string                  `protobuf:"bytes,4,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	AdditionalPerms []*AdditionalServicePerm `protobuf:"bytes,3,rep,name=additional_perms,json=additionalPerms,proto3" json:"additional_perms,omitempty"`
+	Namespace       *string                  `protobuf:"bytes,3,opt,name=namespace,proto3,oneof" json:"namespace,omitempty"`
+	Service         *string                  `protobuf:"bytes,4,opt,name=service,proto3,oneof" json:"service,omitempty"`
+	AdditionalPerms []*AdditionalServicePerm `protobuf:"bytes,5,rep,name=additional_perms,json=additionalPerms,proto3" json:"additional_perms,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -321,9 +347,16 @@ func (x *ServiceOptions) GetIcon() string {
 	return ""
 }
 
-func (x *ServiceOptions) GetName() string {
-	if x != nil && x.Name != nil {
-		return *x.Name
+func (x *ServiceOptions) GetNamespace() string {
+	if x != nil && x.Namespace != nil {
+		return *x.Namespace
+	}
+	return ""
+}
+
+func (x *ServiceOptions) GetService() string {
+	if x != nil && x.Service != nil {
+		return *x.Service
 	}
 	return ""
 }
@@ -343,8 +376,12 @@ func (x *ServiceOptions) SetIcon(v string) {
 	x.Icon = &v
 }
 
-func (x *ServiceOptions) SetName(v string) {
-	x.Name = &v
+func (x *ServiceOptions) SetNamespace(v string) {
+	x.Namespace = &v
+}
+
+func (x *ServiceOptions) SetService(v string) {
+	x.Service = &v
 }
 
 func (x *ServiceOptions) SetAdditionalPerms(v []*AdditionalServicePerm) {
@@ -358,19 +395,30 @@ func (x *ServiceOptions) HasIcon() bool {
 	return x.Icon != nil
 }
 
-func (x *ServiceOptions) HasName() bool {
+func (x *ServiceOptions) HasNamespace() bool {
 	if x == nil {
 		return false
 	}
-	return x.Name != nil
+	return x.Namespace != nil
+}
+
+func (x *ServiceOptions) HasService() bool {
+	if x == nil {
+		return false
+	}
+	return x.Service != nil
 }
 
 func (x *ServiceOptions) ClearIcon() {
 	x.Icon = nil
 }
 
-func (x *ServiceOptions) ClearName() {
-	x.Name = nil
+func (x *ServiceOptions) ClearNamespace() {
+	x.Namespace = nil
+}
+
+func (x *ServiceOptions) ClearService() {
+	x.Service = nil
 }
 
 type ServiceOptions_builder struct {
@@ -378,7 +426,8 @@ type ServiceOptions_builder struct {
 
 	Order           int32
 	Icon            *string
-	Name            *string
+	Namespace       *string
+	Service         *string
 	AdditionalPerms []*AdditionalServicePerm
 }
 
@@ -388,7 +437,8 @@ func (b0 ServiceOptions_builder) Build() *ServiceOptions {
 	_, _ = b, x
 	x.Order = b.Order
 	x.Icon = b.Icon
-	x.Name = b.Name
+	x.Namespace = b.Namespace
+	x.Service = b.Service
 	x.AdditionalPerms = b.AdditionalPerms
 	return m0
 }
@@ -513,14 +563,17 @@ var File_codegen_perms_perms_proto protoreflect.FileDescriptor
 
 const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\n" +
-	"\x19codegen/perms/perms.proto\x12\rcodegen.perms\x1a google/protobuf/descriptor.proto\x1a1resources/permissions/attributes/attributes.proto\"\xcc\x01\n" +
+	"\x19codegen/perms/perms.proto\x12\rcodegen.perms\x1a google/protobuf/descriptor.proto\x1a1resources/permissions/attributes/attributes.proto\"\xfd\x01\n" +
 	"\fPermsOptions\x12\x18\n" +
-	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x1d\n" +
-	"\aservice\x18\x02 \x01(\tH\x00R\aservice\x88\x01\x01\x12\x17\n" +
-	"\x04name\x18\x03 \x01(\tH\x01R\x04name\x88\x01\x01\x12\x14\n" +
-	"\x05names\x18\x06 \x03(\tR\x05names\x12\x14\n" +
-	"\x05order\x18\x04 \x01(\x05R\x05order\x12)\n" +
-	"\x05attrs\x18\x05 \x03(\v2\x13.codegen.perms.AttrR\x05attrsB\n" +
+	"\aenabled\x18\x01 \x01(\bR\aenabled\x12!\n" +
+	"\tnamespace\x18\x02 \x01(\tH\x00R\tnamespace\x88\x01\x01\x12\x1d\n" +
+	"\aservice\x18\x03 \x01(\tH\x01R\aservice\x88\x01\x01\x12\x17\n" +
+	"\x04name\x18\x04 \x01(\tH\x02R\x04name\x88\x01\x01\x12\x14\n" +
+	"\x05names\x18\x05 \x03(\tR\x05names\x12\x14\n" +
+	"\x05order\x18\x06 \x01(\x05R\x05order\x12)\n" +
+	"\x05attrs\x18\a \x03(\v2\x13.codegen.perms.AttrR\x05attrsB\f\n" +
+	"\n" +
+	"_namespaceB\n" +
 	"\n" +
 	"\b_serviceB\a\n" +
 	"\x05_name\"\x9f\x01\n" +
@@ -528,14 +581,18 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\x12C\n" +
 	"\x04type\x18\x03 \x01(\x0e2/.resources.permissions.attributes.AttributeTypeR\x04type\x12*\n" +
-	"\x11valid_string_list\x18\x04 \x03(\tR\x0fvalidStringList\"\xbb\x01\n" +
+	"\x11valid_string_list\x18\x04 \x03(\tR\x0fvalidStringList\"\xf5\x01\n" +
 	"\x0eServiceOptions\x12\x14\n" +
 	"\x05order\x18\x01 \x01(\x05R\x05order\x12\x17\n" +
-	"\x04icon\x18\x02 \x01(\tH\x00R\x04icon\x88\x01\x01\x12\x17\n" +
-	"\x04name\x18\x04 \x01(\tH\x01R\x04name\x88\x01\x01\x12O\n" +
-	"\x10additional_perms\x18\x03 \x03(\v2$.codegen.perms.AdditionalServicePermR\x0fadditionalPermsB\a\n" +
-	"\x05_iconB\a\n" +
-	"\x05_name\"l\n" +
+	"\x04icon\x18\x02 \x01(\tH\x00R\x04icon\x88\x01\x01\x12!\n" +
+	"\tnamespace\x18\x03 \x01(\tH\x01R\tnamespace\x88\x01\x01\x12\x1d\n" +
+	"\aservice\x18\x04 \x01(\tH\x02R\aservice\x88\x01\x01\x12O\n" +
+	"\x10additional_perms\x18\x05 \x03(\v2$.codegen.perms.AdditionalServicePermR\x0fadditionalPermsB\a\n" +
+	"\x05_iconB\f\n" +
+	"\n" +
+	"_namespaceB\n" +
+	"\n" +
+	"\b_service\"l\n" +
 	"\x15AdditionalServicePerm\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x14\n" +
 	"\x05order\x18\x04 \x01(\x05R\x05order\x12)\n" +

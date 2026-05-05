@@ -280,9 +280,7 @@ func (s *Server) CreateCalendar(
 
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permscalendar.CalendarServicePerm,
-		permscalendar.CalendarServiceCreateCalendarPerm,
-		permscalendar.CalendarServiceCreateCalendarFieldsPermField,
+		permscalendar.CalendarService.CreateCalendar.Fields,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -410,9 +408,7 @@ func (s *Server) UpdateCalendar(
 
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permscalendar.CalendarServicePerm,
-		permscalendar.CalendarServiceCreateCalendarPerm,
-		permscalendar.CalendarServiceCreateCalendarFieldsPermField,
+		permscalendar.CalendarService.CreateCalendar.Fields,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)

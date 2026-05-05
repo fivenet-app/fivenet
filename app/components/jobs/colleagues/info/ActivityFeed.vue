@@ -37,7 +37,7 @@ const typesAttrs = computed(() =>
         ? listEnumValues(ColleagueActivityType)
               .filter((t) => t.number !== 0)
               .map((t) => t.name)
-        : attrStringList('jobs.JobsService/ListColleagueActivity', 'Types').value
+        : attrStringList('jobs.ColleaguesService/ListColleagueActivity', 'Types').value
     ).map((t) => t.toUpperCase()),
 );
 const activityTypes = computed(() =>
@@ -105,7 +105,7 @@ async function listColleagueActivity(values: Schema): Promise<ListColleagueActiv
 
 watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
-const accessAttrs = attrStringList('jobs.JobsService/GetColleague', 'Access');
+const accessAttrs = attrStringList('jobs.ColleaguesService/GetColleague', 'Access');
 const colleagueSearchAttrs = ['Own', 'Lower_Rank', 'Same_Rank', 'Any'];
 
 watch(props, async () => refresh());

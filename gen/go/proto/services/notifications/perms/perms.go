@@ -8,5 +8,7 @@ import (
 )
 
 const (
-	NotificationsServicePerm perms.Category = "notifications.NotificationsService"
+	Namespace perms.Namespace = "notifications"
+
+	NotificationsServicePerm perms.Service = "NotificationsService"
 )

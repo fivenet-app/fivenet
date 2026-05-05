@@ -47,7 +47,7 @@ const items = computed<CardElement[]>(() => [
         title: t('common.job', 2),
         description: t('pages.overview.features.jobs'),
         to: { name: 'jobs-overview' },
-        permission: 'jobs.JobsService/ListColleagues',
+        permission: 'jobs.ColleaguesService/ListColleagues',
         icon: 'i-mdi-briefcase-outline',
     },
     {

@@ -1046,20 +1046,20 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\bactivity\x18\x02 \x03(\v2%.resources.wiki.activity.PageActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xf9\x05\n" +
 	"\vWikiService\x12V\n" +
 	"\tListPages\x12\x1f.services.wiki.ListPagesRequest\x1a .services.wiki.ListPagesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12[\n" +
-	"\aGetPage\x12\x1d.services.wiki.GetPageRequest\x1a\x1e.services.wiki.GetPageResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tListPages\x12Y\n" +
+	"\aGetPage\x12\x1d.services.wiki.GetPageRequest\x1a\x1e.services.wiki.GetPageResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tListPages\x12Y\n" +
 	"\n" +
 	"CreatePage\x12 .services.wiki.CreatePageRequest\x1a!.services.wiki.CreatePageResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x85\x01\n" +
 	"\n" +
-	"UpdatePage\x12 .services.wiki.UpdatePageRequest\x1a!.services.wiki.UpdatePageResponse\"2\xd2\xf3\x18.\b\x01*\x12\n" +
-	"\x06Fields\x18\x01\"\x06Public2\n" +
-	"UpdatePage2\n" +
-	"CreatePage\x12Y\n" +
+	"UpdatePage\x12 .services.wiki.UpdatePageRequest\x1a!.services.wiki.UpdatePageResponse\"2\xd2\xf3\x18.\b\x01*\n" +
+	"UpdatePage*\n" +
+	"CreatePage:\x12\n" +
+	"\x06Fields\x18\x01\"\x06Public\x12Y\n" +
 	"\n" +
 	"DeletePage\x12 .services.wiki.DeletePageRequest\x1a!.services.wiki.DeletePageResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12k\n" +
 	"\x10ListPageActivity\x12&.services.wiki.ListPageActivityRequest\x1a'.services.wiki.ListPageActivityResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
 	"\n" +
-	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1e\xd2\xf3\x18\x1a\b\x012\n" +
-	"CreatePage2\n" +
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1e\xd2\xf3\x18\x1a\b\x01*\n" +
+	"CreatePage*\n" +
 	"UpdatePage(\x01\x1a\x13\xea\xf3\x18\x0f\bn\x12\vi-mdi-brainBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki;wikib\x06proto3"
 
 var file_services_wiki_wiki_proto_msgTypes = make([]protoimpl.MessageInfo, 12)

@@ -1675,26 +1675,26 @@ const file_services_mailer_thread_proto_rawDesc = "" +
 	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\x12\x1d\n" +
 	"\n" +
 	"message_id\x18\x03 \x01(\x03R\tmessageId\"\x17\n" +
-	"\x15DeleteMessageResponse2\xa9\t\n" +
+	"\x15DeleteMessageResponse2\xaa\t\n" +
 	"\rThreadService\x12l\n" +
-	"\vListThreads\x12#.services.mailer.ListThreadsRequest\x1a$.services.mailer.ListThreadsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\vListThreads\x12#.services.mailer.ListThreadsRequest\x1a$.services.mailer.ListThreadsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12f\n" +
-	"\tGetThread\x12!.services.mailer.GetThreadRequest\x1a\".services.mailer.GetThreadResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\tGetThread\x12!.services.mailer.GetThreadRequest\x1a\".services.mailer.GetThreadResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12o\n" +
-	"\fCreateThread\x12$.services.mailer.CreateThreadRequest\x1a%.services.mailer.CreateThreadResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\fCreateThread\x12$.services.mailer.CreateThreadRequest\x1a%.services.mailer.CreateThreadResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12n\n" +
-	"\fDeleteThread\x12$.services.mailer.DeleteThreadRequest\x1a%.services.mailer.DeleteThreadResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
-	"\x0eGetThreadState\x12&.services.mailer.GetThreadStateRequest\x1a'.services.mailer.GetThreadStateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\fDeleteThread\x12$.services.mailer.DeleteThreadRequest\x1a%.services.mailer.DeleteThreadResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12u\n" +
+	"\x0eGetThreadState\x12&.services.mailer.GetThreadStateRequest\x1a'.services.mailer.GetThreadStateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12u\n" +
-	"\x0eSetThreadState\x12&.services.mailer.SetThreadStateRequest\x1a'.services.mailer.SetThreadStateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\x0eSetThreadState\x12&.services.mailer.SetThreadStateRequest\x1a'.services.mailer.SetThreadStateResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12r\n" +
-	"\rSearchThreads\x12%.services.mailer.SearchThreadsRequest\x1a&.services.mailer.SearchThreadsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\rSearchThreads\x12%.services.mailer.SearchThreadsRequest\x1a&.services.mailer.SearchThreadsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12\x81\x01\n" +
-	"\x12ListThreadMessages\x12*.services.mailer.ListThreadMessagesRequest\x1a+.services.mailer.ListThreadMessagesResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\x12ListThreadMessages\x12*.services.mailer.ListThreadMessagesRequest\x1a+.services.mailer.ListThreadMessagesResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12l\n" +
-	"\vPostMessage\x12#.services.mailer.PostMessageRequest\x1a$.services.mailer.PostMessageResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\vPostMessage\x12#.services.mailer.PostMessageRequest\x1a$.services.mailer.PostMessageResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12q\n" +
-	"\rDeleteMessage\x12%.services.mailer.DeleteMessageRequest\x1a&.services.mailer.DeleteMessageResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x1a\x1a\xea\xf3\x18\x16\"\x14mailer.MailerServiceBJZHgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer;mailerb\x06proto3"
+	"\rDeleteMessage\x12%.services.mailer.DeleteMessageRequest\x1a&.services.mailer.DeleteMessageResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x1a\x1b\xea\xf3\x18\x17\x1a\x06mailer\"\rMailerServiceBJZHgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer;mailerb\x06proto3"
 
 var file_services_mailer_thread_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_services_mailer_thread_proto_goTypes = []any{

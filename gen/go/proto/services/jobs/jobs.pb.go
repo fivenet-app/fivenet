@@ -251,7 +251,7 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\x0fSetMOTDResponse\x12\x12\n" +
 	"\x04motd\x18\x01 \x01(\tR\x04motd2\xd7\x01\n" +
 	"\vJobsService\x12U\n" +
-	"\aGetMOTD\x12\x1d.services.jobs.GetMOTDRequest\x1a\x1e.services.jobs.GetMOTDResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12P\n" +
+	"\aGetMOTD\x12\x1d.services.jobs.GetMOTDRequest\x1a\x1e.services.jobs.GetMOTDResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12P\n" +
 	"\aSetMOTD\x12\x1d.services.jobs.SetMOTDRequest\x1a\x1e.services.jobs.SetMOTDResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x1f\xea\xf3\x18\x1b\b<\x12\x17i-mdi-briefcase-outlineBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var file_services_jobs_jobs_proto_msgTypes = make([]protoimpl.MessageInfo, 4)

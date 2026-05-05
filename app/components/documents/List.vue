@@ -194,7 +194,7 @@ defineShortcuts({
 
                     <UFieldGroup class="inline-flex">
                         <UButton
-                            v-if="can('documents.DocumentsService/ListCategories').value"
+                            v-if="can('documents.CategoriesService/ListCategories').value"
                             to="/documents/categories"
                             icon="i-mdi-shape"
                             truncate
@@ -205,7 +205,7 @@ defineShortcuts({
                         </UButton>
 
                         <UButton
-                            v-if="can('documents.DocumentsService/ListTemplates').value"
+                            v-if="can('documents.TemplatesService/ListTemplates').value"
                             to="/documents/templates"
                             icon="i-mdi-file-code"
                             truncate

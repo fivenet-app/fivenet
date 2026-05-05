@@ -49,7 +49,14 @@ func TestToUint32Checked(t *testing.T) {
 			t.Parallel()
 			got, ok := ToUint32Checked(tt.in)
 			if got != tt.want || ok != tt.wantOK {
-				t.Fatalf("ToUint32Checked(%d) = (%d, %t), want (%d, %t)", tt.in, got, ok, tt.want, tt.wantOK)
+				t.Fatalf(
+					"ToUint32Checked(%d) = (%d, %t), want (%d, %t)",
+					tt.in,
+					got,
+					ok,
+					tt.want,
+					tt.wantOK,
+				)
 			}
 		})
 	}

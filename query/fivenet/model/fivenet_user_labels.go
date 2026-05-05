@@ -7,7 +7,14 @@
 
 package model
 
+import (
+	"time"
+)
+
 type FivenetUserLabels struct {
-	UserID  int32 `json:"user_id"`
-	LabelID int64 `json:"label_id"`
+	UserID    int32      `json:"user_id"`
+	LabelID   int64      `json:"label_id"`
+	CreatedAt time.Time  `json:"created_at"`
+	ExpiresAt *time.Time `json:"expires_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
 }

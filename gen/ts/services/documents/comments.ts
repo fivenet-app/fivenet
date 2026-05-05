@@ -472,8 +472,8 @@ export const DeleteCommentResponse = new DeleteCommentResponse$Type();
  * @generated ServiceType for protobuf service services.documents.CommentsService
  */
 export const CommentsService = new ServiceType("services.documents.CommentsService", [
-    { name: "GetComments", options: { "codegen.perms.perms": { enabled: true, name: "ListDocuments" } }, I: GetCommentsRequest, O: GetCommentsResponse },
-    { name: "PostComment", options: { "codegen.perms.perms": { enabled: true, name: "ListDocuments" } }, I: PostCommentRequest, O: PostCommentResponse },
-    { name: "EditComment", options: { "codegen.perms.perms": { enabled: true, name: "ListDocuments" } }, I: EditCommentRequest, O: EditCommentResponse },
+    { name: "GetComments", options: { "codegen.perms.perms": { enabled: true, namespace: "documents", service: "DocumentsService", name: "ListDocuments" } }, I: GetCommentsRequest, O: GetCommentsResponse },
+    { name: "PostComment", options: { "codegen.perms.perms": { enabled: true, namespace: "documents", service: "DocumentsService", name: "ListDocuments" } }, I: PostCommentRequest, O: PostCommentResponse },
+    { name: "EditComment", options: { "codegen.perms.perms": { enabled: true, namespace: "documents", service: "DocumentsService", name: "ListDocuments" } }, I: EditCommentRequest, O: EditCommentResponse },
     { name: "DeleteComment", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }] } }, I: DeleteCommentRequest, O: DeleteCommentResponse }
-], { "codegen.perms.perms_svc": { name: "documents.DocumentsService" } });
+], { "codegen.perms.perms_svc": { order: 51, icon: "i-mdi-comment-text-multiple" } });

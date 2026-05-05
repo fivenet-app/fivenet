@@ -378,12 +378,12 @@ const file_services_documents_categories_proto_rawDesc = "" +
 	"\bcategory\x18\x01 \x01(\v2&.resources.documents.category.CategoryR\bcategory\"'\n" +
 	"\x15DeleteCategoryRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
-	"\x16DeleteCategoryResponse2\xab\x03\n" +
+	"\x16DeleteCategoryResponse2\x9e\x03\n" +
 	"\x11CategoriesService\x12y\n" +
-	"\x0eListCategories\x12).services.documents.ListCategoriesRequest\x1a*.services.documents.ListCategoriesResponse\"\x10\xd2\xf3\x18\f\b\x01*\b\n" +
+	"\x0eListCategories\x12).services.documents.ListCategoriesRequest\x1a*.services.documents.ListCategoriesResponse\"\x10\xd2\xf3\x18\f\b\x01:\b\n" +
 	"\x04Jobs\x18\x02\x12\x87\x01\n" +
 	"\x16CreateOrUpdateCategory\x121.services.documents.CreateOrUpdateCategoryRequest\x1a2.services.documents.CreateOrUpdateCategoryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12o\n" +
-	"\x0eDeleteCategory\x12).services.documents.DeleteCategoryRequest\x1a*.services.documents.DeleteCategoryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a \xea\xf3\x18\x1c\"\x1adocuments.DocumentsServiceBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
+	"\x0eDeleteCategory\x12).services.documents.DeleteCategoryRequest\x1a*.services.documents.DeleteCategoryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x13\xea\xf3\x18\x0f\b3\x12\vi-mdi-shapeBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var file_services_documents_categories_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_services_documents_categories_proto_goTypes = []any{

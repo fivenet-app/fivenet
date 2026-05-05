@@ -44,24 +44,31 @@ message DeleteCommentResponse {}
 
 service CommentsService {
   option (codegen.perms.perms_svc) = {
-    name: "documents.DocumentsService"
+    order: 51
+    icon: "i-mdi-comment-text-multiple"
   };
 
   rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "documents"
+      service: "DocumentsService"
       name: "ListDocuments"
     };
   }
   rpc PostComment(PostCommentRequest) returns (PostCommentResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "documents"
+      service: "DocumentsService"
       name: "ListDocuments"
     };
   }
   rpc EditComment(EditCommentRequest) returns (EditCommentResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      namespace: "documents"
+      service: "DocumentsService"
       name: "ListDocuments"
     };
   }

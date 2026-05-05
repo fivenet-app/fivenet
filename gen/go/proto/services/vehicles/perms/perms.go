@@ -8,11 +8,43 @@ import (
 )
 
 const (
-	VehiclesServicePerm perms.Category = "vehicles.VehiclesService"
+	Namespace perms.Namespace = "vehicles"
 
-	// Service: VehiclesService
+	VehiclesServicePerm perms.Service = "VehiclesService"
+
+	// Service: vehicles.VehiclesService
 	VehiclesServiceListVehiclesPerm               perms.Name = "ListVehicles"
 	VehiclesServiceListVehiclesFieldsPermField    perms.Key  = "Fields"
 	VehiclesServiceSetVehiclePropsPerm            perms.Name = "SetVehicleProps"
 	VehiclesServiceSetVehiclePropsFieldsPermField perms.Key  = "Fields"
 )
+
+type VehiclesServicePerms struct {
+	ListVehicles    VehiclesServiceListVehiclesPermRef
+	SetVehicleProps VehiclesServiceSetVehiclePropsPermRef
+}
+type VehiclesServiceListVehiclesPermRef struct {
+	Perm   perms.PermissionRef
+	Fields perms.AttrRef[perms.StringListAttr]
+}
+type VehiclesServiceSetVehiclePropsPermRef struct {
+	Perm   perms.PermissionRef
+	Fields perms.AttrRef[perms.StringListAttr]
+}
+
+var VehiclesService = VehiclesServicePerms{
+	ListVehicles: VehiclesServiceListVehiclesPermRef{
+		Perm: perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceListVehiclesPerm),
+		Fields: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceListVehiclesPerm),
+			VehiclesServiceListVehiclesFieldsPermField,
+		),
+	},
+	SetVehicleProps: VehiclesServiceSetVehiclePropsPermRef{
+		Perm: perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceSetVehiclePropsPerm),
+		Fields: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceSetVehiclePropsPerm),
+			VehiclesServiceSetVehiclePropsFieldsPermField,
+		),
+	},
+}

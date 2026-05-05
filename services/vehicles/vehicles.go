@@ -35,9 +35,7 @@ func (s *Server) ListVehicles(
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permsvehicles.VehiclesServicePerm,
-		permsvehicles.VehiclesServiceSetVehiclePropsPerm,
-		permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermField,
+		permsvehicles.VehiclesService.SetVehicleProps.Fields,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
@@ -166,9 +164,7 @@ func (s *Server) ListVehicles(
 	// Field Permission Check
 	userFields, err := s.ps.AttrStringList(
 		userInfo,
-		permscitizens.CitizensServicePerm,
-		permscitizens.CitizensServiceListCitizensPerm,
-		permscitizens.CitizensServiceListCitizensFieldsPermField,
+		permscitizens.CitizensService.ListCitizens.Fields,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
@@ -246,9 +242,7 @@ func (s *Server) SetVehicleProps(
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permsvehicles.VehiclesServicePerm,
-		permsvehicles.VehiclesServiceSetVehiclePropsPerm,
-		permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermField,
+		permsvehicles.VehiclesService.SetVehicleProps.Fields,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)

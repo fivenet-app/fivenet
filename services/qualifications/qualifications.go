@@ -367,9 +367,7 @@ func (s *Server) UpdateQualification(
 	// Field Permission Check
 	ownAccess, err := s.perms.AttrStringList(
 		userInfo,
-		permsqualifications.QualificationsServicePerm,
-		permsqualifications.QualificationsServiceUpdateQualificationPerm,
-		permsqualifications.QualificationsServiceUpdateQualificationAccessPermField,
+		permsqualifications.QualificationsService.UpdateQualification.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -385,9 +383,7 @@ func (s *Server) UpdateQualification(
 
 	fields, err := s.perms.AttrStringList(
 		userInfo,
-		permsqualifications.QualificationsServicePerm,
-		permsqualifications.QualificationsServiceUpdateQualificationPerm,
-		permsqualifications.QualificationsServiceUpdateQualificationFieldsPermField,
+		permsqualifications.QualificationsService.UpdateQualification.Fields,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -565,9 +561,7 @@ func (s *Server) DeleteQualification(
 	// Field Permission Check
 	fields, err := s.perms.AttrStringList(
 		userInfo,
-		permsqualifications.QualificationsServicePerm,
-		permsqualifications.QualificationsServiceDeleteQualificationPerm,
-		permsqualifications.QualificationsServiceDeleteQualificationAccessPermField,
+		permsqualifications.QualificationsService.DeleteQualification.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

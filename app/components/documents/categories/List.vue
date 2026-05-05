@@ -61,7 +61,10 @@ function categorySelected(idx: number): void {
                 <template #right>
                     <PartialsBackButton fallback-to="/documents" />
 
-                    <UTooltip v-if="can('documents.DocumentsService/CreateOrUpdateCategory').value" :text="$t('common.create')">
+                    <UTooltip
+                        v-if="can('documents.CategoriesService/CreateOrUpdateCategory').value"
+                        :text="$t('common.create')"
+                    >
                         <UButton
                             color="neutral"
                             variant="outline"

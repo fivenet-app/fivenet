@@ -8,5 +8,7 @@ import (
 )
 
 const (
-	CompletorServicePerm perms.Category = "completor.CompletorService"
+	Namespace perms.Namespace = "completor"
+
+	CompletorServicePerm perms.Service = "CompletorService"
 )

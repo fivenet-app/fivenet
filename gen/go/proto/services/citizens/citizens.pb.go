@@ -1170,19 +1170,19 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\x17\n" +
 	"\x15DeleteMugshotResponse2\xcf\t\n" +
 	"\x0fCitizensService\x12\xb1\x02\n" +
-	"\fListCitizens\x12&.services.citizens.ListCitizensRequest\x1a'.services.citizens.ListCitizensResponse\"\xcf\x01\xd2\xf3\x18\xca\x01\b\x01*\xc5\x01\n" +
+	"\fListCitizens\x12&.services.citizens.ListCitizensRequest\x1a'.services.citizens.ListCitizensResponse\"\xcf\x01\xd2\xf3\x18\xca\x01\b\x01:\xc5\x01\n" +
 	"\x06Fields\x18\x01\"\vPhoneNumber\"\bLicenses\"\x10UserProps.Wanted\"\rUserProps.Job\"!UserProps.TrafficInfractionPoints\"\x13UserProps.OpenFines\"\x13UserProps.BloodType\"\x11UserProps.Mugshot\"\x10UserProps.Labels\"\x0fUserProps.Email\x12b\n" +
-	"\aGetUser\x12!.services.citizens.GetUserRequest\x1a\".services.citizens.GetUserResponse\"\x10\xd2\xf3\x18\f\b\x01*\b\n" +
+	"\aGetUser\x12!.services.citizens.GetUserRequest\x1a\".services.citizens.GetUserResponse\"\x10\xd2\xf3\x18\f\b\x01:\b\n" +
 	"\x04Jobs\x18\x03\x12\x90\x01\n" +
-	"\x10ListUserActivity\x12*.services.citizens.ListUserActivityRequest\x1a+.services.citizens.ListUserActivityResponse\"#\xd2\xf3\x18\x1f\b\x01*\x1b\n" +
+	"\x10ListUserActivity\x12*.services.citizens.ListUserActivityRequest\x1a+.services.citizens.ListUserActivityResponse\"#\xd2\xf3\x18\x1f\b\x01:\x1b\n" +
 	"\x06Fields\x18\x01\"\n" +
 	"SourceUser\"\x03Own\x12\xaa\x01\n" +
-	"\fSetUserProps\x12&.services.citizens.SetUserPropsRequest\x1a'.services.citizens.SetUserPropsResponse\"I\xd2\xf3\x18E\b\x01*A\n" +
+	"\fSetUserProps\x12&.services.citizens.SetUserPropsRequest\x1a'.services.citizens.SetUserPropsResponse\"I\xd2\xf3\x18E\b\x01:A\n" +
 	"\x06Fields\x18\x01\"\x06Wanted\"\x03Job\"\x17TrafficInfractionPoints\"\aMugshot\"\x06Labels\x12d\n" +
-	"\fUploadAvatar\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any(\x01\x12l\n" +
-	"\fDeleteAvatar\x12&.services.citizens.DeleteAvatarRequest\x1a'.services.citizens.DeleteAvatarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12n\n" +
-	"\rUploadMugshot\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fSetUserProps(\x01\x12x\n" +
-	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fSetUserProps\x1a&\xea\xf3\x18\"\b\x1e\x12\x1ei-mdi-account-multiple-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
+	"\fUploadAvatar\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any(\x01\x12l\n" +
+	"\fDeleteAvatar\x12&.services.citizens.DeleteAvatarRequest\x1a'.services.citizens.DeleteAvatarResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12n\n" +
+	"\rUploadMugshot\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps(\x01\x12x\n" +
+	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps\x1a&\xea\xf3\x18\"\b\x1e\x12\x1ei-mdi-account-multiple-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
 
 var file_services_citizens_citizens_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_services_citizens_citizens_proto_goTypes = []any{

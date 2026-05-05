@@ -589,14 +589,14 @@ const file_services_documents_comments_proto_rawDesc = "" +
 	"\x14DeleteCommentRequest\x12\x1d\n" +
 	"\n" +
 	"comment_id\x18\x01 \x01(\x03R\tcommentId\"\x17\n" +
-	"\x15DeleteCommentResponse2\xb4\x04\n" +
-	"\x0fCommentsService\x12u\n" +
-	"\vGetComments\x12&.services.documents.GetCommentsRequest\x1a'.services.documents.GetCommentsResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12u\n" +
-	"\vPostComment\x12&.services.documents.PostCommentRequest\x1a'.services.documents.PostCommentResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12u\n" +
-	"\vEditComment\x12&.services.documents.EditCommentRequest\x1a'.services.documents.EditCommentResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListDocuments\x12\x99\x01\n" +
-	"\rDeleteComment\x12(.services.documents.DeleteCommentRequest\x1a).services.documents.DeleteCommentResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
+	"\x15DeleteCommentResponse2\x91\x05\n" +
+	"\x0fCommentsService\x12\x92\x01\n" +
+	"\vGetComments\x12&.services.documents.GetCommentsRequest\x1a'.services.documents.GetCommentsResponse\"2\xd2\xf3\x18.\b\x01\x12\tdocuments\x1a\x10DocumentsService\"\rListDocuments\x12\x92\x01\n" +
+	"\vPostComment\x12&.services.documents.PostCommentRequest\x1a'.services.documents.PostCommentResponse\"2\xd2\xf3\x18.\b\x01\x12\tdocuments\x1a\x10DocumentsService\"\rListDocuments\x12\x92\x01\n" +
+	"\vEditComment\x12&.services.documents.EditCommentRequest\x1a'.services.documents.EditCommentResponse\"2\xd2\xf3\x18.\b\x01\x12\tdocuments\x1a\x10DocumentsService\"\rListDocuments\x12\x99\x01\n" +
+	"\rDeleteComment\x12(.services.documents.DeleteCommentRequest\x1a).services.documents.DeleteCommentResponse\"3\xd2\xf3\x18/\b\x01:+\n" +
 	"\x06Access\x18\x01\"\x03Own\"\n" +
-	"Lower_Rank\"\tSame_Rank\"\x03Any\x1a \xea\xf3\x18\x1c\"\x1adocuments.DocumentsServiceBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
+	"Lower_Rank\"\tSame_Rank\"\x03Any\x1a#\xea\xf3\x18\x1f\b3\x12\x1bi-mdi-comment-text-multipleBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var file_services_documents_comments_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_services_documents_comments_proto_goTypes = []any{

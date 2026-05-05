@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 
-	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -23,32 +22,6 @@ const (
 	AuthUserOriginalCtxTag         = "auth.og"
 	AuthUserOriginalJobCtxTag      = "auth.ogjob"
 	AuthUserOriginalJobGradeCtxTag = "auth.ogjobg"
-)
-
-const (
-	PermSuperuserCategory = "Superuser"
-
-	PermCanBeSuperuserName      = "CanBeSuperuser"
-	PermCanBeSuperuserGuardName = "superuser-canbesuperuser"
-
-	PermSuperuserName      = "Superuser"
-	PermSuperuserGuardName = "superuser-superuser"
-
-	PermAny = "Any"
-)
-
-var (
-	PermCanBeSuperuser = &permissionspermissions.Permission{
-		Category:  PermSuperuserCategory,
-		Name:      PermCanBeSuperuserName,
-		GuardName: PermCanBeSuperuserGuardName,
-	}
-
-	PermSuperuser = &permissionspermissions.Permission{
-		Category:  PermSuperuserCategory,
-		Name:      PermSuperuserName,
-		GuardName: PermSuperuserGuardName,
-	}
 )
 
 var AuthModule = fx.Module("grpc.auth",

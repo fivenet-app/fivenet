@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -12,7 +13,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2026/pkg/perms/collections"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/cache"
 	"github.com/nats-io/nats.go"
 	"github.com/puzpuzpuz/xsync/v4"
@@ -29,7 +29,7 @@ import (
 //
 //nolint:interfacebloat // This interface is designed to be implemented by a concrete type.
 type Permissions interface {
-	// Permissions management
+	// Permissions
 	SetDefaultRolePerms(ctx context.Context, defaultPerms []string) error
 	GetAllPermissions(ctx context.Context) ([]*permissionspermissions.Permission, error)
 	GetPermissionsByIDs(
@@ -38,46 +38,29 @@ type Permissions interface {
 	) ([]*permissionspermissions.Permission, error)
 	GetPermission(
 		ctx context.Context,
-		category Category,
+		namespace Namespace,
+		service Service,
 		name Name,
 	) (*permissionspermissions.Permission, error)
-	CreatePermission(
-		ctx context.Context,
-		category Category,
-		name Name,
-		order int32,
-		icon *string,
-	) (int64, error)
-	GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error)
+	GetPermissionsOfUser(userInfo *userinfo.UserInfo) ([]*permissionspermissions.Permission, error)
 
-	// Attributes management
+	// Attributes
 	GetAllAttributes(ctx context.Context) ([]*permissionsattributes.RoleAttribute, error)
-	CreateAttribute(
-		ctx context.Context,
-		permId int64,
-		key Key,
-		aType permissionsattributes.AttributeTypes,
-		validValues *permissionsattributes.AttributeValues,
-	) (int64, error)
-	UpdateAttribute(
-		ctx context.Context,
-		attributeId int64,
-		permId int64,
-		key Key,
-		aType permissionsattributes.AttributeTypes,
-		validValues *permissionsattributes.AttributeValues,
-	) error
 
 	// Roles management
-	GetRoles(ctx context.Context, excludeSystem bool) (collections.Roles, error)
+	GetRoles(ctx context.Context, excludeSystem bool) ([]*permissionspermissions.Role, error)
 	GetRole(ctx context.Context, id int64) (*permissionspermissions.Role, error)
 	GetRoleByJobAndGrade(
 		ctx context.Context,
 		job string,
 		grade int32,
 	) (*permissionspermissions.Role, error)
-	GetJobRoles(ctx context.Context, job string) (collections.Roles, error)
-	GetJobRolesUpTo(ctx context.Context, job string, grade int32) (collections.Roles, error)
+	GetJobRoles(ctx context.Context, job string) ([]*permissionspermissions.Role, error)
+	GetJobRolesUpTo(
+		ctx context.Context,
+		job string,
+		grade int32,
+	) ([]*permissionspermissions.Role, error)
 	GetClosestJobRole(
 		ctx context.Context,
 		job string,
@@ -85,14 +68,17 @@ type Permissions interface {
 	) (*permissionspermissions.Role, error)
 	CountRolesForJob(ctx context.Context, prefix string) (int64, error)
 	CreateRole(ctx context.Context, job string, grade int32) (*permissionspermissions.Role, error)
-	DeleteRole(ctx context.Context, id int64) error
-	GetRolePermissions(ctx context.Context, id int64) ([]*permissionspermissions.Permission, error)
+	DeleteRole(ctx context.Context, roleId int64) error
+	GetRolePermissions(
+		ctx context.Context,
+		roleId int64,
+	) ([]*permissionspermissions.Permission, error)
 	GetEffectiveRolePermissions(
 		ctx context.Context,
 		id int64,
 	) ([]*permissionspermissions.Permission, error)
-	UpdateRolePermissions(ctx context.Context, id int64, perms ...AddPerm) error
-	RemovePermissionsFromRole(ctx context.Context, id int64, perms ...int64) error
+	UpdateRolePermissions(ctx context.Context, roleId int64, perms ...AddPerm) error
+	RemovePermissionsFromRole(ctx context.Context, roleId int64, perms ...int64) error
 
 	// Role Attributes management
 	GetRoleAttributes(
@@ -123,7 +109,7 @@ type Permissions interface {
 		permissionId int64,
 	) error
 
-	// Limit - Job permissions
+	// Limits - Job permissions
 	GetJobPermissions(ctx context.Context, job string) ([]*permissionspermissions.Permission, error)
 	UpdateJobPermissions(
 		ctx context.Context,
@@ -133,7 +119,7 @@ type Permissions interface {
 	ApplyJobPermissions(ctx context.Context, job string) error
 	ClearJobPermissions(ctx context.Context, job string) error
 
-	// Limit - Job attributes (max values)
+	// Limits - Job attributes (max values)
 	GetJobAttributes(
 		ctx context.Context,
 		job string,
@@ -146,31 +132,30 @@ type Permissions interface {
 	ClearJobAttributes(ctx context.Context, job string) error
 
 	// Perms Check
-	Can(userInfo *userinfo.UserInfo, category Category, name Name) bool
+	Can(userInfo *userinfo.UserInfo, perm PermissionRef) bool
+	CanRaw(userInfo *userinfo.UserInfo, namespace string, service string, name string) bool
+	CanServiceMethod(userInfo *userinfo.UserInfo, serviceMethod string) bool
+	CanProto(userInfo *userinfo.UserInfo, perm *permissionspermissions.Permission) bool
+
 	// Attribute retrieval/"check"
 	Attr(
 		userInfo *userinfo.UserInfo,
-		category Category,
+		namespace Namespace,
+		service Service,
 		name Name,
 		key Key,
 	) (*permissionsattributes.AttributeValues, error)
 	AttrStringList(
 		userInfo *userinfo.UserInfo,
-		category Category,
-		name Name,
-		key Key,
+		attr AttrRef[StringListAttr],
 	) (*permissionsattributes.StringList, error)
 	AttrJobList(
 		userInfo *userinfo.UserInfo,
-		category Category,
-		name Name,
-		key Key,
+		attr AttrRef[JobListAttr],
 	) (*permissionsattributes.StringList, error)
 	AttrJobGradeList(
 		userInfo *userinfo.UserInfo,
-		category Category,
-		name Name,
-		key Key,
+		attr AttrRef[JobGradeListAttr],
 	) (*permissionsattributes.JobGradeList, error)
 }
 
@@ -295,7 +280,8 @@ func New(p Params) (Permissions, error) {
 
 type cachePerm struct {
 	ID        int64
-	Category  Category
+	Namespace Namespace
+	Service   Service
 	Name      Name
 	GuardName string
 	Order     *int32
@@ -305,7 +291,8 @@ type cachePerm struct {
 type cacheAttr struct {
 	ID           int64
 	PermissionID int64
-	Category     Category
+	Namespace    Namespace
+	Service      Service
 	Name         Name
 	Key          Key
 	Type         permissionsattributes.AttributeTypes
@@ -321,36 +308,41 @@ type cacheRoleAttr struct {
 	Value        *permissionsattributes.AttributeValues
 }
 
-func (p *Perms) init(ctxCancel context.Context, ctxStartup context.Context, params Params) error {
+func (ps *Perms) init(ctxCancel context.Context, ctxStartup context.Context, params Params) error {
 	cfgDefaultPerms := params.AppConfig.Get().Perms.GetDefault()
 	defaultPerms := make([]string, len(cfgDefaultPerms))
 	for i := range cfgDefaultPerms {
+		split := strings.Split(cfgDefaultPerms[i].GetCategory(), ".")
+		namespace := strings.Join(split[:len(split)-1], ".")
+		svc := split[len(split)-1]
+
 		defaultPerms[i] = BuildGuard(
-			Category(cfgDefaultPerms[i].GetCategory()),
+			Namespace(namespace),
+			Service(svc),
 			Name(cfgDefaultPerms[i].GetName()),
 		)
 	}
 
-	if err := p.loadData(ctxStartup); err != nil {
+	if err := ps.loadData(ctxStartup); err != nil {
 		return err
 	}
-	p.logger.Debug("permissions loaded")
+	ps.logger.Debug("permissions loaded")
 
-	if err := p.registerSubscriptions(ctxCancel); err != nil {
+	if err := ps.registerSubscriptions(ctxCancel); err != nil {
 		return fmt.Errorf("failed to register events subscriptions. %w", err)
 	}
-	p.logger.Debug("registered events subscription")
+	ps.logger.Debug("registered events subscription")
 
-	if err := p.register(ctxStartup, defaultPerms); err != nil {
+	if err := ps.register(ctxStartup, defaultPerms); err != nil {
 		return fmt.Errorf("failed to register permissions. %w", err)
 	}
 
-	p.wg.Go(func() {
-		if err := p.ApplyJobPermissions(ctxCancel, ""); err != nil {
-			p.logger.Error("failed to apply job permissions", zap.Error(err))
+	ps.wg.Go(func() {
+		if err := ps.ApplyJobPermissions(ctxCancel, ""); err != nil {
+			ps.logger.Error("failed to apply job permissions", zap.Error(err))
 			return
 		}
-		p.logger.Debug("successfully applied job permissions")
+		ps.logger.Debug("successfully applied job permissions")
 	})
 
 	return nil

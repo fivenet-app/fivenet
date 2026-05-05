@@ -137,8 +137,7 @@ func (s *Server) GetTemplate(
 		if err != nil {
 			if s.ps.Can(
 				userInfo,
-				permsdocuments.DocumentsServicePerm,
-				permsdocuments.DocumentsServiceCreateTemplatePerm,
+				permsdocuments.TemplatesService.CreateTemplate.Perm,
 			) {
 				return nil, err
 			} else {

@@ -32,9 +32,7 @@ func (s *Server) ListUserActivity(
 	// User can't see their own activities, unless they have "Own" perm attribute, or are a superuser
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permscitizens.CitizensServicePerm,
-		permscitizens.CitizensServiceListUserActivityPerm,
-		permscitizens.CitizensServiceListUserActivityFieldsPermField,
+		permscitizens.CitizensService.ListUserActivity.Fields,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)

@@ -2298,19 +2298,19 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\"o\n" +
 	"'RecomputeApprovalPolicyCountersResponse\x12D\n" +
-	"\x06policy\x18\x01 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy2\xa2\r\n" +
-	"\x0fApprovalService\x12\xb2\x01\n" +
-	"\x16ListApprovalTasksInbox\x121.services.documents.ListApprovalTasksInboxRequest\x1a2.services.documents.ListApprovalTasksInboxResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12\xac\x01\n" +
-	"\x14ListApprovalPolicies\x12/.services.documents.ListApprovalPoliciesRequest\x1a0.services.documents.ListApprovalPoliciesResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12\x81\x01\n" +
-	"\x14UpsertApprovalPolicy\x12/.services.documents.UpsertApprovalPolicyRequest\x1a0.services.documents.UpsertApprovalPolicyResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\xa3\x01\n" +
-	"\x11ListApprovalTasks\x12,.services.documents.ListApprovalTasksRequest\x1a-.services.documents.ListApprovalTasksResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12~\n" +
+	"\x06policy\x18\x01 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy2\xf0\f\n" +
+	"\x0fApprovalService\x12\xa8\x01\n" +
+	"\x16ListApprovalTasksInbox\x121.services.documents.ListApprovalTasksInboxRequest\x1a2.services.documents.ListApprovalTasksInboxResponse\"'\xd2\xf3\x18#\b\x01\x1a\x10DocumentsService\"\rListDocuments\x12\xa2\x01\n" +
+	"\x14ListApprovalPolicies\x12/.services.documents.ListApprovalPoliciesRequest\x1a0.services.documents.ListApprovalPoliciesResponse\"'\xd2\xf3\x18#\b\x01\x1a\x10DocumentsService\"\rListDocuments\x12\x81\x01\n" +
+	"\x14UpsertApprovalPolicy\x12/.services.documents.UpsertApprovalPolicyRequest\x1a0.services.documents.UpsertApprovalPolicyResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x99\x01\n" +
+	"\x11ListApprovalTasks\x12,.services.documents.ListApprovalTasksRequest\x1a-.services.documents.ListApprovalTasksResponse\"'\xd2\xf3\x18#\b\x01\x1a\x10DocumentsService\"\rListDocuments\x12~\n" +
 	"\x13UpsertApprovalTasks\x12..services.documents.UpsertApprovalTasksRequest\x1a/.services.documents.UpsertApprovalTasksResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12~\n" +
-	"\x13DeleteApprovalTasks\x12..services.documents.DeleteApprovalTasksRequest\x1a/.services.documents.DeleteApprovalTasksResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x97\x01\n" +
-	"\rListApprovals\x12(.services.documents.ListApprovalsRequest\x1a).services.documents.ListApprovalsResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12o\n" +
-	"\x0eRevokeApproval\x12).services.documents.RevokeApprovalRequest\x1a*.services.documents.RevokeApprovalResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x9a\x01\n" +
-	"\x0eDecideApproval\x12).services.documents.DecideApprovalRequest\x1a*.services.documents.DecideApprovalResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12\x8b\x01\n" +
-	"\x12ReopenApprovalTask\x12-.services.documents.ReopenApprovalTaskRequest\x1a..services.documents.ReopenApprovalTaskResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eRevokeApproval\x12\xb2\x01\n" +
-	"\x1fRecomputeApprovalPolicyCounters\x12:.services.documents.RecomputeApprovalPolicyCountersRequest\x1a;.services.documents.RecomputeApprovalPolicyCountersResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eRevokeApproval\x1a\x16\xea\xf3\x18\x12\b4\x12\x0ei-mdi-approvalBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
+	"\x13DeleteApprovalTasks\x12..services.documents.DeleteApprovalTasksRequest\x1a/.services.documents.DeleteApprovalTasksResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8d\x01\n" +
+	"\rListApprovals\x12(.services.documents.ListApprovalsRequest\x1a).services.documents.ListApprovalsResponse\"'\xd2\xf3\x18#\b\x01\x1a\x10DocumentsService\"\rListDocuments\x12o\n" +
+	"\x0eRevokeApproval\x12).services.documents.RevokeApprovalRequest\x1a*.services.documents.RevokeApprovalResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x90\x01\n" +
+	"\x0eDecideApproval\x12).services.documents.DecideApprovalRequest\x1a*.services.documents.DecideApprovalResponse\"'\xd2\xf3\x18#\b\x01\x1a\x10DocumentsService\"\rListDocuments\x12\x8b\x01\n" +
+	"\x12ReopenApprovalTask\x12-.services.documents.ReopenApprovalTaskRequest\x1a..services.documents.ReopenApprovalTaskResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eRevokeApproval\x12\xb2\x01\n" +
+	"\x1fRecomputeApprovalPolicyCounters\x12:.services.documents.RecomputeApprovalPolicyCountersRequest\x1a;.services.documents.RecomputeApprovalPolicyCountersResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eRevokeApproval\x1a\x16\xea\xf3\x18\x12\b4\x12\x0ei-mdi-approvalBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var file_services_documents_approval_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_services_documents_approval_proto_goTypes = []any{

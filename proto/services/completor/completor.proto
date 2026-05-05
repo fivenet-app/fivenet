@@ -70,7 +70,8 @@ service CompletorService {
   rpc CompleteDocumentCategories(CompleteDocumentCategoriesRequest) returns (CompleteDocumentCategoriesResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "documents.DocumentsService"
+      namespace: "documents"
+      service: "CategoriesService"
       name: "ListCategories"
     };
   }

@@ -202,8 +202,8 @@ defineShortcuts({
         <UButton
             v-if="
                 activeChar?.job === user.job &&
-                can('jobs.JobsService/GetColleague').value &&
-                checkIfCanAccessColleague(user, 'jobs.JobsService/GetColleague')
+                can('jobs.ColleaguesService/GetColleague').value &&
+                checkIfCanAccessColleague(user, 'jobs.ColleaguesService/GetColleague')
             "
             block
             icon="i-mdi-account-circle"

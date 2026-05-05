@@ -31,17 +31,24 @@ var (
 	tJobAttrs  = table.FivenetRbacJobAttrs
 )
 
-func (p *Perms) GetAttribute(
-	category Category,
+func (ps *Perms) GetAttribute(
+	namespace Namespace,
+	service Service,
 	name Name,
 	key Key,
 ) (*permissionsattributes.RoleAttribute, error) {
-	permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
+	permId, ok := ps.lookupPermIDByGuard(BuildGuard(namespace, service, name))
 	if !ok {
-		return nil, fmt.Errorf("unable to find perm ID for attribute %s/%s/%s", category, name, key)
+		return nil, fmt.Errorf(
+			"unable to find perm ID for attribute %s.%s/%s/%s",
+			namespace,
+			service,
+			name,
+			key,
+		)
 	}
 
-	attr, ok := p.lookupAttributeByPermID(permId, key)
+	attr, ok := ps.lookupAttributeByPermID(permId, key)
 	if !ok {
 		return nil, errors.New("no attribute found by id")
 	}
@@ -49,7 +56,8 @@ func (p *Perms) GetAttribute(
 	return &permissionsattributes.RoleAttribute{
 		AttrId:       attr.ID,
 		PermissionId: attr.PermissionID,
-		Category:     string(category),
+		Namespace:    string(namespace),
+		Service:      string(service),
 		Name:         string(name),
 		Key:          string(attr.Key),
 		Type:         string(attr.Type),
@@ -58,7 +66,7 @@ func (p *Perms) GetAttribute(
 	}, nil
 }
 
-func (p *Perms) GetAttributeByIDs(
+func (ps *Perms) GetAttributeByIDs(
 	ctx context.Context,
 	attrIds ...int64,
 ) ([]*permissionsattributes.RoleAttribute, error) {
@@ -84,26 +92,27 @@ func (p *Perms) GetAttributeByIDs(
 		LIMIT(1)
 
 	var dest []*permissionsattributes.RoleAttribute
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}
 
 	for i := range dest {
-		attr, ok := p.LookupAttributeByID(dest[i].GetAttrId())
+		attr, ok := ps.lookupAttributeByID(dest[i].GetAttrId())
 		if !ok {
 			return nil, errors.New("no attribute found by id")
 		}
 
-		dest[i].Category = string(attr.Category)
+		dest[i].Namespace = string(attr.Namespace)
+		dest[i].Service = string(attr.Service)
 		dest[i].Name = string(attr.Name)
 	}
 
 	return dest, nil
 }
 
-func (p *Perms) getAttributeFromDatabase(
+func (ps *Perms) getAttributeFromDatabase(
 	ctx context.Context,
 	permId int64,
 	key Key,
@@ -125,7 +134,7 @@ func (p *Perms) getAttributeFromDatabase(
 		LIMIT(1)
 
 	var dest model.FivenetRbacAttrs
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query attribute from database. %w", err)
 		}
@@ -134,7 +143,7 @@ func (p *Perms) getAttributeFromDatabase(
 	return &dest, nil
 }
 
-func (p *Perms) CreateAttribute(
+func (ps *Perms) createAttribute(
 	ctx context.Context,
 	permId int64,
 	key Key,
@@ -155,13 +164,13 @@ func (p *Perms) CreateAttribute(
 			validValues,
 		)
 
-	res, err := stmt.ExecContext(ctx, p.db)
+	res, err := stmt.ExecContext(ctx, ps.db)
 	if err != nil {
 		if !dbutils.IsDuplicateError(err) {
 			return 0, fmt.Errorf("failed to insert attribute into database. %w", err)
 		}
 
-		attr, err := p.getAttributeFromDatabase(ctx, permId, key)
+		attr, err := ps.getAttributeFromDatabase(ctx, permId, key)
 		if err != nil {
 			return 0, fmt.Errorf(
 				"failed to retrieve existing attribute after duplicate error. %w",
@@ -169,7 +178,7 @@ func (p *Perms) CreateAttribute(
 			)
 		}
 
-		if err := p.addOrUpdateAttributeInMap(
+		if err := ps.addOrUpdateAttributeInMap(
 			permId,
 			attr.ID,
 			key,
@@ -190,21 +199,21 @@ func (p *Perms) CreateAttribute(
 		return 0, fmt.Errorf("failed to retrieve last insert ID. %w", err)
 	}
 
-	if err := p.addOrUpdateAttributeInMap(permId, lastId, key, aType, validValues); err != nil {
+	if err := ps.addOrUpdateAttributeInMap(permId, lastId, key, aType, validValues); err != nil {
 		return 0, fmt.Errorf("failed to add or update attribute in map. %w", err)
 	}
 
 	return lastId, nil
 }
 
-func (p *Perms) addOrUpdateAttributeInMap(
+func (ps *Perms) addOrUpdateAttributeInMap(
 	permId int64,
 	attrId int64,
 	key Key,
 	aType permissionsattributes.AttributeTypes,
 	validValues *permissionsattributes.AttributeValues,
 ) error {
-	perm, ok := p.lookupPermByID(permId)
+	perm, ok := ps.lookupPermByID(permId)
 	if !ok {
 		return fmt.Errorf("no permission found by id %d", permId)
 	}
@@ -212,16 +221,17 @@ func (p *Perms) addOrUpdateAttributeInMap(
 	attr := &cacheAttr{
 		ID:           attrId,
 		PermissionID: permId,
-		Category:     perm.Category,
+		Namespace:    perm.Namespace,
+		Service:      perm.Service,
 		Name:         perm.Name,
 		Key:          key,
 		Type:         aType,
 		ValidValues:  validValues,
 	}
 
-	p.attrsMap.Store(attrId, attr)
+	ps.attrsMap.Store(attrId, attr)
 
-	pAttrMap, _ := p.attrsPermsMap.LoadOrCompute(permId, func() (*xsync.Map[string, int64], bool) {
+	pAttrMap, _ := ps.attrsPermsMap.LoadOrCompute(permId, func() (*xsync.Map[string, int64], bool) {
 		return xsync.NewMap[string, int64](), false
 	})
 	pAttrMap.Store(string(key), attrId)
@@ -229,7 +239,7 @@ func (p *Perms) addOrUpdateAttributeInMap(
 	return nil
 }
 
-func (p *Perms) UpdateAttribute(
+func (ps *Perms) updateAttribute(
 	ctx context.Context,
 	attrId int64,
 	permId int64,
@@ -254,24 +264,24 @@ func (p *Perms) UpdateAttribute(
 			tAttrs.ID.EQ(mysql.Int64(attrId)),
 		)
 
-	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		return fmt.Errorf("failed to execute update statement. %w", err)
 	}
 
-	if err := p.addOrUpdateAttributeInMap(permId, attrId, key, aType, validValues); err != nil {
+	if err := ps.addOrUpdateAttributeInMap(permId, attrId, key, aType, validValues); err != nil {
 		return fmt.Errorf("failed to add or update attribute in map. %w", err)
 	}
 
 	return nil
 }
 
-func (p *Perms) getClosestRoleAttr(job string, grade int32, permId int64, key Key) *cacheRoleAttr {
-	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
+func (ps *Perms) getClosestRoleAttr(job string, grade int32, permId int64, key Key) *cacheRoleAttr {
+	roleIds, ok := ps.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
 		return nil
 	}
 
-	pAttrs, ok := p.attrsPermsMap.Load(permId)
+	pAttrs, ok := ps.attrsPermsMap.Load(permId)
 	if !ok {
 		return nil
 	}
@@ -281,7 +291,7 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, permId int64, key Ke
 	}
 
 	for i := range slices.Backward(roleIds) {
-		val, ok := p.lookupRoleAttribute(roleIds[i], attrId)
+		val, ok := ps.lookupRoleAttribute(roleIds[i], attrId)
 		if !ok {
 			continue
 		}
@@ -292,7 +302,7 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, permId int64, key Ke
 	return nil
 }
 
-func (p *Perms) GetJobAttributeValue(
+func (ps *Perms) GetJobAttributeValue(
 	ctx context.Context,
 	job string,
 	attrId int64,
@@ -314,7 +324,7 @@ func (p *Perms) GetJobAttributeValue(
 	dest := &struct {
 		Value *permissionsattributes.AttributeValues `alias:"value"`
 	}{}
-	if err := stmt.QueryContext(ctx, p.db, dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
@@ -323,7 +333,7 @@ func (p *Perms) GetJobAttributeValue(
 	return dest.Value, nil
 }
 
-func (p *Perms) GetJobAttributes(
+func (ps *Perms) GetJobAttributes(
 	ctx context.Context,
 	job string,
 ) ([]*permissionsattributes.RoleAttribute, error) {
@@ -334,7 +344,8 @@ func (p *Perms) GetJobAttributes(
 			tJobAttrs.Job,
 			tJobAttrs.AttrID,
 			tAttrs.PermissionID.AS("role_attribute.permission_id"),
-			tPerms.Category.AS("role_attribute.category"),
+			tPerms.Namespace.AS("role_attribute.namespace"),
+			tPerms.Service.AS("role_attribute.service"),
 			tPerms.Name.AS("role_attribute.name"),
 			tAttrs.Key.AS("role_attribute.key"),
 			tAttrs.Type.AS("role_attribute.type"),
@@ -353,7 +364,7 @@ func (p *Perms) GetJobAttributes(
 		WHERE(tJobAttrs.Job.EQ(mysql.String(job)))
 
 	dest := []*permissionsattributes.RoleAttribute{}
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
@@ -362,20 +373,21 @@ func (p *Perms) GetJobAttributes(
 	return dest, nil
 }
 
-func (p *Perms) Attr(
+func (ps *Perms) Attr(
 	userInfo *userinfo.UserInfo,
-	category Category,
+	namespace Namespace,
+	service Service,
 	name Name,
 	key Key,
 ) (*permissionsattributes.AttributeValues, error) {
-	permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
+	permId, ok := ps.lookupPermIDByGuard(BuildGuard(namespace, service, name))
 	if !ok {
 		return nil, nil
 	}
 
-	rAttr := p.getClosestRoleAttr(userInfo.GetJob(), userInfo.GetJobGrade(), permId, key)
+	rAttr := ps.getClosestRoleAttr(userInfo.GetJob(), userInfo.GetJobGrade(), permId, key)
 	if userInfo.GetSuperuser() {
-		attr, ok := p.lookupAttributeByPermID(permId, key)
+		attr, ok := ps.lookupAttributeByPermID(permId, key)
 		if !ok {
 			return nil, nil
 		}
@@ -400,13 +412,14 @@ func (p *Perms) Attr(
 	return proto.Clone(rAttr.Value).(*permissionsattributes.AttributeValues), nil
 }
 
-func (p *Perms) AttrStringList(
+func (ps *Perms) attrStringListRaw(
 	userInfo *userinfo.UserInfo,
-	category Category,
+	namespace Namespace,
+	service Service,
 	name Name,
 	key Key,
 ) (*permissionsattributes.StringList, error) {
-	attrValue, err := p.Attr(userInfo, category, name, key)
+	attrValue, err := ps.Attr(userInfo, namespace, service, name, key)
 	if err != nil {
 		return &permissionsattributes.StringList{}, err
 	}
@@ -427,22 +440,24 @@ func (p *Perms) AttrStringList(
 	}
 }
 
-func (p *Perms) AttrJobList(
+func (ps *Perms) attrJobListRaw(
 	userInfo *userinfo.UserInfo,
-	category Category,
+	namespace Namespace,
+	service Service,
 	name Name,
 	key Key,
 ) (*permissionsattributes.StringList, error) {
-	return p.AttrStringList(userInfo, category, name, key)
+	return ps.attrStringListRaw(userInfo, namespace, service, name, key)
 }
 
-func (p *Perms) AttrJobGradeList(
+func (ps *Perms) attrJobGradeListRaw(
 	userInfo *userinfo.UserInfo,
-	category Category,
+	namespace Namespace,
+	service Service,
 	name Name,
 	key Key,
 ) (*permissionsattributes.JobGradeList, error) {
-	attrValue, err := p.Attr(userInfo, category, name, key)
+	attrValue, err := ps.Attr(userInfo, namespace, service, name, key)
 	if err != nil {
 		return &permissionsattributes.JobGradeList{
 			Jobs:        map[string]int32{},
@@ -472,7 +487,7 @@ func (p *Perms) AttrJobGradeList(
 	}
 }
 
-func (p *Perms) convertRawValue(
+func (ps *Perms) convertRawValue(
 	targetVal *permissionsattributes.AttributeValues,
 	rawVal string,
 	aType permissionsattributes.AttributeTypes,
@@ -486,14 +501,15 @@ func (p *Perms) convertRawValue(
 	return nil
 }
 
-func (p *Perms) GetAllAttributes(
+func (ps *Perms) GetAllAttributes(
 	ctx context.Context,
 ) ([]*permissionsattributes.RoleAttribute, error) {
 	stmt := tAttrs.
 		SELECT(
 			tAttrs.ID.AS("role_attribute.attr_id"),
 			tAttrs.PermissionID.AS("role_attribute.permission_id"),
-			tPerms.Category.AS("role_attribute.category"),
+			tPerms.Namespace.AS("role_attribute.namespace"),
+			tPerms.Service.AS("role_attribute.service"),
 			tPerms.Name.AS("role_attribute.name"),
 			tAttrs.Key.AS("role_attribute.key"),
 			tAttrs.Type.AS("role_attribute.type"),
@@ -506,7 +522,7 @@ func (p *Perms) GetAllAttributes(
 		)
 
 	var dest []*permissionsattributes.RoleAttribute
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query all attributes. %w", err)
 		}
@@ -530,14 +546,14 @@ func (p *Perms) GetAllAttributes(
 	return dest, nil
 }
 
-func (p *Perms) GetRoleAttributes(
+func (ps *Perms) GetRoleAttributes(
 	ctx context.Context,
 	job string,
 	grade int32,
 ) ([]*permissionsattributes.RoleAttribute, error) {
-	roleId, ok := p.lookupRoleIDForJobAndGrade(job, grade)
+	roleId, ok := ps.lookupRoleIDForJobAndGrade(job, grade)
 	if !ok {
-		roleId, ok = p.lookupRoleIDForJobAndGrade(DefaultRoleJob, p.startJobGrade)
+		roleId, ok = ps.lookupRoleIDForJobAndGrade(DefaultRoleJob, ps.startJobGrade)
 		if !ok {
 			return nil, fmt.Errorf(
 				"failed to fallback to default role. %w",
@@ -546,7 +562,7 @@ func (p *Perms) GetRoleAttributes(
 		}
 	}
 
-	attrsRoleMap, ok := p.attrsRoleMap.Load(roleId)
+	attrsRoleMap, ok := ps.attrsRoleMap.Load(roleId)
 	if !ok {
 		return []*permissionsattributes.RoleAttribute{}, nil
 	}
@@ -554,7 +570,7 @@ func (p *Perms) GetRoleAttributes(
 	var err error
 	attrs := []*permissionsattributes.RoleAttribute{}
 	for key := range attrsRoleMap.All() {
-		attr, ok := p.LookupAttributeByID(key)
+		attr, ok := ps.lookupAttributeByID(key)
 		if !ok {
 			err = fmt.Errorf(
 				"no attribute found by id for role. %w",
@@ -572,11 +588,12 @@ func (p *Perms) GetRoleAttributes(
 			break
 		}
 
-		maxValues, er := p.GetJobAttributeValue(ctx, job, attr.ID)
+		maxValues, er := ps.GetJobAttributeValue(ctx, job, attr.ID)
 		if er != nil {
 			err = fmt.Errorf(
-				"failed to retrieve max values for attribute %s/%s/%s. %w",
-				attr.Category,
+				"failed to retrieve max values for attribute %s.%s/%s/%s. %w",
+				attr.Namespace,
+				attr.Service,
 				attr.Name,
 				attr.Key,
 				er,
@@ -588,7 +605,8 @@ func (p *Perms) GetRoleAttributes(
 			RoleId:       roleId,
 			AttrId:       attr.ID,
 			PermissionId: attr.PermissionID,
-			Category:     string(attr.Category),
+			Namespace:    string(attr.Namespace),
+			Service:      string(attr.Service),
 			Name:         string(attr.Name),
 			Key:          string(attr.Key),
 			Type:         string(attr.Type),
@@ -605,24 +623,24 @@ func (p *Perms) GetRoleAttributes(
 	return attrs, nil
 }
 
-func (p *Perms) GetEffectiveRoleAttributes(
+func (ps *Perms) GetEffectiveRoleAttributes(
 	ctx context.Context,
 	job string,
 	grade int32,
 ) ([]*permissionsattributes.RoleAttribute, error) {
 	roleAttrs := map[int64]interface{}{}
 
-	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
+	roleIds, ok := ps.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
 		return nil, nil
 	}
 
-	perms := p.getRolePermissionsFromCache(roleIds)
+	perms := ps.getRolePermissionsFromCache(roleIds)
 
 	var err error
 	attrs := []*permissionsattributes.RoleAttribute{}
 	for i := range slices.Backward(roleIds) {
-		attrMap, ok := p.attrsRoleMap.Load(roleIds[i])
+		attrMap, ok := ps.attrsRoleMap.Load(roleIds[i])
 		if !ok {
 			continue
 		}
@@ -640,7 +658,7 @@ func (p *Perms) GetEffectiveRoleAttributes(
 				continue
 			}
 
-			attr, ok := p.LookupAttributeByID(value.AttrID)
+			attr, ok := ps.lookupAttributeByID(value.AttrID)
 			if !ok {
 				err = fmt.Errorf(
 					"no attribute found by id for role. %w",
@@ -649,7 +667,7 @@ func (p *Perms) GetEffectiveRoleAttributes(
 				break
 			}
 
-			attrMap, ok := p.attrsRoleMap.Load(roleIds[i])
+			attrMap, ok := ps.attrsRoleMap.Load(roleIds[i])
 			if !ok {
 				continue
 			}
@@ -662,13 +680,14 @@ func (p *Perms) GetEffectiveRoleAttributes(
 				break
 			}
 
-			maxVal, _ := p.GetJobAttributeValue(ctx, job, attr.ID)
+			maxVal, _ := ps.GetJobAttributeValue(ctx, job, attr.ID)
 
 			attrs = append(attrs, &permissionsattributes.RoleAttribute{
 				RoleId:       roleIds[i],
 				AttrId:       value.AttrID,
 				PermissionId: value.PermissionID,
-				Category:     string(attr.Category),
+				Namespace:    string(attr.Namespace),
+				Service:      string(attr.Service),
 				Name:         string(attr.Name),
 				Key:          string(attr.Key),
 				Type:         string(attr.Type),
@@ -688,16 +707,16 @@ func (p *Perms) GetEffectiveRoleAttributes(
 	return attrs, nil
 }
 
-func (p *Perms) getRoleAttributesFromCache(job string, grade int32) []*cacheRoleAttr {
+func (ps *Perms) getRoleAttributesFromCache(job string, grade int32) []*cacheRoleAttr {
 	roleAttrs := map[int64]*cacheRoleAttr{}
 
-	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
+	roleIds, ok := ps.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
 		return nil
 	}
 
 	for i := range slices.Backward(roleIds) {
-		attrMap, ok := p.attrsRoleMap.Load(roleIds[i])
+		attrMap, ok := ps.attrsRoleMap.Load(roleIds[i])
 		if !ok {
 			continue
 		}
@@ -720,12 +739,12 @@ func (p *Perms) getRoleAttributesFromCache(job string, grade int32) []*cacheRole
 	return as
 }
 
-func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error) {
-	attrs := p.getRoleAttributesFromCache(job, grade)
+func (ps *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error) {
+	attrs := ps.getRoleAttributesFromCache(job, grade)
 
 	as := []string{}
 	for _, rAttr := range attrs {
-		attr, ok := p.LookupAttributeByID(rAttr.AttrID)
+		attr, ok := ps.lookupAttributeByID(rAttr.AttrID)
 		if !ok {
 			return nil, fmt.Errorf(
 				"no attribute found by id. %w",
@@ -733,26 +752,24 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 			)
 		}
 
+		attrKey := BuildGuardWithKey(attr.Namespace, attr.Service, attr.Name, rAttr.Key)
 		switch rAttr.Type {
 		case permissionsattributes.StringListAttributeType:
-			aKey := BuildGuardWithKey(attr.Category, attr.Name, rAttr.Key)
 			for _, v := range rAttr.Value.GetStringList().GetStrings() {
-				guard := Guard(aKey + "." + v)
+				guard := guard(attrKey + "." + v)
 				as = append(as, guard)
 			}
 
 		case permissionsattributes.JobListAttributeType:
-			aKey := BuildGuardWithKey(attr.Category, attr.Name, rAttr.Key)
 			for _, v := range rAttr.Value.GetJobList().GetStrings() {
-				guard := Guard(aKey + "." + v)
+				guard := guard(attrKey + "." + v)
 				as = append(as, guard)
 			}
 
 		case permissionsattributes.JobGradeListAttributeType:
 			// Only generate jobs as attribute
-			aKey := BuildGuardWithKey(attr.Category, attr.Name, rAttr.Key)
 			for v := range rAttr.Value.GetJobGradeList().GetJobs() {
-				guard := Guard(aKey + "." + v)
+				guard := guard(attrKey + "." + v)
 				as = append(as, guard)
 			}
 		}
@@ -761,7 +778,7 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 	return as, nil
 }
 
-func (p *Perms) UpdateRoleAttributes(
+func (ps *Perms) UpdateRoleAttributes(
 	ctx context.Context,
 	job string,
 	roleId int64,
@@ -770,7 +787,7 @@ func (p *Perms) UpdateRoleAttributes(
 	for i := range attrs {
 		attrs[i].RoleId = roleId
 
-		a, ok := p.LookupAttributeByID(attrs[i].GetAttrId())
+		a, ok := ps.lookupAttributeByID(attrs[i].GetAttrId())
 		if !ok {
 			return fmt.Errorf(
 				"no attribute found by id %d. %w",
@@ -782,11 +799,11 @@ func (p *Perms) UpdateRoleAttributes(
 		if attrs[i].GetValue() != nil {
 			attrs[i].GetValue().Default(permissionsattributes.AttributeTypes(attrs[i].GetType()))
 
-			maxValues, err := p.GetJobAttributeValue(ctx, job, a.ID)
+			maxValues, err := ps.GetJobAttributeValue(ctx, job, a.ID)
 			if err != nil {
 				return fmt.Errorf(
 					"failed to retrieve max values for attribute %s/%s/%s. %w",
-					a.Category,
+					a.Namespace,
 					a.Name,
 					a.Key,
 					err,
@@ -805,11 +822,11 @@ func (p *Perms) UpdateRoleAttributes(
 		}
 	}
 
-	if err := p.addOrUpdateAttributesToRole(ctx, roleId, attrs...); err != nil {
+	if err := ps.addOrUpdateAttributesToRole(ctx, roleId, attrs...); err != nil {
 		return fmt.Errorf("failed to add or update attributes to role. %w", err)
 	}
 
-	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, &permissionsevents.RoleIDEvent{
+	if err := ps.publishMessage(ctx, RoleAttrUpdateSubject, &permissionsevents.RoleIDEvent{
 		RoleId: roleId,
 	}); err != nil {
 		return fmt.Errorf("failed to publish role attribute update message. %w", err)
@@ -818,13 +835,13 @@ func (p *Perms) UpdateRoleAttributes(
 	return nil
 }
 
-func (p *Perms) addOrUpdateAttributesToRole(
+func (ps *Perms) addOrUpdateAttributesToRole(
 	ctx context.Context,
 	roleId int64,
 	attrs ...*permissionsattributes.RoleAttribute,
 ) error {
 	for i := range attrs {
-		a, ok := p.LookupAttributeByID(attrs[i].GetAttrId())
+		a, ok := ps.lookupAttributeByID(attrs[i].GetAttrId())
 		if !ok {
 			return fmt.Errorf(
 				"unable to add role attribute, didn't find attribute by ID %d. %w",
@@ -856,19 +873,26 @@ func (p *Perms) addOrUpdateAttributesToRole(
 				tRoleAttrs.Value.SET(mysql.StringExp(mysql.Raw("VALUES(`value`)"))),
 			)
 
-		if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 			if !dbutils.IsDuplicateError(err) {
 				return fmt.Errorf("failed to execute insert statement for role attributes. %w", err)
 			}
 		}
 
-		p.updateRoleAttributeInMap(roleId, a.PermissionID, a.ID, a.Key, a.Type, attrs[i].GetValue())
+		ps.updateRoleAttributeInMap(
+			roleId,
+			a.PermissionID,
+			a.ID,
+			a.Key,
+			a.Type,
+			attrs[i].GetValue(),
+		)
 	}
 
 	return nil
 }
 
-func (p *Perms) RemoveAttributesFromRole(
+func (ps *Perms) RemoveAttributesFromRole(
 	ctx context.Context,
 	roleId int64,
 	attrs ...*permissionsattributes.RoleAttribute,
@@ -889,15 +913,15 @@ func (p *Perms) RemoveAttributesFromRole(
 			tRoleAttrs.AttrID.IN(ids...),
 		))
 
-	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		return fmt.Errorf("failed to execute delete statement for role attributes. %w", err)
 	}
 
 	for i := range attrs {
-		p.removeRoleAttributeFromMap(roleId, attrs[i].GetAttrId())
+		ps.removeRoleAttributeFromMap(roleId, attrs[i].GetAttrId())
 	}
 
-	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, &permissionsevents.RoleIDEvent{
+	if err := ps.publishMessage(ctx, RoleAttrUpdateSubject, &permissionsevents.RoleIDEvent{
 		RoleId: roleId,
 	}); err != nil {
 		return fmt.Errorf("failed to publish role attribute removal message. %w", err)
@@ -906,12 +930,12 @@ func (p *Perms) RemoveAttributesFromRole(
 	return nil
 }
 
-func (p *Perms) RemoveAttributesFromRoleByPermission(
+func (ps *Perms) RemoveAttributesFromRoleByPermission(
 	ctx context.Context,
 	roleId int64,
 	permissionId int64,
 ) error {
-	as, ok := p.attrsPermsMap.Load(permissionId)
+	as, ok := ps.attrsPermsMap.Load(permissionId)
 	if !ok {
 		return nil
 	}
@@ -927,11 +951,11 @@ func (p *Perms) RemoveAttributesFromRoleByPermission(
 		return nil
 	}
 
-	if err := p.RemoveAttributesFromRole(ctx, roleId, ras...); err != nil {
+	if err := ps.RemoveAttributesFromRole(ctx, roleId, ras...); err != nil {
 		return fmt.Errorf("failed to remove attributes from role by perm. %w", err)
 	}
 
-	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, &permissionsevents.RoleIDEvent{
+	if err := ps.publishMessage(ctx, RoleAttrUpdateSubject, &permissionsevents.RoleIDEvent{
 		RoleId: roleId,
 	}); err != nil {
 		return fmt.Errorf("failed to publish role attribute removal message. %w", err)
@@ -940,13 +964,13 @@ func (p *Perms) RemoveAttributesFromRoleByPermission(
 	return nil
 }
 
-func (p *Perms) UpdateJobAttributes(
+func (ps *Perms) UpdateJobAttributes(
 	ctx context.Context,
 	job string,
 	attrs ...*permissionsattributes.RoleAttribute,
 ) error {
 	for _, attr := range attrs {
-		a, ok := p.LookupAttributeByID(attr.GetAttrId())
+		a, ok := ps.lookupAttributeByID(attr.GetAttrId())
 		if !ok {
 			return fmt.Errorf(
 				"unable to update role attribute max values, didn't find attribute by ID %d. %w",
@@ -982,7 +1006,7 @@ func (p *Perms) UpdateJobAttributes(
 				tJobAttrs.MaxValues.SET(mysql.StringExp(mysql.Raw("VALUES(`max_values`)"))),
 			)
 
-		if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 			if !dbutils.IsDuplicateError(err) {
 				return fmt.Errorf("failed to execute insert statement for job attributes. %w", err)
 			}
@@ -992,19 +1016,19 @@ func (p *Perms) UpdateJobAttributes(
 	return nil
 }
 
-func (p *Perms) ClearJobAttributes(ctx context.Context, job string) error {
+func (ps *Perms) ClearJobAttributes(ctx context.Context, job string) error {
 	stmt := tJobAttrs.
 		DELETE().
 		WHERE(tJobAttrs.Job.EQ(mysql.String(job)))
 
-	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		return fmt.Errorf("failed to execute delete statement for job attributes. %w", err)
 	}
 
 	return nil
 }
 
-func (p *Perms) updateRoleAttributeInMap(
+func (ps *Perms) updateRoleAttributeInMap(
 	roleId int64,
 	permId int64,
 	attrId int64,
@@ -1012,13 +1036,13 @@ func (p *Perms) updateRoleAttributeInMap(
 	aType permissionsattributes.AttributeTypes,
 	value *permissionsattributes.AttributeValues,
 ) {
-	job, ok := p.lookupJobForRoleID(roleId)
+	job, ok := ps.lookupJobForRoleID(roleId)
 	if !ok {
-		p.logger.Error("unable to lookup job for role id", zap.Int64("role_id", roleId))
+		ps.logger.Error("unable to lookup job for role id", zap.Int64("role_id", roleId))
 		return
 	}
 
-	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(
+	attrRoleMap, _ := ps.attrsRoleMap.LoadOrCompute(
 		roleId,
 		func() (*xsync.Map[int64, *cacheRoleAttr], bool) {
 			return xsync.NewMap[int64, *cacheRoleAttr](), false
@@ -1035,8 +1059,8 @@ func (p *Perms) updateRoleAttributeInMap(
 	})
 }
 
-func (p *Perms) removeRoleAttributeFromMap(roleId int64, attrId int64) {
-	attrMap, ok := p.attrsRoleMap.Load(roleId)
+func (ps *Perms) removeRoleAttributeFromMap(roleId int64, attrId int64) {
+	attrMap, ok := ps.attrsRoleMap.Load(roleId)
 	if !ok {
 		return
 	}

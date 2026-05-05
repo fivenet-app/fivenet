@@ -952,9 +952,9 @@ const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\n" +
 	"\b_restart2\x8d\x03\n" +
 	"\x14NotificationsService\x12\x82\x01\n" +
-	"\x10GetNotifications\x12/.services.notifications.GetNotificationsRequest\x1a0.services.notifications.GetNotificationsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x85\x01\n" +
-	"\x11MarkNotifications\x120.services.notifications.MarkNotificationsRequest\x1a1.services.notifications.MarkNotificationsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12h\n" +
-	"\x06Stream\x12%.services.notifications.StreamRequest\x1a&.services.notifications.StreamResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any(\x010\x01BXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/notifications;notificationsb\x06proto3"
+	"\x10GetNotifications\x12/.services.notifications.GetNotificationsRequest\x1a0.services.notifications.GetNotificationsResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12\x85\x01\n" +
+	"\x11MarkNotifications\x120.services.notifications.MarkNotificationsRequest\x1a1.services.notifications.MarkNotificationsResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12h\n" +
+	"\x06Stream\x12%.services.notifications.StreamRequest\x1a&.services.notifications.StreamResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any(\x010\x01BXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/notifications;notificationsb\x06proto3"
 
 var file_services_notifications_notifications_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_services_notifications_notifications_proto_goTypes = []any{

@@ -207,7 +207,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `attr_id` | [int64](#int64) |  |  |
 | `permission_id` | [int64](#int64) |  |  |
-| `category` | [string](#string) |  |  |
+| `namespace` | [string](#string) |  |  |
+| `service` | [string](#string) |  |  |
 | `name` | [string](#string) |  |  |
 | `key` | [string](#string) |  |  |
 | `type` | [string](#string) |  |  |
@@ -286,6 +287,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `enabled` | [bool](#bool) |  |  |
+| `namespace` | [string](#string) | optional |  |
 | `service` | [string](#string) | optional |  |
 | `name` | [string](#string) | optional |  |
 | `names` | [string](#string) | repeated |  |
@@ -303,7 +305,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `order` | [int32](#int32) |  |  |
 | `icon` | [string](#string) | optional |  |
-| `name` | [string](#string) | optional |  |
+| `namespace` | [string](#string) | optional |  |
+| `service` | [string](#string) | optional |  |
 | `additional_perms` | [AdditionalServicePerm](#codegenpermsAdditionalServicePerm) | repeated |  |
 
 
@@ -392,109 +395,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `user_id` | [int32](#int32) |  |  |
 | `licenses` | [License](#resourcescitizenslicensesLicense) | repeated |  |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/file/meta.proto
-
-
-### resources.file.FileMeta
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `image` | [ImageMeta](#resourcesfileImageMeta) |  |  |
-
-
-
-
-
-### resources.file.ImageMeta
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `width` | [int64](#int64) |  |  |
-| `height` | [int64](#int64) |  |  |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/file/file.proto
-
-
-### resources.file.File
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `parent_id` | [int64](#int64) | optional |  |
-| `id` | [int64](#int64) |  |  |
-| `file_path` | [string](#string) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `byte_size` | [int64](#int64) |  | Bytes stored |
-| `content_type` | [string](#string) |  |  |
-| `meta` | [FileMeta](#resourcesfileFileMeta) | optional |  |
-| `is_dir` | [bool](#bool) |  |  |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/jobs/jobs.proto
-
-
-### resources.jobs.Job
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  |  |
-| `label` | [string](#string) |  |  |
-| `grades` | [JobGrade](#resourcesjobsJobGrade) | repeated |  |
-
-
-
-
-
-### resources.jobs.JobGrade
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job_name` | [string](#string) | optional |  |
-| `grade` | [int32](#int32) |  |  |
-| `label` | [string](#string) |  |  |
 
 
 
@@ -603,6 +503,109 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `requires_expiration` | [bool](#bool) |  |  |
 | `min_duration` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
 | `max_duration` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/file/meta.proto
+
+
+### resources.file.FileMeta
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `image` | [ImageMeta](#resourcesfileImageMeta) |  |  |
+
+
+
+
+
+### resources.file.ImageMeta
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `width` | [int64](#int64) |  |  |
+| `height` | [int64](#int64) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/file/file.proto
+
+
+### resources.file.File
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `parent_id` | [int64](#int64) | optional |  |
+| `id` | [int64](#int64) |  |  |
+| `file_path` | [string](#string) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `byte_size` | [int64](#int64) |  | Bytes stored |
+| `content_type` | [string](#string) |  |  |
+| `meta` | [FileMeta](#resourcesfileFileMeta) | optional |  |
+| `is_dir` | [bool](#bool) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/jobs/jobs.proto
+
+
+### resources.jobs.Job
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  |  |
+| `label` | [string](#string) |  |  |
+| `grades` | [JobGrade](#resourcesjobsJobGrade) | repeated |  |
+
+
+
+
+
+### resources.jobs.JobGrade
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job_name` | [string](#string) | optional |  |
+| `grade` | [int32](#int32) |  |  |
+| `label` | [string](#string) |  |  |
 
 
 
@@ -6322,7 +6325,8 @@ User related events
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `category` | [string](#string) |  |  |
+| `namespace` | [string](#string) |  |  |
+| `service` | [string](#string) |  |  |
 | `name` | [string](#string) |  |  |
 | `guard_name` | [string](#string) |  |  |
 | `val` | [bool](#bool) |  |  |

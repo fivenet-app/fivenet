@@ -672,12 +672,12 @@ const file_services_completor_completor_proto_rawDesc = "" +
 	"categories\"\x15\n" +
 	"\x13ListLawBooksRequest\"E\n" +
 	"\x14ListLawBooksResponse\x12-\n" +
-	"\x05books\x18\x01 \x03(\v2\x17.resources.laws.LawBookR\x05books2\xcc\x04\n" +
+	"\x05books\x18\x01 \x03(\v2\x17.resources.laws.LawBookR\x05books2\xce\x04\n" +
 	"\x10CompletorService\x12z\n" +
-	"\x10CompleteCitizens\x12+.services.completor.CompleteCitizensRequest\x1a,.services.completor.CompleteCitizensResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12n\n" +
-	"\fCompleteJobs\x12'.services.completor.CompleteJobsRequest\x1a(.services.completor.CompleteJobsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\xbf\x01\n" +
-	"\x1aCompleteDocumentCategories\x125.services.completor.CompleteDocumentCategoriesRequest\x1a6.services.completor.CompleteDocumentCategoriesResponse\"2\xd2\xf3\x18.\b\x01\x12\x1adocuments.DocumentsService\x1a\x0eListCategories\x12n\n" +
-	"\fListLawBooks\x12'.services.completor.ListLawBooksRequest\x1a(.services.completor.ListLawBooksResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x1a\x1a\xea\xf3\x18\x16\b\n" +
+	"\x10CompleteCitizens\x12+.services.completor.CompleteCitizensRequest\x1a,.services.completor.CompleteCitizensResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12n\n" +
+	"\fCompleteJobs\x12'.services.completor.CompleteJobsRequest\x1a(.services.completor.CompleteJobsResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12\xc1\x01\n" +
+	"\x1aCompleteDocumentCategories\x125.services.completor.CompleteDocumentCategoriesRequest\x1a6.services.completor.CompleteDocumentCategoriesResponse\"4\xd2\xf3\x180\b\x01\x12\tdocuments\x1a\x11CategoriesService\"\x0eListCategories\x12n\n" +
+	"\fListLawBooks\x12'.services.completor.ListLawBooksRequest\x1a(.services.completor.ListLawBooksResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x1a\x1a\xea\xf3\x18\x16\b\n" +
 	"\x12\x12i-mdi-keyboard-tabBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor;completorb\x06proto3"
 
 var file_services_completor_completor_proto_msgTypes = make([]protoimpl.MessageInfo, 8)

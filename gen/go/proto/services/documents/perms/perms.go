@@ -16,41 +16,47 @@ import (
 )
 
 const (
-	ApprovalServicePerm  perms.Category = "documents.ApprovalService"
-	CollabServicePerm    perms.Category = "documents.CollabService"
-	DocumentsServicePerm perms.Category = "documents.DocumentsService"
-	FormsServicePerm     perms.Category = "documents.FormsService"
-	StampsServicePerm    perms.Category = "documents.StampsService"
-	StatsServicePerm     perms.Category = "documents.StatsService"
+	Namespace perms.Namespace = "documents"
 
-	// Service: ApprovalService
+	ApprovalServicePerm   perms.Service = "ApprovalService"
+	CategoriesServicePerm perms.Service = "CategoriesService"
+	CollabServicePerm     perms.Service = "CollabService"
+	CommentsServicePerm   perms.Service = "CommentsService"
+	DocumentsServicePerm  perms.Service = "DocumentsService"
+	FormsServicePerm      perms.Service = "FormsService"
+	StampsServicePerm     perms.Service = "StampsService"
+	StatsServicePerm      perms.Service = "StatsService"
+	TemplatesServicePerm  perms.Service = "TemplatesService"
+
+	// Service: documents.ApprovalService
 	ApprovalServiceDeleteApprovalTasksPerm  perms.Name = "DeleteApprovalTasks"
 	ApprovalServiceRevokeApprovalPerm       perms.Name = "RevokeApproval"
 	ApprovalServiceUpsertApprovalPolicyPerm perms.Name = "UpsertApprovalPolicy"
 	ApprovalServiceUpsertApprovalTasksPerm  perms.Name = "UpsertApprovalTasks"
 
-	// Service: DocumentsService
+	// Service: documents.CategoriesService
+	CategoriesServiceCreateOrUpdateCategoryPerm  perms.Name = "CreateOrUpdateCategory"
+	CategoriesServiceDeleteCategoryPerm          perms.Name = "DeleteCategory"
+	CategoriesServiceListCategoriesPerm          perms.Name = "ListCategories"
+	CategoriesServiceListCategoriesJobsPermField perms.Key  = "Jobs"
+
+	// Service: documents.CommentsService
+	CommentsServiceDeleteCommentPerm            perms.Name = "DeleteComment"
+	CommentsServiceDeleteCommentAccessPermField perms.Key  = "Access"
+
+	// Service: documents.DocumentsService
 	DocumentsServiceAddDocumentReferencePerm           perms.Name = "AddDocumentReference"
 	DocumentsServiceAddDocumentRelationPerm            perms.Name = "AddDocumentRelation"
 	DocumentsServiceChangeDocumentOwnerPerm            perms.Name = "ChangeDocumentOwner"
 	DocumentsServiceChangeDocumentOwnerAccessPermField perms.Key  = "Access"
 	DocumentsServiceCreateDocumentReqPerm              perms.Name = "CreateDocumentReq"
 	DocumentsServiceCreateDocumentReqTypesPermField    perms.Key  = "Types"
-	DocumentsServiceCreateOrUpdateCategoryPerm         perms.Name = "CreateOrUpdateCategory"
-	DocumentsServiceCreateTemplatePerm                 perms.Name = "CreateTemplate"
-	DocumentsServiceDeleteCategoryPerm                 perms.Name = "DeleteCategory"
-	DocumentsServiceDeleteCommentPerm                  perms.Name = "DeleteComment"
-	DocumentsServiceDeleteCommentAccessPermField       perms.Key  = "Access"
 	DocumentsServiceDeleteDocumentPerm                 perms.Name = "DeleteDocument"
 	DocumentsServiceDeleteDocumentAccessPermField      perms.Key  = "Access"
 	DocumentsServiceDeleteDocumentReqPerm              perms.Name = "DeleteDocumentReq"
-	DocumentsServiceDeleteTemplatePerm                 perms.Name = "DeleteTemplate"
-	DocumentsServiceListCategoriesPerm                 perms.Name = "ListCategories"
-	DocumentsServiceListCategoriesJobsPermField        perms.Key  = "Jobs"
 	DocumentsServiceListDocumentActivityPerm           perms.Name = "ListDocumentActivity"
 	DocumentsServiceListDocumentReqsPerm               perms.Name = "ListDocumentReqs"
 	DocumentsServiceListDocumentsPerm                  perms.Name = "ListDocuments"
-	DocumentsServiceListTemplatesPerm                  perms.Name = "ListTemplates"
 	DocumentsServiceListUserDocumentsPerm              perms.Name = "ListUserDocuments"
 	DocumentsServiceSetDocumentReminderPerm            perms.Name = "SetDocumentReminder"
 	DocumentsServiceToggleDocumentPerm                 perms.Name = "ToggleDocument"
@@ -60,12 +66,307 @@ const (
 	DocumentsServiceUpdateDocumentPerm                 perms.Name = "UpdateDocument"
 	DocumentsServiceUpdateDocumentAccessPermField      perms.Key  = "Access"
 
-	// Service: StampsService
+	// Service: documents.StampsService
 	StampsServiceDeleteStampPerm      perms.Name = "DeleteStamp"
 	StampsServiceListUsableStampsPerm perms.Name = "ListUsableStamps"
 	StampsServiceUpsertStampPerm      perms.Name = "UpsertStamp"
 
-	// Service: StatsService
+	// Service: documents.StatsService
 	StatsServiceGetStatsPerm                perms.Name = "GetStats"
 	StatsServiceGetStatsCategoriesPermField perms.Key  = "Categories"
+
+	// Service: documents.TemplatesService
+	TemplatesServiceCreateTemplatePerm perms.Name = "CreateTemplate"
+	TemplatesServiceDeleteTemplatePerm perms.Name = "DeleteTemplate"
+	TemplatesServiceListTemplatesPerm  perms.Name = "ListTemplates"
 )
+
+type ApprovalServicePerms struct {
+	DeleteApprovalTasks  ApprovalServiceDeleteApprovalTasksPermRef
+	RevokeApproval       ApprovalServiceRevokeApprovalPermRef
+	UpsertApprovalPolicy ApprovalServiceUpsertApprovalPolicyPermRef
+	UpsertApprovalTasks  ApprovalServiceUpsertApprovalTasksPermRef
+}
+type ApprovalServiceDeleteApprovalTasksPermRef struct {
+	Perm perms.PermissionRef
+}
+type ApprovalServiceRevokeApprovalPermRef struct {
+	Perm perms.PermissionRef
+}
+type ApprovalServiceUpsertApprovalPolicyPermRef struct {
+	Perm perms.PermissionRef
+}
+type ApprovalServiceUpsertApprovalTasksPermRef struct {
+	Perm perms.PermissionRef
+}
+
+var ApprovalService = ApprovalServicePerms{
+	DeleteApprovalTasks: ApprovalServiceDeleteApprovalTasksPermRef{
+		Perm: perms.NewPermissionRef(Namespace, ApprovalServicePerm, ApprovalServiceDeleteApprovalTasksPerm),
+	},
+	RevokeApproval: ApprovalServiceRevokeApprovalPermRef{
+		Perm: perms.NewPermissionRef(Namespace, ApprovalServicePerm, ApprovalServiceRevokeApprovalPerm),
+	},
+	UpsertApprovalPolicy: ApprovalServiceUpsertApprovalPolicyPermRef{
+		Perm: perms.NewPermissionRef(Namespace, ApprovalServicePerm, ApprovalServiceUpsertApprovalPolicyPerm),
+	},
+	UpsertApprovalTasks: ApprovalServiceUpsertApprovalTasksPermRef{
+		Perm: perms.NewPermissionRef(Namespace, ApprovalServicePerm, ApprovalServiceUpsertApprovalTasksPerm),
+	},
+}
+
+type CategoriesServicePerms struct {
+	CreateOrUpdateCategory CategoriesServiceCreateOrUpdateCategoryPermRef
+	DeleteCategory         CategoriesServiceDeleteCategoryPermRef
+	ListCategories         CategoriesServiceListCategoriesPermRef
+}
+type CategoriesServiceCreateOrUpdateCategoryPermRef struct {
+	Perm perms.PermissionRef
+}
+type CategoriesServiceDeleteCategoryPermRef struct {
+	Perm perms.PermissionRef
+}
+type CategoriesServiceListCategoriesPermRef struct {
+	Perm perms.PermissionRef
+	Jobs perms.AttrRef[perms.JobListAttr]
+}
+
+var CategoriesService = CategoriesServicePerms{
+	CreateOrUpdateCategory: CategoriesServiceCreateOrUpdateCategoryPermRef{
+		Perm: perms.NewPermissionRef(Namespace, CategoriesServicePerm, CategoriesServiceCreateOrUpdateCategoryPerm),
+	},
+	DeleteCategory: CategoriesServiceDeleteCategoryPermRef{
+		Perm: perms.NewPermissionRef(Namespace, CategoriesServicePerm, CategoriesServiceDeleteCategoryPerm),
+	},
+	ListCategories: CategoriesServiceListCategoriesPermRef{
+		Perm: perms.NewPermissionRef(Namespace, CategoriesServicePerm, CategoriesServiceListCategoriesPerm),
+		Jobs: perms.NewJobListAttrRef(
+			perms.NewPermissionRef(Namespace, CategoriesServicePerm, CategoriesServiceListCategoriesPerm),
+			CategoriesServiceListCategoriesJobsPermField,
+		),
+	},
+}
+
+type CommentsServicePerms struct {
+	DeleteComment CommentsServiceDeleteCommentPermRef
+}
+type CommentsServiceDeleteCommentPermRef struct {
+	Perm   perms.PermissionRef
+	Access perms.AttrRef[perms.StringListAttr]
+}
+
+var CommentsService = CommentsServicePerms{
+	DeleteComment: CommentsServiceDeleteCommentPermRef{
+		Perm: perms.NewPermissionRef(Namespace, CommentsServicePerm, CommentsServiceDeleteCommentPerm),
+		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, CommentsServicePerm, CommentsServiceDeleteCommentPerm),
+			CommentsServiceDeleteCommentAccessPermField,
+		),
+	},
+}
+
+type DocumentsServicePerms struct {
+	AddDocumentReference DocumentsServiceAddDocumentReferencePermRef
+	AddDocumentRelation  DocumentsServiceAddDocumentRelationPermRef
+	ChangeDocumentOwner  DocumentsServiceChangeDocumentOwnerPermRef
+	CreateDocumentReq    DocumentsServiceCreateDocumentReqPermRef
+	DeleteDocument       DocumentsServiceDeleteDocumentPermRef
+	DeleteDocumentReq    DocumentsServiceDeleteDocumentReqPermRef
+	ListDocumentActivity DocumentsServiceListDocumentActivityPermRef
+	ListDocumentReqs     DocumentsServiceListDocumentReqsPermRef
+	ListDocuments        DocumentsServiceListDocumentsPermRef
+	ListUserDocuments    DocumentsServiceListUserDocumentsPermRef
+	SetDocumentReminder  DocumentsServiceSetDocumentReminderPermRef
+	ToggleDocument       DocumentsServiceToggleDocumentPermRef
+	ToggleDocumentPin    DocumentsServiceToggleDocumentPinPermRef
+	UpdateDocument       DocumentsServiceUpdateDocumentPermRef
+}
+type DocumentsServiceAddDocumentReferencePermRef struct {
+	Perm perms.PermissionRef
+}
+type DocumentsServiceAddDocumentRelationPermRef struct {
+	Perm perms.PermissionRef
+}
+type DocumentsServiceChangeDocumentOwnerPermRef struct {
+	Perm   perms.PermissionRef
+	Access perms.AttrRef[perms.StringListAttr]
+}
+type DocumentsServiceCreateDocumentReqPermRef struct {
+	Perm  perms.PermissionRef
+	Types perms.AttrRef[perms.StringListAttr]
+}
+type DocumentsServiceDeleteDocumentPermRef struct {
+	Perm   perms.PermissionRef
+	Access perms.AttrRef[perms.StringListAttr]
+}
+type DocumentsServiceDeleteDocumentReqPermRef struct {
+	Perm perms.PermissionRef
+}
+type DocumentsServiceListDocumentActivityPermRef struct {
+	Perm perms.PermissionRef
+}
+type DocumentsServiceListDocumentReqsPermRef struct {
+	Perm perms.PermissionRef
+}
+type DocumentsServiceListDocumentsPermRef struct {
+	Perm perms.PermissionRef
+}
+type DocumentsServiceListUserDocumentsPermRef struct {
+	Perm perms.PermissionRef
+}
+type DocumentsServiceSetDocumentReminderPermRef struct {
+	Perm perms.PermissionRef
+}
+type DocumentsServiceToggleDocumentPermRef struct {
+	Perm   perms.PermissionRef
+	Access perms.AttrRef[perms.StringListAttr]
+}
+type DocumentsServiceToggleDocumentPinPermRef struct {
+	Perm  perms.PermissionRef
+	Types perms.AttrRef[perms.StringListAttr]
+}
+type DocumentsServiceUpdateDocumentPermRef struct {
+	Perm   perms.PermissionRef
+	Access perms.AttrRef[perms.StringListAttr]
+}
+
+var DocumentsService = DocumentsServicePerms{
+	AddDocumentReference: DocumentsServiceAddDocumentReferencePermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceAddDocumentReferencePerm),
+	},
+	AddDocumentRelation: DocumentsServiceAddDocumentRelationPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceAddDocumentRelationPerm),
+	},
+	ChangeDocumentOwner: DocumentsServiceChangeDocumentOwnerPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceChangeDocumentOwnerPerm),
+		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceChangeDocumentOwnerPerm),
+			DocumentsServiceChangeDocumentOwnerAccessPermField,
+		),
+	},
+	CreateDocumentReq: DocumentsServiceCreateDocumentReqPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceCreateDocumentReqPerm),
+		Types: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceCreateDocumentReqPerm),
+			DocumentsServiceCreateDocumentReqTypesPermField,
+		),
+	},
+	DeleteDocument: DocumentsServiceDeleteDocumentPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceDeleteDocumentPerm),
+		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceDeleteDocumentPerm),
+			DocumentsServiceDeleteDocumentAccessPermField,
+		),
+	},
+	DeleteDocumentReq: DocumentsServiceDeleteDocumentReqPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceDeleteDocumentReqPerm),
+	},
+	ListDocumentActivity: DocumentsServiceListDocumentActivityPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceListDocumentActivityPerm),
+	},
+	ListDocumentReqs: DocumentsServiceListDocumentReqsPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceListDocumentReqsPerm),
+	},
+	ListDocuments: DocumentsServiceListDocumentsPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceListDocumentsPerm),
+	},
+	ListUserDocuments: DocumentsServiceListUserDocumentsPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceListUserDocumentsPerm),
+	},
+	SetDocumentReminder: DocumentsServiceSetDocumentReminderPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceSetDocumentReminderPerm),
+	},
+	ToggleDocument: DocumentsServiceToggleDocumentPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceToggleDocumentPerm),
+		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceToggleDocumentPerm),
+			DocumentsServiceToggleDocumentAccessPermField,
+		),
+	},
+	ToggleDocumentPin: DocumentsServiceToggleDocumentPinPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceToggleDocumentPinPerm),
+		Types: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceToggleDocumentPinPerm),
+			DocumentsServiceToggleDocumentPinTypesPermField,
+		),
+	},
+	UpdateDocument: DocumentsServiceUpdateDocumentPermRef{
+		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceUpdateDocumentPerm),
+		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceUpdateDocumentPerm),
+			DocumentsServiceUpdateDocumentAccessPermField,
+		),
+	},
+}
+
+type StampsServicePerms struct {
+	DeleteStamp      StampsServiceDeleteStampPermRef
+	ListUsableStamps StampsServiceListUsableStampsPermRef
+	UpsertStamp      StampsServiceUpsertStampPermRef
+}
+type StampsServiceDeleteStampPermRef struct {
+	Perm perms.PermissionRef
+}
+type StampsServiceListUsableStampsPermRef struct {
+	Perm perms.PermissionRef
+}
+type StampsServiceUpsertStampPermRef struct {
+	Perm perms.PermissionRef
+}
+
+var StampsService = StampsServicePerms{
+	DeleteStamp: StampsServiceDeleteStampPermRef{
+		Perm: perms.NewPermissionRef(Namespace, StampsServicePerm, StampsServiceDeleteStampPerm),
+	},
+	ListUsableStamps: StampsServiceListUsableStampsPermRef{
+		Perm: perms.NewPermissionRef(Namespace, StampsServicePerm, StampsServiceListUsableStampsPerm),
+	},
+	UpsertStamp: StampsServiceUpsertStampPermRef{
+		Perm: perms.NewPermissionRef(Namespace, StampsServicePerm, StampsServiceUpsertStampPerm),
+	},
+}
+
+type StatsServicePerms struct {
+	GetStats StatsServiceGetStatsPermRef
+}
+type StatsServiceGetStatsPermRef struct {
+	Perm       perms.PermissionRef
+	Categories perms.AttrRef[perms.StringListAttr]
+}
+
+var StatsService = StatsServicePerms{
+	GetStats: StatsServiceGetStatsPermRef{
+		Perm: perms.NewPermissionRef(Namespace, StatsServicePerm, StatsServiceGetStatsPerm),
+		Categories: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, StatsServicePerm, StatsServiceGetStatsPerm),
+			StatsServiceGetStatsCategoriesPermField,
+		),
+	},
+}
+
+type TemplatesServicePerms struct {
+	CreateTemplate TemplatesServiceCreateTemplatePermRef
+	DeleteTemplate TemplatesServiceDeleteTemplatePermRef
+	ListTemplates  TemplatesServiceListTemplatesPermRef
+}
+type TemplatesServiceCreateTemplatePermRef struct {
+	Perm perms.PermissionRef
+}
+type TemplatesServiceDeleteTemplatePermRef struct {
+	Perm perms.PermissionRef
+}
+type TemplatesServiceListTemplatesPermRef struct {
+	Perm perms.PermissionRef
+}
+
+var TemplatesService = TemplatesServicePerms{
+	CreateTemplate: TemplatesServiceCreateTemplatePermRef{
+		Perm: perms.NewPermissionRef(Namespace, TemplatesServicePerm, TemplatesServiceCreateTemplatePerm),
+	},
+	DeleteTemplate: TemplatesServiceDeleteTemplatePermRef{
+		Perm: perms.NewPermissionRef(Namespace, TemplatesServicePerm, TemplatesServiceDeleteTemplatePerm),
+	},
+	ListTemplates: TemplatesServiceListTemplatesPermRef{
+		Perm: perms.NewPermissionRef(Namespace, TemplatesServicePerm, TemplatesServiceListTemplatesPerm),
+	},
+}

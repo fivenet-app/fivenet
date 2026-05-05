@@ -43,9 +43,7 @@ func (s *Server) GetStats(
 
 	categories, err := s.ps.AttrStringList(
 		userInfo,
-		permsdocuments.StatsServicePerm,
-		permsdocuments.StatsServiceGetStatsPerm,
-		permsdocuments.StatsServiceGetStatsCategoriesPermField,
+		permsdocuments.StatsService.GetStats.Categories,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

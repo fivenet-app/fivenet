@@ -1940,7 +1940,7 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"attributes\x18\x06 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
 	"attributesB\f\n" +
 	"\n" +
-	"_job_props2\xaf\t\n" +
+	"_job_props2\xb0\t\n" +
 	"\vAuthService\x12B\n" +
 	"\x05Login\x12\x1b.services.auth.LoginRequest\x1a\x1c.services.auth.LoginResponse\x12E\n" +
 	"\x06Logout\x12\x1c.services.auth.LogoutRequest\x1a\x1d.services.auth.LogoutResponse\x12Z\n" +
@@ -1949,8 +1949,8 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x0eChangePassword\x12$.services.auth.ChangePasswordRequest\x1a%.services.auth.ChangePasswordResponse\x12]\n" +
 	"\x0eForgotPassword\x12$.services.auth.ForgotPasswordRequest\x1a%.services.auth.ForgotPasswordResponse\x12Z\n" +
 	"\rGetCharacters\x12#.services.auth.GetCharactersRequest\x1a$.services.auth.GetCharactersResponse\x12h\n" +
-	"\x0fChooseCharacter\x12%.services.auth.ChooseCharacterRequest\x1a&.services.auth.ChooseCharacterResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x90\x01\n" +
-	"\x0eImpersonateJob\x12$.services.auth.ImpersonateJobRequest\x1a%.services.auth.ImpersonateJobResponse\"1\xd2\xf3\x18-\b\x01\x12\x18settings.SettingsService\x1a\x0fUpdateRolePerms\x12]\n" +
+	"\x0fChooseCharacter\x12%.services.auth.ChooseCharacterRequest\x1a&.services.auth.ChooseCharacterResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x91\x01\n" +
+	"\x0eImpersonateJob\x12$.services.auth.ImpersonateJobRequest\x1a%.services.auth.ImpersonateJobResponse\"2\xd2\xf3\x18.\b\x01\x12\bsettings\x1a\x0fSettingsService\"\x0fUpdateRolePerms\x12]\n" +
 	"\x0eGetAccountInfo\x12$.services.auth.GetAccountInfoRequest\x1a%.services.auth.GetAccountInfoResponse\x12f\n" +
 	"\x11DeleteSocialLogin\x12'.services.auth.DeleteSocialLoginRequest\x1a(.services.auth.DeleteSocialLoginResponse\x12c\n" +
 	"\x10SetSuperuserMode\x12&.services.auth.SetSuperuserModeRequest\x1a'.services.auth.SetSuperuserModeResponse\x1a\x17\xea\xf3\x18\x13\x12\x11i-mdi-key-outlineBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth;authb\x06proto3"

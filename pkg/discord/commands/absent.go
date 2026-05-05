@@ -194,8 +194,7 @@ func (c *AbsentCommand) HandleCommand(
 	}
 	if !c.perms.Can(
 		userInfo,
-		permsjobs.JobsServicePerm,
-		permsjobs.JobsServiceSetColleaguePropsPerm,
+		permsjobs.ColleaguesService.SetColleagueProps.Perm,
 	) {
 		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.no_perms.title", nil)
 		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.no_perms.desc",

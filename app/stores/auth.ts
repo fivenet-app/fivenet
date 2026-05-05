@@ -420,7 +420,9 @@ export const useAuthStore = defineStore(
         };
 
         // Getters
-        const isSuperuser = computed<boolean>(() => !!permissions.value.find((p) => p.guardName === 'superuser-superuser'));
+        const isSuperuser = computed<boolean>(
+            () => !!permissions.value.find((p) => p.guardName === 'internal-superuser-superuser'),
+        );
 
         return {
             // State

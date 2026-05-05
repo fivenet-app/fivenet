@@ -21,8 +21,9 @@ import (
 )
 
 var (
-	tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("label")
-	tCitizenLabels     = table.FivenetUserLabels
+	tCitizensLabelsJob       = table.FivenetUserLabelsJob.AS("label")
+	tCitizenLabels           = table.FivenetUserLabels
+	tCitizensLabelsJobAccess = table.FivenetUserLabelsJobJobAccess
 )
 
 func (s *Server) validateLabels(
@@ -302,7 +303,19 @@ func (s *Server) getUserLabels(
 	userInfo *userinfo.UserInfo,
 	userId int32,
 ) (*citizenslabels.Labels, error) {
-	// TODO
+	jobAccessExists := mysql.EXISTS(
+		mysql.
+			SELECT(mysql.Int(1)).
+			FROM(tCitizensLabelsJobAccess).
+			WHERE(mysql.AND(
+				tCitizensLabelsJobAccess.LabelID.EQ(tCitizensLabelsJob.ID),
+				tCitizensLabelsJobAccess.Access.GT_EQ(
+					mysql.Int32(int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW)),
+				),
+				tCitizensLabelsJobAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+				tCitizensLabelsJobAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+			)),
+	)
 
 	stmt := tCitizenLabels.
 		SELECT(
@@ -320,9 +333,10 @@ func (s *Server) getUserLabels(
 				),
 		).
 		WHERE(mysql.AND(
-			tCitizenLabels.UserID.EQ(mysql.Int32(userId)),
 			tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
 			tCitizensLabelsJob.DeletedAt.IS_NULL(),
+			tCitizenLabels.UserID.EQ(mysql.Int32(userId)),
+			jobAccessExists,
 		)).
 		ORDER_BY(tCitizensLabelsJob.SortKey.ASC(), tCitizensLabelsJob.ID.DESC())
 

@@ -21,13 +21,14 @@ message RoleAttribute {
   optional resources.timestamp.Timestamp created_at = 2;
   int64 attr_id = 3;
   int64 permission_id = 4;
-  string category = 5 [(buf.validate.field).string.max_len = 128];
-  string name = 6 [(buf.validate.field).string.max_len = 255];
-  string key = 7 [(buf.validate.field).string.max_len = 255];
-  string type = 8 [(buf.validate.field).string.max_len = 255];
-  AttributeValues valid_values = 9;
-  AttributeValues value = 10;
-  optional AttributeValues max_values = 11;
+  string namespace = 5 [(buf.validate.field).string.max_len = 48];
+  string service = 6 [(buf.validate.field).string.max_len = 64];
+  string name = 7 [(buf.validate.field).string.max_len = 255];
+  string key = 8 [(buf.validate.field).string.max_len = 255];
+  string type = 9 [(buf.validate.field).string.max_len = 255];
+  AttributeValues valid_values = 10;
+  AttributeValues value = 11;
+  optional AttributeValues max_values = 12;
 }
 
 message AttributeValues {

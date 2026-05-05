@@ -9,9 +9,29 @@ import (
 )
 
 const (
-	CalendarServicePerm perms.Category = "calendar.CalendarService"
+	Namespace perms.Namespace = "calendar"
 
-	// Service: CalendarService
+	CalendarServicePerm perms.Service = "CalendarService"
+
+	// Service: calendar.CalendarService
 	CalendarServiceCreateCalendarPerm            perms.Name = "CreateCalendar"
 	CalendarServiceCreateCalendarFieldsPermField perms.Key  = "Fields"
 )
+
+type CalendarServicePerms struct {
+	CreateCalendar CalendarServiceCreateCalendarPermRef
+}
+type CalendarServiceCreateCalendarPermRef struct {
+	Perm   perms.PermissionRef
+	Fields perms.AttrRef[perms.StringListAttr]
+}
+
+var CalendarService = CalendarServicePerms{
+	CreateCalendar: CalendarServiceCreateCalendarPermRef{
+		Perm: perms.NewPermissionRef(Namespace, CalendarServicePerm, CalendarServiceCreateCalendarPerm),
+		Fields: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, CalendarServicePerm, CalendarServiceCreateCalendarPerm),
+			CalendarServiceCreateCalendarFieldsPermField,
+		),
+	},
+}

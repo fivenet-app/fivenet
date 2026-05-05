@@ -114,7 +114,7 @@ watchOnce(opened, async () => {
                     />
 
                     <UButton
-                        v-if="can('jobs.JobsService/GetColleague').value && user?.job === activeChar?.job"
+                        v-if="can('jobs.ColleaguesService/GetColleague').value && user?.job === activeChar?.job"
                         variant="link"
                         icon="i-mdi-briefcase"
                         :label="$t('common.colleague')"
@@ -149,7 +149,7 @@ watchOnce(opened, async () => {
                     </div>
                     <div>
                         <UButton
-                            v-if="activeChar?.job === user.job && can('jobs.JobsService/GetColleague').value"
+                            v-if="activeChar?.job === user.job && can('jobs.ColleaguesService/GetColleague').value"
                             variant="link"
                             :to="{
                                 name: 'jobs-colleagues-id',

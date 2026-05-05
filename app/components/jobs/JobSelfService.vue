@@ -56,7 +56,7 @@ const selfServicePropsAvatarModal = overlay.create(SelfServiceAvatarModal);
                 v-if="
                     colleagueSelf?.colleague &&
                     activeChar?.userId === colleagueSelf.colleague?.userId &&
-                    can('jobs.JobsService/SetColleagueProps').value
+                    can('jobs.ColleaguesService/SetColleagueProps').value
                 "
                 class="flex-1"
                 block

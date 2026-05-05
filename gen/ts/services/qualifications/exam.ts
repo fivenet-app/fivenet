@@ -602,8 +602,8 @@ export const GetUserExamResponse = new GetUserExamResponse$Type();
  * @generated ServiceType for protobuf service services.qualifications.ExamService
  */
 export const ExamService = new ServiceType("services.qualifications.ExamService", [
-    { name: "GetExamInfo", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: GetExamInfoRequest, O: GetExamInfoResponse },
-    { name: "TakeExam", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: TakeExamRequest, O: TakeExamResponse },
-    { name: "SubmitExam", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: SubmitExamRequest, O: SubmitExamResponse },
-    { name: "GetUserExam", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: GetUserExamRequest, O: GetUserExamResponse }
-], { "codegen.perms.perms_svc": { name: "qualifications.QualificationsService" } });
+    { name: "GetExamInfo", options: { "codegen.perms.perms": { enabled: true, namespace: "qualifications", service: "QualificationsService", name: "ListQualifications" } }, I: GetExamInfoRequest, O: GetExamInfoResponse },
+    { name: "TakeExam", options: { "codegen.perms.perms": { enabled: true, namespace: "qualifications", service: "QualificationsService", name: "ListQualifications" } }, I: TakeExamRequest, O: TakeExamResponse },
+    { name: "SubmitExam", options: { "codegen.perms.perms": { enabled: true, namespace: "qualifications", service: "QualificationsService", name: "ListQualifications" } }, I: SubmitExamRequest, O: SubmitExamResponse },
+    { name: "GetUserExam", options: { "codegen.perms.perms": { enabled: true, namespace: "qualifications", service: "QualificationsService", name: "ListQualifications" } }, I: GetUserExamRequest, O: GetUserExamResponse }
+]);

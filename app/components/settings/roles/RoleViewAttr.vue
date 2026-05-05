@@ -248,7 +248,7 @@ const isOpen = ref(props.defaultOpen ?? false);
                 color="neutral"
                 variant="subtle"
                 trailing-icon="i-mdi-chevron-down"
-                :label="$t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`)"
+                :label="$t(`perms.${attribute.namespace}.${attribute.service}.${attribute.name}.attrs_types.${attribute.key}`)"
                 :title="`${$t('common.id')}: ${attribute.attrId}`"
                 :ui="{
                     trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
@@ -284,7 +284,7 @@ const isOpen = ref(props.defaultOpen ?? false);
                                     />
                                     <span>{{
                                         $t(
-                                            `perms.${permission.category}.${permission.name}.attrs.${value.replaceAll('.', '_')}`,
+                                            `perms.${permission.namespace}.${permission.service}.${permission.name}.attrs.${value.replaceAll('.', '_')}`,
                                         )
                                     }}</span>
                                 </div>

@@ -19,55 +19,110 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+		// Namespace: documents
 
 		// Service: documents.ApprovalService
 		{
-			Category: permkeys.ApprovalServicePerm,
-			Name:     permkeys.ApprovalServiceDeleteApprovalTasksPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5200,
-			Icon:     "i-mdi-approval",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ApprovalServicePerm,
+			Name:      permkeys.ApprovalServiceDeleteApprovalTasksPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5200,
+			Icon:      "i-mdi-approval",
 		},
 		{
-			Category: permkeys.ApprovalServicePerm,
-			Name:     permkeys.ApprovalServiceRevokeApprovalPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5200,
-			Icon:     "i-mdi-approval",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ApprovalServicePerm,
+			Name:      permkeys.ApprovalServiceRevokeApprovalPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5200,
+			Icon:      "i-mdi-approval",
 		},
 		{
-			Category: permkeys.ApprovalServicePerm,
-			Name:     permkeys.ApprovalServiceUpsertApprovalPolicyPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5200,
-			Icon:     "i-mdi-approval",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ApprovalServicePerm,
+			Name:      permkeys.ApprovalServiceUpsertApprovalPolicyPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5200,
+			Icon:      "i-mdi-approval",
 		},
 		{
-			Category: permkeys.ApprovalServicePerm,
-			Name:     permkeys.ApprovalServiceUpsertApprovalTasksPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5200,
-			Icon:     "i-mdi-approval",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.ApprovalServicePerm,
+			Name:      permkeys.ApprovalServiceUpsertApprovalTasksPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5200,
+			Icon:      "i-mdi-approval",
+		},
+
+		// Service: documents.CategoriesService
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CategoriesServicePerm,
+			Name:      permkeys.CategoriesServiceCreateOrUpdateCategoryPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5100,
+			Icon:      "i-mdi-shape",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CategoriesServicePerm,
+			Name:      permkeys.CategoriesServiceDeleteCategoryPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5100,
+			Icon:      "i-mdi-shape",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CategoriesServicePerm,
+			Name:      permkeys.CategoriesServiceListCategoriesPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:  permkeys.CategoriesServiceListCategoriesJobsPermField,
+					Type: permissionsattributes.JobListAttributeType,
+				},
+			},
+			Order: 5100,
+			Icon:  "i-mdi-shape",
+		},
+
+		// Service: documents.CommentsService
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CommentsServicePerm,
+			Name:      permkeys.CommentsServiceDeleteCommentPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.CommentsServiceDeleteCommentAccessPermField,
+					Type:        permissionsattributes.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
+				},
+			},
+			Order: 5100,
+			Icon:  "i-mdi-comment-text-multiple",
 		},
 
 		// Service: documents.DocumentsService
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceAddDocumentReferencePerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceAddDocumentReferencePerm,
+			Attrs:     []perms.Attr{},
+			Order:     5000,
+			Icon:      "i-mdi-file-document-box-multiple-outline",
 		},
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceAddDocumentRelationPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceAddDocumentRelationPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5000,
+			Icon:      "i-mdi-file-document-box-multiple-outline",
 		},
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceChangeDocumentOwnerPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceChangeDocumentOwnerPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.DocumentsServiceChangeDocumentOwnerAccessPermField,
@@ -79,8 +134,9 @@ func init() {
 			Icon:  "i-mdi-file-document-box-multiple-outline",
 		},
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceCreateDocumentReqPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceCreateDocumentReqPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.DocumentsServiceCreateDocumentReqTypesPermField,
@@ -92,42 +148,9 @@ func init() {
 			Icon:  "i-mdi-file-document-box-multiple-outline",
 		},
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceCreateOrUpdateCategoryPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
-		},
-		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceCreateTemplatePerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
-		},
-		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceDeleteCategoryPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
-		},
-		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceDeleteCommentPerm,
-			Attrs: []perms.Attr{
-				{
-					Key:         permkeys.DocumentsServiceDeleteCommentAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
-					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
-				},
-			},
-			Order: 5000,
-			Icon:  "i-mdi-file-document-box-multiple-outline",
-		},
-		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceDeleteDocumentPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceDeleteDocumentPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.DocumentsServiceDeleteDocumentAccessPermField,
@@ -139,76 +162,57 @@ func init() {
 			Icon:  "i-mdi-file-document-box-multiple-outline",
 		},
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceDeleteDocumentReqPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceDeleteDocumentReqPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5000,
+			Icon:      "i-mdi-file-document-box-multiple-outline",
 		},
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceDeleteTemplatePerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceListDocumentActivityPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5000,
+			Icon:      "i-mdi-file-document-box-multiple-outline",
 		},
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceListCategoriesPerm,
-			Attrs: []perms.Attr{
-				{
-					Key:  permkeys.DocumentsServiceListCategoriesJobsPermField,
-					Type: permissionsattributes.JobListAttributeType,
-				},
-			},
-			Order: 5000,
-			Icon:  "i-mdi-file-document-box-multiple-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceListDocumentReqsPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5000,
+			Icon:      "i-mdi-file-document-box-multiple-outline",
 		},
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceListDocumentActivityPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceListDocumentsPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5000,
+			Icon:      "i-mdi-file-document-box-multiple-outline",
 		},
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceListDocumentReqsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceListUserDocumentsPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5000,
+			Icon:      "i-mdi-file-document-box-multiple-outline",
 		},
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceListDocumentsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceSetDocumentReminderPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5000,
+			Icon:      "i-mdi-file-document-box-multiple-outline",
 		},
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceListTemplatesPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
-		},
-		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceListUserDocumentsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
-		},
-		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceSetDocumentReminderPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5000,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
-		},
-		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceToggleDocumentPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceToggleDocumentPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.DocumentsServiceToggleDocumentAccessPermField,
@@ -220,8 +224,9 @@ func init() {
 			Icon:  "i-mdi-file-document-box-multiple-outline",
 		},
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceToggleDocumentPinPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceToggleDocumentPinPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.DocumentsServiceToggleDocumentPinTypesPermField,
@@ -233,8 +238,9 @@ func init() {
 			Icon:  "i-mdi-file-document-box-multiple-outline",
 		},
 		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceUpdateDocumentPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.DocumentsServicePerm,
+			Name:      permkeys.DocumentsServiceUpdateDocumentPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.DocumentsServiceUpdateDocumentAccessPermField,
@@ -248,31 +254,35 @@ func init() {
 
 		// Service: documents.StampsService
 		{
-			Category: permkeys.StampsServicePerm,
-			Name:     permkeys.StampsServiceDeleteStampPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5700,
-			Icon:     "i-mdi-stamper",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.StampsServicePerm,
+			Name:      permkeys.StampsServiceDeleteStampPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5700,
+			Icon:      "i-mdi-stamper",
 		},
 		{
-			Category: permkeys.StampsServicePerm,
-			Name:     permkeys.StampsServiceListUsableStampsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5700,
-			Icon:     "i-mdi-stamper",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.StampsServicePerm,
+			Name:      permkeys.StampsServiceListUsableStampsPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5700,
+			Icon:      "i-mdi-stamper",
 		},
 		{
-			Category: permkeys.StampsServicePerm,
-			Name:     permkeys.StampsServiceUpsertStampPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5700,
-			Icon:     "i-mdi-stamper",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.StampsServicePerm,
+			Name:      permkeys.StampsServiceUpsertStampPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5700,
+			Icon:      "i-mdi-stamper",
 		},
 
 		// Service: documents.StatsService
 		{
-			Category: permkeys.StatsServicePerm,
-			Name:     permkeys.StatsServiceGetStatsPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.StatsServicePerm,
+			Name:      permkeys.StatsServiceGetStatsPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.StatsServiceGetStatsCategoriesPermField,
@@ -282,6 +292,32 @@ func init() {
 			},
 			Order: 5800,
 			Icon:  "i-mdi-graph-box-multiple-outline",
+		},
+
+		// Service: documents.TemplatesService
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.TemplatesServicePerm,
+			Name:      permkeys.TemplatesServiceCreateTemplatePerm,
+			Attrs:     []perms.Attr{},
+			Order:     5500,
+			Icon:      "i-mdi-file-code",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.TemplatesServicePerm,
+			Name:      permkeys.TemplatesServiceDeleteTemplatePerm,
+			Attrs:     []perms.Attr{},
+			Order:     5500,
+			Icon:      "i-mdi-file-code",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.TemplatesServicePerm,
+			Name:      permkeys.TemplatesServiceListTemplatesPerm,
+			Attrs:     []perms.Attr{},
+			Order:     5500,
+			Icon:      "i-mdi-file-code",
 		},
 	})
 }

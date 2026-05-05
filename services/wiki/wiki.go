@@ -630,9 +630,7 @@ func (s *Server) UpdatePage(
 	// Field Permission Check
 	fields, err := s.perms.AttrStringList(
 		userInfo,
-		permswiki.WikiServicePerm,
-		permswiki.WikiServiceUpdatePagePerm,
-		permswiki.WikiServiceUpdatePageFieldsPermField,
+		permswiki.WikiService.UpdatePage.Fields,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)

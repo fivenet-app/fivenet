@@ -328,4 +328,4 @@ export const CategoriesService = new ServiceType("services.documents.CategoriesS
     { name: "ListCategories", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Jobs", type: "ATTRIBUTE_TYPE_JOB_LIST" }] } }, I: ListCategoriesRequest, O: ListCategoriesResponse },
     { name: "CreateOrUpdateCategory", options: { "codegen.perms.perms": { enabled: true } }, I: CreateOrUpdateCategoryRequest, O: CreateOrUpdateCategoryResponse },
     { name: "DeleteCategory", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteCategoryRequest, O: DeleteCategoryResponse }
-], { "codegen.perms.perms_svc": { name: "documents.DocumentsService" } });
+], { "codegen.perms.perms_svc": { order: 51, icon: "i-mdi-shape" } });

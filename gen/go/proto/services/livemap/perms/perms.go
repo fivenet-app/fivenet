@@ -8,9 +8,11 @@ import (
 )
 
 const (
-	LivemapServicePerm perms.Category = "livemap.LivemapService"
+	Namespace perms.Namespace = "livemap"
 
-	// Service: LivemapService
+	LivemapServicePerm perms.Service = "LivemapService"
+
+	// Service: livemap.LivemapService
 	LivemapServiceCreateOrUpdateMarkerPerm            perms.Name = "CreateOrUpdateMarker"
 	LivemapServiceCreateOrUpdateMarkerAccessPermField perms.Key  = "Access"
 	LivemapServiceDeleteMarkerPerm                    perms.Name = "DeleteMarker"
@@ -19,3 +21,50 @@ const (
 	LivemapServiceStreamMarkersPermField              perms.Key  = "Markers"
 	LivemapServiceStreamPlayersPermField              perms.Key  = "Players"
 )
+
+type LivemapServicePerms struct {
+	CreateOrUpdateMarker LivemapServiceCreateOrUpdateMarkerPermRef
+	DeleteMarker         LivemapServiceDeleteMarkerPermRef
+	Stream               LivemapServiceStreamPermRef
+}
+type LivemapServiceCreateOrUpdateMarkerPermRef struct {
+	Perm   perms.PermissionRef
+	Access perms.AttrRef[perms.StringListAttr]
+}
+type LivemapServiceDeleteMarkerPermRef struct {
+	Perm   perms.PermissionRef
+	Access perms.AttrRef[perms.StringListAttr]
+}
+type LivemapServiceStreamPermRef struct {
+	Perm    perms.PermissionRef
+	Markers perms.AttrRef[perms.JobListAttr]
+	Players perms.AttrRef[perms.JobGradeListAttr]
+}
+
+var LivemapService = LivemapServicePerms{
+	CreateOrUpdateMarker: LivemapServiceCreateOrUpdateMarkerPermRef{
+		Perm: perms.NewPermissionRef(Namespace, LivemapServicePerm, LivemapServiceCreateOrUpdateMarkerPerm),
+		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, LivemapServicePerm, LivemapServiceCreateOrUpdateMarkerPerm),
+			LivemapServiceCreateOrUpdateMarkerAccessPermField,
+		),
+	},
+	DeleteMarker: LivemapServiceDeleteMarkerPermRef{
+		Perm: perms.NewPermissionRef(Namespace, LivemapServicePerm, LivemapServiceDeleteMarkerPerm),
+		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, LivemapServicePerm, LivemapServiceDeleteMarkerPerm),
+			LivemapServiceDeleteMarkerAccessPermField,
+		),
+	},
+	Stream: LivemapServiceStreamPermRef{
+		Perm: perms.NewPermissionRef(Namespace, LivemapServicePerm, LivemapServiceStreamPerm),
+		Markers: perms.NewJobListAttrRef(
+			perms.NewPermissionRef(Namespace, LivemapServicePerm, LivemapServiceStreamPerm),
+			LivemapServiceStreamMarkersPermField,
+		),
+		Players: perms.NewJobGradeListAttrRef(
+			perms.NewPermissionRef(Namespace, LivemapServicePerm, LivemapServiceStreamPerm),
+			LivemapServiceStreamPlayersPermField,
+		),
+	},
+}

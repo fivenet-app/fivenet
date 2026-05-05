@@ -136,8 +136,7 @@ func NewServer(p Params) *Server {
 		CanUserAccessTargetFn: func(ctx context.Context, targetId int64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
 			if !s.ps.Can(
 				userInfo,
-				permscitizens.CitizensServicePerm,
-				permscitizens.CitizensServiceGetUserPerm,
+				permscitizens.CitizensService.GetUser.Perm,
 			) {
 				return false, nil
 			}

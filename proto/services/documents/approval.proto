@@ -191,7 +191,7 @@ service ApprovalService {
   rpc ListApprovalTasksInbox(ListApprovalTasksInboxRequest) returns (ListApprovalTasksInboxResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "documents.DocumentsService"
+      service: "DocumentsService"
       name: "ListDocuments"
     };
   }
@@ -200,7 +200,7 @@ service ApprovalService {
   rpc ListApprovalPolicies(ListApprovalPoliciesRequest) returns (ListApprovalPoliciesResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "documents.DocumentsService"
+      service: "DocumentsService"
       name: "ListDocuments"
     };
   }
@@ -212,7 +212,7 @@ service ApprovalService {
   rpc ListApprovalTasks(ListApprovalTasksRequest) returns (ListApprovalTasksResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "documents.DocumentsService"
+      service: "DocumentsService"
       name: "ListDocuments"
     };
   }
@@ -227,7 +227,7 @@ service ApprovalService {
   rpc ListApprovals(ListApprovalsRequest) returns (ListApprovalsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "documents.DocumentsService"
+      service: "DocumentsService"
       name: "ListDocuments"
     };
   }
@@ -237,7 +237,7 @@ service ApprovalService {
   rpc DecideApproval(DecideApprovalRequest) returns (DecideApprovalResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "documents.DocumentsService"
+      service: "DocumentsService"
       name: "ListDocuments"
     };
   }
