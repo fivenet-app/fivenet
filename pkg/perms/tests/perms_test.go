@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/testdata"
@@ -52,8 +53,15 @@ func TestBasicPerms(t *testing.T) {
 	// 1. Superuser can do everything
 	can := ps.CanRaw(userInfo, "citizens", "CitizensService", "ListCitizens")
 	assert.True(t, can, "Superuser has all permissions (citizens.CitizensService/ListCitizens)")
-	can = ps.CanRaw(userInfo, "documents", "DocumentsService", "DeleteComment")
-	assert.True(t, can, "Superuser has all permissions (documents.DocumentsService/DeleteComment)")
+	can = ps.Can(userInfo, permsdocuments.CommentsService.DeleteComment.Perm)
+	assert.True(t, can, "Superuser has all permissions (documents.CommentsService/DeleteComment)")
+	// 1.1. Superuser doesn't have access to non-existing permissions
+	can = ps.CanRaw(userInfo, "test123", "TestService", "DoSomething")
+	assert.False(
+		t,
+		can,
+		"Superuser has not access to non-existing permissions (test123.TestService/DoSomething)",
+	)
 
 	// 2. Non-superuser (ambulance, 17) - Some basic tests that role permissions and attributes are working
 	userInfo.Superuser = false
