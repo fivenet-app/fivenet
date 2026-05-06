@@ -689,7 +689,9 @@ func (s *Server) ChooseCharacter(
 
 	if len(ps) == 0 ||
 		(!canBeSuperuser && !slices.ContainsFunc(ps, func(p *permissionspermissions.Permission) bool {
-			return p.GetName() == string(permsauth.AuthServicePerm) && p.GetName() == string(permsauth.AuthServiceChooseCharacterPerm)
+			return p.GetNamespace() == string(permsauth.Namespace) &&
+				p.GetService() == string(permsauth.AuthServicePerm) &&
+				p.GetName() == string(permsauth.AuthServiceChooseCharacterPerm)
 		})) {
 		return nil, errorsauth.ErrUnableToChooseChar
 	}

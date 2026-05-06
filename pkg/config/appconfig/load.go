@@ -201,7 +201,7 @@ func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 	if slices.ContainsFunc(dest.AppConfig.Perms.GetDefault(), func(p *settings.Perm) bool {
 		return !strings.Contains(p.GetCategory(), ".")
 	}) {
-		c.logger.Error(
+		c.logger.Warn(
 			"WARNING! You must update the default permissions in the app config to include the category prefix.",
 		)
 	}

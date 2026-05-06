@@ -85,14 +85,14 @@ func TestFullAuthFlow(t *testing.T) {
 	// user-3: Login with valid account that has one char
 	loginReq.Username = "user-3"
 	loginReq.Password = "password"
-	mdUser1 := metadata.New(map[string]string{})
-	res, err = client.Login(ctx, loginReq, grpc.Header(&mdUser1))
+	mdUser3 := metadata.New(map[string]string{})
+	res, err = client.Login(ctx, loginReq, grpc.Header(&mdUser3))
 	require.NoError(err)
 	assert.NotNil(res)
 	if res == nil {
 		assert.FailNow("user-3: Login with valid account failed, response is nil")
 	}
-	cookies := mdUser1.Get("set-cookie")
+	cookies := mdUser3.Get("set-cookie")
 	// Make sure we have both cookies
 	require.Len(cookies, 2, "Expected 2 cookies to be set")
 	foundAuthed := -1
@@ -118,8 +118,8 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NotEmpty(accountToken)
 
 	// user-3: Create authenticated metadate and get characters (only has one char)
-	md := metadata.New(map[string]string{"Authorization": "Bearer " + accountToken})
-	ctx = metadata.NewOutgoingContext(ctx, md)
+	mdUser3Outgoing := metadata.New(map[string]string{"Authorization": "Bearer " + accountToken})
+	ctx = metadata.NewOutgoingContext(ctx, mdUser3Outgoing)
 	getCharsReq := &pbauth.GetCharactersRequest{}
 	getCharsRes, err := client.GetCharacters(ctx, getCharsReq)
 	require.NoError(err)
@@ -134,14 +134,14 @@ func TestFullAuthFlow(t *testing.T) {
 	// user-1: Login with valid account (2 chars)
 	loginReq.Username = "user-1"
 	loginReq.Password = "password"
-	mdUser2 := metadata.New(map[string]string{})
-	res, err = client.Login(ctx, loginReq, grpc.Header(&mdUser2))
+	mdUser1 := metadata.New(map[string]string{})
+	res, err = client.Login(ctx, loginReq, grpc.Header(&mdUser1))
 	require.NoError(err)
 	assert.NotNil(res)
 	if res == nil {
 		assert.FailNow("user-1: Login with valid account failed, response is nil")
 	}
-	cookies = mdUser2.Get("set-cookie")
+	cookies = mdUser1.Get("set-cookie")
 	// Make sure we have both cookies
 	require.Len(cookies, 2, "Expected 2 cookies to be set")
 	foundAuthed = -1
@@ -167,8 +167,8 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NotEmpty(accountToken)
 
 	// user-1: Create authenticated metadate and get characters
-	md = metadata.New(map[string]string{"Cookie": cookie.String()})
-	ctx = metadata.NewOutgoingContext(ctx, md)
+	mdUser1Outgoing := metadata.New(map[string]string{"Cookie": cookie.String()})
+	ctx = metadata.NewOutgoingContext(ctx, mdUser1Outgoing)
 	getCharsReq = &pbauth.GetCharactersRequest{}
 	getCharsRes, err = client.GetCharacters(ctx, getCharsReq)
 	require.NoError(err)
@@ -181,8 +181,9 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.Len(getCharsRes.GetChars(), 2)
 
 	// user-1: Choose an invalid character
-	chooseCharReq := &pbauth.ChooseCharacterRequest{}
-	chooseCharReq.CharId = 2 // Char id 2 is `user-2`'s char
+	chooseCharReq := &pbauth.ChooseCharacterRequest{
+		CharId: 2, // Char id 2 is `user-2`'s char
+	}
 	chooseCharRes, err := client.ChooseCharacter(ctx, chooseCharReq)
 	require.Error(err)
 	assert.Nil(chooseCharRes)
