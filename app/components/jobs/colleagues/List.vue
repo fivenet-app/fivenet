@@ -627,7 +627,8 @@ defineShortcuts({
                                         v-if="
                                             canDo.setJobsUserProps &&
                                             (colleague.userId === activeChar!.userId ||
-                                                attr('jobs.ColleaguesService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
+                                                attr('jobs.ColleaguesService/SetColleagueProps', 'Types', 'AbsenceDate')
+                                                    .value) &&
                                             checkIfCanAccessColleague(colleague, 'jobs.ColleaguesService/SetColleagueProps')
                                         "
                                         class="min-w-0"

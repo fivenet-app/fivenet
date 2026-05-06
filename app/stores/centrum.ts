@@ -852,7 +852,8 @@ export const useCentrumStore = defineStore(
                     return can('centrum.CentrumService/TakeControl').value;
                 case 'TakeDispatch':
                     return (
-                        can('centrum.DispatchesService/TakeDispatch').value && getCurrentMode.value !== CentrumMode.CENTRAL_COMMAND
+                        can('centrum.DispatchesService/TakeDispatch').value &&
+                        getCurrentMode.value !== CentrumMode.CENTRAL_COMMAND
                     );
                 case 'AssignDispatch':
                     return can('centrum.CentrumService/TakeControl').value;
