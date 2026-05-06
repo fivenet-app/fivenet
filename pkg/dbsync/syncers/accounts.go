@@ -6,14 +6,11 @@ import (
 	"fmt"
 
 	syncactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
-
-const maxAccountsPerSendRequeust = 100
 
 type AccountsSync struct {
 	*Syncer
@@ -49,8 +46,8 @@ func (s *AccountsSync) Sync(ctx context.Context) (int64, error) {
 		}
 
 		// Sync accounts to FiveNet server (in batches if higher than API limit).
-		for start := 0; start < len(accounts); start += sync.MaxAccountsPerRequest {
-			end := min(start+maxUsersPerSendRequest, len(accounts))
+		for start := 0; start < len(accounts); start += pbsync.MaxAccountsPerRequest {
+			end := min(start+pbsync.MaxAccountsPerRequest, len(accounts))
 			req := &pbsync.SendAccountsRequest{
 				AccountUpdates: accounts[start:end],
 			}

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/cache"
@@ -245,8 +244,8 @@ func (s *VehiclesSync) syncOnce(
 
 	// Sync vehicles to FiveNet server (if there are any left after hash check)
 	if len(vehicles) > 0 {
-		for start := 0; start < len(vehicles); start += sync.MaxVehiclesPerRequest {
-			end := min(start+sync.MaxVehiclesPerRequest, len(vehicles))
+		for start := 0; start < len(vehicles); start += pbsync.MaxVehiclesPerRequest {
+			end := min(start+pbsync.MaxVehiclesPerRequest, len(vehicles))
 			req := &pbsync.SendVehiclesRequest{
 				Vehicles: vehicles[start:end],
 			}

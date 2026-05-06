@@ -1,3 +1,4 @@
+//nolint:forbidigo // This is part of a CLI tool that uses `fmt.Println` for output
 package cmd
 
 import (

@@ -16,8 +16,6 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-var tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("label")
-
 func (s *Server) CompleteCitizens(
 	ctx context.Context,
 	req *pbcompletor.CompleteCitizensRequest,
