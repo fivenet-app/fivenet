@@ -48,6 +48,8 @@ jobs:
           binary_name: 'fivenet'
           extra_files: LICENSE README.md VERSION dbsync.example.yaml
           ldflags: '-X github.com/fivenet-app/fivenet/v2026/pkg/version.Version=${{ env.APP_VERSION }}'
+          md5sum: 'FALSE'
+          sha256sum: 'TRUE'
 
   update-stable-channel:
     name: Update Stable Channel
