@@ -45,14 +45,13 @@ const target = route.query.target as string;
 
 <template>
     <div class="flex h-dvh flex-col">
-        <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />
+        <div class="hero absolute inset-0 z-[-1]" />
 
         <div class="flex w-full flex-1 items-center justify-center">
             <UCard class="w-full max-w-xl bg-white/75 backdrop-blur-sm dark:bg-white/5">
                 <template #header>
-                    <h3 class="inline-flex gap-2 text-2xl leading-6 font-semibold">
+                    <h3 class="flex flex-col gap-2 text-2xl leading-6 font-semibold">
                         <span>{{ $t('pages.dereferer.title') }}</span>
-                        <span>-</span>
                         <span>{{ $t('pages.dereferer.subtitle') }}</span>
                     </h3>
                 </template>

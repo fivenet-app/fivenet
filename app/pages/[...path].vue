@@ -20,7 +20,7 @@ const { username } = storeToRefs(authStore);
 
 <template>
     <div class="flex flex-col">
-        <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />
+        <div class="hero absolute inset-0 z-[-1]" />
 
         <div class="w-full flex-1">
             <UPageHero

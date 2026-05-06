@@ -50,7 +50,7 @@ const links = computed<ButtonProps[]>(() =>
 
 <template>
     <div class="flex flex-1 flex-col">
-        <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />
+        <div class="hero absolute inset-0 z-[-1]" />
 
         <div class="flex min-h-[calc(100dvh-var(--ui-header-height))] flex-col items-center justify-center">
             <UCard class="my-4 w-full max-w-4xl bg-white/75 backdrop-blur-sm dark:bg-white/5">

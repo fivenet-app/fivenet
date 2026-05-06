@@ -20,9 +20,7 @@ const buttonDisabled = ref(true);
 onMounted(() => useTimeoutFn(() => (buttonDisabled.value = false), 2000));
 
 async function handleError(url?: string): Promise<void> {
-    if (url === undefined) {
-        url = '/';
-    }
+    if (url === undefined) url = '/';
 
     await clearError();
     reloadNuxtApp({
@@ -59,7 +57,7 @@ const isDev = import.meta.dev;
 <!-- eslint-disable tailwindcss/no-custom-classname -->
 <template>
     <div class="h-dvh">
-        <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />
+        <div class="hero absolute inset-0 z-[-1]" />
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #d72638 0%, #ac1e2d 50%, #d72638 100%)" />
 
         <div class="flex h-full flex-col items-center justify-center">
@@ -135,11 +133,9 @@ const isDev = import.meta.dev;
 
                 <template #footer>
                     <div class="flex flex-col gap-2">
-                        <div class="flex w-full gap-2">
+                        <div class="grid w-full grid-cols-2 gap-2 md:flex">
                             <UButton
-                                class="flex-1"
                                 color="primary"
-                                block
                                 size="lg"
                                 :disabled="buttonDisabled"
                                 :label="$t !== undefined ? $t('common.home') : 'Home'"
@@ -147,8 +143,7 @@ const isDev = import.meta.dev;
                             />
 
                             <UButton
-                                class="flex-1"
-                                block
+                                class="truncate"
                                 size="lg"
                                 color="success"
                                 :disabled="buttonDisabled"
@@ -159,8 +154,7 @@ const isDev = import.meta.dev;
                             <!-- @vue-ignore -->
                             <UButton
                                 v-if="error && (error.statusMessage || error.message)"
-                                class="flex-1"
-                                block
+                                class="col-span-2 truncate"
                                 size="lg"
                                 color="warning"
                                 :label="$t !== undefined ? $t('pages.error.copy_error') : 'Copy Error message'"
