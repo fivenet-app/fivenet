@@ -16,6 +16,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0
 	github.com/coder/websocket v1.8.14
 	github.com/creasty/defaults v1.8.0
+	github.com/creativeprojects/go-selfupdate v1.5.2
 	github.com/desertbit/timer v1.0.1
 	github.com/diamondburned/arikawa/v3 v3.6.0
 	github.com/fsnotify/fsnotify v1.10.1
@@ -132,7 +133,6 @@ require (
 	github.com/cloudwego/base64x v0.1.6 // indirect
 	github.com/containerd/errdefs v1.0.0 // indirect
 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
-	github.com/creativeprojects/go-selfupdate v1.5.2 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/davidmz/go-pageant v1.0.2 // indirect
 	github.com/disintegration/imaging v1.6.2 // indirect
