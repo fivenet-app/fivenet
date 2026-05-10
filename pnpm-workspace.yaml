@@ -23,3 +23,14 @@ packageExtensions:
       '@shikijs/engine-javascript': ^3.22.0
 
 saveExact: true
+
+allowBuilds:
+  '@parcel/watcher': true
+  better-sqlite3: true
+  canvas: true
+  esbuild: true
+  maplibre-gl: true
+  sharp: true
+  unrs-resolver: true
+  v-code-diff: true
+  vue-demi: true
