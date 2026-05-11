@@ -12,7 +12,12 @@
     position: absolute;
     inset: 0;
     z-index: 0;
+    background-color: #171717;
     background-color: var(--ui-bg, #171717);
     opacity: 0.6;
     transition: background-color 250ms ease;
+}
+
+html.polyfills .hero-overlay::before {
+    background-color: rgb(var(--ui-bg-rgb, 23, 23, 23));
 }

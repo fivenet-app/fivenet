@@ -49,7 +49,7 @@ func (m *JobChange) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *LabelChange) Sanitize() error {
+func (m *LabelAdded) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -57,15 +57,6 @@ func (m *LabelChange) Sanitize() error {
 	// Field: ExpiresAt
 	if m.ExpiresAt != nil {
 		if v, ok := any(m.GetExpiresAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Label
-	if m.Label != nil {
-		if v, ok := any(m.GetLabel()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -84,6 +75,18 @@ func (m *LabelsChange) Sanitize() error {
 
 	// Field: Added
 	for idx, item := range m.Added {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: AddedIds
+	for idx, item := range m.AddedIds {
 		_, _ = idx, item
 
 		if v, ok := any(item).(interface{ Sanitize() error }); ok {
@@ -255,14 +258,6 @@ func (m *UserActivityData) Sanitize() error {
 
 		// Field: JobChange
 	case *UserActivityData_JobChange:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: LabelChange
-	case *UserActivityData_LabelChange:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err

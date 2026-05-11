@@ -20,7 +20,7 @@ const { t, d, n } = useI18n();
 
 const { data: lawBooks, status, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
 
-const numberFormatter = useIntlNumberFormat();
+const numberFormatter = useDisplayNumberFormat();
 
 const formatDetention = useDetentionTimeFormatter();
 

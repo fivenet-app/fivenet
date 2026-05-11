@@ -1,25 +1,42 @@
-<script setup lang="ts" generic="R extends boolean, M extends boolean">
-import { CalendarDate, getLocalTimeZone } from '@internationalized/date';
-import type { CalendarProps } from '@nuxt/ui';
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
+<script setup lang="ts">
+import type { CalendarDate, Time } from '@internationalized/date';
+import type { CalendarProps, InputDateProps } from '@nuxt/ui';
+import InputTimePicker from './InputTimePicker.vue';
 
 export type DateRange = { start: Date; end: Date };
 
 export type TimeSplit = { hours: number; minutes: number };
 
-export interface Props<R extends boolean = false, M extends boolean = false> extends /* @vue-ignore */ Omit<
-    CalendarProps<R, M>,
-    'modelValue' | 'range'
-> {
+type InputDateRangePickerAttrs = Partial<InputDateProps<true> & CalendarProps<true, false>>;
+type CalendarDateRangeValue = { start: CalendarDate | undefined; end: CalendarDate | undefined } | null | undefined;
+
+export interface Props {
     modelValue: DateRange | undefined;
     clearable?: boolean;
     time?: boolean;
+    numberOfMonths?: CalendarProps<true, false>['numberOfMonths'];
+    isDateDisabled?: CalendarProps<true, false>['isDateDisabled'];
+    isDateUnavailable?: CalendarProps<true, false>['isDateUnavailable'];
+    isDateHighlightable?: CalendarProps<true, false>['isDateHighlightable'];
+    allowNonContiguousRanges?: CalendarProps<true, false>['allowNonContiguousRanges'];
+    fixedDate?: CalendarProps<true, false>['fixedDate'];
+    maximumDays?: CalendarProps<true, false>['maximumDays'];
+    minValue?: CalendarProps<true, false>['minValue'];
+    maxValue?: CalendarProps<true, false>['maxValue'];
 }
 
-const props = withDefaults(defineProps<Props<R, M>>(), {
+const props = withDefaults(defineProps<Props>(), {
     clearable: false,
     time: false,
-    class: '',
+    isDateDisabled: undefined,
+    isDateUnavailable: undefined,
+    isDateHighlightable: undefined,
+    allowNonContiguousRanges: undefined,
+    fixedDate: undefined,
+    maximumDays: undefined,
+    numberOfMonths: undefined,
+    minValue: undefined,
+    maxValue: undefined,
 });
 
 const emits = defineEmits<{
@@ -32,68 +49,39 @@ defineOptions({
 
 const dateFormatter = useDateFormatterWithOptions('medium');
 
-// State derived from modelValue
-const state = computed({
-    get() {
-        if (!props.modelValue) {
-            return {
-                start: { hours: 0, minutes: 0 },
-                end: { hours: 23, minutes: 59 },
-            };
-        }
+const inputDate = useTemplateRef('inputDate');
 
-        return {
-            start: {
-                hours: props.modelValue.start.getHours(),
-                minutes: props.modelValue.start.getMinutes(),
-            },
-            end: {
-                hours: props.modelValue.end.getHours(),
-                minutes: props.modelValue.end.getMinutes(),
-            },
-        };
-    },
-    set(value) {
-        if (props.modelValue && value) {
-            const updatedValue: DateRange = {
-                start: new Date(props.modelValue.start),
-                end: new Date(props.modelValue.end),
-            };
+const numberOfMonths = computed(() => props.numberOfMonths ?? 2);
 
-            updatedValue.start.setHours(value.start.hours, value.start.minutes);
-            updatedValue.end.setHours(value.end.hours, value.end.minutes);
+const attrs = useAttrs() as InputDateRangePickerAttrs & { class?: unknown };
 
-            emits('update:modelValue', updatedValue);
-        }
-    },
+const inputDateAttrs = computed(() => {
+    const { class: _class, ...forwardedAttrs } = attrs;
+
+    return {
+        ...forwardedAttrs,
+        class: 'w-full',
+        range: true,
+    };
 });
 
-// Internal modelValue using CalendarDate
-const internalModelValue = computed({
+const internalModelValue = computed<CalendarDateRangeValue>({
     get() {
         if (!props.modelValue) return undefined;
 
         return {
-            start: new CalendarDate(
-                props.modelValue.start.getFullYear(),
-                props.modelValue.start.getMonth() + 1,
-                props.modelValue.start.getDate(),
-            ),
-            end: new CalendarDate(
-                props.modelValue.end.getFullYear(),
-                props.modelValue.end.getMonth() + 1,
-                props.modelValue.end.getDate(),
-            ),
+            start: dateToCalendarDate(props.modelValue.start),
+            end: dateToCalendarDate(props.modelValue.end),
         };
     },
     set(value) {
-        if (value) {
-            const startDate = value.start.toDate(getLocalTimeZone());
-            const endDate = value.end.toDate(getLocalTimeZone());
+        if (value?.start && value.end) {
+            const startDate = calendarDateToDate(value.start)!;
+            const endDate = calendarDateToDate(value.end)!;
 
             // Apply the time state to the dates
-            startDate.setHours(state.value.start.hours, state.value.start.minutes);
-            endDate.setHours(state.value.end.hours, state.value.end.minutes);
+            startDate.setHours(timeState.value.start.hour, timeState.value.start.minute);
+            endDate.setHours(timeState.value.end.hour, timeState.value.end.minute);
 
             emits('update:modelValue', { start: startDate, end: endDate });
         } else {
@@ -102,81 +90,95 @@ const internalModelValue = computed({
     },
 });
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
+const timeState = computed<{ start: Time; end: Time }>({
+    get() {
+        return {
+            start: dateToTime(props.modelValue?.start) ?? dateToTime(new Date(new Date().setHours(0, 0, 0, 0))),
+            end: dateToTime(props.modelValue?.end) ?? dateToTime(new Date(new Date().setHours(23, 59, 0, 0))),
+        };
+    },
+    set(value) {
+        if (!props.modelValue) return;
 
-const smallerThanSm = breakpoints.smaller('sm');
+        const startDate = new Date(props.modelValue.start);
+        const endDate = new Date(props.modelValue.end);
+
+        startDate.setHours(value.start.hour, value.start.minute, value.start.second, value.start.millisecond);
+        endDate.setHours(value.end.hour, value.end.minute, value.end.second, value.end.millisecond);
+
+        emits('update:modelValue', { start: startDate, end: endDate });
+    },
+});
 </script>
 
 <template>
-    <UPopover>
-        <UButton
-            class="inline-flex w-full gap-2"
-            color="neutral"
-            variant="subtle"
-            :icon="smallerThanSm ? undefined : 'i-mdi-calendar'"
-            block
-        >
-            <template v-if="modelValue?.start">
-                <template v-if="modelValue.end">
-                    {{ dateFormatter.format(modelValue.start) }} -
-                    {{ dateFormatter.format(modelValue.end) }}
-                </template>
-
-                <template v-else>
-                    {{ dateFormatter.format(modelValue.start) }}
-                </template>
-            </template>
-            <template v-else> {{ $t('common.pick_date') }} </template>
-        </UButton>
-
-        <template #content>
-            <div class="flex flex-col items-center pb-2">
-                <UCalendar
-                    v-model="internalModelValue"
-                    class="p-1"
-                    :number-of-months="smallerThanSm ? 1 : 2"
-                    range
-                    v-bind="$attrs"
-                />
-
-                <UForm
-                    v-if="time"
-                    class="flex w-full flex-col items-center justify-center gap-2 pb-2 md:flex-row"
-                    :schema="{}"
-                    :state="state"
-                >
-                    <div class="flex flex-1 items-center justify-center">
-                        <UFormField :label="$t('common.from')">
-                            <div class="inline-flex flex-row gap-1">
-                                <UInputNumber v-model="state.start.hours" class="max-w-24" :min="0" :max="23" />
-                                <span class="font-bold">:</span>
-                                <UInputNumber v-model="state.start.minutes" class="max-w-24" :min="0" :max="59" />
-                            </div>
-                        </UFormField>
-                    </div>
-
-                    <div class="flex flex-1 items-center justify-center">
-                        <UFormField :label="$t('common.to')">
-                            <div class="inline-flex flex-row gap-1">
-                                <UInputNumber v-model="state.end.hours" class="max-w-24" :min="0" :max="23" />
-                                <span class="font-bold">:</span>
-                                <UInputNumber v-model="state.end.minutes" class="max-w-24" :min="0" :max="59" />
-                            </div>
-                        </UFormField>
-                    </div>
-                </UForm>
-
-                <div v-if="clearable" class="w-full px-2">
+    <div class="flex w-full flex-col gap-2" :class="$attrs.class">
+        <UInputDate ref="inputDate" v-model="internalModelValue" v-bind="inputDateAttrs">
+            <template #trailing>
+                <div class="flex items-center gap-1">
                     <UButton
-                        variant="outline"
+                        v-if="clearable && modelValue"
+                        class="px-0"
                         color="error"
-                        block
-                        :label="$t('common.clear')"
-                        trailing-icon="i-mdi-clear"
-                        @click="internalModelValue = undefined"
+                        variant="link"
+                        size="sm"
+                        icon="i-mdi-clear"
+                        :aria-label="$t('common.clear')"
+                        @click.stop="emits('update:modelValue', undefined)"
                     />
+
+                    <UPopover :reference="inputDate?.inputsRef[0]?.$el">
+                        <UButton
+                            class="px-0"
+                            color="neutral"
+                            variant="link"
+                            size="sm"
+                            icon="i-mdi-calendar"
+                            :aria-label="$t('common.pick_date')"
+                        />
+
+                        <template #content>
+                            <div>
+                                <UCalendar
+                                    v-model="internalModelValue"
+                                    class="p-2"
+                                    :range="true"
+                                    :min-value="minValue"
+                                    :max-value="maxValue"
+                                    :is-date-disabled="isDateDisabled"
+                                    :is-date-unavailable="isDateUnavailable"
+                                    :is-date-highlightable="isDateHighlightable"
+                                    :allow-non-contiguous-ranges="allowNonContiguousRanges"
+                                    :fixed-date="fixedDate"
+                                    :maximum-days="maximumDays"
+                                    :number-of-months="numberOfMonths"
+                                />
+
+                                <div class="px-2 py-1 pb-2">
+                                    <InputTimePicker
+                                        v-if="time"
+                                        v-model="timeState"
+                                        class="w-full border-t border-default p-2"
+                                        :range="true"
+                                        :disabled="$attrs.disabled"
+                                        :readonly="$attrs.readonly"
+                                        :required="$attrs.required"
+                                        :size="$attrs.size"
+                                        :color="$attrs.color"
+                                        :variant="$attrs.variant"
+                                        :hour-cycle="24"
+                                    />
+                                </div>
+                            </div>
+                        </template>
+                    </UPopover>
                 </div>
-            </div>
-        </template>
-    </UPopover>
+            </template>
+        </UInputDate>
+
+        <span v-if="modelValue?.start" class="sr-only">
+            {{ dateFormatter.format(modelValue.start) }}
+            <template v-if="modelValue.end"> - {{ dateFormatter.format(modelValue.end) }} </template>
+        </span>
+    </div>
 </template>

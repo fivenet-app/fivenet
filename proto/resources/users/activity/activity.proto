@@ -84,7 +84,6 @@ message UserActivityData {
     TrafficInfractionPointsChange traffic_infraction_points_change = 4;
     MugshotChange mugshot_change = 5;
     LabelsChange labels_change = 6;
-    LabelChange label_change = 11;
     JobChange job_change = 7;
 
     // Docstore related
@@ -121,18 +120,18 @@ message MugshotChange {
   optional string new = 1;
 }
 
-// @deprecated
 message LabelsChange {
-  repeated resources.citizens.labels.Label added = 1;
-  repeated resources.citizens.labels.Label removed = 2;
-  bool expired = 4;
+  repeated resources.citizens.labels.Label added = 1 [deprecated = true];
+  repeated resources.citizens.labels.Label removed = 2 [deprecated = true];
+
+  repeated LabelAdded added_ids = 3;
+  repeated int64 removed_ids = 4;
+  bool expired = 5;
 }
 
-message LabelChange {
-  resources.citizens.labels.Label label = 1;
-  bool added = 2;
-  optional resources.timestamp.Timestamp expires_at = 3;
-  bool expired = 4;
+message LabelAdded {
+  int64 id = 1;
+  optional resources.timestamp.Timestamp expires_at = 2;
 }
 
 message JobChange {

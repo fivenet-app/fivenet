@@ -5,6 +5,10 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { LabelsService } from "./labels";
+import type { RemoveCitizenLabelsResponse } from "./labels";
+import type { RemoveCitizenLabelsRequest } from "./labels";
+import type { AddCitizenLabelsResponse } from "./labels";
+import type { AddCitizenLabelsRequest } from "./labels";
 import type { DeleteLabelResponse } from "./labels";
 import type { DeleteLabelRequest } from "./labels";
 import type { CreateOrUpdateLabelResponse } from "./labels";
@@ -36,6 +40,14 @@ export interface ILabelsServiceClient {
      * @generated from protobuf rpc: DeleteLabel
      */
     deleteLabel(input: DeleteLabelRequest, options?: RpcOptions): UnaryCall<DeleteLabelRequest, DeleteLabelResponse>;
+    /**
+     * @generated from protobuf rpc: AddCitizenLabels
+     */
+    addCitizenLabels(input: AddCitizenLabelsRequest, options?: RpcOptions): UnaryCall<AddCitizenLabelsRequest, AddCitizenLabelsResponse>;
+    /**
+     * @generated from protobuf rpc: RemoveCitizenLabels
+     */
+    removeCitizenLabels(input: RemoveCitizenLabelsRequest, options?: RpcOptions): UnaryCall<RemoveCitizenLabelsRequest, RemoveCitizenLabelsResponse>;
 }
 /**
  * @generated from protobuf service services.citizens.LabelsService
@@ -73,5 +85,19 @@ export class LabelsServiceClient implements ILabelsServiceClient, ServiceInfo {
     deleteLabel(input: DeleteLabelRequest, options?: RpcOptions): UnaryCall<DeleteLabelRequest, DeleteLabelResponse> {
         const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteLabelRequest, DeleteLabelResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: AddCitizenLabels
+     */
+    addCitizenLabels(input: AddCitizenLabelsRequest, options?: RpcOptions): UnaryCall<AddCitizenLabelsRequest, AddCitizenLabelsResponse> {
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AddCitizenLabelsRequest, AddCitizenLabelsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: RemoveCitizenLabels
+     */
+    removeCitizenLabels(input: RemoveCitizenLabelsRequest, options?: RpcOptions): UnaryCall<RemoveCitizenLabelsRequest, RemoveCitizenLabelsResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RemoveCitizenLabelsRequest, RemoveCitizenLabelsResponse>("unary", this._transport, method, opt, input);
     }
 }

@@ -133,23 +133,26 @@ const isDev = import.meta.dev;
 
                 <template #footer>
                     <div class="flex flex-col gap-2">
-                        <div class="grid w-full grid-cols-2 gap-2 md:flex">
-                            <UButton
-                                color="primary"
-                                size="lg"
-                                :disabled="buttonDisabled"
-                                :label="$t !== undefined ? $t('common.home') : 'Home'"
-                                @click="() => handleError()"
-                            />
+                        <div class="grid w-full flex-1 grid-cols-2 gap-2 md:flex">
+                            <div class="flex flex-1 flex-row gap-2">
+                                <UButton
+                                    class="flex-1"
+                                    color="primary"
+                                    size="lg"
+                                    :disabled="buttonDisabled"
+                                    :label="$t !== undefined ? $t('common.home') : 'Home'"
+                                    @click="() => handleError()"
+                                />
 
-                            <UButton
-                                class="truncate"
-                                size="lg"
-                                color="success"
-                                :disabled="buttonDisabled"
-                                :label="$t !== undefined ? $t('common.retry') : 'Retry'"
-                                @click="() => handleError(route.fullPath)"
-                            />
+                                <UButton
+                                    class="flex-1 truncate"
+                                    size="lg"
+                                    color="success"
+                                    :disabled="buttonDisabled"
+                                    :label="$t !== undefined ? $t('common.retry') : 'Retry'"
+                                    @click="() => handleError(route.fullPath)"
+                                />
+                            </div>
 
                             <!-- @vue-ignore -->
                             <UButton

@@ -11,7 +11,7 @@ const props = defineProps<{
     activity: UserActivity;
 }>();
 
-const numberFormatter = useIntlNumberFormat();
+const numberFormatter = useDisplayNumberFormat();
 </script>
 
 <template>

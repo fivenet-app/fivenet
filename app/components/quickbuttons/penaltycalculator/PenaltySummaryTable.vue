@@ -21,7 +21,7 @@ function getNameForLawBookId(id: number): string | undefined {
 
 const leeway = computed(() => props.reduction / 100);
 
-const numberFormatter = useIntlNumberFormat();
+const numberFormatter = useDisplayNumberFormat();
 
 const columns = computed(
     () =>

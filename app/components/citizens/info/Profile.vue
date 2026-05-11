@@ -10,7 +10,7 @@ defineProps<{
 
 const { attr } = useAuth();
 
-const numberFormatter = useIntlNumberFormat();
+const numberFormatter = useDisplayNumberFormat();
 </script>
 
 <template>

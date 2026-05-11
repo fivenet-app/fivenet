@@ -4,12 +4,14 @@ package services.citizens;
 
 import "buf/validate/validate.proto";
 import "codegen/perms/perms.proto";
+import "resources/citizens/labels/access.proto";
 import "resources/citizens/labels/labels.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizens";
 
 message ListLabelsRequest {
   optional string search = 1 [(buf.validate.field).string.max_len = 64];
+  optional resources.citizens.labels.AccessLevel min_access = 2 [(buf.validate.field).enum.defined_only = true];
 }
 
 message ListLabelsResponse {
@@ -38,6 +40,20 @@ message DeleteLabelRequest {
 
 message DeleteLabelResponse {}
 
+message AddCitizenLabelsRequest {
+  repeated resources.citizens.labels.Label labels = 1;
+  string reason = 2 [(buf.validate.field).string.max_len = 255];
+}
+
+message AddCitizenLabelsResponse {}
+
+message RemoveCitizenLabelsRequest {
+  repeated int64 ids = 1;
+  string reason = 2 [(buf.validate.field).string.max_len = 255];
+}
+
+message RemoveCitizenLabelsResponse {}
+
 service LabelsService {
   option (codegen.perms.perms_svc) = {
     order: 32
@@ -61,5 +77,19 @@ service LabelsService {
 
   rpc DeleteLabel(DeleteLabelRequest) returns (DeleteLabelResponse) {
     option (codegen.perms.perms) = {enabled: true};
+  }
+
+  rpc AddCitizenLabels(AddCitizenLabelsRequest) returns (AddCitizenLabelsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "SetUserProps"
+    };
+  }
+
+  rpc RemoveCitizenLabels(RemoveCitizenLabelsRequest) returns (RemoveCitizenLabelsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "SetUserProps"
+    };
   }
 }

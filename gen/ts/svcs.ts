@@ -292,6 +292,8 @@ export const grpcMethods = [
 	'citizens.LabelsService/GetLabel',
 	'citizens.LabelsService/CreateOrUpdateLabel',
 	'citizens.LabelsService/DeleteLabel',
+	'citizens.LabelsService/AddCitizenLabels',
+	'citizens.LabelsService/RemoveCitizenLabels',
 	'completor.CompletorService/CompleteCitizens',
 	'completor.CompletorService/CompleteJobs',
 	'completor.CompletorService/CompleteDocumentCategories',

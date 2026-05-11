@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strconv"
 
-	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
@@ -270,10 +269,6 @@ func (s *Housekeeper) expireLabelHandling(ctx context.Context) (int, error) {
 		SELECT(
 			labelID,
 			userID,
-			expiredLabelJob.Job.AS("job"),
-			expiredLabelJob.Name.AS("name"),
-			expiredLabelJob.Icon.AS("icon"),
-			expiredLabelJob.Color.AS("color"),
 		).
 		FROM(
 			expiredLabels.
@@ -285,12 +280,6 @@ func (s *Housekeeper) expireLabelHandling(ctx context.Context) (int, error) {
 	var dest []struct {
 		LabelID int64
 		UserId  int32
-
-		// Label Details
-		Job   string
-		Name  string
-		Icon  *string
-		Color string
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return 0, err
@@ -302,10 +291,6 @@ func (s *Housekeeper) expireLabelHandling(ctx context.Context) (int, error) {
 			s.db,
 			row.LabelID,
 			row.UserId,
-			row.Job,
-			row.Name,
-			row.Icon,
-			row.Color,
 		); err != nil {
 			s.logger.Error(
 				"error updating user labels during cleanup",
@@ -324,10 +309,6 @@ func (s *Housekeeper) removeLabelFromUser(
 	tx qrm.DB,
 	labelId int64,
 	targetUserId int32,
-	job string,
-	name string,
-	icon *string,
-	color string,
 ) error {
 	stmt := tCitizenLabels.
 		DELETE().
@@ -350,20 +331,13 @@ func (s *Housekeeper) removeLabelFromUser(
 		Type:         usersactivity.UserActivityType_USER_ACTIVITY_TYPE_LABELS,
 		Reason:       "",
 		Data: &usersactivity.UserActivityData{
-			Data: &usersactivity.UserActivityData_LabelChange{
-				LabelChange: &usersactivity.LabelChange{
-					Label: &citizenslabels.Label{
-						Id:    labelId,
-						Job:   &job,
-						Name:  name,
-						Icon:  icon,
-						Color: color,
-					},
-					Expired: true,
+			Data: &usersactivity.UserActivityData_LabelsChange{
+				LabelsChange: &usersactivity.LabelsChange{
+					RemovedIds: []int64{labelId},
+					Expired:    true,
 				},
 			},
 		},
-		// TODO need to add a way to be able to handle access checks
 	}); err != nil {
 		return fmt.Errorf(
 			"error creating user activity for user %d during cleanup. %w",

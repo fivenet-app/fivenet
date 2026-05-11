@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+    calendarDateToDate,
+    dateToCalendarDate,
+    dateToCalendarDateTime,
     dateToDateString,
+    dateToTime,
+    dateToZonedDateTime,
     getWeekNumber,
     stringToDate,
     toDate,
@@ -69,6 +74,67 @@ describe('toDatetimeLocal', () => {
         const expected = `${localYear}-${localMonth}-${localDay}T${localHours}:${localMinutes}`;
 
         expect(result).toBe(expected);
+    });
+});
+
+describe('internationalized date helpers', () => {
+    const date = new Date(2025, 10, 25, 12, 34, 56, 789);
+
+    it('should convert a Date to a CalendarDate', () => {
+        const result = dateToCalendarDate(date);
+
+        expect(result.year).toBe(2025);
+        expect(result.month).toBe(11);
+        expect(result.day).toBe(25);
+    });
+
+    it('should convert a Date to a CalendarDateTime', () => {
+        const result = dateToCalendarDateTime(date);
+
+        expect(result.year).toBe(2025);
+        expect(result.month).toBe(11);
+        expect(result.day).toBe(25);
+        expect(result.hour).toBe(12);
+        expect(result.minute).toBe(34);
+        expect(result.second).toBe(56);
+        expect(result.millisecond).toBe(789);
+    });
+
+    it('should convert a Date to a Time', () => {
+        const result = dateToTime(date);
+
+        expect(result.hour).toBe(12);
+        expect(result.minute).toBe(34);
+        expect(result.second).toBe(56);
+        expect(result.millisecond).toBe(789);
+    });
+
+    it('should convert a Date to a ZonedDateTime', () => {
+        const result = dateToZonedDateTime(new Date(Date.UTC(2025, 10, 25, 12, 34, 56, 789)), 'UTC');
+
+        expect(result.year).toBe(2025);
+        expect(result.month).toBe(11);
+        expect(result.day).toBe(25);
+        expect(result.hour).toBe(12);
+        expect(result.minute).toBe(34);
+        expect(result.second).toBe(56);
+        expect(result.millisecond).toBe(789);
+        expect(result.timeZone).toBe('UTC');
+    });
+
+    it('should convert DateValue instances back to Date', () => {
+        const calendarDateTime = dateToCalendarDateTime(date);
+        const result = calendarDateToDate(calendarDateTime);
+
+        expect(result?.getTime()).toBe(date.getTime());
+    });
+
+    it('should pass undefined through optional helpers', () => {
+        expect(dateToCalendarDate(undefined)).toBeUndefined();
+        expect(dateToCalendarDateTime(undefined)).toBeUndefined();
+        expect(dateToTime(undefined)).toBeUndefined();
+        expect(dateToZonedDateTime(undefined)).toBeUndefined();
+        expect(calendarDateToDate(undefined)).toBeUndefined();
     });
 });
 

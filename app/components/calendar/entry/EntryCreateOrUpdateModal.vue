@@ -246,24 +246,34 @@ const formRef = useTemplateRef('formRef');
                         />
                     </UFormField>
 
-                    <div class="flex flex-1 flex-row gap-2">
-                        <UFormField class="flex-1" name="startTime" :label="$t('common.begins_at')" required>
-                            <InputDatePicker
-                                v-model="state.startTime"
-                                class="w-full"
-                                clearable
-                                :date-format="!state.allDay ? undefined : 'date'"
-                                :time="!state.allDay"
-                            />
-                        </UFormField>
+                    <UFormField class="flex-1">
+                        <UTabs
+                            :items="[
+                                { label: $t('common.time_range'), icon: 'i-mdi-calendar-today' },
+                                { label: $t('common.all_day'), icon: 'i-mdi-calendar-today' },
+                            ]"
+                            @update:model-value="($event) => (state.allDay = $event === '1')"
+                        >
+                            <template #content>
+                                <UFormField class="flex-1" name="startTime" :label="$t('common.begins_at')" required>
+                                    <InputDatePicker
+                                        v-model="state.startTime"
+                                        class="w-full"
+                                        :date-format="!state.allDay ? undefined : 'date'"
+                                        :time="!state.allDay"
+                                    />
+                                </UFormField>
 
-                        <UFormField name="allDay" :label="$t('common.all_day')">
-                            <USwitch v-model="state.allDay" />
-                        </UFormField>
-                    </div>
-
-                    <UFormField v-if="!state.allDay" class="flex-1" name="endTime" :label="$t('common.ends_at')" required>
-                        <InputDatePicker v-model="state.endTime" class="w-full" clearable time />
+                                <UFormField class="flex-1" name="endTime" :label="$t('common.ends_at')" required>
+                                    <InputDatePicker
+                                        v-model="state.endTime"
+                                        class="w-full"
+                                        :date-format="!state.allDay ? undefined : 'date'"
+                                        :time="!state.allDay"
+                                    />
+                                </UFormField>
+                            </template>
+                        </UTabs>
                     </UFormField>
 
                     <UFormField class="flex-1" name="content" :label="$t('common.content')" required :ui="{ error: 'hidden' }">

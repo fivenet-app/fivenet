@@ -26,56 +26,43 @@ var (
 	tCitizensLabelsJobAccess = table.FivenetUserLabelsJobJobAccess
 )
 
-func (s *Server) validateLabels(
-	ctx context.Context,
-	userInfo *userinfo.UserInfo,
-	labels []*citizenslabels.Label,
-) (bool, error) {
-	if len(labels) == 0 {
-		return true, nil
-	}
-
-	idsExp := make([]mysql.Expression, len(labels))
-	for i := range labels {
-		idsExp[i] = mysql.Int64(labels[i].GetId())
-	}
-
-	stmt := tCitizensLabelsJob.
-		SELECT(
-			mysql.COUNT(tCitizensLabelsJob.ID).AS("data_count.total"),
-		).
-		FROM(tCitizensLabelsJob).
-		WHERE(mysql.AND(
-			tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
-			tCitizensLabelsJob.ID.IN(idsExp...),
-		)).
-		LIMIT(25)
-
-	var count database.DataCount
-	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return false, err
-		}
-	}
-
-	return len(labels) == int(count.Total), nil
-}
-
 func (s *Server) ListLabels(
 	ctx context.Context,
 	req *pbcitizens.ListLabelsRequest,
 ) (*pbcitizens.ListLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := mysql.AND(
-		tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
-	)
+	condition := mysql.Bool(true)
+
 	if !userInfo.GetSuperuser() {
 		condition = condition.AND(tCitizensLabelsJob.DeletedAt.IS_NULL())
 	}
 
 	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
 		condition = condition.AND(tCitizensLabelsJob.Name.LIKE(mysql.String(search)))
+	}
+
+	if !userInfo.GetSuperuser() {
+		jobAccessExists := mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
+				FROM(tCitizensLabelsJobAccess).
+				WHERE(mysql.AND(
+					tCitizensLabelsJobAccess.LabelID.EQ(tCitizensLabelsJob.ID),
+					tCitizensLabelsJobAccess.Access.GT_EQ(
+						mysql.Int32(int32(req.GetMinAccess())),
+					),
+					tCitizensLabelsJobAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+					tCitizensLabelsJobAccess.MinimumGrade.LT_EQ(
+						mysql.Int32(userInfo.GetJobGrade()),
+					),
+				)),
+		)
+
+		condition = mysql.AND(
+			condition,
+			jobAccessExists,
+		)
 	}
 
 	columns := mysql.ProjectionList{
@@ -270,6 +257,9 @@ func (s *Server) DeleteLabel(
 	if err != nil {
 		return nil, err
 	}
+	if label == nil || label.GetJob() != userInfo.GetJob() {
+		return nil, errorscitizens.ErrFailedQuery
+	}
 
 	deletedAtTime := mysql.CURRENT_TIMESTAMP()
 	if label.GetDeletedAt() != nil && userInfo.GetSuperuser() {
@@ -333,12 +323,12 @@ func (s *Server) getUserLabels(
 				),
 		).
 		WHERE(mysql.AND(
-			tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
 			tCitizensLabelsJob.DeletedAt.IS_NULL(),
 			tCitizenLabels.UserID.EQ(mysql.Int32(userId)),
 			jobAccessExists,
 		)).
-		ORDER_BY(tCitizensLabelsJob.SortKey.ASC(), tCitizensLabelsJob.ID.DESC())
+		ORDER_BY(tCitizensLabelsJob.SortKey.ASC(), tCitizensLabelsJob.ID.DESC()).
+		LIMIT(25)
 
 	list := &citizenslabels.Labels{
 		List: []*citizenslabels.Label{},
@@ -350,4 +340,57 @@ func (s *Server) getUserLabels(
 	}
 
 	return list, nil
+}
+
+func (s *Server) validateLabels(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	labels []*citizenslabels.Label,
+) (bool, error) {
+	if len(labels) == 0 {
+		return true, nil
+	}
+
+	idsExp := make([]mysql.Expression, len(labels))
+	for i := range labels {
+		idsExp[i] = mysql.Int64(labels[i].GetId())
+	}
+
+	stmt := tCitizensLabelsJob.
+		SELECT(
+			mysql.COUNT(tCitizensLabelsJob.ID).AS("data_count.total"),
+		).
+		FROM(tCitizensLabelsJob).
+		WHERE(mysql.AND(
+			tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
+			tCitizensLabelsJob.ID.IN(idsExp...),
+		)).
+		LIMIT(20)
+
+	var count database.DataCount
+	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return false, err
+		}
+	}
+
+	return len(labels) == int(count.Total), nil
+}
+
+func (s *Server) AddCitizenLabels(
+	ctx context.Context,
+	req *pbcitizens.AddCitizenLabelsRequest,
+) (*pbcitizens.AddCitizenLabelsResponse, error) {
+	// TODO
+
+	return nil, nil
+}
+
+func (s *Server) RemoveCitizenLabels(
+	ctx context.Context,
+	req *pbcitizens.RemoveCitizenLabelsRequest,
+) (*pbcitizens.RemoveCitizenLabelsResponse, error) {
+	// TODO
+
+	return nil, nil
 }

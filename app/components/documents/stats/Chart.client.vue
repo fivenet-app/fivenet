@@ -44,7 +44,7 @@ const total = computed(() => {
     return props.stats?.totalValue ?? calculated;
 });
 
-const { format: formatNumber } = useIntlNumberFormatWithOptions({
+const { format: formatNumber } = useDisplayNumberFormatWithOptions({
     style: 'decimal',
     currency: undefined,
 });

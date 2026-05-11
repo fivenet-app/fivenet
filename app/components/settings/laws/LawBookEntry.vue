@@ -29,7 +29,7 @@ const laws = defineModel<Law[]>('laws', { required: true });
 
 const overlay = useOverlay();
 
-const numberFormatter = useIntlNumberFormat();
+const numberFormatter = useDisplayNumberFormat();
 
 const settingsLawsClient = await getSettingsLawsClient();
 

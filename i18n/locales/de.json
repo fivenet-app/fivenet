@@ -704,6 +704,7 @@
         "accepted_at": "Akzeptiert am",
         "choose_color": "Farbe wählen",
         "pick_date": "Datum auswählen",
+        "pick_time": "Uhrzeit auswählen",
         "open_command": "Ausführen",
         "last_char": "Letzte Charakter ID",
         "file_upload_label": "Datei hier ablegen oder zum Hochladen klicken",

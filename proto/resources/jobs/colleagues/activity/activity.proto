@@ -66,6 +66,7 @@ message GradeChange {
 message LabelsChange {
   repeated resources.jobs.labels.Label added = 1;
   repeated resources.jobs.labels.Label removed = 2;
+  // TODO switch to storing label ids instead of the whole label (resolve labels on client-side)
 }
 
 message NameChange {

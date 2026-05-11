@@ -20,12 +20,12 @@ const cardRef = useTemplateRef<HTMLElement | null>('cardRef');
 
 const { width } = useElementSize(cardRef);
 
-const { format: formatNumber } = useIntlNumberFormatWithOptions({
+const { format: formatNumber } = useDisplayNumberFormatWithOptions({
     style: 'decimal',
     currency: undefined,
 });
 
-const { format: formatCurrency } = useIntlNumberFormat();
+const { format: formatCurrency } = useDisplayNumberFormat();
 
 const formatDetention = useDetentionTimeFormatter();
 

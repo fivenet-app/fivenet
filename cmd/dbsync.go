@@ -18,6 +18,9 @@ var svcConfig = &service.Config{
 	DisplayName: "FiveNet DBSync",
 	Description: "The DBSync for FiveNet, used to synchronize your gameservers data with your FiveNet instance.",
 	Arguments:   []string{"dbsync", "run"},
+	Dependencies: []string{
+		"After=network.target",
+	},
 }
 
 type DBSyncCmd struct {

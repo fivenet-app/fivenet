@@ -270,7 +270,6 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 
 			if serviceOpts.GetIcon() != "" {
 				icon = serviceOpts.GetIcon()
-				p.Log("SVC ICON", icon)
 			}
 			if serviceOpts.GetOrder() != 0 {
 				order = serviceOpts.GetOrder()

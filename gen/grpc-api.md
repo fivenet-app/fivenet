@@ -5029,7 +5029,7 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `added` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated |  |
-| `removed` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated |  |
+| `removed` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated | TODO switch to storing label ids instead of the whole label (resolve labels on client-side) |
 
 
 
@@ -6941,29 +6941,27 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 
 
-### resources.users.activity.LabelChange
+### resources.users.activity.LabelAdded
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `label` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) |  |  |
-| `added` | [bool](#bool) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `expired` | [bool](#bool) |  |  |
 
 
 
 
 
 ### resources.users.activity.LabelsChange
-@deprecated
-
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `added` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
-| `removed` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
+| `added` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated | **Deprecated.**  |
+| `removed` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated | **Deprecated.**  |
+| `added_ids` | [LabelAdded](#resourcesusersactivityLabelAdded) | repeated |  |
+| `removed_ids` | [int64](#int64) | repeated |  |
 | `expired` | [bool](#bool) |  |  |
 
 
@@ -7050,7 +7048,6 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `traffic_infraction_points_change` | [TrafficInfractionPointsChange](#resourcesusersactivityTrafficInfractionPointsChange) |  |  |
 | `mugshot_change` | [MugshotChange](#resourcesusersactivityMugshotChange) |  |  |
 | `labels_change` | [LabelsChange](#resourcesusersactivityLabelsChange) |  |  |
-| `label_change` | [LabelChange](#resourcesusersactivityLabelChange) |  |  |
 | `job_change` | [JobChange](#resourcesusersactivityJobChange) |  |  |
 | `document_relation` | [CitizenDocumentRelation](#resourcesusersactivityCitizenDocumentRelation) |  | Docstore related |
 | `jail_change` | [JailChange](#resourcesusersactivityJailChange) |  | "Plugin" activities |
@@ -8853,6 +8850,24 @@ Auth Service handles user authentication, character selection and oauth2 connect
 ## services/citizens/labels.proto
 
 
+### services.citizens.AddCitizenLabelsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `labels` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
+| `reason` | [string](#string) |  |  |
+
+
+
+
+
+### services.citizens.AddCitizenLabelsResponse
+
+
+
+
+
 ### services.citizens.CreateOrUpdateLabelRequest
 
 
@@ -8920,6 +8935,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `search` | [string](#string) | optional |  |
+| `min_access` | [resources.citizens.labels.AccessLevel](#resourcescitizenslabelsAccessLevel) | optional |  |
 
 
 
@@ -8931,6 +8947,24 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `labels` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
+
+
+
+
+
+### services.citizens.RemoveCitizenLabelsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `ids` | [int64](#int64) | repeated |  |
+| `reason` | [string](#string) |  |  |
+
+
+
+
+
+### services.citizens.RemoveCitizenLabelsResponse
 
 
 
@@ -8950,6 +8984,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `GetLabel` | [GetLabelRequest](#servicescitizensGetLabelRequest) | [GetLabelResponse](#servicescitizensGetLabelResponse) | |
 | `CreateOrUpdateLabel` | [CreateOrUpdateLabelRequest](#servicescitizensCreateOrUpdateLabelRequest) | [CreateOrUpdateLabelResponse](#servicescitizensCreateOrUpdateLabelResponse) | |
 | `DeleteLabel` | [DeleteLabelRequest](#servicescitizensDeleteLabelRequest) | [DeleteLabelResponse](#servicescitizensDeleteLabelResponse) | |
+| `AddCitizenLabels` | [AddCitizenLabelsRequest](#servicescitizensAddCitizenLabelsRequest) | [AddCitizenLabelsResponse](#servicescitizensAddCitizenLabelsResponse) | |
+| `RemoveCitizenLabels` | [RemoveCitizenLabelsRequest](#servicescitizensRemoveCitizenLabelsRequest) | [RemoveCitizenLabelsResponse](#servicescitizensRemoveCitizenLabelsResponse) | |
 
  <!-- end services -->
 

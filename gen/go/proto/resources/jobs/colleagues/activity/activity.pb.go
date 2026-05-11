@@ -767,7 +767,7 @@ func (b0 GradeChange_builder) Build() *GradeChange {
 type LabelsChange struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Added         []*labels.Label        `protobuf:"bytes,1,rep,name=added,proto3" json:"added,omitempty"`
-	Removed       []*labels.Label        `protobuf:"bytes,2,rep,name=removed,proto3" json:"removed,omitempty"`
+	Removed       []*labels.Label        `protobuf:"bytes,2,rep,name=removed,proto3" json:"removed,omitempty"` // TODO switch to storing label ids instead of the whole label (resolve labels on client-side)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

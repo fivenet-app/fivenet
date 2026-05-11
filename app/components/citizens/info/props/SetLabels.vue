@@ -4,10 +4,11 @@ import { z } from 'zod';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
-import type { Labels } from '~~/gen/ts/resources/citizens/labels/labels';
+import type { Label, Labels } from '~~/gen/ts/resources/citizens/labels/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { UserProps } from '~~/gen/ts/resources/users/props/props';
+import ConfigureLabelModal from '../../labels/ConfigureLabelModal.vue';
 
 const props = defineProps<{
     userId: number;
@@ -20,6 +21,8 @@ const labels = defineModel<Labels | undefined>();
 const notifications = useNotificationsStore();
 
 const completorStore = useCompletorStore();
+
+const overlay = useOverlay();
 
 const citizensCitizensClient = await getCitizensCitizensClient();
 
@@ -39,7 +42,6 @@ const schema = z.object({
             color: z.coerce.string().length(7),
             icon: z.coerce.string().max(255).optional(),
             expiresAt: z.custom<Timestamp>().optional(),
-            // TODO expiration settings needed, but only when enabled for the label
         })
         .array()
         .max(10)
@@ -103,6 +105,38 @@ watch(state, () => {
     }
 });
 
+const selectedLabel = ref<Label | null>(null);
+
+const configureLabelModal = overlay.create(ConfigureLabelModal);
+
+function handleLabelUpdate(label: Label | null): void {
+    if (!label) return;
+
+    selectedLabel.value = null;
+
+    configureLabelModal.open({
+        label: label,
+        onClose: ($event) => {
+            if (!$event) return;
+
+            const idx = state.labels.findIndex((l) => l.id === $event.id);
+            if (idx == -1) {
+                state.labels.unshift({
+                    ...label,
+                    ...$event,
+                });
+            } else {
+                state.labels[idx] = {
+                    ...label,
+                    ...$event,
+                };
+            }
+        },
+    });
+}
+
+const { format: formatDate } = useDateFormatterWithOptions('medium', 'short');
+
 const formRef = useTemplateRef('formRef');
 </script>
 
@@ -110,9 +144,8 @@ const formRef = useTemplateRef('formRef');
     <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <UFormField v-if="canDo.set && can('citizens.LabelsService/ListLabels').value" name="labels">
             <SelectMenu
-                v-model="state.labels"
+                v-model="selectedLabel"
                 class="w-full"
-                multiple
                 :searchable="
                     async (q: string) =>
                         (await completorStore.completeCitizenLabels(q)).filter(
@@ -123,11 +156,8 @@ const formRef = useTemplateRef('formRef');
                 :search-input="{ placeholder: $t('common.search_field') }"
                 :search-labels="['name']"
                 :ui="{ itemLeadingIcon: 'hidden' }"
+                @update:model-value="handleLabelUpdate"
             >
-                <template #default>
-                    {{ $t('common.selected', state.labels.length) }}
-                </template>
-
                 <template #item-label="{ item }">
                     <UBadge
                         class="truncate"
@@ -155,8 +185,15 @@ const formRef = useTemplateRef('formRef');
                     :style="{ backgroundColor: label.color }"
                     size="md"
                     :icon="label.icon && label.icon !== '' ? convertComponentIconNameToDynamic(label.icon) : undefined"
-                    :label="label.name"
-                />
+                >
+                    <div class="inline-flex flex-col gap-1">
+                        <span>{{ label.name }}</span>
+
+                        <div v-if="label.expiresAt">
+                            ({{ $t('common.expires_at') }} {{ formatDate(toDate(label.expiresAt)) }})
+                        </div>
+                    </div>
+                </UBadge>
 
                 <UTooltip v-if="canDo.set" :text="$t('common.remove')">
                     <UButton

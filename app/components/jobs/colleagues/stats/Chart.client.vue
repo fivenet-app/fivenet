@@ -9,6 +9,8 @@ const props = defineProps<{
     range: Range;
 }>();
 
+const { n } = useI18n();
+
 const cardRef = useTemplateRef<HTMLElement | null>('cardRef');
 
 const { width } = useElementSize(cardRef);
@@ -39,11 +41,6 @@ const averageVacation = computed(() => {
     return totalVacation / points.length;
 });
 
-const { format: formatNumber } = useIntlNumberFormatWithOptions({
-    style: 'decimal',
-    currency: undefined,
-    maximumFractionDigits: 0,
-});
 const { format: formatDate } = useDateFormatterWithOptions('short');
 
 const xTicks = (i: number) => {
@@ -59,7 +56,7 @@ const template = (d?: DataRecord) => {
         return '';
     }
 
-    return `${formatDate(d.date)}: ${formatNumber(d.amount)} (${formatNumber(d.vacation)})`;
+    return `${formatDate(d.date)}: ${n(d.amount)} (${n(d.vacation)})`;
 };
 </script>
 
@@ -73,8 +70,12 @@ const template = (d?: DataRecord) => {
                     ({{ $t('common.absent') }})
                 </p>
                 <p class="text-3xl font-semibold text-highlighted">
-                    {{ formatNumber(stats.averageValue ? stats.averageValue : total) }}
-                    ({{ formatNumber(averageVacation) }})
+                    {{
+                        n(stats.averageValue ? stats.averageValue : total, {
+                            maximumFractionDigits: 0,
+                        })
+                    }}
+                    ({{ n(averageVacation) }})
                 </p>
             </div>
         </template>

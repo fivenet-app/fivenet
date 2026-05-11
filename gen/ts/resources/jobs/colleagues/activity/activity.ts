@@ -131,7 +131,7 @@ export interface LabelsChange {
     /**
      * @generated from protobuf field: repeated resources.jobs.labels.Label removed = 2
      */
-    removed: Label[];
+    removed: Label[]; // TODO switch to storing label ids instead of the whole label (resolve labels on client-side)
 }
 /**
  * @generated from protobuf message resources.jobs.colleagues.activity.NameChange
