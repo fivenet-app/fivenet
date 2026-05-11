@@ -293,28 +293,40 @@ func (s *Server) getUserLabels(
 	userInfo *userinfo.UserInfo,
 	userId int32,
 ) (*citizenslabels.Labels, error) {
-	jobAccessExists := mysql.EXISTS(
-		mysql.
-			SELECT(mysql.Int(1)).
-			FROM(tCitizensLabelsJobAccess).
-			WHERE(mysql.AND(
-				tCitizensLabelsJobAccess.LabelID.EQ(tCitizensLabelsJob.ID),
-				tCitizensLabelsJobAccess.Access.GT_EQ(
-					mysql.Int32(int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW)),
-				),
-				tCitizensLabelsJobAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-				tCitizensLabelsJobAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-			)),
+	condition := mysql.AND(
+		tCitizensLabelsJob.DeletedAt.IS_NULL(),
+		tCitizenLabels.UserID.EQ(mysql.Int32(userId)),
 	)
+
+	if !userInfo.GetSuperuser() {
+		jobAccessExists := mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
+				FROM(tCitizensLabelsJobAccess).
+				WHERE(mysql.AND(
+					tCitizensLabelsJobAccess.LabelID.EQ(tCitizensLabelsJob.ID),
+					tCitizensLabelsJobAccess.Access.GT_EQ(
+						mysql.Int32(int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW)),
+					),
+					tCitizensLabelsJobAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+					tCitizensLabelsJobAccess.MinimumGrade.LT_EQ(
+						mysql.Int32(userInfo.GetJobGrade()),
+					),
+				)),
+		)
+
+		condition = condition.AND(jobAccessExists)
+	}
 
 	stmt := tCitizenLabels.
 		SELECT(
-			tCitizensLabelsJob.ID,
-			tCitizensLabelsJob.Job,
-			tCitizensLabelsJob.Name,
-			tCitizensLabelsJob.Color,
-			tCitizensLabelsJob.Icon,
-			tCitizensLabelsJob.Settings,
+			tCitizensLabelsJob.ID.AS("label.id"),
+			tCitizensLabelsJob.Job.AS("label.job"),
+			tCitizensLabelsJob.Name.AS("label.name"),
+			tCitizensLabelsJob.Color.AS("label.color"),
+			tCitizensLabelsJob.Icon.AS("label.icon"),
+			tCitizensLabelsJob.Settings.AS("label.settings"),
+			tCitizenLabels.ExpiresAt.AS("label.expiresAt"),
 		).
 		FROM(
 			tCitizenLabels.
@@ -322,11 +334,7 @@ func (s *Server) getUserLabels(
 					tCitizensLabelsJob.ID.EQ(tCitizenLabels.LabelID),
 				),
 		).
-		WHERE(mysql.AND(
-			tCitizensLabelsJob.DeletedAt.IS_NULL(),
-			tCitizenLabels.UserID.EQ(mysql.Int32(userId)),
-			jobAccessExists,
-		)).
+		WHERE(condition).
 		ORDER_BY(tCitizensLabelsJob.SortKey.ASC(), tCitizensLabelsJob.ID.DESC()).
 		LIMIT(25)
 
