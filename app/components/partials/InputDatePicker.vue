@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CalendarDate, Time } from '@internationalized/date';
-import type { ButtonProps, CalendarProps, InputDateProps, InputTimeProps } from '@nuxt/ui';
+import type { ButtonProps, CalendarProps, InputDateProps } from '@nuxt/ui';
 import InputTimePicker from './InputTimePicker.vue';
 
 export type TimeSplit = { hours: number; minutes: number };
@@ -18,6 +18,8 @@ export interface Props {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     button?: ButtonProps & { style?: Record<string, any> };
     hideIcon?: boolean;
+    minValue?: CalendarProps<true, false>['minValue'];
+    maxValue?: CalendarProps<true, false>['maxValue'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -29,6 +31,8 @@ const props = withDefaults(defineProps<Props>(), {
     customDateFormat: undefined,
     button: undefined,
     hideIcon: false,
+    minValue: undefined,
+    maxValue: undefined,
 });
 
 const emits = defineEmits<{
@@ -126,8 +130,8 @@ const internalTimeValue = computed<Time | undefined>({
                             <UCalendar
                                 v-model="internalModelValue"
                                 class="p-2"
-                                :min-value="attrs.minValue"
-                                :max-value="attrs.maxValue"
+                                :min-value="minValue"
+                                :max-value="maxValue"
                                 :is-date-disabled="props.isDateDisabled"
                                 :is-date-unavailable="attrs.isDateUnavailable"
                                 :number-of-months="numberOfMonths"

@@ -4,6 +4,7 @@ import { addSeconds } from 'date-fns';
 import { z } from 'zod';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
+import LabelBadge from './LabelBadge.vue';
 
 const props = defineProps<{
     label: Label;
@@ -12,6 +13,8 @@ const props = defineProps<{
 const emits = defineEmits<{
     (e: 'close', v: Label | undefined): void;
 }>();
+
+const { t } = useI18n();
 
 const schema = z.object({
     id: z.coerce.number(),
@@ -22,9 +25,12 @@ const schema = z.object({
         .date()
         .min(new Date())
         .optional()
-        .superRefine((value, ctx) => {
-            if (props.label.settings?.requiresExpiration && !value) {
-                ctx.addIssue({ code: 'invalid_value', path: ['expiresAt'], values: [undefined] });
+        .superRefine((data, ctx) => {
+            if (props.label.settings?.requiresExpiration && !data) {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: t('common.required'),
+                });
             }
         }),
 });
@@ -69,10 +75,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 const formatDuration = useDurationFormatter();
 
 const formRef = useTemplateRef('formRef');
+
+watch(formRef, () => {
+    if (props.label.settings?.requiresExpiration) formRef.value?.submit();
+});
 </script>
 
 <template>
-    <UModal :title="$t('components.citizens.citizen_labels.title')">
+    <UModal>
+        <template #title>
+            <div class="inline-flex gap-2">
+                <span>{{ $t('common.label') }}</span>
+
+                <LabelBadge :label="label" />
+            </div>
+        </template>
+
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField
