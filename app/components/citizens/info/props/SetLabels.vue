@@ -135,8 +135,6 @@ function handleLabelUpdate(label: Label | null): void {
     });
 }
 
-const { format: formatDate } = useDateFormatterWithOptions('medium', 'short');
-
 const formRef = useTemplateRef('formRef');
 </script>
 
@@ -190,7 +188,7 @@ const formRef = useTemplateRef('formRef');
                         <span>{{ label.name }}</span>
 
                         <div v-if="label.expiresAt">
-                            ({{ $t('common.expires_at') }} {{ formatDate(toDate(label.expiresAt)) }})
+                            ({{ $t('common.expires_at') }} {{ $d(toDate(label.expiresAt), 'short') }})
                         </div>
                     </div>
                 </UBadge>

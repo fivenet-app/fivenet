@@ -40,18 +40,16 @@ const total = computed(() => data.value.reduce((acc: number, { sum }) => acc + s
 const formatDate = (date: Date): string => format(date, `yyyy '${t('common.calendar_week')}' w`);
 
 const xTicks = (i: number) => {
-    if (i === 0 || i === data.value.length - 1 || !data.value[i]) {
-        return '';
-    }
+    if (i === 0 || i === data.value.length - 1 || !data.value[i]) return '';
 
     return formatDate(data.value[i]?.date ?? new Date());
 };
 
-const template = (d: DataRecord) =>
-    `<span class="font-semibold">${formatDate(d.date)}</span><br />
-${t('components.jobs.timeclock.Stats.sum')}: ${n(d.sum, 'decimal')} h<br />
-${t('components.jobs.timeclock.Stats.avg')}: ${n(d.avg, 'decimal')} h<br />
-${t('components.jobs.timeclock.Stats.max')}: ${n(d.max, 'decimal')} h`;
+const template = (dr: DataRecord) =>
+    `<span class="font-semibold">${formatDate(dr.date)}</span><br />
+${t('components.jobs.timeclock.Stats.sum')}: ${n(dr.sum, 'decimal')} h<br />
+${t('components.jobs.timeclock.Stats.avg')}: ${n(dr.avg, 'decimal')} h<br />
+${t('components.jobs.timeclock.Stats.max')}: ${n(dr.max, 'decimal')} h`;
 </script>
 
 <template>

@@ -15,6 +15,11 @@ defineProps<{
         :class="[isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!']"
         :style="{ backgroundColor: label.color }"
         :icon="label.icon && label.icon !== '' ? convertComponentIconNameToDynamic(label.icon) : undefined"
-        :label="label.name"
-    />
+    >
+        <div class="inline-flex flex-col gap-1">
+            <span>{{ label.name }}</span>
+
+            <div v-if="label.expiresAt">({{ $t('common.expires_at') }} {{ $d(toDate(label.expiresAt), 'short') }})</div>
+        </div>
+    </UBadge>
 </template>

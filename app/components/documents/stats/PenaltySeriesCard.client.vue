@@ -35,19 +35,15 @@ const y = (d: SeriesPoint) => d.value;
 const formatDate = (date: Date): string => format(date, 'd MMM');
 
 const xTicks = (i: number) => {
-    if (!props.data?.[i]) {
-        return '';
-    }
+    if (!props.data?.[i]) return '';
 
     return formatDate(props.data[i].date);
 };
 
-const template = (d?: SeriesPoint) => {
-    if (!d || !(d.date instanceof Date)) {
-        return '';
-    }
+const template = (dr?: SeriesPoint) => {
+    if (!dr || !(dr.date instanceof Date)) return '';
 
-    return `${formatDate(d.date)}<br>${props.title}: ${formatNumber(d.value)}`;
+    return `${formatDate(dr.date)}<br>${props.title}: ${formatNumber(dr.value)}`;
 };
 </script>
 

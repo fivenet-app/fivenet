@@ -10,6 +10,8 @@ const props = defineProps<{
     range: Range;
 }>();
 
+const { d } = useI18n();
+
 const cardRef = useTemplateRef<HTMLElement | null>('cardRef');
 
 const { width } = useElementSize(cardRef);
@@ -37,9 +39,7 @@ const barColors = computed(() =>
 
 const total = computed(() => {
     const calculated = data.value?.reduce((acc: number, { amount }) => acc + amount, 0) ?? 0;
-    if (props.isPenalties) {
-        return calculated;
-    }
+    if (props.isPenalties) return calculated;
 
     return props.stats?.totalValue ?? calculated;
 });
@@ -48,22 +48,17 @@ const { format: formatNumber } = useDisplayNumberFormatWithOptions({
     style: 'decimal',
     currency: undefined,
 });
-const { format: formatDate } = useDateFormatterWithOptions('short');
 
 const xTicks = (i: number) => {
-    if (!data.value?.[i]) {
-        return '';
-    }
+    if (!data.value?.[i]) return '';
 
-    return formatDate(data.value[i].date);
+    return d(data.value[i].date, 'date');
 };
 
-const template = (d?: DataRecord) => {
-    if (!d || !(d.date instanceof Date)) {
-        return '';
-    }
+const template = (dr?: DataRecord) => {
+    if (!dr || !(dr.date instanceof Date)) return '';
 
-    return `${formatDate(d.date)}: ${formatNumber(d.amount)}`;
+    return `${d(dr.date, 'date')}: ${formatNumber(dr.amount)}`;
 };
 </script>
 
