@@ -6,6 +6,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import { UserActivityType, type UserActivity } from '~~/gen/ts/resources/users/activity/activity';
 import { citizenUserActivityIconColor, citizenUserActivityTypeIcon } from './helpers';
+import LabelBadge from '../labels/LabelBadge.vue';
 
 const props = defineProps<{
     activity: UserActivity;
@@ -198,7 +199,7 @@ const numberFormatter = useDisplayNumberFormat();
                             <span class="font-semibold">
                                 {{ activity.data.data.jobChange.jobLabel }}
                                 <span v-if="activity.data.data.jobChange.grade">
-                                    ({{ $t('common.grade') }}: {{ activity.data.data.jobChange.gradeLabel }})</span
+                                    ({{ $t('common.rank') }}: {{ activity.data.data.jobChange.gradeLabel }})</span
                                 >
                             </span>
                         </h3>
@@ -320,7 +321,7 @@ const numberFormatter = useDisplayNumberFormat();
             </div>
         </template>
 
-        <template v-else-if="activity.type === UserActivityType.LABELS">
+        <template v-else-if="activity.type === UserActivityType.LABELS && activity.data?.data.oneofKind === 'labelsChange'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
                     <UIcon
@@ -343,61 +344,26 @@ const numberFormatter = useDisplayNumberFormat();
                     </div>
 
                     <div>
-                        <div v-if="activity.data?.data.oneofKind === 'labelsChange'" class="inline-flex gap-1">
-                            <UBadge
+                        <div class="inline-flex gap-1">
+                            <LabelBadge
                                 v-for="label in activity.data.data.labelsChange.removed"
-                                :key="label.name"
-                                class="justify-between gap-2 line-through"
-                                :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
-                                :style="{ backgroundColor: label.color }"
-                                :icon="
-                                    label.icon && label.icon !== '' ? convertComponentIconNameToDynamic(label.icon) : undefined
-                                "
-                            >
-                                {{ label.name }}
-                                <span v-if="activity.data.data.labelsChange.expired"
-                                    >&nbsp;({{ $t('common.expires_at') }}:
-                                    <GenericTime :value="label.expiresAt" type="long" />)</span
-                                >
-                            </UBadge>
+                                :key="label.id"
+                                class="line-through"
+                                :label="label"
+                            />
+                            <LabelBadge v-for="label in activity.data.data.labelsChange.added" :key="label.id" :label="label" />
 
-                            <UBadge
-                                v-for="label in activity.data.data.labelsChange.added"
-                                :key="label.name"
-                                class="justify-between gap-2"
-                                :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
-                                :style="{ backgroundColor: label.color }"
-                                :icon="
-                                    label.icon && label.icon !== '' ? convertComponentIconNameToDynamic(label.icon) : undefined
-                                "
-                            >
-                                {{ label.name }}
-                                <span v-if="label.expiresAt"
-                                    >&nbsp;({{ $t('common.expires_at') }}:
-                                    <GenericTime :value="label.expiresAt" type="long" />)</span
-                                >
-                            </UBadge>
-                        </div>
-
-                        <div
-                            v-else-if="activity.data?.data.oneofKind === 'labelChange' && activity.data.data.labelChange.label"
-                            class="inline-flex gap-1"
-                        >
-                            <UBadge
-                                :class="[
-                                    isColorBright(hexToRgb(activity.data.data.labelChange.label.color, rgbBlack)!)
-                                        ? 'text-black!'
-                                        : 'text-white!',
-                                    activity.data.data.labelChange.expired ? 'line-through' : '',
-                                ]"
-                                :style="{ backgroundColor: activity.data.data.labelChange.label.color }"
-                                :icon="
-                                    activity.data.data.labelChange.label.icon &&
-                                    activity.data.data.labelChange.label.icon !== ''
-                                        ? convertComponentIconNameToDynamic(activity.data.data.labelChange.label.icon)
-                                        : undefined
-                                "
-                                :label="activity.data.data.labelChange.label.name"
+                            <LabelBadge
+                                v-for="label in activity.data.data.labelsChange.removedIds"
+                                :id="label"
+                                :key="label"
+                                :expired="activity.data.data.labelsChange.expired"
+                            />
+                            <LabelBadge
+                                v-for="label in activity.data.data.labelsChange.addedIds"
+                                :id="label.id"
+                                :key="label.id"
+                                :expires-at="label.expiresAt"
                             />
                         </div>
                     </div>
@@ -405,11 +371,7 @@ const numberFormatter = useDisplayNumberFormat();
                     <div class="flex items-center justify-between">
                         <p class="inline-flex gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
-                            <span
-                                v-if="activity.data?.data.oneofKind === 'labelChange' && activity.data.data.labelChange.label"
-                            >
-                                {{ $t('common.expired') }}</span
-                            >
+                            <span v-if="activity.data.data.labelsChange.expired"> {{ $t('common.expired') }}</span>
                             <!-- eslint-disable-next-line vue/no-v-html -->
                             <span v-else v-html="activity.reason" />
                         </p>

@@ -14,7 +14,7 @@ import (
 type FivenetUserLabelsJobJobAccess struct {
 	ID           int64      `sql:"primary_key" json:"id"`
 	CreatedAt    *time.Time `json:"created_at"`
-	LabelID      int64      `json:"label_id"`
+	TargetID     int64      `json:"target_id"`
 	Job          string     `json:"job"`
 	MinimumGrade int32      `json:"minimum_grade"`
 	Access       int16      `json:"access"`

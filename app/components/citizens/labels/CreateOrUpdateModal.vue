@@ -26,6 +26,10 @@ const emits = defineEmits<{
 
 const { t } = useI18n();
 
+const { game } = useAppConfig();
+
+const { activeChar } = useAuth();
+
 const { maxAccessEntries } = useAppConfig();
 
 const minLabelDuration = secondsToDuration(60 * 60);
@@ -63,7 +67,15 @@ const state = reactive<Schema>({
         maxDuration: undefined,
     },
     access: {
-        jobs: [],
+        jobs: [
+            {
+                id: 0,
+                targetId: 0,
+                job: activeChar.value?.job ?? '',
+                minimumGrade: activeChar.value?.jobGrade ?? game.startJobGrade,
+                access: AccessLevel.REMOVE,
+            },
+        ],
     },
 });
 
@@ -81,6 +93,21 @@ async function getCitizenLabel(labelId: number): Promise<GetLabelResponse> {
         const { response } = await citizensLabelsClient.getLabel({ id: labelId });
 
         if (!response?.label) return response;
+
+        // Ensure one access is set at least
+        if (!response.label.access || response.label.access.jobs.length === 0) {
+            response.label.access = {
+                jobs: [
+                    {
+                        id: 0,
+                        targetId: 0,
+                        job: activeChar.value?.job ?? '',
+                        minimumGrade: activeChar.value?.jobGrade ?? game.startJobGrade,
+                        access: AccessLevel.REMOVE,
+                    },
+                ],
+            };
+        }
 
         return response;
     } catch (e) {
@@ -138,7 +165,7 @@ async function createOrUpdateLabel(values: Schema): Promise<CreateOrUpdateLabelR
         state.access.jobs = label.access?.jobs ?? [];
 
         emits('refresh');
-        emits('close', false);
+        emits('close', true);
 
         return response;
     } catch (e) {

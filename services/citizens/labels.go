@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
@@ -18,6 +19,7 @@ import (
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 var (
@@ -43,14 +45,16 @@ func (s *Server) ListLabels(
 	}
 
 	if !userInfo.GetSuperuser() {
+		minAccess := min(req.GetMinAccess(), citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW)
+
 		jobAccessExists := mysql.EXISTS(
 			mysql.
 				SELECT(mysql.Int(1)).
 				FROM(tCitizensLabelsJobAccess).
 				WHERE(mysql.AND(
-					tCitizensLabelsJobAccess.LabelID.EQ(tCitizensLabelsJob.ID),
+					tCitizensLabelsJobAccess.TargetID.EQ(tCitizensLabelsJob.ID),
 					tCitizensLabelsJobAccess.Access.GT_EQ(
-						mysql.Int32(int32(req.GetMinAccess())),
+						mysql.Int32(int32(minAccess)),
 					),
 					tCitizensLabelsJobAccess.Job.EQ(mysql.String(userInfo.GetJob())),
 					tCitizensLabelsJobAccess.MinimumGrade.LT_EQ(
@@ -77,6 +81,39 @@ func (s *Server) ListLabels(
 		columns = append(columns, tCitizensLabelsJob.DeletedAt)
 	}
 
+	accessEntries := mysql.
+		SELECT_JSON_ARR(
+			tCitizensLabelsJobAccess.ID,
+			tCitizensLabelsJobAccess.TargetID,
+			tCitizensLabelsJobAccess.Access,
+			tCitizensLabelsJobAccess.Job,
+			tCitizensLabelsJobAccess.MinimumGrade,
+		).
+		FROM(tCitizensLabelsJobAccess).
+		WHERE(mysql.AND(
+			tCitizensLabelsJobAccess.TargetID.EQ(tCitizensLabelsJob.ID),
+
+			tCitizensLabelsJobAccess.Access.GT_EQ(
+				mysql.Int32(int32(
+					min(
+						req.GetMinAccess(),
+						citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW,
+					),
+				)),
+			),
+
+			tCitizensLabelsJobAccess.Job.EQ(
+				mysql.String(userInfo.GetJob()),
+			),
+
+			tCitizensLabelsJobAccess.MinimumGrade.LT_EQ(
+				mysql.Int32(userInfo.GetJobGrade()),
+			),
+		)).
+		AS("access.jobs")
+
+	columns = append(columns, accessEntries)
+
 	stmt := tCitizensLabelsJob.
 		SELECT(
 			columns[0],
@@ -84,10 +121,19 @@ func (s *Server) ListLabels(
 		).
 		FROM(tCitizensLabelsJob).
 		WHERE(condition).
+		GROUP_BY(
+			tCitizensLabelsJob.ID,
+			tCitizensLabelsJob.CreatedAt,
+			tCitizensLabelsJob.Name,
+			tCitizensLabelsJob.Color,
+			tCitizensLabelsJob.Icon,
+			tCitizensLabelsJob.Settings,
+			tCitizensLabelsJob.SortKey,
+		).
 		ORDER_BY(
 			tCitizensLabelsJob.SortKey.ASC(),
 		).
-		LIMIT(15)
+		LIMIT(20)
 
 	resp := &pbcitizens.ListLabelsResponse{
 		Labels: []*citizenslabels.Label{},
@@ -97,6 +143,8 @@ func (s *Server) ListLabels(
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
 	}
+
+	// TODO need to include the user's highest access level in each labels' access list, so the client-side can access check
 
 	return resp, nil
 }
@@ -122,6 +170,14 @@ func (s *Server) GetLabel(
 		}
 
 		label.DeletedAt = nil
+	}
+
+	jobAccess, err := s.labelsAccess.Jobs.List(ctx, s.db, label.GetId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+	label.Access = &citizenslabels.LabelAccess{
+		Jobs: jobAccess,
 	}
 
 	return &pbcitizens.GetLabelResponse{
@@ -177,8 +233,13 @@ func (s *Server) CreateOrUpdateLabel(
 	label := req.GetLabel()
 	label.Job = &userInfo.Job
 
-	tCitizensLabelsJob := table.FivenetUserLabelsJob
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+	defer tx.Rollback()
 
+	tCitizensLabelsJob := table.FivenetUserLabelsJob
 	if req.GetLabel().GetId() > 0 {
 		stmt := tCitizensLabelsJob.
 			UPDATE(
@@ -199,9 +260,11 @@ func (s *Server) CreateOrUpdateLabel(
 			)).
 			LIMIT(1)
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
+
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	} else {
 		stmt := tCitizensLabelsJob.
 			INSERT(
@@ -219,7 +282,7 @@ func (s *Server) CreateOrUpdateLabel(
 				label.Settings,
 			)
 
-		result, err := stmt.ExecContext(ctx, s.db)
+		result, err := stmt.ExecContext(ctx, tx)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
@@ -230,9 +293,39 @@ func (s *Server) CreateOrUpdateLabel(
 		}
 
 		label.Id = lastInsertId
+
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	}
 
-	label, err := s.getLabel(ctx, s.db, label.GetJob(), label.GetId())
+	access := label.GetAccess()
+	if access == nil || len(access.GetJobs()) == 0 {
+		access = &citizenslabels.LabelAccess{
+			Jobs: []*citizenslabels.JobAccess{
+				{
+					TargetId:     label.GetId(),
+					Job:          userInfo.GetJob(),
+					MinimumGrade: userInfo.GetJobGrade(),
+					Access:       citizenslabels.AccessLevel_ACCESS_LEVEL_REMOVE,
+				},
+			},
+		}
+	}
+	if _, err := s.labelsAccess.HandleAccessChanges(
+		ctx,
+		tx,
+		label.GetId(),
+		access.GetJobs(),
+		nil,
+		nil,
+	); err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+
+	label, err = s.getLabel(ctx, s.db, label.GetJob(), label.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -240,7 +333,14 @@ func (s *Server) CreateOrUpdateLabel(
 		label.DeletedAt = nil
 	}
 
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
+	// Retrieve labels access
+	jobAccess, err := s.labelsAccess.Jobs.List(ctx, s.db, label.GetId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+	label.Access = &citizenslabels.LabelAccess{
+		Jobs: jobAccess,
+	}
 
 	return &pbcitizens.CreateOrUpdateLabelResponse{
 		Label: label,
@@ -304,7 +404,7 @@ func (s *Server) getUserLabels(
 				SELECT(mysql.Int(1)).
 				FROM(tCitizensLabelsJobAccess).
 				WHERE(mysql.AND(
-					tCitizensLabelsJobAccess.LabelID.EQ(tCitizensLabelsJob.ID),
+					tCitizensLabelsJobAccess.TargetID.EQ(tCitizensLabelsJob.ID),
 					tCitizensLabelsJobAccess.Access.GT_EQ(
 						mysql.Int32(int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
@@ -318,6 +418,34 @@ func (s *Server) getUserLabels(
 		condition = condition.AND(jobAccessExists)
 	}
 
+	accessEntries := mysql.SELECT_JSON_OBJ(
+		mysql.
+			SELECT_JSON_ARR(
+				tCitizensLabelsJobAccess.ID,
+				tCitizensLabelsJobAccess.TargetID,
+				tCitizensLabelsJobAccess.Access,
+				tCitizensLabelsJobAccess.Job,
+				tCitizensLabelsJobAccess.MinimumGrade,
+			).
+			FROM(tCitizensLabelsJobAccess).
+			WHERE(mysql.AND(
+				tCitizensLabelsJobAccess.TargetID.EQ(tCitizensLabelsJob.ID),
+
+				tCitizensLabelsJobAccess.Access.GT_EQ(
+					mysql.Int32(int32(citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW)),
+				),
+
+				tCitizensLabelsJobAccess.Job.EQ(
+					mysql.String(userInfo.GetJob()),
+				),
+
+				tCitizensLabelsJobAccess.MinimumGrade.LT_EQ(
+					mysql.Int32(userInfo.GetJobGrade()),
+				),
+			)).
+			AS("jobs"),
+	).AS("label.access")
+
 	stmt := tCitizenLabels.
 		SELECT(
 			tCitizensLabelsJob.ID.AS("label.id"),
@@ -327,6 +455,7 @@ func (s *Server) getUserLabels(
 			tCitizensLabelsJob.Icon.AS("label.icon"),
 			tCitizensLabelsJob.Settings.AS("label.settings"),
 			tCitizenLabels.ExpiresAt.AS("label.expiresAt"),
+			accessEntries,
 		).
 		FROM(
 			tCitizenLabels.
@@ -389,6 +518,22 @@ func (s *Server) AddCitizenLabels(
 	ctx context.Context,
 	req *pbcitizens.AddCitizenLabelsRequest,
 ) (*pbcitizens.AddCitizenLabelsResponse, error) {
+	logging.InjectFields(
+		ctx,
+		logging.Fields{"fivenet.citizens.user_id", req.GetUserId()},
+	)
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	// Field Permission Check
+	fields, err := permscitizens.CitizensService.SetUserProps.FieldsTyped.Get(s.ps, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+	if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueLabels) {
+		return nil, errorscitizens.ErrPropsLabelsDenied
+	}
+
 	// TODO
 
 	return nil, nil
@@ -398,6 +543,22 @@ func (s *Server) RemoveCitizenLabels(
 	ctx context.Context,
 	req *pbcitizens.RemoveCitizenLabelsRequest,
 ) (*pbcitizens.RemoveCitizenLabelsResponse, error) {
+	logging.InjectFields(
+		ctx,
+		logging.Fields{"fivenet.citizens.user_id", req.GetUserId()},
+	)
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	// Field Permission Check
+	fields, err := permscitizens.CitizensService.SetUserProps.FieldsTyped.Get(s.ps, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+	if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueLabels) {
+		return nil, errorscitizens.ErrPropsLabelsDenied
+	}
+
 	// TODO
 
 	return nil, nil

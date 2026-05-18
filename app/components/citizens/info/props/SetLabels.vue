@@ -9,6 +9,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { UserProps } from '~~/gen/ts/resources/users/props/props';
 import ConfigureLabelModal from '../../labels/ConfigureLabelModal.vue';
+import { AccessLevel, type LabelAccess } from '~~/gen/ts/resources/citizens/labels/access';
 
 const props = defineProps<{
     userId: number;
@@ -26,10 +27,12 @@ const overlay = useOverlay();
 
 const citizensCitizensClient = await getCitizensCitizensClient();
 
+const canSetProps = can('citizens.CitizensService/SetUserProps');
+
 const canDo = computed(() => ({
-    set:
-        can('citizens.CitizensService/SetUserProps').value &&
-        attr('citizens.CitizensService/SetUserProps', 'Fields', 'Labels').value,
+    // TODO per label access check
+    set: canSetProps.value && attr('citizens.CitizensService/SetUserProps', 'Fields', 'Labels').value,
+    remove: canSetProps.value && attr('citizens.CitizensService/SetUserProps', 'Fields', 'Labels').value,
 }));
 
 const changed = ref(false);
@@ -42,6 +45,12 @@ const schema = z.object({
             color: z.coerce.string().length(7),
             icon: z.coerce.string().max(255).optional(),
             expiresAt: z.custom<Timestamp>().optional(),
+            access: z
+                .custom<LabelAccess>()
+                .default({
+                    jobs: [],
+                })
+                .optional(),
         })
         .array()
         .max(10)
@@ -111,7 +120,6 @@ const configureLabelModal = overlay.create(ConfigureLabelModal);
 
 function handleLabelUpdate(label: Label | null): void {
     if (!label) return;
-
     selectedLabel.value = null;
 
     configureLabelModal.open({
@@ -119,6 +127,7 @@ function handleLabelUpdate(label: Label | null): void {
         onClose: ($event) => {
             if (!$event) return;
 
+            changed.value = true;
             const idx = state.labels.findIndex((l) => l.id === $event.id);
             if (idx == -1) {
                 state.labels.unshift({
@@ -154,7 +163,7 @@ const formRef = useTemplateRef('formRef');
                 :search-input="{ placeholder: $t('common.search_field') }"
                 :search-labels="['name']"
                 :ui="{ itemLeadingIcon: 'hidden' }"
-                @update:model-value="handleLabelUpdate"
+                @update:model-value="($event) => handleLabelUpdate($event)"
             >
                 <template #item-label="{ item }">
                     <UBadge
@@ -193,22 +202,29 @@ const formRef = useTemplateRef('formRef');
                     </div>
                 </UBadge>
 
-                <UTooltip v-if="canDo.set" :text="$t('common.remove')">
+                <UTooltip v-if="label.access?.jobs.find((ja) => ja.access >= AccessLevel.GIVE)" :text="$t('common.edit')">
+                    <UButton
+                        variant="outline"
+                        color="neutral"
+                        size="sm"
+                        icon="i-mdi-pencil"
+                        @click="() => handleLabelUpdate(label)"
+                    />
+                </UTooltip>
+
+                <UTooltip v-if="label.access?.jobs.find((ja) => ja.access >= AccessLevel.REMOVE)" :text="$t('common.remove')">
                     <UButton
                         variant="outline"
                         color="neutral"
                         size="sm"
                         icon="i-mdi-remove"
-                        @click="
-                            changed = true;
-                            state.labels.splice(idx, 1);
-                        "
+                        @click="state.labels.splice(idx, 1)"
                     />
                 </UTooltip>
             </UFieldGroup>
         </div>
 
-        <template v-if="changed">
+        <template v-if="formRef?.dirty || changed">
             <UFormField name="reason" :label="$t('common.reason')" required>
                 <UInput v-model="state.reason" class="w-full" type="text" />
             </UFormField>
