@@ -27,8 +27,6 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 )
 
@@ -85,36 +83,36 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // New builds an HTTP server that will begin serving requests
 // when the Fx application starts.
 func New(p Params) (Result, error) {
-	// Create HTTP Server for graceful shutdown handling and h2c wrapped handler
+	// Create HTTP Server with h2c support enabled, graceful shutdown handling and wrapped GRPC + HTTP request handler
+	httpProtos := &http.Protocols{}
+	httpProtos.SetHTTP1(true)
+	httpProtos.SetUnencryptedHTTP2(true)
+
 	srv := &http.Server{
+		ErrorLog:          zap.NewStdLog(p.Logger),
+		Protocols:         httpProtos,
 		ReadHeaderTimeout: 5 * time.Second,
 		Addr:              p.Config.HTTP.Listen,
-		Handler: h2c.NewHandler(
-			&handler{
-				gin:  p.Engine,
-				grpc: p.GRPCSrv,
-			},
-			&http2.Server{},
-		),
-		ErrorLog: zap.NewStdLog(p.Logger),
+		Handler: &handler{
+			gin:  p.Engine,
+			grpc: p.GRPCSrv,
+		},
 	}
 
-	p.LC.Append(fx.Hook{
-		OnStart: func(ctx context.Context) error {
-			//nolint:noctx // net.Listen is shutdown via the server's Shutdown method
-			ln, err := net.Listen("tcp", srv.Addr)
-			if err != nil {
-				return err
-			}
-			p.Logger.Info("http server listening", zap.String("address", srv.Addr))
-			go srv.Serve(ln)
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+		//nolint:noctx // net.Listen is shutdown via the server's Shutdown method
+		ln, err := net.Listen("tcp", srv.Addr)
+		if err != nil {
+			return err
+		}
+		p.Logger.Info("http server listening", zap.String("address", srv.Addr))
+		go srv.Serve(ln)
 
-			return nil
-		},
-		OnStop: func(ctx context.Context) error {
-			return srv.Shutdown(ctx)
-		},
-	})
+		return nil
+	}))
+	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
+		return srv.Shutdown(ctx)
+	}))
 
 	return Result{
 		Server: srv,
@@ -279,7 +277,7 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	e.NoRoute(func(c *gin.Context) {
 		requestPath := c.Request.URL.Path
 
-		// If the target is a directory (e.g., `/livemap`, `/settings/jobprops`), load root `index.html``
+		// If the target is a directory (e.g., `/livemap`, `/settings/jobprops`), load root `index.html`
 		if strings.HasSuffix(requestPath, "/") || !strings.Contains(requestPath, ".") {
 			c.Request.URL.Path = "/"
 			fileServer.ServeHTTP(c.Writer, c.Request)

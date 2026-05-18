@@ -85,7 +85,6 @@ func (s *Server) UpdateSettings(
 		req.Settings.OfferedAccess = current.GetOfferedAccess()
 		req.Settings.EffectiveAccess = current.GetEffectiveAccess()
 	}
-
 	if !fields.Contains("Public") {
 		req.Settings.Public = current.GetPublic()
 	}

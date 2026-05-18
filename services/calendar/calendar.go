@@ -453,7 +453,6 @@ func (s *Server) UpdateCalendar(
 		empty := ""
 		req.Calendar.Description = &empty
 	}
-
 	if !fields.Contains("Public") && calendar.GetPublic() && req.GetCalendar().GetPublic() {
 		req.Calendar.Public = false
 	}

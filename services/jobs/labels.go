@@ -48,7 +48,6 @@ func (s *Server) GetColleagueLabels(
 	if userInfo.GetSuperuser() {
 		fields.Strings = []string{"Labels"}
 	}
-
 	if !fields.Contains("Labels") {
 		// Fallback to checking if user has manage colleague labels permission
 		if !s.ps.Can(
@@ -334,7 +333,6 @@ func (s *Server) GetColleagueLabelsStats(
 	if userInfo.GetSuperuser() {
 		fields.Strings = []string{"Labels"}
 	}
-
 	if !fields.Contains("Labels") {
 		return &pbjobs.GetColleagueLabelsStatsResponse{}, nil
 	}

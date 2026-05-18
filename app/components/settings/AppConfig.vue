@@ -1038,9 +1038,9 @@ const formRef = useTemplateRef('formRef');
                                 <UInputNumber
                                     v-model="state.quickButtons.penaltyCalculator.maxLeeway"
                                     class="w-full"
-                                    :min="1"
-                                    :step="1"
-                                    :max="99"
+                                    :min="0.01"
+                                    :step="0.01"
+                                    :max="1"
                                     :format-options="{ style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 0 }"
                                 />
                             </UFormField>

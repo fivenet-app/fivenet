@@ -46,7 +46,6 @@ func (s *Server) ListTimeclock(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-
 	if !fields.Contains("All") {
 		req.UserMode = jobstimeclock.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF
 	}

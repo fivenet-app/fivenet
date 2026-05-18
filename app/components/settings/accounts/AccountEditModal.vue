@@ -88,7 +88,7 @@ const formRef = useTemplateRef('formRef');
                 </UFormField>
 
                 <UFormField class="flex-1" name="groups" :label="$t('common.group', 2)">
-                    <UInputTags v-model="state.groups" disabled />
+                    <UInputTags v-model="state.groups" class="w-full" disabled />
                 </UFormField>
 
                 <UFormField class="flex-1" name="oauth2Accounts" :label="$t('components.auth.SocialLogins.title')">

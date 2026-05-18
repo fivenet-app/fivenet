@@ -945,8 +945,8 @@ func (s *Server) DeleteDocument(
 		).
 		WHERE(
 			tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
-		)
-
+		).
+		LIMIT(1)
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
