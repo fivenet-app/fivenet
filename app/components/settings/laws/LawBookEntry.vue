@@ -1,26 +1,27 @@
 <script lang="ts" setup>
 import { UButton, UTooltip } from '#components';
 import type { FormSubmitEvent, TableColumn } from '@nuxt/ui';
-import type { ExpandedState } from '@tanstack/vue-table';
+import type { ExpandedState, Row, TableMeta } from '@tanstack/vue-table';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import LawEntry from '~/components/settings/laws/LawEntry.vue';
 import { getSettingsLawsClient } from '~~/gen/ts/clients';
 import type { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 const props = defineProps<{
     startInEdit?: boolean;
 }>();
 
 const emit = defineEmits<{
-    (e: 'deleted', id: number): void;
+    (e: 'deleted', data: { id: number; deletedAt?: Timestamp }): void;
     (e: 'update:law', update: { id: number; law: Law }): void;
 }>();
 
 const { t } = useI18n();
 
-const { can } = useAuth();
+const { can, isSuperuser } = useAuth();
 
 const notifications = useNotificationsStore();
 
@@ -47,7 +48,7 @@ const state = reactive<Schema>({
 
 async function deleteLawBook(id: number): Promise<void> {
     if (id < 0) {
-        emit('deleted', id);
+        emit('deleted', { id: id });
         return;
     }
 
@@ -55,9 +56,9 @@ async function deleteLawBook(id: number): Promise<void> {
         const call = settingsLawsClient.deleteLawBook({
             id: id,
         });
-        await call;
+        const { response } = await call;
 
-        emit('deleted', id);
+        emit('deleted', { id: id, deletedAt: response.deletedAt });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -101,8 +102,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await saveLawBook(lawBook.value.id, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-function deletedLaw(id: number): void {
-    laws.value = laws.value.filter((b) => b.id !== id);
+function deletedLaw(id: number, deletedAt?: Timestamp): void {
+    if (!isSuperuser.value) {
+        laws.value = laws.value.filter((b) => b.id !== id);
+    } else {
+        const law = laws.value.find((b) => b.id === id);
+        if (law) {
+            law.deletedAt = deletedAt;
+            emit('update:law', { id: id, law: law });
+        }
+    }
 }
 
 const lastNewId = ref(-1);
@@ -156,9 +165,9 @@ async function deleteLaw(id: number): Promise<void> {
         const call = settingsLawsClient.deleteLaw({
             id: id,
         });
-        await call;
+        const { response } = await call;
 
-        deletedLaw(id);
+        deletedLaw(id, response.deletedAt);
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -174,6 +183,19 @@ async function deleteLaw(id: number): Promise<void> {
 const editing = ref(props.startInEdit);
 
 const expanded = ref<ExpandedState>({});
+
+const meta = computed(
+    () =>
+        ({
+            class: {
+                tr: (row: Row<Law>) => {
+                    return row.original.deletedAt
+                        ? 'bg-warning-100/10 hover:bg-warning-200/10 dark:bg-warning-800/10 dark:hover:bg-warning-700/10'
+                        : '';
+                },
+            },
+        }) as TableMeta<Law>,
+);
 
 const columns = computed(
     () =>
@@ -197,11 +219,31 @@ const columns = computed(
             },
             {
                 id: 'actions',
+                cell: ({ row }) =>
+                    can('settings.LawsService/DeleteLawBook').value
+                        ? h(UTooltip, { text: !row.original.deletedAt ? t('common.delete') : t('common.restore') }, () =>
+                              h(UButton, {
+                                  color: !row.original.deletedAt ? 'error' : 'success',
+                                  icon: !row.original.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
+                                  variant: 'link',
+                                  onClick: () => {
+                                      confirmModal.open({
+                                          confirm: async () => deleteLaw(row.original.id),
+                                      });
+                                  },
+                              }),
+                          )
+                        : undefined,
             },
             {
                 accessorKey: 'crime',
                 header: t('common.crime'),
                 cell: ({ row }) => row.original.name,
+                meta: {
+                    class: {
+                        td: 'text-highlighted',
+                    },
+                },
             },
             {
                 accessorKey: 'fine',
@@ -236,7 +278,18 @@ const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
-    <UCard v-if="lawBook" class="overflow-y-auto">
+    <UCard
+        v-if="lawBook"
+        class="overflow-y-auto"
+        :class="[
+            lawBook.deletedAt
+                ? 'bg-warning-100/10 hover:bg-warning-200/10 dark:bg-warning-800/10 dark:hover:bg-warning-700/10'
+                : '',
+        ]"
+        :ui="{
+            body: 'p-0 sm:p-0',
+        }"
+    >
         <template #header>
             <div v-if="!editing" class="inline-flex w-full items-center gap-x-2">
                 <UFieldGroup class="inline-flex">
@@ -246,9 +299,9 @@ const confirmModal = overlay.create(ConfirmModal);
 
                     <UTooltip v-if="can('settings.LawsService/DeleteLawBook').value" :text="$t('common.delete')">
                         <UButton
+                            :icon="!lawBook.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
+                            :color="!lawBook.deletedAt ? 'error' : 'success'"
                             variant="link"
-                            icon="i-mdi-delete"
-                            color="error"
                             @click="
                                 confirmModal.open({
                                     confirm: async () => deleteLawBook(lawBook!.id),
@@ -291,7 +344,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         icon="i-mdi-cancel"
                         @click="
                             editing = false;
-                            lawBook.id < 0 && $emit('deleted', lawBook.id);
+                            lawBook.id < 0 && $emit('deleted', { id: lawBook.id });
                         "
                     />
                 </UTooltip>
@@ -315,6 +368,7 @@ const confirmModal = overlay.create(ConfirmModal);
         <UTable
             v-model:expanded="expanded"
             :columns="columns"
+            :meta="meta"
             :data="laws"
             :expand-button="{ icon: 'i-mdi-pencil', color: 'primary' }"
             :pagination-options="{ manualPagination: true }"
@@ -325,23 +379,6 @@ const confirmModal = overlay.create(ConfirmModal);
         >
             <template #expanded="{ row }">
                 <LawEntry :law="row.original" @update:law="$emit('update:law', $event)" @close="row.toggleExpanded()" />
-            </template>
-
-            <template #actions-cell="{ row: law }">
-                <UTooltip v-if="can('settings.LawsService/DeleteLawBook').value" :text="$t('common.delete')">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-delete"
-                        color="error"
-                        @click="
-                            () => {
-                                confirmModal.open({
-                                    confirm: async () => deleteLaw(law.original.id),
-                                });
-                            }
-                        "
-                    />
-                </UTooltip>
             </template>
         </UTable>
     </UCard>

@@ -26,6 +26,10 @@ export interface ListLabelsRequest {
      * @generated from protobuf field: optional resources.citizens.labels.AccessLevel min_access = 2
      */
     minAccess?: AccessLevel;
+    /**
+     * @generated from protobuf field: optional bool own_job_only = 3
+     */
+    ownJobOnly?: boolean;
 }
 /**
  * @generated from protobuf message services.citizens.ListLabelsResponse
@@ -91,11 +95,15 @@ export interface DeleteLabelResponse {
  */
 export interface AddCitizenLabelsRequest {
     /**
-     * @generated from protobuf field: repeated resources.citizens.labels.Label labels = 1
+     * @generated from protobuf field: int32 user_id = 1
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: repeated resources.citizens.labels.Label labels = 2
      */
     labels: Label[];
     /**
-     * @generated from protobuf field: string reason = 2
+     * @generated from protobuf field: string reason = 3
      */
     reason: string;
 }
@@ -109,11 +117,15 @@ export interface AddCitizenLabelsResponse {
  */
 export interface RemoveCitizenLabelsRequest {
     /**
-     * @generated from protobuf field: repeated int64 ids = 1
+     * @generated from protobuf field: int32 user_id = 1
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: repeated int64 ids = 2
      */
     ids: number[];
     /**
-     * @generated from protobuf field: string reason = 2
+     * @generated from protobuf field: string reason = 3
      */
     reason: string;
 }
@@ -127,7 +139,8 @@ class ListLabelsRequest$Type extends MessageType<ListLabelsRequest> {
     constructor() {
         super("services.citizens.ListLabelsRequest", [
             { no: 1, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 2, name: "min_access", kind: "enum", opt: true, T: () => ["resources.citizens.labels.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
+            { no: 2, name: "min_access", kind: "enum", opt: true, T: () => ["resources.citizens.labels.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 3, name: "own_job_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListLabelsRequest>): ListLabelsRequest {
@@ -147,6 +160,9 @@ class ListLabelsRequest$Type extends MessageType<ListLabelsRequest> {
                 case /* optional resources.citizens.labels.AccessLevel min_access */ 2:
                     message.minAccess = reader.int32();
                     break;
+                case /* optional bool own_job_only */ 3:
+                    message.ownJobOnly = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -165,6 +181,9 @@ class ListLabelsRequest$Type extends MessageType<ListLabelsRequest> {
         /* optional resources.citizens.labels.AccessLevel min_access = 2; */
         if (message.minAccess !== undefined)
             writer.tag(2, WireType.Varint).int32(message.minAccess);
+        /* optional bool own_job_only = 3; */
+        if (message.ownJobOnly !== undefined)
+            writer.tag(3, WireType.Varint).bool(message.ownJobOnly);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -496,12 +515,14 @@ export const DeleteLabelResponse = new DeleteLabelResponse$Type();
 class AddCitizenLabelsRequest$Type extends MessageType<AddCitizenLabelsRequest> {
     constructor() {
         super("services.citizens.AddCitizenLabelsRequest", [
-            { no: 1, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label },
-            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 2, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label },
+            { no: 3, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<AddCitizenLabelsRequest>): AddCitizenLabelsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
         message.labels = [];
         message.reason = "";
         if (value !== undefined)
@@ -513,10 +534,13 @@ class AddCitizenLabelsRequest$Type extends MessageType<AddCitizenLabelsRequest> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.citizens.labels.Label labels */ 1:
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                case /* repeated resources.citizens.labels.Label labels */ 2:
                     message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* string reason */ 2:
+                case /* string reason */ 3:
                     message.reason = reader.string();
                     break;
                 default:
@@ -531,12 +555,15 @@ class AddCitizenLabelsRequest$Type extends MessageType<AddCitizenLabelsRequest> 
         return message;
     }
     internalBinaryWrite(message: AddCitizenLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.citizens.labels.Label labels = 1; */
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        /* repeated resources.citizens.labels.Label labels = 2; */
         for (let i = 0; i < message.labels.length; i++)
-            Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* string reason = 2; */
+            Label.internalBinaryWrite(message.labels[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string reason = 3; */
         if (message.reason !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.reason);
+            writer.tag(3, WireType.LengthDelimited).string(message.reason);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -589,12 +616,14 @@ export const AddCitizenLabelsResponse = new AddCitizenLabelsResponse$Type();
 class RemoveCitizenLabelsRequest$Type extends MessageType<RemoveCitizenLabelsRequest> {
     constructor() {
         super("services.citizens.RemoveCitizenLabelsRequest", [
-            { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 2, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<RemoveCitizenLabelsRequest>): RemoveCitizenLabelsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
         message.ids = [];
         message.reason = "";
         if (value !== undefined)
@@ -606,14 +635,17 @@ class RemoveCitizenLabelsRequest$Type extends MessageType<RemoveCitizenLabelsReq
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated int64 ids */ 1:
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                case /* repeated int64 ids */ 2:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.ids.push(reader.int64().toNumber());
                     else
                         message.ids.push(reader.int64().toNumber());
                     break;
-                case /* string reason */ 2:
+                case /* string reason */ 3:
                     message.reason = reader.string();
                     break;
                 default:
@@ -628,16 +660,19 @@ class RemoveCitizenLabelsRequest$Type extends MessageType<RemoveCitizenLabelsReq
         return message;
     }
     internalBinaryWrite(message: RemoveCitizenLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated int64 ids = 1; */
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        /* repeated int64 ids = 2; */
         if (message.ids.length) {
-            writer.tag(1, WireType.LengthDelimited).fork();
+            writer.tag(2, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.ids.length; i++)
                 writer.int64(message.ids[i]);
             writer.join();
         }
-        /* string reason = 2; */
+        /* string reason = 3; */
         if (message.reason !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.reason);
+            writer.tag(3, WireType.LengthDelimited).string(message.reason);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

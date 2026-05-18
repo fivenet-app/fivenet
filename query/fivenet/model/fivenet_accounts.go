@@ -15,6 +15,7 @@ type FivenetAccounts struct {
 	ID        int64      `sql:"primary_key" json:"id"`
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
 	Enabled   *bool      `json:"enabled"`
 	Username  *string    `json:"username"`
 	Password  *string    `json:"password"`
@@ -22,4 +23,5 @@ type FivenetAccounts struct {
 	Groups    *string    `json:"groups"`
 	RegToken  *string    `json:"reg_token"`
 	LastChar  *int32     `json:"last_char"`
+	Notes     *string    `json:"notes"`
 }

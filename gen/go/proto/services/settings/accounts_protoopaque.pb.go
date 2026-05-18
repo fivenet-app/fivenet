@@ -13,6 +13,7 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -914,9 +915,10 @@ func (b0 DeleteAccountRequest_builder) Build() *DeleteAccountRequest {
 }
 
 type DeleteAccountResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_DeletedAt *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *DeleteAccountResponse) Reset() {
@@ -944,15 +946,39 @@ func (x *DeleteAccountResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *DeleteAccountResponse) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_DeletedAt
+	}
+	return nil
+}
+
+func (x *DeleteAccountResponse) SetDeletedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_DeletedAt = v
+}
+
+func (x *DeleteAccountResponse) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_DeletedAt != nil
+}
+
+func (x *DeleteAccountResponse) ClearDeletedAt() {
+	x.xxx_hidden_DeletedAt = nil
+}
+
 type DeleteAccountResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	DeletedAt *timestamp.Timestamp
 }
 
 func (b0 DeleteAccountResponse_builder) Build() *DeleteAccountResponse {
 	m0 := &DeleteAccountResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.xxx_hidden_DeletedAt = b.DeletedAt
 	return m0
 }
 
@@ -960,7 +986,7 @@ var File_services_settings_accounts_proto protoreflect.FileDescriptor
 
 const file_services_settings_accounts_proto_rawDesc = "" +
 	"\n" +
-	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\x1a resources/users/short/user.proto\"\x96\x03\n" +
+	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\x96\x03\n" +
 	"\x13ListAccountsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1009,8 +1035,11 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"\rprovider_name\x18\x02 \x01(\tR\fproviderName\"\x1f\n" +
 	"\x1dDisconnectSocialLoginResponse\"&\n" +
 	"\x14DeleteAccountRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x17\n" +
-	"\x15DeleteAccountResponse2\xfa\x04\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"j\n" +
+	"\x15DeleteAccountResponse\x12B\n" +
+	"\n" +
+	"deleted_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01B\r\n" +
+	"\v_deleted_at2\xfa\x04\n" +
 	"\x0fAccountsService\x12r\n" +
 	"\fListAccounts\x12&.services.settings.ListAccountsRequest\x1a'.services.settings.ListAccountsResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12u\n" +
 	"\rCreateAccount\x12'.services.settings.CreateAccountRequest\x1a(.services.settings.CreateAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12u\n" +
@@ -1035,6 +1064,7 @@ var file_services_settings_accounts_proto_goTypes = []any{
 	(*database.PaginationResponse)(nil),   // 12: resources.common.database.PaginationResponse
 	(*accounts.Account)(nil),              // 13: resources.accounts.Account
 	(*short.UserShort)(nil),               // 14: resources.users.short.UserShort
+	(*timestamp.Timestamp)(nil),           // 15: resources.timestamp.Timestamp
 }
 var file_services_settings_accounts_proto_depIdxs = []int32{
 	10, // 0: services.settings.ListAccountsRequest.pagination:type_name -> resources.common.database.PaginationRequest
@@ -1043,21 +1073,22 @@ var file_services_settings_accounts_proto_depIdxs = []int32{
 	13, // 3: services.settings.ListAccountsResponse.accounts:type_name -> resources.accounts.Account
 	14, // 4: services.settings.CreateAccountRequest.char:type_name -> resources.users.short.UserShort
 	13, // 5: services.settings.UpdateAccountResponse.account:type_name -> resources.accounts.Account
-	0,  // 6: services.settings.AccountsService.ListAccounts:input_type -> services.settings.ListAccountsRequest
-	2,  // 7: services.settings.AccountsService.CreateAccount:input_type -> services.settings.CreateAccountRequest
-	4,  // 8: services.settings.AccountsService.UpdateAccount:input_type -> services.settings.UpdateAccountRequest
-	6,  // 9: services.settings.AccountsService.DisconnectSocialLogin:input_type -> services.settings.DisconnectSocialLoginRequest
-	8,  // 10: services.settings.AccountsService.DeleteAccount:input_type -> services.settings.DeleteAccountRequest
-	1,  // 11: services.settings.AccountsService.ListAccounts:output_type -> services.settings.ListAccountsResponse
-	3,  // 12: services.settings.AccountsService.CreateAccount:output_type -> services.settings.CreateAccountResponse
-	5,  // 13: services.settings.AccountsService.UpdateAccount:output_type -> services.settings.UpdateAccountResponse
-	7,  // 14: services.settings.AccountsService.DisconnectSocialLogin:output_type -> services.settings.DisconnectSocialLoginResponse
-	9,  // 15: services.settings.AccountsService.DeleteAccount:output_type -> services.settings.DeleteAccountResponse
-	11, // [11:16] is the sub-list for method output_type
-	6,  // [6:11] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	15, // 6: services.settings.DeleteAccountResponse.deleted_at:type_name -> resources.timestamp.Timestamp
+	0,  // 7: services.settings.AccountsService.ListAccounts:input_type -> services.settings.ListAccountsRequest
+	2,  // 8: services.settings.AccountsService.CreateAccount:input_type -> services.settings.CreateAccountRequest
+	4,  // 9: services.settings.AccountsService.UpdateAccount:input_type -> services.settings.UpdateAccountRequest
+	6,  // 10: services.settings.AccountsService.DisconnectSocialLogin:input_type -> services.settings.DisconnectSocialLoginRequest
+	8,  // 11: services.settings.AccountsService.DeleteAccount:input_type -> services.settings.DeleteAccountRequest
+	1,  // 12: services.settings.AccountsService.ListAccounts:output_type -> services.settings.ListAccountsResponse
+	3,  // 13: services.settings.AccountsService.CreateAccount:output_type -> services.settings.CreateAccountResponse
+	5,  // 14: services.settings.AccountsService.UpdateAccount:output_type -> services.settings.UpdateAccountResponse
+	7,  // 15: services.settings.AccountsService.DisconnectSocialLogin:output_type -> services.settings.DisconnectSocialLoginResponse
+	9,  // 16: services.settings.AccountsService.DeleteAccount:output_type -> services.settings.DeleteAccountResponse
+	12, // [12:17] is the sub-list for method output_type
+	7,  // [7:12] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_services_settings_accounts_proto_init() }
@@ -1068,6 +1099,7 @@ func file_services_settings_accounts_proto_init() {
 	file_services_settings_accounts_proto_msgTypes[0].OneofWrappers = []any{}
 	file_services_settings_accounts_proto_msgTypes[2].OneofWrappers = []any{}
 	file_services_settings_accounts_proto_msgTypes[4].OneofWrappers = []any{}
+	file_services_settings_accounts_proto_msgTypes[9].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

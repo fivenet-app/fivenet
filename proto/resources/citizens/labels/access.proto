@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.citizens.labels;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
 import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels;citizenslabels";
@@ -15,6 +16,8 @@ enum AccessLevel {
 }
 
 message LabelAccess {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   repeated JobAccess jobs = 1 [
     (buf.validate.field).repeated.max_items = 20,
     (tagger.tags) = "alias:\"job_access\""

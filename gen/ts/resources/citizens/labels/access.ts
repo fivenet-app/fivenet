@@ -79,7 +79,7 @@ class LabelAccess$Type extends MessageType<LabelAccess> {
     constructor() {
         super("resources.citizens.labels.LabelAccess", [
             { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"job_access\"" } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<LabelAccess>): LabelAccess {
         const message = globalThis.Object.create((this.messagePrototype!));

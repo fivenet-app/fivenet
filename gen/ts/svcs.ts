@@ -430,6 +430,7 @@ export const grpcMethods = [
 	'settings.ConfigService/UpdateAppConfig',
 	'settings.CronService/ListCronjobs',
 	'settings.CronService/RunCronjob',
+	'settings.LawsService/ListLawBooks',
 	'settings.LawsService/CreateOrUpdateLawBook',
 	'settings.LawsService/DeleteLawBook',
 	'settings.LawsService/CreateOrUpdateLaw',

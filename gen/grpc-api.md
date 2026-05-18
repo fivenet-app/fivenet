@@ -745,6 +745,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `enabled` | [bool](#bool) |  |  |
 | `username` | [string](#string) |  |  |
 | `license` | [string](#string) |  |  |
@@ -883,6 +884,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `EVENT_ACTION_CREATED` | 3 |  |
 | `EVENT_ACTION_UPDATED` | 4 |  |
 | `EVENT_ACTION_DELETED` | 5 |  |
+| `EVENT_ACTION_RESTORED` | 6 |  |
 
 
 
@@ -5400,6 +5402,7 @@ Dummy - DO NOT USE!
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `lawbook_id` | [int64](#int64) |  |  |
 | `name` | [string](#string) |  |  |
 | `description` | [string](#string) | optional |  |
@@ -5420,6 +5423,7 @@ Dummy - DO NOT USE!
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `name` | [string](#string) |  |  |
 | `description` | [string](#string) | optional |  |
 | `laws` | [Law](#resourceslawsLaw) | repeated |  |
@@ -6844,7 +6848,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `identifier` | [string](#string) |  |  |
+| `license` | [string](#string) |  |  |
 | `last_char_id` | [int32](#int32) | optional |  |
 
 
@@ -8855,6 +8859,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
 | `labels` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
 | `reason` | [string](#string) |  |  |
 
@@ -8936,6 +8941,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `search` | [string](#string) | optional |  |
 | `min_access` | [resources.citizens.labels.AccessLevel](#resourcescitizenslabelsAccessLevel) | optional |  |
+| `own_job_only` | [bool](#bool) | optional |  |
 
 
 
@@ -8957,6 +8963,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
 | `ids` | [int64](#int64) | repeated |  |
 | `reason` | [string](#string) |  |  |
 
@@ -12482,6 +12489,11 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 ### services.settings.DeleteAccountResponse
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
 
 
 
@@ -12755,6 +12767,11 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 ### services.settings.DeleteLawBookResponse
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
 
 
 
@@ -12772,6 +12789,28 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 ### services.settings.DeleteLawResponse
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### services.settings.ListLawBooksRequest
+
+
+
+
+
+### services.settings.ListLawBooksResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `books` | [resources.laws.LawBook](#resourceslawsLawBook) | repeated |  |
+
+
 
 
  <!-- end messages -->
@@ -12785,6 +12824,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
+| `ListLawBooks` | [ListLawBooksRequest](#servicessettingsListLawBooksRequest) | [ListLawBooksResponse](#servicessettingsListLawBooksResponse) | |
 | `CreateOrUpdateLawBook` | [CreateOrUpdateLawBookRequest](#servicessettingsCreateOrUpdateLawBookRequest) | [CreateOrUpdateLawBookResponse](#servicessettingsCreateOrUpdateLawBookResponse) | |
 | `DeleteLawBook` | [DeleteLawBookRequest](#servicessettingsDeleteLawBookRequest) | [DeleteLawBookResponse](#servicessettingsDeleteLawBookResponse) | |
 | `CreateOrUpdateLaw` | [CreateOrUpdateLawRequest](#servicessettingsCreateOrUpdateLawRequest) | [CreateOrUpdateLawResponse](#servicessettingsCreateOrUpdateLawResponse) | |

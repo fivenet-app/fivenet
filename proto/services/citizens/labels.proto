@@ -12,6 +12,7 @@ option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/
 message ListLabelsRequest {
   optional string search = 1 [(buf.validate.field).string.max_len = 64];
   optional resources.citizens.labels.AccessLevel min_access = 2 [(buf.validate.field).enum.defined_only = true];
+  optional bool own_job_only = 3;
 }
 
 message ListLabelsResponse {
@@ -41,15 +42,17 @@ message DeleteLabelRequest {
 message DeleteLabelResponse {}
 
 message AddCitizenLabelsRequest {
-  repeated resources.citizens.labels.Label labels = 1;
-  string reason = 2 [(buf.validate.field).string.max_len = 255];
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+  repeated resources.citizens.labels.Label labels = 2;
+  string reason = 3 [(buf.validate.field).string.max_len = 255];
 }
 
 message AddCitizenLabelsResponse {}
 
 message RemoveCitizenLabelsRequest {
-  repeated int64 ids = 1;
-  string reason = 2 [(buf.validate.field).string.max_len = 255];
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+  repeated int64 ids = 2;
+  string reason = 3 [(buf.validate.field).string.max_len = 255];
 }
 
 message RemoveCitizenLabelsResponse {}

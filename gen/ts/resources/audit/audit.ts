@@ -112,7 +112,11 @@ export enum EventAction {
     /**
      * @generated from protobuf enum value: EVENT_ACTION_DELETED = 5;
      */
-    DELETED = 5
+    DELETED = 5,
+    /**
+     * @generated from protobuf enum value: EVENT_ACTION_RESTORED = 6;
+     */
+    RESTORED = 6
 }
 /**
  * @generated from protobuf enum resources.audit.EventResult

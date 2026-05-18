@@ -47,6 +47,25 @@ func (m *CreateAccountResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *DeleteAccountResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DisconnectSocialLoginRequest) Sanitize() error {
 	if m == nil {
 		return nil

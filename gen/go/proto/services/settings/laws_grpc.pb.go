@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	LawsService_ListLawBooks_FullMethodName          = "/services.settings.LawsService/ListLawBooks"
 	LawsService_CreateOrUpdateLawBook_FullMethodName = "/services.settings.LawsService/CreateOrUpdateLawBook"
 	LawsService_DeleteLawBook_FullMethodName         = "/services.settings.LawsService/DeleteLawBook"
 	LawsService_CreateOrUpdateLaw_FullMethodName     = "/services.settings.LawsService/CreateOrUpdateLaw"
@@ -29,6 +30,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LawsServiceClient interface {
+	ListLawBooks(ctx context.Context, in *ListLawBooksRequest, opts ...grpc.CallOption) (*ListLawBooksResponse, error)
 	CreateOrUpdateLawBook(ctx context.Context, in *CreateOrUpdateLawBookRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawBookResponse, error)
 	DeleteLawBook(ctx context.Context, in *DeleteLawBookRequest, opts ...grpc.CallOption) (*DeleteLawBookResponse, error)
 	CreateOrUpdateLaw(ctx context.Context, in *CreateOrUpdateLawRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawResponse, error)
@@ -41,6 +43,16 @@ type lawsServiceClient struct {
 
 func NewLawsServiceClient(cc grpc.ClientConnInterface) LawsServiceClient {
 	return &lawsServiceClient{cc}
+}
+
+func (c *lawsServiceClient) ListLawBooks(ctx context.Context, in *ListLawBooksRequest, opts ...grpc.CallOption) (*ListLawBooksResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListLawBooksResponse)
+	err := c.cc.Invoke(ctx, LawsService_ListLawBooks_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *lawsServiceClient) CreateOrUpdateLawBook(ctx context.Context, in *CreateOrUpdateLawBookRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawBookResponse, error) {
@@ -87,6 +99,7 @@ func (c *lawsServiceClient) DeleteLaw(ctx context.Context, in *DeleteLawRequest,
 // All implementations must embed UnimplementedLawsServiceServer
 // for forward compatibility.
 type LawsServiceServer interface {
+	ListLawBooks(context.Context, *ListLawBooksRequest) (*ListLawBooksResponse, error)
 	CreateOrUpdateLawBook(context.Context, *CreateOrUpdateLawBookRequest) (*CreateOrUpdateLawBookResponse, error)
 	DeleteLawBook(context.Context, *DeleteLawBookRequest) (*DeleteLawBookResponse, error)
 	CreateOrUpdateLaw(context.Context, *CreateOrUpdateLawRequest) (*CreateOrUpdateLawResponse, error)
@@ -101,6 +114,9 @@ type LawsServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedLawsServiceServer struct{}
 
+func (UnimplementedLawsServiceServer) ListLawBooks(context.Context, *ListLawBooksRequest) (*ListLawBooksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListLawBooks not implemented")
+}
 func (UnimplementedLawsServiceServer) CreateOrUpdateLawBook(context.Context, *CreateOrUpdateLawBookRequest) (*CreateOrUpdateLawBookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateLawBook not implemented")
 }
@@ -132,6 +148,24 @@ func RegisterLawsServiceServer(s grpc.ServiceRegistrar, srv LawsServiceServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&LawsService_ServiceDesc, srv)
+}
+
+func _LawsService_ListLawBooks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListLawBooksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LawsServiceServer).ListLawBooks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LawsService_ListLawBooks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LawsServiceServer).ListLawBooks(ctx, req.(*ListLawBooksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _LawsService_CreateOrUpdateLawBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -213,6 +247,10 @@ var LawsService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.settings.LawsService",
 	HandlerType: (*LawsServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListLawBooks",
+			Handler:    _LawsService_ListLawBooks_Handler,
+		},
 		{
 			MethodName: "CreateOrUpdateLawBook",
 			Handler:    _LawsService_CreateOrUpdateLawBook_Handler,

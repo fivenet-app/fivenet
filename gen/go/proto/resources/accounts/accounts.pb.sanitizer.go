@@ -23,6 +23,15 @@ func (m *Account) Sanitize() error {
 		}
 	}
 
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Groups
 	if m.Groups != nil {
 		if v, ok := any(m.GetGroups()).(interface{ Sanitize() error }); ok {

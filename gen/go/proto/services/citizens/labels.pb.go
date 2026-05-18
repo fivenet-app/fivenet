@@ -28,6 +28,7 @@ type ListLabelsRequest struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Search        *string                `protobuf:"bytes,1,opt,name=search,proto3,oneof" json:"search,omitempty"`
 	MinAccess     *labels.AccessLevel    `protobuf:"varint,2,opt,name=min_access,json=minAccess,proto3,enum=resources.citizens.labels.AccessLevel,oneof" json:"min_access,omitempty"`
+	OwnJobOnly    *bool                  `protobuf:"varint,3,opt,name=own_job_only,json=ownJobOnly,proto3,oneof" json:"own_job_only,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -71,12 +72,23 @@ func (x *ListLabelsRequest) GetMinAccess() labels.AccessLevel {
 	return labels.AccessLevel(0)
 }
 
+func (x *ListLabelsRequest) GetOwnJobOnly() bool {
+	if x != nil && x.OwnJobOnly != nil {
+		return *x.OwnJobOnly
+	}
+	return false
+}
+
 func (x *ListLabelsRequest) SetSearch(v string) {
 	x.Search = &v
 }
 
 func (x *ListLabelsRequest) SetMinAccess(v labels.AccessLevel) {
 	x.MinAccess = &v
+}
+
+func (x *ListLabelsRequest) SetOwnJobOnly(v bool) {
+	x.OwnJobOnly = &v
 }
 
 func (x *ListLabelsRequest) HasSearch() bool {
@@ -93,6 +105,13 @@ func (x *ListLabelsRequest) HasMinAccess() bool {
 	return x.MinAccess != nil
 }
 
+func (x *ListLabelsRequest) HasOwnJobOnly() bool {
+	if x == nil {
+		return false
+	}
+	return x.OwnJobOnly != nil
+}
+
 func (x *ListLabelsRequest) ClearSearch() {
 	x.Search = nil
 }
@@ -101,11 +120,16 @@ func (x *ListLabelsRequest) ClearMinAccess() {
 	x.MinAccess = nil
 }
 
+func (x *ListLabelsRequest) ClearOwnJobOnly() {
+	x.OwnJobOnly = nil
+}
+
 type ListLabelsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Search    *string
-	MinAccess *labels.AccessLevel
+	Search     *string
+	MinAccess  *labels.AccessLevel
+	OwnJobOnly *bool
 }
 
 func (b0 ListLabelsRequest_builder) Build() *ListLabelsRequest {
@@ -114,6 +138,7 @@ func (b0 ListLabelsRequest_builder) Build() *ListLabelsRequest {
 	_, _ = b, x
 	x.Search = b.Search
 	x.MinAccess = b.MinAccess
+	x.OwnJobOnly = b.OwnJobOnly
 	return m0
 }
 
@@ -537,8 +562,9 @@ func (b0 DeleteLabelResponse_builder) Build() *DeleteLabelResponse {
 
 type AddCitizenLabelsRequest struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
-	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Labels        []*labels.Label        `protobuf:"bytes,2,rep,name=labels,proto3" json:"labels,omitempty"`
+	Reason        string                 `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -568,6 +594,13 @@ func (x *AddCitizenLabelsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *AddCitizenLabelsRequest) GetUserId() int32 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
 func (x *AddCitizenLabelsRequest) GetLabels() []*labels.Label {
 	if x != nil {
 		return x.Labels
@@ -582,6 +615,10 @@ func (x *AddCitizenLabelsRequest) GetReason() string {
 	return ""
 }
 
+func (x *AddCitizenLabelsRequest) SetUserId(v int32) {
+	x.UserId = v
+}
+
 func (x *AddCitizenLabelsRequest) SetLabels(v []*labels.Label) {
 	x.Labels = v
 }
@@ -593,6 +630,7 @@ func (x *AddCitizenLabelsRequest) SetReason(v string) {
 type AddCitizenLabelsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	UserId int32
 	Labels []*labels.Label
 	Reason string
 }
@@ -601,6 +639,7 @@ func (b0 AddCitizenLabelsRequest_builder) Build() *AddCitizenLabelsRequest {
 	m0 := &AddCitizenLabelsRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.UserId = b.UserId
 	x.Labels = b.Labels
 	x.Reason = b.Reason
 	return m0
@@ -651,8 +690,9 @@ func (b0 AddCitizenLabelsResponse_builder) Build() *AddCitizenLabelsResponse {
 
 type RemoveCitizenLabelsRequest struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Ids           []int64                `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids,omitempty"`
-	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Ids           []int64                `protobuf:"varint,2,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	Reason        string                 `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -682,6 +722,13 @@ func (x *RemoveCitizenLabelsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *RemoveCitizenLabelsRequest) GetUserId() int32 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
 func (x *RemoveCitizenLabelsRequest) GetIds() []int64 {
 	if x != nil {
 		return x.Ids
@@ -696,6 +743,10 @@ func (x *RemoveCitizenLabelsRequest) GetReason() string {
 	return ""
 }
 
+func (x *RemoveCitizenLabelsRequest) SetUserId(v int32) {
+	x.UserId = v
+}
+
 func (x *RemoveCitizenLabelsRequest) SetIds(v []int64) {
 	x.Ids = v
 }
@@ -707,6 +758,7 @@ func (x *RemoveCitizenLabelsRequest) SetReason(v string) {
 type RemoveCitizenLabelsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	UserId int32
 	Ids    []int64
 	Reason string
 }
@@ -715,6 +767,7 @@ func (b0 RemoveCitizenLabelsRequest_builder) Build() *RemoveCitizenLabelsRequest
 	m0 := &RemoveCitizenLabelsRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.UserId = b.UserId
 	x.Ids = b.Ids
 	x.Reason = b.Reason
 	return m0
@@ -767,13 +820,16 @@ var File_services_citizens_labels_proto protoreflect.FileDescriptor
 
 const file_services_citizens_labels_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/citizens/labels.proto\x12\x11services.citizens\x1a\x19codegen/perms/perms.proto\x1a&resources/citizens/labels/access.proto\x1a&resources/citizens/labels/labels.proto\"\x96\x01\n" +
+	"\x1eservices/citizens/labels.proto\x12\x11services.citizens\x1a\x19codegen/perms/perms.proto\x1a&resources/citizens/labels/access.proto\x1a&resources/citizens/labels/labels.proto\"\xce\x01\n" +
 	"\x11ListLabelsRequest\x12\x1b\n" +
 	"\x06search\x18\x01 \x01(\tH\x00R\x06search\x88\x01\x01\x12J\n" +
 	"\n" +
-	"min_access\x18\x02 \x01(\x0e2&.resources.citizens.labels.AccessLevelH\x01R\tminAccess\x88\x01\x01B\t\n" +
+	"min_access\x18\x02 \x01(\x0e2&.resources.citizens.labels.AccessLevelH\x01R\tminAccess\x88\x01\x01\x12%\n" +
+	"\fown_job_only\x18\x03 \x01(\bH\x02R\n" +
+	"ownJobOnly\x88\x01\x01B\t\n" +
 	"\a_searchB\r\n" +
-	"\v_min_access\"N\n" +
+	"\v_min_accessB\x0f\n" +
+	"\r_own_job_only\"N\n" +
 	"\x12ListLabelsResponse\x128\n" +
 	"\x06labels\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x06labels\"!\n" +
 	"\x0fGetLabelRequest\x12\x0e\n" +
@@ -786,14 +842,16 @@ const file_services_citizens_labels_proto_rawDesc = "" +
 	"\x05label\x18\x01 \x01(\v2 .resources.citizens.labels.LabelR\x05label\"$\n" +
 	"\x12DeleteLabelRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x15\n" +
-	"\x13DeleteLabelResponse\"k\n" +
-	"\x17AddCitizenLabelsRequest\x128\n" +
-	"\x06labels\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x06labels\x12\x16\n" +
-	"\x06reason\x18\x02 \x01(\tR\x06reason\"\x1a\n" +
-	"\x18AddCitizenLabelsResponse\"F\n" +
-	"\x1aRemoveCitizenLabelsRequest\x12\x10\n" +
-	"\x03ids\x18\x01 \x03(\x03R\x03ids\x12\x16\n" +
-	"\x06reason\x18\x02 \x01(\tR\x06reason\"\x1d\n" +
+	"\x13DeleteLabelResponse\"\x84\x01\n" +
+	"\x17AddCitizenLabelsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x128\n" +
+	"\x06labels\x18\x02 \x03(\v2 .resources.citizens.labels.LabelR\x06labels\x12\x16\n" +
+	"\x06reason\x18\x03 \x01(\tR\x06reason\"\x1a\n" +
+	"\x18AddCitizenLabelsResponse\"_\n" +
+	"\x1aRemoveCitizenLabelsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
+	"\x03ids\x18\x02 \x03(\x03R\x03ids\x12\x16\n" +
+	"\x06reason\x18\x03 \x01(\tR\x06reason\"\x1d\n" +
 	"\x1bRemoveCitizenLabelsResponse2\xee\x05\n" +
 	"\rLabelsService\x12a\n" +
 	"\n" +

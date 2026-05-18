@@ -5,8 +5,15 @@ package services.settings;
 import "buf/validate/validate.proto";
 import "codegen/perms/perms.proto";
 import "resources/laws/laws.proto";
+import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settings";
+
+message ListLawBooksRequest {}
+
+message ListLawBooksResponse {
+  repeated resources.laws.LawBook books = 1;
+}
 
 message CreateOrUpdateLawBookRequest {
   resources.laws.LawBook law_book = 1 [(buf.validate.field).required = true];
@@ -19,7 +26,9 @@ message CreateOrUpdateLawBookResponse {
 message DeleteLawBookRequest {
   int64 id = 1;
 }
-message DeleteLawBookResponse {}
+message DeleteLawBookResponse {
+  optional resources.timestamp.Timestamp deleted_at = 1;
+}
 
 message CreateOrUpdateLawRequest {
   resources.laws.Law law = 1 [(buf.validate.field).required = true];
@@ -33,13 +42,22 @@ message DeleteLawRequest {
   int64 id = 1;
 }
 
-message DeleteLawResponse {}
+message DeleteLawResponse {
+  optional resources.timestamp.Timestamp deleted_at = 1;
+}
 
 service LawsService {
   option (codegen.perms.perms_svc) = {
     order: 122
     icon: "i-mdi-scale-balance"
   };
+
+  rpc ListLawBooks(ListLawBooksRequest) returns (ListLawBooksResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateOrUpdateLawBook"
+    };
+  }
 
   rpc CreateOrUpdateLawBook(CreateOrUpdateLawBookRequest) returns (CreateOrUpdateLawBookResponse) {
     option (codegen.perms.perms) = {enabled: true};

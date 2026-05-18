@@ -134,7 +134,12 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) error {
 		ORDER_BY(
 			tLawBooks.SortKey.ASC(),
 			tLaws.SortKey.ASC(),
-		)
+		).
+		WHERE(mysql.AND(
+			tLawBooks.DeletedAt.IS_NULL(),
+			tLaws.DeletedAt.IS_NULL(),
+		)).
+		LIMIT(1000)
 
 	if lawBookId > 0 {
 		stmt = stmt.WHERE(

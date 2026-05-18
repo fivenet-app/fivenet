@@ -7,6 +7,7 @@ import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "resources/accounts/accounts.proto";
 import "resources/common/database/database.proto";
+import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settings";
@@ -60,7 +61,9 @@ message DeleteAccountRequest {
   int64 id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
-message DeleteAccountResponse {}
+message DeleteAccountResponse {
+  optional resources.timestamp.Timestamp deleted_at = 1;
+}
 
 service AccountsService {
   rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse) {

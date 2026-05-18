@@ -31,12 +31,13 @@ type Account struct {
 	Id             int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key"`
 	CreatedAt      *timestamp.Timestamp    `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt      *timestamp.Timestamp    `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Enabled        bool                    `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	Username       string                  `protobuf:"bytes,5,opt,name=username,proto3" json:"username,omitempty"`
-	License        string                  `protobuf:"bytes,6,opt,name=license,proto3" json:"license,omitempty"`
-	Groups         *AccountGroups          `protobuf:"bytes,7,opt,name=groups,proto3,oneof" json:"groups,omitempty"`
-	LastChar       *int32                  `protobuf:"varint,8,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
-	Oauth2Accounts []*oauth2.OAuth2Account `protobuf:"bytes,9,rep,name=oauth2_accounts,json=oauth2Accounts,proto3" json:"oauth2_accounts,omitempty" alias:"oauth2_account"`
+	DeletedAt      *timestamp.Timestamp    `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Enabled        bool                    `protobuf:"varint,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Username       string                  `protobuf:"bytes,6,opt,name=username,proto3" json:"username,omitempty"`
+	License        string                  `protobuf:"bytes,7,opt,name=license,proto3" json:"license,omitempty"`
+	Groups         *AccountGroups          `protobuf:"bytes,8,opt,name=groups,proto3,oneof" json:"groups,omitempty"`
+	LastChar       *int32                  `protobuf:"varint,9,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
+	Oauth2Accounts []*oauth2.OAuth2Account `protobuf:"bytes,10,rep,name=oauth2_accounts,json=oauth2Accounts,proto3" json:"oauth2_accounts,omitempty" alias:"oauth2_account"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -83,6 +84,13 @@ func (x *Account) GetCreatedAt() *timestamp.Timestamp {
 func (x *Account) GetUpdatedAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *Account) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DeletedAt
 	}
 	return nil
 }
@@ -141,6 +149,10 @@ func (x *Account) SetUpdatedAt(v *timestamp.Timestamp) {
 	x.UpdatedAt = v
 }
 
+func (x *Account) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
 func (x *Account) SetEnabled(v bool) {
 	x.Enabled = v
 }
@@ -179,6 +191,13 @@ func (x *Account) HasUpdatedAt() bool {
 	return x.UpdatedAt != nil
 }
 
+func (x *Account) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
 func (x *Account) HasGroups() bool {
 	if x == nil {
 		return false
@@ -201,6 +220,10 @@ func (x *Account) ClearUpdatedAt() {
 	x.UpdatedAt = nil
 }
 
+func (x *Account) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
 func (x *Account) ClearGroups() {
 	x.Groups = nil
 }
@@ -215,6 +238,7 @@ type Account_builder struct {
 	Id             int64
 	CreatedAt      *timestamp.Timestamp
 	UpdatedAt      *timestamp.Timestamp
+	DeletedAt      *timestamp.Timestamp
 	Enabled        bool
 	Username       string
 	License        string
@@ -230,6 +254,7 @@ func (b0 Account_builder) Build() *Account {
 	x.Id = b.Id
 	x.CreatedAt = b.CreatedAt
 	x.UpdatedAt = b.UpdatedAt
+	x.DeletedAt = b.DeletedAt
 	x.Enabled = b.Enabled
 	x.Username = b.Username
 	x.License = b.License
@@ -396,21 +421,25 @@ var File_resources_accounts_accounts_proto protoreflect.FileDescriptor
 
 const file_resources_accounts_accounts_proto_rawDesc = "" +
 	"\n" +
-	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a&resources/accounts/oauth2/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"\x92\x04\n" +
+	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a&resources/accounts/oauth2/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"\xe5\x04\n" +
 	"\aAccount\x12&\n" +
 	"\x02id\x18\x01 \x01(\x03B\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x18\n" +
-	"\aenabled\x18\x04 \x01(\bR\aenabled\x12\x1a\n" +
-	"\busername\x18\x05 \x01(\tR\busername\x12\x18\n" +
-	"\alicense\x18\x06 \x01(\tR\alicense\x12>\n" +
-	"\x06groups\x18\a \x01(\v2!.resources.accounts.AccountGroupsH\x02R\x06groups\x88\x01\x01\x12 \n" +
-	"\tlast_char\x18\b \x01(\x05H\x03R\blastChar\x88\x01\x01\x12n\n" +
-	"\x0foauth2_accounts\x18\t \x03(\v2(.resources.accounts.oauth2.OAuth2AccountB\x1b\x9a\x84\x9e\x03\x16alias:\"oauth2_account\"R\x0eoauth2AccountsB\r\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
+	"\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x18\n" +
+	"\aenabled\x18\x05 \x01(\bR\aenabled\x12\x1a\n" +
+	"\busername\x18\x06 \x01(\tR\busername\x12\x18\n" +
+	"\alicense\x18\a \x01(\tR\alicense\x12>\n" +
+	"\x06groups\x18\b \x01(\v2!.resources.accounts.AccountGroupsH\x03R\x06groups\x88\x01\x01\x12 \n" +
+	"\tlast_char\x18\t \x01(\x05H\x04R\blastChar\x88\x01\x01\x12n\n" +
+	"\x0foauth2_accounts\x18\n" +
+	" \x03(\v2(.resources.accounts.oauth2.OAuth2AccountB\x1b\x9a\x84\x9e\x03\x16alias:\"oauth2_account\"R\x0eoauth2AccountsB\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_updated_atB\t\n" +
+	"\v_updated_atB\r\n" +
+	"\v_deleted_atB\t\n" +
 	"\a_groupsB\f\n" +
 	"\n" +
 	"_last_char\"'\n" +
@@ -433,14 +462,15 @@ var file_resources_accounts_accounts_proto_goTypes = []any{
 var file_resources_accounts_accounts_proto_depIdxs = []int32{
 	3, // 0: resources.accounts.Account.created_at:type_name -> resources.timestamp.Timestamp
 	3, // 1: resources.accounts.Account.updated_at:type_name -> resources.timestamp.Timestamp
-	1, // 2: resources.accounts.Account.groups:type_name -> resources.accounts.AccountGroups
-	4, // 3: resources.accounts.Account.oauth2_accounts:type_name -> resources.accounts.oauth2.OAuth2Account
-	5, // 4: resources.accounts.Character.char:type_name -> resources.users.User
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	3, // 2: resources.accounts.Account.deleted_at:type_name -> resources.timestamp.Timestamp
+	1, // 3: resources.accounts.Account.groups:type_name -> resources.accounts.AccountGroups
+	4, // 4: resources.accounts.Account.oauth2_accounts:type_name -> resources.accounts.oauth2.OAuth2Account
+	5, // 5: resources.accounts.Character.char:type_name -> resources.users.User
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_resources_accounts_accounts_proto_init() }

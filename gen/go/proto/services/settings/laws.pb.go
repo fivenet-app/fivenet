@@ -11,6 +11,7 @@ package settings
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
 	laws "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/laws"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -24,6 +25,106 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type ListLawBooksRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListLawBooksRequest) Reset() {
+	*x = ListLawBooksRequest{}
+	mi := &file_services_settings_laws_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListLawBooksRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListLawBooksRequest) ProtoMessage() {}
+
+func (x *ListLawBooksRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_laws_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type ListLawBooksRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ListLawBooksRequest_builder) Build() *ListLawBooksRequest {
+	m0 := &ListLawBooksRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
+type ListLawBooksResponse struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Books         []*laws.LawBook        `protobuf:"bytes,1,rep,name=books,proto3" json:"books,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListLawBooksResponse) Reset() {
+	*x = ListLawBooksResponse{}
+	mi := &file_services_settings_laws_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListLawBooksResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListLawBooksResponse) ProtoMessage() {}
+
+func (x *ListLawBooksResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_laws_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListLawBooksResponse) GetBooks() []*laws.LawBook {
+	if x != nil {
+		return x.Books
+	}
+	return nil
+}
+
+func (x *ListLawBooksResponse) SetBooks(v []*laws.LawBook) {
+	x.Books = v
+}
+
+type ListLawBooksResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Books []*laws.LawBook
+}
+
+func (b0 ListLawBooksResponse_builder) Build() *ListLawBooksResponse {
+	m0 := &ListLawBooksResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Books = b.Books
+	return m0
+}
+
 type CreateOrUpdateLawBookRequest struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	LawBook       *laws.LawBook          `protobuf:"bytes,1,opt,name=law_book,json=lawBook,proto3" json:"law_book,omitempty"`
@@ -33,7 +134,7 @@ type CreateOrUpdateLawBookRequest struct {
 
 func (x *CreateOrUpdateLawBookRequest) Reset() {
 	*x = CreateOrUpdateLawBookRequest{}
-	mi := &file_services_settings_laws_proto_msgTypes[0]
+	mi := &file_services_settings_laws_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -45,7 +146,7 @@ func (x *CreateOrUpdateLawBookRequest) String() string {
 func (*CreateOrUpdateLawBookRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateLawBookRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_laws_proto_msgTypes[0]
+	mi := &file_services_settings_laws_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -101,7 +202,7 @@ type CreateOrUpdateLawBookResponse struct {
 
 func (x *CreateOrUpdateLawBookResponse) Reset() {
 	*x = CreateOrUpdateLawBookResponse{}
-	mi := &file_services_settings_laws_proto_msgTypes[1]
+	mi := &file_services_settings_laws_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -113,7 +214,7 @@ func (x *CreateOrUpdateLawBookResponse) String() string {
 func (*CreateOrUpdateLawBookResponse) ProtoMessage() {}
 
 func (x *CreateOrUpdateLawBookResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_laws_proto_msgTypes[1]
+	mi := &file_services_settings_laws_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -169,7 +270,7 @@ type DeleteLawBookRequest struct {
 
 func (x *DeleteLawBookRequest) Reset() {
 	*x = DeleteLawBookRequest{}
-	mi := &file_services_settings_laws_proto_msgTypes[2]
+	mi := &file_services_settings_laws_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -181,7 +282,7 @@ func (x *DeleteLawBookRequest) String() string {
 func (*DeleteLawBookRequest) ProtoMessage() {}
 
 func (x *DeleteLawBookRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_laws_proto_msgTypes[2]
+	mi := &file_services_settings_laws_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -219,13 +320,14 @@ func (b0 DeleteLawBookRequest_builder) Build() *DeleteLawBookRequest {
 
 type DeleteLawBookResponse struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DeleteLawBookResponse) Reset() {
 	*x = DeleteLawBookResponse{}
-	mi := &file_services_settings_laws_proto_msgTypes[3]
+	mi := &file_services_settings_laws_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -237,7 +339,7 @@ func (x *DeleteLawBookResponse) String() string {
 func (*DeleteLawBookResponse) ProtoMessage() {}
 
 func (x *DeleteLawBookResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_laws_proto_msgTypes[3]
+	mi := &file_services_settings_laws_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -248,15 +350,39 @@ func (x *DeleteLawBookResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *DeleteLawBookResponse) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DeletedAt
+	}
+	return nil
+}
+
+func (x *DeleteLawBookResponse) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *DeleteLawBookResponse) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *DeleteLawBookResponse) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
 type DeleteLawBookResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	DeletedAt *timestamp.Timestamp
 }
 
 func (b0 DeleteLawBookResponse_builder) Build() *DeleteLawBookResponse {
 	m0 := &DeleteLawBookResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.DeletedAt = b.DeletedAt
 	return m0
 }
 
@@ -269,7 +395,7 @@ type CreateOrUpdateLawRequest struct {
 
 func (x *CreateOrUpdateLawRequest) Reset() {
 	*x = CreateOrUpdateLawRequest{}
-	mi := &file_services_settings_laws_proto_msgTypes[4]
+	mi := &file_services_settings_laws_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -281,7 +407,7 @@ func (x *CreateOrUpdateLawRequest) String() string {
 func (*CreateOrUpdateLawRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateLawRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_laws_proto_msgTypes[4]
+	mi := &file_services_settings_laws_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -337,7 +463,7 @@ type CreateOrUpdateLawResponse struct {
 
 func (x *CreateOrUpdateLawResponse) Reset() {
 	*x = CreateOrUpdateLawResponse{}
-	mi := &file_services_settings_laws_proto_msgTypes[5]
+	mi := &file_services_settings_laws_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -349,7 +475,7 @@ func (x *CreateOrUpdateLawResponse) String() string {
 func (*CreateOrUpdateLawResponse) ProtoMessage() {}
 
 func (x *CreateOrUpdateLawResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_laws_proto_msgTypes[5]
+	mi := &file_services_settings_laws_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -405,7 +531,7 @@ type DeleteLawRequest struct {
 
 func (x *DeleteLawRequest) Reset() {
 	*x = DeleteLawRequest{}
-	mi := &file_services_settings_laws_proto_msgTypes[6]
+	mi := &file_services_settings_laws_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -417,7 +543,7 @@ func (x *DeleteLawRequest) String() string {
 func (*DeleteLawRequest) ProtoMessage() {}
 
 func (x *DeleteLawRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_laws_proto_msgTypes[6]
+	mi := &file_services_settings_laws_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -455,13 +581,14 @@ func (b0 DeleteLawRequest_builder) Build() *DeleteLawRequest {
 
 type DeleteLawResponse struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DeleteLawResponse) Reset() {
 	*x = DeleteLawResponse{}
-	mi := &file_services_settings_laws_proto_msgTypes[7]
+	mi := &file_services_settings_laws_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -473,7 +600,7 @@ func (x *DeleteLawResponse) String() string {
 func (*DeleteLawResponse) ProtoMessage() {}
 
 func (x *DeleteLawResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_laws_proto_msgTypes[7]
+	mi := &file_services_settings_laws_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -484,15 +611,39 @@ func (x *DeleteLawResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *DeleteLawResponse) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DeletedAt
+	}
+	return nil
+}
+
+func (x *DeleteLawResponse) SetDeletedAt(v *timestamp.Timestamp) {
+	x.DeletedAt = v
+}
+
+func (x *DeleteLawResponse) HasDeletedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.DeletedAt != nil
+}
+
+func (x *DeleteLawResponse) ClearDeletedAt() {
+	x.DeletedAt = nil
+}
+
 type DeleteLawResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	DeletedAt *timestamp.Timestamp
 }
 
 func (b0 DeleteLawResponse_builder) Build() *DeleteLawResponse {
 	m0 := &DeleteLawResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.DeletedAt = b.DeletedAt
 	return m0
 }
 
@@ -500,58 +651,76 @@ var File_services_settings_laws_proto protoreflect.FileDescriptor
 
 const file_services_settings_laws_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservices/settings/laws.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a\x19resources/laws/laws.proto\"R\n" +
+	"\x1cservices/settings/laws.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a\x19resources/laws/laws.proto\x1a#resources/timestamp/timestamp.proto\"\x15\n" +
+	"\x13ListLawBooksRequest\"E\n" +
+	"\x14ListLawBooksResponse\x12-\n" +
+	"\x05books\x18\x01 \x03(\v2\x17.resources.laws.LawBookR\x05books\"R\n" +
 	"\x1cCreateOrUpdateLawBookRequest\x122\n" +
 	"\blaw_book\x18\x01 \x01(\v2\x17.resources.laws.LawBookR\alawBook\"S\n" +
 	"\x1dCreateOrUpdateLawBookResponse\x122\n" +
 	"\blaw_book\x18\x01 \x01(\v2\x17.resources.laws.LawBookR\alawBook\"&\n" +
 	"\x14DeleteLawBookRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x17\n" +
-	"\x15DeleteLawBookResponse\"A\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"j\n" +
+	"\x15DeleteLawBookResponse\x12B\n" +
+	"\n" +
+	"deleted_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01B\r\n" +
+	"\v_deleted_at\"A\n" +
 	"\x18CreateOrUpdateLawRequest\x12%\n" +
 	"\x03law\x18\x01 \x01(\v2\x13.resources.laws.LawR\x03law\"B\n" +
 	"\x19CreateOrUpdateLawResponse\x12%\n" +
 	"\x03law\x18\x01 \x01(\v2\x13.resources.laws.LawR\x03law\"\"\n" +
 	"\x10DeleteLawRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x13\n" +
-	"\x11DeleteLawResponse2\x9a\x04\n" +
-	"\vLawsService\x12\x82\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"f\n" +
+	"\x11DeleteLawResponse\x12B\n" +
+	"\n" +
+	"deleted_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01B\r\n" +
+	"\v_deleted_at2\x9a\x05\n" +
+	"\vLawsService\x12~\n" +
+	"\fListLawBooks\x12&.services.settings.ListLawBooksRequest\x1a'.services.settings.ListLawBooksResponse\"\x1d\xd2\xf3\x18\x19\b\x01\"\x15CreateOrUpdateLawBook\x12\x82\x01\n" +
 	"\x15CreateOrUpdateLawBook\x12/.services.settings.CreateOrUpdateLawBookRequest\x1a0.services.settings.CreateOrUpdateLawBookResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12j\n" +
 	"\rDeleteLawBook\x12'.services.settings.DeleteLawBookRequest\x1a(.services.settings.DeleteLawBookResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8d\x01\n" +
 	"\x11CreateOrUpdateLaw\x12+.services.settings.CreateOrUpdateLawRequest\x1a,.services.settings.CreateOrUpdateLawResponse\"\x1d\xd2\xf3\x18\x19\b\x01\"\x15CreateOrUpdateLawBook\x12m\n" +
 	"\tDeleteLaw\x12#.services.settings.DeleteLawRequest\x1a$.services.settings.DeleteLawResponse\"\x15\xd2\xf3\x18\x11\b\x01\"\rDeleteLawBook\x1a\x1b\xea\xf3\x18\x17\bz\x12\x13i-mdi-scale-balanceBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
-var file_services_settings_laws_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_services_settings_laws_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_settings_laws_proto_goTypes = []any{
-	(*CreateOrUpdateLawBookRequest)(nil),  // 0: services.settings.CreateOrUpdateLawBookRequest
-	(*CreateOrUpdateLawBookResponse)(nil), // 1: services.settings.CreateOrUpdateLawBookResponse
-	(*DeleteLawBookRequest)(nil),          // 2: services.settings.DeleteLawBookRequest
-	(*DeleteLawBookResponse)(nil),         // 3: services.settings.DeleteLawBookResponse
-	(*CreateOrUpdateLawRequest)(nil),      // 4: services.settings.CreateOrUpdateLawRequest
-	(*CreateOrUpdateLawResponse)(nil),     // 5: services.settings.CreateOrUpdateLawResponse
-	(*DeleteLawRequest)(nil),              // 6: services.settings.DeleteLawRequest
-	(*DeleteLawResponse)(nil),             // 7: services.settings.DeleteLawResponse
-	(*laws.LawBook)(nil),                  // 8: resources.laws.LawBook
-	(*laws.Law)(nil),                      // 9: resources.laws.Law
+	(*ListLawBooksRequest)(nil),           // 0: services.settings.ListLawBooksRequest
+	(*ListLawBooksResponse)(nil),          // 1: services.settings.ListLawBooksResponse
+	(*CreateOrUpdateLawBookRequest)(nil),  // 2: services.settings.CreateOrUpdateLawBookRequest
+	(*CreateOrUpdateLawBookResponse)(nil), // 3: services.settings.CreateOrUpdateLawBookResponse
+	(*DeleteLawBookRequest)(nil),          // 4: services.settings.DeleteLawBookRequest
+	(*DeleteLawBookResponse)(nil),         // 5: services.settings.DeleteLawBookResponse
+	(*CreateOrUpdateLawRequest)(nil),      // 6: services.settings.CreateOrUpdateLawRequest
+	(*CreateOrUpdateLawResponse)(nil),     // 7: services.settings.CreateOrUpdateLawResponse
+	(*DeleteLawRequest)(nil),              // 8: services.settings.DeleteLawRequest
+	(*DeleteLawResponse)(nil),             // 9: services.settings.DeleteLawResponse
+	(*laws.LawBook)(nil),                  // 10: resources.laws.LawBook
+	(*timestamp.Timestamp)(nil),           // 11: resources.timestamp.Timestamp
+	(*laws.Law)(nil),                      // 12: resources.laws.Law
 }
 var file_services_settings_laws_proto_depIdxs = []int32{
-	8, // 0: services.settings.CreateOrUpdateLawBookRequest.law_book:type_name -> resources.laws.LawBook
-	8, // 1: services.settings.CreateOrUpdateLawBookResponse.law_book:type_name -> resources.laws.LawBook
-	9, // 2: services.settings.CreateOrUpdateLawRequest.law:type_name -> resources.laws.Law
-	9, // 3: services.settings.CreateOrUpdateLawResponse.law:type_name -> resources.laws.Law
-	0, // 4: services.settings.LawsService.CreateOrUpdateLawBook:input_type -> services.settings.CreateOrUpdateLawBookRequest
-	2, // 5: services.settings.LawsService.DeleteLawBook:input_type -> services.settings.DeleteLawBookRequest
-	4, // 6: services.settings.LawsService.CreateOrUpdateLaw:input_type -> services.settings.CreateOrUpdateLawRequest
-	6, // 7: services.settings.LawsService.DeleteLaw:input_type -> services.settings.DeleteLawRequest
-	1, // 8: services.settings.LawsService.CreateOrUpdateLawBook:output_type -> services.settings.CreateOrUpdateLawBookResponse
-	3, // 9: services.settings.LawsService.DeleteLawBook:output_type -> services.settings.DeleteLawBookResponse
-	5, // 10: services.settings.LawsService.CreateOrUpdateLaw:output_type -> services.settings.CreateOrUpdateLawResponse
-	7, // 11: services.settings.LawsService.DeleteLaw:output_type -> services.settings.DeleteLawResponse
-	8, // [8:12] is the sub-list for method output_type
-	4, // [4:8] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	10, // 0: services.settings.ListLawBooksResponse.books:type_name -> resources.laws.LawBook
+	10, // 1: services.settings.CreateOrUpdateLawBookRequest.law_book:type_name -> resources.laws.LawBook
+	10, // 2: services.settings.CreateOrUpdateLawBookResponse.law_book:type_name -> resources.laws.LawBook
+	11, // 3: services.settings.DeleteLawBookResponse.deleted_at:type_name -> resources.timestamp.Timestamp
+	12, // 4: services.settings.CreateOrUpdateLawRequest.law:type_name -> resources.laws.Law
+	12, // 5: services.settings.CreateOrUpdateLawResponse.law:type_name -> resources.laws.Law
+	11, // 6: services.settings.DeleteLawResponse.deleted_at:type_name -> resources.timestamp.Timestamp
+	0,  // 7: services.settings.LawsService.ListLawBooks:input_type -> services.settings.ListLawBooksRequest
+	2,  // 8: services.settings.LawsService.CreateOrUpdateLawBook:input_type -> services.settings.CreateOrUpdateLawBookRequest
+	4,  // 9: services.settings.LawsService.DeleteLawBook:input_type -> services.settings.DeleteLawBookRequest
+	6,  // 10: services.settings.LawsService.CreateOrUpdateLaw:input_type -> services.settings.CreateOrUpdateLawRequest
+	8,  // 11: services.settings.LawsService.DeleteLaw:input_type -> services.settings.DeleteLawRequest
+	1,  // 12: services.settings.LawsService.ListLawBooks:output_type -> services.settings.ListLawBooksResponse
+	3,  // 13: services.settings.LawsService.CreateOrUpdateLawBook:output_type -> services.settings.CreateOrUpdateLawBookResponse
+	5,  // 14: services.settings.LawsService.DeleteLawBook:output_type -> services.settings.DeleteLawBookResponse
+	7,  // 15: services.settings.LawsService.CreateOrUpdateLaw:output_type -> services.settings.CreateOrUpdateLawResponse
+	9,  // 16: services.settings.LawsService.DeleteLaw:output_type -> services.settings.DeleteLawResponse
+	12, // [12:17] is the sub-list for method output_type
+	7,  // [7:12] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_services_settings_laws_proto_init() }
@@ -559,13 +728,15 @@ func file_services_settings_laws_proto_init() {
 	if File_services_settings_laws_proto != nil {
 		return
 	}
+	file_services_settings_laws_proto_msgTypes[5].OneofWrappers = []any{}
+	file_services_settings_laws_proto_msgTypes[9].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_settings_laws_proto_rawDesc), len(file_services_settings_laws_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

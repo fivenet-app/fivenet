@@ -31,27 +31,31 @@ export interface Account {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: bool enabled = 4
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: bool enabled = 5
      */
     enabled: boolean;
     /**
-     * @generated from protobuf field: string username = 5
+     * @generated from protobuf field: string username = 6
      */
     username: string;
     /**
-     * @generated from protobuf field: string license = 6
+     * @generated from protobuf field: string license = 7
      */
     license: string;
     /**
-     * @generated from protobuf field: optional resources.accounts.AccountGroups groups = 7
+     * @generated from protobuf field: optional resources.accounts.AccountGroups groups = 8
      */
     groups?: AccountGroups;
     /**
-     * @generated from protobuf field: optional int32 last_char = 8
+     * @generated from protobuf field: optional int32 last_char = 9
      */
     lastChar?: number;
     /**
-     * @generated from protobuf field: repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts = 9
+     * @generated from protobuf field: repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts = 10
      */
     oauth2Accounts: OAuth2Account[];
 }
@@ -88,12 +92,13 @@ class Account$Type extends MessageType<Account> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "24" } } } },
-            { no: 6, name: "license", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 7, name: "groups", kind: "message", T: () => AccountGroups },
-            { no: 8, name: "last_char", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 9, name: "oauth2_accounts", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => OAuth2Account, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "tagger.tags": "alias:\"oauth2_account\"" } }
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "24" } } } },
+            { no: 7, name: "license", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 8, name: "groups", kind: "message", T: () => AccountGroups },
+            { no: 9, name: "last_char", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 10, name: "oauth2_accounts", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => OAuth2Account, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "tagger.tags": "alias:\"oauth2_account\"" } }
         ]);
     }
     create(value?: PartialMessage<Account>): Account {
@@ -121,22 +126,25 @@ class Account$Type extends MessageType<Account> {
                 case /* optional resources.timestamp.Timestamp updated_at */ 3:
                     message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
-                case /* bool enabled */ 4:
+                case /* optional resources.timestamp.Timestamp deleted_at */ 4:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* bool enabled */ 5:
                     message.enabled = reader.bool();
                     break;
-                case /* string username */ 5:
+                case /* string username */ 6:
                     message.username = reader.string();
                     break;
-                case /* string license */ 6:
+                case /* string license */ 7:
                     message.license = reader.string();
                     break;
-                case /* optional resources.accounts.AccountGroups groups */ 7:
+                case /* optional resources.accounts.AccountGroups groups */ 8:
                     message.groups = AccountGroups.internalBinaryRead(reader, reader.uint32(), options, message.groups);
                     break;
-                case /* optional int32 last_char */ 8:
+                case /* optional int32 last_char */ 9:
                     message.lastChar = reader.int32();
                     break;
-                case /* repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts */ 9:
+                case /* repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts */ 10:
                     message.oauth2Accounts.push(OAuth2Account.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -160,24 +168,27 @@ class Account$Type extends MessageType<Account> {
         /* optional resources.timestamp.Timestamp updated_at = 3; */
         if (message.updatedAt)
             Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* bool enabled = 4; */
+        /* optional resources.timestamp.Timestamp deleted_at = 4; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* bool enabled = 5; */
         if (message.enabled !== false)
-            writer.tag(4, WireType.Varint).bool(message.enabled);
-        /* string username = 5; */
+            writer.tag(5, WireType.Varint).bool(message.enabled);
+        /* string username = 6; */
         if (message.username !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.username);
-        /* string license = 6; */
+            writer.tag(6, WireType.LengthDelimited).string(message.username);
+        /* string license = 7; */
         if (message.license !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.license);
-        /* optional resources.accounts.AccountGroups groups = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.license);
+        /* optional resources.accounts.AccountGroups groups = 8; */
         if (message.groups)
-            AccountGroups.internalBinaryWrite(message.groups, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* optional int32 last_char = 8; */
+            AccountGroups.internalBinaryWrite(message.groups, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* optional int32 last_char = 9; */
         if (message.lastChar !== undefined)
-            writer.tag(8, WireType.Varint).int32(message.lastChar);
-        /* repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts = 9; */
+            writer.tag(9, WireType.Varint).int32(message.lastChar);
+        /* repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts = 10; */
         for (let i = 0; i < message.oauth2Accounts.length; i++)
-            OAuth2Account.internalBinaryWrite(message.oauth2Accounts[i], writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+            OAuth2Account.internalBinaryWrite(message.oauth2Accounts[i], writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

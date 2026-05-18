@@ -29,15 +29,19 @@ export interface LawBook {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: string name = 4
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: string name = 5
      */
     name: string;
     /**
-     * @generated from protobuf field: optional string description = 5
+     * @generated from protobuf field: optional string description = 6
      */
     description?: string;
     /**
-     * @generated from protobuf field: repeated resources.laws.Law laws = 6
+     * @generated from protobuf field: repeated resources.laws.Law laws = 7
      */
     laws: Law[];
 }
@@ -58,31 +62,35 @@ export interface Law {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: int64 lawbook_id = 4
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: int64 lawbook_id = 5
      */
     lawbookId: number;
     /**
-     * @generated from protobuf field: string name = 5
+     * @generated from protobuf field: string name = 6
      */
     name: string;
     /**
-     * @generated from protobuf field: optional string description = 6
+     * @generated from protobuf field: optional string description = 7
      */
     description?: string;
     /**
-     * @generated from protobuf field: optional string hint = 7
+     * @generated from protobuf field: optional string hint = 8
      */
     hint?: string;
     /**
-     * @generated from protobuf field: optional uint32 fine = 8
+     * @generated from protobuf field: optional uint32 fine = 9
      */
     fine?: number;
     /**
-     * @generated from protobuf field: optional uint32 detention_time = 9
+     * @generated from protobuf field: optional uint32 detention_time = 10
      */
     detentionTime?: number;
     /**
-     * @generated from protobuf field: optional uint32 stvo_points = 10
+     * @generated from protobuf field: optional uint32 stvo_points = 11
      */
     stvoPoints?: number;
 }
@@ -93,9 +101,10 @@ class LawBook$Type extends MessageType<LawBook> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 5, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 6, name: "laws", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Law }
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 7, name: "laws", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Law }
         ]);
     }
     create(value?: PartialMessage<LawBook>): LawBook {
@@ -121,13 +130,16 @@ class LawBook$Type extends MessageType<LawBook> {
                 case /* optional resources.timestamp.Timestamp updated_at */ 3:
                     message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
-                case /* string name */ 4:
+                case /* optional resources.timestamp.Timestamp deleted_at */ 4:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* string name */ 5:
                     message.name = reader.string();
                     break;
-                case /* optional string description */ 5:
+                case /* optional string description */ 6:
                     message.description = reader.string();
                     break;
-                case /* repeated resources.laws.Law laws */ 6:
+                case /* repeated resources.laws.Law laws */ 7:
                     message.laws.push(Law.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -151,15 +163,18 @@ class LawBook$Type extends MessageType<LawBook> {
         /* optional resources.timestamp.Timestamp updated_at = 3; */
         if (message.updatedAt)
             Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* string name = 4; */
+        /* optional resources.timestamp.Timestamp deleted_at = 4; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* string name = 5; */
         if (message.name !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.name);
-        /* optional string description = 5; */
+            writer.tag(5, WireType.LengthDelimited).string(message.name);
+        /* optional string description = 6; */
         if (message.description !== undefined)
-            writer.tag(5, WireType.LengthDelimited).string(message.description);
-        /* repeated resources.laws.Law laws = 6; */
+            writer.tag(6, WireType.LengthDelimited).string(message.description);
+        /* repeated resources.laws.Law laws = 7; */
         for (let i = 0; i < message.laws.length; i++)
-            Law.internalBinaryWrite(message.laws[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            Law.internalBinaryWrite(message.laws[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -177,13 +192,14 @@ class Law$Type extends MessageType<Law> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"law.id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "lawbook_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 7, name: "hint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 8, name: "fine", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 9, name: "detention_time", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 10, name: "stvo_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ }
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "lawbook_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 8, name: "hint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 9, name: "fine", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 10, name: "detention_time", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 11, name: "stvo_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
     create(value?: PartialMessage<Law>): Law {
@@ -209,25 +225,28 @@ class Law$Type extends MessageType<Law> {
                 case /* optional resources.timestamp.Timestamp updated_at */ 3:
                     message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
-                case /* int64 lawbook_id */ 4:
+                case /* optional resources.timestamp.Timestamp deleted_at */ 4:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* int64 lawbook_id */ 5:
                     message.lawbookId = reader.int64().toNumber();
                     break;
-                case /* string name */ 5:
+                case /* string name */ 6:
                     message.name = reader.string();
                     break;
-                case /* optional string description */ 6:
+                case /* optional string description */ 7:
                     message.description = reader.string();
                     break;
-                case /* optional string hint */ 7:
+                case /* optional string hint */ 8:
                     message.hint = reader.string();
                     break;
-                case /* optional uint32 fine */ 8:
+                case /* optional uint32 fine */ 9:
                     message.fine = reader.uint32();
                     break;
-                case /* optional uint32 detention_time */ 9:
+                case /* optional uint32 detention_time */ 10:
                     message.detentionTime = reader.uint32();
                     break;
-                case /* optional uint32 stvo_points */ 10:
+                case /* optional uint32 stvo_points */ 11:
                     message.stvoPoints = reader.uint32();
                     break;
                 default:
@@ -251,27 +270,30 @@ class Law$Type extends MessageType<Law> {
         /* optional resources.timestamp.Timestamp updated_at = 3; */
         if (message.updatedAt)
             Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* int64 lawbook_id = 4; */
+        /* optional resources.timestamp.Timestamp deleted_at = 4; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* int64 lawbook_id = 5; */
         if (message.lawbookId !== 0)
-            writer.tag(4, WireType.Varint).int64(message.lawbookId);
-        /* string name = 5; */
+            writer.tag(5, WireType.Varint).int64(message.lawbookId);
+        /* string name = 6; */
         if (message.name !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.name);
-        /* optional string description = 6; */
+            writer.tag(6, WireType.LengthDelimited).string(message.name);
+        /* optional string description = 7; */
         if (message.description !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.description);
-        /* optional string hint = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.description);
+        /* optional string hint = 8; */
         if (message.hint !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.hint);
-        /* optional uint32 fine = 8; */
+            writer.tag(8, WireType.LengthDelimited).string(message.hint);
+        /* optional uint32 fine = 9; */
         if (message.fine !== undefined)
-            writer.tag(8, WireType.Varint).uint32(message.fine);
-        /* optional uint32 detention_time = 9; */
+            writer.tag(9, WireType.Varint).uint32(message.fine);
+        /* optional uint32 detention_time = 10; */
         if (message.detentionTime !== undefined)
-            writer.tag(9, WireType.Varint).uint32(message.detentionTime);
-        /* optional uint32 stvo_points = 10; */
+            writer.tag(10, WireType.Varint).uint32(message.detentionTime);
+        /* optional uint32 stvo_points = 11; */
         if (message.stvoPoints !== undefined)
-            writer.tag(10, WireType.Varint).uint32(message.stvoPoints);
+            writer.tag(11, WireType.Varint).uint32(message.stvoPoints);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

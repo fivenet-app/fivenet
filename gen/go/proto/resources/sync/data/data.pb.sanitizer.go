@@ -283,8 +283,8 @@ func (m *LastCharID) Sanitize() error {
 		return nil
 	}
 
-	// Field: Identifier
-	m.Identifier = htmlsanitizer.Sanitize(m.Identifier)
+	// Field: License
+	m.License = htmlsanitizer.Sanitize(m.License)
 
 	return nil
 }

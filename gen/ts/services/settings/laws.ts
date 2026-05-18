@@ -3,9 +3,9 @@
 // tslint:disable
 // @ts-nocheck
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
+import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
 import { UnknownFieldHandler } from "@protobuf-ts/runtime";
@@ -13,7 +13,22 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Law } from "../../resources/laws/laws";
+import { Timestamp } from "../../resources/timestamp/timestamp";
 import { LawBook } from "../../resources/laws/laws";
+/**
+ * @generated from protobuf message services.settings.ListLawBooksRequest
+ */
+export interface ListLawBooksRequest {
+}
+/**
+ * @generated from protobuf message services.settings.ListLawBooksResponse
+ */
+export interface ListLawBooksResponse {
+    /**
+     * @generated from protobuf field: repeated resources.laws.LawBook books = 1
+     */
+    books: LawBook[];
+}
 /**
  * @generated from protobuf message services.settings.CreateOrUpdateLawBookRequest
  */
@@ -45,6 +60,10 @@ export interface DeleteLawBookRequest {
  * @generated from protobuf message services.settings.DeleteLawBookResponse
  */
 export interface DeleteLawBookResponse {
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 1
+     */
+    deletedAt?: Timestamp;
 }
 /**
  * @generated from protobuf message services.settings.CreateOrUpdateLawRequest
@@ -77,7 +96,96 @@ export interface DeleteLawRequest {
  * @generated from protobuf message services.settings.DeleteLawResponse
  */
 export interface DeleteLawResponse {
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 1
+     */
+    deletedAt?: Timestamp;
 }
+// @generated message type with reflection information, may provide speed optimized methods
+class ListLawBooksRequest$Type extends MessageType<ListLawBooksRequest> {
+    constructor() {
+        super("services.settings.ListLawBooksRequest", []);
+    }
+    create(value?: PartialMessage<ListLawBooksRequest>): ListLawBooksRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ListLawBooksRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListLawBooksRequest): ListLawBooksRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListLawBooksRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.ListLawBooksRequest
+ */
+export const ListLawBooksRequest = new ListLawBooksRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListLawBooksResponse$Type extends MessageType<ListLawBooksResponse> {
+    constructor() {
+        super("services.settings.ListLawBooksResponse", [
+            { no: 1, name: "books", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => LawBook }
+        ]);
+    }
+    create(value?: PartialMessage<ListLawBooksResponse>): ListLawBooksResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.books = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListLawBooksResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListLawBooksResponse): ListLawBooksResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.laws.LawBook books */ 1:
+                    message.books.push(LawBook.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListLawBooksResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.laws.LawBook books = 1; */
+        for (let i = 0; i < message.books.length; i++)
+            LawBook.internalBinaryWrite(message.books[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.ListLawBooksResponse
+ */
+export const ListLawBooksResponse = new ListLawBooksResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateOrUpdateLawBookRequest$Type extends MessageType<CreateOrUpdateLawBookRequest> {
     constructor() {
@@ -220,7 +328,9 @@ export const DeleteLawBookRequest = new DeleteLawBookRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteLawBookResponse$Type extends MessageType<DeleteLawBookResponse> {
     constructor() {
-        super("services.settings.DeleteLawBookResponse", []);
+        super("services.settings.DeleteLawBookResponse", [
+            { no: 1, name: "deleted_at", kind: "message", T: () => Timestamp }
+        ]);
     }
     create(value?: PartialMessage<DeleteLawBookResponse>): DeleteLawBookResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -233,6 +343,9 @@ class DeleteLawBookResponse$Type extends MessageType<DeleteLawBookResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* optional resources.timestamp.Timestamp deleted_at */ 1:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -245,6 +358,9 @@ class DeleteLawBookResponse$Type extends MessageType<DeleteLawBookResponse> {
         return message;
     }
     internalBinaryWrite(message: DeleteLawBookResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.timestamp.Timestamp deleted_at = 1; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -397,7 +513,9 @@ export const DeleteLawRequest = new DeleteLawRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteLawResponse$Type extends MessageType<DeleteLawResponse> {
     constructor() {
-        super("services.settings.DeleteLawResponse", []);
+        super("services.settings.DeleteLawResponse", [
+            { no: 1, name: "deleted_at", kind: "message", T: () => Timestamp }
+        ]);
     }
     create(value?: PartialMessage<DeleteLawResponse>): DeleteLawResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -410,6 +528,9 @@ class DeleteLawResponse$Type extends MessageType<DeleteLawResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* optional resources.timestamp.Timestamp deleted_at */ 1:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -422,6 +543,9 @@ class DeleteLawResponse$Type extends MessageType<DeleteLawResponse> {
         return message;
     }
     internalBinaryWrite(message: DeleteLawResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.timestamp.Timestamp deleted_at = 1; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -436,6 +560,7 @@ export const DeleteLawResponse = new DeleteLawResponse$Type();
  * @generated ServiceType for protobuf service services.settings.LawsService
  */
 export const LawsService = new ServiceType("services.settings.LawsService", [
+    { name: "ListLawBooks", options: { "codegen.perms.perms": { enabled: true, name: "CreateOrUpdateLawBook" } }, I: ListLawBooksRequest, O: ListLawBooksResponse },
     { name: "CreateOrUpdateLawBook", options: { "codegen.perms.perms": { enabled: true } }, I: CreateOrUpdateLawBookRequest, O: CreateOrUpdateLawBookResponse },
     { name: "DeleteLawBook", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteLawBookRequest, O: DeleteLawBookResponse },
     { name: "CreateOrUpdateLaw", options: { "codegen.perms.perms": { enabled: true, name: "CreateOrUpdateLawBook" } }, I: CreateOrUpdateLawRequest, O: CreateOrUpdateLawResponse },

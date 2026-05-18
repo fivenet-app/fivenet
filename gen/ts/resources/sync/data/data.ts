@@ -129,9 +129,9 @@ export interface DeleteVehicles {
  */
 export interface LastCharID {
     /**
-     * @generated from protobuf field: string identifier = 1
+     * @generated from protobuf field: string license = 1
      */
-    identifier: string;
+    license: string;
     /**
      * @generated from protobuf field: optional int32 last_char_id = 2
      */
@@ -714,13 +714,13 @@ export const DeleteVehicles = new DeleteVehicles$Type();
 class LastCharID$Type extends MessageType<LastCharID> {
     constructor() {
         super("resources.sync.data.LastCharID", [
-            { no: 1, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 1, name: "license", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 2, name: "last_char_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<LastCharID>): LastCharID {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.identifier = "";
+        message.license = "";
         if (value !== undefined)
             reflectionMergePartial<LastCharID>(this, message, value);
         return message;
@@ -730,8 +730,8 @@ class LastCharID$Type extends MessageType<LastCharID> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string identifier */ 1:
-                    message.identifier = reader.string();
+                case /* string license */ 1:
+                    message.license = reader.string();
                     break;
                 case /* optional int32 last_char_id */ 2:
                     message.lastCharId = reader.int32();
@@ -748,9 +748,9 @@ class LastCharID$Type extends MessageType<LastCharID> {
         return message;
     }
     internalBinaryWrite(message: LastCharID, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string identifier = 1; */
-        if (message.identifier !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.identifier);
+        /* string license = 1; */
+        if (message.license !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.license);
         /* optional int32 last_char_id = 2; */
         if (message.lastCharId !== undefined)
             writer.tag(2, WireType.Varint).int32(message.lastCharId);

@@ -476,6 +476,9 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	"settings.LawsService/DeleteLaw": {
 		permssettings.LawsService.DeleteLawBook.Perm,
 	},
+	"settings.LawsService/ListLawBooks": {
+		permssettings.LawsService.CreateOrUpdateLawBook.Perm,
+	},
 
 	// Service: settings.SettingsService
 	"settings.SettingsService/DeleteJobLogo": {

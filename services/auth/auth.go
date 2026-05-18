@@ -48,6 +48,7 @@ func (s *Server) getAccountFromDB(
 		tAccounts.ID,
 		tAccounts.CreatedAt,
 		tAccounts.UpdatedAt,
+		tAccounts.DeletedAt,
 		tAccounts.Enabled,
 		tAccounts.Username,
 		tAccounts.License,
@@ -67,6 +68,7 @@ func (s *Server) getAccountFromDB(
 		FROM(tAccounts).
 		WHERE(mysql.AND(
 			tAccounts.Enabled.IS_TRUE(),
+			tAccounts.DeletedAt.IS_NULL(),
 			condition,
 		)).
 		LIMIT(1)

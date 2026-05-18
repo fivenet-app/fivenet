@@ -12,6 +12,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Timestamp } from "../../resources/timestamp/timestamp";
 import { UserShort } from "../../resources/users/short/user";
 import { Account } from "../../resources/accounts/accounts";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -154,6 +155,10 @@ export interface DeleteAccountRequest {
  * @generated from protobuf message services.settings.DeleteAccountResponse
  */
 export interface DeleteAccountResponse {
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 1
+     */
+    deletedAt?: Timestamp;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListAccountsRequest$Type extends MessageType<ListAccountsRequest> {
@@ -663,7 +668,9 @@ export const DeleteAccountRequest = new DeleteAccountRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteAccountResponse$Type extends MessageType<DeleteAccountResponse> {
     constructor() {
-        super("services.settings.DeleteAccountResponse", []);
+        super("services.settings.DeleteAccountResponse", [
+            { no: 1, name: "deleted_at", kind: "message", T: () => Timestamp }
+        ]);
     }
     create(value?: PartialMessage<DeleteAccountResponse>): DeleteAccountResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -676,6 +683,9 @@ class DeleteAccountResponse$Type extends MessageType<DeleteAccountResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* optional resources.timestamp.Timestamp deleted_at */ 1:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -688,6 +698,9 @@ class DeleteAccountResponse$Type extends MessageType<DeleteAccountResponse> {
         return message;
     }
     internalBinaryWrite(message: DeleteAccountResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.timestamp.Timestamp deleted_at = 1; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

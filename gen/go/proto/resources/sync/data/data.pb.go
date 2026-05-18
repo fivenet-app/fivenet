@@ -662,7 +662,7 @@ func (b0 DeleteVehicles_builder) Build() *DeleteVehicles {
 
 type LastCharID struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Identifier    string                 `protobuf:"bytes,1,opt,name=identifier,proto3" json:"identifier,omitempty"`
+	License       string                 `protobuf:"bytes,1,opt,name=license,proto3" json:"license,omitempty"`
 	LastCharId    *int32                 `protobuf:"varint,2,opt,name=last_char_id,json=lastCharId,proto3,oneof" json:"last_char_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -693,9 +693,9 @@ func (x *LastCharID) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *LastCharID) GetIdentifier() string {
+func (x *LastCharID) GetLicense() string {
 	if x != nil {
-		return x.Identifier
+		return x.License
 	}
 	return ""
 }
@@ -707,8 +707,8 @@ func (x *LastCharID) GetLastCharId() int32 {
 	return 0
 }
 
-func (x *LastCharID) SetIdentifier(v string) {
-	x.Identifier = v
+func (x *LastCharID) SetLicense(v string) {
+	x.License = v
 }
 
 func (x *LastCharID) SetLastCharId(v int32) {
@@ -729,7 +729,7 @@ func (x *LastCharID) ClearLastCharId() {
 type LastCharID_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Identifier string
+	License    string
 	LastCharId *int32
 }
 
@@ -737,7 +737,7 @@ func (b0 LastCharID_builder) Build() *LastCharID {
 	m0 := &LastCharID{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Identifier = b.Identifier
+	x.License = b.License
 	x.LastCharId = b.LastCharId
 	return m0
 }
@@ -1278,12 +1278,10 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\vDeleteUsers\x12\x19\n" +
 	"\buser_ids\x18\x01 \x03(\x05R\auserIds\"(\n" +
 	"\x0eDeleteVehicles\x12\x16\n" +
-	"\x06plates\x18\x01 \x03(\tR\x06plates\"d\n" +
+	"\x06plates\x18\x01 \x03(\tR\x06plates\"^\n" +
 	"\n" +
-	"LastCharID\x12\x1e\n" +
-	"\n" +
-	"identifier\x18\x01 \x01(\tR\n" +
-	"identifier\x12%\n" +
+	"LastCharID\x12\x18\n" +
+	"\alicense\x18\x01 \x01(\tR\alicense\x12%\n" +
 	"\flast_char_id\x18\x02 \x01(\x05H\x00R\n" +
 	"lastCharId\x88\x01\x01B\x0f\n" +
 	"\r_last_char_id\"_\n" +
