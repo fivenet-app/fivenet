@@ -34,6 +34,13 @@ const (
 	UnitsServiceDeleteUnitPerm         perms.Name = "DeleteUnit"
 )
 
+type CentrumServiceUpdateSettingsAccessPermValue string
+
+const (
+	CentrumServiceUpdateSettingsAccessPermValueShared CentrumServiceUpdateSettingsAccessPermValue = "Shared"
+	CentrumServiceUpdateSettingsAccessPermValuePublic CentrumServiceUpdateSettingsAccessPermValue = "Public"
+)
+
 type CentrumServicePerms struct {
 	Stream            CentrumServiceStreamPermRef
 	TakeControl       CentrumServiceTakeControlPermRef
@@ -50,8 +57,9 @@ type CentrumServiceUpdateDispatchersPermRef struct {
 	Perm perms.PermissionRef
 }
 type CentrumServiceUpdateSettingsPermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[CentrumServiceUpdateSettingsAccessPermValue]
 }
 
 var CentrumService = CentrumServicePerms{
@@ -67,6 +75,10 @@ var CentrumService = CentrumServicePerms{
 	UpdateSettings: CentrumServiceUpdateSettingsPermRef{
 		Perm: perms.NewPermissionRef(Namespace, CentrumServicePerm, CentrumServiceUpdateSettingsPerm),
 		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, CentrumServicePerm, CentrumServiceUpdateSettingsPerm),
+			CentrumServiceUpdateSettingsAccessPermField,
+		),
+		AccessTyped: perms.NewTypedStringListAttrRef[CentrumServiceUpdateSettingsAccessPermValue](
 			perms.NewPermissionRef(Namespace, CentrumServicePerm, CentrumServiceUpdateSettingsPerm),
 			CentrumServiceUpdateSettingsAccessPermField,
 		),

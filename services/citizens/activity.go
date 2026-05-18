@@ -30,17 +30,15 @@ func (s *Server) ListUserActivity(
 	}
 
 	// User can't see their own activities, unless they have "Own" perm attribute, or are a superuser
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permscitizens.CitizensService.ListUserActivity.Fields,
-	)
+	fields, err := permscitizens.CitizensService.ListUserActivity.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
 	if userInfo.GetUserId() == req.GetUserId() {
 		// If isn't superuser or doesn't have 'Own' activity feed access
-		if !userInfo.GetSuperuser() && !fields.Contains("Own") {
+		if !userInfo.GetSuperuser() &&
+			!fields.Contains(permscitizens.CitizensServiceListUserActivityFieldsPermValueOwn) {
 			return resp, nil
 		}
 	}

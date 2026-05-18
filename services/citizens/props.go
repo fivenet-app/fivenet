@@ -88,10 +88,7 @@ func (s *Server) SetUserProps(
 	}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permscitizens.CitizensService.SetUserProps.Fields,
-	)
+	fields, err := permscitizens.CitizensService.SetUserProps.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -135,13 +132,13 @@ func (s *Server) SetUserProps(
 
 	// Generate the update sets
 	if req.Props.Wanted != nil {
-		if !fields.Contains("Wanted") {
+		if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueWanted) {
 			return nil, errorscitizens.ErrPropsWantedDenied
 		}
 	}
 
 	if req.Props.JobName != nil {
-		if !fields.Contains("Job") {
+		if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueJob) {
 			return nil, errorscitizens.ErrPropsJobDenied
 		}
 
@@ -164,7 +161,9 @@ func (s *Server) SetUserProps(
 	}
 
 	if req.Props.TrafficInfractionPoints != nil {
-		if !fields.Contains("TrafficInfractionPoints") {
+		if !fields.Contains(
+			permscitizens.CitizensServiceSetUserPropsFieldsPermValueTrafficInfractionPoints,
+		) {
 			return nil, errorscitizens.ErrPropsTrafficPointsDenied
 		}
 	}
@@ -175,7 +174,7 @@ func (s *Server) SetUserProps(
 	req.Props.Email = nil
 
 	if req.GetProps().GetLabels() != nil {
-		if !fields.Contains("Labels") {
+		if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueLabels) {
 			return nil, errorscitizens.ErrPropsLabelsDenied
 		}
 

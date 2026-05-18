@@ -88,8 +88,26 @@ type AttrRef[T AttrKind] struct {
 	key  Key
 }
 
+type StringListValue interface {
+	~string
+}
+
+type StringListAttrRef[T StringListValue] struct {
+	attr AttrRef[StringListAttr]
+}
+
+type TypedStringList[T StringListValue] struct {
+	values []T
+}
+
 func NewStringListAttrRef(perm PermissionRef, key Key) AttrRef[StringListAttr] {
 	return AttrRef[StringListAttr]{perm: perm, key: key}
+}
+
+func NewTypedStringListAttrRef[T StringListValue](perm PermissionRef, key Key) StringListAttrRef[T] {
+	return StringListAttrRef[T]{
+		attr: NewStringListAttrRef(perm, key),
+	}
 }
 
 func NewJobListAttrRef(perm PermissionRef, key Key) AttrRef[JobListAttr] {
@@ -106,6 +124,72 @@ func (a AttrRef[T]) Permission() PermissionRef {
 
 func (a AttrRef[T]) Key() Key {
 	return a.key
+}
+
+func (a StringListAttrRef[T]) Untyped() AttrRef[StringListAttr] {
+	return a.attr
+}
+
+func (a StringListAttrRef[T]) Permission() PermissionRef {
+	return a.attr.Permission()
+}
+
+func (a StringListAttrRef[T]) Key() Key {
+	return a.attr.Key()
+}
+
+func (a StringListAttrRef[T]) Get(
+	ps Permissions,
+	userInfo *userinfo.UserInfo,
+) (*TypedStringList[T], error) {
+	raw, err := ps.AttrStringList(userInfo, a.attr)
+	if err != nil {
+		return nil, err
+	}
+
+	vals := make([]T, len(raw.GetStrings()))
+	for i := range raw.GetStrings() {
+		vals[i] = T(raw.GetStrings()[i])
+	}
+
+	return &TypedStringList[T]{values: vals}, nil
+}
+
+func (s *TypedStringList[T]) Values() []T {
+	if s == nil {
+		return nil
+	}
+
+	out := make([]T, len(s.values))
+	copy(out, s.values)
+
+	return out
+}
+
+func (s *TypedStringList[T]) Contains(items ...T) bool {
+	if s == nil || len(items) == 0 {
+		return false
+	}
+
+lookup:
+	for _, item := range items {
+		for i := range s.values {
+			if s.values[i] == item {
+				continue lookup
+			}
+		}
+		return false
+	}
+
+	return true
+}
+
+func (s *TypedStringList[T]) Len() int {
+	if s == nil {
+		return 0
+	}
+
+	return len(s.values)
 }
 
 func (ps *Perms) Can(userInfo *userinfo.UserInfo, perm PermissionRef) bool {

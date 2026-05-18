@@ -81,6 +81,73 @@ const (
 	TemplatesServiceListTemplatesPerm  perms.Name = "ListTemplates"
 )
 
+type CommentsServiceDeleteCommentAccessPermValue string
+
+const (
+	CommentsServiceDeleteCommentAccessPermValueOwn       CommentsServiceDeleteCommentAccessPermValue = "Own"
+	CommentsServiceDeleteCommentAccessPermValueLowerRank CommentsServiceDeleteCommentAccessPermValue = "Lower_Rank"
+	CommentsServiceDeleteCommentAccessPermValueSameRank  CommentsServiceDeleteCommentAccessPermValue = "Same_Rank"
+	CommentsServiceDeleteCommentAccessPermValueAny       CommentsServiceDeleteCommentAccessPermValue = "Any"
+)
+
+type DocumentsServiceChangeDocumentOwnerAccessPermValue string
+
+const (
+	DocumentsServiceChangeDocumentOwnerAccessPermValueOwn       DocumentsServiceChangeDocumentOwnerAccessPermValue = "Own"
+	DocumentsServiceChangeDocumentOwnerAccessPermValueLowerRank DocumentsServiceChangeDocumentOwnerAccessPermValue = "Lower_Rank"
+	DocumentsServiceChangeDocumentOwnerAccessPermValueSameRank  DocumentsServiceChangeDocumentOwnerAccessPermValue = "Same_Rank"
+	DocumentsServiceChangeDocumentOwnerAccessPermValueAny       DocumentsServiceChangeDocumentOwnerAccessPermValue = "Any"
+)
+
+type DocumentsServiceCreateDocumentReqTypesPermValue string
+
+const (
+	DocumentsServiceCreateDocumentReqTypesPermValueAccess      DocumentsServiceCreateDocumentReqTypesPermValue = "Access"
+	DocumentsServiceCreateDocumentReqTypesPermValueClosure     DocumentsServiceCreateDocumentReqTypesPermValue = "Closure"
+	DocumentsServiceCreateDocumentReqTypesPermValueUpdate      DocumentsServiceCreateDocumentReqTypesPermValue = "Update"
+	DocumentsServiceCreateDocumentReqTypesPermValueDeletion    DocumentsServiceCreateDocumentReqTypesPermValue = "Deletion"
+	DocumentsServiceCreateDocumentReqTypesPermValueOwnerChange DocumentsServiceCreateDocumentReqTypesPermValue = "OwnerChange"
+)
+
+type DocumentsServiceDeleteDocumentAccessPermValue string
+
+const (
+	DocumentsServiceDeleteDocumentAccessPermValueOwn       DocumentsServiceDeleteDocumentAccessPermValue = "Own"
+	DocumentsServiceDeleteDocumentAccessPermValueLowerRank DocumentsServiceDeleteDocumentAccessPermValue = "Lower_Rank"
+	DocumentsServiceDeleteDocumentAccessPermValueSameRank  DocumentsServiceDeleteDocumentAccessPermValue = "Same_Rank"
+	DocumentsServiceDeleteDocumentAccessPermValueAny       DocumentsServiceDeleteDocumentAccessPermValue = "Any"
+)
+
+type DocumentsServiceToggleDocumentAccessPermValue string
+
+const (
+	DocumentsServiceToggleDocumentAccessPermValueOwn       DocumentsServiceToggleDocumentAccessPermValue = "Own"
+	DocumentsServiceToggleDocumentAccessPermValueLowerRank DocumentsServiceToggleDocumentAccessPermValue = "Lower_Rank"
+	DocumentsServiceToggleDocumentAccessPermValueSameRank  DocumentsServiceToggleDocumentAccessPermValue = "Same_Rank"
+	DocumentsServiceToggleDocumentAccessPermValueAny       DocumentsServiceToggleDocumentAccessPermValue = "Any"
+)
+
+type DocumentsServiceToggleDocumentPinTypesPermValue string
+
+const (
+	DocumentsServiceToggleDocumentPinTypesPermValueJobWide DocumentsServiceToggleDocumentPinTypesPermValue = "JobWide"
+)
+
+type DocumentsServiceUpdateDocumentAccessPermValue string
+
+const (
+	DocumentsServiceUpdateDocumentAccessPermValueOwn       DocumentsServiceUpdateDocumentAccessPermValue = "Own"
+	DocumentsServiceUpdateDocumentAccessPermValueLowerRank DocumentsServiceUpdateDocumentAccessPermValue = "Lower_Rank"
+	DocumentsServiceUpdateDocumentAccessPermValueSameRank  DocumentsServiceUpdateDocumentAccessPermValue = "Same_Rank"
+	DocumentsServiceUpdateDocumentAccessPermValueAny       DocumentsServiceUpdateDocumentAccessPermValue = "Any"
+)
+
+type StatsServiceGetStatsCategoriesPermValue string
+
+const (
+	StatsServiceGetStatsCategoriesPermValuePenaltyCalculator StatsServiceGetStatsCategoriesPermValue = "PenaltyCalculator"
+)
+
 type ApprovalServicePerms struct {
 	DeleteApprovalTasks  ApprovalServiceDeleteApprovalTasksPermRef
 	RevokeApproval       ApprovalServiceRevokeApprovalPermRef
@@ -151,14 +218,19 @@ type CommentsServicePerms struct {
 	DeleteComment CommentsServiceDeleteCommentPermRef
 }
 type CommentsServiceDeleteCommentPermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[CommentsServiceDeleteCommentAccessPermValue]
 }
 
 var CommentsService = CommentsServicePerms{
 	DeleteComment: CommentsServiceDeleteCommentPermRef{
 		Perm: perms.NewPermissionRef(Namespace, CommentsServicePerm, CommentsServiceDeleteCommentPerm),
 		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, CommentsServicePerm, CommentsServiceDeleteCommentPerm),
+			CommentsServiceDeleteCommentAccessPermField,
+		),
+		AccessTyped: perms.NewTypedStringListAttrRef[CommentsServiceDeleteCommentAccessPermValue](
 			perms.NewPermissionRef(Namespace, CommentsServicePerm, CommentsServiceDeleteCommentPerm),
 			CommentsServiceDeleteCommentAccessPermField,
 		),
@@ -188,16 +260,19 @@ type DocumentsServiceAddDocumentRelationPermRef struct {
 	Perm perms.PermissionRef
 }
 type DocumentsServiceChangeDocumentOwnerPermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[DocumentsServiceChangeDocumentOwnerAccessPermValue]
 }
 type DocumentsServiceCreateDocumentReqPermRef struct {
-	Perm  perms.PermissionRef
-	Types perms.AttrRef[perms.StringListAttr]
+	Perm       perms.PermissionRef
+	Types      perms.AttrRef[perms.StringListAttr]
+	TypesTyped perms.StringListAttrRef[DocumentsServiceCreateDocumentReqTypesPermValue]
 }
 type DocumentsServiceDeleteDocumentPermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[DocumentsServiceDeleteDocumentAccessPermValue]
 }
 type DocumentsServiceDeleteDocumentReqPermRef struct {
 	Perm perms.PermissionRef
@@ -218,16 +293,19 @@ type DocumentsServiceSetDocumentReminderPermRef struct {
 	Perm perms.PermissionRef
 }
 type DocumentsServiceToggleDocumentPermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[DocumentsServiceToggleDocumentAccessPermValue]
 }
 type DocumentsServiceToggleDocumentPinPermRef struct {
-	Perm  perms.PermissionRef
-	Types perms.AttrRef[perms.StringListAttr]
+	Perm       perms.PermissionRef
+	Types      perms.AttrRef[perms.StringListAttr]
+	TypesTyped perms.StringListAttrRef[DocumentsServiceToggleDocumentPinTypesPermValue]
 }
 type DocumentsServiceUpdateDocumentPermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[DocumentsServiceUpdateDocumentAccessPermValue]
 }
 
 var DocumentsService = DocumentsServicePerms{
@@ -243,6 +321,10 @@ var DocumentsService = DocumentsServicePerms{
 			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceChangeDocumentOwnerPerm),
 			DocumentsServiceChangeDocumentOwnerAccessPermField,
 		),
+		AccessTyped: perms.NewTypedStringListAttrRef[DocumentsServiceChangeDocumentOwnerAccessPermValue](
+			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceChangeDocumentOwnerPerm),
+			DocumentsServiceChangeDocumentOwnerAccessPermField,
+		),
 	},
 	CreateDocumentReq: DocumentsServiceCreateDocumentReqPermRef{
 		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceCreateDocumentReqPerm),
@@ -250,10 +332,18 @@ var DocumentsService = DocumentsServicePerms{
 			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceCreateDocumentReqPerm),
 			DocumentsServiceCreateDocumentReqTypesPermField,
 		),
+		TypesTyped: perms.NewTypedStringListAttrRef[DocumentsServiceCreateDocumentReqTypesPermValue](
+			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceCreateDocumentReqPerm),
+			DocumentsServiceCreateDocumentReqTypesPermField,
+		),
 	},
 	DeleteDocument: DocumentsServiceDeleteDocumentPermRef{
 		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceDeleteDocumentPerm),
 		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceDeleteDocumentPerm),
+			DocumentsServiceDeleteDocumentAccessPermField,
+		),
+		AccessTyped: perms.NewTypedStringListAttrRef[DocumentsServiceDeleteDocumentAccessPermValue](
 			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceDeleteDocumentPerm),
 			DocumentsServiceDeleteDocumentAccessPermField,
 		),
@@ -282,6 +372,10 @@ var DocumentsService = DocumentsServicePerms{
 			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceToggleDocumentPerm),
 			DocumentsServiceToggleDocumentAccessPermField,
 		),
+		AccessTyped: perms.NewTypedStringListAttrRef[DocumentsServiceToggleDocumentAccessPermValue](
+			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceToggleDocumentPerm),
+			DocumentsServiceToggleDocumentAccessPermField,
+		),
 	},
 	ToggleDocumentPin: DocumentsServiceToggleDocumentPinPermRef{
 		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceToggleDocumentPinPerm),
@@ -289,10 +383,18 @@ var DocumentsService = DocumentsServicePerms{
 			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceToggleDocumentPinPerm),
 			DocumentsServiceToggleDocumentPinTypesPermField,
 		),
+		TypesTyped: perms.NewTypedStringListAttrRef[DocumentsServiceToggleDocumentPinTypesPermValue](
+			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceToggleDocumentPinPerm),
+			DocumentsServiceToggleDocumentPinTypesPermField,
+		),
 	},
 	UpdateDocument: DocumentsServiceUpdateDocumentPermRef{
 		Perm: perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceUpdateDocumentPerm),
 		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceUpdateDocumentPerm),
+			DocumentsServiceUpdateDocumentAccessPermField,
+		),
+		AccessTyped: perms.NewTypedStringListAttrRef[DocumentsServiceUpdateDocumentAccessPermValue](
 			perms.NewPermissionRef(Namespace, DocumentsServicePerm, DocumentsServiceUpdateDocumentPerm),
 			DocumentsServiceUpdateDocumentAccessPermField,
 		),
@@ -330,14 +432,19 @@ type StatsServicePerms struct {
 	GetStats StatsServiceGetStatsPermRef
 }
 type StatsServiceGetStatsPermRef struct {
-	Perm       perms.PermissionRef
-	Categories perms.AttrRef[perms.StringListAttr]
+	Perm            perms.PermissionRef
+	Categories      perms.AttrRef[perms.StringListAttr]
+	CategoriesTyped perms.StringListAttrRef[StatsServiceGetStatsCategoriesPermValue]
 }
 
 var StatsService = StatsServicePerms{
 	GetStats: StatsServiceGetStatsPermRef{
 		Perm: perms.NewPermissionRef(Namespace, StatsServicePerm, StatsServiceGetStatsPerm),
 		Categories: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, StatsServicePerm, StatsServiceGetStatsPerm),
+			StatsServiceGetStatsCategoriesPermField,
+		),
+		CategoriesTyped: perms.NewTypedStringListAttrRef[StatsServiceGetStatsCategoriesPermValue](
 			perms.NewPermissionRef(Namespace, StatsServicePerm, StatsServiceGetStatsPerm),
 			StatsServiceGetStatsCategoriesPermField,
 		),

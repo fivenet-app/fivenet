@@ -22,18 +22,38 @@ const (
 	LivemapServiceStreamPlayersPermField              perms.Key  = "Players"
 )
 
+type LivemapServiceCreateOrUpdateMarkerAccessPermValue string
+
+const (
+	LivemapServiceCreateOrUpdateMarkerAccessPermValueOwn       LivemapServiceCreateOrUpdateMarkerAccessPermValue = "Own"
+	LivemapServiceCreateOrUpdateMarkerAccessPermValueLowerRank LivemapServiceCreateOrUpdateMarkerAccessPermValue = "Lower_Rank"
+	LivemapServiceCreateOrUpdateMarkerAccessPermValueSameRank  LivemapServiceCreateOrUpdateMarkerAccessPermValue = "Same_Rank"
+	LivemapServiceCreateOrUpdateMarkerAccessPermValueAny       LivemapServiceCreateOrUpdateMarkerAccessPermValue = "Any"
+)
+
+type LivemapServiceDeleteMarkerAccessPermValue string
+
+const (
+	LivemapServiceDeleteMarkerAccessPermValueOwn       LivemapServiceDeleteMarkerAccessPermValue = "Own"
+	LivemapServiceDeleteMarkerAccessPermValueLowerRank LivemapServiceDeleteMarkerAccessPermValue = "Lower_Rank"
+	LivemapServiceDeleteMarkerAccessPermValueSameRank  LivemapServiceDeleteMarkerAccessPermValue = "Same_Rank"
+	LivemapServiceDeleteMarkerAccessPermValueAny       LivemapServiceDeleteMarkerAccessPermValue = "Any"
+)
+
 type LivemapServicePerms struct {
 	CreateOrUpdateMarker LivemapServiceCreateOrUpdateMarkerPermRef
 	DeleteMarker         LivemapServiceDeleteMarkerPermRef
 	Stream               LivemapServiceStreamPermRef
 }
 type LivemapServiceCreateOrUpdateMarkerPermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[LivemapServiceCreateOrUpdateMarkerAccessPermValue]
 }
 type LivemapServiceDeleteMarkerPermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[LivemapServiceDeleteMarkerAccessPermValue]
 }
 type LivemapServiceStreamPermRef struct {
 	Perm    perms.PermissionRef
@@ -48,10 +68,18 @@ var LivemapService = LivemapServicePerms{
 			perms.NewPermissionRef(Namespace, LivemapServicePerm, LivemapServiceCreateOrUpdateMarkerPerm),
 			LivemapServiceCreateOrUpdateMarkerAccessPermField,
 		),
+		AccessTyped: perms.NewTypedStringListAttrRef[LivemapServiceCreateOrUpdateMarkerAccessPermValue](
+			perms.NewPermissionRef(Namespace, LivemapServicePerm, LivemapServiceCreateOrUpdateMarkerPerm),
+			LivemapServiceCreateOrUpdateMarkerAccessPermField,
+		),
 	},
 	DeleteMarker: LivemapServiceDeleteMarkerPermRef{
 		Perm: perms.NewPermissionRef(Namespace, LivemapServicePerm, LivemapServiceDeleteMarkerPerm),
 		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, LivemapServicePerm, LivemapServiceDeleteMarkerPerm),
+			LivemapServiceDeleteMarkerAccessPermField,
+		),
+		AccessTyped: perms.NewTypedStringListAttrRef[LivemapServiceDeleteMarkerAccessPermValue](
 			perms.NewPermissionRef(Namespace, LivemapServicePerm, LivemapServiceDeleteMarkerPerm),
 			LivemapServiceDeleteMarkerAccessPermField,
 		),

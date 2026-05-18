@@ -21,14 +21,21 @@ const (
 	MailerServiceListEmailsPerm                     perms.Name = "ListEmails"
 )
 
+type MailerServiceCreateOrUpdateEmailFieldsPermValue string
+
+const (
+	MailerServiceCreateOrUpdateEmailFieldsPermValueJob MailerServiceCreateOrUpdateEmailFieldsPermValue = "Job"
+)
+
 type MailerServicePerms struct {
 	CreateOrUpdateEmail MailerServiceCreateOrUpdateEmailPermRef
 	DeleteEmail         MailerServiceDeleteEmailPermRef
 	ListEmails          MailerServiceListEmailsPermRef
 }
 type MailerServiceCreateOrUpdateEmailPermRef struct {
-	Perm   perms.PermissionRef
-	Fields perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Fields      perms.AttrRef[perms.StringListAttr]
+	FieldsTyped perms.StringListAttrRef[MailerServiceCreateOrUpdateEmailFieldsPermValue]
 }
 type MailerServiceDeleteEmailPermRef struct {
 	Perm perms.PermissionRef
@@ -41,6 +48,10 @@ var MailerService = MailerServicePerms{
 	CreateOrUpdateEmail: MailerServiceCreateOrUpdateEmailPermRef{
 		Perm: perms.NewPermissionRef(Namespace, MailerServicePerm, MailerServiceCreateOrUpdateEmailPerm),
 		Fields: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, MailerServicePerm, MailerServiceCreateOrUpdateEmailPerm),
+			MailerServiceCreateOrUpdateEmailFieldsPermField,
+		),
+		FieldsTyped: perms.NewTypedStringListAttrRef[MailerServiceCreateOrUpdateEmailFieldsPermValue](
 			perms.NewPermissionRef(Namespace, MailerServicePerm, MailerServiceCreateOrUpdateEmailPerm),
 			MailerServiceCreateOrUpdateEmailFieldsPermField,
 		),

@@ -23,28 +23,59 @@ const (
 	QualificationsServiceUpdateQualificationFieldsPermField perms.Key  = "Fields"
 )
 
+type QualificationsServiceDeleteQualificationAccessPermValue string
+
+const (
+	QualificationsServiceDeleteQualificationAccessPermValueOwn       QualificationsServiceDeleteQualificationAccessPermValue = "Own"
+	QualificationsServiceDeleteQualificationAccessPermValueLowerRank QualificationsServiceDeleteQualificationAccessPermValue = "Lower_Rank"
+	QualificationsServiceDeleteQualificationAccessPermValueSameRank  QualificationsServiceDeleteQualificationAccessPermValue = "Same_Rank"
+	QualificationsServiceDeleteQualificationAccessPermValueAny       QualificationsServiceDeleteQualificationAccessPermValue = "Any"
+)
+
+type QualificationsServiceUpdateQualificationAccessPermValue string
+
+const (
+	QualificationsServiceUpdateQualificationAccessPermValueOwn       QualificationsServiceUpdateQualificationAccessPermValue = "Own"
+	QualificationsServiceUpdateQualificationAccessPermValueLowerRank QualificationsServiceUpdateQualificationAccessPermValue = "Lower_Rank"
+	QualificationsServiceUpdateQualificationAccessPermValueSameRank  QualificationsServiceUpdateQualificationAccessPermValue = "Same_Rank"
+	QualificationsServiceUpdateQualificationAccessPermValueAny       QualificationsServiceUpdateQualificationAccessPermValue = "Any"
+)
+
+type QualificationsServiceUpdateQualificationFieldsPermValue string
+
+const (
+	QualificationsServiceUpdateQualificationFieldsPermValuePublic QualificationsServiceUpdateQualificationFieldsPermValue = "Public"
+)
+
 type QualificationsServicePerms struct {
 	DeleteQualification QualificationsServiceDeleteQualificationPermRef
 	ListQualifications  QualificationsServiceListQualificationsPermRef
 	UpdateQualification QualificationsServiceUpdateQualificationPermRef
 }
 type QualificationsServiceDeleteQualificationPermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[QualificationsServiceDeleteQualificationAccessPermValue]
 }
 type QualificationsServiceListQualificationsPermRef struct {
 	Perm perms.PermissionRef
 }
 type QualificationsServiceUpdateQualificationPermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
-	Fields perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[QualificationsServiceUpdateQualificationAccessPermValue]
+	Fields      perms.AttrRef[perms.StringListAttr]
+	FieldsTyped perms.StringListAttrRef[QualificationsServiceUpdateQualificationFieldsPermValue]
 }
 
 var QualificationsService = QualificationsServicePerms{
 	DeleteQualification: QualificationsServiceDeleteQualificationPermRef{
 		Perm: perms.NewPermissionRef(Namespace, QualificationsServicePerm, QualificationsServiceDeleteQualificationPerm),
 		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, QualificationsServicePerm, QualificationsServiceDeleteQualificationPerm),
+			QualificationsServiceDeleteQualificationAccessPermField,
+		),
+		AccessTyped: perms.NewTypedStringListAttrRef[QualificationsServiceDeleteQualificationAccessPermValue](
 			perms.NewPermissionRef(Namespace, QualificationsServicePerm, QualificationsServiceDeleteQualificationPerm),
 			QualificationsServiceDeleteQualificationAccessPermField,
 		),
@@ -58,7 +89,15 @@ var QualificationsService = QualificationsServicePerms{
 			perms.NewPermissionRef(Namespace, QualificationsServicePerm, QualificationsServiceUpdateQualificationPerm),
 			QualificationsServiceUpdateQualificationAccessPermField,
 		),
+		AccessTyped: perms.NewTypedStringListAttrRef[QualificationsServiceUpdateQualificationAccessPermValue](
+			perms.NewPermissionRef(Namespace, QualificationsServicePerm, QualificationsServiceUpdateQualificationPerm),
+			QualificationsServiceUpdateQualificationAccessPermField,
+		),
 		Fields: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, QualificationsServicePerm, QualificationsServiceUpdateQualificationPerm),
+			QualificationsServiceUpdateQualificationFieldsPermField,
+		),
+		FieldsTyped: perms.NewTypedStringListAttrRef[QualificationsServiceUpdateQualificationFieldsPermValue](
 			perms.NewPermissionRef(Namespace, QualificationsServicePerm, QualificationsServiceUpdateQualificationPerm),
 			QualificationsServiceUpdateQualificationFieldsPermField,
 		),

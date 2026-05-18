@@ -23,6 +23,12 @@ const (
 	WikiServiceUpdatePageFieldsPermField perms.Key  = "Fields"
 )
 
+type WikiServiceUpdatePageFieldsPermValue string
+
+const (
+	WikiServiceUpdatePageFieldsPermValuePublic WikiServiceUpdatePageFieldsPermValue = "Public"
+)
+
 type WikiServicePerms struct {
 	CreatePage       WikiServiceCreatePagePermRef
 	DeletePage       WikiServiceDeletePagePermRef
@@ -43,8 +49,9 @@ type WikiServiceListPagesPermRef struct {
 	Perm perms.PermissionRef
 }
 type WikiServiceUpdatePagePermRef struct {
-	Perm   perms.PermissionRef
-	Fields perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Fields      perms.AttrRef[perms.StringListAttr]
+	FieldsTyped perms.StringListAttrRef[WikiServiceUpdatePageFieldsPermValue]
 }
 
 var WikiService = WikiServicePerms{
@@ -63,6 +70,10 @@ var WikiService = WikiServicePerms{
 	UpdatePage: WikiServiceUpdatePagePermRef{
 		Perm: perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceUpdatePagePerm),
 		Fields: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceUpdatePagePerm),
+			WikiServiceUpdatePageFieldsPermField,
+		),
+		FieldsTyped: perms.NewTypedStringListAttrRef[WikiServiceUpdatePageFieldsPermValue](
 			perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceUpdatePagePerm),
 			WikiServiceUpdatePageFieldsPermField,
 		),

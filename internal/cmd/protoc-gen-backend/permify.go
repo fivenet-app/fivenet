@@ -6,8 +6,10 @@ import (
 	"path"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 	"text/template"
+	"unicode"
 
 	"github.com/Masterminds/sprig/v3"
 	permspb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
@@ -49,6 +51,8 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 	templateFns["serviceName"] = serviceNameFn
 	templateFns["serviceNamespace"] = serviceNamespaceFn
 	templateFns["remapRef"] = remapRef
+	templateFns["attrValueTypeName"] = attrValueTypeName
+	templateFns["attrValueConstName"] = attrValueConstName
 
 	tpl := template.New("permify").Funcs(templateFns)
 	p.tpl = template.Must(tpl.Parse(permifyTpl))
@@ -116,6 +120,72 @@ func remapRef(defaultNamespace string, defaultService string, perm *Perm) string
 
 		return fmt.Sprintf("%s.%s.%s.Perm", permPkgAlias(namespace), service, perm.Name)
 	}
+}
+
+func sanitizeIdentifierPart(s string) string {
+	var b strings.Builder
+	upperNext := true
+
+	for _, r := range s {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
+			if b.Len() == 0 && unicode.IsDigit(r) {
+				b.WriteRune('V')
+			}
+
+			if upperNext {
+				b.WriteRune(unicode.ToUpper(r))
+				upperNext = false
+			} else {
+				b.WriteRune(r)
+			}
+			continue
+		}
+
+		upperNext = true
+	}
+
+	if b.Len() == 0 {
+		return "Value"
+	}
+
+	return b.String()
+}
+
+func attrValueTypeName(service string, perm *Perm, attr Attr) string {
+	return sanitizeIdentifierPart(service) +
+		sanitizeIdentifierPart(perm.Name) +
+		sanitizeIdentifierPart(attr.Key) +
+		"PermValue"
+}
+
+func attrValueConstName(service string, perm *Perm, attr Attr, value string) string {
+	return sanitizeIdentifierPart(service) +
+		sanitizeIdentifierPart(perm.Name) +
+		sanitizeIdentifierPart(attr.Key) +
+		"PermValue" +
+		sanitizeIdentifierPart(value)
+}
+
+func mergeAttrsUnique(existing []Attr, extra []Attr) []Attr {
+	if len(extra) == 0 {
+		return existing
+	}
+
+	out := slices.Clone(existing)
+	for _, candidate := range extra {
+		dup := false
+		for i := range out {
+			if out[i].Key == candidate.Key && out[i].Type == candidate.Type {
+				dup = true
+				break
+			}
+		}
+		if !dup {
+			out = append(out, candidate)
+		}
+	}
+
+	return out
 }
 
 type RemapImport struct {
@@ -308,13 +378,14 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 						}
 
 						perm.Attrs[i] = Attr{
-							Key:  a.Key,
-							Type: atype,
+							Key:         a.Key,
+							Type:        atype,
+							ValidValues: slices.Clone(a.ValidStringList),
 						}
 						if a.ValidStringList != nil {
 							perm.Attrs[i].Valid += "[]string{"
 							for _, v := range a.ValidStringList {
-								perm.Attrs[i].Valid += fmt.Sprintf("%q, ", v)
+								perm.Attrs[i].Valid += strconv.Quote(v) + ", "
 							}
 							perm.Attrs[i].Valid += "}"
 						}
@@ -386,13 +457,14 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 					}
 
 					perm.Attrs[i] = Attr{
-						Key:  a.Key,
-						Type: atype,
+						Key:         a.Key,
+						Type:        atype,
+						ValidValues: slices.Clone(a.ValidStringList),
 					}
 					if a.ValidStringList != nil {
 						perm.Attrs[i].Valid += "[]string{"
 						for _, v := range a.ValidStringList {
-							perm.Attrs[i].Valid += fmt.Sprintf("%q, ", v)
+							perm.Attrs[i].Valid += strconv.Quote(v) + ", "
 						}
 						perm.Attrs[i].Valid += "}"
 					}
@@ -459,9 +531,10 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 				} else {
 					p.Debugf("Permission already in list, updating: %q - %+v\n", methodName, perm)
 					if len(perm.Attrs) > 0 {
-						data.Permissions[permNamespace][permSvcName][perm.Name].Attrs = append(
+						data.Permissions[permNamespace][permSvcName][perm.Name].Attrs = mergeAttrsUnique(
 							data.Permissions[permNamespace][permSvcName][perm.Name].Attrs,
-							perm.Attrs...)
+							perm.Attrs,
+						)
 					}
 					perm.Order = data.Permissions[permNamespace][permSvcName][perm.Name].Order
 				}
@@ -570,6 +643,27 @@ const (
 
 {{ range $namespace, $services := $.Permissions }}
     {{- range $svcName, $service := $services }}
+        {{- range $perm := $service }}
+            {{- range $attr := $perm.Attrs }}
+                {{- if eq $attr.Type "StringList" }}
+type {{ attrValueTypeName $svcName $perm $attr }} string
+
+                    {{- if gt (len $attr.ValidValues) 0 }}
+const (
+                        {{- range $val := $attr.ValidValues }}
+    {{ attrValueConstName $svcName $perm $attr $val }} {{ attrValueTypeName $svcName $perm $attr }} = {{ printf "%q" $val }}
+                        {{- end }}
+)
+                    {{- end }}
+
+                {{- end }}
+            {{- end }}
+        {{- end }}
+    {{- end }}
+{{ end }}
+
+{{ range $namespace, $services := $.Permissions }}
+    {{- range $svcName, $service := $services }}
 type {{ serviceName $svcName }}Perms struct {
         {{- range $perm := $service }}
     {{ $perm.Name }} {{ serviceName $svcName }}{{ $perm.Name }}PermRef
@@ -581,6 +675,9 @@ type {{ serviceName $svcName }}{{ $perm.Name }}PermRef struct {
     Perm perms.PermissionRef
             {{- range $attr := $perm.Attrs }}
     {{ $attr.Key }} perms.AttrRef[perms.{{ $attr.Type }}Attr]
+                {{- if eq $attr.Type "StringList" }}
+    {{ $attr.Key }}Typed perms.StringListAttrRef[{{ attrValueTypeName $svcName $perm $attr }}]
+                {{- end }}
             {{- end }}
 }
 
@@ -594,6 +691,12 @@ var {{ serviceName $svcName }} = {{ serviceName $svcName }}Perms{
             perms.NewPermissionRef(Namespace, {{ serviceName $svcName }}Perm, {{ serviceName $svcName }}{{ $perm.Name }}Perm),
             {{ serviceName $svcName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
         ),
+                {{- if eq $attr.Type "StringList" }}
+        {{ $attr.Key }}Typed: perms.NewTypedStringListAttrRef[{{ attrValueTypeName $svcName $perm $attr }}](
+            perms.NewPermissionRef(Namespace, {{ serviceName $svcName }}Perm, {{ serviceName $svcName }}{{ $perm.Name }}Perm),
+            {{ serviceName $svcName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
+        ),
+                {{- end }}
             {{- end }}
     },
         {{- end }}
@@ -643,7 +746,8 @@ type Perm struct {
 }
 
 type Attr struct {
-	Key   string
-	Type  string
-	Valid string
+	Key         string
+	Type        string
+	Valid       string
+	ValidValues []string
 }

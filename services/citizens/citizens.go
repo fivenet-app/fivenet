@@ -50,17 +50,14 @@ func (s *Server) ListCitizens(
 	orderBys := []mysql.OrderByClause{}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permscitizens.CitizensService.ListCitizens.Fields,
-	)
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	for _, field := range fields.GetStrings() {
+	for _, field := range fields.Values() {
 		switch field {
-		case "PhoneNumber":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber:
 			selectors = append(selectors, tUser.PhoneNumber)
 
 			if req.GetPhoneNumber() != "" {
@@ -68,7 +65,7 @@ func (s *Server) ListCitizens(
 				condition = condition.AND(tUser.PhoneNumber.LIKE(mysql.String(phoneNumber)))
 			}
 
-		case "UserProps.Wanted":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted:
 			selectors = append(selectors, tUserProps.Wanted)
 
 			if req.Wanted != nil && req.GetWanted() {
@@ -77,10 +74,10 @@ func (s *Server) ListCitizens(
 				orderBys = append(orderBys, tUserProps.UpdatedAt.DESC())
 			}
 
-		case "UserProps.Job":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob:
 			selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
 
-		case "UserProps.TrafficInfractionPoints":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints:
 			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
 
 			if req.TrafficInfractionPoints != nil && req.GetTrafficInfractionPoints() > 0 {
@@ -91,7 +88,7 @@ func (s *Server) ListCitizens(
 				)
 			}
 
-		case "UserProps.OpenFines":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines:
 			selectors = append(selectors, tUserProps.OpenFines)
 
 			if req.OpenFines != nil && req.GetOpenFines() > 0 {
@@ -100,17 +97,17 @@ func (s *Server) ListCitizens(
 				)
 			}
 
-		case "UserProps.BloodType":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType:
 			selectors = append(selectors, tUserProps.BloodType)
 
-		case "UserProps.Mugshot":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot:
 			selectors = append(selectors,
 				tUserProps.MugshotFileID,
 				tFiles.ID,
 				tFiles.FilePath,
 			)
 
-		case "UserProps.Email":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail:
 			selectors = append(selectors, tUserProps.Email)
 		}
 	}
@@ -182,11 +179,15 @@ func (s *Server) ListCitizens(
 			var column mysql.Column
 			switch sc.GetId() {
 			case "trafficInfractionPoints":
-				if fields.Contains("UserProps.TrafficInfractionPoints") {
+				if fields.Contains(
+					permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints,
+				) {
 					column = tUserProps.TrafficInfractionPoints
 				}
 			case "openFines":
-				if fields.Contains("UserProps.OpenFines") {
+				if fields.Contains(
+					permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines,
+				) {
 					column = tUserProps.OpenFines
 				}
 			case "name":
@@ -286,38 +287,35 @@ func (s *Server) GetUser(
 	infoOnly := req.InfoOnly != nil && req.GetInfoOnly()
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permscitizens.CitizensService.ListCitizens.Fields,
-	)
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-	if fields.Strings != nil {
+	if fields.Len() > 0 {
 		selectors = append(selectors, tUserProps.UpdatedAt)
 	}
 
-	for _, field := range fields.GetStrings() {
+	for _, field := range fields.Values() {
 		switch field {
-		case "PhoneNumber":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber:
 			selectors = append(selectors, tUser.PhoneNumber)
-		case "UserProps.Wanted":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted:
 			selectors = append(selectors, tUserProps.Wanted)
-		case "UserProps.Job":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob:
 			selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
-		case "UserProps.TrafficInfractionPoints":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints:
 			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
-		case "UserProps.OpenFines":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines:
 			selectors = append(selectors, tUserProps.OpenFines)
-		case "UserProps.BloodType":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType:
 			selectors = append(selectors, tUserProps.BloodType)
-		case "UserProps.Mugshot":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot:
 			selectors = append(selectors,
 				tUserProps.MugshotFileID,
 				tFiles.ID,
 				tFiles.FilePath,
 			)
-		case "UserProps.Email":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail:
 			selectors = append(selectors, tUserProps.Email)
 		}
 	}
@@ -393,7 +391,7 @@ func (s *Server) GetUser(
 	}
 
 	// Check if user can see licenses and fetch them
-	if !infoOnly && fields.Contains("Licenses") {
+	if !infoOnly && fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueLicenses) {
 		tCitizenLicenses := table.FivenetUserLicenses
 		tLicenses := table.FivenetLicenses
 
@@ -417,7 +415,7 @@ func (s *Server) GetUser(
 		}
 	}
 
-	if fields.Contains("UserProps.Labels") {
+	if fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsLabels) {
 		attributes, err := s.getUserLabels(ctx, userInfo, req.GetUserId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)

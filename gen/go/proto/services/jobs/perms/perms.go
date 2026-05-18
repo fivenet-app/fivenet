@@ -51,6 +51,66 @@ const (
 	TimeclockServiceListTimeclockAccessPermField perms.Key  = "Access"
 )
 
+type ColleaguesServiceGetColleagueAccessPermValue string
+
+const (
+	ColleaguesServiceGetColleagueAccessPermValueOwn       ColleaguesServiceGetColleagueAccessPermValue = "Own"
+	ColleaguesServiceGetColleagueAccessPermValueLowerRank ColleaguesServiceGetColleagueAccessPermValue = "Lower_Rank"
+	ColleaguesServiceGetColleagueAccessPermValueSameRank  ColleaguesServiceGetColleagueAccessPermValue = "Same_Rank"
+	ColleaguesServiceGetColleagueAccessPermValueAny       ColleaguesServiceGetColleagueAccessPermValue = "Any"
+)
+
+type ColleaguesServiceGetColleagueTypesPermValue string
+
+const (
+	ColleaguesServiceGetColleagueTypesPermValueNote   ColleaguesServiceGetColleagueTypesPermValue = "Note"
+	ColleaguesServiceGetColleagueTypesPermValueLabels ColleaguesServiceGetColleagueTypesPermValue = "Labels"
+)
+
+type ColleaguesServiceListColleagueActivityTypesPermValue string
+
+const (
+	ColleaguesServiceListColleagueActivityTypesPermValueHIRED       ColleaguesServiceListColleagueActivityTypesPermValue = "HIRED"
+	ColleaguesServiceListColleagueActivityTypesPermValueFIRED       ColleaguesServiceListColleagueActivityTypesPermValue = "FIRED"
+	ColleaguesServiceListColleagueActivityTypesPermValuePROMOTED    ColleaguesServiceListColleagueActivityTypesPermValue = "PROMOTED"
+	ColleaguesServiceListColleagueActivityTypesPermValueDEMOTED     ColleaguesServiceListColleagueActivityTypesPermValue = "DEMOTED"
+	ColleaguesServiceListColleagueActivityTypesPermValueABSENCEDATE ColleaguesServiceListColleagueActivityTypesPermValue = "ABSENCE_DATE"
+	ColleaguesServiceListColleagueActivityTypesPermValueNOTE        ColleaguesServiceListColleagueActivityTypesPermValue = "NOTE"
+	ColleaguesServiceListColleagueActivityTypesPermValueLABELS      ColleaguesServiceListColleagueActivityTypesPermValue = "LABELS"
+	ColleaguesServiceListColleagueActivityTypesPermValueNAME        ColleaguesServiceListColleagueActivityTypesPermValue = "NAME"
+)
+
+type ColleaguesServiceSetColleaguePropsAccessPermValue string
+
+const (
+	ColleaguesServiceSetColleaguePropsAccessPermValueOwn       ColleaguesServiceSetColleaguePropsAccessPermValue = "Own"
+	ColleaguesServiceSetColleaguePropsAccessPermValueLowerRank ColleaguesServiceSetColleaguePropsAccessPermValue = "Lower_Rank"
+	ColleaguesServiceSetColleaguePropsAccessPermValueSameRank  ColleaguesServiceSetColleaguePropsAccessPermValue = "Same_Rank"
+	ColleaguesServiceSetColleaguePropsAccessPermValueAny       ColleaguesServiceSetColleaguePropsAccessPermValue = "Any"
+)
+
+type ColleaguesServiceSetColleaguePropsTypesPermValue string
+
+const (
+	ColleaguesServiceSetColleaguePropsTypesPermValueAbsenceDate ColleaguesServiceSetColleaguePropsTypesPermValue = "AbsenceDate"
+	ColleaguesServiceSetColleaguePropsTypesPermValueNote        ColleaguesServiceSetColleaguePropsTypesPermValue = "Note"
+	ColleaguesServiceSetColleaguePropsTypesPermValueLabels      ColleaguesServiceSetColleaguePropsTypesPermValue = "Labels"
+	ColleaguesServiceSetColleaguePropsTypesPermValueName        ColleaguesServiceSetColleaguePropsTypesPermValue = "Name"
+)
+
+type ConductServiceListConductEntriesAccessPermValue string
+
+const (
+	ConductServiceListConductEntriesAccessPermValueOwn ConductServiceListConductEntriesAccessPermValue = "Own"
+	ConductServiceListConductEntriesAccessPermValueAll ConductServiceListConductEntriesAccessPermValue = "All"
+)
+
+type TimeclockServiceListTimeclockAccessPermValue string
+
+const (
+	TimeclockServiceListTimeclockAccessPermValueAll TimeclockServiceListTimeclockAccessPermValue = "All"
+)
+
 type ColleaguesServicePerms struct {
 	GetColleague          ColleaguesServiceGetColleaguePermRef
 	ListColleagueActivity ColleaguesServiceListColleagueActivityPermRef
@@ -59,13 +119,16 @@ type ColleaguesServicePerms struct {
 	SetColleagueProps     ColleaguesServiceSetColleaguePropsPermRef
 }
 type ColleaguesServiceGetColleaguePermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
-	Types  perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[ColleaguesServiceGetColleagueAccessPermValue]
+	Types       perms.AttrRef[perms.StringListAttr]
+	TypesTyped  perms.StringListAttrRef[ColleaguesServiceGetColleagueTypesPermValue]
 }
 type ColleaguesServiceListColleagueActivityPermRef struct {
-	Perm  perms.PermissionRef
-	Types perms.AttrRef[perms.StringListAttr]
+	Perm       perms.PermissionRef
+	Types      perms.AttrRef[perms.StringListAttr]
+	TypesTyped perms.StringListAttrRef[ColleaguesServiceListColleagueActivityTypesPermValue]
 }
 type ColleaguesServiceListColleaguesPermRef struct {
 	Perm perms.PermissionRef
@@ -74,9 +137,11 @@ type ColleaguesServiceManageLabelsPermRef struct {
 	Perm perms.PermissionRef
 }
 type ColleaguesServiceSetColleaguePropsPermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
-	Types  perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[ColleaguesServiceSetColleaguePropsAccessPermValue]
+	Types       perms.AttrRef[perms.StringListAttr]
+	TypesTyped  perms.StringListAttrRef[ColleaguesServiceSetColleaguePropsTypesPermValue]
 }
 
 var ColleaguesService = ColleaguesServicePerms{
@@ -86,7 +151,15 @@ var ColleaguesService = ColleaguesServicePerms{
 			perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceGetColleaguePerm),
 			ColleaguesServiceGetColleagueAccessPermField,
 		),
+		AccessTyped: perms.NewTypedStringListAttrRef[ColleaguesServiceGetColleagueAccessPermValue](
+			perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceGetColleaguePerm),
+			ColleaguesServiceGetColleagueAccessPermField,
+		),
 		Types: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceGetColleaguePerm),
+			ColleaguesServiceGetColleagueTypesPermField,
+		),
+		TypesTyped: perms.NewTypedStringListAttrRef[ColleaguesServiceGetColleagueTypesPermValue](
 			perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceGetColleaguePerm),
 			ColleaguesServiceGetColleagueTypesPermField,
 		),
@@ -94,6 +167,10 @@ var ColleaguesService = ColleaguesServicePerms{
 	ListColleagueActivity: ColleaguesServiceListColleagueActivityPermRef{
 		Perm: perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceListColleagueActivityPerm),
 		Types: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceListColleagueActivityPerm),
+			ColleaguesServiceListColleagueActivityTypesPermField,
+		),
+		TypesTyped: perms.NewTypedStringListAttrRef[ColleaguesServiceListColleagueActivityTypesPermValue](
 			perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceListColleagueActivityPerm),
 			ColleaguesServiceListColleagueActivityTypesPermField,
 		),
@@ -110,7 +187,15 @@ var ColleaguesService = ColleaguesServicePerms{
 			perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceSetColleaguePropsPerm),
 			ColleaguesServiceSetColleaguePropsAccessPermField,
 		),
+		AccessTyped: perms.NewTypedStringListAttrRef[ColleaguesServiceSetColleaguePropsAccessPermValue](
+			perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceSetColleaguePropsPerm),
+			ColleaguesServiceSetColleaguePropsAccessPermField,
+		),
 		Types: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceSetColleaguePropsPerm),
+			ColleaguesServiceSetColleaguePropsTypesPermField,
+		),
+		TypesTyped: perms.NewTypedStringListAttrRef[ColleaguesServiceSetColleaguePropsTypesPermValue](
 			perms.NewPermissionRef(Namespace, ColleaguesServicePerm, ColleaguesServiceSetColleaguePropsPerm),
 			ColleaguesServiceSetColleaguePropsTypesPermField,
 		),
@@ -130,8 +215,9 @@ type ConductServiceDeleteConductEntryPermRef struct {
 	Perm perms.PermissionRef
 }
 type ConductServiceListConductEntriesPermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[ConductServiceListConductEntriesAccessPermValue]
 }
 type ConductServiceUpdateConductEntryPermRef struct {
 	Perm perms.PermissionRef
@@ -147,6 +233,10 @@ var ConductService = ConductServicePerms{
 	ListConductEntries: ConductServiceListConductEntriesPermRef{
 		Perm: perms.NewPermissionRef(Namespace, ConductServicePerm, ConductServiceListConductEntriesPerm),
 		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, ConductServicePerm, ConductServiceListConductEntriesPerm),
+			ConductServiceListConductEntriesAccessPermField,
+		),
+		AccessTyped: perms.NewTypedStringListAttrRef[ConductServiceListConductEntriesAccessPermValue](
 			perms.NewPermissionRef(Namespace, ConductServicePerm, ConductServiceListConductEntriesPerm),
 			ConductServiceListConductEntriesAccessPermField,
 		),
@@ -190,8 +280,9 @@ type TimeclockServiceListInactiveEmployeesPermRef struct {
 	Perm perms.PermissionRef
 }
 type TimeclockServiceListTimeclockPermRef struct {
-	Perm   perms.PermissionRef
-	Access perms.AttrRef[perms.StringListAttr]
+	Perm        perms.PermissionRef
+	Access      perms.AttrRef[perms.StringListAttr]
+	AccessTyped perms.StringListAttrRef[TimeclockServiceListTimeclockAccessPermValue]
 }
 
 var TimeclockService = TimeclockServicePerms{
@@ -201,6 +292,10 @@ var TimeclockService = TimeclockServicePerms{
 	ListTimeclock: TimeclockServiceListTimeclockPermRef{
 		Perm: perms.NewPermissionRef(Namespace, TimeclockServicePerm, TimeclockServiceListTimeclockPerm),
 		Access: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, TimeclockServicePerm, TimeclockServiceListTimeclockPerm),
+			TimeclockServiceListTimeclockAccessPermField,
+		),
+		AccessTyped: perms.NewTypedStringListAttrRef[TimeclockServiceListTimeclockAccessPermValue](
 			perms.NewPermissionRef(Namespace, TimeclockServicePerm, TimeclockServiceListTimeclockPerm),
 			TimeclockServiceListTimeclockAccessPermField,
 		),
