@@ -68,11 +68,17 @@ function createWrapper(props: PickerTestProps) {
         global: {
             stubs: {
                 UInputNumber: UInputNumberStub,
+                InputNumber: UInputNumberStub,
                 USelectMenu: USelectMenuStub,
+                SelectMenu: USelectMenuStub,
                 UFormField: UFormFieldStub,
+                FormField: UFormFieldStub,
                 UFieldGroup: UFieldGroupStub,
+                FieldGroup: UFieldGroupStub,
                 UTooltip: UTooltipStub,
+                Tooltip: UTooltipStub,
                 UButton: UButtonStub,
+                Button: UButtonStub,
                 ClientOnly: ClientOnlyStub,
             },
             mocks: {
