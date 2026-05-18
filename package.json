@@ -150,7 +150,7 @@
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.5",
         "happy-dom": "20.9.0",
-        "nuxt": "4.4.5",
+        "nuxt": "4.4.6",
         "nuxt-tiptap-editor": "3.3.0",
         "nuxt-typed-router": "4.0.7",
         "pinia-plugin-persistedstate": "4.7.1",
@@ -173,7 +173,7 @@
     },
     "resolutions": {
         "@internationalized/date": "3.12.1",
-        "@nuxt/kit": "4.4.5",
+        "@nuxt/kit": "4.4.6",
         "@tiptap/core": "3.23.1",
         "@tiptap/pm": "3.23.1",
         "@tiptap/vue-3": "3.23.1"
