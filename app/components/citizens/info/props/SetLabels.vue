@@ -27,14 +27,6 @@ const overlay = useOverlay();
 
 const citizensCitizensClient = await getCitizensCitizensClient();
 
-const canSetProps = can('citizens.CitizensService/SetUserProps');
-
-const canDo = computed(() => ({
-    // TODO per label access check
-    set: canSetProps.value && attr('citizens.CitizensService/SetUserProps', 'Fields', 'Labels').value,
-    remove: canSetProps.value && attr('citizens.CitizensService/SetUserProps', 'Fields', 'Labels').value,
-}));
-
 const changed = ref(false);
 
 const schema = z.object({
@@ -149,7 +141,14 @@ const formRef = useTemplateRef('formRef');
 
 <template>
     <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
-        <UFormField v-if="canDo.set && can('citizens.LabelsService/ListLabels').value" name="labels">
+        <UFormField
+            v-if="
+                can('citizens.CitizensService/SetUserProps').value &&
+                attr('citizens.CitizensService/SetUserProps', 'Fields', 'Labels').value &&
+                can('citizens.LabelsService/ListLabels').value
+            "
+            name="labels"
+        >
             <SelectMenu
                 v-model="selectedLabel"
                 class="w-full"
