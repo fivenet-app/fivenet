@@ -184,8 +184,9 @@ export function tiptapTextPreview(
     let remaining = maxChars;
     let truncated = false;
 
-    const push = (s: string) => {
+    const push = (s: string, { softSeparator = false }: { softSeparator?: boolean } = {}) => {
         if (!s || remaining <= 0) return;
+        if (softSeparator && !/\S/.test(out)) return;
 
         // Avoid expensive rune splitting. JS strings are UTF-16, so "chars" here are code units.
         // For UI previews this is usually fine.
@@ -218,7 +219,7 @@ export function tiptapTextPreview(
             case 'table':
             case 'tableRow':
                 // If there's already content and we don't end with whitespace, add a newline
-                if (out && !/\s$/.test(out)) push('\n');
+                if (out && !/\s$/.test(out)) push('\n', { softSeparator: true });
                 return;
         }
     };
@@ -236,7 +237,7 @@ export function tiptapTextPreview(
             case 'listItem':
             case 'taskItem':
             case 'tableRow':
-                if (out && !/\s$/.test(out)) push('\n');
+                if (out && !/\s$/.test(out)) push('\n', { softSeparator: true });
                 return;
         }
     };
@@ -268,7 +269,7 @@ export function tiptapTextPreview(
         }
 
         if (type === 'hardBreak') {
-            push(opt.blockSeparators ? '\n' : ' ');
+            push(opt.blockSeparators ? '\n' : ' ', { softSeparator: true });
             return;
         }
 

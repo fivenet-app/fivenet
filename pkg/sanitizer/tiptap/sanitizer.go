@@ -414,8 +414,9 @@ func buildAllowed() *Sanitizer {
 // Tree sanitizer
 
 type Stats struct {
-	Words        int
-	FirstHeading string
+	Words          int
+	FirstHeading   string
+	firstParagraph string
 }
 
 func SanitizeStruct(
@@ -453,6 +454,9 @@ func Sanitize(
 	out, ok := sanitizeNode(doc, sanitizer, 0, maxDepth, &stats)
 	if !ok {
 		return nil, Stats{}, errors.New("invalid root")
+	}
+	if stats.FirstHeading == "" {
+		stats.FirstHeading = stats.firstParagraph
 	}
 
 	return out, stats, nil
@@ -518,6 +522,11 @@ func sanitizeNode(
 	if stats.FirstHeading == "" && typ == NodeTypeHeading && len(children) > 0 {
 		if s := plainText(children); s != "" {
 			stats.FirstHeading = s
+		}
+	}
+	if stats.firstParagraph == "" && typ == NodeTypeParagraph && len(children) > 0 {
+		if s := plainText(children); s != "" {
+			stats.firstParagraph = s
 		}
 	}
 

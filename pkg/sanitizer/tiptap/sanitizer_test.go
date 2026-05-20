@@ -454,3 +454,72 @@ func TestSanitizeMaxDepthPrunesTooDeepNodes(t *testing.T) {
 		t.Fatalf("expected deep content to be pruned, got %v", deepChildren)
 	}
 }
+
+func TestSanitizeUsesFirstNonEmptyParagraphWhenNoHeading(t *testing.T) {
+	t.Parallel()
+	New()
+
+	doc := map[string]any{
+		"type": NodeTypeDoc,
+		"content": []any{
+			map[string]any{
+				"type": NodeTypeParagraph,
+				"content": []any{
+					map[string]any{"type": NodeTypeText, "text": "   "},
+				},
+			},
+			map[string]any{
+				"type": NodeTypeParagraph,
+				"content": []any{
+					map[string]any{"type": NodeTypeText, "text": "Fallback Title"},
+				},
+			},
+			map[string]any{
+				"type": NodeTypeParagraph,
+				"content": []any{
+					map[string]any{"type": NodeTypeText, "text": "Another paragraph"},
+				},
+			},
+		},
+	}
+
+	_, stats, err := Sanitize(doc, 0, 10)
+	if err != nil {
+		t.Fatalf("sanitize returned error: %v", err)
+	}
+	if stats.FirstHeading != "Fallback Title" {
+		t.Fatalf("first heading fallback = %q, want %q", stats.FirstHeading, "Fallback Title")
+	}
+}
+
+func TestSanitizePrefersHeadingOverParagraphFallback(t *testing.T) {
+	t.Parallel()
+	New()
+
+	doc := map[string]any{
+		"type": NodeTypeDoc,
+		"content": []any{
+			map[string]any{
+				"type": NodeTypeParagraph,
+				"content": []any{
+					map[string]any{"type": NodeTypeText, "text": "Paragraph candidate"},
+				},
+			},
+			map[string]any{
+				"type":  NodeTypeHeading,
+				"attrs": map[string]any{"level": float64(1)},
+				"content": []any{
+					map[string]any{"type": NodeTypeText, "text": "Real Heading"},
+				},
+			},
+		},
+	}
+
+	_, stats, err := Sanitize(doc, 0, 10)
+	if err != nil {
+		t.Fatalf("sanitize returned error: %v", err)
+	}
+	if stats.FirstHeading != "Real Heading" {
+		t.Fatalf("first heading = %q, want %q", stats.FirstHeading, "Real Heading")
+	}
+}
