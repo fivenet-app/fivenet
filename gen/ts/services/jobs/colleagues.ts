@@ -1126,4 +1126,4 @@ export const ColleaguesService = new ServiceType("services.jobs.ColleaguesServic
     { name: "GetColleagueLabels", options: { "codegen.perms.perms": { enabled: true, name: "GetColleague" } }, I: GetColleagueLabelsRequest, O: GetColleagueLabelsResponse },
     { name: "ManageLabels", options: { "codegen.perms.perms": { enabled: true } }, I: ManageLabelsRequest, O: ManageLabelsResponse },
     { name: "GetColleagueLabelsStats", options: { "codegen.perms.perms": { enabled: true, name: "GetColleague" } }, I: GetColleagueLabelsStatsRequest, O: GetColleagueLabelsStatsResponse }
-], { "codegen.perms.perms_svc": { order: 61, icon: "i-mdi-briefcase-outline" } });
+], { "codegen.perms.perms_svc": { order: 61, icon: "i-mdi-account-group" } });

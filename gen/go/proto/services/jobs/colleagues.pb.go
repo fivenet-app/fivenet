@@ -1389,7 +1389,7 @@ const file_services_jobs_colleagues_proto_rawDesc = "" +
 	"\x1eGetColleagueLabelsStatsRequest\x12\x1b\n" +
 	"\tlabel_ids\x18\x01 \x03(\x03R\blabelIds\"Z\n" +
 	"\x1fGetColleagueLabelsStatsResponse\x127\n" +
-	"\x05count\x18\x01 \x03(\v2!.resources.jobs.labels.LabelCountR\x05count2\xad\t\n" +
+	"\x05count\x18\x01 \x03(\v2!.resources.jobs.labels.LabelCountR\x05count2\xa9\t\n" +
 	"\x11ColleaguesService\x12e\n" +
 	"\x0eListColleagues\x12$.services.jobs.ListColleaguesRequest\x1a%.services.jobs.ListColleaguesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12`\n" +
 	"\aGetSelf\x12\x1d.services.jobs.GetSelfRequest\x1a\x1e.services.jobs.GetSelfResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eListColleagues\x12\xa5\x01\n" +
@@ -1405,7 +1405,7 @@ const file_services_jobs_colleagues_proto_rawDesc = "" +
 	"\x05Types\x18\x01\"\vAbsenceDate\"\x04Note\"\x06Labels\"\x04Name\x12\x7f\n" +
 	"\x12GetColleagueLabels\x12(.services.jobs.GetColleagueLabelsRequest\x1a).services.jobs.GetColleagueLabelsResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fGetColleague\x12_\n" +
 	"\fManageLabels\x12\".services.jobs.ManageLabelsRequest\x1a#.services.jobs.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8e\x01\n" +
-	"\x17GetColleagueLabelsStats\x12-.services.jobs.GetColleagueLabelsStatsRequest\x1a..services.jobs.GetColleagueLabelsStatsResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fGetColleague\x1a\x1f\xea\xf3\x18\x1b\b=\x12\x17i-mdi-briefcase-outlineBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"\x17GetColleagueLabelsStats\x12-.services.jobs.GetColleagueLabelsStatsRequest\x1a..services.jobs.GetColleagueLabelsStatsResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fGetColleague\x1a\x1b\xea\xf3\x18\x17\b=\x12\x13i-mdi-account-groupBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var file_services_jobs_colleagues_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_services_jobs_colleagues_proto_goTypes = []any{

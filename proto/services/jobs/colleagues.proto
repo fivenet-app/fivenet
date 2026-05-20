@@ -104,7 +104,7 @@ message GetColleagueLabelsStatsResponse {
 service ColleaguesService {
   option (codegen.perms.perms_svc) = {
     order: 61
-    icon: "i-mdi-briefcase-outline"
+    icon: "i-mdi-account-group"
   };
 
   rpc ListColleagues(ListColleaguesRequest) returns (ListColleaguesResponse) {

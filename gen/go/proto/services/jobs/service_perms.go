@@ -35,7 +35,7 @@ func init() {
 				},
 			},
 			Order: 6100,
-			Icon:  "i-mdi-briefcase-outline",
+			Icon:  "i-mdi-account-group",
 		},
 		{
 			Namespace: permkeys.Namespace,
@@ -49,7 +49,7 @@ func init() {
 				},
 			},
 			Order: 6100,
-			Icon:  "i-mdi-briefcase-outline",
+			Icon:  "i-mdi-account-group",
 		},
 		{
 			Namespace: permkeys.Namespace,
@@ -57,7 +57,7 @@ func init() {
 			Name:      permkeys.ColleaguesServiceListColleaguesPerm,
 			Attrs:     []perms.Attr{},
 			Order:     6100,
-			Icon:      "i-mdi-briefcase-outline",
+			Icon:      "i-mdi-account-group",
 		},
 		{
 			Namespace: permkeys.Namespace,
@@ -65,7 +65,7 @@ func init() {
 			Name:      permkeys.ColleaguesServiceManageLabelsPerm,
 			Attrs:     []perms.Attr{},
 			Order:     6100,
-			Icon:      "i-mdi-briefcase-outline",
+			Icon:      "i-mdi-account-group",
 		},
 		{
 			Namespace: permkeys.Namespace,
@@ -84,7 +84,7 @@ func init() {
 				},
 			},
 			Order: 6100,
-			Icon:  "i-mdi-briefcase-outline",
+			Icon:  "i-mdi-account-group",
 		},
 
 		// Service: jobs.ConductService
