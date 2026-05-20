@@ -190,6 +190,7 @@ func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		} else {
+			// No app config found in database? Insert into database.
 			dest.AppConfig.Default()
 			if err := c.updateConfigInDB(ctx, dest.AppConfig); err != nil {
 				return nil, err
@@ -197,6 +198,7 @@ func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 		}
 	}
 	dest.AppConfig.Default()
+	dest.AppConfig.Migrate()
 
 	if slices.ContainsFunc(dest.AppConfig.Perms.GetDefault(), func(p *settings.Perm) bool {
 		return !strings.Contains(p.GetCategory(), ".")
