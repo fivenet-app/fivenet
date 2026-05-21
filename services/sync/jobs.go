@@ -207,7 +207,8 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 				WHERE(mysql.AND(
 					tJobsGrades.JobName.EQ(mysql.String(job.GetName())),
 					tJobsGrades.Grade.EQ(mysql.Int32(grade.GetGrade())),
-				))
+				)).
+				LIMIT(1)
 
 			res, err := stmt.ExecContext(ctx, s.db)
 			if err != nil {

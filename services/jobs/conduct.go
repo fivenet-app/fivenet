@@ -9,6 +9,7 @@ import (
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobsconduct "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
@@ -553,9 +554,12 @@ func (s *Server) DeleteConductEntry(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	deletedAtTime := mysql.CURRENT_TIMESTAMP()
-	if entry != nil && entry.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = mysql.TimestampExp(mysql.NULL)
+	var deletedAtTime *timestamp.Timestamp
+	if entry == nil || entry.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
 	tConduct := table.FivenetJobConduct
@@ -564,18 +568,17 @@ func (s *Server) DeleteConductEntry(
 			tConduct.DeletedAt,
 		).
 		SET(
-			tConduct.DeletedAt.SET(deletedAtTime),
+			tConduct.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
 		).
 		WHERE(mysql.AND(
 			tConduct.Job.EQ(mysql.String(userInfo.GetJob())),
 			tConduct.ID.EQ(mysql.Int64(req.GetId())),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbjobs.DeleteConductEntryResponse{}, nil
 }

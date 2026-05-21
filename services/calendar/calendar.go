@@ -8,9 +8,11 @@ import (
 	calendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
 	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
 	permscalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -550,9 +552,12 @@ func (s *Server) DeleteCalendar(
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	deletedAtTime := mysql.CURRENT_TIMESTAMP()
-	if calendar.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = mysql.TimestampExp(mysql.NULL)
+	var deletedAtTime *timestamp.Timestamp
+	if calendar.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
 	stmt := tCalendar.
@@ -560,7 +565,7 @@ func (s *Server) DeleteCalendar(
 			tCalendar.DeletedAt,
 		).
 		SET(
-			tCalendar.DeletedAt.SET(deletedAtTime),
+			tCalendar.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
 		).
 		WHERE(tCalendar.ID.EQ(mysql.Int64(req.GetCalendarId()))).
 		LIMIT(1)

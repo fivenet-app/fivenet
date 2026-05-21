@@ -559,7 +559,8 @@ func (s *UnitDB) UpdateUnitAssignments(
 			WHERE(mysql.AND(
 				tUnitUser.UnitID.EQ(mysql.Int64(unitId)),
 				tUnitUser.UserID.IN(removeIds...),
-			))
+			)).
+			LIMIT(int64(len(removeIds)))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return err
@@ -858,7 +859,8 @@ func (s *UnitDB) Update(ctx context.Context, unit *centrumunits.Unit) (*centrumu
 		).
 		WHERE(mysql.AND(
 			tUnits.ID.EQ(mysql.Int64(unit.GetId())),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, err

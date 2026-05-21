@@ -461,7 +461,8 @@ func (w *Workflow) autoCloseDocument(
 		).
 		WHERE(mysql.AND(
 			tDocument.ID.EQ(mysql.Int64(state.DocumentId)),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err

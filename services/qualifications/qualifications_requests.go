@@ -333,7 +333,8 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 					mysql.Int64(req.GetRequest().GetQualificationId()),
 				),
 				tQualiRequests.UserID.EQ(mysql.Int32(req.GetRequest().GetUserId())),
-			))
+			)).
+			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -613,7 +614,8 @@ func (s *Server) deleteQualificationRequest(
 		WHERE(mysql.AND(
 			tQualiRequests.QualificationID.EQ(mysql.Int64(qualificationId)),
 			tQualiRequests.UserID.EQ(mysql.Int32(userId)),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err

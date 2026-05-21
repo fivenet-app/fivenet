@@ -239,7 +239,8 @@ func (s *Server) CreateOrUpdateTemplate(
 			).
 			WHERE(mysql.AND(
 				tTemplates.ID.EQ(mysql.Int64(req.GetTemplate().GetId())),
-			))
+			)).
+			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -284,7 +285,8 @@ func (s *Server) DeleteTemplate(
 		).
 		WHERE(mysql.AND(
 			tTemplates.ID.EQ(mysql.Int64(req.GetId())),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err

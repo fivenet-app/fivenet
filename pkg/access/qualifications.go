@@ -147,7 +147,8 @@ func (a *Qualifications[U, T, V]) Clear(
 		DELETE().
 		WHERE(
 			a.columns.TargetID.EQ(mysql.Int64(targetId)),
-		)
+		).
+		LIMIT(100)
 
 	var dest T
 	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {

@@ -136,7 +136,8 @@ func (s *Server) CreateOrUpdateMarker(
 			WHERE(mysql.AND(
 				tMarkers.Job.EQ(mysql.String(userInfo.GetJob())),
 				tMarkers.ID.EQ(mysql.Int64(req.GetMarker().GetId())),
-			))
+			)).
+			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)

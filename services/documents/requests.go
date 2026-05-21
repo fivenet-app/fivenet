@@ -627,7 +627,8 @@ func (s *Server) updateDocumentReq(
 		).
 		WHERE(
 			tDocRequest.ID.EQ(mysql.Int64(id)),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		if !dbutils.IsDuplicateError(err) {

@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	"github.com/fivenet-app/fivenet/v2026/services/sync"
 	"github.com/go-jet/jet/v2/mysql"
@@ -244,12 +245,24 @@ func (d *Demo) lookupTargetJobUsersForActivity(
 }
 
 func (d *Demo) clearDemoColleagueActivity(ctx context.Context, tx *sql.Tx, job string) error {
+	condition := mysql.AND(
+		tJobColleagueActivity.Job.EQ(mysql.String(job)),
+		tJobColleagueActivity.Reason.LIKE(mysql.String(demoColleagueActivityReasonPrefix+"%")),
+	)
+
+	var count database.DataCount
+	countStmt := tJobColleagueActivity.
+		SELECT(mysql.COUNT(tJobColleagueActivity.Job).AS("data_count.total")).
+		FROM(tJobColleagueActivity).
+		WHERE(condition)
+	if err := countStmt.QueryContext(ctx, tx, &count); err != nil {
+		return fmt.Errorf("failed to count demo colleague activity rows for job %s. %w", job, err)
+	}
+
 	stmt := tJobColleagueActivity.
 		DELETE().
-		WHERE(mysql.AND(
-			tJobColleagueActivity.Job.EQ(mysql.String(job)),
-			tJobColleagueActivity.Reason.LIKE(mysql.String(demoColleagueActivityReasonPrefix+"%")),
-		))
+		WHERE(condition).
+		LIMIT(count.Total)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to clear demo colleague activity rows for job %s. %w", job, err)

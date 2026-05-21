@@ -317,7 +317,8 @@ func (s *Server) EditComment(
 		WHERE(mysql.AND(
 			tDComments.ID.EQ(mysql.Int64(req.GetComment().GetId())),
 			tDComments.DeletedAt.IS_NULL(),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -470,7 +471,8 @@ func (s *Server) DeleteComment(
 		WHERE(mysql.AND(
 			tDComments.ID.EQ(mysql.Int64(req.GetCommentId())),
 			tDComments.DeletedAt.IS_NULL(),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

@@ -231,7 +231,8 @@ func (s *Server) UpdateAccount(
 		stmt = stmt.
 			WHERE(
 				tAccounts.ID.EQ(mysql.Int64(req.GetId())),
-			)
+			).
+			LIMIT(1)
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}

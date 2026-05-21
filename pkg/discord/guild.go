@@ -426,7 +426,8 @@ func (g *Guild) setLastSyncInterval(
 		).
 		WHERE(
 			tJobProps.Job.EQ(mysql.String(job)),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, g.bot.db); err != nil {
 		return fmt.Errorf("failed to update job last sync data. %w", err)

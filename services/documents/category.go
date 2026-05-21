@@ -6,7 +6,9 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	documentscategory "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/category"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -154,7 +156,8 @@ func (s *Server) CreateOrUpdateCategory(
 			WHERE(mysql.AND(
 				tDCategory.ID.EQ(mysql.Int64(req.GetCategory().GetId())),
 				tDCategory.Job.EQ(mysql.String(userInfo.GetJob())),
-			))
+			)).
+			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -186,9 +189,12 @@ func (s *Server) DeleteCategory(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	deletedAtTime := mysql.CURRENT_TIMESTAMP()
-	if category.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = mysql.TimestampExp(mysql.NULL)
+	var deletedAtTime *timestamp.Timestamp
+	if category.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
 	tDCategory := table.FivenetDocumentsCategories
@@ -197,7 +203,7 @@ func (s *Server) DeleteCategory(
 			tDCategory.DeletedAt,
 		).
 		SET(
-			tDCategory.DeletedAt.SET(deletedAtTime),
+			tDCategory.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
 		).
 		WHERE(mysql.AND(
 			tDCategory.Job.EQ(mysql.String(userInfo.GetJob())),
@@ -208,8 +214,6 @@ func (s *Server) DeleteCategory(
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbdocuments.DeleteCategoryResponse{}, nil
 }

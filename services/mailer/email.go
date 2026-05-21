@@ -12,6 +12,7 @@ import (
 	maileremails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
 	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
 	permsmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer/perms"
@@ -531,7 +532,8 @@ func (s *Server) CreateOrUpdateEmail(
 			WHERE(mysql.AND(
 				tEmails.ID.EQ(mysql.Int64(req.GetEmail().GetId())),
 				condition,
-			))
+			)).
+			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -696,26 +698,28 @@ func (s *Server) DeleteEmail(
 		req.GetId(),
 	)
 
-	deletedAtTime := mysql.CURRENT_TIMESTAMP()
-	if email != nil && email.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = mysql.TimestampExp(mysql.NULL)
+	var deletedAtTime *timestamp.Timestamp
+	if email == nil || email.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
 	tEmails := table.FivenetMailerEmails
 	stmt := tEmails.
 		UPDATE().
 		SET(
-			tEmails.DeletedAt.SET(deletedAtTime),
+			tEmails.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
 		).
 		WHERE(mysql.AND(
 			tEmails.ID.EQ(mysql.Int64(req.GetId())),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
-
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbmailer.DeleteEmailResponse{}, nil
 }

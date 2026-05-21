@@ -193,7 +193,8 @@ func (s *Server) ManageLabels(
 					WHERE(mysql.AND(
 						tJobLabels.ID.EQ(mysql.Int64(label.GetId())),
 						tJobLabels.Job.EQ(mysql.String(label.GetJob())),
-					))
+					)).
+					LIMIT(1)
 
 				if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
 					return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)

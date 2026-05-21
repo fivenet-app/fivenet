@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -160,16 +161,38 @@ func (d *Demo) lookupVehicleOwners(
 }
 
 func (d *Demo) clearDemoVehicles(ctx context.Context, tx *sql.Tx) error {
+	propsCondition := tVehicleProps.Plate.LIKE(mysql.String(demoVehiclePlatePrefix + "%"))
+	var propsCount database.DataCount
+	propsCountStmt := tVehicleProps.
+		SELECT(mysql.COUNT(tVehicleProps.Plate).AS("data_count.total")).
+		FROM(tVehicleProps).
+		WHERE(propsCondition)
+	if err := propsCountStmt.QueryContext(ctx, tx, &propsCount); err != nil {
+		return fmt.Errorf("failed to count demo vehicle props. %w", err)
+	}
+
 	propsStmt := tVehicleProps.
 		DELETE().
-		WHERE(tVehicleProps.Plate.LIKE(mysql.String(demoVehiclePlatePrefix + "%")))
+		WHERE(propsCondition).
+		LIMIT(propsCount.Total)
 	if _, err := propsStmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to clear demo vehicle props. %w", err)
 	}
 
+	vehiclesCondition := tOwnedVehicles.Plate.LIKE(mysql.String(demoVehiclePlatePrefix + "%"))
+	var vehiclesCount database.DataCount
+	vehiclesCountStmt := tOwnedVehicles.
+		SELECT(mysql.COUNT(tOwnedVehicles.Plate).AS("data_count.total")).
+		FROM(tOwnedVehicles).
+		WHERE(vehiclesCondition)
+	if err := vehiclesCountStmt.QueryContext(ctx, tx, &vehiclesCount); err != nil {
+		return fmt.Errorf("failed to count demo vehicles. %w", err)
+	}
+
 	vehiclesStmt := tOwnedVehicles.
 		DELETE().
-		WHERE(tOwnedVehicles.Plate.LIKE(mysql.String(demoVehiclePlatePrefix + "%")))
+		WHERE(vehiclesCondition).
+		LIMIT(vehiclesCount.Total)
 	if _, err := vehiclesStmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to clear demo vehicles. %w", err)
 	}

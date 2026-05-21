@@ -445,7 +445,8 @@ func (s *Server) UpdateTemplate(
 		).
 		WHERE(
 			tDTemplates.ID.EQ(mysql.Int64(req.GetTemplate().GetId())),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

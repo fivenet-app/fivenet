@@ -331,7 +331,8 @@ func (s *Server) handleTimeclockEntry(
 				tTimeClock.UserID.EQ(mysql.Int32(data.GetUserId())),
 				tTimeClock.StartTime.IS_NOT_NULL(),
 				tTimeClock.EndTime.IS_NULL(),
-			))
+			)).
+			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return fmt.Errorf("failed to update timeclock entry. %w", err)
@@ -394,7 +395,8 @@ func (s *Server) handleUserUpdate(
 		stmt := tUser.
 			UPDATE().
 			SET(updateSets[0]).
-			WHERE(tUser.ID.EQ(mysql.Int32(data.GetUserId())))
+			WHERE(tUser.ID.EQ(mysql.Int32(data.GetUserId()))).
+			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return fmt.Errorf("failed to update user. %w", err)

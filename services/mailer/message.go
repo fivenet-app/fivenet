@@ -11,6 +11,7 @@ import (
 	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
 	mailermessages "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/messages"
 	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -333,9 +334,12 @@ func (s *Server) DeleteMessage(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	deletedAtTime := mysql.CURRENT_TIMESTAMP()
-	if message != nil && message.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = mysql.TimestampExp(mysql.NULL)
+	var deletedAtTime *timestamp.Timestamp
+	if message == nil || message.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
 	tMessages := table.FivenetMailerMessages
@@ -344,12 +348,13 @@ func (s *Server) DeleteMessage(
 			tMessages.DeletedAt,
 		).
 		SET(
-			tMessages.DeletedAt.SET(deletedAtTime),
+			tMessages.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
 		).
 		WHERE(mysql.AND(
 			tMessages.ThreadID.EQ(mysql.Int64(req.GetThreadId())),
 			tMessages.ID.EQ(mysql.Int64(req.GetMessageId())),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -372,8 +377,6 @@ func (s *Server) DeleteMessage(
 			},
 		}, emailIds...)
 	}
-
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbmailer.DeleteMessageResponse{}, nil
 }
