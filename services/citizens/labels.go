@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
@@ -361,9 +362,12 @@ func (s *Server) DeleteLabel(
 		return nil, errorscitizens.ErrFailedQuery
 	}
 
-	deletedAtTime := mysql.CURRENT_TIMESTAMP()
-	if label.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = mysql.TimestampExp(mysql.NULL)
+	var deletedAtTime *timestamp.Timestamp
+	if label.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
 	stmt := tCitizensLabelsJob.
@@ -371,7 +375,7 @@ func (s *Server) DeleteLabel(
 			tCitizensLabelsJob.DeletedAt,
 		).
 		SET(
-			tCitizensLabelsJob.DeletedAt.SET(deletedAtTime),
+			tCitizensLabelsJob.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
 		).
 		WHERE(mysql.AND(
 			tCitizensLabelsJob.ID.EQ(mysql.Int64(req.GetId())),
@@ -382,8 +386,6 @@ func (s *Server) DeleteLabel(
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbcitizens.DeleteLabelResponse{}, nil
 }

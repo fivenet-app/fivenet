@@ -288,7 +288,8 @@ func insertCitizenLocations(
 func removeUserLocations(ctx context.Context, db *sql.DB) error {
 	stmt := tLocs.
 		DELETE().
-		WHERE(tLocs.UserID.IS_NOT_NULL().OR(tLocs.UserID.IS_NULL()))
+		WHERE(tLocs.UserID.IS_NOT_NULL().OR(tLocs.UserID.IS_NULL())).
+		LIMIT(10000)
 
 	_, err := stmt.ExecContext(ctx, db)
 

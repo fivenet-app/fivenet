@@ -1007,6 +1007,7 @@ func (s *Server) DeleteApprovalTasks(
 		tApprovalTasks.DocumentID.EQ(mysql.Int64(pol.GetDocumentId())),
 		tApprovalTasks.SnapshotDate.EQ(mysql.DateTimeT(snap)),
 	)
+	deleteLimit := int64(1)
 
 	// Delete all pending?
 	if req.GetDeleteAllPending() {
@@ -1017,6 +1018,7 @@ func (s *Server) DeleteApprovalTasks(
 				),
 			),
 		)
+		deleteLimit = int64(max(1, int(pol.GetPendingCount())))
 	} else if len(req.GetTaskIds()) > 0 {
 		ids := make([]mysql.Expression, 0, len(req.GetTaskIds()))
 		for _, id := range req.GetTaskIds() {
@@ -1024,6 +1026,7 @@ func (s *Server) DeleteApprovalTasks(
 		}
 
 		condition = condition.AND(tApprovalTasks.ID.IN(ids...))
+		deleteLimit = int64(len(ids))
 	} else {
 		return &pbdocuments.DeleteApprovalTasksResponse{}, nil
 	}
@@ -1037,6 +1040,7 @@ func (s *Server) DeleteApprovalTasks(
 	if _, err := tApprovalTasks.
 		DELETE().
 		WHERE(condition).
+		LIMIT(deleteLimit).
 		ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}

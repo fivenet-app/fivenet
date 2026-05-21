@@ -9,8 +9,10 @@ import (
 	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
 	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
 	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -458,7 +460,8 @@ func (s *Server) updateThreadTime(ctx context.Context, tx qrm.DB, threadId int64
 		).
 		WHERE(
 			tThreads.ID.EQ(mysql.Int64(threadId)),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
@@ -484,9 +487,12 @@ func (s *Server) DeleteThread(
 		return nil, err
 	}
 
-	deletedAtTime := mysql.CURRENT_TIMESTAMP()
-	if thread != nil && thread.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = mysql.TimestampExp(mysql.NULL)
+	var deletedAtTime *timestamp.Timestamp
+	if thread == nil || thread.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
 	tThreads := table.FivenetMailerThreads
@@ -495,11 +501,12 @@ func (s *Server) DeleteThread(
 			tThreads.DeletedAt,
 		).
 		SET(
-			tThreads.DeletedAt.SET(deletedAtTime),
+			tThreads.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
 		).
 		WHERE(
 			tThreads.ID.EQ(mysql.Int64(req.GetThreadId())),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -520,8 +527,6 @@ func (s *Server) DeleteThread(
 			},
 		}, emailIds...)
 	}
-
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbmailer.DeleteThreadResponse{}, nil
 }

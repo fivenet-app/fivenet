@@ -178,7 +178,8 @@ func (s *Server) handleExamQuestionsChanges(
 			WHERE(mysql.AND(
 				tExamQuestions.ID.EQ(mysql.Int64(question.GetId())),
 				tExamQuestions.QualificationID.EQ(mysql.Int64(qualificationId)),
-			))
+			)).
+			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, err
@@ -196,7 +197,8 @@ func (s *Server) handleExamQuestionsChanges(
 			WHERE(mysql.AND(
 				tExamQuestions.ID.IN(questionIds...),
 				tExamQuestions.QualificationID.EQ(mysql.Int64(qualificationId)),
-			))
+			)).
+			LIMIT(int64(len(questionIds)))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, err

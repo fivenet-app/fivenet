@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -37,9 +38,22 @@ func (s *Server) handleUserLocations(
 
 	// Handle clear all
 	if clearAll {
+		var count database.DataCount
+
+		countStmt := tLocations.
+			SELECT(
+				mysql.COUNT(tLocations.UserID).AS("data_count.total"),
+			).
+			FROM(tLocations).
+			WHERE(tLocations.UserID.IS_NOT_NULL().OR(tLocations.UserID.IS_NULL()))
+		if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+			return 0, fmt.Errorf("failed to execute user locations clear all count statement. %w", err)
+		}
+
 		stmt := tLocations.
 			DELETE().
-			WHERE(tLocations.UserID.IS_NOT_NULL().OR(tLocations.UserID.IS_NULL()))
+			WHERE(tLocations.UserID.IS_NOT_NULL().OR(tLocations.UserID.IS_NULL())).
+			LIMIT(count.Total)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return 0, fmt.Errorf("failed to execute user locations clear all statement. %w", err)

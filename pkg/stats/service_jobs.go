@@ -30,17 +30,20 @@ func (s *Service) BuildEmployeeCountMetrics(ctx context.Context) error {
 	}
 	defer tx.Rollback()
 
+	rollupCondition := mysql.AND(
+		tRollup.Day.EQ(mysql.DateT(day)),
+		tRollup.SourceKind.EQ(mysql.String(SourceKindEmployeeCount)),
+		tRollup.SourceKey.EQ(mysql.String("fivenet_user_jobs")),
+		tRollup.MetricKey.IN(
+			mysql.String("employee_count"),
+			mysql.String("on_vacation_count"),
+		),
+	)
+
 	if _, err := tRollup.
 		DELETE().
-		WHERE(mysql.AND(
-			tRollup.Day.EQ(mysql.DateT(day)),
-			tRollup.SourceKind.EQ(mysql.String(SourceKindEmployeeCount)),
-			tRollup.SourceKey.EQ(mysql.String("fivenet_user_jobs")),
-			tRollup.MetricKey.IN(
-				mysql.String("employee_count"),
-				mysql.String("on_vacation_count"),
-			),
-		)).
+		WHERE(rollupCondition).
+		LIMIT(10000).
 		ExecContext(ctx, tx); err != nil {
 		return err
 	}

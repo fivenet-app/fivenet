@@ -177,7 +177,8 @@ func (s *Server) SetEmailSettings(
 		if len(settings.GetBlockedEmails()) > 0 {
 			stmt := tSettingsBlocks.
 				DELETE().
-				WHERE(tSettingsBlocks.EmailID.EQ(mysql.Int32(userInfo.GetUserId())))
+				WHERE(tSettingsBlocks.EmailID.EQ(mysql.Int32(userInfo.GetUserId()))).
+				LIMIT(int64(len(settings.GetBlockedEmails())))
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

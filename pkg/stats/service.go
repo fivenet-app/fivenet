@@ -123,12 +123,15 @@ func (s *Service) RebuildDocumentMetricsTx(
 
 	tMetric := table.FivenetDocumentsStatsMetric
 	for _, source := range sources {
+		deleteCondition := mysql.AND(
+			tMetric.DocumentID.EQ(mysql.Int64(doc.GetId())),
+			tMetric.SourceKey.EQ(mysql.String(source)),
+		)
+
 		if _, err := tMetric.
 			DELETE().
-			WHERE(mysql.AND(
-				tMetric.DocumentID.EQ(mysql.Int64(doc.GetId())),
-				tMetric.SourceKey.EQ(mysql.String(source)),
-			)).
+			WHERE(deleteCondition).
+			LIMIT(10000).
 			ExecContext(ctx, tx); err != nil {
 			return err
 		}
@@ -665,6 +668,7 @@ func (s *Service) clearDocumentMetrics(ctx context.Context, tx qrm.DB, documentI
 	_, err := tMetric.
 		DELETE().
 		WHERE(tMetric.DocumentID.EQ(mysql.Int64(documentID))).
+		LIMIT(10000).
 		ExecContext(ctx, tx)
 	return err
 }

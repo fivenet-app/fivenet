@@ -93,7 +93,8 @@ func (a *Users[U, T, AccessLevel]) UpdateEntry(
 		WHERE(mysql.AND(
 			a.columns.ID.EQ(mysql.Int64(entry.GetId())),
 			a.columns.TargetID.EQ(mysql.Int64(targetId)),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err

@@ -245,6 +245,7 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 			if _, err := tFiles.
 				DELETE().
 				WHERE(tFiles.ID.EQ(mysql.Int64(c.GetId()))).
+				LIMIT(1).
 				ExecContext(ctx, tx); err != nil {
 				if err := tx.Rollback(); err != nil {
 					h.logger.Error(

@@ -820,7 +820,8 @@ func (s *DispatchDB) UpdateAssignments(
 			WHERE(mysql.AND(
 				tDispatchUnit.DispatchID.EQ(mysql.Int64(dspId)),
 				tDispatchUnit.UnitID.IN(removeIds...),
-			))
+			)).
+			LIMIT(int64(len(removeIds)))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return err

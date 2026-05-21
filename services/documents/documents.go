@@ -642,7 +642,8 @@ func (s *Server) UpdateDocument(
 			).
 			WHERE(
 				tDocument.ID.EQ(mysql.Int64(oldDoc.GetId())),
-			)
+			).
+			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -931,9 +932,12 @@ func (s *Server) DeleteDocument(
 		return nil, errorsdocuments.ErrDocDeleteDenied
 	}
 
-	deletedAtTime := mysql.CURRENT_TIMESTAMP()
-	if doc.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = mysql.TimestampExp(mysql.NULL)
+	var deletedAtTime *timestamp.Timestamp
+	if doc.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
 	stmt := tDocument.
@@ -941,7 +945,7 @@ func (s *Server) DeleteDocument(
 			tDocument.DeletedAt,
 		).
 		SET(
-			tDocument.DeletedAt.SET(deletedAtTime),
+			tDocument.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
 		).
 		WHERE(
 			tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
@@ -960,8 +964,6 @@ func (s *Server) DeleteDocument(
 	}); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbdocuments.DeleteDocumentResponse{}, nil
 }
@@ -1040,7 +1042,8 @@ func (s *Server) ToggleDocument(
 		).
 		WHERE(
 			tDocument.ID.EQ(mysql.Int64(doc.GetId())),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

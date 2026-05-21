@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"strings"
 
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbfilestore "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/filestore"
@@ -281,6 +282,7 @@ func (h *Handler[P]) deleteJoinRow(
 				h.parentColBoolExp(parentID),
 				h.fileCol.EQ(mysql.Int64(fileID)),
 			)).
+			LIMIT(1).
 			ExecContext(ctx, tx)
 		return err
 	}
@@ -291,6 +293,7 @@ func (h *Handler[P]) deleteJoinRow(
 			h.parentColBoolExp(parentID),
 			h.fileCol.EQ(mysql.Int64(fileID)),
 		)).
+		LIMIT(1).
 		ExecContext(ctx, tx)
 	return err
 }
@@ -413,6 +416,7 @@ func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int6
 				tFiles.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)), // Revive if file was soft-deleted
 			).
 			WHERE(tFiles.ID.EQ(mysql.Int64(fileId.ID))).
+			LIMIT(1).
 			ExecContext(ctx, tx); err != nil {
 			return 0, err
 		}
@@ -498,18 +502,16 @@ func putToStorage(
 // CountFilesForParentID returns the number of files associated with a given parent ID.
 func (h *Handler[P]) CountFilesForParentID(ctx context.Context, parentID P) (int64, error) {
 	stmt := h.joinTable.
-		SELECT(mysql.COUNT(h.fileCol).AS("count")).
+		SELECT(mysql.COUNT(h.fileCol).AS("data_count.total")).
 		FROM(h.joinTable).
 		WHERE(h.parentColBoolExp(parentID))
 
-	var count struct {
-		Count int64 `jet:"count"`
-	}
+	var count database.DataCount
 	if err := stmt.QueryContext(ctx, h.db, &count); err != nil {
 		return 0, err
 	}
 
-	return count.Count, nil
+	return count.Total, nil
 }
 
 // ListFilesForParentID returns a list of files associated with a given parent ID.

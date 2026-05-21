@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"slices"
 
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	permissionsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/events"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -262,7 +263,8 @@ func (ps *Perms) updateAttribute(
 		).
 		WHERE(
 			tAttrs.ID.EQ(mysql.Int64(attrId)),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		return fmt.Errorf("failed to execute update statement. %w", err)
@@ -911,7 +913,8 @@ func (ps *Perms) RemoveAttributesFromRole(
 		WHERE(mysql.AND(
 			tRoleAttrs.RoleID.EQ(mysql.Int64(roleId)),
 			tRoleAttrs.AttrID.IN(ids...),
-		))
+		)).
+		LIMIT(int64(len(ids)))
 
 	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		return fmt.Errorf("failed to execute delete statement for role attributes. %w", err)
@@ -1017,9 +1020,19 @@ func (ps *Perms) UpdateJobAttributes(
 }
 
 func (ps *Perms) ClearJobAttributes(ctx context.Context, job string) error {
+	var count database.DataCount
+	countStmt := tJobAttrs.
+		SELECT(mysql.COUNT(tJobAttrs.AttrID).AS("data_count.total")).
+		FROM(tJobAttrs).
+		WHERE(tJobAttrs.Job.EQ(mysql.String(job)))
+	if err := countStmt.QueryContext(ctx, ps.db, &count); err != nil {
+		return fmt.Errorf("failed to execute count statement for job attributes. %w", err)
+	}
+
 	stmt := tJobAttrs.
 		DELETE().
-		WHERE(tJobAttrs.Job.EQ(mysql.String(job)))
+		WHERE(tJobAttrs.Job.EQ(mysql.String(job))).
+		LIMIT(count.Total)
 
 	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		return fmt.Errorf("failed to execute delete statement for job attributes. %w", err)

@@ -434,7 +434,8 @@ func (s *Server) createOrUpdateQualificationResult(
 			WHERE(mysql.AND(
 				tQualiResults.ID.EQ(mysql.Int64(resultId)),
 				tQualiResults.DeletedAt.IS_NULL(),
-			))
+			)).
+			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return 0, err
@@ -454,7 +455,8 @@ func (s *Server) createOrUpdateQualificationResult(
 			WHERE(mysql.AND(
 				tExamResponses.QualificationID.EQ(mysql.Int64(quali.GetId())),
 				tExamResponses.UserID.EQ(mysql.Int32(userId)),
-			))
+			)).
+			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return 0, err
@@ -680,7 +682,8 @@ func (s *Server) DeleteQualificationResult(
 		WHERE(mysql.AND(
 			tQualiResults.ID.EQ(mysql.Int64(result.GetId())),
 			tQualiResults.ID.EQ(mysql.Int64(req.GetResultId())),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

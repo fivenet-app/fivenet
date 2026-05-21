@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	permsqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
@@ -462,7 +463,8 @@ func (s *Server) UpdateQualification(
 		).
 		WHERE(
 			tQuali.ID.EQ(mysql.Int64(req.GetQualification().GetId())),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -570,9 +572,12 @@ func (s *Server) DeleteQualification(
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	deletedAtTime := mysql.CURRENT_TIMESTAMP()
-	if quali.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = mysql.TimestampExp(mysql.NULL)
+	var deletedAtTime *timestamp.Timestamp
+	if quali.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 	}
 
 	tQuali := table.FivenetQualifications
@@ -581,17 +586,16 @@ func (s *Server) DeleteQualification(
 			tQuali.DeletedAt,
 		).
 		SET(
-			tQuali.DeletedAt.SET(deletedAtTime),
+			tQuali.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
 		).
 		WHERE(
 			tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbqualifications.DeleteQualificationResponse{}, nil
 }

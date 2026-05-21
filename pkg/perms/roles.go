@@ -648,11 +648,21 @@ func (p *Perms) UpdateJobPermissions(
 }
 
 func (ps *Perms) ClearJobPermissions(ctx context.Context, job string) error {
+	var count database.DataCount
+	countStmt := tJobPerms.
+		SELECT(mysql.COUNT(tJobPerms.PermissionID).AS("data_count.total")).
+		FROM(tJobPerms).
+		WHERE(tJobPerms.Job.EQ(mysql.String(job)))
+	if err := countStmt.QueryContext(ctx, ps.db, &count); err != nil {
+		return fmt.Errorf("failed to count job permissions for job %s. %w", job, err)
+	}
+
 	stmt := tJobPerms.
 		DELETE().
 		WHERE(
 			tJobPerms.Job.EQ(mysql.String(job)),
-		)
+		).
+		LIMIT(count.Total)
 
 	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		if !dbutils.IsDuplicateError(err) {

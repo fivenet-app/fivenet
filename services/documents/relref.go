@@ -370,7 +370,8 @@ func (s *Server) RemoveDocumentReference(
 		).
 		WHERE(
 			tDocRef.ID.EQ(mysql.Int64(req.GetId())),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -571,7 +572,8 @@ func (s *Server) RemoveDocumentRelation(
 		).
 		WHERE(
 			tDocRel.ID.EQ(mysql.Int64(req.GetId())),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

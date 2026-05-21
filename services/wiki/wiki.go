@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
 	wikiaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
@@ -872,15 +873,18 @@ func (s *Server) DeletePage(
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
+	// Check if page has any un-deleted child pages
 	tPage := table.FivenetWikiPages
-
-	// Ensure page has no children
 	countStmt := tPage.
 		SELECT(
 			mysql.COUNT(tPage.ID).AS("data_count.total"),
 		).
 		FROM(tPage).
-		WHERE(tPage.ParentID.EQ(mysql.Int64(page.GetId())))
+		WHERE(mysql.AND(
+			tPage.ParentID.EQ(mysql.Int64(page.GetId())),
+			tPage.DeletedAt.IS_NULL(),
+		)).
+		LIMIT(1)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -893,9 +897,21 @@ func (s *Server) DeletePage(
 		return nil, errorswiki.ErrPageHasChildren
 	}
 
-	deletedAtTime := mysql.CURRENT_TIMESTAMP()
-	if page.GetMeta() != nil && page.GetMeta().GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = mysql.TimestampExp(mysql.NULL)
+	condition := tPage.ID.EQ(mysql.Int64(req.GetId()))
+
+	var deletedAtTime *timestamp.Timestamp
+	if page.GetMeta() == nil || page.GetMeta().GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
+
+		// Restore the page's parent page if any
+		if page.GetParentId() > 0 {
+			condition = condition.OR(
+				tPage.ID.EQ(mysql.Int64(page.GetParentId())),
+			)
+		}
 	}
 
 	stmt := tPage.
@@ -903,12 +919,10 @@ func (s *Server) DeletePage(
 			tPage.DeletedAt,
 		).
 		SET(
-			tPage.DeletedAt.SET(deletedAtTime),
+			tPage.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
 		).
-		WHERE(mysql.AND(
-			tPage.ID.EQ(mysql.Int64(req.GetId())),
-		)).
-		LIMIT(1)
+		WHERE(condition).
+		LIMIT(2)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)

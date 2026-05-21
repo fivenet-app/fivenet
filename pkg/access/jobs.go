@@ -88,7 +88,8 @@ func (a *Jobs[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId int64) (T
 		DELETE().
 		WHERE(
 			a.columns.TargetID.EQ(mysql.Int64(targetId)),
-		)
+		).
+		LIMIT(100)
 
 	var dest T
 	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
