@@ -403,9 +403,7 @@ func (s *Server) CreateOrUpdateEmail(
 		// Field Permission Check
 		fields, err := s.ps.AttrStringList(
 			userInfo,
-			permsmailer.MailerServicePerm,
-			permsmailer.MailerServiceCreateOrUpdateEmailPerm,
-			permsmailer.MailerServiceCreateOrUpdateEmailFieldsPermField,
+			permsmailer.MailerService.CreateOrUpdateEmail.Fields,
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

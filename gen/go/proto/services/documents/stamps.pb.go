@@ -594,7 +594,7 @@ const file_services_documents_stamps_proto_rawDesc = "" +
 	"\x13DeleteStampResponse2\xde\x03\n" +
 	"\rStampsService\x12u\n" +
 	"\x10ListUsableStamps\x12+.services.documents.ListUsableStampsRequest\x1a,.services.documents.ListUsableStampsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12o\n" +
-	"\bGetStamp\x12#.services.documents.GetStampRequest\x1a$.services.documents.GetStampResponse\"\x18\xd2\xf3\x18\x14\b\x01\x1a\x10ListUsableStamps\x12f\n" +
+	"\bGetStamp\x12#.services.documents.GetStampRequest\x1a$.services.documents.GetStampResponse\"\x18\xd2\xf3\x18\x14\b\x01\"\x10ListUsableStamps\x12f\n" +
 	"\vUpsertStamp\x12&.services.documents.UpsertStampRequest\x1a'.services.documents.UpsertStampResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12f\n" +
 	"\vDeleteStamp\x12&.services.documents.DeleteStampRequest\x1a'.services.documents.DeleteStampResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x15\xea\xf3\x18\x11\b9\x12\ri-mdi-stamperBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 

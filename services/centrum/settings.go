@@ -73,9 +73,7 @@ func (s *Server) UpdateSettings(
 
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permscentrum.CentrumServicePerm,
-		permscentrum.CentrumServiceUpdateSettingsPerm,
-		permscentrum.CentrumServiceUpdateSettingsAccessPermField,
+		permscentrum.CentrumService.UpdateSettings.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
@@ -87,7 +85,6 @@ func (s *Server) UpdateSettings(
 		req.Settings.OfferedAccess = current.GetOfferedAccess()
 		req.Settings.EffectiveAccess = current.GetEffectiveAccess()
 	}
-
 	if !fields.Contains("Public") {
 		req.Settings.Public = current.GetPublic()
 	}

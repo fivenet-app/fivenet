@@ -1444,23 +1444,23 @@ const file_services_jobs_colleagues_proto_rawDesc = "" +
 	"\x1eGetColleagueLabelsStatsRequest\x12\x1b\n" +
 	"\tlabel_ids\x18\x01 \x03(\x03R\blabelIds\"Z\n" +
 	"\x1fGetColleagueLabelsStatsResponse\x127\n" +
-	"\x05count\x18\x01 \x03(\v2!.resources.jobs.labels.LabelCountR\x05count2\xa4\t\n" +
+	"\x05count\x18\x01 \x03(\v2!.resources.jobs.labels.LabelCountR\x05count2\xa9\t\n" +
 	"\x11ColleaguesService\x12e\n" +
 	"\x0eListColleagues\x12$.services.jobs.ListColleaguesRequest\x1a%.services.jobs.ListColleaguesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12`\n" +
-	"\aGetSelf\x12\x1d.services.jobs.GetSelfRequest\x1a\x1e.services.jobs.GetSelfResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eListColleagues\x12\xa5\x01\n" +
-	"\fGetColleague\x12\".services.jobs.GetColleagueRequest\x1a#.services.jobs.GetColleagueResponse\"L\xd2\xf3\x18H\b\x01*+\n" +
+	"\aGetSelf\x12\x1d.services.jobs.GetSelfRequest\x1a\x1e.services.jobs.GetSelfResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eListColleagues\x12\xa5\x01\n" +
+	"\fGetColleague\x12\".services.jobs.GetColleagueRequest\x1a#.services.jobs.GetColleagueResponse\"L\xd2\xf3\x18H\b\x01:+\n" +
 	"\x06Access\x18\x01\"\x03Own\"\n" +
-	"Lower_Rank\"\tSame_Rank\"\x03Any*\x17\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03Any:\x17\n" +
 	"\x05Types\x18\x01\"\x04Note\"\x06Labels\x12\xc8\x01\n" +
-	"\x15ListColleagueActivity\x12+.services.jobs.ListColleagueActivityRequest\x1a,.services.jobs.ListColleagueActivityResponse\"T\xd2\xf3\x18P\b\x01*L\n" +
+	"\x15ListColleagueActivity\x12+.services.jobs.ListColleagueActivityRequest\x1a,.services.jobs.ListColleagueActivityResponse\"T\xd2\xf3\x18P\b\x01:L\n" +
 	"\x05Types\x18\x01\"\x05HIRED\"\x05FIRED\"\bPROMOTED\"\aDEMOTED\"\fABSENCE_DATE\"\x04NOTE\"\x06LABELS\"\x04NAME\x12\xc7\x01\n" +
-	"\x11SetColleagueProps\x12'.services.jobs.SetColleaguePropsRequest\x1a(.services.jobs.SetColleaguePropsResponse\"_\xd2\xf3\x18[\b\x01*+\n" +
+	"\x11SetColleagueProps\x12'.services.jobs.SetColleaguePropsRequest\x1a(.services.jobs.SetColleaguePropsResponse\"_\xd2\xf3\x18[\b\x01:+\n" +
 	"\x06Access\x18\x01\"\x03Own\"\n" +
-	"Lower_Rank\"\tSame_Rank\"\x03Any**\n" +
+	"Lower_Rank\"\tSame_Rank\"\x03Any:*\n" +
 	"\x05Types\x18\x01\"\vAbsenceDate\"\x04Note\"\x06Labels\"\x04Name\x12\x7f\n" +
-	"\x12GetColleagueLabels\x12(.services.jobs.GetColleagueLabelsRequest\x1a).services.jobs.GetColleagueLabelsResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fGetColleague\x12_\n" +
+	"\x12GetColleagueLabels\x12(.services.jobs.GetColleagueLabelsRequest\x1a).services.jobs.GetColleagueLabelsResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fGetColleague\x12_\n" +
 	"\fManageLabels\x12\".services.jobs.ManageLabelsRequest\x1a#.services.jobs.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8e\x01\n" +
-	"\x17GetColleagueLabelsStats\x12-.services.jobs.GetColleagueLabelsStatsRequest\x1a..services.jobs.GetColleagueLabelsStatsResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fGetColleague\x1a\x16\xea\xf3\x18\x12\"\x10jobs.JobsServiceBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"\x17GetColleagueLabelsStats\x12-.services.jobs.GetColleagueLabelsStatsRequest\x1a..services.jobs.GetColleagueLabelsStatsResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fGetColleague\x1a\x1b\xea\xf3\x18\x17\b=\x12\x13i-mdi-account-groupBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var file_services_jobs_colleagues_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_services_jobs_colleagues_proto_goTypes = []any{

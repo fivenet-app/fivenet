@@ -1928,19 +1928,19 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\vGetJobProps\x12%.services.settings.GetJobPropsRequest\x1a&.services.settings.GetJobPropsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12d\n" +
 	"\vSetJobProps\x12%.services.settings.SetJobPropsRequest\x1a&.services.settings.SetJobPropsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12[\n" +
 	"\bGetRoles\x12\".services.settings.GetRolesRequest\x1a#.services.settings.GetRolesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12b\n" +
-	"\aGetRole\x12!.services.settings.GetRoleRequest\x1a\".services.settings.GetRoleResponse\"\x10\xd2\xf3\x18\f\b\x01\x1a\bGetRoles\x12a\n" +
+	"\aGetRole\x12!.services.settings.GetRoleRequest\x1a\".services.settings.GetRoleResponse\"\x10\xd2\xf3\x18\f\b\x01\"\bGetRoles\x12a\n" +
 	"\n" +
 	"CreateRole\x12$.services.settings.CreateRoleRequest\x1a%.services.settings.CreateRoleResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12a\n" +
 	"\n" +
 	"DeleteRole\x12$.services.settings.DeleteRoleRequest\x1a%.services.settings.DeleteRoleResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12p\n" +
 	"\x0fUpdateRolePerms\x12).services.settings.UpdateRolePermsRequest\x1a*.services.settings.UpdateRolePermsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12w\n" +
-	"\x0eGetPermissions\x12(.services.settings.GetPermissionsRequest\x1a).services.settings.GetPermissionsResponse\"\x10\xd2\xf3\x18\f\b\x01\x1a\bGetRoles\x12\x92\x01\n" +
-	"\x17GetEffectivePermissions\x121.services.settings.GetEffectivePermissionsRequest\x1a2.services.settings.GetEffectivePermissionsResponse\"\x10\xd2\xf3\x18\f\b\x01\x1a\bGetRoles\x12g\n" +
+	"\x0eGetPermissions\x12(.services.settings.GetPermissionsRequest\x1a).services.settings.GetPermissionsResponse\"\x10\xd2\xf3\x18\f\b\x01\"\bGetRoles\x12\x92\x01\n" +
+	"\x17GetEffectivePermissions\x121.services.settings.GetEffectivePermissionsRequest\x1a2.services.settings.GetEffectivePermissionsResponse\"\x10\xd2\xf3\x18\f\b\x01\"\bGetRoles\x12g\n" +
 	"\fViewAuditLog\x12&.services.settings.ViewAuditLogRequest\x1a'.services.settings.ViewAuditLogResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x89\x01\n" +
-	"\x13ListDiscordChannels\x12-.services.settings.ListDiscordChannelsRequest\x1a..services.settings.ListDiscordChannelsResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps\x12z\n" +
-	"\x0eListUserGuilds\x12(.services.settings.ListUserGuildsRequest\x1a).services.settings.ListUserGuildsResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps\x12m\n" +
-	"\rUploadJobLogo\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps(\x01\x12w\n" +
-	"\rDeleteJobLogo\x12'.services.settings.DeleteJobLogoRequest\x1a(.services.settings.DeleteJobLogoResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps\x1a\x19\xea\xf3\x18\x15\bx\x12\x11i-mdi-cog-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\x13ListDiscordChannels\x12-.services.settings.ListDiscordChannelsRequest\x1a..services.settings.ListDiscordChannelsResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vSetJobProps\x12z\n" +
+	"\x0eListUserGuilds\x12(.services.settings.ListUserGuildsRequest\x1a).services.settings.ListUserGuildsResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vSetJobProps\x12m\n" +
+	"\rUploadJobLogo\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vSetJobProps(\x01\x12w\n" +
+	"\rDeleteJobLogo\x12'.services.settings.DeleteJobLogoRequest\x1a(.services.settings.DeleteJobLogoResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vSetJobProps\x1a\x19\xea\xf3\x18\x15\bx\x12\x11i-mdi-cog-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var file_services_settings_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_services_settings_settings_proto_goTypes = []any{

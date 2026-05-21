@@ -3,6 +3,7 @@ import EmailInfoPopover from '~/components/mailer/EmailInfoPopover.vue';
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import type { User } from '~~/gen/ts/resources/users/user';
+import LabelBadge from '../labels/LabelBadge.vue';
 
 defineProps<{
     user: User;
@@ -10,7 +11,7 @@ defineProps<{
 
 const { attr } = useAuth();
 
-const numberFormatter = useIntlNumberFormat();
+const numberFormatter = useDisplayNumberFormat();
 </script>
 
 <template>
@@ -136,21 +137,8 @@ const numberFormatter = useIntlNumberFormat();
                                 {{ $t('common.none', [$t('common.label', 2)]) }}
                             </p>
                             <template v-else>
-                                <div class="grid grid-cols-2 gap-1 md:grid-cols-1">
-                                    <UBadge
-                                        v-for="label in user.props?.labels?.list"
-                                        :key="label.name"
-                                        :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
-                                        :icon="
-                                            label.icon && label.icon !== ''
-                                                ? convertComponentIconNameToDynamic(label.icon)
-                                                : undefined
-                                        "
-                                        :style="{ backgroundColor: label.color }"
-                                        size="md"
-                                        :label="label.name"
-                                        block
-                                    />
+                                <div class="flex flex-col gap-1">
+                                    <LabelBadge v-for="label in user.props?.labels?.list" :key="label.id" :label="label" />
                                 </div>
                             </template>
                         </dd>

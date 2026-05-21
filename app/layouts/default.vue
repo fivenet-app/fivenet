@@ -124,7 +124,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                     label: t('common.colleague', 2),
                     icon: 'i-mdi-account-group',
                     to: '/jobs/colleagues',
-                    permission: 'jobs.JobsService/ListColleagues' as Perms,
+                    permission: 'jobs.ColleaguesService/ListColleagues' as Perms,
                     active: route.name?.startsWith('jobs-colleagues'),
                     children: [
                         {
@@ -139,7 +139,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                     label: t('common.activity'),
                     icon: 'i-mdi-pulse',
                     to: '/jobs/activity',
-                    permission: 'jobs.JobsService/ListColleagueActivity' as Perms,
+                    permission: 'jobs.ColleaguesService/ListColleagueActivity' as Perms,
                 },
                 {
                     label: t('common.timeclock'),
@@ -163,7 +163,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                     permission: 'jobs.ConductService/ListConductEntries' as Perms,
                 },
             ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
-            permission: 'jobs.JobsService/ListColleagues' as Perms,
+            permission: 'jobs.ColleaguesService/ListColleagues' as Perms,
             active: route.name.startsWith('jobs'),
         },
         {
@@ -400,7 +400,7 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
 
                 <div class="flex-1" />
 
-                <template v-if="can(['Superuser/CanBeSuperuser', 'Superuser/Superuser']).value">
+                <template v-if="can(['internal.Superuser/CanBeSuperuser', 'internal.Superuser/Superuser']).value">
                     <SuperuserJobToggle :collapsed="collapsed" />
 
                     <USeparator />

@@ -90,6 +90,8 @@ var Cli struct {
 	DBSync   DBSyncCmd   `cmd:"" help:"Run FiveNet database sync."                        name:"dbsync"`
 	AllInOne AllInOneCmd `cmd:"" help:"Run FiveNet server and worker in one." alias:"aio" name:"allinone"`
 
+	Update UpdateCmd `cmd:"" help:"Check for updates and update the FiveNet binary." alias:"upd"`
+
 	Tools      ToolsCmd      `cmd:"" help:"Run FiveNet tools/helpers."`
 	Migrations MigrationsCmd `cmd:"" help:"Run FiveNet migration helpers."`
 }

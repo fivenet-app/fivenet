@@ -51,7 +51,7 @@ const templates = ref<
     {
         title: t('components.settings.attr_view.templates.full_perms.title'),
         description: t('components.settings.attr_view.templates.full_perms.description'),
-        permissions: [{ category: 'Superuser', name: 'Superuser' }],
+        permissions: [{ namespace: 'Superuser', service: 'Superuser', name: 'Superuser' }],
         attributes: [],
     },
 ]);

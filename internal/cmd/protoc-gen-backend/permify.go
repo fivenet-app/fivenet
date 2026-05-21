@@ -6,14 +6,16 @@ import (
 	"path"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 	"text/template"
+	"unicode"
 
+	"github.com/Masterminds/sprig/v3"
 	permspb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	pgs "github.com/lyft/protoc-gen-star/v2"
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
-	"google.golang.org/protobuf/proto"
 )
 
 // PermifyModule holds all state for this plugin.
@@ -34,28 +36,192 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 	p.ctx = pgsgo.InitContext(c.Parameters())
 
 	serviceNameFn := func(s string) string {
-		_, after, _ := strings.Cut(s, ".")
-		return after
+		split := strings.Split(s, ".")
+		return split[len(split)-1]
 	}
 
-	funcs := map[string]any{
-		"package":     p.ctx.PackageName,
-		"name":        p.ctx.Name,
-		"serviceName": serviceNameFn,
+	serviceNamespaceFn := func(s string) string {
+		split := strings.Split(s, ".")
+		return strings.Join(split[:len(split)-1], ".")
 	}
 
-	tpl := template.New("permify").Funcs(funcs)
+	templateFns := sprig.FuncMap()
+	templateFns["package"] = p.ctx.PackageName
+	templateFns["name"] = p.ctx.Name
+	templateFns["serviceName"] = serviceNameFn
+	templateFns["serviceNamespace"] = serviceNamespaceFn
+	templateFns["remapRef"] = remapRef
+	templateFns["attrValueTypeName"] = attrValueTypeName
+	templateFns["attrValueConstName"] = attrValueConstName
+
+	tpl := template.New("permify").Funcs(templateFns)
 	p.tpl = template.Must(tpl.Parse(permifyTpl))
 
-	constTpl := template.New("permify_const").Funcs(funcs)
+	constTpl := template.New("permify_const").Funcs(templateFns)
 	p.constTpl = template.Must(constTpl.Parse(permifyConstTpl))
 
-	remapTpl := template.New("permify_remap").Funcs(funcs)
+	remapTpl := template.New("permify_remap").Funcs(templateFns)
 	p.remapTpl = template.Must(remapTpl.Parse(permifyRemapTpl))
 }
 
 // Name satisfies the generator.Plugin interface.
 func (p *PermifyModule) Name() string { return "permify" }
+
+func qualifyService(namespace string, service string) string {
+	if namespace == "" || service == "" || strings.Contains(service, ".") {
+		return service
+	}
+
+	return namespace + "." + service
+}
+
+func shortServiceName(service string) string {
+	split := strings.Split(service, ".")
+	return split[len(split)-1]
+}
+
+func permPkgAlias(namespace string) string {
+	replacer := strings.NewReplacer(".", "", "-", "_")
+	return "perms" + replacer.Replace(namespace)
+}
+
+func remapImportPath(namespace string) string {
+	return fmt.Sprintf(
+		"github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/%s/perms",
+		namespace,
+	)
+}
+
+func remapTargetNamespace(defaultNamespace string, perm *Perm) string {
+	if perm.Namespace != "" {
+		return perm.Namespace
+	}
+
+	return defaultNamespace
+}
+
+func remapTargetService(defaultService string, perm *Perm) string {
+	if perm.Service != nil && *perm.Service != "" {
+		return *perm.Service
+	}
+
+	return defaultService
+}
+
+func remapRef(defaultNamespace string, defaultService string, perm *Perm) string {
+	switch perm.Name {
+	case "Any":
+		return "perms.PermAnyRef"
+	case "Superuser":
+		return "perms.PermSuperuserRef"
+	default:
+		namespace := remapTargetNamespace(defaultNamespace, perm)
+		service := shortServiceName(remapTargetService(defaultService, perm))
+
+		return fmt.Sprintf("%s.%s.%s.Perm", permPkgAlias(namespace), service, perm.Name)
+	}
+}
+
+func sanitizeIdentifierPart(s string) string {
+	var b strings.Builder
+	upperNext := true
+
+	for _, r := range s {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
+			if b.Len() == 0 && unicode.IsDigit(r) {
+				b.WriteRune('V')
+			}
+
+			if upperNext {
+				b.WriteRune(unicode.ToUpper(r))
+				upperNext = false
+			} else {
+				b.WriteRune(r)
+			}
+			continue
+		}
+
+		upperNext = true
+	}
+
+	if b.Len() == 0 {
+		return "Value"
+	}
+
+	return b.String()
+}
+
+func attrValueTypeName(service string, perm *Perm, attr Attr) string {
+	return sanitizeIdentifierPart(service) +
+		sanitizeIdentifierPart(perm.Name) +
+		sanitizeIdentifierPart(attr.Key) +
+		"PermValue"
+}
+
+func attrValueConstName(service string, perm *Perm, attr Attr, value string) string {
+	return sanitizeIdentifierPart(service) +
+		sanitizeIdentifierPart(perm.Name) +
+		sanitizeIdentifierPart(attr.Key) +
+		"PermValue" +
+		sanitizeIdentifierPart(value)
+}
+
+func mergeAttrsUnique(existing []Attr, extra []Attr) []Attr {
+	if len(extra) == 0 {
+		return existing
+	}
+
+	out := slices.Clone(existing)
+	for _, candidate := range extra {
+		dup := false
+		for i := range out {
+			if out[i].Key == candidate.Key && out[i].Type == candidate.Type {
+				dup = true
+				break
+			}
+		}
+		if !dup {
+			out = append(out, candidate)
+		}
+	}
+
+	return out
+}
+
+type RemapImport struct {
+	Alias string
+	Path  string
+}
+
+func collectRemapImports(remaps map[string]map[string]map[string][]*Perm) []RemapImport {
+	namespaces := map[string]struct{}{}
+	for namespace, remapNs := range remaps {
+		for _, remap := range remapNs {
+			for _, targets := range remap {
+				for _, target := range targets {
+					if target.Name == "Any" || target.Name == "Superuser" {
+						continue
+					}
+
+					namespaces[remapTargetNamespace(namespace, target)] = struct{}{}
+				}
+			}
+		}
+	}
+
+	imports := make([]RemapImport, 0, len(namespaces))
+	for namespace := range namespaces {
+		imports = append(imports, RemapImport{
+			Alias: permPkgAlias(namespace),
+			Path:  remapImportPath(namespace),
+		})
+	}
+	slices.SortFunc(imports, func(a, b RemapImport) int {
+		return strings.Compare(a.Path, b.Path)
+	})
+
+	return imports
+}
 
 func (p *PermifyModule) Execute(
 	targets map[string]pgs.File,
@@ -72,7 +238,7 @@ func (p *PermifyModule) Execute(
 		visited[key] = []pgs.File{t}
 	}
 
-	remaps := map[string]map[string][]*Perm{}
+	remaps := map[string]map[string]map[string][]*Perm{}
 	for _, fs := range visited {
 		remap := p.generate(fs)
 		maps.Copy(remaps, remap)
@@ -97,29 +263,19 @@ func (p *PermifyModule) Execute(
 		p.remapTpl,
 		struct {
 			FS              []pgs.File
-			PermissionRemap map[string]map[string][]*Perm
+			PermissionRemap map[string]map[string]map[string][]*Perm
+			RemapImports    []RemapImport
 		}{
 			FS:              fs,
 			PermissionRemap: remaps,
+			RemapImports:    collectRemapImports(remaps),
 		},
 	)
 
 	return p.Artifacts()
 }
 
-func getServiceByName(fs []pgs.File, name string) pgs.Service {
-	for _, f := range fs {
-		for _, s := range f.Services() {
-			if strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.") == name {
-				return s
-			}
-		}
-	}
-
-	return nil
-}
-
-func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
+func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string][]*Perm {
 	f := fs[0]
 
 	fqn := strings.Split(f.FullyQualifiedName(), ".")
@@ -128,8 +284,8 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 		F                     pgs.File
 		GoPath                string
 		PermissionServiceKeys []string
-		Permissions           map[string]map[string]*Perm
-		PermissionRemap       map[string]map[string][]*Perm
+		Permissions           map[string]map[string]map[string]*Perm
+		PermissionRemap       map[string]map[string]map[string][]*Perm
 		Attributes            map[string]map[string]*Attr
 	}{
 		FS: fs,
@@ -139,8 +295,9 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 			fqn[len(fqn)-1],
 		),
 		PermissionServiceKeys: []string{},
-		Permissions:           map[string]map[string]*Perm{},
-		PermissionRemap:       map[string]map[string][]*Perm{},
+		Permissions:           map[string]map[string]map[string]*Perm{},
+		PermissionRemap:       map[string]map[string]map[string][]*Perm{},
+		Attributes:            map[string]map[string]*Attr{},
 	}
 
 	slices.SortFunc(fs, func(a, b pgs.File) int {
@@ -150,7 +307,7 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 	for _, f := range fs {
 		for _, s := range f.Services() {
 			var order int32
-			var icon *string
+			var icon string
 
 			var serviceOpts permspb.ServiceOptions
 			_, err := s.Extension(permspb.E_PermsSvc, &serviceOpts)
@@ -158,35 +315,31 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 				p.Fail("error reading perms option:", err)
 			}
 
-			sName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
-			if serviceOpts.GetName() != "" {
-				sbn := getServiceByName(fs, serviceOpts.GetName())
-				if sbn == nil {
-					p.Failf("unable to find override service", serviceOpts.GetName())
-				}
+			// Get full service name and remove `.services.` prefix.
+			actualSvcKey := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
+			actualSvcNameSplit := strings.Split(actualSvcKey, ".")
+			actualNamespace := strings.Join(actualSvcNameSplit[:len(actualSvcNameSplit)-1], ".")
+			actualSvcName := actualSvcNameSplit[len(actualSvcNameSplit)-1]
 
-				sName = strings.TrimPrefix(string(sbn.FullyQualifiedName()), ".services.")
-
-				var serviceOptsT permspb.ServiceOptions
-				_, err := sbn.Extension(permspb.E_PermsSvc, &serviceOptsT)
-				if err != nil {
-					p.Fail("error reading perms option:", err)
-				}
-
-				so := proto.Clone(&serviceOptsT).(*permspb.ServiceOptions)
-				if so.GetIcon() != "" {
-					serviceOpts.Icon = new(so.GetIcon())
-				}
-				if so.GetOrder() != 0 {
-					serviceOpts.Order = so.GetOrder()
-				}
-			} else {
-				data.PermissionServiceKeys = append(data.PermissionServiceKeys, sName)
+			permNamespace := actualNamespace
+			if serviceOpts.GetNamespace() != "" {
+				permNamespace = *serviceOpts.Namespace
 			}
-			p.Debugf("Service: %s (%s)", sName, data.PermissionServiceKeys)
+
+			permSvcKey := actualSvcKey
+			permSvcName := actualSvcName
+			if serviceOpts.GetService() != "" {
+				permSvcKey = qualifyService(permNamespace, *serviceOpts.Service)
+				permSvcName = shortServiceName(permSvcKey)
+			}
+			if !slices.Contains(data.PermissionServiceKeys, permSvcKey) {
+				data.PermissionServiceKeys = append(data.PermissionServiceKeys, permSvcKey)
+			}
+
+			p.Debugf("Service: %s", actualSvcName)
 
 			if serviceOpts.GetIcon() != "" {
-				icon = new(serviceOpts.GetIcon())
+				icon = serviceOpts.GetIcon()
 			}
 			if serviceOpts.GetOrder() != 0 {
 				order = serviceOpts.GetOrder()
@@ -194,17 +347,23 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 
 			if len(serviceOpts.AdditionalPerms) > 0 {
 				for _, v := range serviceOpts.AdditionalPerms {
-					if _, ok := data.Permissions[sName]; !ok {
-						data.Permissions[sName] = map[string]*Perm{}
+					if _, ok := data.Permissions[permNamespace]; !ok {
+						data.Permissions[permNamespace] = map[string]map[string]*Perm{}
 					}
-					if v.Order <= 0 {
+					if _, ok := data.Permissions[permNamespace][permSvcName]; !ok {
+						data.Permissions[permNamespace][permSvcName] = map[string]*Perm{}
+					}
+					if v.Order >= 0 {
 						v.Order = order
 					}
 					perm := &Perm{
-						Name:    v.Name,
-						Service: &sName,
-						Order:   order,
-						Icon:    icon,
+						Namespace: permNamespace,
+						Name:      v.Name,
+						Service:   &permSvcName,
+						Order:     order,
+					}
+					if icon != "" {
+						perm.Icon = new(icon)
 					}
 					perm.Order *= 100
 
@@ -219,24 +378,25 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 						}
 
 						perm.Attrs[i] = Attr{
-							Key:  a.Key,
-							Type: atype,
+							Key:         a.Key,
+							Type:        atype,
+							ValidValues: slices.Clone(a.ValidStringList),
 						}
 						if a.ValidStringList != nil {
 							perm.Attrs[i].Valid += "[]string{"
 							for _, v := range a.ValidStringList {
-								perm.Attrs[i].Valid += fmt.Sprintf("%q, ", v)
+								perm.Attrs[i].Valid += strconv.Quote(v) + ", "
 							}
 							perm.Attrs[i].Valid += "}"
 						}
 					}
-					data.Permissions[sName][v.Name] = perm
+					data.Permissions[permNamespace][permSvcName][v.Name] = perm
 				}
 			}
 
 			for _, m := range s.Methods() {
-				mName := string(m.Name())
-				mName = strings.TrimPrefix(mName, "services.")
+				methodName := string(m.Name())
+				methodName = strings.TrimPrefix(methodName, "services.")
 
 				// Check if the field option is present and true
 				var val permspb.PermsOptions
@@ -251,12 +411,13 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 				}
 
 				if !val.Enabled {
-					p.Fail("perms option not enabled for method:", sName, mName)
+					p.Fail("perms option not enabled for method:", actualSvcName, methodName)
 					continue
 				}
 
 				perm = &Perm{
-					Name: mName,
+					Namespace: permNamespace,
+					Name:      methodName,
 				}
 				names := []string{}
 				if len(val.Names) > 0 {
@@ -266,16 +427,24 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 					names = append(names, *val.Name)
 					perm.Name = *val.Name
 				}
-				if val.Service != nil && *val.Service != "" {
+				if len(names) == 0 {
+					names = append(names, perm.Name)
+				}
+				if val.GetNamespace() != "" {
+					perm.Namespace = val.GetNamespace()
+				}
+				if val.GetService() != "" {
 					perm.Service = val.Service
 				}
-				if val.Order != 0 {
+				if val.GetOrder() != 0 {
 					perm.Order = val.Order
 				} else {
 					perm.Order = order
 				}
 				perm.Order *= 100
-				perm.Icon = icon
+				if icon != "" {
+					perm.Icon = new(icon)
+				}
 
 				perm.Attrs = make([]Attr, len(val.Attrs))
 				for i, a := range val.Attrs {
@@ -288,71 +457,86 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 					}
 
 					perm.Attrs[i] = Attr{
-						Key:  a.Key,
-						Type: atype,
+						Key:         a.Key,
+						Type:        atype,
+						ValidValues: slices.Clone(a.ValidStringList),
 					}
 					if a.ValidStringList != nil {
 						perm.Attrs[i].Valid += "[]string{"
 						for _, v := range a.ValidStringList {
-							perm.Attrs[i].Valid += fmt.Sprintf("%q, ", v)
+							perm.Attrs[i].Valid += strconv.Quote(v) + ", "
 						}
 						perm.Attrs[i].Valid += "}"
 					}
 				}
 
+				serviceTargetOverridden := permSvcKey != actualSvcKey
+				methodTargetOverridden := perm.Namespace != permNamespace || perm.Service != nil
 				for _, name := range names {
-					if name != mName || len(names) > 1 {
-						p.Debugf("names %+v; name: %s, mName: %s", names, name, mName)
-						remapServiceName := sName
+					if name != methodName || len(names) > 1 ||
+						serviceTargetOverridden || methodTargetOverridden {
+						p.Debugf("names %+v; name: %s, mName: %s", names, name, methodName)
 
 						var service *string
 						if perm.Service != nil {
 							s := *perm.Service
 							service = &s
+						} else {
+							service = &permSvcName
 						}
 
 						pm := &Perm{
-							Service: service,
-							Name:    name,
-							Attrs:   perm.Attrs,
-							Order:   perm.Order,
-							Icon:    perm.Icon,
+							Namespace: perm.Namespace,
+							Service:   service,
+							Name:      name,
+							Attrs:     perm.Attrs,
+							Order:     perm.Order,
+							Icon:      perm.Icon,
 						}
-						if _, ok := data.PermissionRemap[remapServiceName]; !ok {
-							data.PermissionRemap[remapServiceName] = map[string][]*Perm{}
+						if _, ok := data.PermissionRemap[actualNamespace]; !ok {
+							data.PermissionRemap[actualNamespace] = map[string]map[string][]*Perm{}
+						}
+						if _, ok := data.PermissionRemap[actualNamespace][actualSvcName]; !ok {
+							data.PermissionRemap[actualNamespace][actualSvcName] = map[string][]*Perm{}
 						}
 
-						data.PermissionRemap[remapServiceName][mName] = append(
-							data.PermissionRemap[remapServiceName][mName],
+						data.PermissionRemap[actualNamespace][actualSvcName][methodName] = append(
+							data.PermissionRemap[actualNamespace][actualSvcName][methodName],
 							pm,
 						)
-						svc := sName
-						if perm.Service != nil {
-							svc = *pm.Service
-						}
-						p.Debugf("Permission Remap added: %q -> %q/%q\n", mName, svc, pm.Name)
+
+						p.Debugf(
+							"Permission Remap added: %q -> %q/%q\n",
+							methodName,
+							*pm.Service,
+							pm.Name,
+						)
 					}
 				}
 
 				if slices.Contains(names, "Superuser") || slices.Contains(names, "Any") ||
-					perm.Service != nil {
+					methodTargetOverridden {
 					continue
 				}
 
-				if _, ok := data.Permissions[sName]; !ok {
-					data.Permissions[sName] = map[string]*Perm{}
+				if _, ok := data.Permissions[permNamespace]; !ok {
+					data.Permissions[permNamespace] = map[string]map[string]*Perm{}
 				}
-				if _, ok := data.Permissions[sName][perm.Name]; !ok {
-					data.Permissions[sName][perm.Name] = perm
-					p.Debugf("Permission added: %q - %+v\n", mName, perm)
+				if _, ok := data.Permissions[permNamespace][permSvcName]; !ok {
+					data.Permissions[permNamespace][permSvcName] = map[string]*Perm{}
+				}
+				if _, ok := data.Permissions[permNamespace][permSvcName][perm.Name]; !ok {
+					data.Permissions[permNamespace][permSvcName][perm.Name] = perm
+					p.Debugf("Permission added: %q - %+v\n", methodName, perm)
 				} else {
-					p.Debugf("Permission already in list, updating: %q - %+v\n", mName, perm)
+					p.Debugf("Permission already in list, updating: %q - %+v\n", methodName, perm)
 					if len(perm.Attrs) > 0 {
-						data.Permissions[sName][perm.Name].Attrs = append(
-							data.Permissions[sName][perm.Name].Attrs,
-							perm.Attrs...)
+						data.Permissions[permNamespace][permSvcName][perm.Name].Attrs = mergeAttrsUnique(
+							data.Permissions[permNamespace][permSvcName][perm.Name].Attrs,
+							perm.Attrs,
+						)
 					}
-					perm.Order = data.Permissions[sName][perm.Name].Order
+					perm.Order = data.Permissions[permNamespace][permSvcName][perm.Name].Order
 				}
 			}
 		}
@@ -393,17 +577,21 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
-	{{- range $sName, $service := .Permissions }}
+	{{- range $namespace, $services := .Permissions }}
+        // Namespace: {{ $namespace }}
 
-		// Service: {{ $sName }}
-		{{ range $perm := $service -}}
+        {{- range $svcName, $service := $services }}
+
+		// Service: {{ $namespace }}.{{ $svcName }}
+		    {{ range $perm := $service -}}
 		{
-			Category: permkeys.{{ serviceName $sName }}Perm,
-			Name: permkeys.{{ serviceName $sName }}{{ $perm.Name }}Perm,
+			Namespace: permkeys.Namespace,
+            Service: permkeys.{{ serviceName $svcName }}Perm,
+			Name: permkeys.{{ serviceName $svcName }}{{ $perm.Name }}Perm,
             Attrs: []perms.Attr{
             {{- range $attr := $perm.Attrs }}
                 {
-                    Key: permkeys.{{ serviceName $sName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
+                    Key: permkeys.{{ serviceName $svcName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
                     Type: permissionsattributes.{{ $attr.Type }}AttributeType,
                     {{ with $attr.Valid -}}ValidValues: {{ $attr.Valid }},{{ end }}
                 },
@@ -412,8 +600,9 @@ func init() {
             Order: {{ $perm.Order }},
             {{ with $perm.Icon }}Icon: "{{ $perm.Icon }}",{{ end }}
 		},
-		{{ end }}
-	{{- end }}
+            {{ end }}
+        {{- end }}
+    {{- end }}
 	})
 }
 `
@@ -429,22 +618,91 @@ import (
     "github.com/fivenet-app/fivenet/v2026/pkg/perms"
 )
 
-{{ with .PermissionServiceKeys }}
 const (
-{{ range $key, $sName := . -}}
-    {{ serviceName $sName }}Perm perms.Category = "{{ $sName }}"
+{{ with .PermissionServiceKeys }}
+{{- $namespace := serviceNamespace (first .) }}
+    Namespace perms.Namespace = "{{ $namespace }}"
+
+{{ range $key, $svcName := . -}}
+    {{ serviceName $svcName }}Perm perms.Service = "{{ serviceName $svcName }}"
+{{ end }}
 {{ end }}
 
-{{ range $sName, $service := $.Permissions }}
-    // Service: {{ serviceName $sName }}
-	{{- range $perm := $service }}
-	{{ serviceName $sName }}{{ $perm.Name }}Perm perms.Name = "{{ $perm.Name }}"
+{{ range $namespace, $services := $.Permissions }}
+    {{ range $svcName, $service := $services }}
+    // Service: {{ $namespace }}.{{ $svcName }}
+	    {{- range $perm := $service }}
+	{{ serviceName $svcName }}{{ $perm.Name }}Perm perms.Name = "{{ $perm.Name }}"
             {{- range $attr := $perm.Attrs }}
-    {{ serviceName $sName }}{{ $perm.Name }}{{ $attr.Key }}PermField perms.Key = "{{ $attr.Key }}"
+    {{ serviceName $svcName }}{{ $perm.Name }}{{ $attr.Key }}PermField perms.Key = "{{ $attr.Key }}"
             {{- end }}
 		{{- end }}
 	{{ end }}
+{{ end }}
 )
+
+{{ range $namespace, $services := $.Permissions }}
+    {{- range $svcName, $service := $services }}
+        {{- range $perm := $service }}
+            {{- range $attr := $perm.Attrs }}
+                {{- if eq $attr.Type "StringList" }}
+type {{ attrValueTypeName $svcName $perm $attr }} string
+
+                    {{- if gt (len $attr.ValidValues) 0 }}
+const (
+                        {{- range $val := $attr.ValidValues }}
+    {{ attrValueConstName $svcName $perm $attr $val }} {{ attrValueTypeName $svcName $perm $attr }} = {{ printf "%q" $val }}
+                        {{- end }}
+)
+                    {{- end }}
+
+                {{- end }}
+            {{- end }}
+        {{- end }}
+    {{- end }}
+{{ end }}
+
+{{ range $namespace, $services := $.Permissions }}
+    {{- range $svcName, $service := $services }}
+type {{ serviceName $svcName }}Perms struct {
+        {{- range $perm := $service }}
+    {{ $perm.Name }} {{ serviceName $svcName }}{{ $perm.Name }}PermRef
+        {{- end }}
+}
+
+        {{- range $perm := $service }}
+type {{ serviceName $svcName }}{{ $perm.Name }}PermRef struct {
+    Perm perms.PermissionRef
+            {{- range $attr := $perm.Attrs }}
+    {{ $attr.Key }} perms.AttrRef[perms.{{ $attr.Type }}Attr]
+                {{- if eq $attr.Type "StringList" }}
+    {{ $attr.Key }}Typed perms.StringListAttrRef[{{ attrValueTypeName $svcName $perm $attr }}]
+                {{- end }}
+            {{- end }}
+}
+
+        {{- end }}
+var {{ serviceName $svcName }} = {{ serviceName $svcName }}Perms{
+        {{- range $perm := $service }}
+    {{ $perm.Name }}: {{ serviceName $svcName }}{{ $perm.Name }}PermRef{
+        Perm: perms.NewPermissionRef(Namespace, {{ serviceName $svcName }}Perm, {{ serviceName $svcName }}{{ $perm.Name }}Perm),
+            {{- range $attr := $perm.Attrs }}
+        {{ $attr.Key }}: perms.New{{ $attr.Type }}AttrRef(
+            perms.NewPermissionRef(Namespace, {{ serviceName $svcName }}Perm, {{ serviceName $svcName }}{{ $perm.Name }}Perm),
+            {{ serviceName $svcName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
+        ),
+                {{- if eq $attr.Type "StringList" }}
+        {{ $attr.Key }}Typed: perms.NewTypedStringListAttrRef[{{ attrValueTypeName $svcName $perm $attr }}](
+            perms.NewPermissionRef(Namespace, {{ serviceName $svcName }}Perm, {{ serviceName $svcName }}{{ $perm.Name }}Perm),
+            {{ serviceName $svcName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
+        ),
+                {{- end }}
+            {{- end }}
+    },
+        {{- end }}
+}
+
+    {{- end }}
 {{ end }}
 `
 
@@ -455,32 +713,41 @@ const permifyRemapTpl = `// Code generated by protoc-gen-backend. DO NOT EDIT.
 
 package goproto
 
-{{ with .PermissionRemap }}
-var PermsRemap = map[string][]string{
-    {{- range $service, $remap := . }}
-	// Service: {{ $service }}
-	{{ range $key, $target := $remap -}}
-	"{{ $service }}/{{ $key }}": []string{
-        {{ range $t := $target -}}
-        "{{- if and (ne $t.Name "Superuser") (ne $t.Name "Any") }}{{ or $t.Service $service }}/{{ end }}{{ $t.Name }}",
-        {{- end }}
+import (
+{{- range $import := .RemapImports }}
+    {{ $import.Alias }} "{{ $import.Path }}"
+{{- end }}
+    perms "github.com/fivenet-app/fivenet/v2026/pkg/perms"
+)
+
+var PermsRemap = map[string][]perms.PermissionRef{
+{{- range $namespace, $remapNs := .PermissionRemap }}
+{{- range $service, $remap := $remapNs }}
+	// Service: {{ $namespace }}.{{ $service }}
+	    {{ range $key, $target := $remap -}}
+	"{{ $namespace }}.{{ $service }}/{{ $key }}": {
+            {{ range $t := $target -}}
+        {{ remapRef $namespace $service $t }},
+            {{- end }}
     },
+        {{ end }}
     {{ end }}
-    {{ end }}
-}
 {{ end }}
+}
 `
 
 type Perm struct {
-	Service *string
-	Name    string
-	Attrs   []Attr
-	Order   int32
-	Icon    *string
+	Namespace string
+	Service   *string
+	Name      string
+	Attrs     []Attr
+	Order     int32
+	Icon      *string
 }
 
 type Attr struct {
-	Key   string
-	Type  string
-	Valid string
+	Key         string
+	Type        string
+	Valid       string
+	ValidValues []string
 }

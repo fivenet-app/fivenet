@@ -704,6 +704,7 @@
         "accepted_at": "Accepted At",
         "choose_color": "Choose Color",
         "pick_date": "Pick a date",
+        "pick_time": "Pick a time",
         "open_command": "Open Command",
         "last_char": "Last Char ID",
         "file_upload_label": "Choose a file or drag it here.",
@@ -3144,8 +3145,9 @@
     },
     "perms": {
         "auth": {
+            "namespace": "Authentication",
             "AuthService": {
-                "category": "Authentication",
+                "service": "Authentication",
                 "ChooseCharacter": {
                     "key": "Choose Character",
                     "description": "Permission to choose character, basically allow or disallow access to FiveNet."
@@ -3153,8 +3155,9 @@
             }
         },
         "citizens": {
+            "namespace": "Citizens",
             "CitizensService": {
-                "category": "Citizens",
+                "service": "Citizens",
                 "ListCitizens": {
                     "key": "List Citizens",
                     "description": "List and search through citizens.",
@@ -3208,7 +3211,7 @@
                 }
             },
             "LabelsService": {
-                "category": "Citizens: Labels",
+                "service": "Labels",
                 "CreateOrUpdateLabel": {
                     "key": "Create/Uppdate Citizen Labels",
                     "description": "Create and update citizens labels."
@@ -3216,24 +3219,17 @@
                 "DeleteLabel": {
                     "key": "Delete Citizen Labels",
                     "description": "Delete citizens labels."
-                }
-            }
-        },
-        "completor": {
-            "CompletorService": {
-                "category": "Auto Complete",
-                "CompleteCitizenLabels": {
-                    "key": "List job's citizen labels",
-                    "description": "Complete citizen labels from multiple jobs.",
-                    "attrs_types": {
-                        "Jobs": "Factions"
-                    }
+                },
+                "ListLabels": {
+                    "key": "List/View Citizen Labels",
+                    "description": "List/View citizen labels."
                 }
             }
         },
         "vehicles": {
+            "namespace": "Vehicles",
             "VehiclesService": {
-                "category": "Vehicles",
+                "service": "Vehicles",
                 "ListVehicles": {
                     "key": "Search Vehicles",
                     "description": "Search and find citizen's vehicles.",
@@ -3257,8 +3253,9 @@
             }
         },
         "documents": {
+            "namespace": "Documents",
             "DocumentsService": {
-                "category": "Documents",
+                "service": "Documents",
                 "AddDocumentReference": {
                     "key": "Add Document References",
                     "description": "Add/ Remove document references."
@@ -3275,10 +3272,6 @@
                     "key": "List User Documents",
                     "description": "View the documents linked to a citizen."
                 },
-                "ListTemplates": {
-                    "key": "List Templates",
-                    "description": "List available document templates."
-                },
                 "UpdateDocument": {
                     "key": "Create and update Documents",
                     "description": "Create documents and edit/ update existing documents.",
@@ -3291,14 +3284,6 @@
                     "attrs_types": {
                         "Access": "Access to factions-own documents"
                     }
-                },
-                "CreateTemplate": {
-                    "key": "Create Template",
-                    "description": "Create document templates."
-                },
-                "DeleteTemplate": {
-                    "key": "DeleteTemplate",
-                    "description": "Delete document templates."
                 },
                 "DeleteDocument": {
                     "key": "DeleteDocument",
@@ -3324,34 +3309,6 @@
                     },
                     "attrs_types": {
                         "Access": "Access to factions-own documents"
-                    }
-                },
-                "DeleteComment": {
-                    "key": "DeleteComment",
-                    "description": "Delete document comments.",
-                    "attrs": {
-                        "Own": "Own",
-                        "Lower_Rank": "Lower Rank",
-                        "Same_Rank": "Same Rank",
-                        "Any": "Any"
-                    },
-                    "attrs_types": {
-                        "Access": "Access to factions-own documents"
-                    }
-                },
-                "CreateOrUpdateCategory": {
-                    "key": "Create or Update Categories",
-                    "description": "Create/ Update document categories."
-                },
-                "DeleteCategory": {
-                    "key": "DeleteCategory",
-                    "description": "Delete document categories."
-                },
-                "ListCategories": {
-                    "key": "ListCategories",
-                    "description": "View and List document categories.",
-                    "attrs_types": {
-                        "Jobs": "Factions"
                     }
                 },
                 "ListDocumentActivity": {
@@ -3408,8 +3365,57 @@
                     "description": "Allows to set own reminders for documents."
                 }
             },
+            "TemplatesService": {
+                "service": "Templates",
+                "ListTemplates": {
+                    "key": "List Templates",
+                    "description": "List available document templates."
+                },
+                "CreateTemplate": {
+                    "key": "Create Template",
+                    "description": "Create document templates."
+                },
+                "DeleteTemplate": {
+                    "key": "Delete Template",
+                    "description": "Delete document templates."
+                }
+            },
+            "CategoriesService": {
+                "service": "Categories",
+                "CreateOrUpdateCategory": {
+                    "key": "Create or Update Categories",
+                    "description": "Create/ Update document categories."
+                },
+                "DeleteCategory": {
+                    "key": "DeleteCategory",
+                    "description": "Delete document categories."
+                },
+                "ListCategories": {
+                    "key": "ListCategories",
+                    "description": "View and List document categories.",
+                    "attrs_types": {
+                        "Jobs": "Factions"
+                    }
+                }
+            },
+            "CommentsService": {
+                "service": "Comments",
+                "DeleteComment": {
+                    "key": "DeleteComment",
+                    "description": "Delete document comments.",
+                    "attrs": {
+                        "Own": "Own",
+                        "Lower_Rank": "Lower Rank",
+                        "Same_Rank": "Same Rank",
+                        "Any": "Any"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to factions-own documents"
+                    }
+                }
+            },
             "ApprovalService": {
-                "category": "Documents: Approval",
+                "service": "Approval",
                 "UpsertApprovalPolicy": {
                     "key": "Create or Update Approval Policy",
                     "description": "Create or update approval policies for jobs."
@@ -3428,7 +3434,7 @@
                 }
             },
             "StampsService": {
-                "category": "Documents: Stamps",
+                "service": "Stamps",
                 "ListUsableStamps": {
                     "key": "List Stamps",
                     "description": "List all usable stamps."
@@ -3443,7 +3449,7 @@
                 }
             },
             "StatsService": {
-                "category": "Documents: Stats",
+                "service": "Stats",
                 "GetStats": {
                     "key": "Get Statistics",
                     "description": "Retrieve various statistics related to documents.",
@@ -3457,8 +3463,9 @@
             }
         },
         "livemap": {
+            "namespace": "Map",
             "LivemapService": {
-                "category": "Map",
+                "service": "Map",
                 "Stream": {
                     "key": "View",
                     "description": "Being able to view the Map.",
@@ -3496,31 +3503,12 @@
             }
         },
         "centrum": {
+            "namespace": "Dispatch Center",
             "CentrumService": {
-                "category": "Dispatch Center",
-                "CreateDispatch": {
-                    "key": "Create Dispatches",
-                    "description": "Create new dispatches via the Map/ Dispatch Center."
-                },
+                "service": "Leitstelle",
                 "Stream": {
                     "key": "Access to Dispatches and Units.",
                     "description": "Basic access required to see dispatches."
-                },
-                "UpdateDispatch": {
-                    "key": "Update Dispatches",
-                    "description": "Updating dispatches information."
-                },
-                "CreateOrUpdateUnit": {
-                    "key": "Create and Update Units",
-                    "description": "Allows to create and update units via the control panel."
-                },
-                "DeleteUnit": {
-                    "key": "Delete Units",
-                    "description": "Allows to delete units via the control panel."
-                },
-                "TakeDispatch": {
-                    "key": "Take Dispatches",
-                    "description": "Basic access to allow an user to take dispatches."
                 },
                 "TakeControl": {
                     "key": "Join Dispatch Center",
@@ -3537,26 +3525,56 @@
                         "Access": "Special Features of Dispatch Center"
                     }
                 },
-                "DeleteDispatch": {
-                    "key": "Delete Dispatches",
-                    "description": "Allows to delete dispatches."
-                },
                 "UpdateDispatchers": {
                     "key": "Remove Dispatchers",
                     "description": "Allows to remove dispatchers from the dispatch center."
                 }
+            },
+            "DispatchesService": {
+                "service": "Dispatches",
+                "CreateDispatch": {
+                    "key": "Create Dispatches",
+                    "description": "Create new dispatches via the Map/ Dispatch Center."
+                },
+                "UpdateDispatch": {
+                    "key": "Update Dispatches",
+                    "description": "Updating dispatches information."
+                },
+                "TakeDispatch": {
+                    "key": "Take Dispatches",
+                    "description": "Basic access to allow an user to take dispatches."
+                },
+                "DeleteDispatch": {
+                    "key": "Delete Dispatches",
+                    "description": "Allows to delete dispatches."
+                }
+            },
+            "UnitsService": {
+                "service": "Units",
+                "CreateOrUpdateUnit": {
+                    "key": "Create and Update Units",
+                    "description": "Allows to create and update units via the control panel."
+                },
+                "DeleteUnit": {
+                    "key": "Delete Units",
+                    "description": "Allows to delete units via the control panel."
+                }
             }
         },
         "jobs": {
+            "namespace": "Job",
             "JobsService": {
-                "category": "Job",
-                "ListColleagues": {
-                    "key": "List colleagues",
-                    "description": "List your colleagues (of your own job)."
-                },
+                "service": "Job",
                 "SetMOTD": {
                     "key": "Update Job MOTD",
                     "description": "Update Job MOTD text on job page."
+                }
+            },
+            "ColleaguesService": {
+                "service": "Colleagues",
+                "ListColleagues": {
+                    "key": "List colleagues",
+                    "description": "List your colleagues (of your own job)."
                 },
                 "GetColleague": {
                     "key": "Get a colleague's profile",
@@ -3639,9 +3657,10 @@
                     "key": "Update Conduct Register Entries",
                     "description": "Update Conduct Register entries."
                 },
-                "category": "Job Conduct Register"
+                "service": "Conduct Register"
             },
             "TimeclockService": {
+                "service": "Timeclock",
                 "ListTimeclock": {
                     "key": "View Timeclock",
                     "description": "See Timeclock entries.",
@@ -3652,14 +3671,13 @@
                         "Access": "Access to time clock entries"
                     }
                 },
-                "category": "Job Timeclock",
                 "ListInactiveEmployees": {
                     "key": "List inactive colleagues",
                     "description": "List inactive colleagues."
                 }
             },
             "StatsService": {
-                "category": "Job Stats",
+                "service": "Job Stats",
                 "GetStats": {
                     "key": "Get Statistics",
                     "description": "Retrieve statistics related to colleagues."
@@ -3667,8 +3685,9 @@
             }
         },
         "qualifications": {
+            "namespace": "Qualifications",
             "QualificationsService": {
-                "category": "Qualifications",
+                "service": "Qualifications",
                 "ListQualifications": {
                     "key": "List Qualifications",
                     "description": "List available qualifications"
@@ -3716,8 +3735,9 @@
             }
         },
         "calendar": {
+            "namespace": "Calendar",
             "CalendarService": {
-                "category": "Calendar",
+                "service": "Calendar",
                 "CreateCalendar": {
                     "key": "Create calendars",
                     "description": "Manage calendars.",
@@ -3732,8 +3752,9 @@
             }
         },
         "wiki": {
+            "namespace": "Wiki",
             "WikiService": {
-                "category": "Wiki",
+                "service": "Wiki",
                 "ListPages": {
                     "key": "List and view Pages",
                     "description": "Should always be given."
@@ -3763,8 +3784,9 @@
             }
         },
         "settings": {
+            "namespace": "Settings",
             "LawsService": {
-                "category": "Law Books",
+                "service": "Law Books",
                 "CreateOrUpdateLawBook": {
                     "key": "Create and Update Law Book",
                     "description": "Create and update laws and law books."
@@ -3775,7 +3797,7 @@
                 }
             },
             "SettingsService": {
-                "category": "Control Panel",
+                "service": "Control Panel",
                 "GetJobProps": {
                     "key": "View Job Properties",
                     "description": "View your job's properties."
@@ -3807,8 +3829,9 @@
             }
         },
         "mailer": {
+            "namespace": "E-Mail",
             "MailerService": {
-                "category": "E-Mail",
+                "service": "E-Mail",
                 "DeleteEmail": {
                     "key": "Delete E-Mail addresses",
                     "description": "Requires manage access to the E-Mail address."
@@ -3829,15 +3852,18 @@
                 }
             }
         },
-        "Superuser": {
-            "category": "Superuser",
-            "CanBeSuperuser": {
-                "key": "Can be Superuser",
-                "description": "This permission allows you to become a superuser, which grants access to all FiveNet features and permissions."
-            },
+        "internal": {
+            "service": "Internal & Superuser",
             "Superuser": {
-                "key": "Superuser",
-                "description": "This permission allows you to access all FiveNet features and permissions, regardless of your job or role."
+                "service": "Superuser",
+                "CanBeSuperuser": {
+                    "key": "Can be Superuser",
+                    "description": "This permission allows you to become a superuser, which grants access to all FiveNet features and permissions."
+                },
+                "Superuser": {
+                    "key": "Superuser",
+                    "description": "This permission allows you to access all FiveNet features and permissions, regardless of your job or role."
+                }
             }
         }
     },

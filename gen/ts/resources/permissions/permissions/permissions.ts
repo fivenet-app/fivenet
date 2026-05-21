@@ -26,27 +26,31 @@ export interface Permission {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: string category = 3
+     * @generated from protobuf field: string namespace = 3
      */
-    category: string;
+    namespace: string;
     /**
-     * @generated from protobuf field: string name = 4
+     * @generated from protobuf field: string service = 4
+     */
+    service: string;
+    /**
+     * @generated from protobuf field: string name = 5
      */
     name: string;
     /**
-     * @generated from protobuf field: string guard_name = 5
+     * @generated from protobuf field: string guard_name = 6
      */
     guardName: string;
     /**
-     * @generated from protobuf field: bool val = 6
+     * @generated from protobuf field: bool val = 7
      */
     val: boolean;
     /**
-     * @generated from protobuf field: optional int32 order = 7
+     * @generated from protobuf field: optional int32 order = 8
      */
     order?: number;
     /**
-     * @generated from protobuf field: optional string icon = 8
+     * @generated from protobuf field: optional string icon = 9
      */
     icon?: string;
 }
@@ -106,18 +110,20 @@ class Permission$Type extends MessageType<Permission> {
         super("resources.permissions.permissions.Permission", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
-            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 5, name: "guard_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 6, name: "val", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "order", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
-            { no: 8, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } }
+            { no: 3, name: "namespace", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } } } },
+            { no: 4, name: "service", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 6, name: "guard_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 7, name: "val", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "order", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
+            { no: 9, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<Permission>): Permission {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
-        message.category = "";
+        message.namespace = "";
+        message.service = "";
         message.name = "";
         message.guardName = "";
         message.val = false;
@@ -136,22 +142,25 @@ class Permission$Type extends MessageType<Permission> {
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* string category */ 3:
-                    message.category = reader.string();
+                case /* string namespace */ 3:
+                    message.namespace = reader.string();
                     break;
-                case /* string name */ 4:
+                case /* string service */ 4:
+                    message.service = reader.string();
+                    break;
+                case /* string name */ 5:
                     message.name = reader.string();
                     break;
-                case /* string guard_name */ 5:
+                case /* string guard_name */ 6:
                     message.guardName = reader.string();
                     break;
-                case /* bool val */ 6:
+                case /* bool val */ 7:
                     message.val = reader.bool();
                     break;
-                case /* optional int32 order */ 7:
+                case /* optional int32 order */ 8:
                     message.order = reader.int32();
                     break;
-                case /* optional string icon */ 8:
+                case /* optional string icon */ 9:
                     message.icon = reader.string();
                     break;
                 default:
@@ -172,24 +181,27 @@ class Permission$Type extends MessageType<Permission> {
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* string category = 3; */
-        if (message.category !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.category);
-        /* string name = 4; */
+        /* string namespace = 3; */
+        if (message.namespace !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.namespace);
+        /* string service = 4; */
+        if (message.service !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.service);
+        /* string name = 5; */
         if (message.name !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.name);
-        /* string guard_name = 5; */
+            writer.tag(5, WireType.LengthDelimited).string(message.name);
+        /* string guard_name = 6; */
         if (message.guardName !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.guardName);
-        /* bool val = 6; */
+            writer.tag(6, WireType.LengthDelimited).string(message.guardName);
+        /* bool val = 7; */
         if (message.val !== false)
-            writer.tag(6, WireType.Varint).bool(message.val);
-        /* optional int32 order = 7; */
+            writer.tag(7, WireType.Varint).bool(message.val);
+        /* optional int32 order = 8; */
         if (message.order !== undefined)
-            writer.tag(7, WireType.Varint).int32(message.order);
-        /* optional string icon = 8; */
+            writer.tag(8, WireType.Varint).int32(message.order);
+        /* optional string icon = 9; */
         if (message.icon !== undefined)
-            writer.tag(8, WireType.LengthDelimited).string(message.icon);
+            writer.tag(9, WireType.LengthDelimited).string(message.icon);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

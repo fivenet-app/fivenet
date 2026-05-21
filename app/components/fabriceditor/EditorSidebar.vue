@@ -7,6 +7,7 @@ import { fonts } from '~/types/editor';
 import ColorPicker from '../partials/ColorPicker.vue';
 import EditorSettings from './EditorSettings.vue';
 import EditorShapes from './EditorShapes.vue';
+import { titleCase } from 'scule';
 
 const { activeObject, canvas, applyPatternFill } = useFabricEditor();
 
@@ -363,7 +364,7 @@ const updateCurvedTextFillColor = (val: string) => {
                             @update:model-value="
                                 (val) => {
                                     (activeObject as FabricHtmlInput)!.inputType = val;
-                                    (activeObject as FabricHtmlInput).label = toTitleCase(val);
+                                    (activeObject as FabricHtmlInput).label = titleCase(val);
                                     canvas?.renderAll();
                                 }
                             "

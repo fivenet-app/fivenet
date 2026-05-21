@@ -7,6 +7,13 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
 import AttrViewAttr from '~/components/settings/attrs/AttrViewAttr.vue';
+import {
+    buildPermissionGroups,
+    getPermissionNamespaceLabel,
+    getPermissionServiceLabel,
+    type PermissionNamespaceGroup,
+    type PermissionServiceGroup,
+} from '~/components/settings/permissions';
 import { getSettingsSystemClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AttributeValues, type RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
@@ -24,7 +31,7 @@ const emit = defineEmits<{
     (e: 'deleted', job: string): void;
 }>();
 
-const { t } = useI18n();
+const { t, te } = useI18n();
 
 const { isSuperuser } = useAuth();
 
@@ -50,7 +57,7 @@ const { listJobs } = completorStore;
 const changed = ref(false);
 
 const permList = ref<Permission[]>([]);
-const permCategories = ref<Map<string, { category: string; icon: string | undefined; order: number }>>(new Map());
+const permCategories = ref<PermissionNamespaceGroup[]>([]);
 const permStates = ref(new Map<number, boolean | undefined>());
 
 const attrList = ref<RoleAttribute[]>([]);
@@ -87,17 +94,7 @@ async function getAllPermissions(job: string): Promise<void> {
 }
 
 async function genPermissionCategories(): Promise<void> {
-    permCategories.value.clear();
-
-    permList.value.forEach((perm) => {
-        if (permCategories.value.has(perm.category)) return;
-
-        permCategories.value.set(perm.category, {
-            category: perm.category,
-            icon: perm.icon,
-            order: perm.order ?? 999999,
-        });
-    });
+    permCategories.value = buildPermissionGroups(permList.value);
 }
 
 async function propogatePermissionStates(): Promise<void> {
@@ -158,9 +155,10 @@ async function updateJobLimits(): Promise<void> {
             attrs.toRemove.push({
                 roleId: 0,
                 attrId: attr.attrId,
-                category: '',
-                key: '',
+                namespace: '',
+                service: '',
                 name: '',
+                key: '',
                 permissionId: attr.permissionId,
                 type: '',
             });
@@ -169,9 +167,10 @@ async function updateJobLimits(): Promise<void> {
                 roleId: 0,
                 attrId: attr.attrId,
                 maxValues: attr.maxValues,
-                category: '',
-                key: '',
+                namespace: '',
+                service: '',
                 name: '',
+                key: '',
                 permissionId: attr.permissionId,
                 type: '',
             });
@@ -212,7 +211,7 @@ async function updateJobLimits(): Promise<void> {
 function clearState(): void {
     changed.value = false;
     permList.value.length = 0;
-    permCategories.value.clear();
+    permCategories.value.length = 0;
     permStates.value.clear();
     attrList.value.length = 0;
 }
@@ -349,17 +348,25 @@ async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
 }
 
 const accordionCategories = computed(() =>
-    [...permCategories.value.entries()]
-        .map((category) => {
-            return {
-                label: t(`perms.${category[1].category}.category`),
-                category: category[1].category,
-                icon: category[1].icon,
-                order: category[1].order,
-            };
-        })
-        .sort((a, b) => a.order - b.order),
+    permCategories.value.map((namespace) => {
+        const services = namespace.services.map((service) => ({
+            ...service,
+            label: getPermissionServiceLabel(service.namespace, service.service, t, te),
+        }));
+        const singleService = services.length === 1 ? services[0] : undefined;
+
+        return {
+            ...namespace,
+            services,
+            singleService,
+            label: singleService?.label ?? getPermissionNamespaceLabel(namespace.namespace, t, te),
+        };
+    }),
 );
+
+function getPermissionsForService(service: PermissionServiceGroup): Permission[] {
+    return permList.value.filter((perm) => perm.namespace === service.namespace && perm.service === service.service);
+}
 
 async function deleteFaction(job: string): Promise<void> {
     try {
@@ -421,7 +428,7 @@ function applyTemplate(permissions: PermissionTemplate[], attributes: AttributeT
     }
 
     // Handle special case where permissions is length 1 and has only Superuser permission, which means all permissions should be applied
-    if (permissions.length === 1 && permissions[0]!.category === 'Superuser' && permissions[0]!.name === 'Superuser') {
+    if (permissions.length === 1 && permissions[0]!.namespace === 'Superuser' && permissions[0]!.name === 'Superuser') {
         permList.value.forEach((perm) => {
             permStates.value.set(perm.id, true);
         });
@@ -460,14 +467,19 @@ function applyTemplate(permissions: PermissionTemplate[], attributes: AttributeT
         });
     } else {
         permissions.forEach((perm) => {
-            const p = permList.value.find((v) => v.category === perm.category && v.name === perm.name);
+            const p = permList.value.find(
+                (v) => v.namespace === perm.namespace && v.service === perm.service && v.name === perm.name,
+            );
             if (p) {
                 permStates.value.set(p.id, true);
             }
         });
 
         attributes.forEach((attr) => {
-            const a = attrList.value.find((v) => v.category === attr.category && v.key === attr.key);
+            const a = attrList.value.find(
+                (v) =>
+                    v.namespace === attr.namespace && v.service === attr.service && v.name === attr.name && v.key === attr.key,
+            );
             if (!a) return;
 
             if (!attr.validValues) {
@@ -593,18 +605,26 @@ const confirmModal = overlay.create(ConfirmModal);
                         />
                     </div>
 
-                    <UAccordion :items="accordionCategories" type="multiple">
-                        <template #content="{ item: category }">
-                            <div class="flex flex-col divide-y divide-default">
+                    <UAccordion
+                        :items="accordionCategories"
+                        type="multiple"
+                        :ui="{
+                            trigger:
+                                'data-[state=open]:border-l data-[state=open]:border-primary data-[state=open]:text-primary pl-2',
+                            content: 'data-[state=open]:border-l data-[state=open]:border-primary',
+                        }"
+                    >
+                        <template #content="{ item: namespace }">
+                            <div v-if="namespace.singleService" class="flex flex-col divide-y divide-default">
                                 <div
-                                    v-for="perm in permList.filter((p) => p.category === category.category)"
+                                    v-for="perm in getPermissionsForService(namespace.singleService)"
                                     :key="perm.id"
-                                    class="flex flex-col gap-1"
+                                    class="flex flex-col gap-1 py-1 pl-4"
                                 >
                                     <UFormField
                                         class="flex flex-1 flex-row items-center gap-2"
-                                        :label="$t(`perms.${perm.category}.${perm.name}.key`)"
-                                        :description="$t(`perms.${perm.category}.${perm.name}.description`)"
+                                        :label="$t(`perms.${perm.namespace}.${perm.service}.${perm.name}.key`)"
+                                        :description="$t(`perms.${perm.namespace}.${perm.service}.${perm.name}.description`)"
                                         :ui="{ wrapper: 'flex-1' }"
                                     >
                                         <UFieldGroup class="inline-flex flex-initial">
@@ -614,6 +634,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 icon="i-mdi-check"
                                                 @click="updatePermissionState(perm.id, true)"
                                             />
+
                                             <UButton
                                                 color="error"
                                                 :variant="
@@ -637,6 +658,64 @@ const confirmModal = overlay.create(ConfirmModal);
                                     </template>
                                 </div>
                             </div>
+
+                            <UAccordion
+                                v-else
+                                class="p-1"
+                                :items="namespace.services"
+                                type="multiple"
+                                :ui="{
+                                    trigger: 'data-[state=open]:text-primary pl-4',
+                                    content: 'pl-4 pb-2',
+                                }"
+                            >
+                                <template #content="{ item: service }">
+                                    <div class="flex flex-col divide-y divide-default">
+                                        <div
+                                            v-for="perm in getPermissionsForService(service)"
+                                            :key="perm.id"
+                                            class="flex flex-col gap-1 py-1"
+                                        >
+                                            <UFormField
+                                                class="flex flex-1 flex-row items-center gap-2"
+                                                :label="$t(`perms.${perm.namespace}.${perm.service}.${perm.name}.key`)"
+                                                :description="
+                                                    $t(`perms.${perm.namespace}.${perm.service}.${perm.name}.description`)
+                                                "
+                                                :ui="{ wrapper: 'flex-1' }"
+                                            >
+                                                <UFieldGroup class="inline-flex flex-initial">
+                                                    <UButton
+                                                        color="success"
+                                                        :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
+                                                        icon="i-mdi-check"
+                                                        @click="updatePermissionState(perm.id, true)"
+                                                    />
+                                                    <UButton
+                                                        color="error"
+                                                        :variant="
+                                                            permStates.get(perm.id) === undefined || !permStates.get(perm.id)
+                                                                ? 'solid'
+                                                                : 'soft'
+                                                        "
+                                                        icon="i-mdi-close"
+                                                        @click="updatePermissionState(perm.id, false)"
+                                                    />
+                                                </UFieldGroup>
+                                            </UFormField>
+
+                                            <template v-for="(attr, idx) in attrList" :key="attr.attrId">
+                                                <AttrViewAttr
+                                                    v-if="attr.permissionId === perm.id"
+                                                    v-model="attrList[idx]!"
+                                                    :permission="perm"
+                                                    @changed="changed = true"
+                                                />
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </UAccordion>
                         </template>
                     </UAccordion>
 

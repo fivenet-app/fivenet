@@ -56,9 +56,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 	// Field Permission Check for same job handling
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permsdocuments.DocumentsServicePerm,
-		permsdocuments.DocumentsServiceUpdateDocumentPerm,
-		permsdocuments.DocumentsServiceUpdateDocumentAccessPermField,
+		permsdocuments.DocumentsService.UpdateDocument.Access,
 	)
 	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

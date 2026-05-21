@@ -40,9 +40,7 @@ func (s *Server) GetColleagueLabels(
 	// Fields Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permsjobs.JobsServicePerm,
-		permsjobs.JobsServiceGetColleaguePerm,
-		permsjobs.JobsServiceGetColleagueTypesPermField,
+		permsjobs.ColleaguesService.GetColleague.Types,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -50,10 +48,12 @@ func (s *Server) GetColleagueLabels(
 	if userInfo.GetSuperuser() {
 		fields.Strings = []string{"Labels"}
 	}
-
 	if !fields.Contains("Labels") {
 		// Fallback to checking if user has manage colleague labels permission
-		if !s.ps.Can(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceManageLabelsPerm) {
+		if !s.ps.Can(
+			userInfo,
+			permsjobs.ColleaguesService.ManageLabels.Perm,
+		) {
 			return nil, errorsjobs.ErrLabelsNoPerms
 		}
 	}
@@ -325,9 +325,7 @@ func (s *Server) GetColleagueLabelsStats(
 	// Types Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permsjobs.JobsServicePerm,
-		permsjobs.JobsServiceGetColleaguePerm,
-		permsjobs.JobsServiceGetColleagueTypesPermField,
+		permsjobs.ColleaguesService.GetColleague.Types,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
@@ -335,7 +333,6 @@ func (s *Server) GetColleagueLabelsStats(
 	if userInfo.GetSuperuser() {
 		fields.Strings = []string{"Labels"}
 	}
-
 	if !fields.Contains("Labels") {
 		return &pbjobs.GetColleagueLabelsStatsResponse{}, nil
 	}

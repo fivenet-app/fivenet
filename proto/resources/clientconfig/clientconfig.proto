@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package resources.clientconfig;
 
-import "google/protobuf/duration.proto";
 import "buf/validate/validate.proto";
+import "google/protobuf/duration.proto";
 import "resources/settings/banner.proto";
 import "resources/settings/config.proto";
 import "resources/settings/data.proto";

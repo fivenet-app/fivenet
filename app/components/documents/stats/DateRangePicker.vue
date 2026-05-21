@@ -3,9 +3,7 @@ import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 import { subYears } from 'date-fns';
 import type { Range } from './helpers';
 
-const { t } = useI18n();
-
-const { format: formatDate } = useDateFormatter();
+const { d, t } = useI18n();
 
 const selected = defineModel<Range>({ required: true });
 
@@ -85,9 +83,9 @@ const maxDate = new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getD
         <UButton class="group data-[state=open]:bg-elevated" color="neutral" variant="subtle" icon="i-mdi-calendar">
             <span class="truncate">
                 <template v-if="selected.start">
-                    <template v-if="selected.end"> {{ formatDate(selected.start) }} - {{ formatDate(selected.end) }} </template>
+                    <template v-if="selected.end"> {{ d(selected.start) }} - {{ d(selected.end) }} </template>
                     <template v-else>
-                        {{ formatDate(selected.start) }}
+                        {{ d(selected.start) }}
                     </template>
                 </template>
                 <template v-else> {{ $t('common.pick_date') }} </template>

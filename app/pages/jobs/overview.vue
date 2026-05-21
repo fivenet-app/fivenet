@@ -18,11 +18,11 @@ definePageMeta({
         'jobs.ConductService/ListConductEntries',
         'jobs.ConductService/UpdateConductEntry',
         'jobs.ConductService/UploadFile',
-        'jobs.JobsService/GetColleague',
-        'jobs.JobsService/ListColleagueActivity',
-        'jobs.JobsService/ListColleagues',
-        'jobs.JobsService/ManageLabels',
-        'jobs.JobsService/SetColleagueProps',
+        'jobs.ColleaguesService/GetColleague',
+        'jobs.ColleaguesService/ListColleagueActivity',
+        'jobs.ColleaguesService/ListColleagues',
+        'jobs.ColleaguesService/ManageLabels',
+        'jobs.ColleaguesService/SetColleagueProps',
         'jobs.JobsService/SetMOTD',
         'jobs.TimeclockService/ListInactiveEmployees',
         'jobs.TimeclockService/ListTimeclock',
@@ -96,7 +96,7 @@ const showRadioFrequency = ref(false);
             </div>
 
             <JobSelfService
-                v-if="can('jobs.JobsService/ListColleagues').value && activeChar !== null"
+                v-if="can('jobs.ColleaguesService/ListColleagues').value && activeChar !== null"
                 :user-id="activeChar.userId"
             />
 

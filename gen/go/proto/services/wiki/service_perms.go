@@ -12,39 +12,45 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+		// Namespace: wiki
 
 		// Service: wiki.WikiService
 		{
-			Category: permkeys.WikiServicePerm,
-			Name:     permkeys.WikiServiceCreatePagePerm,
-			Attrs:    []perms.Attr{},
-			Order:    11000,
-			Icon:     "i-mdi-brain",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.WikiServicePerm,
+			Name:      permkeys.WikiServiceCreatePagePerm,
+			Attrs:     []perms.Attr{},
+			Order:     11000,
+			Icon:      "i-mdi-brain",
 		},
 		{
-			Category: permkeys.WikiServicePerm,
-			Name:     permkeys.WikiServiceDeletePagePerm,
-			Attrs:    []perms.Attr{},
-			Order:    11000,
-			Icon:     "i-mdi-brain",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.WikiServicePerm,
+			Name:      permkeys.WikiServiceDeletePagePerm,
+			Attrs:     []perms.Attr{},
+			Order:     11000,
+			Icon:      "i-mdi-brain",
 		},
 		{
-			Category: permkeys.WikiServicePerm,
-			Name:     permkeys.WikiServiceListPageActivityPerm,
-			Attrs:    []perms.Attr{},
-			Order:    11000,
-			Icon:     "i-mdi-brain",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.WikiServicePerm,
+			Name:      permkeys.WikiServiceListPageActivityPerm,
+			Attrs:     []perms.Attr{},
+			Order:     11000,
+			Icon:      "i-mdi-brain",
 		},
 		{
-			Category: permkeys.WikiServicePerm,
-			Name:     permkeys.WikiServiceListPagesPerm,
-			Attrs:    []perms.Attr{},
-			Order:    11000,
-			Icon:     "i-mdi-brain",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.WikiServicePerm,
+			Name:      permkeys.WikiServiceListPagesPerm,
+			Attrs:     []perms.Attr{},
+			Order:     11000,
+			Icon:      "i-mdi-brain",
 		},
 		{
-			Category: permkeys.WikiServicePerm,
-			Name:     permkeys.WikiServiceUpdatePagePerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.WikiServicePerm,
+			Name:      permkeys.WikiServiceUpdatePagePerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.WikiServiceUpdatePageFieldsPermField,

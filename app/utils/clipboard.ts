@@ -5,6 +5,7 @@ export async function copyToClipboardWrapper(text: string): Promise<void> {
     const settingsStore = useSettingsStore();
     const { nuiEnabled } = storeToRefs(settingsStore);
 
+    // If NUI is enabled, just use the NUI clipboard logic
     if (nuiEnabled.value) return await copyToClipboard(text);
 
     // Based on https://stackoverflow.com/a/79250919
@@ -18,7 +19,7 @@ export async function copyToClipboardWrapper(text: string): Promise<void> {
 
         return await navigator.clipboard.writeText(text);
     } catch {
-        // Based on VueUse useClipboard fallback implementation, licensed under MIT License
+        // Based on VueUse useClipboard fallback implementation, which is licensed under MIT License
         const textArea = document.createElement('textarea');
         textArea.value = text;
         textArea.style.position = 'absolute';

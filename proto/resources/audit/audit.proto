@@ -17,6 +17,7 @@ enum EventAction {
   EVENT_ACTION_CREATED = 3;
   EVENT_ACTION_UPDATED = 4;
   EVENT_ACTION_DELETED = 5;
+  EVENT_ACTION_RESTORED = 6;
 }
 
 enum EventResult {

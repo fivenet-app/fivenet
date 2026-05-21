@@ -1,3 +1,12 @@
+import {
+    CalendarDate,
+    CalendarDateTime,
+    fromDate,
+    getLocalTimeZone,
+    Time,
+    ZonedDateTime,
+    type DateValue,
+} from '@internationalized/date';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Timestamp as resourcesTimestampTimestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
@@ -33,6 +42,56 @@ export function toUtcDateTimestamp(date?: Date): resourcesTimestampTimestamp | u
 
 export function toDatetimeLocal(date: Date): string {
     return new Date(date.getTime() + date.getTimezoneOffset() * -60 * 1000).toISOString().slice(0, 16);
+}
+
+export function dateToCalendarDate(date: Date): CalendarDate;
+export function dateToCalendarDate(date: Date | undefined): CalendarDate | undefined;
+export function dateToCalendarDate(date: Date | undefined): CalendarDate | undefined {
+    if (!date) return undefined;
+
+    return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+}
+
+export function dateToCalendarDateTime(date: Date): CalendarDateTime;
+export function dateToCalendarDateTime(date: Date | undefined): CalendarDateTime | undefined;
+export function dateToCalendarDateTime(date: Date | undefined): CalendarDateTime | undefined {
+    if (!date) return undefined;
+
+    return new CalendarDateTime(
+        date.getFullYear(),
+        date.getMonth() + 1,
+        date.getDate(),
+        date.getHours(),
+        date.getMinutes(),
+        date.getSeconds(),
+        date.getMilliseconds(),
+    );
+}
+
+export function dateToTime(date: Date): Time;
+export function dateToTime(date: Date | undefined): Time | undefined;
+export function dateToTime(date: Date | undefined): Time | undefined {
+    if (!date) return undefined;
+
+    return new Time(date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds());
+}
+
+export function dateToZonedDateTime(date: Date, timeZone?: string): ZonedDateTime;
+export function dateToZonedDateTime(date: Date | undefined, timeZone?: string): ZonedDateTime | undefined;
+export function dateToZonedDateTime(date: Date | undefined, timeZone = getLocalTimeZone()): ZonedDateTime | undefined {
+    if (!date) return undefined;
+
+    return fromDate(date, timeZone);
+}
+
+export function calendarDateToDate(date: DateValue, timeZone?: string): Date;
+export function calendarDateToDate(date: DateValue | undefined, timeZone?: string): Date | undefined;
+export function calendarDateToDate(date: DateValue | undefined, timeZone = getLocalTimeZone()): Date | undefined {
+    if (!date) return undefined;
+
+    if (date instanceof ZonedDateTime) return date.toDate();
+
+    return date.toDate(timeZone);
 }
 
 export function dateToDateString(date: Date): string {

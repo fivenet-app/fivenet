@@ -156,9 +156,7 @@ func (e *UserAwareEnricher) EnrichJobInfoSafeFunc(
 ) func(usr common.IJobInfo) {
 	jobGrades, _ := e.ps.AttrJobGradeList(
 		userInfo,
-		permscitizens.CitizensServicePerm,
-		permscitizens.CitizensServiceGetUserPerm,
-		permscitizens.CitizensServiceGetUserJobsPermField,
+		permscitizens.CitizensService.GetUser.Jobs,
 	)
 
 	appCfg := e.appCfg.Get()

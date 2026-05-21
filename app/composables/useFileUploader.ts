@@ -1,7 +1,6 @@
 // composables/useFileUploader.ts
 import type { ClientStreamingCall, RpcOptions } from '@protobuf-ts/runtime-rpc';
 import pica from 'pica';
-import { canEncodeWebp } from '~/utils/canEncodeWebp';
 import { UploadFileRequest, UploadMeta, type UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
 
 const MAX_READ_SIZE = 128 * 1024; // 128 KB

@@ -570,9 +570,7 @@ func (s *Server) UpdateDocument(
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permsdocuments.DocumentsServicePerm,
-		permsdocuments.DocumentsServiceUpdateDocumentPerm,
-		permsdocuments.DocumentsServiceUpdateDocumentAccessPermField,
+		permsdocuments.DocumentsService.UpdateDocument.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -924,9 +922,7 @@ func (s *Server) DeleteDocument(
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permsdocuments.DocumentsServicePerm,
-		permsdocuments.DocumentsServiceDeleteDocumentPerm,
-		permsdocuments.DocumentsServiceDeleteDocumentAccessPermField,
+		permsdocuments.DocumentsService.DeleteDocument.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -949,8 +945,8 @@ func (s *Server) DeleteDocument(
 		).
 		WHERE(
 			tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
-		)
-
+		).
+		LIMIT(1)
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -1015,9 +1011,7 @@ func (s *Server) ToggleDocument(
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permsdocuments.DocumentsServicePerm,
-		permsdocuments.DocumentsServiceToggleDocumentPerm,
-		permsdocuments.DocumentsServiceToggleDocumentAccessPermField,
+		permsdocuments.DocumentsService.ToggleDocument.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -1135,9 +1129,7 @@ func (s *Server) ChangeDocumentOwner(
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permsdocuments.DocumentsServicePerm,
-		permsdocuments.DocumentsServiceChangeDocumentOwnerPerm,
-		permsdocuments.DocumentsServiceChangeDocumentOwnerAccessPermField,
+		permsdocuments.DocumentsService.ChangeDocumentOwner.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

@@ -317,7 +317,7 @@ const file_services_documents_stats_proto_rawDesc = "" +
 	"totalValue\x12#\n" +
 	"\raverage_value\x18\a \x01(\x01R\faverageValue2\xbb\x01\n" +
 	"\fStatsService\x12\x80\x01\n" +
-	"\bGetStats\x12#.services.documents.GetStatsRequest\x1a$.services.documents.GetStatsResponse\")\xd2\xf3\x18%\b\x01*!\n" +
+	"\bGetStats\x12#.services.documents.GetStatsRequest\x1a$.services.documents.GetStatsResponse\")\xd2\xf3\x18%\b\x01:!\n" +
 	"\n" +
 	"Categories\x18\x01\"\x11PenaltyCalculator\x1a(\xea\xf3\x18$\b:\x12 i-mdi-graph-box-multiple-outlineBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 

@@ -36,22 +36,20 @@ func (c *MigrationsFilestoreCmd) Run() error {
 		fxOpts,
 		fx.Invoke(
 			func(lifecycle fx.Lifecycle, cfg *config.Config, db *sql.DB, storage storage.IStorage, shutdowner fx.Shutdowner) {
-				lifecycle.Append(fx.Hook{
-					OnStart: func(ctx context.Context) error {
-						go func() {
-							exitCode := 0
-							c.db = db
-							c.storage = storage
-							if err := c.run(ctx); err != nil {
-								// handle error, set non-zero exit code so caller knows the job failed
-								exitCode = 1
-								fmt.Println("Error running filestore command:", err)
-							}
-							_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
-						}()
-						return nil
-					},
-				})
+				lifecycle.Append(fx.StartHook(func(ctx context.Context) error {
+					go func() {
+						exitCode := 0
+						c.db = db
+						c.storage = storage
+						if err := c.run(ctx); err != nil {
+							// handle error, set non-zero exit code so caller knows the job failed
+							exitCode = 1
+							fmt.Println("Error running filestore command:", err)
+						}
+						_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
+					}()
+					return nil
+				}))
 			},
 		),
 	)

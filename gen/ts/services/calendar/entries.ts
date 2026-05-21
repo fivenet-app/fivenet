@@ -1037,4 +1037,4 @@ export const EntriesService = new ServiceType("services.calendar.EntriesService"
     { name: "ShareCalendarEntry", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ShareCalendarEntryRequest, O: ShareCalendarEntryResponse },
     { name: "ListCalendarEntryRSVP", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ListCalendarEntryRSVPRequest, O: ListCalendarEntryRSVPResponse },
     { name: "RSVPCalendarEntry", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: RSVPCalendarEntryRequest, O: RSVPCalendarEntryResponse }
-], { "codegen.perms.perms_svc": { name: "calendar.CalendarService" } });
+], { "codegen.perms.perms_svc": { namespace: "calendar", service: "CalendarService" } });

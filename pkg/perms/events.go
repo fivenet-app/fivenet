@@ -24,26 +24,26 @@ const (
 	JobLimitsUpdatedSubject events.Type = "joblimits.update"
 )
 
-func (p *Perms) registerSubscriptions(ctxCancel context.Context) error {
-	if p.ncSub != nil {
-		if err := p.ncSub.Unsubscribe(); err != nil {
-			p.logger.Error("failed to unsubscribe from previous perms subject", zap.Error(err))
+func (ps *Perms) registerSubscriptions(ctxCancel context.Context) error {
+	if ps.ncSub != nil {
+		if err := ps.ncSub.Unsubscribe(); err != nil {
+			ps.logger.Error("failed to unsubscribe from previous perms subject", zap.Error(err))
 		}
-		p.ncSub = nil
+		ps.ncSub = nil
 	}
 
-	ncSub, err := p.nc.Subscribe(fmt.Sprintf("%s.>", BaseSubject), p.handleMessageFunc(ctxCancel))
+	ncSub, err := ps.nc.Subscribe(fmt.Sprintf("%s.>", BaseSubject), ps.handleMessageFunc(ctxCancel))
 	if err != nil {
 		return fmt.Errorf("failed to subscribe to events. %w", err)
 	}
-	p.ncSub = ncSub
+	ps.ncSub = ncSub
 
 	return nil
 }
 
-func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
+func (ps *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 	return func(msg *nats.Msg) {
-		p.logger.Debug("received event message", zap.String("subject", msg.Subject))
+		ps.logger.Debug("received event message", zap.String("subject", msg.Subject))
 
 		switch events.Type(strings.TrimPrefix(msg.Subject, string(BaseSubject)+".")) {
 		case RoleCreatedSubject:
@@ -51,72 +51,75 @@ func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 		case RolePermUpdateSubject:
 			event := &permissionsevents.RoleIDEvent{}
 			if err := protojson.Unmarshal(msg.Data, event); err != nil {
-				p.logger.Error("failed to unmarshal message event data", zap.Error(err))
+				ps.logger.Error("failed to unmarshal message event data", zap.Error(err))
 				return
 			}
 
-			if err := p.loadRoles(ctx, event.GetRoleId()); err != nil {
-				p.logger.Error("failed to load role for role data load", zap.Error(err))
+			if err := ps.loadRoles(ctx, event.GetRoleId()); err != nil {
+				ps.logger.Error("failed to load role for role data load", zap.Error(err))
 				return
 			}
 
-			if err := p.loadRolePermissions(ctx, event.GetRoleId()); err != nil {
-				p.logger.Error("failed to load updated role permissions", zap.Error(err))
+			if err := ps.loadRolePermissions(ctx, event.GetRoleId()); err != nil {
+				ps.logger.Error("failed to load updated role permissions", zap.Error(err))
 				return
 			}
 
 		case RoleAttrUpdateSubject:
 			event := &permissionsevents.RoleIDEvent{}
 			if err := protojson.Unmarshal(msg.Data, event); err != nil {
-				p.logger.Error("failed to unmarshal message event data", zap.Error(err))
+				ps.logger.Error("failed to unmarshal message event data", zap.Error(err))
 				return
 			}
 
-			if err := p.loadRoles(ctx, event.GetRoleId()); err != nil {
-				p.logger.Error("failed to load role for role data load", zap.Error(err))
+			if err := ps.loadRoles(ctx, event.GetRoleId()); err != nil {
+				ps.logger.Error("failed to load role for role data load", zap.Error(err))
 				return
 			}
 
-			if err := p.loadRoleAttributes(ctx, event.GetRoleId()); err != nil {
-				p.logger.Error("failed to load updated role permissions", zap.Error(err))
+			if err := ps.loadRoleAttributes(ctx, event.GetRoleId()); err != nil {
+				ps.logger.Error("failed to load updated role permissions", zap.Error(err))
 				return
 			}
 
 		case RoleDeletedSubject:
 			event := &permissionsevents.RoleIDEvent{}
 			if err := protojson.Unmarshal(msg.Data, event); err != nil {
-				p.logger.Error("failed to unmarshal message event data", zap.Error(err))
+				ps.logger.Error("failed to unmarshal message event data", zap.Error(err))
 				return
 			}
 
 			// Remove role from local state
-			p.deleteRole(event.GetRoleId(), event.GetJob(), event.GetGrade())
+			ps.deleteRole(event.GetRoleId(), event.GetJob(), event.GetGrade())
 
 		case JobLimitsUpdatedSubject:
 			event := &permissionsevents.JobLimitsUpdatedEvent{}
 			if err := protojson.Unmarshal(msg.Data, event); err != nil {
-				p.logger.Error("failed to unmarshal message event data", zap.Error(err))
+				ps.logger.Error("failed to unmarshal message event data", zap.Error(err))
 				return
 			}
 
-			if err := p.loadJobRoles(ctx, event.GetJob()); err != nil {
-				p.logger.Error("failed to load job role permissions and attributes", zap.Error(err))
+			if err := ps.loadJobRoles(ctx, event.GetJob()); err != nil {
+				ps.logger.Error(
+					"failed to load job role permissions and attributes",
+					zap.Error(err),
+				)
 				return
 			}
 
 		default:
-			p.logger.Error("unknown type of perms events message received")
+			ps.logger.Error("unknown type of perms events message received")
 		}
 	}
 }
 
-func (p *Perms) publishMessage(_ context.Context, subj events.Type, msg proto.Message) error {
+func (ps *Perms) publishMessage(_ context.Context, subj events.Type, msg proto.Message) error {
 	out, err := protoutils.MarshalToJSON(msg)
 	if err != nil {
 		return fmt.Errorf("failed to marshal data. %w", err)
 	}
 
-	if err := p.nc.Publish(string(BaseSubject)+"."+string(subj), out); err != nil {
+	if err := ps.nc.Publish(string(BaseSubject)+"."+string(subj), out); err != nil {
 		return fmt.Errorf(
 			"failed to publish message to subject %s. %w",
 			string(BaseSubject)+"."+string(subj),

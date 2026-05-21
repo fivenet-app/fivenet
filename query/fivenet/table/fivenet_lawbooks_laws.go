@@ -20,6 +20,7 @@ type fivenetLawbooksLawsTable struct {
 	ID            mysql.ColumnInteger
 	CreatedAt     mysql.ColumnTimestamp
 	UpdatedAt     mysql.ColumnTimestamp
+	DeletedAt     mysql.ColumnTimestamp
 	LawbookID     mysql.ColumnInteger
 	Name          mysql.ColumnString
 	SortKey       mysql.ColumnString
@@ -72,6 +73,7 @@ func newFivenetLawbooksLawsTableImpl(schemaName, tableName, alias string) fivene
 		IDColumn            = mysql.IntegerColumn("id")
 		CreatedAtColumn     = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn     = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn     = mysql.TimestampColumn("deleted_at")
 		LawbookIDColumn     = mysql.IntegerColumn("lawbook_id")
 		NameColumn          = mysql.StringColumn("name")
 		SortKeyColumn       = mysql.StringColumn("sort_key")
@@ -80,8 +82,8 @@ func newFivenetLawbooksLawsTableImpl(schemaName, tableName, alias string) fivene
 		FineColumn          = mysql.IntegerColumn("fine")
 		DetentionTimeColumn = mysql.IntegerColumn("detention_time")
 		StvoPointsColumn    = mysql.IntegerColumn("stvo_points")
-		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, LawbookIDColumn, NameColumn, SortKeyColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
-		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, LawbookIDColumn, NameColumn, SortKeyColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
+		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, LawbookIDColumn, NameColumn, SortKeyColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
+		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, LawbookIDColumn, NameColumn, SortKeyColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
 		defaultColumns      = mysql.ColumnList{CreatedAtColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
 	)
 
@@ -92,6 +94,7 @@ func newFivenetLawbooksLawsTableImpl(schemaName, tableName, alias string) fivene
 		ID:            IDColumn,
 		CreatedAt:     CreatedAtColumn,
 		UpdatedAt:     UpdatedAtColumn,
+		DeletedAt:     DeletedAtColumn,
 		LawbookID:     LawbookIDColumn,
 		Name:          NameColumn,
 		SortKey:       SortKeyColumn,

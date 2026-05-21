@@ -45,7 +45,7 @@ const mapOptions = {
     markerZoomAnimation: true,
 } as MapOptions;
 
-if (can('centrum.CentrumService/CreateDispatch').value) {
+if (can('centrum.DispatchesService/CreateDispatch').value) {
     const dispatchCreateOrUpdateSlideover = overlay.create(DispatchCreateOrUpdateSlideover);
 
     mapOptions.contextmenuItems.push({

@@ -12,7 +12,6 @@ import (
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/cache"
@@ -755,8 +754,8 @@ func (s *UsersSync) sendUsersDataInChunks(ctx context.Context, us []*syncdata.Da
 		return nil
 	}
 
-	for start := 0; start < len(us); start += sync.MaxUserLocationsPerRequest {
-		end := min(start+maxUsersPerSendRequest, len(us))
+	for start := 0; start < len(us); start += pbsync.MaxUserLocationsPerRequest {
+		end := min(start+pbsync.MaxUserLocationsPerRequest, len(us))
 		req := &pbsync.SendUsersRequest{
 			Users: us[start:end],
 		}

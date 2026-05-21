@@ -782,12 +782,12 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\rMailerService\x12]\n" +
 	"\n" +
 	"ListEmails\x12\".services.mailer.ListEmailsRequest\x1a#.services.mailer.ListEmailsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12c\n" +
-	"\bGetEmail\x12 .services.mailer.GetEmailRequest\x1a!.services.mailer.GetEmailResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\bGetEmail\x12 .services.mailer.GetEmailRequest\x1a!.services.mailer.GetEmailResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x12\x89\x01\n" +
-	"\x13CreateOrUpdateEmail\x12+.services.mailer.CreateOrUpdateEmailRequest\x1a,.services.mailer.CreateOrUpdateEmailResponse\"\x17\xd2\xf3\x18\x13\b\x01*\x0f\n" +
+	"\x13CreateOrUpdateEmail\x12+.services.mailer.CreateOrUpdateEmailRequest\x1a,.services.mailer.CreateOrUpdateEmailResponse\"\x17\xd2\xf3\x18\x13\b\x01:\x0f\n" +
 	"\x06Fields\x18\x01\"\x03Job\x12`\n" +
 	"\vDeleteEmail\x12#.services.mailer.DeleteEmailRequest\x1a$.services.mailer.DeleteEmailResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12~\n" +
-	"\x11GetEmailProposals\x12).services.mailer.GetEmailProposalsRequest\x1a*.services.mailer.GetEmailProposalsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
+	"\x11GetEmailProposals\x12).services.mailer.GetEmailProposalsRequest\x1a*.services.mailer.GetEmailProposalsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListEmails\x1a \xea\xf3\x18\x1c\b\x14\x12\x18i-mdi-inbox-full-outlineBJZHgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer;mailerb\x06proto3"
 
 var file_services_mailer_mailer_proto_msgTypes = make([]protoimpl.MessageInfo, 10)

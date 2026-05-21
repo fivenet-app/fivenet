@@ -14,8 +14,8 @@ const notifications = useNotificationsStore();
 const authAuthClient = await getAuthAuthClient();
 
 const schema = z.object({
-    currentPassword: z.coerce.string().min(6).max(70),
-    newPassword: z.coerce.string().min(6).max(70),
+    currentPassword: passwordSchema,
+    newPassword: passwordSchema,
 });
 
 type Schema = z.output<typeof schema>;

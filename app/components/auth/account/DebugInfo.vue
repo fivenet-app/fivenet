@@ -155,8 +155,11 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
             name="sessionExpiration"
             :label="$t('components.debug_info.access_token_expiration')"
         >
-            <GenericTime :value="userInfo.expiration" ago />
-            (<GenericTime :value="userInfo.expiration" type="long" />)
+            <span v-if="!userInfo.expiration">{{ $t('common.na') }}</span>
+            <template v-else>
+                <GenericTime :value="userInfo.expiration" ago />
+                (<GenericTime :value="userInfo.expiration" type="long" />)
+            </template>
         </UFormField>
 
         <UFormField class="grid grid-cols-2 items-center gap-2" name="status" :label="$t('common.websocket')">

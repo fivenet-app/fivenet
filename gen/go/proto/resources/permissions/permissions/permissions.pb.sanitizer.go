@@ -14,9 +14,6 @@ func (m *Permission) Sanitize() error {
 		return nil
 	}
 
-	// Field: Category
-	m.Category = htmlsanitizer.Sanitize(m.Category)
-
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
 		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
@@ -36,6 +33,12 @@ func (m *Permission) Sanitize() error {
 
 	// Field: Name
 	m.Name = htmlsanitizer.Sanitize(m.Name)
+
+	// Field: Namespace
+	m.Namespace = htmlsanitizer.Sanitize(m.Namespace)
+
+	// Field: Service
+	m.Service = htmlsanitizer.Sanitize(m.Service)
 
 	return nil
 }

@@ -12,11 +12,13 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+		// Namespace: citizens
 
 		// Service: citizens.CitizensService
 		{
-			Category: permkeys.CitizensServicePerm,
-			Name:     permkeys.CitizensServiceGetUserPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CitizensServicePerm,
+			Name:      permkeys.CitizensServiceGetUserPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:  permkeys.CitizensServiceGetUserJobsPermField,
@@ -27,8 +29,9 @@ func init() {
 			Icon:  "i-mdi-account-multiple-outline",
 		},
 		{
-			Category: permkeys.CitizensServicePerm,
-			Name:     permkeys.CitizensServiceListCitizensPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CitizensServicePerm,
+			Name:      permkeys.CitizensServiceListCitizensPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.CitizensServiceListCitizensFieldsPermField,
@@ -40,8 +43,9 @@ func init() {
 			Icon:  "i-mdi-account-multiple-outline",
 		},
 		{
-			Category: permkeys.CitizensServicePerm,
-			Name:     permkeys.CitizensServiceListUserActivityPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CitizensServicePerm,
+			Name:      permkeys.CitizensServiceListUserActivityPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.CitizensServiceListUserActivityFieldsPermField,
@@ -53,8 +57,9 @@ func init() {
 			Icon:  "i-mdi-account-multiple-outline",
 		},
 		{
-			Category: permkeys.CitizensServicePerm,
-			Name:     permkeys.CitizensServiceSetUserPropsPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CitizensServicePerm,
+			Name:      permkeys.CitizensServiceSetUserPropsPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.CitizensServiceSetUserPropsFieldsPermField,
@@ -68,18 +73,36 @@ func init() {
 
 		// Service: citizens.LabelsService
 		{
-			Category: permkeys.LabelsServicePerm,
-			Name:     permkeys.LabelsServiceCreateOrUpdateLabelPerm,
-			Attrs:    []perms.Attr{},
-			Order:    3200,
-			Icon:     "i-mdi-label-multiple",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.LabelsServicePerm,
+			Name:      permkeys.LabelsServiceCreateOrUpdateLabelPerm,
+			Attrs:     []perms.Attr{},
+			Order:     3200,
+			Icon:      "i-mdi-label-multiple",
 		},
 		{
-			Category: permkeys.LabelsServicePerm,
-			Name:     permkeys.LabelsServiceDeleteLabelPerm,
-			Attrs:    []perms.Attr{},
-			Order:    3200,
-			Icon:     "i-mdi-label-multiple",
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.LabelsServicePerm,
+			Name:      permkeys.LabelsServiceDeleteLabelPerm,
+			Attrs:     []perms.Attr{},
+			Order:     3200,
+			Icon:      "i-mdi-label-multiple",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.LabelsServicePerm,
+			Name:      permkeys.LabelsServiceListLabelsPerm,
+			Attrs:     []perms.Attr{},
+			Order:     3200,
+			Icon:      "i-mdi-label-multiple",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.LabelsServicePerm,
+			Name:      permkeys.LabelsServiceSetUserPropsPerm,
+			Attrs:     []perms.Attr{},
+			Order:     3200,
+			Icon:      "i-mdi-label-multiple",
 		},
 	})
 }

@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.settings.cron.title',
     requiresAuth: true,
-    permission: 'Superuser/Superuser',
+    permission: 'internal.Superuser/Superuser',
 });
 </script>
 

@@ -33,31 +33,35 @@ export interface RoleAttribute {
      */
     permissionId: number;
     /**
-     * @generated from protobuf field: string category = 5
+     * @generated from protobuf field: string namespace = 5
      */
-    category: string;
+    namespace: string;
     /**
-     * @generated from protobuf field: string name = 6
+     * @generated from protobuf field: string service = 6
+     */
+    service: string;
+    /**
+     * @generated from protobuf field: string name = 7
      */
     name: string;
     /**
-     * @generated from protobuf field: string key = 7
+     * @generated from protobuf field: string key = 8
      */
     key: string;
     /**
-     * @generated from protobuf field: string type = 8
+     * @generated from protobuf field: string type = 9
      */
     type: string;
     /**
-     * @generated from protobuf field: resources.permissions.attributes.AttributeValues valid_values = 9
+     * @generated from protobuf field: resources.permissions.attributes.AttributeValues valid_values = 10
      */
     validValues?: AttributeValues;
     /**
-     * @generated from protobuf field: resources.permissions.attributes.AttributeValues value = 10
+     * @generated from protobuf field: resources.permissions.attributes.AttributeValues value = 11
      */
     value?: AttributeValues;
     /**
-     * @generated from protobuf field: optional resources.permissions.attributes.AttributeValues max_values = 11
+     * @generated from protobuf field: optional resources.permissions.attributes.AttributeValues max_values = 12
      */
     maxValues?: AttributeValues;
 }
@@ -158,13 +162,14 @@ class RoleAttribute$Type extends MessageType<RoleAttribute> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "attr_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "permission_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 5, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
-            { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 7, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 8, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 9, name: "valid_values", kind: "message", T: () => AttributeValues },
-            { no: 10, name: "value", kind: "message", T: () => AttributeValues },
-            { no: 11, name: "max_values", kind: "message", T: () => AttributeValues }
+            { no: 5, name: "namespace", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } } } },
+            { no: 6, name: "service", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 7, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 8, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 9, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 10, name: "valid_values", kind: "message", T: () => AttributeValues },
+            { no: 11, name: "value", kind: "message", T: () => AttributeValues },
+            { no: 12, name: "max_values", kind: "message", T: () => AttributeValues }
         ]);
     }
     create(value?: PartialMessage<RoleAttribute>): RoleAttribute {
@@ -172,7 +177,8 @@ class RoleAttribute$Type extends MessageType<RoleAttribute> {
         message.roleId = 0;
         message.attrId = 0;
         message.permissionId = 0;
-        message.category = "";
+        message.namespace = "";
+        message.service = "";
         message.name = "";
         message.key = "";
         message.type = "";
@@ -197,25 +203,28 @@ class RoleAttribute$Type extends MessageType<RoleAttribute> {
                 case /* int64 permission_id */ 4:
                     message.permissionId = reader.int64().toNumber();
                     break;
-                case /* string category */ 5:
-                    message.category = reader.string();
+                case /* string namespace */ 5:
+                    message.namespace = reader.string();
                     break;
-                case /* string name */ 6:
+                case /* string service */ 6:
+                    message.service = reader.string();
+                    break;
+                case /* string name */ 7:
                     message.name = reader.string();
                     break;
-                case /* string key */ 7:
+                case /* string key */ 8:
                     message.key = reader.string();
                     break;
-                case /* string type */ 8:
+                case /* string type */ 9:
                     message.type = reader.string();
                     break;
-                case /* resources.permissions.attributes.AttributeValues valid_values */ 9:
+                case /* resources.permissions.attributes.AttributeValues valid_values */ 10:
                     message.validValues = AttributeValues.internalBinaryRead(reader, reader.uint32(), options, message.validValues);
                     break;
-                case /* resources.permissions.attributes.AttributeValues value */ 10:
+                case /* resources.permissions.attributes.AttributeValues value */ 11:
                     message.value = AttributeValues.internalBinaryRead(reader, reader.uint32(), options, message.value);
                     break;
-                case /* optional resources.permissions.attributes.AttributeValues max_values */ 11:
+                case /* optional resources.permissions.attributes.AttributeValues max_values */ 12:
                     message.maxValues = AttributeValues.internalBinaryRead(reader, reader.uint32(), options, message.maxValues);
                     break;
                 default:
@@ -242,27 +251,30 @@ class RoleAttribute$Type extends MessageType<RoleAttribute> {
         /* int64 permission_id = 4; */
         if (message.permissionId !== 0)
             writer.tag(4, WireType.Varint).int64(message.permissionId);
-        /* string category = 5; */
-        if (message.category !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.category);
-        /* string name = 6; */
+        /* string namespace = 5; */
+        if (message.namespace !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.namespace);
+        /* string service = 6; */
+        if (message.service !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.service);
+        /* string name = 7; */
         if (message.name !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.name);
-        /* string key = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.name);
+        /* string key = 8; */
         if (message.key !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.key);
-        /* string type = 8; */
+            writer.tag(8, WireType.LengthDelimited).string(message.key);
+        /* string type = 9; */
         if (message.type !== "")
-            writer.tag(8, WireType.LengthDelimited).string(message.type);
-        /* resources.permissions.attributes.AttributeValues valid_values = 9; */
+            writer.tag(9, WireType.LengthDelimited).string(message.type);
+        /* resources.permissions.attributes.AttributeValues valid_values = 10; */
         if (message.validValues)
-            AttributeValues.internalBinaryWrite(message.validValues, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* resources.permissions.attributes.AttributeValues value = 10; */
+            AttributeValues.internalBinaryWrite(message.validValues, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* resources.permissions.attributes.AttributeValues value = 11; */
         if (message.value)
-            AttributeValues.internalBinaryWrite(message.value, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.permissions.attributes.AttributeValues max_values = 11; */
+            AttributeValues.internalBinaryWrite(message.value, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.permissions.attributes.AttributeValues max_values = 12; */
         if (message.maxValues)
-            AttributeValues.internalBinaryWrite(message.maxValues, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+            AttributeValues.internalBinaryWrite(message.maxValues, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

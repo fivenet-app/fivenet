@@ -13,18 +13,20 @@ import (
 )
 
 const (
-	AccountsServicePerm perms.Category = "settings.AccountsService"
-	ConfigServicePerm   perms.Category = "settings.ConfigService"
-	CronServicePerm     perms.Category = "settings.CronService"
-	LawsServicePerm     perms.Category = "settings.LawsService"
-	SettingsServicePerm perms.Category = "settings.SettingsService"
-	SystemServicePerm   perms.Category = "settings.SystemService"
+	Namespace perms.Namespace = "settings"
 
-	// Service: LawsService
+	AccountsServicePerm perms.Service = "AccountsService"
+	ConfigServicePerm   perms.Service = "ConfigService"
+	CronServicePerm     perms.Service = "CronService"
+	LawsServicePerm     perms.Service = "LawsService"
+	SettingsServicePerm perms.Service = "SettingsService"
+	SystemServicePerm   perms.Service = "SystemService"
+
+	// Service: settings.LawsService
 	LawsServiceCreateOrUpdateLawBookPerm perms.Name = "CreateOrUpdateLawBook"
 	LawsServiceDeleteLawBookPerm         perms.Name = "DeleteLawBook"
 
-	// Service: SettingsService
+	// Service: settings.SettingsService
 	SettingsServiceCreateRolePerm      perms.Name = "CreateRole"
 	SettingsServiceDeleteRolePerm      perms.Name = "DeleteRole"
 	SettingsServiceGetJobPropsPerm     perms.Name = "GetJobProps"
@@ -33,3 +35,78 @@ const (
 	SettingsServiceUpdateRolePermsPerm perms.Name = "UpdateRolePerms"
 	SettingsServiceViewAuditLogPerm    perms.Name = "ViewAuditLog"
 )
+
+type LawsServicePerms struct {
+	CreateOrUpdateLawBook LawsServiceCreateOrUpdateLawBookPermRef
+	DeleteLawBook         LawsServiceDeleteLawBookPermRef
+}
+type LawsServiceCreateOrUpdateLawBookPermRef struct {
+	Perm perms.PermissionRef
+}
+type LawsServiceDeleteLawBookPermRef struct {
+	Perm perms.PermissionRef
+}
+
+var LawsService = LawsServicePerms{
+	CreateOrUpdateLawBook: LawsServiceCreateOrUpdateLawBookPermRef{
+		Perm: perms.NewPermissionRef(Namespace, LawsServicePerm, LawsServiceCreateOrUpdateLawBookPerm),
+	},
+	DeleteLawBook: LawsServiceDeleteLawBookPermRef{
+		Perm: perms.NewPermissionRef(Namespace, LawsServicePerm, LawsServiceDeleteLawBookPerm),
+	},
+}
+
+type SettingsServicePerms struct {
+	CreateRole      SettingsServiceCreateRolePermRef
+	DeleteRole      SettingsServiceDeleteRolePermRef
+	GetJobProps     SettingsServiceGetJobPropsPermRef
+	GetRoles        SettingsServiceGetRolesPermRef
+	SetJobProps     SettingsServiceSetJobPropsPermRef
+	UpdateRolePerms SettingsServiceUpdateRolePermsPermRef
+	ViewAuditLog    SettingsServiceViewAuditLogPermRef
+}
+type SettingsServiceCreateRolePermRef struct {
+	Perm perms.PermissionRef
+}
+type SettingsServiceDeleteRolePermRef struct {
+	Perm perms.PermissionRef
+}
+type SettingsServiceGetJobPropsPermRef struct {
+	Perm perms.PermissionRef
+}
+type SettingsServiceGetRolesPermRef struct {
+	Perm perms.PermissionRef
+}
+type SettingsServiceSetJobPropsPermRef struct {
+	Perm perms.PermissionRef
+}
+type SettingsServiceUpdateRolePermsPermRef struct {
+	Perm perms.PermissionRef
+}
+type SettingsServiceViewAuditLogPermRef struct {
+	Perm perms.PermissionRef
+}
+
+var SettingsService = SettingsServicePerms{
+	CreateRole: SettingsServiceCreateRolePermRef{
+		Perm: perms.NewPermissionRef(Namespace, SettingsServicePerm, SettingsServiceCreateRolePerm),
+	},
+	DeleteRole: SettingsServiceDeleteRolePermRef{
+		Perm: perms.NewPermissionRef(Namespace, SettingsServicePerm, SettingsServiceDeleteRolePerm),
+	},
+	GetJobProps: SettingsServiceGetJobPropsPermRef{
+		Perm: perms.NewPermissionRef(Namespace, SettingsServicePerm, SettingsServiceGetJobPropsPerm),
+	},
+	GetRoles: SettingsServiceGetRolesPermRef{
+		Perm: perms.NewPermissionRef(Namespace, SettingsServicePerm, SettingsServiceGetRolesPerm),
+	},
+	SetJobProps: SettingsServiceSetJobPropsPermRef{
+		Perm: perms.NewPermissionRef(Namespace, SettingsServicePerm, SettingsServiceSetJobPropsPerm),
+	},
+	UpdateRolePerms: SettingsServiceUpdateRolePermsPermRef{
+		Perm: perms.NewPermissionRef(Namespace, SettingsServicePerm, SettingsServiceUpdateRolePermsPerm),
+	},
+	ViewAuditLog: SettingsServiceViewAuditLogPermRef{
+		Perm: perms.NewPermissionRef(Namespace, SettingsServicePerm, SettingsServiceViewAuditLogPerm),
+	},
+}

@@ -175,7 +175,7 @@ const columns = computed(() =>
                 header: t('common.date_of_birth'),
                 cell: ({ row }) => row.original.dateofbirth,
             },
-            can('jobs.JobsService/GetColleague').value
+            can('jobs.ColleaguesService/GetColleague').value
                 ? {
                       id: 'actions',
                       cell: ({ row }) =>

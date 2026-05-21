@@ -1296,10 +1296,10 @@ export const DispatchesService = new ServiceType("services.centrum.DispatchesSer
     { name: "UpdateDispatch", options: { "codegen.perms.perms": { enabled: true } }, I: UpdateDispatchRequest, O: UpdateDispatchResponse },
     { name: "DeleteDispatch", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteDispatchRequest, O: DeleteDispatchResponse },
     { name: "ListDispatchTargetJobs", options: { "codegen.perms.perms": { enabled: true, name: "CreateDispatch" } }, I: ListDispatchTargetJobsRequest, O: ListDispatchTargetJobsResponse },
-    { name: "AssignDispatch", options: { "codegen.perms.perms": { enabled: true, name: "TakeControl" } }, I: AssignDispatchRequest, O: AssignDispatchResponse },
-    { name: "GetDispatch", options: { "codegen.perms.perms": { enabled: true, name: "Stream" } }, I: GetDispatchRequest, O: GetDispatchResponse },
-    { name: "ListDispatches", options: { "codegen.perms.perms": { enabled: true, name: "Stream" } }, I: ListDispatchesRequest, O: ListDispatchesResponse },
-    { name: "ListDispatchActivity", options: { "codegen.perms.perms": { enabled: true, name: "Stream" } }, I: ListDispatchActivityRequest, O: ListDispatchActivityResponse },
+    { name: "AssignDispatch", options: { "codegen.perms.perms": { enabled: true, namespace: "centrum", service: "CentrumService", name: "TakeControl" } }, I: AssignDispatchRequest, O: AssignDispatchResponse },
+    { name: "GetDispatch", options: { "codegen.perms.perms": { enabled: true, namespace: "centrum", service: "CentrumService", name: "Stream" } }, I: GetDispatchRequest, O: GetDispatchResponse },
+    { name: "ListDispatches", options: { "codegen.perms.perms": { enabled: true, namespace: "centrum", service: "CentrumService", name: "Stream" } }, I: ListDispatchesRequest, O: ListDispatchesResponse },
+    { name: "ListDispatchActivity", options: { "codegen.perms.perms": { enabled: true, namespace: "centrum", service: "CentrumService", name: "Stream" } }, I: ListDispatchActivityRequest, O: ListDispatchActivityResponse },
     { name: "TakeDispatch", options: { "codegen.perms.perms": { enabled: true } }, I: TakeDispatchRequest, O: TakeDispatchResponse },
     { name: "UpdateDispatchStatus", options: { "codegen.perms.perms": { enabled: true, name: "TakeDispatch" } }, I: UpdateDispatchStatusRequest, O: UpdateDispatchStatusResponse }
-], { "codegen.perms.perms_svc": { name: "centrum.CentrumService" } });
+], { "codegen.perms.perms_svc": { order: 105, icon: "i-mdi-target-arrow" } });

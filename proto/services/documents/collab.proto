@@ -14,7 +14,8 @@ service CollabService {
   rpc JoinRoom(stream resources.collab.ClientPacket) returns (stream resources.collab.ServerPacket) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "documents.DocumentsService"
+      namespace: "documents"
+      service: "DocumentsService"
       name: "UpdateDocument"
     };
   }

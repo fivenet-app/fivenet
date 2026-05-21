@@ -797,7 +797,7 @@ var File_resources_users_user_proto protoreflect.FileDescriptor
 
 const file_resources_users_user_proto_rawDesc = "" +
 	"\n" +
-	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a#resources/timestamp/timestamp.proto\x1a*resources/citizens/licenses/licenses.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\xe1\a\n" +
+	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a*resources/citizens/licenses/licenses.proto\x1a#resources/timestamp/timestamp.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\xe1\a\n" +
 	"\x04User\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x06userId\x12\x1e\n" +

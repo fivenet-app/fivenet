@@ -11,7 +11,6 @@ import (
 	permissionsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/events"
 	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2026/pkg/perms/collections"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -33,7 +32,10 @@ type AddPerm struct {
 	Val bool
 }
 
-func (p *Perms) GetJobRoles(ctx context.Context, job string) (collections.Roles, error) {
+func (ps *Perms) GetJobRoles(
+	ctx context.Context,
+	job string,
+) ([]*permissionspermissions.Role, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -50,8 +52,8 @@ func (p *Perms) GetJobRoles(ctx context.Context, job string) (collections.Roles,
 			tRoles.Grade.ASC(),
 		)
 
-	var dest collections.Roles
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	var dest []*permissionspermissions.Role
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to get job roles for job %s. %w", job, err)
 		}
@@ -60,11 +62,11 @@ func (p *Perms) GetJobRoles(ctx context.Context, job string) (collections.Roles,
 	return dest, nil
 }
 
-func (p *Perms) GetJobRolesUpTo(
+func (ps *Perms) GetJobRolesUpTo(
 	ctx context.Context,
 	job string,
 	grade int32,
-) (collections.Roles, error) {
+) ([]*permissionspermissions.Role, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -82,8 +84,8 @@ func (p *Perms) GetJobRolesUpTo(
 			tRoles.Grade.ASC(),
 		)
 
-	var dest collections.Roles
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	var dest []*permissionspermissions.Role
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf(
 				"failed to get job roles up to grade %d for job %s. %w",
@@ -97,7 +99,10 @@ func (p *Perms) GetJobRolesUpTo(
 	return dest, nil
 }
 
-func (p *Perms) GetRoles(ctx context.Context, excludeSystem bool) (collections.Roles, error) {
+func (ps *Perms) GetRoles(
+	ctx context.Context,
+	excludeSystem bool,
+) ([]*permissionspermissions.Role, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -115,8 +120,8 @@ func (p *Perms) GetRoles(ctx context.Context, excludeSystem bool) (collections.R
 		stmt = stmt.WHERE(tRoles.Job.NOT_EQ(mysql.String(DefaultRoleJob)))
 	}
 
-	var dest collections.Roles
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	var dest []*permissionspermissions.Role
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to get roles. %w", err)
 		}
@@ -125,7 +130,7 @@ func (p *Perms) GetRoles(ctx context.Context, excludeSystem bool) (collections.R
 	return dest, nil
 }
 
-func (p *Perms) GetClosestJobRole(
+func (ps *Perms) GetClosestJobRole(
 	ctx context.Context,
 	job string,
 	grade int32,
@@ -145,7 +150,7 @@ func (p *Perms) GetClosestJobRole(
 		LIMIT(1)
 
 	var dest permissionspermissions.Role
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf(
 				"failed to get closest job role for job %s and grade %d. %w",
@@ -159,7 +164,7 @@ func (p *Perms) GetClosestJobRole(
 	return &dest, nil
 }
 
-func (p *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error) {
+func (ps *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error) {
 	stmt := tRoles.
 		SELECT(
 			mysql.COUNT(tRoles.ID).AS("data_count.total"),
@@ -170,7 +175,7 @@ func (p *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error)
 		)
 
 	var dest database.DataCount
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return -1, fmt.Errorf("failed to count roles for job %s. %w", job, err)
 		}
@@ -179,7 +184,7 @@ func (p *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error)
 	return dest.Total, nil
 }
 
-func (p *Perms) GetRole(ctx context.Context, id int64) (*permissionspermissions.Role, error) {
+func (ps *Perms) GetRole(ctx context.Context, id int64) (*permissionspermissions.Role, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -194,7 +199,7 @@ func (p *Perms) GetRole(ctx context.Context, id int64) (*permissionspermissions.
 		LIMIT(1)
 
 	var dest permissionspermissions.Role
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to get role with ID %d. %w", id, err)
 		}
@@ -207,7 +212,7 @@ func (p *Perms) GetRole(ctx context.Context, id int64) (*permissionspermissions.
 	return &dest, nil
 }
 
-func (p *Perms) CreateRole(
+func (ps *Perms) CreateRole(
 	ctx context.Context,
 	job string,
 	grade int32,
@@ -223,7 +228,7 @@ func (p *Perms) CreateRole(
 			grade,
 		)
 
-	res, err := stmt.ExecContext(ctx, p.db)
+	res, err := stmt.ExecContext(ctx, ps.db)
 	if err != nil && !dbutils.IsDuplicateError(err) {
 		return nil, fmt.Errorf("failed to create role for job %s and grade %d. %w", job, grade, err)
 	}
@@ -235,12 +240,12 @@ func (p *Perms) CreateRole(
 			return nil, fmt.Errorf("failed to retrieve last insert ID for role creation. %w", err)
 		}
 
-		role, err = p.GetRole(ctx, lastId)
+		role, err = ps.GetRole(ctx, lastId)
 		if err != nil {
 			return nil, fmt.Errorf("failed to retrieve created role with ID %d. %w", lastId, err)
 		}
 	} else {
-		role, err = p.GetRoleByJobAndGrade(ctx, job, grade)
+		role, err = ps.GetRoleByJobAndGrade(ctx, job, grade)
 		if err != nil {
 			return nil, fmt.Errorf(
 				"failed to retrieve existing role for job %s and grade %d. %w",
@@ -251,9 +256,9 @@ func (p *Perms) CreateRole(
 		}
 	}
 
-	p.permsRoleMap.Store(role.GetId(), xsync.NewMap[int64, bool]())
+	ps.permsRoleMap.Store(role.GetId(), xsync.NewMap[int64, bool]())
 
-	grades, _ := p.permsJobsRoleMap.LoadOrCompute(
+	grades, _ := ps.permsJobsRoleMap.LoadOrCompute(
 		role.GetJob(),
 		func() (*xsync.Map[int32, int64], bool) {
 			return xsync.NewMap[int32, int64](), false
@@ -261,9 +266,9 @@ func (p *Perms) CreateRole(
 	)
 	grades.Store(role.GetGrade(), role.GetId())
 
-	p.roleIDToJobMap.Store(role.GetId(), role.GetJob())
+	ps.roleIDToJobMap.Store(role.GetId(), role.GetJob())
 
-	if err := p.publishMessage(ctx, RoleCreatedSubject, &permissionsevents.RoleIDEvent{
+	if err := ps.publishMessage(ctx, RoleCreatedSubject, &permissionsevents.RoleIDEvent{
 		RoleId: role.GetId(),
 		Job:    role.GetJob(),
 		Grade:  role.GetGrade(),
@@ -278,8 +283,8 @@ func (p *Perms) CreateRole(
 	return role, nil
 }
 
-func (p *Perms) DeleteRole(ctx context.Context, id int64) error {
-	role, err := p.GetRole(ctx, id)
+func (ps *Perms) DeleteRole(ctx context.Context, id int64) error {
+	role, err := ps.GetRole(ctx, id)
 	if err != nil {
 		// Role not found? It shouldn't exist anymore
 		if errors.Is(err, qrm.ErrNoRows) {
@@ -297,11 +302,11 @@ func (p *Perms) DeleteRole(ctx context.Context, id int64) error {
 			tRoles.ID.EQ(mysql.Int64(id)),
 		).LIMIT(1)
 
-	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		return fmt.Errorf("failed to delete role with ID %d. %w", id, err)
 	}
 
-	if err := p.publishMessage(ctx, RoleDeletedSubject, &permissionsevents.RoleIDEvent{
+	if err := ps.publishMessage(ctx, RoleDeletedSubject, &permissionsevents.RoleIDEvent{
 		RoleId: role.GetId(),
 		Job:    role.GetJob(),
 		Grade:  role.GetGrade(),
@@ -313,24 +318,24 @@ func (p *Perms) DeleteRole(ctx context.Context, id int64) error {
 		)
 	}
 
-	p.deleteRole(role.GetId(), role.GetJob(), role.GetGrade())
+	ps.deleteRole(role.GetId(), role.GetJob(), role.GetGrade())
 
 	return nil
 }
 
-func (p *Perms) deleteRole(id int64, job string, grade int32) {
-	p.permsRoleMap.Delete(id)
+func (ps *Perms) deleteRole(id int64, job string, grade int32) {
+	ps.permsRoleMap.Delete(id)
 
-	grades, _ := p.permsJobsRoleMap.LoadOrCompute(job, func() (*xsync.Map[int32, int64], bool) {
+	grades, _ := ps.permsJobsRoleMap.LoadOrCompute(job, func() (*xsync.Map[int32, int64], bool) {
 		return xsync.NewMap[int32, int64](), false
 	})
 	grades.Delete(grade)
 
-	p.roleIDToJobMap.Delete(id)
-	p.clearUserCanCache()
+	ps.roleIDToJobMap.Delete(id)
+	ps.clearUserCanCache()
 }
 
-func (p *Perms) GetRoleByJobAndGrade(
+func (ps *Perms) GetRoleByJobAndGrade(
 	ctx context.Context,
 	job string,
 	grade int32,
@@ -350,7 +355,7 @@ func (p *Perms) GetRoleByJobAndGrade(
 		LIMIT(1)
 
 	var dest permissionspermissions.Role
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil
 		} else {
@@ -366,7 +371,7 @@ func (p *Perms) GetRoleByJobAndGrade(
 	return &dest, nil
 }
 
-func (p *Perms) GetRolePermissions(
+func (ps *Perms) GetRolePermissions(
 	ctx context.Context,
 	id int64,
 ) ([]*permissionspermissions.Permission, error) {
@@ -376,7 +381,8 @@ func (p *Perms) GetRolePermissions(
 		SELECT(
 			tPerms.ID,
 			tPerms.CreatedAt,
-			tPerms.Category,
+			tPerms.Namespace,
+			tPerms.Service,
 			tPerms.Name,
 			tPerms.GuardName,
 			tPerms.Order,
@@ -397,7 +403,7 @@ func (p *Perms) GetRolePermissions(
 		)
 
 	var dest []*permissionspermissions.Permission
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to get permissions for role ID %d. %w", id, err)
 		}
@@ -453,7 +459,8 @@ func (p *Perms) GetEffectiveRolePermissions(
 
 		ps = append(ps, &permissionspermissions.Permission{
 			Id:        p.ID,
-			Category:  string(p.Category),
+			Namespace: string(p.Namespace),
+			Service:   string(p.Service),
 			Name:      string(p.Name),
 			GuardName: p.GuardName,
 			Val:       v,
@@ -470,7 +477,7 @@ func (p *Perms) GetEffectiveRolePermissions(
 	return ps, nil
 }
 
-func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId int64, perms ...AddPerm) error {
+func (ps *Perms) UpdateRolePermissions(ctx context.Context, roleId int64, perms ...AddPerm) error {
 	rolePerms := make([]struct {
 		RoleID       int64
 		PermissionID int64
@@ -499,21 +506,21 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId int64, perms .
 			tRolePerms.Val.SET(mysql.BoolExp(mysql.Raw("VALUES(`val`)"))),
 		)
 
-	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		if !dbutils.IsDuplicateError(err) {
 			return fmt.Errorf("failed to update permissions for role ID %d. %w", roleId, err)
 		}
 	}
 
-	roleCache, _ := p.permsRoleMap.LoadOrCompute(roleId, func() (*xsync.Map[int64, bool], bool) {
+	roleCache, _ := ps.permsRoleMap.LoadOrCompute(roleId, func() (*xsync.Map[int64, bool], bool) {
 		return xsync.NewMap[int64, bool](), false
 	})
 	for _, v := range rolePerms {
 		roleCache.Store(v.PermissionID, v.Val)
 	}
-	p.clearUserCanCache()
+	ps.clearUserCanCache()
 
-	if err := p.publishMessage(ctx, RolePermUpdateSubject, &permissionsevents.RoleIDEvent{
+	if err := ps.publishMessage(ctx, RolePermUpdateSubject, &permissionsevents.RoleIDEvent{
 		RoleId: roleId,
 	}); err != nil {
 		return fmt.Errorf(
@@ -526,7 +533,7 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId int64, perms .
 	return nil
 }
 
-func (p *Perms) RemovePermissionsFromRole(
+func (ps *Perms) RemovePermissionsFromRole(
 	ctx context.Context,
 	roleId int64,
 	perms ...int64,
@@ -544,18 +551,18 @@ func (p *Perms) RemovePermissionsFromRole(
 		)).
 		LIMIT(int64(len(ids)))
 
-	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		return fmt.Errorf("failed to remove permissions from role ID %d. %w", roleId, err)
 	}
 
-	if permsRoleMap, ok := p.permsRoleMap.Load(roleId); ok {
+	if permsRoleMap, ok := ps.permsRoleMap.Load(roleId); ok {
 		for _, permId := range perms {
 			permsRoleMap.Delete(permId)
 		}
 	}
-	p.clearUserCanCache()
+	ps.clearUserCanCache()
 
-	if err := p.publishMessage(ctx, RolePermUpdateSubject, &permissionsevents.RoleIDEvent{
+	if err := ps.publishMessage(ctx, RolePermUpdateSubject, &permissionsevents.RoleIDEvent{
 		RoleId: roleId,
 	}); err != nil {
 		return fmt.Errorf(
@@ -568,7 +575,7 @@ func (p *Perms) RemovePermissionsFromRole(
 	return nil
 }
 
-func (p *Perms) GetJobPermissions(
+func (ps *Perms) GetJobPermissions(
 	ctx context.Context,
 	job string,
 ) ([]*permissionspermissions.Permission, error) {
@@ -576,7 +583,8 @@ func (p *Perms) GetJobPermissions(
 	stmt := tJobPerms.
 		SELECT(
 			tJobPerms.PermissionID.AS("permission.id"),
-			tPerms.Category,
+			tPerms.Namespace,
+			tPerms.Service,
 			tPerms.Name,
 			tPerms.GuardName,
 			tPerms.Order,
@@ -585,8 +593,7 @@ func (p *Perms) GetJobPermissions(
 		).
 		FROM(
 			tJobPerms.
-				INNER_JOIN(
-					tPerms,
+				INNER_JOIN(tPerms,
 					tPerms.ID.EQ(tJobPerms.PermissionID),
 				),
 		).
@@ -595,7 +602,7 @@ func (p *Perms) GetJobPermissions(
 		)
 
 	var dest []*permissionspermissions.Permission
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to get permissions for job %s. %w", job, err)
 		}
@@ -640,14 +647,14 @@ func (p *Perms) UpdateJobPermissions(
 	return nil
 }
 
-func (p *Perms) ClearJobPermissions(ctx context.Context, job string) error {
+func (ps *Perms) ClearJobPermissions(ctx context.Context, job string) error {
 	stmt := tJobPerms.
 		DELETE().
 		WHERE(
 			tJobPerms.Job.EQ(mysql.String(job)),
 		)
 
-	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		if !dbutils.IsDuplicateError(err) {
 			return fmt.Errorf("failed to clear job permissions for job %s. %w", job, err)
 		}

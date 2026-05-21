@@ -34,19 +34,17 @@ func (c *VersionCmd) Run(_ *kong.Context) error {
 
 	fxOpts = append(fxOpts,
 		fx.Invoke(func(lifecycle fx.Lifecycle, cfg *config.Config, shutdowner fx.Shutdowner) {
-			lifecycle.Append(fx.Hook{
-				OnStart: func(ctx context.Context) error {
-					go func() {
-						exitCode := 0
-						if err := c.run(ctx, cfg); err != nil {
-							// handle error, set non-zero exit code so caller knows the job failed
-							exitCode = 1
-						}
-						_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
-					}()
-					return nil
-				},
-			})
+			lifecycle.Append(fx.StartHook(func(ctx context.Context) error {
+				go func() {
+					exitCode := 0
+					if err := c.run(ctx, cfg); err != nil {
+						// handle error, set non-zero exit code so caller knows the job failed
+						exitCode = 1
+					}
+					_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
+				}()
+				return nil
+			}))
 		}),
 	)
 
@@ -100,21 +98,19 @@ func (c *UpCmd) Run(_ *kong.Context) error {
 		fxOpts,
 		fx.Invoke(
 			func(logger *zap.Logger, lifecycle fx.Lifecycle, cfg *config.Config, shutdowner fx.Shutdowner) {
-				lifecycle.Append(fx.Hook{
-					OnStart: func(ctx context.Context) error {
-						go func() {
-							exitCode := 0
-							if err := c.run(ctx, logger, cfg); err != nil {
-								logger.Error("Failed to run migrations", zap.Error(err))
-								// handle error, set non-zero exit code so caller knows the job failed
+				lifecycle.Append(fx.StartHook(func(ctx context.Context) error {
+					go func() {
+						exitCode := 0
+						if err := c.run(ctx, logger, cfg); err != nil {
+							logger.Error("Failed to run migrations", zap.Error(err))
+							// handle error, set non-zero exit code so caller knows the job failed
 
-								exitCode = 1
-							}
-							_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
-						}()
-						return nil
-					},
-				})
+							exitCode = 1
+						}
+						_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
+					}()
+					return nil
+				}))
 			},
 		),
 	)

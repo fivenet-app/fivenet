@@ -132,7 +132,7 @@ const columns = computed(
                                             icon: 'i-mdi-link-variant',
                                             external: true,
                                             target: '_blank',
-                                            to: `/api/filestore/${row.original.filePath}`,
+                                            to: `/api/filestore/${row.original.filePath.replace(/^\/+/, '')}`,
                                         },
                                         {},
                                     ),

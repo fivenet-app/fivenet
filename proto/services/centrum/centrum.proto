@@ -3,15 +3,11 @@ syntax = "proto3";
 package services.centrum;
 
 import "buf/validate/validate.proto";
-import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
-import "codegen/sanitizer/sanitizer.proto";
 import "resources/centrum/dispatchers/dispatchers.proto";
 import "resources/centrum/dispatches/dispatches.proto";
 import "resources/centrum/settings/settings.proto";
 import "resources/centrum/units/units.proto";
-import "resources/common/database/database.proto";
-import "resources/jobs/jobs.proto";
 import "resources/livemap/heatmap/heatmap.proto";
 import "resources/timestamp/timestamp.proto";
 

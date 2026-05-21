@@ -207,7 +207,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `attr_id` | [int64](#int64) |  |  |
 | `permission_id` | [int64](#int64) |  |  |
-| `category` | [string](#string) |  |  |
+| `namespace` | [string](#string) |  |  |
+| `service` | [string](#string) |  |  |
 | `name` | [string](#string) |  |  |
 | `key` | [string](#string) |  |  |
 | `type` | [string](#string) |  |  |
@@ -286,6 +287,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `enabled` | [bool](#bool) |  |  |
+| `namespace` | [string](#string) | optional |  |
 | `service` | [string](#string) | optional |  |
 | `name` | [string](#string) | optional |  |
 | `names` | [string](#string) | repeated |  |
@@ -303,7 +305,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `order` | [int32](#int32) |  |  |
 | `icon` | [string](#string) | optional |  |
-| `name` | [string](#string) | optional |  |
+| `namespace` | [string](#string) | optional |  |
+| `service` | [string](#string) | optional |  |
 | `additional_perms` | [AdditionalServicePerm](#codegenpermsAdditionalServicePerm) | repeated |  |
 
 
@@ -392,109 +395,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `user_id` | [int32](#int32) |  |  |
 | `licenses` | [License](#resourcescitizenslicensesLicense) | repeated |  |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/file/meta.proto
-
-
-### resources.file.FileMeta
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `image` | [ImageMeta](#resourcesfileImageMeta) |  |  |
-
-
-
-
-
-### resources.file.ImageMeta
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `width` | [int64](#int64) |  |  |
-| `height` | [int64](#int64) |  |  |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/file/file.proto
-
-
-### resources.file.File
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `parent_id` | [int64](#int64) | optional |  |
-| `id` | [int64](#int64) |  |  |
-| `file_path` | [string](#string) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `byte_size` | [int64](#int64) |  | Bytes stored |
-| `content_type` | [string](#string) |  |  |
-| `meta` | [FileMeta](#resourcesfileFileMeta) | optional |  |
-| `is_dir` | [bool](#bool) |  |  |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/jobs/jobs.proto
-
-
-### resources.jobs.Job
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  |  |
-| `label` | [string](#string) |  |  |
-| `grades` | [JobGrade](#resourcesjobsJobGrade) | repeated |  |
-
-
-
-
-
-### resources.jobs.JobGrade
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job_name` | [string](#string) | optional |  |
-| `grade` | [int32](#int32) |  |  |
-| `label` | [string](#string) |  |  |
 
 
 
@@ -603,6 +503,109 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `requires_expiration` | [bool](#bool) |  |  |
 | `min_duration` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
 | `max_duration` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/file/meta.proto
+
+
+### resources.file.FileMeta
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `image` | [ImageMeta](#resourcesfileImageMeta) |  |  |
+
+
+
+
+
+### resources.file.ImageMeta
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `width` | [int64](#int64) |  |  |
+| `height` | [int64](#int64) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/file/file.proto
+
+
+### resources.file.File
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `parent_id` | [int64](#int64) | optional |  |
+| `id` | [int64](#int64) |  |  |
+| `file_path` | [string](#string) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `byte_size` | [int64](#int64) |  | Bytes stored |
+| `content_type` | [string](#string) |  |  |
+| `meta` | [FileMeta](#resourcesfileFileMeta) | optional |  |
+| `is_dir` | [bool](#bool) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/jobs/jobs.proto
+
+
+### resources.jobs.Job
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  |  |
+| `label` | [string](#string) |  |  |
+| `grades` | [JobGrade](#resourcesjobsJobGrade) | repeated |  |
+
+
+
+
+
+### resources.jobs.JobGrade
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job_name` | [string](#string) | optional |  |
+| `grade` | [int32](#int32) |  |  |
+| `label` | [string](#string) |  |  |
 
 
 
@@ -742,6 +745,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `enabled` | [bool](#bool) |  |  |
 | `username` | [string](#string) |  |  |
 | `license` | [string](#string) |  |  |
@@ -880,6 +884,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `EVENT_ACTION_CREATED` | 3 |  |
 | `EVENT_ACTION_UPDATED` | 4 |  |
 | `EVENT_ACTION_DELETED` | 5 |  |
+| `EVENT_ACTION_RESTORED` | 6 |  |
 
 
 
@@ -5026,7 +5031,7 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `added` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated |  |
-| `removed` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated |  |
+| `removed` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated | TODO switch to storing label ids instead of the whole label (resolve labels on client-side) |
 
 
 
@@ -5397,6 +5402,7 @@ Dummy - DO NOT USE!
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `lawbook_id` | [int64](#int64) |  |  |
 | `name` | [string](#string) |  |  |
 | `description` | [string](#string) | optional |  |
@@ -5417,6 +5423,7 @@ Dummy - DO NOT USE!
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `name` | [string](#string) |  |  |
 | `description` | [string](#string) | optional |  |
 | `laws` | [Law](#resourceslawsLaw) | repeated |  |
@@ -6322,7 +6329,8 @@ User related events
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `category` | [string](#string) |  |  |
+| `namespace` | [string](#string) |  |  |
+| `service` | [string](#string) |  |  |
 | `name` | [string](#string) |  |  |
 | `guard_name` | [string](#string) |  |  |
 | `val` | [bool](#bool) |  |  |
@@ -6840,7 +6848,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `identifier` | [string](#string) |  |  |
+| `license` | [string](#string) |  |  |
 | `last_char_id` | [int32](#int32) | optional |  |
 
 
@@ -6937,29 +6945,27 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 
 
-### resources.users.activity.LabelChange
+### resources.users.activity.LabelAdded
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `label` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) |  |  |
-| `added` | [bool](#bool) |  |  |
+| `id` | [int64](#int64) |  |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `expired` | [bool](#bool) |  |  |
 
 
 
 
 
 ### resources.users.activity.LabelsChange
-@deprecated
-
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `added` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
-| `removed` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
+| `added` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated | **Deprecated.**  |
+| `removed` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated | **Deprecated.**  |
+| `added_ids` | [LabelAdded](#resourcesusersactivityLabelAdded) | repeated |  |
+| `removed_ids` | [int64](#int64) | repeated |  |
 | `expired` | [bool](#bool) |  |  |
 
 
@@ -7046,7 +7052,6 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `traffic_infraction_points_change` | [TrafficInfractionPointsChange](#resourcesusersactivityTrafficInfractionPointsChange) |  |  |
 | `mugshot_change` | [MugshotChange](#resourcesusersactivityMugshotChange) |  |  |
 | `labels_change` | [LabelsChange](#resourcesusersactivityLabelsChange) |  |  |
-| `label_change` | [LabelChange](#resourcesusersactivityLabelChange) |  |  |
 | `job_change` | [JobChange](#resourcesusersactivityJobChange) |  |  |
 | `document_relation` | [CitizenDocumentRelation](#resourcesusersactivityCitizenDocumentRelation) |  | Docstore related |
 | `jail_change` | [JailChange](#resourcesusersactivityJailChange) |  | "Plugin" activities |
@@ -8849,6 +8854,25 @@ Auth Service handles user authentication, character selection and oauth2 connect
 ## services/citizens/labels.proto
 
 
+### services.citizens.AddCitizenLabelsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `labels` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
+| `reason` | [string](#string) |  |  |
+
+
+
+
+
+### services.citizens.AddCitizenLabelsResponse
+
+
+
+
+
 ### services.citizens.CreateOrUpdateLabelRequest
 
 
@@ -8916,6 +8940,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `search` | [string](#string) | optional |  |
+| `min_access` | [resources.citizens.labels.AccessLevel](#resourcescitizenslabelsAccessLevel) | optional |  |
+| `own_job_only` | [bool](#bool) | optional |  |
 
 
 
@@ -8927,6 +8953,25 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `labels` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
+
+
+
+
+
+### services.citizens.RemoveCitizenLabelsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `ids` | [int64](#int64) | repeated |  |
+| `reason` | [string](#string) |  |  |
+
+
+
+
+
+### services.citizens.RemoveCitizenLabelsResponse
 
 
 
@@ -8946,34 +8991,14 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `GetLabel` | [GetLabelRequest](#servicescitizensGetLabelRequest) | [GetLabelResponse](#servicescitizensGetLabelResponse) | |
 | `CreateOrUpdateLabel` | [CreateOrUpdateLabelRequest](#servicescitizensCreateOrUpdateLabelRequest) | [CreateOrUpdateLabelResponse](#servicescitizensCreateOrUpdateLabelResponse) | |
 | `DeleteLabel` | [DeleteLabelRequest](#servicescitizensDeleteLabelRequest) | [DeleteLabelResponse](#servicescitizensDeleteLabelResponse) | |
+| `AddCitizenLabels` | [AddCitizenLabelsRequest](#servicescitizensAddCitizenLabelsRequest) | [AddCitizenLabelsResponse](#servicescitizensAddCitizenLabelsResponse) | |
+| `RemoveCitizenLabels` | [RemoveCitizenLabelsRequest](#servicescitizensRemoveCitizenLabelsRequest) | [RemoveCitizenLabelsResponse](#servicescitizensRemoveCitizenLabelsResponse) | |
 
  <!-- end services -->
 
 
 
 ## services/completor/completor.proto
-
-
-### services.completor.CompleteCitizenLabelsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `search` | [string](#string) |  |  |
-
-
-
-
-
-### services.completor.CompleteCitizenLabelsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `labels` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
-
-
-
 
 
 ### services.completor.CompleteCitizensRequest
@@ -9080,7 +9105,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `CompleteJobs` | [CompleteJobsRequest](#servicescompletorCompleteJobsRequest) | [CompleteJobsResponse](#servicescompletorCompleteJobsResponse) | |
 | `CompleteDocumentCategories` | [CompleteDocumentCategoriesRequest](#servicescompletorCompleteDocumentCategoriesRequest) | [CompleteDocumentCategoriesResponse](#servicescompletorCompleteDocumentCategoriesResponse) | |
 | `ListLawBooks` | [ListLawBooksRequest](#servicescompletorListLawBooksRequest) | [ListLawBooksResponse](#servicescompletorListLawBooksResponse) | |
-| `CompleteCitizenLabels` | [CompleteCitizenLabelsRequest](#servicescompletorCompleteCitizenLabelsRequest) | [CompleteCitizenLabelsResponse](#servicescompletorCompleteCitizenLabelsResponse) | |
 
  <!-- end services -->
 
@@ -12465,6 +12489,11 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 ### services.settings.DeleteAccountResponse
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
 
 
 
@@ -12738,6 +12767,11 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 ### services.settings.DeleteLawBookResponse
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
 
 
 
@@ -12755,6 +12789,28 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 ### services.settings.DeleteLawResponse
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### services.settings.ListLawBooksRequest
+
+
+
+
+
+### services.settings.ListLawBooksResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `books` | [resources.laws.LawBook](#resourceslawsLawBook) | repeated |  |
+
+
 
 
  <!-- end messages -->
@@ -12768,6 +12824,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
+| `ListLawBooks` | [ListLawBooksRequest](#servicessettingsListLawBooksRequest) | [ListLawBooksResponse](#servicessettingsListLawBooksResponse) | |
 | `CreateOrUpdateLawBook` | [CreateOrUpdateLawBookRequest](#servicessettingsCreateOrUpdateLawBookRequest) | [CreateOrUpdateLawBookResponse](#servicessettingsCreateOrUpdateLawBookResponse) | |
 | `DeleteLawBook` | [DeleteLawBookRequest](#servicessettingsDeleteLawBookRequest) | [DeleteLawBookResponse](#servicessettingsDeleteLawBookResponse) | |
 | `CreateOrUpdateLaw` | [CreateOrUpdateLawRequest](#servicessettingsCreateOrUpdateLawRequest) | [CreateOrUpdateLawResponse](#servicessettingsCreateOrUpdateLawResponse) | |

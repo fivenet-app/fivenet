@@ -80,7 +80,7 @@ func newFivenetUserLabelsJobTableImpl(schemaName, tableName, alias string) fiven
 		SettingsColumn  = mysql.StringColumn("settings")
 		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, SettingsColumn}
 		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, SettingsColumn}
-		defaultColumns  = mysql.ColumnList{CreatedAtColumn, ColorColumn, IconColumn, SettingsColumn}
+		defaultColumns  = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetUserLabelsJobTable{

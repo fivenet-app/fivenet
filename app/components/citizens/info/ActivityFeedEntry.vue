@@ -6,12 +6,13 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import { UserActivityType, type UserActivity } from '~~/gen/ts/resources/users/activity/activity';
 import { citizenUserActivityIconColor, citizenUserActivityTypeIcon } from './helpers';
+import LabelBadge from '../labels/LabelBadge.vue';
 
 const props = defineProps<{
     activity: UserActivity;
 }>();
 
-const numberFormatter = useIntlNumberFormat();
+const numberFormatter = useDisplayNumberFormat();
 </script>
 
 <template>
@@ -198,7 +199,7 @@ const numberFormatter = useIntlNumberFormat();
                             <span class="font-semibold">
                                 {{ activity.data.data.jobChange.jobLabel }}
                                 <span v-if="activity.data.data.jobChange.grade">
-                                    ({{ $t('common.grade') }}: {{ activity.data.data.jobChange.gradeLabel }})</span
+                                    ({{ $t('common.rank') }}: {{ activity.data.data.jobChange.gradeLabel }})</span
                                 >
                             </span>
                         </h3>
@@ -335,46 +336,6 @@ const numberFormatter = useIntlNumberFormat();
                             <span>
                                 {{ $t('components.citizens.CitizenInfoActivityFeedEntry.user_props_labels_updated') }}
                             </span>
-
-                            <div class="inline-flex gap-1">
-                                <UBadge
-                                    v-for="label in activity.data.data.labelsChange.removed"
-                                    :key="label.name"
-                                    class="justify-between gap-2 line-through"
-                                    :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
-                                    :style="{ backgroundColor: label.color }"
-                                    :icon="
-                                        label.icon && label.icon !== ''
-                                            ? convertComponentIconNameToDynamic(label.icon)
-                                            : undefined
-                                    "
-                                >
-                                    {{ label.name }}
-                                    <span v-if="activity.data.data.labelsChange.expired"
-                                        >&nbsp;({{ $t('common.expires_at') }}:
-                                        <GenericTime :value="label.expiresAt" type="long" />)</span
-                                    >
-                                </UBadge>
-
-                                <UBadge
-                                    v-for="label in activity.data.data.labelsChange.added"
-                                    :key="label.name"
-                                    class="justify-between gap-2"
-                                    :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
-                                    :style="{ backgroundColor: label.color }"
-                                    :icon="
-                                        label.icon && label.icon !== ''
-                                            ? convertComponentIconNameToDynamic(label.icon)
-                                            : undefined
-                                    "
-                                >
-                                    {{ label.name }}
-                                    <span v-if="label.expiresAt"
-                                        >&nbsp;({{ $t('common.expires_at') }}:
-                                        <GenericTime :value="label.expiresAt" type="long" />)</span
-                                    >
-                                </UBadge>
-                            </div>
                         </h3>
 
                         <p class="text-sm text-dimmed">
@@ -382,11 +343,37 @@ const numberFormatter = useIntlNumberFormat();
                         </p>
                     </div>
 
+                    <div>
+                        <div class="inline-flex gap-1">
+                            <LabelBadge
+                                v-for="label in activity.data.data.labelsChange.removed"
+                                :key="label.id"
+                                class="line-through"
+                                :label="label"
+                            />
+                            <LabelBadge v-for="label in activity.data.data.labelsChange.added" :key="label.id" :label="label" />
+
+                            <LabelBadge
+                                v-for="label in activity.data.data.labelsChange.removedIds"
+                                :id="label"
+                                :key="label"
+                                :expired="activity.data.data.labelsChange.expired"
+                            />
+                            <LabelBadge
+                                v-for="label in activity.data.data.labelsChange.addedIds"
+                                :id="label.id"
+                                :key="label.id"
+                                :expires-at="label.expiresAt"
+                            />
+                        </div>
+                    </div>
+
                     <div class="flex items-center justify-between">
                         <p class="inline-flex gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
+                            <span v-if="activity.data.data.labelsChange.expired"> {{ $t('common.expired') }}</span>
                             <!-- eslint-disable-next-line vue/no-v-html -->
-                            <span v-html="activity.reason" />
+                            <span v-else v-html="activity.reason" />
                         </p>
 
                         <p v-if="activity.sourceUser" class="inline-flex text-sm">

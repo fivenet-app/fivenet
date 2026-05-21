@@ -4,11 +4,8 @@ import (
 	"github.com/gosimple/slug"
 )
 
-// Guard makes the given string into a safe to use guard slug.
-// example: 'create $#% contact' -> 'create-contact'.
-//
-//	@param	string
-//	@param	string
-func Guard(b string) string {
-	return slug.Make(b)
+// guard makes the given string into a safe to use guard slug.
+// Example: 'create $#% contact' -> 'create-contact'.
+func guard(s string) string {
+	return slug.Make(s)
 }

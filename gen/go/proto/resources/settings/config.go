@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"slices"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -38,10 +39,6 @@ func (x *AppConfig) Default() {
 			{
 				Category: "auth.AuthService",
 				Name:     "ChooseCharacter",
-			},
-			{
-				Category: "completor.CompletorService",
-				Name:     "CompleteJobs",
 			},
 			{
 				Category: "documents.DocumentsService",
@@ -152,5 +149,15 @@ func (x *AppConfig) Default() {
 
 	if x.GetGame() == nil {
 		x.Game = &Game{}
+	}
+}
+
+func (x *AppConfig) Migrate() {
+	if x.GetPerms() != nil && len(x.GetPerms().GetDefault()) > 0 {
+		// Remove the `completor.CompletorService/CompleteJobs` permission
+		x.GetPerms().SetDefault(slices.DeleteFunc(x.GetPerms().GetDefault(), func(v *Perm) bool {
+			return (v.Category == "CompletorService" || v.Category == "completor.CompletorService") &&
+				v.Name == "CompleteJobs"
+		}))
 	}
 }

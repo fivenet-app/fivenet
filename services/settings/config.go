@@ -2,6 +2,7 @@ package settings
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
@@ -67,11 +68,17 @@ func (s *Server) UpdateAppConfig(
 	}
 
 	// Update default perms
+	cfgDefaultperms := req.GetConfig().GetPerms().GetDefault()
 	defaultPerms := make([]string, len(req.GetConfig().GetPerms().GetDefault()))
-	for i := range req.GetConfig().GetPerms().GetDefault() {
+	for i := range cfgDefaultperms {
+		split := strings.Split(cfgDefaultperms[i].GetCategory(), ".")
+		namespace := strings.Join(split[:len(split)-1], ".")
+		svc := split[len(split)-1]
+
 		defaultPerms[i] = perms.BuildGuard(
-			perms.Category(req.GetConfig().GetPerms().GetDefault()[i].GetCategory()),
-			perms.Name(req.GetConfig().GetPerms().GetDefault()[i].GetName()),
+			perms.Namespace(namespace),
+			perms.Service(svc),
+			perms.Name(cfgDefaultperms[i].GetName()),
 		)
 	}
 	if err := s.ps.SetDefaultRolePerms(ctx, defaultPerms); err != nil {

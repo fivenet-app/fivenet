@@ -9,6 +9,8 @@ const props = defineProps<{
     range: Range;
 }>();
 
+const { d, n } = useI18n();
+
 const cardRef = useTemplateRef<HTMLElement | null>('cardRef');
 
 const { width } = useElementSize(cardRef);
@@ -31,35 +33,22 @@ const total = computed(() => {
 });
 const averageVacation = computed(() => {
     const points = data.value ?? [];
-    if (points.length === 0) {
-        return 0;
-    }
+    if (points.length === 0) return 0;
 
     const totalVacation = points.reduce((acc: number, point) => acc + point.vacation, 0);
     return totalVacation / points.length;
 });
 
-const { format: formatNumber } = useIntlNumberFormatWithOptions({
-    style: 'decimal',
-    currency: undefined,
-    maximumFractionDigits: 0,
-});
-const { format: formatDate } = useDateFormatterWithOptions('short');
-
 const xTicks = (i: number) => {
-    if (!data.value?.[i]) {
-        return '';
-    }
+    if (!data.value?.[i]) return '';
 
-    return formatDate(data.value[i].date);
+    return d(data.value[i].date, 'date');
 };
 
-const template = (d?: DataRecord) => {
-    if (!d || !(d.date instanceof Date)) {
-        return '';
-    }
+const template = (dr?: DataRecord) => {
+    if (!dr || !(dr.date instanceof Date)) return '';
 
-    return `${formatDate(d.date)}: ${formatNumber(d.amount)} (${formatNumber(d.vacation)})`;
+    return `${d(dr.date, 'date')}: ${n(dr.amount)} (${n(dr.vacation)})`;
 };
 </script>
 
@@ -73,8 +62,12 @@ const template = (d?: DataRecord) => {
                     ({{ $t('common.absent') }})
                 </p>
                 <p class="text-3xl font-semibold text-highlighted">
-                    {{ formatNumber(stats.averageValue ? stats.averageValue : total) }}
-                    ({{ formatNumber(averageVacation) }})
+                    {{
+                        n(stats.averageValue ? stats.averageValue : total, {
+                            maximumFractionDigits: 0,
+                        })
+                    }}
+                    ({{ n(averageVacation) }})
                 </p>
             </div>
         </template>

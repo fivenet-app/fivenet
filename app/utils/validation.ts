@@ -5,6 +5,14 @@ import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 export const pageNumberSchema = z.coerce.number().int().nonnegative().min(1).max(999_999_999).prefault(1);
 
+export const usernameSchema = z
+    .string()
+    .min(3)
+    .max(24)
+    .regex(/^[0-9A-Za-zÄÖÜß_-]{3,24}$/);
+
+export const passwordSchema = z.coerce.string().min(6).max(70);
+
 type DurationI18nKeys = {
     invalid: string;
     required: string;

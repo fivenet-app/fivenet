@@ -11,11 +11,13 @@ import (
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+		// Namespace: vehicles
 
 		// Service: vehicles.VehiclesService
 		{
-			Category: permkeys.VehiclesServicePerm,
-			Name:     permkeys.VehiclesServiceListVehiclesPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.VehiclesServicePerm,
+			Name:      permkeys.VehiclesServiceListVehiclesPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.VehiclesServiceListVehiclesFieldsPermField,
@@ -27,8 +29,9 @@ func init() {
 			Icon:  "i-mdi-car-outline",
 		},
 		{
-			Category: permkeys.VehiclesServicePerm,
-			Name:     permkeys.VehiclesServiceSetVehiclePropsPerm,
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.VehiclesServicePerm,
+			Name:      permkeys.VehiclesServiceSetVehiclePropsPerm,
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.VehiclesServiceSetVehiclePropsFieldsPermField,

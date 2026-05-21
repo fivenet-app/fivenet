@@ -5,11 +5,12 @@ import (
 
 	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2026/pkg/perms/collections"
 	"github.com/pkg/errors"
 )
 
-func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error) {
+func (p *Perms) GetPermissionsOfUser(
+	userInfo *userinfo.UserInfo,
+) ([]*permissionspermissions.Permission, error) {
 	defaultRoleId, ok := p.lookupRoleIDForJobAndGrade(DefaultRoleJob, p.startJobGrade)
 	if !ok {
 		return nil, errors.New("failed to fallback to default role")
@@ -29,11 +30,12 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 		return nil, nil
 	}
 
-	perms := make(collections.Permissions, len(ps))
+	perms := make([]*permissionspermissions.Permission, len(ps))
 	for i := range ps {
 		perms[i] = &permissionspermissions.Permission{
 			Id:        ps[i].ID,
-			Category:  string(ps[i].Category),
+			Namespace: string(ps[i].Namespace),
+			Service:   string(ps[i].Service),
 			Name:      string(ps[i].Name),
 			GuardName: ps[i].GuardName,
 		}
@@ -75,8 +77,13 @@ func (p *Perms) getRolePermissionsFromCache(roleIds []int64) []*cachePerm {
 	return ps
 }
 
-func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) bool {
-	permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
+func (ps *Perms) can(
+	userInfo *userinfo.UserInfo,
+	namespace Namespace,
+	service Service,
+	name Name,
+) bool {
+	permId, ok := ps.lookupPermIDByGuard(BuildGuard(namespace, service, name))
 	if !ok {
 		return false
 	}
@@ -92,36 +99,36 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 		grade:  userInfo.GetJobGrade(),
 		permId: permId,
 	}
-	result, ok := p.userCanCache.Get(cacheKey)
+	result, ok := ps.userCanCache.Get(cacheKey)
 	if ok {
 		return result
 	}
 
-	result = p.checkIfCan(permId, userInfo)
+	result = ps.checkIfCan(permId, userInfo)
 
-	p.userCanCache.Put(cacheKey, result, p.userCanCacheTTL)
+	ps.userCanCache.Put(cacheKey, result, ps.userCanCacheTTL)
 
 	return result
 }
 
-func (p *Perms) checkIfCan(permId int64, userInfo *userinfo.UserInfo) bool {
-	if check, ok := p.checkRoleJob(userInfo.GetJob(), userInfo.GetJobGrade(), permId); ok {
+func (ps *Perms) checkIfCan(permId int64, userInfo *userinfo.UserInfo) bool {
+	if check, ok := ps.checkRoleJob(userInfo.GetJob(), userInfo.GetJobGrade(), permId); ok {
 		return check
 	}
 
 	// Check default role perms
-	check, _ := p.checkRoleJob(DefaultRoleJob, p.startJobGrade, permId)
+	check, _ := ps.checkRoleJob(DefaultRoleJob, ps.startJobGrade, permId)
 	return check
 }
 
-func (p *Perms) checkRoleJob(job string, grade int32, permId int64) (bool, bool) {
-	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
+func (ps *Perms) checkRoleJob(job string, grade int32, permId int64) (bool, bool) {
+	roleIds, ok := ps.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
 		return false, false
 	}
 
 	for i := range slices.Backward(roleIds) {
-		ps, ok := p.permsRoleMap.Load(roleIds[i])
+		ps, ok := ps.permsRoleMap.Load(roleIds[i])
 		if !ok {
 			continue
 		}
@@ -137,8 +144,8 @@ func (p *Perms) checkRoleJob(job string, grade int32, permId int64) (bool, bool)
 	return false, false
 }
 
-func (p *Perms) clearUserCanCache() {
-	if p.userCanCache != nil {
-		p.userCanCache.Clear()
+func (ps *Perms) clearUserCanCache() {
+	if ps.userCanCache != nil {
+		ps.userCanCache.Clear()
 	}
 }

@@ -103,7 +103,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
 
 watchDebounced(query, async () => (await formRef.value?.validate({})) && refresh(), { debounce: 200, maxWait: 1250 });
 
-const numberFormatter = useIntlNumberFormat();
+const numberFormatter = useDisplayNumberFormat();
 
 function addToClipboard(user: User): void {
     clipboardStore.addUser(user);

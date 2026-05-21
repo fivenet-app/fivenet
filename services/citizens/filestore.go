@@ -97,17 +97,11 @@ func (s *Server) UploadMugshot(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", userInfo.GetUserId()})
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permscitizens.CitizensServicePerm,
-		permscitizens.CitizensServiceSetUserPropsPerm,
-		permscitizens.CitizensServiceSetUserPropsFieldsPermField,
-	)
+	fields, err := permscitizens.CitizensService.SetUserProps.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-
-	if !fields.Contains("Mugshot") {
+	if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueMugshot) {
 		return errorscitizens.ErrPropsMugshotDenied
 	}
 

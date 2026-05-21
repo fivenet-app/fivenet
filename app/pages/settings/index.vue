@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import CardsList from '~/components/partials/CardsList.vue';
 import SystemStatus from '~/components/settings/SystemStatus.vue';
-import type { CardElements } from '~/utils/types';
+import type { CardElement } from '~/utils/types';
 
 const { t } = useI18n();
 
@@ -22,7 +22,7 @@ definePageMeta({
 
 const { isSuperuser } = useAuth();
 
-const items = computed<CardElements>(() => [
+const items = computed<CardElement[]>(() => [
     {
         title: t('components.settings.job_props.job_properties'),
         description: t('pages.settings.features.properties'),
@@ -62,45 +62,45 @@ const items = computed<CardElements>(() => [
         title: t('pages.settings.jobs.title'),
         description: t('pages.settings.features.jobs'),
         to: '/settings/jobs',
-        permission: 'Superuser/Superuser',
+        permission: 'internal.Superuser/Superuser',
         icon: 'i-mdi-briefcase',
     },
 ]);
 
-const superuserItems = computed<CardElements>(() => [
+const superuserItems = computed<CardElement[]>(() => [
     {
         title: t('pages.settings.limiter.title'),
         description: t('pages.settings.features.limiter'),
         to: '/settings/limiter',
-        permission: 'Superuser/Superuser',
+        permission: 'internal.Superuser/Superuser',
         icon: 'i-mdi-car-speed-limiter',
     },
     {
         title: t('pages.settings.filestore.title'),
         description: t('pages.settings.features.filestore'),
         to: '/settings/filestore',
-        permission: 'Superuser/Superuser',
+        permission: 'internal.Superuser/Superuser',
         icon: 'i-mdi-file-multiple',
     },
     {
         title: t('pages.settings.accounts.title'),
         description: t('pages.settings.features.accounts'),
         to: '/settings/accounts',
-        permission: 'Superuser/Superuser',
+        permission: 'internal.Superuser/Superuser',
         icon: 'i-mdi-account-multiple',
     },
     {
         title: t('pages.settings.settings.title'),
         description: t('pages.settings.features.settings'),
         to: '/settings/settings',
-        permission: 'Superuser/Superuser',
+        permission: 'internal.Superuser/Superuser',
         icon: 'i-mdi-office-building-cog',
     },
     {
         title: t('pages.settings.cron.title'),
         description: t('pages.settings.features.cron'),
         to: '/settings/cron',
-        permission: 'Superuser/Superuser',
+        permission: 'internal.Superuser/Superuser',
         icon: 'i-mdi-calendar-task',
     },
 ]);

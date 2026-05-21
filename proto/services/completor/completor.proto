@@ -4,7 +4,6 @@ package services.completor;
 
 import "buf/validate/validate.proto";
 import "codegen/perms/perms.proto";
-import "resources/citizens/labels/labels.proto";
 import "resources/documents/category/category.proto";
 import "resources/jobs/jobs.proto";
 import "resources/laws/laws.proto";
@@ -50,14 +49,6 @@ message ListLawBooksResponse {
   repeated resources.laws.LawBook books = 1;
 }
 
-message CompleteCitizenLabelsRequest {
-  string search = 1 [(buf.validate.field).string.max_len = 64];
-}
-
-message CompleteCitizenLabelsResponse {
-  repeated resources.citizens.labels.Label labels = 1;
-}
-
 service CompletorService {
   option (codegen.perms.perms_svc) = {
     order: 10
@@ -79,7 +70,8 @@ service CompletorService {
   rpc CompleteDocumentCategories(CompleteDocumentCategoriesRequest) returns (CompleteDocumentCategoriesResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "documents.DocumentsService"
+      namespace: "documents"
+      service: "CategoriesService"
       name: "ListCategories"
     };
   }
@@ -87,18 +79,6 @@ service CompletorService {
     option (codegen.perms.perms) = {
       enabled: true
       name: "Any"
-    };
-  }
-
-  rpc CompleteCitizenLabels(CompleteCitizenLabelsRequest) returns (CompleteCitizenLabelsResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      attrs: [
-        {
-          key: "Jobs"
-          type: ATTRIBUTE_TYPE_JOB_LIST
-        }
-      ]
     };
   }
 }

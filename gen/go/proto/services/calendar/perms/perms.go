@@ -9,9 +9,41 @@ import (
 )
 
 const (
-	CalendarServicePerm perms.Category = "calendar.CalendarService"
+	Namespace perms.Namespace = "calendar"
 
-	// Service: CalendarService
+	CalendarServicePerm perms.Service = "CalendarService"
+
+	// Service: calendar.CalendarService
 	CalendarServiceCreateCalendarPerm            perms.Name = "CreateCalendar"
 	CalendarServiceCreateCalendarFieldsPermField perms.Key  = "Fields"
 )
+
+type CalendarServiceCreateCalendarFieldsPermValue string
+
+const (
+	CalendarServiceCreateCalendarFieldsPermValueJob    CalendarServiceCreateCalendarFieldsPermValue = "Job"
+	CalendarServiceCreateCalendarFieldsPermValuePublic CalendarServiceCreateCalendarFieldsPermValue = "Public"
+)
+
+type CalendarServicePerms struct {
+	CreateCalendar CalendarServiceCreateCalendarPermRef
+}
+type CalendarServiceCreateCalendarPermRef struct {
+	Perm        perms.PermissionRef
+	Fields      perms.AttrRef[perms.StringListAttr]
+	FieldsTyped perms.StringListAttrRef[CalendarServiceCreateCalendarFieldsPermValue]
+}
+
+var CalendarService = CalendarServicePerms{
+	CreateCalendar: CalendarServiceCreateCalendarPermRef{
+		Perm: perms.NewPermissionRef(Namespace, CalendarServicePerm, CalendarServiceCreateCalendarPerm),
+		Fields: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, CalendarServicePerm, CalendarServiceCreateCalendarPerm),
+			CalendarServiceCreateCalendarFieldsPermField,
+		),
+		FieldsTyped: perms.NewTypedStringListAttrRef[CalendarServiceCreateCalendarFieldsPermValue](
+			perms.NewPermissionRef(Namespace, CalendarServicePerm, CalendarServiceCreateCalendarPerm),
+			CalendarServiceCreateCalendarFieldsPermField,
+		),
+	},
+}

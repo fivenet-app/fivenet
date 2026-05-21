@@ -120,9 +120,7 @@ func (s *Server) listQualificationsQuery(
 		// Field Permission Check
 		fields, _ := s.perms.AttrStringList(
 			userInfo,
-			permscitizens.CitizensServicePerm,
-			permscitizens.CitizensServiceListCitizensPerm,
-			permscitizens.CitizensServiceListCitizensFieldsPermField,
+			permscitizens.CitizensService.ListCitizens.Fields,
 		)
 
 		if fields.Contains("PhoneNumber") {
@@ -267,9 +265,7 @@ func (s *Server) getQualificationQuery(
 		// Field Permission Check
 		fields, _ := s.perms.AttrStringList(
 			userInfo,
-			permscitizens.CitizensServicePerm,
-			permscitizens.CitizensServiceListCitizensPerm,
-			permscitizens.CitizensServiceListCitizensFieldsPermField,
+			permscitizens.CitizensService.ListCitizens.Fields,
 		)
 
 		if fields.Contains("PhoneNumber") {

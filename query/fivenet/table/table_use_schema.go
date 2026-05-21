@@ -102,6 +102,7 @@ func UseSchema(schema string) {
 	FivenetUserJobs = FivenetUserJobs.FromSchema(schema)
 	FivenetUserLabels = FivenetUserLabels.FromSchema(schema)
 	FivenetUserLabelsJob = FivenetUserLabelsJob.FromSchema(schema)
+	FivenetUserLabelsJobJobAccess = FivenetUserLabelsJobJobAccess.FromSchema(schema)
 	FivenetUserLicenses = FivenetUserLicenses.FromSchema(schema)
 	FivenetUserPhoneNumbers = FivenetUserPhoneNumbers.FromSchema(schema)
 	FivenetUserProps = FivenetUserProps.FromSchema(schema)

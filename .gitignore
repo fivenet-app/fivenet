@@ -1,4 +1,3 @@
-
 # Logs
 logs
 *.log
@@ -39,11 +38,6 @@ __debug_bin*
 # Localhost certs
 localhost.*
 
-# Repo checkouts
-.build/
-.build/gdal2tiles-leaflet/
-.build/validate-*/
-
 # Nuxt
 .nuxt
 .nitro
@@ -54,16 +48,13 @@ localhost.*
 # Nuxt Content - Isn't used like that in the project
 /content/
 
-# i18next-scanner
-/lang/
-
-# SQL files
+# SQL files in root of repo
 /*.sql
 
 # FiveNet
 .data/
 
-## Exclude Config files
+## Exclude Config files except the example files
 /config.yaml
 /config.*.yaml
 !/config.example.yaml
@@ -74,4 +65,6 @@ localhost.*
 
 /dbsync/
 /dbsync.state.yaml
-.npmr
+
+# AI Tools
+.codex

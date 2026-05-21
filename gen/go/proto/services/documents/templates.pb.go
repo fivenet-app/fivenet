@@ -703,13 +703,13 @@ const file_services_documents_templates_proto_rawDesc = "" +
 	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"'\n" +
 	"\x15DeleteTemplateRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
-	"\x16DeleteTemplateResponse2\xfc\x04\n" +
+	"\x16DeleteTemplateResponse2\xf3\x04\n" +
 	"\x10TemplatesService\x12l\n" +
 	"\rListTemplates\x12(.services.documents.ListTemplatesRequest\x1a).services.documents.ListTemplatesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
-	"\vGetTemplate\x12&.services.documents.GetTemplateRequest\x1a'.services.documents.GetTemplateResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListTemplates\x12o\n" +
+	"\vGetTemplate\x12&.services.documents.GetTemplateRequest\x1a'.services.documents.GetTemplateResponse\"\x15\xd2\xf3\x18\x11\b\x01\"\rListTemplates\x12o\n" +
 	"\x0eCreateTemplate\x12).services.documents.CreateTemplateRequest\x1a*.services.documents.CreateTemplateResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x7f\n" +
-	"\x0eUpdateTemplate\x12).services.documents.UpdateTemplateRequest\x1a*.services.documents.UpdateTemplateResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eCreateTemplate\x12o\n" +
-	"\x0eDeleteTemplate\x12).services.documents.DeleteTemplateRequest\x1a*.services.documents.DeleteTemplateResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a \xea\xf3\x18\x1c\"\x1adocuments.DocumentsServiceBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
+	"\x0eUpdateTemplate\x12).services.documents.UpdateTemplateRequest\x1a*.services.documents.UpdateTemplateResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eCreateTemplate\x12o\n" +
+	"\x0eDeleteTemplate\x12).services.documents.DeleteTemplateRequest\x1a*.services.documents.DeleteTemplateResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x17\xea\xf3\x18\x13\b7\x12\x0fi-mdi-file-codeBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var file_services_documents_templates_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_documents_templates_proto_goTypes = []any{

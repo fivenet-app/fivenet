@@ -76,6 +76,13 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 		return err
 	}
 
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "citizens.user_props.expire_labels",
+		Schedule: "*/2 * * * *", // Every five minutes
+	}); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -105,6 +112,42 @@ func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
 			if err := data.MarshalFrom(dest); err != nil {
 				return fmt.Errorf(
 					"failed to marshal updated user props cleanup cron data. %w",
+					err,
+				)
+			}
+
+			return nil
+		},
+	)
+
+	h.Add(
+		"citizens.user_props.expire_labels",
+		func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := s.tracer.Start(ctx, "citizens.user_props.expire_labels")
+			defer span.End()
+
+			dest := &cron.GenericCronData{
+				Attributes: map[string]string{},
+			}
+			if err := data.Unmarshal(dest); err != nil {
+				s.logger.Warn(
+					"failed to unmarshal user props labels cleanup cron data",
+					zap.Error(err),
+				)
+			}
+
+			changedRows, err := s.expireLabelHandling(ctx)
+			if err != nil {
+				s.logger.Error("error during user props labels cleanup", zap.Error(err))
+				return err
+			}
+
+			dest.SetAttribute(changedRowsAttributeKey, strconv.Itoa(changedRows))
+
+			// Marshal the updated cron data
+			if err := data.MarshalFrom(dest); err != nil {
+				return fmt.Errorf(
+					"failed to marshal updated user props labels cleanup cron data. %w",
 					err,
 				)
 			}
@@ -150,8 +193,7 @@ func (s *Housekeeper) maxWantedDurationHandling(ctx context.Context) (int, error
 	}
 
 	for _, row := range dest {
-		err := s.unsetUserWantedState(ctx, s.db, row.UserId)
-		if err != nil {
+		if err := s.unsetUserWantedState(ctx, s.db, row.UserId); err != nil {
 			s.logger.Error(
 				"error updating user wanted state during cleanup",
 				zap.Int32("user_id", row.UserId),
@@ -195,6 +237,111 @@ func (s *Housekeeper) unsetUserWantedState(ctx context.Context, tx qrm.DB, userI
 		return fmt.Errorf(
 			"error creating user activity for user %d during cleanup. %w",
 			userId,
+			err,
+		)
+	}
+
+	return nil
+}
+
+func (s *Housekeeper) expireLabelHandling(ctx context.Context) (int, error) {
+	expiredLabel := tCitizenLabels.AS("expired_label")
+	expiredLabelJob := tCitizensLabelsJob.AS("expired_label_job")
+
+	expiredLabels := expiredLabel.
+		SELECT(
+			expiredLabel.UserID.AS("user_id"),
+			mysql.MIN(expiredLabel.LabelID).AS("label_id"),
+		).
+		FROM(expiredLabel).
+		WHERE(mysql.AND(
+			expiredLabel.ExpiresAt.IS_NOT_NULL(),
+			expiredLabel.ExpiresAt.LT_EQ(mysql.CURRENT_TIMESTAMP()),
+		)).
+		GROUP_BY(expiredLabel.UserID).
+		LIMIT(100).
+		AsTable("expired_labels")
+
+	labelID := mysql.IntegerColumn("label_id").From(expiredLabels)
+	userID := mysql.IntegerColumn("user_id").From(expiredLabels)
+
+	stmt := mysql.
+		SELECT(
+			labelID,
+			userID,
+		).
+		FROM(
+			expiredLabels.
+				INNER_JOIN(expiredLabelJob,
+					expiredLabelJob.ID.EQ(labelID),
+				),
+		)
+
+	var dest []struct {
+		LabelID int64
+		UserId  int32
+	}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return 0, err
+	}
+
+	for _, row := range dest {
+		if err := s.removeLabelFromUser(
+			ctx,
+			s.db,
+			row.LabelID,
+			row.UserId,
+		); err != nil {
+			s.logger.Error(
+				"error updating user labels during cleanup",
+				zap.Int32("user_id", row.UserId),
+				zap.Error(err),
+			)
+			continue
+		}
+	}
+
+	return len(dest), nil
+}
+
+func (s *Housekeeper) removeLabelFromUser(
+	ctx context.Context,
+	tx qrm.DB,
+	labelId int64,
+	targetUserId int32,
+) error {
+	stmt := tCitizenLabels.
+		DELETE().
+		WHERE(mysql.AND(
+			tCitizenLabels.UserID.EQ(mysql.Int32(targetUserId)),
+			tCitizenLabels.LabelID.EQ(mysql.Int64(labelId)),
+		)).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return fmt.Errorf(
+			"failed to delete citizen label user %d assignment. %w",
+			targetUserId,
+			err,
+		)
+	}
+
+	if err := usersactivity.CreateUserActivities(ctx, tx, &usersactivity.UserActivity{
+		TargetUserId: targetUserId,
+		Type:         usersactivity.UserActivityType_USER_ACTIVITY_TYPE_LABELS,
+		Reason:       "",
+		Data: &usersactivity.UserActivityData{
+			Data: &usersactivity.UserActivityData_LabelsChange{
+				LabelsChange: &usersactivity.LabelsChange{
+					RemovedIds: []int64{labelId},
+					Expired:    true,
+				},
+			},
+		},
+	}); err != nil {
+		return fmt.Errorf(
+			"error creating user activity for user %d during cleanup. %w",
+			targetUserId,
 			err,
 		)
 	}

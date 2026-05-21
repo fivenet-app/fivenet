@@ -66,27 +66,24 @@ func (g *GRPCPerm) checkPermission(
 		return ctx, nil
 	}
 
-	perms := []string{perm}
-	if _, ok := goproto.PermsRemap[perm]; ok {
-		perms = goproto.PermsRemap[perm]
-	}
-
-	for _, p := range perms {
-		if p == PermSuperuser.GetName() && userInfo.GetSuperuser() {
-			return ctx, nil
-		} else if p == PermAny {
-			return ctx, nil
-		}
-
-		permSplit := strings.Split(p, "/")
-		if len(permSplit) > 1 {
-			category := pkgperms.Category(permSplit[0])
-			name := pkgperms.Name(permSplit[1])
-
-			if g.ps.Can(userInfo, category, name) {
+	if ps, ok := goproto.PermsRemap[perm]; ok {
+		for _, p := range ps {
+			if p == pkgperms.PermAnyRef {
+				return ctx, nil
+			}
+			if p == pkgperms.PermSuperuserRef {
+				continue
+			}
+			if g.ps.Can(userInfo, p) {
 				return ctx, nil
 			}
 		}
+
+		return nil, errorsgrpcauth.ErrPermissionDenied
+	}
+
+	if g.ps.CanServiceMethod(userInfo, perm) {
+		return ctx, nil
 	}
 
 	return nil, errorsgrpcauth.ErrPermissionDenied

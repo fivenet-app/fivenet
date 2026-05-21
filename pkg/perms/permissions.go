@@ -14,39 +14,42 @@ import (
 
 var tPerms = table.FivenetRbacPermissions
 
-func (p *Perms) CreatePermission(
+func (ps *Perms) createPermission(
 	ctx context.Context,
-	category Category,
+	namespace Namespace,
+	service Service,
 	name Name,
 	order int32,
 	icon *string,
 ) (int64, error) {
-	guard := BuildGuard(category, name)
+	guard := BuildGuard(namespace, service, name)
 	stmt := tPerms.
 		INSERT(
-			tPerms.Category,
+			tPerms.Namespace,
+			tPerms.Service,
 			tPerms.Name,
 			tPerms.GuardName,
 			tPerms.Order,
 			tPerms.Icon,
 		).
 		VALUES(
-			category,
+			namespace,
+			service,
 			name,
 			guard,
 			order,
 			icon,
 		)
 
-	res, err := stmt.ExecContext(ctx, p.db)
+	res, err := stmt.ExecContext(ctx, ps.db)
 	if err != nil {
 		if !dbutils.IsDuplicateError(err) {
 			return 0, fmt.Errorf("failed to execute insert statement. %w", err)
 		}
 
-		permId, ok := p.lookupPermIDByGuard(guard)
+		permId, ok := ps.lookupPermIDByGuard(guard)
 		if !ok {
-			permId, err = p.loadPermissionByGuard(ctx, guard) // try to load it from DB again
+			permId, err = ps.loadPermissionByGuard(ctx, guard) // try to load it from DB again
 			if err != nil || permId == 0 {
 				return 0, fmt.Errorf("failed to query permission after duplicate error. %w", err)
 			}
@@ -65,9 +68,10 @@ func (p *Perms) CreatePermission(
 	return lastId, nil
 }
 
-func (p *Perms) loadPermissionFromDatabaseByCategoryName(
+func (ps *Perms) loadPermissionFromDatabaseByCategoryName(
 	ctx context.Context,
-	category Category,
+	namespace Namespace,
+	service Service,
 	name Name,
 ) (*permissionspermissions.Permission, error) {
 	tPerms := tPerms.AS("permission")
@@ -76,7 +80,8 @@ func (p *Perms) loadPermissionFromDatabaseByCategoryName(
 		SELECT(
 			tPerms.ID,
 			tPerms.CreatedAt,
-			tPerms.Category,
+			tPerms.Namespace,
+			tPerms.Service,
 			tPerms.Name,
 			tPerms.GuardName,
 			tPerms.Order,
@@ -84,13 +89,14 @@ func (p *Perms) loadPermissionFromDatabaseByCategoryName(
 		).
 		FROM(tPerms).
 		WHERE(mysql.AND(
-			tPerms.Category.EQ(mysql.String(string(category))),
+			tPerms.Namespace.EQ(mysql.String(string(namespace))),
+			tPerms.Service.EQ(mysql.String(string(service))),
 			tPerms.Name.EQ(mysql.String(string(name))),
 		)).
 		LIMIT(1)
 
 	dest := &permissionspermissions.Permission{}
-	if err := stmt.QueryContext(ctx, p.db, dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query permission by guard. %w", err)
 		}
@@ -103,15 +109,16 @@ func (p *Perms) loadPermissionFromDatabaseByCategoryName(
 	return dest, nil
 }
 
-func (p *Perms) UpdatePermission(
+func (ps *Perms) updatePermission(
 	ctx context.Context,
 	id int64,
-	category Category,
+	namespace Namespace,
+	service Service,
 	name Name,
 	order int32,
 	icon *string,
 ) error {
-	guard := Guard(string(category) + "-" + string(name))
+	guard := guard(string(namespace) + "." + string(service) + "-" + string(name))
 
 	var iconExp mysql.StringExpression
 	if icon != nil {
@@ -123,13 +130,15 @@ func (p *Perms) UpdatePermission(
 	stmt := tPerms.
 		UPDATE(
 			tPerms.Name,
-			tPerms.Category,
+			tPerms.Namespace,
+			tPerms.Service,
 			tPerms.GuardName,
 			tPerms.Order,
 			tPerms.Icon,
 		).
 		SET(
-			tPerms.Category.SET(mysql.String(string(category))),
+			tPerms.Namespace.SET(mysql.String(string(namespace))),
+			tPerms.Service.SET(mysql.String(string(service))),
 			tPerms.Name.SET(mysql.String(string(name))),
 			tPerms.GuardName.SET(mysql.String(guard)),
 			tPerms.Order.SET(mysql.Int32(order)),
@@ -140,14 +149,14 @@ func (p *Perms) UpdatePermission(
 		).
 		LIMIT(1)
 
-	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		return fmt.Errorf("failed to execute update statement. %w", err)
 	}
 
 	return nil
 }
 
-func (p *Perms) GetAllPermissions(
+func (ps *Perms) GetAllPermissions(
 	ctx context.Context,
 ) ([]*permissionspermissions.Permission, error) {
 	tPerms := tPerms.AS("permission")
@@ -156,7 +165,8 @@ func (p *Perms) GetAllPermissions(
 		SELECT(
 			tPerms.ID,
 			tPerms.CreatedAt,
-			tPerms.Category,
+			tPerms.Namespace,
+			tPerms.Service,
 			tPerms.Name,
 			tPerms.GuardName,
 			tPerms.Order,
@@ -168,7 +178,7 @@ func (p *Perms) GetAllPermissions(
 		)
 
 	var dest []*permissionspermissions.Permission
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query all permissions. %w", err)
 		}
@@ -177,7 +187,7 @@ func (p *Perms) GetAllPermissions(
 	return dest, nil
 }
 
-func (p *Perms) RemovePermissionsByIDs(ctx context.Context, ids ...int64) error {
+func (ps *Perms) RemovePermissionsByIDs(ctx context.Context, ids ...int64) error {
 	if len(ids) == 0 {
 		return nil
 	}
@@ -194,14 +204,14 @@ func (p *Perms) RemovePermissionsByIDs(ctx context.Context, ids ...int64) error 
 		).
 		LIMIT(int64(len(wIds)))
 
-	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, ps.db); err != nil {
 		return fmt.Errorf("failed to execute delete statement. %w", err)
 	}
 
 	return nil
 }
 
-func (p *Perms) GetPermissionsByIDs(
+func (ps *Perms) GetPermissionsByIDs(
 	ctx context.Context,
 	ids ...int64,
 ) ([]*permissionspermissions.Permission, error) {
@@ -220,7 +230,8 @@ func (p *Perms) GetPermissionsByIDs(
 		SELECT(
 			tPerms.ID,
 			tPerms.CreatedAt,
-			tPerms.Category,
+			tPerms.Namespace,
+			tPerms.Service,
 			tPerms.Name,
 			tPerms.GuardName,
 			tPerms.Order,
@@ -235,7 +246,7 @@ func (p *Perms) GetPermissionsByIDs(
 		)
 
 	var dest []*permissionspermissions.Permission
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query permissions by IDs. %w", err)
 		}
@@ -244,9 +255,10 @@ func (p *Perms) GetPermissionsByIDs(
 	return dest, nil
 }
 
-func (p *Perms) GetPermission(
+func (ps *Perms) GetPermission(
 	ctx context.Context,
-	category Category,
+	namespace Namespace,
+	service Service,
 	name Name,
 ) (*permissionspermissions.Permission, error) {
 	tPerms := tPerms.AS("permission")
@@ -255,20 +267,23 @@ func (p *Perms) GetPermission(
 		SELECT(
 			tPerms.ID,
 			tPerms.CreatedAt,
-			tPerms.Category,
+			tPerms.Namespace,
+			tPerms.Service,
 			tPerms.Name,
 			tPerms.GuardName,
 			tPerms.Order,
+			tPerms.Icon,
 		).
 		FROM(tPerms).
 		WHERE(mysql.AND(
-			tPerms.Category.EQ(mysql.String(string(category))),
+			tPerms.Namespace.EQ(mysql.String(string(namespace))),
+			tPerms.Service.EQ(mysql.String(string(service))),
 			tPerms.Name.EQ(mysql.String(string(name))),
 		)).
 		LIMIT(1)
 
 	var dest permissionspermissions.Permission
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, ps.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query permission by category and name. %w", err)
 		}

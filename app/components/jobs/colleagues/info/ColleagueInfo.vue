@@ -66,10 +66,10 @@ const selfServicePropsAbsenceDateModal = overlay.create(SelfServiceAbsenceDateMo
 
             <UButton
                 v-if="
-                    can('jobs.JobsService/SetColleagueProps').value &&
+                    can('jobs.ColleaguesService/SetColleagueProps').value &&
                     (colleague.userId === activeChar!.userId ||
-                        attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
-                    checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')
+                        attr('jobs.ColleaguesService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
+                    checkIfCanAccessColleague(colleague, 'jobs.ColleaguesService/SetColleagueProps')
                 "
                 icon="i-mdi-island"
                 size="md"

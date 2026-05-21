@@ -1042,20 +1042,17 @@ const file_services_centrum_units_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12E\n" +
-	"\bactivity\x18\x02 \x03(\v2#.resources.centrum.units.UnitStatusB\x04\xc8\xf3\x18\x01R\bactivity2\xb9\x06\n" +
-	"\fUnitsService\x12a\n" +
-	"\bJoinUnit\x12!.services.centrum.JoinUnitRequest\x1a\".services.centrum.JoinUnitResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12d\n" +
-	"\tListUnits\x12\".services.centrum.ListUnitsRequest\x1a#.services.centrum.ListUnitsResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12y\n" +
-	"\x10ListUnitActivity\x12).services.centrum.ListUnitActivityRequest\x1a*.services.centrum.ListUnitActivityResponse\"\x0e\xd2\xf3\x18\n" +
-	"\b\x01\x1a\x06Stream\x12w\n" +
+	"\bactivity\x18\x02 \x03(\v2#.resources.centrum.units.UnitStatusB\x04\xc8\xf3\x18\x01R\bactivity2\xbb\a\n" +
+	"\fUnitsService\x12z\n" +
+	"\bJoinUnit\x12!.services.centrum.JoinUnitRequest\x1a\".services.centrum.JoinUnitResponse\"'\xd2\xf3\x18#\b\x01\x12\acentrum\x1a\x0eCentrumService\"\x06Stream\x12}\n" +
+	"\tListUnits\x12\".services.centrum.ListUnitsRequest\x1a#.services.centrum.ListUnitsResponse\"'\xd2\xf3\x18#\b\x01\x12\acentrum\x1a\x0eCentrumService\"\x06Stream\x12\x92\x01\n" +
+	"\x10ListUnitActivity\x12).services.centrum.ListUnitActivityRequest\x1a*.services.centrum.ListUnitActivityResponse\"'\xd2\xf3\x18#\b\x01\x12\acentrum\x1a\x0eCentrumService\"\x06Stream\x12w\n" +
 	"\x12CreateOrUpdateUnit\x12+.services.centrum.CreateOrUpdateUnitRequest\x1a,.services.centrum.CreateOrUpdateUnitResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12_\n" +
 	"\n" +
-	"DeleteUnit\x12#.services.centrum.DeleteUnitRequest\x1a$.services.centrum.DeleteUnitResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12l\n" +
+	"DeleteUnit\x12#.services.centrum.DeleteUnitRequest\x1a$.services.centrum.DeleteUnitResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x85\x01\n" +
 	"\n" +
-	"AssignUnit\x12#.services.centrum.AssignUnitRequest\x1a$.services.centrum.AssignUnitResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vTakeControl\x12\x7f\n" +
-	"\x10UpdateUnitStatus\x12).services.centrum.UpdateUnitStatusRequest\x1a*.services.centrum.UpdateUnitStatusResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fTakeDispatch\x1a\x1c\xea\xf3\x18\x18\"\x16centrum.CentrumServiceBLZJgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrumb\x06proto3"
+	"AssignUnit\x12#.services.centrum.AssignUnitRequest\x1a$.services.centrum.AssignUnitResponse\",\xd2\xf3\x18(\b\x01\x12\acentrum\x1a\x0eCentrumService\"\vTakeControl\x12\x9b\x01\n" +
+	"\x10UpdateUnitStatus\x12).services.centrum.UpdateUnitStatusRequest\x1a*.services.centrum.UpdateUnitStatusResponse\"0\xd2\xf3\x18,\b\x01\x12\acentrum\x1a\x11DispatchesService\"\fTakeDispatch\x1a\x1b\xea\xf3\x18\x17\bn\x12\x13i-mdi-account-groupBLZJgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrumb\x06proto3"
 
 var file_services_centrum_units_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_services_centrum_units_proto_goTypes = []any{

@@ -18,7 +18,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.colleagues.id.title',
     requiresAuth: true,
-    permission: 'jobs.JobsService/GetColleague',
+    permission: 'jobs.ColleaguesService/GetColleague',
     redirect: { name: 'jobs-colleagues-id-info' },
     validate: async (route) => {
         route = route as TypedRouteFromName<'jobs-colleagues-id-info'>;
@@ -106,13 +106,13 @@ const links = computed(() =>
             label: t('common.info'),
             to: { name: 'jobs-colleagues-id-info', params: { id: route.params?.id ?? 0 } },
             icon: 'i-mdi-information-outline',
-            permission: 'jobs.JobsService/GetColleague' as Perms,
+            permission: 'jobs.ColleaguesService/GetColleague' as Perms,
         },
         {
             label: t('common.activity'),
             to: { name: 'jobs-colleagues-id-activity', params: { id: route.params?.id ?? 0 } },
             icon: 'i-mdi-pulse',
-            permission: 'jobs.JobsService/ListColleagueActivity' as Perms,
+            permission: 'jobs.ColleaguesService/ListColleagueActivity' as Perms,
         },
         {
             label: t('common.timeclock'),

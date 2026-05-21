@@ -101,17 +101,20 @@ func NewServer(p Params) *Server {
 
 		labelsAccess: access.NewGrouped[citizenslabels.JobAccess, *citizenslabels.JobAccess, access.DummyUserAccess[citizenslabels.AccessLevel], *access.DummyUserAccess[citizenslabels.AccessLevel], access.DummyQualificationAccess[citizenslabels.AccessLevel], *access.DummyQualificationAccess[citizenslabels.AccessLevel], citizenslabels.AccessLevel](
 			p.DB,
-			table.FivenetUserLabelsJobJobAccess,
+			table.FivenetUserLabelsJob,
 			&access.TargetTableColumns{
-				ID: table.FivenetUserLabelsJobJobAccess.ID,
+				ID:         table.FivenetUserLabelsJob.ID,
+				DeletedAt:  table.FivenetUserLabelsJob.DeletedAt,
+				CreatorID:  nil,
+				CreatorJob: table.FivenetUserLabelsJob.Job,
 			},
 			access.NewJobs[citizenslabels.JobAccess, *citizenslabels.JobAccess, citizenslabels.AccessLevel](
 				table.FivenetUserLabelsJobJobAccess,
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
 						ID:       table.FivenetUserLabelsJobJobAccess.ID,
-						TargetID: table.FivenetUserLabelsJobJobAccess.ID,
-						Access:   table.FivenetUserLabelsJobJobAccess.ID,
+						TargetID: table.FivenetUserLabelsJobJobAccess.TargetID,
+						Access:   table.FivenetUserLabelsJobJobAccess.Access,
 					},
 					Job:          table.FivenetUserLabelsJobJobAccess.Job,
 					MinimumGrade: table.FivenetUserLabelsJobJobAccess.MinimumGrade,
@@ -119,12 +122,16 @@ func NewServer(p Params) *Server {
 				table.FivenetUserLabelsJobJobAccess.AS("label_job_access"),
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetUserLabelsJobJobAccess.ID,
-						TargetID: table.FivenetUserLabelsJobJobAccess.ID,
-						Access:   table.FivenetUserLabelsJobJobAccess.ID,
+						ID: table.FivenetUserLabelsJobJobAccess.AS("label_job_access").ID,
+						TargetID: table.FivenetUserLabelsJobJobAccess.AS(
+							"label_job_access",
+						).TargetID,
+						Access: table.FivenetUserLabelsJobJobAccess.AS("label_job_access").Access,
 					},
-					Job:          table.FivenetUserLabelsJobJobAccess.Job,
-					MinimumGrade: table.FivenetUserLabelsJobJobAccess.MinimumGrade,
+					Job: table.FivenetUserLabelsJobJobAccess.AS("label_job_access").Job,
+					MinimumGrade: table.FivenetUserLabelsJobJobAccess.AS(
+						"label_job_access",
+					).MinimumGrade,
 				},
 			),
 			nil,
@@ -136,8 +143,7 @@ func NewServer(p Params) *Server {
 		CanUserAccessTargetFn: func(ctx context.Context, targetId int64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
 			if !s.ps.Can(
 				userInfo,
-				permscitizens.CitizensServicePerm,
-				permscitizens.CitizensServiceGetUserPerm,
+				permscitizens.CitizensService.GetUser.Perm,
 			) {
 				return false, nil
 			}

@@ -31,7 +31,7 @@ const items = computed<NavigationMenuItem[]>(
                 label: t('pages.jobs.colleagues.title'),
                 icon: 'i-mdi-account-group',
                 to: { name: 'jobs-colleagues' },
-                permission: 'jobs.JobsService/ListColleagues' as Perms,
+                permission: 'jobs.ColleaguesService/ListColleagues' as Perms,
                 active: route.name?.startsWith('jobs-colleagues'),
                 children: [
                     {
@@ -46,7 +46,7 @@ const items = computed<NavigationMenuItem[]>(
                 label: t('common.activity'),
                 icon: 'i-mdi-pulse',
                 to: { name: 'jobs-activity' },
-                permission: 'jobs.JobsService/ListColleagueActivity' as Perms,
+                permission: 'jobs.ColleaguesService/ListColleagueActivity' as Perms,
             },
             {
                 label: t('pages.jobs.timeclock.title'),

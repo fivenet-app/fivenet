@@ -13,11 +13,13 @@ extend google.protobuf.MethodOptions {
 
 message PermsOptions {
   bool enabled = 1;
-  optional string service = 2;
-  optional string name = 3;
-  repeated string names = 6;
-  int32 order = 4;
-  repeated Attr attrs = 5;
+  optional string namespace = 2;
+  optional string service = 3;
+  optional string name = 4;
+  repeated string names = 5;
+
+  int32 order = 6;
+  repeated Attr attrs = 7;
 }
 
 message Attr {
@@ -35,9 +37,11 @@ extend google.protobuf.ServiceOptions {
 message ServiceOptions {
   int32 order = 1;
   optional string icon = 2;
-  optional string name = 4;
 
-  repeated AdditionalServicePerm additional_perms = 3;
+  optional string namespace = 3;
+  optional string service = 4;
+
+  repeated AdditionalServicePerm additional_perms = 5;
 }
 
 message AdditionalServicePerm {

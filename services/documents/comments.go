@@ -438,9 +438,7 @@ func (s *Server) DeleteComment(
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permsdocuments.DocumentsServicePerm,
-		permsdocuments.DocumentsServiceDeleteCommentPerm,
-		permsdocuments.DocumentsServiceDeleteCommentAccessPermField,
+		permsdocuments.CommentsService.DeleteComment.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

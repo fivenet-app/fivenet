@@ -112,7 +112,7 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                         class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto"
                     >
                         <UTooltip
-                            v-if="can('documents.DocumentsService/CreateTemplate').value"
+                            v-if="can('documents.TemplatesService/CreateTemplate').value"
                             class="flex-1"
                             :text="$t('common.preview')"
                         >
@@ -132,7 +132,7 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                         </UTooltip>
 
                         <UTooltip
-                            v-if="can('documents.DocumentsService/CreateTemplate').value"
+                            v-if="can('documents.TemplatesService/CreateTemplate').value"
                             class="flex-1"
                             :text="$t('common.edit')"
                         >
@@ -148,7 +148,7 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                         </UTooltip>
 
                         <UTooltip
-                            v-if="can('documents.DocumentsService/DeleteTemplate').value"
+                            v-if="can('documents.TemplatesService/DeleteTemplate').value"
                             class="flex-1"
                             :text="$t('common.delete')"
                         >

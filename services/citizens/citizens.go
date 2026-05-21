@@ -4,15 +4,11 @@ import (
 	context "context"
 	"errors"
 	"slices"
-	"strings"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
-	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
-	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
@@ -20,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -28,11 +23,7 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-var (
-	tUserProps = table.FivenetUserProps
-
-	tFiles = table.FivenetFiles.AS("mugshot")
-)
+var tFiles = table.FivenetFiles.AS("mugshot")
 
 var ZeroTrafficInfractionPoints uint32 = 0
 
@@ -59,19 +50,14 @@ func (s *Server) ListCitizens(
 	orderBys := []mysql.OrderByClause{}
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permscitizens.CitizensServicePerm,
-		permscitizens.CitizensServiceListCitizensPerm,
-		permscitizens.CitizensServiceListCitizensFieldsPermField,
-	)
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	for _, field := range fields.GetStrings() {
+	for _, field := range fields.Values() {
 		switch field {
-		case "PhoneNumber":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber:
 			selectors = append(selectors, tUser.PhoneNumber)
 
 			if req.GetPhoneNumber() != "" {
@@ -79,7 +65,7 @@ func (s *Server) ListCitizens(
 				condition = condition.AND(tUser.PhoneNumber.LIKE(mysql.String(phoneNumber)))
 			}
 
-		case "UserProps.Wanted":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted:
 			selectors = append(selectors, tUserProps.Wanted)
 
 			if req.Wanted != nil && req.GetWanted() {
@@ -88,10 +74,10 @@ func (s *Server) ListCitizens(
 				orderBys = append(orderBys, tUserProps.UpdatedAt.DESC())
 			}
 
-		case "UserProps.Job":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob:
 			selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
 
-		case "UserProps.TrafficInfractionPoints":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints:
 			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
 
 			if req.TrafficInfractionPoints != nil && req.GetTrafficInfractionPoints() > 0 {
@@ -102,7 +88,7 @@ func (s *Server) ListCitizens(
 				)
 			}
 
-		case "UserProps.OpenFines":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines:
 			selectors = append(selectors, tUserProps.OpenFines)
 
 			if req.OpenFines != nil && req.GetOpenFines() > 0 {
@@ -111,17 +97,17 @@ func (s *Server) ListCitizens(
 				)
 			}
 
-		case "UserProps.BloodType":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType:
 			selectors = append(selectors, tUserProps.BloodType)
 
-		case "UserProps.Mugshot":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot:
 			selectors = append(selectors,
 				tUserProps.MugshotFileID,
 				tFiles.ID,
 				tFiles.FilePath,
 			)
 
-		case "UserProps.Email":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail:
 			selectors = append(selectors, tUserProps.Email)
 		}
 	}
@@ -193,11 +179,15 @@ func (s *Server) ListCitizens(
 			var column mysql.Column
 			switch sc.GetId() {
 			case "trafficInfractionPoints":
-				if fields.Contains("UserProps.TrafficInfractionPoints") {
+				if fields.Contains(
+					permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints,
+				) {
 					column = tUserProps.TrafficInfractionPoints
 				}
 			case "openFines":
-				if fields.Contains("UserProps.OpenFines") {
+				if fields.Contains(
+					permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines,
+				) {
 					column = tUserProps.OpenFines
 				}
 			case "name":
@@ -297,40 +287,35 @@ func (s *Server) GetUser(
 	infoOnly := req.InfoOnly != nil && req.GetInfoOnly()
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permscitizens.CitizensServicePerm,
-		permscitizens.CitizensServiceListCitizensPerm,
-		permscitizens.CitizensServiceListCitizensFieldsPermField,
-	)
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-	if fields.Strings != nil {
+	if fields.Len() > 0 {
 		selectors = append(selectors, tUserProps.UpdatedAt)
 	}
 
-	for _, field := range fields.GetStrings() {
+	for _, field := range fields.Values() {
 		switch field {
-		case "PhoneNumber":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber:
 			selectors = append(selectors, tUser.PhoneNumber)
-		case "UserProps.Wanted":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted:
 			selectors = append(selectors, tUserProps.Wanted)
-		case "UserProps.Job":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob:
 			selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
-		case "UserProps.TrafficInfractionPoints":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints:
 			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
-		case "UserProps.OpenFines":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines:
 			selectors = append(selectors, tUserProps.OpenFines)
-		case "UserProps.BloodType":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType:
 			selectors = append(selectors, tUserProps.BloodType)
-		case "UserProps.Mugshot":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot:
 			selectors = append(selectors,
 				tUserProps.MugshotFileID,
 				tFiles.ID,
 				tFiles.FilePath,
 			)
-		case "UserProps.Email":
+		case permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail:
 			selectors = append(selectors, tUserProps.Email)
 		}
 	}
@@ -406,7 +391,7 @@ func (s *Server) GetUser(
 	}
 
 	// Check if user can see licenses and fetch them
-	if !infoOnly && fields.Contains("Licenses") {
+	if !infoOnly && fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueLicenses) {
 		tCitizenLicenses := table.FivenetUserLicenses
 		tLicenses := table.FivenetLicenses
 
@@ -430,7 +415,7 @@ func (s *Server) GetUser(
 		}
 	}
 
-	if fields.Contains("UserProps.Labels") {
+	if fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsLabels) {
 		attributes, err := s.getUserLabels(ctx, userInfo, req.GetUserId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -441,302 +426,6 @@ func (s *Server) GetUser(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 
 	return resp, nil
-}
-
-func (s *Server) SetUserProps(
-	ctx context.Context,
-	req *pbcitizens.SetUserPropsRequest,
-) (*pbcitizens.SetUserPropsResponse, error) {
-	logging.InjectFields(
-		ctx,
-		logging.Fields{"fivenet.citizens.user_id", req.GetProps().GetUserId()},
-	)
-
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	grpc_audit.SetTargetUser(ctx, req.GetProps().GetUserId(), "")
-
-	if req.GetReason() == "" {
-		return nil, errorscitizens.ErrReasonRequired
-	}
-
-	// Get current user props to be able to compare
-	props, err := s.getUserProps(ctx, userInfo, req.GetProps().GetUserId())
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
-
-	if props.Wanted == nil {
-		wanted := false
-		props.Wanted = &wanted
-	}
-	unemployedJob := s.appCfg.Get().JobInfo.GetUnemployedJob()
-	if props.JobName == nil {
-		props.JobName = &unemployedJob.Name
-	}
-	if props.JobGradeNumber == nil {
-		props.JobGradeNumber = &unemployedJob.Grade
-	}
-	if props.TrafficInfractionPoints == nil {
-		props.TrafficInfractionPoints = &ZeroTrafficInfractionPoints
-	}
-	if props.GetLabels() == nil {
-		props.Labels = &citizenslabels.Labels{
-			List: []*citizenslabels.Label{},
-		}
-	}
-
-	props.Job, props.JobGrade = s.enricher.GetJobGrade(
-		props.GetJobName(),
-		props.GetJobGradeNumber(),
-	)
-	// Make sure a job is set
-	if props.GetJob() == nil {
-		props.Job, props.JobGrade = s.enricher.GetJobGrade(
-			unemployedJob.GetName(),
-			unemployedJob.GetGrade(),
-		)
-	}
-
-	resp := &pbcitizens.SetUserPropsResponse{
-		Props: &usersprops.UserProps{},
-	}
-
-	// Field Permission Check
-	fields, err := s.ps.AttrStringList(
-		userInfo,
-		permscitizens.CitizensServicePerm,
-		permscitizens.CitizensServiceSetUserPropsPerm,
-		permscitizens.CitizensServiceSetUserPropsFieldsPermField,
-	)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
-
-	tUser := table.FivenetUser.AS("user")
-
-	stmt := tUser.
-		SELECT(
-			tUser.ID,
-			tUser.Job,
-			tUser.JobGrade,
-		).
-		FROM(
-			tUser.
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUser.ID),
-				).
-				LEFT_JOIN(tFiles,
-					tFiles.ID.EQ(tUserProps.MugshotFileID),
-				),
-		).
-		WHERE(tUser.ID.EQ(mysql.Int32(req.GetProps().GetUserId()))).
-		LIMIT(1)
-
-	u := &users.User{}
-	if err := stmt.QueryContext(ctx, s.db, u); err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
-
-	if u.GetUserId() <= 0 {
-		return nil, errorscitizens.ErrJobGradeNoPermission
-	}
-
-	check, err := s.checkIfUserCanAccess(userInfo, u.GetJob(), u.GetJobGrade())
-	if err != nil {
-		return nil, err
-	}
-	if !check {
-		return nil, errorscitizens.ErrJobGradeNoPermission
-	}
-
-	// Generate the update sets
-	if req.Props.Wanted != nil {
-		if !fields.Contains("Wanted") {
-			return nil, errorscitizens.ErrPropsWantedDenied
-		}
-	}
-
-	if req.Props.JobName != nil {
-		if !fields.Contains("Job") {
-			return nil, errorscitizens.ErrPropsJobDenied
-		}
-
-		if slices.Contains(s.appCfg.Get().JobInfo.GetPublicJobs(), req.GetProps().GetJobName()) {
-			return nil, errorscitizens.ErrPropsJobPublic
-		}
-
-		if req.Props.JobGradeNumber == nil {
-			grade := s.cfg.Game.StartJobGrade
-			req.Props.JobGradeNumber = &grade
-		}
-
-		req.Props.Job, req.Props.JobGrade = s.enricher.GetJobGrade(
-			req.GetProps().GetJobName(),
-			req.GetProps().GetJobGradeNumber(),
-		)
-		if req.GetProps().GetJob() == nil || req.GetProps().GetJobGrade() == nil {
-			return nil, errorscitizens.ErrPropsJobInvalid
-		}
-	}
-
-	if req.Props.TrafficInfractionPoints != nil {
-		if !fields.Contains("TrafficInfractionPoints") {
-			return nil, errorscitizens.ErrPropsTrafficPointsDenied
-		}
-	}
-
-	// Users aren't allowed to set certain props, unset them so they are set to the db state
-	req.Props.OpenFines = nil
-	req.Props.BloodType = nil
-	req.Props.Email = nil
-
-	if req.GetProps().GetLabels() != nil {
-		if !fields.Contains("Labels") {
-			return nil, errorscitizens.ErrPropsLabelsDenied
-		}
-
-		if req.Props.Labels.List == nil {
-			req.Props.Labels.List = []*citizenslabels.Label{}
-		}
-
-		slices.SortFunc(req.GetProps().GetLabels().GetList(), func(a, b *citizenslabels.Label) int {
-			return strings.Compare(a.GetName(), b.GetName())
-		})
-
-		added, _ := utils.SlicesDifferenceFunc(
-			props.GetLabels().GetList(),
-			req.GetProps().GetLabels().GetList(),
-			func(in *citizenslabels.Label) int64 {
-				return in.GetId()
-			},
-		)
-
-		valid, err := s.validateLabels(ctx, userInfo, added)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-		}
-		if !valid {
-			return nil, errorscitizens.ErrPropsLabelsDenied
-		}
-	}
-
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
-	activities, err := props.HandleChanges(
-		ctx,
-		tx,
-		req.GetProps(),
-		&userInfo.UserId,
-		req.GetReason(),
-	)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
-
-	if err := usersactivity.CreateUserActivities(ctx, tx, activities...); err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
-
-	// Commit the transaction
-	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
-
-	// Get and return new user props
-	user, err := s.GetUser(ctx, &pbcitizens.GetUserRequest{
-		UserId: req.GetProps().GetUserId(),
-	})
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
-
-	s.getUserProps(ctx, userInfo, req.GetProps().GetUserId())
-
-	resp.Props = user.GetUser().GetProps()
-
-	// Set Job info if set
-	if resp.GetProps() != nil && resp.Props.JobName != nil {
-		grade := s.cfg.Game.StartJobGrade
-		if resp.Props.JobGradeNumber != nil {
-			grade = resp.GetProps().GetJobGradeNumber()
-		}
-
-		resp.Props.Job, resp.Props.JobGrade = s.enricher.GetJobGrade(
-			resp.GetProps().GetJobName(),
-			grade,
-		)
-	}
-
-	userId := int64(user.GetUser().GetUserId())
-	s.notifi.SendObjectEvent(ctx, &notificationsclientview.ObjectEvent{
-		Type:      notificationsclientview.ObjectType_OBJECT_TYPE_CITIZEN,
-		Id:        &userId,
-		EventType: notificationsclientview.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
-
-		UserId: &userInfo.UserId,
-		Job:    &userInfo.Job,
-	})
-
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
-
-	return resp, nil
-}
-
-func (s *Server) getUserProps(
-	ctx context.Context,
-	userInfo *userinfo.UserInfo,
-	userId int32,
-) (*usersprops.UserProps, error) {
-	tUserProps := tUserProps.AS("user_props")
-	tFiles := table.FivenetFiles.AS("mugshot")
-
-	stmt := tUserProps.
-		SELECT(
-			tUserProps.UserID,
-			tUserProps.UpdatedAt,
-			tUserProps.Wanted,
-			tUserProps.Job,
-			tUserProps.JobGrade,
-			tUserProps.TrafficInfractionPoints,
-			tUserProps.TrafficInfractionPointsUpdatedAt,
-			tUserProps.MugshotFileID,
-			tFiles.ID,
-			tFiles.FilePath,
-		).
-		FROM(
-			tUserProps.
-				LEFT_JOIN(tFiles,
-					tFiles.ID.EQ(tUserProps.MugshotFileID),
-				),
-		).
-		WHERE(
-			tUserProps.UserID.EQ(mysql.Int32(userId)),
-		).
-		LIMIT(1)
-
-	var dest usersprops.UserProps
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	dest.UserId = userId
-
-	attributes, err := s.getUserLabels(ctx, userInfo, userId)
-	if err != nil {
-		return nil, err
-	}
-	dest.Labels = attributes
-
-	return &dest, nil
 }
 
 func (s *Server) checkIfUserCanAccess(
@@ -758,9 +447,7 @@ func (s *Server) checkIfUserCanAccess(
 
 	jobGrades, err := s.ps.AttrJobGradeList(
 		userInfo,
-		permscitizens.CitizensServicePerm,
-		permscitizens.CitizensServiceGetUserPerm,
-		permscitizens.CitizensServiceGetUserJobsPermField,
+		permscitizens.CitizensService.GetUser.Jobs,
 	)
 	if err != nil {
 		return false, errswrap.NewError(err, errorscitizens.ErrFailedQuery)

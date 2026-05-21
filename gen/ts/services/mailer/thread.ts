@@ -1340,4 +1340,4 @@ export const ThreadService = new ServiceType("services.mailer.ThreadService", [
     { name: "ListThreadMessages", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: ListThreadMessagesRequest, O: ListThreadMessagesResponse },
     { name: "PostMessage", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: PostMessageRequest, O: PostMessageResponse },
     { name: "DeleteMessage", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DeleteMessageRequest, O: DeleteMessageResponse }
-], { "codegen.perms.perms_svc": { name: "mailer.MailerService" } });
+], { "codegen.perms.perms_svc": { namespace: "mailer", service: "MailerService" } });

@@ -4,10 +4,10 @@ package resources.users.props;
 
 import "buf/validate/validate.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/citizens/labels/labels.proto";
 import "resources/file/file.proto";
 import "resources/jobs/jobs.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/citizens/labels/labels.proto";
 import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props;usersprops";

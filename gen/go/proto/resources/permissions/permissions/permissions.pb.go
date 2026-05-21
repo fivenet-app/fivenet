@@ -28,12 +28,13 @@ type Permission struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	Category      string                 `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`
-	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	GuardName     string                 `protobuf:"bytes,5,opt,name=guard_name,json=guardName,proto3" json:"guard_name,omitempty"`
-	Val           bool                   `protobuf:"varint,6,opt,name=val,proto3" json:"val,omitempty"`
-	Order         *int32                 `protobuf:"varint,7,opt,name=order,proto3,oneof" json:"order,omitempty"`
-	Icon          *string                `protobuf:"bytes,8,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	Namespace     string                 `protobuf:"bytes,3,opt,name=namespace,proto3" json:"namespace,omitempty"`
+	Service       string                 `protobuf:"bytes,4,opt,name=service,proto3" json:"service,omitempty"`
+	Name          string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	GuardName     string                 `protobuf:"bytes,6,opt,name=guard_name,json=guardName,proto3" json:"guard_name,omitempty"`
+	Val           bool                   `protobuf:"varint,7,opt,name=val,proto3" json:"val,omitempty"`
+	Order         *int32                 `protobuf:"varint,8,opt,name=order,proto3,oneof" json:"order,omitempty"`
+	Icon          *string                `protobuf:"bytes,9,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -77,9 +78,16 @@ func (x *Permission) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *Permission) GetCategory() string {
+func (x *Permission) GetNamespace() string {
 	if x != nil {
-		return x.Category
+		return x.Namespace
+	}
+	return ""
+}
+
+func (x *Permission) GetService() string {
+	if x != nil {
+		return x.Service
 	}
 	return ""
 }
@@ -127,8 +135,12 @@ func (x *Permission) SetCreatedAt(v *timestamp.Timestamp) {
 	x.CreatedAt = v
 }
 
-func (x *Permission) SetCategory(v string) {
-	x.Category = v
+func (x *Permission) SetNamespace(v string) {
+	x.Namespace = v
+}
+
+func (x *Permission) SetService(v string) {
+	x.Service = v
 }
 
 func (x *Permission) SetName(v string) {
@@ -189,7 +201,8 @@ type Permission_builder struct {
 
 	Id        int64
 	CreatedAt *timestamp.Timestamp
-	Category  string
+	Namespace string
+	Service   string
 	Name      string
 	GuardName string
 	Val       bool
@@ -203,7 +216,8 @@ func (b0 Permission_builder) Build() *Permission {
 	_, _ = b, x
 	x.Id = b.Id
 	x.CreatedAt = b.CreatedAt
-	x.Category = b.Category
+	x.Namespace = b.Namespace
+	x.Service = b.Service
 	x.Name = b.Name
 	x.GuardName = b.GuardName
 	x.Val = b.Val
@@ -475,19 +489,20 @@ var File_resources_permissions_permissions_permissions_proto protoreflect.FileDe
 
 const file_resources_permissions_permissions_permissions_proto_rawDesc = "" +
 	"\n" +
-	"3resources/permissions/permissions/permissions.proto\x12!resources.permissions.permissions\x1a1resources/permissions/attributes/attributes.proto\x1a#resources/timestamp/timestamp.proto\"\x97\x02\n" +
+	"3resources/permissions/permissions/permissions.proto\x12!resources.permissions.permissions\x1a1resources/permissions/attributes/attributes.proto\x1a#resources/timestamp/timestamp.proto\"\xb3\x02\n" +
 	"\n" +
 	"Permission\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1a\n" +
-	"\bcategory\x18\x03 \x01(\tR\bcategory\x12\x12\n" +
-	"\x04name\x18\x04 \x01(\tR\x04name\x12\x1d\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1c\n" +
+	"\tnamespace\x18\x03 \x01(\tR\tnamespace\x12\x18\n" +
+	"\aservice\x18\x04 \x01(\tR\aservice\x12\x12\n" +
+	"\x04name\x18\x05 \x01(\tR\x04name\x12\x1d\n" +
 	"\n" +
-	"guard_name\x18\x05 \x01(\tR\tguardName\x12\x10\n" +
-	"\x03val\x18\x06 \x01(\bR\x03val\x12\x19\n" +
-	"\x05order\x18\a \x01(\x05H\x01R\x05order\x88\x01\x01\x12\x17\n" +
-	"\x04icon\x18\b \x01(\tH\x02R\x04icon\x88\x01\x01B\r\n" +
+	"guard_name\x18\x06 \x01(\tR\tguardName\x12\x10\n" +
+	"\x03val\x18\a \x01(\bR\x03val\x12\x19\n" +
+	"\x05order\x18\b \x01(\x05H\x01R\x05order\x88\x01\x01\x12\x17\n" +
+	"\x04icon\x18\t \x01(\tH\x02R\x04icon\x88\x01\x01B\r\n" +
 	"\v_created_atB\b\n" +
 	"\x06_orderB\a\n" +
 	"\x05_icon\"\xa4\x03\n" +

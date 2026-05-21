@@ -58,6 +58,39 @@ describe('tiptapTextPreview', () => {
 
         expect(preview).toBe('');
     });
+
+    it('should not become empty when the document starts with hard breaks', () => {
+        const doc = {
+            type: 'doc',
+            content: [
+                {
+                    type: 'paragraph',
+                    content: [
+                        { type: 'hardBreak' },
+                        {
+                            type: 'image',
+                            attrs: {
+                                src: 'IMAGE_URL',
+                                alt: null,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'paragraph',
+                    content: [
+                        {
+                            type: 'text',
+                            text: 'Die Immobilienagentur Dynasty 8 verkauft im Namen ihres Kunden die Immobilie.',
+                        },
+                    ],
+                },
+            ],
+        };
+
+        expect(tiptapTextPreview(doc, 1)).toBe('…');
+        expect(tiptapTextPreview(doc, 40)).toContain('[Image]');
+    });
 });
 
 describe('isEmptyDoc', () => {
@@ -77,6 +110,24 @@ describe('isEmptyDoc', () => {
         const struct = Struct.fromJson({ fields: { content: { listValue: { values: [] } } } });
 
         expect(isEmptyDoc(struct)).toBe(true);
+    });
+
+    it('should return false for docs that begin with hardBreak but have later content', () => {
+        const doc = {
+            type: 'doc',
+            content: [
+                {
+                    type: 'paragraph',
+                    content: [{ type: 'hardBreak' }],
+                },
+                {
+                    type: 'paragraph',
+                    content: [{ type: 'text', text: 'Kaufinformationen :' }],
+                },
+            ],
+        };
+
+        expect(isEmptyDoc(doc)).toBe(false);
     });
 });
 

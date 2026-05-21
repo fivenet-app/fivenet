@@ -30,7 +30,8 @@ message DeleteCategoryResponse {}
 
 service CategoriesService {
   option (codegen.perms.perms_svc) = {
-    name: "documents.DocumentsService"
+    order: 51
+    icon: "i-mdi-shape"
   };
 
   rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse) {

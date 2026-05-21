@@ -1214,16 +1214,16 @@ const file_services_calendar_entries_proto_rawDesc = "" +
 	"\a_remove\"o\n" +
 	"\x19RSVPCalendarEntryResponse\x12H\n" +
 	"\x05entry\x18\x01 \x01(\v2-.resources.calendar.entries.CalendarEntryRSVPH\x00R\x05entry\x88\x01\x01B\b\n" +
-	"\x06_entry2\xd5\b\n" +
+	"\x06_entry2\xd6\b\n" +
 	"\x0eEntriesService\x12\x81\x01\n" +
-	"\x13ListCalendarEntries\x12-.services.calendar.ListCalendarEntriesRequest\x1a..services.calendar.ListCalendarEntriesResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12~\n" +
-	"\x12GetUpcomingEntries\x12,.services.calendar.GetUpcomingEntriesRequest\x1a-.services.calendar.GetUpcomingEntriesResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12x\n" +
-	"\x10GetCalendarEntry\x12*.services.calendar.GetCalendarEntryRequest\x1a+.services.calendar.GetCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x99\x01\n" +
-	"\x1bCreateOrUpdateCalendarEntry\x125.services.calendar.CreateOrUpdateCalendarEntryRequest\x1a6.services.calendar.CreateOrUpdateCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x81\x01\n" +
-	"\x13DeleteCalendarEntry\x12-.services.calendar.DeleteCalendarEntryRequest\x1a..services.calendar.DeleteCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12~\n" +
-	"\x12ShareCalendarEntry\x12,.services.calendar.ShareCalendarEntryRequest\x1a-.services.calendar.ShareCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x87\x01\n" +
-	"\x15ListCalendarEntryRSVP\x12/.services.calendar.ListCalendarEntryRSVPRequest\x1a0.services.calendar.ListCalendarEntryRSVPResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12{\n" +
-	"\x11RSVPCalendarEntry\x12+.services.calendar.RSVPCalendarEntryRequest\x1a,.services.calendar.RSVPCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x1a\x1e\xea\xf3\x18\x1a\"\x18calendar.CalendarServiceBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar;calendarb\x06proto3"
+	"\x13ListCalendarEntries\x12-.services.calendar.ListCalendarEntriesRequest\x1a..services.calendar.ListCalendarEntriesResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12~\n" +
+	"\x12GetUpcomingEntries\x12,.services.calendar.GetUpcomingEntriesRequest\x1a-.services.calendar.GetUpcomingEntriesResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12x\n" +
+	"\x10GetCalendarEntry\x12*.services.calendar.GetCalendarEntryRequest\x1a+.services.calendar.GetCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12\x99\x01\n" +
+	"\x1bCreateOrUpdateCalendarEntry\x125.services.calendar.CreateOrUpdateCalendarEntryRequest\x1a6.services.calendar.CreateOrUpdateCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12\x81\x01\n" +
+	"\x13DeleteCalendarEntry\x12-.services.calendar.DeleteCalendarEntryRequest\x1a..services.calendar.DeleteCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12~\n" +
+	"\x12ShareCalendarEntry\x12,.services.calendar.ShareCalendarEntryRequest\x1a-.services.calendar.ShareCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12\x87\x01\n" +
+	"\x15ListCalendarEntryRSVP\x12/.services.calendar.ListCalendarEntryRSVPRequest\x1a0.services.calendar.ListCalendarEntryRSVPResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12{\n" +
+	"\x11RSVPCalendarEntry\x12+.services.calendar.RSVPCalendarEntryRequest\x1a,.services.calendar.RSVPCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x1a\x1f\xea\xf3\x18\x1b\x1a\bcalendar\"\x0fCalendarServiceBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar;calendarb\x06proto3"
 
 var file_services_calendar_entries_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_services_calendar_entries_proto_goTypes = []any{

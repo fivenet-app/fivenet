@@ -202,7 +202,7 @@ const columns = computed(() =>
                 header: t('common.date_of_birth'),
                 cell: ({ row }) => h('span', {}, row.original.dateofbirth),
             },
-            can(['jobs.JobsService/GetColleague', 'jobs.JobsService/SetColleagueProps']).value
+            can(['jobs.ColleaguesService/GetColleague', 'jobs.ColleaguesService/SetColleagueProps']).value
                 ? {
                       id: 'actions',
                       cell: ({ row }) =>
@@ -214,8 +214,8 @@ const columns = computed(() =>
                                       vIf:
                                           canDo.value.setJobsUserProps &&
                                           (row.original.userId === activeChar.value!.userId ||
-                                              attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
-                                          checkIfCanAccessColleague(row.original, 'jobs.JobsService/SetColleagueProps'),
+                                              attr('jobs.ColleaguesService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
+                                          checkIfCanAccessColleague(row.original, 'jobs.ColleaguesService/SetColleagueProps'),
                                   },
                                   [
                                       h(UButton, {
@@ -236,7 +236,7 @@ const columns = computed(() =>
                                       text: t('common.show'),
                                       vIf:
                                           canDo.value.getColleague &&
-                                          checkIfCanAccessColleague(row.original, 'jobs.JobsService/GetColleague'),
+                                          checkIfCanAccessColleague(row.original, 'jobs.ColleaguesService/GetColleague'),
                                   },
                                   [
                                       h(UButton, {
@@ -257,8 +257,8 @@ const columns = computed(() =>
 );
 
 const canDo = computed(() => ({
-    getColleague: can('jobs.JobsService/GetColleague').value,
-    setJobsUserProps: can('jobs.JobsService/SetColleagueProps').value,
+    getColleague: can('jobs.ColleaguesService/GetColleague').value,
+    setJobsUserProps: can('jobs.ColleaguesService/SetColleagueProps').value,
 }));
 
 const { game } = useAppConfig();
@@ -320,22 +320,22 @@ defineShortcuts({
 
                         <UFormField
                             v-if="
-                                can('jobs.JobsService/ManageLabels').value ||
-                                attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value
+                                can('jobs.ColleaguesService/ManageLabels').value ||
+                                attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value
                             "
                             label="&nbsp"
                             :ui="{ container: 'inline-flex gap-1' }"
                         >
                             <UFieldGroup>
                                 <UButton
-                                    v-if="can('jobs.JobsService/ManageLabels').value"
+                                    v-if="can('jobs.ColleaguesService/ManageLabels').value"
                                     :label="$t('common.label', 2)"
                                     icon="i-mdi-tag"
                                     @click="jobLabelsModal.open({})"
                                 />
 
                                 <UTooltip
-                                    v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
+                                    v-if="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
                                     :text="$t('common.stats')"
                                 >
                                     <UButton
@@ -364,7 +364,7 @@ defineShortcuts({
                         <template #content>
                             <div class="flex flex-row flex-wrap gap-2">
                                 <UFormField
-                                    v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
+                                    v-if="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
                                     class="flex flex-1 flex-col"
                                     name="labels"
                                     :label="$t('common.label', 2)"
@@ -568,7 +568,7 @@ defineShortcuts({
                                     </div>
 
                                     <div
-                                        v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
+                                        v-if="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
                                         class="flex flex-row gap-1"
                                     >
                                         <UIcon class="h-5 w-5 shrink-0" name="i-mdi-tag" />
@@ -615,10 +615,10 @@ defineShortcuts({
                                 v-if="
                                     (canDo.setJobsUserProps &&
                                         (colleague.userId === activeChar!.userId ||
-                                            attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
-                                        checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')) ||
+                                            attr('jobs.ColleaguesService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
+                                        checkIfCanAccessColleague(colleague, 'jobs.ColleaguesService/SetColleagueProps')) ||
                                     (canDo.getColleague &&
-                                        checkIfCanAccessColleague(colleague, 'jobs.JobsService/GetColleague'))
+                                        checkIfCanAccessColleague(colleague, 'jobs.ColleaguesService/GetColleague'))
                                 "
                                 #footer
                             >
@@ -627,8 +627,9 @@ defineShortcuts({
                                         v-if="
                                             canDo.setJobsUserProps &&
                                             (colleague.userId === activeChar!.userId ||
-                                                attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
-                                            checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')
+                                                attr('jobs.ColleaguesService/SetColleagueProps', 'Types', 'AbsenceDate')
+                                                    .value) &&
+                                            checkIfCanAccessColleague(colleague, 'jobs.ColleaguesService/SetColleagueProps')
                                         "
                                         class="min-w-0"
                                         :text="$t('components.jobs.self_service.set_absence_date')"
@@ -650,7 +651,7 @@ defineShortcuts({
                                     <UTooltip
                                         v-if="
                                             canDo.getColleague &&
-                                            checkIfCanAccessColleague(colleague, 'jobs.JobsService/GetColleague')
+                                            checkIfCanAccessColleague(colleague, 'jobs.ColleaguesService/GetColleague')
                                         "
                                         class="min-w-0"
                                         :text="$t('common.show')"

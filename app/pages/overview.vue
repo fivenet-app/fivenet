@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import HintsBox from '~/components/HintsBox.vue';
 import CardsList from '~/components/partials/CardsList.vue';
-import type { CardElements } from '~/utils/types';
+import type { CardElement } from '~/utils/types';
 
 useHead({
     title: 'common.overview',
@@ -14,7 +14,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const items = computed<CardElements>(() => [
+const items = computed<CardElement[]>(() => [
     {
         title: t('common.mail'),
         description: t('pages.overview.features.mailer'),
@@ -47,7 +47,7 @@ const items = computed<CardElements>(() => [
         title: t('common.job', 2),
         description: t('pages.overview.features.jobs'),
         to: { name: 'jobs-overview' },
-        permission: 'jobs.JobsService/ListColleagues',
+        permission: 'jobs.ColleaguesService/ListColleagues',
         icon: 'i-mdi-briefcase-outline',
     },
     {

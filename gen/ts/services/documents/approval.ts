@@ -1762,15 +1762,15 @@ export const RecomputeApprovalPolicyCountersResponse = new RecomputeApprovalPoli
  * @generated ServiceType for protobuf service services.documents.ApprovalService
  */
 export const ApprovalService = new ServiceType("services.documents.ApprovalService", [
-    { name: "ListApprovalTasksInbox", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ListApprovalTasksInboxRequest, O: ListApprovalTasksInboxResponse },
-    { name: "ListApprovalPolicies", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ListApprovalPoliciesRequest, O: ListApprovalPoliciesResponse },
+    { name: "ListApprovalTasksInbox", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListApprovalTasksInboxRequest, O: ListApprovalTasksInboxResponse },
+    { name: "ListApprovalPolicies", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListApprovalPoliciesRequest, O: ListApprovalPoliciesResponse },
     { name: "UpsertApprovalPolicy", options: { "codegen.perms.perms": { enabled: true } }, I: UpsertApprovalPolicyRequest, O: UpsertApprovalPolicyResponse },
-    { name: "ListApprovalTasks", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ListApprovalTasksRequest, O: ListApprovalTasksResponse },
+    { name: "ListApprovalTasks", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListApprovalTasksRequest, O: ListApprovalTasksResponse },
     { name: "UpsertApprovalTasks", options: { "codegen.perms.perms": { enabled: true } }, I: UpsertApprovalTasksRequest, O: UpsertApprovalTasksResponse },
     { name: "DeleteApprovalTasks", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteApprovalTasksRequest, O: DeleteApprovalTasksResponse },
-    { name: "ListApprovals", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ListApprovalsRequest, O: ListApprovalsResponse },
+    { name: "ListApprovals", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListApprovalsRequest, O: ListApprovalsResponse },
     { name: "RevokeApproval", options: { "codegen.perms.perms": { enabled: true } }, I: RevokeApprovalRequest, O: RevokeApprovalResponse },
-    { name: "DecideApproval", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: DecideApprovalRequest, O: DecideApprovalResponse },
+    { name: "DecideApproval", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: DecideApprovalRequest, O: DecideApprovalResponse },
     { name: "ReopenApprovalTask", options: { "codegen.perms.perms": { enabled: true, name: "RevokeApproval" } }, I: ReopenApprovalTaskRequest, O: ReopenApprovalTaskResponse },
     { name: "RecomputeApprovalPolicyCounters", options: { "codegen.perms.perms": { enabled: true, name: "RevokeApproval" } }, I: RecomputeApprovalPolicyCountersRequest, O: RecomputeApprovalPolicyCountersResponse }
 ], { "codegen.perms.perms_svc": { order: 52, icon: "i-mdi-approval" } });

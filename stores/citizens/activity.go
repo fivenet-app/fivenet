@@ -52,7 +52,13 @@ func (s *UserActivityStore) List(
 
 	stmt := mysql.
 		SELECT(
-			tUserActivity.AllColumns,
+			tUserActivity.ID,
+			tUserActivity.CreatedAt,
+			tUserActivity.SourceUserID,
+			tUserActivity.TargetUserID,
+			tUserActivity.Type,
+			tUserActivity.Reason,
+			tUserActivity.Data,
 		).
 		FROM(tUserActivity).
 		ORDER_BY(orderBys...)

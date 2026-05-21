@@ -33,6 +33,7 @@ const (
 	EventAction_EVENT_ACTION_CREATED     EventAction = 3
 	EventAction_EVENT_ACTION_UPDATED     EventAction = 4
 	EventAction_EVENT_ACTION_DELETED     EventAction = 5
+	EventAction_EVENT_ACTION_RESTORED    EventAction = 6
 )
 
 // Enum value maps for EventAction.
@@ -43,6 +44,7 @@ var (
 		3: "EVENT_ACTION_CREATED",
 		4: "EVENT_ACTION_UPDATED",
 		5: "EVENT_ACTION_DELETED",
+		6: "EVENT_ACTION_RESTORED",
 	}
 	EventAction_value = map[string]int32{
 		"EVENT_ACTION_UNSPECIFIED": 0,
@@ -50,6 +52,7 @@ var (
 		"EVENT_ACTION_CREATED":     3,
 		"EVENT_ACTION_UPDATED":     4,
 		"EVENT_ACTION_DELETED":     5,
+		"EVENT_ACTION_RESTORED":    6,
 	}
 )
 
@@ -554,13 +557,14 @@ const file_resources_audit_audit_proto_rawDesc = "" +
 	"\x04meta\x18\x01 \x03(\v2).resources.audit.AuditEntryMeta.MetaEntryR\x04meta\x1a7\n" +
 	"\tMetaEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01:\x06\xe2\xf3\x18\x02\b\x01*\x98\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01:\x06\xe2\xf3\x18\x02\b\x01*\xb3\x01\n" +
 	"\vEventAction\x12\x1c\n" +
 	"\x18EVENT_ACTION_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13EVENT_ACTION_VIEWED\x10\x02\x12\x18\n" +
 	"\x14EVENT_ACTION_CREATED\x10\x03\x12\x18\n" +
 	"\x14EVENT_ACTION_UPDATED\x10\x04\x12\x18\n" +
-	"\x14EVENT_ACTION_DELETED\x10\x05\"\x04\b\x01\x10\x01*z\n" +
+	"\x14EVENT_ACTION_DELETED\x10\x05\x12\x19\n" +
+	"\x15EVENT_ACTION_RESTORED\x10\x06\"\x04\b\x01\x10\x01*z\n" +
 	"\vEventResult\x12\x1c\n" +
 	"\x18EVENT_RESULT_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16EVENT_RESULT_SUCCEEDED\x10\x01\x12\x17\n" +

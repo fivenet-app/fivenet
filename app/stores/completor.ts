@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { getCompletorCompletorClient, getJobsColleaguesClient } from '~~/gen/ts/clients';
+import { getCitizensLabelsClient, getCompletorCompletorClient, getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
@@ -32,6 +32,11 @@ export const useCompletorStore = defineStore(
               }
             | undefined
         >(undefined);
+
+        /**
+         * Cached citizen labels list.
+         */
+        const citizenLabels = ref<{ refreshedAt: number; data: Label[] } | undefined>(undefined);
 
         /**
          * Find a job by name.
@@ -175,7 +180,7 @@ export const useCompletorStore = defineStore(
          */
         const completeDocumentCategories = async (search: string, ...ids: (number | undefined)[]): Promise<Category[]> => {
             const { can } = useAuth();
-            if (!can('documents.DocumentsService/ListCategories').value) return [];
+            if (!can('documents.CategoriesService/ListCategories').value) return [];
 
             const completorCompletorClient = await getCompletorCompletorClient();
             try {
@@ -226,13 +231,29 @@ export const useCompletorStore = defineStore(
          * @param {string} search - The search term for completing citizen labels.
          * @returns {Promise<Label[]>} - The completed citizen labels.
          */
-        const completeCitizenLabels = async (search: string): Promise<Label[]> => {
-            const completorCompletorClient = await getCompletorCompletorClient();
+        const completeCitizenLabels = async (search: string, refresh = false): Promise<Label[]> => {
+            // Return cached law books if they are still valid and refresh is not requested
+            if (
+                citizenLabels.value &&
+                citizenLabels.value.data.length > 0 &&
+                Date.now() - citizenLabels.value.refreshedAt < maxCacheAge &&
+                !refresh
+            )
+                return citizenLabels.value.data;
+
+            const citizensLabelsClient = await getCitizensLabelsClient();
             try {
-                const call = completorCompletorClient.completeCitizenLabels({
+                const call = citizensLabelsClient.listLabels({
                     search: search,
                 });
                 const { response } = await call;
+                // No search param given? Update cached state.
+                if (!search) {
+                    citizenLabels.value = {
+                        refreshedAt: Date.now(),
+                        data: response.labels,
+                    };
+                }
                 return response.labels;
             } catch (e) {
                 handleGRPCError(e as RpcError);

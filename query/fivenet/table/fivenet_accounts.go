@@ -20,6 +20,7 @@ type fivenetAccountsTable struct {
 	ID        mysql.ColumnInteger
 	CreatedAt mysql.ColumnTimestamp
 	UpdatedAt mysql.ColumnTimestamp
+	DeletedAt mysql.ColumnTimestamp
 	Enabled   mysql.ColumnBool
 	Username  mysql.ColumnString
 	Password  mysql.ColumnString
@@ -27,6 +28,7 @@ type fivenetAccountsTable struct {
 	Groups    mysql.ColumnString
 	RegToken  mysql.ColumnString
 	LastChar  mysql.ColumnInteger
+	Notes     mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -71,6 +73,7 @@ func newFivenetAccountsTableImpl(schemaName, tableName, alias string) fivenetAcc
 		IDColumn        = mysql.IntegerColumn("id")
 		CreatedAtColumn = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn = mysql.TimestampColumn("deleted_at")
 		EnabledColumn   = mysql.BoolColumn("enabled")
 		UsernameColumn  = mysql.StringColumn("username")
 		PasswordColumn  = mysql.StringColumn("password")
@@ -78,8 +81,9 @@ func newFivenetAccountsTableImpl(schemaName, tableName, alias string) fivenetAcc
 		GroupsColumn    = mysql.StringColumn("groups")
 		RegTokenColumn  = mysql.StringColumn("reg_token")
 		LastCharColumn  = mysql.IntegerColumn("last_char")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, GroupsColumn, RegTokenColumn, LastCharColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, GroupsColumn, RegTokenColumn, LastCharColumn}
+		NotesColumn     = mysql.StringColumn("notes")
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, GroupsColumn, RegTokenColumn, LastCharColumn, NotesColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, GroupsColumn, RegTokenColumn, LastCharColumn, NotesColumn}
 		defaultColumns  = mysql.ColumnList{CreatedAtColumn, EnabledColumn}
 	)
 
@@ -90,6 +94,7 @@ func newFivenetAccountsTableImpl(schemaName, tableName, alias string) fivenetAcc
 		ID:        IDColumn,
 		CreatedAt: CreatedAtColumn,
 		UpdatedAt: UpdatedAtColumn,
+		DeletedAt: DeletedAtColumn,
 		Enabled:   EnabledColumn,
 		Username:  UsernameColumn,
 		Password:  PasswordColumn,
@@ -97,6 +102,7 @@ func newFivenetAccountsTableImpl(schemaName, tableName, alias string) fivenetAcc
 		Groups:    GroupsColumn,
 		RegToken:  RegTokenColumn,
 		LastChar:  LastCharColumn,
+		Notes:     NotesColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

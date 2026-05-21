@@ -20,6 +20,7 @@ type fivenetLawbooksTable struct {
 	ID          mysql.ColumnInteger
 	CreatedAt   mysql.ColumnTimestamp
 	UpdatedAt   mysql.ColumnTimestamp
+	DeletedAt   mysql.ColumnTimestamp
 	Name        mysql.ColumnString
 	SortKey     mysql.ColumnString
 	Description mysql.ColumnString
@@ -67,11 +68,12 @@ func newFivenetLawbooksTableImpl(schemaName, tableName, alias string) fivenetLaw
 		IDColumn          = mysql.IntegerColumn("id")
 		CreatedAtColumn   = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn   = mysql.TimestampColumn("deleted_at")
 		NameColumn        = mysql.StringColumn("name")
 		SortKeyColumn     = mysql.StringColumn("sort_key")
 		DescriptionColumn = mysql.StringColumn("description")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, NameColumn, SortKeyColumn, DescriptionColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, NameColumn, SortKeyColumn, DescriptionColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, NameColumn, SortKeyColumn, DescriptionColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, NameColumn, SortKeyColumn, DescriptionColumn}
 		defaultColumns    = mysql.ColumnList{CreatedAtColumn}
 	)
 
@@ -82,6 +84,7 @@ func newFivenetLawbooksTableImpl(schemaName, tableName, alias string) fivenetLaw
 		ID:          IDColumn,
 		CreatedAt:   CreatedAtColumn,
 		UpdatedAt:   UpdatedAtColumn,
+		DeletedAt:   DeletedAtColumn,
 		Name:        NameColumn,
 		SortKey:     SortKeyColumn,
 		Description: DescriptionColumn,

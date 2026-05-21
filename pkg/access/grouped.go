@@ -119,6 +119,8 @@ func NewGrouped[
 	}
 }
 
+// TODO a list method that returns all accesses for a target id would be good. Use interfaces for the passed in pointer object to see what to retrieve from the db.
+
 // HandleAccessChanges processes and categorizes access changes for jobs, users, and qualifications.
 func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) HandleAccessChanges(
 	ctx context.Context,

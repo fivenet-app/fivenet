@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -139,6 +140,7 @@ func (s *Server) ListAccounts(
 			tAccounts.ID,
 			tAccounts.CreatedAt,
 			tAccounts.UpdatedAt,
+			tAccounts.DeletedAt,
 			tAccounts.Enabled,
 			tAccounts.Username,
 			tAccounts.License,
@@ -174,6 +176,7 @@ func (s *Server) getAccount(ctx context.Context, id int64) (*accounts.Account, e
 			tAccounts.ID,
 			tAccounts.CreatedAt,
 			tAccounts.UpdatedAt,
+			tAccounts.DeletedAt,
 			tAccounts.Enabled,
 			tAccounts.Username,
 			tAccounts.License,
@@ -183,7 +186,8 @@ func (s *Server) getAccount(ctx context.Context, id int64) (*accounts.Account, e
 		FROM(tAccounts).
 		WHERE(
 			tAccounts.ID.EQ(mysql.Int64(id)),
-		)
+		).
+		LIMIT(1)
 
 	var account accounts.Account
 	if err := stmt.QueryContext(ctx, s.db, &account); err != nil {
@@ -278,10 +282,28 @@ func (s *Server) DeleteAccount(
 		return nil, errorssettings.ErrCannotDeleteOwnAccount
 	}
 
-	tAccounts := table.FivenetAccounts
+	account, err := s.getAccount(ctx, req.GetId())
+	if err != nil {
+		return nil, errorssettings.ErrFailedQuery
+	}
+	if account == nil {
+		return &pbsettings.DeleteAccountResponse{}, nil
+	}
 
+	var deletedAtTime *timestamp.Timestamp
+	if account.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
+	}
+
+	tAccounts := table.FivenetAccounts
 	stmt := tAccounts.
-		DELETE().
+		UPDATE().
+		SET(
+			tAccounts.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
+		).
 		WHERE(tAccounts.ID.EQ(mysql.Int64(req.GetId()))).
 		LIMIT(1)
 
@@ -289,7 +311,7 @@ func (s *Server) DeleteAccount(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
-
-	return &pbsettings.DeleteAccountResponse{}, nil
+	return &pbsettings.DeleteAccountResponse{
+		DeletedAt: deletedAtTime,
+	}, nil
 }

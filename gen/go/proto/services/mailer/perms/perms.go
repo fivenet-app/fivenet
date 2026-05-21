@@ -10,11 +10,56 @@ import (
 )
 
 const (
-	MailerServicePerm perms.Category = "mailer.MailerService"
+	Namespace perms.Namespace = "mailer"
 
-	// Service: MailerService
+	MailerServicePerm perms.Service = "MailerService"
+
+	// Service: mailer.MailerService
 	MailerServiceCreateOrUpdateEmailPerm            perms.Name = "CreateOrUpdateEmail"
 	MailerServiceCreateOrUpdateEmailFieldsPermField perms.Key  = "Fields"
 	MailerServiceDeleteEmailPerm                    perms.Name = "DeleteEmail"
 	MailerServiceListEmailsPerm                     perms.Name = "ListEmails"
 )
+
+type MailerServiceCreateOrUpdateEmailFieldsPermValue string
+
+const (
+	MailerServiceCreateOrUpdateEmailFieldsPermValueJob MailerServiceCreateOrUpdateEmailFieldsPermValue = "Job"
+)
+
+type MailerServicePerms struct {
+	CreateOrUpdateEmail MailerServiceCreateOrUpdateEmailPermRef
+	DeleteEmail         MailerServiceDeleteEmailPermRef
+	ListEmails          MailerServiceListEmailsPermRef
+}
+type MailerServiceCreateOrUpdateEmailPermRef struct {
+	Perm        perms.PermissionRef
+	Fields      perms.AttrRef[perms.StringListAttr]
+	FieldsTyped perms.StringListAttrRef[MailerServiceCreateOrUpdateEmailFieldsPermValue]
+}
+type MailerServiceDeleteEmailPermRef struct {
+	Perm perms.PermissionRef
+}
+type MailerServiceListEmailsPermRef struct {
+	Perm perms.PermissionRef
+}
+
+var MailerService = MailerServicePerms{
+	CreateOrUpdateEmail: MailerServiceCreateOrUpdateEmailPermRef{
+		Perm: perms.NewPermissionRef(Namespace, MailerServicePerm, MailerServiceCreateOrUpdateEmailPerm),
+		Fields: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, MailerServicePerm, MailerServiceCreateOrUpdateEmailPerm),
+			MailerServiceCreateOrUpdateEmailFieldsPermField,
+		),
+		FieldsTyped: perms.NewTypedStringListAttrRef[MailerServiceCreateOrUpdateEmailFieldsPermValue](
+			perms.NewPermissionRef(Namespace, MailerServicePerm, MailerServiceCreateOrUpdateEmailPerm),
+			MailerServiceCreateOrUpdateEmailFieldsPermField,
+		),
+	},
+	DeleteEmail: MailerServiceDeleteEmailPermRef{
+		Perm: perms.NewPermissionRef(Namespace, MailerServicePerm, MailerServiceDeleteEmailPerm),
+	},
+	ListEmails: MailerServiceListEmailsPermRef{
+		Perm: perms.NewPermissionRef(Namespace, MailerServicePerm, MailerServiceListEmailsPerm),
+	},
+}

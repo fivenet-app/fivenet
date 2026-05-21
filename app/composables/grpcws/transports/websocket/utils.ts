@@ -27,3 +27,13 @@ export function isRetryableError(err: unknown): boolean {
     // If not an RpcError, we assume it's not retryable
     return false;
 }
+
+export function writeUInt32BE(arr: Uint8Array, value: number, offset: number): number {
+    value = +value;
+    offset = offset | 0;
+    arr[offset] = value >>> 24;
+    arr[offset + 1] = value >>> 16;
+    arr[offset + 2] = value >>> 8;
+    arr[offset + 3] = value & 0xff;
+    return offset + 4;
+}

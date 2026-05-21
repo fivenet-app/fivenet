@@ -8,8 +8,23 @@ import (
 )
 
 const (
-	AuthServicePerm perms.Category = "auth.AuthService"
+	Namespace perms.Namespace = "auth"
 
-	// Service: AuthService
+	AuthServicePerm perms.Service = "AuthService"
+
+	// Service: auth.AuthService
 	AuthServiceChooseCharacterPerm perms.Name = "ChooseCharacter"
 )
+
+type AuthServicePerms struct {
+	ChooseCharacter AuthServiceChooseCharacterPermRef
+}
+type AuthServiceChooseCharacterPermRef struct {
+	Perm perms.PermissionRef
+}
+
+var AuthService = AuthServicePerms{
+	ChooseCharacter: AuthServiceChooseCharacterPermRef{
+		Perm: perms.NewPermissionRef(Namespace, AuthServicePerm, AuthServiceChooseCharacterPerm),
+	},
+}

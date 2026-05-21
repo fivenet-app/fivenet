@@ -4,7 +4,6 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import type { ClassProp } from '~/utils/types';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import OpenClosedBadge from '../OpenClosedBadge.vue';
@@ -22,7 +21,9 @@ const props = withDefaults(
         hideCategory?: boolean;
         showId?: boolean;
         loadOnOpen?: boolean;
-        buttonClass?: ClassProp;
+        // Class attribute is "untyped" so use any here
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        buttonClass?: any;
         disableTooltip?: boolean;
         size?: BadgeProps['size'];
     }>(),

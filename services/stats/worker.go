@@ -90,7 +90,7 @@ func (s *worker) loadStats(ctx context.Context) error {
 	tUsers := table.FivenetUser
 	queries := map[string]mysql.Statement{
 		"users_registered": tAccounts.SELECT(mysql.COUNT(tAccounts.ID).AS("value")).
-			WHERE(tAccounts.Enabled.IS_TRUE()),
+			WHERE(tAccounts.DeletedAt.IS_NULL()),
 		"documents_created": tDocuments.SELECT(mysql.COUNT(tDocuments.ID).AS("value")).
 			WHERE(tDocuments.DeletedAt.IS_NULL()),
 		"dispatches_created": tDispatches.SELECT(mysql.MAX(tDispatches.ID).AS("value")),

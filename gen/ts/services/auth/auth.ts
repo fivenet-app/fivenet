@@ -1611,7 +1611,7 @@ export const AuthService = new ServiceType("services.auth.AuthService", [
     { name: "ForgotPassword", options: {}, I: ForgotPasswordRequest, O: ForgotPasswordResponse },
     { name: "GetCharacters", options: {}, I: GetCharactersRequest, O: GetCharactersResponse },
     { name: "ChooseCharacter", options: { "codegen.perms.perms": { enabled: true } }, I: ChooseCharacterRequest, O: ChooseCharacterResponse },
-    { name: "ImpersonateJob", options: { "codegen.perms.perms": { enabled: true, service: "settings.SettingsService", name: "UpdateRolePerms" } }, I: ImpersonateJobRequest, O: ImpersonateJobResponse },
+    { name: "ImpersonateJob", options: { "codegen.perms.perms": { enabled: true, namespace: "settings", service: "SettingsService", name: "UpdateRolePerms" } }, I: ImpersonateJobRequest, O: ImpersonateJobResponse },
     { name: "GetAccountInfo", options: {}, I: GetAccountInfoRequest, O: GetAccountInfoResponse },
     { name: "DeleteSocialLogin", options: {}, I: DeleteSocialLoginRequest, O: DeleteSocialLoginResponse },
     { name: "SetSuperuserMode", options: {}, I: SetSuperuserModeRequest, O: SetSuperuserModeResponse }

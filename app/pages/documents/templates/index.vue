@@ -11,7 +11,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.templates.title',
     requiresAuth: true,
-    permission: 'documents.DocumentsService/ListTemplates',
+    permission: 'documents.TemplatesService/ListTemplates',
 });
 
 const { can } = useAuth();
@@ -59,7 +59,7 @@ defineShortcuts({
                         </span>
                     </UButton>
 
-                    <UTooltip v-if="can('documents.DocumentsService/CreateTemplate').value" :text="$t('common.create')">
+                    <UTooltip v-if="can('documents.TemplatesService/CreateTemplate').value" :text="$t('common.create')">
                         <UButton to="/documents/templates/create" color="neutral" variant="outline" trailing-icon="i-mdi-plus">
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.template') }}

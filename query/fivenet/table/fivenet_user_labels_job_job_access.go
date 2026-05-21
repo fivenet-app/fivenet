@@ -19,7 +19,7 @@ type fivenetUserLabelsJobJobAccessTable struct {
 	// Columns
 	ID           mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
-	LabelID      mysql.ColumnInteger
+	TargetID     mysql.ColumnInteger
 	Job          mysql.ColumnString
 	MinimumGrade mysql.ColumnInteger
 	Access       mysql.ColumnInteger
@@ -66,12 +66,12 @@ func newFivenetUserLabelsJobJobAccessTableImpl(schemaName, tableName, alias stri
 	var (
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
-		LabelIDColumn      = mysql.IntegerColumn("label_id")
+		TargetIDColumn     = mysql.IntegerColumn("target_id")
 		JobColumn          = mysql.StringColumn("job")
 		MinimumGradeColumn = mysql.IntegerColumn("minimum_grade")
 		AccessColumn       = mysql.IntegerColumn("access")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, LabelIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, LabelIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, TargetIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, TargetIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
 		defaultColumns     = mysql.ColumnList{CreatedAtColumn, MinimumGradeColumn}
 	)
 
@@ -81,7 +81,7 @@ func newFivenetUserLabelsJobJobAccessTableImpl(schemaName, tableName, alias stri
 		//Columns
 		ID:           IDColumn,
 		CreatedAt:    CreatedAtColumn,
-		LabelID:      LabelIDColumn,
+		TargetID:     TargetIDColumn,
 		Job:          JobColumn,
 		MinimumGrade: MinimumGradeColumn,
 		Access:       AccessColumn,

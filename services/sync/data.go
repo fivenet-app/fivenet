@@ -203,12 +203,10 @@ func (s *Server) handleLastCharId(
 	ctx context.Context,
 	data *syncdata.LastCharID,
 ) (int64, error) {
-	if data.LastCharId == nil || data.GetIdentifier() == "" ||
-		data.LastCharId == nil ||
-		data.GetLastCharId() == 0 {
+	if data.GetLicense() == "" || data.GetLastCharId() == 0 {
 		return 0, status.Error(
 			codes.InvalidArgument,
-			"LastCharId must contain CharacterId and an UserId or Identifier",
+			"LastCharId must contain char's identifier and lastCharId",
 		)
 	}
 
@@ -221,7 +219,7 @@ func (s *Server) handleLastCharId(
 			tAccounts.LastChar.SET(mysql.Int32(data.GetLastCharId())),
 		).
 		WHERE(
-			tAccounts.License.EQ(mysql.String(data.GetIdentifier())),
+			tAccounts.License.EQ(mysql.String(data.GetLicense())),
 		).
 		LIMIT(1)
 

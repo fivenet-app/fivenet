@@ -59,8 +59,12 @@ const _useAuth = () => {
 
     const getAttr = (perm: Perms, key: string) =>
         computed(() => {
-            const split = perm.split('/');
-            return attributes.value.find((a) => a.category === split[0]! && a.name === split[1]! && a.key === key);
+            const [serviceKey, name] = perm.split('/');
+            const [namespace, service] = serviceKey?.split('.') ?? [];
+
+            return attributes.value.find(
+                (a) => a.namespace === namespace && a.service === service && a.name === name && a.key === key,
+            );
         });
 
     const attr = (perm: Perms, key: string, val: string) =>

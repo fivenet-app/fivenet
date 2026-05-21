@@ -97,22 +97,20 @@ func NewServer(p Params) (Result, error) {
 	}
 
 	// Register lifecycle hooks for server start and stop
-	p.LC.Append(fx.Hook{
-		OnStart: func(ctx context.Context) error {
-			//nolint:noctx // net.Listen is shutdown via the server's Shutdown method
-			ln, err := net.Listen("tcp", srv.Addr)
-			if err != nil {
-				return err
-			}
-			p.Logger.Info("metrics server listening", zap.String("address", srv.Addr))
-			go srv.Serve(ln)
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+		//nolint:noctx // net.Listen is shutdown via the server's Shutdown method
+		ln, err := net.Listen("tcp", srv.Addr)
+		if err != nil {
+			return err
+		}
+		p.Logger.Info("metrics server listening", zap.String("address", srv.Addr))
+		go srv.Serve(ln)
 
-			return nil
-		},
-		OnStop: func(ctx context.Context) error {
-			return srv.Shutdown(ctx)
-		},
-	})
+		return nil
+	}))
+	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
+		return srv.Shutdown(ctx)
+	}))
 
 	return Result{
 		Server: srv,

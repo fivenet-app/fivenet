@@ -822,12 +822,12 @@ const file_services_settings_system_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\"\x19\n" +
 	"\x17TriggerUserSyncResponse2\xe3\x05\n" +
 	"\rSystemService\x12i\n" +
-	"\tGetStatus\x12#.services.settings.GetStatusRequest\x1a$.services.settings.GetStatusResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x81\x01\n" +
-	"\x11GetAllPermissions\x12+.services.settings.GetAllPermissionsRequest\x1a,.services.settings.GetAllPermissionsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12r\n" +
-	"\fGetJobLimits\x12&.services.settings.GetJobLimitsRequest\x1a'.services.settings.GetJobLimitsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12{\n" +
-	"\x0fUpdateJobLimits\x12).services.settings.UpdateJobLimitsRequest\x1a*.services.settings.UpdateJobLimitsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
-	"\rDeleteFaction\x12'.services.settings.DeleteFactionRequest\x1a(.services.settings.DeleteFactionResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12{\n" +
-	"\x0fTriggerUserSync\x12).services.settings.TriggerUserSyncRequest\x1a*.services.settings.TriggerUserSyncResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\tGetStatus\x12#.services.settings.GetStatusRequest\x1a$.services.settings.GetStatusResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12\x81\x01\n" +
+	"\x11GetAllPermissions\x12+.services.settings.GetAllPermissionsRequest\x1a,.services.settings.GetAllPermissionsResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12r\n" +
+	"\fGetJobLimits\x12&.services.settings.GetJobLimitsRequest\x1a'.services.settings.GetJobLimitsResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12{\n" +
+	"\x0fUpdateJobLimits\x12).services.settings.UpdateJobLimitsRequest\x1a*.services.settings.UpdateJobLimitsResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12u\n" +
+	"\rDeleteFaction\x12'.services.settings.DeleteFactionRequest\x1a(.services.settings.DeleteFactionResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12{\n" +
+	"\x0fTriggerUserSync\x12).services.settings.TriggerUserSyncRequest\x1a*.services.settings.TriggerUserSyncResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var file_services_settings_system_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_services_settings_system_proto_goTypes = []any{

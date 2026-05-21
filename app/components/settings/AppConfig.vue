@@ -544,7 +544,7 @@ const formRef = useTemplateRef('formRef');
                                         :key="idx"
                                         class="flex flex-col gap-1 sm:flex-row"
                                     >
-                                        <UFormField class="flex-1" :name="`perms.default.${idx}.category`">
+                                        <UFormField class="flex-1" :name="`perms.default.${idx}.service`">
                                             <ClientOnly>
                                                 <USelectMenu
                                                     v-model="state.perms.default[idx]!.category"
@@ -553,11 +553,11 @@ const formRef = useTemplateRef('formRef');
                                                     :items="GRPCServices"
                                                 >
                                                     <template v-if="state.perms.default[idx]!.category" #default>
-                                                        {{ $t(`perms.${state.perms.default[idx]!.category}.category`) }}
+                                                        {{ $t(`perms.${state.perms.default[idx]!.category}.service`) }}
                                                     </template>
 
                                                     <template #item-label="{ item }">
-                                                        {{ $t(`perms.${item}.category`) }}
+                                                        {{ $t(`perms.${item}.service`) }}
                                                     </template>
 
                                                     <template #empty>
@@ -1038,9 +1038,9 @@ const formRef = useTemplateRef('formRef');
                                 <UInputNumber
                                     v-model="state.quickButtons.penaltyCalculator.maxLeeway"
                                     class="w-full"
-                                    :min="1"
-                                    :step="1"
-                                    :max="99"
+                                    :min="0.01"
+                                    :step="0.01"
+                                    :max="1"
                                     :format-options="{ style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 0 }"
                                 />
                             </UFormField>

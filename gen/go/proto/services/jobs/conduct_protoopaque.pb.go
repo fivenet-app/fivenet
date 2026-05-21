@@ -846,14 +846,14 @@ const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1c\n" +
 	"\x1aDeleteConductEntryResponse2\x94\x06\n" +
 	"\x0eConductService\x12\x87\x01\n" +
-	"\x12ListConductEntries\x12(.services.jobs.ListConductEntriesRequest\x1a).services.jobs.ListConductEntriesResponse\"\x1c\xd2\xf3\x18\x18\b\x01*\x14\n" +
+	"\x12ListConductEntries\x12(.services.jobs.ListConductEntriesRequest\x1a).services.jobs.ListConductEntriesResponse\"\x1c\xd2\xf3\x18\x18\b\x01:\x14\n" +
 	"\x06Access\x18\x01\"\x03Own\"\x03All\x12|\n" +
-	"\x0fGetConductEntry\x12%.services.jobs.GetConductEntryRequest\x1a&.services.jobs.GetConductEntryResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListConductEntries\x12q\n" +
+	"\x0fGetConductEntry\x12%.services.jobs.GetConductEntryRequest\x1a&.services.jobs.GetConductEntryResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListConductEntries\x12q\n" +
 	"\x12CreateConductEntry\x12(.services.jobs.CreateConductEntryRequest\x1a).services.jobs.CreateConductEntryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12q\n" +
 	"\x12UpdateConductEntry\x12(.services.jobs.UpdateConductEntryRequest\x1a).services.jobs.UpdateConductEntryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12q\n" +
 	"\x12DeleteConductEntry\x12(.services.jobs.DeleteConductEntryRequest\x1a).services.jobs.DeleteConductEntryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x85\x01\n" +
 	"\n" +
-	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\".\xd2\xf3\x18*\b\x012\x12CreateConductEntry2\x12UpdateConductEntry(\x01\x1a\x19\xea\xf3\x18\x15\bC\x12\x11i-mdi-list-statusBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\".\xd2\xf3\x18*\b\x01*\x12CreateConductEntry*\x12UpdateConductEntry(\x01\x1a\x19\xea\xf3\x18\x15\bC\x12\x11i-mdi-list-statusBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var file_services_jobs_conduct_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_jobs_conduct_proto_goTypes = []any{

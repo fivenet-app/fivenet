@@ -44,48 +44,45 @@
 
 export type Perms = SystemPerms | GRPCServicePerms;
 
-export type SystemPerms = 'Superuser/CanBeSuperuser' | 'Superuser/Superuser' | 'TODOService/TODOMethod';
+export type SystemPerms = 'internal.Superuser/CanBeSuperuser' | 'internal.Superuser/Superuser' | 'TODOService/TODOMethod';
 
 export type GRPCServicePerms =
 	| 'auth.AuthService/ChooseCharacter'
 	| 'calendar.CalendarService/CreateCalendar'
-	| 'centrum.CentrumService/CreateDispatch'
-	| 'centrum.CentrumService/CreateOrUpdateUnit'
-	| 'centrum.CentrumService/DeleteDispatch'
-	| 'centrum.CentrumService/DeleteUnit'
 	| 'centrum.CentrumService/Stream'
 	| 'centrum.CentrumService/TakeControl'
-	| 'centrum.CentrumService/TakeDispatch'
-	| 'centrum.CentrumService/UpdateDispatch'
 	| 'centrum.CentrumService/UpdateDispatchers'
 	| 'centrum.CentrumService/UpdateSettings'
+	| 'centrum.DispatchesService/CreateDispatch'
+	| 'centrum.DispatchesService/DeleteDispatch'
+	| 'centrum.DispatchesService/TakeDispatch'
+	| 'centrum.DispatchesService/UpdateDispatch'
+	| 'centrum.UnitsService/CreateOrUpdateUnit'
+	| 'centrum.UnitsService/DeleteUnit'
 	| 'citizens.CitizensService/GetUser'
 	| 'citizens.CitizensService/ListCitizens'
 	| 'citizens.CitizensService/ListUserActivity'
 	| 'citizens.CitizensService/SetUserProps'
 	| 'citizens.LabelsService/CreateOrUpdateLabel'
 	| 'citizens.LabelsService/DeleteLabel'
-	| 'completor.CompletorService/CompleteCitizenLabels'
+	| 'citizens.LabelsService/ListLabels'
 	| 'documents.ApprovalService/DeleteApprovalTasks'
 	| 'documents.ApprovalService/RevokeApproval'
 	| 'documents.ApprovalService/UpsertApprovalPolicy'
 	| 'documents.ApprovalService/UpsertApprovalTasks'
+	| 'documents.CategoriesService/CreateOrUpdateCategory'
+	| 'documents.CategoriesService/DeleteCategory'
+	| 'documents.CategoriesService/ListCategories'
+	| 'documents.CommentsService/DeleteComment'
 	| 'documents.DocumentsService/AddDocumentReference'
 	| 'documents.DocumentsService/AddDocumentRelation'
 	| 'documents.DocumentsService/ChangeDocumentOwner'
 	| 'documents.DocumentsService/CreateDocumentReq'
-	| 'documents.DocumentsService/CreateOrUpdateCategory'
-	| 'documents.DocumentsService/CreateTemplate'
-	| 'documents.DocumentsService/DeleteCategory'
-	| 'documents.DocumentsService/DeleteComment'
 	| 'documents.DocumentsService/DeleteDocument'
 	| 'documents.DocumentsService/DeleteDocumentReq'
-	| 'documents.DocumentsService/DeleteTemplate'
-	| 'documents.DocumentsService/ListCategories'
 	| 'documents.DocumentsService/ListDocumentActivity'
 	| 'documents.DocumentsService/ListDocumentReqs'
 	| 'documents.DocumentsService/ListDocuments'
-	| 'documents.DocumentsService/ListTemplates'
 	| 'documents.DocumentsService/ListUserDocuments'
 	| 'documents.DocumentsService/SetDocumentReminder'
 	| 'documents.DocumentsService/ToggleDocument'
@@ -95,16 +92,19 @@ export type GRPCServicePerms =
 	| 'documents.StampsService/ListUsableStamps'
 	| 'documents.StampsService/UpsertStamp'
 	| 'documents.StatsService/GetStats'
+	| 'documents.TemplatesService/CreateTemplate'
+	| 'documents.TemplatesService/DeleteTemplate'
+	| 'documents.TemplatesService/ListTemplates'
+	| 'jobs.ColleaguesService/GetColleague'
+	| 'jobs.ColleaguesService/ListColleagueActivity'
+	| 'jobs.ColleaguesService/ListColleagues'
+	| 'jobs.ColleaguesService/ManageLabels'
+	| 'jobs.ColleaguesService/SetColleagueProps'
 	| 'jobs.ConductService/CreateConductEntry'
 	| 'jobs.ConductService/DeleteConductEntry'
 	| 'jobs.ConductService/ListConductEntries'
 	| 'jobs.ConductService/UpdateConductEntry'
 	| 'jobs.ConductService/UploadFile'
-	| 'jobs.JobsService/GetColleague'
-	| 'jobs.JobsService/ListColleagueActivity'
-	| 'jobs.JobsService/ListColleagues'
-	| 'jobs.JobsService/ManageLabels'
-	| 'jobs.JobsService/SetColleagueProps'
 	| 'jobs.JobsService/SetMOTD'
 	| 'jobs.StatsService/GetStats'
 	| 'jobs.TimeclockService/ListInactiveEmployees'
@@ -140,13 +140,18 @@ export const GRPCServices = [
 	'auth.AuthService',
 	'calendar.CalendarService',
 	'centrum.CentrumService',
+	'centrum.DispatchesService',
+	'centrum.UnitsService',
 	'citizens.CitizensService',
 	'citizens.LabelsService',
-	'completor.CompletorService',
 	'documents.ApprovalService',
+	'documents.CategoriesService',
+	'documents.CommentsService',
 	'documents.DocumentsService',
 	'documents.StampsService',
 	'documents.StatsService',
+	'documents.TemplatesService',
+	'jobs.ColleaguesService',
 	'jobs.ConductService',
 	'jobs.JobsService',
 	'jobs.StatsService',
@@ -163,43 +168,40 @@ export const GRPCServices = [
 export const GRPCServiceMethods = [
 	'auth.AuthService/ChooseCharacter',
 	'calendar.CalendarService/CreateCalendar',
-	'centrum.CentrumService/CreateDispatch',
-	'centrum.CentrumService/CreateOrUpdateUnit',
-	'centrum.CentrumService/DeleteDispatch',
-	'centrum.CentrumService/DeleteUnit',
 	'centrum.CentrumService/Stream',
 	'centrum.CentrumService/TakeControl',
-	'centrum.CentrumService/TakeDispatch',
-	'centrum.CentrumService/UpdateDispatch',
 	'centrum.CentrumService/UpdateDispatchers',
 	'centrum.CentrumService/UpdateSettings',
+	'centrum.DispatchesService/CreateDispatch',
+	'centrum.DispatchesService/DeleteDispatch',
+	'centrum.DispatchesService/TakeDispatch',
+	'centrum.DispatchesService/UpdateDispatch',
+	'centrum.UnitsService/CreateOrUpdateUnit',
+	'centrum.UnitsService/DeleteUnit',
 	'citizens.CitizensService/GetUser',
 	'citizens.CitizensService/ListCitizens',
 	'citizens.CitizensService/ListUserActivity',
 	'citizens.CitizensService/SetUserProps',
 	'citizens.LabelsService/CreateOrUpdateLabel',
 	'citizens.LabelsService/DeleteLabel',
-	'completor.CompletorService/CompleteCitizenLabels',
+	'citizens.LabelsService/ListLabels',
 	'documents.ApprovalService/DeleteApprovalTasks',
 	'documents.ApprovalService/RevokeApproval',
 	'documents.ApprovalService/UpsertApprovalPolicy',
 	'documents.ApprovalService/UpsertApprovalTasks',
+	'documents.CategoriesService/CreateOrUpdateCategory',
+	'documents.CategoriesService/DeleteCategory',
+	'documents.CategoriesService/ListCategories',
+	'documents.CommentsService/DeleteComment',
 	'documents.DocumentsService/AddDocumentReference',
 	'documents.DocumentsService/AddDocumentRelation',
 	'documents.DocumentsService/ChangeDocumentOwner',
 	'documents.DocumentsService/CreateDocumentReq',
-	'documents.DocumentsService/CreateOrUpdateCategory',
-	'documents.DocumentsService/CreateTemplate',
-	'documents.DocumentsService/DeleteCategory',
-	'documents.DocumentsService/DeleteComment',
 	'documents.DocumentsService/DeleteDocument',
 	'documents.DocumentsService/DeleteDocumentReq',
-	'documents.DocumentsService/DeleteTemplate',
-	'documents.DocumentsService/ListCategories',
 	'documents.DocumentsService/ListDocumentActivity',
 	'documents.DocumentsService/ListDocumentReqs',
 	'documents.DocumentsService/ListDocuments',
-	'documents.DocumentsService/ListTemplates',
 	'documents.DocumentsService/ListUserDocuments',
 	'documents.DocumentsService/SetDocumentReminder',
 	'documents.DocumentsService/ToggleDocument',
@@ -209,16 +211,19 @@ export const GRPCServiceMethods = [
 	'documents.StampsService/ListUsableStamps',
 	'documents.StampsService/UpsertStamp',
 	'documents.StatsService/GetStats',
+	'documents.TemplatesService/CreateTemplate',
+	'documents.TemplatesService/DeleteTemplate',
+	'documents.TemplatesService/ListTemplates',
+	'jobs.ColleaguesService/GetColleague',
+	'jobs.ColleaguesService/ListColleagueActivity',
+	'jobs.ColleaguesService/ListColleagues',
+	'jobs.ColleaguesService/ManageLabels',
+	'jobs.ColleaguesService/SetColleagueProps',
 	'jobs.ConductService/CreateConductEntry',
 	'jobs.ConductService/DeleteConductEntry',
 	'jobs.ConductService/ListConductEntries',
 	'jobs.ConductService/UpdateConductEntry',
 	'jobs.ConductService/UploadFile',
-	'jobs.JobsService/GetColleague',
-	'jobs.JobsService/ListColleagueActivity',
-	'jobs.JobsService/ListColleagues',
-	'jobs.JobsService/ManageLabels',
-	'jobs.JobsService/SetColleagueProps',
 	'jobs.JobsService/SetMOTD',
 	'jobs.StatsService/GetStats',
 	'jobs.TimeclockService/ListInactiveEmployees',
@@ -248,4 +253,5 @@ export const GRPCServiceMethods = [
 	'wiki.WikiService/ListPageActivity',
 	'wiki.WikiService/ListPages',
 	'wiki.WikiService/UpdatePage',
-	'wiki.WikiService/UploadFile',];
+	'wiki.WikiService/UploadFile',
+];

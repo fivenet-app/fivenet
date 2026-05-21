@@ -318,7 +318,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                 <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UTooltip
-                    v-if="can('centrum.CentrumService/DeleteDispatch').value && canAccessDispatch.dispatch"
+                    v-if="can('centrum.DispatchesService/DeleteDispatch').value && canAccessDispatch.dispatch"
                     :text="$t('common.delete')"
                 >
                     <UButton

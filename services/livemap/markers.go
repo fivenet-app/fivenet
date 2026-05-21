@@ -90,9 +90,7 @@ func (s *Server) CreateOrUpdateMarker(
 	} else {
 		fields, err := s.ps.AttrStringList(
 			userInfo,
-			permslivemap.LivemapServicePerm,
-			permslivemap.LivemapServiceCreateOrUpdateMarkerPerm,
-			permslivemap.LivemapServiceCreateOrUpdateMarkerAccessPermField,
+			permslivemap.LivemapService.CreateOrUpdateMarker.Access,
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
@@ -177,9 +175,7 @@ func (s *Server) DeleteMarker(
 
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permslivemap.LivemapServicePerm,
-		permslivemap.LivemapServiceDeleteMarkerPerm,
-		permslivemap.LivemapServiceDeleteMarkerAccessPermField,
+		permslivemap.LivemapService.DeleteMarker.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)

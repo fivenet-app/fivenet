@@ -25,9 +25,7 @@ func (s *Server) CompleteDocumentCategories(
 
 	jobs, err := s.ps.AttrJobList(
 		userInfo,
-		permsdocuments.DocumentsServicePerm,
-		permsdocuments.DocumentsServiceListCategoriesPerm,
-		permsdocuments.DocumentsServiceListCategoriesJobsPermField,
+		permsdocuments.CategoriesService.ListCategories.Jobs,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)

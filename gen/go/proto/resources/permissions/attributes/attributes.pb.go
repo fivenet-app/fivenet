@@ -78,13 +78,14 @@ type RoleAttribute struct {
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	AttrId        int64                  `protobuf:"varint,3,opt,name=attr_id,json=attrId,proto3" json:"attr_id,omitempty"`
 	PermissionId  int64                  `protobuf:"varint,4,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty"`
-	Category      string                 `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`
-	Name          string                 `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
-	Key           string                 `protobuf:"bytes,7,opt,name=key,proto3" json:"key,omitempty"`
-	Type          string                 `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
-	ValidValues   *AttributeValues       `protobuf:"bytes,9,opt,name=valid_values,json=validValues,proto3" json:"valid_values,omitempty"`
-	Value         *AttributeValues       `protobuf:"bytes,10,opt,name=value,proto3" json:"value,omitempty"`
-	MaxValues     *AttributeValues       `protobuf:"bytes,11,opt,name=max_values,json=maxValues,proto3,oneof" json:"max_values,omitempty"`
+	Namespace     string                 `protobuf:"bytes,5,opt,name=namespace,proto3" json:"namespace,omitempty"`
+	Service       string                 `protobuf:"bytes,6,opt,name=service,proto3" json:"service,omitempty"`
+	Name          string                 `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty"`
+	Key           string                 `protobuf:"bytes,8,opt,name=key,proto3" json:"key,omitempty"`
+	Type          string                 `protobuf:"bytes,9,opt,name=type,proto3" json:"type,omitempty"`
+	ValidValues   *AttributeValues       `protobuf:"bytes,10,opt,name=valid_values,json=validValues,proto3" json:"valid_values,omitempty"`
+	Value         *AttributeValues       `protobuf:"bytes,11,opt,name=value,proto3" json:"value,omitempty"`
+	MaxValues     *AttributeValues       `protobuf:"bytes,12,opt,name=max_values,json=maxValues,proto3,oneof" json:"max_values,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -142,9 +143,16 @@ func (x *RoleAttribute) GetPermissionId() int64 {
 	return 0
 }
 
-func (x *RoleAttribute) GetCategory() string {
+func (x *RoleAttribute) GetNamespace() string {
 	if x != nil {
-		return x.Category
+		return x.Namespace
+	}
+	return ""
+}
+
+func (x *RoleAttribute) GetService() string {
+	if x != nil {
+		return x.Service
 	}
 	return ""
 }
@@ -207,8 +215,12 @@ func (x *RoleAttribute) SetPermissionId(v int64) {
 	x.PermissionId = v
 }
 
-func (x *RoleAttribute) SetCategory(v string) {
-	x.Category = v
+func (x *RoleAttribute) SetNamespace(v string) {
+	x.Namespace = v
+}
+
+func (x *RoleAttribute) SetService(v string) {
+	x.Service = v
 }
 
 func (x *RoleAttribute) SetName(v string) {
@@ -286,7 +298,8 @@ type RoleAttribute_builder struct {
 	CreatedAt    *timestamp.Timestamp
 	AttrId       int64
 	PermissionId int64
-	Category     string
+	Namespace    string
+	Service      string
 	Name         string
 	Key          string
 	Type         string
@@ -303,7 +316,8 @@ func (b0 RoleAttribute_builder) Build() *RoleAttribute {
 	x.CreatedAt = b.CreatedAt
 	x.AttrId = b.AttrId
 	x.PermissionId = b.PermissionId
-	x.Category = b.Category
+	x.Namespace = b.Namespace
+	x.Service = b.Service
 	x.Name = b.Name
 	x.Key = b.Key
 	x.Type = b.Type
@@ -743,22 +757,23 @@ var File_resources_permissions_attributes_attributes_proto protoreflect.FileDesc
 
 const file_resources_permissions_attributes_attributes_proto_rawDesc = "" +
 	"\n" +
-	"1resources/permissions/attributes/attributes.proto\x12 resources.permissions.attributes\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\"\x94\x04\n" +
+	"1resources/permissions/attributes/attributes.proto\x12 resources.permissions.attributes\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\"\xb0\x04\n" +
 	"\rRoleAttribute\x12\x17\n" +
 	"\arole_id\x18\x01 \x01(\x03R\x06roleId\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x17\n" +
 	"\aattr_id\x18\x03 \x01(\x03R\x06attrId\x12#\n" +
-	"\rpermission_id\x18\x04 \x01(\x03R\fpermissionId\x12\x1a\n" +
-	"\bcategory\x18\x05 \x01(\tR\bcategory\x12\x12\n" +
-	"\x04name\x18\x06 \x01(\tR\x04name\x12\x10\n" +
-	"\x03key\x18\a \x01(\tR\x03key\x12\x12\n" +
-	"\x04type\x18\b \x01(\tR\x04type\x12T\n" +
-	"\fvalid_values\x18\t \x01(\v21.resources.permissions.attributes.AttributeValuesR\vvalidValues\x12G\n" +
-	"\x05value\x18\n" +
-	" \x01(\v21.resources.permissions.attributes.AttributeValuesR\x05value\x12U\n" +
+	"\rpermission_id\x18\x04 \x01(\x03R\fpermissionId\x12\x1c\n" +
+	"\tnamespace\x18\x05 \x01(\tR\tnamespace\x12\x18\n" +
+	"\aservice\x18\x06 \x01(\tR\aservice\x12\x12\n" +
+	"\x04name\x18\a \x01(\tR\x04name\x12\x10\n" +
+	"\x03key\x18\b \x01(\tR\x03key\x12\x12\n" +
+	"\x04type\x18\t \x01(\tR\x04type\x12T\n" +
+	"\fvalid_values\x18\n" +
+	" \x01(\v21.resources.permissions.attributes.AttributeValuesR\vvalidValues\x12G\n" +
+	"\x05value\x18\v \x01(\v21.resources.permissions.attributes.AttributeValuesR\x05value\x12U\n" +
 	"\n" +
-	"max_values\x18\v \x01(\v21.resources.permissions.attributes.AttributeValuesH\x01R\tmaxValues\x88\x01\x01B\r\n" +
+	"max_values\x18\f \x01(\v21.resources.permissions.attributes.AttributeValuesH\x01R\tmaxValues\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_max_values\"\x9d\x02\n" +
 	"\x0fAttributeValues\x12O\n" +

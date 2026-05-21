@@ -116,8 +116,8 @@ func New(p Params) IAuditer {
 	// Stop workers and wait for completion on shutdown.
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
-		close(a.input)
 		wg.Wait()
+		close(a.input)
 		return nil
 	}))
 

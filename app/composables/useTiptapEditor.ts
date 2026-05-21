@@ -152,7 +152,8 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
             filterTransaction: (transaction) => !isChangeOrigin(transaction),
             updateDocument: true,
         }),
-        // Custom
+
+        // Custom extensions
         EnhancedImage.configure({}),
         PenaltyCalculator.configure({}),
     ];

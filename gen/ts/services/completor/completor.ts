@@ -12,7 +12,6 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Label } from "../../resources/citizens/labels/labels";
 import { LawBook } from "../../resources/laws/laws";
 import { Category } from "../../resources/documents/category/category";
 import { Job } from "../../resources/jobs/jobs";
@@ -112,24 +111,6 @@ export interface ListLawBooksResponse {
      * @generated from protobuf field: repeated resources.laws.LawBook books = 1
      */
     books: LawBook[];
-}
-/**
- * @generated from protobuf message services.completor.CompleteCitizenLabelsRequest
- */
-export interface CompleteCitizenLabelsRequest {
-    /**
-     * @generated from protobuf field: string search = 1
-     */
-    search: string;
-}
-/**
- * @generated from protobuf message services.completor.CompleteCitizenLabelsResponse
- */
-export interface CompleteCitizenLabelsResponse {
-    /**
-     * @generated from protobuf field: repeated resources.citizens.labels.Label labels = 1
-     */
-    labels: Label[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class CompleteCitizensRequest$Type extends MessageType<CompleteCitizensRequest> {
@@ -564,107 +545,12 @@ class ListLawBooksResponse$Type extends MessageType<ListLawBooksResponse> {
  * @generated MessageType for protobuf message services.completor.ListLawBooksResponse
  */
 export const ListLawBooksResponse = new ListLawBooksResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class CompleteCitizenLabelsRequest$Type extends MessageType<CompleteCitizenLabelsRequest> {
-    constructor() {
-        super("services.completor.CompleteCitizenLabelsRequest", [
-            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<CompleteCitizenLabelsRequest>): CompleteCitizenLabelsRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.search = "";
-        if (value !== undefined)
-            reflectionMergePartial<CompleteCitizenLabelsRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CompleteCitizenLabelsRequest): CompleteCitizenLabelsRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string search */ 1:
-                    message.search = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: CompleteCitizenLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string search = 1; */
-        if (message.search !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.search);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.completor.CompleteCitizenLabelsRequest
- */
-export const CompleteCitizenLabelsRequest = new CompleteCitizenLabelsRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class CompleteCitizenLabelsResponse$Type extends MessageType<CompleteCitizenLabelsResponse> {
-    constructor() {
-        super("services.completor.CompleteCitizenLabelsResponse", [
-            { no: 1, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label }
-        ]);
-    }
-    create(value?: PartialMessage<CompleteCitizenLabelsResponse>): CompleteCitizenLabelsResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.labels = [];
-        if (value !== undefined)
-            reflectionMergePartial<CompleteCitizenLabelsResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CompleteCitizenLabelsResponse): CompleteCitizenLabelsResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.citizens.labels.Label labels */ 1:
-                    message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: CompleteCitizenLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.citizens.labels.Label labels = 1; */
-        for (let i = 0; i < message.labels.length; i++)
-            Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.completor.CompleteCitizenLabelsResponse
- */
-export const CompleteCitizenLabelsResponse = new CompleteCitizenLabelsResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.completor.CompletorService
  */
 export const CompletorService = new ServiceType("services.completor.CompletorService", [
     { name: "CompleteCitizens", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: CompleteCitizensRequest, O: CompleteCitizensResponse },
     { name: "CompleteJobs", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: CompleteJobsRequest, O: CompleteJobsResponse },
-    { name: "CompleteDocumentCategories", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListCategories" } }, I: CompleteDocumentCategoriesRequest, O: CompleteDocumentCategoriesResponse },
-    { name: "ListLawBooks", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ListLawBooksRequest, O: ListLawBooksResponse },
-    { name: "CompleteCitizenLabels", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Jobs", type: "ATTRIBUTE_TYPE_JOB_LIST" }] } }, I: CompleteCitizenLabelsRequest, O: CompleteCitizenLabelsResponse }
+    { name: "CompleteDocumentCategories", options: { "codegen.perms.perms": { enabled: true, namespace: "documents", service: "CategoriesService", name: "ListCategories" } }, I: CompleteDocumentCategoriesRequest, O: CompleteDocumentCategoriesResponse },
+    { name: "ListLawBooks", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ListLawBooksRequest, O: ListLawBooksResponse }
 ], { "codegen.perms.perms_svc": { order: 10, icon: "i-mdi-keyboard-tab" } });

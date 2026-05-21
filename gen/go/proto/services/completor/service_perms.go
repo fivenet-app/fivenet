@@ -4,26 +4,9 @@
 package completor
 
 import (
-	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
-	permkeys "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 )
 
 func init() {
-	perms.AddPermsToList([]*perms.Perm{
-
-		// Service: completor.CompletorService
-		{
-			Category: permkeys.CompletorServicePerm,
-			Name:     permkeys.CompletorServiceCompleteCitizenLabelsPerm,
-			Attrs: []perms.Attr{
-				{
-					Key:  permkeys.CompletorServiceCompleteCitizenLabelsJobsPermField,
-					Type: permissionsattributes.JobListAttributeType,
-				},
-			},
-			Order: 1000,
-			Icon:  "i-mdi-keyboard-tab",
-		},
-	})
+	perms.AddPermsToList([]*perms.Perm{})
 }

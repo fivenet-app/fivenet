@@ -14,7 +14,8 @@ import (
 type FivenetRbacPermissions struct {
 	ID        int64      `sql:"primary_key" json:"id"`
 	CreatedAt *time.Time `json:"created_at"`
-	Category  string     `json:"category"`
+	Namespace *string    `json:"namespace"`
+	Service   string     `json:"service"`
 	Name      string     `json:"name"`
 	GuardName string     `json:"guard_name"`
 	Order     *int32     `json:"order"`

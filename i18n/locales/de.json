@@ -704,6 +704,7 @@
         "accepted_at": "Akzeptiert am",
         "choose_color": "Farbe wählen",
         "pick_date": "Datum auswählen",
+        "pick_time": "Uhrzeit auswählen",
         "open_command": "Ausführen",
         "last_char": "Letzte Charakter ID",
         "file_upload_label": "Datei hier ablegen oder zum Hochladen klicken",
@@ -3144,8 +3145,9 @@
     },
     "perms": {
         "auth": {
+            "namespace": "Authentifizierung",
             "AuthService": {
-                "category": "Authentifizierung",
+                "service": "Authentifizierung",
                 "ChooseCharacter": {
                     "key": "Charakter auswählen",
                     "description": "Berechtigung zur Charakterauswahl, um den Zugriff auf FiveNet zu erlauben oder zu verweigern."
@@ -3153,8 +3155,9 @@
             }
         },
         "citizens": {
+            "namespace": "Bürger",
             "CitizensService": {
-                "category": "Bürger",
+                "service": "Bürger",
                 "ListCitizens": {
                     "key": "Bürger auflisten",
                     "description": "Bürger auflisten und suchen.",
@@ -3208,7 +3211,7 @@
                 }
             },
             "LabelsService": {
-                "category": "Bürger-Labels",
+                "service": "Labels",
                 "CreateOrUpdateLabel": {
                     "key": "Erstellen/Aktualisieren von Bürger-Labels",
                     "description": "Erstellen und aktualisieren von Bürger-Labels."
@@ -3216,24 +3219,17 @@
                 "DeleteLabel": {
                     "key": "Löschen von Bürger-Labels",
                     "description": "Löschen von Bürger-Labels."
-                }
-            }
-        },
-        "completor": {
-            "CompletorService": {
-                "category": "Autovervollständigung",
-                "CompleteCitizenLabels": {
-                    "key": "Auflisten von Bürger-Labels",
-                    "description": "Damit wird der Zugriff auf Bürger-Labels von anderen Berufen kontrolliert.",
-                    "attrs_types": {
-                        "Jobs": "Fraktionen"
-                    }
+                },
+                "ListLabels": {
+                    "key": "Auflisten/Anzeigen von Bürger-Labels",
+                    "description": "Auflisten/Anzeigen von Bürger-Labels."
                 }
             }
         },
         "vehicles": {
+            "namespace": "Fahrzeuge",
             "VehiclesService": {
-                "category": "Fahrzeuge",
+                "service": "Fahrzeuge",
                 "ListVehicles": {
                     "key": "Fahrzeuge suchen",
                     "description": "Suchen und Finden von Fahrzeugen von Bürgern.",
@@ -3257,8 +3253,9 @@
             }
         },
         "documents": {
+            "namespace": "Dokumenten-System",
             "DocumentsService": {
-                "category": "Dokumenten-System",
+                "service": "Dokumente",
                 "AddDocumentReference": {
                     "key": "Dokument-Referenzen erstellen",
                     "description": "Hinzufügen von Dokument-Referenzen."
@@ -3275,10 +3272,6 @@
                     "key": "Bürger-Dokumente sehen",
                     "description": "Die mit einem Bürger verknüpften Dokumente anzeigen."
                 },
-                "ListTemplates": {
-                    "key": "Vorlagen auflisten",
-                    "description": "Verfügbare Vorlagen auflisten."
-                },
                 "UpdateDocument": {
                     "key": "Dokument erstellen und aktualisieren",
                     "description": "Neue Dokumente erstellen und vorhandenes Dokumente bearbeiten/ aktualisieren.",
@@ -3291,14 +3284,6 @@
                     "attrs_types": {
                         "Access": "Zugriff auf fraktionseigene Dokumente"
                     }
-                },
-                "CreateTemplate": {
-                    "key": "Vorlage erstellen",
-                    "description": "Erstellen von Dokumentenvorlagen."
-                },
-                "DeleteTemplate": {
-                    "key": "Vorlage löschen",
-                    "description": "Dokumentenvorlagen löschen."
                 },
                 "DeleteDocument": {
                     "key": "Dokumenten Löschung",
@@ -3325,31 +3310,6 @@
                     "attrs_types": {
                         "Access": "Zugriff auf fraktionseigene Dokumente"
                     }
-                },
-                "DeleteComment": {
-                    "key": "Dokumenten Kommentare löschen",
-                    "description": "Eigenen Dokumentenkommentar löschen.",
-                    "attrs": {
-                        "Own": "Eigene",
-                        "Lower_Rank": "Niedrigerer Rang",
-                        "Same_Rank": "Gleicher Rang",
-                        "Any": "Egal"
-                    },
-                    "attrs_types": {
-                        "Access": "Zugriff auf fraktionseigene Dokumente"
-                    }
-                },
-                "CreateOrUpdateCategory": {
-                    "key": "Dokumentenkategorie erstellen",
-                    "description": "Dokumentenkategorien erstellen/ aktualisieren."
-                },
-                "DeleteCategory": {
-                    "key": "Dokumentenkategorie löschen",
-                    "description": "Dokumentenkategorien löschen."
-                },
-                "ListCategories": {
-                    "key": "Auflisten der Dokumentenkategorien",
-                    "description": "Liste der Dokumentkategorien."
                 },
                 "ListDocumentActivity": {
                     "key": "Dokumenten-Aktivität anzeigen",
@@ -3405,8 +3365,54 @@
                     "description": "Erlaubt es eigene Erinnerungen für Dokumente zu setzen."
                 }
             },
+            "TemplatesService": {
+                "service": "Vorlagen",
+                "ListTemplates": {
+                    "key": "Vorlagen auflisten",
+                    "description": "Verfügbare Vorlagen auflisten."
+                },
+                "CreateTemplate": {
+                    "key": "Vorlage erstellen",
+                    "description": "Erstellen von Dokumentenvorlagen."
+                },
+                "DeleteTemplate": {
+                    "key": "Vorlage löschen",
+                    "description": "Dokumentenvorlagen löschen."
+                }
+            },
+            "CategoriesService": {
+                "service": "Kategorien",
+                "CreateOrUpdateCategory": {
+                    "key": "Kategorien erstellen",
+                    "description": "Kategorien erstellen/ aktualisieren."
+                },
+                "DeleteCategory": {
+                    "key": "Kategorien löschen",
+                    "description": "Kategorien löschen."
+                },
+                "ListCategories": {
+                    "key": "Auflisten der Kategorien",
+                    "description": "Liste der Kategorien."
+                }
+            },
+            "CommentsService": {
+                "service": "Kommentare",
+                "DeleteComment": {
+                    "key": "Kommentare löschen",
+                    "description": "Eigenen Kommentar löschen.",
+                    "attrs": {
+                        "Own": "Eigene",
+                        "Lower_Rank": "Niedrigerer Rang",
+                        "Same_Rank": "Gleicher Rang",
+                        "Any": "Egal"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf fraktionseigene Dokumente"
+                    }
+                }
+            },
             "ApprovalService": {
-                "category": "Dokumenten-System: Genehmigung",
+                "service": "Genehmigung",
                 "UpsertApprovalPolicy": {
                     "key": "Genehmigungsrichtlinie erstellen oder aktualisieren",
                     "description": "Genehmigungsrichtlinien für Berufe erstellen oder aktualisieren."
@@ -3425,7 +3431,7 @@
                 }
             },
             "StampsService": {
-                "category": "Dokumenten-System: Stempel",
+                "service": "Stempel",
                 "ListUsableStamps": {
                     "key": "Stempel auflisten",
                     "description": "Auflisten der verfügbaren Stempel."
@@ -3440,7 +3446,7 @@
                 }
             },
             "StatsService": {
-                "category": "Dokumenten-System: Statistiken",
+                "service": "Statistiken",
                 "GetStats": {
                     "key": "Statistiken abrufen",
                     "description": "Verschiedene Statistiken im Zusammenhang mit Dokumenten abrufen.",
@@ -3454,8 +3460,9 @@
             }
         },
         "livemap": {
+            "namespace": "Karte",
             "LivemapService": {
-                "category": "Karte",
+                "service": "Karte",
                 "Stream": {
                     "key": "Aufrufen",
                     "description": "Karte aufrufen können.",
@@ -3493,31 +3500,12 @@
             }
         },
         "centrum": {
+            "namespace": "Leitstelle",
             "CentrumService": {
-                "category": "Leitstelle",
-                "CreateDispatch": {
-                    "key": "Einsätze erstellen",
-                    "description": "Neue Einsätze per Karte/ Leitstelle erstellen."
-                },
+                "service": "Leitstelle",
                 "Stream": {
                     "key": "Zugriff auf Einsätze und Einheiten.",
-                    "description": "Basiszugang für Einsätze und Einheiten."
-                },
-                "UpdateDispatch": {
-                    "key": "Einsätze aktualisieren",
-                    "description": "Aktualisieren von Einsatz-Informationen."
-                },
-                "CreateOrUpdateUnit": {
-                    "key": "Erstellen und Aktualisieren von Einheiten",
-                    "description": "Erlaubt das Erstellen und Aktualisieren von Einheiten via der Leistellen-Einstellungen."
-                },
-                "DeleteUnit": {
-                    "key": "Einheiten löschen",
-                    "description": "Erstellen von Einheiten per Leitstellen-Einstellungen."
-                },
-                "TakeDispatch": {
-                    "key": "Einsätze annehmen",
-                    "description": "Basiszugang um Einsätze annehmen zu können."
+                    "description": "Basiszugang um Einsätze und Einheiten auf der Karte sehen zu können."
                 },
                 "TakeControl": {
                     "key": "Leitstelle beitreten",
@@ -3534,26 +3522,56 @@
                         "Access": "Besondere Funktionen der Leitstelle"
                     }
                 },
-                "DeleteDispatch": {
-                    "key": "Einsätze löschen",
-                    "description": "Erlaubt es Einsätze zu löschen."
-                },
                 "UpdateDispatchers": {
                     "key": "Dispatcher entfernen",
                     "description": "Erlaubt das Entfernen von Dispatchern aus der Leitstelle."
                 }
+            },
+            "DispatchesService": {
+                "service": "Einsätze",
+                "CreateDispatch": {
+                    "key": "Einsätze erstellen",
+                    "description": "Neue Einsätze per Karte/ Leitstelle erstellen."
+                },
+                "UpdateDispatch": {
+                    "key": "Einsätze aktualisieren",
+                    "description": "Aktualisieren von Einsatz-Informationen."
+                },
+                "TakeDispatch": {
+                    "key": "Einsätze annehmen",
+                    "description": "Basiszugang um Einsätze annehmen zu können."
+                },
+                "DeleteDispatch": {
+                    "key": "Einsätze löschen",
+                    "description": "Erlaubt es Einsätze zu löschen."
+                }
+            },
+            "UnitsService": {
+                "service": "Einheiten",
+                "CreateOrUpdateUnit": {
+                    "key": "Erstellen und Aktualisieren von Einheiten",
+                    "description": "Erlaubt das Erstellen und Aktualisieren von Einheiten via der Leistellen-Einstellungen."
+                },
+                "DeleteUnit": {
+                    "key": "Einheiten löschen",
+                    "description": "Erstellen von Einheiten per Leitstellen-Einstellungen."
+                }
             }
         },
         "jobs": {
+            "namespace": "Beruf",
             "JobsService": {
-                "category": "Beruf",
-                "ListColleagues": {
-                    "key": "Kollegen anzeigen",
-                    "description": "Liste der Kollegen (vom eigenen Beruf) sehen können."
-                },
+                "service": "Beruf",
                 "SetMOTD": {
                     "key": "Beruf's MOTD aktualisieren",
                     "description": "Die Beruf's MOTD der Übersicht aktualisieren können."
+                }
+            },
+            "ColleaguesService": {
+                "service": "Kollegen",
+                "ListColleagues": {
+                    "key": "Kollegen anzeigen",
+                    "description": "Liste der Kollegen (vom eigenen Beruf) sehen können."
                 },
                 "GetColleague": {
                     "key": "Detailierte Kollegen-Info anzeigen",
@@ -3636,7 +3654,7 @@
                     "key": "Führungsregister: Einträge bearbeiten",
                     "description": "Aktualisieren von Führungsregister Einträgen."
                 },
-                "category": "Beruf Führungsregister"
+                "namespace": "Führungsregister"
             },
             "TimeclockService": {
                 "ListTimeclock": {
@@ -3649,14 +3667,14 @@
                         "Access": "Zugriff auf Stempeluhr-Einträge"
                     }
                 },
-                "category": "Beruf Stempeluhr",
+                "namespace": "Stempeluhr",
                 "ListInactiveEmployees": {
                     "key": "Zeige inaktive Kollegen an",
                     "description": "Zeige inaktive Kollegen nach Tagen an."
                 }
             },
             "StatsService": {
-                "category": "Beruf Statistiken",
+                "namespace": "Statistik",
                 "GetStats": {
                     "key": "Berufsspezifische Statistiken abrufen",
                     "description": "Verschiedene Statistiken im Zusammenhang mit dem Beruf abrufen."
@@ -3664,8 +3682,9 @@
             }
         },
         "qualifications": {
+            "namespace": "Qualifizierungen",
             "QualificationsService": {
-                "category": "Qualifizierungen",
+                "service": "Qualifizierungen",
                 "ListQualifications": {
                     "key": "Auflisten von Qualifizierungen",
                     "description": "Auflisten verfügbarer Qualifizierungen"
@@ -3713,8 +3732,9 @@
             }
         },
         "calendar": {
+            "namespace": "Kalender",
             "CalendarService": {
-                "category": "Kalender",
+                "service": "Kalendar",
                 "CreateCalendar": {
                     "key": "Erstellen von Kalendern",
                     "description": "Verwalten von Kalendern.",
@@ -3729,8 +3749,9 @@
             }
         },
         "wiki": {
+            "namespace": "Lexikon",
             "WikiService": {
-                "category": "Lexikon",
+                "service": "Lexikon",
                 "ListPages": {
                     "key": "Seiten auflisten und anzeigen",
                     "description": "Sollte immer gegeben werden."
@@ -3760,8 +3781,9 @@
             }
         },
         "settings": {
+            "namespace": "Einstellungen",
             "LawsService": {
-                "category": "Gesetzesbücher",
+                "service": "Gesetzesbücher",
                 "CreateOrUpdateLawBook": {
                     "key": "Gesetzbuch erstellen und aktualisieren",
                     "description": "Erstellen und aktualisieren von Gesetzen und Gesetzbüchern."
@@ -3772,7 +3794,7 @@
                 }
             },
             "SettingsService": {
-                "category": "Einstellungen",
+                "service": "Einstellungen",
                 "GetJobProps": {
                     "key": "Job Eigenschaften ansehen",
                     "description": "Die Eigenschaften deines Jobs anzeigen."
@@ -3804,8 +3826,9 @@
             }
         },
         "mailer": {
+            "namespace": "E-Mail",
             "MailerService": {
-                "category": "E-Mail",
+                "service": "E-Mail",
                 "DeleteEmail": {
                     "key": "E-Mail Adressen löschen",
                     "description": "Benötigt Verwaltungsrechte auf die E-Mail Adresse."
@@ -3826,15 +3849,17 @@
                 }
             }
         },
-        "Superuser": {
-            "category": "Superuser",
-            "CanBeSuperuser": {
-                "key": "Kann Superuser sein",
-                "description": "Diese Berechtigung erlaubt es Ihnen, Superuser zu werden, wodurch Sie Zugriff auf alle FiveNet-Funktionen und -Berechtigungen erhalten."
-            },
+        "internal": {
+            "namespace": "Internes & Superuser",
             "Superuser": {
-                "key": "Superuser",
-                "description": "Diese Berechtigung erlaubt Ihnen den Zugriff auf alle FiveNet-Funktionen und -Berechtigungen, unabhängig von Ihrem Beruf oder Ihrer Rolle."
+                "CanBeSuperuser": {
+                    "key": "Kann Superuser sein",
+                    "description": "Diese Berechtigung erlaubt es Ihnen, Superuser zu werden, wodurch Sie Zugriff auf alle FiveNet-Funktionen und -Berechtigungen erhalten."
+                },
+                "Superuser": {
+                    "key": "Superuser",
+                    "description": "Diese Berechtigung erlaubt Ihnen den Zugriff auf alle FiveNet-Funktionen und -Berechtigungen, unabhängig von Ihrem Beruf oder Ihrer Rolle."
+                }
             }
         }
     },

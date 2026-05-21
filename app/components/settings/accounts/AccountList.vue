@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { Row, TableMeta } from '@tanstack/vue-table';
 import { UBadge, UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
@@ -91,11 +92,11 @@ async function deleteAccount(id: number): Promise<void> {
         const call = settingsAccountsClient.deleteAccount({
             id,
         });
-        await call;
+        const { response } = await call;
 
         const idx = accounts.value?.accounts.findIndex((f) => f.id === id);
-        if (idx !== undefined && idx > -1 && accounts.value !== null) {
-            accounts.value?.accounts.splice(idx, 1);
+        if (idx !== undefined && idx > -1 && accounts.value && accounts.value.accounts[idx]) {
+            accounts.value.accounts[idx]!.deletedAt = response.deletedAt;
         }
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -107,6 +108,19 @@ const confirmModal = overlay.create(ConfirmModal);
 const accountEditModal = overlay.create(AccountEditModal);
 
 const appConfig = useAppConfig();
+
+const meta = computed(
+    () =>
+        ({
+            class: {
+                tr: (row: Row<Account>) => {
+                    return row.original.deletedAt
+                        ? 'bg-warning-100/10 hover:bg-warning-200/10 dark:bg-warning-800/10 dark:hover:bg-warning-700/10'
+                        : '';
+                },
+            },
+        }) as TableMeta<Account>,
+);
 
 const columns = computed(
     () =>
@@ -128,11 +142,11 @@ const columns = computed(
                             }),
                         ]),
                         row.original.id !== accountId.value
-                            ? h(UTooltip, { text: t('common.delete') }, [
+                            ? h(UTooltip, { text: !row.original.deletedAt ? t('common.delete') : t('common.restore') }, [
                                   h(UButton, {
+                                      color: !row.original.deletedAt ? 'error' : 'success',
+                                      icon: !row.original.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
                                       variant: 'link',
-                                      icon: 'i-mdi-delete',
-                                      color: 'error',
                                       onClick: () => {
                                           confirmModal.open({
                                               confirm: async () => deleteAccount(row.original.id),
@@ -348,6 +362,7 @@ const columns = computed(
                     v-model:sorting="query.sorting.columns"
                     class="flex-1"
                     :loading="isRequestPending(status)"
+                    :meta="meta"
                     :columns="columns"
                     :data="accounts?.accounts"
                     :empty="$t('common.not_found', [$t('common.account', 2)])"

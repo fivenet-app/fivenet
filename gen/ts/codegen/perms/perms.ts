@@ -21,23 +21,27 @@ export interface PermsOptions {
      */
     enabled: boolean;
     /**
-     * @generated from protobuf field: optional string service = 2
+     * @generated from protobuf field: optional string namespace = 2
+     */
+    namespace?: string;
+    /**
+     * @generated from protobuf field: optional string service = 3
      */
     service?: string;
     /**
-     * @generated from protobuf field: optional string name = 3
+     * @generated from protobuf field: optional string name = 4
      */
     name?: string;
     /**
-     * @generated from protobuf field: repeated string names = 6
+     * @generated from protobuf field: repeated string names = 5
      */
     names: string[];
     /**
-     * @generated from protobuf field: int32 order = 4
+     * @generated from protobuf field: int32 order = 6
      */
     order: number;
     /**
-     * @generated from protobuf field: repeated codegen.perms.Attr attrs = 5
+     * @generated from protobuf field: repeated codegen.perms.Attr attrs = 7
      */
     attrs: Attr[];
 }
@@ -75,11 +79,15 @@ export interface ServiceOptions {
      */
     icon?: string;
     /**
-     * @generated from protobuf field: optional string name = 4
+     * @generated from protobuf field: optional string namespace = 3
      */
-    name?: string;
+    namespace?: string;
     /**
-     * @generated from protobuf field: repeated codegen.perms.AdditionalServicePerm additional_perms = 3
+     * @generated from protobuf field: optional string service = 4
+     */
+    service?: string;
+    /**
+     * @generated from protobuf field: repeated codegen.perms.AdditionalServicePerm additional_perms = 5
      */
     additionalPerms: AdditionalServicePerm[];
 }
@@ -105,11 +113,12 @@ class PermsOptions$Type extends MessageType<PermsOptions> {
     constructor() {
         super("codegen.perms.PermsOptions", [
             { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "service", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "names", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 5, name: "attrs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Attr }
+            { no: 2, name: "namespace", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "service", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "names", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 7, name: "attrs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Attr }
         ]);
     }
     create(value?: PartialMessage<PermsOptions>): PermsOptions {
@@ -130,19 +139,22 @@ class PermsOptions$Type extends MessageType<PermsOptions> {
                 case /* bool enabled */ 1:
                     message.enabled = reader.bool();
                     break;
-                case /* optional string service */ 2:
+                case /* optional string namespace */ 2:
+                    message.namespace = reader.string();
+                    break;
+                case /* optional string service */ 3:
                     message.service = reader.string();
                     break;
-                case /* optional string name */ 3:
+                case /* optional string name */ 4:
                     message.name = reader.string();
                     break;
-                case /* repeated string names */ 6:
+                case /* repeated string names */ 5:
                     message.names.push(reader.string());
                     break;
-                case /* int32 order */ 4:
+                case /* int32 order */ 6:
                     message.order = reader.int32();
                     break;
-                case /* repeated codegen.perms.Attr attrs */ 5:
+                case /* repeated codegen.perms.Attr attrs */ 7:
                     message.attrs.push(Attr.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -160,21 +172,24 @@ class PermsOptions$Type extends MessageType<PermsOptions> {
         /* bool enabled = 1; */
         if (message.enabled !== false)
             writer.tag(1, WireType.Varint).bool(message.enabled);
-        /* optional string service = 2; */
+        /* optional string namespace = 2; */
+        if (message.namespace !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.namespace);
+        /* optional string service = 3; */
         if (message.service !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.service);
-        /* optional string name = 3; */
+            writer.tag(3, WireType.LengthDelimited).string(message.service);
+        /* optional string name = 4; */
         if (message.name !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.name);
-        /* int32 order = 4; */
-        if (message.order !== 0)
-            writer.tag(4, WireType.Varint).int32(message.order);
-        /* repeated codegen.perms.Attr attrs = 5; */
-        for (let i = 0; i < message.attrs.length; i++)
-            Attr.internalBinaryWrite(message.attrs[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* repeated string names = 6; */
+            writer.tag(4, WireType.LengthDelimited).string(message.name);
+        /* repeated string names = 5; */
         for (let i = 0; i < message.names.length; i++)
-            writer.tag(6, WireType.LengthDelimited).string(message.names[i]);
+            writer.tag(5, WireType.LengthDelimited).string(message.names[i]);
+        /* int32 order = 6; */
+        if (message.order !== 0)
+            writer.tag(6, WireType.Varint).int32(message.order);
+        /* repeated codegen.perms.Attr attrs = 7; */
+        for (let i = 0; i < message.attrs.length; i++)
+            Attr.internalBinaryWrite(message.attrs[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -262,8 +277,9 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
         super("codegen.perms.ServiceOptions", [
             { no: 1, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "additional_perms", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AdditionalServicePerm }
+            { no: 3, name: "namespace", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "service", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "additional_perms", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AdditionalServicePerm }
         ]);
     }
     create(value?: PartialMessage<ServiceOptions>): ServiceOptions {
@@ -285,10 +301,13 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
                 case /* optional string icon */ 2:
                     message.icon = reader.string();
                     break;
-                case /* optional string name */ 4:
-                    message.name = reader.string();
+                case /* optional string namespace */ 3:
+                    message.namespace = reader.string();
                     break;
-                case /* repeated codegen.perms.AdditionalServicePerm additional_perms */ 3:
+                case /* optional string service */ 4:
+                    message.service = reader.string();
+                    break;
+                case /* repeated codegen.perms.AdditionalServicePerm additional_perms */ 5:
                     message.additionalPerms.push(AdditionalServicePerm.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -309,12 +328,15 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
         /* optional string icon = 2; */
         if (message.icon !== undefined)
             writer.tag(2, WireType.LengthDelimited).string(message.icon);
-        /* repeated codegen.perms.AdditionalServicePerm additional_perms = 3; */
+        /* optional string namespace = 3; */
+        if (message.namespace !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.namespace);
+        /* optional string service = 4; */
+        if (message.service !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.service);
+        /* repeated codegen.perms.AdditionalServicePerm additional_perms = 5; */
         for (let i = 0; i < message.additionalPerms.length; i++)
-            AdditionalServicePerm.internalBinaryWrite(message.additionalPerms[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional string name = 4; */
-        if (message.name !== undefined)
-            writer.tag(4, WireType.LengthDelimited).string(message.name);
+            AdditionalServicePerm.internalBinaryWrite(message.additionalPerms[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

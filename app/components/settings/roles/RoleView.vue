@@ -6,6 +6,13 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
+import {
+    buildPermissionGroups,
+    getPermissionNamespaceLabel,
+    getPermissionServiceLabel,
+    type PermissionNamespaceGroup,
+    type PermissionServiceGroup,
+} from '~/components/settings/permissions';
 import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
 import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -29,7 +36,7 @@ const emit = defineEmits<{
     (e: 'deleted'): void;
 }>();
 
-const { t } = useI18n();
+const { t, te } = useI18n();
 
 const { activeChar, can, isSuperuser } = useAuth();
 
@@ -47,7 +54,7 @@ const { data: role, status, refresh, error } = useLazyAsyncData(`settings-roles-
 const changed = ref(false);
 
 const permList = ref<Permission[]>([]);
-const permCategories = ref<Map<string, { category: string; icon: string | undefined; order: number }>>(new Map());
+const permNamespaces = ref<PermissionNamespaceGroup[]>([]);
 const permStates = ref(new Map<number, boolean | undefined>());
 
 const attrList = ref<RoleAttribute[]>([]);
@@ -109,17 +116,7 @@ async function deleteRole(id: number): Promise<void> {
 }
 
 async function genPermissionCategories(): Promise<void> {
-    permCategories.value.clear();
-
-    permList.value.forEach((perm) => {
-        if (permCategories.value.has(perm.category)) return;
-
-        permCategories.value.set(perm.category, {
-            category: perm.category,
-            icon: perm.icon,
-            order: perm.order ?? 999999,
-        });
-    });
+    permNamespaces.value = buildPermissionGroups(permList.value);
 }
 
 async function propogateRolePermissionStates(role: Role): Promise<void> {
@@ -179,9 +176,10 @@ async function updateRolePerms(): Promise<void> {
             attrs.toRemove.push({
                 roleId: role.value!.id,
                 attrId: attr.attrId,
-                category: '',
-                key: '',
+                namespace: '',
+                service: '',
                 name: '',
+                key: '',
                 permissionId: attr.permissionId,
                 type: '',
             });
@@ -190,9 +188,10 @@ async function updateRolePerms(): Promise<void> {
                 roleId: role.value!.id,
                 attrId: attr.attrId,
                 value: attr.value,
-                category: '',
-                key: '',
+                namespace: '',
+                service: '',
                 name: '',
+                key: '',
                 permissionId: attr.permissionId,
                 type: '',
             });
@@ -234,7 +233,7 @@ function clearState(): void {
     changed.value = false;
     permList.value.length = 0;
     attrList.value.length = 0;
-    permCategories.value.clear();
+    permNamespaces.value.length = 0;
     permStates.value.clear();
 }
 
@@ -413,17 +412,29 @@ async function impersonateRole(grade: number): Promise<void> {
 }
 
 const accordionCategories = computed(() =>
-    [...permCategories.value.entries()]
-        .map((category) => {
-            return {
-                label: t(`perms.${category[1].category}.category`),
-                category: category[1].category,
-                icon: category[1].icon,
-                order: category[1].order,
-            };
-        })
-        .sort((a, b) => a.order - b.order),
+    permNamespaces.value.map((namespace) => {
+        const services = namespace.services.map((service) => ({
+            ...service,
+            label: getPermissionServiceLabel(service.namespace, service.service, t, te),
+        }));
+        const singleService = services.length === 1 ? services[0] : undefined;
+        if (singleService) {
+            const serviceNamespaceKey = `perms.${singleService.namespace}.namespace`;
+            if (te(serviceNamespaceKey)) singleService.label = t(serviceNamespaceKey) + ` - ${singleService.label}`;
+        }
+
+        return {
+            ...namespace,
+            services,
+            singleService,
+            label: singleService?.label ?? getPermissionNamespaceLabel(namespace.namespace, t, te),
+        };
+    }),
 );
+
+function getPermissionsForService(service: PermissionServiceGroup): Permission[] {
+    return permList.value.filter((perm) => perm.namespace === service.namespace && perm.service === service.service);
+}
 
 const canUpdate = can('settings.SettingsService/UpdateRolePerms');
 
@@ -570,18 +581,26 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         />
                     </div>
 
-                    <UAccordion :items="accordionCategories" type="multiple">
-                        <template #content="{ item: category }">
-                            <div class="flex flex-col divide-y divide-default">
+                    <UAccordion
+                        :items="accordionCategories"
+                        type="multiple"
+                        :ui="{
+                            trigger:
+                                'data-[state=open]:border-l data-[state=open]:border-primary data-[state=open]:text-primary pl-2',
+                            content: 'data-[state=open]:border-l data-[state=open]:border-primary',
+                        }"
+                    >
+                        <template #content="{ item: namespace }">
+                            <div v-if="namespace.singleService" class="flex flex-col divide-y divide-default">
                                 <div
-                                    v-for="perm in permList.filter((p) => p.category === category.category)"
+                                    v-for="perm in getPermissionsForService(namespace.singleService)"
                                     :key="perm.id"
-                                    class="flex flex-col gap-1 py-1"
+                                    class="flex flex-col gap-1 py-1 pl-4"
                                 >
                                     <UFormField
                                         class="flex flex-1 flex-row items-center gap-2"
-                                        :label="$t(`perms.${perm.category}.${perm.name}.key`)"
-                                        :description="$t(`perms.${perm.category}.${perm.name}.description`)"
+                                        :label="$t(`perms.${perm.namespace}.${perm.service}.${perm.name}.key`)"
+                                        :description="$t(`perms.${perm.namespace}.${perm.service}.${perm.name}.description`)"
                                         :ui="{ wrapper: 'flex-1' }"
                                     >
                                         <UFieldGroup class="inline-flex flex-initial">
@@ -630,6 +649,80 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     </template>
                                 </div>
                             </div>
+
+                            <UAccordion
+                                v-else
+                                class="p-1"
+                                :items="namespace.services"
+                                type="multiple"
+                                :ui="{
+                                    trigger: 'data-[state=open]:text-primary pl-4',
+                                    content: 'pl-4 pb-2',
+                                }"
+                            >
+                                <template #content="{ item: service }">
+                                    <div class="flex flex-col divide-y divide-default">
+                                        <div
+                                            v-for="perm in getPermissionsForService(service)"
+                                            :key="perm.id"
+                                            class="flex flex-col gap-1 py-1"
+                                        >
+                                            <UFormField
+                                                class="flex flex-1 flex-row items-center gap-2"
+                                                :label="$t(`perms.${perm.namespace}.${perm.service}.${perm.name}.key`)"
+                                                :description="
+                                                    $t(`perms.${perm.namespace}.${perm.service}.${perm.name}.description`)
+                                                "
+                                                :ui="{ wrapper: 'flex-1' }"
+                                            >
+                                                <UFieldGroup class="inline-flex flex-initial">
+                                                    <UButton
+                                                        color="success"
+                                                        :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
+                                                        icon="i-mdi-check"
+                                                        :disabled="!canUpdate"
+                                                        @click="updatePermissionState(perm.id, true)"
+                                                    />
+
+                                                    <UButton
+                                                        color="neutral"
+                                                        :variant="
+                                                            !permStates.has(perm.id) || permStates.get(perm.id) === undefined
+                                                                ? 'solid'
+                                                                : 'soft'
+                                                        "
+                                                        icon="i-mdi-minus"
+                                                        :disabled="!canUpdate"
+                                                        @click="updatePermissionState(perm.id, undefined)"
+                                                    />
+
+                                                    <UButton
+                                                        color="error"
+                                                        :variant="
+                                                            permStates.get(perm.id) !== undefined && !permStates.get(perm.id)
+                                                                ? 'solid'
+                                                                : 'soft'
+                                                        "
+                                                        icon="i-mdi-close"
+                                                        :disabled="!canUpdate"
+                                                        @click="updatePermissionState(perm.id, false)"
+                                                    />
+                                                </UFieldGroup>
+                                            </UFormField>
+
+                                            <template v-for="(attr, idx) in attrList" :key="attr.attrId">
+                                                <RoleViewAttr
+                                                    v-if="attr.permissionId === perm.id && !isEmptyAttributes(attr.maxValues)"
+                                                    v-model="attrList[idx]!"
+                                                    :permission="perm"
+                                                    :disabled="!canUpdate || permStates.get(perm.id) !== true"
+                                                    @changed="changed = true"
+                                                />
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </UAccordion>
                         </template>
                     </UAccordion>
 

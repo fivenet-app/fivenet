@@ -2,9 +2,11 @@
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import LawBookEntry from '~/components/settings/laws/LawBookEntry.vue';
-import { useCompletorStore } from '~/stores/completor';
+import { getSettingsLawsClient } from '~~/gen/ts/clients';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
+import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 useHead({
     title: 'pages.settings.laws.title',
@@ -16,16 +18,27 @@ definePageMeta({
     permission: 'settings.LawsService/CreateOrUpdateLawBook',
 });
 
-const completorStore = useCompletorStore();
+const { isSuperuser } = useAuth();
 
-const { data: lawBooks, status, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
+const settingsLawsClient = await getSettingsLawsClient();
 
-function deletedLawBook(id: number): void {
+const {
+    data: lawBooks,
+    status,
+    refresh,
+    error,
+} = useLazyAsyncData(`lawbooks`, () => settingsLawsClient.listLawBooks({}).then((resp) => resp.response.books));
+
+function deletedLawBook(id: number, deletedAt?: Timestamp): void {
     if (!lawBooks.value) return;
 
     const idx = lawBooks.value.findIndex((b) => b.id === id);
-    if (idx > -1) {
+    if (idx === -1) return;
+
+    if (!isSuperuser.value) {
         lawBooks.value.splice(idx, 1);
+    } else {
+        lawBooks.value[idx]!.deletedAt = deletedAt;
     }
 }
 
@@ -62,6 +75,8 @@ function updateLaw(event: { id: number; law: Law }): void {
                 <template #right>
                     <PartialsBackButton fallback-to="/settings" />
 
+                    <RefreshButton :loading="isRequestPending(status)" @click="() => refresh()" />
+
                     <UButton
                         color="neutral"
                         variant="outline"
@@ -92,7 +107,7 @@ function updateLaw(event: { id: number; law: Law }): void {
                             v-model:laws="book.laws"
                             :start-in-edit="book.id < 0"
                             @update:law="updateLaw($event)"
-                            @deleted="deletedLawBook($event)"
+                            @deleted="deletedLawBook($event.id, $event.deletedAt)"
                         />
                     </li>
                 </ul>

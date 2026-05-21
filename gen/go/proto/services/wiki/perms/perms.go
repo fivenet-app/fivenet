@@ -9,10 +9,12 @@ import (
 )
 
 const (
-	CollabServicePerm perms.Category = "wiki.CollabService"
-	WikiServicePerm   perms.Category = "wiki.WikiService"
+	Namespace perms.Namespace = "wiki"
 
-	// Service: WikiService
+	CollabServicePerm perms.Service = "CollabService"
+	WikiServicePerm   perms.Service = "WikiService"
+
+	// Service: wiki.WikiService
 	WikiServiceCreatePagePerm            perms.Name = "CreatePage"
 	WikiServiceDeletePagePerm            perms.Name = "DeletePage"
 	WikiServiceListPageActivityPerm      perms.Name = "ListPageActivity"
@@ -20,3 +22,60 @@ const (
 	WikiServiceUpdatePagePerm            perms.Name = "UpdatePage"
 	WikiServiceUpdatePageFieldsPermField perms.Key  = "Fields"
 )
+
+type WikiServiceUpdatePageFieldsPermValue string
+
+const (
+	WikiServiceUpdatePageFieldsPermValuePublic WikiServiceUpdatePageFieldsPermValue = "Public"
+)
+
+type WikiServicePerms struct {
+	CreatePage       WikiServiceCreatePagePermRef
+	DeletePage       WikiServiceDeletePagePermRef
+	ListPageActivity WikiServiceListPageActivityPermRef
+	ListPages        WikiServiceListPagesPermRef
+	UpdatePage       WikiServiceUpdatePagePermRef
+}
+type WikiServiceCreatePagePermRef struct {
+	Perm perms.PermissionRef
+}
+type WikiServiceDeletePagePermRef struct {
+	Perm perms.PermissionRef
+}
+type WikiServiceListPageActivityPermRef struct {
+	Perm perms.PermissionRef
+}
+type WikiServiceListPagesPermRef struct {
+	Perm perms.PermissionRef
+}
+type WikiServiceUpdatePagePermRef struct {
+	Perm        perms.PermissionRef
+	Fields      perms.AttrRef[perms.StringListAttr]
+	FieldsTyped perms.StringListAttrRef[WikiServiceUpdatePageFieldsPermValue]
+}
+
+var WikiService = WikiServicePerms{
+	CreatePage: WikiServiceCreatePagePermRef{
+		Perm: perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceCreatePagePerm),
+	},
+	DeletePage: WikiServiceDeletePagePermRef{
+		Perm: perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceDeletePagePerm),
+	},
+	ListPageActivity: WikiServiceListPageActivityPermRef{
+		Perm: perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceListPageActivityPerm),
+	},
+	ListPages: WikiServiceListPagesPermRef{
+		Perm: perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceListPagesPerm),
+	},
+	UpdatePage: WikiServiceUpdatePagePermRef{
+		Perm: perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceUpdatePagePerm),
+		Fields: perms.NewStringListAttrRef(
+			perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceUpdatePagePerm),
+			WikiServiceUpdatePageFieldsPermField,
+		),
+		FieldsTyped: perms.NewTypedStringListAttrRef[WikiServiceUpdatePageFieldsPermValue](
+			perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceUpdatePagePerm),
+			WikiServiceUpdatePageFieldsPermField,
+		),
+	},
+}

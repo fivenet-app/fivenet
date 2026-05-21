@@ -16,7 +16,7 @@ const startpages: { label: string; path: RoutePathSchema; permission?: Perms }[]
     { label: t('pages.citizens.title'), path: '/citizens', permission: 'citizens.CitizensService/ListCitizens' },
     { label: t('pages.vehicles.title'), path: '/vehicles', permission: 'vehicles.VehiclesService/ListVehicles' },
     { label: t('pages.documents.title'), path: '/documents/', permission: 'documents.DocumentsService/ListDocuments' },
-    { label: t('pages.jobs.overview.title'), path: '/jobs/overview', permission: 'jobs.JobsService/ListColleagues' },
+    { label: t('pages.jobs.overview.title'), path: '/jobs/overview', permission: 'jobs.ColleaguesService/ListColleagues' },
     { label: t('common.calendar'), path: '/calendar' },
     {
         label: t('common.qualification', 2),

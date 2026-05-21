@@ -588,4 +588,4 @@ export const TemplatesService = new ServiceType("services.documents.TemplatesSer
     { name: "CreateTemplate", options: { "codegen.perms.perms": { enabled: true } }, I: CreateTemplateRequest, O: CreateTemplateResponse },
     { name: "UpdateTemplate", options: { "codegen.perms.perms": { enabled: true, name: "CreateTemplate" } }, I: UpdateTemplateRequest, O: UpdateTemplateResponse },
     { name: "DeleteTemplate", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteTemplateRequest, O: DeleteTemplateResponse }
-], { "codegen.perms.perms_svc": { name: "documents.DocumentsService" } });
+], { "codegen.perms.perms_svc": { order: 55, icon: "i-mdi-file-code" } });

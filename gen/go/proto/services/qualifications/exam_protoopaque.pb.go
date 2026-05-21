@@ -824,13 +824,13 @@ const file_services_qualifications_exam_proto_rawDesc = "" +
 	"\x04exam\x18\x01 \x01(\v2,.resources.qualifications.exam.ExamQuestionsR\x04exam\x12D\n" +
 	"\texam_user\x18\x02 \x01(\v2'.resources.qualifications.exam.ExamUserR\bexamUser\x12J\n" +
 	"\tresponses\x18\x03 \x01(\v2,.resources.qualifications.exam.ExamResponsesR\tresponses\x12D\n" +
-	"\agrading\x18\x04 \x01(\v2*.resources.qualifications.exam.ExamGradingR\agrading2\xc8\x04\n" +
-	"\vExamService\x12\x84\x01\n" +
-	"\vGetExamInfo\x12+.services.qualifications.GetExamInfoRequest\x1a,.services.qualifications.GetExamInfoResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12{\n" +
-	"\bTakeExam\x12(.services.qualifications.TakeExamRequest\x1a).services.qualifications.TakeExamResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\x81\x01\n" +
+	"\agrading\x18\x04 \x01(\v2*.resources.qualifications.exam.ExamGradingR\agrading2\xb9\x05\n" +
+	"\vExamService\x12\xab\x01\n" +
+	"\vGetExamInfo\x12+.services.qualifications.GetExamInfoRequest\x1a,.services.qualifications.GetExamInfoResponse\"A\xd2\xf3\x18=\b\x01\x12\x0equalifications\x1a\x15QualificationsService\"\x12ListQualifications\x12\xa2\x01\n" +
+	"\bTakeExam\x12(.services.qualifications.TakeExamRequest\x1a).services.qualifications.TakeExamResponse\"A\xd2\xf3\x18=\b\x01\x12\x0equalifications\x1a\x15QualificationsService\"\x12ListQualifications\x12\xa8\x01\n" +
 	"\n" +
-	"SubmitExam\x12*.services.qualifications.SubmitExamRequest\x1a+.services.qualifications.SubmitExamResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\x84\x01\n" +
-	"\vGetUserExam\x12+.services.qualifications.GetUserExamRequest\x1a,.services.qualifications.GetUserExamResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x1a*\xea\xf3\x18&\"$qualifications.QualificationsServiceBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
+	"SubmitExam\x12*.services.qualifications.SubmitExamRequest\x1a+.services.qualifications.SubmitExamResponse\"A\xd2\xf3\x18=\b\x01\x12\x0equalifications\x1a\x15QualificationsService\"\x12ListQualifications\x12\xab\x01\n" +
+	"\vGetUserExam\x12+.services.qualifications.GetUserExamRequest\x1a,.services.qualifications.GetUserExamResponse\"A\xd2\xf3\x18=\b\x01\x12\x0equalifications\x1a\x15QualificationsService\"\x12ListQualificationsBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
 
 var file_services_qualifications_exam_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_services_qualifications_exam_proto_goTypes = []any{

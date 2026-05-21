@@ -540,7 +540,7 @@ var File_resources_users_props_props_proto protoreflect.FileDescriptor
 
 const file_resources_users_props_props_proto_rawDesc = "" +
 	"\n" +
-	"!resources/users/props/props.proto\x12\x15resources.users.props\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19resources/file/file.proto\x1a\x19resources/jobs/jobs.proto\x1a#resources/timestamp/timestamp.proto\x1a&resources/citizens/labels/labels.proto\x1a\x13tagger/tagger.proto\"\xd3\t\n" +
+	"!resources/users/props/props.proto\x12\x15resources.users.props\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/citizens/labels/labels.proto\x1a\x19resources/file/file.proto\x1a\x19resources/jobs/jobs.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xd3\t\n" +
 	"\tUserProps\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12B\n" +
 	"\n" +

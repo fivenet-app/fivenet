@@ -4,7 +4,7 @@ import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import type { CardElements } from '~/utils/types';
+import type { CardElement } from '~/utils/types';
 import { getDocumentsCategoriesClient } from '~~/gen/ts/clients';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
 
@@ -28,7 +28,7 @@ async function listCategories(): Promise<Category[]> {
     }
 }
 
-const items = computed<CardElements>(
+const items = computed<CardElement[]>(
     () =>
         categories.value?.map((v) => ({
             title: v?.name,
@@ -61,7 +61,10 @@ function categorySelected(idx: number): void {
                 <template #right>
                     <PartialsBackButton fallback-to="/documents" />
 
-                    <UTooltip v-if="can('documents.DocumentsService/CreateOrUpdateCategory').value" :text="$t('common.create')">
+                    <UTooltip
+                        v-if="can('documents.CategoriesService/CreateOrUpdateCategory').value"
+                        :text="$t('common.create')"
+                    >
                         <UButton
                             color="neutral"
                             variant="outline"

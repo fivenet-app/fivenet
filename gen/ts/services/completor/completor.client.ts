@@ -5,8 +5,6 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CompletorService } from "./completor";
-import type { CompleteCitizenLabelsResponse } from "./completor";
-import type { CompleteCitizenLabelsRequest } from "./completor";
 import type { ListLawBooksResponse } from "./completor";
 import type { ListLawBooksRequest } from "./completor";
 import type { CompleteDocumentCategoriesResponse } from "./completor";
@@ -38,10 +36,6 @@ export interface ICompletorServiceClient {
      * @generated from protobuf rpc: ListLawBooks
      */
     listLawBooks(input: ListLawBooksRequest, options?: RpcOptions): UnaryCall<ListLawBooksRequest, ListLawBooksResponse>;
-    /**
-     * @generated from protobuf rpc: CompleteCitizenLabels
-     */
-    completeCitizenLabels(input: CompleteCitizenLabelsRequest, options?: RpcOptions): UnaryCall<CompleteCitizenLabelsRequest, CompleteCitizenLabelsResponse>;
 }
 /**
  * @generated from protobuf service services.completor.CompletorService
@@ -79,12 +73,5 @@ export class CompletorServiceClient implements ICompletorServiceClient, ServiceI
     listLawBooks(input: ListLawBooksRequest, options?: RpcOptions): UnaryCall<ListLawBooksRequest, ListLawBooksResponse> {
         const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListLawBooksRequest, ListLawBooksResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: CompleteCitizenLabels
-     */
-    completeCitizenLabels(input: CompleteCitizenLabelsRequest, options?: RpcOptions): UnaryCall<CompleteCitizenLabelsRequest, CompleteCitizenLabelsResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CompleteCitizenLabelsRequest, CompleteCitizenLabelsResponse>("unary", this._transport, method, opt, input);
     }
 }

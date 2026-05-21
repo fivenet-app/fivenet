@@ -321,11 +321,11 @@ const file_services_filestore_filestore_proto_rawDesc = "" +
 	"\x04path\x18\x01 \x01(\tR\x04path\"\x1a\n" +
 	"\x18DeleteFileByPathResponse2\xd0\x03\n" +
 	"\x10FilestoreService\x12d\n" +
-	"\x06Upload\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser(\x01\x12k\n" +
-	"\tListFiles\x12$.services.filestore.ListFilesRequest\x1a%.services.filestore.ListFilesResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12f\n" +
+	"\x06Upload\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser(\x01\x12k\n" +
+	"\tListFiles\x12$.services.filestore.ListFilesRequest\x1a%.services.filestore.ListFilesResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12f\n" +
 	"\n" +
-	"DeleteFile\x12!.resources.file.DeleteFileRequest\x1a\".resources.file.DeleteFileResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x80\x01\n" +
-	"\x10DeleteFileByPath\x12+.services.filestore.DeleteFileByPathRequest\x1a,.services.filestore.DeleteFileByPathResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/filestore;filestoreb\x06proto3"
+	"DeleteFile\x12!.resources.file.DeleteFileRequest\x1a\".resources.file.DeleteFileResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12\x80\x01\n" +
+	"\x10DeleteFileByPath\x12+.services.filestore.DeleteFileByPathRequest\x1a,.services.filestore.DeleteFileByPathResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuserBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/filestore;filestoreb\x06proto3"
 
 var file_services_filestore_filestore_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_services_filestore_filestore_proto_goTypes = []any{

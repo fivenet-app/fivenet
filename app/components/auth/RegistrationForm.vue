@@ -20,12 +20,8 @@ const accountError = ref<RpcError | undefined>();
 
 const schema = z.object({
     registrationToken: z.coerce.string().length(6).trim(),
-    username: z
-        .string()
-        .min(3)
-        .max(24)
-        .regex(/^[0-9A-Za-zÄÖÜß_-]{3,24}$/),
-    password: z.coerce.string().min(6).max(70),
+    username: usernameSchema,
+    password: passwordSchema,
 });
 
 type Schema = z.output<typeof schema>;

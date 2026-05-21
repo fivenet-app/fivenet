@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { DefineComponent } from 'vue';
 import { availableIcons, fallbackIcon as defaultIcon, type IconEntry } from './icons';
+import { titleCase } from 'scule';
 
 withDefaults(
     defineProps<{
@@ -45,7 +46,7 @@ const icon = defineModel<string | undefined>('modelValue');
                         :style="{ color: hexColor ?? `var(--color-${color ?? 'primary'}-400)` }"
                     />
 
-                    <span class="truncate">{{ camelCaseToTitleCase(icon ?? $t('common.unknown')) }}</span>
+                    <span class="truncate">{{ titleCase(icon ?? $t('common.unknown')) }}</span>
                 </div>
             </template>
 
@@ -57,7 +58,7 @@ const icon = defineModel<string | undefined>('modelValue');
                         :style="{ color: hexColor ?? `var(--color-${color ?? 'primary'}-400)` }"
                     />
 
-                    <span class="truncate">{{ camelCaseToTitleCase(item.name) }}</span>
+                    <span class="truncate">{{ titleCase(item.name) }}</span>
                 </div>
             </template>
         </USelectMenu>

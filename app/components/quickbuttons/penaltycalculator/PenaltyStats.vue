@@ -12,7 +12,7 @@ const { quickButtons } = useAppConfig();
 
 const leeway = computed(() => props.reduction / 100);
 
-const { format: formatNumber } = useIntlNumberFormat();
+const { format: formatNumber } = useDisplayNumberFormat();
 
 const formatDetention = useDetentionTimeFormatter();
 

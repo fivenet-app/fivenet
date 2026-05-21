@@ -377,7 +377,6 @@ type UserActivityData struct {
 	//	*UserActivityData_TrafficInfractionPointsChange
 	//	*UserActivityData_MugshotChange
 	//	*UserActivityData_LabelsChange
-	//	*UserActivityData_LabelChange
 	//	*UserActivityData_JobChange
 	//	*UserActivityData_DocumentRelation
 	//	*UserActivityData_JailChange
@@ -473,15 +472,6 @@ func (x *UserActivityData) GetLabelsChange() *LabelsChange {
 	return nil
 }
 
-func (x *UserActivityData) GetLabelChange() *LabelChange {
-	if x != nil {
-		if x, ok := x.Data.(*UserActivityData_LabelChange); ok {
-			return x.LabelChange
-		}
-	}
-	return nil
-}
-
 func (x *UserActivityData) GetJobChange() *JobChange {
 	if x != nil {
 		if x, ok := x.Data.(*UserActivityData_JobChange); ok {
@@ -564,14 +554,6 @@ func (x *UserActivityData) SetLabelsChange(v *LabelsChange) {
 		return
 	}
 	x.Data = &UserActivityData_LabelsChange{v}
-}
-
-func (x *UserActivityData) SetLabelChange(v *LabelChange) {
-	if v == nil {
-		x.Data = nil
-		return
-	}
-	x.Data = &UserActivityData_LabelChange{v}
 }
 
 func (x *UserActivityData) SetJobChange(v *JobChange) {
@@ -661,14 +643,6 @@ func (x *UserActivityData) HasLabelsChange() bool {
 	return ok
 }
 
-func (x *UserActivityData) HasLabelChange() bool {
-	if x == nil {
-		return false
-	}
-	_, ok := x.Data.(*UserActivityData_LabelChange)
-	return ok
-}
-
 func (x *UserActivityData) HasJobChange() bool {
 	if x == nil {
 		return false
@@ -741,12 +715,6 @@ func (x *UserActivityData) ClearLabelsChange() {
 	}
 }
 
-func (x *UserActivityData) ClearLabelChange() {
-	if _, ok := x.Data.(*UserActivityData_LabelChange); ok {
-		x.Data = nil
-	}
-}
-
 func (x *UserActivityData) ClearJobChange() {
 	if _, ok := x.Data.(*UserActivityData_JobChange); ok {
 		x.Data = nil
@@ -778,7 +746,6 @@ const UserActivityData_WantedChange_case case_UserActivityData_Data = 3
 const UserActivityData_TrafficInfractionPointsChange_case case_UserActivityData_Data = 4
 const UserActivityData_MugshotChange_case case_UserActivityData_Data = 5
 const UserActivityData_LabelsChange_case case_UserActivityData_Data = 6
-const UserActivityData_LabelChange_case case_UserActivityData_Data = 11
 const UserActivityData_JobChange_case case_UserActivityData_Data = 7
 const UserActivityData_DocumentRelation_case case_UserActivityData_Data = 8
 const UserActivityData_JailChange_case case_UserActivityData_Data = 9
@@ -801,8 +768,6 @@ func (x *UserActivityData) WhichData() case_UserActivityData_Data {
 		return UserActivityData_MugshotChange_case
 	case *UserActivityData_LabelsChange:
 		return UserActivityData_LabelsChange_case
-	case *UserActivityData_LabelChange:
-		return UserActivityData_LabelChange_case
 	case *UserActivityData_JobChange:
 		return UserActivityData_JobChange_case
 	case *UserActivityData_DocumentRelation:
@@ -827,7 +792,6 @@ type UserActivityData_builder struct {
 	TrafficInfractionPointsChange *TrafficInfractionPointsChange
 	MugshotChange                 *MugshotChange
 	LabelsChange                  *LabelsChange
-	LabelChange                   *LabelChange
 	JobChange                     *JobChange
 	// Docstore related
 	DocumentRelation *CitizenDocumentRelation
@@ -858,9 +822,6 @@ func (b0 UserActivityData_builder) Build() *UserActivityData {
 	}
 	if b.LabelsChange != nil {
 		x.Data = &UserActivityData_LabelsChange{b.LabelsChange}
-	}
-	if b.LabelChange != nil {
-		x.Data = &UserActivityData_LabelChange{b.LabelChange}
 	}
 	if b.JobChange != nil {
 		x.Data = &UserActivityData_JobChange{b.JobChange}
@@ -916,10 +877,6 @@ type UserActivityData_LabelsChange struct {
 	LabelsChange *LabelsChange `protobuf:"bytes,6,opt,name=labels_change,json=labelsChange,proto3,oneof"`
 }
 
-type UserActivityData_LabelChange struct {
-	LabelChange *LabelChange `protobuf:"bytes,11,opt,name=label_change,json=labelChange,proto3,oneof"`
-}
-
 type UserActivityData_JobChange struct {
 	JobChange *JobChange `protobuf:"bytes,7,opt,name=job_change,json=jobChange,proto3,oneof"`
 }
@@ -949,8 +906,6 @@ func (*UserActivityData_TrafficInfractionPointsChange) isUserActivityData_Data()
 func (*UserActivityData_MugshotChange) isUserActivityData_Data() {}
 
 func (*UserActivityData_LabelsChange) isUserActivityData_Data() {}
-
-func (*UserActivityData_LabelChange) isUserActivityData_Data() {}
 
 func (*UserActivityData_JobChange) isUserActivityData_Data() {}
 
@@ -1314,12 +1269,15 @@ func (b0 MugshotChange_builder) Build() *MugshotChange {
 	return m0
 }
 
-// @deprecated
 type LabelsChange struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Added         []*labels.Label        `protobuf:"bytes,1,rep,name=added,proto3" json:"added,omitempty"`
-	Removed       []*labels.Label        `protobuf:"bytes,2,rep,name=removed,proto3" json:"removed,omitempty"`
-	Expired       bool                   `protobuf:"varint,4,opt,name=expired,proto3" json:"expired,omitempty"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// Deprecated: Marked as deprecated in resources/users/activity/activity.proto.
+	Added []*labels.Label `protobuf:"bytes,1,rep,name=added,proto3" json:"added,omitempty"`
+	// Deprecated: Marked as deprecated in resources/users/activity/activity.proto.
+	Removed       []*labels.Label `protobuf:"bytes,2,rep,name=removed,proto3" json:"removed,omitempty"`
+	AddedIds      []*LabelAdded   `protobuf:"bytes,3,rep,name=added_ids,json=addedIds,proto3" json:"added_ids,omitempty"`
+	RemovedIds    []int64         `protobuf:"varint,4,rep,packed,name=removed_ids,json=removedIds,proto3" json:"removed_ids,omitempty"`
+	Expired       bool            `protobuf:"varint,5,opt,name=expired,proto3" json:"expired,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1349,6 +1307,7 @@ func (x *LabelsChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+// Deprecated: Marked as deprecated in resources/users/activity/activity.proto.
 func (x *LabelsChange) GetAdded() []*labels.Label {
 	if x != nil {
 		return x.Added
@@ -1356,9 +1315,24 @@ func (x *LabelsChange) GetAdded() []*labels.Label {
 	return nil
 }
 
+// Deprecated: Marked as deprecated in resources/users/activity/activity.proto.
 func (x *LabelsChange) GetRemoved() []*labels.Label {
 	if x != nil {
 		return x.Removed
+	}
+	return nil
+}
+
+func (x *LabelsChange) GetAddedIds() []*LabelAdded {
+	if x != nil {
+		return x.AddedIds
+	}
+	return nil
+}
+
+func (x *LabelsChange) GetRemovedIds() []int64 {
+	if x != nil {
+		return x.RemovedIds
 	}
 	return nil
 }
@@ -1370,12 +1344,22 @@ func (x *LabelsChange) GetExpired() bool {
 	return false
 }
 
+// Deprecated: Marked as deprecated in resources/users/activity/activity.proto.
 func (x *LabelsChange) SetAdded(v []*labels.Label) {
 	x.Added = v
 }
 
+// Deprecated: Marked as deprecated in resources/users/activity/activity.proto.
 func (x *LabelsChange) SetRemoved(v []*labels.Label) {
 	x.Removed = v
+}
+
+func (x *LabelsChange) SetAddedIds(v []*LabelAdded) {
+	x.AddedIds = v
+}
+
+func (x *LabelsChange) SetRemovedIds(v []int64) {
+	x.RemovedIds = v
 }
 
 func (x *LabelsChange) SetExpired(v bool) {
@@ -1385,9 +1369,13 @@ func (x *LabelsChange) SetExpired(v bool) {
 type LabelsChange_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Added   []*labels.Label
-	Removed []*labels.Label
-	Expired bool
+	// Deprecated: Marked as deprecated in resources/users/activity/activity.proto.
+	Added []*labels.Label
+	// Deprecated: Marked as deprecated in resources/users/activity/activity.proto.
+	Removed    []*labels.Label
+	AddedIds   []*LabelAdded
+	RemovedIds []int64
+	Expired    bool
 }
 
 func (b0 LabelsChange_builder) Build() *LabelsChange {
@@ -1396,34 +1384,34 @@ func (b0 LabelsChange_builder) Build() *LabelsChange {
 	_, _ = b, x
 	x.Added = b.Added
 	x.Removed = b.Removed
+	x.AddedIds = b.AddedIds
+	x.RemovedIds = b.RemovedIds
 	x.Expired = b.Expired
 	return m0
 }
 
-type LabelChange struct {
+type LabelAdded struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Label         *labels.Label          `protobuf:"bytes,1,opt,name=label,proto3" json:"label,omitempty"`
-	Added         bool                   `protobuf:"varint,2,opt,name=added,proto3" json:"added,omitempty"`
-	ExpiresAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
-	Expired       bool                   `protobuf:"varint,4,opt,name=expired,proto3" json:"expired,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ExpiresAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *LabelChange) Reset() {
-	*x = LabelChange{}
+func (x *LabelAdded) Reset() {
+	*x = LabelAdded{}
 	mi := &file_resources_users_activity_activity_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LabelChange) String() string {
+func (x *LabelAdded) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LabelChange) ProtoMessage() {}
+func (*LabelAdded) ProtoMessage() {}
 
-func (x *LabelChange) ProtoReflect() protoreflect.Message {
+func (x *LabelAdded) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_activity_activity_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1435,89 +1423,52 @@ func (x *LabelChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *LabelChange) GetLabel() *labels.Label {
+func (x *LabelAdded) GetId() int64 {
 	if x != nil {
-		return x.Label
+		return x.Id
 	}
-	return nil
+	return 0
 }
 
-func (x *LabelChange) GetAdded() bool {
-	if x != nil {
-		return x.Added
-	}
-	return false
-}
-
-func (x *LabelChange) GetExpiresAt() *timestamp.Timestamp {
+func (x *LabelAdded) GetExpiresAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.ExpiresAt
 	}
 	return nil
 }
 
-func (x *LabelChange) GetExpired() bool {
-	if x != nil {
-		return x.Expired
-	}
-	return false
+func (x *LabelAdded) SetId(v int64) {
+	x.Id = v
 }
 
-func (x *LabelChange) SetLabel(v *labels.Label) {
-	x.Label = v
-}
-
-func (x *LabelChange) SetAdded(v bool) {
-	x.Added = v
-}
-
-func (x *LabelChange) SetExpiresAt(v *timestamp.Timestamp) {
+func (x *LabelAdded) SetExpiresAt(v *timestamp.Timestamp) {
 	x.ExpiresAt = v
 }
 
-func (x *LabelChange) SetExpired(v bool) {
-	x.Expired = v
-}
-
-func (x *LabelChange) HasLabel() bool {
-	if x == nil {
-		return false
-	}
-	return x.Label != nil
-}
-
-func (x *LabelChange) HasExpiresAt() bool {
+func (x *LabelAdded) HasExpiresAt() bool {
 	if x == nil {
 		return false
 	}
 	return x.ExpiresAt != nil
 }
 
-func (x *LabelChange) ClearLabel() {
-	x.Label = nil
-}
-
-func (x *LabelChange) ClearExpiresAt() {
+func (x *LabelAdded) ClearExpiresAt() {
 	x.ExpiresAt = nil
 }
 
-type LabelChange_builder struct {
+type LabelAdded_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Label     *labels.Label
-	Added     bool
+	Id        int64
 	ExpiresAt *timestamp.Timestamp
-	Expired   bool
 }
 
-func (b0 LabelChange_builder) Build() *LabelChange {
-	m0 := &LabelChange{}
+func (b0 LabelAdded_builder) Build() *LabelAdded {
+	m0 := &LabelAdded{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Label = b.Label
-	x.Added = b.Added
+	x.Id = b.Id
 	x.ExpiresAt = b.ExpiresAt
-	x.Expired = b.Expired
 	return m0
 }
 
@@ -1940,7 +1891,7 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\tnew_value\x18\f \x01(\tB$\x9a\x84\x9e\x03\x1falias:\"user_activity.new_value\"R\bnewValueB\x11\n" +
 	"\x0f_source_user_idB\x0e\n" +
 	"\f_source_userB\a\n" +
-	"\x05_data\"\xba\a\n" +
+	"\x05_data\"\xee\x06\n" +
 	"\x10UserActivityData\x12G\n" +
 	"\vname_change\x18\x01 \x01(\v2$.resources.users.activity.NameChangeH\x00R\n" +
 	"nameChange\x12R\n" +
@@ -1948,8 +1899,7 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\rwanted_change\x18\x03 \x01(\v2&.resources.users.activity.WantedChangeH\x00R\fwantedChange\x12\x82\x01\n" +
 	" traffic_infraction_points_change\x18\x04 \x01(\v27.resources.users.activity.TrafficInfractionPointsChangeH\x00R\x1dtrafficInfractionPointsChange\x12P\n" +
 	"\x0emugshot_change\x18\x05 \x01(\v2'.resources.users.activity.MugshotChangeH\x00R\rmugshotChange\x12M\n" +
-	"\rlabels_change\x18\x06 \x01(\v2&.resources.users.activity.LabelsChangeH\x00R\flabelsChange\x12J\n" +
-	"\flabel_change\x18\v \x01(\v2%.resources.users.activity.LabelChangeH\x00R\vlabelChange\x12D\n" +
+	"\rlabels_change\x18\x06 \x01(\v2&.resources.users.activity.LabelsChangeH\x00R\flabelsChange\x12D\n" +
 	"\n" +
 	"job_change\x18\a \x01(\v2#.resources.users.activity.JobChangeH\x00R\tjobChange\x12`\n" +
 	"\x11document_relation\x18\b \x01(\v21.resources.users.activity.CitizenDocumentRelationH\x00R\x10documentRelation\x12G\n" +
@@ -1974,17 +1924,19 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\x03new\x18\x02 \x01(\rR\x03new\".\n" +
 	"\rMugshotChange\x12\x15\n" +
 	"\x03new\x18\x01 \x01(\tH\x00R\x03new\x88\x01\x01B\x06\n" +
-	"\x04_new\"\x9c\x01\n" +
-	"\fLabelsChange\x126\n" +
-	"\x05added\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x05added\x12:\n" +
-	"\aremoved\x18\x02 \x03(\v2 .resources.citizens.labels.LabelR\aremoved\x12\x18\n" +
-	"\aexpired\x18\x04 \x01(\bR\aexpired\"\xc8\x01\n" +
-	"\vLabelChange\x126\n" +
-	"\x05label\x18\x01 \x01(\v2 .resources.citizens.labels.LabelR\x05label\x12\x14\n" +
-	"\x05added\x18\x02 \x01(\bR\x05added\x12B\n" +
+	"\x04_new\"\x88\x02\n" +
+	"\fLabelsChange\x12:\n" +
+	"\x05added\x18\x01 \x03(\v2 .resources.citizens.labels.LabelB\x02\x18\x01R\x05added\x12>\n" +
+	"\aremoved\x18\x02 \x03(\v2 .resources.citizens.labels.LabelB\x02\x18\x01R\aremoved\x12A\n" +
+	"\tadded_ids\x18\x03 \x03(\v2$.resources.users.activity.LabelAddedR\baddedIds\x12\x1f\n" +
+	"\vremoved_ids\x18\x04 \x03(\x03R\n" +
+	"removedIds\x12\x18\n" +
+	"\aexpired\x18\x05 \x01(\bR\aexpired\"o\n" +
 	"\n" +
-	"expires_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\texpiresAt\x88\x01\x01\x12\x18\n" +
-	"\aexpired\x18\x04 \x01(\bR\aexpiredB\r\n" +
+	"LabelAdded\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
+	"\n" +
+	"expires_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\texpiresAt\x88\x01\x01B\r\n" +
 	"\v_expires_at\"\xb5\x01\n" +
 	"\tJobChange\x12\x15\n" +
 	"\x03job\x18\x01 \x01(\tH\x00R\x03job\x88\x01\x01\x12 \n" +
@@ -2038,7 +1990,7 @@ var file_resources_users_activity_activity_proto_goTypes = []any{
 	(*TrafficInfractionPointsChange)(nil), // 6: resources.users.activity.TrafficInfractionPointsChange
 	(*MugshotChange)(nil),                 // 7: resources.users.activity.MugshotChange
 	(*LabelsChange)(nil),                  // 8: resources.users.activity.LabelsChange
-	(*LabelChange)(nil),                   // 9: resources.users.activity.LabelChange
+	(*LabelAdded)(nil),                    // 9: resources.users.activity.LabelAdded
 	(*JobChange)(nil),                     // 10: resources.users.activity.JobChange
 	(*CitizenDocumentRelation)(nil),       // 11: resources.users.activity.CitizenDocumentRelation
 	(*JailChange)(nil),                    // 12: resources.users.activity.JailChange
@@ -2061,22 +2013,21 @@ var file_resources_users_activity_activity_proto_depIdxs = []int32{
 	6,  // 8: resources.users.activity.UserActivityData.traffic_infraction_points_change:type_name -> resources.users.activity.TrafficInfractionPointsChange
 	7,  // 9: resources.users.activity.UserActivityData.mugshot_change:type_name -> resources.users.activity.MugshotChange
 	8,  // 10: resources.users.activity.UserActivityData.labels_change:type_name -> resources.users.activity.LabelsChange
-	9,  // 11: resources.users.activity.UserActivityData.label_change:type_name -> resources.users.activity.LabelChange
-	10, // 12: resources.users.activity.UserActivityData.job_change:type_name -> resources.users.activity.JobChange
-	11, // 13: resources.users.activity.UserActivityData.document_relation:type_name -> resources.users.activity.CitizenDocumentRelation
-	12, // 14: resources.users.activity.UserActivityData.jail_change:type_name -> resources.users.activity.JailChange
-	13, // 15: resources.users.activity.UserActivityData.fine_change:type_name -> resources.users.activity.FineChange
-	16, // 16: resources.users.activity.LicenseChange.licenses:type_name -> resources.citizens.licenses.License
-	17, // 17: resources.users.activity.LabelsChange.added:type_name -> resources.citizens.labels.Label
-	17, // 18: resources.users.activity.LabelsChange.removed:type_name -> resources.citizens.labels.Label
-	17, // 19: resources.users.activity.LabelChange.label:type_name -> resources.citizens.labels.Label
-	14, // 20: resources.users.activity.LabelChange.expires_at:type_name -> resources.timestamp.Timestamp
-	18, // 21: resources.users.activity.CitizenDocumentRelation.relation:type_name -> resources.documents.relations.DocRelation
-	22, // [22:22] is the sub-list for method output_type
-	22, // [22:22] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	10, // 11: resources.users.activity.UserActivityData.job_change:type_name -> resources.users.activity.JobChange
+	11, // 12: resources.users.activity.UserActivityData.document_relation:type_name -> resources.users.activity.CitizenDocumentRelation
+	12, // 13: resources.users.activity.UserActivityData.jail_change:type_name -> resources.users.activity.JailChange
+	13, // 14: resources.users.activity.UserActivityData.fine_change:type_name -> resources.users.activity.FineChange
+	16, // 15: resources.users.activity.LicenseChange.licenses:type_name -> resources.citizens.licenses.License
+	17, // 16: resources.users.activity.LabelsChange.added:type_name -> resources.citizens.labels.Label
+	17, // 17: resources.users.activity.LabelsChange.removed:type_name -> resources.citizens.labels.Label
+	9,  // 18: resources.users.activity.LabelsChange.added_ids:type_name -> resources.users.activity.LabelAdded
+	14, // 19: resources.users.activity.LabelAdded.expires_at:type_name -> resources.timestamp.Timestamp
+	18, // 20: resources.users.activity.CitizenDocumentRelation.relation:type_name -> resources.documents.relations.DocRelation
+	21, // [21:21] is the sub-list for method output_type
+	21, // [21:21] is the sub-list for method input_type
+	21, // [21:21] is the sub-list for extension type_name
+	21, // [21:21] is the sub-list for extension extendee
+	0,  // [0:21] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_activity_activity_proto_init() }
@@ -2092,7 +2043,6 @@ func file_resources_users_activity_activity_proto_init() {
 		(*UserActivityData_TrafficInfractionPointsChange)(nil),
 		(*UserActivityData_MugshotChange)(nil),
 		(*UserActivityData_LabelsChange)(nil),
-		(*UserActivityData_LabelChange)(nil),
 		(*UserActivityData_JobChange)(nil),
 		(*UserActivityData_DocumentRelation)(nil),
 		(*UserActivityData_JailChange)(nil),

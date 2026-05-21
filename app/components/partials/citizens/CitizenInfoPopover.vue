@@ -4,7 +4,6 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import type { ClipboardUser } from '~/stores/clipboard';
-import type { ClassProp } from '~/utils/types';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { User } from '~~/gen/ts/resources/users/user';
@@ -14,7 +13,9 @@ const props = withDefaults(
     defineProps<{
         userId?: number;
         user?: ClipboardUser | User | UserShort;
-        textClass?: ClassProp;
+        // Class attribute is "untyped" so use any here
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        textClass?: any;
         showAvatar?: boolean;
         showAvatarInName?: boolean;
         trailing?: boolean;
@@ -141,7 +142,7 @@ watchOnce(opened, async () => {
                     />
 
                     <UButton
-                        v-if="can('jobs.JobsService/GetColleague').value && user?.job === activeChar?.job"
+                        v-if="can('jobs.ColleaguesService/GetColleague').value && user?.job === activeChar?.job"
                         variant="link"
                         icon="i-mdi-briefcase"
                         :label="$t('common.colleague')"

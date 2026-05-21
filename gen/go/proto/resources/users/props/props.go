@@ -11,7 +11,6 @@ import (
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -411,20 +410,20 @@ func (s *UserProps) updateLabels(
 	tUserLabels := table.FivenetUserLabels
 
 	if len(added) > 0 {
-		addedLabels := make([]*model.FivenetUserLabels, len(added))
-		for i, label := range added {
-			addedLabels[i] = &model.FivenetUserLabels{
-				UserID:  userId,
-				LabelID: label.GetId(),
-			}
-		}
-
 		stmt := tUserLabels.
 			INSERT(
 				tUserLabels.UserID,
 				tUserLabels.LabelID,
-			).
-			MODELS(addedLabels)
+				tUserLabels.ExpiresAt,
+			)
+
+		for _, label := range added {
+			stmt = stmt.VALUES(
+				userId,
+				label.GetId(),
+				label.GetExpiresAt(),
+			)
+		}
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			if !dbutils.IsDuplicateError(err) {

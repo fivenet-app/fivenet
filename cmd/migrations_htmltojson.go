@@ -35,8 +35,8 @@ func (c *MigrationsHTMLToJSONCmd) Run() error {
 		fxOpts,
 		fx.Invoke(
 			func(lifecycle fx.Lifecycle, cfg *config.Config, db *sql.DB, storage storage.IStorage, shutdowner fx.Shutdowner) {
-				lifecycle.Append(fx.Hook{
-					OnStart: func(ctx context.Context) error {
+				lifecycle.Append(fx.StartHook(
+					func(ctx context.Context) error {
 						go func() {
 							exitCode := 0
 							c.db = db
@@ -48,8 +48,7 @@ func (c *MigrationsHTMLToJSONCmd) Run() error {
 							_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
 						}()
 						return nil
-					},
-				})
+					}))
 			},
 		),
 	)

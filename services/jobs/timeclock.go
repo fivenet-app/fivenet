@@ -41,14 +41,11 @@ func (s *Server) ListTimeclock(
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
-		permsjobs.TimeclockServicePerm,
-		permsjobs.TimeclockServiceListTimeclockPerm,
-		permsjobs.TimeclockServiceListTimeclockAccessPermField,
+		permsjobs.TimeclockService.ListTimeclock.Access,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-
 	if !fields.Contains("All") {
 		req.UserMode = jobstimeclock.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF
 	}
@@ -441,9 +438,7 @@ func (s *Server) GetTimeclockStats(
 		// Field Permission Check
 		fields, err := s.ps.AttrStringList(
 			userInfo,
-			permsjobs.TimeclockServicePerm,
-			permsjobs.TimeclockServiceListTimeclockPerm,
-			permsjobs.TimeclockServiceListTimeclockAccessPermField,
+			permsjobs.TimeclockService.ListTimeclock.Access,
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)

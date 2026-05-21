@@ -9,6 +9,7 @@
 package citizenslabels
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -314,9 +315,9 @@ var File_resources_citizens_labels_access_proto protoreflect.FileDescriptor
 
 const file_resources_citizens_labels_access_proto_rawDesc = "" +
 	"\n" +
-	"&resources/citizens/labels/access.proto\x12\x19resources.citizens.labels\x1a\x13tagger/tagger.proto\"`\n" +
+	"&resources/citizens/labels/access.proto\x12\x19resources.citizens.labels\x1a!codegen/dbscanner/dbscanner.proto\x1a\x13tagger/tagger.proto\"h\n" +
 	"\vLabelAccess\x12Q\n" +
-	"\x04jobs\x18\x01 \x03(\v2$.resources.citizens.labels.JobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\"\xb8\x02\n" +
+	"\x04jobs\x18\x01 \x03(\v2$.resources.citizens.labels.JobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs:\x06\xe2\xf3\x18\x02\b\x01\"\xb8\x02\n" +
 	"\tJobAccess\x12&\n" +
 	"\x02id\x18\x01 \x01(\x03B\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x02id\x12\x1b\n" +
 	"\ttarget_id\x18\x02 \x01(\x03R\btargetId\x12\x10\n" +

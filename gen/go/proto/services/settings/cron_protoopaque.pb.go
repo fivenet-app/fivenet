@@ -253,9 +253,9 @@ const file_services_settings_cron_proto_rawDesc = "" +
 	"\x12RunCronjobResponse\x12\x1a\n" +
 	"\bsequence\x18\x01 \x01(\x04R\bsequence2\xef\x01\n" +
 	"\vCronService\x12r\n" +
-	"\fListCronjobs\x12&.services.settings.ListCronjobsRequest\x1a'.services.settings.ListCronjobsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12l\n" +
+	"\fListCronjobs\x12&.services.settings.ListCronjobsRequest\x1a'.services.settings.ListCronjobsResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuser\x12l\n" +
 	"\n" +
-	"RunCronjob\x12$.services.settings.RunCronjobRequest\x1a%.services.settings.RunCronjobResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
+	"RunCronjob\x12$.services.settings.RunCronjobRequest\x1a%.services.settings.RunCronjobResponse\"\x11\xd2\xf3\x18\r\b\x01\"\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var file_services_settings_cron_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_services_settings_cron_proto_goTypes = []any{

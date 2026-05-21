@@ -150,7 +150,8 @@ message DeleteMessageResponse {}
 
 service ThreadService {
   option (codegen.perms.perms_svc) = {
-    name: "mailer.MailerService"
+    namespace: "mailer"
+    service: "MailerService"
   };
 
   rpc ListThreads(ListThreadsRequest) returns (ListThreadsResponse) {

@@ -13,16 +13,8 @@ const notifications = useNotificationsStore();
 const authAuthClient = await getAuthAuthClient();
 
 const schema = z.object({
-    currentUsername: z
-        .string()
-        .min(3)
-        .max(24)
-        .regex(/^[0-9A-Za-zÄÖÜß_-]{3,24}$/),
-    newUsername: z
-        .string()
-        .min(3)
-        .max(24)
-        .regex(/^[0-9A-Za-zÄÖÜß_-]{3,24}$/),
+    currentUsername: usernameSchema,
+    newUsername: usernameSchema,
 });
 
 type Schema = z.output<typeof schema>;

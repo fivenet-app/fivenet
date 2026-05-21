@@ -119,10 +119,7 @@ function updateAbsenceDateField(): void {
     }
 }
 
-const isDateDisabled = (date: DateValue) => {
-    return isBefore(date.toDate('UTC'), subDays(today, 1));
-};
-
+const isDateDisabled = (date: DateValue) => isBefore(date.toDate('UTC'), subDays(today, 1));
 watch(props, () => updateAbsenceDateField());
 
 updateAbsenceDateField();
