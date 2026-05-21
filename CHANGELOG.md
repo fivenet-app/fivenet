@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.5.1] - 2026-05-21
+
+### 🚀 Features
+
+- Add log to stderr option
+- Remove custom code in favor of packages
+- Rework permissions structure and views
+- Add citizen labels housekeeper logic and feed entry
+- Add self update command to fivenet binary
+- Rework InputDate* and add dedicated InputTimePicker component
+- Add typed string-list permission references
+- Add soft-delete accounts and laws with updated service contracts
+- Improve citizen label access handling and UI
+- Apply lifecycle hook updates and assorted UI fixes
+
+### 🐛 Bug Fixes
+
+- Rename completor citizen label into citizens labels service
+- Adjust hero pattern background color and remove gradient
+- Rbac test data
+- Node lint issues
+- Auth flow test issues
+- Superuser perms test for non-existing permissions
+- Golangci-lint complaints
+- Label expiration not being inserted for citizen labels
+- Setting and retrieving citizen labels
+- Update .gitignore
+- Input duration picker test
+- Remove todo comment from citizens set labels
+- App config default perms translations using wrong key
+- Remove deprecated permissions from app config on load
+- Tiptap is empty doc check
+- Jobs colleagues service permission icon
+
 ## [2026.5.0] - 2026-05-03
 
 ### 🚀 Features
