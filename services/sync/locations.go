@@ -38,6 +38,11 @@ func (s *Server) handleUserLocations(
 
 	// Handle clear all
 	if clearAll {
+		condition := mysql.OR(
+			tLocations.UserID.IS_NOT_NULL(),
+			tLocations.UserID.IS_NULL(),
+		)
+
 		var count database.DataCount
 
 		countStmt := tLocations.
@@ -45,14 +50,17 @@ func (s *Server) handleUserLocations(
 				mysql.COUNT(tLocations.UserID).AS("data_count.total"),
 			).
 			FROM(tLocations).
-			WHERE(tLocations.UserID.IS_NOT_NULL().OR(tLocations.UserID.IS_NULL()))
+			WHERE(condition)
 		if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-			return 0, fmt.Errorf("failed to execute user locations clear all count statement. %w", err)
+			return 0, fmt.Errorf(
+				"failed to execute user locations clear all count statement. %w",
+				err,
+			)
 		}
 
 		stmt := tLocations.
 			DELETE().
-			WHERE(tLocations.UserID.IS_NOT_NULL().OR(tLocations.UserID.IS_NULL())).
+			WHERE(condition).
 			LIMIT(count.Total)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {

@@ -1842,11 +1842,11 @@
                 "svg": "SVG importieren",
                 "json_failed": {
                     "title": "JSON Import fehlgeschlagen",
-                    "description": "Der JSON-Import ist fehlgeschlagen. Fehler: {msg}"
+                    "content": "Der JSON-Import ist fehlgeschlagen. Fehler: {msg}"
                 },
                 "svg_failed": {
                     "title": "SVG Import fehlgeschlagen",
-                    "description": "Der SVG-Import ist fehlgeschlagen. Fehler: {msg}"
+                    "content": "Der SVG-Import ist fehlgeschlagen. Fehler: {msg}"
                 }
             },
             "group": "Gruppieren",
@@ -2988,7 +2988,8 @@
                     "VIEWED": "Aufgerufen",
                     "CREATED": "Erstellt",
                     "UPDATED": "Aktualisiert",
-                    "DELETED": "Gelöscht"
+                    "DELETED": "Gelöscht",
+                    "RESTORED": "Wiederhergestellt"
                 },
                 "EventResult": {
                     "UNSPECIFIED": "Unbestimmt",
@@ -3392,7 +3393,10 @@
                 },
                 "ListCategories": {
                     "key": "Auflisten der Kategorien",
-                    "description": "Liste der Kategorien."
+                    "description": "Liste der Kategorien.",
+                    "attrs_types": {
+                        "Jobs": "Factions"
+                    }
                 }
             },
             "CommentsService": {
@@ -3654,7 +3658,7 @@
                     "key": "Führungsregister: Einträge bearbeiten",
                     "description": "Aktualisieren von Führungsregister Einträgen."
                 },
-                "namespace": "Führungsregister"
+                "service": "Führungsregister"
             },
             "TimeclockService": {
                 "ListTimeclock": {
@@ -3667,14 +3671,14 @@
                         "Access": "Zugriff auf Stempeluhr-Einträge"
                     }
                 },
-                "namespace": "Stempeluhr",
+                "service": "Stempeluhr",
                 "ListInactiveEmployees": {
                     "key": "Zeige inaktive Kollegen an",
                     "description": "Zeige inaktive Kollegen nach Tagen an."
                 }
             },
             "StatsService": {
-                "namespace": "Statistik",
+                "service": "Statistik",
                 "GetStats": {
                     "key": "Berufsspezifische Statistiken abrufen",
                     "description": "Verschiedene Statistiken im Zusammenhang mit dem Beruf abrufen."
@@ -3852,6 +3856,7 @@
         "internal": {
             "namespace": "Internes & Superuser",
             "Superuser": {
+                "service": "Superuser",
                 "CanBeSuperuser": {
                     "key": "Kann Superuser sein",
                     "description": "Diese Berechtigung erlaubt es Ihnen, Superuser zu werden, wodurch Sie Zugriff auf alle FiveNet-Funktionen und -Berechtigungen erhalten."

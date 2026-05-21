@@ -461,6 +461,8 @@ func (s *Server) DeleteComment(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
+	// TODO add restore functionality for superuser
+
 	stmt := tDComments.
 		UPDATE(
 			tDComments.DeletedAt,

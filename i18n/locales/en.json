@@ -2988,7 +2988,8 @@
                     "VIEWED": "Viewed",
                     "CREATED": "Created",
                     "UPDATED": "Updated",
-                    "DELETED": "Deleted"
+                    "DELETED": "Deleted",
+                    "RESTORED": "Restored"
                 },
                 "EventResult": {
                     "UNSPECIFIED": "Unspecified",
@@ -3853,7 +3854,7 @@
             }
         },
         "internal": {
-            "service": "Internal & Superuser",
+            "namespace": "Internal & Superuser",
             "Superuser": {
                 "service": "Superuser",
                 "CanBeSuperuser": {

@@ -78,6 +78,7 @@ onBeforeMount(async () => listJobs());
         :placeholder="$t('common.job', 1)"
         :items="jobs"
         searchable-key="superuser-job-selection"
+        mode="combobox"
         :autocomplete="false"
         name="job"
         label-key="label"
