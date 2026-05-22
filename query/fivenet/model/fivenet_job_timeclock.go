@@ -8,14 +8,15 @@
 package model
 
 import (
+	"github.com/shopspring/decimal"
 	"time"
 )
 
 type FivenetJobTimeclock struct {
-	Job       string     `json:"job"`
-	UserID    int32      `json:"user_id"`
-	Date      time.Time  `json:"date"`
-	StartTime *time.Time `json:"start_time"`
-	EndTime   *time.Time `json:"end_time"`
-	SpentTime *float64   `json:"spent_time"`
+	Job       string           `json:"job"`
+	UserID    int32            `json:"user_id"`
+	Date      time.Time        `json:"date"`
+	StartTime *time.Time       `json:"start_time"`
+	EndTime   *time.Time       `json:"end_time"`
+	SpentTime *decimal.Decimal `json:"spent_time"`
 }

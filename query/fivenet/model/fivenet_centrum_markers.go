@@ -8,24 +8,25 @@
 package model
 
 import (
+	"github.com/shopspring/decimal"
 	"time"
 )
 
 type FivenetCentrumMarkers struct {
-	ID          int64      `sql:"primary_key" json:"id"`
-	CreatedAt   *time.Time `json:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at"`
-	DeletedAt   *time.Time `json:"deleted_at"`
-	ExpiresAt   *time.Time `json:"expires_at"`
-	Job         string     `json:"job"`
-	Name        string     `json:"name"`
-	Description *string    `json:"description"`
-	X           *float64   `json:"x"`
-	Y           *float64   `json:"y"`
-	Postal      *string    `json:"postal"`
-	Color       *string    `json:"color"`
-	Icon        *string    `json:"icon"`
-	MarkerType  int16      `json:"marker_type"`
-	MarkerData  *[]byte    `json:"marker_data"`
-	CreatorID   *int32     `json:"creator_id"`
+	ID          int64            `sql:"primary_key" json:"id"`
+	CreatedAt   *time.Time       `json:"created_at"`
+	UpdatedAt   *time.Time       `json:"updated_at"`
+	DeletedAt   *time.Time       `json:"deleted_at"`
+	ExpiresAt   *time.Time       `json:"expires_at"`
+	Job         string           `json:"job"`
+	Name        string           `json:"name"`
+	Description *string          `json:"description"`
+	X           *decimal.Decimal `json:"x"`
+	Y           *decimal.Decimal `json:"y"`
+	Postal      *string          `json:"postal"`
+	Color       *string          `json:"color"`
+	Icon        *string          `json:"icon"`
+	MarkerType  int16            `json:"marker_type"`
+	MarkerData  *[]byte          `json:"marker_data"`
+	CreatorID   *int32           `json:"creator_id"`
 }

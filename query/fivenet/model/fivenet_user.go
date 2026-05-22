@@ -8,28 +8,29 @@
 package model
 
 import (
+	"github.com/shopspring/decimal"
 	"time"
 )
 
 type FivenetUser struct {
-	ID            int32      `sql:"primary_key" json:"id"`
-	AccountID     *int64     `json:"account_id"`
-	License       *string    `json:"license"`
-	Identifier    string     `json:"identifier"`
-	Group         *string    `json:"group"`
-	Job           *string    `json:"job"`
-	JobGrade      *int32     `json:"job_grade"`
-	Firstname     *string    `json:"firstname"`
-	Lastname      *string    `json:"lastname"`
-	Dateofbirth   *string    `json:"dateofbirth"`
-	Sex           *string    `json:"sex"`
-	Height        *float64   `json:"height"`
-	PhoneNumber   *string    `json:"phone_number"`
-	Disabled      *bool      `json:"disabled"`
-	Visum         *int32     `json:"visum"`
-	Playtime      *int32     `json:"playtime"`
-	CreatedAt     *time.Time `json:"created_at"`
-	UpdatedAt     *time.Time `json:"updated_at"`
-	DeletedAt     *time.Time `json:"deleted_at"`
-	DeletedReason *string    `json:"deleted_reason"`
+	ID            int32            `sql:"primary_key" json:"id"`
+	AccountID     *int64           `json:"account_id"`
+	License       *string          `json:"license"`
+	Identifier    string           `json:"identifier"`
+	Group         *string          `json:"group"`
+	Job           *string          `json:"job"`
+	JobGrade      *int32           `json:"job_grade"`
+	Firstname     *string          `json:"firstname"`
+	Lastname      *string          `json:"lastname"`
+	Dateofbirth   *string          `json:"dateofbirth"`
+	Sex           *string          `json:"sex"`
+	Height        *decimal.Decimal `json:"height"`
+	PhoneNumber   *string          `json:"phone_number"`
+	Disabled      *bool            `json:"disabled"`
+	Visum         *int32           `json:"visum"`
+	Playtime      *int32           `json:"playtime"`
+	CreatedAt     *time.Time       `json:"created_at"`
+	UpdatedAt     *time.Time       `json:"updated_at"`
+	DeletedAt     *time.Time       `json:"deleted_at"`
+	DeletedReason *string          `json:"deleted_reason"`
 }

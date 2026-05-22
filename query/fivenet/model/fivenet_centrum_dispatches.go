@@ -8,21 +8,22 @@
 package model
 
 import (
+	"github.com/shopspring/decimal"
 	"time"
 )
 
 type FivenetCentrumDispatches struct {
-	ID          int64      `sql:"primary_key" json:"id"`
-	CreatedAt   *time.Time `json:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at"`
-	Jobs        string     `json:"jobs"`
-	Message     string     `json:"message"`
-	Description *string    `json:"description"`
-	Attributes  *string    `json:"attributes"`
-	References  *string    `json:"references"`
-	X           float64    `json:"x"`
-	Y           float64    `json:"y"`
-	Postal      *string    `json:"postal"`
-	Anon        bool       `json:"anon"`
-	CreatorID   *int32     `json:"creator_id"`
+	ID          int64           `sql:"primary_key" json:"id"`
+	CreatedAt   *time.Time      `json:"created_at"`
+	UpdatedAt   *time.Time      `json:"updated_at"`
+	Jobs        string          `json:"jobs"`
+	Message     string          `json:"message"`
+	Description *string         `json:"description"`
+	Attributes  *string         `json:"attributes"`
+	References  *string         `json:"references"`
+	X           decimal.Decimal `json:"x"`
+	Y           decimal.Decimal `json:"y"`
+	Postal      *string         `json:"postal"`
+	Anon        bool            `json:"anon"`
+	CreatorID   *int32          `json:"creator_id"`
 }

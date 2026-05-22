@@ -8,18 +8,19 @@
 package model
 
 import (
+	"github.com/shopspring/decimal"
 	"time"
 )
 
 type FivenetQualificationsResults struct {
-	ID              int64      `sql:"primary_key" json:"id"`
-	CreatedAt       *time.Time `json:"created_at"`
-	DeletedAt       *time.Time `json:"deleted_at"`
-	QualificationID int64      `json:"qualification_id"`
-	UserID          int32      `json:"user_id"`
-	Status          *int16     `json:"status"`
-	Score           *float64   `json:"score"`
-	Summary         *string    `json:"summary"`
-	CreatorID       *int32     `json:"creator_id"`
-	CreatorJob      string     `json:"creator_job"`
+	ID              int64            `sql:"primary_key" json:"id"`
+	CreatedAt       *time.Time       `json:"created_at"`
+	DeletedAt       *time.Time       `json:"deleted_at"`
+	QualificationID int64            `json:"qualification_id"`
+	UserID          int32            `json:"user_id"`
+	Status          *int16           `json:"status"`
+	Score           *decimal.Decimal `json:"score"`
+	Summary         *string          `json:"summary"`
+	CreatorID       *int32           `json:"creator_id"`
+	CreatorJob      string           `json:"creator_job"`
 }
