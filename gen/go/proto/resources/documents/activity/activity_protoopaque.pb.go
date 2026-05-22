@@ -45,9 +45,10 @@ const (
 	DocActivityType_DOC_ACTIVITY_TYPE_DELETED            DocActivityType = 9
 	DocActivityType_DOC_ACTIVITY_TYPE_DRAFT_TOGGLED      DocActivityType = 19
 	// Comments
-	DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_ADDED   DocActivityType = 10
-	DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_UPDATED DocActivityType = 11
-	DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_DELETED DocActivityType = 12
+	DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_ADDED    DocActivityType = 10
+	DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_UPDATED  DocActivityType = 11
+	DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_DELETED  DocActivityType = 12
+	DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_RESTORED DocActivityType = 22
 	// Requests
 	DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS       DocActivityType = 13
 	DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE      DocActivityType = 14
@@ -81,6 +82,7 @@ var (
 		10: "DOC_ACTIVITY_TYPE_COMMENT_ADDED",
 		11: "DOC_ACTIVITY_TYPE_COMMENT_UPDATED",
 		12: "DOC_ACTIVITY_TYPE_COMMENT_DELETED",
+		22: "DOC_ACTIVITY_TYPE_COMMENT_RESTORED",
 		13: "DOC_ACTIVITY_TYPE_REQUESTED_ACCESS",
 		14: "DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE",
 		15: "DOC_ACTIVITY_TYPE_REQUESTED_OPENING",
@@ -109,6 +111,7 @@ var (
 		"DOC_ACTIVITY_TYPE_COMMENT_ADDED":          10,
 		"DOC_ACTIVITY_TYPE_COMMENT_UPDATED":        11,
 		"DOC_ACTIVITY_TYPE_COMMENT_DELETED":        12,
+		"DOC_ACTIVITY_TYPE_COMMENT_RESTORED":       22,
 		"DOC_ACTIVITY_TYPE_REQUESTED_ACCESS":       13,
 		"DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE":      14,
 		"DOC_ACTIVITY_TYPE_REQUESTED_OPENING":      15,
@@ -1610,7 +1613,7 @@ const file_resources_documents_activity_activity_proto_rawDesc = "" +
 	"\x13DocSigningRequested\x12?\n" +
 	"\bdeadline\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\bdeadline\x88\x01\x01\x12>\n" +
 	"\tapprovers\x18\x02 \x03(\v2 .resources.users.short.UserShortR\tapproversB\v\n" +
-	"\t_deadline*\x84\b\n" +
+	"\t_deadline*\xac\b\n" +
 	"\x0fDocActivityType\x12!\n" +
 	"\x1dDOC_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19DOC_ACTIVITY_TYPE_CREATED\x10\x01\x12!\n" +
@@ -1627,6 +1630,7 @@ const file_resources_documents_activity_activity_proto_rawDesc = "" +
 	"\x12%\n" +
 	"!DOC_ACTIVITY_TYPE_COMMENT_UPDATED\x10\v\x12%\n" +
 	"!DOC_ACTIVITY_TYPE_COMMENT_DELETED\x10\f\x12&\n" +
+	"\"DOC_ACTIVITY_TYPE_COMMENT_RESTORED\x10\x16\x12&\n" +
 	"\"DOC_ACTIVITY_TYPE_REQUESTED_ACCESS\x10\r\x12'\n" +
 	"#DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE\x10\x0e\x12'\n" +
 	"#DOC_ACTIVITY_TYPE_REQUESTED_OPENING\x10\x0f\x12&\n" +

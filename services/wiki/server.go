@@ -90,6 +90,7 @@ func NewServer(p Params) *Server {
 		tPageFiles.PageID,
 		tPageFiles.FileID,
 		3<<20,
+		5,
 		func(parentID int64) mysql.BoolExpression {
 			return tPageFiles.PageID.EQ(mysql.Int64(parentID))
 		},

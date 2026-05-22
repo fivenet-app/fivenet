@@ -17,4 +17,10 @@ var (
 		&common.I18NItem{Key: "errors.Filestore.ErrUploadFileTooLarge"},
 		nil,
 	)
+	// Has param `maxFiles`.
+	ErrMaxFilesPerParentReached = common.NewI18nErrFunc(
+		codes.ResourceExhausted,
+		&common.I18NItem{Key: "errors.Filestore.ErrMaxFilesPerParentReached"},
+		nil,
+	)
 )

@@ -184,6 +184,7 @@ func NewServer(p Params) Result {
 		tDocFiles.DocumentID,
 		tDocFiles.FileID,
 		3<<20,
+		5,
 		func(parentId int64) mysql.BoolExpression {
 			return tDocFiles.DocumentID.EQ(mysql.Int64(parentId))
 		},

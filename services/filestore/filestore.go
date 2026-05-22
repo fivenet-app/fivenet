@@ -49,16 +49,15 @@ func (s *Server) ListFiles(
 		}
 	}
 
-	fs := make([]*file.File, len(files))
+	resp.Files = make([]*file.File, len(files))
 	for i := range files {
-		fs[i] = &file.File{
+		resp.Files[i] = &file.File{
 			FilePath:    files[i].Name,
 			ByteSize:    files[i].Size,
 			ContentType: files[i].ContentType,
 			IsDir:       files[i].IsDir,
 		}
 	}
-	resp.Files = fs
 
 	return resp, nil
 }

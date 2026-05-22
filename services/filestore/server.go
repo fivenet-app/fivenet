@@ -36,6 +36,7 @@ func NewServer(p Params) *Server {
 		nil,
 		nil,
 		-1,
+		-1,
 		nil,
 		filestore.InsertJoinRow,
 		false,

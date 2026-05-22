@@ -102,6 +102,7 @@ func NewServer(p Params) *Server {
 		tJobProps.Job,
 		tJobProps.LogoFileID,
 		2<<20,
+		1,
 		func(parentID string) mysql.BoolExpression {
 			return tJobProps.Job.EQ(mysql.String(parentID))
 		},

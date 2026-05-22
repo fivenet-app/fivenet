@@ -66,6 +66,7 @@ func NewServer(p Params) *Server {
 		tUserProps.UserID,
 		tUserProps.AvatarFileID,
 		3<<20,
+		1,
 		func(parentId int32) mysql.BoolExpression {
 			return tUserProps.UserID.EQ(mysql.Int32(parentId))
 		},
@@ -79,6 +80,7 @@ func NewServer(p Params) *Server {
 		tUserProps.UserID,
 		tUserProps.MugshotFileID,
 		3<<20,
+		1,
 		func(parentId int32) mysql.BoolExpression {
 			return tUserProps.UserID.EQ(mysql.Int32(parentId))
 		},

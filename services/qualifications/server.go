@@ -100,6 +100,7 @@ func NewServer(p Params) *Server {
 		tQualiFiles.QualificationID,
 		tQualiFiles.FileID,
 		3<<20,
+		5,
 		func(parentId int64) mysql.BoolExpression {
 			return tQualiFiles.QualificationID.EQ(mysql.Int64(parentId))
 		},

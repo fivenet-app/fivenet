@@ -49,6 +49,8 @@ type Handler[P ParentID] struct {
 	fileCol mysql.ColumnInteger
 	// sizeLimit is the maximum allowed file size in bytes.
 	sizeLimit int64
+	// fileLimit is the maximum allowed number of files per parent.
+	fileLimit int64
 
 	// parentColBoolExp is a function that converts the parent ID to a Jet boolean expression.
 	parentColBoolExp ParentColBoolExpFn[P]
@@ -66,10 +68,10 @@ func NewHandler[P ParentID](
 	parentCol mysql.Column,
 	fileCol mysql.ColumnInteger,
 	sizeLimit int64,
+	fileLimit int64,
 	parentColBoolExp ParentColBoolExpFn[P],
 	joinRowInserter JoinRowInserterFn[P],
 	nullOnlyParentRow bool,
-	// TODO add max files per parent enforcement
 ) *Handler[P] {
 	AddTable(joinInfo{
 		Table:   join,
@@ -83,11 +85,32 @@ func NewHandler[P ParentID](
 		parentCol: parentCol,
 		fileCol:   fileCol,
 		sizeLimit: sizeLimit,
+		fileLimit: fileLimit,
 		// parentColBoolExp is a function that converts the parent ID to a mysql.BoolExpression
 		parentColBoolExp:  parentColBoolExp,
 		joinRowInserter:   joinRowInserter,
 		nullOnlyParentRow: nullOnlyParentRow,
 	}
+}
+
+// CheckFileLimit enforces the maximum number of files per parent for additive relations.
+func (h *Handler[P]) CheckFileLimit(ctx context.Context, parentID P) error {
+	if h.joinTable == nil || h.fileLimit <= 0 || h.nullOnlyParentRow {
+		return nil
+	}
+
+	count, err := h.CountFilesForParentID(ctx, parentID)
+	if err != nil {
+		return err
+	}
+
+	if count >= h.fileLimit {
+		return ErrMaxFilesPerParentReached(map[string]any{
+			"maxFiles": h.fileLimit,
+		})
+	}
+
+	return nil
 }
 
 // AwaitHandshake reads the first upload packet to extract metadata. No handshake logic is required for this handler.
@@ -131,7 +154,11 @@ func (h *Handler[P]) UploadFile(
 		) // Convert bytes to megabytes
 	}
 
-	// pipe chunks to the storage backend
+	if err := h.CheckFileLimit(ctx, parentID); err != nil {
+		return nil, err
+	}
+
+	// Pipe chunks to the storage backend
 	pr, pw := io.Pipe()
 	go func() {
 		for {

@@ -2667,7 +2667,8 @@
         },
         "Filestore": {
             "ErrInvalidUploadMeta": "Invalid upload meta data!",
-            "ErrUploadFileTooLarge": "File is too large to upload! Maximum file size is {maxSize} MB."
+            "ErrUploadFileTooLarge": "File is too large to upload! Maximum file size is {maxSize} MB.",
+            "ErrMaxFilesPerParentReached": "Maximum number of files ({maxFiles}) reached for this item!"
         },
         "notifications": {
             "NotificationsService": {

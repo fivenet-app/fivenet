@@ -13,11 +13,13 @@ import (
 	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
 	documentscomment "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/comment"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -461,19 +463,24 @@ func (s *Server) DeleteComment(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	// TODO add restore functionality for superuser
+	activityType := documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_DELETED
+	var deletedAtTime *timestamp.Timestamp
+	if comment.GetDeletedAt() == nil || !userInfo.GetSuperuser() {
+		deletedAtTime = timestamp.Now()
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	} else {
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
+		activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_RESTORED
+	}
 
 	stmt := tDComments.
 		UPDATE(
 			tDComments.DeletedAt,
 		).
 		SET(
-			tDComments.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
+			tDComments.DeletedAt.SET(dbutils.TimestampToMySQL(deletedAtTime)),
 		).
-		WHERE(mysql.AND(
-			tDComments.ID.EQ(mysql.Int64(req.GetCommentId())),
-			tDComments.DeletedAt.IS_NULL(),
-		)).
+		WHERE(tDComments.ID.EQ(mysql.Int64(req.GetCommentId()))).
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -482,7 +489,7 @@ func (s *Server) DeleteComment(
 
 	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 		DocumentId:   comment.GetDocumentId(),
-		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_DELETED,
+		ActivityType: activityType,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.GetJob(),
 	}); err != nil {

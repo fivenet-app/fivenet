@@ -110,6 +110,7 @@ func NewServer(p Params) *Server {
 		tConductFiles.ConductID,
 		tConductFiles.FileID,
 		3<<20, // 3 MiB limit
+		5,
 		func(parentId int64) mysql.BoolExpression {
 			return tConductFiles.ConductID.EQ(mysql.Int64(parentId))
 		},

@@ -296,6 +296,10 @@ export enum DocActivityType {
      */
     COMMENT_DELETED = 12,
     /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_COMMENT_RESTORED = 22;
+     */
+    COMMENT_RESTORED = 22,
+    /**
      * Requests
      *
      * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_REQUESTED_ACCESS = 13;
