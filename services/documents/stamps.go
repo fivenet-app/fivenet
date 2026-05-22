@@ -250,8 +250,8 @@ func (s *Server) UpsertStamp(
 				tStamp.VariantsJSON,
 			).
 			SET(
-				mysql.String(st.GetJob()),
-				mysql.String(st.GetSvgTemplate()),
+				st.GetName(),
+				st.GetSvgTemplate(),
 				nil,
 			).
 			WHERE(tStamp.ID.EQ(mysql.Int64(st.GetId()))).
@@ -259,17 +259,6 @@ func (s *Server) UpsertStamp(
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-
-		if _, err := s.signingStampAccess.HandleAccessChanges(
-			ctx,
-			s.db,
-			st.GetId(),
-			st.Access.Jobs,
-			nil,
-			nil,
-		); err != nil {
-			return nil, err
 		}
 	} else {
 		// Create new stamp in db
@@ -280,25 +269,30 @@ func (s *Server) UpsertStamp(
 				tStamp.VariantsJSON,
 			).
 			VALUES(
-				st.GetJob(),
+				st.GetName(),
 				st.GetSvgTemplate(),
 				nil,
 			)
-
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		res, err := stmt.ExecContext(ctx, s.db)
+		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-
-		if _, err := s.signingStampAccess.HandleAccessChanges(
-			ctx,
-			s.db,
-			st.GetId(),
-			st.Access.Jobs,
-			nil,
-			nil,
-		); err != nil {
+		lastId, err := res.LastInsertId()
+		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
+		req.GetStamp().SetId(lastId)
+	}
+
+	if _, err := s.signingStampAccess.HandleAccessChanges(
+		ctx,
+		s.db,
+		st.GetId(),
+		st.Access.Jobs,
+		nil,
+		nil,
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	if err := tx.Commit(); err != nil {
