@@ -122,6 +122,8 @@ storage:
     prefix: ""
     retries: 3
     checkOnStartup: false
+  metricsEnabled: true
+  metricsInterval: 10m
 
 imageProxy:
   options:
