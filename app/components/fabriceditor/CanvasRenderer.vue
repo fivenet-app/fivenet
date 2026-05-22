@@ -107,10 +107,6 @@ onMounted(async () => {
         canvas.requestRenderAll();
     });
 });
-
-watchDeep(form, () => {
-    console.log('Form updated:', form.value);
-});
 </script>
 
 <template>

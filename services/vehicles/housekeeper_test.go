@@ -121,7 +121,7 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 	// wanted IS TRUE AND (wanted_at < CURRENT_TIMESTAMP - INTERVAL maxDays DAY OR wanted_till < CURRENT_TIMESTAMP).
 	expectedQuery := regexp.QuoteMeta(
 		`SELECT fivenet_vehicles_props.plate AS "fivenet_vehicles_props.plate" FROM fivenet_vehicles_props ` +
-			`WHERE ( fivenet_vehicles_props.wanted IS TRUE AND ` +
+			`WHERE ( (fivenet_vehicles_props.wanted IS TRUE) AND ` +
 			`( (fivenet_vehicles_props.wanted_at < (CURRENT_TIMESTAMP - INTERVAL 3 DAY)) ` +
 			`OR (fivenet_vehicles_props.wanted_till < CURRENT_TIMESTAMP) ) ) LIMIT ?;`,
 	)

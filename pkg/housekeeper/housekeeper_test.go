@@ -63,12 +63,12 @@ func TestSoftDeleteJobData(t *testing.T) {
 	jobName := "test_job"
 
 	// Mock queries for main table
-	mock.ExpectExec("UPDATE calendars SET deleted_at = CURRENT_TIMESTAMP WHERE \\(.+\\(job = \\?\\) AND deleted_at IS NULL.+\\) LIMIT \\?;").
+	mock.ExpectExec("UPDATE calendars SET deleted_at = CURRENT_TIMESTAMP WHERE \\( \\(job = \\?\\) AND \\(deleted_at IS NULL\\) \\) LIMIT \\?;").
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 10))
 
 	// Mock queries for dependant table `calendar_entries`
-	mock.ExpectExec("UPDATE calendar_entries SET deleted_at = CURRENT_TIMESTAMP WHERE \\(job = \\?\\) AND.+deleted_at IS NULL AND \\(calendar_id IN .+ SELECT id AS \"id\" FROM calendars WHERE .+\\(job = \\?\\) AND deleted_at IS NULL.+ LIMIT \\?;").
+	mock.ExpectExec("(?s)UPDATE calendar_entries SET deleted_at = CURRENT_TIMESTAMP WHERE .*\\(job = \\?\\).*deleted_at IS NULL.*calendar_id IN.*SELECT id AS \"id\" FROM calendars.*\\(job = \\?\\).*deleted_at IS NULL.*LIMIT \\?;").
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 5))
 
@@ -135,22 +135,22 @@ func TestHardDelete(t *testing.T) {
 	}
 
 	// Mock queries for dependant table `calendar_rsvp`
-	mock.ExpectExec("DELETE FROM calendar_rsvp WHERE \\(entry_id IN \\(\\( SELECT id AS \"id\" FROM calendar_entries WHERE \\( deleted_at IS NOT NULL AND \\(deleted_at <= \\(CURRENT_DATE - INTERVAL 30 DAY\\)\\) \\) \\)\\)\\) LIMIT \\?;").
+	mock.ExpectExec("(?s)DELETE FROM calendar_rsvp WHERE .*entry_id IN.*SELECT id AS \"id\" FROM calendar_entries.*deleted_at IS NOT NULL.*deleted_at <= \\(CURRENT_DATE - INTERVAL 30 DAY\\).*LIMIT \\?;").
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 5))
 
 	// Mock queries for dependant table `calendar_entries`
-	mock.ExpectExec("DELETE FROM calendar_entries WHERE \\(calendar_id IN \\(\\( SELECT id AS \"id\" FROM calendars WHERE \\( deleted_at IS NOT NULL AND \\(deleted_at <= \\(CURRENT_DATE - INTERVAL 30 DAY\\)\\) \\) \\)\\)\\) LIMIT \\?;").
+	mock.ExpectExec("(?s)DELETE FROM calendar_entries WHERE .*calendar_id IN.*SELECT id AS \"id\" FROM calendars.*deleted_at IS NOT NULL.*deleted_at <= \\(CURRENT_DATE - INTERVAL 30 DAY\\).*LIMIT \\?;").
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 10))
 
 	// Mock queries for dependant table `calendar_subscriptions`
-	mock.ExpectExec("DELETE FROM calendar_subscriptions WHERE \\(calendar_id IN \\(\\( SELECT id AS \"id\" FROM calendars WHERE \\( deleted_at IS NOT NULL AND \\(deleted_at <= \\(CURRENT_DATE - INTERVAL 30 DAY\\)\\) \\) \\)\\)\\) LIMIT \\?;").
+	mock.ExpectExec("(?s)DELETE FROM calendar_subscriptions WHERE .*calendar_id IN.*SELECT id AS \"id\" FROM calendars.*deleted_at IS NOT NULL.*deleted_at <= \\(CURRENT_DATE - INTERVAL 30 DAY\\).*LIMIT \\?;").
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 5))
 
 	// Mock queries for main table `calendars`
-	mock.ExpectExec("DELETE FROM calendars WHERE \\( deleted_at IS NOT NULL AND \\(deleted_at <= \\(CURRENT_DATE - INTERVAL 30 DAY\\)\\) \\) LIMIT \\?;").
+	mock.ExpectExec("DELETE FROM calendars WHERE \\( \\(deleted_at IS NOT NULL\\) AND \\(deleted_at <= \\(CURRENT_DATE - INTERVAL 30 DAY\\)\\) \\) LIMIT \\?;").
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 5))
 
