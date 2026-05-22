@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func newTestDemo(seed uint64) *Demo {
@@ -26,9 +28,7 @@ func TestDemoIdentifierDeterministic(t *testing.T) {
 	got := d.charIdentifier(1, license)
 	want := "char1:860d10f4cb5bb61a609ca73e14b0255dc366f2c2e9494bcfb7a34b9da9"
 
-	if got != want {
-		t.Fatalf("expected identifier %q, got %q", want, got)
-	}
+	assert.Equal(t, want, got, "expected identifier %q, got %q", want, got)
 }
 
 func TestBuildFakeUserProfileDeterministic(t *testing.T) {
@@ -41,39 +41,14 @@ func TestBuildFakeUserProfileDeterministic(t *testing.T) {
 	d2 := newTestDemo(42)
 	p2 := d2.buildFakeUserProfile(1, "demochar", licenses)
 
-	if p1.Identifier != p2.Identifier {
-		t.Fatalf("identifier mismatch: %q vs %q", p1.Identifier, p2.Identifier)
-	}
-	if p1.Firstname != p2.Firstname || p1.Lastname != p2.Lastname {
-		t.Fatalf(
-			"name mismatch: %q %q vs %q %q",
-			p1.Firstname,
-			p1.Lastname,
-			p2.Firstname,
-			p2.Lastname,
-		)
-	}
-	if p1.PrimaryJob != p2.PrimaryJob || p1.PrimaryJobGrade != p2.PrimaryJobGrade {
-		t.Fatalf(
-			"primary job mismatch: %s/%d vs %s/%d",
-			p1.PrimaryJob,
-			p1.PrimaryJobGrade,
-			p2.PrimaryJob,
-			p2.PrimaryJobGrade,
-		)
-	}
-	if p1.PhoneNumber != p2.PhoneNumber {
-		t.Fatalf("phone mismatch: %q vs %q", p1.PhoneNumber, p2.PhoneNumber)
-	}
-	if len(p1.Jobs) != len(p2.Jobs) || len(p1.Licenses) != len(p2.Licenses) {
-		t.Fatalf(
-			"profile sizes mismatch: jobs %d/%d licenses %d/%d",
-			len(p1.Jobs),
-			len(p2.Jobs),
-			len(p1.Licenses),
-			len(p2.Licenses),
-		)
-	}
+	assert.Equal(t, p2.Identifier, p1.Identifier, "identifier mismatch: %q vs %q", p1.Identifier, p2.Identifier)
+	assert.Equal(t, p2.Firstname, p1.Firstname, "name mismatch: %q %q vs %q %q", p1.Firstname, p1.Lastname, p2.Firstname, p2.Lastname)
+	assert.Equal(t, p2.Lastname, p1.Lastname, "name mismatch: %q %q vs %q %q", p1.Firstname, p1.Lastname, p2.Firstname, p2.Lastname)
+	assert.Equal(t, p2.PrimaryJob, p1.PrimaryJob, "primary job mismatch: %s/%d vs %s/%d", p1.PrimaryJob, p1.PrimaryJobGrade, p2.PrimaryJob, p2.PrimaryJobGrade)
+	assert.Equal(t, p2.PrimaryJobGrade, p1.PrimaryJobGrade, "primary job mismatch: %s/%d vs %s/%d", p1.PrimaryJob, p1.PrimaryJobGrade, p2.PrimaryJob, p2.PrimaryJobGrade)
+	assert.Equal(t, p2.PhoneNumber, p1.PhoneNumber, "phone mismatch: %q vs %q", p1.PhoneNumber, p2.PhoneNumber)
+	assert.Equal(t, len(p2.Jobs), len(p1.Jobs), "profile sizes mismatch: jobs %d/%d licenses %d/%d", len(p1.Jobs), len(p2.Jobs), len(p1.Licenses), len(p2.Licenses))
+	assert.Equal(t, len(p2.Licenses), len(p1.Licenses), "profile sizes mismatch: jobs %d/%d licenses %d/%d", len(p1.Jobs), len(p2.Jobs), len(p1.Licenses), len(p2.Licenses))
 }
 
 func TestPickUserJobsFromConfiguredPool(t *testing.T) {
@@ -92,21 +67,14 @@ func TestPickUserJobsFromConfiguredPool(t *testing.T) {
 
 	for range 250 {
 		jobs := d.pickUserJobs()
-		if len(jobs) == 0 {
-			t.Fatal("expected at least one job")
-		}
-		if !jobs[0].IsPrimary {
-			t.Fatal("expected first job to be primary")
-		}
+		require.NotEmpty(t, jobs, "expected at least one job")
+		assert.True(t, jobs[0].IsPrimary, "expected first job to be primary")
 
 		for _, job := range jobs {
 			grades, ok := pool[job.Job]
-			if !ok {
-				t.Fatalf("job %q not in demo pool", job.Job)
-			}
-			if _, ok := grades[job.Grade]; !ok {
-				t.Fatalf("job grade %d for %q not in demo seed grades", job.Grade, job.Job)
-			}
+			require.True(t, ok, "job %q not in demo pool", job.Job)
+			_, ok = grades[job.Grade]
+			assert.True(t, ok, "job grade %d for %q not in demo seed grades", job.Grade, job.Job)
 		}
 	}
 }
@@ -117,13 +85,9 @@ func TestBuildTargetJobUserProfileUsesTargetJob(t *testing.T) {
 	d.cfg.Demo.TargetJob = "ambulance"
 
 	profile := d.buildTargetJobUserProfile(3, []string{"drive"})
-	if profile.PrimaryJob != "ambulance" {
-		t.Fatalf("expected primary job ambulance, got %q", profile.PrimaryJob)
-	}
-	if len(profile.Jobs) != 1 || profile.Jobs[0].Job != "ambulance" || !profile.Jobs[0].IsPrimary {
-		t.Fatalf("expected exactly one primary ambulance job, got %+v", profile.Jobs)
-	}
-	if !strings.HasPrefix(profile.Identifier, "char1:") {
-		t.Fatalf("expected char1 identifier, got %q", profile.Identifier)
-	}
+	assert.Equal(t, "ambulance", profile.PrimaryJob, "expected primary job ambulance, got %q", profile.PrimaryJob)
+	require.Len(t, profile.Jobs, 1, "expected exactly one primary ambulance job, got %+v", profile.Jobs)
+	assert.Equal(t, "ambulance", profile.Jobs[0].Job, "expected exactly one primary ambulance job, got %+v", profile.Jobs)
+	assert.True(t, profile.Jobs[0].IsPrimary, "expected exactly one primary ambulance job, got %+v", profile.Jobs)
+	assert.True(t, strings.HasPrefix(profile.Identifier, "char1:"), "expected char1 identifier, got %q", profile.Identifier)
 }

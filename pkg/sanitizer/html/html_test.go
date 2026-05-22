@@ -3,7 +3,7 @@ package htmlsanitizer
 import (
 	"testing"
 
-	"gotest.tools/v3/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSanitize(t *testing.T) {

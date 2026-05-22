@@ -8,6 +8,7 @@ import (
 	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
 )
 
@@ -39,16 +40,12 @@ func (m *natsServer) Setup() {
 
 	// Initialize new server with options
 	ns, err := server.NewServer(opts)
-	if err != nil {
-		m.t.Fatalf("failed to setup mysql test server. %v", err)
-	}
+	require.NoError(m.t, err, "failed to setup mysql test server")
 
 	// Start the server via goroutine
 	go ns.Start()
 	// Wait for server to be ready for connections
-	if !ns.ReadyForConnections(8 * time.Second) {
-		m.t.Fatal("nats: not ready connection after 8 seconds")
-	}
+	require.True(m.t, ns.ReadyForConnections(8*time.Second), "nats: not ready connection after 8 seconds")
 	m.server = ns
 
 	// Auto stop server when test is done
@@ -61,10 +58,7 @@ func (m *natsServer) GetURL() string {
 
 func (m *natsServer) GetConn() *nats.Conn {
 	conn, err := nats.Connect(m.GetURL())
-	if err != nil {
-		m.t.Fatalf("failed to get NATS client. %v", err)
-		return nil
-	}
+	require.NoError(m.t, err, "failed to get NATS client")
 
 	return conn
 }
@@ -73,10 +67,7 @@ func (m *natsServer) GetJS() jetstream.JetStream {
 	conn := m.GetConn()
 
 	js, err := jetstream.New(conn)
-	if err != nil {
-		m.t.Fatalf("failed to create JetStream client. %v", err)
-		return nil
-	}
+	require.NoError(m.t, err, "failed to create JetStream client")
 
 	return js
 }

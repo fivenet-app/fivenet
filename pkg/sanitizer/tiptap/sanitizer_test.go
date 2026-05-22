@@ -3,6 +3,9 @@ package tiptapsanitizer
 import (
 	"encoding/json"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBuildAllowedContainsAllNodePolicies(t *testing.T) {
@@ -35,9 +38,7 @@ func TestBuildAllowedContainsAllNodePolicies(t *testing.T) {
 	}
 
 	for _, typ := range nodeTypes {
-		if _, ok := s.Nodes[typ]; !ok {
-			t.Fatalf("missing node policy for %q", typ)
-		}
+		assert.Contains(t, s.Nodes, typ, "missing node policy for %q", typ)
 	}
 }
 
@@ -59,9 +60,7 @@ func TestBuildAllowedContainsAllMarkPolicies(t *testing.T) {
 	}
 
 	for _, typ := range markTypes {
-		if _, ok := s.Marks[typ]; !ok {
-			t.Fatalf("missing mark policy for %q", typ)
-		}
+		assert.Contains(t, s.Marks, typ, "missing mark policy for %q", typ)
 	}
 }
 
@@ -178,9 +177,7 @@ func TestNodePoliciesBasicValidation(t *testing.T) {
 			t.Parallel()
 			policy := s.Nodes[tt.typ]
 			ok, _ := policy.Validate(tt.attrs)
-			if ok != tt.ok {
-				t.Fatalf("policy %q validate ok=%v, want %v", tt.typ, ok, tt.ok)
-			}
+			assert.Equal(t, tt.ok, ok, "policy %q validate ok=%v, want %v", tt.typ, ok, tt.ok)
 		})
 	}
 }
@@ -240,9 +237,7 @@ func TestMarkPoliciesBasicValidation(t *testing.T) {
 			t.Parallel()
 			policy := s.Marks[tt.typ]
 			ok, _ := policy.Validate(tt.attrs)
-			if ok != tt.ok {
-				t.Fatalf("policy %q validate ok=%v, want %v", tt.typ, ok, tt.ok)
-			}
+			assert.Equal(t, tt.ok, ok, "policy %q validate ok=%v, want %v", tt.typ, ok, tt.ok)
 		})
 	}
 }
@@ -265,26 +260,18 @@ func TestSanitizeTextNodeWithMarks(t *testing.T) {
 	}
 
 	out, ok := sanitizeNode(in, s, 0, 8, stats)
-	if !ok {
-		t.Fatal("sanitizeNode returned not ok")
-	}
+	require.True(t, ok, "sanitizeNode returned not ok")
 
-	if got, _ := out["type"].(string); got != NodeTypeText {
-		t.Fatalf("sanitized type = %q, want %q", got, NodeTypeText)
-	}
+	gotType, _ := out["type"].(string)
+	assert.Equal(t, NodeTypeText, gotType, "sanitized type = %q, want %q", gotType, NodeTypeText)
 
-	if got, _ := out["text"].(string); got != "hello world" {
-		t.Fatalf("sanitized text = %q, want %q", got, "hello world")
-	}
+	gotText, _ := out["text"].(string)
+	assert.Equal(t, "hello world", gotText, "sanitized text = %q, want %q", gotText, "hello world")
 
 	marks, _ := out["marks"].([]any)
-	if len(marks) != 2 {
-		t.Fatalf("sanitized marks count = %d, want 2", len(marks))
-	}
+	assert.Len(t, marks, 2, "sanitized marks count = %d, want 2", len(marks))
 
-	if stats.Words != 2 {
-		t.Fatalf("stats words = %d, want 2", stats.Words)
-	}
+	assert.Equal(t, 2, stats.Words, "stats words = %d, want 2", stats.Words)
 }
 
 func TestSanitizeMentionNode(t *testing.T) {
@@ -297,20 +284,13 @@ func TestSanitizeMentionNode(t *testing.T) {
 	}
 
 	out, ok := sanitizeNode(in, s, 0, 8, stats)
-	if !ok {
-		t.Fatal("sanitizeNode mention returned not ok")
-	}
+	require.True(t, ok, "sanitizeNode mention returned not ok")
 
-	if got, _ := out["type"].(string); got != NodeTypeMention {
-		t.Fatalf("sanitized type = %q, want %q", got, NodeTypeMention)
-	}
+	gotType, _ := out["type"].(string)
+	assert.Equal(t, NodeTypeMention, gotType, "sanitized type = %q, want %q", gotType, NodeTypeMention)
 	attrs, _ := out["attrs"].(map[string]any)
-	if attrs["id"] != "user-42" {
-		t.Fatalf("sanitized mention id = %v, want user-42", attrs["id"])
-	}
-	if attrs["label"] != "Ada" {
-		t.Fatalf("sanitized mention label = %v, want Ada", attrs["label"])
-	}
+	assert.Equal(t, "user-42", attrs["id"], "sanitized mention id = %v, want user-42", attrs["id"])
+	assert.Equal(t, "Ada", attrs["label"], "sanitized mention label = %v, want Ada", attrs["label"])
 }
 
 func TestSanitizeNestedContentAndHeadingExtraction(t *testing.T) {
@@ -355,28 +335,18 @@ func TestSanitizeNestedContentAndHeadingExtraction(t *testing.T) {
 	}
 
 	out, stats, err := Sanitize(doc, 0, 10)
-	if err != nil {
-		t.Fatalf("sanitize returned error: %v", err)
-	}
+	require.NoError(t, err, "sanitize returned error")
 
-	if stats.FirstHeading != "First Heading" {
-		t.Fatalf("first heading = %q, want %q", stats.FirstHeading, "First Heading")
-	}
-	if stats.Words != 5 {
-		t.Fatalf("word count = %d, want 5", stats.Words)
-	}
+	assert.Equal(t, "First Heading", stats.FirstHeading, "first heading = %q, want %q", stats.FirstHeading, "First Heading")
+	assert.Equal(t, 5, stats.Words, "word count = %d, want 5", stats.Words)
 
 	content, _ := out["content"].([]any)
-	if len(content) != 3 {
-		t.Fatalf("root content length = %d, want 3", len(content))
-	}
+	assert.Len(t, content, 3, "root content length = %d, want 3", len(content))
 
 	// Validate nested structure survived sanitize.
 	first, _ := content[0].(map[string]any)
 	firstContent, _ := first["content"].([]any)
-	if len(firstContent) != 1 {
-		t.Fatalf("bulletList children = %d, want 1", len(firstContent))
-	}
+	assert.Len(t, firstContent, 1, "bulletList children = %d, want 1", len(firstContent))
 }
 
 func TestSanitizeMaxBytesLimit(t *testing.T) {
@@ -396,17 +366,11 @@ func TestSanitizeMaxBytesLimit(t *testing.T) {
 	}
 
 	b, err := json.Marshal(doc)
-	if err != nil {
-		t.Fatalf("marshal doc failed: %v", err)
-	}
+	require.NoError(t, err, "marshal doc failed")
 
 	_, _, err = Sanitize(doc, len(b)-1, 10)
-	if err == nil {
-		t.Fatal("expected document too large error, got nil")
-	}
-	if err.Error() != "document too large" {
-		t.Fatalf("error = %q, want %q", err.Error(), "document too large")
-	}
+	require.Error(t, err, "expected document too large error, got nil")
+	assert.EqualError(t, err, "document too large")
 }
 
 func TestSanitizeMaxDepthPrunesTooDeepNodes(t *testing.T) {
@@ -432,26 +396,20 @@ func TestSanitizeMaxDepthPrunesTooDeepNodes(t *testing.T) {
 
 	// maxDepth=2 means depth 3 nodes are dropped.
 	out, stats, err := Sanitize(doc, 0, 2)
-	if err != nil {
-		t.Fatalf("sanitize returned error: %v", err)
-	}
+	require.NoError(t, err, "sanitize returned error")
 
-	if stats.Words != 0 {
-		t.Fatalf("word count = %d, want 0 after depth pruning", stats.Words)
-	}
+	assert.Equal(t, 0, stats.Words, "word count = %d, want 0 after depth pruning", stats.Words)
 
 	content, _ := out["content"].([]any)
-	if len(content) != 1 {
-		t.Fatalf("root content length = %d, want 1", len(content))
-	}
+	assert.Len(t, content, 1, "root content length = %d, want 1", len(content))
 	first, _ := content[0].(map[string]any)
 	children, _ := first["content"].([]any)
-	if len(children) != 1 {
-		t.Fatalf("first paragraph children = %d, want 1", len(children))
-	}
+	assert.Len(t, children, 1, "first paragraph children = %d, want 1", len(children))
 	second, _ := children[0].(map[string]any)
-	if deepChildren, ok := second["content"]; ok && len(deepChildren.([]any)) > 0 {
-		t.Fatalf("expected deep content to be pruned, got %v", deepChildren)
+	if deepChildren, ok := second["content"]; ok {
+		dc, typeOK := deepChildren.([]any)
+		require.True(t, typeOK, "expected deep content to be []any, got %T", deepChildren)
+		assert.Empty(t, dc, "expected deep content to be pruned, got %v", deepChildren)
 	}
 }
 
@@ -484,12 +442,8 @@ func TestSanitizeUsesFirstNonEmptyParagraphWhenNoHeading(t *testing.T) {
 	}
 
 	_, stats, err := Sanitize(doc, 0, 10)
-	if err != nil {
-		t.Fatalf("sanitize returned error: %v", err)
-	}
-	if stats.FirstHeading != "Fallback Title" {
-		t.Fatalf("first heading fallback = %q, want %q", stats.FirstHeading, "Fallback Title")
-	}
+	require.NoError(t, err, "sanitize returned error")
+	assert.Equal(t, "Fallback Title", stats.FirstHeading, "first heading fallback = %q, want %q", stats.FirstHeading, "Fallback Title")
 }
 
 func TestSanitizePrefersHeadingOverParagraphFallback(t *testing.T) {
@@ -516,10 +470,6 @@ func TestSanitizePrefersHeadingOverParagraphFallback(t *testing.T) {
 	}
 
 	_, stats, err := Sanitize(doc, 0, 10)
-	if err != nil {
-		t.Fatalf("sanitize returned error: %v", err)
-	}
-	if stats.FirstHeading != "Real Heading" {
-		t.Fatalf("first heading = %q, want %q", stats.FirstHeading, "Real Heading")
-	}
+	require.NoError(t, err, "sanitize returned error")
+	assert.Equal(t, "Real Heading", stats.FirstHeading, "first heading = %q, want %q", stats.FirstHeading, "Real Heading")
 }

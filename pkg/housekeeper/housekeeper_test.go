@@ -5,6 +5,8 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
 
@@ -15,9 +17,7 @@ func TestSoftDeleteJobData(t *testing.T) {
 	// Mock dependencies
 	logger := zap.NewNop()
 	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("failed to create mock db: %v", err)
-	}
+	require.NoError(t, err, "failed to create mock db")
 	defer db.Close()
 
 	housekeeper := &Housekeeper{
@@ -75,14 +75,10 @@ func TestSoftDeleteJobData(t *testing.T) {
 	// Execute the function
 	var r int64
 	r, err = housekeeper.SoftDeleteJobData(ctx, table, jobName)
-	if err != nil {
-		t.Errorf("SoftDeleteJobData failed (%d): %v", r, err)
-	}
+	assert.NoError(t, err, "SoftDeleteJobData failed (%d)", r)
 
 	// Ensure all expectations were met
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("unmet expectations: %v", err)
-	}
+	assert.NoError(t, mock.ExpectationsWereMet(), "unmet expectations")
 }
 
 func TestHardDelete(t *testing.T) {
@@ -92,9 +88,7 @@ func TestHardDelete(t *testing.T) {
 	// Mock dependencies
 	logger := zap.NewNop()
 	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("failed to create mock db: %v", err)
-	}
+	require.NoError(t, err, "failed to create mock db")
 	defer db.Close()
 
 	housekeeper := &Housekeeper{
@@ -157,12 +151,8 @@ func TestHardDelete(t *testing.T) {
 	// Execute the function
 	var r int64
 	r, err = housekeeper.HardDelete(ctx, table)
-	if err != nil {
-		t.Errorf("HardDelete failed (%d): %v", r, err)
-	}
+	assert.NoError(t, err, "HardDelete failed (%d)", r)
 
 	// Ensure all expectations were met
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("unmet expectations: %v", err)
-	}
+	assert.NoError(t, mock.ExpectationsWereMet(), "unmet expectations")
 }

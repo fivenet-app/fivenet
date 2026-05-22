@@ -3,6 +3,8 @@ package utils
 import (
 	"math"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestToUint32Saturated(t *testing.T) {
@@ -22,9 +24,8 @@ func TestToUint32Saturated(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if got := ToUint32Saturated(tt.in); got != tt.want {
-				t.Fatalf("ToUint32Saturated(%d) = %d, want %d", tt.in, got, tt.want)
-			}
+			got := ToUint32Saturated(tt.in)
+			assert.Equal(t, tt.want, got, "ToUint32Saturated(%d) = %d, want %d", tt.in, got, tt.want)
 		})
 	}
 }
@@ -48,16 +49,28 @@ func TestToUint32Checked(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got, ok := ToUint32Checked(tt.in)
-			if got != tt.want || ok != tt.wantOK {
-				t.Fatalf(
-					"ToUint32Checked(%d) = (%d, %t), want (%d, %t)",
-					tt.in,
-					got,
-					ok,
-					tt.want,
-					tt.wantOK,
-				)
-			}
+			assert.Equal(
+				t,
+				tt.want,
+				got,
+				"ToUint32Checked(%d) = (%d, %t), want (%d, %t)",
+				tt.in,
+				got,
+				ok,
+				tt.want,
+				tt.wantOK,
+			)
+			assert.Equal(
+				t,
+				tt.wantOK,
+				ok,
+				"ToUint32Checked(%d) = (%d, %t), want (%d, %t)",
+				tt.in,
+				got,
+				ok,
+				tt.want,
+				tt.wantOK,
+			)
 		})
 	}
 }

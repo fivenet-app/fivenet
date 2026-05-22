@@ -4,29 +4,19 @@ import (
 	"testing"
 
 	"github.com/creasty/defaults"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDemoDefaults(t *testing.T) {
 	t.Parallel()
 	cfg := &Config{}
-	if err := defaults.Set(cfg); err != nil {
-		t.Fatalf("failed to set defaults: %v", err)
-	}
+	require.NoError(t, defaults.Set(cfg), "failed to set defaults")
 
-	if cfg.Demo.Features.Dispatches != true {
-		t.Fatal("expected demo.features.dispatches default to be true")
-	}
-	if cfg.Demo.Features.Locations != true {
-		t.Fatal("expected demo.features.locations default to be true")
-	}
-	if cfg.Demo.Features.Timeclock != true {
-		t.Fatal("expected demo.features.timeclock default to be true")
-	}
-	if cfg.Demo.Features.Users != false {
-		t.Fatal("expected demo.features.users default to be false")
-	}
+	assert.True(t, cfg.Demo.Features.Dispatches, "expected demo.features.dispatches default to be true")
+	assert.True(t, cfg.Demo.Features.Locations, "expected demo.features.locations default to be true")
+	assert.True(t, cfg.Demo.Features.Timeclock, "expected demo.features.timeclock default to be true")
+	assert.False(t, cfg.Demo.Features.Users, "expected demo.features.users default to be false")
 
-	if cfg.Demo.FakeUsers.Count != 50 {
-		t.Fatalf("expected demo.fakeUsers.count default 50, got %d", cfg.Demo.FakeUsers.Count)
-	}
+	assert.EqualValues(t, 50, cfg.Demo.FakeUsers.Count, "expected demo.fakeUsers.count default 50, got %d", cfg.Demo.FakeUsers.Count)
 }

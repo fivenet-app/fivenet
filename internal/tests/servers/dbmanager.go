@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ory/dockertest/v4"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -95,22 +96,16 @@ func (m *dbServer) Setup(ctx context.Context) {
 
 		return nil
 	}); err != nil {
-		m.t.Fatalf("could not connect to database: %q", err)
+		require.NoError(m.t, err, "could not connect to database")
 	}
 
-	if err := m.prepareDBForFirstUse(ctx); err != nil {
-		m.t.Fatalf("failed to prepare database for first use: %q", err)
-	}
+	require.NoError(m.t, m.prepareDBForFirstUse(ctx), "failed to prepare database for first use")
 
-	if err := m.LoadBaseData(ctx); err != nil {
-		m.t.Fatalf("failed to load base data into database: %q", err)
-	}
+	require.NoError(m.t, m.LoadBaseData(ctx), "failed to load base data into database")
 
 	var err error
 	m.db, err = sql.Open("mysql", m.getDSN())
-	if err != nil {
-		m.t.Fatalf("could not connect to database after setup: %q", err)
-	}
+	require.NoError(m.t, err, "could not connect to database after setup")
 }
 
 func (m *dbServer) DB() (*sql.DB, error) {
@@ -133,9 +128,8 @@ func (m *dbServer) getDSN() string {
 
 func (m *dbServer) prepareDBForFirstUse(ctx context.Context) error {
 	// Use DB migrations to handle the rest (esx compat mode is true)
-	if _, err := query.MigrateDB(ctx, zap.NewNop(), m.getDSN(), false, false); err != nil {
-		m.t.Fatalf("failed to migrate test database: %v", err)
-	}
+	_, err := query.MigrateDB(ctx, zap.NewNop(), m.getDSN(), false, false)
+	require.NoError(m.t, err, "failed to migrate test database")
 
 	return nil
 }
@@ -155,18 +149,13 @@ func (m *dbServer) getMultiStatementDB() (*sql.DB, error) {
 
 func (m *dbServer) loadSQLFile(ctx context.Context, file string) error {
 	initDB, err := m.getMultiStatementDB()
-	if err != nil {
-		m.t.Fatalf("failed to get multi statement db: %v", err)
-	}
+	require.NoError(m.t, err, "failed to get multi statement db")
 
 	c, ioErr := os.ReadFile(file)
-	if ioErr != nil {
-		m.t.Fatalf("failed to read %s for tests: %v", file, ioErr)
-	}
+	require.NoError(m.t, ioErr, "failed to read %s for tests", file)
 	sqlBase := string(c)
-	if _, err := initDB.ExecContext(ctx, sqlBase); err != nil {
-		m.t.Fatalf("failed to apply %s for tests: %v", file, err)
-	}
+	_, err = initDB.ExecContext(ctx, sqlBase)
+	require.NoError(m.t, err, "failed to apply %s for tests", file)
 
 	return nil
 }
@@ -174,9 +163,7 @@ func (m *dbServer) loadSQLFile(ctx context.Context, file string) error {
 func (m *dbServer) LoadBaseData(ctx context.Context) error {
 	path := filepath.Join(tests.TestDataSQLPath, "base_*.sql")
 	files, err := filepath.Glob(path)
-	if err != nil {
-		m.t.Fatalf("failed to find base data sql files (%s): %v", path, err)
-	}
+	require.NoError(m.t, err, "failed to find base data sql files (%s)", path)
 	// Sort the found files as they might not be in lexical order which we
 	// need for this case https://github.com/golang/go/issues/17153
 	slices.Sort(files)
@@ -197,9 +184,7 @@ func (m *dbServer) Stop() {
 	m.stopped = true
 
 	if m.db != nil {
-		if err := m.db.Close(); err != nil {
-			m.t.Fatalf("could not close test database connection: %v", err)
-		}
+		require.NoError(m.t, m.db.Close(), "could not close test database connection")
 	}
 }
 

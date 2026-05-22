@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestEncrypt(t *testing.T) {
@@ -13,18 +15,12 @@ func TestEncrypt(t *testing.T) {
 
 	plaintext := "Hello, World!"
 	encrypted, err := crypt.Encrypt(plaintext)
-	if err != nil {
-		t.Fatalf("Encrypt failed: %v", err)
-	}
+	require.NoError(t, err, "Encrypt failed")
 
-	if encrypted == "" {
-		t.Fatal("Encrypt returned an empty string")
-	}
+	assert.NotEmpty(t, encrypted, "Encrypt returned an empty string")
 
 	// Ensure the encrypted string is not the same as the plaintext
-	if encrypted == plaintext {
-		t.Fatal("Encrypted string should not match the plaintext")
-	}
+	assert.NotEqual(t, plaintext, encrypted, "Encrypted string should not match the plaintext")
 }
 
 func TestEncryptDecrypt(t *testing.T) {
@@ -32,22 +28,14 @@ func TestEncryptDecrypt(t *testing.T) {
 	cfg := &config.Config{Secret: "test-secret"}
 	crypt := New(cfg)
 
+	require := require.New(t)
+
 	plaintext := "Hello, World!"
 	encrypted, err := crypt.Encrypt(plaintext)
-	if err != nil {
-		t.Fatalf("Encrypt failed: %v", err)
-	}
+	require.NoError(err, "Encrypt failed")
 
 	decrypted, err := crypt.Decrypt(encrypted)
-	if err != nil {
-		t.Fatalf("Decrypt failed: %v", err)
-	}
+	require.NoError(err, "Decrypt failed")
 
-	if decrypted != plaintext {
-		t.Fatalf(
-			"Decrypted text does not match original plaintext. Got: %s, Want: %s",
-			decrypted,
-			plaintext,
-		)
-	}
+	assert.Equal(t, plaintext, decrypted, "Decrypted text does not match original plaintext")
 }
