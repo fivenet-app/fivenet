@@ -156,7 +156,7 @@ const formRef = useTemplateRef('formRef');
 <template>
     <UPopover v-model:open="open">
         <UTooltip :text="$t('components.partials.tiptap_editor.image')">
-            <UButton icon="i-mdi-image" :color="fileLimitReached ? 'error' : 'neutral'" variant="ghost" :disabled="disabled" />
+            <UButton icon="i-mdi-images" :color="fileLimitReached ? 'error' : 'neutral'" variant="ghost" :disabled="disabled" />
         </UTooltip>
 
         <template #content>

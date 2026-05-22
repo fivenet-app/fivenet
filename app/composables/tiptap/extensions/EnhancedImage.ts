@@ -2,6 +2,7 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { VueNodeViewRenderer } from '@tiptap/vue-3';
 import EnhancedImageView from '~/components/partials/editor/EnhancedImageView.vue';
+import { deleteImageTrackerForceRemovedMetaKey } from './DeleteImageTracker';
 
 export interface EnhancedImageOptions {
     /**
@@ -146,7 +147,12 @@ export const EnhancedImage = Node.create<EnhancedImageOptions>({
                         }
                     });
 
-                    if (!positions.length) return false;
+                    if (!positions.length) {
+                        if (dispatch) {
+                            dispatch(state.tr.setMeta(deleteImageTrackerForceRemovedMetaKey, [fileId]));
+                        }
+                        return true;
+                    }
 
                     if (dispatch) {
                         let tr = state.tr;

@@ -2,6 +2,9 @@ import { Extension } from '@tiptap/core';
 import type { Node } from 'prosemirror-model';
 import { Plugin, PluginKey } from 'prosemirror-state';
 
+export const deleteImageTrackerKey = new PluginKey('delete-image-tracker');
+export const deleteImageTrackerForceRemovedMetaKey = 'delete-image-tracker:force-removed';
+
 // Helper - collect current <image> fileIds in the document
 function collectImageIds(doc: Node): Set<number> {
     const out = new Set<number>();
@@ -16,11 +19,14 @@ function collectImageIds(doc: Node): Set<number> {
 // Factory that triggers `onRemoved(ids)` whenever an image vanishes
 function deleteImageTracker(onRemoved: (ids: number[]) => void) {
     return new Plugin({
-        key: new PluginKey('delete-image-tracker'),
+        key: deleteImageTrackerKey,
 
         state: {
             init: (_, state) => collectImageIds(state.doc),
             apply: (tr, prev: Set<number>, _old, newState) => {
+                const forcedRemoved = tr.getMeta(deleteImageTrackerForceRemovedMetaKey) as number[] | undefined;
+                if (forcedRemoved?.length) onRemoved([...new Set(forcedRemoved.filter((id) => !!id))]);
+
                 if (!tr.docChanged) return prev;
                 const next = collectImageIds(newState.doc);
 
