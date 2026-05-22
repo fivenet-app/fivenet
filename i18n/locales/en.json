@@ -906,7 +906,9 @@
                 "add_row_after": "Add row after",
                 "delete_row": "Delete row",
                 "default": "Default",
-                "penalty_calculator": "Penalty Calculator"
+                "penalty_calculator": "Penalty Calculator",
+                "delete_table": "Delete table",
+                "toggle_header_row": "Toggle header row"
             },
             "signature_pad": {
                 "pen_color": "Pen Color",

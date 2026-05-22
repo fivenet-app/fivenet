@@ -906,7 +906,9 @@
                 "add_row_after": "Zeile danach einfügen",
                 "delete_row": "Zeile löschen",
                 "default": "Standard",
-                "penalty_calculator": "Strafenrechner"
+                "penalty_calculator": "Strafenrechner",
+                "delete_table": "Tabelle löschen",
+                "toggle_header_row": "Kopfzeile umschalten"
             },
             "signature_pad": {
                 "pen_color": "Stiftfarbe",

@@ -57,6 +57,15 @@ const isOpen = ref(false);
         <template #content>
             <div class="p-4">
                 <div v-if="active" class="grid grid-cols-1 gap-2">
+                    <UFieldGroup>
+                        <UButton
+                            class="w-full"
+                            :label="$t('components.partials.tiptap_editor.toggle_header_row')"
+                            icon="i-mdi-table-headers-eye"
+                            @click="editor.chain().focus().toggleHeaderRow().run()"
+                        />
+                    </UFieldGroup>
+
                     <div class="grid grid-cols-2 gap-2">
                         <UFieldGroup orientation="vertical">
                             <UButton
@@ -109,19 +118,31 @@ const isOpen = ref(false);
                             @click="editor.chain().focus().deleteRow().run()"
                         />
                     </UFieldGroup>
+
+                    <UFieldGroup>
+                        <UButton
+                            class="w-full"
+                            block
+                            :label="$t('components.partials.tiptap_editor.delete_table')"
+                            icon="i-mdi-table-remove"
+                            color="red"
+                            variant="subtle"
+                            @click="editor.chain().focus().deleteTable().run()"
+                        />
+                    </UFieldGroup>
                 </div>
 
                 <UForm v-else :schema="schema" :state="state" @submit="onSubmit">
                     <UFormField :label="$t('components.partials.tiptap_editor.rows')" name="rows">
-                        <UInput v-model="state.rows" type="text" :disabled="disabled" />
+                        <UInputNumber v-model="state.rows" :min="0" :step="1" :max="200" :disabled="disabled" />
                     </UFormField>
 
                     <UFormField :label="$t('components.partials.tiptap_editor.cols')" name="cols">
-                        <UInput v-model="state.cols" type="text" :disabled="disabled" />
+                        <UInputNumber v-model="state.cols" :min="0" :step="1" :max="200" :disabled="disabled" />
                     </UFormField>
 
                     <UFormField :label="$t('components.partials.tiptap_editor.with_header_row')" name="withHeaderRow">
-                        <USwitch v-model="state.withHeaderRow" type="text" :disabled="disabled" />
+                        <USwitch v-model="state.withHeaderRow" :disabled="disabled" />
                     </UFormField>
 
                     <UFormField class="mt-2">
