@@ -10,12 +10,15 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/state"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
@@ -83,6 +86,7 @@ type BotParams struct {
 	Config    *config.Config
 	AppConfig appconfig.IConfig
 	Perms     perms.Permissions
+	I18n      *i18n.I18n
 
 	Discord *state.State
 }
@@ -95,10 +99,12 @@ type Bot struct {
 	js       *events.JSWrapper
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
-	cfg      *config.Discord
+	dcCfg    *config.Discord
 	appCfg   appconfig.IConfig
 	perms    perms.Permissions
+	i18n     *i18n.I18n
 
+	publicURL          string
 	oauth2ProviderName string
 
 	wg     sync.WaitGroup
@@ -135,10 +141,12 @@ func New(p BotParams) Result {
 		js:       p.JS,
 		db:       p.DB,
 		enricher: p.Enricher,
-		cfg:      &p.Config.Discord,
+		dcCfg:    &p.Config.Discord,
 		appCfg:   p.AppConfig,
 		perms:    p.Perms,
+		i18n:     p.I18n,
 
+		publicURL:          p.Config.HTTP.PublicURL,
 		oauth2ProviderName: oauth2ProviderName,
 
 		wg:     sync.WaitGroup{},
@@ -303,6 +311,8 @@ func (b *Bot) start(ctx context.Context) error {
 		g.events.Publish(ev)
 	})
 
+	b.dc.AddHandler(b.handlePrivateMessage)
+
 	for {
 		if b.dc.Ready().Version > 0 && ready.Load() {
 			if _, err := b.dc.Me(); err != nil {
@@ -330,7 +340,7 @@ func (b *Bot) start(ctx context.Context) error {
 
 func (b *Bot) syncLoop(ctx context.Context) {
 	for {
-		b.logger.Info("running discord sync", zap.Bool("dry_run", b.cfg.DryRun))
+		b.logger.Info("running discord sync", zap.Bool("dry_run", b.dcCfg.DryRun))
 		func() {
 			ctx, span := b.tracer.Start(ctx, "discord_bot")
 			defer span.End()
@@ -519,4 +529,53 @@ func (b *Bot) IsUserGuildAdmin(
 	}
 
 	return perms.Has(discord.PermissionAdministrator), nil
+}
+
+func (b *Bot) handlePrivateMessage(ev *gateway.MessageCreateEvent) {
+	// Ignore messages from bots and webhooks
+	if ev.Author.Bot || ev.WebhookID.IsValid() {
+		return
+	}
+	// Only react to private messages, ignore guild messages
+	if ev.GuildID.IsValid() {
+		return
+	}
+
+	locale := b.i18n.GetFallbackLanguage()
+	if ev.Author.Locale != "" {
+		locale = ev.Author.Locale
+	}
+	t := b.i18n.Translator(locale)
+
+	if _, err := b.dc.SendMessageComplex(ev.ChannelID, api.SendMessageData{
+		Embeds: []discord.Embed{
+			{
+				Type:        discord.NormalEmbed,
+				Title:       t("discord.messages.private_message.title", nil),
+				Description: t("discord.messages.private_message.desc", nil),
+				Author:      embeds.EmbedAuthor,
+				Color:       embeds.ColorInfo,
+				Footer:      embeds.EmbedFooterFiveNet,
+			},
+		},
+		Components: discord.Components(
+			&discord.ActionRowComponent{
+				&discord.ButtonComponent{
+					Label: t("discord.commands.fivenet.open_link", nil),
+					Style: discord.LinkButtonStyle(b.publicURL),
+				},
+				&discord.ButtonComponent{
+					Label:    t("discord.commands.help.name", nil),
+					Style:    discord.SecondaryButtonStyle(),
+					CustomID: "help",
+				},
+			},
+		),
+	}); err != nil {
+		b.logger.Error(
+			"failed to send message in private messages",
+			zap.Int64("discord_user_id", int64(ev.Author.ID)),
+			zap.Error(err),
+		)
+	}
 }

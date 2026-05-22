@@ -40,6 +40,7 @@ func NewDCState(p StateParams) *state.State {
 	state.AddIntents(gateway.IntentGuildMembers)
 	state.AddIntents(gateway.IntentGuildPresences)
 	state.AddIntents(gateway.IntentGuildIntegrations)
+	state.AddIntents(gateway.IntentDirectMessages)
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		go func() {

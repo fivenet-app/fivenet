@@ -12,6 +12,9 @@ import (
 	"strings"
 )
 
+// TFunc is the translation function type. It takes a key and a map of variables, and returns the translated string.
+type TFunc func(string, map[string]any) string
+
 // I18n is a struct that holds translations for multiple languages and handles the translation.
 type I18n struct {
 	fallbackLang   string
@@ -46,6 +49,11 @@ func (i *I18n) LoadFromJSON(lang string, data []byte) error {
 	return nil
 }
 
+// GetFallbackLanguage returns the fallback language.
+func (i *I18n) GetFallbackLanguage() string {
+	return i.fallbackLang
+}
+
 // SetFallbackLanguage sets the fallback language.
 func (i *I18n) SetFallbackLanguage(lang string) {
 	i.fallbackLang = lang
@@ -58,7 +66,7 @@ func (i *I18n) SetFallbackLanguage(lang string) {
 // The map of variables can contain:
 // - "n": a number for pluralization
 // - Any other key-value pairs for variable replacement.
-func (i *I18n) Translator(lang string) func(string, map[string]any) string {
+func (i *I18n) Translator(lang string) TFunc {
 	return func(key string, vars map[string]any) string {
 		t, _ := i.translateWithFallback(lang, key, vars)
 		return t

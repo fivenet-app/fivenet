@@ -9,7 +9,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/state"
-	lang "github.com/fivenet-app/fivenet/v2026/i18n"
+	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
@@ -45,7 +45,7 @@ type CommandParams struct {
 	Cfg      *config.Config
 	JS       *events.JSWrapper
 	DB       *sql.DB
-	L        *lang.I18n
+	I18n     *i18n.I18n
 	BotState discordtypes.BotState
 	Perms    perms.Permissions
 }

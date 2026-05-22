@@ -9,7 +9,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
 	"github.com/diamondburned/arikawa/v3/discord"
-	lang "github.com/fivenet-app/fivenet/v2026/i18n"
+	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 )
 
@@ -20,48 +20,39 @@ var helpTopics = []string{
 }
 
 type HelpCommand struct {
-	l *lang.I18n
+	l *i18n.I18n
 
 	url string
 }
 
 func NewHelpCommand(p CommandParams) (Command, error) {
 	return &HelpCommand{
-		l:   p.L,
+		l:   p.I18n,
 		url: p.Cfg.HTTP.PublicURL,
 	}, nil
 }
 
 func (c *HelpCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommandData {
-	lEN := c.l.Translator("en")
-	lDE := c.l.Translator("de")
+	tr := newCommandLocalizer(c.l, "discord.commands.help")
 
 	cmdData := api.CreateCommandData{
-		Type: discord.ChatInputCommand,
-		Name: lEN("discord.commands.help.name", nil),
-		NameLocalizations: discord.StringLocales{
-			discord.German: lDE("discord.commands.help.name", nil),
-		},
+		Type:              discord.ChatInputCommand,
+		Name:              tr.text("name"),
+		NameLocalizations: tr.localizations("name"),
 
-		Description: lEN("discord.commands.help.desc", nil),
-		DescriptionLocalizations: discord.StringLocales{
-			discord.German: lDE("discord.commands.help.desc", nil),
-		},
+		Description:              tr.text("desc"),
+		DescriptionLocalizations: tr.localizations("desc"),
 
 		Options:                  []discord.CommandOption{},
 		DefaultMemberPermissions: discord.NewPermissions(discord.PermissionSendMessages),
 	}
 
 	choices := &discord.StringOption{
-		OptionName: lEN("discord.commands.help.topic.name", nil),
-		OptionNameLocalizations: discord.StringLocales{
-			discord.German: lDE("discord.commands.help.topic.name", nil),
-		},
+		OptionName:              tr.text("topic.name"),
+		OptionNameLocalizations: tr.localizations("topic.name"),
 
-		Description: lEN("discord.commands.help.topic.desc", nil),
-		DescriptionLocalizations: discord.StringLocales{
-			discord.German: lDE("discord.commands.help.topic.desc", nil),
-		},
+		Description:              tr.text("topic.desc"),
+		DescriptionLocalizations: tr.localizations("topic.desc"),
 
 		Choices: []discord.StringChoice{},
 
@@ -71,11 +62,9 @@ func (c *HelpCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommand
 
 	for _, option := range helpTopics {
 		choices.Choices = append(choices.Choices, discord.StringChoice{
-			Name: lEN(fmt.Sprintf("discord.commands.help.%s.name", option), nil),
-			NameLocalizations: discord.StringLocales{
-				discord.German: lDE(fmt.Sprintf("discord.commands.help.%s.name", option), nil),
-			},
-			Value: option,
+			Name:              tr.text(option + ".name"),
+			NameLocalizations: tr.localizations(option + ".name"),
+			Value:             option,
 		})
 	}
 
@@ -105,10 +94,14 @@ func (c *HelpCommand) HandleComponent(
 	ctx context.Context,
 	data cmdroute.ComponentData,
 ) *api.InteractionResponse {
-	parts := strings.Split(string(data.ComponentInteraction.ID()), "_")
+	topic, found := strings.CutPrefix(string(data.ComponentInteraction.ID()), "help_")
+	if !found {
+		topic = ""
+	}
+
 	return &api.InteractionResponse{
 		Type: api.MessageInteractionWithSource,
-		Data: c.getHelpTopicResponse(data.Event.Locale, parts[1]),
+		Data: c.getHelpTopicResponse(data.Event.Locale, topic),
 	}
 }
 
@@ -116,19 +109,19 @@ func (c *HelpCommand) getHelpTopicResponse(
 	locale discord.Language,
 	topic string,
 ) *api.InteractionResponseData {
-	localizer := c.l.Translator(string(locale))
+	t := c.l.Translator(string(locale))
 
 	var title string
 	var desc string
 
 	if len(topic) > 0 && slices.Contains(helpTopics, topic) {
 		messageId := "discord.commands.help." + topic
-		title = localizer(messageId+".title", nil)
-		desc = localizer(messageId+".msg", map[string]any{"url": c.url})
+		title = t(messageId+".title", nil)
+		desc = t(messageId+".msg", map[string]any{"url": c.url})
 	} else {
 		messageId := "discord.commands.help.empty"
-		title = localizer(messageId+".title", nil)
-		desc = localizer(messageId+".msg", nil)
+		title = t(messageId+".title", nil)
+		desc = t(messageId+".msg", nil)
 	}
 
 	helpOpts := []discord.InteractiveComponent{}
@@ -139,7 +132,7 @@ func (c *HelpCommand) getHelpTopicResponse(
 		}
 
 		helpOpts = append(helpOpts, &discord.ButtonComponent{
-			Label:    localizer(fmt.Sprintf("discord.commands.help.%s.title", opt), nil),
+			Label:    t(fmt.Sprintf("discord.commands.help.%s.title", opt), nil),
 			CustomID: discord.ComponentID(fmt.Sprintf("help_%s", opt)),
 			Style:    btnStyle,
 		})

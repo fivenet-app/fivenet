@@ -98,18 +98,18 @@ func NewGuild(
 	g.settings.Store(settings)
 
 	base := modules.NewBaseModule(ctx, g.logger.Named("module"),
-		g.bot.db, g.bot.dc, g.guild, g.job, g.bot.cfg, g.bot.appCfg, g.bot.enricher,
+		g.bot.db, g.bot.dc, g.guild, g.job, g.bot.dcCfg, g.bot.appCfg, g.bot.enricher,
 		oauth2ProviderName, g.settings,
 	)
 
 	ms := []string{}
-	if b.cfg.GroupSync.Enabled {
+	if b.dcCfg.GroupSync.Enabled {
 		ms = append(ms, "groupsync")
 	}
-	if b.cfg.UserInfoSync.Enabled {
+	if b.dcCfg.UserInfoSync.Enabled {
 		ms = append(ms, "userinfo")
 	}
-	if b.cfg.Qualifications.Enabled {
+	if b.dcCfg.Qualifications.Enabled {
 		ms = append(ms, "qualifications")
 	}
 
@@ -226,7 +226,7 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 	}
 
 	// Allow config to force dry run mode
-	plan, ls, err := state.Calculate(g.ctx, g.bot.dc, g.bot.cfg.DryRun || settings.GetDryRun())
+	plan, ls, err := state.Calculate(g.ctx, g.bot.dc, g.bot.dcCfg.DryRun || settings.GetDryRun())
 	if err != nil {
 		errs = multierr.Append(errs, fmt.Errorf("error during plan calculation. %w", err))
 		return errs
@@ -284,12 +284,15 @@ func (g *Guild) sendStartStatusLog(channelId discord.ChannelID) error {
 	}
 
 	if _, err := g.bot.dc.SendEmbeds(channel.ID, discord.Embed{
-		Type:        discord.NormalEmbed,
-		Title:       "Starting sync...",
-		Description: fmt.Sprintf("Dry run: %t", g.settings.Load().GetDryRun() || g.bot.cfg.DryRun),
-		Author:      embeds.EmbedAuthor,
-		Color:       embeds.ColorInfo,
-		Footer:      embeds.EmbedFooterVersion,
+		Type:  discord.NormalEmbed,
+		Title: "Starting sync...",
+		Description: fmt.Sprintf(
+			"Dry run: %t",
+			g.settings.Load().GetDryRun() || g.bot.dcCfg.DryRun,
+		),
+		Author: embeds.EmbedAuthor,
+		Color:  embeds.ColorInfo,
+		Footer: embeds.EmbedFooterVersion,
 	}); err != nil {
 		return fmt.Errorf("failed to send status log start embed. %w", err)
 	}

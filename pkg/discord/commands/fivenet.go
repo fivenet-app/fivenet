@@ -6,36 +6,33 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
 	"github.com/diamondburned/arikawa/v3/discord"
-	lang "github.com/fivenet-app/fivenet/v2026/i18n"
+	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 )
 
 type FivenetCommand struct {
-	l *lang.I18n
+	l *i18n.I18n
 
 	url string
 }
 
 func NewFivenetCommand(p CommandParams) (Command, error) {
 	return &FivenetCommand{
-		l:   p.L,
+		l:   p.I18n,
 		url: p.Cfg.HTTP.PublicURL,
 	}, nil
 }
 
 func (c *FivenetCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommandData {
-	lEN := c.l.Translator("en")
-	lDE := c.l.Translator("de")
+	tr := newCommandLocalizer(c.l, "discord.commands.fivenet")
 
 	router.Add("fivenet", c)
 
 	return api.CreateCommandData{
-		Type:        discord.ChatInputCommand,
-		Name:        "fivenet",
-		Description: lEN("discord.commands.fivenet.desc", nil),
-		DescriptionLocalizations: discord.StringLocales{
-			discord.German: lDE("discord.commands.fivenet.desc", nil),
-		},
+		Type:                     discord.ChatInputCommand,
+		Name:                     "fivenet",
+		Description:              tr.text("desc"),
+		DescriptionLocalizations: tr.localizations("desc"),
 		DefaultMemberPermissions: discord.NewPermissions(discord.PermissionSendMessages),
 	}
 }
@@ -44,7 +41,7 @@ func (c *FivenetCommand) HandleCommand(
 	ctx context.Context,
 	cmd cmdroute.CommandData,
 ) *api.InteractionResponseData {
-	localizer := c.l.Translator(string(cmd.Event.Locale))
+	t := c.l.Translator(string(cmd.Event.Locale))
 
 	return &api.InteractionResponseData{
 		Flags: discord.EphemeralMessage,
@@ -52,7 +49,7 @@ func (c *FivenetCommand) HandleCommand(
 			{
 				Type:        discord.LinkEmbed,
 				Title:       "FiveNet",
-				Description: localizer("discord.commands.fivenet.summary", nil),
+				Description: t("discord.commands.fivenet.summary", nil),
 				URL:         c.url,
 				Thumbnail:   embeds.EmbedThumbnailLogo,
 				Provider: &discord.EmbedProvider{
@@ -66,7 +63,7 @@ func (c *FivenetCommand) HandleCommand(
 		Components: discord.ComponentsPtr(
 			&discord.ActionRowComponent{
 				&discord.ButtonComponent{
-					Label: localizer("discord.commands.fivenet.open_link", nil),
+					Label: t("discord.commands.fivenet.open_link", nil),
 					Style: discord.LinkButtonStyle(c.url),
 				},
 			},

@@ -5,7 +5,7 @@ import (
 
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
 	"github.com/diamondburned/arikawa/v3/discord"
-	lang "github.com/fivenet-app/fivenet/v2026/i18n"
+	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -13,7 +13,7 @@ import (
 
 func TestNewHandleFivenetCommand(t *testing.T) {
 	t.Parallel()
-	l, err := lang.New()
+	l, err := i18n.New()
 	require.NoError(t, err)
 
 	cfg, err := config.LoadTestConfig()
@@ -23,8 +23,8 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 
 	router := cmdroute.NewRouter()
 	cmd, err := NewFivenetCommand(CommandParams{
-		Cfg: cfg,
-		L:   l,
+		Cfg:  cfg,
+		I18n: l,
 	})
 	require.NoError(t, err)
 	require.NotNil(t, cmd)
