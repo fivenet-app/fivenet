@@ -19,6 +19,10 @@ declare module '@tiptap/core' {
              * Insert an image (= writer uploads or paste)
              */
             setEnhancedImage: (options: { src: string; alt?: string; title?: string; fileId?: number }) => ReturnType;
+            /**
+             * Remove all image nodes for a tracked file.
+             */
+            removeEnhancedImageByFileId: (fileId: number) => ReturnType;
         };
     }
 }
@@ -129,6 +133,38 @@ export const EnhancedImage = Node.create<EnhancedImageOptions>({
                             attrs,
                         })
                         .run(),
+
+            removeEnhancedImageByFileId:
+                (fileId) =>
+                ({ state, dispatch }) => {
+                    if (!fileId) return false;
+
+                    const positions: number[] = [];
+                    state.doc.descendants((node, pos) => {
+                        if (node.type.name === this.name && Number(node.attrs.fileId) === fileId) {
+                            positions.push(pos);
+                        }
+                    });
+
+                    if (!positions.length) return false;
+
+                    if (dispatch) {
+                        let tr = state.tr;
+
+                        // Delete from back to front to keep positions valid.
+                        for (let i = positions.length - 1; i >= 0; i--) {
+                            const pos = positions[i]!;
+                            const node = tr.doc.nodeAt(pos);
+                            if (!node || node.type.name !== this.name) continue;
+
+                            tr = tr.delete(pos, pos + node.nodeSize);
+                        }
+
+                        dispatch(tr);
+                    }
+
+                    return true;
+                },
         };
     },
 

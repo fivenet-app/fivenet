@@ -66,6 +66,19 @@ defineEmits<{
                                         "
                                     />
                                 </UTooltip>
+
+                                <UTooltip :text="$t('common.remove_file')">
+                                    <UButton
+                                        color="error"
+                                        icon="i-mdi-file-image-remove"
+                                        size="xl"
+                                        variant="link"
+                                        @click="
+                                            editor.chain().focus().removeEnhancedImageByFileId(file.id).run();
+                                            $emit('close', false);
+                                        "
+                                    />
+                                </UTooltip>
                             </div>
                         </template>
 
