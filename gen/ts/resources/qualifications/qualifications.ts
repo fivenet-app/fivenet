@@ -454,7 +454,7 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 25, name: "request", kind: "message", T: () => QualificationRequest },
             { no: 26, name: "label_sync_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 27, name: "label_sync_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 28, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "tagger.tags": "alias:\"files\"" } }
+            { no: 28, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "buf.validate.field": { repeated: { maxItems: "5" } }, "tagger.tags": "alias:\"files\"" } }
         ]);
     }
     create(value?: PartialMessage<Qualification>): Qualification {

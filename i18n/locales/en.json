@@ -859,6 +859,10 @@
                 "file_list": "File List",
                 "file_list_empty": "No files uploaded yet.",
                 "file_list_hint": "You can upload files by dragging and dropping them into the editor or by using the 'Insert File' button.",
+                "file_limit_reached": {
+                    "title": "File limit reached, cannot upload more files.",
+                    "description": "You have reached the maximum number of files that can be uploaded. Please remove some files before uploading new ones."
+                },
                 "extensions": {
                     "template_var": {
                         "title": "Template Variables",

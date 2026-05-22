@@ -1949,7 +1949,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
             { no: 6, name: "data", kind: "message", T: () => DocumentData },
             { no: 7, name: "meta", kind: "message", T: () => DocumentMeta, options: { "buf.validate.field": { required: true } } },
             { no: 11, name: "access", kind: "message", T: () => DocumentAccess },
-            { no: 12, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "tagger.tags": "alias:\"files\"" } }
+            { no: 12, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "buf.validate.field": { repeated: { maxItems: "5" } }, "tagger.tags": "alias:\"files\"" } }
         ]);
     }
     create(value?: PartialMessage<UpdateDocumentRequest>): UpdateDocumentRequest {

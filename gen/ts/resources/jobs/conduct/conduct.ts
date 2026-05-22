@@ -121,7 +121,7 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
             { no: 6, name: "type", kind: "enum", T: () => ["resources.jobs.conduct.ConductType", ConductType, "CONDUCT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 7, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "message", kind: "message", T: () => Content },
-            { no: 9, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "tagger.tags": "alias:\"files\"" } },
+            { no: 9, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "buf.validate.field": { repeated: { maxItems: "5" } }, "tagger.tags": "alias:\"files\"" } },
             { no: 10, name: "expires_at", kind: "message", T: () => Timestamp },
             { no: 11, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 12, name: "target_user", kind: "message", T: () => Colleague, options: { "tagger.tags": "alias:\"target_user\"" } },

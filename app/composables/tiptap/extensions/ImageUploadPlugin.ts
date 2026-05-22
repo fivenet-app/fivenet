@@ -1,7 +1,7 @@
 import type { Editor } from '@tiptap/core';
 import { Plugin } from 'prosemirror-state';
 
-export function imageUploadPlugin(_: Editor, onFiles: (files: File[]) => Promise<void>) {
+export function imageUploadPlugin(_: Editor, onFiles: (files: File[]) => Promise<boolean>) {
     return new Plugin({
         props: {
             handlePaste: (_, e) => {

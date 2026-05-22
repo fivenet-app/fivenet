@@ -67,7 +67,10 @@ message Qualification {
       strip_html_tags: true
     }
   ];
-  repeated resources.file.File files = 28 [(tagger.tags) = "alias:\"files\""];
+  repeated resources.file.File files = 28 [
+    (tagger.tags) = "alias:\"files\"",
+    (buf.validate.field).repeated.max_items = 5
+  ];
 }
 
 message QualificationShort {

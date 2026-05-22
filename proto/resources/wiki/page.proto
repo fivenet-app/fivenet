@@ -27,7 +27,10 @@ message Page {
   PageMeta meta = 5 [(buf.validate.field).required = true];
   resources.common.content.Content content = 6;
   resources.wiki.access.PageAccess access = 7 [(buf.validate.field).required = true];
-  repeated resources.file.File files = 8 [(tagger.tags) = "alias:\"files\""];
+  repeated resources.file.File files = 8 [
+    (tagger.tags) = "alias:\"files\"",
+    (buf.validate.field).repeated.max_items = 5
+  ];
 }
 
 message PageMeta {

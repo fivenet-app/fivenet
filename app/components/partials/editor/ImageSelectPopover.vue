@@ -2,18 +2,21 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { Editor } from '@tiptap/core';
 import { z } from 'zod';
+import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(
     defineProps<{
         editor: Editor;
+        files?: FileGrpc[];
         fileLimit?: number;
         disabled?: boolean;
-        uploadHandler?: (file: File[]) => Promise<void>;
+        uploadHandler?: (file: File[]) => Promise<boolean>;
         openFileList?: () => Promise<void>;
     }>(),
     {
-        fileLimit: 10,
+        files: () => [],
+        fileLimit: 5,
         disabled: false,
         uploadHandler: undefined,
         openFileList: undefined,
@@ -43,6 +46,20 @@ const imageState = reactive<Schema>({
 async function setViaURL(urlOrBlob: string | File): Promise<void> {
     canSubmit.value = false;
 
+    // Check if file limit is reached
+    if (props.files.length >= props.fileLimit) {
+        logger.warn('File limit reached, cannot upload more files');
+        notifications.add({
+            title: { key: 'components.partials.tiptap_editor.notifications.file_limit_reached.title', parameters: {} },
+            description: {
+                key: 'components.partials.tiptap_editor.notifications.file_limit_reached.content',
+                parameters: {},
+            },
+            type: NotificationType.ERROR,
+        });
+        return;
+    }
+
     // Use image proxy for external URLs
     if (typeof urlOrBlob === 'string') {
         let dataUrl: string | undefined = undefined;
@@ -65,7 +82,11 @@ async function setViaURL(urlOrBlob: string | File): Promise<void> {
         return setImage(dataUrl);
     } else if (props.uploadHandler) {
         try {
-            await props.uploadHandler([urlOrBlob]);
+            const response = await props.uploadHandler([urlOrBlob]);
+            if (!response) {
+                console.warn('Editor - Image upload response: Upload handler returned false');
+                return;
+            }
 
             notifications.add({
                 title: { key: 'notifications.editor.file_upload.success.title', parameters: {} },
@@ -115,6 +136,8 @@ async function onFileHandler(file: File | null | undefined): Promise<void> {
     emit('close', false);
 }
 
+const fileLimitReached = computed(() => props.files.length >= props.fileLimit);
+
 const open = ref(false);
 
 const canSubmit = ref(true);
@@ -133,11 +156,20 @@ const formRef = useTemplateRef('formRef');
 <template>
     <UPopover v-model:open="open">
         <UTooltip :text="$t('components.partials.tiptap_editor.image')">
-            <UButton icon="i-mdi-image" color="neutral" variant="ghost" :disabled="disabled" />
+            <UButton icon="i-mdi-image" :color="fileLimitReached ? 'error' : 'neutral'" variant="ghost" :disabled="disabled" />
         </UTooltip>
 
         <template #content>
-            <div class="p-4">
+            <div class="flex flex-col gap-2 p-4">
+                <UAlert
+                    v-if="fileLimitReached"
+                    class="w-96"
+                    color="error"
+                    icon="i-mdi-close-circle"
+                    :title="$t('components.partials.tiptap_editor.file_limit_reached.title')"
+                    :description="$t('components.partials.tiptap_editor.file_limit_reached.description')"
+                />
+
                 <UFieldGroup class="w-full">
                     <UButton
                         class="flex-1"
@@ -155,7 +187,13 @@ const formRef = useTemplateRef('formRef');
 
                 <UForm ref="formRef" :schema="schema" :state="imageState" @submit="onSubmitThrottle">
                     <UFormField name="url" :label="$t('components.partials.tiptap_editor.url')">
-                        <UInput v-model="imageState.url" class="w-full" type="text" name="url" :disabled="disabled" />
+                        <UInput
+                            v-model="imageState.url"
+                            class="w-full"
+                            type="text"
+                            name="url"
+                            :disabled="disabled || !canSubmit || fileLimitReached"
+                        />
                     </UFormField>
 
                     <UFormField class="mt-2 w-full">
@@ -163,7 +201,7 @@ const formRef = useTemplateRef('formRef');
                             class="flex-1"
                             type="submit"
                             icon="i-mdi-image"
-                            :disabled="disabled || !canSubmit || !imageState.url"
+                            :disabled="disabled || !canSubmit || !imageState.url || fileLimitReached"
                             :loading="disabled || !canSubmit"
                             :label="$t('components.partials.tiptap_editor.insert')"
                             block
@@ -177,7 +215,7 @@ const formRef = useTemplateRef('formRef');
                 <UFileUpload
                     name="file"
                     block
-                    :disabled="disabled || !canSubmit"
+                    :disabled="disabled || !canSubmit || fileLimitReached"
                     :accept="fileUpload.types.images.join(',')"
                     :placeholder="$t('common.image')"
                     :label="$t('common.file_upload_label')"

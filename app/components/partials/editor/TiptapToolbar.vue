@@ -20,14 +20,14 @@ const props = defineProps<{
     historyType?: string;
 
     fileLimit?: number;
-    fileUploadHandler: undefined | ((files: File[]) => Promise<void>);
+    fileUploadHandler: undefined | ((files: File[]) => Promise<boolean>);
 }>();
 
 const emits = defineEmits<{
     (e: 'update:content', val: JSONContent | string | undefined): void;
 }>();
 
-const files = defineModel<FileGrpc[]>('files', { default: () => [] });
+const files = defineModel<FileGrpc[]>('files');
 
 const overlay = useOverlay();
 
@@ -543,15 +543,16 @@ const isLinkOpen = ref(false);
         <ImageSelectPopover
             v-if="!disableImages"
             :editor="editor"
-            :file-list="files"
+            :files="files"
             :file-limit="fileLimit"
             :disabled="disabled"
             :upload-handler="fileUploadHandler"
             @open-file-list="
-                fileListModal.open({
-                    editor: unref(editor)!,
-                    files: files,
-                })
+                () =>
+                    fileListModal.open({
+                        editor: unref(editor)!,
+                        files: files ?? [],
+                    })
             "
         />
 
@@ -728,7 +729,7 @@ const isLinkOpen = ref(false);
                     @click="
                         fileListModal.open({
                             editor: unref(editor)!,
-                            files: files,
+                            files: files ?? [],
                         })
                     "
                 />
@@ -743,7 +744,7 @@ const isLinkOpen = ref(false);
                     @click="
                         versionHistoryModal.open({
                             historyType: historyType,
-                            currentContent: { content: ed?.getJSON(), files: files },
+                            currentContent: { content: ed?.getJSON(), files: files ?? [] },
                             onApply: applyVersion,
                         })
                     "

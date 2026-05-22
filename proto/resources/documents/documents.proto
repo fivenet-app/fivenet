@@ -49,7 +49,10 @@ message Document {
   optional resources.documents.pins.DocumentPin pin = 17 [(tagger.tags) = "alias:\"pin\""];
   optional resources.documents.workflow.WorkflowState workflow_state = 18;
   optional resources.documents.workflow.WorkflowUserState workflow_user = 19;
-  repeated resources.file.File files = 20 [(tagger.tags) = "alias:\"files\""];
+  repeated resources.file.File files = 20 [
+    (tagger.tags) = "alias:\"files\"",
+    (buf.validate.field).repeated.max_items = 5
+  ];
 }
 
 message DocumentShort {

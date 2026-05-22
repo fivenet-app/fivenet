@@ -19,9 +19,9 @@ import type GrpcProvider from '~/composables/yjs/yjs';
 import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import type { UploadFileRequest, UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import TiptapToolbar from './TiptapToolbar.vue';
 import YJSUserPopover from './YJSUserPopover.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(
     defineProps<{
@@ -52,7 +52,7 @@ const props = withDefaults(
         name: undefined,
         wrapperClass: '',
         limit: 0,
-        fileLimit: 10,
+        fileLimit: 5,
         disabled: false,
         placeholder: '',
         hideToolbar: false,
@@ -81,7 +81,7 @@ defineOptions({
 });
 
 const modelValue = defineModel<JSONContent | string | undefined>({ required: true });
-const files = defineModel<FileGrpc[]>('files', { default: () => [] });
+const files = defineModel<FileGrpc[]>('files');
 
 provide('tiptap:disablePenaltyCalculatorBlockEditing', toRef(props, 'disablePenaltyCalculatorBlockEditing'));
 
@@ -106,14 +106,19 @@ const extensions = useTiptapEditor(toRef(props, 'limit'), toRef(props, 'placehol
 if (!props.disableImages) {
     extensions.push(
         DeleteImageTracker.configure({
-            onRemoved: (ids) =>
+            onRemoved: (ids) => {
+                if (!files.value) return;
+
                 ids.forEach((id) => {
+                    if (!files.value) return;
+
                     if (hasFileById(files.value, id)) {
                         const idx = files.value.findIndex((f) => f.id === id);
                         if (idx > -1) files.value.splice(idx, 1);
                     }
                     logger.info('Removed file:', id);
-                }),
+                });
+            },
         }),
     );
 }
@@ -277,7 +282,7 @@ function syncPenaltyCalculatorData(editor: Editor): void {
     }
 }
 
-let fileUploadHandler: undefined | ((files: File[]) => Promise<void>) = undefined;
+let fileUploadHandler: undefined | ((files: File[]) => Promise<boolean>) = undefined;
 
 const editor = useEditor({
     content: '',
@@ -314,19 +319,23 @@ const editor = useEditor({
 if (props.filestoreService && props.filestoreNamespace && props.targetId) {
     const { resizeAndUpload } = useFileUploader(props.filestoreService, props.filestoreNamespace, props.targetId);
 
-    async function handleFiles(fs: File[]): Promise<void> {
+    async function handleFiles(fs: File[]): Promise<boolean> {
+        // Check if file limit is reached
+        if (files.value && files.value.length >= props.fileLimit) {
+            logger.warn('File limit reached, cannot upload more files');
+            notifications.add({
+                title: { key: 'components.partials.tiptap_editor.notifications.file_limit_reached.title', parameters: {} },
+                description: {
+                    key: 'components.partials.tiptap_editor.notifications.file_limit_reached.content',
+                    parameters: {},
+                },
+                type: NotificationType.ERROR,
+            });
+            return false;
+        }
+
         for (const f of fs) {
             if (!f.type.startsWith('image/')) continue;
-
-            if (files.value && files.value.length >= props.fileLimit) {
-                logger.warn('File limit reached, cannot upload more files');
-                notifications.add({
-                    title: { key: 'components.partials.tiptap_editor.file_limit_reached.title', parameters: {} },
-                    description: { key: 'components.partials.tiptap_editor.file_limit_reached.content', parameters: {} },
-                    type: NotificationType.ERROR,
-                });
-                return;
-            }
 
             try {
                 const resp = await resizeAndUpload(f);
@@ -338,12 +347,12 @@ if (props.filestoreService && props.filestoreNamespace && props.targetId) {
                     .run();
 
                 resp.file && emits('file-uploaded', resp.file);
-
-                files.value.push(resp.file!);
+                files.value?.push(resp.file!);
             } catch (e) {
                 logger.warn('Image resize failed, uploading original image', e);
             }
         }
+        return true;
     }
     fileUploadHandler = handleFiles;
 }
@@ -580,6 +589,7 @@ defineExpose<{
     >
         <template v-if="editor && !hideToolbar" #header>
             <TiptapToolbar
+                v-model:files="files"
                 :editor="markRaw(editor)"
                 :disabled="disabled"
                 :disable-images="disableImages"

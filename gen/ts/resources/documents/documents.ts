@@ -312,7 +312,7 @@ class Document$Type extends MessageType<Document> {
             { no: 17, name: "pin", kind: "message", T: () => DocumentPin, options: { "tagger.tags": "alias:\"pin\"" } },
             { no: 18, name: "workflow_state", kind: "message", T: () => WorkflowState },
             { no: 19, name: "workflow_user", kind: "message", T: () => WorkflowUserState },
-            { no: 20, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "tagger.tags": "alias:\"files\"" } }
+            { no: 20, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "buf.validate.field": { repeated: { maxItems: "5" } }, "tagger.tags": "alias:\"files\"" } }
         ]);
     }
     create(value?: PartialMessage<Document>): Document {

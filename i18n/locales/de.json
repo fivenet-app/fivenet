@@ -859,6 +859,10 @@
                 "file_list": "Liste der Anhänge",
                 "file_list_empty": "Es wurden noch keine Dateien hochgeladen.",
                 "file_list_hint": "Sie können Dateien hochladen, indem Sie sie per Drag & Drop in den Editor ziehen oder die Schaltfläche 'Datei einfügen' verwenden.",
+                "file_limit_reached": {
+                    "title": "Dateilimit erreicht, kann keine weiteren Dateien hochladen.",
+                    "description": "Sie haben die maximale Anzahl von Dateien erreicht, die hochgeladen werden können. Bitte entfernen Sie einige Dateien, bevor Sie neue Dateien hochladen."
+                },
                 "extensions": {
                     "template_var": {
                         "title": "Vorlage-Variablen",

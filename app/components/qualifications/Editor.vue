@@ -802,10 +802,10 @@ const formRef = useTemplateRef('formRef');
                                     v-model:exam-mode="state.examMode"
                                     v-model:settings="state.examSettings"
                                     v-model:exam="state.exam"
+                                    v-model:files="state.files"
                                     class="mx-auto max-w-(--breakpoint-xl)"
                                     :disabled="!canDo.edit"
                                     :qualification-id="props.qualificationId"
-                                    @file-uploaded="(file) => state.files.push(file)"
                                 />
                             </UContainer>
                         </div>

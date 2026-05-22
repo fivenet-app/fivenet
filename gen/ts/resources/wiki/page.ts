@@ -196,7 +196,7 @@ class Page$Type extends MessageType<Page> {
             { no: 5, name: "meta", kind: "message", T: () => PageMeta, options: { "buf.validate.field": { required: true } } },
             { no: 6, name: "content", kind: "message", T: () => Content },
             { no: 7, name: "access", kind: "message", T: () => PageAccess, options: { "buf.validate.field": { required: true } } },
-            { no: 8, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "tagger.tags": "alias:\"files\"" } }
+            { no: 8, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "buf.validate.field": { repeated: { maxItems: "5" } }, "tagger.tags": "alias:\"files\"" } }
         ]);
     }
     create(value?: PartialMessage<Page>): Page {

@@ -15,18 +15,18 @@ defineEmits<{
 </script>
 
 <template>
-    <UModal :title="$t('components.partials.tiptap_editor.file_list')">
+    <UModal :title="$t('components.partials.tiptap_editor.file_list')" fullscreen>
         <template #body>
-            <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
+            <div class="mx-auto flex w-full flex-1 flex-col">
                 <DataNoDataBlock v-if="files.length === 0" :message="$t('components.partials.tiptap_editor.file_list_empty')" />
 
-                <UPageGrid v-else class="flex-1">
+                <UPageGrid v-else class="flex-1 lg:grid-cols-2">
                     <UPageCard
                         v-for="file in files"
                         :key="file.id"
                         :title="file.filePath"
                         icon="i-mdi-file-document"
-                        :ui="{ title: 'line-clamp-3! whitespace-normal!' }"
+                        :ui="{ title: 'line-clamp-3! whitespace-normal!', leading: 'size-full' }"
                     >
                         <template #leading>
                             <div class="flex-1">
@@ -35,6 +35,7 @@ defineEmits<{
                                     :src="file.filePath"
                                     :alt="file.filePath"
                                     size="3xl"
+                                    enable-popup
                                 />
                                 <UIcon
                                     v-else

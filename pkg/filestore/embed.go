@@ -69,6 +69,7 @@ func NewHandler[P ParentID](
 	parentColBoolExp ParentColBoolExpFn[P],
 	joinRowInserter JoinRowInserterFn[P],
 	nullOnlyParentRow bool,
+	// TODO add max files per parent enforcement
 ) *Handler[P] {
 	AddTable(joinInfo{
 		Table:   join,
