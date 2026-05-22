@@ -3,6 +3,7 @@ import type { NavigationMenuItem } from '@nuxt/ui';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 import { getDocumentsStampsClient } from '~~/gen/ts/clients';
 import type { ListUsableStampsResponse } from '~~/gen/ts/services/documents/stamps';
 
@@ -104,6 +105,8 @@ async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
         </template>
 
         <template v-if="itemsLeft.length > 1 || itemsRight.length > 1" #footer>
+            <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
+
             <USeparator />
 
             <UDashboardToolbar>

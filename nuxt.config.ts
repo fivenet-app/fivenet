@@ -253,6 +253,8 @@ export default defineNuxtConfig({
                 'date-fns',
                 'diff-match-patch', // CJS
                 'emoji-blast',
+                'fabric',
+                'fabric/extensions',
                 'howler', // CJS
                 'leaflet-contextmenu', // CJS
                 'leaflet.heat', // CJS

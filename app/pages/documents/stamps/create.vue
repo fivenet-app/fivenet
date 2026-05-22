@@ -3,7 +3,10 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import EditorToolbar from '~/components/fabriceditor/EditorToolbar.vue';
 import EditorWrapper from '~/components/fabriceditor/EditorWrapper.vue';
+import AccessManager from '~/components/partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import { getDocumentsStampsClient } from '~~/gen/ts/clients';
+import { StampAccessLevel, type StampJobAccess } from '~~/gen/ts/resources/documents/stamps/stamp';
 
 useHead({
     title: 'pages.documents.stamps.create',
@@ -19,7 +22,10 @@ const { can } = useAuth();
 
 const schema = z.object({
     name: z.string().min(1).max(120),
-    svgData: z.string().min(1).max(99999),
+    svgData: z.string().max(99999),
+    access: z.object({
+        jobs: z.custom<StampJobAccess>().array().max(5),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -27,6 +33,9 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     name: '',
     svgData: '',
+    access: {
+        jobs: [],
+    },
 });
 
 const stampsClient = await getDocumentsStampsClient();
@@ -37,11 +46,9 @@ async function createOrUpsertStamp(values: Schema) {
             stamp: {
                 id: 0,
                 job: '',
-                name: '',
+                name: values.name,
                 svgTemplate: values.svgData,
-                access: {
-                    jobs: [],
-                },
+                access: values.access,
             },
         });
         const { response } = await call;
@@ -53,6 +60,8 @@ async function createOrUpsertStamp(values: Schema) {
     }
 }
 
+const formRef = useTemplateRef('formRef');
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
@@ -61,7 +70,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UForm class="flex w-full flex-1" :state="state" :schema="schema" @submit="onSubmitThrottle">
+    <UForm ref="formRef" class="flex w-full flex-1" :state="state" :schema="schema" @submit="onSubmitThrottle">
         <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
             <template #header>
                 <UDashboardNavbar :title="$t('pages.documents.stamps.create')">
@@ -73,7 +82,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <PartialsBackButton fallback-to="/documents" />
 
                         <UTooltip v-if="can('documents.StampsService/UpsertStamp').value" :text="$t('common.save', 1)">
-                            <UButton trailing-icon="i-mdi-content-save" color="neutral" variant="outline" truncate>
+                            <UButton
+                                type="submit"
+                                trailing-icon="i-mdi-content-save"
+                                color="neutral"
+                                variant="outline"
+                                truncate
+                            >
                                 <span class="hidden truncate sm:block">
                                     {{ $t('common.save', 1) }}
                                 </span>
@@ -97,8 +112,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 {{ $t('pages.documents.stamps.create') }}
                             </template>
 
-                            <UFormField name="name" :label="$t('common.name')">
+                            {{ formRef?.errors }}
+
+                            <UFormField name="name" :label="$t('common.name')" required>
                                 <UInput v-model="state.name" class="w-full" type="text" />
+                            </UFormField>
+
+                            <UFormField name="access" :label="$t('common.access')">
+                                <AccessManager
+                                    v-model:jobs="state.access.jobs"
+                                    :target-id="0"
+                                    name="jobs"
+                                    :access-types="[{ label: $t('common.job', 2), value: 'job' }]"
+                                    :access-roles="enumToAccessLevelEnums(StampAccessLevel, 'enums.documents.StampAccessLevel')"
+                                />
                             </UFormField>
                         </UCard>
                     </template>
