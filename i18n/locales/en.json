@@ -3145,8 +3145,9 @@
         },
         "messages": {
             "private_message": {
-                "title": "FiveNet Bot",
-                "desc": "👋 Hi! I'm an automated bot and not much of a conversation partner.\n\nIf you need help with FiveNet, use the Help button below or run `/help` on a server where the FiveNet Bot is installed."
+                "title": "👋 Hi! I'm an automated bot and not much of a conversation partner.",
+                "desc": "If you need help with FiveNet, use the Help button below or run `/help` on a server where the FiveNet Bot is installed.",
+                "help_button": "Help Command (/help)"
             }
         }
     },

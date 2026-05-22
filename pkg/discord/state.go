@@ -37,10 +37,10 @@ func NewDCState(p StateParams) *state.State {
 
 	// Create a new Discord session using the provided login information.
 	state := state.New("Bot " + p.Config.Discord.Token)
+	state.AddIntents(gateway.IntentDirectMessages)
 	state.AddIntents(gateway.IntentGuildMembers)
 	state.AddIntents(gateway.IntentGuildPresences)
 	state.AddIntents(gateway.IntentGuildIntegrations)
-	state.AddIntents(gateway.IntentDirectMessages)
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		go func() {

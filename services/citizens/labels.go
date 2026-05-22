@@ -145,8 +145,6 @@ func (s *Server) ListLabels(
 		}
 	}
 
-	// TODO need to include the user's highest access level in each labels' access list, so the client-side can access check
-
 	return resp, nil
 }
 

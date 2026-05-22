@@ -561,19 +561,19 @@ func (b *Bot) handlePrivateMessage(ev *gateway.MessageCreateEvent) {
 		Components: discord.Components(
 			&discord.ActionRowComponent{
 				&discord.ButtonComponent{
-					Label: t("discord.commands.fivenet.open_link", nil),
-					Style: discord.LinkButtonStyle(b.publicURL),
-				},
-				&discord.ButtonComponent{
-					Label:    t("discord.commands.help.name", nil),
+					Label:    t("discord.messages.private_message.help_button", nil),
 					Style:    discord.SecondaryButtonStyle(),
 					CustomID: "help",
+				},
+				&discord.ButtonComponent{
+					Label: t("discord.commands.fivenet.open_link", nil),
+					Style: discord.LinkButtonStyle(b.publicURL),
 				},
 			},
 		),
 	}); err != nil {
 		b.logger.Error(
-			"failed to send message in private messages",
+			"failed to send message via direct message",
 			zap.Int64("discord_user_id", int64(ev.Author.ID)),
 			zap.Error(err),
 		)
