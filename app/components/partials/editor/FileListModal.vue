@@ -3,8 +3,9 @@ import type { Editor } from '@tiptap/core';
 import type { File } from '~~/gen/ts/resources/file/file';
 import DataNoDataBlock from '../data/DataNoDataBlock.vue';
 import GenericImg from '../elements/GenericImg.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-defineProps<{
+const props = defineProps<{
     editor: Editor;
     files: File[];
 }>();
@@ -12,6 +13,18 @@ defineProps<{
 defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
+
+const notifications = useNotificationsStore();
+
+function deleteFile(id: number): void {
+    props.editor.chain().focus().removeEnhancedImageByFileId(id).run();
+
+    notifications.add({
+        title: { key: 'notifications.action_successful.title', parameters: {} },
+        description: { key: 'notifications.action_successful.content', parameters: {} },
+        type: NotificationType.SUCCESS,
+    });
+}
 </script>
 
 <template>
@@ -73,10 +86,7 @@ defineEmits<{
                                         icon="i-mdi-file-image-remove"
                                         size="xl"
                                         variant="link"
-                                        @click="
-                                            editor.chain().focus().removeEnhancedImageByFileId(file.id).run();
-                                            $emit('close', false);
-                                        "
+                                        @click="deleteFile(file.id)"
                                     />
                                 </UTooltip>
                             </div>
