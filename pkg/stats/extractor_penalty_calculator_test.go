@@ -40,7 +40,6 @@ func TestPenaltyCalculatorExtractor_WithTotals(t *testing.T) {
 	require.NoError(t, err)
 
 	actual := toMetricMap(metrics)
-	require.Equal(t, int64(1), actual["case_count|"])
 	require.Equal(t, int64(15), actual["reduction_percent|"])
 	require.Equal(t, int64(2), actual["selected_law_distinct_count|"])
 	require.Equal(t, int64(9), actual["selected_law_total_count|"])

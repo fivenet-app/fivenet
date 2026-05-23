@@ -470,11 +470,10 @@ func (s *Service) QueryPenaltyReductionAverage(
 	ctx context.Context,
 	startDay, endDay time.Time,
 	job string,
-) (int64, int64, error) {
+) (int64, error) {
 	tRollup := table.FivenetStatsDailyRollup
 	var sums struct {
 		ReductionSum int64 `alias:"reduction_sum"`
-		CaseCountSum int64 `alias:"case_count_sum"`
 	}
 
 	stmt := tRollup.
@@ -483,10 +482,6 @@ func (s *Service) QueryPenaltyReductionAverage(
 				WHEN(tRollup.MetricKey.EQ(mysql.String("reduction_percent"))).
 				THEN(tRollup.Value).
 				ELSE(mysql.Int(0))).AS("reduction_sum"),
-			mysql.SUM(mysql.CASE().
-				WHEN(tRollup.MetricKey.EQ(mysql.String("case_count"))).
-				THEN(tRollup.Value).
-				ELSE(mysql.Int(0))).AS("case_count_sum"),
 		).
 		FROM(tRollup).
 		WHERE(mysql.AND(
@@ -495,17 +490,14 @@ func (s *Service) QueryPenaltyReductionAverage(
 			tRollup.Job.EQ(mysql.String(job)),
 			tRollup.SourceKind.EQ(mysql.String(SourceKindDocumentMetric)),
 			tRollup.SourceKey.EQ(mysql.String(PenaltyCalculatorSourceKey)),
-			tRollup.MetricKey.IN(
-				mysql.String("reduction_percent"),
-				mysql.String("case_count"),
-			),
+			tRollup.MetricKey.EQ(mysql.String("reduction_percent")),
 		))
 
 	if err := stmt.QueryContext(ctx, s.db, &sums); err != nil {
-		return 0, 0, err
+		return 0, err
 	}
 
-	return sums.ReductionSum, sums.CaseCountSum, nil
+	return sums.ReductionSum, nil
 }
 
 func (s *Service) QueryTotalValue(

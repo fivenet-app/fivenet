@@ -52,7 +52,6 @@ func (e *PenaltyCalculatorExtractor) Extract(
 		})
 	}
 
-	addMetric("case_count", 1, nil)
 	addMetric("reduction_percent", int64(data.GetReduction()), nil)
 	addMetric("selected_law_distinct_count", int64(len(selected)), nil)
 

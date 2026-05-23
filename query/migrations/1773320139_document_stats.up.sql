@@ -7,7 +7,7 @@ CREATE TABLE `fivenet_documents_stats_metric` (
 
   `job` varchar(40) NOT NULL,
   `source_key` varchar(64) NOT NULL, -- e.g. penalty_calculator
-  `metric_key` varchar(64) NOT NULL, -- e.g. case_count, fine_total, law_count
+  `metric_key` varchar(64) NOT NULL, -- e.g. fine_total, law_count
 
   `dimension1` varchar(128) NOT NULL DEFAULT '', -- e.g. law_id
   `dimension2` varchar(128) NOT NULL DEFAULT '',

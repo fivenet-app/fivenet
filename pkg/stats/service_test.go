@@ -50,14 +50,6 @@ func TestService_RebuildDocumentMetrics_ReplacesBySource(t *testing.T) {
 					DocumentID: 42,
 					Job:        "police",
 					SourceKey:  "penalty_calculator",
-					MetricKey:  "case_count",
-					Value:      1,
-					OccurredAt: time.Now().UTC(),
-				},
-				{
-					DocumentID: 42,
-					Job:        "police",
-					SourceKey:  "penalty_calculator",
 					MetricKey:  "law_count",
 					Dimension1: ptrString("10"),
 					Value:      2,
@@ -103,14 +95,7 @@ func TestService_RebuildDocumentMetrics_MultiExtractorDeletesBothSources(t *test
 		&testExtractor{
 			sourceKey: "beta",
 			supports:  true,
-			metrics: []*DocumentMetric{{
-				DocumentID: 43,
-				Job:        "police",
-				SourceKey:  "beta",
-				MetricKey:  "case_count",
-				Value:      1,
-				OccurredAt: time.Now().UTC(),
-			}},
+			metrics:   []*DocumentMetric{},
 		},
 	}
 
