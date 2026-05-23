@@ -852,16 +852,16 @@ const file_services_citizens_labels_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
 	"\x03ids\x18\x02 \x03(\x03R\x03ids\x12\x16\n" +
 	"\x06reason\x18\x03 \x01(\tR\x06reason\"\x1d\n" +
-	"\x1bRemoveCitizenLabelsResponse2\xee\x05\n" +
+	"\x1bRemoveCitizenLabelsResponse2\x90\x06\n" +
 	"\rLabelsService\x12a\n" +
 	"\n" +
 	"ListLabels\x12$.services.citizens.ListLabelsRequest\x1a%.services.citizens.ListLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12g\n" +
 	"\bGetLabel\x12\".services.citizens.GetLabelRequest\x1a#.services.citizens.GetLabelResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListLabels\x12|\n" +
 	"\x13CreateOrUpdateLabel\x12-.services.citizens.CreateOrUpdateLabelRequest\x1a..services.citizens.CreateOrUpdateLabelResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12d\n" +
-	"\vDeleteLabel\x12%.services.citizens.DeleteLabelRequest\x1a&.services.citizens.DeleteLabelResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x81\x01\n" +
-	"\x10AddCitizenLabels\x12*.services.citizens.AddCitizenLabelsRequest\x1a+.services.citizens.AddCitizenLabelsResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps\x12\x8a\x01\n" +
-	"\x13RemoveCitizenLabels\x12-.services.citizens.RemoveCitizenLabelsRequest\x1a..services.citizens.RemoveCitizenLabelsResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps\x1a\x1c\xea\xf3\x18\x18\b \x12\x14i-mdi-label-multipleBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
+	"\vDeleteLabel\x12%.services.citizens.DeleteLabelRequest\x1a&.services.citizens.DeleteLabelResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x92\x01\n" +
+	"\x10AddCitizenLabels\x12*.services.citizens.AddCitizenLabelsRequest\x1a+.services.citizens.AddCitizenLabelsResponse\"%\xd2\xf3\x18!\b\x01\x1a\x0fCitizensService\"\fSetUserProps\x12\x9b\x01\n" +
+	"\x13RemoveCitizenLabels\x12-.services.citizens.RemoveCitizenLabelsRequest\x1a..services.citizens.RemoveCitizenLabelsResponse\"%\xd2\xf3\x18!\b\x01\x1a\x0fCitizensService\"\fSetUserProps\x1a\x1c\xea\xf3\x18\x18\b \x12\x14i-mdi-label-multipleBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
 
 var file_services_citizens_labels_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_services_citizens_labels_proto_goTypes = []any{

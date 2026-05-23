@@ -729,6 +729,6 @@ export const LabelsService = new ServiceType("services.citizens.LabelsService", 
     { name: "GetLabel", options: { "codegen.perms.perms": { enabled: true, name: "ListLabels" } }, I: GetLabelRequest, O: GetLabelResponse },
     { name: "CreateOrUpdateLabel", options: { "codegen.perms.perms": { enabled: true } }, I: CreateOrUpdateLabelRequest, O: CreateOrUpdateLabelResponse },
     { name: "DeleteLabel", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteLabelRequest, O: DeleteLabelResponse },
-    { name: "AddCitizenLabels", options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: AddCitizenLabelsRequest, O: AddCitizenLabelsResponse },
-    { name: "RemoveCitizenLabels", options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: RemoveCitizenLabelsRequest, O: RemoveCitizenLabelsResponse }
+    { name: "AddCitizenLabels", options: { "codegen.perms.perms": { enabled: true, service: "CitizensService", name: "SetUserProps" } }, I: AddCitizenLabelsRequest, O: AddCitizenLabelsResponse },
+    { name: "RemoveCitizenLabels", options: { "codegen.perms.perms": { enabled: true, service: "CitizensService", name: "SetUserProps" } }, I: RemoveCitizenLabelsRequest, O: RemoveCitizenLabelsResponse }
 ], { "codegen.perms.perms_svc": { order: 32, icon: "i-mdi-label-multiple" } });

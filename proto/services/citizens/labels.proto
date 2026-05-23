@@ -85,6 +85,7 @@ service LabelsService {
   rpc AddCitizenLabels(AddCitizenLabelsRequest) returns (AddCitizenLabelsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      service: "CitizensService"
       name: "SetUserProps"
     };
   }
@@ -92,6 +93,7 @@ service LabelsService {
   rpc RemoveCitizenLabels(RemoveCitizenLabelsRequest) returns (RemoveCitizenLabelsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      service: "CitizensService"
       name: "SetUserProps"
     };
   }

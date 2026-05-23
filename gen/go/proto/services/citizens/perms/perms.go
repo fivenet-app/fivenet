@@ -28,7 +28,6 @@ const (
 	LabelsServiceCreateOrUpdateLabelPerm perms.Name = "CreateOrUpdateLabel"
 	LabelsServiceDeleteLabelPerm         perms.Name = "DeleteLabel"
 	LabelsServiceListLabelsPerm          perms.Name = "ListLabels"
-	LabelsServiceSetUserPropsPerm        perms.Name = "SetUserProps"
 )
 
 type CitizensServiceListCitizensFieldsPermValue string
@@ -136,7 +135,6 @@ type LabelsServicePerms struct {
 	CreateOrUpdateLabel LabelsServiceCreateOrUpdateLabelPermRef
 	DeleteLabel         LabelsServiceDeleteLabelPermRef
 	ListLabels          LabelsServiceListLabelsPermRef
-	SetUserProps        LabelsServiceSetUserPropsPermRef
 }
 type LabelsServiceCreateOrUpdateLabelPermRef struct {
 	Perm perms.PermissionRef
@@ -145,9 +143,6 @@ type LabelsServiceDeleteLabelPermRef struct {
 	Perm perms.PermissionRef
 }
 type LabelsServiceListLabelsPermRef struct {
-	Perm perms.PermissionRef
-}
-type LabelsServiceSetUserPropsPermRef struct {
 	Perm perms.PermissionRef
 }
 
@@ -160,8 +155,5 @@ var LabelsService = LabelsServicePerms{
 	},
 	ListLabels: LabelsServiceListLabelsPermRef{
 		Perm: perms.NewPermissionRef(Namespace, LabelsServicePerm, LabelsServiceListLabelsPerm),
-	},
-	SetUserProps: LabelsServiceSetUserPropsPermRef{
-		Perm: perms.NewPermissionRef(Namespace, LabelsServicePerm, LabelsServiceSetUserPropsPerm),
 	},
 }
