@@ -544,7 +544,7 @@
         "stats": "Statistik",
         "tutor": "Tutor",
         "approved_by": "Genehmigt von",
-        "clear": "Löschen",
+        "clear": "Leeren",
         "calendar": "Kalender",
         "rsvp": "RSVP",
         "maybe": "Vielleicht",
@@ -3410,7 +3410,7 @@
                     "key": "Auflisten der Kategorien",
                     "description": "Liste der Kategorien.",
                     "attrs_types": {
-                        "Jobs": "Factions"
+                        "Jobs": "Berufe"
                     }
                 }
             },

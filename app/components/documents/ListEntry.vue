@@ -81,6 +81,7 @@ const links = computed(() =>
                                 :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
                                 :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
                                 size="xs"
+                                variant="subtle"
                             />
                         </div>
 

@@ -3403,11 +3403,11 @@
                     "description": "Create/ Update document categories."
                 },
                 "DeleteCategory": {
-                    "key": "DeleteCategory",
+                    "key": "Delete Categories",
                     "description": "Delete document categories."
                 },
                 "ListCategories": {
-                    "key": "ListCategories",
+                    "key": "List Categories",
                     "description": "View and List document categories.",
                     "attrs_types": {
                         "Jobs": "Factions"
@@ -3417,7 +3417,7 @@
             "CommentsService": {
                 "service": "Comments",
                 "DeleteComment": {
-                    "key": "DeleteComment",
+                    "key": "Delete Comments",
                     "description": "Delete document comments.",
                     "attrs": {
                         "Own": "Own",

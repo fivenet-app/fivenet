@@ -36,6 +36,7 @@ const props = withDefaults(
         disableImages?: boolean;
         showPenaltyCalculatorButton?: boolean;
         disablePenaltyCalculatorBlockEditing?: boolean;
+        enablePenaltyCalculatorBlockRemoval?: boolean;
         historyType?: string;
         enableCollab?: boolean;
 
@@ -59,6 +60,7 @@ const props = withDefaults(
         disableImages: false,
         showPenaltyCalculatorButton: false,
         disablePenaltyCalculatorBlockEditing: false,
+        enablePenaltyCalculatorBlockRemoval: false,
         historyType: undefined,
         enableCollab: false,
 
@@ -84,6 +86,7 @@ const modelValue = defineModel<JSONContent | string | undefined>({ required: tru
 const files = defineModel<FileGrpc[]>('files');
 
 provide('tiptap:disablePenaltyCalculatorBlockEditing', toRef(props, 'disablePenaltyCalculatorBlockEditing'));
+provide('tiptap:enablePenaltyCalculatorBlockRemoval', toRef(props, 'enablePenaltyCalculatorBlockRemoval'));
 
 const selectedPenalties = useState<SelectedPenalty[]>('quickButton:penaltyCalculator:selected', () => [] as SelectedPenalty[]);
 const reduction = useState<number>('quickButton:penaltyCalculator:reduction', () => 0);

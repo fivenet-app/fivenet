@@ -128,14 +128,16 @@ const timeState = computed<{ start: Time; end: Time }>({
                     />
 
                     <UPopover :reference="inputDate?.inputsRef[0]?.$el">
-                        <UButton
-                            class="px-0"
-                            color="neutral"
-                            variant="link"
-                            size="sm"
-                            icon="i-mdi-calendar"
-                            :aria-label="$t('common.pick_date')"
-                        />
+                        <UTooltip :text="$t('common.pick_date')">
+                            <UButton
+                                class="px-0"
+                                color="neutral"
+                                variant="link"
+                                size="sm"
+                                icon="i-mdi-calendar"
+                                :aria-label="$t('common.pick_date')"
+                            />
+                        </UTooltip>
 
                         <template #content>
                             <div>

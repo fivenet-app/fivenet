@@ -719,6 +719,7 @@ const formRef = useTemplateRef('formRef');
                                             :limit="125_000"
                                             show-penalty-calculator-button
                                             disable-penalty-calculator-block-editing
+                                            enable-penalty-calculator-block-removal
                                             content-type="html"
                                         >
                                             <template #toolbar="{ editor }">

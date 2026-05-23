@@ -56,13 +56,71 @@ const isDisabled = computed(() => !!attrs.disabled || !!attrs.readonly);
 
 const isTimeUnavailable = computed(() => attrs.isTimeUnavailable as IsTimeUnavailable | undefined);
 
-const localModelValue = ref<ModelValue>(props.modelValue);
+function cloneTimeValue(value: TimeValue | undefined): TimeValue | undefined {
+    if (!value) return undefined;
+    return new Time(value.hour, value.minute, value.second, value.millisecond);
+}
+
+function isTimeRange(value: ModelValue): value is TimeRangeValue {
+    return typeof value === 'object' && value !== null && ('start' in value || 'end' in value);
+}
+
+function cloneModelValue(value: ModelValue): ModelValue {
+    if (isTimeRange(value)) {
+        return {
+            start: cloneTimeValue(value.start),
+            end: cloneTimeValue(value.end),
+        };
+    }
+
+    return value ? cloneTimeValue(value) : value;
+}
+
+function isSameTimeValue(a: TimeValue | null | undefined, b: TimeValue | null | undefined): boolean {
+    if (!a && !b) return true;
+    if (!a || !b) return false;
+
+    return (
+        a.hour === b.hour &&
+        a.minute === b.minute &&
+        (a.second ?? 0) === (b.second ?? 0) &&
+        (a.millisecond ?? 0) === (b.millisecond ?? 0)
+    );
+}
+
+function isSameModelValue(a: ModelValue, b: ModelValue): boolean {
+    const aIsRange = isTimeRange(a);
+    const bIsRange = isTimeRange(b);
+
+    if (aIsRange !== bIsRange) return false;
+
+    if (aIsRange && bIsRange) {
+        return isSameTimeValue(a.start, b.start) && isSameTimeValue(a.end, b.end);
+    }
+
+    return isSameTimeValue(a as TimeValue | null | undefined, b as TimeValue | null | undefined);
+}
+
+const localModelValue = ref<ModelValue>(cloneModelValue(props.modelValue));
+const inputTimeRenderKey = ref(0);
+const skipNextRangeRemount = ref(false);
 
 watch(
     () => props.modelValue,
     (value) => {
-        localModelValue.value = value;
+        const normalizedValue = cloneModelValue(value);
+        const hadChanged = !isSameModelValue(localModelValue.value, normalizedValue);
+        localModelValue.value = normalizedValue;
+
+        // Work around stale range segments in reka-ui by remounting when range values
+        // change externally (e.g. from picker buttons or parent updates).
+        if (attrs.range && hadChanged && !skipNextRangeRemount.value) {
+            inputTimeRenderKey.value++;
+        }
+
+        skipNextRangeRemount.value = false;
     },
+    { deep: true },
 );
 
 const internalModelValue = computed<InputTimeModelValue>({
@@ -70,7 +128,7 @@ const internalModelValue = computed<InputTimeModelValue>({
         return localModelValue.value as InputTimeModelValue;
     },
     set(value) {
-        updateModelValue(value as ModelValue);
+        updateModelValue(value as ModelValue, 'input');
     },
 });
 
@@ -118,10 +176,6 @@ function getTimeMinutes(value: TimeValue | null | undefined): number | undefined
     return value.hour * 60 + value.minute;
 }
 
-function isTimeRange(value: ModelValue): value is TimeRangeValue {
-    return typeof value === 'object' && value !== null && ('start' in value || 'end' in value);
-}
-
 function isTimeDisabled(value: Time): boolean {
     const minutes = getTimeMinutes(value);
     const minMinutes = getTimeMinutes(attrs.minValue);
@@ -143,9 +197,21 @@ function isSelectedTime(value: Time, part?: keyof TimeRangeValue): boolean {
     return !isTimeRange(localModelValue.value) && getTimeMinutes(localModelValue.value) === getTimeMinutes(value);
 }
 
-function updateModelValue(value: ModelValue): void {
-    localModelValue.value = value;
-    emits('update:modelValue', value);
+function updateModelValue(value: ModelValue, source: 'input' | 'picker' | 'clear' = 'picker'): void {
+    const normalizedValue = cloneModelValue(value);
+    const hadChanged = !isSameModelValue(localModelValue.value, normalizedValue);
+
+    localModelValue.value = normalizedValue;
+
+    if (attrs.range && hadChanged && source !== 'input') {
+        inputTimeRenderKey.value++;
+    }
+
+    if (source === 'input') {
+        skipNextRangeRemount.value = true;
+    }
+
+    emits('update:modelValue', normalizedValue);
 }
 
 function selectTime(value: Time, part?: keyof TimeRangeValue): void {
@@ -153,18 +219,21 @@ function selectTime(value: Time, part?: keyof TimeRangeValue): void {
 
     if (attrs.range) {
         const current = isTimeRange(localModelValue.value) ? localModelValue.value : { start: undefined, end: undefined };
-        updateModelValue({
-            start: part === 'start' ? value : current.start,
-            end: part === 'end' ? value : current.end,
-        });
+        updateModelValue(
+            {
+                start: part === 'start' ? value : current.start,
+                end: part === 'end' ? value : current.end,
+            },
+            'picker',
+        );
         return;
     }
 
-    updateModelValue(value);
+    updateModelValue(value, 'picker');
 }
 
 function clearValue(): void {
-    updateModelValue(undefined);
+    updateModelValue(undefined, 'clear');
 }
 
 function onChange(event: Event): void {
@@ -182,6 +251,7 @@ function onFocus(event: FocusEvent): void {
 
 <template>
     <UInputTime
+        :key="inputTimeRenderKey"
         ref="inputTime"
         v-model="internalModelValue"
         v-bind="inputTimeAttrs"
@@ -218,7 +288,9 @@ function onFocus(event: FocusEvent): void {
                 />
 
                 <UPopover v-if="picker" :reference="inputTime?.inputsRef[0]?.$el">
-                    <UButton v-bind="pickerButtonProps" />
+                    <UTooltip :text="$t('common.pick_time')">
+                        <UButton v-bind="pickerButtonProps" />
+                    </UTooltip>
 
                     <template #content>
                         <div v-if="$attrs.range" class="grid max-w-96 grid-cols-2 gap-3 p-2">

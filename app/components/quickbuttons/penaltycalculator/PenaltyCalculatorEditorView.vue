@@ -22,14 +22,29 @@ const reduction = useState<number>('quickButton:penaltyCalculator:reduction', ()
 const localDocumentData = ref<DocumentData | undefined>();
 const documentData = inject<Ref<DocumentData | undefined>>('documents:editor:data', localDocumentData);
 const disablePenaltyCalculatorBlockEditing = inject<Ref<boolean>>('tiptap:disablePenaltyCalculatorBlockEditing', ref(false));
+const enablePenaltyCalculatorBlockRemoval = inject<Ref<boolean>>('tiptap:enablePenaltyCalculatorBlockRemoval', ref(false));
 
 const overlay = useOverlay();
 const penaltyCalculatorDrawer = overlay.create(PenaltyCalculatorDrawer);
 
 const isActionsOpen = ref(false);
 const confirmDelete = ref(false);
+const confirmClear = ref(false);
 
-let confirmDeleteTimer: ReturnType<typeof setTimeout> | undefined = undefined;
+const { start: startConfirmDeleteTimeout, stop: stopConfirmDeleteTimeout } = useTimeoutFn(
+    () => {
+        confirmDelete.value = false;
+    },
+    3000,
+    { immediate: false },
+);
+const { start: startConfirmClearTimeout, stop: stopConfirmClearTimeout } = useTimeoutFn(
+    () => {
+        confirmClear.value = false;
+    },
+    3000,
+    { immediate: false },
+);
 
 const persistedPenaltyData = computed(() => documentData.value?.penaltyCalculator);
 const displayedSelectedPenalties = computed(() =>
@@ -39,8 +54,33 @@ const displayedReduction = computed(() => persistedPenaltyData.value?.reduction 
 const summary = computed(() => calculatePenaltySummary(displayedSelectedPenalties.value));
 
 function resetDeleteConfirm(): void {
-    if (confirmDeleteTimer) clearTimeout(confirmDeleteTimer);
+    stopConfirmDeleteTimeout();
     confirmDelete.value = false;
+}
+
+function resetClearConfirm(): void {
+    stopConfirmClearTimeout();
+    confirmClear.value = false;
+}
+
+function resetConfirmActions(): void {
+    resetDeleteConfirm();
+    resetClearConfirm();
+}
+
+function clearWithConfirm(): void {
+    if (!props.editor.isEditable) return;
+
+    if (!confirmClear.value) {
+        confirmClear.value = true;
+        resetDeleteConfirm();
+        stopConfirmClearTimeout();
+        startConfirmClearTimeout();
+        return;
+    }
+
+    resetClearConfirm();
+    if (documentData.value?.penaltyCalculator) documentData.value.penaltyCalculator = undefined;
 }
 
 function ensureDocumentDataContainer(): DocumentData {
@@ -75,11 +115,9 @@ function deleteNodeWithConfirm(): void {
 
     if (!confirmDelete.value) {
         confirmDelete.value = true;
-        if (confirmDeleteTimer) clearTimeout(confirmDeleteTimer);
-        confirmDeleteTimer = setTimeout(() => {
-            confirmDelete.value = false;
-            confirmDeleteTimer = undefined;
-        }, 3000);
+        resetClearConfirm();
+        stopConfirmDeleteTimeout();
+        startConfirmDeleteTimeout();
         return;
     }
 
@@ -88,7 +126,7 @@ function deleteNodeWithConfirm(): void {
     props.deleteNode();
 }
 
-onBeforeUnmount(() => resetDeleteConfirm());
+onBeforeUnmount(() => resetConfirmActions());
 </script>
 
 <template>
@@ -98,26 +136,46 @@ onBeforeUnmount(() => resetDeleteConfirm());
             @mouseenter="isActionsOpen = true"
             @mouseleave="
                 isActionsOpen = false;
-                resetDeleteConfirm();
+                resetConfirmActions();
             "
             @click="isActionsOpen = true"
         >
             <UFieldGroup
-                v-if="editor.isEditable && !disablePenaltyCalculatorBlockEditing && (isActionsOpen || selected)"
+                v-if="
+                    editor.isEditable &&
+                    (!disablePenaltyCalculatorBlockEditing || enablePenaltyCalculatorBlockRemoval) &&
+                    (isActionsOpen || selected)
+                "
                 class="absolute top-2 right-2 z-20 rounded-md border border-neutral-300 shadow-sm dark:border-neutral-700 dark:bg-neutral-900/90"
             >
-                <UTooltip :text="$t('common.edit')">
-                    <UButton
-                        size="xs"
-                        color="neutral"
-                        variant="soft"
-                        icon="i-mdi-pencil"
-                        :label="$t('common.edit')"
-                        @click="openEditDrawer"
-                    />
-                </UTooltip>
+                <template v-if="!disablePenaltyCalculatorBlockEditing">
+                    <UTooltip :text="$t('common.edit')">
+                        <UButton
+                            size="xs"
+                            color="neutral"
+                            variant="soft"
+                            icon="i-mdi-pencil"
+                            :label="$t('common.edit')"
+                            @click="openEditDrawer"
+                        />
+                    </UTooltip>
 
-                <UTooltip :text="confirmDelete ? $t('common.confirm') : $t('common.delete')">
+                    <UTooltip :text="confirmClear ? $t('common.confirm') : $t('common.clear')">
+                        <UButton
+                            size="xs"
+                            :color="confirmClear ? 'error' : 'neutral'"
+                            :variant="confirmClear ? 'solid' : 'soft'"
+                            :trailing-icon="confirmClear ? 'i-mdi-check' : 'i-mdi-clear'"
+                            :label="$t('common.clear')"
+                            @click="clearWithConfirm"
+                        />
+                    </UTooltip>
+                </template>
+
+                <UTooltip
+                    v-if="enablePenaltyCalculatorBlockRemoval"
+                    :text="confirmDelete ? $t('common.confirm') : $t('common.delete')"
+                >
                     <UButton
                         size="xs"
                         color="error"
