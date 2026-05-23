@@ -128,7 +128,7 @@
         "@protobuf-ts/plugin": "catalog:",
         "@release-it/bumper": "7.0.5",
         "@total-typescript/ts-reset": "0.6.1",
-        "@types/big.js": "6.2.2",
+        "@types/big.js": "7.0.0",
         "@types/diff-match-patch": "1.0.36",
         "@types/google-protobuf": "3.15.12",
         "@types/howler": "2.2.13",
