@@ -749,10 +749,12 @@ func (s *Server) handleColleagueLabelSync(
 		INSERT(
 			tJobLabels.Job,
 			tJobLabels.Name,
+			tJobLabels.Color,
 		).
 		VALUES(
 			userInfo.GetJob(),
 			labelName,
+			"#5c7aff", // Default color if not set
 		)
 
 	var labelId int64
