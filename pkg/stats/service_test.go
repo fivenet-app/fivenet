@@ -111,8 +111,6 @@ func TestService_RebuildDocumentMetrics_MultiExtractorDeletesBothSources(t *test
 		WillReturnResult(sqlmock.NewResult(0, 0))
 	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM fivenet_documents_stats_metric")).
 		WillReturnResult(sqlmock.NewResult(0, 0))
-	mock.ExpectExec(regexp.QuoteMeta("INSERT INTO fivenet_documents_stats_metric")).
-		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	err = svc.RebuildDocumentMetrics(t.Context(), doc)
