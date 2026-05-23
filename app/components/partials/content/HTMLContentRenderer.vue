@@ -63,9 +63,7 @@ export default defineComponent({
                     value.attrs?.['data-type'] === 'penalty-calculator' ||
                     value.attrs?.['data-type'] === 'penaltyCalculator')
             ) {
-                return h(PenaltyCalculatorContentView, {
-                    class: 'my-2 rounded-md border border-dashed border-neutral-300 p-2 text-sm text-muted',
-                });
+                return h(PenaltyCalculatorContentView);
             }
 
             // 5. Tag remapping

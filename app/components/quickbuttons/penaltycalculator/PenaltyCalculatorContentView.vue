@@ -21,7 +21,7 @@ const summary = computed(() => calculatePenaltySummary(selectedPenalties.value))
 </script>
 
 <template>
-    <div class="my-2 flex flex-col gap-2">
+    <div class="my-2 flex flex-col gap-2 rounded-md p-2 text-sm text-muted">
         <PenaltySummaryTable
             :law-books="lawBooks ?? []"
             :selected-laws="selectedPenalties"
