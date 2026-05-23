@@ -363,7 +363,7 @@ watch(
                 <UIcon class="handle size-7 cursor-move" name="i-mdi-drag-horizontal" />
             </UTooltip>
 
-            <UFieldGroup>
+            <UFieldGroup orientation="vertical">
                 <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="$emit('move-up')" />
                 <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="$emit('move-down')" />
             </UFieldGroup>

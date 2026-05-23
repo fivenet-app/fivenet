@@ -6,15 +6,14 @@ import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetColleagueLabelsResponse, ManageLabelsResponse } from '~~/gen/ts/services/jobs/colleagues';
 
-const emit = defineEmits<{
-    (e: 'close', v: boolean): void;
-}>();
-
 const notifications = useNotificationsStore();
+
+const { t } = useI18n();
 
 const jobsColleaguesClient = await getJobsColleaguesClient();
 
@@ -65,8 +64,6 @@ async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
             type: NotificationType.SUCCESS,
         });
 
-        emit('close', false);
-
         return response;
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -84,11 +81,54 @@ watch(labels, () => (state.labels = labels.value?.labels ?? []));
 
 const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
 
+const breadcrumbs = computed(() => [
+    {
+        label: t('pages.jobs.colleagues.title'),
+        icon: 'i-mdi-account-group',
+        to: '/jobs/colleagues',
+    },
+    {
+        label: t('pages.jobs.colleagues.labels.title'),
+        icon: 'i-mdi-label',
+    },
+]);
+
 const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="$t('common.label', 2)" fullscreen>
+    <UDashboardPanel :ui="{ root: 'min-h-0' }">
+        <template #header>
+            <UDashboardToolbar>
+                <template #left>
+                    <UBreadcrumb :items="breadcrumbs" />
+                </template>
+            </UDashboardToolbar>
+
+            <UDashboardToolbar>
+                <template #left>
+                    <UButton
+                        block
+                        :disabled="!canSubmit || !!error"
+                        icon="i-mdi-content-save"
+                        :loading="isRequestPending(status) || !canSubmit"
+                        :label="$t('common.save')"
+                        @click="formRef?.submit()"
+                    />
+                </template>
+
+                <template #right>
+                    <RefreshButton @click="() => refresh()" />
+                    <UButton
+                        to="/jobs/colleagues"
+                        icon="i-mdi-arrow-left"
+                        variant="subtle"
+                        :label="$t('pages.jobs.colleagues.title')"
+                    />
+                </template>
+            </UDashboardToolbar>
+        </template>
+
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
@@ -98,24 +138,24 @@ const formRef = useTemplateRef('formRef');
                     <div class="flex flex-col gap-1">
                         <VueDraggable
                             v-model="state.labels"
-                            class="flex flex-col gap-2"
+                            class="flex flex-col gap-2 divide-y divide-default"
                             :disabled="!canSubmit"
                             handle=".handle"
                         >
-                            <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1">
+                            <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1 pb-2">
                                 <div class="inline-flex items-center gap-1">
                                     <UTooltip :text="$t('common.draggable')">
                                         <UIcon class="handle size-6 cursor-move" name="i-mdi-drag-horizontal" />
                                     </UTooltip>
 
-                                    <UFieldGroup>
+                                    <UFieldGroup orientation="vertical">
                                         <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
                                         <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="moveDown(idx)" />
                                     </UFieldGroup>
                                 </div>
 
                                 <div class="flex flex-1 flex-col gap-1">
-                                    <UFormField class="flex-1" :name="`labels.${idx}.name`">
+                                    <UFormField class="flex-1" :name="`labels.${idx}.name`" :label="$t('common.label', 1)">
                                         <UInput
                                             v-model="state.labels[idx]!.name"
                                             class="w-full flex-1"
@@ -126,19 +166,19 @@ const formRef = useTemplateRef('formRef');
                                     </UFormField>
 
                                     <div class="flex flex-1 flex-row gap-2">
-                                        <UFormField class="flex-1" :name="`${idx}.color`" :label="$t('common.color')">
+                                        <UFormField class="flex-1" :name="`labels.${idx}.color`" :label="$t('common.color')">
                                             <ColorPicker
                                                 v-model="state.labels[idx]!.color"
                                                 class="w-full"
-                                                :name="`${idx}.color`"
+                                                :name="`labels.${idx}.color`"
                                             />
                                         </UFormField>
 
-                                        <UFormField class="flex-1" :name="`${idx}.icon`" :label="$t('common.icon')">
+                                        <UFormField class="flex-1" :name="`labels.${idx}.icon`" :label="$t('common.icon')">
                                             <IconSelectMenu
                                                 v-model="state.labels[idx]!.icon"
                                                 class="w-full"
-                                                :name="`${idx}.icon`"
+                                                :name="`labels.${idx}.icon`"
                                                 :hex-color="state.labels[idx]!.color"
                                                 clear
                                             />
@@ -165,20 +205,5 @@ const formRef = useTemplateRef('formRef');
                 </UFormField>
             </UForm>
         </template>
-
-        <template #footer>
-            <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
-
-                <UButton
-                    class="flex-1"
-                    block
-                    :disabled="!canSubmit || !!error"
-                    :loading="isRequestPending(status) || !canSubmit"
-                    :label="$t('common.save')"
-                    @click="formRef?.submit()"
-                />
-            </UFieldGroup>
-        </template>
-    </UModal>
+    </UDashboardPanel>
 </template>

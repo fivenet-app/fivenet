@@ -133,6 +133,12 @@ const links = computed<NavigationMenuItem[]>(() =>
                             to: '/jobs/colleagues/stats',
                             permission: 'jobs.StatsService/GetStats' as Perms,
                         },
+                        {
+                            label: t('pages.jobs.colleagues.labels.title'),
+                            icon: 'i-mdi-label',
+                            to: '/jobs/colleagues/labels',
+                            permission: 'jobs.ColleaguesService/ManageLabels' as Perms,
+                        },
                     ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
                 },
                 {

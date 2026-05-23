@@ -77,7 +77,7 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
                                 <UIcon class="handle size-6 cursor-move" name="i-mdi-drag-horizontal" />
                             </UTooltip>
 
-                            <UFieldGroup>
+                            <UFieldGroup orientation="vertical">
                                 <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
                                 <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="moveDown(idx)" />
                             </UFieldGroup>

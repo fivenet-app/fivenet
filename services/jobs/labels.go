@@ -66,9 +66,9 @@ func (s *Server) GetColleagueLabels(
 	if req.GetSearch() != "" {
 		search := dbutils.PrepareForLikeSearch(req.GetSearch())
 		if search != "" {
-			condition = condition.AND(mysql.OR(
+			condition = condition.AND(
 				tJobLabels.Name.LIKE(mysql.String(search)),
-			))
+			)
 		}
 	}
 
@@ -159,6 +159,7 @@ func (s *Server) ManageLabels(
 					tJobLabels.Color,
 					tJobLabels.Icon,
 					tJobLabels.Order,
+					tJobLabels.DeletedAt,
 				).
 				MODELS(toCreate).
 				ON_DUPLICATE_KEY_UPDATE(
@@ -182,6 +183,7 @@ func (s *Server) ManageLabels(
 						tJobLabels.Color,
 						tJobLabels.Icon,
 						tJobLabels.Order,
+						tJobLabels.DeletedAt,
 					).
 					SET(
 						tJobLabels.Name.SET(mysql.String(label.GetName())),

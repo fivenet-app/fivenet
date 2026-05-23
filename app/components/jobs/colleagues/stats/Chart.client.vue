@@ -63,11 +63,11 @@ const template = (dr?: DataRecord) => {
                 </p>
                 <p class="text-3xl font-semibold text-highlighted">
                     {{
-                        n(stats.averageValue ? stats.averageValue : total, {
+                        $n(stats.averageValue ? stats.averageValue : total, {
                             maximumFractionDigits: 0,
                         })
                     }}
-                    ({{ n(averageVacation) }})
+                    ({{ $n(averageVacation) }})
                 </p>
             </div>
         </template>

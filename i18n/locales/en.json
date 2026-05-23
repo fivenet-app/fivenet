@@ -82,7 +82,10 @@
                     "timeclock": "Colleague Info: Timeclock"
                 },
                 "stats": {
-                    "title": "Colleague Statistics"
+                    "title": "Statistics"
+                },
+                "labels": {
+                    "title": "Labels"
                 }
             },
             "conduct": {

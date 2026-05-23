@@ -82,7 +82,10 @@
                     "timeclock": "Kollegen-Info: Stempeluhr"
                 },
                 "stats": {
-                    "title": "Kollegen-Statistik"
+                    "title": "Statistik"
+                },
+                "labels": {
+                    "title": "Labels"
                 }
             },
             "conduct": {

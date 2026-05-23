@@ -20,9 +20,8 @@ import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import type { Label } from '~~/gen/ts/resources/jobs/labels/labels';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { GetColleagueLabelsResponse, ListColleaguesResponse } from '~~/gen/ts/services/jobs/colleagues';
-import ColleagueLabelStatsModal from './ColleagueLabelStatsModal.vue';
+import StatsModalClient from './labels/StatsModal.client.vue';
 import ColleagueName from './ColleagueName.vue';
-import JobLabelsModal from './JobLabelsModal.vue';
 import SelfServiceAbsenceDateModal from './SelfServiceAbsenceDateModal.vue';
 
 const { t } = useI18n();
@@ -264,8 +263,7 @@ const canDo = computed(() => ({
 const { game } = useAppConfig();
 
 const selfServicePropsAbsenceDateModal = overlay.create(SelfServiceAbsenceDateModal);
-const jobLabelsModal = overlay.create(JobLabelsModal);
-const colleagueLabelStatsModal = overlay.create(ColleagueLabelStatsModal);
+const labelsStatsModal = overlay.create(StatsModalClient);
 
 const input = useTemplateRef('input');
 
@@ -331,18 +329,14 @@ defineShortcuts({
                                     v-if="can('jobs.ColleaguesService/ManageLabels').value"
                                     :label="$t('common.label', 2)"
                                     icon="i-mdi-tag"
-                                    @click="jobLabelsModal.open({})"
+                                    to="/jobs/colleagues/labels"
                                 />
 
                                 <UTooltip
                                     v-if="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
                                     :text="$t('common.stats')"
                                 >
-                                    <UButton
-                                        icon="i-mdi-chart-donut"
-                                        color="neutral"
-                                        @click="colleagueLabelStatsModal.open({})"
-                                    />
+                                    <UButton icon="i-mdi-chart-donut" color="neutral" @click="labelsStatsModal.open({})" />
                                 </UTooltip>
                             </UFieldGroup>
                         </UFormField>
