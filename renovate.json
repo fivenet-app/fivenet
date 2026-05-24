@@ -13,12 +13,6 @@
     },
     "packageRules": [
         {
-            "description": "Temporarily ignore vitest 4.1.4 (Rollup/i18n JSON issue)",
-            "matchManagers": ["npm"],
-            "matchPackageNames": ["vitest"],
-            "allowedVersions": "!/^4\\.1\\.\\d+$/"
-        },
-        {
             "matchManagers": ["gomod"],
             "groupName": "go modules",
             "groupSlug": "go-modules"
@@ -35,5 +29,6 @@
     "postUpdateOptions": ["gomodTidy", "pnpmDedupe"],
     "nix": {
         "enabled": true
-    }
+    },
+    "minimumReleaseAge": "1 day"
 }
