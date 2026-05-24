@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VisArea, VisAxis, VisCrosshair, VisGroupedBar, VisLine, VisTooltip, VisXYContainer } from '@unovis/vue';
+import { VisAxis, VisCrosshair, VisGroupedBar, VisTooltip, VisXYContainer } from '@unovis/vue';
 import type { StatsPeriod } from '~~/gen/ts/resources/stats/stats';
 import { buildChartData, type ChartStats, type DataRecord, type Range } from '../../../documents/stats/helpers';
 
@@ -67,7 +67,7 @@ const template = (dr?: DataRecord) => {
                             maximumFractionDigits: 0,
                         })
                     }}
-                    ({{ $n(averageVacation) }})
+                    (Ø {{ $n(averageVacation, { maximumFractionDigits: 1 }) }})
                 </p>
             </div>
         </template>
@@ -75,8 +75,13 @@ const template = (dr?: DataRecord) => {
         <VisXYContainer class="h-96" :data="data ?? []" :padding="{ top: 40 }" :width="width">
             <VisGroupedBar :x="x" :y="y" color="var(--ui-primary)" />
 
-            <VisLine :x="x" :y="(d: DataRecord) => d.vacation" color="var(--ui-warning)" />
-            <VisArea :x="x" :y="(d: DataRecord) => d.vacation" color="var(--ui-warning)" :opacity="0.1" />
+            <VisGroupedBar
+                :data="data ?? []"
+                :x="x"
+                :y="(d: DataRecord) => d.vacation"
+                color="var(--ui-warning)"
+                :opacity="0.1"
+            />
 
             <VisAxis type="x" :x="x" :tick-format="xTicks" />
 
