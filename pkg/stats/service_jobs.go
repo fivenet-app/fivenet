@@ -168,9 +168,9 @@ func (s *Service) QueryEmployeeSeriesOverTime(
 
 	stmt := tRollup.
 		SELECT(
-			periodExpr.AS("day"),
-			tRollup.MetricKey.AS("key"),
-			mysql.SUM(tRollup.Value).AS("value"),
+			periodExpr.AS("period_series_value.day"),
+			tRollup.MetricKey.AS("period_series_value.key"),
+			mysql.SUM(tRollup.Value).AS("period_series_value.value"),
 		).
 		FROM(tRollup).
 		WHERE(mysql.AND(

@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zaptest/observer"
 )
 
 func TestSoftDeleteJobData(t *testing.T) {
@@ -68,7 +69,7 @@ func TestSoftDeleteJobData(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 10))
 
 	// Mock queries for dependant table `calendar_entries`
-	mock.ExpectExec("(?s)UPDATE calendar_entries SET deleted_at = CURRENT_TIMESTAMP WHERE .*\\(job = \\?\\).*deleted_at IS NULL.*calendar_id IN.*SELECT id AS \"id\" FROM calendars.*\\(job = \\?\\).*deleted_at IS NULL.*LIMIT \\?;").
+	mock.ExpectExec("(?s)UPDATE calendar_entries SET deleted_at = CURRENT_TIMESTAMP WHERE .*deleted_at IS NULL.*calendar_id IN.*SELECT id AS \"id\" FROM calendars.*\\(job = \\?\\).*deleted_at IS NULL.*LIMIT \\?;").
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 5))
 
@@ -79,6 +80,46 @@ func TestSoftDeleteJobData(t *testing.T) {
 
 	// Ensure all expectations were met
 	assert.NoError(t, mock.ExpectationsWereMet(), "unmet expectations")
+}
+
+func TestMarkRowsAsDeleted_NoParentJobColumnLeakOnChildWithoutJob(t *testing.T) {
+	t.Parallel()
+	ctx := t.Context()
+
+	core, observed := observer.New(zap.DebugLevel)
+	logger := zap.New(core)
+
+	h := &Housekeeper{
+		logger: logger,
+		dryRun: true,
+	}
+
+	parent := &Table{
+		Table:           mysql.NewTable("", "fivenet_mailer_emails", ""),
+		IDColumn:        mysql.IntegerColumn("id"),
+		JobColumn:       mysql.StringColumn("job"),
+		DeletedAtColumn: mysql.TimestampColumn("deleted_at"),
+	}
+
+	child := &Table{
+		Table:           mysql.NewTable("", "fivenet_mailer_threads", ""),
+		ForeignKey:      mysql.IntegerColumn("creator_email_id"),
+		DeletedAtColumn: mysql.TimestampColumn("deleted_at"),
+	}
+
+	_, err := h.markRowsAsDeleted(ctx, parent, child, "unemployed")
+	require.NoError(t, err)
+
+	var query string
+	for _, e := range observed.All() {
+		if e.Message == "dry run markRowsAsDeleted statement" {
+			query = e.ContextMap()["query"].(string)
+			break
+		}
+	}
+
+	require.NotEmpty(t, query, "expected dry run query log")
+	assert.NotContains(t, query, "fivenet_mailer_emails.job")
 }
 
 func TestHardDelete(t *testing.T) {

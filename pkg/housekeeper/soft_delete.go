@@ -138,7 +138,7 @@ func (h *Housekeeper) SoftDeleteJobData(
 
 	// Traverse dependencies and soft delete in dependant tables.
 	for _, dep := range table.DependantTables {
-		if dep.DeletedAtColumn == nil && table.JobColumn == nil {
+		if dep.DeletedAtColumn == nil || table.JobColumn == nil {
 			continue
 		}
 
@@ -177,7 +177,7 @@ func (h *Housekeeper) softDeleteJobData(
 		if err != nil {
 			return rowsAffected, fmt.Errorf(
 				"failed to soft delete rows from dependant table %s. %w",
-				parent.Table.TableName(),
+				table.Table.TableName(),
 				err,
 			)
 		}
@@ -255,14 +255,7 @@ func (h *Housekeeper) markRowsAsDeleted(
 	table *Table,
 	jobName string,
 ) (int64, error) {
-	var condition mysql.BoolExpression
-	if table.JobColumn != nil {
-		condition = table.JobColumn.EQ(mysql.String(jobName))
-	} else {
-		condition = parentTable.JobColumn.EQ(mysql.String(jobName))
-	}
-
-	condition = condition.AND(mysql.AND(
+	condition := mysql.AND(
 		table.DeletedAtColumn.IS_NULL(),
 		table.ForeignKey.IN(
 			parentTable.Table.
@@ -272,7 +265,11 @@ func (h *Housekeeper) markRowsAsDeleted(
 					parentTable.DeletedAtColumn.IS_NULL(),
 				)),
 		),
-	))
+	)
+
+	if table.JobColumn != nil {
+		condition = condition.AND(table.JobColumn.EQ(mysql.String(jobName)))
+	}
 
 	stmt := table.Table.
 		UPDATE().
