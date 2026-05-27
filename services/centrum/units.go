@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -104,6 +105,84 @@ func (s *Server) CreateOrUpdateUnit(
 	return &pbcentrum.CreateOrUpdateUnitResponse{
 		Unit: unit,
 	}, nil
+}
+
+func (s *Server) ReorderUnits(
+	ctx context.Context,
+	req *pbcentrum.ReorderUnitsRequest,
+) (*pbcentrum.ReorderUnitsResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	// Remove any duplicate unit ids from the request
+	unitIds := utils.RemoveSliceDuplicates(req.GetUnitIds())
+
+	stmt := tUnits.
+		SELECT(tUnits.ID).
+		FROM(tUnits).
+		WHERE(mysql.AND(
+			tUnits.Job.EQ(mysql.String(userInfo.GetJob())),
+			tUnits.DeletedAt.IS_NULL(),
+		)).
+		LIMIT(int64(len(unitIds)))
+
+	var dest []int64
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
+	}
+
+	existing := make(map[int64]struct{}, len(unitIds))
+	for _, unitID := range dest {
+		existing[unitID] = struct{}{}
+	}
+
+	if len(existing) != len(unitIds) {
+		return nil, errorscentrum.ErrUnitPermDenied
+	}
+
+	for _, unitID := range unitIds {
+		if _, ok := existing[unitID]; !ok {
+			return nil, errorscentrum.ErrUnitPermDenied
+		}
+	}
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	defer tx.Rollback()
+
+	for idx, unitID := range unitIds {
+		if _, err := tUnits.
+			UPDATE().
+			SET(
+				tUnits.SortOrder.SET(mysql.Int(int64(idx))),
+			).
+			WHERE(mysql.AND(
+				tUnits.ID.EQ(mysql.Int64(unitID)),
+				tUnits.Job.EQ(mysql.String(userInfo.GetJob())),
+				tUnits.DeletedAt.IS_NULL(),
+			)).
+			LIMIT(1).
+			ExecContext(ctx, tx); err != nil {
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+
+	for _, unitID := range unitIds {
+		if err := s.units.LoadFromDB(ctx, unitID); err != nil {
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
+	}
+
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
+
+	return &pbcentrum.ReorderUnitsResponse{}, nil
 }
 
 func (s *Server) DeleteUnit(

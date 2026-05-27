@@ -246,6 +246,7 @@ export default defineNuxtConfig({
                 '@vue-leaflet/vue-leaflet',
                 '@vue/devtools-core',
                 '@vue/devtools-kit',
+                '@vueuse/integrations/useSortable',
                 '@zxcvbn-ts/core',
                 'browser-headers', // CJS
                 'css-blank-pseudo/browser',
@@ -263,7 +264,7 @@ export default defineNuxtConfig({
                 'maska/vue',
                 'mdi-vue3',
                 'mitt',
-                'pica', // CJS
+                'pica',
                 'splitpanes',
                 'uuid',
                 'v-calendar',

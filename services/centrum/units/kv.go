@@ -74,7 +74,24 @@ func (s *UnitDB) List(_ context.Context, jobs []string) []*centrumunits.Unit {
 	}
 
 	slices.SortFunc(us, func(a, b *centrumunits.Unit) int {
-		return strings.Compare(a.GetName(), b.GetName())
+		if a.GetSortOrder() != b.GetSortOrder() {
+			if a.GetSortOrder() < b.GetSortOrder() {
+				return -1
+			}
+			return 1
+		}
+
+		if c := strings.Compare(a.GetName(), b.GetName()); c != 0 {
+			return c
+		}
+
+		if a.GetId() < b.GetId() {
+			return -1
+		} else if a.GetId() > b.GetId() {
+			return 1
+		}
+
+		return 0
 	})
 
 	return us
@@ -106,6 +123,27 @@ func (s *UnitDB) Filter(
 		}
 
 		return true
+	})
+
+	slices.SortFunc(us, func(a, b *centrumunits.Unit) int {
+		if a.GetSortOrder() != b.GetSortOrder() {
+			if a.GetSortOrder() < b.GetSortOrder() {
+				return -1
+			}
+			return 1
+		}
+
+		if c := strings.Compare(a.GetName(), b.GetName()); c != 0 {
+			return c
+		}
+
+		if a.GetId() < b.GetId() {
+			return -1
+		} else if a.GetId() > b.GetId() {
+			return 1
+		}
+
+		return 0
 	})
 
 	return us

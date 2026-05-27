@@ -278,6 +278,7 @@ export const grpcMethods = [
 	'centrum.UnitsService/ListUnitActivity',
 	'centrum.UnitsService/CreateOrUpdateUnit',
 	'centrum.UnitsService/DeleteUnit',
+	'centrum.UnitsService/ReorderUnits',
 	'centrum.UnitsService/AssignUnit',
 	'centrum.UnitsService/UpdateUnitStatus',
 	'citizens.CitizensService/ListCitizens',

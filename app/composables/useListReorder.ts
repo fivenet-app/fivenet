@@ -1,4 +1,4 @@
-export function useListReorder<T>(list: Ref<T[]>) {
+export function useListReorder<T>(list: Ref<T[]>, options?: { onMove?: () => void }) {
     function move(from: number, to: number) {
         if (from === to) return;
         if (from < 0 || from >= list.value.length) return;
@@ -7,6 +7,7 @@ export function useListReorder<T>(list: Ref<T[]>) {
         const temp = list.value[from];
         list.value[from] = list.value[to]!;
         list.value[to] = temp!;
+        options?.onMove?.();
     }
 
     function moveUp(index: number) {

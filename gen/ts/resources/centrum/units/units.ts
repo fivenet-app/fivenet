@@ -39,6 +39,10 @@ export interface Unit {
      */
     jobLabel?: string;
     /**
+     * @generated from protobuf field: int32 sort_order = 17
+     */
+    sortOrder: number;
+    /**
      * @generated from protobuf field: string name = 5
      */
     name: string;
@@ -250,6 +254,7 @@ class Unit$Type extends MessageType<Unit> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 15, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 17, name: "sort_order", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } }, "tagger.tags": "alias:\"sort_order\"" } },
             { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 6, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "2", maxLen: "4" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 7, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
@@ -266,6 +271,7 @@ class Unit$Type extends MessageType<Unit> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.job = "";
+        message.sortOrder = 0;
         message.name = "";
         message.initials = "";
         message.color = "";
@@ -293,6 +299,9 @@ class Unit$Type extends MessageType<Unit> {
                     break;
                 case /* optional string job_label */ 15:
                     message.jobLabel = reader.string();
+                    break;
+                case /* int32 sort_order */ 17:
+                    message.sortOrder = reader.int32();
                     break;
                 case /* string name */ 5:
                     message.name = reader.string();
@@ -381,6 +390,9 @@ class Unit$Type extends MessageType<Unit> {
         /* optional string icon = 16; */
         if (message.icon !== undefined)
             writer.tag(16, WireType.LengthDelimited).string(message.icon);
+        /* int32 sort_order = 17; */
+        if (message.sortOrder !== 0)
+            writer.tag(17, WireType.Varint).int32(message.sortOrder);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

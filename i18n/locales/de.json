@@ -1721,7 +1721,7 @@
                 },
                 "display": {
                     "title": "Anzeige",
-                    "description": "Anzeigeeinstellungen, wie Sprache und Waehrung.",
+                    "description": "Anzeigeeinstellungen, wie Sprache und Währung.",
                     "intl_locale": "Internationale Lokalisierung"
                 },
                 "game": {

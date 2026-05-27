@@ -9,6 +9,8 @@ import type { UpdateUnitStatusResponse } from "./units";
 import type { UpdateUnitStatusRequest } from "./units";
 import type { AssignUnitResponse } from "./units";
 import type { AssignUnitRequest } from "./units";
+import type { ReorderUnitsResponse } from "./units";
+import type { ReorderUnitsRequest } from "./units";
 import type { DeleteUnitResponse } from "./units";
 import type { DeleteUnitRequest } from "./units";
 import type { CreateOrUpdateUnitResponse } from "./units";
@@ -46,6 +48,10 @@ export interface IUnitsServiceClient {
      * @generated from protobuf rpc: DeleteUnit
      */
     deleteUnit(input: DeleteUnitRequest, options?: RpcOptions): UnaryCall<DeleteUnitRequest, DeleteUnitResponse>;
+    /**
+     * @generated from protobuf rpc: ReorderUnits
+     */
+    reorderUnits(input: ReorderUnitsRequest, options?: RpcOptions): UnaryCall<ReorderUnitsRequest, ReorderUnitsResponse>;
     /**
      * @generated from protobuf rpc: AssignUnit
      */
@@ -100,17 +106,24 @@ export class UnitsServiceClient implements IUnitsServiceClient, ServiceInfo {
         return stackIntercept<DeleteUnitRequest, DeleteUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @generated from protobuf rpc: ReorderUnits
+     */
+    reorderUnits(input: ReorderUnitsRequest, options?: RpcOptions): UnaryCall<ReorderUnitsRequest, ReorderUnitsResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ReorderUnitsRequest, ReorderUnitsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: AssignUnit
      */
     assignUnit(input: AssignUnitRequest, options?: RpcOptions): UnaryCall<AssignUnitRequest, AssignUnitResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<AssignUnitRequest, AssignUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: UpdateUnitStatus
      */
     updateUnitStatus(input: UpdateUnitStatusRequest, options?: RpcOptions): UnaryCall<UpdateUnitStatusRequest, UpdateUnitStatusResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateUnitStatusRequest, UpdateUnitStatusResponse>("unary", this._transport, method, opt, input);
     }
 }

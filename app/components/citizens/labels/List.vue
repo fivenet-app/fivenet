@@ -194,9 +194,8 @@ const columns = computed<TableColumn<Label>[]>(() => [
         </template>
 
         <template #body>
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
             <DataErrorBlock
-                v-else-if="error"
+                v-if="error"
                 :title="$t('common.unable_to_load', [$t('components.citizens.citizen_labels.title')])"
                 :error="error"
                 :retry="refresh"
@@ -208,7 +207,7 @@ const columns = computed<TableColumn<Label>[]>(() => [
                 :loading="isRequestPending(status)"
                 :columns="columns"
                 :data="labels"
-                :empty="$t('common.not_found', [$t('common.label', 2)])"
+                :empty="$t('common.not_found', [$t('components.citizens.citizen_labels.title')])"
                 sticky
             />
         </template>

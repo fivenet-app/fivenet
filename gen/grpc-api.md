@@ -2095,6 +2095,7 @@ Dummy - DO NOT USE!
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
+| `sort_order` | [int32](#int32) |  |  |
 | `name` | [string](#string) |  |  |
 | `initials` | [string](#string) |  |  |
 | `color` | [string](#string) |  |  |
@@ -8651,6 +8652,23 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+### services.centrum.ReorderUnitsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unit_ids` | [int64](#int64) | repeated |  |
+
+
+
+
+
+### services.centrum.ReorderUnitsResponse
+
+
+
+
+
 ### services.centrum.UpdateUnitStatusRequest
 
 
@@ -8686,6 +8704,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `ListUnitActivity` | [ListUnitActivityRequest](#servicescentrumListUnitActivityRequest) | [ListUnitActivityResponse](#servicescentrumListUnitActivityResponse) | |
 | `CreateOrUpdateUnit` | [CreateOrUpdateUnitRequest](#servicescentrumCreateOrUpdateUnitRequest) | [CreateOrUpdateUnitResponse](#servicescentrumCreateOrUpdateUnitResponse) | |
 | `DeleteUnit` | [DeleteUnitRequest](#servicescentrumDeleteUnitRequest) | [DeleteUnitResponse](#servicescentrumDeleteUnitResponse) | |
+| `ReorderUnits` | [ReorderUnitsRequest](#servicescentrumReorderUnitsRequest) | [ReorderUnitsResponse](#servicescentrumReorderUnitsResponse) | |
 | `AssignUnit` | [AssignUnitRequest](#servicescentrumAssignUnitRequest) | [AssignUnitResponse](#servicescentrumAssignUnitResponse) | |
 | `UpdateUnitStatus` | [UpdateUnitStatusRequest](#servicescentrumUpdateUnitStatusRequest) | [UpdateUnitStatusResponse](#servicescentrumUpdateUnitStatusResponse) | |
 

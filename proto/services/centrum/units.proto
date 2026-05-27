@@ -27,6 +27,16 @@ message ListUnitsResponse {
   repeated resources.centrum.units.Unit units = 1 [(codegen.itemslen.enabled) = true];
 }
 
+message ListUnitActivityRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  int64 id = 2;
+}
+
+message ListUnitActivityResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.centrum.units.UnitStatus activity = 2 [(codegen.itemslen.enabled) = true];
+}
+
 message CreateOrUpdateUnitRequest {
   resources.centrum.units.Unit unit = 1 [(buf.validate.field).required = true];
 }
@@ -40,6 +50,26 @@ message DeleteUnitRequest {
 }
 
 message DeleteUnitResponse {}
+
+message ReorderUnitsRequest {
+  repeated int64 unit_ids = 1 [(buf.validate.field).repeated = {
+    items: {
+      int64: {gt: 0}
+    }
+    min_items: 1
+    max_items: 250
+  }];
+}
+
+message ReorderUnitsResponse {}
+
+message AssignUnitRequest {
+  int64 unit_id = 1;
+  repeated int32 to_add = 2;
+  repeated int32 to_remove = 3;
+}
+
+message AssignUnitResponse {}
 
 message UpdateUnitStatusRequest {
   int64 unit_id = 1;
@@ -55,24 +85,6 @@ message UpdateUnitStatusRequest {
 }
 
 message UpdateUnitStatusResponse {}
-
-message AssignUnitRequest {
-  int64 unit_id = 1;
-  repeated int32 to_add = 2;
-  repeated int32 to_remove = 3;
-}
-
-message AssignUnitResponse {}
-
-message ListUnitActivityRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  int64 id = 2;
-}
-
-message ListUnitActivityResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.centrum.units.UnitStatus activity = 2 [(codegen.itemslen.enabled) = true];
-}
 
 service UnitsService {
   option (codegen.perms.perms_svc) = {
@@ -111,6 +123,14 @@ service UnitsService {
   rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }
+
+  rpc ReorderUnits(ReorderUnitsRequest) returns (ReorderUnitsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateOrUpdateUnit"
+    };
+  }
+
   rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse) {
     option (codegen.perms.perms) = {
       enabled: true

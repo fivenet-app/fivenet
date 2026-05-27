@@ -34,6 +34,10 @@ func (x *Unit) Merge(in *Unit) *Unit {
 		x.Job = in.GetJob()
 	}
 
+	if x.GetSortOrder() != in.GetSortOrder() {
+		x.SortOrder = in.GetSortOrder()
+	}
+
 	if x.GetName() != in.GetName() {
 		x.Name = in.GetName()
 	}

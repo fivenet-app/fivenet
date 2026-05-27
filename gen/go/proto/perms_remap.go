@@ -149,6 +149,9 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	"centrum.UnitsService/ListUnits": {
 		permscentrum.CentrumService.Stream.Perm,
 	},
+	"centrum.UnitsService/ReorderUnits": {
+		permscentrum.UnitsService.CreateOrUpdateUnit.Perm,
+	},
 	"centrum.UnitsService/UpdateUnitStatus": {
 		permscentrum.DispatchesService.TakeDispatch.Perm,
 	},
