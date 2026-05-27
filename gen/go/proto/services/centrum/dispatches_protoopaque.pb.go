@@ -35,6 +35,7 @@ type ListDispatchesRequest struct {
 	xxx_hidden_NotStatus   []dispatches.StatusDispatch `protobuf:"varint,3,rep,packed,name=not_status,json=notStatus,proto3,enum=resources.centrum.dispatches.StatusDispatch"`
 	xxx_hidden_Ids         []int64                     `protobuf:"varint,4,rep,packed,name=ids,proto3"`
 	xxx_hidden_Postal      *string                     `protobuf:"bytes,5,opt,name=postal,proto3,oneof"`
+	xxx_hidden_CreatorIds  []int32                     `protobuf:"varint,6,rep,packed,name=creator_ids,json=creatorIds,proto3"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -104,6 +105,13 @@ func (x *ListDispatchesRequest) GetPostal() string {
 	return ""
 }
 
+func (x *ListDispatchesRequest) GetCreatorIds() []int32 {
+	if x != nil {
+		return x.xxx_hidden_CreatorIds
+	}
+	return nil
+}
+
 func (x *ListDispatchesRequest) SetPagination(v *database.PaginationRequest) {
 	x.xxx_hidden_Pagination = v
 }
@@ -122,7 +130,11 @@ func (x *ListDispatchesRequest) SetIds(v []int64) {
 
 func (x *ListDispatchesRequest) SetPostal(v string) {
 	x.xxx_hidden_Postal = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 6)
+}
+
+func (x *ListDispatchesRequest) SetCreatorIds(v []int32) {
+	x.xxx_hidden_CreatorIds = v
 }
 
 func (x *ListDispatchesRequest) HasPagination() bool {
@@ -156,6 +168,7 @@ type ListDispatchesRequest_builder struct {
 	NotStatus  []dispatches.StatusDispatch
 	Ids        []int64
 	Postal     *string
+	CreatorIds []int32
 }
 
 func (b0 ListDispatchesRequest_builder) Build() *ListDispatchesRequest {
@@ -167,9 +180,10 @@ func (b0 ListDispatchesRequest_builder) Build() *ListDispatchesRequest {
 	x.xxx_hidden_NotStatus = b.NotStatus
 	x.xxx_hidden_Ids = b.Ids
 	if b.Postal != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 6)
 		x.xxx_hidden_Postal = b.Postal
 	}
+	x.xxx_hidden_CreatorIds = b.CreatorIds
 	return m0
 }
 
@@ -1517,7 +1531,7 @@ var File_services_centrum_dispatches_proto protoreflect.FileDescriptor
 
 const file_services_centrum_dispatches_proto_rawDesc = "" +
 	"\n" +
-	"!services/centrum/dispatches.proto\x12\x10services.centrum\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a-resources/centrum/dispatches/dispatches.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\"\xb2\x02\n" +
+	"!services/centrum/dispatches.proto\x12\x10services.centrum\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a-resources/centrum/dispatches/dispatches.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\"\xd3\x02\n" +
 	"\x15ListDispatchesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1526,7 +1540,9 @@ const file_services_centrum_dispatches_proto_rawDesc = "" +
 	"\n" +
 	"not_status\x18\x03 \x03(\x0e2,.resources.centrum.dispatches.StatusDispatchR\tnotStatus\x12\x10\n" +
 	"\x03ids\x18\x04 \x03(\x03R\x03ids\x12\x1b\n" +
-	"\x06postal\x18\x05 \x01(\tH\x00R\x06postal\x88\x01\x01B\t\n" +
+	"\x06postal\x18\x05 \x01(\tH\x00R\x06postal\x88\x01\x01\x12\x1f\n" +
+	"\vcreator_ids\x18\x06 \x03(\x05R\n" +
+	"creatorIdsB\t\n" +
 	"\a_postal\"\xb5\x01\n" +
 	"\x16ListDispatchesResponse\x12M\n" +
 	"\n" +

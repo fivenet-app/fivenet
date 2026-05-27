@@ -83,6 +83,15 @@ func (s *Server) ListDispatches(
 		condition = condition.AND(tDispatch.ID.IN(ids...))
 	}
 
+	if len(req.GetCreatorIds()) > 0 {
+		creatorIds := make([]mysql.Expression, len(req.GetCreatorIds()))
+		for i := range req.GetCreatorIds() {
+			creatorIds[i] = mysql.Int32(req.GetCreatorIds()[i])
+		}
+
+		condition = condition.AND(tDispatch.CreatorID.IN(creatorIds...))
+	}
+
 	if req.Postal != nil && req.GetPostal() != "" {
 		condition = condition.AND(tDispatch.Postal.EQ(mysql.String(req.GetPostal())))
 	}

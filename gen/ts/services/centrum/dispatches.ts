@@ -43,6 +43,10 @@ export interface ListDispatchesRequest {
      * @generated from protobuf field: optional string postal = 5
      */
     postal?: string;
+    /**
+     * @generated from protobuf field: repeated int32 creator_ids = 6
+     */
+    creatorIds: number[];
 }
 /**
  * @generated from protobuf message services.centrum.ListDispatchesResponse
@@ -244,10 +248,11 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
     constructor() {
         super("services.centrum.ListDispatchesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.dispatches.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 3, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.dispatches.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 4, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } } } },
-            { no: 5, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } }
+            { no: 2, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.dispatches.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } },
+            { no: 3, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.dispatches.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } },
+            { no: 4, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { int64: { gt: "0" } } } } } },
+            { no: 5, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } },
+            { no: 6, name: "creator_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { int32: { gt: 0 } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListDispatchesRequest>): ListDispatchesRequest {
@@ -255,6 +260,7 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
         message.status = [];
         message.notStatus = [];
         message.ids = [];
+        message.creatorIds = [];
         if (value !== undefined)
             reflectionMergePartial<ListDispatchesRequest>(this, message, value);
         return message;
@@ -290,6 +296,13 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
                     break;
                 case /* optional string postal */ 5:
                     message.postal = reader.string();
+                    break;
+                case /* repeated int32 creator_ids */ 6:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.creatorIds.push(reader.int32());
+                    else
+                        message.creatorIds.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -330,6 +343,13 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
         /* optional string postal = 5; */
         if (message.postal !== undefined)
             writer.tag(5, WireType.LengthDelimited).string(message.postal);
+        /* repeated int32 creator_ids = 6; */
+        if (message.creatorIds.length) {
+            writer.tag(6, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.creatorIds.length; i++)
+                writer.int32(message.creatorIds[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1061,8 +1081,8 @@ class AssignDispatchRequest$Type extends MessageType<AssignDispatchRequest> {
     constructor() {
         super("services.centrum.AssignDispatchRequest", [
             { no: 1, name: "dispatch_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { int64: { gt: "0" } } } } } },
+            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { int64: { gt: "0" } } } } } },
             { no: 4, name: "forced", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -1184,7 +1204,7 @@ export const AssignDispatchResponse = new AssignDispatchResponse$Type();
 class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
     constructor() {
         super("services.centrum.TakeDispatchRequest", [
-            { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1" } } } },
+            { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "10", items: { int64: { gt: "0" } } } } } },
             { no: 2, name: "resp", kind: "enum", T: () => ["resources.centrum.dispatches.TakeDispatchResp", TakeDispatchResp, "TAKE_DISPATCH_RESP_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);

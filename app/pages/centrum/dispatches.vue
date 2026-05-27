@@ -6,11 +6,13 @@ import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
 import DispatchLayer from '~/components/centrum/livemap/DispatchLayer.vue';
 import BaseMap from '~/components/livemap/BaseMap.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { getCentrumDispatchesClient } from '~~/gen/ts/clients';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ListDispatchesRequest, ListDispatchesResponse } from '~~/gen/ts/services/centrum/dispatches';
 
 useHead({
@@ -26,11 +28,14 @@ definePageMeta({
 const livemapStore = useLivemapStore();
 const { showLocationMarker } = storeToRefs(livemapStore);
 
+const completorStore = useCompletorStore();
+
 const centrumDispatchesClient = await getCentrumDispatchesClient();
 
 const schema = z.object({
     postal: z.coerce.string().trim().max(12).default(''),
     id: z.coerce.number().max(16).optional(),
+    creatorIds: z.coerce.number().array().max(5).default([]),
     page: pageNumberSchema,
 });
 
@@ -48,6 +53,7 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
             status: [],
             ids: [],
             postal: query.postal.replaceAll('-', '').replace(/\D/g, ''),
+            creatorIds: query.creatorIds,
         };
 
         if (query.id && query.id > 0) {
@@ -155,6 +161,40 @@ const mount = ref(false);
                                             :max="99999999999"
                                             :placeholder="$t('common.id')"
                                         />
+                                    </UFormField>
+
+                                    <UFormField class="flex-1" name="creator" :label="$t('common.creator')">
+                                        <SelectMenu
+                                            v-model="query.creatorIds"
+                                            class="w-full"
+                                            multiple
+                                            nullable
+                                            :searchable="
+                                                async (q: string): Promise<UserShort[]> =>
+                                                    await completorStore.completeCitizens({
+                                                        search: q,
+                                                        userIds: query.creatorIds,
+                                                    })
+                                            "
+                                            searchable-key="completor-citizens"
+                                            :search-input="{ placeholder: $t('common.search_field') }"
+                                            :filter-fields="['firstname', 'lastname']"
+                                            :placeholder="$t('common.creator')"
+                                            trailing
+                                            value-key="userId"
+                                        >
+                                            <template #default="{ modelValue }">
+                                                {{ $t('common.selected', modelValue?.length ?? 0) }}
+                                            </template>
+
+                                            <template #item-label="{ item }">
+                                                {{ userToLabel(item) }}
+                                            </template>
+
+                                            <template #empty>
+                                                {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                            </template>
+                                        </SelectMenu>
                                     </UFormField>
                                 </UForm>
                             </div>

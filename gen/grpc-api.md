@@ -8418,6 +8418,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `not_status` | [resources.centrum.dispatches.StatusDispatch](#resourcescentrumdispatchesStatusDispatch) | repeated |  |
 | `ids` | [int64](#int64) | repeated |  |
 | `postal` | [string](#string) | optional |  |
+| `creator_ids` | [int32](#int32) | repeated |  |
 
 
 
