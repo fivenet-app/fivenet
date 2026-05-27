@@ -683,7 +683,7 @@ class Website$Type extends MessageType<Website> {
     constructor() {
         super("resources.settings.Website", [
             { no: 1, name: "links", kind: "message", T: () => Links },
-            { no: 2, name: "stats_page", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "stats_page", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"statsPage\"" } }
         ]);
     }
     create(value?: PartialMessage<Website>): Website {

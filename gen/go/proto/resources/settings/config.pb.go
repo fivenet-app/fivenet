@@ -649,7 +649,7 @@ func (b0 Perm_builder) Build() *Perm {
 type Website struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Links         *Links                 `protobuf:"bytes,1,opt,name=links,proto3" json:"links,omitempty"`
-	StatsPage     bool                   `protobuf:"varint,2,opt,name=stats_page,json=statsPage,proto3" json:"stats_page,omitempty"`
+	StatsPage     bool                   `protobuf:"varint,2,opt,name=stats_page,json=statsPage,proto3" json:"statsPage"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2197,11 +2197,11 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\adefault\x18\x01 \x03(\v2\x18.resources.settings.PermR\adefault\"J\n" +
 	"\x04Perm\x12$\n" +
 	"\bcategory\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\bcategory\x12\x1c\n" +
-	"\x04name\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\"Y\n" +
+	"\x04name\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\"p\n" +
 	"\aWebsite\x12/\n" +
-	"\x05links\x18\x01 \x01(\v2\x19.resources.settings.LinksR\x05links\x12\x1d\n" +
+	"\x05links\x18\x01 \x01(\v2\x19.resources.settings.LinksR\x05links\x124\n" +
 	"\n" +
-	"stats_page\x18\x02 \x01(\bR\tstatsPage\"\x85\x01\n" +
+	"stats_page\x18\x02 \x01(\bB\x15\x9a\x84\x9e\x03\x10json:\"statsPage\"R\tstatsPage\"\x85\x01\n" +
 	"\x05Links\x124\n" +
 	"\x0eprivacy_policy\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x00R\rprivacyPolicy\x88\x01\x01\x12'\n" +
 	"\aimprint\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x01R\aimprint\x88\x01\x01B\x11\n" +
