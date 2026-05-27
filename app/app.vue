@@ -8,7 +8,8 @@ import { useClipboardStore } from '~/stores/clipboard';
 import { useSettingsStore } from '~/stores/settings';
 import BannerMessage from './components/partials/BannerMessage.vue';
 
-const { locale, t, setLocale, finalizePendingLocaleChange } = useI18n();
+const { locale, t, finalizePendingLocaleChange } = useI18n();
+const { initLocale } = useAppLocale();
 
 const appConfig = useAppConfig();
 
@@ -20,7 +21,7 @@ const logger = useLogger('⚙️ Settings');
 
 useHead({
     htmlAttrs: {
-        lang: 'en',
+        lang: locale,
     },
     meta: [{ key: 'theme-color', name: 'theme-color', content: color }],
     titleTemplate: (title?: string) => (title ? `${title?.includes('.') ? t(title) : title} - FiveNet` : 'FiveNet'),
@@ -36,7 +37,7 @@ useSeoMeta({
 });
 
 const settingsStore = useSettingsStore();
-const { getUserLocale, nuiEnabled, design } = storeToRefs(settingsStore);
+const { nuiEnabled, design } = storeToRefs(settingsStore);
 
 if (APP_VERSION !== settingsStore.version) {
     logger.info('Resetting app data because new version has been detected', settingsStore.version, APP_VERSION);
@@ -103,16 +104,6 @@ async function setThemeColors(): Promise<void> {
 watch(design.value, () => setThemeColors());
 setThemeColors();
 
-async function setUserLocale(): Promise<void> {
-    logger.info('Setting user locale to', getUserLocale.value);
-    if (getUserLocale.value !== undefined) {
-        locale.value = getUserLocale.value;
-        await setLocale(getUserLocale.value);
-    }
-}
-setUserLocale();
-watch(getUserLocale, setUserLocale);
-
 function clickListener(event: MouseEvent): void {
     if (!event.target || event.defaultPrevented) return;
 
@@ -178,6 +169,8 @@ const onBeforeEnter = async () => await finalizePendingLocaleChange();
 
 const router = useRouter();
 const route = router.currentRoute;
+
+await initLocale();
 </script>
 
 <template>

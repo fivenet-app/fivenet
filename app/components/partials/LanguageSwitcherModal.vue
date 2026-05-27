@@ -1,23 +1,19 @@
 <script lang="ts" setup>
 import type { LocaleObject } from '@nuxtjs/i18n';
-import { useSettingsStore } from '~/stores/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-defineEmits<{
+const emit = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const { locale, locales } = useI18n();
+const { currentLocale, availableLocales, setUserLocale } = useAppLocale();
 
 const notifications = useNotificationsStore();
-
-const settingsStore = useSettingsStore();
-const { locale: userLocale } = storeToRefs(settingsStore);
 
 const languages = ref<LocaleObject[]>([]);
 
 onBeforeMount(async () => {
-    locales.value.forEach((lang) => {
+    availableLocales.value.forEach((lang) => {
         if (typeof lang === 'string') return;
 
         languages.value.push({
@@ -32,20 +28,23 @@ onBeforeMount(async () => {
 const preventClose = ref(false);
 
 async function switchLanguage(lang: LocaleObject): Promise<void> {
-    if (locale.value === lang.code) return;
+    if (currentLocale.value === lang.code) return;
 
     preventClose.value = true;
     useLogger('⚙️ Settings').info('Switching language to:', lang.code);
+    try {
+        await setUserLocale(lang.code);
+        emit('close', false);
 
-    userLocale.value = lang.code;
-
-    notifications.add({
-        title: { key: 'notifications.language_switched.title', parameters: {} },
-        description: { key: 'notifications.language_switched.content', parameters: { name: lang.name ?? lang.code } },
-        type: NotificationType.SUCCESS,
-        duration: 1650,
-        callback: () => reloadNuxtApp({ persistState: false, force: true }),
-    });
+        notifications.add({
+            title: { key: 'notifications.language_switched.title', parameters: {} },
+            description: { key: 'notifications.language_switched.content', parameters: { name: lang.name ?? lang.code } },
+            type: NotificationType.SUCCESS,
+            duration: 1500,
+        });
+    } finally {
+        preventClose.value = false;
+    }
 }
 </script>
 
@@ -58,6 +57,7 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
                     :key="item.name"
                     :title="item.name"
                     :icon="item.icon"
+                    :highlight="currentLocale === item.code"
                     :ui="{ leadingIcon: 'size-12' }"
                     @click="switchLanguage(item)"
                 />
