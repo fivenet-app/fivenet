@@ -152,7 +152,7 @@ const schema = z.object({
                     })
                     .optional(),
                 maxCount: z.coerce.number().int().min(1).max(100).nonnegative().optional(),
-                maxLeeway: z.coerce.number().int().min(0).max(1).nonnegative().optional(),
+                maxLeeway: z.coerce.number().min(0).max(1).nonnegative().optional(),
                 warnSettings: z
                     .object({
                         enabled: z.coerce.boolean(),
@@ -288,7 +288,16 @@ async function updateAppConfig(values: Schema): Promise<void> {
         },
     };
     config.value.config.display = values.display;
-    config.value.config.quickButtons = values.quickButtons;
+    config.value.config.quickButtons = {
+        ...values.quickButtons,
+        penaltyCalculator: {
+            ...values.quickButtons.penaltyCalculator,
+            maxLeeway: values.quickButtons.penaltyCalculator.maxLeeway
+                ? // Convert percentage (float) to integer (0-100) for backend
+                  Math.floor(values.quickButtons.penaltyCalculator.maxLeeway * 100)
+                : undefined,
+        },
+    };
     config.value.config.livemap = values.livemap;
     config.value.config.game = {
         maxWantedDurationUserEnabled: values.game.maxWantedDurationUserEnabled,
