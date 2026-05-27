@@ -40,10 +40,11 @@ const items = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const settingsStore = useSettingsStore();
-const { locale: userLocale } = storeToRefs(settingsStore);
+const { currentLocale, setUserLocale } = useAppLocale();
 
-const { locale, setLocale } = useI18n();
+async function changeLocale(newLocale: string) {
+    await setUserLocale(newLocale);
+}
 </script>
 
 <template>
@@ -57,18 +58,7 @@ const { locale, setLocale } = useI18n();
         <UNavigationMenu :items="items" />
 
         <template #right>
-            <ULocaleSelect
-                v-model="locale"
-                :locales="[en, de]"
-                @update:model-value="
-                    ($event) => {
-                        let l = $event as typeof userLocale;
-                        if (!l) l = 'en';
-                        setLocale(l);
-                        userLocale = l as typeof userLocale;
-                    }
-                "
-            />
+            <ULocaleSelect v-model="currentLocale" :locales="[en, de]" @update:model-value="($event) => changeLocale($event)" />
 
             <template v-if="!username">
                 <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" to="/auth/login" />

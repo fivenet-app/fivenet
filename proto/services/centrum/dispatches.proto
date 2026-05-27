@@ -14,10 +14,31 @@ option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/
 
 message ListDispatchesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.centrum.dispatches.StatusDispatch status = 2 [(buf.validate.field).repeated.items.enum.defined_only = true];
-  repeated resources.centrum.dispatches.StatusDispatch not_status = 3 [(buf.validate.field).repeated.items.enum.defined_only = true];
-  repeated int64 ids = 4 [(buf.validate.field).repeated.max_items = 10];
+  repeated resources.centrum.dispatches.StatusDispatch status = 2 [(buf.validate.field).repeated = {
+    items: {
+      enum: {defined_only: true}
+    }
+    max_items: 10
+  }];
+  repeated resources.centrum.dispatches.StatusDispatch not_status = 3 [(buf.validate.field).repeated = {
+    items: {
+      enum: {defined_only: true}
+    }
+    max_items: 10
+  }];
+  repeated int64 ids = 4 [(buf.validate.field).repeated = {
+    items: {
+      int64: {gt: 0}
+    }
+    max_items: 10
+  }];
   optional string postal = 5 [(buf.validate.field).string.max_len = 12];
+  repeated int32 creator_ids = 6 [(buf.validate.field).repeated = {
+    items: {
+      int32: {gt: 0}
+    }
+    max_items: 10
+  }];
 }
 
 message ListDispatchesResponse {
@@ -88,15 +109,31 @@ message UpdateDispatchStatusResponse {}
 
 message AssignDispatchRequest {
   int64 dispatch_id = 1;
-  repeated int64 to_add = 2;
-  repeated int64 to_remove = 3;
+  repeated int64 to_add = 2 [(buf.validate.field).repeated = {
+    items: {
+      int64: {gt: 0}
+    }
+    max_items: 10
+  }];
+  repeated int64 to_remove = 3 [(buf.validate.field).repeated = {
+    items: {
+      int64: {gt: 0}
+    }
+    max_items: 10
+  }];
   optional bool forced = 4;
 }
 
 message AssignDispatchResponse {}
 
 message TakeDispatchRequest {
-  repeated int64 dispatch_ids = 1 [(buf.validate.field).repeated.min_items = 1];
+  repeated int64 dispatch_ids = 1 [(buf.validate.field).repeated = {
+    items: {
+      int64: {gt: 0}
+    }
+    min_items: 1
+    max_items: 10
+  }];
   resources.centrum.dispatches.TakeDispatchResp resp = 2 [(buf.validate.field).enum.defined_only = true];
   optional string reason = 3 [
     (buf.validate.field).string.max_len = 255,

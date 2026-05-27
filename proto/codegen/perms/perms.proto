@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package codegen.perms;
 
+import "buf/validate/validate.proto";
 import "google/protobuf/descriptor.proto";
 import "resources/permissions/attributes/attributes.proto";
 
@@ -25,7 +26,7 @@ message PermsOptions {
 message Attr {
   string key = 1;
   string value = 2;
-  resources.permissions.attributes.AttributeType type = 3;
+  resources.permissions.attributes.AttributeType type = 3 [(buf.validate.field).enum.defined_only = true];
 
   repeated string valid_string_list = 4;
 }

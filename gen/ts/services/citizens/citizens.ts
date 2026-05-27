@@ -462,7 +462,7 @@ class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> 
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.users.activity.UserActivityType", UserActivityType, "USER_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
+            { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.users.activity.UserActivityType", UserActivityType, "USER_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "20", items: { enum: { definedOnly: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListUserActivityRequest>): ListUserActivityRequest {

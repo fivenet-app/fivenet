@@ -2049,7 +2049,7 @@ class ListDocumentActivityRequest$Type extends MessageType<ListDocumentActivityR
         super("services.documents.ListDocumentActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.activity.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { in: [13, 14, 15, 16, 17, 18] } } } } } }
+            { no: 3, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.activity.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true, in: [13, 14, 15, 16, 17, 18] } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListDocumentActivityRequest>): ListDocumentActivityRequest {
@@ -2280,7 +2280,7 @@ class CreateDocumentReqRequest$Type extends MessageType<CreateDocumentReqRequest
     constructor() {
         super("services.documents.CreateDocumentReqRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "request_type", kind: "enum", T: () => ["resources.documents.activity.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "buf.validate.field": { enum: { in: [13, 14, 15, 16, 17, 18] } } } },
+            { no: 2, name: "request_type", kind: "enum", T: () => ["resources.documents.activity.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true, in: [13, 14, 15, 16, 17, 18] } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 4, name: "data", kind: "message", T: () => DocActivityData }
         ]);
@@ -2790,7 +2790,7 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 4, name: "relations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.relations.DocRelation", DocRelation, "DOC_RELATION_"], options: { "buf.validate.field": { repeated: { maxItems: "3" } } } },
+            { no: 4, name: "relations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.relations.DocRelation", DocRelation, "DOC_RELATION_"], options: { "buf.validate.field": { repeated: { maxItems: "3", items: { enum: { definedOnly: true } } } } } },
             { no: 5, name: "closed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "include_created", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);

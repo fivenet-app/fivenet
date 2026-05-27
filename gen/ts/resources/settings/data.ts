@@ -45,7 +45,7 @@ export enum DataMode {
 class Data$Type extends MessageType<Data> {
     constructor() {
         super("resources.settings.Data", [
-            { no: 1, name: "mode", kind: "enum", T: () => ["resources.settings.DataMode", DataMode, "DATA_MODE_"] }
+            { no: 1, name: "mode", kind: "enum", T: () => ["resources.settings.DataMode", DataMode, "DATA_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<Data>): Data {

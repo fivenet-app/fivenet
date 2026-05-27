@@ -1012,7 +1012,7 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "qualification_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 4, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"] },
+            { no: 4, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
             { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } }
         ]);
     }
@@ -1334,7 +1334,7 @@ class ListQualificationsResultsRequest$Type extends MessageType<ListQualificatio
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "qualification_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 4, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.ResultStatus", ResultStatus, "RESULT_STATUS_"] },
+            { no: 4, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.ResultStatus", ResultStatus, "RESULT_STATUS_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
             { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } }
         ]);
     }

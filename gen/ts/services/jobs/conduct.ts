@@ -143,7 +143,7 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
         super("services.jobs.ListConductEntriesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.conduct.ConductType", ConductType, "CONDUCT_TYPE_"] },
+            { no: 3, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.conduct.ConductType", ConductType, "CONDUCT_TYPE_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
             { no: 4, name: "show_expired", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "show_drafts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },

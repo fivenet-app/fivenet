@@ -19,8 +19,8 @@ message ListTimeclockRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  resources.jobs.timeclock.TimeclockViewMode user_mode = 3;
-  resources.jobs.timeclock.TimeclockMode mode = 4;
+  resources.jobs.timeclock.TimeclockViewMode user_mode = 3 [(buf.validate.field).enum.defined_only = true];
+  resources.jobs.timeclock.TimeclockMode mode = 4 [(buf.validate.field).enum.defined_only = true];
   optional resources.common.database.DateRange date = 5;
   bool per_day = 6;
   repeated int32 user_ids = 7 [(buf.validate.field).repeated.max_items = 15];

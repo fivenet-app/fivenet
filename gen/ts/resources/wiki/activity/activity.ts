@@ -219,7 +219,7 @@ class PageActivity$Type extends MessageType<PageActivity> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "page_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 4, name: "activity_type", kind: "enum", T: () => ["resources.wiki.activity.PageActivityType", PageActivityType, "PAGE_ACTIVITY_TYPE_"] },
+            { no: 4, name: "activity_type", kind: "enum", T: () => ["resources.wiki.activity.PageActivityType", PageActivityType, "PAGE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 5, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 6, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 7, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },

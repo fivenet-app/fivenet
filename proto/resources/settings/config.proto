@@ -167,7 +167,7 @@ enum DiscordBotPresenceType {
 }
 
 message DiscordBotPresence {
-  DiscordBotPresenceType type = 1;
+  DiscordBotPresenceType type = 1 [(buf.validate.field).enum.defined_only = true];
   optional string status = 2 [(codegen.sanitizer.sanitizer) = {
     enabled: true
     strip_html_tags: true

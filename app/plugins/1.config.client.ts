@@ -39,6 +39,7 @@ export default defineNuxtPlugin({
 
     async setup() {
         await appConfigPromise;
+
         return {
             provide: {
                 appConfigPromise: appConfigPromise,

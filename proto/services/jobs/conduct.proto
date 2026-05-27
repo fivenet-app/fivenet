@@ -17,7 +17,7 @@ message ListConductEntriesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  repeated resources.jobs.conduct.ConductType types = 3;
+  repeated resources.jobs.conduct.ConductType types = 3 [(buf.validate.field).repeated.items.enum.defined_only = true];
   optional bool show_expired = 4;
   optional bool show_drafts = 5;
   repeated int32 user_ids = 6;

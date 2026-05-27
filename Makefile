@@ -1,5 +1,5 @@
 VERSION := $(shell cat VERSION)
-GIT_VERSION := $(shell git describe --tags --exclude='fivenet-*')
+GIT_VERSION := $(shell git describe --tags)
 
 VALIDATE_VERSION ?= v1.0.2
 BUILD_DIR := .build/

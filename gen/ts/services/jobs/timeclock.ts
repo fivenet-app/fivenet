@@ -212,8 +212,8 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
         super("services.jobs.ListTimeclockRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "user_mode", kind: "enum", T: () => ["resources.jobs.timeclock.TimeclockViewMode", TimeclockViewMode, "TIMECLOCK_VIEW_MODE_"] },
-            { no: 4, name: "mode", kind: "enum", T: () => ["resources.jobs.timeclock.TimeclockMode", TimeclockMode, "TIMECLOCK_MODE_"] },
+            { no: 3, name: "user_mode", kind: "enum", T: () => ["resources.jobs.timeclock.TimeclockViewMode", TimeclockViewMode, "TIMECLOCK_VIEW_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 4, name: "mode", kind: "enum", T: () => ["resources.jobs.timeclock.TimeclockMode", TimeclockMode, "TIMECLOCK_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 5, name: "date", kind: "message", T: () => DateRange },
             { no: 6, name: "per_day", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 7, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "15" } } } }

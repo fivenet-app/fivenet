@@ -97,7 +97,7 @@ export enum Kind {
 class ContentDiffOp$Type extends MessageType<ContentDiffOp> {
     constructor() {
         super("resources.common.content.ContentDiffOp", [
-            { no: 1, name: "kind", kind: "enum", T: () => ["resources.common.content.Kind", Kind, "KIND_"] },
+            { no: 1, name: "kind", kind: "enum", T: () => ["resources.common.content.Kind", Kind, "KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 2, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }

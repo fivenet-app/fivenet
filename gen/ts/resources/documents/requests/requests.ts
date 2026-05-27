@@ -76,7 +76,7 @@ class DocRequest$Type extends MessageType<DocRequest> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 5, name: "request_type", kind: "enum", T: () => ["resources.documents.activity.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "buf.validate.field": { enum: { in: [13, 14, 15, 16, 17, 18] } } } },
+            { no: 5, name: "request_type", kind: "enum", T: () => ["resources.documents.activity.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true, in: [13, 14, 15, 16, 17, 18] } } } },
             { no: 6, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 7, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 8, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },

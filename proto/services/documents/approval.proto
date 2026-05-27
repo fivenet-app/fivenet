@@ -15,7 +15,12 @@ option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/
 
 message ListApprovalTasksInboxRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.documents.approval.ApprovalTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
+  repeated resources.documents.approval.ApprovalTaskStatus statuses = 2 [(buf.validate.field).repeated = {
+    max_items: 4
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
   // Controls inclusion of drafts in the result:
   // - unset/null: include all documents (drafts and non-drafts)
   // - false: only non-draft documents
@@ -50,7 +55,12 @@ message UpsertApprovalPolicyResponse {
 
 message ListApprovalTasksRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  repeated resources.documents.approval.ApprovalTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
+  repeated resources.documents.approval.ApprovalTaskStatus statuses = 2 [(buf.validate.field).repeated = {
+    max_items: 4
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
 }
 
 message ListApprovalTasksResponse {
@@ -124,7 +134,7 @@ message ListApprovalsRequest {
   optional int64 task_id = 2 [(buf.validate.field).int64.gt = 0];
   optional resources.timestamp.Timestamp snapshot_date = 3;
   // Optional filters
-  optional resources.documents.approval.ApprovalStatus status = 4;
+  optional resources.documents.approval.ApprovalStatus status = 4 [(buf.validate.field).enum.defined_only = true];
   // Filter by signer
   optional int32 user_id = 5;
 }

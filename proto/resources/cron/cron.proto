@@ -21,7 +21,7 @@ message Cronjob {
    */
   string schedule = 2;
   // Cronjob state
-  CronjobState state = 3;
+  CronjobState state = 3 [(buf.validate.field).enum.defined_only = true];
   // Next time the cronjob should be run
   resources.timestamp.Timestamp next_schedule_time = 4;
   // Last attempted start time of Cronjob

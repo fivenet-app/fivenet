@@ -218,22 +218,6 @@ export const useSettingsStore = defineStore(
             livemapLayers.value.splice(idx, 1);
         };
 
-        // Getters
-        /**
-         * Get the user's locale.
-         *
-         * @returns {Locale} - The user's locale, falling back to the default locale if not set.
-         */
-        const getUserLocale = computed<Locale>(() => {
-            if (locale.value !== undefined) {
-                return locale.value;
-            }
-            if (useAppConfig().defaultLocale !== '') {
-                return useAppConfig().defaultLocale as Locale;
-            }
-            return 'en';
-        });
-
         const getLogger = (): ILogger => logger;
 
         return {
@@ -269,8 +253,6 @@ export const useSettingsStore = defineStore(
             addOrUpdateLivemapLayer,
             removeLivemapLayer,
 
-            // Getters
-            getUserLocale,
             eventsShowSnowflakes,
         };
     },

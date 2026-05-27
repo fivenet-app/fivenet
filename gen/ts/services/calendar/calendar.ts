@@ -180,7 +180,7 @@ class ListCalendarsRequest$Type extends MessageType<ListCalendarsRequest> {
         super("services.calendar.ListCalendarsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "only_public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "min_access_level", kind: "enum", opt: true, T: () => ["resources.calendar.access.AccessLevel", AccessLevel, "ACCESS_LEVEL_"] },
+            { no: 3, name: "min_access_level", kind: "enum", opt: true, T: () => ["resources.calendar.access.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 4, name: "after", kind: "message", T: () => Timestamp },
             { no: 5, name: "calendar_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);

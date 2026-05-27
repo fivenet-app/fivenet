@@ -1050,7 +1050,7 @@ export const Discord = new Discord$Type();
 class DiscordBotPresence$Type extends MessageType<DiscordBotPresence> {
     constructor() {
         super("resources.settings.DiscordBotPresence", [
-            { no: 1, name: "type", kind: "enum", T: () => ["resources.settings.DiscordBotPresenceType", DiscordBotPresenceType, "DISCORD_BOT_PRESENCE_TYPE_"] },
+            { no: 1, name: "type", kind: "enum", T: () => ["resources.settings.DiscordBotPresenceType", DiscordBotPresenceType, "DISCORD_BOT_PRESENCE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 2, name: "status", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 3, name: "url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
