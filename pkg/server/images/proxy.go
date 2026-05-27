@@ -10,7 +10,13 @@ import (
 	"willnorris.com/go/imageproxy"
 )
 
-const Path = "/api/image_proxy"
+const (
+	// Path is the base path for the image proxy API endpoint.
+	Path = "/api/image_proxy"
+
+	// UserAgentPrefix is the prefix for the User-Agent header sent by the image proxy.
+	UserAgentPrefix = "FiveNet Image Proxy "
+)
 
 // ImageProxy provides an HTTP image proxy handler using the imageproxy package.
 type ImageProxy struct {
@@ -41,7 +47,7 @@ func (p *ImageProxy) RegisterHTTP(e *gin.Engine) {
 
 	proxy.AllowHosts = p.config.Options.AllowHosts
 	proxy.DenyHosts = p.config.Options.DenyHosts
-	proxy.UserAgent = "FiveNet Image Proxy " + version.Version
+	proxy.UserAgent = UserAgentPrefix + version.Version
 	proxy.ContentTypes = []string{"image/*"}
 	proxy.ScaleUp = false
 	proxy.MinimumCacheDuration = p.config.Options.MinimumCacheDuration

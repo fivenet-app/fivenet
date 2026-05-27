@@ -8,9 +8,33 @@ import (
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/httperrors"
+	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	iconifygo "github.com/galexrt/iconify-go"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
+)
+
+const (
+	// Path is the base path for the icon API endpoint.
+	Path = "/api/icons"
+
+	// UserAgentPrefix is the prefix for the User-Agent header sent by the icon API proxy.
+	UserAgentPrefix = "FiveNet Icon Proxy "
+)
+
+var (
+	loadedIconSets      = []string{"mdi", "simple-icons", "flagpack"}
+	loadedIconSetLookup = map[string]struct{}{
+		"mdi":          {},
+		"simple-icons": {},
+		"flagpack":     {},
+	}
+
+	ErrUnknownIconSet         = errors.New("unknown icon set")
+	ErrInvalidCollectionName  = errors.New("invalid icon collection file name")
+	ErrMissingIconsQueryParam = errors.New("missing icons query parameter")
+	ErrRequestURLTooLong      = errors.New("request URL too long")
 )
 
 type IconifyAPI struct {
@@ -36,10 +60,10 @@ func New(p Params) (*IconifyAPI, error) {
 	if !p.Config.Icons.Proxy {
 		var err error
 		icServer, err = iconifygo.NewIconifyServer(
-			"/api/icons",
+			Path,
 			p.Config.Icons.Path,
 			iconifygo.WithHandlers("json"),
-			iconifygo.WithPreloadIconsets([]string{"mdi", "simple-icons", "flagpack"}),
+			iconifygo.WithPreloadIconsets(loadedIconSets),
 		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create iconify server. %w", err)
@@ -64,7 +88,7 @@ func New(p Params) (*IconifyAPI, error) {
 func (i *IconifyAPI) RegisterHTTP(e *gin.Engine) {
 	// Register the iconify API handler for local serving or proxy
 	if !i.proxy {
-		e.GET("/api/icons/*path", func(c *gin.Context) {
+		e.GET(Path+"/*path", func(c *gin.Context) {
 			if !validateIconRequest(c.Param("path"), c.Request.URL.Query()) {
 				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid icon request"})
 				return
@@ -79,7 +103,7 @@ func (i *IconifyAPI) RegisterHTTP(e *gin.Engine) {
 
 func (i *IconifyAPI) registerProxyHandler(e *gin.Engine) {
 	// Proxy requests to iconify API if enabled (make sure the request is a valid json icon request)
-	e.GET("/api/icons/:path", func(c *gin.Context) {
+	e.GET(Path+":path", func(c *gin.Context) {
 		// Validate the request and build the target URL
 		path := c.Param("path")
 		query := c.Request.URL.Query()
@@ -88,30 +112,11 @@ func (i *IconifyAPI) registerProxyHandler(e *gin.Engine) {
 			return
 		}
 
-		// Build the target URL for the iconify API request
-		targetURL, err := buildTargetURL(i.apiURL, path, query)
+		req, err := validateAndBuildRequest(c, i.apiURL, path, query)
 		if err != nil {
-			c.AbortWithStatusJSON(
-				http.StatusInternalServerError,
-				gin.H{"error": "failed to build proxy request"},
-			)
+			// Error response already handled in validateAndBuildRequest
 			return
 		}
-		if len(targetURL) > 1024 {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "request URL too long"})
-			return
-		}
-
-		req, err := http.NewRequestWithContext(c.Request.Context(), http.MethodGet, targetURL, nil)
-		if err != nil {
-			c.AbortWithStatusJSON(
-				http.StatusInternalServerError,
-				gin.H{"error": "failed to create proxy request"},
-			)
-			return
-		}
-		req.Header.Set("User-Agent", c.Request.UserAgent())
-		req.Header.Set("Accept", "application/json")
 
 		resp, err := i.client.Do(req)
 		if err != nil {
@@ -130,6 +135,40 @@ func (i *IconifyAPI) registerProxyHandler(e *gin.Engine) {
 	})
 }
 
+func validateAndBuildRequest(
+	c *gin.Context,
+	apiURL string,
+	path string,
+	query url.Values,
+) (*http.Request, error) {
+	// Build the target URL for the iconify API request
+	targetURL, err := buildTargetURL(apiURL, path, query)
+	if err != nil {
+		if reqErr, ok := errors.AsType[httperrors.HTTPStatusError](err); ok {
+			c.AbortWithStatusJSON(reqErr.StatusCode(), gin.H{"error": err.Error()})
+			return nil, err
+		}
+
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError,
+			gin.H{"error": "failed to build proxy request"},
+		)
+		return nil, err
+	}
+
+	req, err := http.NewRequestWithContext(c.Request.Context(), http.MethodGet, targetURL, nil)
+	if err != nil {
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError,
+			gin.H{"error": "failed to create proxy request"},
+		)
+		return nil, err
+	}
+	req.Header.Set("User-Agent", UserAgentPrefix+version.Version)
+	req.Header.Set("Accept", "application/json")
+	return req, nil
+}
+
 func validateIconRequest(path string, query url.Values) bool {
 	if path == "" || path == "/" || !strings.HasSuffix(path, ".json") {
 		return false
@@ -143,17 +182,39 @@ func validateIconRequest(path string, query url.Values) bool {
 }
 
 func buildTargetURL(apiURL string, path string, query url.Values) (string, error) {
-	targetURL, err := url.JoinPath(apiURL, path)
+	// Ensure the path (file name) is valid
+	if !strings.HasSuffix(path, ".json") {
+		return "", httperrors.NewHTTPRequestError(http.StatusBadRequest, ErrInvalidCollectionName)
+	}
+	// Ensure the path corresponds to a known/loaded icon set
+	iconSet := strings.TrimSuffix(path, ".json")
+	if _, ok := loadedIconSetLookup[iconSet]; !ok {
+		return "", httperrors.NewHTTPRequestError(http.StatusBadRequest, ErrInvalidCollectionName)
+	}
+
+	// Safely construct the target URL
+	targetURL, err := url.JoinPath(apiURL, iconSet+".json")
+	if err != nil {
+		return "", err
+	}
+	parsedURL, err := url.Parse(targetURL)
 	if err != nil {
 		return "", err
 	}
 
 	q := query.Get("icons")
 	if q == "" {
-		return "", errors.New("missing icons query parameter")
+		return "", httperrors.NewHTTPRequestError(http.StatusBadRequest, ErrMissingIconsQueryParam)
 	}
+	// Encode query values so untrusted input cannot alter URL structure.
+	values := parsedURL.Query()
+	values.Set("icons", q)
+	parsedURL.RawQuery = values.Encode()
 
-	targetURL += "?icons=" + q
-
-	return targetURL, nil
+	u := parsedURL.String()
+	// Arbitrary limit to prevent "excessively" long URLs
+	if len(u) > 256 {
+		return "", httperrors.NewHTTPRequestError(http.StatusBadRequest, ErrRequestURLTooLong)
+	}
+	return u, nil
 }

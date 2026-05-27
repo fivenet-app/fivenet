@@ -630,7 +630,7 @@ func (ps *Perms) GetEffectiveRoleAttributes(
 	job string,
 	grade int32,
 ) ([]*permissionsattributes.RoleAttribute, error) {
-	roleAttrs := map[int64]interface{}{}
+	roleAttrs := map[int64]struct{}{}
 
 	roleIds, ok := ps.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
@@ -698,7 +698,7 @@ func (ps *Perms) GetEffectiveRoleAttributes(
 				MaxValues:    maxVal,
 			})
 
-			roleAttrs[value.AttrID] = nil
+			roleAttrs[value.AttrID] = struct{}{}
 		}
 	}
 

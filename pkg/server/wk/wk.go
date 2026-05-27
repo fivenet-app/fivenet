@@ -41,10 +41,10 @@ func New() *WK {
 func (w *WK) RegisterHTTP(e *gin.Engine) {
 	g := e.Group("/.well-known")
 	{
-		g.GET("change-password", func(c *gin.Context) {
+		g.GET("/change-password", func(c *gin.Context) {
 			c.Redirect(http.StatusTemporaryRedirect, "/auth/login?tab=forgotPassword#")
 		})
-		g.GET("security.txt", func(c *gin.Context) {
+		g.GET("/security.txt", func(c *gin.Context) {
 			c.String(http.StatusOK, w.securityTxt)
 		})
 	}

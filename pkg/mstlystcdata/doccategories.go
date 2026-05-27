@@ -164,7 +164,7 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 
 	// Update cached categories
 	errs := multierr.Combine()
-	categoriesPerJob := map[string]interface{}{}
+	categoriesPerJob := map[string]struct{}{}
 	for _, d := range dest {
 		key := strconv.FormatInt(d.GetId(), 10)
 		if err := c.Put(ctx, key, d); err != nil {
