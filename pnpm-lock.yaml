@@ -36,8 +36,8 @@ importers:
         specifier: 1.2.3
         version: 1.2.3
       '@iconify-json/simple-icons':
-        specifier: 1.2.83
-        version: 1.2.83
+        specifier: 1.2.84
+        version: 1.2.84
       '@internationalized/date':
         specifier: 3.12.1
         version: 3.12.1
@@ -276,8 +276,8 @@ importers:
         specifier: 1.6.9
         version: 1.6.9
       splitpanes:
-        specifier: 4.0.4
-        version: 4.0.4(vue@3.5.34(typescript@6.0.3))
+        specifier: 4.0.5
+        version: 4.0.5(vue@3.5.34(typescript@6.0.3))
       uuid:
         specifier: 14.0.0
         version: 14.0.0
@@ -1679,8 +1679,8 @@ packages:
   '@iconify-json/mdi@1.2.3':
     resolution: {integrity: sha512-O3cLwbDOK7NNDf2ihaQOH5F9JglnulNDFV7WprU2dSoZu3h3cWH//h74uQAB87brHmvFVxIOkuBX2sZSzYhScg==}
 
-  '@iconify-json/simple-icons@1.2.83':
-    resolution: {integrity: sha512-6Pp9V++XisT9RKH7FB4RLPqUDzcmLtSma0ovOEIoEWGrXtHwBFsH7oN1z8vvCVCb95fb87QgR46/zRLyN9Y3kg==}
+  '@iconify-json/simple-icons@1.2.84':
+    resolution: {integrity: sha512-v4JVu6xIewGoETD4mm2k6UAdFAbTlY1duw5ZNSxYORfs2yFsHDhoU9Omn/BgrV0nR/ptWkF3ZIr/ZHoYXI/6Jw==}
 
   '@iconify/collections@1.0.686':
     resolution: {integrity: sha512-oxSibPS3Ic11901U3KwLpLIBFbrRS8cHQhn2Rlq/TE487eYsAYbCWVUpo8a2jkEjWDUQPcLtEgfZKu87mZZ3xA==}
@@ -9038,8 +9038,8 @@ packages:
     resolution: {integrity: sha512-1POYv7uv2gXoyGFpBCmpDVSNV74IfsWlDW216UPjbWufNf+bSU6GdbDsxdcxtfwb4xlI3yxzOTKClUosxARYrQ==}
     engines: {node: '>=0.10.0'}
 
-  splitpanes@4.0.4:
-    resolution: {integrity: sha512-RbysugZhjbCw5fgplvk3hOXr41stahQDtZhHVkhnnJI6H4wlGDhM2kIpbehy7v92duy9GnMa8zIhHigIV1TWtg==}
+  splitpanes@4.0.5:
+    resolution: {integrity: sha512-WiuFk1bgKjfYAdZ1nhsW0iycs+yJxSYzWxWANy0yXjyr9MwgGkuZk2b8nyY8iREwmuYVsUmux9zN+Mz1wdbN0Q==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -11316,7 +11316,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/simple-icons@1.2.83':
+  '@iconify-json/simple-icons@1.2.84':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -20017,7 +20017,7 @@ snapshots:
 
   speakingurl@14.0.1: {}
 
-  splitpanes@4.0.4(vue@3.5.34(typescript@6.0.3)):
+  splitpanes@4.0.5(vue@3.5.34(typescript@6.0.3)):
     dependencies:
       vue: 3.5.34(typescript@6.0.3)
 
