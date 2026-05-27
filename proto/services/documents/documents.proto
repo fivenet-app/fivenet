@@ -182,6 +182,7 @@ message ListDocumentActivityRequest {
     max_items: 10
     items: {
       enum: {
+        defined_only: true
         in: [
           13,
           14,
@@ -213,6 +214,7 @@ message ListDocumentReqsResponse {
 message CreateDocumentReqRequest {
   int64 document_id = 1;
   resources.documents.activity.DocActivityType request_type = 2 [(buf.validate.field).enum = {
+    defined_only: true
     in: [
       13,
       14,
@@ -276,7 +278,12 @@ message ListUserDocumentsRequest {
   optional resources.common.database.Sort sort = 2;
 
   int32 user_id = 3 [(buf.validate.field).int32.gt = 0];
-  repeated resources.documents.relations.DocRelation relations = 4 [(buf.validate.field).repeated.max_items = 3];
+  repeated resources.documents.relations.DocRelation relations = 4 [(buf.validate.field).repeated = {
+    max_items: 3
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
   optional bool closed = 5;
   // Include the document relations created by the given user.
   optional bool include_created = 6;

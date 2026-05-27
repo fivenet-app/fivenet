@@ -144,7 +144,7 @@ message JobChange {
 message CitizenDocumentRelation {
   bool added = 1;
   int64 document_id = 2;
-  resources.documents.relations.DocRelation relation = 3;
+  resources.documents.relations.DocRelation relation = 3 [(buf.validate.field).enum.defined_only = true];
 }
 
 message JailChange {

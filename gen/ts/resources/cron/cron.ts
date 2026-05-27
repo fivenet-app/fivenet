@@ -209,7 +209,7 @@ class Cronjob$Type extends MessageType<Cronjob> {
         super("resources.cron.Cronjob", [
             { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "schedule", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "state", kind: "enum", T: () => ["resources.cron.CronjobState", CronjobState, "CRONJOB_STATE_"] },
+            { no: 3, name: "state", kind: "enum", T: () => ["resources.cron.CronjobState", CronjobState, "CRONJOB_STATE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 4, name: "next_schedule_time", kind: "message", T: () => Timestamp },
             { no: 5, name: "last_attempt_time", kind: "message", T: () => Timestamp },
             { no: 6, name: "started_time", kind: "message", T: () => Timestamp },

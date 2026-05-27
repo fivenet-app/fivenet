@@ -58,7 +58,12 @@ message ListColleagueActivityRequest {
   optional resources.common.database.Sort sort = 2;
   // Search params
   repeated int32 user_ids = 3;
-  repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types = 4 [(buf.validate.field).repeated.max_items = 10];
+  repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types = 4 [(buf.validate.field).repeated = {
+    max_items: 10
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
 }
 
 message ListColleagueActivityResponse {

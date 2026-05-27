@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package resources.common.content;
 
+import "buf/validate/validate.proto";
+
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content;content";
 
 enum Kind {
@@ -13,7 +15,7 @@ enum Kind {
 
 // One diff operation, designed for inline client rendering.
 message ContentDiffOp {
-  Kind kind = 1;
+  Kind kind = 1 [(buf.validate.field).enum.defined_only = true];
 
   // Plain text segment. Can contain whitespace and newlines.
   // Client renders:

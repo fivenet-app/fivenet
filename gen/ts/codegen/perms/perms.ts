@@ -206,7 +206,7 @@ class Attr$Type extends MessageType<Attr> {
         super("codegen.perms.Attr", [
             { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "value", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "type", kind: "enum", T: () => ["resources.permissions.attributes.AttributeType", AttributeType, "ATTRIBUTE_TYPE_"] },
+            { no: 3, name: "type", kind: "enum", T: () => ["resources.permissions.attributes.AttributeType", AttributeType, "ATTRIBUTE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 4, name: "valid_string_list", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
         ]);
     }

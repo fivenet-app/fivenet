@@ -2,10 +2,12 @@ syntax = "proto3";
 
 package resources.settings;
 
+import "buf/validate/validate.proto";
+
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settings";
 
 message Data {
-  DataMode mode = 1;
+  DataMode mode = 1 [(buf.validate.field).enum.defined_only = true];
 }
 
 enum DataMode {

@@ -82,7 +82,7 @@ message ListQualificationRequestsRequest {
   optional resources.common.database.Sort sort = 2;
   // Search params
   optional int64 qualification_id = 3;
-  repeated resources.qualifications.RequestStatus status = 4;
+  repeated resources.qualifications.RequestStatus status = 4 [(buf.validate.field).repeated.items.enum.defined_only = true];
   optional int32 user_id = 5 [(buf.validate.field).int32.gte = 0];
 }
 
@@ -113,7 +113,7 @@ message ListQualificationsResultsRequest {
   optional resources.common.database.Sort sort = 2;
   // Search params
   optional int64 qualification_id = 3;
-  repeated resources.qualifications.ResultStatus status = 4;
+  repeated resources.qualifications.ResultStatus status = 4 [(buf.validate.field).repeated.items.enum.defined_only = true];
   optional int32 user_id = 5 [(buf.validate.field).int32.gte = 0];
 }
 

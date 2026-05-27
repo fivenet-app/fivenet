@@ -593,7 +593,7 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.colleagues.activity.ColleagueActivityType", ColleagueActivityType, "COLLEAGUE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10" } } } }
+            { no: 4, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.colleagues.activity.ColleagueActivityType", ColleagueActivityType, "COLLEAGUE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListColleagueActivityRequest>): ListColleagueActivityRequest {

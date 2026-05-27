@@ -57,7 +57,10 @@ message MarkerMarker {
   string job = 12 [(buf.validate.field).string.max_len = 20];
   string job_label = 13;
 
-  MarkerType type = 14 [(tagger.tags) = "alias:\"markerType\""];
+  MarkerType type = 14 [
+    (buf.validate.field).enum.defined_only = true,
+    (tagger.tags) = "alias:\"markerType\""
+  ];
   MarkerData data = 15 [(tagger.tags) = "alias:\"markerData\""];
 
   optional int32 creator_id = 16 [(buf.validate.field).int32.gt = 0];

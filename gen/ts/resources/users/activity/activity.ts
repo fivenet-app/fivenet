@@ -1122,7 +1122,7 @@ class CitizenDocumentRelation$Type extends MessageType<CitizenDocumentRelation> 
         super("resources.users.activity.CitizenDocumentRelation", [
             { no: 1, name: "added", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "relation", kind: "enum", T: () => ["resources.documents.relations.DocRelation", DocRelation, "DOC_RELATION_"] }
+            { no: 3, name: "relation", kind: "enum", T: () => ["resources.documents.relations.DocRelation", DocRelation, "DOC_RELATION_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<CitizenDocumentRelation>): CitizenDocumentRelation {

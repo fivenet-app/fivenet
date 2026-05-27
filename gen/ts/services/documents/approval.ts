@@ -416,7 +416,7 @@ class ListApprovalTasksInboxRequest$Type extends MessageType<ListApprovalTasksIn
     constructor() {
         super("services.documents.ListApprovalTasksInboxRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.approval.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } },
+            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.approval.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4", items: { enum: { definedOnly: true } } } } } },
             { no: 3, name: "only_drafts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "not_already_acted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
@@ -745,7 +745,7 @@ class ListApprovalTasksRequest$Type extends MessageType<ListApprovalTasksRequest
     constructor() {
         super("services.documents.ListApprovalTasksRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.approval.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
+            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.approval.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4", items: { enum: { definedOnly: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListApprovalTasksRequest>): ListApprovalTasksRequest {
@@ -1190,7 +1190,7 @@ class ListApprovalsRequest$Type extends MessageType<ListApprovalsRequest> {
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp },
-            { no: 4, name: "status", kind: "enum", opt: true, T: () => ["resources.documents.approval.ApprovalStatus", ApprovalStatus, "APPROVAL_STATUS_"] },
+            { no: 4, name: "status", kind: "enum", opt: true, T: () => ["resources.documents.approval.ApprovalStatus", ApprovalStatus, "APPROVAL_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }

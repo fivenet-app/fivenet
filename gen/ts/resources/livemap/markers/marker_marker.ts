@@ -169,7 +169,7 @@ class MarkerMarker$Type extends MessageType<MarkerMarker> {
             { no: 11, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 12, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 13, name: "job_label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 14, name: "type", kind: "enum", T: () => ["resources.livemap.markers.MarkerType", MarkerType, "MARKER_TYPE_"], options: { "tagger.tags": "alias:\"markerType\"" } },
+            { no: 14, name: "type", kind: "enum", T: () => ["resources.livemap.markers.MarkerType", MarkerType, "MARKER_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } }, "tagger.tags": "alias:\"markerType\"" } },
             { no: 15, name: "data", kind: "message", T: () => MarkerData, options: { "tagger.tags": "alias:\"markerData\"" } },
             { no: 16, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 17, name: "creator", kind: "message", T: () => UserShort }

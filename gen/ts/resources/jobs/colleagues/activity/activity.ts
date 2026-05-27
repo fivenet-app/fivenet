@@ -198,7 +198,7 @@ class ColleagueActivity$Type extends MessageType<ColleagueActivity> {
             { no: 6, name: "source_user", kind: "message", T: () => Colleague, options: { "tagger.tags": "alias:\"source_user\"" } },
             { no: 7, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 8, name: "target_user", kind: "message", T: () => Colleague, options: { "tagger.tags": "alias:\"target_user\"" } },
-            { no: 9, name: "activity_type", kind: "enum", T: () => ["resources.jobs.colleagues.activity.ColleagueActivityType", ColleagueActivityType, "COLLEAGUE_ACTIVITY_TYPE_"] },
+            { no: 9, name: "activity_type", kind: "enum", T: () => ["resources.jobs.colleagues.activity.ColleagueActivityType", ColleagueActivityType, "COLLEAGUE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 10, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 11, name: "data", kind: "message", T: () => ColleagueActivityData }
         ]);

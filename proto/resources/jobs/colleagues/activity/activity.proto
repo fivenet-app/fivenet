@@ -32,7 +32,7 @@ message ColleagueActivity {
   optional resources.jobs.colleagues.Colleague source_user = 6 [(tagger.tags) = "alias:\"source_user\""];
   int32 target_user_id = 7 [(buf.validate.field).int32.gte = 0];
   resources.jobs.colleagues.Colleague target_user = 8 [(tagger.tags) = "alias:\"target_user\""];
-  ColleagueActivityType activity_type = 9;
+  ColleagueActivityType activity_type = 9 [(buf.validate.field).enum.defined_only = true];
   string reason = 10 [
     (buf.validate.field).string.max_len = 255,
     (codegen.sanitizer.sanitizer) = {enabled: true}
