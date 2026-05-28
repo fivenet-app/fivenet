@@ -3,6 +3,7 @@ package centrum
 import (
 	"context"
 	"errors"
+	"math"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
@@ -154,10 +155,15 @@ func (s *Server) ReorderUnits(
 	defer tx.Rollback()
 
 	for idx, unitID := range unitIds {
+		// Check that idx does not exceed int32 limit, as sort order is stored as int32 in the database
+		if idx > math.MaxInt32 {
+			return nil, errorscentrum.ErrFailedQuery
+		}
+
 		if _, err := tUnits.
 			UPDATE().
 			SET(
-				tUnits.SortOrder.SET(mysql.Int(int64(idx))),
+				tUnits.SortOrder.SET(mysql.Int32(int32(idx))),
 			).
 			WHERE(mysql.AND(
 				tUnits.ID.EQ(mysql.Int64(unitID)),

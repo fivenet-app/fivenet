@@ -22,7 +22,7 @@ type fivenetCentrumUnitsTable struct {
 	UpdatedAt   mysql.ColumnTimestamp
 	DeletedAt   mysql.ColumnTimestamp
 	Job         mysql.ColumnString
-    SortOrder   mysql.ColumnInteger
+	SortOrder   mysql.ColumnInteger
 	Name        mysql.ColumnString
 	Initials    mysql.ColumnString
 	Color       mysql.ColumnString
@@ -98,7 +98,7 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 		UpdatedAt:   UpdatedAtColumn,
 		DeletedAt:   DeletedAtColumn,
 		Job:         JobColumn,
-        SortOrder:   SortOrderColumn,
+		SortOrder:   SortOrderColumn,
 		Name:        NameColumn,
 		Initials:    InitialsColumn,
 		Color:       ColorColumn,

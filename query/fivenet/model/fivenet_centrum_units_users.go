@@ -7,7 +7,12 @@
 
 package model
 
+import (
+	"time"
+)
+
 type FivenetCentrumUnitsUsers struct {
-	UnitID int64 `sql:"primary_key" json:"unit_id"`
-	UserID int32 `sql:"primary_key" json:"user_id"`
+	UnitID    int64      `sql:"primary_key" json:"unit_id"`
+	UserID    int32      `sql:"primary_key" json:"user_id"`
+	CreatedAt *time.Time `json:"created_at"`
 }

@@ -7,7 +7,12 @@
 
 package model
 
+import (
+	"time"
+)
+
 type FivenetCentrumDispatchers struct {
-	Job    string `json:"job"`
-	UserID int32  `sql:"primary_key" json:"user_id"`
+	Job       string     `json:"job"`
+	UserID    int32      `sql:"primary_key" json:"user_id"`
+	CreatedAt *time.Time `json:"created_at"`
 }

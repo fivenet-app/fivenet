@@ -17,8 +17,9 @@ type fivenetCentrumDispatchersTable struct {
 	mysql.Table
 
 	// Columns
-	Job    mysql.ColumnString
-	UserID mysql.ColumnInteger
+	Job       mysql.ColumnString
+	UserID    mysql.ColumnInteger
+	CreatedAt mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -60,19 +61,21 @@ func newFivenetCentrumDispatchersTable(schemaName, tableName, alias string) *Fiv
 
 func newFivenetCentrumDispatchersTableImpl(schemaName, tableName, alias string) fivenetCentrumDispatchersTable {
 	var (
-		JobColumn      = mysql.StringColumn("job")
-		UserIDColumn   = mysql.IntegerColumn("user_id")
-		allColumns     = mysql.ColumnList{JobColumn, UserIDColumn}
-		mutableColumns = mysql.ColumnList{JobColumn}
-		defaultColumns = mysql.ColumnList{}
+		JobColumn       = mysql.StringColumn("job")
+		UserIDColumn    = mysql.IntegerColumn("user_id")
+		CreatedAtColumn = mysql.TimestampColumn("created_at")
+		allColumns      = mysql.ColumnList{JobColumn, UserIDColumn, CreatedAtColumn}
+		mutableColumns  = mysql.ColumnList{JobColumn, CreatedAtColumn}
+		defaultColumns  = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetCentrumDispatchersTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		Job:    JobColumn,
-		UserID: UserIDColumn,
+		Job:       JobColumn,
+		UserID:    UserIDColumn,
+		CreatedAt: CreatedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
