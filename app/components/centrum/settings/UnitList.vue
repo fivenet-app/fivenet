@@ -249,6 +249,10 @@ useDraggable<Unit>('.unit-list-table', unitList, {
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('common.unit', 2)">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton fallback-to="/centrum" />
 

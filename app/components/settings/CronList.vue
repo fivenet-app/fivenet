@@ -8,7 +8,6 @@ import { type Cronjob, CronjobState, GenericCronData } from '~~/gen/ts/resources
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListCronjobsResponse } from '~~/gen/ts/services/settings/cron';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
-import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import Pagination from '../partials/Pagination.vue';
 

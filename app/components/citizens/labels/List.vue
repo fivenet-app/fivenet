@@ -9,7 +9,6 @@ import { getCitizensLabelsClient } from '~~/gen/ts/clients';
 import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import DataErrorBlock from '../../partials/data/DataErrorBlock.vue';
-import DataPendingBlock from '../../partials/data/DataPendingBlock.vue';
 import CreateOrUpdateModal from './CreateOrUpdateModal.vue';
 
 const { can } = useAuth();

@@ -9,7 +9,10 @@ defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
+const { activeChar, can } = useAuth();
+
 const centrumStore = useCentrumStore();
+const { updateDispatchers } = centrumStore;
 const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centrumStore);
 </script>
 
@@ -41,9 +44,13 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                     :type="$t('common.dispatcher')"
                 />
                 <template v-else>
-                    <div v-for="dispas in dispatchers" :key="dispas.job" class="gap-4 p-4" :cols="2">
+                    <div
+                        v-for="dispas in dispatchers.sort((a, b) => a.dispatchers.length - b.dispatchers.length)"
+                        :key="dispas.job"
+                        class="gap-4 p-4"
+                    >
                         <h3 class="mb-4 text-lg font-semibold">
-                            {{ dispas.jobLabel ?? dispas.job }}
+                            {{ dispas.jobLabel ?? dispas.job }} ({{ $t('common.count') }}: {{ dispas.dispatchers.length }})
                         </h3>
 
                         <UPageGrid class="lg:grid-cols-2 xl:grid-cols-2">
@@ -52,10 +59,34 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                                 :key="dispatcher.userId"
                                 :title="`${dispatcher.firstname} ${dispatcher.lastname}`"
                                 icon="i-mdi-account"
+                                :highlight="dispatcher.userId === activeChar?.userId"
                                 :ui="{
-                                    title: 'text-highlighted text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
+                                    title: 'w-full flex items-center gap-1.5',
+                                    body: 'w-full',
                                 }"
                             >
+                                <template #title>
+                                    <span
+                                        class="line-clamp-2 flex-1 text-base font-semibold whitespace-break-spaces text-highlighted"
+                                        >{{ `${dispatcher.firstname} ${dispatcher.lastname}` }}</span
+                                    >
+
+                                    <UTooltip
+                                        v-if="
+                                            dispatcher.job === activeChar?.job &&
+                                            can('centrum.CentrumService/UpdateDispatchers')
+                                        "
+                                        :text="$t('common.remove')"
+                                    >
+                                        <UButton
+                                            color="red"
+                                            icon="i-mdi-remove"
+                                            variant="link"
+                                            @click="() => updateDispatchers([dispatcher.userId])"
+                                        />
+                                    </UTooltip>
+                                </template>
+
                                 <template #default>
                                     <PhoneNumberBlock :number="dispatcher.phoneNumber" />
                                 </template>
