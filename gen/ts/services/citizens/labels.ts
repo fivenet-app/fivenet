@@ -91,48 +91,18 @@ export interface DeleteLabelRequest {
 export interface DeleteLabelResponse {
 }
 /**
- * @generated from protobuf message services.citizens.AddCitizenLabelsRequest
+ * @generated from protobuf message services.citizens.ReorderLabelsRequest
  */
-export interface AddCitizenLabelsRequest {
+export interface ReorderLabelsRequest {
     /**
-     * @generated from protobuf field: int32 user_id = 1
+     * @generated from protobuf field: repeated int64 label_ids = 1
      */
-    userId: number;
-    /**
-     * @generated from protobuf field: repeated resources.citizens.labels.Label labels = 2
-     */
-    labels: Label[];
-    /**
-     * @generated from protobuf field: string reason = 3
-     */
-    reason: string;
+    labelIds: number[];
 }
 /**
- * @generated from protobuf message services.citizens.AddCitizenLabelsResponse
+ * @generated from protobuf message services.citizens.ReorderLabelsResponse
  */
-export interface AddCitizenLabelsResponse {
-}
-/**
- * @generated from protobuf message services.citizens.RemoveCitizenLabelsRequest
- */
-export interface RemoveCitizenLabelsRequest {
-    /**
-     * @generated from protobuf field: int32 user_id = 1
-     */
-    userId: number;
-    /**
-     * @generated from protobuf field: repeated int64 ids = 2
-     */
-    ids: number[];
-    /**
-     * @generated from protobuf field: string reason = 3
-     */
-    reason: string;
-}
-/**
- * @generated from protobuf message services.citizens.RemoveCitizenLabelsResponse
- */
-export interface RemoveCitizenLabelsResponse {
+export interface ReorderLabelsResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListLabelsRequest$Type extends MessageType<ListLabelsRequest> {
@@ -512,141 +482,30 @@ class DeleteLabelResponse$Type extends MessageType<DeleteLabelResponse> {
  */
 export const DeleteLabelResponse = new DeleteLabelResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class AddCitizenLabelsRequest$Type extends MessageType<AddCitizenLabelsRequest> {
+class ReorderLabelsRequest$Type extends MessageType<ReorderLabelsRequest> {
     constructor() {
-        super("services.citizens.AddCitizenLabelsRequest", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 2, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label },
-            { no: 3, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
+        super("services.citizens.ReorderLabelsRequest", [
+            { no: 1, name: "label_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "50", items: { int64: { gt: "0" } } } } } }
         ]);
     }
-    create(value?: PartialMessage<AddCitizenLabelsRequest>): AddCitizenLabelsRequest {
+    create(value?: PartialMessage<ReorderLabelsRequest>): ReorderLabelsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.userId = 0;
-        message.labels = [];
-        message.reason = "";
+        message.labelIds = [];
         if (value !== undefined)
-            reflectionMergePartial<AddCitizenLabelsRequest>(this, message, value);
+            reflectionMergePartial<ReorderLabelsRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddCitizenLabelsRequest): AddCitizenLabelsRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReorderLabelsRequest): ReorderLabelsRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int32 user_id */ 1:
-                    message.userId = reader.int32();
-                    break;
-                case /* repeated resources.citizens.labels.Label labels */ 2:
-                    message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* string reason */ 3:
-                    message.reason = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: AddCitizenLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 user_id = 1; */
-        if (message.userId !== 0)
-            writer.tag(1, WireType.Varint).int32(message.userId);
-        /* repeated resources.citizens.labels.Label labels = 2; */
-        for (let i = 0; i < message.labels.length; i++)
-            Label.internalBinaryWrite(message.labels[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* string reason = 3; */
-        if (message.reason !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.reason);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.citizens.AddCitizenLabelsRequest
- */
-export const AddCitizenLabelsRequest = new AddCitizenLabelsRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class AddCitizenLabelsResponse$Type extends MessageType<AddCitizenLabelsResponse> {
-    constructor() {
-        super("services.citizens.AddCitizenLabelsResponse", []);
-    }
-    create(value?: PartialMessage<AddCitizenLabelsResponse>): AddCitizenLabelsResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<AddCitizenLabelsResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddCitizenLabelsResponse): AddCitizenLabelsResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: AddCitizenLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.citizens.AddCitizenLabelsResponse
- */
-export const AddCitizenLabelsResponse = new AddCitizenLabelsResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class RemoveCitizenLabelsRequest$Type extends MessageType<RemoveCitizenLabelsRequest> {
-    constructor() {
-        super("services.citizens.RemoveCitizenLabelsRequest", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 2, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<RemoveCitizenLabelsRequest>): RemoveCitizenLabelsRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.userId = 0;
-        message.ids = [];
-        message.reason = "";
-        if (value !== undefined)
-            reflectionMergePartial<RemoveCitizenLabelsRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RemoveCitizenLabelsRequest): RemoveCitizenLabelsRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int32 user_id */ 1:
-                    message.userId = reader.int32();
-                    break;
-                case /* repeated int64 ids */ 2:
+                case /* repeated int64 label_ids */ 1:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.ids.push(reader.int64().toNumber());
+                            message.labelIds.push(reader.int64().toNumber());
                     else
-                        message.ids.push(reader.int64().toNumber());
-                    break;
-                case /* string reason */ 3:
-                    message.reason = reader.string();
+                        message.labelIds.push(reader.int64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -659,20 +518,14 @@ class RemoveCitizenLabelsRequest$Type extends MessageType<RemoveCitizenLabelsReq
         }
         return message;
     }
-    internalBinaryWrite(message: RemoveCitizenLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 user_id = 1; */
-        if (message.userId !== 0)
-            writer.tag(1, WireType.Varint).int32(message.userId);
-        /* repeated int64 ids = 2; */
-        if (message.ids.length) {
-            writer.tag(2, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.ids.length; i++)
-                writer.int64(message.ids[i]);
+    internalBinaryWrite(message: ReorderLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated int64 label_ids = 1; */
+        if (message.labelIds.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.labelIds.length; i++)
+                writer.int64(message.labelIds[i]);
             writer.join();
         }
-        /* string reason = 3; */
-        if (message.reason !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.reason);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -680,21 +533,21 @@ class RemoveCitizenLabelsRequest$Type extends MessageType<RemoveCitizenLabelsReq
     }
 }
 /**
- * @generated MessageType for protobuf message services.citizens.RemoveCitizenLabelsRequest
+ * @generated MessageType for protobuf message services.citizens.ReorderLabelsRequest
  */
-export const RemoveCitizenLabelsRequest = new RemoveCitizenLabelsRequest$Type();
+export const ReorderLabelsRequest = new ReorderLabelsRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class RemoveCitizenLabelsResponse$Type extends MessageType<RemoveCitizenLabelsResponse> {
+class ReorderLabelsResponse$Type extends MessageType<ReorderLabelsResponse> {
     constructor() {
-        super("services.citizens.RemoveCitizenLabelsResponse", []);
+        super("services.citizens.ReorderLabelsResponse", []);
     }
-    create(value?: PartialMessage<RemoveCitizenLabelsResponse>): RemoveCitizenLabelsResponse {
+    create(value?: PartialMessage<ReorderLabelsResponse>): ReorderLabelsResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<RemoveCitizenLabelsResponse>(this, message, value);
+            reflectionMergePartial<ReorderLabelsResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RemoveCitizenLabelsResponse): RemoveCitizenLabelsResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReorderLabelsResponse): ReorderLabelsResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -710,7 +563,7 @@ class RemoveCitizenLabelsResponse$Type extends MessageType<RemoveCitizenLabelsRe
         }
         return message;
     }
-    internalBinaryWrite(message: RemoveCitizenLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ReorderLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -718,9 +571,9 @@ class RemoveCitizenLabelsResponse$Type extends MessageType<RemoveCitizenLabelsRe
     }
 }
 /**
- * @generated MessageType for protobuf message services.citizens.RemoveCitizenLabelsResponse
+ * @generated MessageType for protobuf message services.citizens.ReorderLabelsResponse
  */
-export const RemoveCitizenLabelsResponse = new RemoveCitizenLabelsResponse$Type();
+export const ReorderLabelsResponse = new ReorderLabelsResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.citizens.LabelsService
  */
@@ -729,6 +582,5 @@ export const LabelsService = new ServiceType("services.citizens.LabelsService", 
     { name: "GetLabel", options: { "codegen.perms.perms": { enabled: true, name: "ListLabels" } }, I: GetLabelRequest, O: GetLabelResponse },
     { name: "CreateOrUpdateLabel", options: { "codegen.perms.perms": { enabled: true } }, I: CreateOrUpdateLabelRequest, O: CreateOrUpdateLabelResponse },
     { name: "DeleteLabel", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteLabelRequest, O: DeleteLabelResponse },
-    { name: "AddCitizenLabels", options: { "codegen.perms.perms": { enabled: true, service: "CitizensService", name: "SetUserProps" } }, I: AddCitizenLabelsRequest, O: AddCitizenLabelsResponse },
-    { name: "RemoveCitizenLabels", options: { "codegen.perms.perms": { enabled: true, service: "CitizensService", name: "SetUserProps" } }, I: RemoveCitizenLabelsRequest, O: RemoveCitizenLabelsResponse }
+    { name: "ReorderLabels", options: { "codegen.perms.perms": { enabled: true, name: "CreateOrUpdateLabel" } }, I: ReorderLabelsRequest, O: ReorderLabelsResponse }
 ], { "codegen.perms.perms_svc": { order: 32, icon: "i-mdi-label-multiple" } });

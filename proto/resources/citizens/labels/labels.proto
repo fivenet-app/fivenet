@@ -25,6 +25,7 @@ message Label {
   optional resources.timestamp.Timestamp deleted_at = 4;
 
   optional string job = 5 [(buf.validate.field).string.max_len = 20];
+  int32 sort_order = 12 [(buf.validate.field).int32.gte = 0];
   string name = 6 [
     (buf.validate.field).string.max_len = 48,
     (codegen.sanitizer.sanitizer) = {

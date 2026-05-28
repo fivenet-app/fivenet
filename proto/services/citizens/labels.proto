@@ -41,21 +41,17 @@ message DeleteLabelRequest {
 
 message DeleteLabelResponse {}
 
-message AddCitizenLabelsRequest {
-  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
-  repeated resources.citizens.labels.Label labels = 2;
-  string reason = 3 [(buf.validate.field).string.max_len = 255];
+message ReorderLabelsRequest {
+  repeated int64 label_ids = 1 [(buf.validate.field).repeated = {
+    items: {
+      int64: {gt: 0}
+    }
+    min_items: 1
+    max_items: 50
+  }];
 }
 
-message AddCitizenLabelsResponse {}
-
-message RemoveCitizenLabelsRequest {
-  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
-  repeated int64 ids = 2;
-  string reason = 3 [(buf.validate.field).string.max_len = 255];
-}
-
-message RemoveCitizenLabelsResponse {}
+message ReorderLabelsResponse {}
 
 service LabelsService {
   option (codegen.perms.perms_svc) = {
@@ -82,19 +78,10 @@ service LabelsService {
     option (codegen.perms.perms) = {enabled: true};
   }
 
-  rpc AddCitizenLabels(AddCitizenLabelsRequest) returns (AddCitizenLabelsResponse) {
+  rpc ReorderLabels(ReorderLabelsRequest) returns (ReorderLabelsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "CitizensService"
-      name: "SetUserProps"
-    };
-  }
-
-  rpc RemoveCitizenLabels(RemoveCitizenLabelsRequest) returns (RemoveCitizenLabelsResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      service: "CitizensService"
-      name: "SetUserProps"
+      name: "CreateOrUpdateLabel"
     };
   }
 }

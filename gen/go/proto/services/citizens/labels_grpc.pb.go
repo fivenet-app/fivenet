@@ -23,8 +23,7 @@ const (
 	LabelsService_GetLabel_FullMethodName            = "/services.citizens.LabelsService/GetLabel"
 	LabelsService_CreateOrUpdateLabel_FullMethodName = "/services.citizens.LabelsService/CreateOrUpdateLabel"
 	LabelsService_DeleteLabel_FullMethodName         = "/services.citizens.LabelsService/DeleteLabel"
-	LabelsService_AddCitizenLabels_FullMethodName    = "/services.citizens.LabelsService/AddCitizenLabels"
-	LabelsService_RemoveCitizenLabels_FullMethodName = "/services.citizens.LabelsService/RemoveCitizenLabels"
+	LabelsService_ReorderLabels_FullMethodName       = "/services.citizens.LabelsService/ReorderLabels"
 )
 
 // LabelsServiceClient is the client API for LabelsService service.
@@ -35,8 +34,7 @@ type LabelsServiceClient interface {
 	GetLabel(ctx context.Context, in *GetLabelRequest, opts ...grpc.CallOption) (*GetLabelResponse, error)
 	CreateOrUpdateLabel(ctx context.Context, in *CreateOrUpdateLabelRequest, opts ...grpc.CallOption) (*CreateOrUpdateLabelResponse, error)
 	DeleteLabel(ctx context.Context, in *DeleteLabelRequest, opts ...grpc.CallOption) (*DeleteLabelResponse, error)
-	AddCitizenLabels(ctx context.Context, in *AddCitizenLabelsRequest, opts ...grpc.CallOption) (*AddCitizenLabelsResponse, error)
-	RemoveCitizenLabels(ctx context.Context, in *RemoveCitizenLabelsRequest, opts ...grpc.CallOption) (*RemoveCitizenLabelsResponse, error)
+	ReorderLabels(ctx context.Context, in *ReorderLabelsRequest, opts ...grpc.CallOption) (*ReorderLabelsResponse, error)
 }
 
 type labelsServiceClient struct {
@@ -87,20 +85,10 @@ func (c *labelsServiceClient) DeleteLabel(ctx context.Context, in *DeleteLabelRe
 	return out, nil
 }
 
-func (c *labelsServiceClient) AddCitizenLabels(ctx context.Context, in *AddCitizenLabelsRequest, opts ...grpc.CallOption) (*AddCitizenLabelsResponse, error) {
+func (c *labelsServiceClient) ReorderLabels(ctx context.Context, in *ReorderLabelsRequest, opts ...grpc.CallOption) (*ReorderLabelsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AddCitizenLabelsResponse)
-	err := c.cc.Invoke(ctx, LabelsService_AddCitizenLabels_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *labelsServiceClient) RemoveCitizenLabels(ctx context.Context, in *RemoveCitizenLabelsRequest, opts ...grpc.CallOption) (*RemoveCitizenLabelsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RemoveCitizenLabelsResponse)
-	err := c.cc.Invoke(ctx, LabelsService_RemoveCitizenLabels_FullMethodName, in, out, cOpts...)
+	out := new(ReorderLabelsResponse)
+	err := c.cc.Invoke(ctx, LabelsService_ReorderLabels_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -115,8 +103,7 @@ type LabelsServiceServer interface {
 	GetLabel(context.Context, *GetLabelRequest) (*GetLabelResponse, error)
 	CreateOrUpdateLabel(context.Context, *CreateOrUpdateLabelRequest) (*CreateOrUpdateLabelResponse, error)
 	DeleteLabel(context.Context, *DeleteLabelRequest) (*DeleteLabelResponse, error)
-	AddCitizenLabels(context.Context, *AddCitizenLabelsRequest) (*AddCitizenLabelsResponse, error)
-	RemoveCitizenLabels(context.Context, *RemoveCitizenLabelsRequest) (*RemoveCitizenLabelsResponse, error)
+	ReorderLabels(context.Context, *ReorderLabelsRequest) (*ReorderLabelsResponse, error)
 	mustEmbedUnimplementedLabelsServiceServer()
 }
 
@@ -139,11 +126,8 @@ func (UnimplementedLabelsServiceServer) CreateOrUpdateLabel(context.Context, *Cr
 func (UnimplementedLabelsServiceServer) DeleteLabel(context.Context, *DeleteLabelRequest) (*DeleteLabelResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteLabel not implemented")
 }
-func (UnimplementedLabelsServiceServer) AddCitizenLabels(context.Context, *AddCitizenLabelsRequest) (*AddCitizenLabelsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddCitizenLabels not implemented")
-}
-func (UnimplementedLabelsServiceServer) RemoveCitizenLabels(context.Context, *RemoveCitizenLabelsRequest) (*RemoveCitizenLabelsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemoveCitizenLabels not implemented")
+func (UnimplementedLabelsServiceServer) ReorderLabels(context.Context, *ReorderLabelsRequest) (*ReorderLabelsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReorderLabels not implemented")
 }
 func (UnimplementedLabelsServiceServer) mustEmbedUnimplementedLabelsServiceServer() {}
 func (UnimplementedLabelsServiceServer) testEmbeddedByValue()                       {}
@@ -238,38 +222,20 @@ func _LabelsService_DeleteLabel_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _LabelsService_AddCitizenLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddCitizenLabelsRequest)
+func _LabelsService_ReorderLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReorderLabelsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LabelsServiceServer).AddCitizenLabels(ctx, in)
+		return srv.(LabelsServiceServer).ReorderLabels(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: LabelsService_AddCitizenLabels_FullMethodName,
+		FullMethod: LabelsService_ReorderLabels_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LabelsServiceServer).AddCitizenLabels(ctx, req.(*AddCitizenLabelsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _LabelsService_RemoveCitizenLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RemoveCitizenLabelsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(LabelsServiceServer).RemoveCitizenLabels(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: LabelsService_RemoveCitizenLabels_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LabelsServiceServer).RemoveCitizenLabels(ctx, req.(*RemoveCitizenLabelsRequest))
+		return srv.(LabelsServiceServer).ReorderLabels(ctx, req.(*ReorderLabelsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -298,12 +264,8 @@ var LabelsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _LabelsService_DeleteLabel_Handler,
 		},
 		{
-			MethodName: "AddCitizenLabels",
-			Handler:    _LabelsService_AddCitizenLabels_Handler,
-		},
-		{
-			MethodName: "RemoveCitizenLabels",
-			Handler:    _LabelsService_RemoveCitizenLabels_Handler,
+			MethodName: "ReorderLabels",
+			Handler:    _LabelsService_ReorderLabels_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

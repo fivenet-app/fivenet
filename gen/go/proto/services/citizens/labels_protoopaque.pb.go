@@ -584,29 +584,27 @@ func (b0 DeleteLabelResponse_builder) Build() *DeleteLabelResponse {
 	return m0
 }
 
-type AddCitizenLabelsRequest struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_UserId int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3"`
-	xxx_hidden_Labels *[]*labels.Label       `protobuf:"bytes,2,rep,name=labels,proto3"`
-	xxx_hidden_Reason string                 `protobuf:"bytes,3,opt,name=reason,proto3"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+type ReorderLabelsRequest struct {
+	state               protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_LabelIds []int64                `protobuf:"varint,1,rep,packed,name=label_ids,json=labelIds,proto3"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
-func (x *AddCitizenLabelsRequest) Reset() {
-	*x = AddCitizenLabelsRequest{}
+func (x *ReorderLabelsRequest) Reset() {
+	*x = ReorderLabelsRequest{}
 	mi := &file_services_citizens_labels_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AddCitizenLabelsRequest) String() string {
+func (x *ReorderLabelsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AddCitizenLabelsRequest) ProtoMessage() {}
+func (*ReorderLabelsRequest) ProtoMessage() {}
 
-func (x *AddCitizenLabelsRequest) ProtoReflect() protoreflect.Message {
+func (x *ReorderLabelsRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_services_citizens_labels_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -618,79 +616,51 @@ func (x *AddCitizenLabelsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *AddCitizenLabelsRequest) GetUserId() int32 {
+func (x *ReorderLabelsRequest) GetLabelIds() []int64 {
 	if x != nil {
-		return x.xxx_hidden_UserId
-	}
-	return 0
-}
-
-func (x *AddCitizenLabelsRequest) GetLabels() []*labels.Label {
-	if x != nil {
-		if x.xxx_hidden_Labels != nil {
-			return *x.xxx_hidden_Labels
-		}
+		return x.xxx_hidden_LabelIds
 	}
 	return nil
 }
 
-func (x *AddCitizenLabelsRequest) GetReason() string {
-	if x != nil {
-		return x.xxx_hidden_Reason
-	}
-	return ""
+func (x *ReorderLabelsRequest) SetLabelIds(v []int64) {
+	x.xxx_hidden_LabelIds = v
 }
 
-func (x *AddCitizenLabelsRequest) SetUserId(v int32) {
-	x.xxx_hidden_UserId = v
-}
-
-func (x *AddCitizenLabelsRequest) SetLabels(v []*labels.Label) {
-	x.xxx_hidden_Labels = &v
-}
-
-func (x *AddCitizenLabelsRequest) SetReason(v string) {
-	x.xxx_hidden_Reason = v
-}
-
-type AddCitizenLabelsRequest_builder struct {
+type ReorderLabelsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	UserId int32
-	Labels []*labels.Label
-	Reason string
+	LabelIds []int64
 }
 
-func (b0 AddCitizenLabelsRequest_builder) Build() *AddCitizenLabelsRequest {
-	m0 := &AddCitizenLabelsRequest{}
+func (b0 ReorderLabelsRequest_builder) Build() *ReorderLabelsRequest {
+	m0 := &ReorderLabelsRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_UserId = b.UserId
-	x.xxx_hidden_Labels = &b.Labels
-	x.xxx_hidden_Reason = b.Reason
+	x.xxx_hidden_LabelIds = b.LabelIds
 	return m0
 }
 
-type AddCitizenLabelsResponse struct {
+type ReorderLabelsResponse struct {
 	state         protoimpl.MessageState `protogen:"opaque.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AddCitizenLabelsResponse) Reset() {
-	*x = AddCitizenLabelsResponse{}
+func (x *ReorderLabelsResponse) Reset() {
+	*x = ReorderLabelsResponse{}
 	mi := &file_services_citizens_labels_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AddCitizenLabelsResponse) String() string {
+func (x *ReorderLabelsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AddCitizenLabelsResponse) ProtoMessage() {}
+func (*ReorderLabelsResponse) ProtoMessage() {}
 
-func (x *AddCitizenLabelsResponse) ProtoReflect() protoreflect.Message {
+func (x *ReorderLabelsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_services_citizens_labels_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -702,141 +672,13 @@ func (x *AddCitizenLabelsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-type AddCitizenLabelsResponse_builder struct {
+type ReorderLabelsResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 }
 
-func (b0 AddCitizenLabelsResponse_builder) Build() *AddCitizenLabelsResponse {
-	m0 := &AddCitizenLabelsResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
-type RemoveCitizenLabelsRequest struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_UserId int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3"`
-	xxx_hidden_Ids    []int64                `protobuf:"varint,2,rep,packed,name=ids,proto3"`
-	xxx_hidden_Reason string                 `protobuf:"bytes,3,opt,name=reason,proto3"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
-}
-
-func (x *RemoveCitizenLabelsRequest) Reset() {
-	*x = RemoveCitizenLabelsRequest{}
-	mi := &file_services_citizens_labels_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RemoveCitizenLabelsRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RemoveCitizenLabelsRequest) ProtoMessage() {}
-
-func (x *RemoveCitizenLabelsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_citizens_labels_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *RemoveCitizenLabelsRequest) GetUserId() int32 {
-	if x != nil {
-		return x.xxx_hidden_UserId
-	}
-	return 0
-}
-
-func (x *RemoveCitizenLabelsRequest) GetIds() []int64 {
-	if x != nil {
-		return x.xxx_hidden_Ids
-	}
-	return nil
-}
-
-func (x *RemoveCitizenLabelsRequest) GetReason() string {
-	if x != nil {
-		return x.xxx_hidden_Reason
-	}
-	return ""
-}
-
-func (x *RemoveCitizenLabelsRequest) SetUserId(v int32) {
-	x.xxx_hidden_UserId = v
-}
-
-func (x *RemoveCitizenLabelsRequest) SetIds(v []int64) {
-	x.xxx_hidden_Ids = v
-}
-
-func (x *RemoveCitizenLabelsRequest) SetReason(v string) {
-	x.xxx_hidden_Reason = v
-}
-
-type RemoveCitizenLabelsRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	UserId int32
-	Ids    []int64
-	Reason string
-}
-
-func (b0 RemoveCitizenLabelsRequest_builder) Build() *RemoveCitizenLabelsRequest {
-	m0 := &RemoveCitizenLabelsRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_UserId = b.UserId
-	x.xxx_hidden_Ids = b.Ids
-	x.xxx_hidden_Reason = b.Reason
-	return m0
-}
-
-type RemoveCitizenLabelsResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RemoveCitizenLabelsResponse) Reset() {
-	*x = RemoveCitizenLabelsResponse{}
-	mi := &file_services_citizens_labels_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RemoveCitizenLabelsResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RemoveCitizenLabelsResponse) ProtoMessage() {}
-
-func (x *RemoveCitizenLabelsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_citizens_labels_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type RemoveCitizenLabelsResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 RemoveCitizenLabelsResponse_builder) Build() *RemoveCitizenLabelsResponse {
-	m0 := &RemoveCitizenLabelsResponse{}
+func (b0 ReorderLabelsResponse_builder) Build() *ReorderLabelsResponse {
+	m0 := &ReorderLabelsResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
 	return m0
@@ -868,28 +710,20 @@ const file_services_citizens_labels_proto_rawDesc = "" +
 	"\x05label\x18\x01 \x01(\v2 .resources.citizens.labels.LabelR\x05label\"$\n" +
 	"\x12DeleteLabelRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x15\n" +
-	"\x13DeleteLabelResponse\"\x84\x01\n" +
-	"\x17AddCitizenLabelsRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x128\n" +
-	"\x06labels\x18\x02 \x03(\v2 .resources.citizens.labels.LabelR\x06labels\x12\x16\n" +
-	"\x06reason\x18\x03 \x01(\tR\x06reason\"\x1a\n" +
-	"\x18AddCitizenLabelsResponse\"_\n" +
-	"\x1aRemoveCitizenLabelsRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
-	"\x03ids\x18\x02 \x03(\x03R\x03ids\x12\x16\n" +
-	"\x06reason\x18\x03 \x01(\tR\x06reason\"\x1d\n" +
-	"\x1bRemoveCitizenLabelsResponse2\x90\x06\n" +
+	"\x13DeleteLabelResponse\"3\n" +
+	"\x14ReorderLabelsRequest\x12\x1b\n" +
+	"\tlabel_ids\x18\x01 \x03(\x03R\blabelIds\"\x17\n" +
+	"\x15ReorderLabelsResponse2\xde\x04\n" +
 	"\rLabelsService\x12a\n" +
 	"\n" +
 	"ListLabels\x12$.services.citizens.ListLabelsRequest\x1a%.services.citizens.ListLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12g\n" +
 	"\bGetLabel\x12\".services.citizens.GetLabelRequest\x1a#.services.citizens.GetLabelResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
 	"ListLabels\x12|\n" +
 	"\x13CreateOrUpdateLabel\x12-.services.citizens.CreateOrUpdateLabelRequest\x1a..services.citizens.CreateOrUpdateLabelResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12d\n" +
-	"\vDeleteLabel\x12%.services.citizens.DeleteLabelRequest\x1a&.services.citizens.DeleteLabelResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x92\x01\n" +
-	"\x10AddCitizenLabels\x12*.services.citizens.AddCitizenLabelsRequest\x1a+.services.citizens.AddCitizenLabelsResponse\"%\xd2\xf3\x18!\b\x01\x1a\x0fCitizensService\"\fSetUserProps\x12\x9b\x01\n" +
-	"\x13RemoveCitizenLabels\x12-.services.citizens.RemoveCitizenLabelsRequest\x1a..services.citizens.RemoveCitizenLabelsResponse\"%\xd2\xf3\x18!\b\x01\x1a\x0fCitizensService\"\fSetUserProps\x1a\x1c\xea\xf3\x18\x18\b \x12\x14i-mdi-label-multipleBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
+	"\vDeleteLabel\x12%.services.citizens.DeleteLabelRequest\x1a&.services.citizens.DeleteLabelResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x7f\n" +
+	"\rReorderLabels\x12'.services.citizens.ReorderLabelsRequest\x1a(.services.citizens.ReorderLabelsResponse\"\x1b\xd2\xf3\x18\x17\b\x01\"\x13CreateOrUpdateLabel\x1a\x1c\xea\xf3\x18\x18\b \x12\x14i-mdi-label-multipleBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
 
-var file_services_citizens_labels_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_services_citizens_labels_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_citizens_labels_proto_goTypes = []any{
 	(*ListLabelsRequest)(nil),           // 0: services.citizens.ListLabelsRequest
 	(*ListLabelsResponse)(nil),          // 1: services.citizens.ListLabelsResponse
@@ -899,37 +733,32 @@ var file_services_citizens_labels_proto_goTypes = []any{
 	(*CreateOrUpdateLabelResponse)(nil), // 5: services.citizens.CreateOrUpdateLabelResponse
 	(*DeleteLabelRequest)(nil),          // 6: services.citizens.DeleteLabelRequest
 	(*DeleteLabelResponse)(nil),         // 7: services.citizens.DeleteLabelResponse
-	(*AddCitizenLabelsRequest)(nil),     // 8: services.citizens.AddCitizenLabelsRequest
-	(*AddCitizenLabelsResponse)(nil),    // 9: services.citizens.AddCitizenLabelsResponse
-	(*RemoveCitizenLabelsRequest)(nil),  // 10: services.citizens.RemoveCitizenLabelsRequest
-	(*RemoveCitizenLabelsResponse)(nil), // 11: services.citizens.RemoveCitizenLabelsResponse
-	(labels.AccessLevel)(0),             // 12: resources.citizens.labels.AccessLevel
-	(*labels.Label)(nil),                // 13: resources.citizens.labels.Label
+	(*ReorderLabelsRequest)(nil),        // 8: services.citizens.ReorderLabelsRequest
+	(*ReorderLabelsResponse)(nil),       // 9: services.citizens.ReorderLabelsResponse
+	(labels.AccessLevel)(0),             // 10: resources.citizens.labels.AccessLevel
+	(*labels.Label)(nil),                // 11: resources.citizens.labels.Label
 }
 var file_services_citizens_labels_proto_depIdxs = []int32{
-	12, // 0: services.citizens.ListLabelsRequest.min_access:type_name -> resources.citizens.labels.AccessLevel
-	13, // 1: services.citizens.ListLabelsResponse.labels:type_name -> resources.citizens.labels.Label
-	13, // 2: services.citizens.GetLabelResponse.label:type_name -> resources.citizens.labels.Label
-	13, // 3: services.citizens.CreateOrUpdateLabelRequest.label:type_name -> resources.citizens.labels.Label
-	13, // 4: services.citizens.CreateOrUpdateLabelResponse.label:type_name -> resources.citizens.labels.Label
-	13, // 5: services.citizens.AddCitizenLabelsRequest.labels:type_name -> resources.citizens.labels.Label
-	0,  // 6: services.citizens.LabelsService.ListLabels:input_type -> services.citizens.ListLabelsRequest
-	2,  // 7: services.citizens.LabelsService.GetLabel:input_type -> services.citizens.GetLabelRequest
-	4,  // 8: services.citizens.LabelsService.CreateOrUpdateLabel:input_type -> services.citizens.CreateOrUpdateLabelRequest
-	6,  // 9: services.citizens.LabelsService.DeleteLabel:input_type -> services.citizens.DeleteLabelRequest
-	8,  // 10: services.citizens.LabelsService.AddCitizenLabels:input_type -> services.citizens.AddCitizenLabelsRequest
-	10, // 11: services.citizens.LabelsService.RemoveCitizenLabels:input_type -> services.citizens.RemoveCitizenLabelsRequest
-	1,  // 12: services.citizens.LabelsService.ListLabels:output_type -> services.citizens.ListLabelsResponse
-	3,  // 13: services.citizens.LabelsService.GetLabel:output_type -> services.citizens.GetLabelResponse
-	5,  // 14: services.citizens.LabelsService.CreateOrUpdateLabel:output_type -> services.citizens.CreateOrUpdateLabelResponse
-	7,  // 15: services.citizens.LabelsService.DeleteLabel:output_type -> services.citizens.DeleteLabelResponse
-	9,  // 16: services.citizens.LabelsService.AddCitizenLabels:output_type -> services.citizens.AddCitizenLabelsResponse
-	11, // 17: services.citizens.LabelsService.RemoveCitizenLabels:output_type -> services.citizens.RemoveCitizenLabelsResponse
-	12, // [12:18] is the sub-list for method output_type
-	6,  // [6:12] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	10, // 0: services.citizens.ListLabelsRequest.min_access:type_name -> resources.citizens.labels.AccessLevel
+	11, // 1: services.citizens.ListLabelsResponse.labels:type_name -> resources.citizens.labels.Label
+	11, // 2: services.citizens.GetLabelResponse.label:type_name -> resources.citizens.labels.Label
+	11, // 3: services.citizens.CreateOrUpdateLabelRequest.label:type_name -> resources.citizens.labels.Label
+	11, // 4: services.citizens.CreateOrUpdateLabelResponse.label:type_name -> resources.citizens.labels.Label
+	0,  // 5: services.citizens.LabelsService.ListLabels:input_type -> services.citizens.ListLabelsRequest
+	2,  // 6: services.citizens.LabelsService.GetLabel:input_type -> services.citizens.GetLabelRequest
+	4,  // 7: services.citizens.LabelsService.CreateOrUpdateLabel:input_type -> services.citizens.CreateOrUpdateLabelRequest
+	6,  // 8: services.citizens.LabelsService.DeleteLabel:input_type -> services.citizens.DeleteLabelRequest
+	8,  // 9: services.citizens.LabelsService.ReorderLabels:input_type -> services.citizens.ReorderLabelsRequest
+	1,  // 10: services.citizens.LabelsService.ListLabels:output_type -> services.citizens.ListLabelsResponse
+	3,  // 11: services.citizens.LabelsService.GetLabel:output_type -> services.citizens.GetLabelResponse
+	5,  // 12: services.citizens.LabelsService.CreateOrUpdateLabel:output_type -> services.citizens.CreateOrUpdateLabelResponse
+	7,  // 13: services.citizens.LabelsService.DeleteLabel:output_type -> services.citizens.DeleteLabelResponse
+	9,  // 14: services.citizens.LabelsService.ReorderLabels:output_type -> services.citizens.ReorderLabelsResponse
+	10, // [10:15] is the sub-list for method output_type
+	5,  // [5:10] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_services_citizens_labels_proto_init() }
@@ -944,7 +773,7 @@ func file_services_citizens_labels_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_citizens_labels_proto_rawDesc), len(file_services_citizens_labels_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -80,12 +80,12 @@ func (s *Server) GetColleagueLabels(
 			tJobLabels.Name,
 			tJobLabels.Color,
 			tJobLabels.Icon,
-			tJobLabels.Order,
+			tJobLabels.SortOrder,
 		).
 		FROM(tJobLabels).
 		WHERE(condition).
 		ORDER_BY(
-			tJobLabels.Order.ASC(),
+			tJobLabels.SortOrder.ASC(),
 			tJobLabels.SortKey.ASC(),
 		)
 
@@ -112,7 +112,7 @@ func (s *Server) ManageLabels(
 			tJobLabels.Name,
 			tJobLabels.Color,
 			tJobLabels.Icon,
-			tJobLabels.Order,
+			tJobLabels.SortOrder,
 		).
 		FROM(tJobLabels).
 		WHERE(mysql.AND(
@@ -134,7 +134,7 @@ func (s *Server) ManageLabels(
 	var i int32
 	for _, label := range req.GetLabels() {
 		label.Job = &userInfo.Job
-		label.Order = i
+		label.SortOrder = i
 		i++
 	}
 
@@ -158,7 +158,7 @@ func (s *Server) ManageLabels(
 					tJobLabels.Name,
 					tJobLabels.Color,
 					tJobLabels.Icon,
-					tJobLabels.Order,
+					tJobLabels.SortOrder,
 					tJobLabels.DeletedAt,
 				).
 				MODELS(toCreate).
@@ -166,7 +166,7 @@ func (s *Server) ManageLabels(
 					tJobLabels.Name.SET(mysql.RawString("VALUES(`name`)")),
 					tJobLabels.Color.SET(mysql.RawString("VALUES(`color`)")),
 					tJobLabels.Icon.SET(mysql.RawString("VALUES(`icon`)")),
-					tJobLabels.Order.SET(mysql.RawInt("VALUES(`order`)")),
+					tJobLabels.SortOrder.SET(mysql.RawInt("VALUES(`order`)")),
 					tJobLabels.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 				)
 
@@ -182,14 +182,14 @@ func (s *Server) ManageLabels(
 						tJobLabels.Name,
 						tJobLabels.Color,
 						tJobLabels.Icon,
-						tJobLabels.Order,
+						tJobLabels.SortOrder,
 						tJobLabels.DeletedAt,
 					).
 					SET(
 						tJobLabels.Name.SET(mysql.String(label.GetName())),
 						tJobLabels.Color.SET(mysql.String(label.GetColor())),
 						tJobLabels.Icon.SET(dbutils.StringEmpty(label.GetIcon())),
-						tJobLabels.Order.SET(mysql.Int32(label.GetOrder())),
+						tJobLabels.SortOrder.SET(mysql.Int32(label.GetSortOrder())),
 						tJobLabels.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 					).
 					WHERE(mysql.AND(
@@ -305,7 +305,7 @@ func (s *Server) getUserLabels(
 			tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
 			tJobLabels.DeletedAt.IS_NULL(),
 		)).
-		ORDER_BY(tJobLabels.Order.ASC())
+		ORDER_BY(tJobLabels.SortOrder.ASC())
 
 	list := &jobslabels.Labels{
 		List: []*jobslabels.Label{},
@@ -368,7 +368,8 @@ func (s *Server) GetColleagueLabelsStats(
 		)).
 		GROUP_BY(tJobLabels.ID).
 		ORDER_BY(
-			tJobLabels.Order.ASC(),
+			tJobLabels.SortOrder.ASC(),
+			tJobLabels.SortKey.ASC(),
 		)
 
 	dest := []*jobslabels.LabelCount{}

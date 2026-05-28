@@ -473,6 +473,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) | optional |  |
+| `sort_order` | [int32](#int32) |  |  |
 | `name` | [string](#string) |  |  |
 | `color` | [string](#string) |  |  |
 | `icon` | [string](#string) | optional |  |
@@ -1305,7 +1306,7 @@ Dummy - DO NOT USE!
 | `name` | [string](#string) |  |  |
 | `color` | [string](#string) |  |  |
 | `icon` | [string](#string) | optional |  |
-| `order` | [int32](#int32) |  |  |
+| `sort_order` | [int32](#int32) |  |  |
 
 
 
@@ -8875,25 +8876,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 ## services/citizens/labels.proto
 
 
-### services.citizens.AddCitizenLabelsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `labels` | [resources.citizens.labels.Label](#resourcescitizenslabelsLabel) | repeated |  |
-| `reason` | [string](#string) |  |  |
-
-
-
-
-
-### services.citizens.AddCitizenLabelsResponse
-
-
-
-
-
 ### services.citizens.CreateOrUpdateLabelRequest
 
 
@@ -8979,20 +8961,18 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.citizens.RemoveCitizenLabelsRequest
+### services.citizens.ReorderLabelsRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `ids` | [int64](#int64) | repeated |  |
-| `reason` | [string](#string) |  |  |
+| `label_ids` | [int64](#int64) | repeated |  |
 
 
 
 
 
-### services.citizens.RemoveCitizenLabelsResponse
+### services.citizens.ReorderLabelsResponse
 
 
 
@@ -9012,8 +8992,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `GetLabel` | [GetLabelRequest](#servicescitizensGetLabelRequest) | [GetLabelResponse](#servicescitizensGetLabelResponse) | |
 | `CreateOrUpdateLabel` | [CreateOrUpdateLabelRequest](#servicescitizensCreateOrUpdateLabelRequest) | [CreateOrUpdateLabelResponse](#servicescitizensCreateOrUpdateLabelResponse) | |
 | `DeleteLabel` | [DeleteLabelRequest](#servicescitizensDeleteLabelRequest) | [DeleteLabelResponse](#servicescitizensDeleteLabelResponse) | |
-| `AddCitizenLabels` | [AddCitizenLabelsRequest](#servicescitizensAddCitizenLabelsRequest) | [AddCitizenLabelsResponse](#servicescitizensAddCitizenLabelsResponse) | |
-| `RemoveCitizenLabels` | [RemoveCitizenLabelsRequest](#servicescitizensRemoveCitizenLabelsRequest) | [RemoveCitizenLabelsResponse](#servicescitizensRemoveCitizenLabelsResponse) | |
+| `ReorderLabels` | [ReorderLabelsRequest](#servicescitizensReorderLabelsRequest) | [ReorderLabelsResponse](#servicescitizensReorderLabelsResponse) | |
 
  <!-- end services -->
 

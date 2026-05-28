@@ -5,10 +5,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { LabelsService } from "./labels";
-import type { RemoveCitizenLabelsResponse } from "./labels";
-import type { RemoveCitizenLabelsRequest } from "./labels";
-import type { AddCitizenLabelsResponse } from "./labels";
-import type { AddCitizenLabelsRequest } from "./labels";
+import type { ReorderLabelsResponse } from "./labels";
+import type { ReorderLabelsRequest } from "./labels";
 import type { DeleteLabelResponse } from "./labels";
 import type { DeleteLabelRequest } from "./labels";
 import type { CreateOrUpdateLabelResponse } from "./labels";
@@ -41,13 +39,9 @@ export interface ILabelsServiceClient {
      */
     deleteLabel(input: DeleteLabelRequest, options?: RpcOptions): UnaryCall<DeleteLabelRequest, DeleteLabelResponse>;
     /**
-     * @generated from protobuf rpc: AddCitizenLabels
+     * @generated from protobuf rpc: ReorderLabels
      */
-    addCitizenLabels(input: AddCitizenLabelsRequest, options?: RpcOptions): UnaryCall<AddCitizenLabelsRequest, AddCitizenLabelsResponse>;
-    /**
-     * @generated from protobuf rpc: RemoveCitizenLabels
-     */
-    removeCitizenLabels(input: RemoveCitizenLabelsRequest, options?: RpcOptions): UnaryCall<RemoveCitizenLabelsRequest, RemoveCitizenLabelsResponse>;
+    reorderLabels(input: ReorderLabelsRequest, options?: RpcOptions): UnaryCall<ReorderLabelsRequest, ReorderLabelsResponse>;
 }
 /**
  * @generated from protobuf service services.citizens.LabelsService
@@ -87,17 +81,10 @@ export class LabelsServiceClient implements ILabelsServiceClient, ServiceInfo {
         return stackIntercept<DeleteLabelRequest, DeleteLabelResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: AddCitizenLabels
+     * @generated from protobuf rpc: ReorderLabels
      */
-    addCitizenLabels(input: AddCitizenLabelsRequest, options?: RpcOptions): UnaryCall<AddCitizenLabelsRequest, AddCitizenLabelsResponse> {
+    reorderLabels(input: ReorderLabelsRequest, options?: RpcOptions): UnaryCall<ReorderLabelsRequest, ReorderLabelsResponse> {
         const method = this.methods[4], opt = this._transport.mergeOptions(options);
-        return stackIntercept<AddCitizenLabelsRequest, AddCitizenLabelsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: RemoveCitizenLabels
-     */
-    removeCitizenLabels(input: RemoveCitizenLabelsRequest, options?: RpcOptions): UnaryCall<RemoveCitizenLabelsRequest, RemoveCitizenLabelsResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
-        return stackIntercept<RemoveCitizenLabelsRequest, RemoveCitizenLabelsResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<ReorderLabelsRequest, ReorderLabelsResponse>("unary", this._transport, method, opt, input);
     }
 }

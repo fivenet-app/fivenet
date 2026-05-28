@@ -90,7 +90,9 @@ const { data, status, error, refresh } = useLazyAsyncData(
 
 async function getCitizenLabel(labelId: number): Promise<GetLabelResponse> {
     try {
-        const { response } = await citizensLabelsClient.getLabel({ id: labelId });
+        const { response } = await citizensLabelsClient.getLabel({
+            id: labelId,
+        });
 
         if (!response?.label) return response;
 
@@ -140,6 +142,7 @@ async function createOrUpdateLabel(values: Schema): Promise<CreateOrUpdateLabelR
                 name: values.name ?? '',
                 color: values.color ?? '#ffffff',
                 icon: values.icon,
+                sortOrder: 0,
                 settings: {
                     requiresExpiration: values.settings.requiresExpiration,
                     minDuration: values.settings.minDuration,

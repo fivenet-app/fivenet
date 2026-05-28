@@ -22,6 +22,8 @@ const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
 
+const appConfig = useAppConfig();
+
 const centrumUnitsClient = await getCentrumUnitsClient();
 
 const {
@@ -86,8 +88,6 @@ async function reorderUnits(units: Unit[]): Promise<void> {
         throw e;
     }
 }
-
-const appConfig = useAppConfig();
 
 const orderChanged = ref(false);
 const tableRef = useTemplateRef('tableRef');
@@ -325,6 +325,7 @@ const confirmModal = overlay.create(ConfirmModal);
                 :data="units"
                 :empty="$t('common.not_found', [$t('common.unit', 2)])"
                 :pagination-options="{ manualPagination: true }"
+                sticky
                 :ui="{ tbody: 'unit-list-table' }"
             />
         </template>

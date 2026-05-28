@@ -26,6 +26,7 @@ func GetUserLabels(
 			tJobLabels.Name,
 			tJobLabels.Color,
 			tJobLabels.Icon,
+			tJobLabels.SortOrder,
 		).
 		FROM(
 			tUserLabels.
@@ -39,7 +40,8 @@ func GetUserLabels(
 			tJobLabels.DeletedAt.IS_NULL(),
 		)).
 		ORDER_BY(
-			tJobLabels.Order.ASC(),
+			tJobLabels.SortOrder.ASC(),
+			tJobLabels.SortKey.ASC(),
 		)
 
 	list := &jobslabels.Labels{

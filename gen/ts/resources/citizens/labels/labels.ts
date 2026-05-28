@@ -48,6 +48,10 @@ export interface Label {
      */
     job?: string;
     /**
+     * @generated from protobuf field: int32 sort_order = 12
+     */
+    sortOrder: number;
+    /**
      * @generated from protobuf field: string name = 6
      */
     name: string;
@@ -147,6 +151,7 @@ class Label$Type extends MessageType<Label> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 12, name: "sort_order", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 7, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 8, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
@@ -158,6 +163,7 @@ class Label$Type extends MessageType<Label> {
     create(value?: PartialMessage<Label>): Label {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
+        message.sortOrder = 0;
         message.name = "";
         message.color = "";
         if (value !== undefined)
@@ -183,6 +189,9 @@ class Label$Type extends MessageType<Label> {
                     break;
                 case /* optional string job */ 5:
                     message.job = reader.string();
+                    break;
+                case /* int32 sort_order */ 12:
+                    message.sortOrder = reader.int32();
                     break;
                 case /* string name */ 6:
                     message.name = reader.string();
@@ -247,6 +256,9 @@ class Label$Type extends MessageType<Label> {
         /* optional resources.timestamp.Timestamp expires_at = 11; */
         if (message.expiresAt)
             Timestamp.internalBinaryWrite(message.expiresAt, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* int32 sort_order = 12; */
+        if (message.sortOrder !== 0)
+            writer.tag(12, WireType.Varint).int32(message.sortOrder);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

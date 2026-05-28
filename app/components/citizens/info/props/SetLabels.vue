@@ -37,6 +37,7 @@ const schema = z.object({
             color: z.coerce.string().length(7),
             icon: z.coerce.string().max(255).optional(),
             expiresAt: z.custom<Timestamp>().optional(),
+            sortOrder: z.number().default(0),
             access: z
                 .custom<LabelAccess>()
                 .default({

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UButton, UTooltip } from '#components';
+import { UButton, UFieldGroup, UIcon, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -10,6 +10,7 @@ import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import DataErrorBlock from '../../partials/data/DataErrorBlock.vue';
 import CreateOrUpdateModal from './CreateOrUpdateModal.vue';
+import { useDraggable } from 'vue-draggable-plus';
 
 const { can } = useAuth();
 
@@ -25,11 +26,20 @@ const formatDuration = useDurationFormatter();
 
 const citizensLabelsClient = await getCitizensLabelsClient();
 
-const { data: labels, status, error, refresh } = useLazyAsyncData('citizens-labels', () => listLabels());
+const {
+    data: labels,
+    status,
+    error,
+    refresh,
+} = useLazyAsyncData('citizens-labels', () => listLabels(), {
+    default: () => [] as Label[],
+});
 
 async function listLabels(): Promise<Label[]> {
     try {
-        const { response } = await citizensLabelsClient.listLabels({});
+        const { response } = await citizensLabelsClient.listLabels({
+            ownJobOnly: true,
+        });
 
         return response?.labels ?? [];
     } catch (e) {
@@ -60,7 +70,114 @@ async function deleteLabel(labelId: number): Promise<void> {
     }
 }
 
+async function reorderLabels(labels: Label[]) {
+    if (!labels.length) return;
+
+    try {
+        const call = citizensLabelsClient.reorderLabels({
+            labelIds: labels.map((item) => item.id),
+        });
+        await call;
+
+        orderChanged.value = false;
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
+const orderChanged = ref(false);
+const tableRef = useTemplateRef('tableRef');
+const tableBodyRef = computed<HTMLElement | null>(() => {
+    const rootEl = tableRef.value?.$el as HTMLElement | undefined;
+    return rootEl?.querySelector('tbody.unit-list-table') ?? null;
+});
+
+const { moveUp, moveDown } = useListReorder(labels, {
+    onMove: () => (orderChanged.value = true),
+});
+
+useDraggable(tableBodyRef, labels, {
+    animation: 150,
+    handle: '.handle-choice',
+    draggable: 'tr',
+    onUpdate: () => (orderChanged.value = true),
+});
+
 const columns = computed<TableColumn<Label>[]>(() => [
+    {
+        id: 'actions',
+        cell: ({ row }) =>
+            h('div', [
+                h(
+                    'div',
+                    {
+                        class: 'inline-flex items-center gap-1',
+                    },
+                    [
+                        h(UTooltip, { text: t('common.draggable') }, [
+                            h(UIcon, {
+                                class: 'handle-choice size-6 cursor-move',
+                                name: 'i-mdi-drag-horizontal',
+                            }),
+                        ]),
+                        h(UFieldGroup, { orientation: 'vertical' }, [
+                            h(UButton, {
+                                size: 'xs',
+                                variant: 'link',
+                                icon: 'i-mdi-arrow-up',
+                                onClick: () => moveUp(row.index),
+                            }),
+                            h(UButton, {
+                                size: 'xs',
+                                variant: 'link',
+                                icon: 'i-mdi-arrow-down',
+                                onClick: () => moveDown(row.index),
+                            }),
+                        ]),
+                    ],
+                ),
+                can('citizens.LabelsService/CreateOrUpdateLabel').value
+                    ? h(
+                          UTooltip,
+                          { text: t('common.edit') },
+                          h(UButton, {
+                              color: 'primary',
+                              variant: 'link',
+                              icon: 'i-mdi-pencil',
+                              onClick: () => {
+                                  createOrUpdateModal.open({
+                                      labelId: row.original.id,
+                                      onRefresh: () => refresh(),
+                                  });
+                              },
+                          }),
+                      )
+                    : undefined,
+                can('citizens.LabelsService/DeleteLabel').value
+                    ? h(
+                          UTooltip,
+                          { text: row.original.deletedAt ? t('common.restore') : t('common.delete') },
+                          h(UButton, {
+                              color: !row.original.deletedAt ? 'error' : 'success',
+                              variant: 'link',
+                              icon: !row.original.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
+                              onClick: () => {
+                                  deleteConfirmModal.open({
+                                      confirm: () => row.original.id && deleteLabel(row.original.id),
+                                  });
+                              },
+                          }),
+                      )
+                    : undefined,
+            ]),
+    },
     {
         accessorKey: 'name',
         header: ({ column }) => {
@@ -118,46 +235,6 @@ const columns = computed<TableColumn<Label>[]>(() => [
                       ),
             ),
     },
-    {
-        id: 'actions',
-        header: '',
-        cell: ({ row }) =>
-            h('div', [
-                can('citizens.LabelsService/CreateOrUpdateLabel').value
-                    ? h(
-                          UTooltip,
-                          { text: t('common.edit') },
-                          h(UButton, {
-                              color: 'primary',
-                              variant: 'link',
-                              icon: 'i-mdi-pencil',
-                              onClick: () => {
-                                  createOrUpdateModal.open({
-                                      labelId: row.original.id,
-                                      onRefresh: () => refresh(),
-                                  });
-                              },
-                          }),
-                      )
-                    : undefined,
-                can('citizens.LabelsService/DeleteLabel').value
-                    ? h(
-                          UTooltip,
-                          { text: row.original.deletedAt ? t('common.restore') : t('common.delete') },
-                          h(UButton, {
-                              color: !row.original.deletedAt ? 'error' : 'success',
-                              variant: 'link',
-                              icon: !row.original.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
-                              onClick: () => {
-                                  deleteConfirmModal.open({
-                                      confirm: () => row.original.id && deleteLabel(row.original.id),
-                                  });
-                              },
-                          }),
-                      )
-                    : undefined,
-            ]),
-    },
 ]);
 </script>
 
@@ -171,6 +248,15 @@ const columns = computed<TableColumn<Label>[]>(() => [
 
                 <template #right>
                     <PartialsBackButton to="/citizens" />
+
+                    <UTooltip v-if="orderChanged" :text="$t('common.save', 1)">
+                        <UButton
+                            color="primary"
+                            variant="outline"
+                            icon="i-mdi-content-save"
+                            @click="() => reorderLabels(labels)"
+                        />
+                    </UTooltip>
 
                     <UTooltip v-if="can('citizens.LabelsService/CreateOrUpdateLabel').value" :text="$t('common.edit')">
                         <UButton
@@ -202,12 +288,15 @@ const columns = computed<TableColumn<Label>[]>(() => [
 
             <UTable
                 v-else
+                ref="tableRef"
                 class="flex-1"
                 :loading="isRequestPending(status)"
                 :columns="columns"
                 :data="labels"
                 :empty="$t('common.not_found', [$t('components.citizens.citizen_labels.title')])"
+                :pagination-options="{ manualPagination: true }"
                 sticky
+                :ui="{ tbody: 'unit-list-table' }"
             />
         </template>
 

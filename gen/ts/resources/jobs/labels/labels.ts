@@ -50,9 +50,9 @@ export interface Label {
      */
     icon?: string;
     /**
-     * @generated from protobuf field: int32 order = 7
+     * @generated from protobuf field: int32 sort_order = 7
      */
-    order: number;
+    sortOrder: number;
 }
 /**
  * @generated from protobuf message resources.jobs.labels.LabelCount
@@ -124,7 +124,7 @@ class Label$Type extends MessageType<Label> {
             { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } } } },
             { no: 5, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 6, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 7, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 7, name: "sort_order", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<Label>): Label {
@@ -132,7 +132,7 @@ class Label$Type extends MessageType<Label> {
         message.id = 0;
         message.name = "";
         message.color = "";
-        message.order = 0;
+        message.sortOrder = 0;
         if (value !== undefined)
             reflectionMergePartial<Label>(this, message, value);
         return message;
@@ -160,8 +160,8 @@ class Label$Type extends MessageType<Label> {
                 case /* optional string icon */ 6:
                     message.icon = reader.string();
                     break;
-                case /* int32 order */ 7:
-                    message.order = reader.int32();
+                case /* int32 sort_order */ 7:
+                    message.sortOrder = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -193,9 +193,9 @@ class Label$Type extends MessageType<Label> {
         /* optional string icon = 6; */
         if (message.icon !== undefined)
             writer.tag(6, WireType.LengthDelimited).string(message.icon);
-        /* int32 order = 7; */
-        if (message.order !== 0)
-            writer.tag(7, WireType.Varint).int32(message.order);
+        /* int32 sort_order = 7; */
+        if (message.sortOrder !== 0)
+            writer.tag(7, WireType.Varint).int32(message.sortOrder);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

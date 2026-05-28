@@ -24,7 +24,7 @@ type fivenetJobLabelsTable struct {
 	SortKey   mysql.ColumnString
 	Color     mysql.ColumnString
 	Icon      mysql.ColumnString
-	Order     mysql.ColumnInteger
+	SortOrder mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -73,10 +73,10 @@ func newFivenetJobLabelsTableImpl(schemaName, tableName, alias string) fivenetJo
 		SortKeyColumn   = mysql.StringColumn("sort_key")
 		ColorColumn     = mysql.StringColumn("color")
 		IconColumn      = mysql.StringColumn("icon")
-		OrderColumn     = mysql.IntegerColumn("order")
-		allColumns      = mysql.ColumnList{IDColumn, JobColumn, DeletedAtColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, OrderColumn}
-		mutableColumns  = mysql.ColumnList{JobColumn, DeletedAtColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, OrderColumn}
-		defaultColumns  = mysql.ColumnList{ColorColumn, OrderColumn}
+		SortOrderColumn = mysql.IntegerColumn("sort_order")
+		allColumns      = mysql.ColumnList{IDColumn, JobColumn, DeletedAtColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, SortOrderColumn}
+		mutableColumns  = mysql.ColumnList{JobColumn, DeletedAtColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, SortOrderColumn}
+		defaultColumns  = mysql.ColumnList{ColorColumn, SortOrderColumn}
 	)
 
 	return fivenetJobLabelsTable{
@@ -90,7 +90,7 @@ func newFivenetJobLabelsTableImpl(schemaName, tableName, alias string) fivenetJo
 		SortKey:   SortKeyColumn,
 		Color:     ColorColumn,
 		Icon:      IconColumn,
-		Order:     OrderColumn,
+		SortOrder: SortOrderColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

@@ -17,6 +17,7 @@ type FivenetUserLabelsJob struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 	DeletedAt *time.Time `json:"deleted_at"`
 	Job       string     `json:"job"`
+	SortOrder int32      `json:"sort_order"`
 	Name      string     `json:"name"`
 	SortKey   *string    `json:"sort_key"`
 	Color     *string    `json:"color"`

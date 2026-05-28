@@ -9,31 +9,6 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *AddCitizenLabelsRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Labels
-	for idx, item := range m.Labels {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: Reason
-	m.Reason = htmlsanitizer.Sanitize(m.Reason)
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *CreateOrUpdateLabelRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -122,19 +97,6 @@ func (m *ListLabelsResponse) Sanitize() error {
 		}
 
 	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *RemoveCitizenLabelsRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Reason
-	m.Reason = htmlsanitizer.Sanitize(m.Reason)
 
 	return nil
 }

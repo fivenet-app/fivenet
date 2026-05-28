@@ -171,14 +171,11 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	},
 
 	// Service: citizens.LabelsService
-	"citizens.LabelsService/AddCitizenLabels": {
-		permscitizens.CitizensService.SetUserProps.Perm,
-	},
 	"citizens.LabelsService/GetLabel": {
 		permscitizens.LabelsService.ListLabels.Perm,
 	},
-	"citizens.LabelsService/RemoveCitizenLabels": {
-		permscitizens.CitizensService.SetUserProps.Perm,
+	"citizens.LabelsService/ReorderLabels": {
+		permscitizens.LabelsService.CreateOrUpdateLabel.Perm,
 	},
 
 	// Service: completor.CompletorService

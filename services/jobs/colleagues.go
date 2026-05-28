@@ -282,7 +282,8 @@ func (s *Server) ListColleagues(
 				tColleagueLabels.UserID.IN(userIds...),
 			)).
 			ORDER_BY(
-				tJobLabels.Order.ASC(),
+				tJobLabels.SortOrder.ASC(),
+				tJobLabels.SortKey.ASC(),
 			)
 
 		labels := []*struct {

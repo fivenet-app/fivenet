@@ -93,6 +93,7 @@ type Label struct {
 	xxx_hidden_UpdatedAt   *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
 	xxx_hidden_DeletedAt   *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
 	xxx_hidden_Job         *string                `protobuf:"bytes,5,opt,name=job,proto3,oneof"`
+	xxx_hidden_SortOrder   int32                  `protobuf:"varint,12,opt,name=sort_order,json=sortOrder,proto3"`
 	xxx_hidden_Name        string                 `protobuf:"bytes,6,opt,name=name,proto3"`
 	xxx_hidden_Color       string                 `protobuf:"bytes,7,opt,name=color,proto3"`
 	xxx_hidden_Icon        *string                `protobuf:"bytes,8,opt,name=icon,proto3,oneof"`
@@ -168,6 +169,13 @@ func (x *Label) GetJob() string {
 	return ""
 }
 
+func (x *Label) GetSortOrder() int32 {
+	if x != nil {
+		return x.xxx_hidden_SortOrder
+	}
+	return 0
+}
+
 func (x *Label) GetName() string {
 	if x != nil {
 		return x.xxx_hidden_Name
@@ -231,7 +239,11 @@ func (x *Label) SetDeletedAt(v *timestamp.Timestamp) {
 
 func (x *Label) SetJob(v string) {
 	x.xxx_hidden_Job = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 11)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 12)
+}
+
+func (x *Label) SetSortOrder(v int32) {
+	x.xxx_hidden_SortOrder = v
 }
 
 func (x *Label) SetName(v string) {
@@ -244,7 +256,7 @@ func (x *Label) SetColor(v string) {
 
 func (x *Label) SetIcon(v string) {
 	x.xxx_hidden_Icon = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 11)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 12)
 }
 
 func (x *Label) SetSettings(v *Settings) {
@@ -291,7 +303,7 @@ func (x *Label) HasIcon() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *Label) HasSettings() bool {
@@ -333,7 +345,7 @@ func (x *Label) ClearJob() {
 }
 
 func (x *Label) ClearIcon() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
 	x.xxx_hidden_Icon = nil
 }
 
@@ -357,6 +369,7 @@ type Label_builder struct {
 	UpdatedAt *timestamp.Timestamp
 	DeletedAt *timestamp.Timestamp
 	Job       *string
+	SortOrder int32
 	Name      string
 	Color     string
 	Icon      *string
@@ -375,13 +388,14 @@ func (b0 Label_builder) Build() *Label {
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	x.xxx_hidden_DeletedAt = b.DeletedAt
 	if b.Job != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 11)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 12)
 		x.xxx_hidden_Job = b.Job
 	}
+	x.xxx_hidden_SortOrder = b.SortOrder
 	x.xxx_hidden_Name = b.Name
 	x.xxx_hidden_Color = b.Color
 	if b.Icon != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 11)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 12)
 		x.xxx_hidden_Icon = b.Icon
 	}
 	x.xxx_hidden_Settings = b.Settings
@@ -503,7 +517,7 @@ const file_resources_citizens_labels_labels_proto_rawDesc = "" +
 	"\n" +
 	"&resources/citizens/labels/labels.proto\x12\x19resources.citizens.labels\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a&resources/citizens/labels/access.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"F\n" +
 	"\x06Labels\x124\n" +
-	"\x04list\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x04list:\x06\xe2\xf3\x18\x02\b\x01\"\x9e\x05\n" +
+	"\x04list\x18\x01 \x03(\v2 .resources.citizens.labels.LabelR\x04list:\x06\xe2\xf3\x18\x02\b\x01\"\xbd\x05\n" +
 	"\x05Label\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12=\n" +
 	"\n" +
@@ -512,7 +526,9 @@ const file_resources_citizens_labels_labels_proto_rawDesc = "" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x15\n" +
-	"\x03job\x18\x05 \x01(\tH\x02R\x03job\x88\x01\x01\x12\x1c\n" +
+	"\x03job\x18\x05 \x01(\tH\x02R\x03job\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\f \x01(\x05R\tsortOrder\x12\x1c\n" +
 	"\x04name\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04name\x12\x1e\n" +
 	"\x05color\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12!\n" +
 	"\x04icon\x18\b \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x04icon\x88\x01\x01\x12D\n" +

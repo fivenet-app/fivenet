@@ -22,6 +22,7 @@ type fivenetUserLabelsJobTable struct {
 	UpdatedAt mysql.ColumnTimestamp
 	DeletedAt mysql.ColumnTimestamp
 	Job       mysql.ColumnString
+	SortOrder mysql.ColumnInteger
 	Name      mysql.ColumnString
 	SortKey   mysql.ColumnString
 	Color     mysql.ColumnString
@@ -73,14 +74,15 @@ func newFivenetUserLabelsJobTableImpl(schemaName, tableName, alias string) fiven
 		UpdatedAtColumn = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn = mysql.TimestampColumn("deleted_at")
 		JobColumn       = mysql.StringColumn("job")
+		SortOrderColumn = mysql.IntegerColumn("sort_order")
 		NameColumn      = mysql.StringColumn("name")
 		SortKeyColumn   = mysql.StringColumn("sort_key")
 		ColorColumn     = mysql.StringColumn("color")
 		IconColumn      = mysql.StringColumn("icon")
 		SettingsColumn  = mysql.StringColumn("settings")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, SettingsColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, SettingsColumn}
-		defaultColumns  = mysql.ColumnList{CreatedAtColumn}
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, SortOrderColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, SettingsColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, SortOrderColumn, NameColumn, SortKeyColumn, ColorColumn, IconColumn, SettingsColumn}
+		defaultColumns  = mysql.ColumnList{CreatedAtColumn, SortOrderColumn}
 	)
 
 	return fivenetUserLabelsJobTable{
@@ -92,6 +94,7 @@ func newFivenetUserLabelsJobTableImpl(schemaName, tableName, alias string) fiven
 		UpdatedAt: UpdatedAtColumn,
 		DeletedAt: DeletedAtColumn,
 		Job:       JobColumn,
+		SortOrder: SortOrderColumn,
 		Name:      NameColumn,
 		SortKey:   SortKeyColumn,
 		Color:     ColorColumn,

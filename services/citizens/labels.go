@@ -4,6 +4,7 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
+	"math"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
@@ -16,11 +17,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
 var (
@@ -45,7 +46,11 @@ func (s *Server) ListLabels(
 		condition = condition.AND(tCitizensLabelsJob.Name.LIKE(mysql.String(search)))
 	}
 
-	if !userInfo.GetSuperuser() {
+	// When an user can create/update labels, the user is allowed to be returned all of their job's labels.
+	canUpdate := s.ps.Can(userInfo, permscitizens.LabelsService.CreateOrUpdateLabel.Perm)
+	if req.GetOwnJobOnly() && canUpdate {
+		condition = condition.AND(tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())))
+	} else if !userInfo.GetSuperuser() {
 		minAccess := min(req.GetMinAccess(), citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW)
 
 		jobAccessExists := mysql.EXISTS(
@@ -132,6 +137,7 @@ func (s *Server) ListLabels(
 			tCitizensLabelsJob.SortKey,
 		).
 		ORDER_BY(
+			tCitizensLabelsJob.SortOrder.ASC(),
 			tCitizensLabelsJob.SortKey.ASC(),
 		).
 		LIMIT(20)
@@ -464,7 +470,11 @@ func (s *Server) getUserLabels(
 				),
 		).
 		WHERE(condition).
-		ORDER_BY(tCitizensLabelsJob.SortKey.ASC(), tCitizensLabelsJob.ID.DESC()).
+		ORDER_BY(
+			tCitizensLabelsJob.SortOrder.ASC(),
+			tCitizensLabelsJob.SortKey.ASC(),
+			tCitizensLabelsJob.ID.DESC(),
+		).
 		LIMIT(25)
 
 	list := &citizenslabels.Labels{
@@ -514,52 +524,79 @@ func (s *Server) validateLabels(
 	return len(labels) == int(count.Total), nil
 }
 
-func (s *Server) AddCitizenLabels(
+func (s *Server) ReorderLabels(
 	ctx context.Context,
-	req *pbcitizens.AddCitizenLabelsRequest,
-) (*pbcitizens.AddCitizenLabelsResponse, error) {
-	logging.InjectFields(
-		ctx,
-		logging.Fields{"fivenet.citizens.user_id", req.GetUserId()},
-	)
-
+	req *pbcitizens.ReorderLabelsRequest,
+) (*pbcitizens.ReorderLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// Field Permission Check
-	fields, err := permscitizens.CitizensService.SetUserProps.FieldsTyped.Get(s.ps, userInfo)
+	// Remove any duplicate unit ids from the request
+	labelIds := utils.RemoveSliceDuplicates(req.GetLabelIds())
+
+	stmt := tCitizensLabelsJob.
+		SELECT(tCitizensLabelsJob.ID).
+		FROM(tCitizensLabelsJob).
+		WHERE(mysql.AND(
+			tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
+			tCitizensLabelsJob.DeletedAt.IS_NULL(),
+		)).
+		LIMIT(int64(len(labelIds)))
+
+	var dest []int64
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+		}
+	}
+
+	existing := make(map[int64]struct{}, len(labelIds))
+	for _, unitID := range dest {
+		existing[unitID] = struct{}{}
+	}
+
+	if len(existing) != len(labelIds) {
+		return nil, errorscitizens.ErrFailedQuery
+	}
+
+	for _, unitID := range labelIds {
+		if _, ok := existing[unitID]; !ok {
+			return nil, errorscitizens.ErrFailedQuery
+		}
+	}
+
+	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-	if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueLabels) {
-		return nil, errorscitizens.ErrPropsLabelsDenied
+	defer tx.Rollback()
+
+	for idx, labelId := range labelIds {
+		// Check that idx does not exceed int32 limit, as sort order is stored as int32 in the database
+		if idx > math.MaxInt32 {
+			return nil, errorscitizens.ErrFailedQuery
+		}
+
+		if _, err := tCitizensLabelsJob.
+			UPDATE().
+			SET(
+				tCitizensLabelsJob.SortOrder.SET(mysql.Int32(int32(idx))),
+			).
+			WHERE(mysql.AND(
+				tCitizensLabelsJob.ID.EQ(mysql.Int64(labelId)),
+				tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
+				tCitizensLabelsJob.DeletedAt.IS_NULL(),
+			)).
+			LIMIT(1).
+			ExecContext(ctx, tx); err != nil {
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+		}
 	}
 
-	// TODO
-
-	return nil, nil
-}
-
-func (s *Server) RemoveCitizenLabels(
-	ctx context.Context,
-	req *pbcitizens.RemoveCitizenLabelsRequest,
-) (*pbcitizens.RemoveCitizenLabelsResponse, error) {
-	logging.InjectFields(
-		ctx,
-		logging.Fields{"fivenet.citizens.user_id", req.GetUserId()},
-	)
-
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	// Field Permission Check
-	fields, err := permscitizens.CitizensService.SetUserProps.FieldsTyped.Get(s.ps, userInfo)
-	if err != nil {
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-	if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueLabels) {
-		return nil, errorscitizens.ErrPropsLabelsDenied
-	}
 
-	// TODO
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
-	return nil, nil
+	return &pbcitizens.ReorderLabelsResponse{}, nil
 }

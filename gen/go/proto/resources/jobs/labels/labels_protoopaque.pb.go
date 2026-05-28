@@ -92,7 +92,7 @@ type Label struct {
 	xxx_hidden_Name        string                 `protobuf:"bytes,4,opt,name=name,proto3"`
 	xxx_hidden_Color       string                 `protobuf:"bytes,5,opt,name=color,proto3"`
 	xxx_hidden_Icon        *string                `protobuf:"bytes,6,opt,name=icon,proto3,oneof"`
-	xxx_hidden_Order       int32                  `protobuf:"varint,7,opt,name=order,proto3"`
+	xxx_hidden_SortOrder   int32                  `protobuf:"varint,7,opt,name=sort_order,json=sortOrder,proto3"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -172,9 +172,9 @@ func (x *Label) GetIcon() string {
 	return ""
 }
 
-func (x *Label) GetOrder() int32 {
+func (x *Label) GetSortOrder() int32 {
 	if x != nil {
-		return x.xxx_hidden_Order
+		return x.xxx_hidden_SortOrder
 	}
 	return 0
 }
@@ -205,8 +205,8 @@ func (x *Label) SetIcon(v string) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 7)
 }
 
-func (x *Label) SetOrder(v int32) {
-	x.xxx_hidden_Order = v
+func (x *Label) SetSortOrder(v int32) {
+	x.xxx_hidden_SortOrder = v
 }
 
 func (x *Label) HasJob() bool {
@@ -253,7 +253,7 @@ type Label_builder struct {
 	Name      string
 	Color     string
 	Icon      *string
-	Order     int32
+	SortOrder int32
 }
 
 func (b0 Label_builder) Build() *Label {
@@ -272,7 +272,7 @@ func (b0 Label_builder) Build() *Label {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 7)
 		x.xxx_hidden_Icon = b.Icon
 	}
-	x.xxx_hidden_Order = b.Order
+	x.xxx_hidden_SortOrder = b.SortOrder
 	return m0
 }
 
@@ -364,7 +364,7 @@ const file_resources_jobs_labels_labels_proto_rawDesc = "" +
 	"\n" +
 	"\"resources/jobs/labels/labels.proto\x12\x15resources.jobs.labels\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\":\n" +
 	"\x06Labels\x120\n" +
-	"\x04list\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x04list\"\xa2\x02\n" +
+	"\x04list\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x04list\"\xab\x02\n" +
 	"\x05Label\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x15\n" +
 	"\x03job\x18\x02 \x01(\tH\x00R\x03job\x88\x01\x01\x12B\n" +
@@ -372,8 +372,9 @@ const file_resources_jobs_labels_labels_proto_rawDesc = "" +
 	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12\x1e\n" +
 	"\x05color\x18\x05 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12!\n" +
-	"\x04icon\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x02R\x04icon\x88\x01\x01\x12\x14\n" +
-	"\x05order\x18\a \x01(\x05R\x05orderB\x06\n" +
+	"\x04icon\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x02R\x04icon\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\a \x01(\x05R\tsortOrderB\x06\n" +
 	"\x04_jobB\r\n" +
 	"\v_deleted_atB\a\n" +
 	"\x05_icon\"V\n" +
