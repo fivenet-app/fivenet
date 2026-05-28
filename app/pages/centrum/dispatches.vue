@@ -209,7 +209,11 @@ const mount = ref(false);
                                 :error="error"
                                 :retry="refresh"
                             />
-                            <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
+                            <DataNoDataBlock
+                                v-else-if="data?.dispatches.length === 0"
+                                icon="i-mdi-car-emergency"
+                                :type="$t('common.dispatches')"
+                            />
 
                             <div v-else class="relative overflow-x-auto">
                                 <DispatchList

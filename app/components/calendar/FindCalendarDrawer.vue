@@ -93,7 +93,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                 />
                 <DataNoDataBlock
                     v-else-if="!data?.calendars || data?.calendars.length === 0"
-                    :type="`${$t('common.calendar')} ${$t('common.calendar')}`"
+                    :type="$t('common.calendar')"
                     icon="i-mdi-calendar"
                 />
 

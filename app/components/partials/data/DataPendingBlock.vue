@@ -1,7 +1,9 @@
 <script lang="ts" setup>
+import type { AlertProps } from '@nuxt/ui';
+
 withDefaults(
     defineProps<{
-        message: string;
+        message: NonNullable<AlertProps['title']>;
         paused?: boolean;
     }>(),
     {

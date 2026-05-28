@@ -1,32 +1,31 @@
 <script lang="ts" setup>
-import type { ButtonProps } from '@nuxt/ui';
+import type { AlertProps } from '@nuxt/ui';
 
-const props = withDefaults(
-    defineProps<{
-        title?: string;
-        message?: string;
-        icon?: string;
-        type?: string;
-        actions?: ButtonProps[];
-        focus?: () => void | Promise<void>;
-        retry?: () => Promise<unknown>;
-        padded?: boolean;
-    }>(),
-    {
-        title: undefined,
-        message: undefined,
-        icon: 'i-mdi-magnify',
-        type: undefined,
-        actions: () => [],
-        focus: undefined,
-        retry: undefined,
-        padded: true,
-    },
-);
+type DataNoDataBlockProps = {
+    title?: AlertProps['title'];
+    message?: AlertProps['description'];
+    icon?: AlertProps['icon'];
+    type?: string;
+    actions?: NonNullable<AlertProps['actions']>;
+    focus?: () => void | Promise<void>;
+    retry?: () => Promise<unknown>;
+    padded?: boolean;
+};
+
+const props = withDefaults(defineProps<DataNoDataBlockProps>(), {
+    title: undefined,
+    message: undefined,
+    icon: 'i-mdi-magnify',
+    type: undefined,
+    actions: () => [],
+    focus: undefined,
+    retry: undefined,
+    padded: true,
+});
 
 const { t } = useI18n();
 
-const actions = computed<ButtonProps[]>(() =>
+const actions = computed<NonNullable<AlertProps['actions']>>(() =>
     props.actions.length > 0
         ? props.actions
         : [
@@ -68,7 +67,16 @@ async function click() {
             :title="title"
             :description="message ?? $t('common.not_found', [type ?? $t('common.data')])"
             :actions="actions"
+            v-bind="$attrs"
             @click="click()"
-        />
+        >
+            <template v-if="$slots.title" #title>
+                <slot name="title" />
+            </template>
+
+            <template v-if="$slots.description" #description>
+                <slot name="description" />
+            </template>
+        </UAlert>
     </div>
 </template>

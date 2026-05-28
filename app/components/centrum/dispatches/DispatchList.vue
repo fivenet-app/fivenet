@@ -17,6 +17,7 @@ import { useLivemapStore } from '~/stores/livemap';
 import { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access/access';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import DispatchStatusBadge from '../partials/DispatchStatusBadge.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -271,162 +272,177 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                 <USkeleton v-for="idx in 7" :key="idx" class="h-9 w-full" />
             </div>
 
-            <template v-for="(group, idx) in grouped" v-else :key="group.key">
-                <h3 v-if="alwaysShowDay || idx !== 0"><GenericTime :value="group.date" type="date" /></h3>
+            <DataNoDataBlock
+                v-else-if="!grouped || grouped.length === 0"
+                icon="i-mdi-success-circle"
+                color="green"
+                :title="$t('components.centrum.dispatches.list.empty.title')"
+            >
+                <template #description>
+                    <span class="whitespace-pre-wrap">
+                        {{ $t('components.centrum.dispatches.list.empty.description') }}
+                    </span>
+                </template>
+            </DataNoDataBlock>
 
-                <UTable
-                    v-if="!centrum.dispatchListCardStyle"
-                    class="overflow-x-visible"
-                    :columns="columns"
-                    :data="group.dispatches"
-                    :empty="$t('common.not_found', [$t('common.dispatch', 2)])"
-                    :sorting-options="{ manualSorting: true }"
-                    :pagination-options="{ manualPagination: true }"
-                />
+            <template v-else>
+                <template v-for="(group, idx) in grouped" :key="group.key">
+                    <h3 v-if="alwaysShowDay || idx !== 0"><GenericTime :value="group.date" type="date" /></h3>
 
-                <div v-else class="grid grid-cols-1 gap-1 p-1">
-                    <UCard
-                        v-for="dispatch in group.dispatches"
-                        :key="dispatch.id"
-                        class="px-px"
-                        :title="dispatch.message"
-                        :ui="{ header: 'p-1 sm:px-1', body: 'p-1 sm:p-1', footer: 'p-1 sm:px-1' }"
-                    >
-                        <template #header>
-                            <div class="flex items-center justify-between">
-                                <div class="flex flex-1 items-center gap-2">
-                                    <div>
-                                        <UTooltip v-if="!hideActions" :text="$t('common.assign')">
-                                            <UButton
-                                                variant="link"
-                                                icon="i-mdi-account-multiple-plus"
-                                                :ui="{ base: 'px-0.5 py-1' }"
-                                                @click="
-                                                    () => {
-                                                        dispatchAssignModal.open({
-                                                            dispatchId: dispatch.id,
-                                                        });
-                                                    }
+                    <UTable
+                        v-if="!centrum.dispatchListCardStyle"
+                        class="overflow-x-visible"
+                        :columns="columns"
+                        :data="group.dispatches"
+                        :empty="$t('common.not_found', [$t('common.dispatch', 2)])"
+                        :sorting-options="{ manualSorting: true }"
+                        :pagination-options="{ manualPagination: true }"
+                    />
+
+                    <div v-else class="grid grid-cols-1 gap-1 p-1">
+                        <UCard
+                            v-for="dispatch in group.dispatches"
+                            :key="dispatch.id"
+                            class="px-px"
+                            :title="dispatch.message"
+                            :ui="{ header: 'p-1 sm:px-1', body: 'p-1 sm:p-1', footer: 'p-1 sm:px-1' }"
+                        >
+                            <template #header>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-1 items-center gap-2">
+                                        <div>
+                                            <UTooltip v-if="!hideActions" :text="$t('common.assign')">
+                                                <UButton
+                                                    variant="link"
+                                                    icon="i-mdi-account-multiple-plus"
+                                                    :ui="{ base: 'px-0.5 py-1' }"
+                                                    @click="
+                                                        () => {
+                                                            dispatchAssignModal.open({
+                                                                dispatchId: dispatch.id,
+                                                            });
+                                                        }
+                                                    "
+                                                />
+                                            </UTooltip>
+
+                                            <UTooltip :text="$t('common.go_to_location')">
+                                                <UButton
+                                                    variant="link"
+                                                    icon="i-mdi-map-marker"
+                                                    @click="() => gotoCoords({ x: dispatch.x, y: dispatch.y })"
+                                                />
+                                            </UTooltip>
+
+                                            <UTooltip v-if="!hideActions" :text="$t('common.status')">
+                                                <UButton
+                                                    variant="link"
+                                                    icon="i-mdi-refresh"
+                                                    :ui="{ base: 'px-0.5 py-1' }"
+                                                    @click="
+                                                        () => {
+                                                            dispatchStatusUpdateModal.open({
+                                                                dispatchId: dispatch.id,
+                                                            });
+                                                        }
+                                                    "
+                                                />
+                                            </UTooltip>
+
+                                            <UTooltip :text="$t('common.detail', 2)">
+                                                <UButton
+                                                    variant="link"
+                                                    icon="i-mdi-dots-vertical"
+                                                    :ui="{ base: 'px-0.5 py-1' }"
+                                                    @click="
+                                                        () => {
+                                                            dispatchDetailsSlideover.open({
+                                                                dispatchId: dispatch.id,
+                                                            });
+                                                        }
+                                                    "
+                                                />
+                                            </UTooltip>
+                                        </div>
+
+                                        <div class="flex flex-1 items-center justify-center gap-2">
+                                            <GenericTime
+                                                class="text-highlighted"
+                                                :value="dispatch.createdAt"
+                                                type="compact"
+                                                badge
+                                                size="sm"
+                                                :update-callback="
+                                                    () =>
+                                                        dispatchTimeToBadge(
+                                                            dispatch.createdAt,
+                                                            dispatch.status?.status,
+                                                            settings?.timings?.dispatchMaxWait,
+                                                        )
                                                 "
                                             />
-                                        </UTooltip>
 
-                                        <UTooltip :text="$t('common.go_to_location')">
-                                            <UButton
-                                                variant="link"
-                                                icon="i-mdi-map-marker"
-                                                @click="() => gotoCoords({ x: dispatch.x, y: dispatch.y })"
-                                            />
-                                        </UTooltip>
+                                            <DispatchStatusBadge :status="dispatch.status?.status" size="sm" />
+                                        </div>
 
-                                        <UTooltip v-if="!hideActions" :text="$t('common.status')">
-                                            <UButton
-                                                variant="link"
-                                                icon="i-mdi-refresh"
-                                                :ui="{ base: 'px-0.5 py-1' }"
-                                                @click="
-                                                    () => {
-                                                        dispatchStatusUpdateModal.open({
-                                                            dispatchId: dispatch.id,
-                                                        });
-                                                    }
-                                                "
-                                            />
-                                        </UTooltip>
+                                        <span class="text-sm">
+                                            {{ $t('common.postal') }}: {{ dispatch.postal ?? $t('common.na') }}
+                                        </span>
 
-                                        <UTooltip :text="$t('common.detail', 2)">
-                                            <UButton
-                                                variant="link"
-                                                icon="i-mdi-dots-vertical"
-                                                :ui="{ base: 'px-0.5 py-1' }"
-                                                @click="
-                                                    () => {
-                                                        dispatchDetailsSlideover.open({
-                                                            dispatchId: dispatch.id,
-                                                        });
-                                                    }
-                                                "
-                                            />
-                                        </UTooltip>
+                                        <IDCopyBadge :id="dispatch.id" prefix="DSP" disable-tooltip variant="link" />
                                     </div>
+                                </div>
+                            </template>
 
-                                    <div class="flex flex-1 items-center justify-center gap-2">
-                                        <GenericTime
-                                            class="text-highlighted"
-                                            :value="dispatch.createdAt"
-                                            type="compact"
+                            <div class="flex flex-col gap-1">
+                                <div class="flex flex-row">
+                                    <p class="line-clamp-2 flex-1 hover:line-clamp-6">
+                                        <span class="mr-1 font-semibold">{{ $t('common.message') }}:</span>
+                                        <span>{{ dispatch.message }}</span>
+                                    </p>
+
+                                    <p class="inline-flex items-center gap-1">
+                                        <span class="mr-1 font-semibold">{{ $t('common.creator') }}:</span>
+                                        <span v-if="dispatch.anon">
+                                            {{ $t('common.anon') }}
+                                        </span>
+                                        <span v-else-if="dispatch.creator">
+                                            <CitizenInfoPopover :user="dispatch.creator" />
+                                        </span>
+                                        <span v-else>
+                                            {{ $t('common.unknown') }}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <template #footer>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span v-if="dispatch.units.length === 0" class="italic">{{
+                                        $t('enums.centrum.StatusDispatch.UNASSIGNED')
+                                    }}</span>
+                                    <span v-else class="grid grid-flow-row auto-rows-auto gap-1 sm:grid-flow-col">
+                                        <UnitInfoPopover
+                                            v-for="unit in dispatch.units"
+                                            :key="unit.unitId"
+                                            :unit="unit.unit"
+                                            :assignment="unit"
+                                            initials-only
                                             badge
-                                            size="sm"
-                                            :update-callback="
-                                                () =>
-                                                    dispatchTimeToBadge(
-                                                        dispatch.createdAt,
-                                                        dispatch.status?.status,
-                                                        settings?.timings?.dispatchMaxWait,
-                                                    )
-                                            "
+                                            show-icon
                                         />
+                                    </span>
 
-                                        <DispatchStatusBadge :status="dispatch.status?.status" size="sm" />
+                                    <div class="truncate">
+                                        {{ dispatch.jobs?.jobs.map((j) => j.label ?? j.name).join(',') }}
                                     </div>
 
-                                    <span class="text-sm">
-                                        {{ $t('common.postal') }}: {{ dispatch.postal ?? $t('common.na') }}
-                                    </span>
-
-                                    <IDCopyBadge :id="dispatch.id" prefix="DSP" disable-tooltip variant="link" />
+                                    <DispatchAttributes :attributes="dispatch.attributes" />
                                 </div>
-                            </div>
-                        </template>
-
-                        <div class="flex flex-col gap-1">
-                            <div class="flex flex-row">
-                                <p class="line-clamp-2 flex-1 hover:line-clamp-6">
-                                    <span class="mr-1 font-semibold">{{ $t('common.message') }}:</span>
-                                    <span>{{ dispatch.message }}</span>
-                                </p>
-
-                                <p class="inline-flex items-center gap-1">
-                                    <span class="mr-1 font-semibold">{{ $t('common.creator') }}:</span>
-                                    <span v-if="dispatch.anon">
-                                        {{ $t('common.anon') }}
-                                    </span>
-                                    <span v-else-if="dispatch.creator">
-                                        <CitizenInfoPopover :user="dispatch.creator" />
-                                    </span>
-                                    <span v-else>
-                                        {{ $t('common.unknown') }}
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
-
-                        <template #footer>
-                            <div class="flex items-center justify-between gap-2">
-                                <span v-if="dispatch.units.length === 0" class="italic">{{
-                                    $t('enums.centrum.StatusDispatch.UNASSIGNED')
-                                }}</span>
-                                <span v-else class="grid grid-flow-row auto-rows-auto gap-1 sm:grid-flow-col">
-                                    <UnitInfoPopover
-                                        v-for="unit in dispatch.units"
-                                        :key="unit.unitId"
-                                        :unit="unit.unit"
-                                        :assignment="unit"
-                                        initials-only
-                                        badge
-                                        show-icon
-                                    />
-                                </span>
-
-                                <div class="truncate">
-                                    {{ dispatch.jobs?.jobs.map((j) => j.label ?? j.name).join(',') }}
-                                </div>
-
-                                <DispatchAttributes :attributes="dispatch.attributes" />
-                            </div>
-                        </template>
-                    </UCard>
-                </div>
+                            </template>
+                        </UCard>
+                    </div>
+                </template>
             </template>
 
             <div class="flex-1" />

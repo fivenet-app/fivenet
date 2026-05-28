@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { statusOrder, type GroupedUnits } from '~/components/centrum/helpers';
 import UnitListEntry from '~/components/centrum/units/UnitListEntry.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
 
@@ -53,7 +54,7 @@ const grouped = computedAsync(async () => {
                     v-if="can('centrum.UnitsService/CreateOrUpdateUnit').value"
                     :text="$t('components.centrum.units.edit_units')"
                 >
-                    <UButton to="/centrum/units" icon="i-mdi-cog" variant="link" />
+                    <UButton to="/centrum/units" icon="i-mdi-car-multiple" variant="link" />
                 </UTooltip>
             </h2>
         </div>
@@ -66,13 +67,33 @@ const grouped = computedAsync(async () => {
                 <USkeleton v-for="idx in 8" :key="idx" class="h-9 w-full" />
             </div>
 
-            <template v-for="group in grouped" v-else :key="group.key">
-                <p class="-mb-1.5 text-sm">
-                    {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
-                </p>
-                <ul class="mt-3 grid grid-cols-1 gap-2 @md:grid-cols-2 @3xl:grid-cols-3" role="list">
-                    <UnitListEntry v-for="unit in group.units" :key="unit.id" :unit="unit" />
-                </ul>
+            <DataNoDataBlock
+                v-else-if="grouped?.length === 0"
+                :type="$t('common.unit', 2)"
+                icon="i-mdi-car-multiple"
+                :actions="
+                    can('centrum.UnitsService/CreateOrUpdateUnit').value
+                        ? [
+                              {
+                                  label: $t('components.centrum.units.create_unit'),
+                                  trailingIcon: 'i-mdi-plus',
+                                  variant: 'outline',
+                                  to: '/centrum/units',
+                              },
+                          ]
+                        : undefined
+                "
+            />
+
+            <template v-else>
+                <template v-for="group in grouped" :key="group.key">
+                    <p class="-mb-1.5 text-sm">
+                        {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
+                    </p>
+                    <ul class="mt-3 grid grid-cols-1 gap-2 @md:grid-cols-2 @3xl:grid-cols-3" role="list">
+                        <UnitListEntry v-for="unit in group.units" :key="unit.id" :unit="unit" />
+                    </ul>
+                </template>
             </template>
         </div>
     </div>

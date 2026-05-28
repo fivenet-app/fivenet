@@ -1141,6 +1141,12 @@
                         "UNIT_DECLINED": "Einsatz von Einheit abgelehnt",
                         "UNSPECIFIED": "Unbekannter Einsatz-Status"
                     }
+                },
+                "list": {
+                    "empty": {
+                        "title": "Alles unter Kontrolle",
+                        "description": "Keine aktiven Einsätze.\nDie Kaffeemaschine meldet aktuell mehr Aktivität als der Funkverkehr."
+                    }
                 }
             },
             "settings": {

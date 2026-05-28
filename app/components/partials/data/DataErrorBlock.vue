@@ -1,10 +1,11 @@
 <script lang="ts" setup>
+import type { AlertProps } from '@nuxt/ui';
 import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
 
 const props = withDefaults(
     defineProps<{
-        title?: string;
-        message?: string;
+        title?: AlertProps['title'];
+        message?: AlertProps['description'];
         error?: Error;
         retry?: () => Promise<unknown>;
         retryMessage?: string;

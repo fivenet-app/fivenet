@@ -19,7 +19,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const { activeChar, attr } = useAuth();
+const { activeChar, attr, can } = useAuth();
 
 const notifications = useNotificationsStore();
 
@@ -243,6 +243,14 @@ const formRef = useTemplateRef('formRef');
 
                 <template #right>
                     <PartialsBackButton fallback-to="/centrum" />
+
+                    <UTooltip v-if="can('centrum.UnitsService/CreateOrUpdateUnit').value" :text="$t('common.unit', 2)">
+                        <UButton icon="i-mdi-car-multiple" to="/centrum/units">
+                            <span class="hidden truncate sm:block">
+                                {{ $t('common.unit', 2) }}
+                            </span>
+                        </UButton>
+                    </UTooltip>
 
                     <UButton
                         v-if="!!settings"

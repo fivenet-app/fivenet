@@ -1141,6 +1141,12 @@
                         "UNIT_DECLINED": "Unit declined/didn't respond to Dispatch",
                         "UNSPECIFIED": "Unspecified"
                     }
+                },
+                "list": {
+                    "empty": {
+                        "title": "All Quiet at Dispatch",
+                        "description": "No active incidents.\nAt the moment, the busiest unit seems to be the coffee machine."
+                    }
                 }
             },
             "settings": {
