@@ -1,12 +1,16 @@
-export function useListReorder<T>(list: Ref<T[]>, options?: { onMove?: () => void }) {
-    function move(from: number, to: number) {
-        if (from === to) return;
-        if (from < 0 || from >= list.value.length) return;
-        if (to < 0 || to >= list.value.length) return;
+type ReorderListRef<T> = Ref<T[]> | Ref<T[] | undefined>;
 
-        const temp = list.value[from];
-        list.value[from] = list.value[to]!;
-        list.value[to] = temp!;
+export function useListReorder<T>(list: ReorderListRef<T>, options?: { onMove?: () => void }) {
+    function move(from: number, to: number) {
+        const items = list.value;
+        if (!items) return;
+        if (from === to) return;
+        if (from < 0 || from >= items.length) return;
+        if (to < 0 || to >= items.length) return;
+
+        const temp = items[from];
+        items[from] = items[to]!;
+        items[to] = temp!;
         options?.onMove?.();
     }
 
@@ -16,7 +20,7 @@ export function useListReorder<T>(list: Ref<T[]>, options?: { onMove?: () => voi
     }
 
     function moveDown(index: number) {
-        if (index >= list.value.length - 1) return; // bottom item, do nothing
+        if (!list.value || index >= list.value.length - 1) return; // bottom item, do nothing
         move(index, index + 1);
     }
 

@@ -12,7 +12,6 @@ import Pagination from '~/components/partials/Pagination.vue';
 import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/units';
 import { useDraggable } from 'vue-draggable-plus';
 
 const { t } = useI18n();
@@ -25,16 +24,23 @@ const notifications = useNotificationsStore();
 
 const centrumUnitsClient = await getCentrumUnitsClient();
 
-const { data: units, status, refresh, error } = useLazyAsyncData('centrum-units', () => listUnits());
+const {
+    data: units,
+    status,
+    refresh,
+    error,
+} = useLazyAsyncData('centrum-units', () => listUnits(), {
+    default: () => [] as Unit[],
+});
 
-async function listUnits(): Promise<ListUnitsResponse> {
+async function listUnits(): Promise<Unit[]> {
     try {
         const call = centrumUnitsClient.listUnits({
             status: [],
         });
         const { response } = await call;
 
-        return response;
+        return response.units;
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -60,6 +66,8 @@ async function deleteUnit(id: number): Promise<void> {
 }
 
 async function reorderUnits(units: Unit[]): Promise<void> {
+    if (!units.length) return;
+
     try {
         const call = centrumUnitsClient.reorderUnits({
             unitIds: units.map((item) => item.id),
@@ -80,9 +88,23 @@ async function reorderUnits(units: Unit[]): Promise<void> {
 }
 
 const appConfig = useAppConfig();
-const unitList = computed<Unit[]>(() => units.value?.units ?? []);
-const { moveUp, moveDown } = useListReorder(unitList, {
+
+const orderChanged = ref(false);
+const tableRef = useTemplateRef('tableRef');
+const tableBodyRef = computed<HTMLElement | null>(() => {
+    const rootEl = tableRef.value?.$el as HTMLElement | undefined;
+    return rootEl?.querySelector('tbody.unit-list-table') ?? null;
+});
+
+const { moveUp, moveDown } = useListReorder(units, {
     onMove: () => (orderChanged.value = true),
+});
+
+useDraggable(tableBodyRef, units, {
+    animation: 150,
+    handle: '.handle-choice',
+    draggable: 'tr',
+    onUpdate: () => (orderChanged.value = true),
 });
 
 const columns = computed<TableColumn<Unit>[]>(() => [
@@ -236,13 +258,6 @@ const columns = computed<TableColumn<Unit>[]>(() => [
 
 const unitCreateOrUpdate = overlay.create(UnitCreateOrUpdateModal);
 const confirmModal = overlay.create(ConfirmModal);
-
-const orderChanged = ref(false);
-useDraggable<Unit>('.unit-list-table', unitList, {
-    animation: 150,
-    handle: '.handle-choice',
-    onSort: () => (orderChanged.value = true),
-});
 </script>
 
 <template>
@@ -257,7 +272,12 @@ useDraggable<Unit>('.unit-list-table', unitList, {
                     <PartialsBackButton fallback-to="/centrum" />
 
                     <UTooltip v-if="orderChanged" :text="$t('common.save', 1)">
-                        <UButton color="primary" variant="outline" icon="i-mdi-content-save" @click="reorderUnits(unitList)" />
+                        <UButton
+                            color="primary"
+                            variant="outline"
+                            icon="i-mdi-content-save"
+                            @click="() => reorderUnits(units)"
+                        />
                     </UTooltip>
 
                     <UTooltip v-if="can('centrum.CentrumService/Stream').value" :text="$t('common.setting', 2)">
@@ -298,12 +318,12 @@ useDraggable<Unit>('.unit-list-table', unitList, {
 
             <UTable
                 v-else
+                ref="tableRef"
                 class="flex-1"
                 :loading="isRequestPending(status)"
                 :columns="columns"
-                :data="unitList"
+                :data="units"
                 :empty="$t('common.not_found', [$t('common.unit', 2)])"
-                :sorting-options="{ manualSorting: true }"
                 :pagination-options="{ manualPagination: true }"
                 :ui="{ tbody: 'unit-list-table' }"
             />
