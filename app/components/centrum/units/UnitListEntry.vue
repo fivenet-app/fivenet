@@ -29,6 +29,7 @@ const isBright = computed(() => isColorBright(unitColorHex.value));
         >
             {{ unit.initials }}
         </div>
+
         <div class="flex flex-1 items-center justify-between truncate border border-neutral-200">
             <div class="flex-1 px-1 py-2 text-sm">
                 <span class="font-medium">{{ unit.name }}</span>
@@ -37,6 +38,7 @@ const isBright = computed(() => isColorBright(unitColorHex.value));
                 </p>
             </div>
         </div>
+
         <div
             class="flex w-20 shrink-0 items-center justify-center rounded-r-md border-y border-r text-center text-sm font-medium"
             :class="unitStatusToBGColor(unit.status?.status)"

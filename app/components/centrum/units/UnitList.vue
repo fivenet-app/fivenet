@@ -36,7 +36,7 @@ const grouped = computedAsync(async () => {
                     return aHasUsers ? -1 : 1;
                 }
 
-                return (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.name.localeCompare(b.name);
+                return a.sortOrder - b.sortOrder || a.name.localeCompare(b.name);
             }),
         );
 
