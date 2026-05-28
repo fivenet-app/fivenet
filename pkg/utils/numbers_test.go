@@ -25,7 +25,15 @@ func TestToUint32Saturated(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			got := ToUint32Saturated(tt.in)
-			assert.Equal(t, tt.want, got, "ToUint32Saturated(%d) = %d, want %d", tt.in, got, tt.want)
+			assert.Equal(
+				t,
+				tt.want,
+				got,
+				"ToUint32Saturated(%d) = %d, want %d",
+				tt.in,
+				got,
+				tt.want,
+			)
 		})
 	}
 }

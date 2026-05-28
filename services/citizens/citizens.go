@@ -391,7 +391,8 @@ func (s *Server) GetUser(
 	}
 
 	// Check if user can see licenses and fetch them
-	if !infoOnly && fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueLicenses) {
+	if !infoOnly &&
+		fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueLicenses) {
 		tCitizenLicenses := table.FivenetUserLicenses
 		tLicenses := table.FivenetLicenses
 

@@ -41,14 +41,80 @@ func TestBuildFakeUserProfileDeterministic(t *testing.T) {
 	d2 := newTestDemo(42)
 	p2 := d2.buildFakeUserProfile(1, "demochar", licenses)
 
-	assert.Equal(t, p2.Identifier, p1.Identifier, "identifier mismatch: %q vs %q", p1.Identifier, p2.Identifier)
-	assert.Equal(t, p2.Firstname, p1.Firstname, "name mismatch: %q %q vs %q %q", p1.Firstname, p1.Lastname, p2.Firstname, p2.Lastname)
-	assert.Equal(t, p2.Lastname, p1.Lastname, "name mismatch: %q %q vs %q %q", p1.Firstname, p1.Lastname, p2.Firstname, p2.Lastname)
-	assert.Equal(t, p2.PrimaryJob, p1.PrimaryJob, "primary job mismatch: %s/%d vs %s/%d", p1.PrimaryJob, p1.PrimaryJobGrade, p2.PrimaryJob, p2.PrimaryJobGrade)
-	assert.Equal(t, p2.PrimaryJobGrade, p1.PrimaryJobGrade, "primary job mismatch: %s/%d vs %s/%d", p1.PrimaryJob, p1.PrimaryJobGrade, p2.PrimaryJob, p2.PrimaryJobGrade)
-	assert.Equal(t, p2.PhoneNumber, p1.PhoneNumber, "phone mismatch: %q vs %q", p1.PhoneNumber, p2.PhoneNumber)
-	assert.Equal(t, len(p2.Jobs), len(p1.Jobs), "profile sizes mismatch: jobs %d/%d licenses %d/%d", len(p1.Jobs), len(p2.Jobs), len(p1.Licenses), len(p2.Licenses))
-	assert.Equal(t, len(p2.Licenses), len(p1.Licenses), "profile sizes mismatch: jobs %d/%d licenses %d/%d", len(p1.Jobs), len(p2.Jobs), len(p1.Licenses), len(p2.Licenses))
+	assert.Equal(
+		t,
+		p2.Identifier,
+		p1.Identifier,
+		"identifier mismatch: %q vs %q",
+		p1.Identifier,
+		p2.Identifier,
+	)
+	assert.Equal(
+		t,
+		p2.Firstname,
+		p1.Firstname,
+		"name mismatch: %q %q vs %q %q",
+		p1.Firstname,
+		p1.Lastname,
+		p2.Firstname,
+		p2.Lastname,
+	)
+	assert.Equal(
+		t,
+		p2.Lastname,
+		p1.Lastname,
+		"name mismatch: %q %q vs %q %q",
+		p1.Firstname,
+		p1.Lastname,
+		p2.Firstname,
+		p2.Lastname,
+	)
+	assert.Equal(
+		t,
+		p2.PrimaryJob,
+		p1.PrimaryJob,
+		"primary job mismatch: %s/%d vs %s/%d",
+		p1.PrimaryJob,
+		p1.PrimaryJobGrade,
+		p2.PrimaryJob,
+		p2.PrimaryJobGrade,
+	)
+	assert.Equal(
+		t,
+		p2.PrimaryJobGrade,
+		p1.PrimaryJobGrade,
+		"primary job mismatch: %s/%d vs %s/%d",
+		p1.PrimaryJob,
+		p1.PrimaryJobGrade,
+		p2.PrimaryJob,
+		p2.PrimaryJobGrade,
+	)
+	assert.Equal(
+		t,
+		p2.PhoneNumber,
+		p1.PhoneNumber,
+		"phone mismatch: %q vs %q",
+		p1.PhoneNumber,
+		p2.PhoneNumber,
+	)
+	assert.Len(
+		t,
+		p1.Jobs, len(p2.Jobs),
+		"profile sizes mismatch: jobs %d/%d licenses %d/%d",
+		len(p1.Jobs),
+		len(p2.Jobs),
+		len(p1.Licenses),
+		len(p2.Licenses),
+	)
+	assert.Len(
+		t,
+		p1.Licenses, len(p2.Licenses),
+		"profile sizes mismatch: jobs %d/%d licenses %d/%d",
+		len(p1.Jobs),
+		len(p2.Jobs),
+		len(p1.Licenses),
+		len(p2.Licenses),
+	)
 }
 
 func TestPickUserJobsFromConfiguredPool(t *testing.T) {
@@ -85,9 +151,37 @@ func TestBuildTargetJobUserProfileUsesTargetJob(t *testing.T) {
 	d.cfg.Demo.TargetJob = "ambulance"
 
 	profile := d.buildTargetJobUserProfile(3, []string{"drive"})
-	assert.Equal(t, "ambulance", profile.PrimaryJob, "expected primary job ambulance, got %q", profile.PrimaryJob)
-	require.Len(t, profile.Jobs, 1, "expected exactly one primary ambulance job, got %+v", profile.Jobs)
-	assert.Equal(t, "ambulance", profile.Jobs[0].Job, "expected exactly one primary ambulance job, got %+v", profile.Jobs)
-	assert.True(t, profile.Jobs[0].IsPrimary, "expected exactly one primary ambulance job, got %+v", profile.Jobs)
-	assert.True(t, strings.HasPrefix(profile.Identifier, "char1:"), "expected char1 identifier, got %q", profile.Identifier)
+	assert.Equal(
+		t,
+		"ambulance",
+		profile.PrimaryJob,
+		"expected primary job ambulance, got %q",
+		profile.PrimaryJob,
+	)
+	require.Len(
+		t,
+		profile.Jobs,
+		1,
+		"expected exactly one primary ambulance job, got %+v",
+		profile.Jobs,
+	)
+	assert.Equal(
+		t,
+		"ambulance",
+		profile.Jobs[0].Job,
+		"expected exactly one primary ambulance job, got %+v",
+		profile.Jobs,
+	)
+	assert.True(
+		t,
+		profile.Jobs[0].IsPrimary,
+		"expected exactly one primary ambulance job, got %+v",
+		profile.Jobs,
+	)
+	assert.True(
+		t,
+		strings.HasPrefix(profile.Identifier, "char1:"),
+		"expected char1 identifier, got %q",
+		profile.Identifier,
+	)
 }

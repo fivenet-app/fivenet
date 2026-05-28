@@ -45,7 +45,11 @@ func (m *natsServer) Setup() {
 	// Start the server via goroutine
 	go ns.Start()
 	// Wait for server to be ready for connections
-	require.True(m.t, ns.ReadyForConnections(8*time.Second), "nats: not ready connection after 8 seconds")
+	require.True(
+		m.t,
+		ns.ReadyForConnections(8*time.Second),
+		"nats: not ready connection after 8 seconds",
+	)
 	m.server = ns
 
 	// Auto stop server when test is done

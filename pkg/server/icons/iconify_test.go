@@ -8,6 +8,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/httperrors"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestValidateIconRequest(t *testing.T) {
@@ -151,14 +152,14 @@ func TestBuildTargetURL(t *testing.T) {
 				return
 			}
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			if tc.wantURL != "" {
 				assert.Equal(t, tc.wantURL, gotURL)
 			}
 
 			if tc.assertSafe {
 				parsed, parseErr := url.Parse(gotURL)
-				assert.NoError(t, parseErr)
+				require.NoError(t, parseErr)
 				assert.Equal(t, "home&foo=bar#frag", parsed.Query().Get("icons"))
 				assert.Empty(t, parsed.Query().Get("foo"))
 				assert.Empty(t, parsed.Fragment)

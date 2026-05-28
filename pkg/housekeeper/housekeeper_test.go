@@ -76,10 +76,10 @@ func TestSoftDeleteJobData(t *testing.T) {
 	// Execute the function
 	var r int64
 	r, err = housekeeper.SoftDeleteJobData(ctx, table, jobName)
-	assert.NoError(t, err, "SoftDeleteJobData failed (%d)", r)
+	require.NoError(t, err, "SoftDeleteJobData failed (%d)", r)
 
 	// Ensure all expectations were met
-	assert.NoError(t, mock.ExpectationsWereMet(), "unmet expectations")
+	require.NoError(t, mock.ExpectationsWereMet(), "unmet expectations")
 }
 
 func TestMarkRowsAsDeleted_NoParentJobColumnLeakOnChildWithoutJob(t *testing.T) {
@@ -192,8 +192,8 @@ func TestHardDelete(t *testing.T) {
 	// Execute the function
 	var r int64
 	r, err = housekeeper.HardDelete(ctx, table)
-	assert.NoError(t, err, "HardDelete failed (%d)", r)
+	require.NoError(t, err, "HardDelete failed (%d)", r)
 
 	// Ensure all expectations were met
-	assert.NoError(t, mock.ExpectationsWereMet(), "unmet expectations")
+	require.NoError(t, mock.ExpectationsWereMet(), "unmet expectations")
 }

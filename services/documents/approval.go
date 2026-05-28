@@ -1007,8 +1007,8 @@ func (s *Server) DeleteApprovalTasks(
 		tApprovalTasks.DocumentID.EQ(mysql.Int64(pol.GetDocumentId())),
 		tApprovalTasks.SnapshotDate.EQ(mysql.DateTimeT(snap)),
 	)
-	deleteLimit := int64(1)
 
+	var deleteLimit int64
 	// Delete all pending?
 	if req.GetDeleteAllPending() {
 		condition = condition.AND(

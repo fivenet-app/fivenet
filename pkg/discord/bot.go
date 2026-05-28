@@ -574,7 +574,7 @@ func (b *Bot) handlePrivateMessage(ev *gateway.MessageCreateEvent) {
 	}); err != nil {
 		b.logger.Error(
 			"failed to send message via direct message",
-			zap.Int64("discord_user_id", int64(ev.Author.ID)),
+			zap.Uint64("discord_user_id", uint64(ev.Author.ID)),
 			zap.Error(err),
 		)
 	}

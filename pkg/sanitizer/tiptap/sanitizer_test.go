@@ -287,7 +287,14 @@ func TestSanitizeMentionNode(t *testing.T) {
 	require.True(t, ok, "sanitizeNode mention returned not ok")
 
 	gotType, _ := out["type"].(string)
-	assert.Equal(t, NodeTypeMention, gotType, "sanitized type = %q, want %q", gotType, NodeTypeMention)
+	assert.Equal(
+		t,
+		NodeTypeMention,
+		gotType,
+		"sanitized type = %q, want %q",
+		gotType,
+		NodeTypeMention,
+	)
 	attrs, _ := out["attrs"].(map[string]any)
 	assert.Equal(t, "user-42", attrs["id"], "sanitized mention id = %v, want user-42", attrs["id"])
 	assert.Equal(t, "Ada", attrs["label"], "sanitized mention label = %v, want Ada", attrs["label"])
@@ -337,7 +344,14 @@ func TestSanitizeNestedContentAndHeadingExtraction(t *testing.T) {
 	out, stats, err := Sanitize(doc, 0, 10)
 	require.NoError(t, err, "sanitize returned error")
 
-	assert.Equal(t, "First Heading", stats.FirstHeading, "first heading = %q, want %q", stats.FirstHeading, "First Heading")
+	assert.Equal(
+		t,
+		"First Heading",
+		stats.FirstHeading,
+		"first heading = %q, want %q",
+		stats.FirstHeading,
+		"First Heading",
+	)
 	assert.Equal(t, 5, stats.Words, "word count = %d, want 5", stats.Words)
 
 	content, _ := out["content"].([]any)
@@ -443,7 +457,14 @@ func TestSanitizeUsesFirstNonEmptyParagraphWhenNoHeading(t *testing.T) {
 
 	_, stats, err := Sanitize(doc, 0, 10)
 	require.NoError(t, err, "sanitize returned error")
-	assert.Equal(t, "Fallback Title", stats.FirstHeading, "first heading fallback = %q, want %q", stats.FirstHeading, "Fallback Title")
+	assert.Equal(
+		t,
+		"Fallback Title",
+		stats.FirstHeading,
+		"first heading fallback = %q, want %q",
+		stats.FirstHeading,
+		"Fallback Title",
+	)
 }
 
 func TestSanitizePrefersHeadingOverParagraphFallback(t *testing.T) {
@@ -471,5 +492,12 @@ func TestSanitizePrefersHeadingOverParagraphFallback(t *testing.T) {
 
 	_, stats, err := Sanitize(doc, 0, 10)
 	require.NoError(t, err, "sanitize returned error")
-	assert.Equal(t, "Real Heading", stats.FirstHeading, "first heading = %q, want %q", stats.FirstHeading, "Real Heading")
+	assert.Equal(
+		t,
+		"Real Heading",
+		stats.FirstHeading,
+		"first heading = %q, want %q",
+		stats.FirstHeading,
+		"Real Heading",
+	)
 }

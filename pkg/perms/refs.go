@@ -104,7 +104,10 @@ func NewStringListAttrRef(perm PermissionRef, key Key) AttrRef[StringListAttr] {
 	return AttrRef[StringListAttr]{perm: perm, key: key}
 }
 
-func NewTypedStringListAttrRef[T StringListValue](perm PermissionRef, key Key) StringListAttrRef[T] {
+func NewTypedStringListAttrRef[T StringListValue](
+	perm PermissionRef,
+	key Key,
+) StringListAttrRef[T] {
 	return StringListAttrRef[T]{
 		attr: NewStringListAttrRef(perm, key),
 	}
