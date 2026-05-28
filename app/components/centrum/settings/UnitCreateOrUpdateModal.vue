@@ -86,6 +86,7 @@ async function createOrUpdateUnit(values: Schema): Promise<void> {
                 users: [],
                 homePostal: values.homePostal,
                 access: values.access,
+                sortOrder: props.unit?.sortOrder ?? 0,
             },
         });
         const { response } = await call;
@@ -138,9 +139,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <USlideover
-        :title="unit && unit?.id ? $t('components.centrum.units.update_unit') : $t('components.centrum.units.create_unit')"
-    >
+    <UModal :title="unit?.id ? $t('components.centrum.units.update_unit') : $t('components.centrum.units.create_unit')">
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="name" :label="$t('common.name')">
@@ -186,7 +185,7 @@ const formRef = useTemplateRef('formRef');
                 </UFormField>
 
                 <UFormField class="flex-1" name="color" :label="$t('common.color')">
-                    <ColorPicker v-model="state.color" />
+                    <ColorPicker v-model="state.color" class="w-full" />
                 </UFormField>
 
                 <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
@@ -239,5 +238,5 @@ const formRef = useTemplateRef('formRef');
                 />
             </UFieldGroup>
         </template>
-    </USlideover>
+    </UModal>
 </template>

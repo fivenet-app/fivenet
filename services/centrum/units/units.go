@@ -294,6 +294,7 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id int64) error {
 			tUnits.CreatedAt,
 			tUnits.UpdatedAt,
 			tUnits.Job,
+			tUnits.SortOrder,
 			tUnits.Name,
 			tUnits.Initials,
 			tUnits.Color,
@@ -313,7 +314,9 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id int64) error {
 		WHERE(condition).
 		ORDER_BY(
 			tUnits.Job.ASC(),
+			tUnits.SortOrder.ASC(),
 			tUnits.Name.ASC(),
+			tUnits.ID.ASC(),
 		)
 
 	units := []*centrumunits.Unit{}

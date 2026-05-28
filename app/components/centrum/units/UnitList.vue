@@ -28,15 +28,14 @@ const grouped = computedAsync(async () => {
         .sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status))
         .forEach((group) =>
             group.units.sort((a, b) => {
-                if (a.users.length === b.users.length) {
-                    return 0;
-                } else if (a.users.length === 0) {
-                    return 1;
-                } else if (b.users.length === 0) {
-                    return -1;
-                } else {
-                    return a.name.localeCompare(b.name);
+                const aHasUsers = a.users.length > 0;
+                const bHasUsers = b.users.length > 0;
+
+                if (aHasUsers !== bHasUsers) {
+                    return aHasUsers ? -1 : 1;
                 }
+
+                return (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.name.localeCompare(b.name);
             }),
         );
 

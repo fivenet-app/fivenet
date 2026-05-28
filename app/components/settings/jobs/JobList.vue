@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { UButton } from '#components';
 import type { TableColumn } from '@nuxt/ui';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 
@@ -120,7 +120,6 @@ const expanded = ref({});
                     :error="error"
                     :retry="refresh"
                 />
-                <DataPendingBlock v-else-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.job', 2)])" />
 
                 <UTable
                     v-else

@@ -286,6 +286,172 @@ func (b0 ListUnitsResponse_builder) Build() *ListUnitsResponse {
 	return m0
 }
 
+type ListUnitActivityRequest struct {
+	state                 protoimpl.MessageState      `protogen:"opaque.v1"`
+	xxx_hidden_Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
+	xxx_hidden_Id         int64                       `protobuf:"varint,2,opt,name=id,proto3"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *ListUnitActivityRequest) Reset() {
+	*x = ListUnitActivityRequest{}
+	mi := &file_services_centrum_units_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUnitActivityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUnitActivityRequest) ProtoMessage() {}
+
+func (x *ListUnitActivityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_centrum_units_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListUnitActivityRequest) GetPagination() *database.PaginationRequest {
+	if x != nil {
+		return x.xxx_hidden_Pagination
+	}
+	return nil
+}
+
+func (x *ListUnitActivityRequest) GetId() int64 {
+	if x != nil {
+		return x.xxx_hidden_Id
+	}
+	return 0
+}
+
+func (x *ListUnitActivityRequest) SetPagination(v *database.PaginationRequest) {
+	x.xxx_hidden_Pagination = v
+}
+
+func (x *ListUnitActivityRequest) SetId(v int64) {
+	x.xxx_hidden_Id = v
+}
+
+func (x *ListUnitActivityRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Pagination != nil
+}
+
+func (x *ListUnitActivityRequest) ClearPagination() {
+	x.xxx_hidden_Pagination = nil
+}
+
+type ListUnitActivityRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationRequest
+	Id         int64
+}
+
+func (b0 ListUnitActivityRequest_builder) Build() *ListUnitActivityRequest {
+	m0 := &ListUnitActivityRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Pagination = b.Pagination
+	x.xxx_hidden_Id = b.Id
+	return m0
+}
+
+type ListUnitActivityResponse struct {
+	state                 protoimpl.MessageState       `protogen:"opaque.v1"`
+	xxx_hidden_Pagination *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3"`
+	xxx_hidden_Activity   *[]*units.UnitStatus         `protobuf:"bytes,2,rep,name=activity,proto3"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *ListUnitActivityResponse) Reset() {
+	*x = ListUnitActivityResponse{}
+	mi := &file_services_centrum_units_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUnitActivityResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUnitActivityResponse) ProtoMessage() {}
+
+func (x *ListUnitActivityResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_centrum_units_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListUnitActivityResponse) GetPagination() *database.PaginationResponse {
+	if x != nil {
+		return x.xxx_hidden_Pagination
+	}
+	return nil
+}
+
+func (x *ListUnitActivityResponse) GetActivity() []*units.UnitStatus {
+	if x != nil {
+		if x.xxx_hidden_Activity != nil {
+			return *x.xxx_hidden_Activity
+		}
+	}
+	return nil
+}
+
+func (x *ListUnitActivityResponse) SetPagination(v *database.PaginationResponse) {
+	x.xxx_hidden_Pagination = v
+}
+
+func (x *ListUnitActivityResponse) SetActivity(v []*units.UnitStatus) {
+	x.xxx_hidden_Activity = &v
+}
+
+func (x *ListUnitActivityResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Pagination != nil
+}
+
+func (x *ListUnitActivityResponse) ClearPagination() {
+	x.xxx_hidden_Pagination = nil
+}
+
+type ListUnitActivityResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Activity   []*units.UnitStatus
+}
+
+func (b0 ListUnitActivityResponse_builder) Build() *ListUnitActivityResponse {
+	m0 := &ListUnitActivityResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Pagination = b.Pagination
+	x.xxx_hidden_Activity = &b.Activity
+	return m0
+}
+
 type CreateOrUpdateUnitRequest struct {
 	state           protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Unit *units.Unit            `protobuf:"bytes,1,opt,name=unit,proto3"`
@@ -295,7 +461,7 @@ type CreateOrUpdateUnitRequest struct {
 
 func (x *CreateOrUpdateUnitRequest) Reset() {
 	*x = CreateOrUpdateUnitRequest{}
-	mi := &file_services_centrum_units_proto_msgTypes[4]
+	mi := &file_services_centrum_units_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -307,7 +473,7 @@ func (x *CreateOrUpdateUnitRequest) String() string {
 func (*CreateOrUpdateUnitRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateUnitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_units_proto_msgTypes[4]
+	mi := &file_services_centrum_units_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -363,7 +529,7 @@ type CreateOrUpdateUnitResponse struct {
 
 func (x *CreateOrUpdateUnitResponse) Reset() {
 	*x = CreateOrUpdateUnitResponse{}
-	mi := &file_services_centrum_units_proto_msgTypes[5]
+	mi := &file_services_centrum_units_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -375,7 +541,7 @@ func (x *CreateOrUpdateUnitResponse) String() string {
 func (*CreateOrUpdateUnitResponse) ProtoMessage() {}
 
 func (x *CreateOrUpdateUnitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_units_proto_msgTypes[5]
+	mi := &file_services_centrum_units_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -431,7 +597,7 @@ type DeleteUnitRequest struct {
 
 func (x *DeleteUnitRequest) Reset() {
 	*x = DeleteUnitRequest{}
-	mi := &file_services_centrum_units_proto_msgTypes[6]
+	mi := &file_services_centrum_units_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -443,7 +609,7 @@ func (x *DeleteUnitRequest) String() string {
 func (*DeleteUnitRequest) ProtoMessage() {}
 
 func (x *DeleteUnitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_units_proto_msgTypes[6]
+	mi := &file_services_centrum_units_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -487,7 +653,7 @@ type DeleteUnitResponse struct {
 
 func (x *DeleteUnitResponse) Reset() {
 	*x = DeleteUnitResponse{}
-	mi := &file_services_centrum_units_proto_msgTypes[7]
+	mi := &file_services_centrum_units_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -499,7 +665,7 @@ func (x *DeleteUnitResponse) String() string {
 func (*DeleteUnitResponse) ProtoMessage() {}
 
 func (x *DeleteUnitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_units_proto_msgTypes[7]
+	mi := &file_services_centrum_units_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -522,6 +688,234 @@ func (b0 DeleteUnitResponse_builder) Build() *DeleteUnitResponse {
 	return m0
 }
 
+type ReorderUnitsRequest struct {
+	state              protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_UnitIds []int64                `protobuf:"varint,1,rep,packed,name=unit_ids,json=unitIds,proto3"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *ReorderUnitsRequest) Reset() {
+	*x = ReorderUnitsRequest{}
+	mi := &file_services_centrum_units_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReorderUnitsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReorderUnitsRequest) ProtoMessage() {}
+
+func (x *ReorderUnitsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_centrum_units_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ReorderUnitsRequest) GetUnitIds() []int64 {
+	if x != nil {
+		return x.xxx_hidden_UnitIds
+	}
+	return nil
+}
+
+func (x *ReorderUnitsRequest) SetUnitIds(v []int64) {
+	x.xxx_hidden_UnitIds = v
+}
+
+type ReorderUnitsRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UnitIds []int64
+}
+
+func (b0 ReorderUnitsRequest_builder) Build() *ReorderUnitsRequest {
+	m0 := &ReorderUnitsRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_UnitIds = b.UnitIds
+	return m0
+}
+
+type ReorderUnitsResponse struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReorderUnitsResponse) Reset() {
+	*x = ReorderUnitsResponse{}
+	mi := &file_services_centrum_units_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReorderUnitsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReorderUnitsResponse) ProtoMessage() {}
+
+func (x *ReorderUnitsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_centrum_units_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type ReorderUnitsResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ReorderUnitsResponse_builder) Build() *ReorderUnitsResponse {
+	m0 := &ReorderUnitsResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
+type AssignUnitRequest struct {
+	state               protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_UnitId   int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3"`
+	xxx_hidden_ToAdd    []int32                `protobuf:"varint,2,rep,packed,name=to_add,json=toAdd,proto3"`
+	xxx_hidden_ToRemove []int32                `protobuf:"varint,3,rep,packed,name=to_remove,json=toRemove,proto3"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *AssignUnitRequest) Reset() {
+	*x = AssignUnitRequest{}
+	mi := &file_services_centrum_units_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AssignUnitRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AssignUnitRequest) ProtoMessage() {}
+
+func (x *AssignUnitRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_centrum_units_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *AssignUnitRequest) GetUnitId() int64 {
+	if x != nil {
+		return x.xxx_hidden_UnitId
+	}
+	return 0
+}
+
+func (x *AssignUnitRequest) GetToAdd() []int32 {
+	if x != nil {
+		return x.xxx_hidden_ToAdd
+	}
+	return nil
+}
+
+func (x *AssignUnitRequest) GetToRemove() []int32 {
+	if x != nil {
+		return x.xxx_hidden_ToRemove
+	}
+	return nil
+}
+
+func (x *AssignUnitRequest) SetUnitId(v int64) {
+	x.xxx_hidden_UnitId = v
+}
+
+func (x *AssignUnitRequest) SetToAdd(v []int32) {
+	x.xxx_hidden_ToAdd = v
+}
+
+func (x *AssignUnitRequest) SetToRemove(v []int32) {
+	x.xxx_hidden_ToRemove = v
+}
+
+type AssignUnitRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UnitId   int64
+	ToAdd    []int32
+	ToRemove []int32
+}
+
+func (b0 AssignUnitRequest_builder) Build() *AssignUnitRequest {
+	m0 := &AssignUnitRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_UnitId = b.UnitId
+	x.xxx_hidden_ToAdd = b.ToAdd
+	x.xxx_hidden_ToRemove = b.ToRemove
+	return m0
+}
+
+type AssignUnitResponse struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AssignUnitResponse) Reset() {
+	*x = AssignUnitResponse{}
+	mi := &file_services_centrum_units_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AssignUnitResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AssignUnitResponse) ProtoMessage() {}
+
+func (x *AssignUnitResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_centrum_units_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type AssignUnitResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 AssignUnitResponse_builder) Build() *AssignUnitResponse {
+	m0 := &AssignUnitResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
 type UpdateUnitStatusRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_UnitId      int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3"`
@@ -536,7 +930,7 @@ type UpdateUnitStatusRequest struct {
 
 func (x *UpdateUnitStatusRequest) Reset() {
 	*x = UpdateUnitStatusRequest{}
-	mi := &file_services_centrum_units_proto_msgTypes[8]
+	mi := &file_services_centrum_units_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -548,7 +942,7 @@ func (x *UpdateUnitStatusRequest) String() string {
 func (*UpdateUnitStatusRequest) ProtoMessage() {}
 
 func (x *UpdateUnitStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_units_proto_msgTypes[8]
+	mi := &file_services_centrum_units_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -669,7 +1063,7 @@ type UpdateUnitStatusResponse struct {
 
 func (x *UpdateUnitStatusResponse) Reset() {
 	*x = UpdateUnitStatusResponse{}
-	mi := &file_services_centrum_units_proto_msgTypes[9]
+	mi := &file_services_centrum_units_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -681,7 +1075,7 @@ func (x *UpdateUnitStatusResponse) String() string {
 func (*UpdateUnitStatusResponse) ProtoMessage() {}
 
 func (x *UpdateUnitStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_units_proto_msgTypes[9]
+	mi := &file_services_centrum_units_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -704,300 +1098,6 @@ func (b0 UpdateUnitStatusResponse_builder) Build() *UpdateUnitStatusResponse {
 	return m0
 }
 
-type AssignUnitRequest struct {
-	state               protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_UnitId   int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3"`
-	xxx_hidden_ToAdd    []int32                `protobuf:"varint,2,rep,packed,name=to_add,json=toAdd,proto3"`
-	xxx_hidden_ToRemove []int32                `protobuf:"varint,3,rep,packed,name=to_remove,json=toRemove,proto3"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
-}
-
-func (x *AssignUnitRequest) Reset() {
-	*x = AssignUnitRequest{}
-	mi := &file_services_centrum_units_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AssignUnitRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AssignUnitRequest) ProtoMessage() {}
-
-func (x *AssignUnitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_units_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *AssignUnitRequest) GetUnitId() int64 {
-	if x != nil {
-		return x.xxx_hidden_UnitId
-	}
-	return 0
-}
-
-func (x *AssignUnitRequest) GetToAdd() []int32 {
-	if x != nil {
-		return x.xxx_hidden_ToAdd
-	}
-	return nil
-}
-
-func (x *AssignUnitRequest) GetToRemove() []int32 {
-	if x != nil {
-		return x.xxx_hidden_ToRemove
-	}
-	return nil
-}
-
-func (x *AssignUnitRequest) SetUnitId(v int64) {
-	x.xxx_hidden_UnitId = v
-}
-
-func (x *AssignUnitRequest) SetToAdd(v []int32) {
-	x.xxx_hidden_ToAdd = v
-}
-
-func (x *AssignUnitRequest) SetToRemove(v []int32) {
-	x.xxx_hidden_ToRemove = v
-}
-
-type AssignUnitRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	UnitId   int64
-	ToAdd    []int32
-	ToRemove []int32
-}
-
-func (b0 AssignUnitRequest_builder) Build() *AssignUnitRequest {
-	m0 := &AssignUnitRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_UnitId = b.UnitId
-	x.xxx_hidden_ToAdd = b.ToAdd
-	x.xxx_hidden_ToRemove = b.ToRemove
-	return m0
-}
-
-type AssignUnitResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AssignUnitResponse) Reset() {
-	*x = AssignUnitResponse{}
-	mi := &file_services_centrum_units_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AssignUnitResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AssignUnitResponse) ProtoMessage() {}
-
-func (x *AssignUnitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_units_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-type AssignUnitResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-}
-
-func (b0 AssignUnitResponse_builder) Build() *AssignUnitResponse {
-	m0 := &AssignUnitResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	return m0
-}
-
-type ListUnitActivityRequest struct {
-	state                 protoimpl.MessageState      `protogen:"opaque.v1"`
-	xxx_hidden_Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Id         int64                       `protobuf:"varint,2,opt,name=id,proto3"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *ListUnitActivityRequest) Reset() {
-	*x = ListUnitActivityRequest{}
-	mi := &file_services_centrum_units_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListUnitActivityRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListUnitActivityRequest) ProtoMessage() {}
-
-func (x *ListUnitActivityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_units_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListUnitActivityRequest) GetPagination() *database.PaginationRequest {
-	if x != nil {
-		return x.xxx_hidden_Pagination
-	}
-	return nil
-}
-
-func (x *ListUnitActivityRequest) GetId() int64 {
-	if x != nil {
-		return x.xxx_hidden_Id
-	}
-	return 0
-}
-
-func (x *ListUnitActivityRequest) SetPagination(v *database.PaginationRequest) {
-	x.xxx_hidden_Pagination = v
-}
-
-func (x *ListUnitActivityRequest) SetId(v int64) {
-	x.xxx_hidden_Id = v
-}
-
-func (x *ListUnitActivityRequest) HasPagination() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Pagination != nil
-}
-
-func (x *ListUnitActivityRequest) ClearPagination() {
-	x.xxx_hidden_Pagination = nil
-}
-
-type ListUnitActivityRequest_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Pagination *database.PaginationRequest
-	Id         int64
-}
-
-func (b0 ListUnitActivityRequest_builder) Build() *ListUnitActivityRequest {
-	m0 := &ListUnitActivityRequest{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Pagination = b.Pagination
-	x.xxx_hidden_Id = b.Id
-	return m0
-}
-
-type ListUnitActivityResponse struct {
-	state                 protoimpl.MessageState       `protogen:"opaque.v1"`
-	xxx_hidden_Pagination *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Activity   *[]*units.UnitStatus         `protobuf:"bytes,2,rep,name=activity,proto3"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *ListUnitActivityResponse) Reset() {
-	*x = ListUnitActivityResponse{}
-	mi := &file_services_centrum_units_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListUnitActivityResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListUnitActivityResponse) ProtoMessage() {}
-
-func (x *ListUnitActivityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_units_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-func (x *ListUnitActivityResponse) GetPagination() *database.PaginationResponse {
-	if x != nil {
-		return x.xxx_hidden_Pagination
-	}
-	return nil
-}
-
-func (x *ListUnitActivityResponse) GetActivity() []*units.UnitStatus {
-	if x != nil {
-		if x.xxx_hidden_Activity != nil {
-			return *x.xxx_hidden_Activity
-		}
-	}
-	return nil
-}
-
-func (x *ListUnitActivityResponse) SetPagination(v *database.PaginationResponse) {
-	x.xxx_hidden_Pagination = v
-}
-
-func (x *ListUnitActivityResponse) SetActivity(v []*units.UnitStatus) {
-	x.xxx_hidden_Activity = &v
-}
-
-func (x *ListUnitActivityResponse) HasPagination() bool {
-	if x == nil {
-		return false
-	}
-	return x.xxx_hidden_Pagination != nil
-}
-
-func (x *ListUnitActivityResponse) ClearPagination() {
-	x.xxx_hidden_Pagination = nil
-}
-
-type ListUnitActivityResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	Pagination *database.PaginationResponse
-	Activity   []*units.UnitStatus
-}
-
-func (b0 ListUnitActivityResponse_builder) Build() *ListUnitActivityResponse {
-	m0 := &ListUnitActivityResponse{}
-	b, x := &b0, m0
-	_, _ = b, x
-	x.xxx_hidden_Pagination = b.Pagination
-	x.xxx_hidden_Activity = &b.Activity
-	return m0
-}
-
 var File_services_centrum_units_proto protoreflect.FileDescriptor
 
 const file_services_centrum_units_proto_rawDesc = "" +
@@ -1012,27 +1112,7 @@ const file_services_centrum_units_proto_rawDesc = "" +
 	"\x10ListUnitsRequest\x12;\n" +
 	"\x06status\x18\x01 \x03(\x0e2#.resources.centrum.units.StatusUnitR\x06status\"N\n" +
 	"\x11ListUnitsResponse\x129\n" +
-	"\x05units\x18\x01 \x03(\v2\x1d.resources.centrum.units.UnitB\x04\xc8\xf3\x18\x01R\x05units\"N\n" +
-	"\x19CreateOrUpdateUnitRequest\x121\n" +
-	"\x04unit\x18\x01 \x01(\v2\x1d.resources.centrum.units.UnitR\x04unit\"O\n" +
-	"\x1aCreateOrUpdateUnitResponse\x121\n" +
-	"\x04unit\x18\x01 \x01(\v2\x1d.resources.centrum.units.UnitR\x04unit\",\n" +
-	"\x11DeleteUnitRequest\x12\x17\n" +
-	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\"\x14\n" +
-	"\x12DeleteUnitResponse\"\xc9\x01\n" +
-	"\x17UpdateUnitStatusRequest\x12\x17\n" +
-	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\x12;\n" +
-	"\x06status\x18\x02 \x01(\x0e2#.resources.centrum.units.StatusUnitR\x06status\x12#\n" +
-	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12\x1f\n" +
-	"\x04code\x18\x04 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x01R\x04code\x88\x01\x01B\t\n" +
-	"\a_reasonB\a\n" +
-	"\x05_code\"\x1a\n" +
-	"\x18UpdateUnitStatusResponse\"`\n" +
-	"\x11AssignUnitRequest\x12\x17\n" +
-	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\x12\x15\n" +
-	"\x06to_add\x18\x02 \x03(\x05R\x05toAdd\x12\x1b\n" +
-	"\tto_remove\x18\x03 \x03(\x05R\btoRemove\"\x14\n" +
-	"\x12AssignUnitResponse\"w\n" +
+	"\x05units\x18\x01 \x03(\v2\x1d.resources.centrum.units.UnitB\x04\xc8\xf3\x18\x01R\x05units\"w\n" +
 	"\x17ListUnitActivityRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1042,66 +1122,94 @@ const file_services_centrum_units_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12E\n" +
-	"\bactivity\x18\x02 \x03(\v2#.resources.centrum.units.UnitStatusB\x04\xc8\xf3\x18\x01R\bactivity2\xbb\a\n" +
+	"\bactivity\x18\x02 \x03(\v2#.resources.centrum.units.UnitStatusB\x04\xc8\xf3\x18\x01R\bactivity\"N\n" +
+	"\x19CreateOrUpdateUnitRequest\x121\n" +
+	"\x04unit\x18\x01 \x01(\v2\x1d.resources.centrum.units.UnitR\x04unit\"O\n" +
+	"\x1aCreateOrUpdateUnitResponse\x121\n" +
+	"\x04unit\x18\x01 \x01(\v2\x1d.resources.centrum.units.UnitR\x04unit\",\n" +
+	"\x11DeleteUnitRequest\x12\x17\n" +
+	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\"\x14\n" +
+	"\x12DeleteUnitResponse\"0\n" +
+	"\x13ReorderUnitsRequest\x12\x19\n" +
+	"\bunit_ids\x18\x01 \x03(\x03R\aunitIds\"\x16\n" +
+	"\x14ReorderUnitsResponse\"`\n" +
+	"\x11AssignUnitRequest\x12\x17\n" +
+	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\x12\x15\n" +
+	"\x06to_add\x18\x02 \x03(\x05R\x05toAdd\x12\x1b\n" +
+	"\tto_remove\x18\x03 \x03(\x05R\btoRemove\"\x14\n" +
+	"\x12AssignUnitResponse\"\xc9\x01\n" +
+	"\x17UpdateUnitStatusRequest\x12\x17\n" +
+	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\x12;\n" +
+	"\x06status\x18\x02 \x01(\x0e2#.resources.centrum.units.StatusUnitR\x06status\x12#\n" +
+	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12\x1f\n" +
+	"\x04code\x18\x04 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x01R\x04code\x88\x01\x01B\t\n" +
+	"\a_reasonB\a\n" +
+	"\x05_code\"\x1a\n" +
+	"\x18UpdateUnitStatusResponse2\xb6\b\n" +
 	"\fUnitsService\x12z\n" +
 	"\bJoinUnit\x12!.services.centrum.JoinUnitRequest\x1a\".services.centrum.JoinUnitResponse\"'\xd2\xf3\x18#\b\x01\x12\acentrum\x1a\x0eCentrumService\"\x06Stream\x12}\n" +
 	"\tListUnits\x12\".services.centrum.ListUnitsRequest\x1a#.services.centrum.ListUnitsResponse\"'\xd2\xf3\x18#\b\x01\x12\acentrum\x1a\x0eCentrumService\"\x06Stream\x12\x92\x01\n" +
 	"\x10ListUnitActivity\x12).services.centrum.ListUnitActivityRequest\x1a*.services.centrum.ListUnitActivityResponse\"'\xd2\xf3\x18#\b\x01\x12\acentrum\x1a\x0eCentrumService\"\x06Stream\x12w\n" +
 	"\x12CreateOrUpdateUnit\x12+.services.centrum.CreateOrUpdateUnitRequest\x1a,.services.centrum.CreateOrUpdateUnitResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12_\n" +
 	"\n" +
-	"DeleteUnit\x12#.services.centrum.DeleteUnitRequest\x1a$.services.centrum.DeleteUnitResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x85\x01\n" +
+	"DeleteUnit\x12#.services.centrum.DeleteUnitRequest\x1a$.services.centrum.DeleteUnitResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12y\n" +
+	"\fReorderUnits\x12%.services.centrum.ReorderUnitsRequest\x1a&.services.centrum.ReorderUnitsResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12CreateOrUpdateUnit\x12\x85\x01\n" +
 	"\n" +
 	"AssignUnit\x12#.services.centrum.AssignUnitRequest\x1a$.services.centrum.AssignUnitResponse\",\xd2\xf3\x18(\b\x01\x12\acentrum\x1a\x0eCentrumService\"\vTakeControl\x12\x9b\x01\n" +
 	"\x10UpdateUnitStatus\x12).services.centrum.UpdateUnitStatusRequest\x1a*.services.centrum.UpdateUnitStatusResponse\"0\xd2\xf3\x18,\b\x01\x12\acentrum\x1a\x11DispatchesService\"\fTakeDispatch\x1a\x1b\xea\xf3\x18\x17\bn\x12\x13i-mdi-account-groupBLZJgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum;centrumb\x06proto3"
 
-var file_services_centrum_units_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_services_centrum_units_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_services_centrum_units_proto_goTypes = []any{
 	(*JoinUnitRequest)(nil),             // 0: services.centrum.JoinUnitRequest
 	(*JoinUnitResponse)(nil),            // 1: services.centrum.JoinUnitResponse
 	(*ListUnitsRequest)(nil),            // 2: services.centrum.ListUnitsRequest
 	(*ListUnitsResponse)(nil),           // 3: services.centrum.ListUnitsResponse
-	(*CreateOrUpdateUnitRequest)(nil),   // 4: services.centrum.CreateOrUpdateUnitRequest
-	(*CreateOrUpdateUnitResponse)(nil),  // 5: services.centrum.CreateOrUpdateUnitResponse
-	(*DeleteUnitRequest)(nil),           // 6: services.centrum.DeleteUnitRequest
-	(*DeleteUnitResponse)(nil),          // 7: services.centrum.DeleteUnitResponse
-	(*UpdateUnitStatusRequest)(nil),     // 8: services.centrum.UpdateUnitStatusRequest
-	(*UpdateUnitStatusResponse)(nil),    // 9: services.centrum.UpdateUnitStatusResponse
-	(*AssignUnitRequest)(nil),           // 10: services.centrum.AssignUnitRequest
-	(*AssignUnitResponse)(nil),          // 11: services.centrum.AssignUnitResponse
-	(*ListUnitActivityRequest)(nil),     // 12: services.centrum.ListUnitActivityRequest
-	(*ListUnitActivityResponse)(nil),    // 13: services.centrum.ListUnitActivityResponse
-	(*units.Unit)(nil),                  // 14: resources.centrum.units.Unit
-	(units.StatusUnit)(0),               // 15: resources.centrum.units.StatusUnit
-	(*database.PaginationRequest)(nil),  // 16: resources.common.database.PaginationRequest
-	(*database.PaginationResponse)(nil), // 17: resources.common.database.PaginationResponse
-	(*units.UnitStatus)(nil),            // 18: resources.centrum.units.UnitStatus
+	(*ListUnitActivityRequest)(nil),     // 4: services.centrum.ListUnitActivityRequest
+	(*ListUnitActivityResponse)(nil),    // 5: services.centrum.ListUnitActivityResponse
+	(*CreateOrUpdateUnitRequest)(nil),   // 6: services.centrum.CreateOrUpdateUnitRequest
+	(*CreateOrUpdateUnitResponse)(nil),  // 7: services.centrum.CreateOrUpdateUnitResponse
+	(*DeleteUnitRequest)(nil),           // 8: services.centrum.DeleteUnitRequest
+	(*DeleteUnitResponse)(nil),          // 9: services.centrum.DeleteUnitResponse
+	(*ReorderUnitsRequest)(nil),         // 10: services.centrum.ReorderUnitsRequest
+	(*ReorderUnitsResponse)(nil),        // 11: services.centrum.ReorderUnitsResponse
+	(*AssignUnitRequest)(nil),           // 12: services.centrum.AssignUnitRequest
+	(*AssignUnitResponse)(nil),          // 13: services.centrum.AssignUnitResponse
+	(*UpdateUnitStatusRequest)(nil),     // 14: services.centrum.UpdateUnitStatusRequest
+	(*UpdateUnitStatusResponse)(nil),    // 15: services.centrum.UpdateUnitStatusResponse
+	(*units.Unit)(nil),                  // 16: resources.centrum.units.Unit
+	(units.StatusUnit)(0),               // 17: resources.centrum.units.StatusUnit
+	(*database.PaginationRequest)(nil),  // 18: resources.common.database.PaginationRequest
+	(*database.PaginationResponse)(nil), // 19: resources.common.database.PaginationResponse
+	(*units.UnitStatus)(nil),            // 20: resources.centrum.units.UnitStatus
 }
 var file_services_centrum_units_proto_depIdxs = []int32{
-	14, // 0: services.centrum.JoinUnitResponse.unit:type_name -> resources.centrum.units.Unit
-	15, // 1: services.centrum.ListUnitsRequest.status:type_name -> resources.centrum.units.StatusUnit
-	14, // 2: services.centrum.ListUnitsResponse.units:type_name -> resources.centrum.units.Unit
-	14, // 3: services.centrum.CreateOrUpdateUnitRequest.unit:type_name -> resources.centrum.units.Unit
-	14, // 4: services.centrum.CreateOrUpdateUnitResponse.unit:type_name -> resources.centrum.units.Unit
-	15, // 5: services.centrum.UpdateUnitStatusRequest.status:type_name -> resources.centrum.units.StatusUnit
-	16, // 6: services.centrum.ListUnitActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	17, // 7: services.centrum.ListUnitActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	18, // 8: services.centrum.ListUnitActivityResponse.activity:type_name -> resources.centrum.units.UnitStatus
+	16, // 0: services.centrum.JoinUnitResponse.unit:type_name -> resources.centrum.units.Unit
+	17, // 1: services.centrum.ListUnitsRequest.status:type_name -> resources.centrum.units.StatusUnit
+	16, // 2: services.centrum.ListUnitsResponse.units:type_name -> resources.centrum.units.Unit
+	18, // 3: services.centrum.ListUnitActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	19, // 4: services.centrum.ListUnitActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	20, // 5: services.centrum.ListUnitActivityResponse.activity:type_name -> resources.centrum.units.UnitStatus
+	16, // 6: services.centrum.CreateOrUpdateUnitRequest.unit:type_name -> resources.centrum.units.Unit
+	16, // 7: services.centrum.CreateOrUpdateUnitResponse.unit:type_name -> resources.centrum.units.Unit
+	17, // 8: services.centrum.UpdateUnitStatusRequest.status:type_name -> resources.centrum.units.StatusUnit
 	0,  // 9: services.centrum.UnitsService.JoinUnit:input_type -> services.centrum.JoinUnitRequest
 	2,  // 10: services.centrum.UnitsService.ListUnits:input_type -> services.centrum.ListUnitsRequest
-	12, // 11: services.centrum.UnitsService.ListUnitActivity:input_type -> services.centrum.ListUnitActivityRequest
-	4,  // 12: services.centrum.UnitsService.CreateOrUpdateUnit:input_type -> services.centrum.CreateOrUpdateUnitRequest
-	6,  // 13: services.centrum.UnitsService.DeleteUnit:input_type -> services.centrum.DeleteUnitRequest
-	10, // 14: services.centrum.UnitsService.AssignUnit:input_type -> services.centrum.AssignUnitRequest
-	8,  // 15: services.centrum.UnitsService.UpdateUnitStatus:input_type -> services.centrum.UpdateUnitStatusRequest
-	1,  // 16: services.centrum.UnitsService.JoinUnit:output_type -> services.centrum.JoinUnitResponse
-	3,  // 17: services.centrum.UnitsService.ListUnits:output_type -> services.centrum.ListUnitsResponse
-	13, // 18: services.centrum.UnitsService.ListUnitActivity:output_type -> services.centrum.ListUnitActivityResponse
-	5,  // 19: services.centrum.UnitsService.CreateOrUpdateUnit:output_type -> services.centrum.CreateOrUpdateUnitResponse
-	7,  // 20: services.centrum.UnitsService.DeleteUnit:output_type -> services.centrum.DeleteUnitResponse
-	11, // 21: services.centrum.UnitsService.AssignUnit:output_type -> services.centrum.AssignUnitResponse
-	9,  // 22: services.centrum.UnitsService.UpdateUnitStatus:output_type -> services.centrum.UpdateUnitStatusResponse
-	16, // [16:23] is the sub-list for method output_type
-	9,  // [9:16] is the sub-list for method input_type
+	4,  // 11: services.centrum.UnitsService.ListUnitActivity:input_type -> services.centrum.ListUnitActivityRequest
+	6,  // 12: services.centrum.UnitsService.CreateOrUpdateUnit:input_type -> services.centrum.CreateOrUpdateUnitRequest
+	8,  // 13: services.centrum.UnitsService.DeleteUnit:input_type -> services.centrum.DeleteUnitRequest
+	10, // 14: services.centrum.UnitsService.ReorderUnits:input_type -> services.centrum.ReorderUnitsRequest
+	12, // 15: services.centrum.UnitsService.AssignUnit:input_type -> services.centrum.AssignUnitRequest
+	14, // 16: services.centrum.UnitsService.UpdateUnitStatus:input_type -> services.centrum.UpdateUnitStatusRequest
+	1,  // 17: services.centrum.UnitsService.JoinUnit:output_type -> services.centrum.JoinUnitResponse
+	3,  // 18: services.centrum.UnitsService.ListUnits:output_type -> services.centrum.ListUnitsResponse
+	5,  // 19: services.centrum.UnitsService.ListUnitActivity:output_type -> services.centrum.ListUnitActivityResponse
+	7,  // 20: services.centrum.UnitsService.CreateOrUpdateUnit:output_type -> services.centrum.CreateOrUpdateUnitResponse
+	9,  // 21: services.centrum.UnitsService.DeleteUnit:output_type -> services.centrum.DeleteUnitResponse
+	11, // 22: services.centrum.UnitsService.ReorderUnits:output_type -> services.centrum.ReorderUnitsResponse
+	13, // 23: services.centrum.UnitsService.AssignUnit:output_type -> services.centrum.AssignUnitResponse
+	15, // 24: services.centrum.UnitsService.UpdateUnitStatus:output_type -> services.centrum.UpdateUnitStatusResponse
+	17, // [17:25] is the sub-list for method output_type
+	9,  // [9:17] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name
 	9,  // [9:9] is the sub-list for extension extendee
 	0,  // [0:9] is the sub-list for field type_name
@@ -1113,14 +1221,14 @@ func file_services_centrum_units_proto_init() {
 		return
 	}
 	file_services_centrum_units_proto_msgTypes[0].OneofWrappers = []any{}
-	file_services_centrum_units_proto_msgTypes[8].OneofWrappers = []any{}
+	file_services_centrum_units_proto_msgTypes[14].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_centrum_units_proto_rawDesc), len(file_services_centrum_units_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -138,6 +138,7 @@ type Unit struct {
 	xxx_hidden_UpdatedAt   *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
 	xxx_hidden_Job         string                 `protobuf:"bytes,4,opt,name=job,proto3"`
 	xxx_hidden_JobLabel    *string                `protobuf:"bytes,15,opt,name=job_label,json=jobLabel,proto3,oneof"`
+	xxx_hidden_SortOrder   int32                  `protobuf:"varint,17,opt,name=sort_order,json=sortOrder,proto3"`
 	xxx_hidden_Name        string                 `protobuf:"bytes,5,opt,name=name,proto3"`
 	xxx_hidden_Initials    string                 `protobuf:"bytes,6,opt,name=initials,proto3"`
 	xxx_hidden_Color       string                 `protobuf:"bytes,7,opt,name=color,proto3"`
@@ -215,6 +216,13 @@ func (x *Unit) GetJobLabel() string {
 		return ""
 	}
 	return ""
+}
+
+func (x *Unit) GetSortOrder() int32 {
+	if x != nil {
+		return x.xxx_hidden_SortOrder
+	}
+	return 0
 }
 
 func (x *Unit) GetName() string {
@@ -316,7 +324,11 @@ func (x *Unit) SetJob(v string) {
 
 func (x *Unit) SetJobLabel(v string) {
 	x.xxx_hidden_JobLabel = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 15)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 16)
+}
+
+func (x *Unit) SetSortOrder(v int32) {
+	x.xxx_hidden_SortOrder = v
 }
 
 func (x *Unit) SetName(v string) {
@@ -333,12 +345,12 @@ func (x *Unit) SetColor(v string) {
 
 func (x *Unit) SetIcon(v string) {
 	x.xxx_hidden_Icon = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 15)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 16)
 }
 
 func (x *Unit) SetDescription(v string) {
 	x.xxx_hidden_Description = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 15)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 16)
 }
 
 func (x *Unit) SetStatus(v *UnitStatus) {
@@ -355,7 +367,7 @@ func (x *Unit) SetAttributes(v *UnitAttributes) {
 
 func (x *Unit) SetHomePostal(v string) {
 	x.xxx_hidden_HomePostal = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 15)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 16)
 }
 
 func (x *Unit) SetAccess(v *access.UnitAccess) {
@@ -387,14 +399,14 @@ func (x *Unit) HasIcon() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
 }
 
 func (x *Unit) HasDescription() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
 }
 
 func (x *Unit) HasStatus() bool {
@@ -415,7 +427,7 @@ func (x *Unit) HasHomePostal() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 13)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 14)
 }
 
 func (x *Unit) HasAccess() bool {
@@ -439,12 +451,12 @@ func (x *Unit) ClearJobLabel() {
 }
 
 func (x *Unit) ClearIcon() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
 	x.xxx_hidden_Icon = nil
 }
 
 func (x *Unit) ClearDescription() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 10)
 	x.xxx_hidden_Description = nil
 }
 
@@ -457,7 +469,7 @@ func (x *Unit) ClearAttributes() {
 }
 
 func (x *Unit) ClearHomePostal() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 13)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 14)
 	x.xxx_hidden_HomePostal = nil
 }
 
@@ -473,6 +485,7 @@ type Unit_builder struct {
 	UpdatedAt   *timestamp.Timestamp
 	Job         string
 	JobLabel    *string
+	SortOrder   int32
 	Name        string
 	Initials    string
 	Color       string
@@ -494,25 +507,26 @@ func (b0 Unit_builder) Build() *Unit {
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	x.xxx_hidden_Job = b.Job
 	if b.JobLabel != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 15)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 16)
 		x.xxx_hidden_JobLabel = b.JobLabel
 	}
+	x.xxx_hidden_SortOrder = b.SortOrder
 	x.xxx_hidden_Name = b.Name
 	x.xxx_hidden_Initials = b.Initials
 	x.xxx_hidden_Color = b.Color
 	if b.Icon != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 15)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 16)
 		x.xxx_hidden_Icon = b.Icon
 	}
 	if b.Description != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 15)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 16)
 		x.xxx_hidden_Description = b.Description
 	}
 	x.xxx_hidden_Status = b.Status
 	x.xxx_hidden_Users = &b.Users
 	x.xxx_hidden_Attributes = b.Attributes
 	if b.HomePostal != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 15)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 16)
 		x.xxx_hidden_HomePostal = b.HomePostal
 	}
 	x.xxx_hidden_Access = b.Access
@@ -1202,7 +1216,7 @@ var File_resources_centrum_units_units_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_units_units_proto_rawDesc = "" +
 	"\n" +
-	"#resources/centrum/units/units.proto\x12\x17resources.centrum.units\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a+resources/centrum/units/access/access.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xcf\x06\n" +
+	"#resources/centrum/units/units.proto\x12\x17resources.centrum.units\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a+resources/centrum/units/access/access.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x87\a\n" +
 	"\x04Unit\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1210,7 +1224,9 @@ const file_resources_centrum_units_units_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x10\n" +
 	"\x03job\x18\x04 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x0f \x01(\tH\x02R\bjobLabel\x88\x01\x01\x12\x1a\n" +
+	"\tjob_label\x18\x0f \x01(\tH\x02R\bjobLabel\x88\x01\x01\x126\n" +
+	"\n" +
+	"sort_order\x18\x11 \x01(\x05B\x17\x9a\x84\x9e\x03\x12alias:\"sort_order\"R\tsortOrder\x12\x1a\n" +
 	"\x04name\x18\x05 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x04name\x12\"\n" +
 	"\binitials\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\binitials\x12\x1e\n" +
 	"\x05color\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12!\n" +

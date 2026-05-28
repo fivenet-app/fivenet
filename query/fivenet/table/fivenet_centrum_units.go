@@ -22,6 +22,7 @@ type fivenetCentrumUnitsTable struct {
 	UpdatedAt   mysql.ColumnTimestamp
 	DeletedAt   mysql.ColumnTimestamp
 	Job         mysql.ColumnString
+    SortOrder   mysql.ColumnInteger
 	Name        mysql.ColumnString
 	Initials    mysql.ColumnString
 	Color       mysql.ColumnString
@@ -75,6 +76,7 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn   = mysql.TimestampColumn("deleted_at")
 		JobColumn         = mysql.StringColumn("job")
+		SortOrderColumn   = mysql.IntegerColumn("sort_order")
 		NameColumn        = mysql.StringColumn("name")
 		InitialsColumn    = mysql.StringColumn("initials")
 		ColorColumn       = mysql.StringColumn("color")
@@ -82,9 +84,9 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 		DescriptionColumn = mysql.StringColumn("description")
 		AttributesColumn  = mysql.StringColumn("attributes")
 		HomePostalColumn  = mysql.StringColumn("home_postal")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, IconColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, IconColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
-		defaultColumns    = mysql.ColumnList{CreatedAtColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, SortOrderColumn, NameColumn, InitialsColumn, ColorColumn, IconColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, SortOrderColumn, NameColumn, InitialsColumn, ColorColumn, IconColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn, SortOrderColumn}
 	)
 
 	return fivenetCentrumUnitsTable{
@@ -96,6 +98,7 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 		UpdatedAt:   UpdatedAtColumn,
 		DeletedAt:   DeletedAtColumn,
 		Job:         JobColumn,
+        SortOrder:   SortOrderColumn,
 		Name:        NameColumn,
 		Initials:    InitialsColumn,
 		Color:       ColorColumn,

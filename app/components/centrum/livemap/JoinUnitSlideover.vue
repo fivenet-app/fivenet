@@ -53,7 +53,7 @@ const filteredUnits = computed(() => ({
                     u.initials.toLowerCase().includes(queryUnit.value.toLowerCase())) &&
                 checkUnitAccess(u.access, UnitAccessLevel.JOIN),
         )
-        .sort((a, b) => a.name.localeCompare(b.name)),
+        .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name)),
     unavailable: getSortedUnits.value
         .filter(
             (u) =>
@@ -61,7 +61,7 @@ const filteredUnits = computed(() => ({
                     u.initials.toLowerCase().includes(queryUnit.value.toLowerCase())) &&
                 !checkUnitAccess(u.access, UnitAccessLevel.JOIN),
         )
-        .sort((a, b) => a.name.localeCompare(b.name)),
+        .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name)),
 }));
 </script>
 

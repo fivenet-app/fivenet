@@ -54,6 +54,32 @@ export interface ListUnitsResponse {
     units: Unit[];
 }
 /**
+ * @generated from protobuf message services.centrum.ListUnitActivityRequest
+ */
+export interface ListUnitActivityRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: int64 id = 2
+     */
+    id: number;
+}
+/**
+ * @generated from protobuf message services.centrum.ListUnitActivityResponse
+ */
+export interface ListUnitActivityResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.centrum.units.UnitStatus activity = 2
+     */
+    activity: UnitStatus[];
+}
+/**
  * @generated from protobuf message services.centrum.CreateOrUpdateUnitRequest
  */
 export interface CreateOrUpdateUnitRequest {
@@ -86,30 +112,18 @@ export interface DeleteUnitRequest {
 export interface DeleteUnitResponse {
 }
 /**
- * @generated from protobuf message services.centrum.UpdateUnitStatusRequest
+ * @generated from protobuf message services.centrum.ReorderUnitsRequest
  */
-export interface UpdateUnitStatusRequest {
+export interface ReorderUnitsRequest {
     /**
-     * @generated from protobuf field: int64 unit_id = 1
+     * @generated from protobuf field: repeated int64 unit_ids = 1
      */
-    unitId: number;
-    /**
-     * @generated from protobuf field: resources.centrum.units.StatusUnit status = 2
-     */
-    status: StatusUnit;
-    /**
-     * @generated from protobuf field: optional string reason = 3
-     */
-    reason?: string;
-    /**
-     * @generated from protobuf field: optional string code = 4
-     */
-    code?: string;
+    unitIds: number[];
 }
 /**
- * @generated from protobuf message services.centrum.UpdateUnitStatusResponse
+ * @generated from protobuf message services.centrum.ReorderUnitsResponse
  */
-export interface UpdateUnitStatusResponse {
+export interface ReorderUnitsResponse {
 }
 /**
  * @generated from protobuf message services.centrum.AssignUnitRequest
@@ -134,30 +148,30 @@ export interface AssignUnitRequest {
 export interface AssignUnitResponse {
 }
 /**
- * @generated from protobuf message services.centrum.ListUnitActivityRequest
+ * @generated from protobuf message services.centrum.UpdateUnitStatusRequest
  */
-export interface ListUnitActivityRequest {
+export interface UpdateUnitStatusRequest {
     /**
-     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1
+     * @generated from protobuf field: int64 unit_id = 1
      */
-    pagination?: PaginationRequest;
+    unitId: number;
     /**
-     * @generated from protobuf field: int64 id = 2
+     * @generated from protobuf field: resources.centrum.units.StatusUnit status = 2
      */
-    id: number;
+    status: StatusUnit;
+    /**
+     * @generated from protobuf field: optional string reason = 3
+     */
+    reason?: string;
+    /**
+     * @generated from protobuf field: optional string code = 4
+     */
+    code?: string;
 }
 /**
- * @generated from protobuf message services.centrum.ListUnitActivityResponse
+ * @generated from protobuf message services.centrum.UpdateUnitStatusResponse
  */
-export interface ListUnitActivityResponse {
-    /**
-     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1
-     */
-    pagination?: PaginationResponse;
-    /**
-     * @generated from protobuf field: repeated resources.centrum.units.UnitStatus activity = 2
-     */
-    activity: UnitStatus[];
+export interface UpdateUnitStatusResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class JoinUnitRequest$Type extends MessageType<JoinUnitRequest> {
@@ -354,6 +368,114 @@ class ListUnitsResponse$Type extends MessageType<ListUnitsResponse> {
  */
 export const ListUnitsResponse = new ListUnitsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ListUnitActivityRequest$Type extends MessageType<ListUnitActivityRequest> {
+    constructor() {
+        super("services.centrum.ListUnitActivityRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ListUnitActivityRequest>): ListUnitActivityRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ListUnitActivityRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListUnitActivityRequest): ListUnitActivityRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* int64 id */ 2:
+                    message.id = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListUnitActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* int64 id = 2; */
+        if (message.id !== 0)
+            writer.tag(2, WireType.Varint).int64(message.id);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.ListUnitActivityRequest
+ */
+export const ListUnitActivityRequest = new ListUnitActivityRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListUnitActivityResponse$Type extends MessageType<ListUnitActivityResponse> {
+    constructor() {
+        super("services.centrum.ListUnitActivityResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitStatus, options: { "codegen.itemslen.enabled": true } }
+        ]);
+    }
+    create(value?: PartialMessage<ListUnitActivityResponse>): ListUnitActivityResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.activity = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListUnitActivityResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListUnitActivityResponse): ListUnitActivityResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.centrum.units.UnitStatus activity */ 2:
+                    message.activity.push(UnitStatus.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListUnitActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.centrum.units.UnitStatus activity = 2; */
+        for (let i = 0; i < message.activity.length; i++)
+            UnitStatus.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.ListUnitActivityResponse
+ */
+export const ListUnitActivityResponse = new ListUnitActivityResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class CreateOrUpdateUnitRequest$Type extends MessageType<CreateOrUpdateUnitRequest> {
     constructor() {
         super("services.centrum.CreateOrUpdateUnitRequest", [
@@ -531,39 +653,30 @@ class DeleteUnitResponse$Type extends MessageType<DeleteUnitResponse> {
  */
 export const DeleteUnitResponse = new DeleteUnitResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> {
+class ReorderUnitsRequest$Type extends MessageType<ReorderUnitsRequest> {
     constructor() {
-        super("services.centrum.UpdateUnitStatusRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.units.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
+        super("services.centrum.ReorderUnitsRequest", [
+            { no: 1, name: "unit_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "250", items: { int64: { gt: "0" } } } } } }
         ]);
     }
-    create(value?: PartialMessage<UpdateUnitStatusRequest>): UpdateUnitStatusRequest {
+    create(value?: PartialMessage<ReorderUnitsRequest>): ReorderUnitsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.unitId = 0;
-        message.status = 0;
+        message.unitIds = [];
         if (value !== undefined)
-            reflectionMergePartial<UpdateUnitStatusRequest>(this, message, value);
+            reflectionMergePartial<ReorderUnitsRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateUnitStatusRequest): UpdateUnitStatusRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReorderUnitsRequest): ReorderUnitsRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 unit_id */ 1:
-                    message.unitId = reader.int64().toNumber();
-                    break;
-                case /* resources.centrum.units.StatusUnit status */ 2:
-                    message.status = reader.int32();
-                    break;
-                case /* optional string reason */ 3:
-                    message.reason = reader.string();
-                    break;
-                case /* optional string code */ 4:
-                    message.code = reader.string();
+                case /* repeated int64 unit_ids */ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.unitIds.push(reader.int64().toNumber());
+                    else
+                        message.unitIds.push(reader.int64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -576,19 +689,14 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
         }
         return message;
     }
-    internalBinaryWrite(message: UpdateUnitStatusRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 unit_id = 1; */
-        if (message.unitId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.unitId);
-        /* resources.centrum.units.StatusUnit status = 2; */
-        if (message.status !== 0)
-            writer.tag(2, WireType.Varint).int32(message.status);
-        /* optional string reason = 3; */
-        if (message.reason !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.reason);
-        /* optional string code = 4; */
-        if (message.code !== undefined)
-            writer.tag(4, WireType.LengthDelimited).string(message.code);
+    internalBinaryWrite(message: ReorderUnitsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated int64 unit_ids = 1; */
+        if (message.unitIds.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.unitIds.length; i++)
+                writer.int64(message.unitIds[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -596,21 +704,21 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.UpdateUnitStatusRequest
+ * @generated MessageType for protobuf message services.centrum.ReorderUnitsRequest
  */
-export const UpdateUnitStatusRequest = new UpdateUnitStatusRequest$Type();
+export const ReorderUnitsRequest = new ReorderUnitsRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UpdateUnitStatusResponse$Type extends MessageType<UpdateUnitStatusResponse> {
+class ReorderUnitsResponse$Type extends MessageType<ReorderUnitsResponse> {
     constructor() {
-        super("services.centrum.UpdateUnitStatusResponse", []);
+        super("services.centrum.ReorderUnitsResponse", []);
     }
-    create(value?: PartialMessage<UpdateUnitStatusResponse>): UpdateUnitStatusResponse {
+    create(value?: PartialMessage<ReorderUnitsResponse>): ReorderUnitsResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<UpdateUnitStatusResponse>(this, message, value);
+            reflectionMergePartial<ReorderUnitsResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateUnitStatusResponse): UpdateUnitStatusResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReorderUnitsResponse): ReorderUnitsResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -626,7 +734,7 @@ class UpdateUnitStatusResponse$Type extends MessageType<UpdateUnitStatusResponse
         }
         return message;
     }
-    internalBinaryWrite(message: UpdateUnitStatusResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ReorderUnitsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -634,9 +742,9 @@ class UpdateUnitStatusResponse$Type extends MessageType<UpdateUnitStatusResponse
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.UpdateUnitStatusResponse
+ * @generated MessageType for protobuf message services.centrum.ReorderUnitsResponse
  */
-export const UpdateUnitStatusResponse = new UpdateUnitStatusResponse$Type();
+export const ReorderUnitsResponse = new ReorderUnitsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AssignUnitRequest$Type extends MessageType<AssignUnitRequest> {
     constructor() {
@@ -755,30 +863,39 @@ class AssignUnitResponse$Type extends MessageType<AssignUnitResponse> {
  */
 export const AssignUnitResponse = new AssignUnitResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListUnitActivityRequest$Type extends MessageType<ListUnitActivityRequest> {
+class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> {
     constructor() {
-        super("services.centrum.ListUnitActivityRequest", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        super("services.centrum.UpdateUnitStatusRequest", [
+            { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.units.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);
     }
-    create(value?: PartialMessage<ListUnitActivityRequest>): ListUnitActivityRequest {
+    create(value?: PartialMessage<UpdateUnitStatusRequest>): UpdateUnitStatusRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
+        message.unitId = 0;
+        message.status = 0;
         if (value !== undefined)
-            reflectionMergePartial<ListUnitActivityRequest>(this, message, value);
+            reflectionMergePartial<UpdateUnitStatusRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListUnitActivityRequest): ListUnitActivityRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateUnitStatusRequest): UpdateUnitStatusRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.common.database.PaginationRequest pagination */ 1:
-                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                case /* int64 unit_id */ 1:
+                    message.unitId = reader.int64().toNumber();
                     break;
-                case /* int64 id */ 2:
-                    message.id = reader.int64().toNumber();
+                case /* resources.centrum.units.StatusUnit status */ 2:
+                    message.status = reader.int32();
+                    break;
+                case /* optional string reason */ 3:
+                    message.reason = reader.string();
+                    break;
+                case /* optional string code */ 4:
+                    message.code = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -791,13 +908,19 @@ class ListUnitActivityRequest$Type extends MessageType<ListUnitActivityRequest> 
         }
         return message;
     }
-    internalBinaryWrite(message: ListUnitActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.common.database.PaginationRequest pagination = 1; */
-        if (message.pagination)
-            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* int64 id = 2; */
-        if (message.id !== 0)
-            writer.tag(2, WireType.Varint).int64(message.id);
+    internalBinaryWrite(message: UpdateUnitStatusRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 unit_id = 1; */
+        if (message.unitId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.unitId);
+        /* resources.centrum.units.StatusUnit status = 2; */
+        if (message.status !== 0)
+            writer.tag(2, WireType.Varint).int32(message.status);
+        /* optional string reason = 3; */
+        if (message.reason !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        /* optional string code = 4; */
+        if (message.code !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.code);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -805,35 +928,25 @@ class ListUnitActivityRequest$Type extends MessageType<ListUnitActivityRequest> 
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.ListUnitActivityRequest
+ * @generated MessageType for protobuf message services.centrum.UpdateUnitStatusRequest
  */
-export const ListUnitActivityRequest = new ListUnitActivityRequest$Type();
+export const UpdateUnitStatusRequest = new UpdateUnitStatusRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListUnitActivityResponse$Type extends MessageType<ListUnitActivityResponse> {
+class UpdateUnitStatusResponse$Type extends MessageType<UpdateUnitStatusResponse> {
     constructor() {
-        super("services.centrum.ListUnitActivityResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitStatus, options: { "codegen.itemslen.enabled": true } }
-        ]);
+        super("services.centrum.UpdateUnitStatusResponse", []);
     }
-    create(value?: PartialMessage<ListUnitActivityResponse>): ListUnitActivityResponse {
+    create(value?: PartialMessage<UpdateUnitStatusResponse>): UpdateUnitStatusResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.activity = [];
         if (value !== undefined)
-            reflectionMergePartial<ListUnitActivityResponse>(this, message, value);
+            reflectionMergePartial<UpdateUnitStatusResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListUnitActivityResponse): ListUnitActivityResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateUnitStatusResponse): UpdateUnitStatusResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.common.database.PaginationResponse pagination */ 1:
-                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
-                    break;
-                case /* repeated resources.centrum.units.UnitStatus activity */ 2:
-                    message.activity.push(UnitStatus.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -845,13 +958,7 @@ class ListUnitActivityResponse$Type extends MessageType<ListUnitActivityResponse
         }
         return message;
     }
-    internalBinaryWrite(message: ListUnitActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.common.database.PaginationResponse pagination = 1; */
-        if (message.pagination)
-            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.centrum.units.UnitStatus activity = 2; */
-        for (let i = 0; i < message.activity.length; i++)
-            UnitStatus.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+    internalBinaryWrite(message: UpdateUnitStatusResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -859,9 +966,9 @@ class ListUnitActivityResponse$Type extends MessageType<ListUnitActivityResponse
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.ListUnitActivityResponse
+ * @generated MessageType for protobuf message services.centrum.UpdateUnitStatusResponse
  */
-export const ListUnitActivityResponse = new ListUnitActivityResponse$Type();
+export const UpdateUnitStatusResponse = new UpdateUnitStatusResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.centrum.UnitsService
  */
@@ -871,6 +978,7 @@ export const UnitsService = new ServiceType("services.centrum.UnitsService", [
     { name: "ListUnitActivity", options: { "codegen.perms.perms": { enabled: true, namespace: "centrum", service: "CentrumService", name: "Stream" } }, I: ListUnitActivityRequest, O: ListUnitActivityResponse },
     { name: "CreateOrUpdateUnit", options: { "codegen.perms.perms": { enabled: true } }, I: CreateOrUpdateUnitRequest, O: CreateOrUpdateUnitResponse },
     { name: "DeleteUnit", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteUnitRequest, O: DeleteUnitResponse },
+    { name: "ReorderUnits", options: { "codegen.perms.perms": { enabled: true, name: "CreateOrUpdateUnit" } }, I: ReorderUnitsRequest, O: ReorderUnitsResponse },
     { name: "AssignUnit", options: { "codegen.perms.perms": { enabled: true, namespace: "centrum", service: "CentrumService", name: "TakeControl" } }, I: AssignUnitRequest, O: AssignUnitResponse },
     { name: "UpdateUnitStatus", options: { "codegen.perms.perms": { enabled: true, namespace: "centrum", service: "DispatchesService", name: "TakeDispatch" } }, I: UpdateUnitStatusRequest, O: UpdateUnitStatusResponse }
 ], { "codegen.perms.perms_svc": { order: 110, icon: "i-mdi-account-group" } });

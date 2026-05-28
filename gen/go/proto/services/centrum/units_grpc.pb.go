@@ -24,6 +24,7 @@ const (
 	UnitsService_ListUnitActivity_FullMethodName   = "/services.centrum.UnitsService/ListUnitActivity"
 	UnitsService_CreateOrUpdateUnit_FullMethodName = "/services.centrum.UnitsService/CreateOrUpdateUnit"
 	UnitsService_DeleteUnit_FullMethodName         = "/services.centrum.UnitsService/DeleteUnit"
+	UnitsService_ReorderUnits_FullMethodName       = "/services.centrum.UnitsService/ReorderUnits"
 	UnitsService_AssignUnit_FullMethodName         = "/services.centrum.UnitsService/AssignUnit"
 	UnitsService_UpdateUnitStatus_FullMethodName   = "/services.centrum.UnitsService/UpdateUnitStatus"
 )
@@ -37,6 +38,7 @@ type UnitsServiceClient interface {
 	ListUnitActivity(ctx context.Context, in *ListUnitActivityRequest, opts ...grpc.CallOption) (*ListUnitActivityResponse, error)
 	CreateOrUpdateUnit(ctx context.Context, in *CreateOrUpdateUnitRequest, opts ...grpc.CallOption) (*CreateOrUpdateUnitResponse, error)
 	DeleteUnit(ctx context.Context, in *DeleteUnitRequest, opts ...grpc.CallOption) (*DeleteUnitResponse, error)
+	ReorderUnits(ctx context.Context, in *ReorderUnitsRequest, opts ...grpc.CallOption) (*ReorderUnitsResponse, error)
 	AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error)
 	UpdateUnitStatus(ctx context.Context, in *UpdateUnitStatusRequest, opts ...grpc.CallOption) (*UpdateUnitStatusResponse, error)
 }
@@ -99,6 +101,16 @@ func (c *unitsServiceClient) DeleteUnit(ctx context.Context, in *DeleteUnitReque
 	return out, nil
 }
 
+func (c *unitsServiceClient) ReorderUnits(ctx context.Context, in *ReorderUnitsRequest, opts ...grpc.CallOption) (*ReorderUnitsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReorderUnitsResponse)
+	err := c.cc.Invoke(ctx, UnitsService_ReorderUnits_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *unitsServiceClient) AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AssignUnitResponse)
@@ -128,6 +140,7 @@ type UnitsServiceServer interface {
 	ListUnitActivity(context.Context, *ListUnitActivityRequest) (*ListUnitActivityResponse, error)
 	CreateOrUpdateUnit(context.Context, *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error)
 	DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error)
+	ReorderUnits(context.Context, *ReorderUnitsRequest) (*ReorderUnitsResponse, error)
 	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
 	UpdateUnitStatus(context.Context, *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error)
 	mustEmbedUnimplementedUnitsServiceServer()
@@ -154,6 +167,9 @@ func (UnimplementedUnitsServiceServer) CreateOrUpdateUnit(context.Context, *Crea
 }
 func (UnimplementedUnitsServiceServer) DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUnit not implemented")
+}
+func (UnimplementedUnitsServiceServer) ReorderUnits(context.Context, *ReorderUnitsRequest) (*ReorderUnitsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReorderUnits not implemented")
 }
 func (UnimplementedUnitsServiceServer) AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AssignUnit not implemented")
@@ -272,6 +288,24 @@ func _UnitsService_DeleteUnit_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UnitsService_ReorderUnits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReorderUnitsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UnitsServiceServer).ReorderUnits(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UnitsService_ReorderUnits_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UnitsServiceServer).ReorderUnits(ctx, req.(*ReorderUnitsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UnitsService_AssignUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AssignUnitRequest)
 	if err := dec(in); err != nil {
@@ -334,6 +368,10 @@ var UnitsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUnit",
 			Handler:    _UnitsService_DeleteUnit_Handler,
+		},
+		{
+			MethodName: "ReorderUnits",
+			Handler:    _UnitsService_ReorderUnits_Handler,
 		},
 		{
 			MethodName: "AssignUnit",

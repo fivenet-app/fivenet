@@ -17,6 +17,7 @@ type FivenetCentrumUnits struct {
 	UpdatedAt   *time.Time `json:"updated_at"`
 	DeletedAt   *time.Time `json:"deleted_at"`
 	Job         string     `json:"job"`
+	SortOrder   int        `json:"sort_order"`
 	Name        string     `json:"name"`
 	Initials    string     `json:"initials"`
 	Color       string     `json:"color"`

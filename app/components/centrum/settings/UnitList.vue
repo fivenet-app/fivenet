@@ -1,19 +1,19 @@
 <script lang="ts" setup>
-import { UButton, UTooltip } from '#components';
+import { UButton, UFieldGroup, UIcon, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
 import UnitAttributes from '~/components/centrum/partials/UnitAttributes.vue';
-import UnitCreateOrUpdateSlideover from '~/components/centrum/settings/UnitCreateOrUpdateSlideover.vue';
+import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrUpdateModal.vue';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import Pagination from '~/components/partials/Pagination.vue';
 import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/units';
+import { useDraggable } from 'vue-draggable-plus';
 
 const { t } = useI18n();
 
@@ -59,13 +59,65 @@ async function deleteUnit(id: number): Promise<void> {
     }
 }
 
+async function reorderUnits(units: Unit[]): Promise<void> {
+    try {
+        const call = centrumUnitsClient.reorderUnits({
+            unitIds: units.map((item) => item.id),
+        });
+        await call;
+
+        orderChanged.value = false;
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
 const appConfig = useAppConfig();
+const unitList = computed<Unit[]>(() => units.value?.units ?? []);
+const { moveUp, moveDown } = useListReorder(unitList, {
+    onMove: () => (orderChanged.value = true),
+});
 
 const columns = computed<TableColumn<Unit>[]>(() => [
     {
         id: 'actions',
         cell: ({ row }) =>
             h('div', [
+                h(
+                    'div',
+                    {
+                        class: 'inline-flex items-center gap-1',
+                    },
+                    [
+                        h(UTooltip, { text: t('common.draggable') }, [
+                            h(UIcon, {
+                                class: 'handle-choice size-6 cursor-move',
+                                name: 'i-mdi-drag-horizontal',
+                            }),
+                        ]),
+                        h(UFieldGroup, { orientation: 'vertical' }, [
+                            h(UButton, {
+                                size: 'xs',
+                                variant: 'link',
+                                icon: 'i-mdi-arrow-up',
+                                onClick: () => moveUp(row.index),
+                            }),
+                            h(UButton, {
+                                size: 'xs',
+                                variant: 'link',
+                                icon: 'i-mdi-arrow-down',
+                                onClick: () => moveDown(row.index),
+                            }),
+                        ]),
+                    ],
+                ),
                 h(
                     UTooltip,
                     {
@@ -77,7 +129,7 @@ const columns = computed<TableColumn<Unit>[]>(() => [
                             variant: 'link',
                             icon: 'i-mdi-pencil',
                             onClick: () => {
-                                unitCreateOrUpdateSlideover.open({
+                                unitCreateOrUpdate.open({
                                     unit: row.original,
                                     onUpdated: async () => refresh(),
                                 });
@@ -182,16 +234,31 @@ const columns = computed<TableColumn<Unit>[]>(() => [
     },
 ]);
 
-const unitCreateOrUpdateSlideover = overlay.create(UnitCreateOrUpdateSlideover);
+const unitCreateOrUpdate = overlay.create(UnitCreateOrUpdateModal);
 const confirmModal = overlay.create(ConfirmModal);
+
+const orderChanged = ref(false);
+useDraggable<Unit>('.unit-list-table', unitList, {
+    animation: 150,
+    handle: '.handle-choice',
+    onSort: () => (orderChanged.value = true),
+});
 </script>
 
 <template>
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('common.unit', 2)">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton fallback-to="/centrum" />
+
+                    <UTooltip v-if="orderChanged" :text="$t('common.save', 1)">
+                        <UButton color="primary" variant="outline" icon="i-mdi-content-save" @click="reorderUnits(unitList)" />
+                    </UTooltip>
 
                     <UTooltip v-if="can('centrum.CentrumService/Stream').value" :text="$t('common.setting', 2)">
                         <UButton icon="i-mdi-settings" to="/centrum/settings">
@@ -207,7 +274,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         variant="outline"
                         trailing-icon="i-mdi-plus"
                         @click="
-                            unitCreateOrUpdateSlideover.open({
+                            unitCreateOrUpdate.open({
                                 onCreated: async () => refresh(),
                                 onUpdated: async () => refresh(),
                             })
@@ -228,17 +295,17 @@ const confirmModal = overlay.create(ConfirmModal);
                 :error="error"
                 :retry="refresh"
             />
-            <DataPendingBlock v-else-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.unit', 2)])" />
 
             <UTable
                 v-else
                 class="flex-1"
                 :loading="isRequestPending(status)"
                 :columns="columns"
-                :data="units?.units"
+                :data="unitList"
                 :empty="$t('common.not_found', [$t('common.unit', 2)])"
                 :sorting-options="{ manualSorting: true }"
                 :pagination-options="{ manualPagination: true }"
+                :ui="{ tbody: 'unit-list-table' }"
             />
         </template>
 

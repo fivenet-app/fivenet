@@ -9,7 +9,6 @@ import { getCitizensLabelsClient } from '~~/gen/ts/clients';
 import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import DataErrorBlock from '../../partials/data/DataErrorBlock.vue';
-import DataPendingBlock from '../../partials/data/DataPendingBlock.vue';
 import CreateOrUpdateModal from './CreateOrUpdateModal.vue';
 
 const { can } = useAuth();
@@ -194,9 +193,8 @@ const columns = computed<TableColumn<Label>[]>(() => [
         </template>
 
         <template #body>
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
             <DataErrorBlock
-                v-else-if="error"
+                v-if="error"
                 :title="$t('common.unable_to_load', [$t('components.citizens.citizen_labels.title')])"
                 :error="error"
                 :retry="refresh"
@@ -208,7 +206,7 @@ const columns = computed<TableColumn<Label>[]>(() => [
                 :loading="isRequestPending(status)"
                 :columns="columns"
                 :data="labels"
-                :empty="$t('common.not_found', [$t('common.label', 2)])"
+                :empty="$t('common.not_found', [$t('components.citizens.citizen_labels.title')])"
                 sticky
             />
         </template>
