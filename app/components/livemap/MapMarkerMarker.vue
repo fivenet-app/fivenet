@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { PointExpression } from 'leaflet';
 import MarkerMarkerPopup from '~/components/livemap/MarkerMarkerPopup.vue';
-import { availableIcons, fallbackIcon } from '~/components/partials/icons';
+import { resolveIconComponent } from '~/components/partials/icons';
 import { MarkerType, type MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 
 const props = withDefaults(
@@ -62,13 +62,7 @@ const popupAnchor = computed<PointExpression>(() => [0, (props.size / 2) * -1]);
     >
         <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
             <component
-                :is="
-                    availableIcons.find(
-                        (icon) =>
-                            marker.data?.data.oneofKind === 'icon' &&
-                            icon.name === convertDynamicIconNameToComponent(marker.data?.data.icon.icon),
-                    )?.component ?? fallbackIcon.name
-                "
+                :is="resolveIconComponent(convertDynamicIconNameToComponent(marker.data?.data.icon.icon))"
                 class="size-full"
                 :style="{ color: marker.color ?? 'currentColor' }"
             />
@@ -85,7 +79,7 @@ const popupAnchor = computed<PointExpression>(() => [0, (props.size / 2) * -1]);
         @click="$emit('selected')"
     >
         <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
-            <component :is="fallbackIcon.component" :fill="marker.color ?? 'currentColor'" />
+            <component :is="resolveIconComponent()" :fill="marker.color ?? 'currentColor'" />
         </LIcon>
 
         <MarkerMarkerPopup :marker="marker" />

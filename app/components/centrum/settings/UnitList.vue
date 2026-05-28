@@ -7,7 +7,7 @@ import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrU
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import { availableIcons, fallbackIcon } from '~/components/partials/icons';
+import { fallbackIconName, resolveIconComponent } from '~/components/partials/icons';
 import Pagination from '~/components/partials/Pagination.vue';
 import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units/units';
@@ -239,10 +239,15 @@ const columns = computed<TableColumn<Unit>[]>(() => [
         accessorKey: 'icon',
         header: t('common.icon'),
         cell: ({ row }) =>
-            h(availableIcons.find((item) => item.name === row.original.icon)?.component ?? fallbackIcon.component, {
-                class: 'size-5',
-                fill: row.original.color ?? 'currentColor',
-            }),
+            row.original.icon
+                ? h(UIcon, {
+                      class: 'size-5',
+                      name: convertComponentIconNameToDynamic(row.original.icon),
+                      style: {
+                          color: row.original.color ?? 'currentColor',
+                      },
+                  })
+                : undefined,
     },
     {
         accessorKey: 'attributes',

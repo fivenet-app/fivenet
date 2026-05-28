@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { CardElement } from '~/utils/types';
-import { availableIcons, fallbackIcon } from './icons';
 
 withDefaults(
     defineProps<{
@@ -35,11 +34,11 @@ const { can } = useAuth();
         >
             <template v-if="showIcon && module.icon" #leading>
                 <template v-if="!module.icon.startsWith('i-')">
-                    <component
-                        :is="availableIcons.find((item) => item.name === module.icon)?.component ?? fallbackIcon.component"
+                    <UIcon
                         v-if="module.icon"
                         class="h-10 w-10 shrink-0"
                         :class="`text-${module.color ?? 'primary'}`"
+                        :name="convertComponentIconNameToDynamic(module.icon)"
                     />
                 </template>
                 <template v-else>

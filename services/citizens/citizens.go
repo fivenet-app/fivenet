@@ -417,11 +417,11 @@ func (s *Server) GetUser(
 	}
 
 	if fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsLabels) {
-		attributes, err := s.getUserLabels(ctx, userInfo, req.GetUserId())
+		labels, err := s.getUserLabels(ctx, userInfo, req.GetUserId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
-		resp.User.Props.Labels = attributes
+		resp.User.Props.Labels = labels
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)

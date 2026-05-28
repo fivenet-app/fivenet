@@ -3,7 +3,7 @@ import { UButton, UFieldGroup, UIcon, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import { availableIcons } from '~/components/partials/icons';
+import { resolveIconComponent } from '~/components/partials/icons';
 import Pagination from '~/components/partials/Pagination.vue';
 import { getCitizensLabelsClient } from '~~/gen/ts/clients';
 import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
@@ -115,34 +115,36 @@ const columns = computed<TableColumn<Label>[]>(() => [
         id: 'actions',
         cell: ({ row }) =>
             h('div', [
-                h(
-                    'div',
-                    {
-                        class: 'inline-flex items-center gap-1',
-                    },
-                    [
-                        h(UTooltip, { text: t('common.draggable') }, [
-                            h(UIcon, {
-                                class: 'handle-choice size-6 cursor-move',
-                                name: 'i-mdi-drag-horizontal',
-                            }),
-                        ]),
-                        h(UFieldGroup, { orientation: 'vertical' }, [
-                            h(UButton, {
-                                size: 'xs',
-                                variant: 'link',
-                                icon: 'i-mdi-arrow-up',
-                                onClick: () => moveUp(row.index),
-                            }),
-                            h(UButton, {
-                                size: 'xs',
-                                variant: 'link',
-                                icon: 'i-mdi-arrow-down',
-                                onClick: () => moveDown(row.index),
-                            }),
-                        ]),
-                    ],
-                ),
+                can('citizens.LabelsService/CreateOrUpdateLabel').value
+                    ? h(
+                          'div',
+                          {
+                              class: 'inline-flex items-center gap-1',
+                          },
+                          [
+                              h(UTooltip, { text: t('common.draggable') }, [
+                                  h(UIcon, {
+                                      class: 'handle-choice size-6 cursor-move',
+                                      name: 'i-mdi-drag-horizontal',
+                                  }),
+                              ]),
+                              h(UFieldGroup, { orientation: 'vertical' }, [
+                                  h(UButton, {
+                                      size: 'xs',
+                                      variant: 'link',
+                                      icon: 'i-mdi-arrow-up',
+                                      onClick: () => moveUp(row.index),
+                                  }),
+                                  h(UButton, {
+                                      size: 'xs',
+                                      variant: 'link',
+                                      icon: 'i-mdi-arrow-down',
+                                      onClick: () => moveDown(row.index),
+                                  }),
+                              ]),
+                          ],
+                      )
+                    : undefined,
                 can('citizens.LabelsService/CreateOrUpdateLabel').value
                     ? h(
                           UTooltip,
@@ -216,10 +218,15 @@ const columns = computed<TableColumn<Label>[]>(() => [
         accessorKey: 'icon',
         header: t('common.icon'),
         cell: ({ row }) =>
-            h(availableIcons.find((item) => item.name === row.original.icon)?.component ?? 'span', {
-                class: 'size-5',
-                fill: row.original.color ?? 'currentColor',
-            }),
+            row.original.icon
+                ? h(UIcon, {
+                      class: 'size-5',
+                      name: convertComponentIconNameToDynamic(row.original.icon),
+                      style: {
+                          color: row.original.color ?? 'currentColor',
+                      },
+                  })
+                : undefined,
     },
     {
         accessorKey: 'expiration',

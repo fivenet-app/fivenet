@@ -1,19 +1,24 @@
 <script lang="ts" setup>
-import type { DefineComponent } from 'vue';
-import { availableIcons, fallbackIcon as defaultIcon, type IconEntry } from './icons';
+import type { Component } from 'vue';
+import {
+    availableIcons,
+    fallbackIconComponent as defaultFallbackIconComponent,
+    fallbackIconName,
+    type IconEntry,
+} from './icons';
 import { titleCase } from 'scule';
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         color?: string;
         hexColor?: string;
-        fallbackIcon?: DefineComponent | IconEntry;
+        fallbackIcon?: Component | IconEntry;
         clear?: boolean;
     }>(),
     {
         color: undefined,
         hexColor: undefined,
-        fallbackIcon: () => defaultIcon,
+        fallbackIcon: () => defaultFallbackIconComponent,
         clear: false,
     },
 );
@@ -23,42 +28,53 @@ defineOptions({
 });
 
 const icon = defineModel<string | undefined>('modelValue');
+
+function getItemName(item: unknown): string | undefined {
+    if (typeof item !== 'object' || item === null || !('name' in item)) {
+        return undefined;
+    }
+
+    const { name } = item as { name?: unknown };
+    return typeof name === 'string' ? name : undefined;
+}
 </script>
 
 <template>
     <ClientOnly>
         <USelectMenu
             v-model="icon"
+            class="max-h-100"
             :items="availableIcons"
             :search-input="{ placeholder: $t('common.search_field') }"
             :filter-fields="['name', 'label']"
             label-key="label"
             value-key="name"
             virtualize
-            :clear="clear"
+            :clear="props.clear"
+            :ui="{ viewport: 'max-h-98' }"
             v-bind="$attrs"
         >
             <template v-if="icon" #default>
                 <div class="inline-flex items-center gap-1">
-                    <component
-                        :is="availableIcons.find((item) => item.name === icon)?.component ?? fallbackIcon.component"
+                    <UIcon
                         class="size-5"
-                        :style="{ color: hexColor ?? `var(--color-${color ?? 'primary'}-400)` }"
+                        :name="convertComponentIconNameToDynamic(icon ?? fallbackIconName)"
+                        :style="{ color: props.hexColor ?? `var(--color-${props.color ?? 'primary'}-400)` }"
                     />
 
                     <span class="truncate">{{ titleCase(icon ?? $t('common.unknown')) }}</span>
                 </div>
             </template>
 
-            <template #item-label="{ item }">
+            <template #item="{ item }">
                 <div class="inline-flex items-center gap-1">
-                    <component
-                        :is="item?.component"
+                    <UIcon
                         class="size-5"
-                        :style="{ color: hexColor ?? `var(--color-${color ?? 'primary'}-400)` }"
+                        :name="convertComponentIconNameToDynamic(getItemName(item) ?? '')"
+                        :style="{ color: props.hexColor ?? `var(--color-${props.color ?? 'primary'}-400)` }"
                     />
 
-                    <span class="truncate">{{ titleCase(item.name) }}</span>
+                    <span class="truncate">{{ titleCase(getItemName(item) ?? $t('common.unknown')) }}</span>
                 </div>
             </template>
         </USelectMenu>

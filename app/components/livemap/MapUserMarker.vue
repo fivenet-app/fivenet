@@ -9,7 +9,7 @@ import UnitDetailsSlideover from '../centrum/units/UnitDetailsSlideover.vue';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 import { checkIfCanAccessColleague } from '../jobs/colleagues/helpers';
 import PhoneNumberBlock from '../partials/citizens/PhoneNumberBlock.vue';
-import { availableIcons } from '../partials/icons';
+import { resolveIconComponent } from '../partials/icons';
 
 const props = withDefaults(
     defineProps<{
@@ -56,11 +56,7 @@ const unitInverseColor = computed(() => hexToRgb(unit.value?.color ?? livemap.us
 
 const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
 const popupAnchor = computed<PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
-const icon = computed(() =>
-    unit.value?.icon
-        ? (availableIcons.find((item) => item.name === unit.value?.icon)?.component ?? MapMarkerIcon)
-        : MapMarkerIcon,
-);
+const icon = computed(() => (unit.value?.icon ? resolveIconComponent(unit.value.icon) : MapMarkerIcon));
 
 const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status));
 

@@ -5,7 +5,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
-import { availableIcons, fallbackIcon } from '../partials/icons';
+import { resolveIconComponent } from '../partials/icons';
 import MarkerCreateOrUpdateSlideover from './MarkerCreateOrUpdateSlideover.vue';
 
 defineProps<{
@@ -92,15 +92,9 @@ const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideov
                 <span class="font-semibold"> {{ $t('common.marker') }} {{ marker.name }}</span>
 
                 <template v-if="marker.data?.data.oneofKind === 'icon'">
-                    <component
-                        :is="
-                            availableIcons.find(
-                                (icon) =>
-                                    marker.data?.data.oneofKind === 'icon' &&
-                                    icon.name === convertDynamicIconNameToComponent(marker.data?.data.icon.icon),
-                            )?.component ?? fallbackIcon.component
-                        "
+                    <UIcon
                         class="size-6"
+                        :name="convertComponentIconNameToDynamic(marker.data.data.icon.icon)"
                         :style="{ color: marker.color ?? 'currentColor' }"
                     />
                 </template>
