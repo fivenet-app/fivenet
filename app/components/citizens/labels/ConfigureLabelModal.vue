@@ -18,6 +18,7 @@ const { t } = useI18n();
 
 const schema = z.object({
     id: z.coerce.number(),
+    sortOrder: z.number().min(0).default(0),
     name: z.coerce.string().min(1),
     color: z.coerce.string().length(7),
     icon: z.coerce.string().max(255).optional(),
@@ -39,6 +40,7 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     id: props.label.id,
+    sortOrder: props.label.sortOrder,
     name: props.label.name,
     color: props.label.color,
     icon: props.label.icon,
@@ -64,6 +66,7 @@ const maxExpiresAt = computed(() =>
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     emits('close', {
         id: event.data.id,
+        sortOrder: event.data.sortOrder,
         name: event.data.name,
         color: event.data.color,
         icon: event.data.icon,

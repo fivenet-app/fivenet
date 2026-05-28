@@ -24,7 +24,7 @@ const schema = z.object({
             name: z.coerce.string().min(1).max(64),
             color: z.coerce.string().length(7),
             icon: z.coerce.string().max(128).optional(),
-            order: z.coerce.number().nonnegative().default(0),
+            sortOrder: z.coerce.number().nonnegative().default(0),
         })
         .array()
         .max(50)
@@ -200,7 +200,7 @@ const formRef = useTemplateRef('formRef');
                         :class="state.labels.length ? 'mt-2' : ''"
                         :disabled="!canSubmit"
                         icon="i-mdi-plus"
-                        @click="state.labels.push({ id: 0, name: '', color: '#5c7aff', order: 0 })"
+                        @click="state.labels.push({ id: 0, name: '', color: '#5c7aff', sortOrder: 0 })"
                     />
                 </UFormField>
             </UForm>

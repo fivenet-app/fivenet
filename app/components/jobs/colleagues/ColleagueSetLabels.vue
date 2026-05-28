@@ -45,7 +45,7 @@ const schema = z.object({
             name: z.coerce.string().min(1),
             color: z.coerce.string().length(7),
             icon: z.coerce.string().max(128).optional(),
-            order: z.coerce.number().nonnegative().default(0),
+            sortOrder: z.coerce.number().nonnegative().default(0),
         })
         .array()
         .max(10)
