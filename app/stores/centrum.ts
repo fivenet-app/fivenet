@@ -212,6 +212,7 @@ export const useCentrumStore = defineStore(
                 existing.createdAt = unit.createdAt;
                 existing.updatedAt = unit.updatedAt;
                 existing.name = unit.name;
+                existing.sortOrder = unit.sortOrder;
                 existing.initials = unit.initials;
                 existing.color = unit.color;
                 existing.icon = unit.icon;
