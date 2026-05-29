@@ -78,10 +78,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 const formatDuration = useDurationFormatter();
 
 const formRef = useTemplateRef('formRef');
-
-watch(formRef, () => {
-    if (props.label.settings?.requiresExpiration) formRef.value?.submit();
-});
 </script>
 
 <template>
@@ -90,7 +86,7 @@ watch(formRef, () => {
             <div class="inline-flex gap-2">
                 <span>{{ $t('common.label') }}</span>
 
-                <LabelBadge :label="label" />
+                <LabelBadge :label="label" hide-expires-at />
             </div>
         </template>
 

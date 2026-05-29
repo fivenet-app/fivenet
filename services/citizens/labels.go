@@ -36,6 +36,20 @@ func (s *Server) ListLabels(
 ) (*pbcitizens.ListLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	// Either user can see labels of citizens
+	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.ps, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+
+	var canCreateLabel bool
+	if !fields.Contains(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsLabels) {
+		canCreateLabel = s.ps.Can(userInfo, permscitizens.LabelsService.CreateOrUpdateLabel.Perm)
+		if !canCreateLabel {
+			return nil, errorscitizens.ErrLabelNotFound
+		}
+	}
+
 	condition := mysql.Bool(true)
 
 	if !userInfo.GetSuperuser() {
@@ -47,8 +61,7 @@ func (s *Server) ListLabels(
 	}
 
 	// When an user can create/update labels, the user is allowed to be returned all of their job's labels.
-	canUpdate := s.ps.Can(userInfo, permscitizens.LabelsService.CreateOrUpdateLabel.Perm)
-	if req.GetOwnJobOnly() && canUpdate {
+	if req.GetOwnJobOnly() && canCreateLabel {
 		condition = condition.AND(tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())))
 	} else if !userInfo.GetSuperuser() {
 		minAccess := min(req.GetMinAccess(), citizenslabels.AccessLevel_ACCESS_LEVEL_VIEW)

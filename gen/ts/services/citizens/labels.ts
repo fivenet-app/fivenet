@@ -578,8 +578,8 @@ export const ReorderLabelsResponse = new ReorderLabelsResponse$Type();
  * @generated ServiceType for protobuf service services.citizens.LabelsService
  */
 export const LabelsService = new ServiceType("services.citizens.LabelsService", [
-    { name: "ListLabels", options: { "codegen.perms.perms": { enabled: true } }, I: ListLabelsRequest, O: ListLabelsResponse },
-    { name: "GetLabel", options: { "codegen.perms.perms": { enabled: true, name: "ListLabels" } }, I: GetLabelRequest, O: GetLabelResponse },
+    { name: "ListLabels", options: { "codegen.perms.perms": { enabled: true, service: "CitizensService", name: "GetUser" } }, I: ListLabelsRequest, O: ListLabelsResponse },
+    { name: "GetLabel", options: { "codegen.perms.perms": { enabled: true, service: "CitizensService", name: "GetUser" } }, I: GetLabelRequest, O: GetLabelResponse },
     { name: "CreateOrUpdateLabel", options: { "codegen.perms.perms": { enabled: true } }, I: CreateOrUpdateLabelRequest, O: CreateOrUpdateLabelResponse },
     { name: "DeleteLabel", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteLabelRequest, O: DeleteLabelResponse },
     { name: "ReorderLabels", options: { "codegen.perms.perms": { enabled: true, name: "CreateOrUpdateLabel" } }, I: ReorderLabelsRequest, O: ReorderLabelsResponse }

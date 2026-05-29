@@ -35,7 +35,7 @@ const { game } = useAppConfig();
 
 const { t } = useI18n();
 
-const { can } = useAuth();
+const { attr, can } = useAuth();
 
 const clipboardStore = useClipboardStore();
 
@@ -272,15 +272,17 @@ const isOpen = ref(false);
                 @update:mug-shot="user.props!.mugshot = $event"
             />
 
-            <USeparator />
+            <template v-if="user && attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Labels').value">
+                <USeparator />
 
-            <div v-if="user" class="flex flex-col gap-2">
-                <h2 class="flex min-w-0 items-center truncate font-semibold text-highlighted">
-                    {{ $t('common.label', 2) }}
-                </h2>
+                <div class="flex flex-col gap-2">
+                    <h2 class="flex min-w-0 items-center truncate font-semibold text-highlighted">
+                        {{ $t('common.label', 2) }}
+                    </h2>
 
-                <SetLabels v-model="user.props!.labels" class="flex-1" :user-id="user.userId" />
-            </div>
+                    <SetLabels v-model="user.props!.labels" class="flex-1" :user-id="user.userId" />
+                </div>
+            </template>
         </template>
     </UDashboardPanel>
 
@@ -319,15 +321,19 @@ const isOpen = ref(false);
                             @update:mug-shot="user.props!.mugshot = $event"
                         />
 
-                        <USeparator />
+                        <template
+                            v-if="user && attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Labels').value"
+                        >
+                            <USeparator />
 
-                        <div v-if="user" class="flex flex-col gap-2">
-                            <h1 class="flex min-w-0 items-center truncate font-semibold text-highlighted">
-                                {{ $t('common.label', 2) }}
-                            </h1>
+                            <div class="flex flex-col gap-2">
+                                <h1 class="flex min-w-0 items-center truncate font-semibold text-highlighted">
+                                    {{ $t('common.label', 2) }}
+                                </h1>
 
-                            <SetLabels v-model="user.props!.labels" class="flex-1" :user-id="user.userId" />
-                        </div>
+                                <SetLabels v-model="user.props!.labels" class="flex-1" :user-id="user.userId" />
+                            </div>
+                        </template>
                     </template>
                 </UDashboardPanel>
             </template>

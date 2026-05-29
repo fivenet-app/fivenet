@@ -790,7 +790,8 @@
             "n": "Nicht angegeben"
         },
         "run": "Ausführen | Läuft",
-        "share": "Teilen"
+        "share": "Teilen",
+        "error": "Fehler"
     },
     "components": {
         "partials": {
@@ -3244,10 +3245,6 @@
                 "DeleteLabel": {
                     "key": "Löschen von Bürger-Labels",
                     "description": "Löschen von Bürger-Labels."
-                },
-                "ListLabels": {
-                    "key": "Auflisten/Anzeigen von Bürger-Labels",
-                    "description": "Auflisten/Anzeigen von Bürger-Labels."
                 }
             }
         },

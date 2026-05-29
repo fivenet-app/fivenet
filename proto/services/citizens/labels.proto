@@ -60,13 +60,18 @@ service LabelsService {
   };
 
   rpc ListLabels(ListLabelsRequest) returns (ListLabelsResponse) {
-    option (codegen.perms.perms) = {enabled: true};
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "CitizensService"
+      name: "GetUser"
+    };
   }
 
   rpc GetLabel(GetLabelRequest) returns (GetLabelResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "ListLabels"
+      service: "CitizensService"
+      name: "GetUser"
     };
   }
 

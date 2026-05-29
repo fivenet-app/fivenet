@@ -790,7 +790,8 @@
             "n": "Not specified"
         },
         "run": "Run | Running",
-        "share": "Share"
+        "share": "Share",
+        "error": "Error"
     },
     "components": {
         "partials": {
@@ -3244,10 +3245,6 @@
                 "DeleteLabel": {
                     "key": "Delete Citizen Labels",
                     "description": "Delete citizens labels."
-                },
-                "ListLabels": {
-                    "key": "List/View Citizen Labels",
-                    "description": "List/View citizen labels."
                 }
             }
         },

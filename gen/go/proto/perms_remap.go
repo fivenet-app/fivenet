@@ -172,7 +172,10 @@ var PermsRemap = map[string][]perms.PermissionRef{
 
 	// Service: citizens.LabelsService
 	"citizens.LabelsService/GetLabel": {
-		permscitizens.LabelsService.ListLabels.Perm,
+		permscitizens.CitizensService.GetUser.Perm,
+	},
+	"citizens.LabelsService/ListLabels": {
+		permscitizens.CitizensService.GetUser.Perm,
 	},
 	"citizens.LabelsService/ReorderLabels": {
 		permscitizens.LabelsService.CreateOrUpdateLabel.Perm,

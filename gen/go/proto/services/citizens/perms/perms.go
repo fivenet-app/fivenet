@@ -27,7 +27,6 @@ const (
 	// Service: citizens.LabelsService
 	LabelsServiceCreateOrUpdateLabelPerm perms.Name = "CreateOrUpdateLabel"
 	LabelsServiceDeleteLabelPerm         perms.Name = "DeleteLabel"
-	LabelsServiceListLabelsPerm          perms.Name = "ListLabels"
 )
 
 type CitizensServiceListCitizensFieldsPermValue string
@@ -134,15 +133,11 @@ var CitizensService = CitizensServicePerms{
 type LabelsServicePerms struct {
 	CreateOrUpdateLabel LabelsServiceCreateOrUpdateLabelPermRef
 	DeleteLabel         LabelsServiceDeleteLabelPermRef
-	ListLabels          LabelsServiceListLabelsPermRef
 }
 type LabelsServiceCreateOrUpdateLabelPermRef struct {
 	Perm perms.PermissionRef
 }
 type LabelsServiceDeleteLabelPermRef struct {
-	Perm perms.PermissionRef
-}
-type LabelsServiceListLabelsPermRef struct {
 	Perm perms.PermissionRef
 }
 
@@ -152,8 +147,5 @@ var LabelsService = LabelsServicePerms{
 	},
 	DeleteLabel: LabelsServiceDeleteLabelPermRef{
 		Perm: perms.NewPermissionRef(Namespace, LabelsServicePerm, LabelsServiceDeleteLabelPerm),
-	},
-	ListLabels: LabelsServiceListLabelsPermRef{
-		Perm: perms.NewPermissionRef(Namespace, LabelsServicePerm, LabelsServiceListLabelsPerm),
 	},
 }

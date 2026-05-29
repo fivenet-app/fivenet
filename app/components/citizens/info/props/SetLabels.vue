@@ -97,10 +97,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 watch(labels, () => (state.labels = labels.value?.list !== undefined ? labels.value?.list.slice() : []));
 
 watch(state, () => {
-    if (
-        state.labels.length === labels.value?.list.length &&
-        state.labels.every((el, idx) => el.name === labels.value?.list[idx]?.name)
-    ) {
+    if (state.labels.length === labels.value?.list.length && state.labels.every((el, idx) => el === labels.value?.list[idx])) {
         changed.value = false;
     } else {
         changed.value = true;
@@ -145,8 +142,7 @@ const formRef = useTemplateRef('formRef');
         <UFormField
             v-if="
                 can('citizens.CitizensService/SetUserProps').value &&
-                attr('citizens.CitizensService/SetUserProps', 'Fields', 'Labels').value &&
-                can('citizens.LabelsService/ListLabels').value
+                attr('citizens.CitizensService/SetUserProps', 'Fields', 'Labels').value
             "
             name="labels"
         >

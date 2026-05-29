@@ -713,12 +713,11 @@ const file_services_citizens_labels_proto_rawDesc = "" +
 	"\x13DeleteLabelResponse\"3\n" +
 	"\x14ReorderLabelsRequest\x12\x1b\n" +
 	"\tlabel_ids\x18\x01 \x03(\x03R\blabelIds\"\x17\n" +
-	"\x15ReorderLabelsResponse2\xde\x04\n" +
-	"\rLabelsService\x12a\n" +
+	"\x15ReorderLabelsResponse2\x86\x05\n" +
+	"\rLabelsService\x12{\n" +
 	"\n" +
-	"ListLabels\x12$.services.citizens.ListLabelsRequest\x1a%.services.citizens.ListLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12g\n" +
-	"\bGetLabel\x12\".services.citizens.GetLabelRequest\x1a#.services.citizens.GetLabelResponse\"\x12\xd2\xf3\x18\x0e\b\x01\"\n" +
-	"ListLabels\x12|\n" +
+	"ListLabels\x12$.services.citizens.ListLabelsRequest\x1a%.services.citizens.ListLabelsResponse\" \xd2\xf3\x18\x1c\b\x01\x1a\x0fCitizensService\"\aGetUser\x12u\n" +
+	"\bGetLabel\x12\".services.citizens.GetLabelRequest\x1a#.services.citizens.GetLabelResponse\" \xd2\xf3\x18\x1c\b\x01\x1a\x0fCitizensService\"\aGetUser\x12|\n" +
 	"\x13CreateOrUpdateLabel\x12-.services.citizens.CreateOrUpdateLabelRequest\x1a..services.citizens.CreateOrUpdateLabelResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12d\n" +
 	"\vDeleteLabel\x12%.services.citizens.DeleteLabelRequest\x1a&.services.citizens.DeleteLabelResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x7f\n" +
 	"\rReorderLabels\x12'.services.citizens.ReorderLabelsRequest\x1a(.services.citizens.ReorderLabelsResponse\"\x1b\xd2\xf3\x18\x17\b\x01\"\x13CreateOrUpdateLabel\x1a\x1c\xea\xf3\x18\x18\b \x12\x14i-mdi-label-multipleBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
