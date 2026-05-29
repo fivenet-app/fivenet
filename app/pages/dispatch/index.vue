@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import DispatchCenter from '~/components/centrum/DispatchCenter.vue';
+import DispatchCenter from '~/components/dispatch/DispatchCenter.vue';
 
 useHead({
     title: 'common.dispatch_center',

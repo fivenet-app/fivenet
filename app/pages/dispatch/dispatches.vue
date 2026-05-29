@@ -2,8 +2,8 @@
 import { Pane, Splitpanes } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import { z } from 'zod';
-import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
-import DispatchLayer from '~/components/centrum/livemap/DispatchLayer.vue';
+import DispatchList from '~/components/dispatch/dispatches/DispatchList.vue';
+import DispatchLayer from '~/components/dispatch/livemap/DispatchLayer.vue';
 import BaseMap from '~/components/livemap/BaseMap.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';

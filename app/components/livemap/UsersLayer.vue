@@ -65,7 +65,7 @@ onBeforeMount(async () => {
 
 onBeforeRouteLeave(async (to) => {
     // Don't end livemap stream if user is switching to dispatch center or livemap page
-    if (to.path.startsWith('/livemap') || to.path === '/dispatch') return;
+    if (to.path.startsWith('/livemap') || to.path === '/dispatch' || to.path === '/centrum') return;
 
     await stopStream(true);
 });

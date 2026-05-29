@@ -1,0 +1,140 @@
+<script lang="ts" setup>
+import { dispatchStatusToBadgeColor } from '~/components/dispatch/helpers';
+import { useCentrumStore } from '~/stores/centrum';
+import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+
+defineProps<{
+    popoverClass?: string;
+}>();
+
+const centrumStore = useCentrumStore();
+const { dispatches } = storeToRefs(centrumStore);
+
+const counts = computedAsync(() => {
+    const count = {
+        unassigned: 0,
+        enRoute: 0,
+        onScene: 0,
+        needAssistance: 0,
+        completed: 0,
+    };
+
+    dispatches.value.forEach((dsp) => {
+        switch (dsp.status?.status) {
+            case StatusDispatch.NEW:
+            case StatusDispatch.UNASSIGNED:
+                count.unassigned++;
+                break;
+
+            case StatusDispatch.UNIT_UNASSIGNED:
+            case StatusDispatch.UNIT_DECLINED:
+                if (dsp.units.length <= 0) {
+                    count.unassigned++;
+                } else {
+                    count.enRoute++;
+                }
+                break;
+
+            case StatusDispatch.UNIT_ASSIGNED:
+            case StatusDispatch.UNIT_ACCEPTED:
+            case StatusDispatch.EN_ROUTE:
+                count.enRoute++;
+                break;
+
+            case StatusDispatch.ON_SCENE:
+                count.onScene++;
+                break;
+            case StatusDispatch.NEED_ASSISTANCE:
+                count.needAssistance++;
+                break;
+
+            case StatusDispatch.COMPLETED:
+            case StatusDispatch.CANCELLED:
+            case StatusDispatch.ARCHIVED:
+            default:
+                count.completed++;
+        }
+    });
+
+    return count;
+});
+
+defineOptions({
+    inheritAttrs: false,
+});
+</script>
+
+<template>
+    <UPopover :class="popoverClass">
+        <UButton
+            class="items-center"
+            :ui="{ trailingIcon: 'max-md:hidden!' }"
+            variant="ghost"
+            trailing-icon="i-mdi-chevron-down"
+            :label="`${$t('components.centrum.livemap.total_dispatches')}: ${dispatches.size}`"
+            v-bind="$attrs"
+        />
+
+        <template #content>
+            <div class="p-4">
+                <UIcon v-if="!counts" class="size-4 animate-spin" name="i-mdi-refresh" />
+                <div v-else class="flex flex-col gap-1 text-sm font-normal text-nowrap">
+                    <div class="inline-flex justify-between gap-1.5">
+                        <UBadge
+                            class="px-2 py-1"
+                            :color="dispatchStatusToBadgeColor(StatusDispatch.UNASSIGNED)"
+                            size="sm"
+                            :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.UNASSIGNED]}`)"
+                        />
+                        <p class="font-semibold">{{ counts?.unassigned }}</p>
+                    </div>
+
+                    <div class="inline-flex justify-between gap-1.5">
+                        <UBadge
+                            class="px-2 py-1"
+                            :color="dispatchStatusToBadgeColor(StatusDispatch.EN_ROUTE)"
+                            size="sm"
+                            :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.EN_ROUTE]}`)"
+                        />
+                        <p class="font-semibold">{{ counts.enRoute }}</p>
+                    </div>
+
+                    <div class="inline-flex justify-between gap-1.5">
+                        <UBadge
+                            class="px-2 py-1"
+                            :color="dispatchStatusToBadgeColor(StatusDispatch.ON_SCENE)"
+                            size="sm"
+                            :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.ON_SCENE]}`)"
+                        />
+                        <p class="font-semibold">{{ counts.onScene }}</p>
+                    </div>
+
+                    <div class="inline-flex justify-between gap-1.5">
+                        <UBadge
+                            class="px-2 py-1"
+                            :color="dispatchStatusToBadgeColor(StatusDispatch.NEED_ASSISTANCE)"
+                            size="sm"
+                            :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.NEED_ASSISTANCE]}`)"
+                        />
+                        <p class="font-semibold">{{ counts.needAssistance }}</p>
+                    </div>
+
+                    <div class="inline-flex justify-between gap-1.5">
+                        <UBadge
+                            class="px-2 py-1"
+                            :color="dispatchStatusToBadgeColor(StatusDispatch.COMPLETED)"
+                            size="sm"
+                            :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.COMPLETED]}`)"
+                        />
+                        <p class="font-semibold">{{ counts.completed }}</p>
+                    </div>
+
+                    <div class="flex justify-between font-semibold">
+                        <span>{{ $t('common.total_count') }}</span>
+                        <span>{{ dispatches.size }}</span>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </UPopover>
+</template>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import UnitList from '~/components/centrum/settings/UnitList.vue';
+import UnitList from '~/components/dispatch/settings/UnitList.vue';
 
 const { t } = useI18n();
 

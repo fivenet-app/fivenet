@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import CentrumSidebar from '~/components/centrum/livemap/CentrumSidebar.vue';
+import CentrumSidebar from '~/components/dispatch/livemap/CentrumSidebar.vue';
 
 useHead({
     title: 'common.livemap',

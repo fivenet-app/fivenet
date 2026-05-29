@@ -1,0 +1,60 @@
+<script lang="ts" setup>
+import DispatchFeedItem from '~/components/dispatch/dispatches/DispatchFeedItem.vue';
+import { getCentrumDispatchesClient } from '~~/gen/ts/clients';
+import type { ListDispatchActivityResponse } from '~~/gen/ts/services/centrum/dispatches';
+
+const props = defineProps<{
+    dispatchId?: number;
+}>();
+
+const centrumDispatchesClient = await getCentrumDispatchesClient();
+
+const offset = ref(0);
+
+const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId ?? 0}-activity-${offset.value}`, () =>
+    listDispatchActivity(),
+);
+
+async function listDispatchActivity(): Promise<ListDispatchActivityResponse> {
+    try {
+        const call = centrumDispatchesClient.listDispatchActivity({
+            pagination: {
+                offset: offset.value,
+            },
+            id: props.dispatchId ?? 0,
+        });
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
+const { pause, resume } = useIntervalFn(async () => {
+    pause();
+    await refresh();
+    resume();
+}, 3500);
+</script>
+
+<template>
+    <div class="my-1 flex h-full flex-1 grow flex-col gap-2 px-1">
+        <div class="flex justify-between">
+            <h2 class="inline-flex flex-1 items-center text-base leading-6 font-semibold">{{ $t('common.feed') }}</h2>
+        </div>
+
+        <div class="flex flex-1 flex-col overflow-x-auto overflow-y-auto">
+            <ul class="space-y-2" role="list">
+                <DispatchFeedItem
+                    v-for="(activityItem, activityItemIdx) in data?.activity"
+                    :key="activityItem.id"
+                    :activity-length="data?.activity?.length ?? 0"
+                    :item="activityItem"
+                    :activity-item-idx="activityItemIdx"
+                />
+            </ul>
+        </div>
+    </div>
+</template>

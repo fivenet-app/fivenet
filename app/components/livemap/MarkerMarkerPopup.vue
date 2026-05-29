@@ -5,7 +5,6 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
-import { resolveIconComponent } from '../partials/icons';
 import MarkerCreateOrUpdateSlideover from './MarkerCreateOrUpdateSlideover.vue';
 
 defineProps<{

@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import type { LeafletMouseEvent, PointExpression } from 'leaflet';
 import { MapMarkerIcon } from 'mdi-vue3';
-import { unitStatusToBGColor } from '~/components/centrum/helpers';
+import { unitStatusToBGColor } from '~/components/dispatch/helpers';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
-import UnitDetailsSlideover from '../centrum/units/UnitDetailsSlideover.vue';
+import UnitDetailsSlideover from '../dispatch/units/UnitDetailsSlideover.vue';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 import { checkIfCanAccessColleague } from '../jobs/colleagues/helpers';
 import PhoneNumberBlock from '../partials/citizens/PhoneNumberBlock.vue';

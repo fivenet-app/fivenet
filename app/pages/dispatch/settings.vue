@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Settings from '~/components/centrum/settings/Settings.vue';
+import Settings from '~/components/dispatch/settings/Settings.vue';
 
 useHead({
     title: 'components.centrum.settings.title',

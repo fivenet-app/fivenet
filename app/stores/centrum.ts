@@ -1,6 +1,6 @@
 import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
-import { statusOrder } from '~/components/centrum/helpers';
+import { statusOrder } from '~/components/dispatch/helpers';
 import type { NotificationActionI18n } from '~/types/notifications';
 import { getCentrumCentrumClient, getCentrumDispatchesClient } from '~~/gen/ts/clients';
 import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers/dispatchers';
@@ -960,7 +960,7 @@ export const useCentrumStore = defineStore(
          */
         const getNotificationActions = (): NotificationActionI18n[] => {
             const route = useRoute();
-            if (route.name !== 'centrum' && route.name !== 'livemap') {
+            if (route.name !== 'dispatch' && route.name !== 'livemap') {
                 return [
                     {
                         label: { key: 'common.click_here', parameters: {} },

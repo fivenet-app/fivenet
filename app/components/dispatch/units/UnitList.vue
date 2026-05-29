@@ -1,0 +1,100 @@
+<script lang="ts" setup>
+import { statusOrder, type GroupedUnits } from '~/components/dispatch/helpers';
+import UnitListEntry from '~/components/dispatch/units/UnitListEntry.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import { useCentrumStore } from '~/stores/centrum';
+import { StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
+
+const { can } = useAuth();
+
+const centrumStore = useCentrumStore();
+const { getSortedUnits, abort, stopping } = storeToRefs(centrumStore);
+
+const grouped = computedAsync(async () => {
+    const groups: GroupedUnits = [];
+    getSortedUnits.value.forEach((e) => {
+        const idx = groups.findIndex((g) => g.key === e.status?.status.toString());
+        if (idx === -1) {
+            groups.push({
+                status: e.status?.status ?? 0,
+                units: [e],
+                key: e.status?.status.toString() ?? '',
+            });
+        } else {
+            groups[idx]!.units.push(e);
+        }
+    });
+
+    groups
+        .sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status))
+        .forEach((group) =>
+            group.units.sort((a, b) => {
+                const aHasUsers = a.users.length > 0;
+                const bHasUsers = b.users.length > 0;
+
+                if (aHasUsers !== bHasUsers) {
+                    return aHasUsers ? -1 : 1;
+                }
+
+                return a.sortOrder - b.sortOrder || a.name.localeCompare(b.name);
+            }),
+        );
+
+    return groups;
+});
+</script>
+
+<template>
+    <div class="flex h-full grow flex-col overflow-y-auto px-1">
+        <div class="flex justify-between">
+            <h2 class="inline-flex items-center text-base leading-6 font-semibold text-toned">
+                {{ $t('common.unit', 2) }}
+
+                <UTooltip
+                    v-if="can('centrum.UnitsService/CreateOrUpdateUnit').value"
+                    :text="$t('components.centrum.units.edit_units')"
+                >
+                    <UButton to="/dispatch/units" icon="i-mdi-car-multiple" variant="link" />
+                </UTooltip>
+            </h2>
+        </div>
+
+        <div class="@container/unitlist flex-1">
+            <div
+                v-if="abort === undefined && stopping"
+                class="mt-3 grid grid-cols-1 gap-2 @md/unitlist:grid-cols-2 @3xl:grid-cols-3"
+            >
+                <USkeleton v-for="idx in 8" :key="idx" class="h-9 w-full" />
+            </div>
+
+            <DataNoDataBlock
+                v-else-if="grouped?.length === 0"
+                :type="$t('common.unit', 2)"
+                icon="i-mdi-car-multiple"
+                :actions="
+                    can('centrum.UnitsService/CreateOrUpdateUnit').value
+                        ? [
+                              {
+                                  label: $t('components.centrum.units.create_unit'),
+                                  trailingIcon: 'i-mdi-plus',
+                                  variant: 'outline',
+                                  to: '/dispatch/units',
+                              },
+                          ]
+                        : undefined
+                "
+            />
+
+            <template v-else>
+                <template v-for="group in grouped" :key="group.key">
+                    <p class="-mb-1.5 text-sm">
+                        {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
+                    </p>
+                    <ul class="mt-3 grid grid-cols-1 gap-2 @md:grid-cols-2 @3xl:grid-cols-3" role="list">
+                        <UnitListEntry v-for="unit in group.units" :key="unit.id" :unit="unit" />
+                    </ul>
+                </template>
+            </template>
+        </div>
+    </div>
+</template>

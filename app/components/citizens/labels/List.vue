@@ -3,7 +3,6 @@ import { UButton, UFieldGroup, UIcon, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import { resolveIconComponent } from '~/components/partials/icons';
 import Pagination from '~/components/partials/Pagination.vue';
 import { getCitizensLabelsClient } from '~~/gen/ts/clients';
 import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
