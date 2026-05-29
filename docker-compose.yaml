@@ -13,7 +13,7 @@ name: fivenet
 services:
   # NGINX reverse proxy
   nginx-proxy:
-    image: docker.io/nginxproxy/nginx-proxy:1.10
+    image: docker.io/nginxproxy/nginx-proxy:1.11
     container_name: nginx-proxy
     environment: {}
     ports:
