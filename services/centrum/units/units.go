@@ -512,8 +512,8 @@ func (s *UnitDB) UpdateStatus(
 
 func (s *UnitDB) UpdateUnitAssignments(
 	ctx context.Context,
-	_ string,
-	userId *int32,
+	creatorJob string,
+	creatorId *int32,
 	unitId int64,
 	toAdd []int32,
 	toRemove []int32,
@@ -531,8 +531,8 @@ func (s *UnitDB) UpdateUnitAssignments(
 
 	var x, y *float64
 	var postal *string
-	if userId != nil {
-		if um, ok := s.tracker.GetUserMarkerById(*userId); ok {
+	if creatorId != nil {
+		if um, ok := s.tracker.GetUserMarkerById(*creatorId); ok {
 			x = &um.X
 			y = &um.Y
 			postal = um.Postal
@@ -660,21 +660,22 @@ func (s *UnitDB) UpdateUnitAssignments(
 				}
 
 				// Send updates
-				for _, user := range toAnnounce {
+				for _, userId := range toAnnounce {
 					if _, err := s.AddStatus(ctx, s.db, &centrumunits.UnitStatus{
-						CreatedAt: timestamp.Now(),
-						UnitId:    unit.GetId(),
-						Status:    centrumunits.StatusUnit_STATUS_UNIT_USER_REMOVED,
-						UserId:    &user,
-						CreatorId: userId,
-						X:         x,
-						Y:         y,
-						Postal:    postal,
+						CreatedAt:  timestamp.Now(),
+						UnitId:     unit.GetId(),
+						Status:     centrumunits.StatusUnit_STATUS_UNIT_USER_REMOVED,
+						UserId:     &userId,
+						CreatorId:  creatorId,
+						X:          x,
+						Y:          y,
+						Postal:     postal,
+						CreatorJob: new(unit.GetJob()),
 					}, true, unit.GetJob()); err != nil {
 						return nil, false, err
 					}
 
-					if err := s.tracker.UnsetUnitIDForUser(ctx, user); err != nil {
+					if err := s.tracker.UnsetUnitIDForUser(ctx, userId); err != nil {
 						return nil, false, err
 					}
 				}
@@ -693,7 +694,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 						UnitId:     unit.GetId(),
 						Status:     centrumunits.StatusUnit_STATUS_UNIT_USER_ADDED,
 						UserId:     &user.UserId,
-						CreatorId:  userId,
+						CreatorId:  creatorId,
 						X:          x,
 						Y:          y,
 						Postal:     postal,
@@ -719,11 +720,11 @@ func (s *UnitDB) UpdateUnitAssignments(
 					UnitId:     unit.GetId(),
 					Unit:       proto.Clone(unit).(*centrumunits.Unit),
 					Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-					UserId:     userId,
+					UserId:     creatorId,
 					X:          x,
 					Y:          y,
 					Postal:     postal,
-					CreatorId:  userId,
+					CreatorId:  creatorId,
 					CreatorJob: new(unit.GetJob()),
 				}, true, unit.GetJob()); err != nil {
 					return nil, false, err

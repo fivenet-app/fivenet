@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { unitStatusToBGColor } from '~/components/dispatch/helpers';
+import { defaultUnitIcon, unitStatusToBGColor } from '~/components/dispatch/helpers';
 import UnitDetailsSlideover from '~/components/dispatch/units/UnitDetailsSlideover.vue';
 import { rgbBlack } from '~/utils/color';
 import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
@@ -31,9 +31,19 @@ const isBright = computed(() => isColorBright(unitColorHex.value));
         </div>
 
         <div class="flex flex-1 items-center justify-between truncate border border-neutral-200">
-            <div class="flex-1 px-1 py-2 text-sm">
-                <span class="font-medium">{{ unit.name }}</span>
-                <p :class="unit.users.length === 0 ? 'text-gray-400' : 'text-gray-300'">
+            <div class="flex-1 px-1 py-1.5 text-sm">
+                <div class="inline-flex items-center gap-1 font-medium">
+                    <UIcon
+                        v-if="unit.icon && unit.icon !== defaultUnitIcon"
+                        class="!size-4"
+                        :name="convertComponentIconNameToDynamic(unit.icon)"
+                        :style="{ color: unit.color ?? 'currentColor' }"
+                    />
+
+                    <span>{{ unit.name }}</span>
+                </div>
+
+                <p class="text-sm" :class="unit.users.length === 0 ? 'text-gray-400' : 'text-gray-300'">
                     {{ $t('common.member', unit.users.length) }}
                 </p>
             </div>

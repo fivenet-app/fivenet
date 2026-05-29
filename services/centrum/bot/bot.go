@@ -128,6 +128,7 @@ func (b *Bot) Run() {
 
 			if err := b.dispatches.UpdateAssignments(
 				b.ctx,
+				new(b.job),
 				nil,
 				dsp.GetId(),
 				[]int64{unit.GetId()},

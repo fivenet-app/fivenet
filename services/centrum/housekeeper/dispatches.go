@@ -114,6 +114,7 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 		for dispatchId, units := range dsps {
 			if err := s.dispatches.UpdateAssignments(
 				ctx,
+				new(job),
 				nil,
 				dispatchId,
 				nil,

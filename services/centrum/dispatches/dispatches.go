@@ -771,7 +771,8 @@ func (s *DispatchDB) UpdateStatus(
 
 func (s *DispatchDB) UpdateAssignments(
 	ctx context.Context,
-	userId *int32,
+	creatorJob *string,
+	creatorId *int32,
 	dspId int64,
 	toAdd []int64,
 	toRemove []int64,
@@ -779,7 +780,7 @@ func (s *DispatchDB) UpdateAssignments(
 ) error {
 	s.logger.Debug(
 		"updating dispatch assignments",
-		zap.Int32p("user_id", userId),
+		zap.Int32p("user_id", creatorId),
 		zap.Int64("dispatch_id", dspId),
 		zap.Int64s("toAdd", toAdd),
 		zap.Int64s("toRemove", toRemove),
@@ -791,8 +792,8 @@ func (s *DispatchDB) UpdateAssignments(
 
 	var x, y *float64
 	var postal *string
-	if userId != nil {
-		if um, ok := s.tracker.GetUserMarkerById(*userId); ok {
+	if creatorId != nil {
+		if um, ok := s.tracker.GetUserMarkerById(*creatorId); ok {
 			x = &um.X
 			y = &um.Y
 			postal = um.Postal
@@ -941,10 +942,11 @@ func (s *DispatchDB) UpdateAssignments(
 						DispatchId: dsp.GetId(),
 						UnitId:     &unitId,
 						Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
-						UserId:     userId,
+						UserId:     creatorId,
 						X:          x,
 						Y:          y,
 						Postal:     postal,
+						CreatorJob: creatorJob,
 					}, true, dsp.GetJobs().GetJobStrings()); err != nil {
 						return nil, false, err
 					}
@@ -952,7 +954,7 @@ func (s *DispatchDB) UpdateAssignments(
 			}
 
 			if len(toAdd) > 0 {
-				units := []int64{}
+				resolvedUnits := map[int64]*centrumunits.Unit{}
 				for i := range toAdd {
 					// Skip already added units
 					if slices.ContainsFunc(
@@ -975,33 +977,31 @@ func (s *DispatchDB) UpdateAssignments(
 					}
 
 					// Only add unit to dispatch if not already assigned/in list
-					units = append(units, toAdd[i])
+					resolvedUnits[toAdd[i]] = unit
 				}
 
-				for _, unitId := range units {
-					unit, err := s.units.Get(ctx, unitId)
-					if err != nil {
-						continue
-					}
-
+				for unitId, unit := range resolvedUnits {
+					resolvedUnits[unitId] = unit
 					dsp.Units = append(dsp.Units, &centrumdispatches.DispatchAssignment{
 						DispatchId: dsp.GetId(),
-						UnitId:     unit.GetId(),
+						UnitId:     unitId,
 						Unit:       unit,
 						ExpiresAt:  expiresAtTS,
 					})
 				}
 
-				for _, unitId := range units {
+				for unitId, unit := range resolvedUnits {
 					if _, err := s.AddDispatchStatus(ctx, s.db, &centrumdispatches.DispatchStatus{
 						CreatedAt:  timestamp.Now(),
 						DispatchId: dsp.GetId(),
 						UnitId:     &unitId,
-						UserId:     userId,
+						Unit:       unit,
+						UserId:     creatorId,
 						Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
 						X:          x,
 						Y:          y,
 						Postal:     postal,
+						CreatorJob: creatorJob,
 					}, true, dsp.GetJobs().GetJobStrings()); err != nil {
 						return nil, false, err
 					}
@@ -1028,10 +1028,11 @@ func (s *DispatchDB) UpdateAssignments(
 				CreatedAt:  timestamp.Now(),
 				DispatchId: dspId,
 				Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
-				UserId:     userId,
+				UserId:     creatorId,
 				X:          x,
 				Y:          y,
 				Postal:     postal,
+				CreatorJob: creatorJob,
 			}); err != nil {
 				return err
 			}

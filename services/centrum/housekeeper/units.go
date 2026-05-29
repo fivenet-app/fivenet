@@ -103,6 +103,7 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 
 				if err := s.dispatches.UpdateAssignments(
 					ctx,
+					new(job),
 					nil,
 					dsp.GetId(),
 					nil,

@@ -217,6 +217,7 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrumdispatches
 		if err := s.dispatches.UpdateAssignments(
 			ctx,
 			nil,
+			nil,
 			dup.GetId(),
 			nil,
 			toRemove,

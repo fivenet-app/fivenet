@@ -33,7 +33,7 @@ const { gotoCoords } = useLivemapStore();
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.dispatch.units.feed.item.USER_ADDED') }}
 
-                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
+                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge show-icon />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -62,7 +62,7 @@ const { gotoCoords } = useLivemapStore();
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.dispatch.units.feed.item.USER_REMOVED') }}
 
-                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
+                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge show-icon />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -91,7 +91,7 @@ const { gotoCoords } = useLivemapStore();
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.dispatch.units.feed.item.UNAVAILABLE') }}
 
-                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
+                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge show-icon />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -120,7 +120,7 @@ const { gotoCoords } = useLivemapStore();
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.dispatch.units.feed.item.AVAILABLE') }}
 
-                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
+                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge show-icon />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -149,7 +149,7 @@ const { gotoCoords } = useLivemapStore();
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.dispatch.units.feed.item.ON_BREAK') }}
 
-                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
+                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge show-icon />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -178,7 +178,7 @@ const { gotoCoords } = useLivemapStore();
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.dispatch.units.feed.item.BUSY') }}
 
-                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
+                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge show-icon />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -207,7 +207,7 @@ const { gotoCoords } = useLivemapStore();
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.dispatch.units.feed.item.UNKNOWN') }}
 
-                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
+                    <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge show-icon />
                 </span>
 
                 <span class="inline-flex items-center text-xs">

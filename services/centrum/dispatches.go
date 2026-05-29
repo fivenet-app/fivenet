@@ -540,7 +540,8 @@ func (s *Server) AssignDispatch(
 
 	if err := s.dispatches.UpdateAssignments(
 		ctx,
-		&userInfo.UserId,
+		new(userInfo.GetJob()),
+		new(userInfo.GetUserId()),
 		dsp.GetId(),
 		req.GetToAdd(),
 		req.GetToRemove(),

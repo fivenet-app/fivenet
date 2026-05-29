@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { checkUnitAccess, unitStatusToBGColor, unitStatusToIcon } from '~/components/dispatch//helpers';
+import { checkUnitAccess, defaultUnitIcon, unitStatusToBGColor, unitStatusToIcon } from '~/components/dispatch//helpers';
 import UnitAttributes from '~/components/dispatch/partials/UnitAttributes.vue';
 import UnitAssignUsersModal from '~/components/dispatch/units/UnitAssignUsersModal.vue';
 import UnitFeed from '~/components/dispatch/units/UnitFeed.vue';
@@ -32,7 +32,25 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit.status?.st
 </script>
 
 <template>
-    <USlideover :title="`${$t('common.unit')} ${unit.initials} - ${unit.name}`" :overlay="false">
+    <USlideover :overlay="false">
+        <template #title>
+            <div class="inline-flex flex-row items-center gap-1">
+                <span>{{ $t('common.unit') }}:</span>
+
+                <UIcon
+                    v-if="unit.icon && unit.icon !== defaultUnitIcon"
+                    class="!size-5"
+                    :name="convertComponentIconNameToDynamic(unit.icon)"
+                    :style="{ color: unit.color ?? 'currentColor' }"
+                />
+
+                <span>{{ unit.initials }}</span>
+                <span>-</span>
+
+                <span>{{ unit.name }}</span>
+            </div>
+        </template>
+
         <template #body>
             <dl class="divide-y divide-default">
                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
