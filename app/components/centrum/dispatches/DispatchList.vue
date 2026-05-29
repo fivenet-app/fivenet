@@ -381,14 +381,6 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                                                 "
                                             />
 
-                                            {{
-                                                dispatchTimeToBadge(
-                                                    dispatch.createdAt,
-                                                    dispatch.status?.status,
-                                                    settings?.timings?.dispatchMaxWait,
-                                                )
-                                            }}
-
                                             <DispatchStatusBadge :status="dispatch.status?.status" size="sm" />
                                         </div>
 
