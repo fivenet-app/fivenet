@@ -121,18 +121,18 @@ func NewServer(p Params) *Server {
 					Job:          table.FivenetUserLabelsJobJobAccess.Job,
 					MinimumGrade: table.FivenetUserLabelsJobJobAccess.MinimumGrade,
 				},
-				table.FivenetUserLabelsJobJobAccess.AS("label_job_access"),
+				table.FivenetUserLabelsJobJobAccess.AS("job_access"),
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID: table.FivenetUserLabelsJobJobAccess.AS("label_job_access").ID,
+						ID: table.FivenetUserLabelsJobJobAccess.AS("job_access").ID,
 						TargetID: table.FivenetUserLabelsJobJobAccess.AS(
-							"label_job_access",
+							"job_access",
 						).TargetID,
-						Access: table.FivenetUserLabelsJobJobAccess.AS("label_job_access").Access,
+						Access: table.FivenetUserLabelsJobJobAccess.AS("job_access").Access,
 					},
-					Job: table.FivenetUserLabelsJobJobAccess.AS("label_job_access").Job,
+					Job: table.FivenetUserLabelsJobJobAccess.AS("job_access").Job,
 					MinimumGrade: table.FivenetUserLabelsJobJobAccess.AS(
-						"label_job_access",
+						"job_access",
 					).MinimumGrade,
 				},
 			),
