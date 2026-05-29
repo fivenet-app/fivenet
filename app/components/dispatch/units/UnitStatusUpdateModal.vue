@@ -78,7 +78,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="`${$t('components.centrum.update_unit_status.title')}: ${unit.name} (${unit.initials})`">
+    <UModal :title="`${$t('components.dispatch.update_unit_status.title')}: ${unit.name} (${unit.initials})`">
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-y divide-default">

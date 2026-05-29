@@ -97,10 +97,10 @@ const categories = computed(() => [
     {
         title: t('common.livemap'),
         items: [
-            { kbds: ['M', 'D'], name: `${t('common.dialog')}: ${t('components.centrum.take_dispatch.title')}` },
+            { kbds: ['M', 'D'], name: `${t('common.dialog')}: ${t('components.dispatch.take_dispatch.title')}` },
             { kbds: ['M', 'H'], name: `${t('common.mark')}: ${t('common.department_postal')}` },
-            { kbds: ['C', 'U'], name: t('components.centrum.update_unit_status.title') },
-            { kbds: ['C', 'D'], name: t('components.centrum.update_dispatch_status.title') },
+            { kbds: ['C', 'U'], name: t('components.dispatch.update_unit_status.title') },
+            { kbds: ['C', 'D'], name: t('components.dispatch.update_dispatch_status.title') },
         ],
     },
     {

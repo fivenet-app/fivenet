@@ -1080,7 +1080,7 @@
         "penaltycalculator": {
             "title": "Penalty Calculator"
         },
-        "centrum": {
+        "dispatch": {
             "create_dispatch": {
                 "title": "Create Dispatch",
                 "subtitle": "Create a new Dispatch."
@@ -1408,7 +1408,7 @@
                     "custom_sound": "Custom Sound",
                     "select_custom_sound": "Select Custom Sound File",
                     "notification": "Notification Sound",
-                    "centrum": {
+                    "dispatch": {
                         "attention": "Attention Sound",
                         "dispatch_sos": "Dispatch SOS",
                         "dispatch_assigned": "Dispatch Assigned",

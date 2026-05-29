@@ -50,11 +50,11 @@ export type AudioSettings = {
 export type AudioSoundsSettings = {
     notification: NotificationSound;
 
-    'centrum.attention': NotificationSound;
-    'centrum.dispatchSOS': NotificationSound;
-    'centrum.dispatchAssigned': NotificationSound;
-    'centrum.dispatchUpdated': NotificationSound;
-    'centrum.dispatchCompleted': NotificationSound;
+    'dispatch.attention': NotificationSound;
+    'dispatch.dispatchSOS': NotificationSound;
+    'dispatch.dispatchAssigned': NotificationSound;
+    'dispatch.dispatchUpdated': NotificationSound;
+    'dispatch.dispatchCompleted': NotificationSound;
 };
 
 export const useSettingsStore = defineStore(
@@ -109,11 +109,11 @@ export const useSettingsStore = defineStore(
             sounds: {
                 notification: { value: 'default' },
 
-                'centrum.attention': { value: 'default' },
-                'centrum.dispatchSOS': { value: 'default' },
-                'centrum.dispatchAssigned': { value: 'default' },
-                'centrum.dispatchUpdated': { value: 'none' },
-                'centrum.dispatchCompleted': { value: 'none' },
+                'dispatch.attention': { value: 'default' },
+                'dispatch.dispatchSOS': { value: 'default' },
+                'dispatch.dispatchAssigned': { value: 'default' },
+                'dispatch.dispatchUpdated': { value: 'none' },
+                'dispatch.dispatchCompleted': { value: 'none' },
             },
         });
 

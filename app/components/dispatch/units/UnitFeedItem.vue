@@ -31,7 +31,7 @@ const { gotoCoords } = useLivemapStore();
 
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
-                    {{ $t('components.centrum.units.feed.item.USER_ADDED') }}
+                    {{ $t('components.dispatch.units.feed.item.USER_ADDED') }}
 
                     <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
                 </span>
@@ -60,7 +60,7 @@ const { gotoCoords } = useLivemapStore();
 
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
-                    {{ $t('components.centrum.units.feed.item.USER_REMOVED') }}
+                    {{ $t('components.dispatch.units.feed.item.USER_REMOVED') }}
 
                     <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
                 </span>
@@ -89,7 +89,7 @@ const { gotoCoords } = useLivemapStore();
 
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
-                    {{ $t('components.centrum.units.feed.item.UNAVAILABLE') }}
+                    {{ $t('components.dispatch.units.feed.item.UNAVAILABLE') }}
 
                     <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
                 </span>
@@ -118,7 +118,7 @@ const { gotoCoords } = useLivemapStore();
 
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
-                    {{ $t('components.centrum.units.feed.item.AVAILABLE') }}
+                    {{ $t('components.dispatch.units.feed.item.AVAILABLE') }}
 
                     <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
                 </span>
@@ -147,7 +147,7 @@ const { gotoCoords } = useLivemapStore();
 
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
-                    {{ $t('components.centrum.units.feed.item.ON_BREAK') }}
+                    {{ $t('components.dispatch.units.feed.item.ON_BREAK') }}
 
                     <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
                 </span>
@@ -176,7 +176,7 @@ const { gotoCoords } = useLivemapStore();
 
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
-                    {{ $t('components.centrum.units.feed.item.BUSY') }}
+                    {{ $t('components.dispatch.units.feed.item.BUSY') }}
 
                     <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
                 </span>
@@ -205,7 +205,7 @@ const { gotoCoords } = useLivemapStore();
 
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
-                    {{ $t('components.centrum.units.feed.item.UNKNOWN') }}
+                    {{ $t('components.dispatch.units.feed.item.UNKNOWN') }}
 
                     <UnitInfoPopover v-if="item.unit" :unit="item.unit" initials-only badge />
                 </span>

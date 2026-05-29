@@ -69,7 +69,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="`${$t('components.centrum.assign_unit.title')}: ${unit.name} (${unit.initials})`">
+    <UModal :title="`${$t('components.dispatch.assign_unit.title')}: ${unit.name} (${unit.initials})`">
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="flex flex-1 flex-col justify-between gap-2">

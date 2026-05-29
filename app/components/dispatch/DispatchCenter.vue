@@ -62,7 +62,7 @@ onBeforeRouteLeave(async (to) => {
                         <div class="relative size-full">
                             <div v-if="error" class="absolute inset-0 z-30 flex items-center justify-center bg-default/75">
                                 <DataErrorBlock
-                                    :title="$t('components.centrum.dispatch_center.failed_datastream')"
+                                    :title="$t('components.dispatch.dispatch_center.failed_datastream')"
                                     :error="error"
                                     :retry="startStream"
                                 />

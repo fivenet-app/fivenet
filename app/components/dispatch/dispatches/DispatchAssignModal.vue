@@ -123,7 +123,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="$t('components.centrum.assign_dispatch.title')">
+    <UModal :title="$t('components.dispatch.assign_dispatch.title')">
         <template #actions>
             <IDCopyBadge :id="dispatch?.id ?? dispatchId" class="ml-2" prefix="DSP" />
         </template>

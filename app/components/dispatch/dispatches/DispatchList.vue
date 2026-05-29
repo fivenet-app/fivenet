@@ -276,11 +276,11 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                 v-else-if="!grouped || grouped.length === 0"
                 icon="i-mdi-success-circle"
                 color="green"
-                :title="$t('components.centrum.dispatches.list.empty.title')"
+                :title="$t('components.dispatch.dispatches.list.empty.title')"
             >
                 <template #description>
                     <span class="whitespace-pre-wrap">
-                        {{ $t('components.centrum.dispatches.list.empty.description') }}
+                        {{ $t('components.dispatch.dispatches.list.empty.description') }}
                     </span>
                 </template>
             </DataNoDataBlock>

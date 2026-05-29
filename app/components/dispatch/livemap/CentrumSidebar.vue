@@ -286,7 +286,7 @@ onBeforeRouteLeave(async (to) => {
     await stopStream(true);
 });
 
-const attentionSound = useSounds('centrum.attention', { playbackRate: 1.85 });
+const attentionSound = useSounds('dispatch.attention', { playbackRate: 1.85 });
 
 const unitCheckupStatusAge = 12.5 * 60 * 1000;
 const unitCheckupStatusReping = 15 * 60 * 1000;
@@ -414,7 +414,7 @@ defineShortcuts({
                                 color="error"
                                 :show="pendingDispatches.length > 0"
                             >
-                                <UTooltip :text="$t('components.centrum.take_dispatch.title')" :kbds="['M', 'D']">
+                                <UTooltip :text="$t('components.dispatch.take_dispatch.title')" :kbds="['M', 'D']">
                                     <UButton
                                         class="flex size-12 items-center justify-center"
                                         :class="[getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full']"
@@ -536,7 +536,7 @@ defineShortcuts({
 
                                     <UTooltip
                                         class="col-span-2"
-                                        :text="$t('components.centrum.update_unit_status.title')"
+                                        :text="$t('components.dispatch.update_unit_status.title')"
                                         :kbds="['S', 'U']"
                                     >
                                         <UButton
@@ -544,7 +544,7 @@ defineShortcuts({
                                             color="primary"
                                             size="xs"
                                             block
-                                            :label="$t('components.centrum.update_unit_status.title')"
+                                            :label="$t('components.dispatch.update_unit_status.title')"
                                             @click="onSubmitUnitStatusThrottle(getOwnUnit.id)"
                                         />
                                     </UTooltip>
@@ -583,7 +583,7 @@ defineShortcuts({
 
                                     <UTooltip
                                         class="col-span-2"
-                                        :text="$t('components.centrum.update_dispatch_status.title')"
+                                        :text="$t('components.dispatch.update_dispatch_status.title')"
                                         :kbds="['S', 'D']"
                                     >
                                         <UButton
@@ -591,7 +591,7 @@ defineShortcuts({
                                             color="primary"
                                             size="xs"
                                             block
-                                            :label="$t('components.centrum.update_dispatch_status.title')"
+                                            :label="$t('components.dispatch.update_dispatch_status.title')"
                                             @click="updateDspStatus(selectedDispatch)"
                                         />
                                     </UTooltip>

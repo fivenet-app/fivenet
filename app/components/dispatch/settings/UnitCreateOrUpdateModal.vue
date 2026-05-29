@@ -139,7 +139,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="unit?.id ? $t('components.centrum.units.update_unit') : $t('components.centrum.units.create_unit')">
+    <UModal :title="unit?.id ? $t('components.dispatch.units.update_unit') : $t('components.dispatch.units.create_unit')">
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="name" :label="$t('common.name')">
@@ -231,8 +231,8 @@ const formRef = useTemplateRef('formRef');
                     :disabled="!canSubmit"
                     :label="
                         unit && unit?.id
-                            ? $t('components.centrum.units.update_unit')
-                            : $t('components.centrum.units.create_unit')
+                            ? $t('components.dispatch.units.update_unit')
+                            : $t('components.dispatch.units.create_unit')
                     "
                     @click="formRef?.submit()"
                 />

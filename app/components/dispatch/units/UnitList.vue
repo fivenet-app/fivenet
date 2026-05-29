@@ -52,7 +52,7 @@ const grouped = computedAsync(async () => {
 
                 <UTooltip
                     v-if="can('centrum.UnitsService/CreateOrUpdateUnit').value"
-                    :text="$t('components.centrum.units.edit_units')"
+                    :text="$t('components.dispatch.units.edit_units')"
                 >
                     <UButton to="/dispatch/units" icon="i-mdi-car-multiple" variant="link" />
                 </UTooltip>
@@ -75,7 +75,7 @@ const grouped = computedAsync(async () => {
                     can('centrum.UnitsService/CreateOrUpdateUnit').value
                         ? [
                               {
-                                  label: $t('components.centrum.units.create_unit'),
+                                  label: $t('components.dispatch.units.create_unit'),
                                   trailingIcon: 'i-mdi-plus',
                                   variant: 'outline',
                                   to: '/dispatch/units',

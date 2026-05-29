@@ -71,7 +71,7 @@ defineOptions({
             :ui="{ trailingIcon: 'max-md:hidden!' }"
             variant="ghost"
             trailing-icon="i-mdi-chevron-down"
-            :label="`${$t('components.centrum.livemap.total_dispatches')}: ${dispatches.size}`"
+            :label="`${$t('components.dispatch.livemap.total_dispatches')}: ${dispatches.size}`"
             v-bind="$attrs"
         />
 

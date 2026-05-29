@@ -63,6 +63,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
 function toggleFollow(): void {
     if (!followMarker.value) {
         followMarker.value = true;
+        selectedMarker.value = props.marker;
     } else {
         followMarker.value = false;
         selectedMarker.value = undefined;

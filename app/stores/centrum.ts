@@ -55,9 +55,9 @@ export const useCentrumStore = defineStore(
         const ownDispatches = ref<number[]>([]);
         const pendingDispatches = ref<number[]>([]);
 
-        const dispatchSOS = useSounds('centrum.dispatchSOS');
-        const dispatchAssigned = useSounds('centrum.dispatchAssigned');
-        const dispatchCompleted = useSounds('centrum.dispatchCompleted');
+        const dispatchSOS = useSounds('dispatch.dispatchSOS');
+        const dispatchAssigned = useSounds('dispatch.dispatchAssigned');
+        const dispatchCompleted = useSounds('dispatch.dispatchCompleted');
 
         // Helpers
         /**

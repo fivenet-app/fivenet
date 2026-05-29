@@ -306,7 +306,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         "
                     >
                         <span class="hidden truncate sm:block">
-                            {{ $t('components.centrum.units.create_unit') }}
+                            {{ $t('components.dispatch.units.create_unit') }}
                         </span>
                     </UButton>
                 </template>

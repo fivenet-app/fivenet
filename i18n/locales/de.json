@@ -1080,7 +1080,7 @@
         "penaltycalculator": {
             "title": "Strafenrechner"
         },
-        "centrum": {
+        "dispatch": {
             "create_dispatch": {
                 "title": "Einsatz Erstellen",
                 "subtitle": "Erstelle einen neuen Einsatz."
@@ -1408,7 +1408,7 @@
                     "custom_sound": "Benutzerdefinierter Sound",
                     "select_custom_sound": "Wählen Sie einen benutzerdefinierten Sound aus",
                     "notification": "Benachrichtigungs-Sounds",
-                    "centrum": {
+                    "dispatch": {
                         "attention": "Aufmerksamkeits-Sound",
                         "dispatch_sos": "Einsatz SOS",
                         "dispatch_assigned": "Einsatz Zugewiesen",

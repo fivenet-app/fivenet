@@ -79,7 +79,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="$t('components.centrum.update_dispatch_status.title')" :overlay="false">
+    <UModal :title="$t('components.dispatch.update_dispatch_status.title')" :overlay="false">
         <template #actions>
             <IDCopyBadge :id="dispatchId" class="ml-2" prefix="DSP" />
         </template>

@@ -84,7 +84,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
 </script>
 
 <template>
-    <USlideover :title="$t('components.centrum.take_dispatch.title')">
+    <USlideover :title="$t('components.dispatch.take_dispatch.title')">
         <template #body>
             <dl class="divide-y divide-default">
                 <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">

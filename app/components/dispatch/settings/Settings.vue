@@ -236,7 +236,7 @@ const formRef = useTemplateRef('formRef');
 <template>
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
-            <UDashboardNavbar :title="$t('components.centrum.settings.title')">
+            <UDashboardNavbar :title="$t('components.dispatch.settings.title')">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
@@ -292,8 +292,8 @@ const formRef = useTemplateRef('formRef');
                 >
                     <template #settings>
                         <UPageCard
-                            :title="$t('components.centrum.settings.title')"
-                            :description="$t('components.centrum.settings.description')"
+                            :title="$t('components.dispatch.settings.title')"
+                            :description="$t('components.dispatch.settings.description')"
                         >
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
@@ -307,7 +307,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="public"
                                 :label="$t('common.public')"
-                                :description="$t('components.centrum.settings.public.description')"
+                                :description="$t('components.dispatch.settings.public.description')"
                             >
                                 <USwitch
                                     v-model="state.public"
@@ -363,8 +363,8 @@ const formRef = useTemplateRef('formRef');
                         </UPageCard>
 
                         <UPageCard
-                            :title="$t('components.centrum.settings.deduplication.title')"
-                            :description="$t('components.centrum.settings.deduplication.description')"
+                            :title="$t('components.dispatch.settings.deduplication.title')"
+                            :description="$t('components.dispatch.settings.deduplication.description')"
                         >
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
@@ -377,7 +377,7 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="configuration.deduplicationDuration"
-                                :label="$t('components.centrum.settings.deduplication.deduplication_duration')"
+                                :label="$t('components.dispatch.settings.deduplication.deduplication_duration')"
                             >
                                 <InputDurationPicker
                                     v-model="state.configuration.deduplicationDuration"
@@ -393,8 +393,8 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="configuration.deduplicationRadius"
-                                :label="$t('components.centrum.settings.deduplication.deduplication_radius')"
-                                :description="$t('components.centrum.settings.deduplication.deduplication_radius_description')"
+                                :label="$t('components.dispatch.settings.deduplication.deduplication_radius')"
+                                :description="$t('components.dispatch.settings.deduplication.deduplication_radius_description')"
                             >
                                 <UInputNumber
                                     v-model="state.configuration.deduplicationRadius"
@@ -410,8 +410,8 @@ const formRef = useTemplateRef('formRef');
 
                     <template #predefined>
                         <UPageCard
-                            :title="$t('components.centrum.settings.predefined.title')"
-                            :description="$t('components.centrum.settings.predefined.description')"
+                            :title="$t('components.dispatch.settings.predefined.title')"
+                            :description="$t('components.dispatch.settings.predefined.description')"
                         >
                             <!-- Predefined Unit Status Reason -->
                             <UFormField
@@ -503,14 +503,14 @@ const formRef = useTemplateRef('formRef');
 
                     <template #timings>
                         <UPageCard
-                            :title="$t('components.centrum.settings.timings.title')"
-                            :description="$t('components.centrum.settings.timings.description')"
+                            :title="$t('components.dispatch.settings.timings.title')"
+                            :description="$t('components.dispatch.settings.timings.description')"
                         >
                             <!-- Timings -->
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="timings.dispatchMaxWait"
-                                :label="$t('components.centrum.settings.timings.dispatch_max_wait')"
+                                :label="$t('components.dispatch.settings.timings.dispatch_max_wait')"
                             >
                                 <UInputNumber
                                     v-model="state.timings.dispatchMaxWait"
@@ -525,7 +525,7 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="timings.requireUnit"
-                                :label="$t('components.centrum.settings.timings.require_unit')"
+                                :label="$t('components.dispatch.settings.timings.require_unit')"
                             >
                                 <USwitch v-model="state.timings.requireUnit" :disabled="!canSubmit" />
                             </UFormField>
@@ -533,7 +533,7 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="timings.requireUnitReminderSeconds"
-                                :label="$t('components.centrum.settings.timings.require_unit_reminder_seconds')"
+                                :label="$t('components.dispatch.settings.timings.require_unit_reminder_seconds')"
                             >
                                 <UInputNumber
                                     v-model="state.timings.requireUnitReminderSeconds"
@@ -549,8 +549,8 @@ const formRef = useTemplateRef('formRef');
 
                     <template #access>
                         <UPageCard
-                            :title="$t('components.centrum.settings.access.title')"
-                            :description="$t('components.centrum.settings.access.description')"
+                            :title="$t('components.dispatch.settings.access.title')"
+                            :description="$t('components.dispatch.settings.access.description')"
                         >
                             <!-- Access -->
                             <UFormField name="access" :label="$t('common.access')">
@@ -574,8 +574,8 @@ const formRef = useTemplateRef('formRef');
                         </UPageCard>
 
                         <UPageCard
-                            :title="$t('components.centrum.settings.offered_access.title')"
-                            :description="$t('components.centrum.settings.offered_access.description')"
+                            :title="$t('components.dispatch.settings.offered_access.title')"
+                            :description="$t('components.dispatch.settings.offered_access.description')"
                         >
                             <UFormField name="offeredAccess" :label="$t('common.access')">
                                 <UPageGrid class="mt-2">

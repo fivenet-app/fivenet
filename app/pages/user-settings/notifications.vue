@@ -75,23 +75,23 @@ const sounds = computed<
     ],
     [
         {
-            name: 'centrum.attention',
-            label: t('components.auth.user_settings.sounds.centrum.attention'),
+            name: 'dispatch.attention',
+            label: t('components.auth.user_settings.sounds.dispatch.attention'),
             items: [soundDefaultItem, ...soundsBaseItems.value],
         },
         {
-            name: 'centrum.dispatchSOS',
-            label: t('components.auth.user_settings.sounds.centrum.dispatch_sos'),
+            name: 'dispatch.dispatchSOS',
+            label: t('components.auth.user_settings.sounds.dispatch.dispatch_sos'),
             items: [soundDefaultItem, ...soundsBaseItems.value],
         },
         {
-            name: 'centrum.dispatchAssigned',
-            label: t('components.auth.user_settings.sounds.centrum.dispatch_assigned'),
+            name: 'dispatch.dispatchAssigned',
+            label: t('components.auth.user_settings.sounds.dispatch.dispatch_assigned'),
             items: [soundDefaultItem, ...soundsBaseItems.value],
         },
         {
-            name: 'centrum.dispatchCompleted',
-            label: t('components.auth.user_settings.sounds.centrum.dispatch_completed'),
+            name: 'dispatch.dispatchCompleted',
+            label: t('components.auth.user_settings.sounds.dispatch.dispatch_completed'),
             items: [...soundsBaseItems.value],
         },
     ],

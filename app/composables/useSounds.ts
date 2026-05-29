@@ -6,10 +6,10 @@ import { useSettingsStore } from '~/stores/settings';
 export type SoundKeys =
     | 'notification'
     // Centrum Sounds
-    | 'centrum.attention'
-    | 'centrum.dispatchSOS'
-    | 'centrum.dispatchAssigned'
-    | 'centrum.dispatchCompleted';
+    | 'dispatch.attention'
+    | 'dispatch.dispatchSOS'
+    | 'dispatch.dispatchAssigned'
+    | 'dispatch.dispatchCompleted';
 
 export type NotificationSound = {
     value: 'default' | 'custom' | 'none';
@@ -24,10 +24,10 @@ type StoredSound = {
 
 const SoundsRegister: Record<SoundKeys, string> = {
     notification: '/sounds/notification.aac',
-    'centrum.attention': '/sounds/centrum/attention.aac',
-    'centrum.dispatchSOS': '/sounds/centrum/dispatch_sos.aac',
-    'centrum.dispatchAssigned': '/sounds/centrum/dispatch_assigned.aac',
-    'centrum.dispatchCompleted': '/sounds/centrum/dispatch_completed.aac',
+    'dispatch.attention': '/sounds/dispatch/attention.aac',
+    'dispatch.dispatchSOS': '/sounds/dispatch/dispatch_sos.aac',
+    'dispatch.dispatchAssigned': '/sounds/dispatch/dispatch_assigned.aac',
+    'dispatch.dispatchCompleted': '/sounds/dispatch/dispatch_completed.aac',
 } as const;
 
 const DB_NAME = 'fivenet-sounds';

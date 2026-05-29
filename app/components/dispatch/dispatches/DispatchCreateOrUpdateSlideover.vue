@@ -102,7 +102,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <USlideover :title="$t('components.centrum.create_dispatch.title')" :overlay="false">
+    <USlideover :title="$t('components.dispatch.create_dispatch.title')" :overlay="false">
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <dl class="divide-y divide-default">

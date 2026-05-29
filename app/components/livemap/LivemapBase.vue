@@ -49,7 +49,7 @@ if (can('centrum.DispatchesService/CreateDispatch').value) {
     const dispatchCreateOrUpdateSlideover = overlay.create(DispatchCreateOrUpdateSlideover);
 
     mapOptions.contextmenuItems.push({
-        text: t('components.centrum.create_dispatch.title'),
+        text: t('components.dispatch.create_dispatch.title'),
         callback: (e: ContextMenuItemClickEvent) => {
             location.value = { x: e.latlng.lng, y: e.latlng.lat };
             showLocationMarker.value = true;
@@ -79,7 +79,7 @@ if (can('livemap.LivemapService/CreateOrUpdateMarker').value) {
 }
 if (nuiEnabled.value) {
     mapOptions.contextmenuItems.push({
-        text: t('components.centrum.livemap.mark_on_gps'),
+        text: t('components.dispatch.livemap.mark_on_gps'),
         callback: (e: ContextMenuItemClickEvent) => setWaypoint(e.latlng.lng, e.latlng.lat),
     });
 }

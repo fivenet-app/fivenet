@@ -2,11 +2,11 @@
 import Settings from '~/components/dispatch/settings/Settings.vue';
 
 useHead({
-    title: 'components.centrum.settings.title',
+    title: 'components.dispatch.settings.title',
 });
 
 definePageMeta({
-    title: 'components.centrum.settings.title',
+    title: 'components.dispatch.settings.title',
     requiresAuth: true,
     permission: 'centrum.CentrumService/TakeControl',
 });
