@@ -62,20 +62,20 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4
 	go.eigsys.de/gin-cachecontrol/v2 v2.6.0
-	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.68.0
-	go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace v0.68.0
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0
-	go.opentelemetry.io/otel v1.43.0
-	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.43.0
-	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.43.0
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0
-	go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.43.0
-	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0
-	go.opentelemetry.io/otel/metric v1.43.0
-	go.opentelemetry.io/otel/sdk v1.43.0
-	go.opentelemetry.io/otel/sdk/metric v1.43.0
-	go.opentelemetry.io/otel/trace v1.43.0
+	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.69.0
+	go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace v0.69.0
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0
+	go.opentelemetry.io/otel v1.44.0
+	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0
+	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.44.0
+	go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.44.0
+	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.44.0
+	go.opentelemetry.io/otel/metric v1.44.0
+	go.opentelemetry.io/otel/sdk v1.44.0
+	go.opentelemetry.io/otel/sdk/metric v1.44.0
+	go.opentelemetry.io/otel/trace v1.44.0
 	go.uber.org/fx v1.24.0
 	go.uber.org/multierr v1.11.0
 	go.uber.org/zap v1.28.0
@@ -126,11 +126,11 @@ require (
 	github.com/blevesearch/zapx/v16 v16.3.4 // indirect
 	github.com/blevesearch/zapx/v17 v17.1.2 // indirect
 	github.com/bytedance/gopkg v0.1.4 // indirect
-	github.com/bytedance/sonic v1.15.0 // indirect
+	github.com/bytedance/sonic v1.15.1 // indirect
 	github.com/bytedance/sonic/loader v0.5.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
-	github.com/cloudwego/base64x v0.1.6 // indirect
+	github.com/cloudwego/base64x v0.1.7 // indirect
 	github.com/containerd/errdefs v1.0.0 // indirect
 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
@@ -165,7 +165,7 @@ require (
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
 	github.com/hablullah/go-hijri v1.0.2 // indirect
 	github.com/hablullah/go-juliandays v1.0.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
@@ -179,7 +179,7 @@ require (
 	github.com/klauspost/crc32 v1.3.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lib/pq v1.12.3 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/minio/crc64nvme v1.1.1 // indirect
 	github.com/minio/highwayhash v1.0.4 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
@@ -206,7 +206,7 @@ require (
 	github.com/prometheus/common v0.66.1 // indirect
 	github.com/prometheus/procfs v0.16.1 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
-	github.com/quic-go/quic-go v0.59.0 // indirect
+	github.com/quic-go/quic-go v0.59.1 // indirect
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd // indirect
 	github.com/sagikazarmark/locafero v0.11.0 // indirect
@@ -226,20 +226,20 @@ require (
 	github.com/zeebo/xxh3 v1.1.0 // indirect
 	gitlab.com/gitlab-org/api/client-go v1.46.0 // indirect
 	go.etcd.io/bbolt v1.4.0 // indirect
-	go.mongodb.org/mongo-driver/v2 v2.5.0 // indirect
+	go.mongodb.org/mongo-driver/v2 v2.6.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.43.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
 	go.uber.org/dig v1.19.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/arch v0.25.0 // indirect
+	golang.org/x/arch v0.27.0 // indirect
 	golang.org/x/exp v0.0.0-20251219203646-944ab1f22d93 // indirect
 	golang.org/x/sys v0.45.0 // indirect
 	golang.org/x/text v0.37.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260401024825-9d38bb4040a9 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260401024825-9d38bb4040a9 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
 	gopkg.in/ini.v1 v1.67.2 // indirect
 	nhooyr.io/websocket v1.8.17 // indirect
 	willnorris.com/go/gifresize v1.0.0 // indirect
