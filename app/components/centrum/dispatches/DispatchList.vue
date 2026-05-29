@@ -367,11 +367,10 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
 
                                         <div class="flex flex-1 items-center justify-center gap-2">
                                             <GenericTime
-                                                class="text-highlighted"
-                                                :value="dispatch.createdAt"
-                                                type="compact"
                                                 badge
                                                 size="sm"
+                                                type="compact"
+                                                :value="dispatch.createdAt"
                                                 :update-callback="
                                                     () =>
                                                         dispatchTimeToBadge(
@@ -381,6 +380,14 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                                                         )
                                                 "
                                             />
+
+                                            {{
+                                                dispatchTimeToBadge(
+                                                    dispatch.createdAt,
+                                                    dispatch.status?.status,
+                                                    settings?.timings?.dispatchMaxWait,
+                                                )
+                                            }}
 
                                             <DispatchStatusBadge :status="dispatch.status?.status" size="sm" />
                                         </div>

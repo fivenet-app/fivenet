@@ -247,7 +247,7 @@ export function dispatchTimeToBadge(
     class?: string;
 } {
     if (isStatusDispatchCompleted(status)) {
-        return { variant: 'solid', color: 'neutral' };
+        return { variant: 'solid', color: 'neutral', class: 'text-inverted' };
     }
 
     // Elapsed time in seconds since dispatch
