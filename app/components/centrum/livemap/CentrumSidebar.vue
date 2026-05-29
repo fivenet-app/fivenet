@@ -280,8 +280,9 @@ onBeforeMount(async () => {
 });
 
 onBeforeRouteLeave(async (to) => {
-    // Don't end centrum stream if user is switching to center or livemap page
-    if (to.path.startsWith('/livemap') || to.path === '/centrum') return;
+    // Don't end centrum stream if user is switching to dispatch center or livemap page
+    console.log('onBeforeRouteLeave', to.path);
+    if (to.path.startsWith('/livemap') || to.path === '/dispatch') return;
 
     await stopStream(true);
 });

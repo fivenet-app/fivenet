@@ -274,7 +274,7 @@ const confirmModal = overlay.create(ConfirmModal);
                 </template>
 
                 <template #right>
-                    <PartialsBackButton fallback-to="/centrum" />
+                    <PartialsBackButton fallback-to="/dispatch" />
 
                     <UTooltip v-if="orderChanged" :text="$t('common.save', 1)">
                         <UButton

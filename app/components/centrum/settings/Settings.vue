@@ -242,7 +242,7 @@ const formRef = useTemplateRef('formRef');
                 </template>
 
                 <template #right>
-                    <PartialsBackButton fallback-to="/centrum" />
+                    <PartialsBackButton fallback-to="/dispatch" />
 
                     <UTooltip v-if="can('centrum.UnitsService/CreateOrUpdateUnit').value" :text="$t('common.unit', 2)">
                         <UButton icon="i-mdi-car-multiple" to="/dispatch/units">

@@ -24,7 +24,7 @@ const startpages: { label: string; path: RoutePathSchema; permission?: Perms }[]
         permission: 'qualifications.QualificationsService/ListQualifications',
     },
     { label: t('common.livemap'), path: '/livemap', permission: 'livemap.LivemapService/Stream' },
-    { label: t('common.dispatch_center'), path: '/centrum', permission: 'centrum.CentrumService/TakeControl' },
+    { label: t('common.dispatch_center'), path: '/dispatch', permission: 'centrum.CentrumService/TakeControl' },
     { label: t('common.wiki'), path: '/wiki', permission: 'wiki.WikiService/ListPages' },
 ];
 

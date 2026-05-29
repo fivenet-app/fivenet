@@ -64,8 +64,8 @@ onBeforeMount(async () => {
 });
 
 onBeforeRouteLeave(async (to) => {
-    // Don't end livemap stream if user is switching to livemap/centrum page
-    if (to.path.startsWith('/livemap') || to.path === '/centrum') return;
+    // Don't end livemap stream if user is switching to dispatch center or livemap page
+    if (to.path.startsWith('/livemap') || to.path === '/dispatch') return;
 
     await stopStream(true);
 });

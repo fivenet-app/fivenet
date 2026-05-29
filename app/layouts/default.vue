@@ -209,7 +209,7 @@ const links = computed<NavigationMenuItem[]>(() =>
         {
             label: t('common.dispatch_center'),
             icon: 'i-mdi-car-emergency',
-            to: '/centrum',
+            to: '/dispatch',
             tooltip: {
                 text: t('common.dispatch_center'),
                 kbds: ['G', 'W'],

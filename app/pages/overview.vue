@@ -73,7 +73,7 @@ const items = computed<CardElement[]>(() => [
     {
         title: t('common.dispatch_center'),
         description: t('pages.overview.features.centrum'),
-        to: { name: 'centrum' },
+        to: { name: 'dispatch' },
         permission: 'centrum.CentrumService/TakeControl',
         icon: 'i-mdi-car-emergency',
     },

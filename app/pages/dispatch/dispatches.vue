@@ -110,7 +110,7 @@ const mount = ref(false);
                 </template>
 
                 <template #right>
-                    <PartialsBackButton fallback-to="/centrum" />
+                    <PartialsBackButton fallback-to="/dispatch" />
                 </template>
             </UDashboardNavbar>
         </template>
