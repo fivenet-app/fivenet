@@ -9,6 +9,7 @@ definePageMeta({
     title: 'common.dispatch_center',
     requiresAuth: true,
     permission: 'centrum.CentrumService/TakeControl',
+    alias: '/centrum',
 });
 </script>
 

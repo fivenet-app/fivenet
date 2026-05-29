@@ -47,7 +47,7 @@ const items = computed<CardElement[]>(() => [
     {
         title: t('common.dispatch_center_settings'),
         description: t('pages.settings.features.dispatch_center'),
-        to: '/centrum/settings',
+        to: '/dispatch/settings',
         permission: 'centrum.CentrumService/UpdateSettings',
         icon: 'i-mdi-car-emergency',
     },

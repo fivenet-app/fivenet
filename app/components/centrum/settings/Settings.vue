@@ -245,7 +245,7 @@ const formRef = useTemplateRef('formRef');
                     <PartialsBackButton fallback-to="/centrum" />
 
                     <UTooltip v-if="can('centrum.UnitsService/CreateOrUpdateUnit').value" :text="$t('common.unit', 2)">
-                        <UButton icon="i-mdi-car-multiple" to="/centrum/units">
+                        <UButton icon="i-mdi-car-multiple" to="/dispatch/units">
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.unit', 2) }}
                             </span>

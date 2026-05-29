@@ -286,7 +286,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     </UTooltip>
 
                     <UTooltip v-if="can('centrum.CentrumService/Stream').value" :text="$t('common.setting', 2)">
-                        <UButton icon="i-mdi-settings" to="/centrum/settings">
+                        <UButton icon="i-mdi-settings" to="/dispatch/settings">
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.setting', 2) }}
                             </span>

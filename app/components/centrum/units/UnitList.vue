@@ -54,7 +54,7 @@ const grouped = computedAsync(async () => {
                     v-if="can('centrum.UnitsService/CreateOrUpdateUnit').value"
                     :text="$t('components.centrum.units.edit_units')"
                 >
-                    <UButton to="/centrum/units" icon="i-mdi-car-multiple" variant="link" />
+                    <UButton to="/dispatch/units" icon="i-mdi-car-multiple" variant="link" />
                 </UTooltip>
             </h2>
         </div>
@@ -78,7 +78,7 @@ const grouped = computedAsync(async () => {
                                   label: $t('components.centrum.units.create_unit'),
                                   trailingIcon: 'i-mdi-plus',
                                   variant: 'outline',
-                                  to: '/centrum/units',
+                                  to: '/dispatch/units',
                               },
                           ]
                         : undefined

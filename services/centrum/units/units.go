@@ -715,15 +715,16 @@ func (s *UnitDB) UpdateUnitAssignments(
 			// Unit is empty now, set unit status to be unavailable automatically
 			if len(unit.GetUsers()) == 0 {
 				if unit.Status, err = s.AddStatus(ctx, s.db, &centrumunits.UnitStatus{
-					CreatedAt: timestamp.Now(),
-					UnitId:    unit.GetId(),
-					Unit:      proto.Clone(unit).(*centrumunits.Unit),
-					Status:    centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-					UserId:    userId,
-					CreatorId: userId,
-					X:         x,
-					Y:         y,
-					Postal:    postal,
+					CreatedAt:  timestamp.Now(),
+					UnitId:     unit.GetId(),
+					Unit:       proto.Clone(unit).(*centrumunits.Unit),
+					Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+					UserId:     userId,
+					X:          x,
+					Y:          y,
+					Postal:     postal,
+					CreatorId:  userId,
+					CreatorJob: new(unit.GetJob()),
 				}, true, unit.GetJob()); err != nil {
 					return nil, false, err
 				}
@@ -791,7 +792,7 @@ func (s *UnitDB) CreateUnit(
 	unit.Job = creatorJob
 	unit.Id = lastId
 
-	// A new unit shouldn't have a status, so we make sure we add one
+	// A new unit should have a status, so we make sure we add one
 	if unit.Status, err = s.AddStatus(ctx, tx, &centrumunits.UnitStatus{
 		CreatedAt: timestamp.Now(),
 		UnitId:    unit.GetId(),
