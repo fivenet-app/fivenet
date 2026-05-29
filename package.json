@@ -116,7 +116,7 @@
         "vue-json-pretty": "2.6.0",
         "vue-timeline-chart": "5.0.1",
         "y-protocols": "1.0.7",
-        "yjs": "13.6.30",
+        "yjs": "13.6.31",
         "zod": "4.4.3"
     },
     "devDependencies": {
@@ -172,7 +172,7 @@
         "westures": "1.1.1"
     },
     "resolutions": {
-        "@internationalized/date": "3.12.1",
+        "@internationalized/date": "3.12.2",
         "@nuxt/kit": "4.4.6",
         "@tiptap/core": "3.23.6",
         "@tiptap/pm": "3.23.6",
