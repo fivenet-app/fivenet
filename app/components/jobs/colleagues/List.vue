@@ -506,104 +506,101 @@ defineShortcuts({
                     <UPageGrid
                         class="grid-cols-1 p-4 sm:grid-cols-2 sm:p-4 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-5"
                     >
-                        <UPageCard
+                        <UCard
                             v-for="colleague in data?.colleagues"
                             :key="colleague.userId"
-                            :highlight="colleague.userId === activeChar!.userId"
+                            :class="colleague.userId === activeChar!.userId ? 'ring-2 ring-primary' : ''"
                             :ui="{
+                                root: 'flex flex-col',
                                 header: 'w-full',
+                                body: 'p-4 sm:p-4 flex-1',
                                 footer: 'w-full',
                             }"
                         >
-                            <template #title>
-                                <ColleagueName :colleague="colleague" />
-                            </template>
+                            <div class="flex w-full flex-col items-center justify-center overflow-hidden pb-2">
+                                <ProfilePictureImg
+                                    :src="colleague?.profilePicture"
+                                    :name="`${colleague.firstname} ${colleague.lastname}`"
+                                    size="3xl"
+                                    enable-popup
+                                    :alt="$t('common.profile_picture')"
+                                    :rounded="false"
+                                    img-class="size-42"
+                                />
+                            </div>
 
-                            <template #header>
-                                <div class="flex w-full items-center justify-center overflow-hidden">
-                                    <ProfilePictureImg
-                                        :src="colleague?.profilePicture"
-                                        :name="`${colleague.firstname} ${colleague.lastname}`"
-                                        size="3xl"
-                                        enable-popup
-                                        :alt="$t('common.profile_picture')"
-                                        :rounded="false"
-                                        img-class="size-42"
+                            <div class="truncate">
+                                <ColleagueName class="truncate text-highlighted" :colleague="colleague" />
+                            </div>
+
+                            <div class="flex min-w-0 flex-col gap-1 overflow-x-hidden text-[15px] text-pretty text-muted">
+                                <div class="truncate">
+                                    {{ colleague.jobGradeLabel }}
+                                    <template v-if="colleague.job !== game.unemployedJobName">
+                                        ({{ colleague.jobGrade }})
+                                    </template>
+                                </div>
+
+                                <PhoneNumberBlock :number="colleague.phoneNumber" />
+
+                                <div class="inline-flex items-center gap-1">
+                                    <UIcon class="h-5 w-5 shrink-0" name="i-mdi-birthday-cake" />
+
+                                    <span>{{ colleague.dateofbirth }}</span>
+                                </div>
+
+                                <div class="inline-flex items-center gap-1">
+                                    <UIcon class="h-5 w-5 shrink-0" name="i-mdi-email" />
+
+                                    <EmailInfoPopover
+                                        :email="colleague.email"
+                                        variant="link"
+                                        :trailing="false"
+                                        :ui="{ base: 'px-1 sm:px-1 py-0 sm:py-0' }"
                                     />
                                 </div>
-                            </template>
 
-                            <template #description>
-                                <div class="flex flex-col gap-1 truncate">
-                                    <div>
-                                        {{ colleague.jobGradeLabel }}
-                                        <template v-if="colleague.job !== game.unemployedJobName">
-                                            ({{ colleague.jobGrade }})
-                                        </template>
-                                    </div>
+                                <div
+                                    v-if="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
+                                    class="flex min-w-0 items-start gap-1 overflow-x-hidden"
+                                >
+                                    <UIcon class="h-5 w-5 shrink-0 self-start" name="i-mdi-tag" />
 
-                                    <PhoneNumberBlock :number="colleague.phoneNumber" />
-
-                                    <div class="inline-flex items-center gap-1">
-                                        <UIcon class="h-5 w-5 shrink-0" name="i-mdi-birthday-cake" />
-
-                                        <span>{{ colleague.dateofbirth }}</span>
-                                    </div>
-
-                                    <div class="flex items-center gap-1">
-                                        <UIcon class="h-5 w-5 shrink-0" name="i-mdi-email" />
-
-                                        <EmailInfoPopover
-                                            :email="colleague.email"
-                                            variant="link"
-                                            :trailing="false"
-                                            :ui="{ base: 'px-1 sm:px-1 py-0 sm:py-0' }"
+                                    <span v-if="!colleague.props?.labels?.list.length">
+                                        {{ $t('common.none', [$t('common.label', 2)]) }}
+                                    </span>
+                                    <div v-else class="flex min-w-0 flex-1 basis-0 flex-row flex-wrap gap-1 overflow-hidden">
+                                        <UButton
+                                            v-for="label in colleague.props?.labels?.list"
+                                            :key="label.name"
+                                            class="max-w-full min-w-0 cursor-pointer overflow-hidden"
+                                            :class="
+                                                isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'
+                                            "
+                                            size="xs"
+                                            :label="label.name"
+                                            :icon="
+                                                label.icon && label.icon !== ''
+                                                    ? convertComponentIconNameToDynamic(label.icon)
+                                                    : undefined
+                                            "
+                                            :style="{ backgroundColor: label.color }"
+                                            :ui="{ label: 'block min-w-0 truncate' }"
+                                            @click="toggleLabelInSearch(label)"
                                         />
                                     </div>
-
-                                    <div
-                                        v-if="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
-                                        class="flex flex-row gap-1"
-                                    >
-                                        <UIcon class="h-5 w-5 shrink-0" name="i-mdi-tag" />
-
-                                        <span v-if="!colleague.props?.labels?.list.length">
-                                            {{ $t('common.none', [$t('common.label', 2)]) }}
-                                        </span>
-                                        <div v-else class="flex max-w-full flex-row flex-wrap gap-1">
-                                            <UButton
-                                                v-for="label in colleague.props?.labels?.list"
-                                                :key="label.name"
-                                                class="cursor-pointer justify-between gap-2"
-                                                :class="
-                                                    isColorBright(hexToRgb(label.color, rgbBlack)!)
-                                                        ? 'text-black!'
-                                                        : 'text-white!'
-                                                "
-                                                size="xs"
-                                                :label="label.name"
-                                                :icon="
-                                                    label.icon && label.icon !== ''
-                                                        ? convertComponentIconNameToDynamic(label.icon)
-                                                        : undefined
-                                                "
-                                                :style="{ backgroundColor: label.color }"
-                                                @click="toggleLabelInSearch(label)"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
-                                        class="inline-flex items-center gap-1"
-                                    >
-                                        <UIcon class="size-5" name="i-mdi-island" />
-                                        <GenericTime :value="colleague.props?.absenceBegin" type="shortDate" />
-                                        <span>{{ $t('common.to') }}</span>
-                                        <GenericTime :value="colleague.props?.absenceEnd" type="date" />
-                                    </div>
                                 </div>
-                            </template>
+
+                                <div
+                                    v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
+                                    class="inline-flex items-center gap-1"
+                                >
+                                    <UIcon class="size-5" name="i-mdi-island" />
+                                    <GenericTime :value="colleague.props?.absenceBegin" type="shortDate" />
+                                    <span>{{ $t('common.to') }}</span>
+                                    <GenericTime :value="colleague.props?.absenceEnd" type="date" />
+                                </div>
+                            </div>
 
                             <template
                                 v-if="
@@ -617,31 +614,6 @@ defineShortcuts({
                                 #footer
                             >
                                 <UFieldGroup class="w-full min-w-0">
-                                    <UTooltip
-                                        v-if="
-                                            canDo.setJobsUserProps &&
-                                            (colleague.userId === activeChar!.userId ||
-                                                attr('jobs.ColleaguesService/SetColleagueProps', 'Types', 'AbsenceDate')
-                                                    .value) &&
-                                            checkIfCanAccessColleague(colleague, 'jobs.ColleaguesService/SetColleagueProps')
-                                        "
-                                        class="min-w-0"
-                                        :text="$t('components.jobs.self_service.set_absence_date')"
-                                    >
-                                        <UButton
-                                            class="min-w-0"
-                                            :label="$t('components.jobs.self_service.set_absence_date')"
-                                            icon="i-mdi-island"
-                                            block
-                                            @click="
-                                                selfServicePropsAbsenceDateModal.open({
-                                                    userId: colleague.userId,
-                                                    'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
-                                                })
-                                            "
-                                        />
-                                    </UTooltip>
-
                                     <UTooltip
                                         v-if="
                                             canDo.getColleague &&
@@ -661,9 +633,33 @@ defineShortcuts({
                                             }"
                                         />
                                     </UTooltip>
+
+                                    <UDropdownMenu
+                                        v-if="
+                                            canDo.setJobsUserProps &&
+                                            (colleague.userId === activeChar!.userId ||
+                                                attr('jobs.ColleaguesService/SetColleagueProps', 'Types', 'AbsenceDate')
+                                                    .value) &&
+                                            checkIfCanAccessColleague(colleague, 'jobs.ColleaguesService/SetColleagueProps')
+                                        "
+                                        :content="{ side: 'top' }"
+                                        :items="[
+                                            {
+                                                label: $t('components.jobs.self_service.set_absence_date'),
+                                                icon: 'i-mdi-island',
+                                                onClick: () =>
+                                                    selfServicePropsAbsenceDateModal.open({
+                                                        userId: colleague.userId,
+                                                        'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
+                                                    }),
+                                            },
+                                        ]"
+                                    >
+                                        <UButton icon="i-mdi-menu" color="neutral" variant="outline" />
+                                    </UDropdownMenu>
                                 </UFieldGroup>
                             </template>
-                        </UPageCard>
+                        </UCard>
                     </UPageGrid>
                 </div>
             </template>

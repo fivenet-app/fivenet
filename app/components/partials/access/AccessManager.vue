@@ -32,7 +32,6 @@ const props = withDefaults(
         hideJobs?: string[];
         name?: string;
         fullName?: boolean;
-        // TODO improve user experience by having a list of "required" access entries for the highest grade of the job that can't be removed and modified
     }>(),
     {
         jobs: () => [],
