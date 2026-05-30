@@ -1,10 +1,12 @@
 package filestore
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"errors"
 	"io"
+	"net/http"
 	"net/url"
 	"strings"
 
@@ -51,6 +53,8 @@ type Handler[P ParentID] struct {
 	sizeLimit int64
 	// fileLimit is the maximum allowed number of files per parent.
 	fileLimit int64
+	// uploadFilter optionally restricts allowed upload file types.
+	uploadFilter *UploadFilter
 
 	// parentColBoolExp is a function that converts the parent ID to a Jet boolean expression.
 	parentColBoolExp ParentColBoolExpFn[P]
@@ -91,6 +95,12 @@ func NewHandler[P ParentID](
 		joinRowInserter:   joinRowInserter,
 		nullOnlyParentRow: nullOnlyParentRow,
 	}
+}
+
+// WithUploadFilter sets an optional upload filter for file type validation.
+func (h *Handler[P]) WithUploadFilter(filter *UploadFilter) *Handler[P] {
+	h.uploadFilter = filter.clone()
+	return h
 }
 
 // CheckFileLimit enforces the maximum number of files per parent for additive relations.
@@ -154,6 +164,19 @@ func (h *Handler[P]) UploadFile(
 		) // Convert bytes to megabytes
 	}
 
+	ctype = sniff(ctype, key)
+	leadingData, err := readLeadingData(srv, 512)
+	if err != nil {
+		return nil, err
+	}
+	if detected := detectContentType(leadingData); detected != "" {
+		ctype = detected
+	}
+
+	if err := h.validateUploadType(key, ctype); err != nil {
+		return nil, err
+	}
+
 	if err := h.CheckFileLimit(ctx, parentID); err != nil {
 		return nil, err
 	}
@@ -161,6 +184,13 @@ func (h *Handler[P]) UploadFile(
 	// Pipe chunks to the storage backend
 	pr, pw := io.Pipe()
 	go func() {
+		if len(leadingData) > 0 {
+			if _, err := pw.Write(leadingData); err != nil {
+				pw.CloseWithError(err)
+				return
+			}
+		}
+
 		for {
 			pkt, err := srv.Recv()
 			if errors.Is(err, io.EOF) {
@@ -240,6 +270,61 @@ func (h *Handler[P]) UploadFile(
 		},
 	}
 	return resp, srv.SendAndClose(resp)
+}
+
+func (h *Handler[P]) validateUploadType(key, contentType string) error {
+	if h.uploadFilter == nil {
+		return nil
+	}
+	return h.uploadFilter.Validate(key, contentType)
+}
+
+func readLeadingData(
+	srv pbfilestore.FilestoreService_UploadServer,
+	minBytes int,
+) ([]byte, error) {
+	if minBytes <= 0 {
+		return nil, nil
+	}
+
+	var buf bytes.Buffer
+	for buf.Len() < minBytes {
+		pkt, err := srv.Recv()
+		if errors.Is(err, io.EOF) {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		data := pkt.GetData()
+		if len(data) == 0 {
+			continue
+		}
+
+		if _, err := buf.Write(data); err != nil {
+			return nil, err
+		}
+	}
+
+	if buf.Len() == 0 {
+		return nil, status.Error(codes.InvalidArgument, "upload stream has no file data")
+	}
+
+	return buf.Bytes(), nil
+}
+
+func detectContentType(data []byte) string {
+	if len(data) == 0 {
+		return ""
+	}
+
+	detected := normalizeContentType(http.DetectContentType(data))
+	if detected == "application/octet-stream" {
+		return ""
+	}
+
+	return detected
 }
 
 // UploadFromMeta streams the remainder of the gRPC Upload after the caller has read & validated the first UploadMeta packet.

@@ -23,4 +23,10 @@ var (
 		&common.I18NItem{Key: "errors.Filestore.ErrMaxFilesPerParentReached"},
 		nil,
 	)
+	// Has params `extension` and/or `contentType`.
+	ErrUploadFileTypeNotAllowed = common.NewI18nErrFunc(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.Filestore.ErrUploadFileTypeNotAllowed"},
+		nil,
+	)
 )

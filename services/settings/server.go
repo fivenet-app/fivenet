@@ -108,7 +108,7 @@ func NewServer(p Params) *Server {
 		},
 		filestore.UpdateJoinRow,
 		true,
-	)
+	).WithUploadFilter(filestore.NewImageUploadFilter())
 
 	var dcOAuth2Provider *config.OAuth2Provider
 	var dc *discordapi.Client

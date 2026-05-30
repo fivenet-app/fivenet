@@ -2690,7 +2690,8 @@
         "Filestore": {
             "ErrInvalidUploadMeta": "Ungültige Upload-Metadaten!",
             "ErrUploadFileTooLarge": "Datei ist zu groß zum Hochladen! Die maximale Dateigröße beträgt {maxSize} MB.",
-            "ErrMaxFilesPerParentReached": "Maximale Anzahl an Dateien ({maxFiles}) für dieses Element erreicht!"
+            "ErrMaxFilesPerParentReached": "Maximale Anzahl an Dateien ({maxFiles}) für dieses Element erreicht!",
+            "ErrUploadFileTypeNotAllowed": "Dieser Dateityp ist zum Hochladen nicht erlaubt."
         },
         "notifications": {
             "NotificationsService": {

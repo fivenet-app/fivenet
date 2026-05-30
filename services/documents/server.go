@@ -190,7 +190,7 @@ func NewServer(p Params) Result {
 		},
 		filestore.InsertJoinRow,
 		false,
-	)
+	).WithUploadFilter(filestore.NewImageUploadFilter())
 
 	docAccess := newAccess(p.DB)
 	access.RegisterAccess("documents", &access.GroupedAccessAdapter{

@@ -96,7 +96,7 @@ func NewServer(p Params) *Server {
 		},
 		filestore.InsertJoinRow,
 		false,
-	)
+	).WithUploadFilter(filestore.NewImageUploadFilter())
 
 	objAccess := access.NewGrouped[wikiaccess.PageJobAccess, *wikiaccess.PageJobAccess, wikiaccess.PageUserAccess, *wikiaccess.PageUserAccess, access.DummyQualificationAccess[wikiaccess.AccessLevel]](
 		p.DB,

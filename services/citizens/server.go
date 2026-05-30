@@ -72,7 +72,7 @@ func NewServer(p Params) *Server {
 		},
 		filestore.UpdateJoinRow,
 		true,
-	)
+	).WithUploadFilter(filestore.NewImageUploadFilter())
 	mugshotHandler := filestore.NewHandler(
 		p.Storage,
 		p.DB,
@@ -86,7 +86,7 @@ func NewServer(p Params) *Server {
 		},
 		filestore.UpdateJoinRow,
 		true,
-	)
+	).WithUploadFilter(filestore.NewImageUploadFilter())
 
 	s := &Server{
 		db:       p.DB,

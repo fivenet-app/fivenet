@@ -106,7 +106,7 @@ func NewServer(p Params) *Server {
 		},
 		filestore.InsertJoinRow,
 		false,
-	)
+	).WithUploadFilter(filestore.NewImageUploadFilter())
 
 	s := &Server{
 		logger: p.Logger.Named("jobs"),

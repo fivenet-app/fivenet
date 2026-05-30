@@ -2690,7 +2690,8 @@
         "Filestore": {
             "ErrInvalidUploadMeta": "Invalid upload meta data!",
             "ErrUploadFileTooLarge": "File is too large to upload! Maximum file size is {maxSize} MB.",
-            "ErrMaxFilesPerParentReached": "Maximum number of files ({maxFiles}) reached for this item!"
+            "ErrMaxFilesPerParentReached": "Maximum number of files ({maxFiles}) reached for this item!",
+            "ErrUploadFileTypeNotAllowed": "This file type is not allowed for upload."
         },
         "notifications": {
             "NotificationsService": {
