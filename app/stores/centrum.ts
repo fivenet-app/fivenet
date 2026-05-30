@@ -242,6 +242,9 @@ export const useCentrumStore = defineStore(
                 logger.warn('Processed Unit Status for unknown unit:', status.unitId);
                 return;
             }
+
+            if (status.unit !== undefined) console.log('had to null unit in unit status', status);
+            status.unit = undefined;
             if (!u.status) {
                 u.status = status;
             } else {
@@ -349,6 +352,7 @@ export const useCentrumStore = defineStore(
                 logger.warn('Processed Dispatch Status for unknown dispatch:', status.dispatchId, status);
                 return;
             }
+            status.unit = undefined;
             if (!disp.status) {
                 disp.status = status;
             } else {

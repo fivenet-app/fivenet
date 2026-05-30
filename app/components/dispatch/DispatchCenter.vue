@@ -8,6 +8,7 @@ import UnitList from '~/components/dispatch/units/UnitList.vue';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
+import { useSettingsStore } from '~/stores/settings';
 import DispatcherInfo from './dispatchers/DispatcherInfo.vue';
 
 const { can } = useAuth();
@@ -15,6 +16,49 @@ const { can } = useAuth();
 const centrumStore = useCentrumStore();
 const { error, feed, isCenter } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
+
+const settingsStore = useSettingsStore();
+const { centrum } = storeToRefs(settingsStore);
+
+type SplitpanesPane = {
+    size: number;
+};
+
+type SplitpanesResizedEvent = {
+    panes?: SplitpanesPane[];
+};
+
+const roundPaneSize = (size: number): number => Math.round(size * 100) / 100;
+const defaultDispatchCenterPaneSizes = {
+    map: 30,
+    sidebar: 70,
+    dispatchList: 58,
+    unitList: 26,
+    feed: 8,
+};
+
+centrum.value.dispatchCenterPaneSizes = {
+    map: centrum.value.dispatchCenterPaneSizes?.map ?? defaultDispatchCenterPaneSizes.map,
+    sidebar: centrum.value.dispatchCenterPaneSizes?.sidebar ?? defaultDispatchCenterPaneSizes.sidebar,
+    dispatchList: centrum.value.dispatchCenterPaneSizes?.dispatchList ?? defaultDispatchCenterPaneSizes.dispatchList,
+    unitList: centrum.value.dispatchCenterPaneSizes?.unitList ?? defaultDispatchCenterPaneSizes.unitList,
+    feed: centrum.value.dispatchCenterPaneSizes?.feed ?? defaultDispatchCenterPaneSizes.feed,
+};
+
+function onOuterPanesResized({ panes }: SplitpanesResizedEvent): void {
+    if (!panes || panes.length < 2) return;
+
+    centrum.value.dispatchCenterPaneSizes.map = roundPaneSize(panes[0]!.size);
+    centrum.value.dispatchCenterPaneSizes.sidebar = roundPaneSize(panes[1]!.size);
+}
+
+function onInnerPanesResized({ panes }: SplitpanesResizedEvent): void {
+    if (!panes || panes.length < 3) return;
+
+    centrum.value.dispatchCenterPaneSizes.dispatchList = roundPaneSize(panes[0]!.size);
+    centrum.value.dispatchCenterPaneSizes.unitList = roundPaneSize(panes[1]!.size);
+    centrum.value.dispatchCenterPaneSizes.feed = roundPaneSize(panes[2]!.size);
+}
 
 onBeforeMount(async () => {
     isCenter.value = true;
@@ -57,8 +101,8 @@ onBeforeRouteLeave(async (to) => {
             <div
                 class="max-h-[calc(100dvh-var(--ui-header-height))] min-h-[calc(100dvh-var(--ui-header-height))] w-full overflow-hidden"
             >
-                <Splitpanes>
-                    <Pane :min-size="25">
+                <Splitpanes @resized="onOuterPanesResized">
+                    <Pane :min-size="25" :size="centrum.dispatchCenterPaneSizes.map">
                         <div class="relative size-full">
                             <div v-if="error" class="absolute inset-0 z-30 flex items-center justify-center bg-default/75">
                                 <DataErrorBlock
@@ -76,17 +120,17 @@ onBeforeRouteLeave(async (to) => {
                         </div>
                     </Pane>
 
-                    <Pane :min-size="40" :size="70">
-                        <Splitpanes horizontal>
-                            <Pane :size="58" :min-size="2">
+                    <Pane :min-size="40" :size="centrum.dispatchCenterPaneSizes.sidebar">
+                        <Splitpanes horizontal @resized="onInnerPanesResized">
+                            <Pane :size="centrum.dispatchCenterPaneSizes.dispatchList" :min-size="2">
                                 <DispatchList show-button />
                             </Pane>
 
-                            <Pane :size="26" :min-size="2">
+                            <Pane :size="centrum.dispatchCenterPaneSizes.unitList" :min-size="2">
                                 <UnitList />
                             </Pane>
 
-                            <Pane :size="8" :min-size="2">
+                            <Pane :size="centrum.dispatchCenterPaneSizes.feed" :min-size="2">
                                 <Feed :items="feed" />
                             </Pane>
                         </Splitpanes>

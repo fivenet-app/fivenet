@@ -42,6 +42,19 @@ export type SignatureSettings = {
     maxStrokeWidth: number;
 };
 
+export type DispatchCenterPaneSizes = {
+    map: number;
+    sidebar: number;
+    dispatchList: number;
+    unitList: number;
+    feed: number;
+};
+
+export type CentrumSettings = {
+    dispatchListCardStyle: boolean;
+    dispatchCenterPaneSizes: DispatchCenterPaneSizes;
+};
+
 export type AudioSettings = {
     notificationsVolume: number;
     sounds: AudioSoundsSettings;
@@ -83,8 +96,15 @@ export const useSettingsStore = defineStore(
             useUnitColor: true,
         });
 
-        const centrum = ref({
+        const centrum = ref<CentrumSettings>({
             dispatchListCardStyle: false,
+            dispatchCenterPaneSizes: {
+                map: 30,
+                sidebar: 70,
+                dispatchList: 58,
+                unitList: 26,
+                feed: 8,
+            },
         });
 
         const livemapTileLayer = ref<string>('postal');
