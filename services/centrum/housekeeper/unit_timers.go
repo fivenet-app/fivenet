@@ -13,7 +13,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 func (s *Housekeeper) runTTLWatcher(ctx context.Context) error {
@@ -116,7 +115,6 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id int64) error {
 	if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
 		CreatedAt:  timestamp.Now(),
 		UnitId:     unit.GetId(),
-		Unit:       proto.Clone(unit).(*centrumunits.Unit),
 		Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 		UserId:     userId,
 		CreatorJob: &unit.Job,

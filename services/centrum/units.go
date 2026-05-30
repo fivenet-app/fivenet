@@ -257,7 +257,6 @@ func (s *Server) UpdateUnitStatus(
 	if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
 		CreatedAt:  timestamp.Now(),
 		UnitId:     unit.GetId(),
-		Unit:       unit,
 		Status:     req.GetStatus(),
 		Reason:     req.Reason,
 		Code:       req.Code,

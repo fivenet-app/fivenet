@@ -981,7 +981,6 @@ func (s *DispatchDB) UpdateAssignments(
 				}
 
 				for unitId, unit := range resolvedUnits {
-					resolvedUnits[unitId] = unit
 					dsp.Units = append(dsp.Units, &centrumdispatches.DispatchAssignment{
 						DispatchId: dsp.GetId(),
 						UnitId:     unitId,
@@ -990,12 +989,11 @@ func (s *DispatchDB) UpdateAssignments(
 					})
 				}
 
-				for unitId, unit := range resolvedUnits {
+				for unitId := range resolvedUnits {
 					if _, err := s.AddDispatchStatus(ctx, s.db, &centrumdispatches.DispatchStatus{
 						CreatedAt:  timestamp.Now(),
 						DispatchId: dsp.GetId(),
 						UnitId:     &unitId,
-						Unit:       unit,
 						UserId:     creatorId,
 						Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
 						X:          x,
@@ -1281,7 +1279,7 @@ func (s *DispatchDB) AddDispatchStatus(
 		return nil, err
 	}
 
-	newStatus, err := s.GetStatus(ctx, tx, lastId)
+	newStatus, err := s.GetStatusByID(ctx, tx, lastId)
 	if err != nil {
 		return nil, err
 	}
@@ -1310,7 +1308,7 @@ func (s *DispatchDB) AddDispatchStatus(
 	return newStatus, nil
 }
 
-func (s *DispatchDB) GetStatus(
+func (s *DispatchDB) GetStatusByID(
 	ctx context.Context,
 	tx qrm.DB,
 	id int64,

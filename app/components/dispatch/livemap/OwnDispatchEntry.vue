@@ -86,7 +86,7 @@ useIntervalFn(
                     <div class="inline-flex flex-col items-center">
                         <span class="font-medium">{{ $t('common.status') }}:</span>
                         <UBadge
-                            class="line-clamp-2 px-px py-0.5 break-words"
+                            class="line-clamp-2 px-px py-0.5 break-all"
                             variant="solid"
                             :color="dispatchStatusToBadgeColor(dispatch.status?.status)"
                             :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)"
@@ -95,7 +95,7 @@ useIntervalFn(
 
                     <div class="inline-flex flex-col items-center">
                         <span class="font-medium">{{ $t('common.sent_by') }}:</span>
-                        <span class="line-clamp-2 break-words">
+                        <span class="line-clamp-2 break-all">
                             <template v-if="dispatch.anon">
                                 {{ $t('common.anon') }}
                             </template>

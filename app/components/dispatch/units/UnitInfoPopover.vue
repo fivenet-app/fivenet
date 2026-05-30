@@ -10,16 +10,23 @@ const { timeCorrection } = storeToRefs(centrumStore);
 
 const props = withDefaults(
     defineProps<{
-        unit: Unit | undefined;
+        unitId?: number | undefined;
+        unit?: Unit | undefined;
         initialsOnly?: boolean;
         assignment?: DispatchAssignment;
         showIcon?: boolean;
     }>(),
     {
+        unitId: undefined,
+        unit: undefined,
         initialsOnly: false,
         assignment: undefined,
         showIcon: false,
     },
+);
+
+const unit = computed(() =>
+    props.unit && props.unit.id !== 0 ? props.unit : props.unitId ? centrumStore.units.get(props.unitId) : undefined,
 );
 
 const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.status));
@@ -39,8 +46,9 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
 
             <UIcon
                 v-if="showIcon && unit.icon && unit.icon !== defaultUnitIcon"
-                class="size-4"
+                class="size-3"
                 :name="convertComponentIconNameToDynamic(unit.icon)"
+                :style="{ color: unit.color ?? 'currentColor' }"
             />
 
             <span>

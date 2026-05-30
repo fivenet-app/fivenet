@@ -242,13 +242,10 @@ export const useCentrumStore = defineStore(
                 logger.warn('Processed Unit Status for unknown unit:', status.unitId);
                 return;
             }
-            if (!status.unit) {
-                status.unit = u;
-            }
             if (!u.status) {
                 u.status = status;
             } else {
-                // User added / removed
+                // Don't set user added / removed for status
                 if (status.status === StatusUnit.USER_ADDED || status.status === StatusUnit.USER_REMOVED) return;
 
                 // Normal status update
@@ -265,6 +262,7 @@ export const useCentrumStore = defineStore(
                 u.status.postal = status.postal;
                 u.status.creator = status.creator;
                 u.status.creatorId = status.creatorId;
+                u.status.creatorJob = status.creatorJob;
             }
         };
 
@@ -358,7 +356,6 @@ export const useCentrumStore = defineStore(
                 disp.status.createdAt = status.createdAt;
                 disp.status.dispatchId = status.dispatchId;
                 disp.status.unitId = status.unitId;
-                disp.status.unit = status.unit;
                 disp.status.status = status.status;
                 disp.status.reason = status.reason;
                 disp.status.code = status.code;
@@ -367,6 +364,7 @@ export const useCentrumStore = defineStore(
                 disp.status.x = status.x;
                 disp.status.y = status.y;
                 disp.status.postal = status.postal;
+                disp.status.creatorJob = status.creatorJob;
 
                 // If unit got unassigned, remove it from the dispatch's units
                 if (disp.status.status === StatusDispatch.UNIT_UNASSIGNED) {

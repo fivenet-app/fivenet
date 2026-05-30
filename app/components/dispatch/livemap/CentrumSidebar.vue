@@ -61,7 +61,10 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
 
 async function updateDispatchStatus(dispatchId: number, status: StatusDispatch): Promise<void> {
     try {
-        const call = centrumDispatchesClient.updateDispatchStatus({ dispatchId, status });
+        const call = centrumDispatchesClient.updateDispatchStatus({
+            dispatchId: dispatchId,
+            status: status,
+        });
         await call;
 
         notifications.add({
@@ -100,7 +103,7 @@ async function updateUnitStatus(id: number, status: StatusUnit): Promise<void> {
     try {
         const call = centrumUnitsClient.updateUnitStatus({
             unitId: id,
-            status,
+            status: status,
         });
         await call;
 

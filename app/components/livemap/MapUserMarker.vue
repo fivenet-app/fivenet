@@ -10,6 +10,7 @@ import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 import { checkIfCanAccessColleague } from '../jobs/colleagues/helpers';
 import PhoneNumberBlock from '../partials/citizens/PhoneNumberBlock.vue';
 import { resolveIconComponent } from '../partials/icons';
+import UnitInfoPopover from '../dispatch/units/UnitInfoPopover.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -210,8 +211,9 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                         }})
                     </li>
 
-                    <li v-if="unit">
-                        <span class="font-semibold">{{ $t('common.units') }}:</span> {{ unit.name }} ({{ unit.initials }})
+                    <li v-if="unit || props.marker.unitId" class="inline-flex items-center gap-1">
+                        <span class="font-semibold">{{ $t('common.unit') }}:</span>
+                        <UnitInfoPopover :unit-id="props.marker.unitId" :unit="unit" show-icon />
                     </li>
                 </ul>
             </UCard>

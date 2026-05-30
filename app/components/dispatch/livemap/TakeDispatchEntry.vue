@@ -81,6 +81,7 @@ onBeforeMount(() => {
                 }}</span>
             </div>
         </dt>
+
         <dd class="mt-1 flex-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
             <ul class="divide-y divide-default rounded-md border border-default" role="list">
                 <li class="flex items-center gap-1 py-3 pr-4 pl-3 text-sm">
@@ -138,6 +139,7 @@ onBeforeMount(() => {
                                 initials-only
                                 badge
                                 :assignment="unit"
+                                show-icon
                             />
                         </span>
                     </div>

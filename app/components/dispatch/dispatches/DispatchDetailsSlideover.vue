@@ -186,8 +186,10 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                             <div class="flex flex-1 items-center">
                                                 <UnitInfoPopover
                                                     class="flex items-center justify-center"
+                                                    :unit-id="unit.unitId"
                                                     :unit="unit.unit"
                                                     :assignment="unit"
+                                                    show-icon
                                                 >
                                                     <template #before>
                                                         <UIcon class="mr-1 size-5 shrink-0" name="i-mdi-account-group" />

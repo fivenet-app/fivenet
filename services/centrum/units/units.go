@@ -573,19 +573,22 @@ func (s *UnitDB) UpdateUnitAssignments(
 	if len(toAdd) > 0 {
 		addIds := []int32{}
 		for i := range toAdd {
-			if um, ok := s.tracker.GetUserMarkerById(toAdd[i]); !ok || um.GetHidden() {
+			um, ok := s.tracker.GetUserMarkerById(toAdd[i])
+			if !ok || um.GetHidden() {
 				continue
 			}
 
-			unit, err := s.Get(ctx, unitId)
-			if err != nil {
-				return err
-			}
-			// Skip already added units
-			if slices.ContainsFunc(unit.GetUsers(), func(in *centrumunits.UnitAssignment) bool {
-				return in.GetUserId() == toAdd[i]
-			}) {
-				continue
+			// Ensure that we check if an user is part of an unit, but only if the user mapping has no unit
+			if um.GetUnitId() == 0 {
+				unit, err := s.Get(ctx, unitId)
+				if err != nil {
+					return err
+				}
+				if slices.ContainsFunc(unit.GetUsers(), func(in *centrumunits.UnitAssignment) bool {
+					return in.GetUserId() == toAdd[i]
+				}) {
+					continue
+				}
 			}
 
 			addIds = append(addIds, toAdd[i])
@@ -698,7 +701,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 						X:          x,
 						Y:          y,
 						Postal:     postal,
-						CreatorJob: &user.Job,
+						CreatorJob: new(user.Job),
 					}, true, unit.GetJob()); err != nil {
 						return nil, false, err
 					}
@@ -718,7 +721,6 @@ func (s *UnitDB) UpdateUnitAssignments(
 				if unit.Status, err = s.AddStatus(ctx, s.db, &centrumunits.UnitStatus{
 					CreatedAt:  timestamp.Now(),
 					UnitId:     unit.GetId(),
-					Unit:       proto.Clone(unit).(*centrumunits.Unit),
 					Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 					UserId:     creatorId,
 					X:          x,
@@ -797,7 +799,6 @@ func (s *UnitDB) CreateUnit(
 	if unit.Status, err = s.AddStatus(ctx, tx, &centrumunits.UnitStatus{
 		CreatedAt: timestamp.Now(),
 		UnitId:    unit.GetId(),
-		Unit:      unit,
 		Status:    centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 	}, false, ""); err != nil {
 		return nil, err
@@ -951,7 +952,7 @@ func (s *UnitDB) AddStatus(
 	}
 
 	if publish {
-		data, err := proto.Marshal(status)
+		data, err := proto.Marshal(newStatus)
 		if err != nil {
 			return nil, err
 		}
@@ -1040,6 +1041,8 @@ func (s *UnitDB) GetStatusByID(
 			return nil, nil
 		}
 	}
+
+	// We can't use the units store to get the unit as we might be in a "locked" update unit call
 
 	return &dest, nil
 }

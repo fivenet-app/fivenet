@@ -211,6 +211,7 @@ const columns = [
                       { class: 'grid grid-flow-row auto-rows-auto gap-1 sm:grid-flow-col' },
                       row.original.units.map((unit) =>
                           h(UnitInfoPopover, {
+                              unitId: unit.unitId,
                               unit: unit.unit,
                               initialsOnly: true,
                               badge: true,

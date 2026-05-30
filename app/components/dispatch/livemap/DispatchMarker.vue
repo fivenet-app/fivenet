@@ -192,10 +192,12 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
                             <UnitInfoPopover
                                 v-for="unit in dispatch.units"
                                 :key="unit.unitId"
+                                :unit-id="unit.unitId"
                                 :unit="unit.unit"
+                                :assignment="unit"
                                 initials-only
                                 badge
-                                :assignment="unit"
+                                show-icon
                             />
                         </span>
                     </li>

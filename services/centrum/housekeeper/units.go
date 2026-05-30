@@ -172,7 +172,6 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 			if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
 				CreatedAt:  timestamp.Now(),
 				UnitId:     unit.GetId(),
-				Unit:       unit,
 				Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 				UserId:     userId,
 				CreatorJob: &job,
