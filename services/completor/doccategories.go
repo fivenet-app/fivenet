@@ -30,7 +30,8 @@ func (s *Server) CompleteDocumentCategories(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 	}
-	if jobs.Len() == 0 {
+	// Ensure user's job is always included
+	if !jobs.Contains(userInfo.GetJob()) {
 		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
 	}
 
@@ -39,7 +40,9 @@ func (s *Server) CompleteDocumentCategories(
 		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
 	}
 
-	orderBys := []mysql.OrderByClause{}
+	orderBys := []mysql.OrderByClause{
+		tDCategory.Job.EQ(mysql.String(userInfo.GetJob())).DESC(),
+	}
 	condition := tDCategory.Job.IN(jobsExp...)
 
 	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
@@ -55,7 +58,9 @@ func (s *Server) CompleteDocumentCategories(
 		}
 
 		// Make sure to sort by the category IDs if provided
-		orderBys = append(orderBys, tDCategory.ID.IN(categoryIds...).DESC())
+		orderBys = append([]mysql.OrderByClause{
+			tDCategory.ID.IN(categoryIds...).DESC(),
+		}, orderBys...)
 	}
 
 	orderBys = append(orderBys, tDCategory.SortKey.ASC())
