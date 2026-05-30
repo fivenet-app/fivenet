@@ -243,7 +243,6 @@ export const useCentrumStore = defineStore(
                 return;
             }
 
-            if (status.unit !== undefined) console.log('had to null unit in unit status', status);
             status.unit = undefined;
             if (!u.status) {
                 u.status = status;
