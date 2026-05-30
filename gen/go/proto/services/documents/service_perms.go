@@ -289,6 +289,10 @@ func init() {
 					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"PenaltyCalculator"},
 				},
+				{
+					Key:  permkeys.StatsServiceGetStatsJobsPermField,
+					Type: permissionsattributes.JobListAttributeType,
+				},
 			},
 			Order: 5800,
 			Icon:  "i-mdi-graph-box-multiple-outline",

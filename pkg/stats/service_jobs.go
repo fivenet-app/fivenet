@@ -149,7 +149,7 @@ func (s *Service) QueryEmployeeCountOverTime(
 		ctx,
 		startDay,
 		endDay,
-		job,
+		[]string{job},
 		SourceKindEmployeeCount,
 		"fivenet_user_jobs",
 		"employee_count",

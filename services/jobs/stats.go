@@ -87,7 +87,7 @@ func (s *Server) GetStats(
 			ctx,
 			start,
 			end,
-			userInfo.GetJob(),
+			[]string{userInfo.GetJob()},
 			pkgstats.SourceKindEmployeeCount,
 			"fivenet_user_jobs",
 			"employee_count",

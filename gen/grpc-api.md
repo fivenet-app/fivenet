@@ -10393,6 +10393,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `end` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `period` | [resources.stats.StatsPeriod](#resourcesstatsStatsPeriod) |  |  |
 | `category` | [resources.stats.StatsCategory](#resourcesstatsStatsCategory) |  |  |
+| `jobs` | [string](#string) | repeated |  |
 
 
 

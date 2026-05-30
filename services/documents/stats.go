@@ -2,6 +2,7 @@ package documents
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/stats"
@@ -41,12 +42,55 @@ func (s *Server) GetStats(
 
 	period := max(req.GetPeriod(), stats.StatsPeriod_STATS_PERIOD_DAILY)
 
-	categories, err := s.ps.AttrStringList(
+	allowedCategories, err := s.ps.AttrStringList(
 		userInfo,
 		permsdocuments.StatsService.GetStats.Categories,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if allowedCategories == nil || len(allowedCategories.GetStrings()) == 0 {
+		return nil, errorsdocuments.ErrNoStatsCategories
+	}
+
+	jobsList, err := s.ps.AttrJobList(userInfo, permsdocuments.StatsService.GetStats.Jobs)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	allowedJobs := make([]string, 0, len(jobsList.GetStrings()))
+	userJob := strings.TrimSpace(userInfo.GetJob())
+	// User always has access to their own job
+	if len(allowedJobs) == 0 {
+		allowedJobs = append(allowedJobs, userJob)
+	}
+
+	allowedJobsSet := make(map[string]struct{}, len(allowedJobs))
+	for _, job := range allowedJobs {
+		allowedJobsSet[job] = struct{}{}
+	}
+
+	jobs := make([]string, 0, len(req.GetJobs()))
+	if len(req.GetJobs()) == 0 {
+		jobs = append(jobs, allowedJobs...)
+	} else {
+		seen := make(map[string]struct{}, len(req.GetJobs()))
+		for _, job := range req.GetJobs() {
+			job = strings.TrimSpace(job)
+			if job == "" {
+				continue
+			}
+			// Allow superuser access to any job even if not "in allowed" list
+			if _, ok := allowedJobsSet[job]; !ok && !userInfo.GetSuperuser() {
+				continue
+			}
+			if _, ok := seen[job]; ok {
+				continue
+			}
+
+			seen[job] = struct{}{}
+			jobs = append(jobs, job)
+		}
 	}
 
 	resp := &pbdocuments.GetStatsResponse{
@@ -59,7 +103,7 @@ func (s *Server) GetStats(
 
 	switch req.GetCategory() {
 	case stats.StatsCategory_STATS_CATEGORY_DOCUMENTS_BY_CATEGORY:
-		byCategory, err := s.stats.QueryDocumentsByCategory(ctx, start, end, userInfo.GetJob())
+		byCategory, err := s.stats.QueryDocumentsByCategory(ctx, start, end, jobs)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -77,7 +121,7 @@ func (s *Server) GetStats(
 			ctx,
 			start,
 			end,
-			userInfo.GetJob(),
+			jobs,
 			pkgstats.SourceKindDocumentColumn,
 			"documents",
 			"document_count",
@@ -97,7 +141,7 @@ func (s *Server) GetStats(
 			ctx,
 			start,
 			end,
-			userInfo.GetJob(),
+			jobs,
 			pkgstats.SourceKindDocumentColumn,
 			"documents",
 			"document_count",
@@ -109,14 +153,14 @@ func (s *Server) GetStats(
 
 	case stats.StatsCategory_STATS_CATEGORY_TOP_LAWS:
 		// Ensure the user has permission to view penalty calculator stats before querying for top laws, as they are related to the penalty calculator.
-		if !categories.Contains("PenaltyCalculator") {
+		if !allowedCategories.Contains("PenaltyCalculator") {
 			return nil, status.Error(
 				codes.PermissionDenied,
 				"user does not have permission to view penalty calculator stats",
 			)
 		}
 
-		topLaws, err := s.stats.QueryTopLaws(ctx, start, end, userInfo.GetJob(), 10)
+		topLaws, err := s.stats.QueryTopLaws(ctx, start, end, jobs, 10)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -131,7 +175,7 @@ func (s *Server) GetStats(
 			ctx,
 			start,
 			end,
-			userInfo.GetJob(),
+			jobs,
 			pkgstats.SourceKindDocumentMetric,
 			pkgstats.PenaltyCalculatorSourceKey,
 			"law_count",
@@ -151,7 +195,7 @@ func (s *Server) GetStats(
 			ctx,
 			start,
 			end,
-			userInfo.GetJob(),
+			jobs,
 			pkgstats.SourceKindDocumentMetric,
 			pkgstats.PenaltyCalculatorSourceKey,
 			"law_count",
@@ -163,7 +207,7 @@ func (s *Server) GetStats(
 
 	case stats.StatsCategory_STATS_CATEGORY_PENALTIES_OVER_TIME:
 		// Ensure the user has permission to view penalty calculator stats before querying for top laws, as they are related to the penalty calculator.
-		if !categories.Contains("PenaltyCalculator") {
+		if !allowedCategories.Contains("PenaltyCalculator") {
 			return nil, status.Error(
 				codes.PermissionDenied,
 				"user does not have permission to view penalty calculator stats",
@@ -174,7 +218,7 @@ func (s *Server) GetStats(
 			ctx,
 			start,
 			end,
-			userInfo.GetJob(),
+			jobs,
 			period,
 		)
 		if err != nil {
@@ -203,7 +247,7 @@ func (s *Server) GetStats(
 			ctx,
 			start,
 			end,
-			userInfo.GetJob(),
+			jobs,
 			pkgstats.SourceKindDocumentMetric,
 			pkgstats.PenaltyCalculatorSourceKey,
 			"fine_total",

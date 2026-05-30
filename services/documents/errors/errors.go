@@ -209,9 +209,14 @@ var (
 	ErrStampLimitReached = common.NewI18nErr(
 		codes.InvalidArgument,
 		&common.I18NItem{
-			Key:        "errors.documents.DocumentsService.ErrStampLimitReached.content",
+			Key:        "errors.documents.StampsService.ErrStampLimitReached.content",
 			Parameters: map[string]string{"max": "5"},
 		},
-		&common.I18NItem{Key: "errors.documents.DocumentsService.ErrStampLimitReached.title"},
+		&common.I18NItem{Key: "errors.documents.StampsService.ErrStampLimitReached.title"},
+	)
+	ErrNoStatsCategories = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.documents.StampsService.ErrStampLimitReached.content"},
+		&common.I18NItem{Key: "errors.documents.StampsService.ErrStampLimitReached.title"},
 	)
 )

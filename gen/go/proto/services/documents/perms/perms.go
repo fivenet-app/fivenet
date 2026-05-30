@@ -74,6 +74,7 @@ const (
 	// Service: documents.StatsService
 	StatsServiceGetStatsPerm                perms.Name = "GetStats"
 	StatsServiceGetStatsCategoriesPermField perms.Key  = "Categories"
+	StatsServiceGetStatsJobsPermField       perms.Key  = "Jobs"
 
 	// Service: documents.TemplatesService
 	TemplatesServiceCreateTemplatePerm perms.Name = "CreateTemplate"
@@ -435,6 +436,7 @@ type StatsServiceGetStatsPermRef struct {
 	Perm            perms.PermissionRef
 	Categories      perms.AttrRef[perms.StringListAttr]
 	CategoriesTyped perms.StringListAttrRef[StatsServiceGetStatsCategoriesPermValue]
+	Jobs            perms.AttrRef[perms.JobListAttr]
 }
 
 var StatsService = StatsServicePerms{
@@ -447,6 +449,10 @@ var StatsService = StatsServicePerms{
 		CategoriesTyped: perms.NewTypedStringListAttrRef[StatsServiceGetStatsCategoriesPermValue](
 			perms.NewPermissionRef(Namespace, StatsServicePerm, StatsServiceGetStatsPerm),
 			StatsServiceGetStatsCategoriesPermField,
+		),
+		Jobs: perms.NewJobListAttrRef(
+			perms.NewPermissionRef(Namespace, StatsServicePerm, StatsServiceGetStatsPerm),
+			StatsServiceGetStatsJobsPermField,
 		),
 	},
 }

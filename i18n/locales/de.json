@@ -271,7 +271,7 @@
         "citizen": "Bürger | Bürger",
         "vehicle": "Fahrzeug | Fahrzeuge",
         "document": "Dokument | Dokumente",
-        "job": "Beruf",
+        "job": "Beruf | Berufe",
         "livemap": "Karte",
         "control_panel": "Einstellungen",
         "about": "Über",
@@ -2647,6 +2647,18 @@
                     "title": "Dokument ist ein Entwurf!",
                     "content": "Nur veröffentlichte Dokumente können genehmigt werden."
                 }
+            },
+            "StampsService": {
+                "ErrStampLimitReached": {
+                    "title": "Stempel-Limit erreicht!",
+                    "content": "Das Limit von {max} Stempeln wurde erreicht."
+                }
+            },
+            "StatsService": {
+                "ErrNoStatsCategories": {
+                    "title": "Keine Statistik-Kategorien verfügbar!",
+                    "content": "Du hast keinen Zugriff auf Statistik-Kategorien."
+                }
             }
         },
         "livemap": {
@@ -3476,7 +3488,8 @@
                     "key": "Statistiken abrufen",
                     "description": "Verschiedene Statistiken im Zusammenhang mit Dokumenten abrufen.",
                     "attrs_types": {
-                        "Categories": "Verfügbare Statistik-Kategorien"
+                        "Categories": "Verfügbare Statistik-Kategorien",
+                        "Jobs": "Berufe"
                     },
                     "attrs": {
                         "PenaltyCalculator": "Straf- und gesetzesbasierte Statistiken"

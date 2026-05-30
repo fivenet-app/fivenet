@@ -15,6 +15,12 @@ message GetStatsRequest {
 
   resources.stats.StatsPeriod period = 3 [(buf.validate.field).enum.defined_only = true];
   resources.stats.StatsCategory category = 4 [(buf.validate.field).enum.defined_only = true];
+  repeated string jobs = 5 [(buf.validate.field).repeated = {
+    max_items: 15
+    items: {
+      string: {max_len: 40}
+    }
+  }];
 }
 
 message GetStatsResponse {
@@ -42,6 +48,10 @@ service StatsService {
           key: "Categories"
           type: ATTRIBUTE_TYPE_STRING_LIST
           valid_string_list: ["PenaltyCalculator"]
+        },
+        {
+          key: "Jobs"
+          type: ATTRIBUTE_TYPE_JOB_LIST
         }
       ]
     };

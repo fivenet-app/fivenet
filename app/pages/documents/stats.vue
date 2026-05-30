@@ -24,7 +24,11 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const { attrStringList, isSuperuser } = useAuth();
+const { activeChar, attrStringList, attrJobList, isSuperuser } = useAuth();
+
+const completorStore = useCompletorStore();
+const { jobs } = storeToRefs(completorStore);
+const { listJobs } = completorStore;
 
 const schema = z.object({
     range: z
@@ -37,6 +41,7 @@ const schema = z.object({
             end: new Date(),
         })),
     category: z.enum(StatsCategory).default(StatsCategory.DOCUMENTS_BY_CATEGORY),
+    jobs: z.string().max(40).array().max(15).default([]),
 });
 
 const query = useSearchForm('documents-stats', schema);
@@ -63,6 +68,7 @@ const {
         end: toUtcDateTimestamp(query.range.end),
         period: selectedPeriod.value,
         category: query.category,
+        jobs: query.jobs,
     });
     const { response } = await call;
 
@@ -79,11 +85,32 @@ const {
 });
 
 watch(
-    () => [query.category, query.range.start.getTime(), query.range.end.getTime()],
-    async () => {
-        await refresh();
+    () => query.jobs,
+    () => {
+        if (query.jobs.length > 0) return;
+        if (!activeChar.value) return;
+
+        query.jobs.push(activeChar.value.job);
     },
+    { immediate: true },
 );
+watchDebounced(
+    () => [query.category, query.range.start.getTime(), query.range.end.getTime(), query.jobs],
+    async () => await refresh(),
+    { debounce: 200, maxWait: 1250 },
+);
+
+const allowedJobs = computed(() => {
+    // Superuser can see all jobs, how helpful that might be, is up to the superuser.. :-)
+    if (isSuperuser.value) return jobs.value.map((j) => ({ name: j.name, label: j.label }));
+
+    // Map the job names from the attribute to "actual" jobs
+    return attrJobList('documents.StatsService/GetStats', 'Jobs').value.map((j) => {
+        const job = jobs.value.find((js) => js.name === j);
+
+        return { name: job?.name ?? j, label: job?.label ?? j };
+    });
+});
 
 const canSeePenalties = computed(
     () =>
@@ -126,6 +153,8 @@ const breadcrumbs = computed(() => [
 ]);
 
 const isPenalties = computed(() => query.category === StatsCategory.PENALTIES_OVER_TIME);
+
+onBeforeMount(async () => listJobs());
 </script>
 
 <template>
@@ -149,13 +178,43 @@ const isPenalties = computed(() => query.category === StatsCategory.PENALTIES_OV
 
             <UDashboardToolbar>
                 <template #left>
-                    <DateRangePicker v-model="query.range" />
+                    <UFormField name="range">
+                        <DateRangePicker v-model="query.range" />
+                    </UFormField>
 
-                    <USelectMenu v-model="query.category" :items="categories" value-key="value" />
+                    <UFormField name="category">
+                        <USelectMenu v-model="query.category" :items="categories" value-key="value" />
+                    </UFormField>
                 </template>
 
                 <template #right>
                     <RefreshButton @click="() => refresh()" />
+                </template>
+            </UDashboardToolbar>
+
+            <UDashboardToolbar v-if="allowedJobs.length > 1">
+                <template #default>
+                    <UFormField class="w-full" name="jobs" :label="$t('common.job', 2)" :ui="{ root: 'py-2' }">
+                        <USelectMenu
+                            v-model="query.jobs"
+                            class="w-full"
+                            block
+                            :items="allowedJobs"
+                            label-key="label"
+                            value-key="name"
+                            multiple
+                            :search-input="{ placeholder: $t('common.search_field') }"
+                            :filter-fields="['name', 'label']"
+                        >
+                            <template v-if="query.jobs.length === 0" #default>
+                                {{ $t('common.none_selected', [$t('common.job', 2)]) }}
+                            </template>
+
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.job', 2)]) }}
+                            </template>
+                        </USelectMenu>
+                    </UFormField>
                 </template>
             </UDashboardToolbar>
         </template>

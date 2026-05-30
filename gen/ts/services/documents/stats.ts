@@ -39,6 +39,10 @@ export interface GetStatsRequest {
      * @generated from protobuf field: resources.stats.StatsCategory category = 4
      */
     category: StatsCategory;
+    /**
+     * @generated from protobuf field: repeated string jobs = 5
+     */
+    jobs: string[];
 }
 /**
  * @generated from protobuf message services.documents.GetStatsResponse
@@ -80,13 +84,15 @@ class GetStatsRequest$Type extends MessageType<GetStatsRequest> {
             { no: 1, name: "start", kind: "message", T: () => Timestamp },
             { no: 2, name: "end", kind: "message", T: () => Timestamp },
             { no: 3, name: "period", kind: "enum", T: () => ["resources.stats.StatsPeriod", StatsPeriod, "STATS_PERIOD_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 4, name: "category", kind: "enum", T: () => ["resources.stats.StatsCategory", StatsCategory, "STATS_CATEGORY_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
+            { no: 4, name: "category", kind: "enum", T: () => ["resources.stats.StatsCategory", StatsCategory, "STATS_CATEGORY_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 5, name: "jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "15", items: { string: { maxLen: "40" } } } } } }
         ]);
     }
     create(value?: PartialMessage<GetStatsRequest>): GetStatsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.period = 0;
         message.category = 0;
+        message.jobs = [];
         if (value !== undefined)
             reflectionMergePartial<GetStatsRequest>(this, message, value);
         return message;
@@ -107,6 +113,9 @@ class GetStatsRequest$Type extends MessageType<GetStatsRequest> {
                     break;
                 case /* resources.stats.StatsCategory category */ 4:
                     message.category = reader.int32();
+                    break;
+                case /* repeated string jobs */ 5:
+                    message.jobs.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -132,6 +141,9 @@ class GetStatsRequest$Type extends MessageType<GetStatsRequest> {
         /* resources.stats.StatsCategory category = 4; */
         if (message.category !== 0)
             writer.tag(4, WireType.Varint).int32(message.category);
+        /* repeated string jobs = 5; */
+        for (let i = 0; i < message.jobs.length; i++)
+            writer.tag(5, WireType.LengthDelimited).string(message.jobs[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -241,5 +253,5 @@ export const GetStatsResponse = new GetStatsResponse$Type();
  * @generated ServiceType for protobuf service services.documents.StatsService
  */
 export const StatsService = new ServiceType("services.documents.StatsService", [
-    { name: "GetStats", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Categories", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["PenaltyCalculator"] }] } }, I: GetStatsRequest, O: GetStatsResponse }
+    { name: "GetStats", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Categories", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["PenaltyCalculator"] }, { key: "Jobs", type: "ATTRIBUTE_TYPE_JOB_LIST" }] } }, I: GetStatsRequest, O: GetStatsResponse }
 ], { "codegen.perms.perms_svc": { order: 58, icon: "i-mdi-graph-box-multiple-outline" } });

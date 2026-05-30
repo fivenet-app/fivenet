@@ -3,6 +3,10 @@
 
 package documents
 
+import (
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
+)
+
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
 func (m *GetStatsRequest) Sanitize() error {
@@ -17,6 +21,14 @@ func (m *GetStatsRequest) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: Jobs
+	for idx, item := range m.Jobs {
+		_, _ = idx, item
+
+		m.Jobs[idx] = htmlsanitizer.Sanitize(m.Jobs[idx])
+
 	}
 
 	// Field: Start

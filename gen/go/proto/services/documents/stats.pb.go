@@ -31,6 +31,7 @@ type GetStatsRequest struct {
 	End           *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=end,proto3" json:"end,omitempty"`
 	Period        stats.StatsPeriod      `protobuf:"varint,3,opt,name=period,proto3,enum=resources.stats.StatsPeriod" json:"period,omitempty"`
 	Category      stats.StatsCategory    `protobuf:"varint,4,opt,name=category,proto3,enum=resources.stats.StatsCategory" json:"category,omitempty"`
+	Jobs          []string               `protobuf:"bytes,5,rep,name=jobs,proto3" json:"jobs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -88,6 +89,13 @@ func (x *GetStatsRequest) GetCategory() stats.StatsCategory {
 	return stats.StatsCategory(0)
 }
 
+func (x *GetStatsRequest) GetJobs() []string {
+	if x != nil {
+		return x.Jobs
+	}
+	return nil
+}
+
 func (x *GetStatsRequest) SetStart(v *timestamp.Timestamp) {
 	x.Start = v
 }
@@ -102,6 +110,10 @@ func (x *GetStatsRequest) SetPeriod(v stats.StatsPeriod) {
 
 func (x *GetStatsRequest) SetCategory(v stats.StatsCategory) {
 	x.Category = v
+}
+
+func (x *GetStatsRequest) SetJobs(v []string) {
+	x.Jobs = v
 }
 
 func (x *GetStatsRequest) HasStart() bool {
@@ -133,6 +145,7 @@ type GetStatsRequest_builder struct {
 	End      *timestamp.Timestamp
 	Period   stats.StatsPeriod
 	Category stats.StatsCategory
+	Jobs     []string
 }
 
 func (b0 GetStatsRequest_builder) Build() *GetStatsRequest {
@@ -143,6 +156,7 @@ func (b0 GetStatsRequest_builder) Build() *GetStatsRequest {
 	x.End = b.End
 	x.Period = b.Period
 	x.Category = b.Category
+	x.Jobs = b.Jobs
 	return m0
 }
 
@@ -291,12 +305,13 @@ var File_services_documents_stats_proto protoreflect.FileDescriptor
 
 const file_services_documents_stats_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/documents/stats.proto\x12\x12services.documents\x1a\x19codegen/perms/perms.proto\x1a\x1bresources/stats/stats.proto\x1a#resources/timestamp/timestamp.proto\"\xeb\x01\n" +
+	"\x1eservices/documents/stats.proto\x12\x12services.documents\x1a\x19codegen/perms/perms.proto\x1a\x1bresources/stats/stats.proto\x1a#resources/timestamp/timestamp.proto\"\xff\x01\n" +
 	"\x0fGetStatsRequest\x124\n" +
 	"\x05start\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x05start\x120\n" +
 	"\x03end\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\x03end\x124\n" +
 	"\x06period\x18\x03 \x01(\x0e2\x1c.resources.stats.StatsPeriodR\x06period\x12:\n" +
-	"\bcategory\x18\x04 \x01(\x0e2\x1e.resources.stats.StatsCategoryR\bcategory\"\xbf\x03\n" +
+	"\bcategory\x18\x04 \x01(\x0e2\x1e.resources.stats.StatsCategoryR\bcategory\x12\x12\n" +
+	"\x04jobs\x18\x05 \x03(\tR\x04jobs\"\xbf\x03\n" +
 	"\x10GetStatsResponse\x124\n" +
 	"\btop_laws\x18\x01 \x03(\v2\x19.resources.stats.KeyValueR\atopLaws\x12C\n" +
 	"\x0ffines_over_time\x18\x02 \x03(\v2\x1b.resources.stats.DailyValueR\rfinesOverTime\x12R\n" +
@@ -305,11 +320,12 @@ const file_services_documents_stats_proto_rawDesc = "" +
 	"\x14period_series_values\x18\x05 \x03(\v2\".resources.stats.PeriodSeriesValueR\x12periodSeriesValues\x12\x1f\n" +
 	"\vtotal_value\x18\x06 \x01(\x03R\n" +
 	"totalValue\x12#\n" +
-	"\raverage_value\x18\a \x01(\x01R\faverageValue2\xbb\x01\n" +
-	"\fStatsService\x12\x80\x01\n" +
-	"\bGetStats\x12#.services.documents.GetStatsRequest\x1a$.services.documents.GetStatsResponse\")\xd2\xf3\x18%\b\x01:!\n" +
+	"\raverage_value\x18\a \x01(\x01R\faverageValue2\xc5\x01\n" +
+	"\fStatsService\x12\x8a\x01\n" +
+	"\bGetStats\x12#.services.documents.GetStatsRequest\x1a$.services.documents.GetStatsResponse\"3\xd2\xf3\x18/\b\x01:!\n" +
 	"\n" +
-	"Categories\x18\x01\"\x11PenaltyCalculator\x1a(\xea\xf3\x18$\b:\x12 i-mdi-graph-box-multiple-outlineBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
+	"Categories\x18\x01\"\x11PenaltyCalculator:\b\n" +
+	"\x04Jobs\x18\x02\x1a(\xea\xf3\x18$\b:\x12 i-mdi-graph-box-multiple-outlineBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var file_services_documents_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_services_documents_stats_proto_goTypes = []any{

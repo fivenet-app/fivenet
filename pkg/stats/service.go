@@ -63,6 +63,39 @@ func NewService(db *sql.DB, appCfg appconfig.IConfig) *Service {
 	}
 }
 
+func normalizeJobFilters(jobs []string) []string {
+	if len(jobs) == 0 {
+		return nil
+	}
+
+	normalized := make([]string, 0, len(jobs))
+	seen := make(map[string]struct{}, len(jobs))
+
+	for _, job := range jobs {
+		job = strings.TrimSpace(job)
+		if job == "" {
+			continue
+		}
+		if _, ok := seen[job]; ok {
+			continue
+		}
+
+		seen[job] = struct{}{}
+		normalized = append(normalized, job)
+	}
+
+	return normalized
+}
+
+func jobExpressions(jobs []string) []mysql.Expression {
+	expressions := make([]mysql.Expression, 0, len(jobs))
+	for _, job := range jobs {
+		expressions = append(expressions, mysql.String(job))
+	}
+
+	return expressions
+}
+
 func (s *Service) RebuildDocumentMetrics(ctx context.Context, doc *documents.Document) error {
 	if doc == nil {
 		return nil
@@ -283,61 +316,61 @@ GROUP BY DATE(m.occurred_at), m.job, m.source_key, m.metric_key,
 func (s *Service) QueryTopLaws(
 	ctx context.Context,
 	startDay, endDay time.Time,
-	job string,
+	jobs []string,
 	limit int64,
 ) ([]*KeyValue, error) {
+	jobs = normalizeJobFilters(jobs)
+	if len(jobs) == 0 {
+		return []*KeyValue{}, nil
+	}
+
 	if limit <= 0 {
 		limit = 10
 	}
 
-	items := []*KeyValue{}
-	query := `
-SELECT
-  CONCAT(COALESCE(b.name, 'Unknown'), '::', COALESCE(l.name, CONCAT('#', x.dimension1))) AS ` + "`key`" + `,
-  x.value AS ` + "`value`" + `
-FROM (
-  SELECT
-    r.dimension1,
-    SUM(r.value) AS value
-  FROM fivenet_stats_daily_rollup r
-  WHERE r.day >= ?
-    AND r.day <= ?
-    AND r.job = ?
-    AND r.source_kind = ?
-    AND r.source_key = ?
-    AND r.metric_key = 'law_count'
-    AND r.dimension1 <> ''
-  GROUP BY r.dimension1
-  ORDER BY SUM(r.value) DESC
-  LIMIT ?
-) x
-LEFT JOIN fivenet_lawbooks_laws l ON l.id = CAST(x.dimension1 AS UNSIGNED)
-LEFT JOIN fivenet_lawbooks b ON b.id = l.lawbook_id
-ORDER BY x.value DESC
-`
-	rows, err := s.db.QueryContext(
-		ctx,
-		query,
-		timeutils.StartOfDay(startDay).Format(time.DateOnly),
-		timeutils.StartOfDay(endDay).Format(time.DateOnly),
-		job,
-		SourceKindDocumentMetric,
-		PenaltyCalculatorSourceKey,
-		limit,
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
+	tRollup := table.FivenetStatsDailyRollup.AS("r")
+	tLaws := table.FivenetLawbooksLaws.AS("l")
+	tLawbooks := table.FivenetLawbooks.AS("b")
+	jobNames := jobExpressions(jobs)
 
-	for rows.Next() {
-		item := &KeyValue{}
-		if err := rows.Scan(&item.Key, &item.Value); err != nil {
-			return nil, err
-		}
-		items = append(items, item)
-	}
-	if err := rows.Err(); err != nil {
+	lawNameExpr := mysql.COALESCE(
+		tLaws.Name,
+		mysql.CONCAT(mysql.String("#"), tRollup.Dimension1),
+	)
+	lawbookNameExpr := mysql.COALESCE(tLawbooks.Name, mysql.String("Unknown"))
+	keyExpr := mysql.CONCAT(lawbookNameExpr, mysql.String("::"), lawNameExpr)
+
+	stmt := tRollup.
+		SELECT(
+			keyExpr.AS("key"),
+			mysql.SUM(tRollup.Value).AS("value"),
+		).
+		FROM(
+			tRollup.
+				LEFT_JOIN(
+					tLaws,
+					tLaws.ID.EQ(mysql.CAST(tRollup.Dimension1).AS_UNSIGNED()),
+				).
+				LEFT_JOIN(
+					tLawbooks,
+					tLawbooks.ID.EQ(tLaws.LawbookID),
+				),
+		).
+		WHERE(mysql.AND(
+			tRollup.Day.GT_EQ(mysql.DateT(timeutils.StartOfDay(startDay))),
+			tRollup.Day.LT_EQ(mysql.DateT(timeutils.StartOfDay(endDay))),
+			tRollup.Job.IN(jobNames...),
+			tRollup.SourceKind.EQ(mysql.String(SourceKindDocumentMetric)),
+			tRollup.SourceKey.EQ(mysql.String(PenaltyCalculatorSourceKey)),
+			tRollup.MetricKey.EQ(mysql.String("law_count")),
+			tRollup.Dimension1.NOT_EQ(mysql.String("")),
+		)).
+		GROUP_BY(tRollup.Dimension1, tLawbooks.Name, tLaws.Name).
+		ORDER_BY(mysql.SUM(tRollup.Value).DESC()).
+		LIMIT(limit)
+
+	items := []*KeyValue{}
+	if err := stmt.QueryContext(ctx, s.db, &items); err != nil {
 		return nil, err
 	}
 
@@ -347,14 +380,14 @@ ORDER BY x.value DESC
 func (s *Service) QueryFinesOverTime(
 	ctx context.Context,
 	startDay, endDay time.Time,
-	job string,
+	jobs []string,
 	period pbstats.StatsPeriod,
 ) ([]*DailyValue, error) {
 	return s.QueryPeriodValues(
 		ctx,
 		startDay,
 		endDay,
-		job,
+		jobs,
 		SourceKindDocumentMetric,
 		PenaltyCalculatorSourceKey,
 		"fine_total",
@@ -365,11 +398,17 @@ func (s *Service) QueryFinesOverTime(
 func (s *Service) QueryPenaltySeriesOverTime(
 	ctx context.Context,
 	startDay, endDay time.Time,
-	job string,
+	jobs []string,
 	period pbstats.StatsPeriod,
 ) ([]*PeriodSeriesValue, error) {
+	jobs = normalizeJobFilters(jobs)
+	if len(jobs) == 0 {
+		return []*PeriodSeriesValue{}, nil
+	}
+
 	tRollup := table.FivenetStatsDailyRollup
 	periodExpr := periodStartDateExpr(period)
+	jobNames := jobExpressions(jobs)
 
 	stmt := tRollup.
 		SELECT(
@@ -381,7 +420,7 @@ func (s *Service) QueryPenaltySeriesOverTime(
 		WHERE(mysql.AND(
 			tRollup.Day.GT_EQ(mysql.DateT(timeutils.StartOfDay(startDay))),
 			tRollup.Day.LT_EQ(mysql.DateT(timeutils.StartOfDay(endDay))),
-			tRollup.Job.EQ(mysql.String(job)),
+			tRollup.Job.IN(jobNames...),
 			tRollup.SourceKind.EQ(mysql.String(SourceKindDocumentMetric)),
 			tRollup.SourceKey.EQ(mysql.String(PenaltyCalculatorSourceKey)),
 			tRollup.MetricKey.IN(
@@ -410,56 +449,56 @@ func (s *Service) QueryPenaltySeriesOverTime(
 func (s *Service) QueryDocumentsByCategory(
 	ctx context.Context,
 	startDay, endDay time.Time,
-	job string,
+	jobs []string,
 ) ([]*CategoryValue, error) {
-	items := []*CategoryValue{}
-	query := `
-SELECT
-  CAST(r.dimension1 AS UNSIGNED) AS ` + "`id`" + `,
-  COALESCE(c.name, CONCAT('#', r.dimension1)) AS ` + "`name`" + `,
-  c.color AS ` + "`color`" + `,
-  c.icon AS ` + "`icon`" + `,
-  SUM(r.value) AS ` + "`value`" + `
-FROM fivenet_stats_daily_rollup r
-LEFT JOIN fivenet_documents_categories c ON c.id = CAST(r.dimension1 AS UNSIGNED) AND c.deleted_at IS NULL
-WHERE r.day >= ?
-  AND r.day <= ?
-  AND r.job = ?
-  AND r.source_kind = ?
-  AND r.source_key = 'documents'
-  AND r.metric_key = 'category_count'
-  AND r.dimension1 <> ''
-GROUP BY CAST(r.dimension1 AS UNSIGNED), COALESCE(c.name, CONCAT('#', r.dimension1)), c.color, c.icon
-ORDER BY SUM(r.value) DESC
-`
+	jobs = normalizeJobFilters(jobs)
+	if len(jobs) == 0 {
+		return []*CategoryValue{}, nil
+	}
 
-	rows, err := s.db.QueryContext(
-		ctx,
-		query,
-		timeutils.StartOfDay(startDay).Format(time.DateOnly),
-		timeutils.StartOfDay(endDay).Format(time.DateOnly),
-		job,
-		SourceKindDocumentColumn,
+	tRollup := table.FivenetStatsDailyRollup.AS("r")
+	tCategory := table.FivenetDocumentsCategories.AS("c")
+	jobNames := jobExpressions(jobs)
+
+	categoryIDExpr := mysql.CAST(tRollup.Dimension1).AS_UNSIGNED()
+	categoryNameExpr := mysql.COALESCE(
+		mysql.MAX(tCategory.Name),
+		mysql.CONCAT(mysql.String("#"), tRollup.Dimension1),
 	)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
+	categoryColorExpr := mysql.MAX(tCategory.Color)
+	categoryIconExpr := mysql.MAX(tCategory.Icon)
 
-	for rows.Next() {
-		item := &CategoryValue{}
-		if err := rows.Scan(
-			&item.ID,
-			&item.Name,
-			&item.Color,
-			&item.Icon,
-			&item.Value,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, item)
-	}
-	if err := rows.Err(); err != nil {
+	stmt := tRollup.
+		SELECT(
+			categoryIDExpr.AS("id"),
+			categoryNameExpr.AS("name"),
+			categoryColorExpr.AS("color"),
+			categoryIconExpr.AS("icon"),
+			mysql.SUM(tRollup.Value).AS("value"),
+		).
+		FROM(
+			tRollup.LEFT_JOIN(
+				tCategory,
+				mysql.AND(
+					tCategory.ID.EQ(categoryIDExpr),
+					tCategory.DeletedAt.IS_NULL(),
+				),
+			),
+		).
+		WHERE(mysql.AND(
+			tRollup.Day.GT_EQ(mysql.DateT(timeutils.StartOfDay(startDay))),
+			tRollup.Day.LT_EQ(mysql.DateT(timeutils.StartOfDay(endDay))),
+			tRollup.Job.IN(jobNames...),
+			tRollup.SourceKind.EQ(mysql.String(SourceKindDocumentColumn)),
+			tRollup.SourceKey.EQ(mysql.String("documents")),
+			tRollup.MetricKey.EQ(mysql.String("category_count")),
+			tRollup.Dimension1.NOT_EQ(mysql.String("")),
+		)).
+		GROUP_BY(tRollup.Dimension1, categoryIDExpr).
+		ORDER_BY(mysql.SUM(tRollup.Value).DESC())
+
+	items := []*CategoryValue{}
+	if err := stmt.QueryContext(ctx, s.db, &items); err != nil {
 		return nil, err
 	}
 
@@ -469,12 +508,15 @@ ORDER BY SUM(r.value) DESC
 func (s *Service) QueryPenaltyReductionAverage(
 	ctx context.Context,
 	startDay, endDay time.Time,
-	job string,
+	jobs []string,
 ) (int64, error) {
-	tRollup := table.FivenetStatsDailyRollup
-	var sums struct {
-		ReductionSum int64 `alias:"reduction_sum"`
+	jobs = normalizeJobFilters(jobs)
+	if len(jobs) == 0 {
+		return 0, nil
 	}
+
+	tRollup := table.FivenetStatsDailyRollup
+	jobNames := jobExpressions(jobs)
 
 	stmt := tRollup.
 		SELECT(
@@ -487,12 +529,15 @@ func (s *Service) QueryPenaltyReductionAverage(
 		WHERE(mysql.AND(
 			tRollup.Day.GT_EQ(mysql.DateT(timeutils.StartOfDay(startDay))),
 			tRollup.Day.LT_EQ(mysql.DateT(timeutils.StartOfDay(endDay))),
-			tRollup.Job.EQ(mysql.String(job)),
+			tRollup.Job.IN(jobNames...),
 			tRollup.SourceKind.EQ(mysql.String(SourceKindDocumentMetric)),
 			tRollup.SourceKey.EQ(mysql.String(PenaltyCalculatorSourceKey)),
 			tRollup.MetricKey.EQ(mysql.String("reduction_percent")),
 		))
 
+	var sums struct {
+		ReductionSum int64 `alias:"reduction_sum"`
+	}
 	if err := stmt.QueryContext(ctx, s.db, &sums); err != nil {
 		return 0, err
 	}
@@ -503,94 +548,102 @@ func (s *Service) QueryPenaltyReductionAverage(
 func (s *Service) QueryTotalValue(
 	ctx context.Context,
 	startDay, endDay time.Time,
-	job string,
+	jobs []string,
 	sourceKind string,
 	sourceKey string,
 	metricKey string,
 ) (int64, error) {
-	var total sql.NullInt64
-	query := `
-SELECT SUM(value)
-FROM fivenet_stats_daily_rollup
-WHERE day >= ?
-  AND day <= ?
-  AND job = ?
-  AND source_kind = ?
-  AND source_key = ?
-  AND metric_key = ?
-`
-
-	if err := s.db.QueryRowContext(
-		ctx,
-		query,
-		timeutils.StartOfDay(startDay).Format(time.DateOnly),
-		timeutils.StartOfDay(endDay).Format(time.DateOnly),
-		job,
-		sourceKind,
-		sourceKey,
-		metricKey,
-	).Scan(&total); err != nil {
-		return 0, err
-	}
-
-	if !total.Valid {
+	jobs = normalizeJobFilters(jobs)
+	if len(jobs) == 0 {
 		return 0, nil
 	}
 
-	return total.Int64, nil
+	tRollup := table.FivenetStatsDailyRollup
+	jobNames := jobExpressions(jobs)
+
+	var dest struct {
+		Total sql.NullInt64 `alias:"total"`
+	}
+	stmt := tRollup.
+		SELECT(mysql.SUM(tRollup.Value).AS("total")).
+		FROM(tRollup).
+		WHERE(mysql.AND(
+			tRollup.Day.GT_EQ(mysql.DateT(timeutils.StartOfDay(startDay))),
+			tRollup.Day.LT_EQ(mysql.DateT(timeutils.StartOfDay(endDay))),
+			tRollup.Job.IN(jobNames...),
+			tRollup.SourceKind.EQ(mysql.String(sourceKind)),
+			tRollup.SourceKey.EQ(mysql.String(sourceKey)),
+			tRollup.MetricKey.EQ(mysql.String(metricKey)),
+		))
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return 0, err
+	}
+
+	if !dest.Total.Valid {
+		return 0, nil
+	}
+
+	return dest.Total.Int64, nil
 }
 
 func (s *Service) QueryAverageValue(
 	ctx context.Context,
 	startDay, endDay time.Time,
-	job string,
+	jobs []string,
 	sourceKind string,
 	sourceKey string,
 	metricKey string,
 ) (float64, error) {
-	var average sql.NullFloat64
-	query := `
-SELECT AVG(value)
-FROM fivenet_stats_daily_rollup
-WHERE day >= ?
-  AND day <= ?
-  AND job = ?
-  AND source_kind = ?
-  AND source_key = ?
-  AND metric_key = ?
-`
-
-	if err := s.db.QueryRowContext(
-		ctx,
-		query,
-		timeutils.StartOfDay(startDay).Format(time.DateOnly),
-		timeutils.StartOfDay(endDay).Format(time.DateOnly),
-		job,
-		sourceKind,
-		sourceKey,
-		metricKey,
-	).Scan(&average); err != nil {
-		return 0, err
-	}
-
-	if !average.Valid {
+	jobs = normalizeJobFilters(jobs)
+	if len(jobs) == 0 {
 		return 0, nil
 	}
 
-	return average.Float64, nil
+	tRollup := table.FivenetStatsDailyRollup
+	jobNames := jobExpressions(jobs)
+
+	var dest struct {
+		Average sql.NullFloat64 `alias:"average"`
+	}
+	stmt := tRollup.
+		SELECT(mysql.AVG(tRollup.Value).AS("average")).
+		FROM(tRollup).
+		WHERE(mysql.AND(
+			tRollup.Day.GT_EQ(mysql.DateT(timeutils.StartOfDay(startDay))),
+			tRollup.Day.LT_EQ(mysql.DateT(timeutils.StartOfDay(endDay))),
+			tRollup.Job.IN(jobNames...),
+			tRollup.SourceKind.EQ(mysql.String(sourceKind)),
+			tRollup.SourceKey.EQ(mysql.String(sourceKey)),
+			tRollup.MetricKey.EQ(mysql.String(metricKey)),
+		))
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return 0, err
+	}
+
+	if !dest.Average.Valid {
+		return 0, nil
+	}
+
+	return dest.Average.Float64, nil
 }
 
 func (s *Service) QueryPeriodValues(
 	ctx context.Context,
 	startDay, endDay time.Time,
-	job string,
+	jobs []string,
 	sourceKind string,
 	sourceKey string,
 	metricKey string,
 	period pbstats.StatsPeriod,
 ) ([]*DailyValue, error) {
+	jobs = normalizeJobFilters(jobs)
+	if len(jobs) == 0 {
+		return []*DailyValue{}, nil
+	}
+
 	tRollup := table.FivenetStatsDailyRollup
 	periodExpr := periodStartDateExpr(period)
+	jobNames := jobExpressions(jobs)
 
 	stmt := tRollup.
 		SELECT(
@@ -601,7 +654,7 @@ func (s *Service) QueryPeriodValues(
 		WHERE(mysql.AND(
 			tRollup.Day.GT_EQ(mysql.DateT(timeutils.StartOfDay(startDay))),
 			tRollup.Day.LT_EQ(mysql.DateT(timeutils.StartOfDay(endDay))),
-			tRollup.Job.EQ(mysql.String(job)),
+			tRollup.Job.IN(jobNames...),
 			tRollup.SourceKind.EQ(mysql.String(sourceKind)),
 			tRollup.SourceKey.EQ(mysql.String(sourceKey)),
 			tRollup.MetricKey.EQ(mysql.String(metricKey)),
@@ -624,6 +677,8 @@ func (s *Service) rebuildRollupsWithRange(
 	insertSQL string,
 	insertArgs []any,
 ) error {
+	tRollup := table.FivenetStatsDailyRollup
+
 	startDay = timeutils.StartOfDay(startDay)
 	endDay = timeutils.StartOfDay(endDay)
 	if endDay.Before(startDay) {
@@ -639,12 +694,14 @@ func (s *Service) rebuildRollupsWithRange(
 	}
 	defer tx.Rollback()
 
-	if _, err := tx.ExecContext(ctx,
-		`DELETE FROM fivenet_stats_daily_rollup WHERE day >= ? AND day <= ? AND source_kind = ?`,
-		startDay.Format(time.DateOnly),
-		endDay.Format(time.DateOnly),
-		sourceKind,
-	); err != nil {
+	stmt := tRollup.
+		DELETE().
+		WHERE(mysql.AND(
+			tRollup.Day.GT_EQ(mysql.DateT(startDay)),
+			tRollup.Day.LT_EQ(mysql.DateT(endDay)),
+			tRollup.SourceKind.EQ(mysql.String(sourceKind)),
+		))
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 

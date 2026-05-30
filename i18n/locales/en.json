@@ -2647,6 +2647,18 @@
                     "title": "Document is still a draft!",
                     "content": "You can't create approval tasks for draft documents."
                 }
+            },
+            "StampsService": {
+                "ErrStampLimitReached": {
+                    "title": "Stamp limit reached!",
+                    "content": "The limit of {max} stamps has been reached."
+                }
+            },
+            "StatsService": {
+                "ErrNoStatsCategories": {
+                    "title": "No statistics categories available!",
+                    "content": "You don't have access to any statistics categories."
+                }
             }
         },
         "livemap": {
@@ -3232,7 +3244,7 @@
                     "key": "Get User",
                     "description": "View a citizen's.",
                     "attrs_types": {
-                        "Jobs": "Factions"
+                        "Jobs": "Jobs"
                     }
                 }
             },
@@ -3416,7 +3428,7 @@
                     "key": "List Categories",
                     "description": "View and List document categories.",
                     "attrs_types": {
-                        "Jobs": "Factions"
+                        "Jobs": "Jobs"
                     }
                 }
             },
@@ -3476,7 +3488,8 @@
                     "key": "Get Statistics",
                     "description": "Retrieve various statistics related to documents.",
                     "attrs_types": {
-                        "Categories": "Available Statistics Categories"
+                        "Categories": "Available Statistics Categories",
+                        "Jobs": "Jobs"
                     },
                     "attrs": {
                         "PenaltyCalculator": "Penalty-and Law-based Stats"
