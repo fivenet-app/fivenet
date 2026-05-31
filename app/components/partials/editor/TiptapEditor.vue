@@ -21,7 +21,6 @@ import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import type { UploadFileRequest, UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
 import TiptapToolbar from './TiptapToolbar.vue';
 import YJSUserPopover from './YJSUserPopover.vue';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(
     defineProps<{
@@ -102,7 +101,7 @@ const { t } = useI18n();
 const settingsStore = useSettingsStore();
 const { editor: editorSettings } = storeToRefs(settingsStore);
 
-const notifications = useNotificationsStore();
+const { uploadImages } = useImageUpload();
 
 const extensions = useTiptapEditor(toRef(props, 'limit'), toRef(props, 'placeholder'));
 
@@ -322,27 +321,30 @@ const editor = useEditor({
 if (props.filestoreService && props.filestoreNamespace && props.targetId) {
     const { resizeAndUpload } = useFileUploader(props.filestoreService, props.filestoreNamespace, props.targetId);
 
-    async function handleFiles(fs: File[]): Promise<boolean> {
-        // Check if file limit is reached
-        if (files.value && files.value.length >= props.fileLimit) {
-            logger.warn('File limit reached, cannot upload more files');
-            notifications.add({
+    fileUploadHandler = async function handleFiles(fs: File[]): Promise<boolean> {
+        const result = await uploadImages({
+            files: fs,
+            uploadOne: resizeAndUpload,
+            currentFileCount: files.value?.length ?? 0,
+            fileLimit: props.fileLimit,
+            fileLimitNotification: {
                 title: { key: 'components.partials.tiptap_editor.notifications.file_limit_reached.title', parameters: {} },
                 description: {
                     key: 'components.partials.tiptap_editor.notifications.file_limit_reached.content',
                     parameters: {},
                 },
-                type: NotificationType.ERROR,
-            });
-            return false;
-        }
-
-        for (const f of fs) {
-            if (!f.type.startsWith('image/')) continue;
-
-            try {
-                const resp = await resizeAndUpload(f);
-
+            },
+            invalidTypeNotification: {
+                title: {
+                    key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.title',
+                    parameters: {},
+                },
+                description: {
+                    key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.content',
+                    parameters: {},
+                },
+            },
+            onUploaded: (resp) => {
                 unref(editor)!
                     .chain()
                     .focus()
@@ -351,13 +353,12 @@ if (props.filestoreService && props.filestoreNamespace && props.targetId) {
 
                 resp.file && emits('file-uploaded', resp.file);
                 files.value?.push(resp.file!);
-            } catch (e) {
-                logger.warn('Image resize failed, uploading original image', e);
-            }
-        }
-        return true;
-    }
-    fileUploadHandler = handleFiles;
+            },
+            onUploadError: (error) => logger.warn('Image resize/upload failed', error),
+        });
+
+        return result.ok;
+    };
 }
 
 // If collaboration is enabled, we don't set the content directly

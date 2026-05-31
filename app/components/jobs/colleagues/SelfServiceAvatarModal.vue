@@ -39,20 +39,33 @@ const state = reactive<Schema>({
 });
 
 const { resizeAndUpload } = useFileUploader((_) => citizensCitizensClient.uploadAvatar(_), 'documents', 0);
+const { uploadImages } = useImageUpload();
 
 async function uploadAvatar(f: File): Promise<void> {
-    if (!f.type.startsWith('image/')) return;
-
     try {
-        const resp = await resizeAndUpload(f);
-
-        notifications.add({
-            title: { key: 'notifications.action_successful.title', parameters: {} },
-            description: { key: 'notifications.action_successful.content', parameters: {} },
-            type: NotificationType.SUCCESS,
+        const result = await uploadImages({
+            files: [f],
+            uploadOne: (file) => resizeAndUpload(file),
+            invalidTypeNotification: {
+                title: {
+                    key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.title',
+                    parameters: {},
+                },
+                description: {
+                    key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.content',
+                    parameters: {},
+                },
+            },
+            successNotification: {
+                title: { key: 'notifications.action_successful.title', parameters: {} },
+                description: { key: 'notifications.action_successful.content', parameters: {} },
+            },
+            onUploaded: (resp) => {
+                activeChar.value!.profilePicture = resp.file?.filePath;
+            },
         });
 
-        activeChar.value!.profilePicture = resp.file?.filePath;
+        if (!result.ok) return;
 
         emit('close', false);
     } catch (e) {

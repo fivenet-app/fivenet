@@ -20,5 +20,5 @@ export function parseError(err: RpcError): CommonError | undefined {
 }
 
 export function isTranslatedError(message: string): boolean {
-    return message.startsWith('{');
+    return message.trimStart().startsWith('{');
 }

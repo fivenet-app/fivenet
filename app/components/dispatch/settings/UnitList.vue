@@ -7,7 +7,6 @@ import UnitCreateOrUpdateModal from '~/components/dispatch/settings/UnitCreateOr
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import { fallbackIconName, resolveIconComponent } from '~/components/partials/icons';
 import Pagination from '~/components/partials/Pagination.vue';
 import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units/units';

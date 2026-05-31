@@ -623,7 +623,7 @@
         "sort_direction": "Sort Direction",
         "case_sensitive": "Case sensitive",
         "source_code": "Source Code",
-        "allowed_file_types": "PNG, JPG (Max. 2000x1500px)",
+        "allowed_file_types": "PNG, JPG, WEBP (Max. 2000x1500px)",
         "default_lang": "Default Language",
         "selected": "None selected | {n} selected | {n} selected",
         "image_caching": "Please note that due to browser caching it can take up to 4 hours for the image to have updated for everyone.",
@@ -859,6 +859,10 @@
                     "file_limit_reached": {
                         "title": "File limit reached, cannot upload more files.",
                         "content": "You have reached the maximum number of files that can be uploaded. Please remove some files before uploading new ones."
+                    },
+                    "invalid_file_type_images": {
+                        "title": "Ungültige Datei(en) ausgewählt!",
+                        "content": "Es können nur Bilder hochgeladen werden."
                     }
                 },
                 "file_list": "File List",
@@ -2691,7 +2695,10 @@
             "ErrInvalidUploadMeta": "Invalid upload meta data!",
             "ErrUploadFileTooLarge": "File is too large to upload! Maximum file size is {maxSize} MB.",
             "ErrMaxFilesPerParentReached": "Maximum number of files ({maxFiles}) reached for this item!",
-            "ErrUploadFileTypeNotAllowed": "This file type is not allowed for upload."
+            "ErrUploadFileTypeNotAllowed": {
+                "title": "File type is not allowed for upload!",
+                "content": "Server detected the following file metadata, extension: {extension}, content type: {contentType}."
+            }
         },
         "notifications": {
             "NotificationsService": {

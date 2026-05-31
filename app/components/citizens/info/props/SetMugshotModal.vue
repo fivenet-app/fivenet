@@ -54,24 +54,37 @@ const state = reactive<Schema>({
 });
 
 const { resizeAndUpload } = useFileUploader((_) => citizensCitizensClient.uploadMugshot(_), 'documents', user.value.userId);
+const { uploadImages } = useImageUpload();
 
 async function uploadMugshot(f: File, reason: string): Promise<void> {
-    if (!f.type.startsWith('image/')) return;
-
     try {
-        const resp = await resizeAndUpload(f, reason);
-
-        notifications.add({
-            title: { key: 'notifications.action_successful.title', parameters: {} },
-            description: { key: 'notifications.action_successful.content', parameters: {} },
-            type: NotificationType.SUCCESS,
+        const result = await uploadImages({
+            files: [f],
+            uploadOne: (file) => resizeAndUpload(file, reason),
+            invalidTypeNotification: {
+                title: {
+                    key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.title',
+                    parameters: {},
+                },
+                description: {
+                    key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.content',
+                    parameters: {},
+                },
+            },
+            successNotification: {
+                title: { key: 'notifications.action_successful.title', parameters: {} },
+                description: { key: 'notifications.action_successful.content', parameters: {} },
+            },
+            onUploaded: (resp) => {
+                if (user.value.props) {
+                    user.value.props.mugshot = resp.file;
+                } else {
+                    user.value.props = { userId: user.value.userId, mugshot: resp.file };
+                }
+            },
         });
 
-        if (user.value.props) {
-            user.value.props.mugshot = resp.file;
-        } else {
-            user.value.props = { userId: user.value.userId, mugshot: resp.file };
-        }
+        if (!result.ok) return;
 
         emit('close', false);
     } catch (e) {

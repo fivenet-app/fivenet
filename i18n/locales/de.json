@@ -623,7 +623,7 @@
         "sort_direction": "Sortierrichtung",
         "case_sensitive": "Groß-/Kleinschreibung beachten",
         "source_code": "Quellcode",
-        "allowed_file_types": "PNG, JPG (MAX. 2000x1500px)",
+        "allowed_file_types": "PNG, JPG, WEBP (MAX. 2000x1500px)",
         "default_lang": "Standardsprache",
         "selected": "Keine ausgewählt | {n} ausgewählt | {n} ausgewählt",
         "image_caching": "Bitte beachten Sie, dass es aufgrund des Browser-Cachings bis zu 4 Stunden dauern kann, bis das Bild für alle aktualisiert wurde.",
@@ -859,6 +859,10 @@
                     "file_limit_reached": {
                         "title": "Dateilimit erreicht, kann keine weiteren Dateien hochladen.",
                         "content": "Sie haben die maximale Anzahl von Dateien erreicht, die hochgeladen werden können. Bitte entfernen Sie einige Dateien, bevor Sie neue Dateien hochladen."
+                    },
+                    "invalid_file_type_images": {
+                        "title": "Invalid file(s) selected!",
+                        "content": "Only images are allowed to be uploaded."
                     }
                 },
                 "file_list": "Liste der Anhänge",
@@ -2691,7 +2695,10 @@
             "ErrInvalidUploadMeta": "Ungültige Upload-Metadaten!",
             "ErrUploadFileTooLarge": "Datei ist zu groß zum Hochladen! Die maximale Dateigröße beträgt {maxSize} MB.",
             "ErrMaxFilesPerParentReached": "Maximale Anzahl an Dateien ({maxFiles}) für dieses Element erreicht!",
-            "ErrUploadFileTypeNotAllowed": "Dieser Dateityp ist zum Hochladen nicht erlaubt."
+            "ErrUploadFileTypeNotAllowed": {
+                "title": "Dateityp ist zum Hochladen nicht erlaubt!",
+                "content": "Server hat folgenden Datei-Metadaten erkannt, Dateiendung: {extension}, Medientyp: {contentType}"
+            }
         },
         "notifications": {
             "NotificationsService": {

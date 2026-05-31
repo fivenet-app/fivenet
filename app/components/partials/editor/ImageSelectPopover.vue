@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { Editor } from '@tiptap/core';
 import { z } from 'zod';
+import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -32,6 +33,8 @@ const { fileUpload } = useAppConfig();
 
 const notifications = useNotificationsStore();
 
+const logger = useLogger('📄 Editor');
+
 const schema = z.object({
     url: z.url().max(512),
 });
@@ -41,6 +44,40 @@ type Schema = z.output<typeof schema>;
 const imageState = reactive<Schema>({
     url: '',
 });
+
+function getUploadErrorText(error: unknown): string {
+    const raw = (error as Error | undefined)?.message?.toString()?.trimStart();
+    if (!raw) return 'N/A';
+
+    return raw;
+}
+
+function getUploadErrorNotification(error: unknown): {
+    title: { key: string; parameters: I18NItemParamters };
+    description: { key: string; parameters: I18NItemParamters };
+} {
+    const fallback = {
+        title: { key: 'notifications.editor.file_upload.failed.title', parameters: {} },
+        description: {
+            key: 'notifications.editor.file_upload.failed.content',
+            parameters: { err: getUploadErrorText(error) },
+        },
+    };
+
+    const raw = (error as Error | undefined)?.message?.toString()?.trimStart();
+    if (!raw || !isTranslatedError(raw)) return fallback;
+
+    try {
+        const parsed = JSON.parse(raw) as CommonError;
+        return {
+            title: parsed.title ?? fallback.title,
+            description: parsed.content ?? fallback.description,
+        };
+    } catch (e) {
+        logger.error('Failed to parse upload error JSON.', e);
+        return fallback;
+    }
+}
 
 // Try to download image from remote url
 async function setViaURL(urlOrBlob: string | File): Promise<void> {
@@ -84,7 +121,7 @@ async function setViaURL(urlOrBlob: string | File): Promise<void> {
         try {
             const response = await props.uploadHandler([urlOrBlob]);
             if (!response) {
-                console.warn('Editor - Image upload response: Upload handler returned false');
+                logger.warn('Editor - Image upload response: Upload handler returned false');
                 return;
             }
 
@@ -94,19 +131,17 @@ async function setViaURL(urlOrBlob: string | File): Promise<void> {
                 type: NotificationType.SUCCESS,
             });
         } catch (e) {
-            console.error('Editor - Image upload failed', e);
+            logger.error('Editor - Image upload failed', e);
+            const errorNotification = getUploadErrorNotification(e);
 
             notifications.add({
-                title: { key: 'notifications.editor.file_upload.failed.title', parameters: {} },
-                description: {
-                    key: 'notifications.editor.file_upload.failed.content',
-                    parameters: { error: (e as Error)?.message?.toString() ?? 'N/A' },
-                },
+                title: errorNotification.title,
+                description: errorNotification.description,
                 type: NotificationType.ERROR,
             });
         }
     } else {
-        console.warn('Editor - No upload handler provided for image upload');
+        logger.warn('Editor - No upload handler provided for image upload');
     }
 }
 

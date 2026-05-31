@@ -175,11 +175,15 @@ export function useFileUploader(
         });
 
     const resizeAndUpload = async (file: File, reason?: string) => {
-        const { blob, fileName, mime } = await resizeImage(file).catch(() => ({
-            blob: file,
-            fileName: file.name,
-            mime: file.type || 'application/octet-stream',
-        }));
+        const { blob, fileName, mime } = await resizeImage(file).catch(() => {
+            console.warn('Image resize failed, uploading original image.');
+            return {
+                blob: file,
+                fileName: file.name,
+                mime: file.type || 'application/octet-stream',
+            };
+        });
+
         return upload(blob, fileName, mime, reason);
     };
 

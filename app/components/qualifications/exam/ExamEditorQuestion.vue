@@ -132,17 +132,33 @@ const { resizeAndUpload } = useFileUploader(
     'qualifications-exam-questions',
     props.qualificationId,
 );
+const { uploadImages } = useImageUpload();
 
 async function handleImage(file: globalThis.File | null | undefined): Promise<void> {
     if (!file || question.value!.data!.data.oneofKind !== 'image') return;
 
-    const resp = await resizeAndUpload(file);
-    if (question.value?.data?.data.oneofKind === 'image') {
-        question.value.data.data.image.image = resp.file;
-    }
+    const result = await uploadImages({
+        files: [file],
+        uploadOne: (f) => resizeAndUpload(f),
+        invalidTypeNotification: {
+            title: {
+                key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.title',
+                parameters: {},
+            },
+            description: {
+                key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.content',
+                parameters: {},
+            },
+        },
+        onUploaded: (resp) => {
+            if (!resp.file || question.value?.data?.data.oneofKind !== 'image') return;
 
-    question.value!.data!.data.image.image = resp.file!;
-    emit('fileUploaded', resp.file!);
+            question.value.data.data.image.image = resp.file;
+            emit('fileUploaded', resp.file);
+        },
+    });
+
+    if (!result.ok) return;
 }
 
 const questionTypes = ['separator', 'image', 'yesno', 'freeText', 'singleChoice', 'multipleChoice'];

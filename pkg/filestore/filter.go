@@ -71,7 +71,8 @@ func (f *UploadFilter) Validate(fileName, contentType string) error {
 	if len(f.allowedExtensions) > 0 {
 		if _, ok := f.allowedExtensions[ext]; !ok {
 			return ErrUploadFileTypeNotAllowed(map[string]any{
-				"extension": ext,
+				"extension":   ext,
+				"contentType": ctype,
 			})
 		}
 	}
@@ -79,6 +80,7 @@ func (f *UploadFilter) Validate(fileName, contentType string) error {
 	if len(f.allowedContentTypes) > 0 {
 		if _, ok := f.allowedContentTypes[ctype]; !ok {
 			return ErrUploadFileTypeNotAllowed(map[string]any{
+				"extension":   ext,
 				"contentType": ctype,
 			})
 		}

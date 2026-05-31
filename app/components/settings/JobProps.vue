@@ -308,6 +308,32 @@ const selectedTab = computed({
 });
 
 const { resizeAndUpload } = useFileUploader((opts) => settingsSettingsClient.uploadJobLogo(opts), 'jobprops', 0);
+const { uploadImages } = useImageUpload();
+
+async function handleJobLogoUpload(file: File | null | undefined): Promise<void> {
+    if (!file) return;
+
+    await uploadImages({
+        files: [file],
+        uploadOne: (f) => resizeAndUpload(f),
+        invalidTypeNotification: {
+            title: {
+                key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.title',
+                parameters: {},
+            },
+            description: {
+                key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.content',
+                parameters: {},
+            },
+        },
+        onUploaded: (resp) => {
+            if (!resp.file || !jobProps.value) return;
+
+            jobProps.value.logoFile = resp.file;
+            jobProps.value.logoFileId = resp.file.id;
+        },
+    });
+}
 
 const selectedChange = ref<DiscordSyncChange | undefined>();
 
@@ -406,7 +432,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                             :placeholder="$t('common.image')"
                                             :label="$t('common.file_upload_label')"
                                             :description="$t('common.allowed_file_types')"
-                                            @update:model-value="($event) => $event && resizeAndUpload($event)"
+                                            @update:model-value="($event) => handleJobLogoUpload($event)"
                                         />
 
                                         <UButton
