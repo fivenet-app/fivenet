@@ -39,12 +39,30 @@ function clicked(h: Hit): void {
 
     if (h.userMarker) selectedMarker.value = h.userMarker;
 }
+
+function getMarkerMarkerIconName(h: Hit): string | undefined {
+    if (!h.markerMarker) return;
+    if (h.markerMarker.data?.data.oneofKind === 'icon') {
+        return convertComponentIconNameToDynamic(h.markerMarker.data?.data.icon.icon);
+    }
+
+    switch (h.markerMarker.data?.data.oneofKind) {
+        case 'circle':
+            return 'i-mdi-circle-outline';
+        case 'polygon':
+            return 'i-mdi-vector-polygon';
+        case 'rectangle':
+            return 'i-mdi-rectangle-outline';
+        default:
+            return 'i-mdi-map-marker-radius-outline';
+    }
+}
 </script>
 
 <template>
     <UCard
         class="-my-[13px] -mr-[24px] -ml-[20px] flex max-h-[90dvh] min-w-[200px] flex-col overflow-y-auto"
-        :ui="{ header: 'mx-auto p-1 sm:px-2', body: 'p-1 sm:p-2 xl:mx-auto max-h-[90%]', footer: 'mx-auto p-1 sm:px-2' }"
+        :ui="{ header: 'mx-auto p-1 sm:px-2', body: 'p-1 sm:p-2 xl:mx-auto max-h-[50%]', footer: 'mx-auto p-1 sm:px-2' }"
     >
         <template #header>
             <div class="font-semibold">{{ $t('common.choose_one') }} ({{ hits.length }})</div>
@@ -57,9 +75,9 @@ function clicked(h: Hit): void {
                     <UButton block color="neutral" variant="soft" @click="() => clicked(h)">
                         <template v-if="h.markerMarker">
                             <UIcon
-                                v-if="h.markerMarker?.data?.data.oneofKind === 'icon'"
+                                v-if="getMarkerMarkerIconName(h)"
                                 class="size-5"
-                                :name="convertComponentIconNameToDynamic(h.markerMarker.data?.data.icon.icon)"
+                                :name="getMarkerMarkerIconName(h)"
                                 :style="{ color: h.markerMarker.color ?? 'currentColor' }"
                             />
 

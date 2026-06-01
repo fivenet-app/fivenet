@@ -11,7 +11,8 @@ import {
     type LayersControlEvent,
     type LeafletMouseEvent,
     type Map,
-    Marker,
+    type Marker,
+    type Path,
     type Point,
     type PointExpression,
     Projection,
@@ -50,7 +51,8 @@ const settingsStore = useSettingsStore();
 const { livemapTileLayer, livemapLayers, livemap: livemapSettings } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
-const { location, selectedMarker, zoom } = storeToRefs(livemapStore);
+const { location, selectedMarker, zoom, markerCoordPickerActive, showLocationMarker, suppressMapPreclickUntil } =
+    storeToRefs(livemapStore);
 
 let map: Map | undefined;
 
@@ -217,11 +219,63 @@ const chooser = ref<null | {
 
 const chooserRef = useTemplateRef('chooserRef');
 
-async function showChooser(latlng: LatLngExpression, hits: Marker[], hiddenCount: number): Promise<void> {
+type PopupCandidateLayer = (Marker | Path) & {
+    options?: {
+        name?: string;
+        zIndexOffset?: number;
+        userMarker?: UserMarker;
+        dispatchMarker?: Dispatch;
+        markerMarker?: MarkerMarker;
+    };
+    getLatLng?: () => LatLng;
+    getBounds?: () => { getCenter: () => LatLng; contains: (latlng: LatLng) => boolean };
+    getRadius?: () => number;
+    openPopup: () => void;
+};
+
+function isPopupCandidateLayer(layer: Layer): layer is PopupCandidateLayer {
+    const candidate = layer as Partial<PopupCandidateLayer>;
+    const hasPopupHandler = typeof candidate.openPopup === 'function';
+    const hasLivemapPayload =
+        !!candidate.options?.userMarker || !!candidate.options?.dispatchMarker || !!candidate.options?.markerMarker;
+
+    return hasPopupHandler && hasLivemapPayload;
+}
+
+function getLayerCenterPoint(map: Map, layer: PopupCandidateLayer): Point | undefined {
+    if (layer.getLatLng) {
+        return map.latLngToContainerPoint(layer.getLatLng());
+    }
+
+    if (layer.getBounds) {
+        return map.latLngToContainerPoint(layer.getBounds().getCenter());
+    }
+
+    return;
+}
+
+function isLayerWithinPickRange(map: Map, layer: PopupCandidateLayer, px: Point, latlng: LatLng, radiusPx: number): boolean {
+    if (layer.getRadius && layer.getLatLng) {
+        const center = layer.getLatLng();
+        if (map.distance(latlng, center) <= layer.getRadius()) {
+            return true;
+        }
+    }
+
+    if (layer.getBounds && layer.getBounds().contains(latlng)) {
+        return true;
+    }
+
+    const centerPoint = getLayerCenterPoint(map, layer);
+    if (!centerPoint) return false;
+
+    return centerPoint.distanceTo(px) <= radiusPx;
+}
+
+async function showChooser(latlng: LatLngExpression, hits: PopupCandidateLayer[], hiddenCount: number): Promise<void> {
     chooser.value = {
         latlng: latlng,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        hits: hits.map((m: Marker & { options?: any }) => ({
+        hits: hits.map((m) => ({
             userMarker: m.options?.userMarker as UserMarker | undefined,
             dispatchMarker: m.options?.dispatchMarker as Dispatch | undefined,
             markerMarker: m.options?.markerMarker as MarkerMarker | undefined,
@@ -261,6 +315,12 @@ async function onMapReady(m: Map): Promise<void> {
         mouseLong.value = Math.round(event.latlng.lng * 100000) / 100000;
     });
 
+    map.addEventListener('click', async (event: LeafletMouseEvent) => {
+        if (!markerCoordPickerActive.value || !event.latlng) return;
+        location.value = { x: event.latlng.lng, y: event.latlng.lat };
+        showLocationMarker.value = true;
+    });
+
     map.on('movestart', async () => {
         isMoving.value = true;
     });
@@ -269,17 +329,22 @@ async function onMapReady(m: Map): Promise<void> {
         isMoving.value = false;
     });
 
-    function gatherNearbyMarkers(map: Map, px: Point, radiusPx = 35): { hits: Marker[]; hiddenCount: number } {
-        const hits: Marker[] = [];
+    function gatherNearbyMarkers(
+        map: Map,
+        px: Point,
+        latlng: LatLng,
+        radiusPx = 35,
+    ): { hits: PopupCandidateLayer[]; hiddenCount: number } {
+        const hits: PopupCandidateLayer[] = [];
         let hiddenCount = 0;
         map.eachLayer((layer) => {
             const name = (layer.options as { name?: string })['name'];
             if (name === undefined) return;
             const hidden = !livemapLayers.value.find((l) => l.key === name)?.visible;
 
-            eachMarkerIn(layer, (m) => {
-                const pos = map.latLngToContainerPoint(m.getLatLng());
-                if (pos.distanceTo(px) > radiusPx || hits.find((hit) => stamp(hit) === stamp(m))) return;
+            eachPopupLayerIn(layer, (m) => {
+                if (!isLayerWithinPickRange(map, m, px, latlng, radiusPx) || hits.find((hit) => stamp(hit) === stamp(m)))
+                    return;
 
                 if (hidden) {
                     hiddenCount++;
@@ -291,7 +356,7 @@ async function onMapReady(m: Map): Promise<void> {
         return { hits: hits, hiddenCount: hiddenCount };
     }
 
-    function showMultiSelectPopup(latlng: LatLngExpression, hits: Marker[], hiddenCount: number): void {
+    function showMultiSelectPopup(latlng: LatLngExpression, hits: PopupCandidateLayer[], hiddenCount: number): void {
         hits.sort((a, b) => (a.options?.zIndexOffset || 0) - (b.options?.zIndexOffset || 0));
 
         showChooser(latlng, hits, hiddenCount);
@@ -299,9 +364,10 @@ async function onMapReady(m: Map): Promise<void> {
 
     map.on('preclick', async (e: LeafletMouseEvent) => {
         if (!map) return;
+        if (Date.now() < suppressMapPreclickUntil.value) return;
 
         const px = e.containerPoint;
-        const hits = gatherNearbyMarkers(map, px, 35);
+        const hits = gatherNearbyMarkers(map, px, e.latlng, 35);
 
         if (hits.hits.length === 0) return;
         if (hits.hits.length === 1) {
@@ -313,10 +379,10 @@ async function onMapReady(m: Map): Promise<void> {
         showMultiSelectPopup(e.latlng, hits.hits, hits.hiddenCount);
     });
 
-    function eachMarkerIn(layer: Layer, cb: (m: Marker) => void) {
-        if (layer instanceof Marker) return cb(layer);
+    function eachPopupLayerIn(layer: Layer, cb: (m: PopupCandidateLayer) => void) {
+        if (isPopupCandidateLayer(layer)) cb(layer);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if ((layer as any).eachLayer) (layer as any).eachLayer((l: Layer) => eachMarkerIn(l, cb));
+        if ((layer as any).eachLayer) (layer as any).eachLayer((l: Layer) => eachPopupLayerIn(l, cb));
     }
 
     emit('mapReady', map);
