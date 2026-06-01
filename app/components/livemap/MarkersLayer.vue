@@ -2,6 +2,7 @@
 import MapMarkerMarker from '~/components/livemap/MapMarkerMarker.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
+import { groupByJob } from '~/utils/livemap/groupByJob';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 
 defineEmits<{
@@ -32,6 +33,8 @@ watch(jobsMarkers, (val) =>
     ),
 );
 
+const markersByJob = computed(() => groupByJob<MarkerMarker>(markersMarkers.value.values()));
+
 onBeforeMount(async () =>
     addOrUpdateLivemapCategory({
         key: 'markers',
@@ -51,7 +54,7 @@ onBeforeMount(async () =>
         :options="{ name: `markers_${job.name}` }"
     >
         <MapMarkerMarker
-            v-for="marker in [...markersMarkers.values()].filter((p) => p.job === job.name)"
+            v-for="marker in markersByJob.get(job.name) ?? []"
             :key="marker.id"
             :marker="marker"
             :size="livemap.markerSize"
