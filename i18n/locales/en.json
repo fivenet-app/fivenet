@@ -1061,7 +1061,9 @@
             "show_grid": "Show Grid",
             "toggle_all_layers": "Toggle All Layers",
             "use_unit_color": "Use Unit Color for Icon",
-            "unfollow_marker": "Unfollow Marker"
+            "unfollow_marker": "Unfollow Marker",
+            "enable_marker_dragging": "Enable Marker Dragging",
+            "disable_marker_dragging": "Disable Marker Dragging"
         },
         "debug_info": {
             "title": "Debug Info",
@@ -2793,7 +2795,9 @@
                 "UNSPECIFIED": "Unspecified",
                 "DOT": "Dot",
                 "CIRCLE": "Circle",
-                "ICON": "Icon"
+                "ICON": "Icon",
+                "RECTANGLE": "Rectangle",
+                "POLYGON": "Polygon"
             }
         },
         "jobs": {

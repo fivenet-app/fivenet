@@ -5526,6 +5526,8 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `circle` | [CircleMarker](#resourceslivemapmarkersCircleMarker) |  |  |
 | `icon` | [IconMarker](#resourceslivemapmarkersIconMarker) |  |  |
+| `rectangle` | [RectangleMarker](#resourceslivemapmarkersRectangleMarker) |  |  |
+| `polygon` | [PolygonMarker](#resourceslivemapmarkersPolygonMarker) |  |  |
 
 
 
@@ -5557,6 +5559,43 @@ Dummy - DO NOT USE!
 
 
 
+
+### resources.livemap.markers.PolygonMarker
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `points` | [PolygonPoint](#resourceslivemapmarkersPolygonPoint) | repeated |  |
+| `opacity` | [float](#float) | optional |  |
+
+
+
+
+
+### resources.livemap.markers.PolygonPoint
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `x` | [double](#double) |  |  |
+| `y` | [double](#double) |  |  |
+
+
+
+
+
+### resources.livemap.markers.RectangleMarker
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `end_x` | [double](#double) |  |  |
+| `end_y` | [double](#double) |  |  |
+| `opacity` | [float](#float) | optional |  |
+
+
+
+
  <!-- end messages -->
 
 
@@ -5568,6 +5607,8 @@ Dummy - DO NOT USE!
 | `MARKER_TYPE_DOT` | 1 |  |
 | `MARKER_TYPE_CIRCLE` | 2 |  |
 | `MARKER_TYPE_ICON` | 3 |  |
+| `MARKER_TYPE_RECTANGLE` | 4 |  |
+| `MARKER_TYPE_POLYGON` | 5 |  |
 
 
  <!-- end enums -->
