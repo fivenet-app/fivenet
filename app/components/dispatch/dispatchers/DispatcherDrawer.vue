@@ -74,7 +74,7 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                                     <UTooltip
                                         v-if="
                                             dispatcher.job === activeChar?.job &&
-                                            can('centrum.CentrumService/UpdateDispatchers')
+                                            can('centrum.CentrumService/UpdateDispatchers').value
                                         "
                                         :text="$t('common.remove')"
                                     >

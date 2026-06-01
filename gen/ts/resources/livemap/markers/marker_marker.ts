@@ -106,6 +106,18 @@ export interface MarkerData {
          */
         icon: IconMarker;
     } | {
+        oneofKind: "rectangle";
+        /**
+         * @generated from protobuf field: resources.livemap.markers.RectangleMarker rectangle = 5
+         */
+        rectangle: RectangleMarker;
+    } | {
+        oneofKind: "polygon";
+        /**
+         * @generated from protobuf field: resources.livemap.markers.PolygonMarker polygon = 6
+         */
+        polygon: PolygonMarker;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -132,6 +144,49 @@ export interface IconMarker {
     icon: string;
 }
 /**
+ * @generated from protobuf message resources.livemap.markers.RectangleMarker
+ */
+export interface RectangleMarker {
+    /**
+     * @generated from protobuf field: double end_x = 1
+     */
+    endX: number;
+    /**
+     * @generated from protobuf field: double end_y = 2
+     */
+    endY: number;
+    /**
+     * @generated from protobuf field: optional float opacity = 3
+     */
+    opacity?: number;
+}
+/**
+ * @generated from protobuf message resources.livemap.markers.PolygonPoint
+ */
+export interface PolygonPoint {
+    /**
+     * @generated from protobuf field: double x = 1
+     */
+    x: number;
+    /**
+     * @generated from protobuf field: double y = 2
+     */
+    y: number;
+}
+/**
+ * @generated from protobuf message resources.livemap.markers.PolygonMarker
+ */
+export interface PolygonMarker {
+    /**
+     * @generated from protobuf field: repeated resources.livemap.markers.PolygonPoint points = 1
+     */
+    points: PolygonPoint[];
+    /**
+     * @generated from protobuf field: optional float opacity = 2
+     */
+    opacity?: number;
+}
+/**
  * @generated from protobuf enum resources.livemap.markers.MarkerType
  */
 export enum MarkerType {
@@ -150,7 +205,15 @@ export enum MarkerType {
     /**
      * @generated from protobuf enum value: MARKER_TYPE_ICON = 3;
      */
-    ICON = 3
+    ICON = 3,
+    /**
+     * @generated from protobuf enum value: MARKER_TYPE_RECTANGLE = 4;
+     */
+    RECTANGLE = 4,
+    /**
+     * @generated from protobuf enum value: MARKER_TYPE_POLYGON = 5;
+     */
+    POLYGON = 5
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class MarkerMarker$Type extends MessageType<MarkerMarker> {
@@ -322,7 +385,9 @@ class MarkerData$Type extends MessageType<MarkerData> {
     constructor() {
         super("resources.livemap.markers.MarkerData", [
             { no: 3, name: "circle", kind: "message", oneof: "data", T: () => CircleMarker },
-            { no: 4, name: "icon", kind: "message", oneof: "data", T: () => IconMarker }
+            { no: 4, name: "icon", kind: "message", oneof: "data", T: () => IconMarker },
+            { no: 5, name: "rectangle", kind: "message", oneof: "data", T: () => RectangleMarker },
+            { no: 6, name: "polygon", kind: "message", oneof: "data", T: () => PolygonMarker }
         ], { "codegen.dbscanner.dbscanner": { enabled: true, notJson: true } });
     }
     create(value?: PartialMessage<MarkerData>): MarkerData {
@@ -349,6 +414,18 @@ class MarkerData$Type extends MessageType<MarkerData> {
                         icon: IconMarker.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).icon)
                     };
                     break;
+                case /* resources.livemap.markers.RectangleMarker rectangle */ 5:
+                    message.data = {
+                        oneofKind: "rectangle",
+                        rectangle: RectangleMarker.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).rectangle)
+                    };
+                    break;
+                case /* resources.livemap.markers.PolygonMarker polygon */ 6:
+                    message.data = {
+                        oneofKind: "polygon",
+                        polygon: PolygonMarker.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).polygon)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -367,6 +444,12 @@ class MarkerData$Type extends MessageType<MarkerData> {
         /* resources.livemap.markers.IconMarker icon = 4; */
         if (message.data.oneofKind === "icon")
             IconMarker.internalBinaryWrite(message.data.icon, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.livemap.markers.RectangleMarker rectangle = 5; */
+        if (message.data.oneofKind === "rectangle")
+            RectangleMarker.internalBinaryWrite(message.data.rectangle, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.livemap.markers.PolygonMarker polygon = 6; */
+        if (message.data.oneofKind === "polygon")
+            PolygonMarker.internalBinaryWrite(message.data.polygon, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -478,3 +561,174 @@ class IconMarker$Type extends MessageType<IconMarker> {
  * @generated MessageType for protobuf message resources.livemap.markers.IconMarker
  */
 export const IconMarker = new IconMarker$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RectangleMarker$Type extends MessageType<RectangleMarker> {
+    constructor() {
+        super("resources.livemap.markers.RectangleMarker", [
+            { no: 1, name: "end_x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 2, name: "end_y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 3, name: "opacity", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.field": { float: { lte: 75, gte: 1 } } } }
+        ]);
+    }
+    create(value?: PartialMessage<RectangleMarker>): RectangleMarker {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.endX = 0;
+        message.endY = 0;
+        if (value !== undefined)
+            reflectionMergePartial<RectangleMarker>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RectangleMarker): RectangleMarker {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* double end_x */ 1:
+                    message.endX = reader.double();
+                    break;
+                case /* double end_y */ 2:
+                    message.endY = reader.double();
+                    break;
+                case /* optional float opacity */ 3:
+                    message.opacity = reader.float();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RectangleMarker, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* double end_x = 1; */
+        if (message.endX !== 0)
+            writer.tag(1, WireType.Bit64).double(message.endX);
+        /* double end_y = 2; */
+        if (message.endY !== 0)
+            writer.tag(2, WireType.Bit64).double(message.endY);
+        /* optional float opacity = 3; */
+        if (message.opacity !== undefined)
+            writer.tag(3, WireType.Bit32).float(message.opacity);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.livemap.markers.RectangleMarker
+ */
+export const RectangleMarker = new RectangleMarker$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PolygonPoint$Type extends MessageType<PolygonPoint> {
+    constructor() {
+        super("resources.livemap.markers.PolygonPoint", [
+            { no: 1, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 2, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PolygonPoint>): PolygonPoint {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.x = 0;
+        message.y = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PolygonPoint>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PolygonPoint): PolygonPoint {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* double x */ 1:
+                    message.x = reader.double();
+                    break;
+                case /* double y */ 2:
+                    message.y = reader.double();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PolygonPoint, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* double x = 1; */
+        if (message.x !== 0)
+            writer.tag(1, WireType.Bit64).double(message.x);
+        /* double y = 2; */
+        if (message.y !== 0)
+            writer.tag(2, WireType.Bit64).double(message.y);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.livemap.markers.PolygonPoint
+ */
+export const PolygonPoint = new PolygonPoint$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PolygonMarker$Type extends MessageType<PolygonMarker> {
+    constructor() {
+        super("resources.livemap.markers.PolygonMarker", [
+            { no: 1, name: "points", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PolygonPoint, options: { "buf.validate.field": { repeated: { minItems: "2", maxItems: "18" } } } },
+            { no: 2, name: "opacity", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.field": { float: { lte: 75, gte: 1 } } } }
+        ]);
+    }
+    create(value?: PartialMessage<PolygonMarker>): PolygonMarker {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.points = [];
+        if (value !== undefined)
+            reflectionMergePartial<PolygonMarker>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PolygonMarker): PolygonMarker {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.livemap.markers.PolygonPoint points */ 1:
+                    message.points.push(PolygonPoint.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* optional float opacity */ 2:
+                    message.opacity = reader.float();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PolygonMarker, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.livemap.markers.PolygonPoint points = 1; */
+        for (let i = 0; i < message.points.length; i++)
+            PolygonPoint.internalBinaryWrite(message.points[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional float opacity = 2; */
+        if (message.opacity !== undefined)
+            writer.tag(2, WireType.Bit32).float(message.opacity);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.livemap.markers.PolygonMarker
+ */
+export const PolygonMarker = new PolygonMarker$Type();

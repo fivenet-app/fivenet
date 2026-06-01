@@ -16,6 +16,8 @@ enum MarkerType {
   MARKER_TYPE_DOT = 1;
   MARKER_TYPE_CIRCLE = 2;
   MARKER_TYPE_ICON = 3;
+  MARKER_TYPE_RECTANGLE = 4;
+  MARKER_TYPE_POLYGON = 5;
 }
 
 message MarkerMarker {
@@ -78,6 +80,8 @@ message MarkerData {
 
     CircleMarker circle = 3;
     IconMarker icon = 4;
+    RectangleMarker rectangle = 5;
+    PolygonMarker polygon = 6;
   }
 }
 
@@ -97,4 +101,29 @@ message IconMarker {
       strip_html_tags: true
     }
   ];
+}
+
+message RectangleMarker {
+  double end_x = 1;
+  double end_y = 2;
+  optional float opacity = 3 [(buf.validate.field).float = {
+    gte: 1
+    lte: 75
+  }];
+}
+
+message PolygonPoint {
+  double x = 1;
+  double y = 2;
+}
+
+message PolygonMarker {
+  repeated PolygonPoint points = 1 [(buf.validate.field).repeated = {
+    min_items: 2
+    max_items: 18
+  }];
+  optional float opacity = 2 [(buf.validate.field).float = {
+    gte: 1
+    lte: 75
+  }];
 }

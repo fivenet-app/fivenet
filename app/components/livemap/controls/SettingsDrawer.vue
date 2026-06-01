@@ -6,8 +6,13 @@ defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
+const { can } = useAuth();
+
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
+
+const livemapStore = useLivemapStore();
+const { markerDragEnabled } = storeToRefs(livemapStore);
 
 const schema = z.object({
     markerSize: z.coerce.number().min(14).max(32),
@@ -69,6 +74,18 @@ const schema = z.object({
 
                     <UFormField name="useUnitColor" :label="$t('components.livemap.use_unit_color')">
                         <USwitch v-model="livemap.useUnitColor" />
+                    </UFormField>
+
+                    <UFormField
+                        v-if="can('livemap.LivemapService/CreateOrUpdateMarker').value"
+                        name="markerDragEnabled"
+                        :label="
+                            markerDragEnabled
+                                ? $t('components.livemap.enable_marker_dragging')
+                                : $t('components.livemap.disable_marker_dragging')
+                        "
+                    >
+                        <USwitch v-model="markerDragEnabled" />
                     </UFormField>
                 </UForm>
             </UContainer>

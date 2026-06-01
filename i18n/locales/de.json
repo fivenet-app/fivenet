@@ -1061,7 +1061,9 @@
             "show_grid": "Raster anzeigen",
             "toggle_all_layers": "Alle Ebenen umschalten",
             "use_unit_color": "Einheitsfarbe für Icon verwenden",
-            "unfollow_marker": "Markierung nicht mehr verfolgen"
+            "unfollow_marker": "Markierung nicht mehr verfolgen",
+            "enable_marker_dragging": "Markierung verschiebbar machen",
+            "disable_marker_dragging": "Markierung nicht mehr verschiebbar machen"
         },
         "debug_info": {
             "title": "Debug-Informationen",
@@ -2793,7 +2795,9 @@
                 "UNSPECIFIED": "Unbestimmt",
                 "DOT": "Punkt",
                 "CIRCLE": "Kreis",
-                "ICON": "Icon"
+                "ICON": "Icon",
+                "RECTANGLE": "Rechteck",
+                "POLYGON": "Polygon"
             }
         },
         "jobs": {

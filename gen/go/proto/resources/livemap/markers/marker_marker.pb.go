@@ -34,6 +34,8 @@ const (
 	MarkerType_MARKER_TYPE_DOT         MarkerType = 1
 	MarkerType_MARKER_TYPE_CIRCLE      MarkerType = 2
 	MarkerType_MARKER_TYPE_ICON        MarkerType = 3
+	MarkerType_MARKER_TYPE_RECTANGLE   MarkerType = 4
+	MarkerType_MARKER_TYPE_POLYGON     MarkerType = 5
 )
 
 // Enum value maps for MarkerType.
@@ -43,12 +45,16 @@ var (
 		1: "MARKER_TYPE_DOT",
 		2: "MARKER_TYPE_CIRCLE",
 		3: "MARKER_TYPE_ICON",
+		4: "MARKER_TYPE_RECTANGLE",
+		5: "MARKER_TYPE_POLYGON",
 	}
 	MarkerType_value = map[string]int32{
 		"MARKER_TYPE_UNSPECIFIED": 0,
 		"MARKER_TYPE_DOT":         1,
 		"MARKER_TYPE_CIRCLE":      2,
 		"MARKER_TYPE_ICON":        3,
+		"MARKER_TYPE_RECTANGLE":   4,
+		"MARKER_TYPE_POLYGON":     5,
 	}
 )
 
@@ -471,6 +477,8 @@ type MarkerData struct {
 	//
 	//	*MarkerData_Circle
 	//	*MarkerData_Icon
+	//	*MarkerData_Rectangle
+	//	*MarkerData_Polygon
 	Data          isMarkerData_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -526,6 +534,24 @@ func (x *MarkerData) GetIcon() *IconMarker {
 	return nil
 }
 
+func (x *MarkerData) GetRectangle() *RectangleMarker {
+	if x != nil {
+		if x, ok := x.Data.(*MarkerData_Rectangle); ok {
+			return x.Rectangle
+		}
+	}
+	return nil
+}
+
+func (x *MarkerData) GetPolygon() *PolygonMarker {
+	if x != nil {
+		if x, ok := x.Data.(*MarkerData_Polygon); ok {
+			return x.Polygon
+		}
+	}
+	return nil
+}
+
 func (x *MarkerData) SetCircle(v *CircleMarker) {
 	if v == nil {
 		x.Data = nil
@@ -540,6 +566,22 @@ func (x *MarkerData) SetIcon(v *IconMarker) {
 		return
 	}
 	x.Data = &MarkerData_Icon{v}
+}
+
+func (x *MarkerData) SetRectangle(v *RectangleMarker) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &MarkerData_Rectangle{v}
+}
+
+func (x *MarkerData) SetPolygon(v *PolygonMarker) {
+	if v == nil {
+		x.Data = nil
+		return
+	}
+	x.Data = &MarkerData_Polygon{v}
 }
 
 func (x *MarkerData) HasData() bool {
@@ -565,6 +607,22 @@ func (x *MarkerData) HasIcon() bool {
 	return ok
 }
 
+func (x *MarkerData) HasRectangle() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MarkerData_Rectangle)
+	return ok
+}
+
+func (x *MarkerData) HasPolygon() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*MarkerData_Polygon)
+	return ok
+}
+
 func (x *MarkerData) ClearData() {
 	x.Data = nil
 }
@@ -581,9 +639,23 @@ func (x *MarkerData) ClearIcon() {
 	}
 }
 
+func (x *MarkerData) ClearRectangle() {
+	if _, ok := x.Data.(*MarkerData_Rectangle); ok {
+		x.Data = nil
+	}
+}
+
+func (x *MarkerData) ClearPolygon() {
+	if _, ok := x.Data.(*MarkerData_Polygon); ok {
+		x.Data = nil
+	}
+}
+
 const MarkerData_Data_not_set_case case_MarkerData_Data = 0
 const MarkerData_Circle_case case_MarkerData_Data = 3
 const MarkerData_Icon_case case_MarkerData_Data = 4
+const MarkerData_Rectangle_case case_MarkerData_Data = 5
+const MarkerData_Polygon_case case_MarkerData_Data = 6
 
 func (x *MarkerData) WhichData() case_MarkerData_Data {
 	if x == nil {
@@ -594,6 +666,10 @@ func (x *MarkerData) WhichData() case_MarkerData_Data {
 		return MarkerData_Circle_case
 	case *MarkerData_Icon:
 		return MarkerData_Icon_case
+	case *MarkerData_Rectangle:
+		return MarkerData_Rectangle_case
+	case *MarkerData_Polygon:
+		return MarkerData_Polygon_case
 	default:
 		return MarkerData_Data_not_set_case
 	}
@@ -603,8 +679,10 @@ type MarkerData_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	// Fields of oneof Data:
-	Circle *CircleMarker
-	Icon   *IconMarker
+	Circle    *CircleMarker
+	Icon      *IconMarker
+	Rectangle *RectangleMarker
+	Polygon   *PolygonMarker
 	// -- end of Data
 }
 
@@ -617,6 +695,12 @@ func (b0 MarkerData_builder) Build() *MarkerData {
 	}
 	if b.Icon != nil {
 		x.Data = &MarkerData_Icon{b.Icon}
+	}
+	if b.Rectangle != nil {
+		x.Data = &MarkerData_Rectangle{b.Rectangle}
+	}
+	if b.Polygon != nil {
+		x.Data = &MarkerData_Polygon{b.Polygon}
 	}
 	return m0
 }
@@ -643,9 +727,21 @@ type MarkerData_Icon struct {
 	Icon *IconMarker `protobuf:"bytes,4,opt,name=icon,proto3,oneof"`
 }
 
+type MarkerData_Rectangle struct {
+	Rectangle *RectangleMarker `protobuf:"bytes,5,opt,name=rectangle,proto3,oneof"`
+}
+
+type MarkerData_Polygon struct {
+	Polygon *PolygonMarker `protobuf:"bytes,6,opt,name=polygon,proto3,oneof"`
+}
+
 func (*MarkerData_Circle) isMarkerData_Data() {}
 
 func (*MarkerData_Icon) isMarkerData_Data() {}
+
+func (*MarkerData_Rectangle) isMarkerData_Data() {}
+
+func (*MarkerData_Polygon) isMarkerData_Data() {}
 
 type CircleMarker struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
@@ -786,6 +882,255 @@ func (b0 IconMarker_builder) Build() *IconMarker {
 	return m0
 }
 
+type RectangleMarker struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	EndX          float64                `protobuf:"fixed64,1,opt,name=end_x,json=endX,proto3" json:"end_x,omitempty"`
+	EndY          float64                `protobuf:"fixed64,2,opt,name=end_y,json=endY,proto3" json:"end_y,omitempty"`
+	Opacity       *float32               `protobuf:"fixed32,3,opt,name=opacity,proto3,oneof" json:"opacity,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RectangleMarker) Reset() {
+	*x = RectangleMarker{}
+	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RectangleMarker) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RectangleMarker) ProtoMessage() {}
+
+func (x *RectangleMarker) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RectangleMarker) GetEndX() float64 {
+	if x != nil {
+		return x.EndX
+	}
+	return 0
+}
+
+func (x *RectangleMarker) GetEndY() float64 {
+	if x != nil {
+		return x.EndY
+	}
+	return 0
+}
+
+func (x *RectangleMarker) GetOpacity() float32 {
+	if x != nil && x.Opacity != nil {
+		return *x.Opacity
+	}
+	return 0
+}
+
+func (x *RectangleMarker) SetEndX(v float64) {
+	x.EndX = v
+}
+
+func (x *RectangleMarker) SetEndY(v float64) {
+	x.EndY = v
+}
+
+func (x *RectangleMarker) SetOpacity(v float32) {
+	x.Opacity = &v
+}
+
+func (x *RectangleMarker) HasOpacity() bool {
+	if x == nil {
+		return false
+	}
+	return x.Opacity != nil
+}
+
+func (x *RectangleMarker) ClearOpacity() {
+	x.Opacity = nil
+}
+
+type RectangleMarker_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	EndX    float64
+	EndY    float64
+	Opacity *float32
+}
+
+func (b0 RectangleMarker_builder) Build() *RectangleMarker {
+	m0 := &RectangleMarker{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.EndX = b.EndX
+	x.EndY = b.EndY
+	x.Opacity = b.Opacity
+	return m0
+}
+
+type PolygonPoint struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	X             float64                `protobuf:"fixed64,1,opt,name=x,proto3" json:"x,omitempty"`
+	Y             float64                `protobuf:"fixed64,2,opt,name=y,proto3" json:"y,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolygonPoint) Reset() {
+	*x = PolygonPoint{}
+	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolygonPoint) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolygonPoint) ProtoMessage() {}
+
+func (x *PolygonPoint) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PolygonPoint) GetX() float64 {
+	if x != nil {
+		return x.X
+	}
+	return 0
+}
+
+func (x *PolygonPoint) GetY() float64 {
+	if x != nil {
+		return x.Y
+	}
+	return 0
+}
+
+func (x *PolygonPoint) SetX(v float64) {
+	x.X = v
+}
+
+func (x *PolygonPoint) SetY(v float64) {
+	x.Y = v
+}
+
+type PolygonPoint_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	X float64
+	Y float64
+}
+
+func (b0 PolygonPoint_builder) Build() *PolygonPoint {
+	m0 := &PolygonPoint{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.X = b.X
+	x.Y = b.Y
+	return m0
+}
+
+type PolygonMarker struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Points        []*PolygonPoint        `protobuf:"bytes,1,rep,name=points,proto3" json:"points,omitempty"`
+	Opacity       *float32               `protobuf:"fixed32,2,opt,name=opacity,proto3,oneof" json:"opacity,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolygonMarker) Reset() {
+	*x = PolygonMarker{}
+	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolygonMarker) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolygonMarker) ProtoMessage() {}
+
+func (x *PolygonMarker) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_livemap_markers_marker_marker_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PolygonMarker) GetPoints() []*PolygonPoint {
+	if x != nil {
+		return x.Points
+	}
+	return nil
+}
+
+func (x *PolygonMarker) GetOpacity() float32 {
+	if x != nil && x.Opacity != nil {
+		return *x.Opacity
+	}
+	return 0
+}
+
+func (x *PolygonMarker) SetPoints(v []*PolygonPoint) {
+	x.Points = v
+}
+
+func (x *PolygonMarker) SetOpacity(v float32) {
+	x.Opacity = &v
+}
+
+func (x *PolygonMarker) HasOpacity() bool {
+	if x == nil {
+		return false
+	}
+	return x.Opacity != nil
+}
+
+func (x *PolygonMarker) ClearOpacity() {
+	x.Opacity = nil
+}
+
+type PolygonMarker_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Points  []*PolygonPoint
+	Opacity *float32
+}
+
+func (b0 PolygonMarker_builder) Build() *PolygonMarker {
+	m0 := &PolygonMarker{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Points = b.Points
+	x.Opacity = b.Opacity
+	return m0
+}
+
 var File_resources_livemap_markers_marker_marker_proto protoreflect.FileDescriptor
 
 const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
@@ -824,11 +1169,13 @@ const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\x06_colorB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
-	"\b_creator\"\x9e\x01\n" +
+	"\b_creator\"\xb0\x02\n" +
 	"\n" +
 	"MarkerData\x12A\n" +
 	"\x06circle\x18\x03 \x01(\v2'.resources.livemap.markers.CircleMarkerH\x00R\x06circle\x12;\n" +
-	"\x04icon\x18\x04 \x01(\v2%.resources.livemap.markers.IconMarkerH\x00R\x04icon:\b\xe2\xf3\x18\x04\b\x01\x10\x01B\x06\n" +
+	"\x04icon\x18\x04 \x01(\v2%.resources.livemap.markers.IconMarkerH\x00R\x04icon\x12J\n" +
+	"\trectangle\x18\x05 \x01(\v2*.resources.livemap.markers.RectangleMarkerH\x00R\trectangle\x12D\n" +
+	"\apolygon\x18\x06 \x01(\v2(.resources.livemap.markers.PolygonMarkerH\x00R\apolygon:\b\xe2\xf3\x18\x04\b\x01\x10\x01B\x06\n" +
 	"\x04data\"Q\n" +
 	"\fCircleMarker\x12\x16\n" +
 	"\x06radius\x18\x01 \x01(\x05R\x06radius\x12\x1d\n" +
@@ -837,40 +1184,62 @@ const file_resources_livemap_markers_marker_marker_proto_rawDesc = "" +
 	"\b_opacity\"*\n" +
 	"\n" +
 	"IconMarker\x12\x1c\n" +
-	"\x04icon\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04icon*l\n" +
+	"\x04icon\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04icon\"f\n" +
+	"\x0fRectangleMarker\x12\x13\n" +
+	"\x05end_x\x18\x01 \x01(\x01R\x04endX\x12\x13\n" +
+	"\x05end_y\x18\x02 \x01(\x01R\x04endY\x12\x1d\n" +
+	"\aopacity\x18\x03 \x01(\x02H\x00R\aopacity\x88\x01\x01B\n" +
+	"\n" +
+	"\b_opacity\"*\n" +
+	"\fPolygonPoint\x12\f\n" +
+	"\x01x\x18\x01 \x01(\x01R\x01x\x12\f\n" +
+	"\x01y\x18\x02 \x01(\x01R\x01y\"{\n" +
+	"\rPolygonMarker\x12?\n" +
+	"\x06points\x18\x01 \x03(\v2'.resources.livemap.markers.PolygonPointR\x06points\x12\x1d\n" +
+	"\aopacity\x18\x02 \x01(\x02H\x00R\aopacity\x88\x01\x01B\n" +
+	"\n" +
+	"\b_opacity*\xa0\x01\n" +
 	"\n" +
 	"MarkerType\x12\x1b\n" +
 	"\x17MARKER_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fMARKER_TYPE_DOT\x10\x01\x12\x16\n" +
 	"\x12MARKER_TYPE_CIRCLE\x10\x02\x12\x14\n" +
-	"\x10MARKER_TYPE_ICON\x10\x03B\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers;livemapmarkersb\x06proto3"
+	"\x10MARKER_TYPE_ICON\x10\x03\x12\x19\n" +
+	"\x15MARKER_TYPE_RECTANGLE\x10\x04\x12\x17\n" +
+	"\x13MARKER_TYPE_POLYGON\x10\x05B\\ZZgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers;livemapmarkersb\x06proto3"
 
 var file_resources_livemap_markers_marker_marker_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_livemap_markers_marker_marker_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_resources_livemap_markers_marker_marker_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_resources_livemap_markers_marker_marker_proto_goTypes = []any{
 	(MarkerType)(0),             // 0: resources.livemap.markers.MarkerType
 	(*MarkerMarker)(nil),        // 1: resources.livemap.markers.MarkerMarker
 	(*MarkerData)(nil),          // 2: resources.livemap.markers.MarkerData
 	(*CircleMarker)(nil),        // 3: resources.livemap.markers.CircleMarker
 	(*IconMarker)(nil),          // 4: resources.livemap.markers.IconMarker
-	(*timestamp.Timestamp)(nil), // 5: resources.timestamp.Timestamp
-	(*short.UserShort)(nil),     // 6: resources.users.short.UserShort
+	(*RectangleMarker)(nil),     // 5: resources.livemap.markers.RectangleMarker
+	(*PolygonPoint)(nil),        // 6: resources.livemap.markers.PolygonPoint
+	(*PolygonMarker)(nil),       // 7: resources.livemap.markers.PolygonMarker
+	(*timestamp.Timestamp)(nil), // 8: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),     // 9: resources.users.short.UserShort
 }
 var file_resources_livemap_markers_marker_marker_proto_depIdxs = []int32{
-	5, // 0: resources.livemap.markers.MarkerMarker.created_at:type_name -> resources.timestamp.Timestamp
-	5, // 1: resources.livemap.markers.MarkerMarker.updated_at:type_name -> resources.timestamp.Timestamp
-	5, // 2: resources.livemap.markers.MarkerMarker.expires_at:type_name -> resources.timestamp.Timestamp
-	5, // 3: resources.livemap.markers.MarkerMarker.deleted_at:type_name -> resources.timestamp.Timestamp
-	0, // 4: resources.livemap.markers.MarkerMarker.type:type_name -> resources.livemap.markers.MarkerType
-	2, // 5: resources.livemap.markers.MarkerMarker.data:type_name -> resources.livemap.markers.MarkerData
-	6, // 6: resources.livemap.markers.MarkerMarker.creator:type_name -> resources.users.short.UserShort
-	3, // 7: resources.livemap.markers.MarkerData.circle:type_name -> resources.livemap.markers.CircleMarker
-	4, // 8: resources.livemap.markers.MarkerData.icon:type_name -> resources.livemap.markers.IconMarker
-	9, // [9:9] is the sub-list for method output_type
-	9, // [9:9] is the sub-list for method input_type
-	9, // [9:9] is the sub-list for extension type_name
-	9, // [9:9] is the sub-list for extension extendee
-	0, // [0:9] is the sub-list for field type_name
+	8,  // 0: resources.livemap.markers.MarkerMarker.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 1: resources.livemap.markers.MarkerMarker.updated_at:type_name -> resources.timestamp.Timestamp
+	8,  // 2: resources.livemap.markers.MarkerMarker.expires_at:type_name -> resources.timestamp.Timestamp
+	8,  // 3: resources.livemap.markers.MarkerMarker.deleted_at:type_name -> resources.timestamp.Timestamp
+	0,  // 4: resources.livemap.markers.MarkerMarker.type:type_name -> resources.livemap.markers.MarkerType
+	2,  // 5: resources.livemap.markers.MarkerMarker.data:type_name -> resources.livemap.markers.MarkerData
+	9,  // 6: resources.livemap.markers.MarkerMarker.creator:type_name -> resources.users.short.UserShort
+	3,  // 7: resources.livemap.markers.MarkerData.circle:type_name -> resources.livemap.markers.CircleMarker
+	4,  // 8: resources.livemap.markers.MarkerData.icon:type_name -> resources.livemap.markers.IconMarker
+	5,  // 9: resources.livemap.markers.MarkerData.rectangle:type_name -> resources.livemap.markers.RectangleMarker
+	7,  // 10: resources.livemap.markers.MarkerData.polygon:type_name -> resources.livemap.markers.PolygonMarker
+	6,  // 11: resources.livemap.markers.PolygonMarker.points:type_name -> resources.livemap.markers.PolygonPoint
+	12, // [12:12] is the sub-list for method output_type
+	12, // [12:12] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_resources_livemap_markers_marker_marker_proto_init() }
@@ -882,15 +1251,19 @@ func file_resources_livemap_markers_marker_marker_proto_init() {
 	file_resources_livemap_markers_marker_marker_proto_msgTypes[1].OneofWrappers = []any{
 		(*MarkerData_Circle)(nil),
 		(*MarkerData_Icon)(nil),
+		(*MarkerData_Rectangle)(nil),
+		(*MarkerData_Polygon)(nil),
 	}
 	file_resources_livemap_markers_marker_marker_proto_msgTypes[2].OneofWrappers = []any{}
+	file_resources_livemap_markers_marker_marker_proto_msgTypes[4].OneofWrappers = []any{}
+	file_resources_livemap_markers_marker_marker_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_livemap_markers_marker_marker_proto_rawDesc), len(file_resources_livemap_markers_marker_marker_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   4,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

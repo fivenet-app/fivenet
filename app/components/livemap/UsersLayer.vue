@@ -2,6 +2,7 @@
 import MapUserMarker from '~/components/livemap/MapUserMarker.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
+import { groupByJob } from '~/utils/livemap/groupByJob';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
 
 withDefaults(
@@ -73,12 +74,14 @@ onBeforeRouteLeave(async (to) => {
 const playerQueryRaw = ref<string>('');
 const playerQuery = computed(() => playerQueryRaw.value.toLowerCase());
 
-const playerMarkersFiltered = computedAsync(async () =>
-    [...(markersUsers.value.values() ?? [])].filter(
-        (m) =>
-            playerQuery.value === '' || (m.user?.firstname + ' ' + m.user?.lastname).toLowerCase().includes(playerQuery.value),
-    ),
-);
+const playerMarkersByJob = computed(() => {
+    const query = playerQuery.value;
+    return groupByJob<UserMarker>(markersUsers.value.values(), (marker) => {
+        if (query === '') return true;
+        const fullName = `${marker.user?.firstname ?? ''} ${marker.user?.lastname ?? ''}`.toLowerCase();
+        return fullName.includes(query);
+    });
+});
 </script>
 
 <template>
@@ -91,7 +94,7 @@ const playerMarkersFiltered = computedAsync(async () =>
         :options="{ name: `users_${job.name}` }"
     >
         <MapUserMarker
-            v-for="marker in playerMarkersFiltered?.filter((m) => m.job === job.name)"
+            v-for="marker in playerMarkersByJob.get(job.name) ?? []"
             :key="marker.userId"
             :marker="marker"
             :size="livemap.markerSize"

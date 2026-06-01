@@ -6,7 +6,7 @@ import ColorPicker from '~/components/partials/ColorPicker.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
-import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/markers/marker_marker';
+import { type MarkerMarker, MarkerType, type PolygonPoint } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import type { Coordinate } from '~~/shared/types/types';
 import InputDatePicker from '../partials/InputDatePicker.vue';
 
@@ -20,24 +20,68 @@ const emit = defineEmits<{
 }>();
 
 const livemapStore = useLivemapStore();
-const { location: storeLocation } = storeToRefs(livemapStore);
+const { location: storeLocation, showLocationMarker, markerCoordPickerActive, markersMarkers } = storeToRefs(livemapStore);
 const { addOrUpdateMarkerMarker } = livemapStore;
 
 const livemapLivemapClient = await getLivemapLivemapClient();
 
-const markerTypes = [{ value: MarkerType.CIRCLE }, { value: MarkerType.DOT }, { value: MarkerType.ICON }];
+const markerTypes = [
+    { icon: 'i-mdi-vector-circle', value: MarkerType.CIRCLE },
+    { icon: 'i-mdi-dot', value: MarkerType.DOT },
+    { icon: 'i-mdi-emoticon', value: MarkerType.ICON },
+    { icon: 'i-mdi-vector-rectangle', value: MarkerType.RECTANGLE },
+    { icon: 'i-mdi-vector-polygon', value: MarkerType.POLYGON },
+];
+
+function clonePolygonPointsPlain(points?: PolygonPoint[]): PolygonPoint[] {
+    if (!points) return [];
+    return points.map((point) => ({ x: point.x, y: point.y }));
+}
+
+function cloneDataPlain<T>(value: T): T {
+    return JSON.parse(JSON.stringify(toRaw(value))) as T;
+}
+
+function resolveInitialMarkerType(marker?: MarkerMarker): MarkerType {
+    const kind = marker?.data?.data.oneofKind;
+    if (kind === 'circle') return MarkerType.CIRCLE;
+    if (kind === 'icon') return MarkerType.ICON;
+    if (kind === 'rectangle') return MarkerType.RECTANGLE;
+    if (kind === 'polygon') return MarkerType.POLYGON;
+
+    if (marker?.type !== undefined && marker.type !== MarkerType.UNSPECIFIED) {
+        return marker.type;
+    }
+
+    return MarkerType.CIRCLE;
+}
 
 const defaultExpiresAt = ref<Date>(new Date());
 defaultExpiresAt.value.setTime(defaultExpiresAt.value.getTime() + 1 * 60 * 60 * 1000);
+const initialX = props.marker?.x ?? props.location?.x ?? storeLocation.value?.x ?? 0;
+const initialY = props.marker?.y ?? props.location?.y ?? storeLocation.value?.y ?? 0;
+const defaultPolygonPoints: PolygonPoint[] = [
+    { x: initialX + 75, y: initialY },
+    { x: initialX + 35, y: initialY + 75 },
+];
 
 const schema = z.object({
     name: z.coerce.string().min(1).max(255),
     description: z.union([z.string().min(3).max(1024), z.string().length(0).optional()]),
     expiresAt: z.date().optional(),
     color: z.coerce.string().length(7),
+    x: z.coerce.number(),
+    y: z.coerce.number(),
     markerType: z.enum(MarkerType),
     circleRadius: z.coerce.number().gte(5).lte(250),
     circleOpacity: z.coerce.number().gte(1).lte(75).optional(),
+    rectangleEndX: z.coerce.number(),
+    rectangleEndY: z.coerce.number(),
+    shapeOpacity: z.coerce.number().gte(1).lte(75).optional(),
+    polygonPoints: z
+        .array(z.object({ x: z.coerce.number(), y: z.coerce.number() }))
+        .min(2)
+        .max(18),
     icon: z.string().max(128).optional(),
 });
 
@@ -48,7 +92,9 @@ const state = reactive<Schema>({
     description: props.marker?.description,
     expiresAt: props.marker?.expiresAt ? toDate(props.marker?.expiresAt) : defaultExpiresAt.value,
     color: props.marker?.color ?? '#ee4b2b',
-    markerType: props.marker?.type ?? MarkerType.CIRCLE,
+    x: initialX,
+    y: initialY,
+    markerType: resolveInitialMarkerType(props.marker),
     circleRadius:
         props.marker?.data?.data.oneofKind === 'circle' && props.marker?.data?.data.circle.radius
             ? props.marker?.data?.data.circle.radius
@@ -57,24 +103,254 @@ const state = reactive<Schema>({
         props.marker?.data?.data.oneofKind === 'circle' && props.marker?.data?.data.circle.opacity
             ? props.marker?.data?.data.circle.opacity
             : 15,
+    rectangleEndX:
+        props.marker?.data?.data.oneofKind === 'rectangle' && props.marker?.data?.data.rectangle.endX
+            ? props.marker?.data?.data.rectangle.endX
+            : initialX + 75,
+    rectangleEndY:
+        props.marker?.data?.data.oneofKind === 'rectangle' && props.marker?.data?.data.rectangle.endY
+            ? props.marker?.data?.data.rectangle.endY
+            : initialY + 75,
+    shapeOpacity:
+        props.marker?.data?.data.oneofKind === 'rectangle' && props.marker?.data?.data.rectangle.opacity
+            ? props.marker?.data?.data.rectangle.opacity
+            : props.marker?.data?.data.oneofKind === 'polygon' && props.marker?.data?.data.polygon.opacity
+              ? props.marker?.data?.data.polygon.opacity
+              : 15,
+    polygonPoints:
+        props.marker?.data?.data.oneofKind === 'polygon' && props.marker?.data?.data.polygon.points.length >= 2
+            ? clonePolygonPointsPlain(props.marker?.data?.data.polygon.points)
+            : clonePolygonPointsPlain(defaultPolygonPoints),
     icon:
         props.marker?.data?.data.oneofKind === 'icon' && props.marker?.data?.data.icon.icon
             ? props.marker?.data?.data.icon.icon
             : HelpIcon.name,
 });
 
+const isPickingCoordinates = computed<boolean>(() => markerCoordPickerActive.value === true);
+const rectangleSelectionAwaitingEnd = ref(false);
+const polygonSelectionIndex = ref<number | undefined>(undefined);
+const polygonVertexEditIndex = ref<number | undefined>(undefined);
+const saved = ref(false);
+const previewTarget = computed<MarkerMarker | undefined>(() =>
+    props.marker?.id ? markersMarkers.value.get(props.marker.id) : undefined,
+);
+const originalPreviewState =
+    previewTarget.value === undefined
+        ? undefined
+        : {
+              x: previewTarget.value.x,
+              y: previewTarget.value.y,
+              type: previewTarget.value.type,
+              data: previewTarget.value.data ? cloneDataPlain(previewTarget.value.data) : undefined,
+          };
+
+const coordinatePickerHint = computed<string | undefined>(() => {
+    if (!isPickingCoordinates.value) return undefined;
+    if (state.markerType === MarkerType.RECTANGLE) {
+        return rectangleSelectionAwaitingEnd.value ? '2/2' : '1/2';
+    }
+
+    if (state.markerType === MarkerType.POLYGON) {
+        if (polygonVertexEditIndex.value !== undefined) {
+            return `V${polygonVertexEditIndex.value + 1}`;
+        }
+        const index = polygonSelectionIndex.value ?? 0;
+        const total = state.polygonPoints.length + 1;
+        return `${Math.min(index + 1, total)}/${total}`;
+    }
+
+    return undefined;
+});
+
+function resetCoordinatePickingProgress(): void {
+    rectangleSelectionAwaitingEnd.value = false;
+    polygonSelectionIndex.value = undefined;
+    polygonVertexEditIndex.value = undefined;
+}
+
+function stopCoordinatePicking(): void {
+    markerCoordPickerActive.value = false;
+    resetCoordinatePickingProgress();
+    showLocationMarker.value = false;
+}
+
+watch([() => state.x, () => state.y], ([x, y]) => {
+    if (!previewTarget.value) return;
+    previewTarget.value.x = x;
+    previewTarget.value.y = y;
+});
+
+watch([() => state.circleRadius, () => state.circleOpacity], ([radius, opacity]) => {
+    if (!previewTarget.value || state.markerType !== MarkerType.CIRCLE || previewTarget.value.data?.data.oneofKind !== 'circle')
+        return;
+    previewTarget.value.data.data.circle.radius = radius;
+    previewTarget.value.data.data.circle.opacity = opacity;
+});
+
+watch([() => state.rectangleEndX, () => state.rectangleEndY, () => state.shapeOpacity], ([endX, endY, opacity]) => {
+    if (
+        !previewTarget.value ||
+        state.markerType !== MarkerType.RECTANGLE ||
+        previewTarget.value.data?.data.oneofKind !== 'rectangle'
+    )
+        return;
+    previewTarget.value.data.data.rectangle.endX = endX;
+    previewTarget.value.data.data.rectangle.endY = endY;
+    previewTarget.value.data.data.rectangle.opacity = opacity;
+});
+
+watch(
+    () => state.polygonPoints,
+    (points) => {
+        if (
+            !previewTarget.value ||
+            state.markerType !== MarkerType.POLYGON ||
+            previewTarget.value.data?.data.oneofKind !== 'polygon'
+        )
+            return;
+        previewTarget.value.data.data.polygon.points = clonePolygonPointsPlain(toRaw(points));
+    },
+    { deep: true },
+);
+
+watch(
+    () => state.shapeOpacity,
+    (opacity) => {
+        if (
+            !previewTarget.value ||
+            state.markerType !== MarkerType.POLYGON ||
+            previewTarget.value.data?.data.oneofKind !== 'polygon'
+        )
+            return;
+        previewTarget.value.data.data.polygon.opacity = opacity;
+    },
+);
+
+watch(
+    () => storeLocation.value,
+    (val) => {
+        if (!isPickingCoordinates.value || !val) return;
+
+        if (state.markerType === MarkerType.RECTANGLE) {
+            if (!rectangleSelectionAwaitingEnd.value) {
+                state.x = val.x;
+                state.y = val.y;
+                rectangleSelectionAwaitingEnd.value = true;
+                showLocationMarker.value = true;
+                return;
+            }
+
+            state.rectangleEndX = val.x;
+            state.rectangleEndY = val.y;
+            stopCoordinatePicking();
+            return;
+        }
+
+        if (state.markerType === MarkerType.POLYGON) {
+            if (polygonVertexEditIndex.value !== undefined) {
+                if (polygonVertexEditIndex.value === 0) {
+                    state.x = val.x;
+                    state.y = val.y;
+                } else if (polygonVertexEditIndex.value - 1 < state.polygonPoints.length) {
+                    state.polygonPoints[polygonVertexEditIndex.value - 1] = {
+                        x: val.x,
+                        y: val.y,
+                    };
+                }
+
+                stopCoordinatePicking();
+                return;
+            }
+
+            const currentIndex = polygonSelectionIndex.value ?? 0;
+            const totalPoints = state.polygonPoints.length + 1;
+            if (currentIndex === 0) {
+                state.x = val.x;
+                state.y = val.y;
+            } else if (currentIndex - 1 < state.polygonPoints.length) {
+                state.polygonPoints[currentIndex - 1] = {
+                    x: val.x,
+                    y: val.y,
+                };
+            }
+
+            const nextIndex = currentIndex + 1;
+            if (nextIndex >= totalPoints) {
+                stopCoordinatePicking();
+            } else {
+                polygonSelectionIndex.value = nextIndex;
+            }
+            return;
+        }
+
+        state.x = val.x;
+        state.y = val.y;
+    },
+);
+
+watch(
+    () => state.markerType,
+    () => {
+        resetCoordinatePickingProgress();
+    },
+);
+
+function toggleCoordinatePicker(): void {
+    if (markerCoordPickerActive.value) {
+        stopCoordinatePicking();
+        return;
+    }
+
+    markerCoordPickerActive.value = true;
+    resetCoordinatePickingProgress();
+    if (state.markerType === MarkerType.RECTANGLE) {
+        showLocationMarker.value = false;
+    } else if (state.markerType === MarkerType.POLYGON) {
+        polygonSelectionIndex.value = 0;
+        showLocationMarker.value = false;
+    } else {
+        storeLocation.value = { x: state.x, y: state.y };
+        showLocationMarker.value = true;
+    }
+}
+
+function beginPolygonVertexEdit(index: number): void {
+    if (index < 0 || index > state.polygonPoints.length) return;
+    resetCoordinatePickingProgress();
+    polygonVertexEditIndex.value = index;
+    markerCoordPickerActive.value = true;
+    showLocationMarker.value = false;
+}
+
+function addPolygonPoint(): void {
+    if (state.polygonPoints.length >= 18) return;
+    const source = state.polygonPoints[state.polygonPoints.length - 1] ?? { x: state.x, y: state.y };
+    state.polygonPoints.push({
+        x: source.x + 25,
+        y: source.y + 25,
+    });
+}
+
+function removePolygonPoint(index: number): void {
+    if (state.polygonPoints.length <= 2) return;
+    polygonVertexEditIndex.value = undefined;
+    state.polygonPoints.splice(index, 1);
+}
+
 async function createOrUpdateMarker(values: Schema): Promise<void> {
     const expiresAt = values.expiresAt ? toTimestamp(values.expiresAt) : undefined;
 
     try {
+        stopCoordinatePicking();
         const marker: MarkerMarker = {
             id: props.marker?.id ?? 0,
             job: '',
             jobLabel: '',
             name: values.name,
             description: values.description,
-            x: props.marker?.x ?? props.location?.x ?? storeLocation.value?.x ?? 0,
-            y: props.marker?.y ?? props.location?.y ?? storeLocation.value?.y ?? 0,
+            x: values.x,
+            y: values.y,
             color: values.color,
             expiresAt: expiresAt,
             type: values.markerType,
@@ -99,6 +375,27 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
                     },
                 },
             };
+        } else if (values.markerType === MarkerType.RECTANGLE) {
+            marker.data = {
+                data: {
+                    oneofKind: 'rectangle',
+                    rectangle: {
+                        endX: values.rectangleEndX,
+                        endY: values.rectangleEndY,
+                        opacity: values.shapeOpacity ?? 15,
+                    },
+                },
+            };
+        } else if (values.markerType === MarkerType.POLYGON) {
+            marker.data = {
+                data: {
+                    oneofKind: 'polygon',
+                    polygon: {
+                        points: values.polygonPoints,
+                        opacity: values.shapeOpacity ?? 15,
+                    },
+                },
+            };
         }
 
         const call = livemapLivemapClient.createOrUpdateMarker({
@@ -110,7 +407,8 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
             addOrUpdateMarkerMarker(response.marker);
         }
 
-        emit('close', false);
+        saved.value = true;
+        emit('close', true);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -124,12 +422,25 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 const formRef = useTemplateRef('formRef');
+
+onBeforeUnmount(() => {
+    stopCoordinatePicking();
+    if (!saved.value && previewTarget.value && originalPreviewState) {
+        previewTarget.value.x = originalPreviewState.x;
+        previewTarget.value.y = originalPreviewState.y;
+        previewTarget.value.type = originalPreviewState.type;
+        previewTarget.value.data = originalPreviewState.data;
+    }
+});
 </script>
 
 <template>
     <USlideover
         :title="!marker ? $t('components.livemap.create_marker.title') : $t('components.livemap.update_marker.title')"
         :overlay="false"
+        :modal="false"
+        :dismissible="!isPickingCoordinates"
+        :ui="{ content: isPickingCoordinates ? 'max-w-sm' : 'max-w-xl' }"
     >
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
@@ -225,6 +536,59 @@ const formRef = useTemplateRef('formRef');
                         </dd>
                     </div>
 
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="x">
+                                {{ $t('common.longitude') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="x">
+                                <UInputNumber
+                                    v-model="state.x"
+                                    class="w-full"
+                                    name="x"
+                                    :step="0.00001"
+                                    :placeholder="$t('common.longitude')"
+                                />
+                            </UFormField>
+                        </dd>
+                    </div>
+
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="y">
+                                {{ $t('common.latitude') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="y">
+                                <UInputNumber
+                                    v-model="state.y"
+                                    class="w-full"
+                                    name="y"
+                                    :step="0.00001"
+                                    :placeholder="$t('common.latitude')"
+                                />
+                            </UFormField>
+                        </dd>
+                    </div>
+
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium" />
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UButton
+                                :variant="isPickingCoordinates ? 'solid' : 'soft'"
+                                :color="isPickingCoordinates ? 'warning' : 'neutral'"
+                                icon="i-mdi-crosshairs-gps"
+                                :label="isPickingCoordinates ? $t('common.cancel') : $t('common.select')"
+                                type="button"
+                                @click="toggleCoordinatePicker"
+                            />
+                            <p v-if="coordinatePickerHint" class="mt-2 text-xs text-dimmed">{{ coordinatePickerHint }}</p>
+                        </dd>
+                    </div>
+
                     <div
                         v-if="state.markerType === MarkerType.CIRCLE"
                         class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
@@ -249,9 +613,183 @@ const formRef = useTemplateRef('formRef');
                     </div>
 
                     <div
-                        v-else-if="state.markerType === MarkerType.ICON"
+                        v-if="state.markerType === MarkerType.RECTANGLE"
                         class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
                     >
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="rectangleEndX">
+                                {{ $t('common.longitude') }} 2
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="rectangleEndX">
+                                <UInputNumber
+                                    v-model="state.rectangleEndX"
+                                    class="w-full"
+                                    name="rectangleEndX"
+                                    :step="0.00001"
+                                    :placeholder="$t('common.longitude')"
+                                />
+                            </UFormField>
+                        </dd>
+                    </div>
+
+                    <div
+                        v-if="state.markerType === MarkerType.RECTANGLE"
+                        class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                    >
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="rectangleEndY">
+                                {{ $t('common.latitude') }} 2
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="rectangleEndY">
+                                <UInputNumber
+                                    v-model="state.rectangleEndY"
+                                    class="w-full"
+                                    name="rectangleEndY"
+                                    :step="0.00001"
+                                    :placeholder="$t('common.latitude')"
+                                />
+                            </UFormField>
+                        </dd>
+                    </div>
+
+                    <div
+                        v-if="state.markerType === MarkerType.RECTANGLE || state.markerType === MarkerType.POLYGON"
+                        class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                    >
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="shapeOpacity">
+                                {{ $t('common.opacity') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="shapeOpacity">
+                                <UInputNumber
+                                    v-model="state.shapeOpacity"
+                                    class="w-full"
+                                    name="shapeOpacity"
+                                    :min="1"
+                                    :max="75"
+                                    :placeholder="$t('common.opacity')"
+                                />
+                            </UFormField>
+                        </dd>
+                    </div>
+
+                    <div
+                        v-if="state.markerType === MarkerType.POLYGON"
+                        class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                    >
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium">
+                                {{ $t('common.points', 2) }}
+                            </label>
+                        </dt>
+
+                        <dd class="mt-1 space-y-2 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <div class="rounded-md border border-default p-2">
+                                <div class="mb-1 flex items-center justify-between text-xs text-dimmed">
+                                    <span>{{ $t('common.point', 1) }} 1</span>
+                                    <UButton
+                                        color="neutral"
+                                        variant="soft"
+                                        icon="i-mdi-crosshairs-gps"
+                                        size="xs"
+                                        :label="$t('common.select')"
+                                        type="button"
+                                        @click="beginPolygonVertexEdit(0)"
+                                    />
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <UFormField name="x">
+                                        <UInputNumber
+                                            v-model="state.x"
+                                            class="w-full"
+                                            name="polygonStartX"
+                                            :step="0.00001"
+                                            :placeholder="$t('common.longitude')"
+                                        />
+                                    </UFormField>
+
+                                    <UFormField name="y">
+                                        <UInputNumber
+                                            v-model="state.y"
+                                            class="w-full"
+                                            name="polygonStartY"
+                                            :step="0.00001"
+                                            :placeholder="$t('common.latitude')"
+                                        />
+                                    </UFormField>
+                                </div>
+                            </div>
+
+                            <div
+                                v-for="(point, idx) in state.polygonPoints"
+                                :key="`poly-point-${idx}`"
+                                class="rounded-md border border-default p-2"
+                            >
+                                <div class="mb-1 flex items-center justify-between text-xs text-dimmed">
+                                    <span>{{ $t('common.point', 1) }} {{ idx + 2 }}</span>
+                                    <div class="flex items-center gap-1">
+                                        <UButton
+                                            color="neutral"
+                                            variant="soft"
+                                            icon="i-mdi-crosshairs-gps"
+                                            size="xs"
+                                            :label="$t('common.select')"
+                                            type="button"
+                                            @click="beginPolygonVertexEdit(idx + 1)"
+                                        />
+                                        <UButton
+                                            color="error"
+                                            variant="link"
+                                            icon="i-mdi-delete"
+                                            size="xs"
+                                            type="button"
+                                            :disabled="state.polygonPoints.length <= 2"
+                                            @click="removePolygonPoint(idx)"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2">
+                                    <UFormField :name="`polygonPoints.${idx}.x`">
+                                        <UInputNumber
+                                            v-model="point.x"
+                                            class="w-full"
+                                            :name="`polygonPoints.${idx}.x`"
+                                            :step="0.00001"
+                                            :placeholder="$t('common.longitude')"
+                                        />
+                                    </UFormField>
+
+                                    <UFormField :name="`polygonPoints.${idx}.y`">
+                                        <UInputNumber
+                                            v-model="point.y"
+                                            class="w-full"
+                                            :name="`polygonPoints.${idx}.y`"
+                                            :step="0.00001"
+                                            :placeholder="$t('common.latitude')"
+                                        />
+                                    </UFormField>
+                                </div>
+                            </div>
+
+                            <UButton
+                                :label="$t('common.add')"
+                                icon="i-mdi-plus"
+                                variant="soft"
+                                type="button"
+                                :disabled="state.polygonPoints.length >= 18"
+                                @click="addPolygonPoint"
+                            />
+                        </dd>
+                    </div>
+
+                    <div v-if="state.markerType === MarkerType.ICON" class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
                             <label class="block text-sm leading-6 font-medium" for="icon">
                                 {{ $t('common.icon') }}

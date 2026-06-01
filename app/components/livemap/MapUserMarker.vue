@@ -5,6 +5,7 @@ import { unitStatusToBGColor } from '~/components/dispatch/helpers';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
+import LeafletLazyPopup from './LeafletLazyPopup.vue';
 import UnitDetailsSlideover from '../dispatch/units/UnitDetailsSlideover.vue';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 import { checkIfCanAccessColleague } from '../jobs/colleagues/helpers';
@@ -117,106 +118,109 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
             </div>
         </LIcon>
 
-        <LPopup class="min-w-[175px] md:min-w-[305px] xl:min-w-[350px]" :options="{ closeButton: false }">
-            <UCard
-                class="-my-[13px] -mr-[24px] -ml-[20px] flex flex-col"
-                :ui="{ header: 'p-1 sm:px-2', body: 'p-1 sm:p-2 xl:mx-auto', footer: 'p-1 sm:px-2' }"
-            >
-                <template #header>
-                    <div class="grid grid-cols-1 gap-2 !text-primary md:grid-cols-2 xl:grid-cols-3">
-                        <UButton
-                            v-if="marker.x !== undefined && marker.y !== undefined"
-                            variant="link"
-                            icon="i-mdi-map-marker"
-                            block
-                            :label="$t('common.mark')"
-                            @click="gotoCoords({ x: marker.x, y: marker.y })"
-                        />
+        <LeafletLazyPopup class="min-w-[175px] md:min-w-[305px] xl:min-w-[350px]" :options="{ closeButton: false }">
+            <template #default="{ popupOpen }">
+                <UCard
+                    v-if="popupOpen"
+                    class="-my-[13px] -mr-[24px] -ml-[20px] flex flex-col"
+                    :ui="{ header: 'p-1 sm:px-2', body: 'p-1 sm:p-2 xl:mx-auto', footer: 'p-1 sm:px-2' }"
+                >
+                    <template #header>
+                        <div class="grid grid-cols-1 gap-2 !text-primary md:grid-cols-2 xl:grid-cols-3">
+                            <UButton
+                                v-if="marker.x !== undefined && marker.y !== undefined"
+                                variant="link"
+                                icon="i-mdi-map-marker"
+                                block
+                                :label="$t('common.mark')"
+                                @click="gotoCoords({ x: marker.x, y: marker.y })"
+                            />
 
-                        <UButton
-                            v-if="can('citizens.CitizensService/ListCitizens').value"
-                            class="!text-(--ui-primary)"
-                            variant="link"
-                            icon="i-mdi-account"
-                            block
-                            :label="$t('common.profile')"
-                            :to="`/citizens/${marker.user?.userId ?? 0}`"
-                        />
+                            <UButton
+                                v-if="can('citizens.CitizensService/ListCitizens').value"
+                                class="!text-(--ui-primary)"
+                                variant="link"
+                                icon="i-mdi-account"
+                                block
+                                :label="$t('common.profile')"
+                                :to="`/citizens/${marker.user?.userId ?? 0}`"
+                            />
 
-                        <UButton
-                            v-if="
-                                can('jobs.ColleaguesService/GetColleague').value &&
-                                marker.user &&
-                                marker.user?.job === activeChar?.job &&
-                                checkIfCanAccessColleague(marker.user, 'jobs.ColleaguesService/GetColleague')
-                            "
-                            class="!text-(--ui-primary)"
-                            variant="link"
-                            icon="i-mdi-briefcase"
-                            block
-                            :label="$t('common.colleague')"
-                            :to="`/jobs/colleagues/${marker.user?.userId ?? 0}/info`"
-                        />
+                            <UButton
+                                v-if="
+                                    can('jobs.ColleaguesService/GetColleague').value &&
+                                    marker.user &&
+                                    marker.user?.job === activeChar?.job &&
+                                    checkIfCanAccessColleague(marker.user, 'jobs.ColleaguesService/GetColleague')
+                                "
+                                class="!text-(--ui-primary)"
+                                variant="link"
+                                icon="i-mdi-briefcase"
+                                block
+                                :label="$t('common.colleague')"
+                                :to="`/jobs/colleagues/${marker.user?.userId ?? 0}/info`"
+                            />
 
-                        <PhoneNumberBlock
-                            v-if="marker.user?.phoneNumber"
-                            class="px-2.5 py-1.5"
-                            :number="marker.user?.phoneNumber"
-                            hide-number
-                            show-label
-                            block
-                        />
+                            <PhoneNumberBlock
+                                v-if="marker.user?.phoneNumber"
+                                class="px-2.5 py-1.5"
+                                :number="marker.user?.phoneNumber"
+                                hide-number
+                                show-label
+                                block
+                            />
 
-                        <UButton
-                            v-if="unit"
-                            variant="link"
-                            icon="i-mdi-group"
-                            block
-                            :label="$t('common.unit')"
-                            @click="
-                                unitDetailsSlideover.open({
-                                    unit: unit,
-                                })
-                            "
-                        />
+                            <UButton
+                                v-if="unit"
+                                variant="link"
+                                icon="i-mdi-group"
+                                block
+                                :label="$t('common.unit')"
+                                @click="
+                                    unitDetailsSlideover.open({
+                                        unit: unit,
+                                    })
+                                "
+                            />
 
-                        <UButton
-                            v-if="activeChar && activeChar?.userId !== marker.userId"
-                            variant="link"
-                            icon="i-mdi-track-changes"
-                            block
-                            :label="
-                                followMarker && selectedMarker?.userId === marker.userId
-                                    ? $t('common.unfollow')
-                                    : $t('common.follow')
-                            "
-                            @click="toggleFollow"
-                        />
-                    </div>
-                </template>
+                            <UButton
+                                v-if="activeChar && activeChar?.userId !== marker.userId"
+                                variant="link"
+                                icon="i-mdi-track-changes"
+                                block
+                                :label="
+                                    followMarker && selectedMarker?.userId === marker.userId
+                                        ? $t('common.unfollow')
+                                        : $t('common.follow')
+                                "
+                                @click="toggleFollow"
+                            />
+                        </div>
+                    </template>
 
-                <p class="inline-flex items-center gap-1">
-                    <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
-                </p>
+                    <p class="inline-flex items-center gap-1">
+                        <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
+                    </p>
 
-                <ul role="list">
-                    <li>
-                        <span class="font-semibold"> {{ $t('common.name') }} </span>:
-                        <ColleagueName v-if="marker.user" :colleague="marker.user" />
-                    </li>
+                    <ul role="list">
+                        <li>
+                            <span class="font-semibold"> {{ $t('common.name') }} </span>:
+                            <ColleagueName v-if="marker.user" :colleague="marker.user" />
+                        </li>
 
-                    <li v-if="(marker.user?.jobGrade ?? 0) > 0 && marker.user?.jobGradeLabel">
-                        <span class="font-semibold">{{ $t('common.rank') }}:</span> {{ marker.user?.jobGradeLabel }} ({{
-                            marker.user?.jobGrade
-                        }})
-                    </li>
+                        <li v-if="(marker.user?.jobGrade ?? 0) > 0 && marker.user?.jobGradeLabel">
+                            <span class="font-semibold">{{ $t('common.rank') }}:</span> {{ marker.user?.jobGradeLabel }} ({{
+                                marker.user?.jobGrade
+                            }})
+                        </li>
 
-                    <li v-if="unit || props.marker.unitId" class="inline-flex items-center gap-1">
-                        <span class="font-semibold">{{ $t('common.unit') }}:</span>
-                        <UnitInfoPopover :unit-id="props.marker.unitId" :unit="unit" show-icon />
-                    </li>
-                </ul>
-            </UCard>
-        </LPopup>
+                        <li v-if="unit || props.marker.unitId" class="inline-flex items-center gap-1">
+                            <span class="font-semibold">{{ $t('common.unit') }}:</span>
+                            <UnitInfoPopover :unit-id="props.marker.unitId" :unit="unit" show-icon />
+                        </li>
+                    </ul>
+                </UCard>
+            </template>
+        </LeafletLazyPopup>
     </LMarker>
 </template>

@@ -34,6 +34,9 @@ export const useLivemapStore = defineStore(
 
         const location = ref<Coordinate | undefined>();
         const showLocationMarker = ref<boolean>(false);
+        const markerCoordPickerActive = ref<boolean>(false);
+        const markerDragEnabled = ref<boolean>(false);
+        const suppressMapPreclickUntil = ref<number>(0);
         const zoom = ref<number>(2);
 
         const initiated = ref<boolean>(false);
@@ -424,6 +427,10 @@ export const useLivemapStore = defineStore(
             if (ingame) return await setWaypoint(loc.x, loc.y);
         };
 
+        const suppressMapPreclick = (durationMs: number = 500): void => {
+            suppressMapPreclickUntil.value = Date.now() + durationMs;
+        };
+
         return {
             // State
             error,
@@ -432,6 +439,9 @@ export const useLivemapStore = defineStore(
             reconnectBackoffTime,
             location,
             showLocationMarker,
+            markerCoordPickerActive,
+            markerDragEnabled,
+            suppressMapPreclickUntil,
             zoom,
             initiated,
             userOnDuty,
@@ -453,6 +463,7 @@ export const useLivemapStore = defineStore(
             updateUserInfo,
             deleteMarkerMarker,
             gotoCoords,
+            suppressMapPreclick,
         };
     },
     {

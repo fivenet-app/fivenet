@@ -134,7 +134,7 @@ func (s *Server) CreateOrUpdateMarker(
 				req.GetMarker().GetData(),
 			).
 			WHERE(mysql.AND(
-				tMarkers.Job.EQ(mysql.String(userInfo.GetJob())),
+				tMarkers.Job.EQ(mysql.String(marker.GetJob())),
 				tMarkers.ID.EQ(mysql.Int64(req.GetMarker().GetId())),
 			)).
 			LIMIT(1)
