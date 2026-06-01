@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { VueDraggable } from 'vue-draggable-plus';
+import ReorderButtons from './ReorderButtons.vue';
+import DraggableHandle from './DraggableHandle.vue';
 
 const props = defineProps<{
     modelValue: string;
@@ -174,57 +176,28 @@ const { moveUp, moveDown } = useListReorder(blocks);
             v-model="blocks"
             class="flex min-h-[48px] flex-wrap items-center gap-2 rounded-sm bg-neutral-100 p-2 dark:bg-neutral-800"
             :item-key="'id'"
-            handle=".drag-handle"
+            handle=".handle"
             :ghost-class="'opacity-50'"
             :disabled="disabled"
         >
             <template v-for="(element, index) in blocks" :key="element.id">
                 <div class="flex items-center gap-1">
-                    <!-- Text Block -->
-                    <template v-if="element.type === 'text'">
-                        <UBadge
-                            class="flex items-center gap-1 font-mono"
-                            color="primary"
-                            variant="soft"
-                            size="md"
-                            :ui="{ base: 'py-0!' }"
-                        >
-                            <UInput
-                                class="w-28"
-                                :model-value="element.value"
-                                size="xs"
-                                type="text"
-                                :placeholder="$t('common.text')"
-                                :disabled="disabled"
-                                @update:model-value="handleTextInput(index, $event)"
-                            />
+                    <UBadge class="flex items-center gap-1 font-mono" color="primary" variant="soft" size="md">
+                        <UInput
+                            v-if="element.type === 'text'"
+                            class="w-28"
+                            :model-value="element.value"
+                            size="xs"
+                            type="text"
+                            :placeholder="$t('common.text')"
+                            :disabled="disabled"
+                            square
+                            @update:model-value="handleTextInput(index, $event)"
+                        />
 
-                            <UButton
-                                type="button"
-                                icon="i-mdi-close-circle"
-                                size="xs"
-                                color="error"
-                                variant="link"
-                                tabindex="-1"
-                                @click="removeBlock(index)"
-                            />
+                        <span v-else>{{ findLabel(element.value) || element.value }}</span>
 
-                            <UButton
-                                class="drag-handle cursor-move opacity-60 select-none"
-                                type="button"
-                                icon="i-mdi-drag"
-                                size="xs"
-                                variant="link"
-                                tabindex="-1"
-                                :disabled="disabled"
-                            />
-                        </UBadge>
-                    </template>
-                    <!-- Token Block -->
-                    <template v-else>
-                        <UBadge class="flex items-center gap-1 font-mono" color="primary" variant="soft" size="md">
-                            <span>{{ findLabel(element.value) || element.value }}</span>
-
+                        <div class="inline-flex items-center gap-1">
                             <UButton
                                 type="button"
                                 icon="i-mdi-close-circle"
@@ -236,26 +209,17 @@ const { moveUp, moveDown } = useListReorder(blocks);
                                 @click="removeBlock(index)"
                             />
 
-                            <div class="inline-flex items-center gap-1">
-                                <UFieldGroup>
-                                    <UButton size="xs" variant="link" icon="i-mdi-arrow-left" @click="moveUp(index)" />
-                                    <UButton size="xs" variant="link" icon="i-mdi-arrow-right" @click="moveDown(index)" />
-                                </UFieldGroup>
+                            <DraggableHandle size="xs" orientation="horizontal" :disabled="disabled" />
 
-                                <UTooltip :text="$t('common.draggable')">
-                                    <UButton
-                                        class="drag-handle cursor-move opacity-60 select-none"
-                                        type="button"
-                                        icon="i-mdi-drag"
-                                        size="xs"
-                                        variant="link"
-                                        tabindex="-1"
-                                        :disabled="disabled"
-                                    />
-                                </UTooltip>
-                            </div>
-                        </UBadge>
-                    </template>
+                            <ReorderButtons
+                                size="xs"
+                                :idx="index"
+                                :move-up="moveUp"
+                                :move-down="moveDown"
+                                orientation="horizontal"
+                            />
+                        </div>
+                    </UBadge>
                 </div>
             </template>
         </VueDraggable>

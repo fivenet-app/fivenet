@@ -5,8 +5,10 @@ import { z } from 'zod';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DraggableHandle from '~/components/partials/DraggableHandle.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
+import ReorderButtons from '~/components/partials/ReorderButtons.vue';
 import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetColleagueLabelsResponse, ManageLabelsResponse } from '~~/gen/ts/services/jobs/colleagues';
@@ -119,12 +121,6 @@ const formRef = useTemplateRef('formRef');
 
                 <template #right>
                     <RefreshButton @click="() => refresh()" />
-                    <UButton
-                        to="/jobs/colleagues"
-                        icon="i-mdi-arrow-left"
-                        variant="subtle"
-                        :label="$t('pages.jobs.colleagues.title')"
-                    />
                 </template>
             </UDashboardToolbar>
         </template>
@@ -144,14 +140,9 @@ const formRef = useTemplateRef('formRef');
                         >
                             <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1 pb-2">
                                 <div class="inline-flex items-center gap-1">
-                                    <UTooltip :text="$t('common.draggable')">
-                                        <UIcon class="handle size-6 cursor-move" name="i-mdi-drag-horizontal" />
-                                    </UTooltip>
+                                    <DraggableHandle :disabled="!canSubmit" />
 
-                                    <UFieldGroup orientation="vertical">
-                                        <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
-                                        <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="moveDown(idx)" />
-                                    </UFieldGroup>
+                                    <ReorderButtons :idx="idx" :move-up="moveUp" :move-down="moveDown" />
                                 </div>
 
                                 <div class="flex flex-1 flex-col gap-1">
@@ -162,6 +153,7 @@ const formRef = useTemplateRef('formRef');
                                             :name="`labels.${idx}.name`"
                                             type="text"
                                             :placeholder="$t('common.label', 1)"
+                                            :disabled="!canSubmit"
                                         />
                                     </UFormField>
 
@@ -171,6 +163,7 @@ const formRef = useTemplateRef('formRef');
                                                 v-model="state.labels[idx]!.color"
                                                 class="w-full"
                                                 :name="`labels.${idx}.color`"
+                                                :disabled="!canSubmit"
                                             />
                                         </UFormField>
 
@@ -181,6 +174,7 @@ const formRef = useTemplateRef('formRef');
                                                 :name="`labels.${idx}.icon`"
                                                 :hex-color="state.labels[idx]!.color"
                                                 clear
+                                                :disabled="!canSubmit"
                                             />
                                         </UFormField>
                                     </div>

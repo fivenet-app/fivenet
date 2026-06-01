@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus';
+import DraggableHandle from '~/components/partials/DraggableHandle.vue';
+import ReorderButtons from '~/components/partials/ReorderButtons.vue';
 import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam/exam';
 
 defineProps<{
@@ -13,7 +15,23 @@ const question = defineModel<ExamQuestion>({ required: true });
 const singleChoiceChoices = computed<string[]>(() =>
     question.value.data?.data.oneofKind === 'singleChoice' ? question.value.data.data.singleChoice.choices : [],
 );
+const validSingleChoiceChoices = computed<string[]>(() =>
+    singleChoiceChoices.value.filter((choice) => choice.trim().length > 0),
+);
 const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
+
+watch(
+    validSingleChoiceChoices,
+    (choices) => {
+        if (
+            question.value.answer?.answer.oneofKind === 'singleChoice' &&
+            !choices.includes(question.value.answer.answer.singleChoice.choice)
+        ) {
+            question.value.answer.answer.singleChoice.choice = '';
+        }
+    },
+    { immediate: true },
+);
 </script>
 
 <template>
@@ -38,14 +56,9 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                     class="flex flex-1 items-center gap-2"
                 >
                     <div class="inline-flex items-center gap-1">
-                        <UTooltip :text="$t('common.draggable')">
-                            <UIcon class="handle-choice size-6 cursor-move" name="i-mdi-drag-horizontal" />
-                        </UTooltip>
+                        <DraggableHandle handle-class="handle-choice" />
 
-                        <UFieldGroup orientation="vertical">
-                            <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
-                            <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="moveDown(idx)" />
-                        </UFieldGroup>
+                        <ReorderButtons :idx="idx" :move-up="moveUp" :move-down="moveDown" />
                     </div>
 
                     <UFormField class="w-full" :name="`exam.questions.${index}.data.data.singleChoice.choices.${idx}`">
@@ -82,7 +95,8 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                 <USelect
                     v-model="question.answer!.answer.singleChoice.choice"
                     class="w-full"
-                    :items="question.data!.data.singleChoice?.choices"
+                    :items="validSingleChoiceChoices"
+                    :disabled="disabled || validSingleChoiceChoices.length === 0"
                 />
             </UFormField>
         </UFormField>

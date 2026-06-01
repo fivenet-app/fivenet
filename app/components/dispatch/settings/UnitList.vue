@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UButton, UFieldGroup, UIcon, UTooltip } from '#components';
+import { UButton, UIcon, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
 import UnitAttributes from '~/components/dispatch/partials/UnitAttributes.vue';
@@ -12,6 +12,8 @@ import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { useDraggable } from 'vue-draggable-plus';
+import ReorderButtons from '~/components/partials/ReorderButtons.vue';
+import DraggableHandle from '~/components/partials/DraggableHandle.vue';
 
 const { t } = useI18n();
 
@@ -117,26 +119,10 @@ const columns = computed<TableColumn<Unit>[]>(() => [
                         class: 'inline-flex items-center gap-1',
                     },
                     [
-                        h(UTooltip, { text: t('common.draggable') }, [
-                            h(UIcon, {
-                                class: 'handle-choice size-6 cursor-move',
-                                name: 'i-mdi-drag-horizontal',
-                            }),
-                        ]),
-                        h(UFieldGroup, { orientation: 'vertical' }, [
-                            h(UButton, {
-                                size: 'xs',
-                                variant: 'link',
-                                icon: 'i-mdi-arrow-up',
-                                onClick: () => moveUp(row.index),
-                            }),
-                            h(UButton, {
-                                size: 'xs',
-                                variant: 'link',
-                                icon: 'i-mdi-arrow-down',
-                                onClick: () => moveDown(row.index),
-                            }),
-                        ]),
+                        h(DraggableHandle, {
+                            handleClass: 'handle-choice',
+                        }),
+                        h(ReorderButtons, { idx: row.index, moveUp: moveUp, moveDown: moveDown }),
                     ],
                 ),
                 h(

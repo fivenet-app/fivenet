@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus';
 import type { zWorkflowSchema } from '../types';
+import ReorderButtons from '~/components/partials/ReorderButtons.vue';
+import DraggableHandle from '~/components/partials/DraggableHandle.vue';
 
 defineProps<{
     disabled?: boolean;
@@ -73,14 +75,9 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
                         class="flex items-center gap-1"
                     >
                         <div class="inline-flex items-center gap-1">
-                            <UTooltip :text="$t('common.draggable')">
-                                <UIcon class="handle size-6 cursor-move" name="i-mdi-drag-horizontal" />
-                            </UTooltip>
+                            <DraggableHandle handle-class="handle-choice" />
 
-                            <UFieldGroup orientation="vertical">
-                                <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
-                                <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="moveDown(idx)" />
-                            </UFieldGroup>
+                            <ReorderButtons :idx="idx" :move-up="moveUp" :move-down="moveDown" />
                         </div>
 
                         <UFormField

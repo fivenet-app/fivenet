@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UButton, UFieldGroup, UIcon, UTooltip } from '#components';
+import { UButton, UIcon, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -10,6 +10,8 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import DataErrorBlock from '../../partials/data/DataErrorBlock.vue';
 import CreateOrUpdateModal from './CreateOrUpdateModal.vue';
 import { useDraggable } from 'vue-draggable-plus';
+import ReorderButtons from '~/components/partials/ReorderButtons.vue';
+import DraggableHandle from '~/components/partials/DraggableHandle.vue';
 
 const { can } = useAuth();
 
@@ -121,26 +123,14 @@ const columns = computed<TableColumn<Label>[]>(() => [
                               class: 'inline-flex items-center gap-1',
                           },
                           [
-                              h(UTooltip, { text: t('common.draggable') }, [
-                                  h(UIcon, {
-                                      class: 'handle-choice size-6 cursor-move',
-                                      name: 'i-mdi-drag-horizontal',
-                                  }),
-                              ]),
-                              h(UFieldGroup, { orientation: 'vertical' }, [
-                                  h(UButton, {
-                                      size: 'xs',
-                                      variant: 'link',
-                                      icon: 'i-mdi-arrow-up',
-                                      onClick: () => moveUp(row.index),
-                                  }),
-                                  h(UButton, {
-                                      size: 'xs',
-                                      variant: 'link',
-                                      icon: 'i-mdi-arrow-down',
-                                      onClick: () => moveDown(row.index),
-                                  }),
-                              ]),
+                              h(DraggableHandle, {
+                                  handleClass: 'handle-choice',
+                              }),
+                              h(ReorderButtons, {
+                                  idx: row.index,
+                                  moveUp: moveUp,
+                                  moveDown: moveDown,
+                              }),
                           ],
                       )
                     : undefined,

@@ -157,7 +157,7 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                         v-model="exam.questions"
                         class="flex flex-col gap-4 divide-y divide-default"
                         :disabled="disabled"
-                        handle=".handle"
+                        handle=".handle-question"
                     >
                         <ExamEditorQuestion
                             v-for="(question, idx) in exam?.questions"

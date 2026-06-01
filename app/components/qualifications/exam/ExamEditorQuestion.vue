@@ -8,6 +8,8 @@ import type { File } from '~~/gen/ts/resources/file/file';
 import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam/exam';
 import QuestionMutipleChoice from './QuestionMutipleChoice.vue';
 import QuestionSingleChoice from './QuestionSingleChoice.vue';
+import ReorderButtons from '~/components/partials/ReorderButtons.vue';
+import DraggableHandle from '~/components/partials/DraggableHandle.vue';
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
@@ -332,9 +334,10 @@ watch(
                         question.value?.answer?.answer?.oneofKind === 'multipleChoice' &&
                         question.value?.answer?.answer?.multipleChoice
                     ) {
+                        const validChoices = newChoices?.filter((choice) => choice.trim().length > 0) ?? [];
                         // Filter answer choices to ensure they are valid values
                         question.value.answer.answer.multipleChoice.choices =
-                            question.value.answer.answer.multipleChoice.choices.filter((value) => newChoices?.includes(value));
+                            question.value.answer.answer.multipleChoice.choices.filter((value) => validChoices.includes(value));
                     }
                 },
                 { immediate: true, deep: true },
@@ -350,8 +353,9 @@ watch(
                         question.value?.answer?.answer?.oneofKind === 'singleChoice' &&
                         question.value?.answer?.answer?.singleChoice
                     ) {
+                        const validChoices = newChoices?.filter((choice) => choice.trim().length > 0) ?? [];
                         // Reset singleChoice answer if it becomes invalid
-                        if (!newChoices?.includes(question.value.answer.answer.singleChoice.choice)) {
+                        if (!validChoices.includes(question.value.answer.answer.singleChoice.choice)) {
                             question.value.answer.answer.singleChoice.choice = ''; // Reset to a placeholder
                         }
                     }
@@ -375,14 +379,9 @@ watch(
 <template>
     <div v-if="question" class="flex items-center gap-2">
         <div class="inline-flex items-center gap-1">
-            <UTooltip :text="$t('common.draggable')">
-                <UIcon class="handle size-7 cursor-move" name="i-mdi-drag-horizontal" />
-            </UTooltip>
+            <DraggableHandle handle-class="handle-question" />
 
-            <UFieldGroup orientation="vertical">
-                <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="$emit('move-up')" />
-                <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="$emit('move-down')" />
-            </UFieldGroup>
+            <ReorderButtons :idx="index" :move-up="() => $emit('move-up')" :move-down="() => $emit('move-down')" />
         </div>
 
         <UFormField :name="`exam.questions.${index}.data.data.oneofKind`">

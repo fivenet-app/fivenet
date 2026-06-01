@@ -100,12 +100,6 @@ const breadcrumbs = computed(() => [
 
                 <template #right>
                     <RefreshButton @click="() => refresh()" />
-                    <UButton
-                        to="/jobs/colleagues"
-                        icon="i-mdi-arrow-left"
-                        variant="subtle"
-                        :label="$t('pages.jobs.colleagues.title')"
-                    />
                 </template>
             </UDashboardToolbar>
         </template>
