@@ -77,19 +77,23 @@ export interface CategoryValue {
      */
     id: number;
     /**
-     * @generated from protobuf field: string name = 2
+     * @generated from protobuf field: string job = 2
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: string name = 3
      */
     name: string;
     /**
-     * @generated from protobuf field: optional string color = 3
+     * @generated from protobuf field: optional string color = 4
      */
     color?: string;
     /**
-     * @generated from protobuf field: optional string icon = 4
+     * @generated from protobuf field: optional string icon = 5
      */
     icon?: string;
     /**
-     * @generated from protobuf field: int64 value = 5
+     * @generated from protobuf field: int64 value = 6
      */
     value: number;
 }
@@ -373,15 +377,17 @@ class CategoryValue$Type extends MessageType<CategoryValue> {
     constructor() {
         super("resources.stats.CategoryValue", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "value", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "value", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<CategoryValue>): CategoryValue {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
+        message.job = "";
         message.name = "";
         message.value = 0;
         if (value !== undefined)
@@ -396,16 +402,19 @@ class CategoryValue$Type extends MessageType<CategoryValue> {
                 case /* int64 id */ 1:
                     message.id = reader.int64().toNumber();
                     break;
-                case /* string name */ 2:
+                case /* string job */ 2:
+                    message.job = reader.string();
+                    break;
+                case /* string name */ 3:
                     message.name = reader.string();
                     break;
-                case /* optional string color */ 3:
+                case /* optional string color */ 4:
                     message.color = reader.string();
                     break;
-                case /* optional string icon */ 4:
+                case /* optional string icon */ 5:
                     message.icon = reader.string();
                     break;
-                case /* int64 value */ 5:
+                case /* int64 value */ 6:
                     message.value = reader.int64().toNumber();
                     break;
                 default:
@@ -423,18 +432,21 @@ class CategoryValue$Type extends MessageType<CategoryValue> {
         /* int64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int64(message.id);
-        /* string name = 2; */
+        /* string job = 2; */
+        if (message.job !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.job);
+        /* string name = 3; */
         if (message.name !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.name);
-        /* optional string color = 3; */
+            writer.tag(3, WireType.LengthDelimited).string(message.name);
+        /* optional string color = 4; */
         if (message.color !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.color);
-        /* optional string icon = 4; */
+            writer.tag(4, WireType.LengthDelimited).string(message.color);
+        /* optional string icon = 5; */
         if (message.icon !== undefined)
-            writer.tag(4, WireType.LengthDelimited).string(message.icon);
-        /* int64 value = 5; */
+            writer.tag(5, WireType.LengthDelimited).string(message.icon);
+        /* int64 value = 6; */
         if (message.value !== 0)
-            writer.tag(5, WireType.Varint).int64(message.value);
+            writer.tag(6, WireType.Varint).int64(message.value);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

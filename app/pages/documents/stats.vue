@@ -75,6 +75,7 @@ const {
     if (response.documentsByCategory.length > 0) {
         response.documentsByCategory.push({
             id: 0,
+            job: '',
             name: t('common.categories', 0),
             color: '',
             value: response.totalValue - response.documentsByCategory.reduce((acc, { value }) => acc + value, 0),

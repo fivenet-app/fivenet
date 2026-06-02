@@ -464,10 +464,11 @@ func (b0 PeriodSeriesValue_builder) Build() *PeriodSeriesValue {
 type CategoryValue struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Id          int64                  `protobuf:"varint,1,opt,name=id,proto3"`
-	xxx_hidden_Name        string                 `protobuf:"bytes,2,opt,name=name,proto3"`
-	xxx_hidden_Color       *string                `protobuf:"bytes,3,opt,name=color,proto3,oneof"`
-	xxx_hidden_Icon        *string                `protobuf:"bytes,4,opt,name=icon,proto3,oneof"`
-	xxx_hidden_Value       int64                  `protobuf:"varint,5,opt,name=value,proto3"`
+	xxx_hidden_Job         string                 `protobuf:"bytes,2,opt,name=job,proto3"`
+	xxx_hidden_Name        string                 `protobuf:"bytes,3,opt,name=name,proto3"`
+	xxx_hidden_Color       *string                `protobuf:"bytes,4,opt,name=color,proto3,oneof"`
+	xxx_hidden_Icon        *string                `protobuf:"bytes,5,opt,name=icon,proto3,oneof"`
+	xxx_hidden_Value       int64                  `protobuf:"varint,6,opt,name=value,proto3"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -504,6 +505,13 @@ func (x *CategoryValue) GetId() int64 {
 		return x.xxx_hidden_Id
 	}
 	return 0
+}
+
+func (x *CategoryValue) GetJob() string {
+	if x != nil {
+		return x.xxx_hidden_Job
+	}
+	return ""
 }
 
 func (x *CategoryValue) GetName() string {
@@ -544,18 +552,22 @@ func (x *CategoryValue) SetId(v int64) {
 	x.xxx_hidden_Id = v
 }
 
+func (x *CategoryValue) SetJob(v string) {
+	x.xxx_hidden_Job = v
+}
+
 func (x *CategoryValue) SetName(v string) {
 	x.xxx_hidden_Name = v
 }
 
 func (x *CategoryValue) SetColor(v string) {
 	x.xxx_hidden_Color = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 6)
 }
 
 func (x *CategoryValue) SetIcon(v string) {
 	x.xxx_hidden_Icon = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 6)
 }
 
 func (x *CategoryValue) SetValue(v int64) {
@@ -566,23 +578,23 @@ func (x *CategoryValue) HasColor() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *CategoryValue) HasIcon() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *CategoryValue) ClearColor() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
 	x.xxx_hidden_Color = nil
 }
 
 func (x *CategoryValue) ClearIcon() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
 	x.xxx_hidden_Icon = nil
 }
 
@@ -590,6 +602,7 @@ type CategoryValue_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Id    int64
+	Job   string
 	Name  string
 	Color *string
 	Icon  *string
@@ -601,13 +614,14 @@ func (b0 CategoryValue_builder) Build() *CategoryValue {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Id = b.Id
+	x.xxx_hidden_Job = b.Job
 	x.xxx_hidden_Name = b.Name
 	if b.Color != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 6)
 		x.xxx_hidden_Color = b.Color
 	}
 	if b.Icon != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 6)
 		x.xxx_hidden_Icon = b.Icon
 	}
 	x.xxx_hidden_Value = b.Value
@@ -633,13 +647,14 @@ const file_resources_stats_stats_proto_rawDesc = "" +
 	"\x03day\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x03day\x12\x10\n" +
 	"\x03key\x18\x02 \x01(\tR\x03key\x12\x14\n" +
 	"\x05label\x18\x03 \x01(\tR\x05label\x12\x14\n" +
-	"\x05value\x18\x04 \x01(\x03R\x05value\"\x90\x01\n" +
+	"\x05value\x18\x04 \x01(\x03R\x05value\"\xa2\x01\n" +
 	"\rCategoryValue\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12\x19\n" +
-	"\x05color\x18\x03 \x01(\tH\x00R\x05color\x88\x01\x01\x12\x17\n" +
-	"\x04icon\x18\x04 \x01(\tH\x01R\x04icon\x88\x01\x01\x12\x14\n" +
-	"\x05value\x18\x05 \x01(\x03R\x05valueB\b\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
+	"\x03job\x18\x02 \x01(\tR\x03job\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x19\n" +
+	"\x05color\x18\x04 \x01(\tH\x00R\x05color\x88\x01\x01\x12\x17\n" +
+	"\x04icon\x18\x05 \x01(\tH\x01R\x04icon\x88\x01\x01\x12\x14\n" +
+	"\x05value\x18\x06 \x01(\x03R\x05valueB\b\n" +
 	"\x06_colorB\a\n" +
 	"\x05_icon*\xe6\x01\n" +
 	"\rStatsCategory\x12\x1e\n" +

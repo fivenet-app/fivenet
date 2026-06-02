@@ -452,7 +452,7 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="name">
+                            <UFormField name="name" required>
                                 <UInput
                                     v-model="state.name"
                                     class="w-full"
@@ -463,6 +463,7 @@ onBeforeUnmount(() => {
                             </UFormField>
                         </dd>
                     </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
                             <label class="block text-sm leading-6 font-medium" for="description">
@@ -481,6 +482,7 @@ onBeforeUnmount(() => {
                             </UFormField>
                         </dd>
                     </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
                             <label class="block text-sm leading-6 font-medium" for="expiresAt">
@@ -506,6 +508,7 @@ onBeforeUnmount(() => {
                             </UFormField>
                         </dd>
                     </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
                             <label class="block text-sm leading-6 font-medium" for="markerType">

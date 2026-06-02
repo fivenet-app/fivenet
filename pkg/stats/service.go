@@ -470,11 +470,12 @@ func (s *Service) QueryDocumentsByCategory(
 
 	stmt := tRollup.
 		SELECT(
-			categoryIDExpr.AS("id"),
-			categoryNameExpr.AS("name"),
-			categoryColorExpr.AS("color"),
-			categoryIconExpr.AS("icon"),
-			mysql.SUM(tRollup.Value).AS("value"),
+			categoryIDExpr.AS("categoryvalue.id"),
+			categoryNameExpr.AS("categoryvalue.name"),
+			categoryColorExpr.AS("categoryvalue.color"),
+			categoryIconExpr.AS("categoryvalue.icon"),
+			tRollup.Job.AS("categoryvalue.job"),
+			mysql.SUM(tRollup.Value).AS("categoryvalue.value"),
 		).
 		FROM(
 			tRollup.LEFT_JOIN(
@@ -494,7 +495,7 @@ func (s *Service) QueryDocumentsByCategory(
 			tRollup.MetricKey.EQ(mysql.String("category_count")),
 			tRollup.Dimension1.NOT_EQ(mysql.String("")),
 		)).
-		GROUP_BY(tRollup.Dimension1, categoryIDExpr).
+		GROUP_BY(tRollup.Dimension1, tRollup.Job, categoryIDExpr).
 		ORDER_BY(mysql.SUM(tRollup.Value).DESC())
 
 	items := []*CategoryValue{}

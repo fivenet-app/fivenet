@@ -6551,6 +6551,7 @@ User related events
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
+| `job` | [string](#string) |  |  |
 | `name` | [string](#string) |  |  |
 | `color` | [string](#string) | optional |  |
 | `icon` | [string](#string) | optional |  |

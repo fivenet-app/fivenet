@@ -24,6 +24,9 @@ func (m *CategoryValue) Sanitize() error {
 		*m.Icon = htmlsanitizer.Sanitize(*m.Icon)
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	// Field: Name
 	m.Name = htmlsanitizer.Sanitize(m.Name)
 

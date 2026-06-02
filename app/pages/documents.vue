@@ -27,6 +27,12 @@ const itemsLeft = computed<NavigationMenuItem[]>(() =>
 const itemsRight = computed<NavigationMenuItem[]>(() =>
     [
         {
+            label: t('common.stats'),
+            to: '/documents/stats',
+            icon: 'i-mdi-graph-box-outline',
+            permission: 'documents.StatsService/GetStats' as Perms,
+        },
+        {
             label: t('common.stamp', 2),
             to: '/documents/stamps',
             icon: 'i-mdi-stamper',
