@@ -6,6 +6,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import LicensePlate from '~/components/partials/LicensePlate.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import TableSortButton from '~/components/partials/TableSortButton.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import { getVehiclesVehiclesClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
@@ -40,8 +41,6 @@ const props = withDefaults(
         searchKey: 'vehicles',
     },
 );
-
-const appConfig = useAppConfig();
 
 const clipboardStore = useClipboardStore();
 
@@ -141,19 +140,9 @@ const columns = computed(() =>
             {
                 accessorKey: 'plate',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column,
                         label: t('common.plate'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
                 cell: ({ row }) =>
@@ -174,19 +163,9 @@ const columns = computed(() =>
             {
                 accessorKey: 'model',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column,
                         label: t('common.model'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
             },

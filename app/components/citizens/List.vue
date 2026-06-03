@@ -9,6 +9,7 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import TableSortButton from '~/components/partials/TableSortButton.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import { getCitizensCitizensClient, getSettingsSystemClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
@@ -116,27 +117,15 @@ function addToClipboard(user: User): void {
     });
 }
 
-const appConfig = useAppConfig();
-
 const columns = computed(() =>
     (
         [
             {
                 accessorKey: 'name',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column,
                         label: t('common.name'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
             },
@@ -190,19 +179,9 @@ const columns = computed(() =>
                 ? {
                       accessorKey: 'trafficInfractionPoints',
                       header: ({ column }) => {
-                          const isSorted = column.getIsSorted();
-
-                          return h(UButton, {
-                              color: 'neutral',
-                              variant: 'ghost',
+                          return h(TableSortButton, {
+                              column,
                               label: t('common.traffic_infraction_points', 2),
-                              icon: isSorted
-                                  ? isSorted === 'asc'
-                                      ? appConfig.custom.icons.sortAsc
-                                      : appConfig.custom.icons.sortDesc
-                                  : appConfig.custom.icons.sort,
-                              class: '-mx-2.5',
-                              onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                           });
                       },
                       cell: ({ row }) => row.original.props?.trafficInfractionPoints,
@@ -212,19 +191,9 @@ const columns = computed(() =>
                 ? {
                       accessorKey: 'openFines',
                       header: ({ column }) => {
-                          const isSorted = column.getIsSorted();
-
-                          return h(UButton, {
-                              color: 'neutral',
-                              variant: 'ghost',
+                          return h(TableSortButton, {
+                              column,
                               label: t('common.fine', 2),
-                              icon: isSorted
-                                  ? isSorted === 'asc'
-                                      ? appConfig.custom.icons.sortAsc
-                                      : appConfig.custom.icons.sortDesc
-                                  : appConfig.custom.icons.sort,
-                              class: '-mx-2.5',
-                              onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                           });
                       },
                       cell: ({ row }) =>

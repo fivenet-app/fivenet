@@ -11,6 +11,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
+import TableSortButton from '~/components/partials/TableSortButton.vue';
 import { getSettingsAccountsClient } from '~~/gen/ts/clients';
 import type { Account } from '~~/gen/ts/resources/accounts/accounts';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
@@ -107,8 +108,6 @@ async function deleteAccount(id: number): Promise<void> {
 const confirmModal = overlay.create(ConfirmModal);
 const accountEditModal = overlay.create(AccountEditModal);
 
-const appConfig = useAppConfig();
-
 const meta = computed(
     () =>
         ({
@@ -165,19 +164,9 @@ const columns = computed(
             {
                 accessorKey: 'username',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column,
                         label: t('common.username'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
                 cell: ({ row }) =>
@@ -228,19 +217,9 @@ const columns = computed(
             {
                 accessorKey: 'license',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column,
                         label: t('common.license'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
                 cell: ({ row }) => h('pre', { class: 'text-highlighted' }, row.original.license),

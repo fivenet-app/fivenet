@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UBadge, UButton } from '#components';
+import { UBadge } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { listEnumValues } from '@protobuf-ts/runtime';
 import { computed, h } from 'vue';
@@ -11,6 +11,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import TableSortButton from '~/components/partials/TableSortButton.vue';
 import type { ToggleItem } from '~/utils/types';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
@@ -93,8 +94,6 @@ async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
 
 watchDebounced(query, async () => (await formRef.value?.validate({})) && refresh(), { debounce: 250, maxWait: 1250 });
 
-const appConfig = useAppConfig();
-
 const columns = computed(
     () =>
         [
@@ -125,19 +124,9 @@ const columns = computed(
             {
                 accessorKey: 'createdAt',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column,
                         label: t('common.created_at'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(isSorted === 'asc'),
                     });
                 },
                 cell: ({ row }) => h(GenericTime, { value: row.original.createdAt }),

@@ -4,6 +4,7 @@ import type { TableColumn } from '@nuxt/ui';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import TableSortButton from '~/components/partials/TableSortButton.vue';
 import { getCitizensLabelsClient } from '~~/gen/ts/clients';
 import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -20,8 +21,6 @@ const { t } = useI18n();
 const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
-
-const appConfig = useAppConfig();
 
 const formatDuration = useDurationFormatter();
 
@@ -172,19 +171,9 @@ const columns = computed<TableColumn<Label>[]>(() => [
     {
         accessorKey: 'name',
         header: ({ column }) => {
-            const isSorted = column.getIsSorted();
-
-            return h(UButton, {
-                color: 'neutral',
-                variant: 'ghost',
+            return h(TableSortButton, {
+                column,
                 label: t('common.name'),
-                icon: isSorted
-                    ? isSorted === 'asc'
-                        ? appConfig.custom.icons.sortAsc
-                        : appConfig.custom.icons.sortDesc
-                    : appConfig.custom.icons.sort,
-                class: '-mx-2.5',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
             });
         },
         meta: {

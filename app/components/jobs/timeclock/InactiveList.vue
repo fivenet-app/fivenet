@@ -7,13 +7,12 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import TableSortButton from '~/components/partials/TableSortButton.vue';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueName from '../colleagues/ColleagueName.vue';
-
-const appConfig = useAppConfig();
 
 const { t } = useI18n();
 
@@ -98,19 +97,9 @@ const columns = computed(() =>
             {
                 accessorKey: 'name',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column,
                         label: t('common.name'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
                 cell: ({ row }) =>
@@ -127,19 +116,9 @@ const columns = computed(() =>
             {
                 accessorKey: 'jobGrade',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column,
                         label: t('common.rank', 1),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
                 cell: ({ row }) =>

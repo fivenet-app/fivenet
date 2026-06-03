@@ -791,7 +791,9 @@
         },
         "run": "Run | Running",
         "share": "Share",
-        "error": "Error"
+        "error": "Error",
+        "desc": "Descending",
+        "asc": "Ascending"
     },
     "components": {
         "partials": {

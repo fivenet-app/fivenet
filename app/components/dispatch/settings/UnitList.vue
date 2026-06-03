@@ -8,6 +8,7 @@ import ColorPicker from '~/components/partials/ColorPicker.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import TableSortButton from '~/components/partials/TableSortButton.vue';
 import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -22,8 +23,6 @@ const { can } = useAuth();
 const overlay = useOverlay();
 
 const notifications = useNotificationsStore();
-
-const appConfig = useAppConfig();
 
 const centrumUnitsClient = await getCentrumUnitsClient();
 
@@ -168,19 +167,9 @@ const columns = computed<TableColumn<Unit>[]>(() => [
     {
         accessorKey: 'name',
         header: ({ column }) => {
-            const isSorted = column.getIsSorted();
-
-            return h(UButton, {
-                color: 'neutral',
-                variant: 'ghost',
+            return h(TableSortButton, {
+                column: column,
                 label: t('common.name'),
-                icon: isSorted
-                    ? isSorted === 'asc'
-                        ? appConfig.custom.icons.sortAsc
-                        : appConfig.custom.icons.sortDesc
-                    : appConfig.custom.icons.sort,
-                class: '-mx-2.5',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
             });
         },
         cell: ({ row }) => h('span', { class: 'text-highlighted' }, row.original.name),
@@ -188,19 +177,9 @@ const columns = computed<TableColumn<Unit>[]>(() => [
     {
         accessorKey: 'initials',
         header: ({ column }) => {
-            const isSorted = column.getIsSorted();
-
-            return h(UButton, {
-                color: 'neutral',
-                variant: 'ghost',
+            return h(TableSortButton, {
+                column: column,
                 label: t('common.initials'),
-                icon: isSorted
-                    ? isSorted === 'asc'
-                        ? appConfig.custom.icons.sortAsc
-                        : appConfig.custom.icons.sortDesc
-                    : appConfig.custom.icons.sort,
-                class: '-mx-2.5',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
             });
         },
         cell: ({ row }) => h('span', {}, row.original.initials),

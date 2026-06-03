@@ -3,6 +3,7 @@ import { UBadge, UButton, ULink } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { getGroupedRowModel } from '@tanstack/vue-table';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
+import TableSortButton from '~/components/partials/TableSortButton.vue';
 import { type CategoryValue, StatsCategory, type StatsPeriod } from '~~/gen/ts/resources/stats/stats';
 import type { GetStatsResponse } from '~~/gen/ts/services/documents/stats';
 import type { Range } from './helpers';
@@ -39,7 +40,15 @@ const categoryColumns = computed<TableColumn<CategoryValue>[]>(() => [
                 : row.original.name,
     },
     {
-        header: t('common.count'),
+        id: 'value',
+        accessorKey: 'value',
+        header: ({ column }) => {
+            return h(TableSortButton, {
+                column: column,
+                label: t('common.count'),
+            });
+        },
+        sortingFn: (rowA, rowB) => rowA.original.value - rowB.original.value,
         cell: ({ row }) => formatNumber(row.original.value),
     },
 ]);
@@ -76,10 +85,22 @@ const topLawColumns = computed<TableColumn<TopLawRow>[]>(() => [
     {
         accessorKey: 'law',
         header: t('common.law', 1),
+        meta: {
+            class: {
+                td: 'text-highlighted',
+            },
+        },
     },
     {
+        id: 'value',
         accessorKey: 'value',
-        header: t('common.count'),
+        header: ({ column }) => {
+            return h(TableSortButton, {
+                column: column,
+                label: t('common.count'),
+            });
+        },
+        sortingFn: (rowA, rowB) => rowA.original.value - rowB.original.value,
         aggregateFn: 'sum',
         aggregatedCell: ({ getValue }) => formatNumber(getValue<number>()),
         cell: ({ row, getValue }) => {
@@ -102,25 +123,32 @@ const topLawData = computed<TopLawRow[]>(() =>
         };
     }),
 );
+
+const sorting = ref([
+    {
+        id: 'value',
+        desc: true,
+    },
+]);
 </script>
 
 <template>
     <UCard :ui="{ root: 'overflow-visible', body: '!px-0 !pt-0 !pb-0' }">
-        <UTable v-if="props.category === StatsCategory.DOCUMENTS_BY_CATEGORY" :columns="categoryColumns" :data="categoryData" />
+        <UTable
+            v-if="props.category === StatsCategory.DOCUMENTS_BY_CATEGORY"
+            v-model:sorting="sorting"
+            :columns="categoryColumns"
+            :data="categoryData"
+        />
         <UTable
             v-else-if="props.category === StatsCategory.TOP_LAWS"
+            v-model:sorting="sorting"
             :columns="topLawColumns"
             :data="topLawData"
             :grouping="['lawBook']"
             :grouping-options="{
                 getGroupedRowModel: getGroupedRowModel(),
             }"
-            :sorting="[
-                {
-                    id: 'value',
-                    desc: true,
-                },
-            ]"
             :ui="{ root: 'min-w-full', td: 'empty:p-0' }"
         >
             <template #lawBook-cell="{ row }">

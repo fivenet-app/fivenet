@@ -148,7 +148,7 @@ const breadcrumbs = computed(() => [
         to: '/documents',
     },
     {
-        label: t('pages.documents.stats.title'),
+        label: t('common.stats'),
         icon: 'i-mdi-graph-box-outline',
     },
 ]);

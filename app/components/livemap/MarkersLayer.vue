@@ -61,4 +61,6 @@ onBeforeMount(async () =>
             @selected="$emit('markerSelected', marker)"
         />
     </LLayerGroup>
+
+    <!-- TODO add a marker marker list for easy finding and "reading" up on markers -->
 </template>

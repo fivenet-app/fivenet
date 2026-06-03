@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UBadge, UButton, ULink } from '#components';
+import { UBadge, ULink } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -7,11 +7,10 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import TableSortButton from '~/components/partials/TableSortButton.vue';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { type DocumentReference, DocReference } from '~~/gen/ts/resources/documents/references/references';
 import { docReferenceToBadge } from './helpers';
-
-const appConfig = useAppConfig();
 
 const props = withDefaults(
     defineProps<{
@@ -54,19 +53,9 @@ const columns = computed(() =>
             {
                 accessorKey: 'targetDocument',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column,
                         label: t('common.target'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
                 cell: ({ row }) =>

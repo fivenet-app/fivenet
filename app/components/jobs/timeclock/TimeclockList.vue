@@ -11,6 +11,7 @@ import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import InputDateRangePopover from '~/components/partials/InputDateRangePopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
+import TableSortButton from '~/components/partials/TableSortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
@@ -44,8 +45,6 @@ const props = withDefaults(
 const { t } = useI18n();
 
 const { attr } = useAuth();
-
-const appConfig = useAppConfig();
 
 const completorStore = useCompletorStore();
 
@@ -190,19 +189,9 @@ const columns = computed<TableColumn<TimeclockEntry>[]>(() => [
     {
         accessorKey: 'date',
         header: ({ column }) => {
-            const isSorted = column.getIsSorted();
-
-            return h(UButton, {
-                color: 'neutral',
-                variant: 'ghost',
+            return h(TableSortButton, {
+                column,
                 label: t('common.date'),
-                icon: isSorted
-                    ? isSorted === 'asc'
-                        ? appConfig.custom.icons.sortAsc
-                        : appConfig.custom.icons.sortDesc
-                    : appConfig.custom.icons.sort,
-                class: '-mx-2.5',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
             });
         },
         meta: {
@@ -221,19 +210,9 @@ const columns = computed<TableColumn<TimeclockEntry>[]>(() => [
     {
         accessorKey: 'name',
         header: ({ column }) => {
-            const isSorted = column.getIsSorted();
-
-            return h(UButton, {
-                color: 'neutral',
-                variant: 'ghost',
+            return h(TableSortButton, {
+                column,
                 label: t('common.name'),
-                icon: isSorted
-                    ? isSorted === 'asc'
-                        ? appConfig.custom.icons.sortAsc
-                        : appConfig.custom.icons.sortDesc
-                    : appConfig.custom.icons.sort,
-                class: '-mx-2.5',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
             });
         },
         meta: {
@@ -246,19 +225,9 @@ const columns = computed<TableColumn<TimeclockEntry>[]>(() => [
     {
         accessorKey: 'rank',
         header: ({ column }) => {
-            const isSorted = column.getIsSorted();
-
-            return h(UButton, {
-                color: 'neutral',
-                variant: 'ghost',
+            return h(TableSortButton, {
+                column,
                 label: t('common.rank'),
-                icon: isSorted
-                    ? isSorted === 'asc'
-                        ? appConfig.custom.icons.sortAsc
-                        : appConfig.custom.icons.sortDesc
-                    : appConfig.custom.icons.sort,
-                class: '-mx-2.5',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
             });
         },
         meta: {
@@ -283,19 +252,9 @@ const columns = computed<TableColumn<TimeclockEntry>[]>(() => [
     {
         accessorKey: 'time',
         header: ({ column }) => {
-            const isSorted = column.getIsSorted();
-
-            return h(UButton, {
-                color: 'neutral',
-                variant: 'ghost',
+            return h(TableSortButton, {
+                column,
                 label: t('common.time'),
-                icon: isSorted
-                    ? isSorted === 'asc'
-                        ? appConfig.custom.icons.sortAsc
-                        : appConfig.custom.icons.sortDesc
-                    : appConfig.custom.icons.sort,
-                class: '-mx-2.5',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
             });
         },
     },

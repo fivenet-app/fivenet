@@ -160,7 +160,7 @@ func (s *Server) GetStats(
 			)
 		}
 
-		topLaws, err := s.stats.QueryTopLaws(ctx, start, end, jobs, 10)
+		topLaws, err := s.stats.QueryTopLaws(ctx, start, end, jobs, 20)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}

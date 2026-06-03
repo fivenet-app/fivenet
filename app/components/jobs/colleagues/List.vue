@@ -12,6 +12,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
+import TableSortButton from '~/components/partials/TableSortButton.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useSettingsStore } from '~/stores/settings';
 import { getJobsColleaguesClient } from '~~/gen/ts/clients';
@@ -130,46 +131,24 @@ function toggleLabelInSearch(label: Label): void {
     }
 }
 
-const appConfig = useAppConfig();
-
 const columns = computed(() =>
     (
         [
             {
                 accessorKey: 'name',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column: column,
                         label: t('common.name'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
             },
             {
                 accessorKey: 'jobGrade',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column: column,
                         label: t('common.rank'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
                 cell: ({ row }) => h('span', {}, row.original.jobGradeLabel),

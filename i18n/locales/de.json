@@ -791,7 +791,9 @@
         },
         "run": "Ausführen | Läuft",
         "share": "Teilen",
-        "error": "Fehler"
+        "error": "Fehler",
+        "desc": "Absteigend",
+        "asc": "Aufsteigend"
     },
     "components": {
         "partials": {

@@ -7,6 +7,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import TableSortButton from '~/components/partials/TableSortButton.vue';
 import { checkQualificationAccess, requestStatusToTextColor } from '~/components/qualifications/helpers';
 import RequestTutorModal from '~/components/qualifications/tutor/RequestTutorModal.vue';
 import ResultTutorModal from '~/components/qualifications/tutor/ResultTutorModal.vue';
@@ -141,8 +142,6 @@ async function deleteQualificationRequest(qualificationId: number, userId: numbe
     }
 }
 
-const appConfig = useAppConfig();
-
 const columns = computed(
     () =>
         [
@@ -243,19 +242,9 @@ const columns = computed(
             {
                 accessorKey: 'status',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column,
                         label: t('common.status'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
                 cell: ({ row }) =>
@@ -272,19 +261,9 @@ const columns = computed(
             {
                 accessorKey: 'createdAt',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column,
                         label: t('common.created_at'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
                 cell: ({ row }) => h(GenericTime, { value: row.original.createdAt }),
@@ -292,19 +271,9 @@ const columns = computed(
             {
                 accessorKey: 'approvedAt',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column,
                         label: t('common.approved_at'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
                 cell: ({ row }) => h(GenericTime, { value: row.original.approvedAt }),

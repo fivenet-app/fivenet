@@ -325,7 +325,7 @@ func (s *Service) QueryTopLaws(
 	}
 
 	if limit <= 0 {
-		limit = 10
+		limit = 20
 	}
 
 	tRollup := table.FivenetStatsDailyRollup.AS("r")
@@ -342,8 +342,8 @@ func (s *Service) QueryTopLaws(
 
 	stmt := tRollup.
 		SELECT(
-			keyExpr.AS("key"),
-			mysql.SUM(tRollup.Value).AS("value"),
+			keyExpr.AS("keyvalue.key"),
+			mysql.SUM(tRollup.Value).AS("keyvalue.value"),
 		).
 		FROM(
 			tRollup.

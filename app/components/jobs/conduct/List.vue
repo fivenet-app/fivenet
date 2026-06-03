@@ -12,6 +12,7 @@ import DraftBadge from '~/components/partials/DraftBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
+import TableSortButton from '~/components/partials/TableSortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsConductClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
@@ -145,27 +146,15 @@ const conductViewSlideover = overlay.create(ViewSlideover);
 const conductEditorModal = overlay.create(EditorModal);
 const confirmModal = overlay.create(ConfirmModal);
 
-const appConfig = useAppConfig();
-
 const columns = computed(
     () =>
         [
             {
                 accessorKey: 'id',
                 header: ({ column }) => {
-                    const isSorted = column.getIsSorted();
-
-                    return h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
+                    return h(TableSortButton, {
+                        column,
                         label: t('common.id'),
-                        icon: isSorted
-                            ? isSorted === 'asc'
-                                ? appConfig.custom.icons.sortAsc
-                                : appConfig.custom.icons.sortDesc
-                            : appConfig.custom.icons.sort,
-                        class: '-mx-2.5',
-                        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
                 cell: ({ row }) =>
