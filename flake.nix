@@ -3,7 +3,7 @@
   description = "Basic flake for FiveNet development";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=release-25.11";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=release-26.05";
   };
 
   outputs = { self, nixpkgs }:
