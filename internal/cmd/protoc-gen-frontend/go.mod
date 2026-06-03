@@ -1,6 +1,6 @@
 module github.com/fivenet-app/fivenet/v2026/internal/cmd/protoc-gen-fronthelper
 
-go 1.26.3
+go 1.26.4
 
 require (
 	github.com/fivenet-app/fivenet/v2026 v2026.5.1
