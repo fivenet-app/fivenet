@@ -6,7 +6,8 @@
         "lokalise.i18n-ally",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "bufbuild.vscode-buf"
+        "bufbuild.vscode-buf",
+        "golang.go",
     ],
     "unwantedRecommendations": [
         "vscode.typescript-language-features"
